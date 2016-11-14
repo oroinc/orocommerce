@@ -162,8 +162,10 @@ class QuickAddRowCollectionBuilder
      */
     private function getVisibleProductsBySkus(array $skus)
     {
-        $qb = $this->productManager->restrictQueryBuilder($this->productRepository->getProductWithNamesQueryBuilder($skus), []);
-        $products = $qb->getQuery()->execute();
+        $qb = $this->productRepository->getProductWithNamesQueryBuilder($skus);
+        $restricted = $this->productManager->restrictQueryBuilder($qb, []);
+        $query = $restricted->getQuery();
+        $products = $query->execute();
         $productsBySku = [];
 
         foreach ($products as $product) {

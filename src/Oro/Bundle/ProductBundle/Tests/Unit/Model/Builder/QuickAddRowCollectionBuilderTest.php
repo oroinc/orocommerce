@@ -2,10 +2,18 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Model\Builder;
 
+use Doctrine\DBAL\Connection;
+use Doctrine\ORM\Configuration;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Internal\Hydration\AbstractHydrator;
+use Doctrine\ORM\Query;
+use Doctrine\ORM\QueryBuilder;
+
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use Oro\Bundle\ProductBundle\Form\Type\QuickAddType;
 use Oro\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder;
 use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
@@ -22,6 +30,16 @@ class QuickAddRowCollectionBuilderTest extends \PHPUnit_Framework_TestCase
      * @var \PHPUnit_Framework_MockObject_MockObject|ProductRepository
      */
     private $productRepository;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|ProductManager
+     */
+    private $productManager;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|ProductManager
+     */
+    private $queryBuilder;
 
     /**
      * @var array
@@ -62,12 +80,61 @@ class QuickAddRowCollectionBuilderTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+
+        $configuration = $this->getMockBuilder(Configuration::class)->disableOriginalConstructor()->getMock();
+        $configuration->method('getDefaultQueryHints')->willReturn([]);
+        $connection = $this->getMockBuilder(Connection::class)->disableOriginalConstructor()->getMock();
+
+
+        $em = $this->getMockBuilder(EntityManager::class)->disableOriginalConstructor()->getMock();
+        $em->method('getConfiguration')->willReturn($configuration);
+        $em->method('getConnection')->willReturn($connection);
+
+        $hydrator = $this->getMockBuilder(AbstractHydrator::class)->setConstructorArgs([$em])->getMock();
+        $hydrator->method('hydrateAll')->withAnyParameters()->willReturn(array());
+
+        $hydrRef = new \ReflectionProperty(AbstractHydrator::class, '_hints');
+        $hydrRef->setAccessible(true);
+        $hydrRef->setValue($hydrator, []);
+
+
+        $em->method('newHydrator')->willReturn($hydrator);
+
+        $query = $this->getMockBuilder('\Doctrine\ORM\AbstractQuery')->setConstructorArgs([$em])
+            ->setMethods(array('setParameter', 'getResult', 'execute'))
+            ->getMockForAbstractClass();
+
+        $query->method('getResult')
+            ->willReturn(
+                [
+                    'HSSUC' => $this->prepareProduct('HSSUC'),
+                    'HSTUC' => $this->prepareProduct('HSTUC'),
+                ]
+            );
+        $query->method('execute')
+            ->willReturn(
+                [
+                    'HSSUC' => $this->prepareProduct('HSSUC'),
+                    'HSTUC' => $this->prepareProduct('HSTUC'),
+                ]
+            );
+        $this->queryBuilder = $this->getMockBuilder(QueryBuilder::class)->setConstructorArgs([$em])->getMock();
+        $this->queryBuilder->method('getQuery')->willReturn($query);
+
         $this->productRepository = $this
             ->getMockBuilder('Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->builder = new QuickAddRowCollectionBuilder($this->productRepository);
+        $this->productRepository->method('getProductWithNamesQueryBuilder')
+            ->with(array_keys($this->expectedElements))
+            ->willReturn($this->queryBuilder);
+
+        $this->productManager = $this->getMockBuilder(ProductManager::class)->disableOriginalConstructor()->getMock();
+
+        $this->productManager->method('restrictQueryBuilder')->willReturn($this->queryBuilder);
+
+        $this->builder = new QuickAddRowCollectionBuilder($this->productRepository, $this->productManager );
     }
 
     public function testBuildFromRequest()
@@ -85,7 +152,6 @@ class QuickAddRowCollectionBuilderTest extends \PHPUnit_Framework_TestCase
             QuickAddType::PRODUCTS_FIELD_NAME => $data
         ]);
 
-        $this->prepareProductRepository();
         $this->assertValidCollection($this->builder->buildFromRequest($request));
     }
 
@@ -100,7 +166,6 @@ class QuickAddRowCollectionBuilderTest extends \PHPUnit_Framework_TestCase
             $this->markTestSkipped('Skipped due to xdebug enabled (nesting level can be reached)');
         }
 
-        $this->prepareProductRepository();
         $this->assertValidCollection($this->builder->buildFromFile($file));
     }
 
@@ -118,7 +183,6 @@ class QuickAddRowCollectionBuilderTest extends \PHPUnit_Framework_TestCase
      */
     public function testBuildFromCopyPasteText($text)
     {
-        $this->prepareProductRepository();
         $this->assertValidCollection($this->builder->buildFromCopyPasteText($text));
     }
 
@@ -172,23 +236,11 @@ class QuickAddRowCollectionBuilderTest extends \PHPUnit_Framework_TestCase
     protected function prepareProduct($sku)
     {
         $product = $this->getMock('Oro\Bundle\ProductBundle\Entity\Product');
-        $product->expects($this->once())
+        $product
             ->method('getSku')
             ->willReturn($sku);
 
         return $product;
     }
 
-    private function prepareProductRepository()
-    {
-        $this->productRepository->expects($this->once())
-            ->method('getProductWithNamesBySku')
-            ->with(array_keys($this->expectedElements))
-            ->willReturn(
-                [
-                    'HSSUC' => $this->prepareProduct('HSSUC'),
-                    'HSTUC' => $this->prepareProduct('HSTUC'),
-                ]
-            );
-    }
 }
