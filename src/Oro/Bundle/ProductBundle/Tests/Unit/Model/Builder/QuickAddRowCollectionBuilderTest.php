@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Model\Builder;
 
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -22,6 +23,11 @@ class QuickAddRowCollectionBuilderTest extends \PHPUnit_Framework_TestCase
      * @var \PHPUnit_Framework_MockObject_MockObject|ProductRepository
      */
     private $productRepository;
+
+    /**
+     * @var EventDispatcherInterface
+     */
+    protected $eventDispatcher;
 
     /**
      * @var array
@@ -66,8 +72,9 @@ class QuickAddRowCollectionBuilderTest extends \PHPUnit_Framework_TestCase
             ->getMockBuilder('Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository')
             ->disableOriginalConstructor()
             ->getMock();
+        $this->eventDispatcher = $this->getMock(EventDispatcherInterface::class);
 
-        $this->builder = new QuickAddRowCollectionBuilder($this->productRepository);
+        $this->builder = new QuickAddRowCollectionBuilder($this->productRepository, $this->eventDispatcher);
     }
 
     public function testBuildFromRequest()
@@ -127,7 +134,7 @@ class QuickAddRowCollectionBuilderTest extends \PHPUnit_Framework_TestCase
         $commaSeparated = ['HSSUC, 1', 'HSTUC, 2.55', 'HCCM, 3,', 'SKU1,10.0112', 'SKU2,asd', 'SKU3,'];
         $tabsSeparated = ["HSSUC\t1", "HSTUC\t2.55", "HCCM\t3\t", "SKU1\t10.0112", "SKU2\tasd", "SKU3\t"];
         $spaceSeparated = ['HSSUC 1', 'HSTUC 2.55', 'HCCM 3,', 'SKU1 10.0112', 'SKU2 asd', 'SKU3'];
-        
+
         return [
             'comma separated' => [implode(PHP_EOL, $commaSeparated)],
             'tabs separated' => [implode(PHP_EOL, $tabsSeparated)],

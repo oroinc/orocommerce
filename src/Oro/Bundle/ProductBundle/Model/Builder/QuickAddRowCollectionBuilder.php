@@ -84,33 +84,12 @@ class QuickAddRowCollectionBuilder
      */
     public function buildFromFile(UploadedFile $file)
     {
-        $lineNumber = 0;
         $collection = new QuickAddRowCollection();
         $collection->setEventDispatcher($this->eventDispatcher);
-        $collectionBySkus = [];
 
         $reader = $this->createReaderForFile($file);
         $reader->open($file->getRealPath());
-
-        foreach ($reader->getSheetIterator() as $sheet) {
-            foreach ($sheet->getRowIterator() as $row) {
-                if (0 === $lineNumber || empty($row[0])) {
-                    $lineNumber++;
-                    continue;
-                }
-                $lineNumber++;
-                $sku = isset($row[0]) ? trim($row[0]) : null;
-                $quantity = isset($row[1]) ? (float)trim($row[1]) : null;
-                if (isset($collectionBySkus[$sku])) {
-                    $collectionBySkus[$sku]['quantity'] += $quantity;
-                } else {
-                    $collectionBySkus[$sku] = [
-                        'quantity' => $quantity,
-                        'lineNumber' => $lineNumber,
-                    ];
-                }
-            }
-        }
+        $collectionBySkus = $this->buildCollectionBySkuFromFile($reader);
 
         foreach ($collectionBySkus as $sku => $row) {
             $collection->add(new QuickAddRow($row['lineNumber'], $sku, $row['quantity']));
@@ -157,6 +136,36 @@ class QuickAddRowCollectionBuilder
         return $collection;
     }
 
+    /**
+     * @param ReaderInterface $reader
+     * @return array
+     */
+    public function buildCollectionBySkuFromFile($reader)
+    {
+        $collectionBySkus = [];
+        $lineNumber = 0;
+        foreach ($reader->getSheetIterator() as $sheet) {
+            foreach ($sheet->getRowIterator() as $row) {
+                if (0 === $lineNumber || empty($row[0])) {
+                    $lineNumber++;
+                    continue;
+                }
+                $lineNumber++;
+                $sku = isset($row[0]) ? trim($row[0]) : null;
+                $quantity = isset($row[1]) ? (float)trim($row[1]) : null;
+                if (isset($collectionBySkus[$sku])) {
+                    $collectionBySkus[$sku]['quantity'] += $quantity;
+                } else {
+                    $collectionBySkus[$sku] = [
+                        'quantity' => $quantity,
+                        'lineNumber' => $lineNumber,
+                    ];
+                }
+            }
+        }
+
+        return $collectionBySkus;
+    }
 
     /**
      * @param string[] $skus
