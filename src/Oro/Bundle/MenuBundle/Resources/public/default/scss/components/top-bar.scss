@@ -10,7 +10,6 @@
         display: inline-block;
 
         ul {
-            @include list-normalize();
 
             li {
                 display: inline-block;
@@ -27,32 +26,6 @@
 
             &:hover {
                 text-decoration: underline;
-            }
-        }
-
-        &--has-sibling {
-            margin-right: 10px;
-        }
-    }
-
-    &__controls {
-        .cart__promo__link {
-            font-size: $base-font-size;
-
-            &:hover {
-                text-decoration: none;
-
-                cursor: default;
-            }
-
-            span {
-                font-size: $base-font-size;
-
-                &:hover {
-                    text-decoration: underline;
-
-                    cursor: pointer;
-                }
             }
         }
     }
@@ -102,6 +75,23 @@
             a {
                 font-size: $base-font-size;
                 color: get-color('additional', 'dark');
+            }
+        }
+    }
+}
+
+@include breakpoint('tablet') {
+    .topbar {
+        &__navigation {
+            ul {
+                display: block;
+
+                li {
+                    display: block;
+                    margin-right: 20px;
+                    padding: 5px 0;
+                    text-transform: uppercase;
+                }
             }
         }
     }

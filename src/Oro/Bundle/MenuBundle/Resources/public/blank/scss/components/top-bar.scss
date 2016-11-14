@@ -67,8 +67,6 @@
 
         &__navigation {
             ul {
-                @include list-normalize();
-
                 display: block;
 
                 li {
