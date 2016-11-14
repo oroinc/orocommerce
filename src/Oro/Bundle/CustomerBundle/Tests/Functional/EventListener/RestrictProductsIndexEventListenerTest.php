@@ -5,7 +5,7 @@ namespace Oro\Bundle\CustomerBundle\Tests\Functional\EventListener;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-use Oro\Bundle\SearchBundle\Engine\AbstractIndexer;
+use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\CustomerBundle\EventListener\RestrictProductsIndexEventListener;
