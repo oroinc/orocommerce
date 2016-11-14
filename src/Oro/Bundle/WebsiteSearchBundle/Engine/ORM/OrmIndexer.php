@@ -4,11 +4,13 @@ namespace Oro\Bundle\WebsiteSearchBundle\Engine\ORM;
 
 use Oro\Bundle\SearchBundle\Query\Query as SearchQuery;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
+use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
 use Oro\Bundle\WebsiteSearchBundle\Engine\ORM\Driver\DriverAwareTrait;
 
 class OrmIndexer extends AbstractIndexer
 {
     use DriverAwareTrait;
+    use ContextTrait;
 
     /**
      * {@inheritdoc}
@@ -48,6 +50,11 @@ class OrmIndexer extends AbstractIndexer
         $entityAliasTemp,
         array $context
     ) {
+        //Save entities directly with real alias if entity ids passed to context
+        if ($this->getContextEntityIds($context)) {
+            $entityAliasTemp = $this->getEntityAlias($entityClass, $context);
+        }
+
         $items = [];
         foreach ($entitiesData as $entityId => $indexData) {
             $item = $this->getDriver()->createItem();
@@ -89,6 +96,23 @@ class OrmIndexer extends AbstractIndexer
      */
     public function resetIndex($class = null, array $context = [])
     {
-        $this->getDriver()->removeIndexByClass($class);
+        $currentWebsiteId = $this->getContextCurrentWebsiteId($context);
+
+        //Resets index for class or CurrentWebsite if passed to context
+        if ($class || $currentWebsiteId) {
+            $entityClasses = $class ? [$class] : $this->mappingProvider->getEntityClasses();
+
+            foreach ($entityClasses as $entityClass) {
+                if ($currentWebsiteId) {
+                    $entityAlias = $this->getEntityAlias($entityClass, $context);
+                    $this->getDriver()->removeIndexByAlias($entityAlias);
+                } else {
+                    $this->getDriver()->removeIndexByClass($entityClass);
+                }
+            }
+        } //Resets whole index
+        else {
+            $this->getDriver()->removeIndexByClass();
+        }
     }
 }

@@ -16,6 +16,8 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteSearchBundle\Event\RestrictIndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Traits\DefaultWebsiteIdTestTrait;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
 
 /**
  * @dbIsolationPerTest
@@ -49,11 +51,16 @@ class RestrictProductsIndexEventListenerTest extends WebTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        /** @var DoctrineHelper $doctrineHelper */
+        $doctrineHelper = $this->getContainer()->get('oro_entity.doctrine_helper');
+        $websiteContextManager = new WebsiteContextManager($doctrineHelper);
+
         $listener = new RestrictProductsIndexEventListener(
-            $this->getContainer()->get('oro_entity.doctrine_helper'),
+            $doctrineHelper,
             $this->configManager,
             self::PRODUCT_VISIBILITY_CONFIGURATION_PATH,
-            self::CATEGORY_VISIBILITY_CONFIGURATION_PATH
+            self::CATEGORY_VISIBILITY_CONFIGURATION_PATH,
+            $websiteContextManager
         );
 
         $this->clearRestrictListeners($this->getRestrictEntityEventName());
