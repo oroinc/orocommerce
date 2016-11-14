@@ -1,24 +1,38 @@
 <?php
 
-namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
-use Oro\Bundle\NavigationBundle\Form\Type\RouteChoiceType;
-use Oro\Bundle\NavigationBundle\Tests\Unit\Form\Type\Stub\RouteChoiceTypeStub;
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Mapping\ClassMetadata;
+use Oro\Bundle\ProductBundle\ContentVariantType\ProductPageContentVariantType;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Form\Type\ProductPageVariantType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ContentVariantStub;
 use Oro\Bundle\ScopeBundle\Form\Type\ScopeCollectionType;
-use Oro\Bundle\WebCatalogBundle\ContentVariantType\SystemPageContentVariantType;
-use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Bundle\WebCatalogBundle\Form\Type\SystemPageVariantType;
 use Oro\Bundle\WebCatalogBundle\Tests\Unit\Form\Type\Stub\ScopeCollectionTypeStub;
+use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 use Symfony\Component\Form\PreloadedExtension;
 
-class SystemPageVariantTypeTest extends FormIntegrationTestCase
+class ProductPageVariantTypeTest extends FormIntegrationTestCase
 {
+    use EntityTrait;
+
     /**
      * @var SystemPageVariantType
      */
     protected $type;
+
+    /**
+     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $registry;
 
     /**
      * {@inheritDoc}
@@ -27,7 +41,8 @@ class SystemPageVariantTypeTest extends FormIntegrationTestCase
     {
         parent::setUp();
 
-        $this->type = new SystemPageVariantType();
+        $this->registry = $this->getMock(ManagerRegistry::class);
+        $this->type = new ProductPageVariantType($this->registry);
     }
 
     /**
@@ -47,11 +62,12 @@ class SystemPageVariantTypeTest extends FormIntegrationTestCase
             new PreloadedExtension(
                 [
                     ScopeCollectionType::NAME => new ScopeCollectionTypeStub(),
-                    RouteChoiceType::NAME => new RouteChoiceTypeStub(
+                    ProductSelectType::NAME => new EntityType(
                         [
-                            'some_route' => 'some_route',
-                            'other_route' => 'other_route'
-                        ]
+                            1 => $this->getEntity(Product::class, ['id' => 1]),
+                            2 => $this->getEntity(Product::class, ['id' => 2]),
+                        ],
+                        ProductSelectType::NAME
                     )
                 ],
                 []
@@ -61,21 +77,22 @@ class SystemPageVariantTypeTest extends FormIntegrationTestCase
 
     public function testBuildForm()
     {
+        $this->assertMetadataCall();
         $form = $this->factory->create($this->type);
 
-        $this->assertTrue($form->has('systemPageRoute'));
+        $this->assertTrue($form->has('productPageProduct'));
         $this->assertTrue($form->has('scopes'));
         $this->assertTrue($form->has('type'));
     }
 
     public function testGetName()
     {
-        $this->assertEquals(SystemPageVariantType::NAME, $this->type->getName());
+        $this->assertEquals(ProductPageVariantType::NAME, $this->type->getName());
     }
 
     public function testGetBlockPrefix()
     {
-        $this->assertEquals(SystemPageVariantType::NAME, $this->type->getBlockPrefix());
+        $this->assertEquals(ProductPageVariantType::NAME, $this->type->getBlockPrefix());
     }
 
     /**
@@ -87,6 +104,7 @@ class SystemPageVariantTypeTest extends FormIntegrationTestCase
      */
     public function testSubmit($existingData, $submittedData, $expectedData)
     {
+        $this->assertMetadataCall();
         $form = $this->factory->create($this->type, $existingData);
 
         $this->assertEquals($existingData, $form->getData());
@@ -102,28 +120,51 @@ class SystemPageVariantTypeTest extends FormIntegrationTestCase
      */
     public function submitDataProvider()
     {
+        $product1 = $this->getEntity(Product::class, ['id' => 1]);
+        $product2 = $this->getEntity(Product::class, ['id' => 2]);
+
         return [
             'new entity' => [
-                new ContentVariant(),
+                new ContentVariantStub(),
                 [
-                    'systemPageRoute' => 'some_route'
+                    'productPageProduct' => 1
                 ],
-                (new ContentVariant())
-                    ->setSystemPageRoute('some_route')
-                    ->setType(SystemPageContentVariantType::TYPE)
+                (new ContentVariantStub())
+                    ->setProductPageProduct($product1)
+                    ->setType(ProductPageContentVariantType::TYPE)
             ],
             'existing entity' => [
-                (new ContentVariant())
-                    ->setSystemPageRoute('some_route')
-                    ->setType(SystemPageContentVariantType::TYPE),
+                (new ContentVariantStub())
+                    ->setProductPageProduct($product1)
+                    ->setType(ProductPageContentVariantType::TYPE),
                 [
-                    'systemPageRoute' => 'other_route',
+                    'productPageProduct' => 2,
                     'type' => 'fakeType'
                 ],
-                (new ContentVariant())
-                    ->setSystemPageRoute('other_route')
-                    ->setType(SystemPageContentVariantType::TYPE)
+                (new ContentVariantStub())
+                    ->setProductPageProduct($product2)
+                    ->setType(ProductPageContentVariantType::TYPE)
             ],
         ];
+    }
+
+    protected function assertMetadataCall()
+    {
+        /** @var ClassMetadata|\PHPUnit_Framework_MockObject_MockObject $metadata */
+        $metadata = $this->getMockBuilder(ClassMetadata::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $metadata->expects($this->once())
+            ->method('getName')
+            ->willReturn(ContentVariantStub::class);
+        /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
+        $em = $this->getMock(EntityManagerInterface::class);
+        $em->expects($this->once())
+            ->method('getClassMetadata')
+            ->with(ContentVariantInterface::class)
+            ->willReturn($metadata);
+        $this->registry->expects($this->any())
+            ->method('getManager')
+            ->willReturn($em);
     }
 }

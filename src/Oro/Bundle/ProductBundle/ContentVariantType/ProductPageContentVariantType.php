@@ -1,16 +1,38 @@
 <?php
 
-namespace Oro\Bundle\WebCatalogBundle\ContentVariantType;
+namespace Oro\Bundle\ProductBundle\ContentVariantType;
 
-use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
-use Oro\Bundle\WebCatalogBundle\Form\Type\SystemPageVariantType;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Form\Type\ProductPageVariantType;
+use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Component\WebCatalog\ContentVariantTypeInterface;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 use Oro\Component\WebCatalog\RouteData;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 
-class SystemPageContentVariantType implements ContentVariantTypeInterface
+class ProductPageContentVariantType implements ContentVariantTypeInterface
 {
-    const TYPE = 'system_page';
+    const TYPE = 'product_page';
+
+    /**
+     * @var SecurityFacade
+     */
+    private $securityFacade;
+
+    /**
+     * @var PropertyAccessor
+     */
+    private $propertyAccessor;
+
+    /**
+     * @param SecurityFacade $securityFacade
+     * @param PropertyAccessor $propertyAccessor
+     */
+    public function __construct(SecurityFacade $securityFacade, PropertyAccessor $propertyAccessor)
+    {
+        $this->securityFacade = $securityFacade;
+        $this->propertyAccessor = $propertyAccessor;
+    }
 
     /**
      * {@inheritdoc}
@@ -25,7 +47,7 @@ class SystemPageContentVariantType implements ContentVariantTypeInterface
      */
     public function getTitle()
     {
-        return 'oro.webcatalog.contentvariant.variant_type.system_page.label';
+        return 'oro.product.entity_label';
     }
 
     /**
@@ -33,7 +55,7 @@ class SystemPageContentVariantType implements ContentVariantTypeInterface
      */
     public function getFormType()
     {
-        return SystemPageVariantType::class;
+        return ProductPageVariantType::class;
     }
 
     /**
@@ -41,7 +63,7 @@ class SystemPageContentVariantType implements ContentVariantTypeInterface
      */
     public function isAllowed()
     {
-        return true;
+        return $this->securityFacade->isGranted('oro_product_view');
     }
 
     /**
@@ -53,12 +75,13 @@ class SystemPageContentVariantType implements ContentVariantTypeInterface
     }
 
     /**
-     * @param ContentVariant $contentVariant
-     *
      * {@inheritdoc}
      */
     public function getRouteData(ContentVariantInterface $contentVariant)
     {
-        return new RouteData($contentVariant->getSystemPageRoute());
+        /** @var Product $product */
+        $product = $this->propertyAccessor->getValue($contentVariant, 'productPageProduct');
+
+        return new RouteData('oro_product_frontend_product_view', ['id' => $product->getId()]);
     }
 }

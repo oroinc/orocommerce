@@ -5,6 +5,7 @@ namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Form\Type;
 use Oro\Bundle\NavigationBundle\Form\Type\RouteChoiceType;
 use Oro\Bundle\NavigationBundle\Tests\Unit\Form\Type\Stub\RouteChoiceTypeStub;
 use Oro\Bundle\ScopeBundle\Form\Type\ScopeCollectionType;
+use Oro\Bundle\WebCatalogBundle\ContentVariantType\SystemPageContentVariantType;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Bundle\WebCatalogBundle\Form\Type\SystemPageVariantType;
@@ -64,6 +65,7 @@ class SystemPageVariantTypeTest extends FormIntegrationTestCase
 
         $this->assertTrue($form->has('systemPageRoute'));
         $this->assertTrue($form->has('scopes'));
+        $this->assertTrue($form->has('type'));
     }
 
     public function testGetName()
@@ -108,15 +110,19 @@ class SystemPageVariantTypeTest extends FormIntegrationTestCase
                 ],
                 (new ContentVariant())
                     ->setSystemPageRoute('some_route')
+                    ->setType(SystemPageContentVariantType::TYPE)
             ],
             'existing entity' => [
                 (new ContentVariant())
-                    ->setSystemPageRoute('some_route'),
+                    ->setSystemPageRoute('some_route')
+                    ->setType(SystemPageContentVariantType::TYPE),
                 [
-                    'systemPageRoute' => 'other_route'
+                    'systemPageRoute' => 'other_route',
+                    'type' => 'fakeType'
                 ],
                 (new ContentVariant())
                     ->setSystemPageRoute('other_route')
+                    ->setType(SystemPageContentVariantType::TYPE)
             ],
         ];
     }

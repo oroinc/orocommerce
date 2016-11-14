@@ -1,17 +1,34 @@
 <?php
 
-namespace Oro\Bundle\WebCatalogBundle\Form\Type;
+namespace Oro\Bundle\ProductBundle\Form\Type;
 
-use Oro\Bundle\NavigationBundle\Form\Type\RouteChoiceType;
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Oro\Bundle\ProductBundle\ContentVariantType\ProductPageContentVariantType;
 use Oro\Bundle\ScopeBundle\Form\Type\ScopeCollectionType;
-use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
+use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class SystemPageVariantType extends AbstractType
+class ProductPageVariantType extends AbstractType
 {
-    const NAME = 'oro_web_catalog_system_page_variant';
+    const NAME = 'oro_product_page_variant';
+
+    /**
+     * @var ManagerRegistry
+     */
+    private $registry;
+
+    /**
+     * @param ManagerRegistry $registry
+     */
+    public function __construct(ManagerRegistry $registry)
+    {
+        $this->registry = $registry;
+    }
 
     /**
      * {@inheritdoc}
@@ -20,14 +37,11 @@ class SystemPageVariantType extends AbstractType
     {
         $builder
             ->add(
-                'systemPageRoute',
-                RouteChoiceType::NAME,
+                'productPageProduct',
+                ProductSelectType::NAME,
                 [
-                    'label' => 'oro.webcatalog.contentvariant.system_page_route.label',
-                    'required' => true,
-                    'options_filter' => [
-                        'frontend' => true
-                    ]
+                    'label' => 'oro.product.entity_label',
+                    'required' => true
                 ]
             )
             ->add(
@@ -41,7 +55,21 @@ class SystemPageVariantType extends AbstractType
                     ],
                     'mapped' => false
                 ]
+            )
+            ->add(
+                'type',
+                HiddenType::class
             );
+
+        $builder->addEventListener(
+            FormEvents::POST_SUBMIT,
+            function (FormEvent $event) {
+                $data = $event->getData();
+                if ($data instanceof ContentVariantInterface) {
+                    $data->setType(ProductPageContentVariantType::TYPE);
+                }
+            }
+        );
     }
 
     /**
@@ -49,9 +77,11 @@ class SystemPageVariantType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
+        $metadata = $this->registry->getManager()->getClassMetadata(ContentVariantInterface::class);
+
         $resolver->setDefaults(
             [
-                'data_class' => ContentVariant::class
+                'data_class' => $metadata->getName()
             ]
         );
     }

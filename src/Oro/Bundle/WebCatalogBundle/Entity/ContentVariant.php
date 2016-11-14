@@ -34,7 +34,7 @@ class ContentVariant extends ExtendContentVariant implements ContentVariantInter
     /**
      * @var string
      *
-     * @ORM\Column(name="system_page_route", type="string", length=255)
+     * @ORM\Column(name="system_page_route", type="string", length=255, nullable=true)
      */
     protected $systemPageRoute;
 

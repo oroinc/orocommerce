@@ -4,9 +4,14 @@ namespace Oro\Bundle\WebCatalogBundle\Form\Type;
 
 use Oro\Bundle\NavigationBundle\Form\Type\RouteChoiceType;
 use Oro\Bundle\ScopeBundle\Form\Type\ScopeCollectionType;
+use Oro\Bundle\WebCatalogBundle\ContentVariantType\SystemPageContentVariantType;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
+use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class SystemPageVariantType extends AbstractType
@@ -41,7 +46,21 @@ class SystemPageVariantType extends AbstractType
                     ],
                     'mapped' => false
                 ]
+            )
+            ->add(
+                'type',
+                HiddenType::class
             );
+
+        $builder->addEventListener(
+            FormEvents::POST_SUBMIT,
+            function (FormEvent $event) {
+                $data = $event->getData();
+                if ($data instanceof ContentVariantInterface) {
+                    $data->setType(SystemPageContentVariantType::TYPE);
+                }
+            }
+        );
     }
 
     /**
