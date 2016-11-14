@@ -73,8 +73,7 @@ abstract class AbstractAccountPartialUpdateDriver implements AccountPartialUpdat
                     $this->addAccountVisibility(
                         $productIds,
                         $productAlias,
-                        $accountVisibilityFieldName,
-                        BaseVisibilityResolved::VISIBILITY_VISIBLE
+                        $accountVisibilityFieldName
                     );
                     $productIds = [];
                 }
@@ -84,27 +83,24 @@ abstract class AbstractAccountPartialUpdateDriver implements AccountPartialUpdat
                 $this->addAccountVisibility(
                     $productIds,
                     $productAlias,
-                    $accountVisibilityFieldName,
-                    BaseVisibilityResolved::VISIBILITY_VISIBLE
+                    $accountVisibilityFieldName
                 );
             }
         }
     }
 
     /**
-     * Adds $accountVisibilityFieldName field with $fieldValue value for products in $productAlias which
+     * Adds $accountVisibilityFieldName field for products in $productAlias which
      * ids are in $productsIds.
      *
      * @param array $productIds
      * @param string $productAlias
      * @param string $accountVisibilityFieldName
-     * @param string $fieldValue
      */
     abstract protected function addAccountVisibility(
         array $productIds,
         $productAlias,
-        $accountVisibilityFieldName,
-        $fieldValue
+        $accountVisibilityFieldName
     );
 
     /**

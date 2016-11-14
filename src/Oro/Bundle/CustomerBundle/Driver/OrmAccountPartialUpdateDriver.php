@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query;
 
 use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
 use Oro\Bundle\CustomerBundle\Visibility\Provider\ProductVisibilityProvider;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
@@ -103,15 +104,14 @@ class OrmAccountPartialUpdateDriver extends AbstractAccountPartialUpdateDriver
     protected function addAccountVisibility(
         array $productIds,
         $productAlias,
-        $accountVisibilityFieldName,
-        $fieldValue
+        $accountVisibilityFieldName
     ) {
         $queryBuilder = $this->getItemQueryBuilder();
         $queryBuilder
             ->select(
                 'searchItem.id',
                 sprintf("'%s'", $accountVisibilityFieldName),
-                (string)$fieldValue
+                (string)BaseVisibilityResolved::VISIBILITY_VISIBLE
             )
             ->andWhere($queryBuilder->expr()->eq('searchItem.entity', ':entityClass'))
             ->andWhere($queryBuilder->expr()->eq('searchItem.alias', ':entityAlias'))
