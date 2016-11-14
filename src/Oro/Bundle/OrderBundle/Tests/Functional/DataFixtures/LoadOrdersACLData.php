@@ -12,7 +12,6 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 
 class LoadOrdersACLData extends AbstractFixture implements
     FixtureInterface,
-//    ContainerAwareInterface,
     DependentFixtureInterface
 {
     const ORDER_ACC_1_USER_LOCAL = 'order_account1_user_local';
@@ -20,6 +19,8 @@ class LoadOrdersACLData extends AbstractFixture implements
     const ORDER_ACC_1_USER_DEEP = 'order_account1_user_deep';
 
     const ORDER_ACC_1_1_USER_LOCAL = 'order_account1.1_user_local';
+
+    const ORDER_ACC_2_USER_LOCAL = 'order_account2_user_local';
 
     /**
      * @var array
@@ -36,6 +37,9 @@ class LoadOrdersACLData extends AbstractFixture implements
         ],
         self::ORDER_ACC_1_1_USER_LOCAL => [
             'accountUser' => LoadAccountUserACLData::USER_ACCOUNT_1_1_ROLE_LOCAL
+        ],
+        self::ORDER_ACC_2_USER_LOCAL => [
+            'accountUser' => LoadAccountUserACLData::USER_ACCOUNT_2_ROLE_LOCAL
         ],
     ];
 
