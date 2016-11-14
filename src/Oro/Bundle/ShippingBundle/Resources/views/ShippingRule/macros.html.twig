@@ -1,22 +1,25 @@
-{% macro renderShippingMethodsConfigs(methodConfigs) %}
-    {% spaceless %}
+{% macro renderShippingMethodsConfigs(methodConfigs, currency) %}
+    {%- spaceless -%}
         <ol>
-        {% for methodConfig in methodConfigs %}
-            {% set methodLabel = get_shipping_method_label(methodConfig.method)|trans %}
-            {% if methodLabel|length > 0 %}
-                <li>{{  methodLabel }}
-                    <ul>
-                    {% for typeConfig in methodConfig.typeConfigs %}
-                        <li>{{ get_shipping_method_type_label(methodConfig.method, typeConfig.type)|trans }}</li>
-                    {% endfor %}
-                    </ul>
-                </li>
-            {% else %}
-                {% for typeConfig in methodConfig.typeConfigs %}
-                    <li>{{ get_shipping_method_type_label(methodConfig.method, typeConfig.type)|trans }}</li>
-                {% endfor %}
-            {% endif %}
-        {% endfor %}
+            {%- for methodConfig in methodConfigs -%}
+                {%- set typeConfigData = [] -%}
+                {%- for typeConfig in methodConfig.typeConfigs -%}
+                    {% set typeConfigData = typeConfigData|merge([{
+                        'identifier': typeConfig.type,
+                        'options': typeConfig.options,
+                        'enabled': typeConfig.enabled,
+                    }]) %}
+                {%- endfor -%}
+                {%- set shippingMethodData = {
+                    'identifier': methodConfig.method,
+                    'types': typeConfigData,
+                    'options': methodConfig.options,
+                } -%}
+                {%- include oro_shipping_method_config_template(methodConfig.method) with {
+                    'currency': currency,
+                    'methodData': shippingMethodData
+                } -%}
+            {%- endfor -%}
         </ol>
-    {% endspaceless %}
+    {%- endspaceless -%}
 {% endmacro %}
