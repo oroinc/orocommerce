@@ -6,13 +6,13 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\CustomerBundle\Entity\Visibility\VisibilityInterface;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\CustomerBundle\EventListener\RestrictProductsIndexEventListener;
-use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\SearchBundle\Query\Result;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
 use Oro\Bundle\WebsiteSearchBundle\Event\RestrictIndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Traits\DefaultWebsiteIdTestTrait;
@@ -26,8 +26,8 @@ class RestrictProductsIndexEventListenerTest extends WebTestCase
 {
     use DefaultWebsiteIdTestTrait;
 
-    const PRODUCT_VISIBILITY_CONFIGURATION_PATH = 'oro_customer.product_visibility';
-    const CATEGORY_VISIBILITY_CONFIGURATION_PATH = 'oro_customer.category_visibility';
+    const PRODUCT_VISIBILITY_CONFIGURATION_PATH = 'oro_visibility.product_visibility';
+    const CATEGORY_VISIBILITY_CONFIGURATION_PATH = 'oro_visibility.category_visibility';
 
     /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject */
     private $configManager;
@@ -63,6 +63,10 @@ class RestrictProductsIndexEventListenerTest extends WebTestCase
             $websiteContextManager
         );
 
+        $listener->setVisibilityScopeProvider(
+            $this->getContainer()->get('oro_customer.provider.visibility_scope_provider')
+        );
+
         $this->clearRestrictListeners($this->getRestrictEntityEventName());
         $this->clearRestrictListeners('oro_product.product_search_query.restriction');
 
@@ -77,7 +81,7 @@ class RestrictProductsIndexEventListenerTest extends WebTestCase
 
         $this->loadFixtures([LoadProductVisibilityData::class]);
 
-        $this->getContainer()->get('oro_customer.visibility.cache.product.cache_builder')->buildCache();
+        $this->getContainer()->get('oro_visibility.visibility.cache.product.cache_builder')->buildCache();
     }
 
     /**
@@ -93,7 +97,7 @@ class RestrictProductsIndexEventListenerTest extends WebTestCase
         $query = new Query();
         $query->from('oro_product_WEBSITE_ID');
         $query->select('recordTitle');
-        $query->getCriteria()->orderBy(['title_' . $this->getDefaultWebsiteId() => Query::ORDER_ASC]);
+        $query->getCriteria()->orderBy(['sku' => Query::ORDER_ASC]);
 
         $searchEngine = $this->getContainer()->get('oro_website_search.engine');
         $result = $searchEngine->search($query);
@@ -159,12 +163,15 @@ class RestrictProductsIndexEventListenerTest extends WebTestCase
 
         $values = $this->runIndexationAndSearch();
 
-        $this->assertCount(5, $values);
+        $this->assertCount(8, $values);
         $this->assertStringStartsWith('product.1', $values[0]->getRecordTitle());
         $this->assertStringStartsWith('product.2', $values[1]->getRecordTitle());
         $this->assertStringStartsWith('product.3', $values[2]->getRecordTitle());
         $this->assertStringStartsWith('product.4', $values[3]->getRecordTitle());
         $this->assertStringStartsWith('product.5', $values[4]->getRecordTitle());
+        $this->assertStringStartsWith('product.6', $values[5]->getRecordTitle());
+        $this->assertStringStartsWith('product.7', $values[6]->getRecordTitle());
+        $this->assertStringStartsWith('product.8', $values[7]->getRecordTitle());
     }
 
     public function testRestrictIndexEntityEventListenerWhenProductFallBackIsHiddenAndCategoryFallBackIsVisible()
@@ -180,15 +187,14 @@ class RestrictProductsIndexEventListenerTest extends WebTestCase
 
         $values = $this->runIndexationAndSearch();
 
-        $this->assertCount(8, $values);
+        $this->assertCount(7, $values);
         $this->assertStringStartsWith('product.1', $values[0]->getRecordTitle());
         $this->assertStringStartsWith('product.2', $values[1]->getRecordTitle());
         $this->assertStringStartsWith('product.3', $values[2]->getRecordTitle());
         $this->assertStringStartsWith('product.4', $values[3]->getRecordTitle());
         $this->assertStringStartsWith('product.5', $values[4]->getRecordTitle());
-        $this->assertStringStartsWith('product.6', $values[5]->getRecordTitle());
-        $this->assertStringStartsWith('product.7', $values[6]->getRecordTitle());
-        $this->assertStringStartsWith('product.8', $values[7]->getRecordTitle());
+        $this->assertStringStartsWith('product.7', $values[5]->getRecordTitle());
+        $this->assertStringStartsWith('product.8', $values[6]->getRecordTitle());
     }
 
     /**
