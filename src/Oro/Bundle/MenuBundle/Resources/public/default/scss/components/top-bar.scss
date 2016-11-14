@@ -1,49 +1,28 @@
 /* Topbar component */
 .topbar {
-    background: get-color('additional', 'light');
-    font-size: 12px;
+    background: $top-bar-background;
 
-    @media (max-width: $screen-md) {
+    @include breakpoint('tablet-small') {
         display: none;
     }
 
     &__navigation {
         display: inline-block;
 
-        @media (max-width: $screen-md) {
-            padding: 0 0 20px 15px;
-        }
-
         ul {
             @include list-normalize();
 
             li {
                 display: inline-block;
-                margin-right: 40px;
-
-                line-height: 26px;
 
                 &:last-child {
                     margin-right: 0;
-                }
-
-                @media (max-width: 1069px) {
-                    margin-right: 30px;
-                }
-
-                @media (max-width: $screen-md) {
-                    display: block;
-                    margin-right: 20px;
-                    padding: 5px 0;
-
-                    text-transform: uppercase;
-
                 }
             }
         }
 
         a {
-            color: get-color('additional', 'dark');
+            color: $top-bar-link-color;
             text-decoration: none;
 
             &:hover {

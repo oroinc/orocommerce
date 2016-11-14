@@ -11,19 +11,6 @@
     </div>
 {% endblock %}
 
-{% block _top_nav_widget %}
-    {% spaceless %}
-        {% set attr = layout_attr_defaults(attr, {
-        '~class': " topbar__navigation topbar__navigation--has-sibling"
-        }) %}
-
-        <nav {{ block('block_attributes') }}
-        >
-            {{ block_widget(block) }}
-        </nav>
-    {% endspaceless %}
-{% endblock %}
-
 {% block _top_nav_menu_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
     '~class': " col-md-7 col-sm-7 text-right"
@@ -33,15 +20,14 @@
     </div>
 {% endblock %}
 
-
 {% block _top_nav_controls_widget %}
     {% set attr = layout_attr_defaults(attr, {
-    '~class': " col-md-5 col-sm-5"
+    '~class': " pull-left col-md-5 col-sm-5"
     }) %}
     {% set dom_relocation_options =  {
     responsive: [
     {
-    breakpoint: 990,
+    breakpoint: 992,
     moveTo: '[data-main-menu-container]'
     }
     ]}|json_encode

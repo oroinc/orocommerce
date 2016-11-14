@@ -1,13 +1,9 @@
 {% block _top_nav_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
-    '~class': " topbar"
+    '~class': " topbar grid__row"
     }) %}
     <div {{ block('block_attributes') }}>
-        <div class="container-fluid">
-            <div class="row">
-                {{ block_widget(block) }}
-            </div>
-        </div>
+        {{ block_widget(block) }}
     </div>
 {% endblock %}
 
@@ -23,36 +19,25 @@
     {% endspaceless %}
 {% endblock %}
 
-{% block _top_nav_menu_container_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-    '~class': " col-md-7 col-sm-7 text-right"
-    }) %}
-    <div {{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </div>
-{% endblock %}
-
 {% block _top_nav_controls_widget %}
     {% set attr = layout_attr_defaults(attr, {
-    '~class': " col-md-5 col-sm-5"
+    '~class': " grid__column grid__column--5"
     }) %}
-    {% set dom_relocation_options =  {
-    responsive: [
-    {
-    breakpoint: 990,
-    moveTo: '[data-main-menu-container]'
-    }
-    ]}|json_encode
-    %}
 
     <div {{ block('block_attributes') }}>
-        <nav class="topbar__navigation"
-             data-dom-relocation
-             data-dom-relocation-options="{{ dom_relocation_options }}"
-        >
-            <ul>
+        <nav class="topbar__navigation">
+            <ul class="primary-menu">
                 {{ block_widget(block) }}
             </ul>
         </nav>
+    </div>
+{% endblock %}
+
+{% block _top_nav_menu_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+    '~class': " grid__column grid__column--7 text-right"
+    }) %}
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
     </div>
 {% endblock %}

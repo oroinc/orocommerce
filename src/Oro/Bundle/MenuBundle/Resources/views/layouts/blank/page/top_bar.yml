@@ -15,11 +15,10 @@ layout:
                     options:
                         item: '=data["menu"].getMenu("top-nav")'
                         allow_safe_labels: true
+                        attr:
+                            class: primary-menu
                 top_nav_controls:
                     blockType: container
-                    options:
-                        attr:
-                            class: pull-left
             tree:
                 page_header:
                     top_nav_container:
