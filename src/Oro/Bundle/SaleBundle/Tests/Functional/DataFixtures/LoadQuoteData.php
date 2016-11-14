@@ -24,6 +24,8 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
     const QUOTE7    = 'sale.quote.7';
     const QUOTE8    = 'sale.quote.8';
     const QUOTE9    = 'sale.quote.9';
+    const QUOTE10    = 'sale.quote.10';
+    const QUOTE11    = 'sale.quote.11';
 
     const PRODUCT1  = 'product.1';
     const PRODUCT2  = 'product.2';
@@ -137,6 +139,18 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
             'validUntil'    => null,
             'products'      => [],
             'paymentTerm'   => LoadPaymentTermData::TERM_LABEL_NET_10,
+        ],
+        self::QUOTE10 => [
+            'qid'           => self::QUOTE10,
+            'account'       => LoadUserData::PARENT_ACCOUNT,
+            'accountUser'   => LoadUserData::PARENT_ACCOUNT_USER1,
+            'products'      => [],
+        ],
+        self::QUOTE11 => [
+            'qid'           => self::QUOTE11,
+            'account'       => LoadUserData::PARENT_ACCOUNT,
+            'accountUser'   => LoadUserData::PARENT_ACCOUNT_USER2,
+            'products'      => [],
         ],
     ];
 

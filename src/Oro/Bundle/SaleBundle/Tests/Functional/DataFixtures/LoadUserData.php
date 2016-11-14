@@ -25,7 +25,9 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
     const ROLE3 = 'sale-role3';
     const ROLE4 = 'sale-role4';
     const ROLE5 = 'sale-role5';
+    const ROLE6 = 'sale-role6';
 
+    const PARENT_ACCOUNT = 'sale-parent-account';
     const ACCOUNT1 = 'sale-account1';
     const ACCOUNT2 = 'sale-account2';
 
@@ -33,6 +35,8 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
     const ACCOUNT1_USER2    = 'sale-account1-user2@example.com';
     const ACCOUNT1_USER3    = 'sale-account1-user3@example.com';
     const ACCOUNT2_USER1    = 'sale-account2-user1@example.com';
+    const PARENT_ACCOUNT_USER1    = 'sale-parent-account-user1@example.com';
+    const PARENT_ACCOUNT_USER2    = 'sale-parent-account-user2@example.com';
 
     /**
      * @var array
@@ -80,6 +84,16 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
                 'acls'  => ['VIEW_BASIC', 'CREATE_BASIC'],
             ],
         ],
+        self::ROLE6 => [
+            [
+                'class' => 'oro_sale.entity.quote.class',
+                'acls'  => ['VIEW_DEEP'],
+            ],
+            [
+                'class' => 'oro_customer.entity.account_user.class',
+                'acls'  => ['VIEW_DEEP'],
+            ],
+        ],
     ];
 
     /**
@@ -87,10 +101,15 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
      */
     protected $accounts = [
         [
+            'name' => self::PARENT_ACCOUNT,
+        ],
+        [
             'name' => self::ACCOUNT1,
+            'parent' => self::PARENT_ACCOUNT
         ],
         [
             'name' => self::ACCOUNT2,
+            'parent' => self::PARENT_ACCOUNT
         ],
     ];
 
@@ -138,6 +157,26 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
             'account'   => self::ACCOUNT2,
             'roles'     => [
                 self::ROLE1,
+            ],
+        ],
+        [
+            'email'     => self::PARENT_ACCOUNT_USER1,
+            'firstname' => 'ParentUser1FN',
+            'lastname'  => 'ParentUser1LN',
+            'password'  => self::PARENT_ACCOUNT_USER1,
+            'account'   => self::PARENT_ACCOUNT,
+            'roles'     => [
+                self::ROLE6
+            ],
+        ],
+        [
+            'email'     => self::PARENT_ACCOUNT_USER2,
+            'firstname' => 'ParentUser2FN',
+            'lastname'  => 'ParentUser2LN',
+            'password'  => self::PARENT_ACCOUNT_USER2,
+            'account'   => self::PARENT_ACCOUNT,
+            'roles'     => [
+                self::ROLE2,
             ],
         ],
     ];
@@ -214,6 +253,9 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
                 ->setName($item['name'])
                 ->setOrganization($organization)
             ;
+            if (isset($item['parent'])) {
+                $account->setParent($this->getReference($item['parent']));
+            }
             $manager->persist($account);
 
             $this->addReference($item['name'], $account);

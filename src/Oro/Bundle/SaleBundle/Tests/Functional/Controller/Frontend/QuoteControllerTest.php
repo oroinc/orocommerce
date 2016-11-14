@@ -203,6 +203,76 @@ class QuoteControllerTest extends WebTestCase
                     ],
                 ],
             ],
+            'parent account user1 (all quotes)' => [
+                'input' => [
+                    'login' => LoadUserData::PARENT_ACCOUNT_USER1,
+                    'password' => LoadUserData::PARENT_ACCOUNT_USER1,
+                ],
+                'expected' => [
+                    'data' => [
+                        [
+                            'qid' => LoadQuoteData::QUOTE10,
+                        ],
+                        [
+                            'qid' => LoadQuoteData::QUOTE11,
+                        ],
+                        [
+                            'qid' => LoadQuoteData::QUOTE3,
+                        ],
+                        [
+                            'qid' => LoadQuoteData::QUOTE4,
+                        ],
+                        [
+                            'qid' => LoadQuoteData::QUOTE5,
+                        ],
+                        [
+                            'qid' => LoadQuoteData::QUOTE7,
+                        ],
+                        [
+                            'qid' => LoadQuoteData::QUOTE8,
+                        ],
+                        [
+                            'qid' => LoadQuoteData::QUOTE9,
+                        ]
+                    ],
+                    'columns' => [
+                        'id',
+                        'qid',
+                        'createdAt',
+                        'validUntil',
+                        'poNumber',
+                        'shipUntil',
+                        'view_link',
+                        'action_configuration',
+                    ],
+                ],
+            ],
+            'parent account user2 (only account user quotes)' => [
+                'input' => [
+                    'login' => LoadUserData::PARENT_ACCOUNT_USER2,
+                    'password' => LoadUserData::PARENT_ACCOUNT_USER2,
+                ],
+                'expected' => [
+                    'data' => [
+                        [
+                            'qid' => LoadQuoteData::QUOTE10
+                        ],
+                        [
+                            'qid' => LoadQuoteData::QUOTE11,
+                        ],
+                    ],
+                    'columns' => [
+                        'id',
+                        'qid',
+                        'createdAt',
+                        'validUntil',
+                        'poNumber',
+                        'shipUntil',
+                        'view_link',
+                        'action_configuration',
+                    ],
+                ],
+            ],
         ];
     }
 
@@ -427,5 +497,87 @@ class QuoteControllerTest extends WebTestCase
                 ],
             ],
         ];
+    }
+
+    /**
+     * @dataProvider ACLProvider
+     *
+     * @param string $route
+     * @param string $request
+     * @param string $login
+     * @param string $password
+     * @param int $status
+     */
+    public function testACL($route, $request, $login, $password, $status)
+    {
+        if ('' !== $login) {
+            $this->initClient([], static::generateBasicAuthHeader($login, $password));
+        } else {
+            $this->initClient([]);
+            $this->client->getCookieJar()->clear();
+        }
+
+        /* @var $request Request */
+        $request = $this->getReference($request);
+
+        $this->client->request(
+            'GET',
+            $this->getUrl(
+                $route,
+                ['id' => $request->getId()]
+            )
+        );
+
+        $response = $this->client->getResponse();
+        static::assertHtmlResponseStatusCodeEquals($response, $status);
+    }
+
+    /**
+     * @return array
+     */
+    public function ACLProvider()
+    {
+        return [
+            'VIEW (nanonymous user)' => [
+                'route' => 'oro_sale_quote_frontend_view',
+                'request' => LoadQuoteData::QUOTE2,
+                'login' => '',
+                'password' => '',
+                'status' => 401
+            ],
+            'VIEW (user from another account)' => [
+                'route' => 'oro_sale_quote_frontend_view',
+                'request' => LoadQuoteData::QUOTE2,
+                'login' => LoadUserData::ACCOUNT2_USER1,
+                'password' => LoadUserData::ACCOUNT2_USER1,
+                'status' => 403
+            ],
+            'VIEW (user from parent account : DEEP)' => [
+                'route' => 'oro_sale_quote_frontend_view',
+                'request' => LoadQuoteData::QUOTE3,
+                'login' => LoadUserData::PARENT_ACCOUNT_USER1,
+                'password' => LoadUserData::PARENT_ACCOUNT_USER1,
+                'status' => 200
+            ],
+            'VIEW (user from parent account : LOCAL)' => [
+                'route' => 'oro_sale_quote_frontend_view',
+                'request' => LoadQuoteData::QUOTE2,
+                'login' => LoadUserData::PARENT_ACCOUNT_USER2,
+                'password' => LoadUserData::PARENT_ACCOUNT_USER2,
+                'status' => 403
+            ],
+        ];
+    }
+
+    public function testGridAccessDeniedForAnonymousUsers()
+    {
+        $this->initClient();
+        $this->client->getCookieJar()->clear();
+
+        $this->client->request('GET', $this->getUrl('oro_rfp_frontend_request_index'));
+        static::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 401);
+
+        $response = $this->client->requestGrid(['gridName' => 'frontend-quotes-grid'], [], true);
+        $this->assertSame($response->getStatusCode(), 302);
     }
 }
