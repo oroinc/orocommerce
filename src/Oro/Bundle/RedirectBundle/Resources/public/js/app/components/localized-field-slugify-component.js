@@ -18,30 +18,14 @@ define(function(require) {
         },
 
         /**
-         * Turn off slugify when already not needed
+         * @inheritDoc
          */
-        initSlugifyTurningOff: function() {
-            this.$recipient.on('change', _.bind(this.slugTriggerOff, this));
-        },
-
-        /**
-         * Turn off trigger for slug generation
-         *
-         * @param event
-         */
-        slugTriggerOff: function(event) {
-            var $recipient = $(event.target);
-            var $target = this.getTargetByRecipient($recipient);
-
-            if ($target.prop('type') === 'text' || $target.is('select')) {
-                if ($target.val() !== $recipient.val()) {
-                    this.doSync = false;
-                }
-            } else if ($target.prop('type') === 'checkbox') {
-                if ($target.prop('checked') !== $recipient.prop('checked')) {
-                    this.doSync = false;
-                }
+        dispose: function() {
+            if (this.disposed) {
+                return;
             }
+
+            LocalizedFieldSlugifyComponent.__super__.dispose.call(this);
         }
     });
 

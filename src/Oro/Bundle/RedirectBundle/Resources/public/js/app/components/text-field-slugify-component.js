@@ -37,22 +37,6 @@ define(function(require) {
         },
 
         /**
-         * Turn off slugify when already not needed
-         */
-        initSlugifyTurningOff: function() {
-            this.$recipient.on('change', _.bind(this.slugTriggerOff, this));
-        },
-
-        /**
-         * Turn off trigger for slug generation
-         */
-        slugTriggerOff: function() {
-            if (this.$target.val() !== this.$recipient.val() ) {
-                this.doSync = false;
-            }
-        },
-
-        /**
          * Check slug is available
          */
         checkSlugAvailable: function() {
@@ -63,6 +47,19 @@ define(function(require) {
                 this.$recipient.attr("disabled", false)
                     .closest('div').find('[type=checkbox]').attr('disabled', false);
             }
+        },
+
+        /**
+         * @inheritDoc
+         */
+        dispose: function() {
+            if (this.disposed) {
+                return;
+            }
+
+            this.$mode.off('change', _.bind(this.checkSlugAvailable, this));
+
+            TextFieldSlugifyComponent.__super__.dispose.call(this);
         }
     });
 

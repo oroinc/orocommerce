@@ -116,7 +116,18 @@ define(function (require) {
          * Turn off slugify when already not needed
          */
         initSlugifyTurningOff: function() {
-            // should be defined in descendants
+            this.$recipient.on('change', _.bind(this.slugTriggerOff, this));
+        },
+
+        /**
+         * Turn off trigger for slug generation
+         *
+         * @param event
+         */
+        slugTriggerOff: function(event) {
+            if (event.originalEvent) {
+                this.doSync = false;
+            }
         },
 
         /**
@@ -125,7 +136,7 @@ define(function (require) {
          * @param {Object} options
          */
         initTargetAndRecipient: function(options) {
-            // should be defined in descendants
+            throw new Error('Method initTargetAndRecipient should be defined in a inherited class.');
         },
 
         /**
@@ -150,6 +161,20 @@ define(function (require) {
             var targetSelector = $recipient.prop('name') + '';
             targetSelector = targetSelector.replace(this.recipient, this.target);
             return $('[name="'+targetSelector+'"]');
+        },
+
+        /**
+         * @inheritDoc
+         */
+        dispose: function() {
+            if (this.disposed) {
+                return;
+            }
+
+            this.$target.off('change', _.bind(this.syncField, this));
+            this.$recipient.off('change', _.bind(this.slugTriggerOff, this));
+
+            SlugifyComponent.__super__.dispose.call(this);
         }
     });
 
