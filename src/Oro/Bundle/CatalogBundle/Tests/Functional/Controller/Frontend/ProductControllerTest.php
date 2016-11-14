@@ -124,6 +124,7 @@ class ProductControllerTest extends WebTestCase
 
     /**
      * @dataProvider dataProviderForNotExistingCategories
+     * @param mixed $categoryId
      */
     public function testControllerActionWithNotExistingCategoryId($categoryId)
     {
@@ -222,7 +223,7 @@ class ProductControllerTest extends WebTestCase
             [99999],
             ['99999'],
             ['dummy-string'],
-            [null],
+            [''],
         ];
     }
 }
