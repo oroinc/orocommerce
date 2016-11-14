@@ -6,20 +6,15 @@
 {%- endblock form_label -%}
 
 {% block _oro_paypal_credit_card_payment_credit_card_cvv_widget %}
-    {% set attr = attr|merge({
-        class: [
-            attr.class|default(''),
-            class_prefix ~ "__form__input_ccv",
-            class_prefix ~ "__form__input",
-            'input input_md'
-        ]|join(' ')
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' input input--full'
     }) %}
 
     {%- set type = type|default('password') -%}
     <input type="{{ type }}" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
 
     <span class="ttip__wrap">
-        <a href="javascript: void(0);" class="ttip__toggle what-this-link">{{ 'oro.paypal.methods.whats_this'|trans }}</a>
+        <a href="javascript: void(0);" class="ttip__toggle">{{ 'oro.paypal.methods.whats_this'|trans }}</a>
         <span class="ttip">
             <span class="ttip__content">{{ 'oro.paypal.methods.tooltip'|trans|nl2br }}</span>
         </span>

@@ -9,10 +9,9 @@ use Oro\Bundle\PricingBundle\Entity\BaseProductPrice;
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
-use Oro\Bundle\PricingBundle\Expression\NodeInterface;
-use Oro\Bundle\PricingBundle\Expression\RelationNode;
-use Oro\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Component\Expression\FieldsProviderInterface;
+use Oro\Component\Expression\Node;
 
 /**
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
@@ -43,7 +42,7 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
     ];
 
     /**
-     * @var PriceRuleFieldsProvider
+     * @var FieldsProviderInterface
      */
     protected $fieldsProvider;
 
@@ -58,9 +57,9 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
     protected $qbSelectPart = [];
 
     /**
-     * @param PriceRuleFieldsProvider $fieldsProvider
+     * @param FieldsProviderInterface $fieldsProvider
      */
-    public function setFieldsProvider(PriceRuleFieldsProvider $fieldsProvider)
+    public function setFieldsProvider(FieldsProviderInterface $fieldsProvider)
     {
         $this->fieldsProvider = $fieldsProvider;
     }
@@ -357,12 +356,12 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
     }
 
     /**
-     * @param NodeInterface $node
+     * @param Node\NodeInterface $node
      */
-    protected function saveUsedPriceRelations(NodeInterface $node)
+    protected function saveUsedPriceRelations(Node\NodeInterface $node)
     {
         foreach ($node->getNodes() as $subNode) {
-            if ($subNode instanceof RelationNode) {
+            if ($subNode instanceof Node\RelationNode) {
                 $realClass = $this->fieldsProvider->getRealClassName($subNode->getRelationAlias());
                 if (is_a($realClass, BaseProductPrice::class, true)) {
                     $this->usedPriceRelations[$subNode->getResolvedContainer()] = $this->requiredPriceConditions;
@@ -387,7 +386,7 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
         if ($ruleCondition) {
             $parsedCondition = $this->expressionParser->parse($ruleCondition);
             foreach ($parsedCondition->getNodes() as $node) {
-                if ($node instanceof RelationNode) {
+                if ($node instanceof Node\RelationNode) {
                     $relationAlias = $node->getResolvedContainer();
                     if (!empty($this->usedPriceRelations[$relationAlias][$node->getRelationField()])) {
                         $this->usedPriceRelations[$relationAlias][$node->getRelationField()] = false;
@@ -518,7 +517,7 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
     {
         $parsedCondition = $this->expressionParser->parse($rule->getQuantityExpression());
         foreach ($parsedCondition->getNodes() as $node) {
-            if ($node instanceof RelationNode) {
+            if ($node instanceof Node\RelationNode) {
                 $nodeRoot = $this->expressionParser->getReverseNameMapping()[$node->getContainer()];
                 if ($node->getContainerId()) {
                     return sprintf(

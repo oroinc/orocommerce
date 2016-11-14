@@ -20,7 +20,6 @@ class ShippingMethodEnabledMapperTest extends AbstractCheckoutDiffMapperTest
      */
     protected $shippingContextProviderFactory;
 
-
     protected function setUp()
     {
         $this->shippingPriceProvider = $this->getMockBuilder(ShippingPriceProvider::class)
@@ -74,7 +73,7 @@ class ShippingMethodEnabledMapperTest extends AbstractCheckoutDiffMapperTest
             ->method('create')
             ->willReturn($shippingContext);
         $this->shippingPriceProvider->expects(static::any())
-            ->method('getApplicableMethodsWithTypesData')
+            ->method('getPrice')
             ->willReturn($methodPrice);
 
         $this->checkout->setShippingMethod($methodName)->setShippingMethodType($typeName);
@@ -89,55 +88,13 @@ class ShippingMethodEnabledMapperTest extends AbstractCheckoutDiffMapperTest
     {
         return [
             'wrong_method'                    => [
-                'methodPrice' => [
-                    'wrong_method' => [
-                        'types' => [
-                            'flat_rate' => [
-                                'identifier' => 'per_order',
-                            ]
-                        ]
-                    ]
-                ],
+                'methodPrice' => null,
                 'method'      => 'flat_rate',
                 'type'        => 'per_order',
-                'expected'    => false,
-            ],
-            'not_types'                       => [
-                'methodPrice' => [
-                    'flat_rate' => [
-                        'identifier' => 'flat_rate'
-                    ]
-                ],
-                'method'      => 'flat_rule',
-                'type'        => 'per_order',
-                'expected'    => false,
-            ],
-            'correct_method_not_correct_type' => [
-                'methodPrice' => [
-                    'flat_rate' => [
-                        'identifier' => 'flat_rate',
-                        'types'      => [
-                            'flat_rate' => [
-                                'identifier' => 'per_order',
-                            ]
-                        ]
-                    ]
-                ],
-                'method'      => 'flat_rate',
-                'type'        => null,
                 'expected'    => false,
             ],
             'correct_method_correct_type'     => [
-                'methodPrice' => [
-                    'flat_rate' => [
-                        'identifier' => 'flat_rate',
-                        'types'      => [
-                            'flat_rate' => [
-                                'identifier' => 'per_order',
-                            ]
-                        ]
-                    ]
-                ],
+                'methodPrice' => Price::create(10, 'USD'),
                 'method'      => 'flat_rate',
                 'type'        => 'per_order',
                 'expected'    => true,

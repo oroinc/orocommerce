@@ -46,11 +46,35 @@
     </div>
 {% endblock %}
 
-{% block _main_menu_container_widget %}
+{% block _main_menu_axtra_container_widget %}
     {% set attr =  layout_attr_defaults(attr, {
-        '~class': ' main-menu'
+        'data-main-menu-axtra-container': ''
     }) %}
 
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _main_menu_container_widget %}
+    {% set attr =  layout_attr_defaults(attr, {
+        '~class': ' main-menu-outer collapse-view',
+        'data-page-component-module': "oroui/js/app/components/jquery-widget-component",
+        '~data-page-component-options': {
+            widgetModule: 'oroui/js/widget/collapse-widget',
+            open: false
+        }
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _main_menu_list_widget %}
+    {% set attr =  layout_attr_defaults(attr, {
+        '~class': ' main-menu-outer__container main-menu'
+    }) %}
     <ul {{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </ul>

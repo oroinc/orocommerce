@@ -16,6 +16,8 @@ use Oro\Bundle\ShippingBundle\Model\ExtendShippingRule;
  *     name="oro_shipping_rule",
  *     indexes={
  *         @ORM\Index(name="oro_shipping_rule_en_cur_idx", columns={"enabled", "currency"}),
+ *         @ORM\Index(name="idx_oro_shipping_rule_created_at", columns={"created_at"}),
+ *         @ORM\Index(name="idx_oro_shipping_rule_updated_at", columns={"updated_at"})
  *     }
  * )
  * @ORM\HasLifecycleCallbacks()
@@ -37,6 +39,9 @@ use Oro\Bundle\ShippingBundle\Model\ExtendShippingRule;
  *          }
  *      }
  * )
+ *
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class ShippingRule extends ExtendShippingRule
 {
@@ -186,6 +191,41 @@ class ShippingRule extends ExtendShippingRule
     protected $stopProcessing = false;
 
     /**
+     * @var \DateTime $createdAt
+     *
+     * @ORM\Column(name="created_at", type="datetime")
+     * @ConfigField(
+     *      defaultValues={
+     *          "entity"={
+     *              "label"="oro.ui.created_at"
+     *          },
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $createdAt;
+
+    /**
+     * @var \DateTime $updatedAt
+     *
+     * @ORM\Column(name="updated_at", type="datetime")
+     * @ConfigField(
+     *      defaultValues={
+     *          "entity"={
+     *              "label"="oro.ui.updated_at"
+     *          },
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $updatedAt;
+
+
+    /**
      * {@inheritdoc}
      */
     public function __construct()
@@ -193,6 +233,27 @@ class ShippingRule extends ExtendShippingRule
         parent::__construct();
         $this->destinations = new ArrayCollection();
         $this->methodConfigs = new ArrayCollection();
+    }
+
+    /**
+     * Pre persist event handler
+     *
+     * @ORM\PrePersist
+     */
+    public function prePersist()
+    {
+        $this->createdAt = new \DateTime('now', new \DateTimeZone('UTC'));
+        $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
+    }
+
+    /**
+     * Pre update event handler
+     *
+     * @ORM\PreUpdate
+     */
+    public function preUpdate()
+    {
+        $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
     }
 
     /**
@@ -410,6 +471,44 @@ class ShippingRule extends ExtendShippingRule
     public function setStopProcessing($stopProcessing)
     {
         $this->stopProcessing = $stopProcessing;
+        return $this;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * @param \DateTime $createdAt
+     * @return $this
+     */
+    public function setCreatedAt($createdAt)
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getUpdatedAt()
+    {
+        return $this->updatedAt;
+    }
+
+    /**
+     * @param \DateTime $updatedAt
+     * @return $this
+     */
+    public function setUpdatedAt($updatedAt)
+    {
+        $this->updatedAt = $updatedAt;
+
         return $this;
     }
 }

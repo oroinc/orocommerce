@@ -22,7 +22,7 @@ class ShoppingListController extends Controller
 {
     /**
      * @Route("/{id}", name="oro_shopping_list_frontend_view", defaults={"id" = null}, requirements={"id"="\d+"})
-     * @Layout(vars={"title"})
+     * @Layout
      * @Acl(
      *      id="oro_shopping_list_frontend_view",
      *      type="entity",
@@ -56,8 +56,8 @@ class ShoppingListController extends Controller
         }
 
         return [
-            'title' => $title,
             'data' => [
+                'title' => $title,
                 'entity' => $shoppingList,
                 'totals' => [
                     'identifier' => 'totals',
