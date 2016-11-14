@@ -103,6 +103,7 @@ abstract class AbstractEngineTest extends WebTestCase
     protected function getSearchItems(Query $query)
     {
         $searchResults = $this->engine->search($query);
+
         return $searchResults->getElements();
     }
 
