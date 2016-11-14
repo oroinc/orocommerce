@@ -2,17 +2,21 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Controller\Frontend;
 
-use Symfony\Component\DomCrawler\Crawler;
-
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
-use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData as BaseLoadAccountData;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
-use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListACLData;
+use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems;
+use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
+use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListUserACLData;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Symfony\Component\DomCrawler\Crawler;
 
 /**
  * @dbIsolation
@@ -28,19 +32,25 @@ class ShoppingListControllerTest extends WebTestCase
     /** @var ConfigManager $configManager */
     protected $configManager;
 
+    /**
+     * @var ShoppingList
+     */
+    protected $shoppingListAcl;
+
     protected function setUp()
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)
+            $this->generateBasicAuthHeader(BaseLoadAccountData::AUTH_USER, BaseLoadAccountData::AUTH_PW)
         );
 
         $this->loadFixtures(
             [
-                'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
-                'Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists',
-                'Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems',
-                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices',
+                LoadProductUnitPrecisions::class,
+                LoadShoppingLists::class,
+                LoadShoppingListLineItems::class,
+                LoadCombinedProductPrices::class,
+                LoadShoppingListACLData::class,
             ]
         );
 
@@ -163,6 +173,70 @@ class ShoppingListControllerTest extends WebTestCase
         $this->assertShoppingListItemSaved($currentShoppingList, $product->getSku(), 15);
         $this->assertQuickAddFormSubmitted($crawler, $products, $currentShoppingList->getId());//add to specific
         $this->assertShoppingListItemSaved($currentShoppingList, $product->getSku(), 30);
+    }
+    /**
+     * @group frontend-ACL
+     * @dataProvider ACLProvider
+     *
+     * @param string $route
+     * @param string $resource
+     * @param string $user
+     * @param int $status
+     */
+    public function testACL($route, $resource, $user, $status)
+    {
+        $this->loginUser($user);
+
+        /* @var $resource ShoppingList */
+        $resource = $this->getReference($resource);
+
+        $em = $this->getContainer()->get('doctrine')->getManagerForClass(ShoppingList::class);
+        $em->getRepository(ShoppingList::class);
+
+        $url = $this->getUrl($route, ['id' => $resource->getId()]);
+        $this->client->request('GET', $url);
+
+        $response = $this->client->getResponse();
+        static::assertHtmlResponseStatusCodeEquals($response, $status);
+    }
+
+    /**
+     * @return array
+     */
+    public function ACLProvider()
+    {
+        return [
+            'VIEW (anonymous user)' => [
+                'route' => 'oro_shopping_list_frontend_view',
+                'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_1_USER_LOCAL,
+                'user' => '',
+                'status' => 401,
+            ],
+            'VIEW (user from another account)' => [
+                'route' => 'oro_shopping_list_frontend_view',
+                'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_1_USER_LOCAL,
+                'user' => LoadShoppingListUserACLData::USER_ACCOUNT_2_ROLE_LOCAL,
+                'status' => 403,
+            ],
+            'VIEW (user from parent account : DEEP_VIEW_ONLY)' => [
+                'route' => 'oro_shopping_list_frontend_view',
+                'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_1_1_USER_LOCAL,
+                'user' => LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_DEEP_VIEW_ONLY,
+                'status' => 200,
+            ],
+            'VIEW (user from parent account : LOCAL)' => [
+                'route' => 'oro_shopping_list_frontend_view',
+                'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_1_1_USER_LOCAL,
+                'user' => LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_DEEP,
+                'status' => 200,
+            ],
+            'VIEW (user from same account : LOCAL)' => [
+                'route' => 'oro_shopping_list_frontend_view',
+                'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_1_USER_LOCAL,
+                'user' => LoadShoppingListUserACLData::USER_ACCOUNT_1_1_ROLE_LOCAL,
+                'status' => 403,
+            ],
+        ];
     }
 
     /**
