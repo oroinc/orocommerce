@@ -4,6 +4,7 @@ namespace Oro\Bundle\WebCatalogBundle\Form\Type;
 
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
+use Oro\Bundle\ScopeBundle\Form\Type\ScopeCollectionType;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -33,6 +34,16 @@ class ContentNodeType extends AbstractType
                 LocalizedFallbackValueCollectionType::NAME,
                 [
                     'label'    => 'oro.webcatalog.contentnode.titles.label',
+                ]
+            )
+            ->add(
+                'scopes',
+                ScopeCollectionType::NAME,
+                [
+                    'mapped' => false,
+                    'entry_options' => [
+                        'scope_type' => 'web_content'
+                    ]
                 ]
             );
 

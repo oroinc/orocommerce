@@ -3,6 +3,7 @@
 namespace Oro\Bundle\WebCatalogBundle\Form\Type;
 
 use Oro\Bundle\NavigationBundle\Form\Type\RouteChoiceType;
+use Oro\Bundle\ScopeBundle\Form\Type\ScopeCollectionType;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -31,10 +32,13 @@ class SystemPageVariantType extends AbstractType
             )
             ->add(
                 'scopes',
-                'text', // TODO: Replace with scopes collection, remove mapped=false
+                ScopeCollectionType::NAME,
                 [
                     'label' => 'oro.webcatalog.contentvariant.scopes.label',
                     'required' => false,
+                    'entry_options' => [
+                        'scope_type' => 'web_content'
+                    ],
                     'mapped' => false
                 ]
             );

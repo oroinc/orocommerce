@@ -3,6 +3,8 @@
 namespace Oro\Bundle\CMSBundle\Provider;
 
 use Oro\Bundle\CMSBundle\Entity\Page;
+use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
+use Oro\Component\DependencyInjection\ServiceLink;
 use Oro\Component\WebCatalog\ContentVariantTitleProviderInterface;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
@@ -18,11 +20,26 @@ class PageTitleProvider implements ContentVariantTitleProviderInterface
     protected $propertyAccessor;
 
     /**
-     * @param PropertyAccessor $propertyAccessor
+     * @var ServiceLink
      */
-    public function __construct(PropertyAccessor $propertyAccessor)
+    protected $localizationHelperLink;
+
+    /**
+     * @param PropertyAccessor $propertyAccessor
+     * @param ServiceLink $localizationHelperLink
+     */
+    public function __construct(PropertyAccessor $propertyAccessor, ServiceLink $localizationHelperLink)
     {
         $this->propertyAccessor = $propertyAccessor;
+        $this->localizationHelperLink = $localizationHelperLink;
+    }
+
+    /**
+     * @return LocalizationHelper|object
+     */
+    protected function getLocalizationHelper()
+    {
+        return $this->localizationHelperLink->getService();
     }
 
     /**
@@ -35,8 +52,8 @@ class PageTitleProvider implements ContentVariantTitleProviderInterface
         }
 
         $page  = $this->propertyAccessor->getValue($contentVariant, self::FIELD_NAME);
-        if ($page instanceof Page && $page->getTitle()) {
-            return $page->getTitle();
+        if ($page instanceof Page) {
+            return $this->getLocalizationHelper()->getFirstNonEmptyLocalizedValue($page->getTitles());
         }
 
         return null;

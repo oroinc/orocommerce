@@ -4,9 +4,11 @@ namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\NavigationBundle\Form\Type\RouteChoiceType;
 use Oro\Bundle\NavigationBundle\Tests\Unit\Form\Type\Stub\RouteChoiceTypeStub;
+use Oro\Bundle\ScopeBundle\Form\Type\ScopeCollectionType;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Bundle\WebCatalogBundle\Form\Type\SystemPageVariantType;
+use Oro\Bundle\WebCatalogBundle\Tests\Unit\Form\Type\Stub\ScopeCollectionTypeStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Symfony\Component\Form\PreloadedExtension;
 
@@ -43,6 +45,7 @@ class SystemPageVariantTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
+                    ScopeCollectionType::NAME => new ScopeCollectionTypeStub(),
                     RouteChoiceType::NAME => new RouteChoiceTypeStub(
                         [
                             'some_route' => 'some_route',

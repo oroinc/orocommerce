@@ -4,9 +4,11 @@ namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\ScopeBundle\Form\Type\ScopeCollectionType;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Form\Type\ContentNodeType;
 use Oro\Bundle\WebCatalogBundle\Form\Type\WebCatalogType;
+use Oro\Bundle\WebCatalogBundle\Tests\Unit\Form\Type\Stub\ScopeCollectionTypeStub;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
@@ -50,6 +52,7 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
                     TextType::class                            => new TextType(),
                     EntityIdentifierType::NAME                 => new StubEntityIdentifierType([]),
                     LocalizedFallbackValueCollectionType::NAME => new LocalizedFallbackValueCollectionTypeStub(),
+                    ScopeCollectionType::NAME                  => new ScopeCollectionTypeStub()
                 ],
                 []
             ),

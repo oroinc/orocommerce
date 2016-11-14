@@ -61,11 +61,13 @@ class OroCMSBundleInstaller implements Installation, AttachmentExtensionAwareInt
         /** Tables generation **/
         $this->createOroCmsPageTable($schema);
         $this->createOroCmsPageSlugTable($schema);
+        $this->createOroCmsPageTitleTable($schema);
         $this->createOroCmsLoginPageTable($schema);
 
         /** Foreign keys generation **/
         $this->addOroCmsPageForeignKeys($schema);
         $this->addOroCmsPageSlugForeignKeys($schema);
+        $this->addOroCmsPageTitleForeignKeys($schema);
 
         $this->addImageAssociations($schema);
         $this->addContentVariantTypes($schema);
@@ -81,7 +83,6 @@ class OroCMSBundleInstaller implements Installation, AttachmentExtensionAwareInt
         $table = $schema->createTable('oro_cms_page');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
-        $table->addColumn('title', 'string', ['length' => 255]);
         $table->addColumn('content', 'text', ['notnull' => false]);
         $table->addColumn('created_at', 'datetime', []);
         $table->addColumn('updated_at', 'datetime', []);
@@ -163,6 +164,42 @@ class OroCMSBundleInstaller implements Installation, AttachmentExtensionAwareInt
     protected function addOroCmsPageSlugForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('oro_cms_page_slug');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_cms_page'),
+            ['page_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_fallback_localization_val'),
+            ['localized_value_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+    }
+
+    /**
+     * Create oro_cms_page_title table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroCmsPageTitleTable(Schema $schema)
+    {
+        $table = $schema->createTable('oro_cms_page_title');
+        $table->addColumn('page_id', 'integer', []);
+        $table->addColumn('localized_value_id', 'integer', []);
+        $table->setPrimaryKey(['page_id', 'localized_value_id']);
+        $table->addUniqueIndex(['localized_value_id']);
+    }
+
+    /**
+     * Add oro_cms_page_title foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOroCmsPageTitleForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('oro_cms_page_title');
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_cms_page'),
             ['page_id'],

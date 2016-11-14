@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Entity;
 
+use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
@@ -32,6 +33,7 @@ class ContentNodeTest extends \PHPUnit_Framework_TestCase
             ['titles', new LocalizedFallbackValue()],
             ['slugPrototypes', new LocalizedFallbackValue()],
             ['slugs', new Slug()],
+            ['scopes', new Scope()],
             ['contentVariants', new ContentVariant()],
         ]);
     }

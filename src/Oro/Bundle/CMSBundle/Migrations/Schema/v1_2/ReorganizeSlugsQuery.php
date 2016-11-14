@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CMSBundle\Migrations\Schema\v1_2;
 
+use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
 use Doctrine\DBAL\Types\Type;
 use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
@@ -84,7 +85,11 @@ LEFT JOIN oro_redirect_slug s ON (p.current_slug_id = s.id);';
             $localizationValueQuery = 'INSERT INTO oro_cms_page_slug (page_id, localized_value_id)
 VALUES (:pageId, :localizationValueId);';
 
-            $params = ['pageId' => $pageId, 'localizationValueId' => $this->connection->lastInsertId()];
+            $params = ['pageId' => $pageId, 'localizationValueId' => $this->connection->lastInsertId(
+                $this->connection->getDatabasePlatform() instanceof PostgreSqlPlatform
+                    ? 'oro_fallback_localization_val_id_seq'
+                    : null
+            )];
             $types = ['pageId' => Type::INTEGER, 'localizationValueId' => Type::INTEGER ];
 
             $this->logQuery($logger, $localizationValueQuery, $params, $types);
