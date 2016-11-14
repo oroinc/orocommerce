@@ -1,0 +1,22 @@
+layout:
+    imports:
+        -
+            id: oro_customer_menu
+            root: page_sidebar
+
+    actions:
+        - '@add':
+            id: checkouts_title
+            parentId: page_content
+            blockType: text
+            siblingId: ~
+            prepend: true
+            options:
+                text: 'oro.checkout.entity_plural_label'
+
+        - '@appendOption':
+            id: title
+            optionName: value
+            optionValue:
+                - 'oro.customer.menu.account_user.label'
+                - 'oro.checkout.entity_plural_label'
