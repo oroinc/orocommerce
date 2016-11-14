@@ -6,6 +6,7 @@ use Oro\Bundle\CatalogBundle\Provider\CategoryTitleProvider;
 use Oro\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Category;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
+use Oro\Component\DependencyInjection\ServiceLink;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
@@ -26,9 +27,15 @@ class CategoryTitleProviderTest extends \PHPUnit_Framework_TestCase
         $this->localizationHelper = $this->getMockBuilder(LocalizationHelper::class)
             ->disableOriginalConstructor()
             ->getMock();
+        $localizationHelperLink = $this->getMockBuilder(ServiceLink::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $localizationHelperLink->expects($this->any())
+            ->method('getService')
+            ->willReturn($this->localizationHelper);
         $this->categoryTitleProvider = new CategoryTitleProvider(
             PropertyAccess::createPropertyAccessor(),
-            $this->localizationHelper
+            $localizationHelperLink
         );
     }
 
