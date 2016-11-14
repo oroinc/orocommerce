@@ -23,16 +23,6 @@
 {% endblock %}
 
 {% block __oro_rfp_frontend_request_edit__rfp_form_fields_widget %}
-    {{ form_row(form.firstName) }}
-    {{ form_row(form.lastName) }}
-    {{ form_row(form.email)  }}
-    {{ form_row(form.phone) }}
-    {{ form_row(form.company) }}
-    {{ form_row(form.role) }}
-    {{ form_row(form.note) }}
-    {{ form_row(form.poNumber) }}
-    {{ form_row(form.shipUntil, { 'attr': {'class': 'input input--size-m'} }) }}
-    {{ form_row(form.assignedAccountUsers) }}
     <div class="request-form-grid">
         <div class="request-form-grid__row">
             <div class="request-form-grid__column grid__column--6">
