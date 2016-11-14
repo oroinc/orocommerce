@@ -134,7 +134,7 @@ class QuickAddRowCollectionBuilderTest extends \PHPUnit_Framework_TestCase
 
         $this->productManager->method('restrictQueryBuilder')->willReturn($this->queryBuilder);
 
-        $this->builder = new QuickAddRowCollectionBuilder($this->productRepository, $this->productManager );
+        $this->builder = new QuickAddRowCollectionBuilder($this->productRepository, $this->productManager);
     }
 
     public function testBuildFromRequest()
@@ -242,5 +242,4 @@ class QuickAddRowCollectionBuilderTest extends \PHPUnit_Framework_TestCase
 
         return $product;
     }
-
 }
