@@ -16,3 +16,7 @@
         border-bottom: 1px solid get-color('additional', 'light');
     }
 }
+
+.request-form-editline textarea, .request-form-container textarea {
+    width: 100%;
+}
