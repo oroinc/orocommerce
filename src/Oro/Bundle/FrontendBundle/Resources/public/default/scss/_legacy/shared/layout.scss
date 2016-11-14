@@ -289,16 +289,6 @@
   line-height: 2;
   align-items: center;
 
-  .badge {
-    position: absolute;
-    top: 50%;
-    left: 20px;
-
-    &_xlg {
-      margin-top: -25px;
-    }
-  }
-
   &__btn {
     width: 170px;
     padding: 0 !important;

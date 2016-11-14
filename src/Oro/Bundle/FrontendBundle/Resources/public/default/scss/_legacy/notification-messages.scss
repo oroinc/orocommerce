@@ -23,12 +23,6 @@
     }
   }
 
-  .badge {
-    position: absolute;
-    top: 15px;
-    left: 15px;
-  }
-
   .cf-clear {
     position: absolute;
     top: 14px;
@@ -83,10 +77,6 @@
 
     font-size: 13px;
     line-height: 1.85;
-
-    .badge {
-      margin-bottom: 3px;
-    }
   }
 
   &_sm {
