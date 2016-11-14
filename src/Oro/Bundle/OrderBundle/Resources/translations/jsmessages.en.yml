@@ -10,3 +10,5 @@ oro:
             edit: Edit Notes
             add: Add Notes
             remove: Remove Notes
+
+        continue_editing: Continue Editing

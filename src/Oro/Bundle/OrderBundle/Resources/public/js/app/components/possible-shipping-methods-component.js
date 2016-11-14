@@ -29,10 +29,6 @@ define(function(require) {
          */
         initialize: function(options) {
             this.$el = options._sourceElement;
-            this.initialMethod = options.method;
-            this.initialType = options.type;
-            this.initialEstimatedCost = options.estimatedCost;
-            this.initialPossibleMethods = options.possibleMethods;
             this.loadingMaskView = new LoadingMaskView({container: this.$el});
             this.orderHasChanged = false;
             var self = this;
@@ -71,17 +67,24 @@ define(function(require) {
         },
 
         showConfirmation: function() {
+            var self = this;
+
             var confirmation = new StandardConfirmation({
                 title: __('oro.order.possible_shipping_methods.confirmation.title'),
                 content: __('oro.order.possible_shipping_methods.confirmation.content'),
                 allowOk: true,
-                allowCancel: false
+                allowCancel: true,
+                okText: __('Save'),
+                cancelText: __('oro.order.continue_editing')
             });
 
-            confirmation
+            return confirmation
                 .off('ok')
                 .on('ok')
-                .open();
+                .open(function(){
+                    self.orderHasChanged = false;
+                    self.$el.closest('form').trigger('submit');
+                });
         },
 
         showLoadingMask: function() {
@@ -213,20 +216,6 @@ define(function(require) {
         },
 
         /**
-         * 
-         * @param {string} inputClass
-         * @param {string} label
-         * @param {string} value
-         */
-        createShippingMethodDiv: function(inputClass, label, value) {
-            var $div = $("<div>", {"class": "control-group"});
-            $div.append('<label class="control-label">' + __(label) + '</label>');
-            $div.append('<div class="controls"><input class="' + inputClass +'" type="text" readonly value="' + value + '"></div>');
-            
-            return $div;
-        },
-
-        /**
          * @param {string|null} type
          * @param {string|null} method
          * @param {number|null} estimated_cost
@@ -311,17 +300,6 @@ define(function(require) {
             }
 
             return this.$estimatedShippingCostElement;
-        },
-
-        /**
-         * @returns {jQuery|HTMLElement}
-         */
-        getOverriddenShippingCostElement: function() {
-            if (!this.hasOwnProperty('$overriddenShippingCostElement')) {
-                this.$overriddenShippingCostElement = $(document).find(this.selectors.overriddenShippingCost);
-            }
-
-            return this.$overriddenShippingCostElement;
         },
 
         /**
