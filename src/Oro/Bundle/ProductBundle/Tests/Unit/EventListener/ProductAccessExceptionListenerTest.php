@@ -40,14 +40,33 @@ class ProductAccessExceptionListenerTest extends \PHPUnit_Framework_TestCase
     public function testOtherException()
     {
         $exampleException = new NotFoundHttpException();
-        $this->event->expects($this->once())
+
+        $this->event->expects($this->at(0))
+            ->method('getException')
+            ->willReturn($exampleException);
+
+        $this->event->expects($this->never())
+            ->method('setException');
+
+        $this->testable->onAccessException($this->event);
+
+        $request = new Request();
+        $request->attributes->set('_route', 'unknown_route');
+
+        $this->requestStack->expects($this->once())
+            ->method('getCurrentRequest')
+            ->willReturn($request);
+
+        $exampleException = new AccessDeniedHttpException();
+
+        $this->event->expects($this->at(0))
             ->method('getException')
             ->willReturn($exampleException);
 
         $this->testable->onAccessException($this->event);
     }
 
-    public function testMyException()
+    public function testAccessDeniedException()
     {
         $message = 'somemessage';
 
