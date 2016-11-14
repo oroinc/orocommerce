@@ -51,11 +51,10 @@ class RestrictProductsIndexEventListener
      */
     public function onRestrictIndexEntityEvent(RestrictIndexEntityEvent $event)
     {
-        $context = $event->getContext();
-
-        $websiteId = $this->websiteContextManager->getWebsiteId($context);
-
+        $websiteId = $this->websiteContextManager->getWebsiteId($event->getContext());
         if (!$websiteId) {
+            $event->stopPropagation();
+
             return;
         }
 

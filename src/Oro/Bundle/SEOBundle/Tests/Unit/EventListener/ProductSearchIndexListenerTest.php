@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\SEOBundle\Tests\Unit\EventListener;
 
-use Symfony\Component\PropertyAccess\PropertyAccessor;
-
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
 use Oro\Bundle\WebsiteBundle\Provider\AbstractWebsiteLocalizationProvider;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
@@ -23,11 +21,11 @@ class ProductSearchIndexListenerTest extends \PHPUnit_Framework_TestCase
         $event = $this->getMockBuilder(IndexEntityEvent::class)
             ->disableOriginalConstructor()->getMock();
 
-        $event->expects($this->at(0))
+        $event->expects($this->once())
             ->method('getEntities')
             ->willReturn($entities);
 
-        $event->expects($this->at(1))
+        $event->expects($this->once())
             ->method('getContext')
             ->willReturn([]);
 
@@ -67,8 +65,6 @@ class ProductSearchIndexListenerTest extends \PHPUnit_Framework_TestCase
                 ]
             );
 
-        $propertyAccessor = new PropertyAccessor();
-
         /** @var WebsiteContextManager|\PHPUnit_Framework_MockObject_MockObject $websiteContextManager */
         $websiteContextManager = $this->getMockBuilder(WebsiteContextManager::class)
             ->disableOriginalConstructor()
@@ -76,9 +72,8 @@ class ProductSearchIndexListenerTest extends \PHPUnit_Framework_TestCase
 
         $websiteContextManager->expects($this->once())->method('getWebsiteId')->with([])->willReturn(1);
 
-        $testable         = new ProductSearchIndexListener(
+        $testable = new ProductSearchIndexListener(
             $localizationProvider,
-            $propertyAccessor,
             $websiteContextManager
         );
         $testable->onWebsiteSearchIndex($event);

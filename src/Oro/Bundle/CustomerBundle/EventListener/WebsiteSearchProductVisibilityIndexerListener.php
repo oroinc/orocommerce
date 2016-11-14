@@ -35,11 +35,13 @@ class WebsiteSearchProductVisibilityIndexerListener
      */
     public function onWebsiteSearchIndex(IndexEntityEvent $event)
     {
-        $context = $event->getContext();
-        $websiteId = $this->websiteContextManager->getWebsiteId($context);
+        $websiteId = $this->websiteContextManager->getWebsiteId($event->getContext());
+        if (!$websiteId) {
+            $event->stopPropagation();
 
-        if ($websiteId) {
-            $this->visibilityIndexer->addIndexInfo($event, $websiteId);
+            return;
         }
+
+        $this->visibilityIndexer->addIndexInfo($event, $websiteId);
     }
 }

@@ -10,15 +10,8 @@ use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
-use Symfony\Component\PropertyAccess\PropertyAccessor;
-
 class ProductSearchIndexListener
 {
-    /**
-     * @var PropertyAccessor
-     */
-    private $propertyAccessor;
-
     /**
      * @var AbstractWebsiteLocalizationProvider
      */
@@ -31,16 +24,13 @@ class ProductSearchIndexListener
 
     /**
      * @param AbstractWebsiteLocalizationProvider $websiteLocalizationProvider
-     * @param PropertyAccessor $propertyAccessor
      * @param WebsiteContextManager $websiteContextManager
      */
     public function __construct(
         AbstractWebsiteLocalizationProvider $websiteLocalizationProvider,
-        PropertyAccessor $propertyAccessor,
         WebsiteContextManager $websiteContextManager
     ) {
         $this->websiteLocalizationProvider = $websiteLocalizationProvider;
-        $this->propertyAccessor            = $propertyAccessor;
         $this->websiteContextManager       = $websiteContextManager;
     }
 
@@ -49,16 +39,15 @@ class ProductSearchIndexListener
      */
     public function onWebsiteSearchIndex(IndexEntityEvent $event)
     {
-        /** @var Product[] $products */
-        $products = $event->getEntities();
-
-        $context = $event->getContext();
-
-        $websiteId = $this->websiteContextManager->getWebsiteId($context);
-
+        $websiteId = $this->websiteContextManager->getWebsiteId($event->getContext());
         if (!$websiteId) {
+            $event->stopPropagation();
+
             return;
         }
+
+        /** @var Product[] $products */
+        $products = $event->getEntities();
 
         $localizations = $this->websiteLocalizationProvider->getLocalizationsByWebsiteId($websiteId);
 

@@ -39,16 +39,15 @@ class WebsiteSearchProductIndexerListener
      */
     public function onWebsiteSearchIndex(IndexEntityEvent $event)
     {
-        /** @var Product[] $products */
-        $products = $event->getEntities();
-
-        $context = $event->getContext();
-
-        $websiteId = $this->websiteContextManger->getWebsiteId($context);
-
+        $websiteId = $this->websiteContextManger->getWebsiteId($event->getContext());
         if (!$websiteId) {
+            $event->stopPropagation();
+
             return;
         }
+
+        /** @var Product[] $products */
+        $products = $event->getEntities();
 
         $localizations = $this->websiteLocalizationProvider->getLocalizationsByWebsiteId($websiteId);
 

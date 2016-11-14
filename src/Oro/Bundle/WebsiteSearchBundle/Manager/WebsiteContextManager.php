@@ -34,8 +34,8 @@ class WebsiteContextManager
 
         if ($websiteRepository->checkWebsiteExists($websiteId)) {
             return $websiteId;
-        } else {
-            return null;
         }
+
+        return null;
     }
 }

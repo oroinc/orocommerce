@@ -45,7 +45,7 @@ class WebsiteRepository extends EntityRepository implements BatchIteratorInterfa
     }
 
     /**
-     * @param $websiteId
+     * @param int $websiteId
      * @return bool
      */
     public function checkWebsiteExists($websiteId)
@@ -54,10 +54,10 @@ class WebsiteRepository extends EntityRepository implements BatchIteratorInterfa
 
         $result = $qb->select('website.id')
             ->where($qb->expr()->eq('website.id', ':websiteId'))
-            ->setParameter('websiteId', $websiteId)
+            ->setParameter('websiteId', (int)$websiteId)
             ->getQuery()
             ->getArrayResult();
 
-        return $result;
+        return (bool)$result;
     }
 }
