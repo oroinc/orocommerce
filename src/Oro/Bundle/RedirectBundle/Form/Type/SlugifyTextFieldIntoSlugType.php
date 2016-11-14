@@ -50,6 +50,9 @@ class SlugifyTextFieldIntoSlugType extends TextType
         $this->addComponentOptions($view, $options);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getComponent()
     {
         return self::COMPONENT;

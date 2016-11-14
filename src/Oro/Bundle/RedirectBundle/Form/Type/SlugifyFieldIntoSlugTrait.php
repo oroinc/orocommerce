@@ -6,8 +6,17 @@ use Symfony\Component\Form\FormView;
 
 trait SlugifyFieldIntoSlugTrait
 {
+    /**
+     * Get js component name
+     *
+     * @return string
+     */
     abstract public function getComponent();
 
+    /**
+     * @param FormView $view
+     * @param array $options
+     */
     private function addComponentOptions(FormView $view, array $options)
     {
         $view->vars['slugify_component'] = $this->getComponent();
