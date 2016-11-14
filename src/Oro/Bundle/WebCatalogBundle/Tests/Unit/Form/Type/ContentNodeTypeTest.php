@@ -54,7 +54,7 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
                     TextType::class                            => new TextType(),
                     EntityIdentifierType::NAME                 => new StubEntityIdentifierType([]),
                     LocalizedFallbackValueCollectionType::NAME => new LocalizedFallbackValueCollectionTypeStub(),
-                    SlugifyLocalizedFieldIntoSlugType::NAME => new SlugifyLocalizedFieldIntoSlugTypeStub(),
+                    SlugifyLocalizedFieldIntoSlugType::NAME    => new SlugifyLocalizedFieldIntoSlugTypeStub(),
                     ScopeCollectionType::NAME                  => new ScopeCollectionTypeStub()
                 ],
                 []
