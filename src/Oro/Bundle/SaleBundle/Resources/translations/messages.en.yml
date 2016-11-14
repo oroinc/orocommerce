@@ -70,7 +70,7 @@ oro:
                 send_no_quote_alert: 'Send no Quote alert for the Request'
 
             message:
-                quote.expire.success: 'Quote #%id% was successfully expired'
+                quote.expire.success: 'Quote #%id% was successfully marked as expired'
 
             form:
                 address:

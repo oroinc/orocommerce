@@ -4,7 +4,7 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\WorkflowState\Action;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-use Oro\Component\Action\Model\ContextAccessor;
+use Oro\Component\ConfigExpression\ContextAccessor;
 use Oro\Bundle\CheckoutBundle\WorkflowState\Storage\CheckoutDiffStorageInterface;
 use Oro\Bundle\CheckoutBundle\WorkflowState\Action\DeleteCheckoutStateAction;
 

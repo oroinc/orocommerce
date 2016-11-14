@@ -1,5 +1,5 @@
 .expand-text {
-  height: $font-size;
+  height: $base-font-size;
 
   overflow: hidden;
 
@@ -13,7 +13,7 @@
     transition: all 200ms linear;
 
     &:hover {
-      color: $base-font-color;
+      color: get-color('additional', 'dark');
     }
   }
 

@@ -2,23 +2,22 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Validator;
 
+use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
-use Oro\Bundle\PricingBundle\Expression\BinaryNode;
-use Oro\Bundle\PricingBundle\Expression\ExpressionParser;
-use Oro\Bundle\PricingBundle\Expression\NameNode;
-use Oro\Bundle\PricingBundle\Expression\RelationNode;
-use Oro\Bundle\PricingBundle\Expression\ValueNode;
 use Oro\Bundle\PricingBundle\Validator\Constraints\LexemeCircularReference;
 use Oro\Bundle\PricingBundle\Validator\Constraints\LexemeCircularReferenceValidator;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Component\Expression\ExpressionParser;
+use Oro\Component\Expression\Node\BinaryNode;
+use Oro\Component\Expression\Node\NameNode;
+use Oro\Component\Expression\Node\RelationNode;
+use Oro\Component\Expression\Node\ValueNode;
 use Oro\Component\Testing\Unit\EntityTrait;
-
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
-use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\ORM\EntityRepository;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)

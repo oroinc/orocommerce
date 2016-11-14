@@ -42,7 +42,12 @@
     }) %}
     <h3 {{ block('block_attributes') }}>
         <a href="<%= model.view_link %>"
-           class="view-product">{{ product.getDefaultName }}</a>
+           data-page-component-module="oroui/js/app/components/jquery-widget-component"
+           data-page-component-options="{{ {
+               widgetModule: 'orofrontend/default/js/widgets/line-clamp-widget',
+           }|json_encode }}"
+           class="view-product"
+        >{{ product.getDefaultName }}</a>
     </h3>
 {% endblock %}
 

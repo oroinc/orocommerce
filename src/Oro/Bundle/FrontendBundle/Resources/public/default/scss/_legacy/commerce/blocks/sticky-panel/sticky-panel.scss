@@ -9,7 +9,7 @@
     display: none;
     width: 100%;
 
-    background: $base-white-color;
+    background: get-color('additional', 'ultra');
 
     &__content {
         width: $sticky-panel-width;

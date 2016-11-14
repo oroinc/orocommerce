@@ -2,10 +2,6 @@ layout:
     actions:
         - '@setBlockTheme':
             themes: 'OroOrderBundle:layouts:default/oro_order_frontend_success/success.html.twig'
-        - '@appendOption':
-            id: title
-            optionName: value
-            optionValue: 'oro.order.success.thank_you'
         - '@add':
             id: success_order
             parentId: content

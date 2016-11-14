@@ -22,16 +22,16 @@
 
         text-align: center;
 
-        color: $base-white-color;
+        color: get-color('additional', 'ultra');
         border-radius: 50%;
-        background-color: $base-font-color-lighter;
+        background-color: get-color('additional', 'dark');
 
         &--transparent {
             background-color: transparent;
         }
 
         &--chromatic {
-            background-color: $theme-orange-color;
+            background-color: get-color('primary', 'base');
         }
 
         &--large {
@@ -99,7 +99,7 @@
 
             text-align: left;
 
-            color: #fff;
+            color: get-color('additional', 'ultra');
             border-radius: 50%;
             background-color: #707070;
         }

@@ -6,19 +6,17 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-use Gedmo\Mapping\Annotation as Gedmo;
-
+use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
+use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\Ownership\AuditableOrganizationAwareTrait;
 use Oro\Bundle\CMSBundle\Model\ExtendPage;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
-use Oro\Component\Tree\Entity\TreeTrait;
 
 /**
  * @ORM\Table(name="oro_cms_page")
- * @ORM\Entity(repositoryClass="Oro\Bundle\CMSBundle\Entity\Repository\PageRepository")
- * @Gedmo\Tree(type="nested")
+ * @ORM\Entity()
  * @Config(
  *      routeName="oro_cms_page_index",
  *      routeView="oro_cms_page_view",
@@ -38,15 +36,18 @@ use Oro\Component\Tree\Entity\TreeTrait;
  *          "security"={
  *              "type"="ACL",
  *              "group_name"=""
+ *          },
+ *          "form"={
+ *              "form_type"="oro_cms_page_select",
+ *              "grid_name"="cms-page-select-grid"
  *          }
  *      }
  * )
- * @ORM\HasLifecycleCallbacks()
  */
-class Page extends ExtendPage
+class Page extends ExtendPage implements DatesAwareInterface
 {
-    use TreeTrait;
     use AuditableOrganizationAwareTrait;
+    use DatesAwareTrait;
 
     /**
      * @var integer
@@ -74,7 +75,7 @@ class Page extends ExtendPage
     /**
      * @var string
      *
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="text", nullable=true)
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -103,65 +104,6 @@ class Page extends ExtendPage
     protected $currentSlug;
 
     /**
-     * @var Page
-     *
-     * @Gedmo\TreeParent
-     * @ORM\ManyToOne(targetEntity="Page", inversedBy="childPages")
-     * @ORM\JoinColumn(name="parent_id", referencedColumnName="id", onDelete="CASCADE")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $parentPage;
-
-    /**
-     * @var Collection|Page[]
-     *
-     * @ORM\OneToMany(targetEntity="Page", mappedBy="parentPage", cascade={"persist"})
-     * @ORM\OrderBy({"left" = "ASC"})
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $childPages;
-
-    /**
-     * @var \DateTime $createdAt
-     *
-     * @ORM\Column(name="created_at", type="datetime")
-     * @ConfigField(
-     *      defaultValues={
-     *          "entity"={
-     *              "label"="oro.ui.created_at"
-     *          }
-     *      }
-     * )
-     */
-    protected $createdAt;
-
-    /**
-     * @var \DateTime $updatedAt
-     *
-     * @ORM\Column(name="updated_at", type="datetime")
-     * @ConfigField(
-     *      defaultValues={
-     *          "entity"={
-     *              "label"="oro.ui.updated_at"
-     *          }
-     *      }
-     * )
-     */
-    protected $updatedAt;
-
-    /**
      * @var Collection|Slug[]
      *
      * @ORM\ManyToMany(
@@ -180,15 +122,14 @@ class Page extends ExtendPage
      */
     protected $slugs;
 
+    /**
+     * {@inheritdoc}
+     */
     public function __construct()
     {
         parent::__construct();
 
-        $this->slugs      = new ArrayCollection();
-        $this->childPages = new ArrayCollection();
-        $this->createdAt  = new \DateTime('now', new \DateTimeZone('UTC'));
-        $this->updatedAt  = new \DateTime('now', new \DateTimeZone('UTC'));
-
+        $this->slugs = new ArrayCollection();
         $this->setCurrentSlug(new Slug());
     }
 
@@ -294,100 +235,6 @@ class Page extends ExtendPage
     }
 
     /**
-     * @param Page|null $parentPage
-     * @return $this
-     */
-    public function setParentPage(Page $parentPage = null)
-    {
-        $this->parentPage = $parentPage;
-        $this->refreshSlugUrls();
-
-        return $this;
-    }
-
-    /**
-     * @return Page
-     */
-    public function getParentPage()
-    {
-        return $this->parentPage;
-    }
-
-    /**
-     * @return Collection|Page[]
-     */
-    public function getChildPages()
-    {
-        return $this->childPages;
-    }
-
-    /**
-     * @param Page $page
-     * @return $this
-     */
-    public function addChildPage(Page $page)
-    {
-        if (!$this->childPages->contains($page)) {
-            $this->childPages->add($page);
-            $page->setParentPage($this);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param Page $page
-     * @return $this
-     */
-    public function removeChildPage(Page $page)
-    {
-        if ($this->childPages->contains($page)) {
-            $this->childPages->removeElement($page);
-            $page->setParentPage(null);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getCreatedAt()
-    {
-        return $this->createdAt;
-    }
-
-    /**
-     * @param \DateTime $createdAt
-     * @return $this
-     */
-    public function setCreatedAt($createdAt)
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getUpdatedAt()
-    {
-        return $this->updatedAt;
-    }
-
-    /**
-     * @param \DateTime $updatedAt
-     * @return $this
-     */
-    public function setUpdatedAt($updatedAt)
-    {
-        $this->updatedAt = $updatedAt;
-
-        return $this;
-    }
-
-    /**
      * @return Collection|Slug[]
      */
     public function getSlugs()
@@ -422,14 +269,6 @@ class Page extends ExtendPage
     }
 
     /**
-     * @ORM\PreUpdate
-     */
-    public function preUpdate()
-    {
-        $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
-    }
-
-    /**
      * @return string
      */
     public function __toString()
@@ -442,16 +281,7 @@ class Page extends ExtendPage
      */
     protected function refreshSlugUrls()
     {
-        $parentSlugUrl = '';
-        if ($this->parentPage) {
-            $parentSlugUrl = $this->parentPage->currentSlug->getUrl();
-        }
-
         $slugUrl = $this->currentSlug->getSlugUrl();
-        $this->currentSlug->setUrl($parentSlugUrl . Slug::DELIMITER . $slugUrl);
-
-        foreach ($this->childPages as $childPage) {
-            $childPage->refreshSlugUrls();
-        }
+        $this->currentSlug->setUrl(Slug::DELIMITER . $slugUrl);
     }
 }

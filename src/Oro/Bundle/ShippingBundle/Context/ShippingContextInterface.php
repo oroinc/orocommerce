@@ -41,4 +41,14 @@ interface ShippingContextInterface
      * @return Price
      */
     public function getSubtotal();
+
+    /**
+     * @return object
+     */
+    public function getSourceEntity();
+
+    /**
+     * @return mixed
+     */
+    public function getSourceEntityIdentifier();
 }

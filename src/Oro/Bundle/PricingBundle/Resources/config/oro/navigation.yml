@@ -33,7 +33,7 @@ navigation:
                 route:           'oro_pricing_price_list_create'
                 extras:
                     description:    'oro.pricing.menu.shortcut_price_lists.description'
-                    isCustomAction: true
+                    is_custom_action: true
 
         tree:
             application_menu:
