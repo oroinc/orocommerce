@@ -29,7 +29,7 @@ class ProductQuantityToOrderLimitValidator extends ConstraintValidator
      */
     public function validate($value, Constraint $constraint)
     {
-        if (!$value instanceof Product) {
+        if (!$value instanceof Product || !$value->getId()) {
             return;
         }
 
