@@ -19,14 +19,14 @@ Oro\Bundle\PricingBundle\Entity\PriceList:
         priceRules:
             - Valid: ~
         productAssignmentRule:
-            - Oro\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpression:
+            - Oro\Bundle\ProductBundle\Validator\Constraints\Expression:
                 withRelations: true
                 allowedFields:
                     Oro\Bundle\PricingBundle\Entity\PriceList:
                         - 'assignedProducts'
-                groups: [NotCircularReference]
-            - Oro\Bundle\PricingBundle\Validator\Constraints\LogicalExpression:
-                groups: [NotCircularReference]
+                groups: [Default, NotCircularReference]
+            - Oro\Bundle\ProductBundle\Validator\Constraints\LogicalExpression:
+                groups: [Default, NotCircularReference]
 
 Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList:
     constraints:
@@ -72,34 +72,43 @@ Oro\Bundle\PricingBundle\Entity\PriceRule:
         currency:
             - Currency: ~
         currencyExpression:
-            - Oro\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpression:
+            - Oro\Bundle\ProductBundle\Validator\Constraints\Expression:
                 withRelations: true
                 fieldLabel: 'oro.pricing.pricerule.currency.label'
+            - Oro\Bundle\ProductBundle\Validator\Constraints\LogicalExpression:
+                logicalExpressionsAllowed: false
+        productUnitExpression:
+            - Oro\Bundle\ProductBundle\Validator\Constraints\LogicalExpression:
+                logicalExpressionsAllowed: false
         quantity:
             - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
             - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
         quantityExpression:
-            - Oro\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpression:
+            - Oro\Bundle\ProductBundle\Validator\Constraints\Expression:
                 numericOnly: true
                 withRelations: true
                 fieldLabel: 'oro.pricing.pricerule.quantity.label'
+            - Oro\Bundle\ProductBundle\Validator\Constraints\LogicalExpression:
+                logicalExpressionsAllowed: false
         ruleCondition:
-            - Oro\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpression:
+            - Oro\Bundle\ProductBundle\Validator\Constraints\Expression:
                 fieldLabel: 'oro.pricing.pricerule.rule_condition.label'
                 withRelations: true
                 allowedFields:
                     Oro\Bundle\PricingBundle\Entity\PriceList:
                         - 'assignedProducts'
-                groups: [NotCircularReference]
-            - Oro\Bundle\PricingBundle\Validator\Constraints\LogicalExpression:
-                groups: [NotCircularReference]
+                groups: [Default, NotCircularReference]
+            - Oro\Bundle\ProductBundle\Validator\Constraints\LogicalExpression:
+                groups: [Default, NotCircularReference]
         rule:
             - NotBlank: ~
-            - Oro\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpression:
+            - Oro\Bundle\ProductBundle\Validator\Constraints\Expression:
                 fieldLabel: 'oro.pricing.pricerule.calculate_as.label'
                 numericOnly: true
                 withRelations: true
-                groups: [NotCircularReference]
+                groups: [Default, NotCircularReference]
+            - Oro\Bundle\ProductBundle\Validator\Constraints\LogicalExpression:
+                logicalExpressionsAllowed: false
         priority:
             - NotBlank: ~
             - Type:

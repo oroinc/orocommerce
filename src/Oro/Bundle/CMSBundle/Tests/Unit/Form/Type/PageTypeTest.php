@@ -19,8 +19,6 @@ use Oro\Bundle\RedirectBundle\Entity\Slug;
 
 class PageTypeTest extends FormIntegrationTestCase
 {
-    const DATA_CLASS = 'Oro\Bundle\CMSBundle\Entity\Page';
-
     /**
      * @var PageType
      */
@@ -42,7 +40,6 @@ class PageTypeTest extends FormIntegrationTestCase
             ->getFormFactory();
 
         $this->type = new PageType();
-        $this->type->setDataClass(self::DATA_CLASS);
     }
 
     /**
@@ -110,19 +107,8 @@ class PageTypeTest extends FormIntegrationTestCase
         $builder->expects($this->at(0))
             ->method('add')
             ->with(
-                'parentPage',
-                EntityIdentifierType::NAME,
-                [
-                    'class' => self::DATA_CLASS,
-                    'multiple' => false
-                ]
-            )
-            ->will($this->returnSelf());
-        $builder->expects($this->at(1))
-            ->method('add')
-            ->with(
                 'title',
-                'text',
+                TextType::class,
                 [
                     'label' => 'oro.cms.page.title.label',
                     'required' => true,
@@ -130,7 +116,7 @@ class PageTypeTest extends FormIntegrationTestCase
                 ]
             )
             ->will($this->returnSelf());
-        $builder->expects($this->at(2))
+        $builder->expects($this->at(1))
             ->method('add')
             ->with(
                 'content',
@@ -151,18 +137,18 @@ class PageTypeTest extends FormIntegrationTestCase
 
     public function testSetDefaultOptions()
     {
-        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolverInterface');
+        $resolver = $this->getMockBuilder('Symfony\Component\OptionsResolver\OptionsResolver')
+             ->disableOriginalConstructor()
+             ->getMock();
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with(
                 [
-                    'data_class' => self::DATA_CLASS,
-                    'intention' => 'page',
-                    'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"'
+                    'data_class' => Page::class
                 ]
             );
 
-        $this->type->setDefaultOptions($resolver);
+        $this->type->configureOptions($resolver);
     }
 
     public function testGetName()
@@ -181,12 +167,10 @@ class PageTypeTest extends FormIntegrationTestCase
     {
         if ($defaultData) {
             $existingPage = new Page();
-            $this->setId($existingPage, 1);
             $existingPage->setTitle($defaultData['title']);
             $existingPage->setContent($defaultData['content']);
 
             $existingSlug = new Slug();
-            $this->setId($existingSlug, 1);
             $existingSlug->setUrl($defaultData['slug']['slug']);
             $existingPage->setCurrentSlug($existingSlug);
 
@@ -212,19 +196,6 @@ class PageTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @param mixed $obj
-     * @param mixed $val
-     */
-    protected function setId($obj, $val)
-    {
-        $class = new \ReflectionClass($obj);
-        $prop  = $class->getProperty('id');
-        $prop->setAccessible(true);
-
-        $prop->setValue($obj, $val);
-    }
-
-    /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @return array
      */
@@ -235,7 +206,6 @@ class PageTypeTest extends FormIntegrationTestCase
                 'options' => [],
                 'defaultData' => null,
                 'submittedData' => [
-                    'parentPage' => null,
                     'title' => 'First test page',
                     'content' => 'Page content',
                     'slug' => [
@@ -244,7 +214,6 @@ class PageTypeTest extends FormIntegrationTestCase
                     ]
                 ],
                 'expectedData' => [
-                    'parentPage' => null,
                     'title' => 'First test page',
                     'content' => 'Page content',
                     'mode' => 'new',
@@ -254,7 +223,6 @@ class PageTypeTest extends FormIntegrationTestCase
             'update current page without redirect' => [
                 'options' => [],
                 'defaultData' => [
-                    'parentPage' => null,
                     'title' => 'First test page',
                     'content' => 'Page content',
                     'slug' => [
@@ -263,7 +231,6 @@ class PageTypeTest extends FormIntegrationTestCase
                     ]
                 ],
                 'submittedData' => [
-                    'parentPage' => null,
                     'title' => 'Updated first test page',
                     'content' => 'Updated page content',
                     'slug' => [
@@ -272,7 +239,6 @@ class PageTypeTest extends FormIntegrationTestCase
                     ]
                 ],
                 'expectedData' => [
-                    'parentPage' => null,
                     'title' => 'Updated first test page',
                     'content' => 'Updated page content',
                     'slug' => '/updated-first-page'
@@ -281,7 +247,6 @@ class PageTypeTest extends FormIntegrationTestCase
             'update current page with redirect' => [
                 'options' => [],
                 'defaultData' => [
-                    'parentPage' => null,
                     'title' => 'First test page',
                     'content' => 'Page content',
                     'slug' => [
@@ -290,7 +255,6 @@ class PageTypeTest extends FormIntegrationTestCase
                     ]
                 ],
                 'submittedData' => [
-                    'parentPage' => null,
                     'title' => 'Updated first test page',
                     'content' => 'Updated page content',
                     'slug' => [
@@ -300,7 +264,6 @@ class PageTypeTest extends FormIntegrationTestCase
                     ]
                 ],
                 'expectedData' => [
-                    'parentPage' => null,
                     'title' => 'Updated first test page',
                     'content' => 'Updated page content',
                     'slug' => '/updated-first-page'
@@ -309,7 +272,6 @@ class PageTypeTest extends FormIntegrationTestCase
             'update current page with old slug' => [
                 'options' => [],
                 'defaultData' => [
-                    'parentPage' => null,
                     'title' => 'First test page',
                     'content' => 'Page content',
                     'slug' => [
@@ -318,7 +280,6 @@ class PageTypeTest extends FormIntegrationTestCase
                     ]
                 ],
                 'submittedData' => [
-                    'parentPage' => null,
                     'title' => 'Updated first test page',
                     'content' => 'Updated page content',
                     'slug' => [
@@ -326,7 +287,6 @@ class PageTypeTest extends FormIntegrationTestCase
                     ]
                 ],
                 'expectedData' => [
-                    'parentPage' => null,
                     'title' => 'Updated first test page',
                     'content' => 'Updated page content',
                     'slug' => '/first-page'

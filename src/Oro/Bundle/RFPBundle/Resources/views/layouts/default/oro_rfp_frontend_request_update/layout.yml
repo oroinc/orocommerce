@@ -5,16 +5,11 @@ layout:
             root: content
         - oro_account_menu
     actions:
-        - '@appendOption':
+        - '@setOption':
             id: title
-            optionName: value
+            optionName: params
             optionValue:
-                - 'oro.customer.menu.account_user.label'
-                - 'oro.frontend.rfp.request.entity_plural_label'
-                -
-                    label: 'oro.frontend.rfp.request.edit_title.label'
-                    parameters:
-                        '%id%': '=data["entity"].getId()'
+                '%id%': '=data["entity"].getId()'
 
         - '@setOption':
             id: page_title

@@ -4,7 +4,7 @@
         <div class="{{ class_prefix }}__form__row">
             <div class="{{ class_prefix }}__form__col form__col_x6" data-payment-method-forms>
                 {% if views|length > 0 %}
-                    <span class="{{ class_prefix }}__form__label">{{ 'oro.payment.methods.select_method'|trans }}<sup class="red">*</sup></span>
+                    <span class="label label--full">{{ 'oro.payment.methods.select_method'|trans }}<sup class="red">*</sup></span>
                     {% for name, view in views if views is defined and view is iterable %}
                         {% set selected = currentPaymentMethod == name %}
                         <div class="{{ class_prefix }}__form__radio" data-item-container>

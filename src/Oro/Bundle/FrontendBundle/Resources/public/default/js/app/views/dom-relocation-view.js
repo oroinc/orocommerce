@@ -24,9 +24,15 @@ define(function(require) {
             this.options = _.extend({}, this.options, options || {});
 
             DomRelocationView.__super__.initialize.apply(this, arguments);
+        },
 
+        /**
+         * @inheritDoc
+         */
+        setElement: function(element) {
             this.$window = $(window);
             this.elements = null;
+            return DomRelocationView.__super__.setElement.call(this, element);
         },
 
         /**

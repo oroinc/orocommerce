@@ -1,0 +1,75 @@
+{% block block_row -%}
+    <div class="form-row">
+        {% if type != 'checkbox' %}
+        <div class="form-row__label">{{ block_label(block) -}}</div>
+        {% endif %}
+        <div class="form-row__content">{{ block_widget(block) -}}</div>
+    </div>
+{%- endblock %}
+
+{% block _login_page_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' login-form'
+    }) %}
+    <div {{ block('block_attributes') }}>
+        {{ block('container_widget') }}
+    </div>
+{% endblock %}
+
+{% block _login_form_start_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'id': 'form-login',
+        'action': path('oro_customer_account_user_security_check'),
+        'method': 'post'
+    }) %}
+    <form {{ block('block_attributes') }}>
+        <div class="grid">
+            {{ block_widget(block) }}
+{% endblock %}
+
+{% block _login_form_end_widget %}
+            {{ block_widget(block) }}
+        </div>
+    </form>
+    <script type="text/javascript">
+        require(['jquery', 'jquery.validate'],
+            function ($) {
+                $('#form-login').validate({});
+            });
+    </script>
+{% endblock %}
+
+{% block _login_form_notifications_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' notifications'
+    }) %}
+    <div class="form-row">
+        <p  class="notifications notifications--error">{{ block_widget(block) }}</p>
+    </div>
+{% endblock %}
+
+{% block _login_form_remember_widget %}
+    {{ block_row(block) }}
+{% endblock %}
+
+{% block _login_form_username_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'required': 'required',
+        'autofocus': true,
+        'data-validation': {"NotBlank":{"payload":null}},
+        '~class': " input input--full"
+    }) %}
+
+    {% set label_attr = layout_attr_defaults(label_attr, {
+        '~class': " label"
+    }) %}
+
+    {{ block_row(block, {
+        attr: attr,
+        label_attr: label_attr
+    }) }}
+{% endblock %}
+
+{% block _login_form_password_widget %}
+    {{ block('_login_form_username_widget') }}
+{% endblock %}
