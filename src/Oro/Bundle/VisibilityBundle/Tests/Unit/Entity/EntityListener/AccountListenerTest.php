@@ -49,7 +49,7 @@ class AccountListenerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $this->account = new Account();
-        $this->listener = new \Oro\Bundle\VisibilityBundle\Entity\EntityListener\AccountListener($this->factory, $this->producer, $this->driver);
+        $this->listener = new AccountListener($this->factory, $this->producer, $this->driver);
     }
 
     public function testPostPersistWithoutGroup()
