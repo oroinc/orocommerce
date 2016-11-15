@@ -5,7 +5,7 @@ namespace Oro\Bundle\VisibilityBundle\Model;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\CustomerBundle\Visibility\ProductVisibilityTrait;
+use Oro\Bundle\VisibilityBundle\Visibility\ProductVisibilityTrait;
 use Oro\Bundle\SearchBundle\Query\Modifier\QueryBuilderModifierInterface;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility;
