@@ -4,7 +4,7 @@ define(function(require) {
     var LineItemsView;
     var $ = require('jquery');
     var _ = require('underscore');
-    var LineItemProductView = require('oroproduct/js/app/views/line-item-product-view');
+    var BaseView = require('oroui/js/app/views/base/view');
     var ProductsPricesComponent = require('oropricing/js/app/components/products-prices-component');
 
     /**
@@ -12,22 +12,12 @@ define(function(require) {
      * @extends oroui.app.views.base.View
      * @class ororfp.app.views.LineItemsView
      */
-    LineItemsView = LineItemProductView.extend({
+    LineItemsView = BaseView.extend({
         /**
          * @property {Object}
          */
         options: {
         },
-
-        /**
-         * @property {jQuery}
-         */
-        $form: null,
-
-        /**
-         * @property {jQuery}
-         */
-        $el: null,
 
         /**
          * @inheritDoc
@@ -37,24 +27,25 @@ define(function(require) {
 
             LineItemsView.__super__.initialize.apply(this, arguments);
 
-            this.subview('productsPricesComponent', new ProductsPricesComponent({
-                _sourceElement: this.$el,
-                tierPrices: this.options.tierPrices,
-                currency: this.options.currency,
-                tierPricesRoute: this.options.tierPricesRoute
-            }));
-
-            this.initLayout().done(_.bind(this.handleLayoutInit, this));
+            this.initLayout({
+                prices: this.options.tierPrices
+            }).done(_.bind(this.handleLayoutInit, this));
         },
 
         /**
          * Doing something after loading child components
          */
         handleLayoutInit: function() {
-            this.$form = this.$el.closest('form');
             this.$el.find('.add-lineitem').mousedown(function(e) {
                 $(this).click();
             });
+
+            this.subview('productsPricesComponent', new ProductsPricesComponent({
+                _sourceElement: this.$el,
+                tierPrices: this.options.tierPrices,
+                currency: this.options.currency,
+                tierPricesRoute: this.options.tierPricesRoute
+            }));
         },
 
         /**
