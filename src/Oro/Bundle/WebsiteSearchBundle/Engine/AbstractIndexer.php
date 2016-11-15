@@ -342,7 +342,7 @@ abstract class AbstractIndexer implements IndexerInterface
     /**
      * @param string $entityClass
      * @param array $context
-     * @return string
+     * @return string|null
      */
     protected function getEntityAlias($entityClass, array $context)
     {
