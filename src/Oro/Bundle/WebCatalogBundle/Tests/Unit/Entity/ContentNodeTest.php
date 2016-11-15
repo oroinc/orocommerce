@@ -26,7 +26,8 @@ class ContentNodeTest extends \PHPUnit_Framework_TestCase
             ['right', 20],
             ['root', 1],
             ['createdAt', new \DateTime()],
-            ['updatedAt', new \DateTime()]
+            ['updatedAt', new \DateTime()],
+            ['parentScopeUsed', true]
         ]);
         $this->assertPropertyCollections(new ContentNode(), [
             ['childNodes', new ContentNode()],
@@ -52,5 +53,18 @@ class ContentNodeTest extends \PHPUnit_Framework_TestCase
         $entity->setUpdatedAt(null);
 
         $this->assertFalse($entity->isUpdatedAtSet());
+    }
+
+    public function testResetScopes()
+    {
+        $scope = new Scope();
+        $contentNode = new ContentNode();
+        $contentNode->addScope($scope);
+
+        $this->assertNotEmpty($contentNode->getScopes());
+
+        $contentNode->resetScopes();
+
+        $this->assertEmpty($contentNode->getScopes());
     }
 }
