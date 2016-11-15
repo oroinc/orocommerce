@@ -5,7 +5,7 @@ namespace Oro\Bundle\WebsiteBundle\Translation\Strategy;
 use Oro\Bundle\TranslationBundle\Strategy\TranslationStrategyInterface;
 use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 
-class CompositeFallbackStrategy implements TranslationStrategyInterface
+class FrontendFallbackStrategy implements TranslationStrategyInterface
 {
     /**
      * @var FrontendHelper
@@ -15,18 +15,16 @@ class CompositeFallbackStrategy implements TranslationStrategyInterface
     /**
      * @var TranslationStrategyInterface
      */
-    protected $frontendStrategy;
+    protected $strategy;
 
     /**
      * @param FrontendHelper $frontendHelper
-     * @param TranslationStrategyInterface $frontendStrategy
+     * @param TranslationStrategyInterface $strategy
      */
-    public function __construct(
-        FrontendHelper $frontendHelper,
-        TranslationStrategyInterface $frontendStrategy
-    ) {
+    public function __construct(FrontendHelper $frontendHelper, TranslationStrategyInterface $strategy)
+    {
         $this->frontendHelper = $frontendHelper;
-        $this->frontendStrategy = $frontendStrategy;
+        $this->strategy = $strategy;
     }
 
     /**
@@ -34,7 +32,7 @@ class CompositeFallbackStrategy implements TranslationStrategyInterface
      */
     public function getName()
     {
-        return $this->frontendStrategy->getName();
+        return $this->strategy->getName();
     }
 
     /**
@@ -42,7 +40,7 @@ class CompositeFallbackStrategy implements TranslationStrategyInterface
      */
     public function getLocaleFallbacks()
     {
-        return $this->frontendStrategy->getLocaleFallbacks();
+        return $this->strategy->getLocaleFallbacks();
     }
 
     /**

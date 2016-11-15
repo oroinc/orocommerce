@@ -4,9 +4,9 @@ namespace Oro\Bundle\WebsiteBundle\Tests\Unit\Translation\Strategy;
 
 use Oro\Bundle\TranslationBundle\Strategy\DefaultTranslationStrategy;
 use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
-use Oro\Bundle\WebsiteBundle\Translation\Strategy\CompositeFallbackStrategy;
+use Oro\Bundle\WebsiteBundle\Translation\Strategy\FrontendFallbackStrategy;
 
-class CompositeFallbackStrategyTest extends \PHPUnit_Framework_TestCase
+class FrontendFallbackStrategyTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var FrontendHelper|\PHPUnit_Framework_MockObject_MockObject
@@ -25,14 +25,13 @@ class CompositeFallbackStrategyTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->frontendHelper = $this->getMockBuilder('Oro\Bundle\FrontendBundle\Request\FrontendHelper')
+        $this->frontendHelper = $this->getMockBuilder(FrontendHelper::class)
             ->disableOriginalConstructor()->getMock();
 
-        $this->frontendStrategy = $this
-            ->getMockBuilder('Oro\Bundle\TranslationBundle\Strategy\DefaultTranslationStrategy')
+        $this->frontendStrategy = $this->getMockBuilder(DefaultTranslationStrategy::class)
             ->disableOriginalConstructor()->getMock();
 
-        $this->strategy = new CompositeFallbackStrategy($this->frontendHelper, $this->frontendStrategy);
+        $this->strategy = new FrontendFallbackStrategy($this->frontendHelper, $this->frontendStrategy);
     }
 
     public function testIsApplicable()

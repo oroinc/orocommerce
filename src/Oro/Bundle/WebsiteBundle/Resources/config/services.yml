@@ -38,23 +38,14 @@ services:
         tags:
             - { name: oro_action.action, alias: assign_current_website }
 
-    oro_website.translation.strategy.composite_fallback_strategy:
-        class: 'Oro\Bundle\WebsiteBundle\Translation\Strategy\CompositeFallbackStrategy'
+    oro_website.translation.strategy.frontend_fallback_strategy:
+        class: 'Oro\Bundle\WebsiteBundle\Translation\Strategy\FrontendFallbackStrategy'
         public: false
         arguments:
             - '@oro_frontend.request.frontend_helper'
             - '@oro_locale.translation.strategy.localization_fallback_strategy'
         tags:
             - { name: oro_translation.extension.translation_strategy, priority: -100 }
-
-    oro_website.translation.cache_warmer.composite:
-        class: 'Oro\Bundle\WebsiteBundle\Translation\CacheWarmer\CompositeTranslationCacheWarmer'
-        public: false
-        decorates: 'translation.warmer'
-        decoration_inner_name: 'translation.warmer.default'
-        arguments:
-            - '@translation.warmer.default'
-            - '@oro_translation.strategy.provider'
 
     oro_website.event_listener.routing:
         class: 'Oro\Bundle\WebsiteBundle\EventListener\RoutingListener'
