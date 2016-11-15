@@ -34,6 +34,7 @@ class QuickAddRowCollectionBuilder
 
     /**
      * @param EntityRepository $productRepository
+     * @param ProductManager $productManager
      */
     public function __construct(EntityRepository $productRepository, ProductManager $productManager)
     {
