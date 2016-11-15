@@ -210,8 +210,8 @@ class RestrictProductsIndexEventListenerTest extends WebTestCase
         $this->assertSearchItems('product.3', $values[2]);
         $this->assertSearchItems('product.4', $values[3]);
         $this->assertSearchItems('product.5', $values[4]);
-        $this->assertSearchItems('product.7', $values[6]);
-        $this->assertSearchItems('product.8', $values[7]);
+        $this->assertSearchItems('product.7', $values[5]);
+        $this->assertSearchItems('product.8', $values[6]);
     }
 
     /**
