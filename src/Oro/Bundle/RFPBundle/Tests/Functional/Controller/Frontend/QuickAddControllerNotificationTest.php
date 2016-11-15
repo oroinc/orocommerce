@@ -3,7 +3,6 @@
 namespace Oro\Bundle\RFPBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\ProductBundle\ComponentProcessor\DataStorageAwareComponentProcessor;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -32,14 +31,8 @@ class QuickAddControllerNotificationTest extends WebTestCase
             ]
         );
 
-        $inventoryStatusClassName = ExtendHelper::buildEnumValueClassName('prod_inventory_status');
-        $availableInventoryStatuses = [
-            $this->getContainer()->get('doctrine')->getRepository($inventoryStatusClassName)
-                ->find(Product::INVENTORY_STATUS_IN_STOCK)->getId()
-        ];
-
         $this->configManager = $this->getContainer()->get('oro_config.manager');
-        $this->configManager->set(self::RFP_PRODUCT_VISIBILITY_KEY, $availableInventoryStatuses);
+        $this->configManager->set(self::RFP_PRODUCT_VISIBILITY_KEY, [Product::INVENTORY_STATUS_IN_STOCK]);
         $this->configManager->flush();
     }
 
@@ -47,13 +40,13 @@ class QuickAddControllerNotificationTest extends WebTestCase
      * @dataProvider productProvider
      *
      * @param string $processorName
-     * @param string $expectedMessage
      * @param array $products
+     * @param string $expectedMessage
      */
     public function testNotification(
         $processorName,
-        $expectedMessage,
-        array $products
+        array $products,
+        $expectedMessage
     ) {
         /** @var DataStorageAwareComponentProcessor $processor */
         $processor = $this->getContainer()->get($processorName);
@@ -93,17 +86,16 @@ class QuickAddControllerNotificationTest extends WebTestCase
         return [
             'no_products_be_added_to_rfq' => [
                 'processorName' => 'oro_rfp.processor.quick_add',
-                'expectedMessage' => 'oro.frontend.rfp.data_storage.no_products_be_added_to_rfq',
                 'products' => [
                     [
                         'productSku' => 'product.3',
                         'productQuantity' => 1,
                     ],
                 ],
+                'expectedMessage' => 'oro.frontend.rfp.data_storage.no_products_be_added_to_rfq',
             ],
             'cannot_be_added_to_rfq' => [
                 'processorName' => 'oro_rfp.processor.quick_add',
-                'expectedMessage' => 'oro.frontend.rfp.data_storage.cannot_be_added_to_rfq',
                 'products' => [
                     [
                         'productSku' => 'product.2',
@@ -114,6 +106,7 @@ class QuickAddControllerNotificationTest extends WebTestCase
                         'productQuantity' => 1,
                     ],
                 ],
+                'expectedMessage' => 'oro.frontend.rfp.data_storage.cannot_be_added_to_rfq',
             ],
         ];
     }
