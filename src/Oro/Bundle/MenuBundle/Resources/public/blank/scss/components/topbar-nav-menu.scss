@@ -1,0 +1,9 @@
+.topbar-nav-menu {
+    display: flex;
+}
+
+@include breakpoint('desktop') {
+    .topbar-nav-menu {
+        justify-content: flex-end;
+    }
+}

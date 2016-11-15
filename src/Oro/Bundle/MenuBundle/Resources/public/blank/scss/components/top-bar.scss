@@ -4,6 +4,9 @@
 }
 
 .topbar-navigation {
+    @include list-normalize();
+    
+    display: flex;
     justify-content: flex-end;
 
     &--controls {
@@ -18,12 +21,6 @@
         &:last-child {
             margin-right: 0;
         }
-    }
-}
-
-@include breakpoint('desktop') {
-    .grid__column:last-child {
-        text-align: right;
     }
 }
 

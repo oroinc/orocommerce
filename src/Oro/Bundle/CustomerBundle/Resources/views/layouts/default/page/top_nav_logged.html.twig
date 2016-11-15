@@ -1,6 +1,6 @@
 {% block _top_nav_left_logged_user_widget %}
     {% set attr = layout_attr_defaults(attr, {
-    '~class': ' primary-menu__item primary-menu__item--offset-m'
+    '~class': ' topbar-navigation__item'
     }) %}
 
     <li {{ block('block_attributes') }}>
@@ -12,7 +12,7 @@
 
 {% block _top_nav_left_sign_out_item_widget %}
     {% set attr = layout_attr_defaults(attr, {
-    '~class': ' primary-menu__item primary-menu__item--offset-m'
+    '~class': ' topbar-navigation__item'
     }) %}
 
     <li {{ block('block_attributes') }}>
@@ -22,7 +22,7 @@
 
 {% block _top_nav_left_my_account_item_widget %}
     {% set attr = layout_attr_defaults(attr, {
-    '~class': ' primary-menu__item primary-menu__item--offset-m'
+    '~class': ' topbar-navigation__item'
     }) %}
 
     <li {{ block('block_attributes') }}>
@@ -32,7 +32,7 @@
 
 {% block _top_nav_left_sign_out_link_widget %}
     {% set attr = layout_attr_defaults(attr, {
-    '~class': ' link'
+    '~class': ' topbar-navigation__link'
     }) %}
 
     {{ block_widget(block, {attr: attr}) }}
@@ -40,7 +40,7 @@
 
 {% block _top_nav_left_my_account_link_widget %}
     {% set attr = layout_attr_defaults(attr, {
-    '~class': ' link'
+    '~class': ' topbar-navigation__link'
     }) %}
 
     {{ block_widget(block, {attr: attr}) }}

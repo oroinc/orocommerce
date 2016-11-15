@@ -62,6 +62,7 @@
         text-decoration: none;
 
         &:hover {
+            color: $top-bar-link-color;
             text-decoration: underline;
         }
     }

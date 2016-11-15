@@ -9,15 +9,15 @@
 
 {% block _top_nav_widget %}
     {% set attr = layout_attr_defaults(attr, {
-    '~class': " topbar-navigation topbar__navigation--has-sibling"
+    '~class': " primary-menu"
     }) %}
 
     {% set child_attr = layout_attr_defaults(child_attr, {
-    '~class': ' topbar-navigation__item'
+    '~class': ' primary-menu__item primary-menu__item--offset-m'
     }) %}
 
     {% set link_attr = layout_attr_defaults(link_attr, {
-    '~class': 'topbar-navigation__link'
+    '~class': 'link'
     }) %}
 
     {{ block('menu_widget') }}
@@ -29,7 +29,7 @@
     }) %}
 
     <div {{ block('block_attributes') }}>
-        <ul class="primary-menu topbar-navigation topbar-navigation--controls">
+        <ul class="primary-menu">
             {{ block_widget(block) }}
         </ul>
     </div>
@@ -37,9 +37,11 @@
 
 {% block _top_nav_menu_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
-    '~class': " grid__column grid__column--7 text-right"
+    '~class': " grid__column grid__column--7"
     }) %}
     <div {{ block('block_attributes') }}>
-        {{ block_widget(block) }}
+        <div class="topbar-nav-menu">
+            {{ block_widget(block) }}
+        </div>
     </div>
 {% endblock %}
