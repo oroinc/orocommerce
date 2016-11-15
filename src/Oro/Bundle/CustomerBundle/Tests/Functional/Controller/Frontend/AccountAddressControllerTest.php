@@ -69,49 +69,49 @@ class AccountAddressControllerTest extends WebTestCase
      */
     protected function fillFormForCreate(Form $form)
     {
-        $form['oro_account_typed_address[label]'] = 'Address Label';
-        $form['oro_account_typed_address[primary]'] = true;
-        $form['oro_account_typed_address[namePrefix]'] = 'pref';
-        $form['oro_account_typed_address[firstName]'] = 'first';
-        $form['oro_account_typed_address[middleName]'] = 'middle';
-        $form['oro_account_typed_address[lastName]'] = 'last';
-        $form['oro_account_typed_address[nameSuffix]'] = 'suffix';
-        $form['oro_account_typed_address[organization]'] = 'org';
-        $form['oro_account_typed_address[phone]'] = '+05000000';
-        $form['oro_account_typed_address[street]'] = 'Street, 1';
-        $form['oro_account_typed_address[street2]'] = 'Street, 2';
-        $form['oro_account_typed_address[city]'] = 'London';
+        $form['oro_account_frontend_typed_address[label]'] = 'Address Label';
+        $form['oro_account_frontend_typed_address[primary]'] = true;
+        $form['oro_account_frontend_typed_address[namePrefix]'] = 'pref';
+        $form['oro_account_frontend_typed_address[firstName]'] = 'first';
+        $form['oro_account_frontend_typed_address[middleName]'] = 'middle';
+        $form['oro_account_frontend_typed_address[lastName]'] = 'last';
+        $form['oro_account_frontend_typed_address[nameSuffix]'] = 'suffix';
+        $form['oro_account_frontend_typed_address[organization]'] = 'org';
+        $form['oro_account_frontend_typed_address[phone]'] = '+05000000';
+        $form['oro_account_frontend_typed_address[street]'] = 'Street, 1';
+        $form['oro_account_frontend_typed_address[street2]'] = 'Street, 2';
+        $form['oro_account_frontend_typed_address[city]'] = 'London';
 
-        $form['oro_account_typed_address[postalCode]'] = 10500;
+        $form['oro_account_frontend_typed_address[postalCode]'] = 10500;
 
-        $form['oro_account_typed_address[types]'] = [
+        $form['oro_account_frontend_typed_address[types]'] = [
             AddressType::TYPE_BILLING,
             AddressType::TYPE_SHIPPING
         ];
-        $form['oro_account_typed_address[defaults][default]'] = [false, AddressType::TYPE_SHIPPING];
+        $form['oro_account_frontend_typed_address[defaults][default]'] = [false, AddressType::TYPE_SHIPPING];
 
         $doc = new \DOMDocument("1.0");
         $doc->loadHTML(
-            '<select name="oro_account_typed_address[country]" ' .
-            'id="oro_account_typed_address_country" ' .
+            '<select name="oro_account_frontend_typed_address[country]" ' .
+            'id="oro_account_frontend_typed_address_country" ' .
             'tabindex="-1" class="select2-offscreen"> ' .
             '<option value="" selected="selected"></option> ' .
             '<option value="ZW">Zimbabwe</option> </select>'
         );
         $field = new ChoiceFormField($doc->getElementsByTagName('select')->item(0));
         $form->set($field);
-        $form['oro_account_typed_address[country]'] = 'ZW';
+        $form['oro_account_frontend_typed_address[country]'] = 'ZW';
 
         $doc->loadHTML(
-            '<select name="oro_account_typed_address[region]" ' .
-            'id="oro_account_typed_address_country_region" ' .
+            '<select name="oro_account_frontend_typed_address[region]" ' .
+            'id="oro_account_frontend_typed_address_country_region" ' .
             'tabindex="-1" class="select2-offscreen"> ' .
             '<option value="" selected="selected"></option> ' .
             '<option value="ZW-MA">Manicaland</option> </select>'
         );
         $field = new ChoiceFormField($doc->getElementsByTagName('select')->item(0));
         $form->set($field);
-        $form['oro_account_typed_address[region]'] = 'ZW-MA';
+        $form['oro_account_frontend_typed_address[region]'] = 'ZW-MA';
 
         return $form;
     }
@@ -146,7 +146,7 @@ class AccountAddressControllerTest extends WebTestCase
 
         $form = $crawler->selectButton('Save')->form();
 
-        $form['oro_account_typed_address[label]'] = 'Changed Label';
+        $form['oro_account_frontend_typed_address[label]'] = 'Changed Label';
 
         $this->client->followRedirects(true);
 

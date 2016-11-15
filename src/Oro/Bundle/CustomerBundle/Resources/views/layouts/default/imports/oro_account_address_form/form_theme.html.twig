@@ -1,11 +1,23 @@
 {% extends 'form_div_layout.html.twig' %}
 
-{% block oro_account_typed_address_widget %}
+{% block oro_account_frontend_typed_address_widget %}
+    {% set ownerSelectors %}
+        <div data-page-component-module="orosale/js/app/components/related-data-component">
+            <div data-page-component-module="orocustomer/js/app/components/account-selection-component">
+                {{ form_row(form.frontendOwner) }}
+            </div>
+        </div>
+    {% endset %}
     {% spaceless %}
         <div class="grid">
             <div class="grid__row grid__row--offset-none">
                 <div class="grid__column grid__column--12 grid__column--offset-y">
                     {{ form_row(form.primary, {'label' : 'oro.customer.frontend.address.form.label.primary'|trans }) }}
+                </div>
+            </div>
+            <div class="grid__row grid__row--offset-none">
+                <div class="grid__column grid__column--12 grid__column--offset-y">
+                    {{ ownerSelectors }}
                 </div>
             </div>
             <div class="grid__row grid__row--offset-none">
