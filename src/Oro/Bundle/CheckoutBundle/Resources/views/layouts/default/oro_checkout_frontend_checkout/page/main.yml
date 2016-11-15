@@ -4,7 +4,7 @@ layout:
             id: title
             optionName: params
             optionValue:
-                 '%step_label%': '=data["workflowStep"].getLabel()'
+                 '%step_label%': '=data["translator"].getTrans(data["workflowStep"].getLabel(),[],"workflows")'
     imports:
         -
             id: oro_checkout_content

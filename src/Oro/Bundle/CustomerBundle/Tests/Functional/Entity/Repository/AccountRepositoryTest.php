@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\CustomerBundle\Tests\Functional\Entity\Repository;
 
-use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\Repository\AccountRepository;
-use Oro\Bundle\CustomerBundle\Entity\Visibility\AccountCategoryVisibility;
-use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountCategoryVisibility;
 
 /**
  * @dbIsolation
@@ -37,7 +36,6 @@ class AccountRepositoryTest extends WebTestCase
             [
                 'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccounts',
                 'Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData',
-                'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData'
             ]
         );
 
@@ -122,33 +120,6 @@ class AccountRepositoryTest extends WebTestCase
     }
 
     /**
-     * @dataProvider getCategoryAccountIdsByVisibilityDataProvider
-     * @param string $categoryName
-     * @param string $visibility
-     * @param array $expectedAccounts
-     * @param array $restricted
-     */
-    public function testGetCategoryAccountIdsByVisibility(
-        $categoryName,
-        $visibility,
-        array $expectedAccounts,
-        array $restricted = null
-    ) {
-        /** @var Category $category */
-        $category = $this->getReference($categoryName);
-
-        $accountIds = $this->repository->getCategoryAccountIdsByVisibility($category, $visibility, $restricted);
-
-        $expectedAccountIds = [];
-        foreach ($expectedAccounts as $expectedAccountName) {
-            $accountGroup = $this->getReference($expectedAccountName);
-            $expectedAccountIds[] = $accountGroup->getId();
-        }
-
-        $this->assertEquals($expectedAccountIds, $accountIds);
-    }
-
-    /**
      * @return array
      */
     public function getCategoryAccountIdsByVisibilityDataProvider()
@@ -179,6 +150,7 @@ class AccountRepositoryTest extends WebTestCase
 
     public function testGetBatchIterator()
     {
+        /** @var Account[] $results */
         $results  = $this->repository->findAll();
         $accounts = [];
 

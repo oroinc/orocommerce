@@ -148,6 +148,7 @@ services:
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@oro_website.provider.website_localization'
+            - '@oro_website_search.manager.website_context_manager'
         tags:
             - { name: kernel.event_listener, event: oro_website_search.event.index_entity.product, method: onWebsiteSearchIndex }
 
@@ -168,3 +169,10 @@ services:
             - '@event_dispatcher'
         tags:
             - { name: doctrine.event_listener, event: onFlush }
+
+    oro_catalog.category_exists_listener:
+        class: Oro\Bundle\CatalogBundle\EventListener\CategoryExistsListener
+        arguments:
+            - '@oro_catalog.repository.category'
+        tags:
+            - { name: kernel.event_listener, event: kernel.controller }

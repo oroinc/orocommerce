@@ -11,12 +11,12 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
 use Oro\Bundle\CustomerBundle\Indexer\ProductVisibilityIndexer;
 use Oro\Bundle\CustomerBundle\Model\ProductVisibilitySearchQueryModifier;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\SearchBundle\Query\Criteria\Comparison as SearchComparison;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\AccountIdPlaceholder;
 use Oro\Bundle\WebsiteSearchBundle\Provider\PlaceholderProvider;
 

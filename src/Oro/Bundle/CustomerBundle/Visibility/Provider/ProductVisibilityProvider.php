@@ -7,12 +7,12 @@ use Doctrine\ORM\Query\Expr\Join;
 
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
-use Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
-use Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
 use Oro\Bundle\CustomerBundle\Visibility\ProductVisibilityTrait;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
@@ -46,18 +46,112 @@ class ProductVisibilityProvider
      */
     public function getAccountVisibilitiesForProducts(array $products, $websiteId)
     {
-        $qb = $this->createProductsQuery($products);
+        $website = $this->getWebsiteById($websiteId);
 
-        $qb->join(Account::class, 'account', Join::WITH, 'account.id <> 0');
+        $productsWithCategoryConfigVisibility = $this->getProductsByDefaultVisibility(
+            $this->getCategoryConfigValue(),
+            $products,
+            $website
+        );
 
-        $visibilityTerm = $this->getTotalAccountsProductVisibilityResolvedTerm($qb, $this->getWebsiteById($websiteId));
+        $accountsData = $this->getAccountsDataBasedOnAccountGroupProductVisibility(
+            $website,
+            $productsWithCategoryConfigVisibility,
+            $this->getCategoryConfigValue()
+        );
 
-        $qb
-            ->addSelect('account.id as accountId')
-            ->andWhere($qb->expr()->neq($visibilityTerm, $this->getCategoryConfigValue()))
-            ->addOrderBy('accountId', Query::ORDER_ASC);
+        $accountsData = array_merge(
+            $accountsData,
+            $this->getAccountsDataBasedOnAccountProductVisibility(
+                $website,
+                $productsWithCategoryConfigVisibility,
+                $this->getCategoryConfigValue()
+            )
+        );
 
-        return $qb->getQuery()->getArrayResult();
+        $accountsData = array_merge($accountsData, $this->processInverseProducts($products, $website));
+
+        usort($accountsData, [$this, 'compare']);
+
+        return $accountsData;
+    }
+
+    /**
+     * @param array $a
+     * @param array $b
+     * @return int
+     */
+    private function compare(array $a, array $b)
+    {
+        if ($a['productId'] === $b['productId']) {
+            return $a['accountId'] - $b['accountId'];
+        }
+
+        return $a['productId'] - $b['productId'];
+    }
+
+    /**
+     * @param array $products
+     * @param Website $website
+     * @return array
+     */
+    private function processInverseProducts(array $products, Website $website)
+    {
+        $productsWithCategoryConfigVisibility = $this->getProductsByDefaultVisibility(
+            $this->getInverseCategoryConfigValue(),
+            $products,
+            $website
+        );
+
+        $accountsData = $this->getAccountsDataBasedOnAccountGroupProductVisibility(
+            $website,
+            $productsWithCategoryConfigVisibility,
+            $this->getInverseCategoryConfigValue()
+        );
+
+        $accountsData = array_merge(
+            $accountsData,
+            $this->getAccountsDataBasedOnAccountProductVisibility(
+                $website,
+                $productsWithCategoryConfigVisibility,
+                $this->getInverseCategoryConfigValue()
+            )
+        );
+
+        return array_udiff(
+            $this->getAllAccountsData($productsWithCategoryConfigVisibility),
+            $accountsData,
+            [$this, 'compare']
+        );
+    }
+
+    /**
+     * @return array
+     */
+    private function getAccountIds()
+    {
+        $queryBuilder = $this->doctrineHelper->getEntityManagerForClass(Account::class)->createQueryBuilder();
+        $queryBuilder
+            ->select('account.id as accountIid')
+            ->from(Account::class, 'account');
+
+        return array_column($queryBuilder->getQuery()->getArrayResult(), 'accountIid');
+    }
+
+    /**
+     * @param array $productIds
+     * @return array
+     */
+    private function getAllAccountsData(array $productIds)
+    {
+        $data = [];
+        foreach ($productIds as $productId) {
+            foreach ($this->getAccountIds() as $accountId) {
+                $data[] = ['productId' => $productId, 'accountId' => $accountId];
+            }
+        }
+
+        return $data;
     }
 
     /**
@@ -164,22 +258,6 @@ class ProductVisibilityProvider
     }
 
     /**
-     * @param QueryBuilder $queryBuilder
-     * @param Website $website
-     * @return string
-     */
-    private function getTotalAccountsProductVisibilityResolvedTerm(QueryBuilder $queryBuilder, Website $website)
-    {
-        $productVisibilityTerms = [
-            $this->getProductVisibilityResolvedTermByWebsite($queryBuilder, $website),
-            $this->getAllAccountGroupsProductVisibilityResolvedTerm($queryBuilder, $website),
-            $this->getAllAccountsProductVisibilityResolvedTerm($queryBuilder, $website)
-        ];
-
-        return $this->getVisibilityConditionForVisibilityTerms($productVisibilityTerms);
-    }
-
-    /**
      * @param array $visibilityTerms
      * @return string
      */
@@ -198,65 +276,64 @@ class ProductVisibilityProvider
      * @param Website $website
      * @return string
      */
-    private function getAllAccountsProductVisibilityResolvedTerm(QueryBuilder $queryBuilder, Website $website)
-    {
-        $queryBuilder->leftJoin(
-            'Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved',
-            'account_product_visibility_resolved',
-            Join::WITH,
-            $queryBuilder->expr()->andX(
-                $queryBuilder->expr()->eq(
-                    $this->getRootAlias($queryBuilder),
-                    'account_product_visibility_resolved.product'
-                ),
-                $queryBuilder->expr()->eq('account_product_visibility_resolved.account', 'account'),
-                $queryBuilder->expr()->eq('account_product_visibility_resolved.website', ':_website')
+    private function getAllAccountGroupsProductVisibilityResolvedTerm(
+        QueryBuilder $queryBuilder,
+        Website $website
+    ) {
+        $accountProductVisibilitySubquery = $this->doctrineHelper
+            ->getEntityManagerForClass(AccountProductVisibilityResolved::class)
+            ->createQueryBuilder();
+
+        $accountProductVisibilitySubquery
+            ->select('IDENTITY(accountProductVisibilityScope.account)')
+            ->from(AccountProductVisibilityResolved::class, 'accountProductVisibilityResolved')
+            ->innerJoin(
+                'accountProductVisibilityResolved.scope',
+                'accountProductVisibilityScope',
+                Join::WITH,
+                $accountProductVisibilitySubquery->expr()->orX(
+                    $accountProductVisibilitySubquery->expr()->isNull('accountProductVisibilityScope.website'),
+                    $accountProductVisibilitySubquery->expr()->eq('accountProductVisibilityScope.website', ':_website')
+                )
             )
-        );
+            ->where(
+                $accountProductVisibilitySubquery->expr()->andX(
+                    $accountProductVisibilitySubquery->expr()->eq(
+                        'accountProductVisibilityResolved.product',
+                        'account_group_product_visibility_resolved.product'
+                    ),
+                    $accountProductVisibilitySubquery->expr()->eq('accountProductVisibilityScope.account', 'account')
+                )
+            );
 
-        $queryBuilder->setParameter('_website', $website);
-
-        $productFallback = $this->addCategoryConfigFallback('product_visibility_resolved.visibility');
-        $accountFallback = $this->addCategoryConfigFallback('account_product_visibility_resolved.visibility');
-
-        $term = <<<TERM
-CASE WHEN account_product_visibility_resolved.visibility = %s
-    THEN (COALESCE(%s, %s) * 100)
-ELSE (COALESCE(%s, 0) * 100)
-END
-TERM;
-        return sprintf(
-            $term,
-            AccountProductVisibilityResolved::VISIBILITY_FALLBACK_TO_ALL,
-            $productFallback,
-            $this->getProductConfigValue(),
-            $accountFallback
-        );
-    }
-
-    /**
-     * @param QueryBuilder $queryBuilder
-     * @param Website $website
-     * @return string
-     */
-    private function getAllAccountGroupsProductVisibilityResolvedTerm(QueryBuilder $queryBuilder, Website $website)
-    {
-        $queryBuilder->leftJoin(
-            'Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\AccountGroupProductVisibilityResolved',
-            'account_group_product_visibility_resolved',
-            Join::WITH,
-            $queryBuilder->expr()->andX(
+        $queryBuilder
+            ->innerJoin(
+                'OroVisibilityBundle:VisibilityResolved\AccountGroupProductVisibilityResolved',
+                'account_group_product_visibility_resolved',
+                Join::WITH,
                 $queryBuilder->expr()->eq(
                     $this->getRootAlias($queryBuilder),
                     'account_group_product_visibility_resolved.product'
-                ),
-                $queryBuilder->expr()->eq(
-                    'account_group_product_visibility_resolved.accountGroup',
-                    'account.group'
-                ),
-                $queryBuilder->expr()->eq('account_group_product_visibility_resolved.website', ':_website')
+                )
             )
-        );
+            ->innerJoin(
+                'account_group_product_visibility_resolved.scope',
+                'accountGroupScope',
+                Join::WITH,
+                $queryBuilder->expr()->orX(
+                    $queryBuilder->expr()->eq('accountGroupScope.website', ':_website'),
+                    $queryBuilder->expr()->isNull('accountGroupScope.website')
+                )
+            )
+            ->innerJoin(
+                'OroCustomerBundle:Account',
+                'account',
+                Join::WITH,
+                'account.group = accountGroupScope.accountGroup'
+            )
+            ->andWhere($queryBuilder->expr()->not(
+                $queryBuilder->expr()->exists($accountProductVisibilitySubquery->getDQL())
+            ));
 
         $queryBuilder->setParameter('_website', $website);
 
@@ -282,5 +359,141 @@ TERM;
             ->addOrderBy('productId', Query::ORDER_ASC);
 
         return $qb;
+    }
+
+    /**
+     * @param int $fallbackProductVisibility
+     * @return string
+     */
+    private function getAccountProductVisibilityResolvedTerm($fallbackProductVisibility)
+    {
+        $accountFallback = $this->addCategoryConfigFallback('account_product_visibility_resolved.visibility');
+
+        return $this->getAccountProductVisibilityResolvedVisibilityTerm($fallbackProductVisibility, $accountFallback);
+    }
+
+    /**
+     * @param Website $website
+     * @param array $products
+     * @param int $productVisibility
+     * @return array
+     */
+    private function getAccountsDataBasedOnAccountProductVisibility(
+        Website $website,
+        $products,
+        $productVisibility
+    ) {
+        $queryBuilder = $this->createProductsQuery($products);
+
+        $queryBuilder
+            ->innerJoin(
+                'OroVisibilityBundle:VisibilityResolved\AccountProductVisibilityResolved',
+                'account_product_visibility_resolved',
+                Join::WITH,
+                $queryBuilder->expr()->eq(
+                    $this->getRootAlias($queryBuilder),
+                    'account_product_visibility_resolved.product'
+                )
+            )
+            ->innerJoin(
+                'account_product_visibility_resolved.scope',
+                'scope',
+                Join::WITH,
+                $queryBuilder->expr()->orX(
+                    $queryBuilder->expr()->eq('scope.website', ':accountsWebsite'),
+                    $queryBuilder->expr()->isNull('scope.website')
+                )
+            );
+
+        $queryBuilder->setParameter('accountsWebsite', $website);
+
+        $accountVisibilityTerm = $this->getAccountProductVisibilityResolvedTerm($productVisibility);
+        $accountVisibilityCondition = $this->getVisibilityConditionForVisibilityTerms([$accountVisibilityTerm]);
+
+        $queryBuilder
+            ->select('product.id as productId, IDENTITY(scope.account) as accountId')
+            ->andWhere(
+                $queryBuilder->expr()->eq($accountVisibilityCondition, $this->inverseVisibility($productVisibility))
+            );
+
+        return $queryBuilder->getQuery()->getArrayResult();
+    }
+
+    /**
+     * @param Website $website
+     * @param array $products
+     * @param int $productVisibility
+     * @return array
+     */
+    private function getAccountsDataBasedOnAccountGroupProductVisibility(
+        Website $website,
+        $products,
+        $productVisibility
+    ) {
+        $queryBuilder = $this->createProductsQuery($products);
+
+        $accountGroupVisibilityTerm = $this->getAllAccountGroupsProductVisibilityResolvedTerm(
+            $queryBuilder,
+            $website
+        );
+        $accountGroupVisibilityCondition = $this->getVisibilityConditionForVisibilityTerms([
+            $accountGroupVisibilityTerm
+        ]);
+
+        $queryBuilder
+            ->select('product.id as productId, account.id as accountId')
+            ->andWhere(
+                $queryBuilder->expr()->eq(
+                    $accountGroupVisibilityCondition,
+                    $this->inverseVisibility($productVisibility)
+                )
+            )
+            ->addOrderBy('account.id', 'ASC');
+
+        return $queryBuilder->getQuery()->getArrayResult();
+    }
+
+    /**
+     * Returns products from $products for given $website which visibility equals to $defaultVisibility.
+     *
+     * @param $defaultVisibility
+     * @param $products
+     * @param Website $website
+     * @return array
+     */
+    private function getProductsByDefaultVisibility($defaultVisibility, $products, Website $website)
+    {
+        $queryBuilder = $this->createProductsQuery($products);
+
+        $productVisibilityTerm = $this->getProductVisibilityResolvedTermByWebsite($queryBuilder, $website);
+        $productVisibilityCondition = $this->getVisibilityConditionForVisibilityTerms([$productVisibilityTerm]);
+
+        $queryBuilder
+            ->select('product.id as productId')
+            ->andWhere($queryBuilder->expr()->eq($productVisibilityCondition, $defaultVisibility))
+            ->addOrderBy('product.id');
+
+        $productsResult = $queryBuilder->getQuery()->getArrayResult();
+
+        return array_column($productsResult, 'productId');
+    }
+
+    /**
+     * @return int
+     */
+    private function getInverseCategoryConfigValue()
+    {
+        return $this->inverseVisibility($this->getCategoryConfigValue());
+    }
+
+    /**
+     * @param int $visibility
+     * @return int
+     */
+    private function inverseVisibility($visibility)
+    {
+        return $visibility === BaseVisibilityResolved::VISIBILITY_VISIBLE
+            ? BaseVisibilityResolved::VISIBILITY_HIDDEN
+            : BaseVisibilityResolved::VISIBILITY_VISIBLE;
     }
 }

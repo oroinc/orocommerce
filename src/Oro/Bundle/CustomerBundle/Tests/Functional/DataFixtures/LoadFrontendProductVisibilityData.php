@@ -10,6 +10,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
 
 class LoadFrontendProductVisibilityData extends ContainerAwareFixture implements DependentFixtureInterface
 {
@@ -33,7 +34,7 @@ class LoadFrontendProductVisibilityData extends ContainerAwareFixture implements
      */
     public function load(ObjectManager $manager)
     {
-        $this->container->get('oro_customer.visibility.cache.product.cache_builder')->buildCache();
+        $this->container->get('oro_visibility.visibility.cache.product.cache_builder')->buildCache();
         $this->container->get('event_dispatcher')->dispatch(
             ReindexationRequestEvent::EVENT_NAME,
             new ReindexationRequestEvent([Product::class], [], [], false)

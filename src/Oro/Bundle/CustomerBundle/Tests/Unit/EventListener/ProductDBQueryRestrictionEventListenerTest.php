@@ -4,10 +4,10 @@ namespace Oro\Bundle\CustomerBundle\Tests\Unit\EventListener;
 
 use Doctrine\ORM\QueryBuilder;
 
-use Oro\Bundle\CustomerBundle\Model\ProductVisibilityQueryBuilderModifier;
 use Oro\Bundle\CustomerBundle\EventListener\ProductDBQueryRestrictionEventListener;
 use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\ProductBundle\Event\ProductDBQueryRestrictionEvent;
+use Oro\Bundle\VisibilityBundle\Model\ProductVisibilityQueryBuilderModifier;
 
 class ProductDBQueryRestrictionEventListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -34,7 +34,7 @@ class ProductDBQueryRestrictionEventListenerTest extends \PHPUnit_Framework_Test
         $this->frontendHelper = $this->getMockBuilder('Oro\Bundle\FrontendBundle\Request\FrontendHelper')
             ->disableOriginalConstructor()->getMock();
         $this->modifier = $this
-            ->getMockBuilder('Oro\Bundle\CustomerBundle\Model\ProductVisibilityQueryBuilderModifier')
+            ->getMockBuilder(\Oro\Bundle\VisibilityBundle\Model\ProductVisibilityQueryBuilderModifier::class)
             ->disableOriginalConstructor()->getMock();
         $this->listener = new ProductDBQueryRestrictionEventListener(
             $this->frontendHelper,

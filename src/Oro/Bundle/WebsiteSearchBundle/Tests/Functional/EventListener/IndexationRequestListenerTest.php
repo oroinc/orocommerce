@@ -180,12 +180,14 @@ class IndexationRequestListenerTest extends WebTestCase
          */
         $em = $this->client->getContainer()->get('doctrine.orm.entity_manager');
 
+        $productId = $product->getId(); // retrieve now, cause after removing, it will be NULL
+
         $em->remove($product);
         $em->flush();
 
         $this->assertNotNull($triggeredEvent, 'Event was not triggered.');
         $this->assertContains(TestProduct::class, $triggeredEvent->getClassesNames());
-        $this->assertContains($product->getId(), $triggeredEvent->getIds());
+        $this->assertContains($productId, $triggeredEvent->getIds());
     }
 
     /**

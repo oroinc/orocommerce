@@ -7,14 +7,14 @@ use Symfony\Component\HttpFoundation\Request;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Driver\AccountPartialUpdateDriverInterface;
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\Visibility\AccountProductVisibility;
-use Oro\Bundle\CustomerBundle\Entity\Visibility\Repository\AccountProductVisibilityRepository;
-use Oro\Bundle\CustomerBundle\Entity\Visibility\VisibilityInterface;
-use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountProductVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\AccountProductVisibilityRepository;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
+use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Traits\DefaultWebsiteIdTestTrait;
 
@@ -25,8 +25,8 @@ abstract class AbstractAccountPartialUpdateDriverTest extends WebTestCase
 {
     use DefaultWebsiteIdTestTrait;
 
-    const PRODUCT_VISIBILITY_CONFIGURATION_PATH = 'oro_customer.product_visibility';
-    const CATEGORY_VISIBILITY_CONFIGURATION_PATH = 'oro_customer.category_visibility';
+    const PRODUCT_VISIBILITY_CONFIGURATION_PATH = 'oro_visibility.product_visibility';
+    const CATEGORY_VISIBILITY_CONFIGURATION_PATH = 'oro_visibility.category_visibility';
 
     /**
      * @var ConfigManager
@@ -54,7 +54,7 @@ abstract class AbstractAccountPartialUpdateDriverTest extends WebTestCase
             $this->configManager->set('oro_customer.anonymous_account_group', $anonymousGroupId);
 
             $this->driver = $this->getContainer()->get('oro_website_search.driver.account_partial_update_driver');
-            $this->getContainer()->get('oro_customer.visibility.cache.product.cache_builder')->buildCache();
+            $this->getContainer()->get('oro_visibility.visibility.cache.product.cache_builder')->buildCache();
         }
     }
 
@@ -83,7 +83,7 @@ abstract class AbstractAccountPartialUpdateDriverTest extends WebTestCase
             ->select('sku')
             ->from('oro_product_WEBSITE_ID')
             ->getCriteria()
-            ->andWhere(Criteria::expr()->eq($this->getVisibilityAccountFieldName($account), 1))
+            ->andWhere(Criteria::expr()->exists($this->getVisibilityAccountFieldName($account)))
             ->orderBy(['sku' => Criteria::ASC]);
 
         $searchEngine = $this->getContainer()->get('oro_website_search.engine');
@@ -155,18 +155,21 @@ abstract class AbstractAccountPartialUpdateDriverTest extends WebTestCase
         /** @var AccountProductVisibilityRepository $visibilityRepository */
         $visibilityRepository = $visibilityManager->getRepository(AccountProductVisibility::class);
 
+        $scope = $this->getContainer()
+            ->get('oro_customer.provider.visibility_scope_provider')
+            ->getAccountProductVisibilityScope($account, $this->getDefaultWebsite());
+
         /** @var AccountProductVisibility $productVisibility */
         $productVisibility = $visibilityRepository->findOneBy([
-            'website' => $this->getDefaultWebsiteId(),
             'product' => $this->getReference('product.2'),
-            'account' => $account
+            'scope' => $scope
         ]);
 
         $productVisibility->setVisibility(VisibilityInterface::VISIBLE);
         $visibilityManager->persist($productVisibility);
         $visibilityManager->flush();
 
-        $this->getContainer()->get('oro_customer.visibility.cache.product.cache_builder')->buildCache();
+        $this->getContainer()->get('oro_visibility.visibility.cache.product.cache_builder')->buildCache();
 
         $this->driver->updateAccountVisibility($account);
 

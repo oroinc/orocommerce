@@ -15,6 +15,7 @@ class ShippingRuleTest extends \PHPUnit_Framework_TestCase
 
     public function testProperties()
     {
+        $now = new \DateTime('now');
         $properties = [
             ['id', '123'],
             ['name', 'Test Rule'],
@@ -23,6 +24,8 @@ class ShippingRuleTest extends \PHPUnit_Framework_TestCase
             ['conditions', 'Subtotal > 50 USD AND Subtotal <= 100 USD'],
             ['currency', 'USD'],
             ['stopProcessing', 'USD'],
+            ['createdAt', $now, false],
+            ['updatedAt', $now, false],
         ];
 
         $rule = new ShippingRule();
@@ -103,5 +106,23 @@ class ShippingRuleTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($priority, $shippingRuleCopy->getPriority());
         $this->assertEquals($conditions, $shippingRuleCopy->getConditions());
         $this->assertEquals($currency, $shippingRuleCopy->getCurrency());
+    }
+
+    public function testPrePersist()
+    {
+        $entity = new ShippingRule();
+        $this->assertNull($entity->getCreatedAt());
+        $this->assertNull($entity->getUpdatedAt());
+        $entity->prePersist();
+        $this->assertInstanceOf('\DateTime', $entity->getCreatedAt());
+        $this->assertInstanceOf('\DateTime', $entity->getUpdatedAt());
+    }
+
+    public function testPreUpdate()
+    {
+        $entity = new ShippingRule();
+        $this->assertNull($entity->getUpdatedAt());
+        $entity->preUpdate();
+        $this->assertInstanceOf('\DateTime', $entity->getUpdatedAt());
     }
 }

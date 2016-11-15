@@ -221,3 +221,9 @@ services:
         arguments:
             - '@oro_website_search.placeholder_decorator'
             - '@oro_website_search.provider.search_mapping'
+
+    oro_website_search.manager.website_context_manager:
+        class: 'Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager'
+        public: false
+        arguments:
+            - '@oro_entity.doctrine_helper'

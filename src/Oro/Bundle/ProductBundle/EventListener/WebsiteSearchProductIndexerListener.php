@@ -2,23 +2,20 @@
 
 namespace Oro\Bundle\ProductBundle\EventListener;
 
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteBundle\Provider\AbstractWebsiteLocalizationProvider;
 use Oro\Bundle\WebsiteBundle\Provider\WebsiteLocalizationProvider;
-use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
+use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
 
 class WebsiteSearchProductIndexerListener
 {
-    use ContextTrait;
-
     /**
-     * @var DoctrineHelper
+     * @var WebsiteContextManager
      */
-    private $doctrineHelper;
+    private $websiteContextManger;
 
     /**
      * @var WebsiteLocalizationProvider
@@ -26,15 +23,15 @@ class WebsiteSearchProductIndexerListener
     private $websiteLocalizationProvider;
 
     /**
-     * @param DoctrineHelper $doctrineHelper
      * @param AbstractWebsiteLocalizationProvider $websiteLocalizationProvider
+     * @param WebsiteContextManager $websiteContextManager
      */
     public function __construct(
-        DoctrineHelper $doctrineHelper,
-        AbstractWebsiteLocalizationProvider $websiteLocalizationProvider
+        AbstractWebsiteLocalizationProvider $websiteLocalizationProvider,
+        WebsiteContextManager $websiteContextManager
     ) {
-        $this->doctrineHelper = $doctrineHelper;
         $this->websiteLocalizationProvider = $websiteLocalizationProvider;
+        $this->websiteContextManger = $websiteContextManager;
     }
 
     /**
@@ -42,12 +39,15 @@ class WebsiteSearchProductIndexerListener
      */
     public function onWebsiteSearchIndex(IndexEntityEvent $event)
     {
+        $websiteId = $this->websiteContextManger->getWebsiteId($event->getContext());
+        if (!$websiteId) {
+            $event->stopPropagation();
+
+            return;
+        }
+
         /** @var Product[] $products */
         $products = $event->getEntities();
-
-        $context = $event->getContext();
-
-        $websiteId = $this->getContextCurrentWebsiteId($context);
 
         $localizations = $this->websiteLocalizationProvider->getLocalizationsByWebsiteId($websiteId);
 
