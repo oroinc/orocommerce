@@ -9,7 +9,6 @@ use Box\Spout\Reader\ReaderInterface;
 
 use Doctrine\ORM\EntityRepository;
 
-
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -137,24 +136,6 @@ class QuickAddRowCollectionBuilder
 
         return $collection;
     }
-
-
-    /**
-     * @param string[] $skus
-     * @return Product[]
-     */
-    private function getProductsBySkus(array $skus)
-    {
-        $products = $this->productRepository->getProductWithNamesBySku($skus);
-        $productsBySku = [];
-
-        foreach ($products as $product) {
-            $productsBySku[strtoupper($product->getSku())] = $product;
-        }
-
-        return $productsBySku;
-    }
-
 
     /**
      * @param string[] $skus

@@ -85,7 +85,6 @@ class QuickAddRowCollectionBuilderTest extends \PHPUnit_Framework_TestCase
         $configuration->method('getDefaultQueryHints')->willReturn([]);
         $connection = $this->getMockBuilder(Connection::class)->disableOriginalConstructor()->getMock();
 
-
         $em = $this->getMockBuilder(EntityManager::class)->disableOriginalConstructor()->getMock();
         $em->method('getConfiguration')->willReturn($configuration);
         $em->method('getConnection')->willReturn($connection);
@@ -96,7 +95,6 @@ class QuickAddRowCollectionBuilderTest extends \PHPUnit_Framework_TestCase
         $hydrRef = new \ReflectionProperty(AbstractHydrator::class, '_hints');
         $hydrRef->setAccessible(true);
         $hydrRef->setValue($hydrator, []);
-
 
         $em->method('newHydrator')->willReturn($hydrator);
 
