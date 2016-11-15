@@ -3,6 +3,7 @@
 }
 
 .main-menu {
+    display: -webkit-flex;
     display: flex;
     flex-grow: 1;
 
@@ -16,6 +17,7 @@
     border-bottom: 0;
 
     &__item {
+        -webkit-flex-grow: 1;
         flex-grow: 1;
     }
 
