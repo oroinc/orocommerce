@@ -121,20 +121,6 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
     {
         $request = Request::create('/get');
 
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
-
-        // TODO REMOVE IT IN BB-5245
-        $formAccessor = $this->getMock('Oro\Bundle\LayoutBundle\Layout\Form\FormAccessorInterface');
-        $this->productFormProvider
-            ->expects($this->never())
-            ->method('getQuickAddForm')
-            ->willReturn($formAccessor);
-
-        $formAccessor->expects($this->never())
-            ->method('getForm')
-            ->with([])
-            ->willReturn($form);
-
         $this->assertEquals(null, $this->handler->process($request, 'reload'));
     }
 
