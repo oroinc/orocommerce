@@ -7,7 +7,7 @@ define(function(require) {
     var __ = require('orotranslation/js/translator');
     var mediator = require('oroui/js/mediator');
     var layout = require('oroui/js/layout');
-    var BaseView = require('oroui/js/app/views/base/view');
+    var LineItemProductView = require('oroproduct/js/app/views/line-item-product-view');
     var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
     var routing = require('routing');
     var messenger = require('oroui/js/messenger');
@@ -17,7 +17,7 @@ define(function(require) {
      * @extends oroui.app.views.base.View
      * @class ororfp.app.views.LineItemView
      */
-    LineItemView = BaseView.extend({
+    LineItemView = LineItemProductView.extend({
         /**
          * @property {Object}
          */
@@ -78,6 +78,8 @@ define(function(require) {
                 this.options.ftid = this.$el.data('content').toString()
                     .replace(/[^a-zA-Z0-9]+/g, '_').replace(/_+$/, '');
             }
+
+            LineItemView.__super__.initialize.apply(this, arguments);
 
             this.delegate('click', '.removeLineItem', this.removeRow);
 
@@ -224,7 +226,7 @@ define(function(require) {
                 return;
             }
             LineItemView.__super__.dispose.call(this);
-        },
+        }
     });
 
     return LineItemView;

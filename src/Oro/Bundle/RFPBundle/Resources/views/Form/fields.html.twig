@@ -373,7 +373,7 @@
 {% endmacro %}
 
 {% block oro_rfp_frontend_request_product_widget %}
-    {% set attr = layout_attr_defaults(attr, {
+    {% set attr = layout_attr_defaults(form.product.vars.attr, {
         'data-role': 'lineitem-product'
     }) %}
     <div class="request-form-editline__product">

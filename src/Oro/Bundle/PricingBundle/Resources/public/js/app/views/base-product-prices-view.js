@@ -87,13 +87,15 @@ define(function(require) {
 
         renderHint: function() {
             var $pricesHint = this.getElement('pricesHint');
-            var content = this.getHintContent();
-
-            if (!$pricesHint.length || !content.length) {
+            if (!$pricesHint.length) {
                 return;
             }
 
+            var content = this.getHintContent();
             $pricesHint.toggleClass('disabled', content.length === 0);
+            if (!content.length) {
+                return;
+            }
 
             if (!$pricesHint.data('popover')) {
                 layout.initPopoverForElements($pricesHint, {
