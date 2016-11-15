@@ -75,9 +75,9 @@ class ProductVisibilityTest extends WebTestCase
                 'configValue' => ProductVisibility::VISIBLE,
                 'expectedData' => [
                     LoadProductData::PRODUCT_1 => 200,
-                    LoadProductData::PRODUCT_2 => 403,
-                    LoadProductData::PRODUCT_3 => 403,
-                    LoadProductData::PRODUCT_4 => 403, // inventoryStatus: discontinued and visibility: hidden
+                    LoadProductData::PRODUCT_2 => 404,
+                    LoadProductData::PRODUCT_3 => 404,
+                    LoadProductData::PRODUCT_4 => 404, // inventoryStatus: discontinued and visibility: hidden
                     LoadProductData::PRODUCT_5 => 200,
                     LoadProductData::PRODUCT_6 => 200,
                     LoadProductData::PRODUCT_7 => 200,
@@ -88,11 +88,11 @@ class ProductVisibilityTest extends WebTestCase
                 'configValue' => ProductVisibility::HIDDEN,
                 'expectedData' => [
                     LoadProductData::PRODUCT_1 => 200,
-                    LoadProductData::PRODUCT_2 => 403,
-                    LoadProductData::PRODUCT_3 => 403,
-                    LoadProductData::PRODUCT_4 => 403, // inventoryStatus: discontinued and visibility: hidden
-                    LoadProductData::PRODUCT_5 => 403, // status: disabled
-                    LoadProductData::PRODUCT_6 => 403, // config for Default website only, visibility is for US
+                    LoadProductData::PRODUCT_2 => 404,
+                    LoadProductData::PRODUCT_3 => 404,
+                    LoadProductData::PRODUCT_4 => 404, // inventoryStatus: discontinued and visibility: hidden
+                    LoadProductData::PRODUCT_5 => 404, // status: disabled
+                    LoadProductData::PRODUCT_6 => 404, // config for Default website only, visibility is for US
                     LoadProductData::PRODUCT_7 => 200, // config for Default website only, visibility is for US
                     LoadProductData::PRODUCT_8 => 200, // config for Default website only, visibility is for US
                 ]
