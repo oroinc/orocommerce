@@ -12,6 +12,7 @@ oro.cms:
             label:              'Slugs'
             singular_label:     'Slug'
         form.choose:            'Choose a Landing Page...'
+        content_variant_type.label: 'Landing Page'
 
     controller:
         page.saved.message: 'Page has been saved'

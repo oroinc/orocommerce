@@ -1,17 +1,17 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Tests\Unit\ContentVariant;
+namespace Oro\Bundle\CMSBundle\Tests\Unit\ContentVariantType;
 
-use Oro\Bundle\ProductBundle\ContentVariantType\ProductPageContentVariantType;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Form\Type\ProductPageVariantType;
-use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ContentVariantStub;
+use Oro\Bundle\CMSBundle\Entity\Page;
+use Oro\Bundle\CMSBundle\Form\Type\CmsPageVariantType;
+use Oro\Bundle\CMSBundle\Tests\Unit\ContentVariantType\Stub\ContentVariantStub;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
+use Oro\Bundle\CMSBundle\ContentVariantType\CmsPageContentVariantType;
 use Oro\Component\WebCatalog\RouteData;
 
-class ProductPageContentVariantTypeTest extends \PHPUnit_Framework_TestCase
+class CmsPageContentVariantTypeTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
 
@@ -21,7 +21,7 @@ class ProductPageContentVariantTypeTest extends \PHPUnit_Framework_TestCase
     private $securityFacade;
 
     /**
-     * @var ProductPageContentVariantType
+     * @var CmsPageContentVariantType
      */
     private $type;
 
@@ -31,29 +31,29 @@ class ProductPageContentVariantTypeTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->type = new ProductPageContentVariantType($this->securityFacade, $this->getPropertyAccessor());
+        $this->type = new CmsPageContentVariantType($this->securityFacade, $this->getPropertyAccessor());
     }
 
     public function testGetName()
     {
-        $this->assertEquals('product_page', $this->type->getName());
+        $this->assertEquals('cms_page', $this->type->getName());
     }
 
     public function testGetTitle()
     {
-        $this->assertEquals('oro.product.entity_label', $this->type->getTitle());
+        $this->assertEquals('oro.cms.page.entity_label', $this->type->getTitle());
     }
 
     public function testGetFormType()
     {
-        $this->assertEquals(ProductPageVariantType::class, $this->type->getFormType());
+        $this->assertEquals(CmsPageVariantType::class, $this->type->getFormType());
     }
 
     public function testIsAllowed()
     {
         $this->securityFacade->expects($this->once())
             ->method('isGranted')
-            ->with('oro_product_view')
+            ->with('oro_cms_page_view')
             ->willReturn(true);
         $this->assertTrue($this->type->isAllowed());
     }
@@ -72,7 +72,7 @@ class ProductPageContentVariantTypeTest extends \PHPUnit_Framework_TestCase
         $contentVariant = $this->getMock(ContentVariantInterface::class);
         $contentVariant->expects($this->once())
             ->method('getType')
-            ->willReturn('product_page');
+            ->willReturn('cms_page');
 
         $this->assertTrue($this->type->isSupportedPage($contentVariant));
     }
@@ -81,12 +81,13 @@ class ProductPageContentVariantTypeTest extends \PHPUnit_Framework_TestCase
     {
         /** @var ContentVariantStub **/
         $contentVariant = new ContentVariantStub();
-        /** @var Product $product */
-        $product = $this->getEntity(Product::class, ['id' => 42]);
-        $contentVariant->setProductPageProduct($product);
+        
+        /** @var Page $page */
+        $page = $this->getEntity(Page::class, ['id' => 42]);
+        $contentVariant->setCmsPage($page);
 
         $this->assertEquals(
-            new RouteData('oro_product_frontend_product_view', ['id' => 42]),
+            new RouteData('oro_cms_frontend_page_view', ['id' => 42]),
             $this->type->getRouteData($contentVariant)
         );
     }
