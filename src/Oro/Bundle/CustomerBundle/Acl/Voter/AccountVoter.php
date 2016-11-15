@@ -5,6 +5,7 @@ namespace Oro\Bundle\CustomerBundle\Acl\Voter;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Security\Acl\Permission\BasicPermissionMap;
+use Symfony\Component\Security\Core\Authentication\AuthenticationTrustResolverInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 use Oro\Bundle\EntityBundle\Exception\NotManageableEntityException;
@@ -12,6 +13,7 @@ use Oro\Bundle\SecurityBundle\Acl\Voter\AbstractEntityVoter;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\CustomerBundle\Entity\AccountOwnerAwareInterface;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Provider\AccountUserRelationsProvider;
 use Oro\Bundle\CustomerBundle\Security\AccountUserProvider;
 
 class AccountVoter extends AbstractEntityVoter implements ContainerAwareInterface
@@ -67,7 +69,7 @@ class AccountVoter extends AbstractEntityVoter implements ContainerAwareInterfac
      */
     public function supportsClass($class)
     {
-        return is_a($class, 'Oro\Bundle\CustomerBundle\Entity\AccountOwnerAwareInterface', true);
+        return is_a($class, AccountOwnerAwareInterface::class, true);
     }
 
     /**
@@ -75,12 +77,13 @@ class AccountVoter extends AbstractEntityVoter implements ContainerAwareInterfac
      */
     public function vote(TokenInterface $token, $object, array $attributes)
     {
-        if (!$token->getUser() instanceof AccountUser) {
+        $user = $this->getUser($token);
+        if (!$user instanceof AccountUser) {
             return self::ACCESS_ABSTAIN;
         }
 
         $this->object = $object;
-        $this->user = $token->getUser();
+        $this->user = $user;
 
         if (!$object || !is_object($object)) {
             return self::ACCESS_ABSTAIN;
@@ -99,6 +102,24 @@ class AccountVoter extends AbstractEntityVoter implements ContainerAwareInterfac
     }
 
     /**
+     * @param TokenInterface $token
+     * @return mixed
+     */
+    protected function getUser(TokenInterface $token)
+    {
+        $trustResolver = $this->getAuthenticationTrustResolver();
+        if ($trustResolver->isAnonymous($token)) {
+            $user = new AccountUser();
+            $relationsProvider = $this->getRelationsProvider();
+            $user->setAccount($relationsProvider->getAccountIncludingEmpty());
+
+            return $user;
+        }
+
+        return $token->getUser();
+    }
+
+    /**
      * {@inheritdoc}
      */
     protected function getPermissionForAttribute($class, $identifier, $attribute)
@@ -108,13 +129,11 @@ class AccountVoter extends AbstractEntityVoter implements ContainerAwareInterfac
                 return self::ACCESS_GRANTED;
             }
 
-            return self::ACCESS_ABSTAIN;
+            return self::ACCESS_DENIED;
         }
 
-        if ($this->isGrantedBasicPermission($attribute, $class)) {
-            if ($this->isSameUser($this->user, $this->object)) {
-                return self::ACCESS_GRANTED;
-            }
+        if ($this->isGrantedBasicPermission($attribute, $class) && $this->isSameUser($this->user, $this->object)) {
+            return self::ACCESS_GRANTED;
         }
 
         if ($this->isGrantedLocalPermission($attribute, $class)) {
@@ -123,7 +142,7 @@ class AccountVoter extends AbstractEntityVoter implements ContainerAwareInterfac
             }
         }
 
-        return self::ACCESS_ABSTAIN;
+        return self::ACCESS_DENIED;
     }
 
     /**
@@ -153,10 +172,8 @@ class AccountVoter extends AbstractEntityVoter implements ContainerAwareInterfac
      */
     protected function isGrantedClassPermission($attribute, $class)
     {
-        /* @var $securityFacade SecurityFacade */
-        $securityFacade = $this->getContainer()->get('oro_security.security_facade');
-
-        $descriptor = sprintf('entity:%s@%s', AccountUser::SECURITY_GROUP, $class);
+        $securityFacade = $this->getSecurityFacade();
+        $descriptor = $this->getDescriptorByClass($class);
 
         switch ($attribute) {
             case self::ATTRIBUTE_VIEW:
@@ -230,5 +247,38 @@ class AccountVoter extends AbstractEntityVoter implements ContainerAwareInterfac
     protected function getSecurityProvider()
     {
         return $this->getContainer()->get('oro_customer.security.account_user_provider');
+    }
+
+    /**
+     * @return AuthenticationTrustResolverInterface
+     */
+    protected function getAuthenticationTrustResolver()
+    {
+        return $this->getContainer()->get('security.authentication.trust_resolver');
+    }
+
+    /**
+     * @return SecurityFacade
+     */
+    protected function getSecurityFacade()
+    {
+        return $this->getContainer()->get('oro_security.security_facade');
+    }
+
+    /**
+     * @return AccountUserRelationsProvider
+     */
+    protected function getRelationsProvider()
+    {
+        return $this->getContainer()->get('oro_customer.provider.account_user_relations_provider');
+    }
+
+    /**
+     * @param string $class
+     * @return string
+     */
+    protected function getDescriptorByClass($class)
+    {
+        return sprintf('entity:%s@%s', AccountUser::SECURITY_GROUP, $class);
     }
 }

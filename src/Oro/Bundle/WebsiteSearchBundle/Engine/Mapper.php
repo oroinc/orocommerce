@@ -14,9 +14,10 @@ class Mapper
     /**
      * @param Query $query
      * @param array $item
-     * @return array|null
+     * @param array $serviceFields
+     * @return array
      */
-    public function mapSelectedData(Query $query, array $item)
+    public function mapSelectedData(Query $query, array $item, $serviceFields = [])
     {
         $selects = $query->getSelect();
         $selectAliases = $query->getSelectAliases();
@@ -37,6 +38,12 @@ class Mapper
             } else {
                 $resultName = $name;
             }
+
+            // Skip service fields
+            if (in_array($resultName, $serviceFields, true)) {
+                continue;
+            }
+
             $result[$resultName] = '';
 
             if (isset($item[$name])) {

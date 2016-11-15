@@ -6,7 +6,7 @@ use Doctrine\ORM\Event\PreUpdateEventArgs;
 
 use Oro\Bundle\CustomerBundle\Driver\AccountPartialUpdateDriverInterface;
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Model\MessageFactoryInterface;
+use Oro\Bundle\VisibilityBundle\Model\MessageFactoryInterface;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
 class AccountListener

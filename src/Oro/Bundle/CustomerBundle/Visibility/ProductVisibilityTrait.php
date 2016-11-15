@@ -7,9 +7,10 @@ use Doctrine\ORM\Query\Expr\Join;
 
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
-use Oro\Bundle\CustomerBundle\Entity\Visibility\VisibilityInterface;
-use Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
-use Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
+use Oro\Bundle\CustomerBundle\Provider\VisibilityScopeProvider;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
@@ -36,18 +37,23 @@ trait ProductVisibilityTrait
     protected $configValue = [];
 
     /**
+     * @var VisibilityScopeProvider
+     */
+    protected $visibilityScopeProvider;
+
+    /**
      * @param QueryBuilder $queryBuilder
-     * @param AccountGroup $account
+     * @param AccountGroup $accountGroup
      * @param Website $website
      * @return string
      */
     private function getAccountGroupProductVisibilityResolvedTermByWebsite(
         QueryBuilder $queryBuilder,
-        AccountGroup $account,
+        AccountGroup $accountGroup,
         Website $website
     ) {
         $queryBuilder->leftJoin(
-            'Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\AccountGroupProductVisibilityResolved',
+            'OroVisibilityBundle:VisibilityResolved\AccountGroupProductVisibilityResolved',
             'account_group_product_visibility_resolved',
             Join::WITH,
             $queryBuilder->expr()->andX(
@@ -55,13 +61,16 @@ trait ProductVisibilityTrait
                     $this->getRootAlias($queryBuilder),
                     'account_group_product_visibility_resolved.product'
                 ),
-                $queryBuilder->expr()->eq('account_group_product_visibility_resolved.accountGroup', ':_account_group'),
-                $queryBuilder->expr()->eq('account_group_product_visibility_resolved.website', ':_website')
+                $queryBuilder->expr()->eq(
+                    'account_group_product_visibility_resolved.scope',
+                    ':accountGroupScope'
+                )
             )
         );
 
-        $queryBuilder->setParameter('_account_group', $account);
-        $queryBuilder->setParameter('_website', $website);
+        $scope = $this->getVisibilityScopeProvider()->getAccountGroupProductVisibilityScope($accountGroup, $website);
+
+        $queryBuilder->setParameter('accountGroupScope', $scope);
 
         return sprintf(
             'COALESCE(%s, 0) * 10',
@@ -81,7 +90,7 @@ trait ProductVisibilityTrait
         Website $website
     ) {
         $queryBuilder->leftJoin(
-            'Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved',
+            'OroVisibilityBundle:VisibilityResolved\AccountProductVisibilityResolved',
             'account_product_visibility_resolved',
             Join::WITH,
             $queryBuilder->expr()->andX(
@@ -89,13 +98,13 @@ trait ProductVisibilityTrait
                     $this->getRootAlias($queryBuilder),
                     'account_product_visibility_resolved.product'
                 ),
-                $queryBuilder->expr()->eq('account_product_visibility_resolved.account', ':_account'),
-                $queryBuilder->expr()->eq('account_product_visibility_resolved.website', ':_website')
+                $queryBuilder->expr()->eq('account_product_visibility_resolved.scope', ':accountScope')
             )
         );
 
-        $queryBuilder->setParameter('_account', $account);
-        $queryBuilder->setParameter('_website', $website);
+        $scope = $this->getVisibilityScopeProvider()->getAccountProductVisibilityScope($account, $website);
+
+        $queryBuilder->setParameter('accountScope', $scope);
 
         $productFallback = $this->addCategoryConfigFallback('product_visibility_resolved.visibility');
         $accountFallback = $this->addCategoryConfigFallback('account_product_visibility_resolved.visibility');
@@ -133,16 +142,16 @@ TERM;
     private function getProductVisibilityResolvedTermByWebsite(QueryBuilder $queryBuilder, Website $website)
     {
         $queryBuilder->leftJoin(
-            'Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\ProductVisibilityResolved',
+            'OroVisibilityBundle:VisibilityResolved\ProductVisibilityResolved',
             'product_visibility_resolved',
             Join::WITH,
             $queryBuilder->expr()->andX(
                 $queryBuilder->expr()->eq($this->getRootAlias($queryBuilder), 'product_visibility_resolved.product'),
-                $queryBuilder->expr()->eq('product_visibility_resolved.website', ':_website')
+                $queryBuilder->expr()->eq('product_visibility_resolved.scope', ':scope')
             )
         );
 
-        $queryBuilder->setParameter('_website', $website);
+        $queryBuilder->setParameter('scope', $this->getVisibilityScopeProvider()->getProductVisibilityScope($website));
 
         return sprintf(
             'COALESCE(%s, %s)',
@@ -242,5 +251,26 @@ TERM;
     public function setCategoryVisibilitySystemConfigurationPath($path)
     {
         $this->categoryConfigPath = $path;
+    }
+
+    /**
+     * @param VisibilityScopeProvider $visibilityScopeProvider
+     */
+    public function setVisibilityScopeProvider(VisibilityScopeProvider $visibilityScopeProvider)
+    {
+        $this->visibilityScopeProvider = $visibilityScopeProvider;
+    }
+
+    /**
+     * @return VisibilityScopeProvider
+     * @throws \RuntimeException
+     */
+    public function getVisibilityScopeProvider()
+    {
+        if (!$this->visibilityScopeProvider) {
+            throw new \RuntimeException('Visibility scope provider was not set');
+        }
+
+        return $this->visibilityScopeProvider;
     }
 }

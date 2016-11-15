@@ -6,6 +6,7 @@ use Oro\Bundle\CustomerBundle\EventListener\WebsiteSearchProductVisibilityIndexe
 use Oro\Bundle\CustomerBundle\Indexer\ProductVisibilityIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
+use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
 
 class WebsiteSearchProductVisibilityIndexerListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -20,6 +21,11 @@ class WebsiteSearchProductVisibilityIndexerListenerTest extends \PHPUnit_Framewo
     private $visibilityIndexer;
 
     /**
+     * @var WebsiteContextManager|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $websiteContextManager;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -28,18 +34,27 @@ class WebsiteSearchProductVisibilityIndexerListenerTest extends \PHPUnit_Framewo
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->listener = new WebsiteSearchProductVisibilityIndexerListener($this->visibilityIndexer);
+        $this->websiteContextManager = $this->getMockBuilder(WebsiteContextManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->listener = new WebsiteSearchProductVisibilityIndexerListener(
+            $this->visibilityIndexer,
+            $this->websiteContextManager
+        );
     }
 
     public function testOnWebsiteSearchIndex()
     {
         $websiteId = 1;
-        $event = new IndexEntityEvent(
-            [],
-            [
-                AbstractIndexer::CONTEXT_CURRENT_WEBSITE_ID_KEY => $websiteId
-            ]
-        );
+        $context =  [AbstractIndexer::CONTEXT_CURRENT_WEBSITE_ID_KEY => $websiteId];
+        $event = new IndexEntityEvent([], $context);
+
+        $this->websiteContextManager
+            ->expects($this->once())
+            ->method('getWebsiteId')
+            ->with($context)
+            ->willReturn(1);
 
         $this->visibilityIndexer
             ->expects($this->once())
@@ -50,8 +65,7 @@ class WebsiteSearchProductVisibilityIndexerListenerTest extends \PHPUnit_Framewo
     }
 
     /**
-     * @expectedException \LogicException
-     * @expectedExceptionMessage Required website id is not passed to context
+     * No exception (it may broke queue) listener will return safely
      */
     public function testOnWebsiteSearchIndexWhenWebsiteIdIsNotInContext()
     {

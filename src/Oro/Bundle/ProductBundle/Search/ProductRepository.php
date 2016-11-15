@@ -75,7 +75,7 @@ class ProductRepository extends WebsiteSearchRepository
             ->getCriteria()
             ->andWhere(
                 Criteria::expr()->contains('all_text_LOCALIZATION_ID', $search)
-            )->orderBy(['id' => Criteria::ASC])
+            )->orderBy(['product_id' => Criteria::ASC])
             ->setFirstResult($firstResult)
             ->setMaxResults($maxResults);
 

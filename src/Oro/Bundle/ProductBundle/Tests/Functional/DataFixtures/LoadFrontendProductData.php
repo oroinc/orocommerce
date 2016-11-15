@@ -33,7 +33,7 @@ class LoadFrontendProductData extends ContainerAwareFixture implements Dependent
      */
     public function load(ObjectManager $manager)
     {
-        $this->container->get('oro_customer.visibility.cache.product.cache_builder')->buildCache();
+        $this->container->get('oro_visibility.visibility.cache.product.cache_builder')->buildCache();
         $this->container->get('event_dispatcher')->dispatch(
             ReindexationRequestEvent::EVENT_NAME,
             new ReindexationRequestEvent([Product::class], [], [], false)
