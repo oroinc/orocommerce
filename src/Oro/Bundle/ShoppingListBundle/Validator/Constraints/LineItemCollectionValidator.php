@@ -6,7 +6,6 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
-use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Event\LineItemValidateEvent;
 use Oro\Bundle\ShoppingListBundle\Validator\Constraints\LineItem as LineItemConstraint;
 
@@ -26,7 +25,7 @@ class LineItemCollectionValidator extends ConstraintValidator
     }
 
     /**
-     * @param LineItem[] $value
+     * @param [] $value
      * @param Constraint|LineItemConstraint $constraint
      *
      * {@inheritdoc}
