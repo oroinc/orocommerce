@@ -151,8 +151,6 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit_Framework_TestCa
             $this->repository
         );
 
-        /** @var BuildAfter|\PHPUnit_Framework_MockObject_MockObject $event */
-
         /** @var SearchDatasource|\PHPUnit_Framework_MockObject_MockObject $searchDataSource */
         $datasource = $this->getMockBuilder(SearchDatasource::class)
             ->disableOriginalConstructor()

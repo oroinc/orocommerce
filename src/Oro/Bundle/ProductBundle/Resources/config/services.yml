@@ -488,3 +488,9 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_website_search.before_search, method: process }
 
+    oro_product.exception.product_access_listener:
+        class: 'Oro\Bundle\ProductBundle\EventListener\ProductAccessExceptionListener'
+        arguments:
+           - "@request_stack"
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception, method: onAccessException }
