@@ -4,7 +4,7 @@ namespace Oro\Bundle\WebCatalogBundle\Form\Type;
 
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
-use Oro\Bundle\RedirectBundle\Form\Type\SlugifyLocalizedFieldIntoSlugType;
+use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugType;
 use Oro\Bundle\ValidationBundle\Validator\Constraints\UrlSafe;
 use Oro\Bundle\ScopeBundle\Form\Type\ScopeCollectionType;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
@@ -61,7 +61,7 @@ class ContentNodeType extends AbstractType
         if ($data instanceof ContentNode && $data->getParentNode() instanceof ContentNode) {
             $event->getForm()->add(
                 'slugPrototypes',
-                SlugifyLocalizedFieldIntoSlugType::NAME,
+                LocalizedSlugType::NAME,
                 [
                     'label'    => 'oro.webcatalog.contentnode.slug_prototypes.label',
                     'required' => true,

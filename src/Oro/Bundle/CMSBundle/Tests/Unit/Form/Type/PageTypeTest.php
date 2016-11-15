@@ -10,8 +10,8 @@ use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\ConstraintViolationList;
 
-use Oro\Bundle\RedirectBundle\Form\Type\SlugifyLocalizedFieldIntoSlugType;
-use Oro\Bundle\RedirectBundle\Tests\Unit\Form\Type\Stub\SlugifyLocalizedFieldIntoSlugTypeStub;
+use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugType;
+use Oro\Bundle\RedirectBundle\Tests\Unit\Form\Type\Stub\LocalizedSlugTypeStub;
 use Oro\Bundle\ValidationBundle\Validator\Constraints\UrlSafe;
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
@@ -97,7 +97,7 @@ class PageTypeTest extends FormIntegrationTestCase
                     'text' => new TextType(),
                     OroRichTextType::NAME => new OroRichTextType($configManager, $htmlTagProvider),
                     LocalizedFallbackValueCollectionType::NAME => new LocalizedFallbackValueCollectionTypeStub(),
-                    SlugifyLocalizedFieldIntoSlugType::NAME => new SlugifyLocalizedFieldIntoSlugTypeStub(),
+                    LocalizedSlugType::NAME => new LocalizedSlugTypeStub(),
                 ],
                 []
             )
@@ -140,7 +140,7 @@ class PageTypeTest extends FormIntegrationTestCase
                 ->method('add')
                 ->with(
                     'slugs',
-                    SlugifyLocalizedFieldIntoSlugType::NAME,
+                    LocalizedSlugType::NAME,
                     [
                         'label'    => 'oro.cms.page.slugs.label',
                         'required' => true,

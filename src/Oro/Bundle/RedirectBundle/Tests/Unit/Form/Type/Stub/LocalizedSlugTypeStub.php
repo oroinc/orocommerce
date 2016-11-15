@@ -3,17 +3,17 @@
 namespace Oro\Bundle\RedirectBundle\Tests\Unit\Form\Type\Stub;
 
 use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueCollectionTypeStub;
-use Oro\Bundle\RedirectBundle\Form\Type\SlugifyLocalizedFieldIntoSlugType;
+use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class SlugifyLocalizedFieldIntoSlugTypeStub extends LocalizedFallbackValueCollectionTypeStub
+class LocalizedSlugTypeStub extends LocalizedFallbackValueCollectionTypeStub
 {
     /**
      * {@inheritdoc}
      */
     public function getName()
     {
-        return SlugifyLocalizedFieldIntoSlugType::NAME;
+        return LocalizedSlugType::NAME;
     }
 
     /**

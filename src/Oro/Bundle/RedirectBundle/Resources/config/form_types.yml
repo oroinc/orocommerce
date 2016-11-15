@@ -1,11 +1,11 @@
 services:
-    oro_redirect.form.type.slugify_localized_field_into_slug:
-        class: 'Oro\Bundle\RedirectBundle\Form\Type\SlugifyLocalizedFieldIntoSlugType'
+    oro_redirect.form.type.localized_slug:
+        class: 'Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugType'
         arguments:
             - '@doctrine'
         tags:
-            - { name: form.type, alias: oro_redirect_slugify_localized_field_into_slug }
-    oro_redirect.form.type.slugify_text_field_into_slug:
-        class: 'Oro\Bundle\RedirectBundle\Form\Type\SlugifyTextFieldIntoSlugType'
+            - { name: form.type, alias: oro_redirect_localized_slug }
+    oro_redirect.form.type.slug:
+        class: 'Oro\Bundle\RedirectBundle\Form\Type\SlugType'
         tags:
-            - { name: form.type, alias: oro_redirect_slugify_text_field_into_slug }
+            - { name: form.type, alias: oro_redirect_slug }
