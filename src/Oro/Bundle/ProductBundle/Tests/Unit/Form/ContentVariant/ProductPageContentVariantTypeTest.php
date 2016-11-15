@@ -81,6 +81,7 @@ class ProductPageContentVariantTypeTest extends \PHPUnit_Framework_TestCase
     {
         /** @var ContentVariantStub **/
         $contentVariant = new ContentVariantStub();
+        /** @var Product $product */
         $product = $this->getEntity(Product::class, ['id' => 42]);
         $contentVariant->setProductPageProduct($product);
 

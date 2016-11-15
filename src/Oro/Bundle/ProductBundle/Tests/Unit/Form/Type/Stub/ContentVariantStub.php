@@ -64,6 +64,9 @@ class ContentVariantStub implements ContentVariantInterface
      */
     protected $productPageProduct;
 
+    /**
+     * @return int
+     */
     public function getId()
     {
         return 1;

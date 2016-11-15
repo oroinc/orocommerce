@@ -120,7 +120,10 @@ class ProductPageVariantTypeTest extends FormIntegrationTestCase
      */
     public function submitDataProvider()
     {
+        /** @var Product $product1 */
         $product1 = $this->getEntity(Product::class, ['id' => 1]);
+
+        /** @var Product $product2 */
         $product2 = $this->getEntity(Product::class, ['id' => 2]);
 
         return [

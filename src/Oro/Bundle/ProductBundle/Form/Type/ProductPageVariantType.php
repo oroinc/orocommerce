@@ -52,8 +52,7 @@ class ProductPageVariantType extends AbstractType
                     'required' => false,
                     'entry_options' => [
                         'scope_type' => 'web_content'
-                    ],
-                    'mapped' => false
+                    ]
                 ]
             )
             ->add(
