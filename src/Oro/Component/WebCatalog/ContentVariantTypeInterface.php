@@ -44,7 +44,7 @@ interface ContentVariantTypeInterface
      * @param ContentVariantInterface $contentVariant
      * @return bool
      */
-    public function isSupportedPage(ContentVariantInterface $contentVariant);
+    public function isSupportedVariant(ContentVariantInterface $contentVariant);
 
     /**
      * Get routing data based on configured variant.

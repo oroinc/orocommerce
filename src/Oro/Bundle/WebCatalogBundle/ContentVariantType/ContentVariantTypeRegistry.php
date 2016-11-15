@@ -4,6 +4,7 @@ namespace Oro\Bundle\WebCatalogBundle\ContentVariantType;
 
 use Oro\Bundle\WebCatalogBundle\Exception\InvalidArgumentException;
 use Oro\Component\WebCatalog\ContentVariantTypeInterface;
+use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 
 class ContentVariantTypeRegistry
 {
@@ -56,5 +57,22 @@ class ContentVariantTypeRegistry
         }
 
         return $types;
+    }
+
+    /**
+     * @param ContentVariantInterface $contentVariant
+     * @return string
+     */
+    public function getFormType(ContentVariantInterface $contentVariant)
+    {
+        foreach ($this->getContentVariantTypes() as $type) {
+            if ($type->isSupportedVariant($contentVariant)) {
+                return $type->getFormType();
+            }
+        }
+
+        throw new InvalidArgumentException(
+            sprintf('Content variant type "%s" is not known.', $contentVariant->getType())
+        );
     }
 }

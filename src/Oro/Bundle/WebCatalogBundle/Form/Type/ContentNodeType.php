@@ -44,6 +44,13 @@ class ContentNodeType extends AbstractType
                         'scope_type' => 'web_content'
                     ]
                 ]
+            )
+            ->add(
+                'contentVariants',
+                ContentVariantCollectionType::NAME,
+                [
+                    'label' => 'oro.webcatalog.contentvariant.entity_plural_label'
+                ]
             );
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);
