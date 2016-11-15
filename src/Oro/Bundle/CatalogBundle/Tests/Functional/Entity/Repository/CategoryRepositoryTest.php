@@ -9,6 +9,7 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
+use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadMasterCatalogLocalizedTitles;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
@@ -35,6 +36,7 @@ class CategoryRepositoryTest extends WebTestCase
         $this->repository = $this->registry->getRepository('OroCatalogBundle:Category');
         $this->loadFixtures(
             [
+                LoadMasterCatalogLocalizedTitles::class,
                 LoadCategoryData::class,
                 LoadCategoryProductData::class,
             ]
@@ -44,9 +46,13 @@ class CategoryRepositoryTest extends WebTestCase
     public function testGetMasterCatalogRoot()
     {
         $root = $this->repository->getMasterCatalogRoot();
-        $this->assertInstanceOf('Oro\Bundle\CatalogBundle\Entity\Category', $root);
+        $this->assertInstanceOf(Category::class, $root);
 
         $defaultTitle = $root->getDefaultTitle();
+        $this->assertEquals(
+            LoadMasterCatalogLocalizedTitles::MASTER_CATALOG_LOCALIZED_TITLES,
+            $root->getTitles()->count()
+        );
         $this->assertEquals('Master catalog', $defaultTitle->getString());
     }
 
@@ -61,7 +67,7 @@ class CategoryRepositoryTest extends WebTestCase
         $category = current($categories);
         /** @var PersistentCollection $titles */
         $titles = $category->getTitles();
-        $this->assertInstanceOf('Doctrine\ORM\PersistentCollection', $titles);
+        $this->assertInstanceOf(PersistentCollection::class, $titles);
         $this->assertTrue($titles->isInitialized());
         $this->assertNotEmpty($titles->toArray());
     }
@@ -89,7 +95,7 @@ class CategoryRepositoryTest extends WebTestCase
         $expectedTitle = $expectedCategory->getDefaultTitle()->getString();
 
         $actualCategory = $this->repository->findOneByDefaultTitle($expectedTitle);
-        $this->assertInstanceOf('Oro\Bundle\CatalogBundle\Entity\Category', $actualCategory);
+        $this->assertInstanceOf(Category::class, $actualCategory);
         $this->assertEquals($expectedCategory->getId(), $actualCategory->getId());
         $this->assertEquals($expectedTitle, $actualCategory->getDefaultTitle()->getString());
 
