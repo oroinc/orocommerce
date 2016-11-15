@@ -55,6 +55,12 @@
     }
 }
 
+@include breakpoint('tablet') {
+    .shown-on-desktop {
+        display: none !important;
+    }
+}
+
 @include breakpoint('desktop') {
     %hidden-on-desktop {
         &.hidden-on-desktop {
