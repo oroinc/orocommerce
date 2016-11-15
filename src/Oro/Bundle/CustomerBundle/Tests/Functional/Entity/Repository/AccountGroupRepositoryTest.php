@@ -2,14 +2,11 @@
 
 namespace Oro\Bundle\CustomerBundle\Tests\Functional\Entity\Repository;
 
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\CustomerBundle\Entity\Repository\AccountGroupRepository;
-use Oro\Bundle\CustomerBundle\Entity\Visibility\AccountGroupCategoryVisibility;
 use Oro\Bundle\CustomerBundle\Migrations\Data\ORM\LoadAnonymousAccountGroup;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
-use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
  * @dbIsolation
@@ -33,44 +30,10 @@ class AccountGroupRepositoryTest extends WebTestCase
             [
                 'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups',
                 'Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData',
-                'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData',
             ]
         );
     }
 
-    /**
-     * @dataProvider getCategoryAccountGroupIdsByVisibilityDataProvider
-     * @param string $categoryName
-     * @param string $visibility
-     * @param array $expectedAccountGroups
-     * @param array $restricted
-     */
-    public function testGetCategoryAccountGroupIdsByVisibility(
-        $categoryName,
-        $visibility,
-        array $expectedAccountGroups,
-        array $restricted = null
-    ) {
-        /** @var Category $category */
-        $category = $this->getReference($categoryName);
-
-        $accountGroupIds = $this->repository->getCategoryAccountGroupIdsByVisibility(
-            $category,
-            $visibility,
-            $restricted
-        );
-
-        $expectedAccountGroupIds = [];
-        foreach ($expectedAccountGroups as $expectedAccountGroupName) {
-            $accountGroup = $this->getReference($expectedAccountGroupName);
-            $expectedAccountGroupIds[] = $accountGroup->getId();
-        }
-
-        sort($expectedAccountGroupIds);
-        sort($accountGroupIds);
-
-        $this->assertEquals($expectedAccountGroupIds, $accountGroupIds);
-    }
 
     public function testGetBatchIterator()
     {
@@ -88,35 +51,5 @@ class AccountGroupRepositoryTest extends WebTestCase
         }
 
         $this->assertEquals($expectedNames, $accountGroupNames);
-    }
-
-    /**
-     * @return array
-     */
-    public function getCategoryAccountGroupIdsByVisibilityDataProvider()
-    {
-        return [
-            'FIRST_LEVEL with HIDDEN' => [
-                'categoryName' => LoadCategoryData::FIRST_LEVEL,
-                'visibility' => AccountGroupCategoryVisibility::HIDDEN,
-                'expectedAccountGroups' => [
-                    'account_group.group1'
-                ]
-            ],
-            'FIRST_LEVEL with VISIBLE restricted' => [
-                'categoryName' => LoadCategoryData::FIRST_LEVEL,
-                'visibility' => AccountGroupCategoryVisibility::VISIBLE,
-                'expectedAccountGroups' => [],
-                'restricted' => []
-            ],
-            'FOURTH_LEVEL1 with PARENT_CATEGORY' => [
-                'categoryName' => LoadCategoryData::FOURTH_LEVEL1,
-                'visibility' => AccountGroupCategoryVisibility::PARENT_CATEGORY,
-                'expectedAccountGroups' => [
-                    'account_group.group1',
-                    'account_group.group3',
-                ]
-            ],
-        ];
     }
 }

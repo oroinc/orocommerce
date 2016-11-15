@@ -24,6 +24,7 @@ oro_frontend:
 
     home_page:
         title: 'Home page'
+        welcome: 'Welcome'
 
     exception:
         default: 'The System is currently under maintenance and should be available in a few minutes.'

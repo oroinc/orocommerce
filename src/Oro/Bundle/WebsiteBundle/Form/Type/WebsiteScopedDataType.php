@@ -16,6 +16,9 @@ use Doctrine\ORM\EntityManager;
 use Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
+/**
+ * @deprecated use Oro\Bundle\ScopeBundle\Form\Type\ScopedDataType instead
+ */
 class WebsiteScopedDataType extends AbstractType
 {
     const NAME = 'oro_website_scoped_data_type';
@@ -158,9 +161,9 @@ class WebsiteScopedDataType extends AbstractType
 
         $formOptions['options']['ownership_disabled'] = true;
 
+        /** @var EntityManager $em */
+        $em = $this->registry->getManagerForClass($this->websiteCLass);
         foreach ($event->getData() as $websiteId => $value) {
-            /** @var EntityManager $em */
-            $em = $this->registry->getManagerForClass($this->websiteCLass);
             $formOptions['options']['data'] = [];
 
             if (is_array($value)) {

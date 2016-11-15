@@ -2,11 +2,7 @@ layout:
     actions:
         - '@setBlockTheme':
             themes: 'default.html.twig'
-        - '@appendOption':
-            id: title
-            optionName: value
-            optionValue: 'oro.catalog.frontend.root.title'
-        - @remove:
+        - '@remove':
             id: page_container
         - '@addTree':
             items:
