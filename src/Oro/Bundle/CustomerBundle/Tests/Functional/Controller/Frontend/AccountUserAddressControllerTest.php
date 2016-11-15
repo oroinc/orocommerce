@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\CustomerBundle\Tests\Functional\Controller\Frontend;
 
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserACLData;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserAddressACLData;
 use Symfony\Component\DomCrawler\Field\ChoiceFormField;
 use Symfony\Component\DomCrawler\Form;
 
@@ -25,42 +27,44 @@ class AccountUserAddressControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient(
-            [],
-            $this->generateBasicAuthHeader(OroLoadAccountUserData::AUTH_USER, OroLoadAccountUserData::AUTH_PW)
+          //  [],
+          //  $this->generateBasicAuthHeader(OroLoadAccountUserData::AUTH_USER, OroLoadAccountUserData::AUTH_PW)
         );
         $this->client->useHashNavigation(true);
         $this->loadFixtures(
             [
-                'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccounts'
+                LoadAccountUserAddressACLData::class
             ]
         );
 
         $this->currentUser = $this->getCurrentUser();
     }
 
-    public function testIndex()
-    {
-        $this->markTestSkipped('Should be fixed after BAP-10981');
-        $crawler = $this->client->request(
-            'GET',
-            $this->getUrl('oro_customer_frontend_account_user_address_index')
-        );
-
-        $addCompanyAddressLink = $crawler->selectLink('Add Company Address')->link();
-        $addUserAddressLink = $crawler->selectLink('Add Address')->link();
-        $this->assertNotEmpty($addCompanyAddressLink);
-        $this->assertNotEmpty($addUserAddressLink);
-        $addressLists = $crawler->filter('.address-list');
-        $this->assertCount(2, $addressLists);
-    }
+//    public function testIndex()
+//    {
+//        $this->markTestSkipped('Should be fixed after BAP-10981');
+//        $crawler = $this->client->request(
+//            'GET',
+//            $this->getUrl('oro_customer_frontend_account_user_address_index')
+//        );
+//
+//        $addCompanyAddressLink = $crawler->selectLink('Add Company Address')->link();
+//        $addUserAddressLink = $crawler->selectLink('Add Address')->link();
+//        $this->assertNotEmpty($addCompanyAddressLink);
+//        $this->assertNotEmpty($addUserAddressLink);
+//        $addressLists = $crawler->filter('.address-list');
+//        $this->assertCount(2, $addressLists);
+//    }
 
     public function testCreate()
     {
+        $this->loginUser(LoadAccountUserAddressACLData::USER_ACCOUNT_1_ROLE_DEEP);
+        $user = $this->getReference(LoadAccountUserAddressACLData::USER_ACCOUNT_1_ROLE_DEEP);
         $crawler = $this->client->request(
             'GET',
             $this->getUrl(
                 'oro_customer_frontend_account_user_address_create',
-                ['entityId' => $this->currentUser->getId()]
+                ['entityId' => $user->getId()]
             )
         );
 
@@ -194,7 +198,7 @@ class AccountUserAddressControllerTest extends WebTestCase
      */
     protected function getCurrentUser()
     {
-        return $this->getUserRepository()->findOneBy(['username' => OroLoadAccountUserData::AUTH_USER]);
+        return $this->getUserRepository()->findOneBy(['username' => LoadAccountUserAddressACLData::USER_ACCOUNT_1_ROLE_DEEP]);
     }
 
     /**
