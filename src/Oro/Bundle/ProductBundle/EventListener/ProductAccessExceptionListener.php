@@ -6,6 +6,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Security\Core\Exception\InsufficientAuthenticationException;
 
 class ProductAccessExceptionListener
 {
@@ -31,7 +32,8 @@ class ProductAccessExceptionListener
     {
         $exception = $event->getException();
 
-        if (!$exception instanceof AccessDeniedHttpException) {
+        if (!($exception instanceof AccessDeniedHttpException ||
+              $exception instanceof InsufficientAuthenticationException)) {
             return;
         }
 

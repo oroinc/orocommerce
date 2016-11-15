@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Security\Core\Exception\InsufficientAuthenticationException;
 
 use Oro\Bundle\ProductBundle\EventListener\ProductAccessExceptionListener;
 
@@ -71,6 +72,31 @@ class ProductAccessExceptionListenerTest extends \PHPUnit_Framework_TestCase
         $message = 'somemessage';
 
         $exampleException = new AccessDeniedHttpException($message);
+
+        $this->event->expects($this->once())
+            ->method('getException')
+            ->willReturn($exampleException);
+
+        $this->event->expects($this->once())
+            ->method('setException')
+            ->with(new NotFoundHttpException($message))
+            ->willReturn($exampleException);
+
+        $request = new Request();
+        $request->attributes->set('_route', ProductAccessExceptionListener::PRODUCT_VIEW_ROUTE);
+
+        $this->requestStack->expects($this->once())
+            ->method('getCurrentRequest')
+            ->willReturn($request);
+
+        $this->testable->onAccessException($this->event);
+    }
+
+    public function testInsufficientAuthenticationException()
+    {
+        $message = 'somemessage';
+
+        $exampleException = new InsufficientAuthenticationException($message);
 
         $this->event->expects($this->once())
             ->method('getException')
