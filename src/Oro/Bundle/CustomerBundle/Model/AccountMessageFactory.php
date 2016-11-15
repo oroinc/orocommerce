@@ -6,6 +6,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Model\Exception\InvalidArgumentException;
+use Oro\Bundle\VisibilityBundle\Model\MessageFactoryInterface;
 
 class AccountMessageFactory implements MessageFactoryInterface
 {
@@ -34,7 +35,7 @@ class AccountMessageFactory implements MessageFactoryInterface
         if ($account instanceof Account) {
             $message[self::ID] = $account->getId();
         }
-        
+
         return $message;
     }
 

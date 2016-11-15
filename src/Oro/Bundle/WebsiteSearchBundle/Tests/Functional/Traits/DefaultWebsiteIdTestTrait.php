@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Traits;
 
+use Oro\Bundle\WebsiteBundle\Entity\Website;
+
 trait DefaultWebsiteIdTestTrait
 {
     /**
@@ -9,10 +11,17 @@ trait DefaultWebsiteIdTestTrait
      */
     protected function getDefaultWebsiteId()
     {
+        return $this->getDefaultWebsite()->getId();
+    }
+
+    /**
+     * @return Website
+     */
+    protected function getDefaultWebsite()
+    {
         return $this
             ->getContainer()
             ->get('oro_website.manager')
-            ->getDefaultWebsite()
-            ->getId();
+            ->getDefaultWebsite();
     }
 }

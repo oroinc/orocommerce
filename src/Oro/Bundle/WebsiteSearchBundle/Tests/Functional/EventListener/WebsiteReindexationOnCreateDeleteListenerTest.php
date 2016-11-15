@@ -74,10 +74,12 @@ class WebsiteReindexationOnCreateDeleteListenerTest extends WebTestCase
 
         $this->assertNull($triggeredEvent);
 
+        $removedWebsiteId = $website->getId();
         $this->entityManager->remove($website);
+        $this->entityManager->flush();
 
         $this->assertNotNull($triggeredEvent);
-        $this->assertContains($website->getId(), $triggeredEvent->getWebsitesIds());
+        $this->assertContains($removedWebsiteId, $triggeredEvent->getWebsitesIds());
     }
 
     public function testDoesNotTriggersEventWhenWebsiteIsUpdated()

@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\CustomerBundle\Indexer;
 
-use Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
 use Oro\Bundle\CustomerBundle\Visibility\Provider\ProductVisibilityProvider;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\AccountIdPlaceholder;
 

@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CheckoutBundle\WorkflowState\Action;
 
-use Oro\Component\Action\Model\ContextAccessor;
+use Oro\Component\ConfigExpression\ContextAccessor;
 use Oro\Component\Action\Action\AbstractAction;
 use Oro\Component\Action\Exception\InvalidParameterException;
 use Oro\Bundle\CheckoutBundle\WorkflowState\Manager\CheckoutStateDiffManager;

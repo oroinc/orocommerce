@@ -6,9 +6,8 @@ use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\AccountGroupProductVisibilityResolved;
-use Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
-use Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountGroupProductVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
 use Oro\Bundle\CustomerBundle\Visibility\ProductVisibilityTrait;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
@@ -59,8 +58,6 @@ class RestrictProductsIndexEventListener
         }
 
         $qb = $event->getQueryBuilder();
-        $qb->setParameter('website', $websiteId);
-
         $website = $this->doctrineHelper->getEntity(Website::class, $websiteId);
 
         $productVisibilityForAll = $this->getProductVisibilityResolvedTermByWebsite($qb, $website);
@@ -68,8 +65,8 @@ class RestrictProductsIndexEventListener
         $qb->andWhere(
             $qb->expr()->orX(
                 $qb->expr()->gt($productVisibilityForAll, 0),
-                $this->getAccountProductVisibilitySubQuery($qb),
-                $this->getAccountGroupProductVisibilitySubQuery($qb)
+                $this->getAccountProductVisibilitySubQuery($qb, $websiteId),
+                $this->getAccountGroupProductVisibilitySubQuery($qb, $websiteId)
             )
         );
     }
@@ -78,17 +75,36 @@ class RestrictProductsIndexEventListener
      * @param QueryBuilder $queryBuilder
      * @param string $visibilityClass
      * @param string $visibilityAlias
+     * @param int $websiteId
      * @return QueryBuilder
      */
-    private function getVisibilityQueryBuilder(QueryBuilder $queryBuilder, $visibilityClass, $visibilityAlias)
-    {
+    private function getVisibilityQueryBuilder(
+        QueryBuilder $queryBuilder,
+        $visibilityClass,
+        $visibilityAlias,
+        $websiteId
+    ) {
         $subQueryBuilder = $this->doctrineHelper
             ->getEntityRepository($visibilityClass)
             ->createQueryBuilder($visibilityAlias);
 
+        $visibilityScopeAlias = sprintf('visibilityScope%s', $visibilityAlias);
+
+        $subQueryBuilder
+            ->innerJoin(
+                sprintf('%s.scope', $visibilityAlias),
+                $visibilityScopeAlias,
+                Expr\Join::WITH,
+                $subQueryBuilder->expr()->orX(
+                    $subQueryBuilder->expr()->eq($visibilityScopeAlias . '.website', ':visibilityWebsite'),
+                    $subQueryBuilder->expr()->isNull($visibilityScopeAlias . '.website')
+                )
+            );
+
+        $queryBuilder->setParameter('visibilityWebsite', $websiteId);
+
         $subQueryBuilder->andWhere(
-            $subQueryBuilder->expr()->eq(sprintf('%s.product', $visibilityAlias), $this->getRootAlias($queryBuilder)),
-            $subQueryBuilder->expr()->eq(sprintf('%s.website', $visibilityAlias), ':website')
+            $subQueryBuilder->expr()->eq(sprintf('%s.product', $visibilityAlias), $this->getRootAlias($queryBuilder))
         );
 
         return $subQueryBuilder;
@@ -96,33 +112,21 @@ class RestrictProductsIndexEventListener
 
     /**
      * @param QueryBuilder $queryBuilder
+     * @param int $websiteId
      * @return Expr\Func
      */
-    private function getAccountProductVisibilitySubQuery(QueryBuilder $queryBuilder)
+    private function getAccountProductVisibilitySubQuery(QueryBuilder $queryBuilder, $websiteId)
     {
         $subQueryBuilder = $this->getVisibilityQueryBuilder(
             $queryBuilder,
             AccountProductVisibilityResolved::class,
-            'account_product_visibility_resolved'
+            'account_product_visibility_resolved',
+            $websiteId
         );
 
-        $subQueryBuilder->leftJoin(
-            ProductVisibilityResolved::class,
-            'sub_query_product_visibility_resolved',
-            Expr\Join::WITH,
-            $subQueryBuilder->expr()->andX(
-                $subQueryBuilder->expr()->eq(
-                    'account_product_visibility_resolved.product',
-                    'sub_query_product_visibility_resolved.product'
-                ),
-                $subQueryBuilder->expr()->eq('sub_query_product_visibility_resolved.website', ':website')
-            )
-        );
-
-        $productFallback = $this->addCategoryConfigFallback('sub_query_product_visibility_resolved.visibility');
         $accountFallback = $this->addCategoryConfigFallback('account_product_visibility_resolved.visibility');
 
-        $visibilityTerm = $this->getAccountProductVisibilityResolvedVisibilityTerm($productFallback, $accountFallback);
+        $visibilityTerm = $this->getAccountProductVisibilityResolvedVisibilityTerm($accountFallback);
 
         $subQueryBuilder->andWhere(
             $subQueryBuilder->expr()->gt($visibilityTerm, 0)
@@ -132,15 +136,36 @@ class RestrictProductsIndexEventListener
     }
 
     /**
+     * @param string $accountFallback
+     * @return string
+     */
+    private function getAccountProductVisibilityResolvedVisibilityTerm($accountFallback)
+    {
+        $term = <<<TERM
+CASE WHEN account_product_visibility_resolved.visibility = %s
+    THEN 0
+ELSE (COALESCE(%s, 0) * 100)
+END
+TERM;
+        return sprintf(
+            $term,
+            AccountProductVisibilityResolved::VISIBILITY_FALLBACK_TO_ALL,
+            $accountFallback
+        );
+    }
+
+    /**
      * @param QueryBuilder $queryBuilder
+     * @param int $websiteId
      * @return Expr\Func
      */
-    private function getAccountGroupProductVisibilitySubQuery(QueryBuilder $queryBuilder)
+    private function getAccountGroupProductVisibilitySubQuery(QueryBuilder $queryBuilder, $websiteId)
     {
         $subQueryBuilder = $this->getVisibilityQueryBuilder(
             $queryBuilder,
             AccountGroupProductVisibilityResolved::class,
-            'account_group_product_visibility_resolved'
+            'account_group_product_visibility_resolved',
+            $websiteId
         );
 
         $subQueryBuilder->andWhere(

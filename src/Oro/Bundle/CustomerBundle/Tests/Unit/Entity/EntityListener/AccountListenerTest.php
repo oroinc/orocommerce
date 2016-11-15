@@ -8,7 +8,7 @@ use Oro\Bundle\CustomerBundle\Driver\AccountPartialUpdateDriverInterface;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\CustomerBundle\Entity\EntityListener\AccountListener;
-use Oro\Bundle\CustomerBundle\Model\MessageFactoryInterface;
+use Oro\Bundle\VisibilityBundle\Model\MessageFactoryInterface;
 use Oro\Component\MessageQueue\Client\Message;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 

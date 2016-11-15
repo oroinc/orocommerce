@@ -7,7 +7,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-use Oro\Component\Action\Model\ContextAccessor;
+use Oro\Component\ConfigExpression\ContextAccessor;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
 use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 use Oro\Bundle\PaymentBundle\Action\AbstractPaymentMethodAction;
@@ -37,7 +37,7 @@ abstract class AbstractActionTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->contextAccessor = $this->getMock('Oro\Component\Action\Model\ContextAccessor');
+        $this->contextAccessor = $this->getMock('Oro\Component\ConfigExpression\ContextAccessor');
 
         $this->paymentMethodRegistry = $this->getMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry');
 
