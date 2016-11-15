@@ -27,20 +27,18 @@
     {% set dom_relocation_options =  {
     responsive: [
     {
-    breakpoint: 992,
+    breakpoint: 1079,
     moveTo: '[data-main-menu-container]'
     }
     ]}|json_encode
     %}
 
     <div {{ block('block_attributes') }}>
-        <nav class="topbar__navigation"
-             data-dom-relocation
-             data-dom-relocation-options="{{ dom_relocation_options }}"
+        <ul class="primary-menu topbar-navigation topbar-navigation--controls"
+            data-dom-relocation
+            data-dom-relocation-options="{{ dom_relocation_options }}"
         >
-            <ul>
-                {{ block_widget(block) }}
-            </ul>
-        </nav>
+            {{ block_widget(block) }}
+        </ul>
     </div>
 {% endblock %}

@@ -1,50 +1,22 @@
 /* Topbar component */
 .topbar {
     font-size: $base-font-size - 2;
+}
 
-    &__navigation {
-        &:last-child {
-            display: inline-block;
-        }
+.topbar-navigation {
+    justify-content: flex-end;
 
-        ul {
-            @include list-normalize();
-
-            li {
-                margin-right: $top-bar-menu-item-offset-right;
-
-                line-height: $top-bar-menu-item-line-height;
-
-                &:last-child {
-                    margin-right: 0;
-                }
-            }
-        }
-
-        &--has-sibling {
-            margin-right: 10px;
-        }
+    &--controls {
+        justify-content: flex-start;
     }
 
-    &__controls {
-        .cart__promo__link {
-            font-size: $base-font-size;
+    &__item {
+        margin-right: $top-bar-menu-item-offset-right;
 
-            &:hover {
-                text-decoration: none;
+        line-height: $top-bar-menu-item-line-height;
 
-                cursor: default;
-            }
-
-            span {
-                font-size: $base-font-size;
-
-                &:hover {
-                    text-decoration: underline;
-
-                    cursor: pointer;
-                }
-            }
+        &:last-child {
+            margin-right: 0;
         }
     }
 }
@@ -64,17 +36,15 @@
             padding: 0;
             width: 100%;
         }
+    }
 
-        &__navigation {
-            ul {
-                display: block;
+    .topbar-navigation {
+        display: block;
 
-                li {
-                    display: inline-block;
+        &__item {
+            display: inline-block;
 
-                    margin-right: 20px;
-                }
-            }
+            margin-right: 20px;
         }
     }
 }

@@ -2,34 +2,6 @@
 .topbar {
     background: $top-bar-background;
 
-    @include breakpoint('tablet-small') {
-        display: none;
-    }
-
-    &__navigation {
-        display: inline-block;
-
-        ul {
-
-            li {
-                display: inline-block;
-
-                &:last-child {
-                    margin-right: 0;
-                }
-            }
-        }
-
-        a {
-            color: $top-bar-link-color;
-            text-decoration: none;
-
-            &:hover {
-                text-decoration: underline;
-            }
-        }
-    }
-
     &__dropdown {
         position: absolute;
         top: 26px;
@@ -80,19 +52,59 @@
     }
 }
 
-@include breakpoint('tablet') {
-    .topbar {
-        &__navigation {
-            ul {
-                display: block;
+.topbar-navigation {
+    &--has-sibling {
+        margin-right: 10px;
+    }
 
-                li {
-                    display: block;
-                    margin-right: 20px;
-                    padding: 5px 0;
-                    text-transform: uppercase;
+    &__link {
+        color: $top-bar-link-color;
+        text-decoration: none;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}
+
+@include breakpoint('desktop') {
+    .topbar-navigation {
+        &__item {
+            &.last {
+                font-size: $base-font-size;
+
+                &:hover {
+                    text-decoration: none;
+
+                    cursor: default;
+                }
+
+                span {
+                    font-size: $base-font-size;
+
+                    &:hover {
+                        text-decoration: underline;
+
+                        cursor: pointer;
+                    }
                 }
             }
+        }
+    }
+}
+
+@include breakpoint('tablet') {
+    .topbar {
+        display: none;
+    }
+    .topbar-navigation {
+        padding: 0 0 20px 15px;
+
+        &__item {
+            display: block;
+            margin-right: 20px;
+            padding: 5px 0;
+            text-transform: uppercase;
         }
     }
 }

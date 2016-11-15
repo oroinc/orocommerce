@@ -8,15 +8,19 @@
 {% endblock %}
 
 {% block _top_nav_widget %}
-    {% spaceless %}
-        {% set attr = layout_attr_defaults(attr, {
-        '~class': " topbar__navigation topbar__navigation--has-sibling"
-        }) %}
+    {% set attr = layout_attr_defaults(attr, {
+    '~class': " topbar-navigation topbar__navigation--has-sibling"
+    }) %}
 
-        <nav {{ block('block_attributes') }}>
-            {{ block_widget(block) }}
-        </nav>
-    {% endspaceless %}
+    {% set child_attr = layout_attr_defaults(child_attr, {
+    '~class': ' topbar-navigation__item'
+    }) %}
+
+    {% set link_attr = layout_attr_defaults(link_attr, {
+    '~class': 'topbar-navigation__link'
+    }) %}
+
+    {{ block('menu_widget') }}
 {% endblock %}
 
 {% block _top_nav_controls_widget %}
@@ -25,11 +29,9 @@
     }) %}
 
     <div {{ block('block_attributes') }}>
-        <nav class="topbar__navigation">
-            <ul class="primary-menu">
-                {{ block_widget(block) }}
-            </ul>
-        </nav>
+        <ul class="primary-menu topbar-navigation topbar-navigation--controls">
+            {{ block_widget(block) }}
+        </ul>
     </div>
 {% endblock %}
 
