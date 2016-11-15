@@ -444,3 +444,12 @@ services:
             - '@oro_message_queue.client.message_producer'
         tags:
             - { name: kernel.event_listener, event: kernel.terminate, method: sendScheduledMessages }
+
+    oro_product.content_variant_type.product_page:
+        class: Oro\Bundle\ProductBundle\ContentVariantType\ProductPageContentVariantType
+        public: false
+        arguments:
+            - '@oro_security.security_facade'
+            - '@property_accessor'
+        tags:
+            - { name: oro_web_catalog.content_variant_type }
