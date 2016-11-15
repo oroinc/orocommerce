@@ -53,7 +53,6 @@ class OroCalendarCommerceBridgeBundle implements Migration, RenameExtensionAware
     private static function renameCustomerRelated(Schema $schema, QueryBag $queries, RenameExtension $extension)
     {
         // CustomerBundle v1_7 - calendar event to account user association
-        // MUST be executed before CustomerBundle v1_8 table rename
         if ($schema->hasTable('oro_rel_46a29d19a6adb604a9b8e1')
             && !$schema->hasTable('oro_rel_46a29d19a6adb604aeb863')) {
             $extension->renameTable(
@@ -62,14 +61,6 @@ class OroCalendarCommerceBridgeBundle implements Migration, RenameExtensionAware
                 'oro_rel_46a29d19a6adb604a9b8e1',
                 'oro_rel_46a29d19a6adb604aeb863'
             );
-
-            $queries->addQuery(new UpdateExtendRelationQuery(
-                'Oro\Bundle\CalendarBundle\Entity\CalendarEvent',
-                'Oro\Bundle\AccountBundle\Entity\AccountUser',
-                'account_user_489123cf',
-                'account_user_795f990e',
-                RelationType::MANY_TO_MANY
-            ));
         }
 
         // CustomerBundle v1_8 - calendar event to account user association
@@ -81,23 +72,31 @@ class OroCalendarCommerceBridgeBundle implements Migration, RenameExtensionAware
                 'oro_rel_46a29d19a6adb604aeb863',
                 'oro_rel_46a29d19a6adb604264ef1'
             );
-
-            $queries->addQuery(new UpdateExtendRelationQuery(
-                'Oro\Bundle\CalendarBundle\Entity\CalendarEvent',
-                'Oro\Bundle\CustomerBundle\Entity\AccountUser',
-                'account_user_795f990e',
-                'account_user_741cdecd',
-                RelationType::MANY_TO_MANY
-            ));
-
-            $queries->addQuery(new UpdateExtendRelationQuery(
-                'Oro\Bundle\CalendarBundle\Entity\CalendarEvent',
-                'Oro\Bundle\CustomerBundle\Entity\AccountUser',
-                'account_user_489123cf',
-                'account_user_741cdecd',
-                RelationType::MANY_TO_MANY
-            ));
         }
+
+        $queries->addQuery(new UpdateExtendRelationQuery(
+            'Oro\Bundle\CalendarBundle\Entity\CalendarEvent',
+            'Oro\Bundle\AccountBundle\Entity\AccountUser',
+            'account_user_489123cf',
+            'account_user_795f990e',
+            RelationType::MANY_TO_MANY
+        ));
+
+        $queries->addQuery(new UpdateExtendRelationQuery(
+            'Oro\Bundle\CalendarBundle\Entity\CalendarEvent',
+            'Oro\Bundle\CustomerBundle\Entity\AccountUser',
+            'account_user_795f990e',
+            'account_user_741cdecd',
+            RelationType::MANY_TO_MANY
+        ));
+
+        $queries->addQuery(new UpdateExtendRelationQuery(
+            'Oro\Bundle\CalendarBundle\Entity\CalendarEvent',
+            'Oro\Bundle\CustomerBundle\Entity\AccountUser',
+            'account_user_489123cf',
+            'account_user_741cdecd',
+            RelationType::MANY_TO_MANY
+        ));
     }
 
     /**
