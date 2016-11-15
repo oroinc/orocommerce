@@ -2,13 +2,15 @@
 
 namespace Oro\Bundle\InventoryBundle\EventListener;
 
-use Symfony\Component\Translation\TranslatorInterface;
-
 use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use Oro\Bundle\CheckoutBundle\Event\CheckoutValidateEvent;
 use Oro\Bundle\InventoryBundle\Validator\QuantityToOrderValidatorService;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Event\QuickAddRowCollectionValidateEvent;
+use Oro\Bundle\ProductBundle\Model\QuickAddRow;
+use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
 use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
@@ -30,20 +32,11 @@ class QuantityToOrderConditionListener
     protected $validatorService;
 
     /**
-     * @var TranslatorInterface
-     */
-    protected $translator;
-
-    /**
      * @param QuantityToOrderValidatorService $validatorService
-     * @param TranslatorInterface $translator
      */
-    public function __construct(
-        QuantityToOrderValidatorService $validatorService,
-        TranslatorInterface $translator
-    ) {
+    public function __construct(QuantityToOrderValidatorService $validatorService)
+    {
         $this->validatorService = $validatorService;
-        $this->translator = $translator;
     }
 
     /**
@@ -92,6 +85,34 @@ class QuantityToOrderConditionListener
 
         if (false == $this->validatorService->isLineItemListValid($context->getEntity()->getLineItems())) {
             $event->addError(self::QUANTITY_CHECK_ERROR, $context);
+        }
+    }
+
+    /**
+     * @param QuickAddRowCollectionValidateEvent $event
+     */
+    public function onQuickAddRowCollectionValidate(QuickAddRowCollectionValidateEvent $event)
+    {
+        $collection = $event->getQuickAddRowCollection();
+        if (!$collection instanceof QuickAddRowCollection) {
+            return;
+        }
+
+        /** @var QuickAddRow $quickAddRow */
+        foreach ($collection as $quickAddRow) {
+            $product = $quickAddRow->getProduct();
+            if (!$product instanceof Product) {
+                continue;
+            }
+
+            if ($maxError = $this->validatorService->getMaximumErrorIfInvalid($product, $quickAddRow->getQuantity())) {
+                $quickAddRow->addError($maxError);
+                continue;
+            }
+
+            if ($minError = $this->validatorService->getMinimumErrorIfInvalid($product, $quickAddRow->getQuantity())) {
+                $quickAddRow->addError($minError);
+            }
         }
     }
 

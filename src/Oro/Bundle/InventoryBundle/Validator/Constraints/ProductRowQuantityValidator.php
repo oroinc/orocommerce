@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\InventoryBundle\Validator\Constraints;
 
-use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
@@ -24,23 +23,15 @@ class ProductRowQuantityValidator extends ConstraintValidator
     protected $doctrineHelper;
 
     /**
-     * @var TranslatorInterface
-     */
-    protected $translator;
-
-    /**
      * @param QuantityToOrderValidatorService $quantityValidatorService
      * @param DoctrineHelper $doctrineHelper
-     * @param TranslatorInterface $translator
      */
     public function __construct(
         QuantityToOrderValidatorService $quantityValidatorService,
-        DoctrineHelper $doctrineHelper,
-        TranslatorInterface $translator
+        DoctrineHelper $doctrineHelper
     ) {
         $this->quantityValidatorService = $quantityValidatorService;
         $this->doctrineHelper = $doctrineHelper;
-        $this->translator = $translator;
     }
 
     /**
@@ -57,32 +48,22 @@ class ProductRowQuantityValidator extends ConstraintValidator
             return;
         }
 
-        $minLimit = $this->quantityValidatorService->getMinimumLimit($product);
-        $maxLimit = $this->quantityValidatorService->getMaximumLimit($product);
+        if ($maxError = $this->quantityValidatorService->getMaximumErrorIfInvalid($product, $value->productQuantity)) {
+            $this->addViolation($maxError);
 
-        if ($this->quantityValidatorService->isHigherThanMaxLimit($maxLimit, $value->productQuantity)) {
-            $this->addViolation($product, $maxLimit, 'quantity_over_max_limit');
+            return;
         }
-        if ($this->quantityValidatorService->isLowerThenMinLimit($minLimit, $value->productQuantity)) {
-            $this->addViolation($product, $minLimit, 'quantity_below_min_limit');
+
+        if ($minError = $this->quantityValidatorService->getMinimumErrorIfInvalid($product, $value->productQuantity)) {
+            $this->addViolation($minError);
         }
     }
 
     /**
-     * @param Product $product
-     * @param int $limit
-     * @param string $errorSuffix
+     * @param string $message
      */
-    protected function addViolation(Product $product, $limit, $errorSuffix)
+    protected function addViolation($message)
     {
-        $message = $this->translator->trans(
-            'oro.inventory.product.error.' . $errorSuffix,
-            [
-                '%limit%' => $limit,
-                '%sku%' => $product->getSku(),
-                '%product_name%' => $product->getName(),
-            ]
-        );
         $this->context->buildViolation($message)
             ->atPath('productQuantity')
             ->addViolation();

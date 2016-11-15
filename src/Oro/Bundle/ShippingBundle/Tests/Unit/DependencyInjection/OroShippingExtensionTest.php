@@ -36,6 +36,7 @@ class OroShippingExtensionTest extends ExtensionTestCase
             'oro_shipping.twig.shipping_method_extension',
             'oro_shipping.shipping_price.provider',
             'oro_shipping.provider.measure_units.conversion',
+            'oro_shipping.condition.has_applicable_shipping_methods',
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
 

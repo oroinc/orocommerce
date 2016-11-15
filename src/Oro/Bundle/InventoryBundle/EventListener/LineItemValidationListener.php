@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\InventoryBundle\EventListener;
 
-use Symfony\Component\Translation\TranslatorInterface;
-
 use Oro\Bundle\InventoryBundle\Validator\QuantityToOrderValidatorService;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
@@ -17,18 +15,11 @@ class LineItemValidationListener
     protected $validatorService;
 
     /**
-     * @var TranslatorInterface
-     */
-    protected $translator;
-
-    /**
      * @param QuantityToOrderValidatorService $quantityValidator
-     * @param TranslatorInterface $translator
      */
-    public function __construct(QuantityToOrderValidatorService $quantityValidator, TranslatorInterface $translator)
+    public function __construct(QuantityToOrderValidatorService $quantityValidator)
     {
         $this->validatorService = $quantityValidator;
-        $this->translator = $translator;
     }
 
     /**
@@ -51,37 +42,13 @@ class LineItemValidationListener
             }
 
             $product = $lineItem->getProduct();
-            $minLimit = $this->validatorService->getMinimumLimit($product);
-            $maxLimit = $this->validatorService->getMaximumLimit($product);
-
-            // trigger error messages for products
-            if ($this->validatorService->isHigherThanMaxLimit($maxLimit, $lineItem->getQuantity())) {
-                $this->addErrorToEvent($event, $product, $maxLimit, 'quantity_over_max_limit');
+            if ($maxError = $this->validatorService->getMaximumErrorIfInvalid($product, $lineItem->getQuantity())) {
+                $event->addError($product->getSku(), $maxError);
+                continue;
             }
-            if ($this->validatorService->isLowerThenMinLimit($minLimit, $lineItem->getQuantity())) {
-                $this->addErrorToEvent($event, $product, $minLimit, 'quantity_below_min_limit');
+            if ($minError = $this->validatorService->getMinimumErrorIfInvalid($product, $lineItem->getQuantity())) {
+                $event->addError($product->getSku(), $minError);
             }
         }
-    }
-
-    /**
-     * @param LineItemValidateEvent $event
-     * @param Product $product
-     * @param int $limit
-     * @param string $errorSuffix
-     */
-    protected function addErrorToEvent(LineItemValidateEvent $event, Product $product, $limit, $errorSuffix)
-    {
-        $event->addError(
-            $product->getSku(),
-            $this->translator->trans(
-                'oro.inventory.product.error.' . $errorSuffix,
-                [
-                    '%limit%' => $limit,
-                    '%sku%' => $product->getSku(),
-                    '%product_name%' => $product->getName(),
-                ]
-            )
-        );
     }
 }

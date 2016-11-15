@@ -320,6 +320,7 @@ services:
         public: false
         arguments:
             - "@oro_product.repository.product"
+            - '@event_dispatcher'
 
     oro_product.datagrid_theme_helper:
         class: 'Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper'
