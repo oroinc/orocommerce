@@ -159,6 +159,13 @@ services:
         tags:
             - { name: layout.data_provider, alias: oro_rfp_request_form }
 
+    oro_rfp.layout.data_provider.tier_prices:
+        class: 'Oro\Bundle\RFPBundle\Layout\DataProvider\TierPricesProvider'
+        arguments:
+            - '@oro_pricing.provider.product_price'
+        tags:
+            - { name: layout.data_provider, alias: oro_rfp_tier_prices }
+
     oro_rfp.request.manager:
         class: 'Oro\Bundle\RFPBundle\Model\RequestManager'
         arguments:

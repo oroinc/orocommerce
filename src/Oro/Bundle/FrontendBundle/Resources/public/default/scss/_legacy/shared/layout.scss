@@ -283,7 +283,7 @@
   min-height: 90px;
   margin-top: 15px;
   padding: 20px 20px 20px 90px;
-  border: 1px solid $theme-lighter-gray-color;
+  border: 1px solid get-color('additional', 'light');
   border-radius: 5px;
 
   line-height: 2;
