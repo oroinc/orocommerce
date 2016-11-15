@@ -245,7 +245,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('This value is already used.', $crawler->filter('.notification_error')->html());
+        $this->assertContains('This value is already used.', $crawler->filter('.validation-error')->html());
     }
 
     /**
