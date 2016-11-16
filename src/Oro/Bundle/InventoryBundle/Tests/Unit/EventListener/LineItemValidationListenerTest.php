@@ -68,8 +68,9 @@ class LineItemValidationListenerTest extends \PHPUnit_Framework_TestCase
         $this->lineItemValidationListener->onLineItemValidate($this->event);
     }
 
-    public function testOnLineItemValidateAddsErrorToEvent()
+    public function testOnLineItemValidateAddsMaxErrorToEvent()
     {
+        $maxMessage = 'maxMessage';
         $lineItem = new LineItem();
         $product = new ProductStub();
         $lineItem->setProduct($product);
@@ -80,13 +81,36 @@ class LineItemValidationListenerTest extends \PHPUnit_Framework_TestCase
             ->willReturn($lineItems);
 
         $this->quantityValidator->expects($this->once())
-            ->method('isHigherThanMaxLimit')
-            ->willReturn(true);
-        $this->quantityValidator->expects($this->once())
-            ->method('isLowerThenMinLimit')
-            ->willReturn(true);
+            ->method('getMaximumErrorIfInvalid')
+            ->willReturn($maxMessage);
+        $this->quantityValidator->expects($this->never())
+            ->method('getMinimumErrorIfInvalid');
 
-        $this->event->expects($this->exactly(2))
+        $this->event->expects($this->once())
+            ->method('addError');
+        $this->lineItemValidationListener->onLineItemValidate($this->event);
+    }
+
+    public function testOnLineItemValidateAddsMinErrorToEvent()
+    {
+        $minMessage = 'minMessage';
+        $lineItem = new LineItem();
+        $product = new ProductStub();
+        $lineItem->setProduct($product);
+        $lineItems = new ArrayCollection();
+        $lineItems->add($lineItem);
+        $this->event->expects($this->once())
+            ->method('getLineItems')
+            ->willReturn($lineItems);
+
+        $this->quantityValidator->expects($this->once())
+            ->method('getMaximumErrorIfInvalid')
+            ->willReturn(false);
+        $this->quantityValidator->expects($this->once())
+            ->method('getMinimumErrorIfInvalid')
+            ->willReturn($minMessage);
+
+        $this->event->expects($this->once())
             ->method('addError');
         $this->lineItemValidationListener->onLineItemValidate($this->event);
     }

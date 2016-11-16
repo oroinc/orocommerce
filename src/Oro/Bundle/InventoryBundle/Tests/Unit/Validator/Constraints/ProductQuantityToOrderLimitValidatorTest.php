@@ -9,7 +9,7 @@ use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
 use Oro\Bundle\InventoryBundle\Validator\QuantityToOrderValidatorService;
 use Oro\Bundle\InventoryBundle\Validator\Constraints\ProductQuantityToOrderLimit;
 use Oro\Bundle\InventoryBundle\Validator\Constraints\ProductQuantityToOrderLimitValidator;
-use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\InventoryBundle\Tests\Unit\Validator\Constraints\Stub\ProductStub;
 
 class ProductQuantityToOrderLimitValidatorTest extends \PHPUnit_Framework_TestCase
 {
@@ -58,7 +58,8 @@ class ProductQuantityToOrderLimitValidatorTest extends \PHPUnit_Framework_TestCa
 
     public function testValidateWithoutAddingConstraint()
     {
-        $product = new Product();
+        $product = new ProductStub();
+        $product->setId(1);
         $this
             ->validatorService
             ->expects($this->once())
@@ -69,9 +70,22 @@ class ProductQuantityToOrderLimitValidatorTest extends \PHPUnit_Framework_TestCa
         $this->validator->validate($product, $this->constraint);
     }
 
+    public function testValidateIgnoredIfNoProductId()
+    {
+        $product = new ProductStub();
+        $this
+            ->validatorService
+            ->expects($this->never())
+            ->method('isMaxLimitLowerThenMinLimit')
+            ->with($product)
+            ->willReturn(false);
+        $this->validator->validate($product, $this->constraint);
+    }
+
     public function testValidate()
     {
-        $product = new Product();
+        $product = new ProductStub();
+        $product->setId(1);
         $this
             ->validatorService
             ->expects($this->once())
