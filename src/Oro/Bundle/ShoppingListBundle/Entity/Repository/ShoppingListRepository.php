@@ -103,13 +103,6 @@ class ShoppingListRepository extends EntityRepository
             ->select('list, items')
             ->leftJoin('list.lineItems', 'items');
 
-        $aclHelper->applyAclToQb(
-            ShoppingList::class,
-            $qb,
-            'VIEW',
-            ['accountUser' => 'list.accountUser', 'organization' => 'list.organization']
-        );
-
         foreach ($sortCriteria as $field => $sortOrder) {
             if ($sortOrder === Criteria::ASC) {
                 $qb->addOrderBy($qb->expr()->asc($field));
@@ -117,6 +110,7 @@ class ShoppingListRepository extends EntityRepository
                 $qb->addOrderBy($qb->expr()->desc($field));
             }
         }
+        $aclHelper->apply($qb, 'VIEW', false);
 
         return $qb->getQuery()->getResult();
     }
