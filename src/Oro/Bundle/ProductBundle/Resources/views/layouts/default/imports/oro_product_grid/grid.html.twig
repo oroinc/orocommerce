@@ -55,8 +55,9 @@
         class: attr.class|default('') ~ " oro-pagination",
         'data-grid-pagination': ''
     }) %}
-    <div class="catalog__filter-controls__item">
-        <div{{ block('block_attributes') }}>{{ block(block_type_widget_id) }}</div>
+
+    <div{{ block('block_attributes') }}>
+        {{ block(block_type_widget_id) }}
     </div>
 {% endblock %}
 
