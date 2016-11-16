@@ -1,42 +1,4 @@
 datagrids:
-    catalog-category-select-grid:
-        acl_resource: oro_product_view
-        options:
-            entityHint: 'category'
-        source:
-            type: orm
-            query:
-                select:
-                    - category.id
-                from:
-                    - { table: '%oro_catalog.entity.category.class%', alias: category }
-        columns:
-            id:
-                label: oro.catalog.category.id.label
-            title:
-                label: oro.catalog.category.titles.label
-        properties:
-            id: ~
-            title:
-                type: localized_value
-                data_name: titles
-        sorters:
-            columns:
-                id:
-                    data_name: category.id
-                title:
-                    data_name: title
-            default:
-                id: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
-        filters:
-            columns:
-                id:
-                    type: number
-                    data_name: category.id
-                title:
-                    type: string
-                    data_name: title
-
     category-products-grid:
         acl_resource: oro_product_update
         extended_entity_name: %oro_product.entity.product.class%

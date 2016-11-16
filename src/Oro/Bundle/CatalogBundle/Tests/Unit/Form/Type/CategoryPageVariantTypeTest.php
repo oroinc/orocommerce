@@ -8,7 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\CatalogBundle\ContentVariantType\CategoryPageContentVariantType;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryPageVariantType;
-use Oro\Bundle\CatalogBundle\Form\Type\CategorySelectType;
+use Oro\Bundle\CatalogBundle\Form\Type\CategoryTreeType;
 use Oro\Bundle\CatalogBundle\Tests\Unit\ContentVariantType\Stub\ContentVariantStub;
 use Oro\Bundle\ScopeBundle\Form\Type\ScopeCollectionType;
 use Oro\Bundle\WebCatalogBundle\Tests\Unit\Form\Type\Stub\ScopeCollectionTypeStub;
@@ -60,12 +60,12 @@ class CategoryPageVariantTypeTest extends FormIntegrationTestCase
             new PreloadedExtension(
                 [
                     ScopeCollectionType::NAME => new ScopeCollectionTypeStub(),
-                    CategorySelectType::NAME => new EntityType(
+                    CategoryTreeType::NAME => new EntityType(
                         [
                             1 => $this->getEntity(Category::class, ['id' => 1]),
                             2 => $this->getEntity(Category::class, ['id' => 2]),
                         ],
-                        CategorySelectType::NAME
+                        CategoryTreeType::NAME
                     )
                 ],
                 []

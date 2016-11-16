@@ -49,8 +49,3 @@ services:
             - '@doctrine'
         tags:
             - { name: form.type, alias: oro_catalog_category_page_variant }
-
-    oro_catalog.form.type.category_select:
-        class: Oro\Bundle\CatalogBundle\Form\Type\CategorySelectType
-        tags:
-            - { name: form.type, alias: oro_catalog_category_select }

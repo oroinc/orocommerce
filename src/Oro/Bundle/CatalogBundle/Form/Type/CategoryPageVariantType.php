@@ -38,7 +38,7 @@ class CategoryPageVariantType extends AbstractType
         $builder
             ->add(
                 'categoryPageCategory',
-                CategorySelectType::NAME,
+                CategoryTreeType::NAME,
                 [
                     'label' => 'oro.catalog.category.entity_label',
                     'required' => true

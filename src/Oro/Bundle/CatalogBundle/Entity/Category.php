@@ -34,10 +34,6 @@ use Oro\Component\Tree\Entity\TreeTrait;
  *          },
  *          "dataaudit"={
  *              "auditable"=true
- *          },
- *          "form"={
- *              "form_type"="oro_catalog_category_select",
- *              "grid_name"="catalog-category-select-grid"
  *          }
  *      }
  * )

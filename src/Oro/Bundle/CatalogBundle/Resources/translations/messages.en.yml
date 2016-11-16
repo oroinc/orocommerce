@@ -22,7 +22,6 @@ oro:
             unit_precision.label:        'Unit Precision'
             unit.label:                  'Unit of Quantity'
             precision.label:             'Precision'
-            form.choose:                 'Choose a Category...'
             content_variant_type.label:  'Category Page'
 
         sections:

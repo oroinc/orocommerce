@@ -130,12 +130,3 @@ services:
             - '@property_accessor'
         tags:
             - { name: oro_web_catalog.content_variant_type }
-
-    oro_catalog.form.autocomplete.category.search_handler:
-        public: false
-        parent: oro_form.autocomplete.search_handler
-        arguments:
-            - '%oro_catalog.entity.category.class%'
-            - [ "defaultTitle.string"]
-        tags:
-            - { name: oro_form.autocomplete.search_handler, alias: oro_category, acl_resource: oro_catalog_category_view }
