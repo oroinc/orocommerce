@@ -78,7 +78,6 @@ class OroWebCatalogBundleInstaller implements
         $table->addColumn('description', 'text', ['notnull' => false]);
         $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
-        $table->addColumn('parent_scope_used', 'boolean', ['default' => false]);
         $table->setPrimaryKey(['id']);
         $this->noteExtension->addNoteAssociation($schema, $table->getName());
     }
@@ -111,6 +110,7 @@ class OroWebCatalogBundleInstaller implements
         $table->addColumn('parent_id', 'integer', ['notnull' => false]);
         $table->addColumn('web_catalog_id', 'integer', []);
         $table->addColumn('name', 'string', ['length' => 255]);
+        $table->addColumn('parent_scope_used', 'boolean', ['default' => false]);
         $table->addColumn('materialized_path', 'string', ['notnull' => false, 'length' => 1024]);
         $table->addColumn('tree_left', 'integer', []);
         $table->addColumn('tree_level', 'integer', []);

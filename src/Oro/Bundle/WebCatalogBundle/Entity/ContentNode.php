@@ -92,7 +92,7 @@ class ContentNode extends ExtendContentNode implements ContentNodeInterface, Dat
      *
      * @ORM\Column(name="parent_scope_used", type="boolean", options={"default"=false})
      */
-    protected $parentScopeUsed;
+    protected $parentScopeUsed = true;
 
     /**
      * @var Collection|LocalizedFallbackValue[]
@@ -460,7 +460,7 @@ class ContentNode extends ExtendContentNode implements ContentNodeInterface, Dat
      */
     public function resetScopes()
     {
-        $this->scopes = new ArrayCollection();
+        $this->scopes->clear();
         
         return $this;
     }

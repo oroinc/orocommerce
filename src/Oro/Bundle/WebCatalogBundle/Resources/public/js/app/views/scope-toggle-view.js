@@ -45,7 +45,7 @@ define(function(require) {
             this.$scopeFields = this.$el.find(this.options.selectors.scopesSelector);
 
             this._initScopes();
-            this.$useParentScope.on('change',_.bind(this._toggleScopes, this));
+            this.$el.on('change', this.$useParentScope, _.bind(this._toggleScopes, this));
         },
 
         _initScopes: function() {
