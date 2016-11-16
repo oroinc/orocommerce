@@ -66,81 +66,84 @@ abstract class AbstractLoadACLData extends AbstractFixture implements
     protected $admin;
 
     /**
-     * @var array
+     * @return array
      */
-    protected $accountUsers = [
-        [
-            'email' => self::USER_ACCOUNT_1_ROLE_BASIC,
-            'account' => 'account.level_1.1',
-            'role' => self::ROLE_BASIC,
-        ],
-        [
-            'email' => self::USER_ACCOUNT_1_ROLE_LOCAL,
-            'account' => 'account.level_1.1',
-            'role' => self::ROLE_LOCAL,
-        ],
-        [
-            'email' => self::USER_ACCOUNT_1_ROLE_DEEP,
-            'account' => 'account.level_1.1',
-            'role' => self::ROLE_DEEP,
-        ],
-        [
-            'email' => self::USER_ACCOUNT_1_ROLE_LOCAL_VIEW_ONLY,
-            'account' => 'account.level_1.1',
-            'role' => self::ROLE_LOCAL_VIEW_ONLY,
-        ],
-        [
-            'email' => self::USER_ACCOUNT_1_ROLE_DEEP_VIEW_ONLY,
-            'account' => 'account.level_1.1',
-            'role' => self::ROLE_DEEP_VIEW_ONLY,
-        ],
-        [
-            'email' => self::USER_ACCOUNT_1_1_ROLE_BASIC,
-            'account' => 'account.level_1.1.1',
-            'role' => self::ROLE_BASIC,
-        ],
-        [
-            'email' => self::USER_ACCOUNT_1_1_ROLE_LOCAL,
-            'account' => 'account.level_1.1.1',
-            'role' => self::ROLE_LOCAL,
-        ],
-        [
-            'email' => self::USER_ACCOUNT_1_1_ROLE_DEEP,
-            'account' => 'account.level_1.1.1',
-            'role' => self::ROLE_DEEP,
-        ],
-        [
-            'email' => self::USER_ACCOUNT_1_2_ROLE_BASIC,
-            'account' => 'account.level_1.1.2',
-            'role' => self::ROLE_BASIC,
-        ],
-        [
-            'email' => self::USER_ACCOUNT_1_2_ROLE_LOCAL,
-            'account' => 'account.level_1.1.2',
-            'role' => self::ROLE_LOCAL,
-        ],
-        [
-            'email' => self::USER_ACCOUNT_1_2_ROLE_DEEP,
-            'account' => 'account.level_1.1.2',
-            'role' => self::ROLE_DEEP,
-        ],
-        [
-            'email' => self::USER_ACCOUNT_2_ROLE_BASIC,
-            'account' => 'account.level_1.2',
-            'role' => self::ROLE_BASIC,
-        ],
-        [
-            'email' => self::USER_ACCOUNT_2_ROLE_LOCAL,
-            'account' => 'account.level_1.2',
-            'role' => self::ROLE_LOCAL,
-        ],
-        [
-            'email' => self::USER_ACCOUNT_2_ROLE_DEEP,
-            'account' => 'account.level_1.2',
-            'role' => self::ROLE_DEEP,
-        ],
-    ];
+    public static function getAccountUsers()
+    {
 
+        return [
+            [
+                'email' => static::USER_ACCOUNT_1_ROLE_BASIC,
+                'account' => 'account.level_1.1',
+                'role' => static::ROLE_BASIC,
+            ],
+            [
+                'email' => static::USER_ACCOUNT_1_ROLE_LOCAL,
+                'account' => 'account.level_1.1',
+                'role' => static::ROLE_LOCAL,
+            ],
+            [
+                'email' => static::USER_ACCOUNT_1_ROLE_DEEP,
+                'account' => 'account.level_1.1',
+                'role' => static::ROLE_DEEP,
+            ],
+            [
+                'email' => static::USER_ACCOUNT_1_ROLE_LOCAL_VIEW_ONLY,
+                'account' => 'account.level_1.1',
+                'role' => static::ROLE_LOCAL_VIEW_ONLY,
+            ],
+            [
+                'email' => static::USER_ACCOUNT_1_ROLE_DEEP_VIEW_ONLY,
+                'account' => 'account.level_1.1',
+                'role' => static::ROLE_DEEP_VIEW_ONLY,
+            ],
+            [
+                'email' => static::USER_ACCOUNT_1_1_ROLE_BASIC,
+                'account' => 'account.level_1.1.1',
+                'role' => static::ROLE_BASIC,
+            ],
+            [
+                'email' => static::USER_ACCOUNT_1_1_ROLE_LOCAL,
+                'account' => 'account.level_1.1.1',
+                'role' => static::ROLE_LOCAL,
+            ],
+            [
+                'email' => static::USER_ACCOUNT_1_1_ROLE_DEEP,
+                'account' => 'account.level_1.1.1',
+                'role' => static::ROLE_DEEP,
+            ],
+            [
+                'email' => static::USER_ACCOUNT_1_2_ROLE_BASIC,
+                'account' => 'account.level_1.1.2',
+                'role' => static::ROLE_BASIC,
+            ],
+            [
+                'email' => static::USER_ACCOUNT_1_2_ROLE_LOCAL,
+                'account' => 'account.level_1.1.2',
+                'role' => static::ROLE_LOCAL,
+            ],
+            [
+                'email' => static::USER_ACCOUNT_1_2_ROLE_DEEP,
+                'account' => 'account.level_1.1.2',
+                'role' => static::ROLE_DEEP,
+            ],
+            [
+                'email' => static::USER_ACCOUNT_2_ROLE_BASIC,
+                'account' => 'account.level_1.2',
+                'role' => static::ROLE_BASIC,
+            ],
+            [
+                'email' => static::USER_ACCOUNT_2_ROLE_LOCAL,
+                'account' => 'account.level_1.2',
+                'role' => static::ROLE_LOCAL,
+            ],
+            [
+                'email' => static::USER_ACCOUNT_2_ROLE_DEEP,
+                'account' => 'account.level_1.2',
+                'role' => static::ROLE_DEEP,
+            ],
+        ];
+    }
     /**
      * {@inheritdoc}
      */
@@ -189,23 +192,29 @@ abstract class AbstractLoadACLData extends AbstractFixture implements
         $defaultUser = $this->getAdminUser($manager);
         $organization = $defaultUser->getOrganization();
 
-        foreach ($this->accountUsers as $item) {
-            $supportedRoles = $this->getSupportedRoles();
+        $supportedRoles = $this->getSupportedRoles();
+        foreach (static::getAccountUsers() as $item) {
             if (!in_array($item['role'], $supportedRoles)) {
                 continue;
             }
-            /* @var $accountUser AccountUser */
-            $accountUser = $userManager->createUser();
-            $accountUser
-                ->setEmail($item['email'])
-                ->setAccount($this->getReference($item['account']))
-                ->setOwner($defaultUser)
-                ->setFirstName($item['email'])
-                ->setLastName($item['email'])
-                ->setConfirmed(true)
-                ->addOrganization($organization)
-                ->setOrganization($organization)
-                ->setPlainPassword($item['email']);
+            $accountUser = null;
+            if ($this->hasReference($item['email'])) {
+                $accountUser = $this->getReference($item['email']);
+            } else {
+                /* @var $accountUser AccountUser */
+                $accountUser = $userManager->createUser();
+                $accountUser
+                    ->setEmail($item['email'])
+                    ->setAccount($this->getReference($item['account']))
+                    ->setOwner($defaultUser)
+                    ->setFirstName($item['email'])
+                    ->setLastName($item['email'])
+                    ->setConfirmed(true)
+                    ->addOrganization($organization)
+                    ->setOrganization($organization)
+                    ->setPlainPassword($item['email']);
+                $this->setReference($item['email'], $accountUser);
+            }
             /** @var RoleInterface $role */
             $role = $this->getReference($item['role']);
             $accountUser
@@ -214,7 +223,6 @@ abstract class AbstractLoadACLData extends AbstractFixture implements
                 ->setSalt('');
 
             $userManager->updateUser($accountUser);
-            $this->setReference($item['email'], $accountUser);
         }
     }
 
@@ -232,11 +240,11 @@ abstract class AbstractLoadACLData extends AbstractFixture implements
         );
 
         $roles = [
-            self::ROLE_BASIC => [['VIEW_BASIC', 'CREATE_BASIC', 'EDIT_BASIC'], ['DELETE_BASIC']],
-            self::ROLE_LOCAL => [['VIEW_LOCAL', 'CREATE_LOCAL', 'EDIT_LOCAL'], ['DELETE_LOCAL']],
-            self::ROLE_LOCAL_VIEW_ONLY => [['VIEW_LOCAL'], []],
-            self::ROLE_DEEP => [['VIEW_DEEP', 'CREATE_DEEP', 'EDIT_DEEP'], ['DELETE_DEEP']],
-            self::ROLE_DEEP_VIEW_ONLY => [['VIEW_DEEP'], []],
+            static::ROLE_BASIC => [['VIEW_BASIC', 'CREATE_BASIC', 'EDIT_BASIC'], ['DELETE_BASIC']],
+            static::ROLE_LOCAL => [['VIEW_LOCAL', 'CREATE_LOCAL', 'EDIT_LOCAL'], ['DELETE_LOCAL']],
+            static::ROLE_LOCAL_VIEW_ONLY => [['VIEW_LOCAL'], []],
+            static::ROLE_DEEP => [['VIEW_DEEP', 'CREATE_DEEP', 'EDIT_DEEP'], ['DELETE_DEEP']],
+            static::ROLE_DEEP_VIEW_ONLY => [['VIEW_DEEP'], []],
         ];
 
         foreach ($roles as $key => $permissions) {
