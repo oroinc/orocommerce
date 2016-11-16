@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Entity\Repository;
 
+use Doctrine\Common\Collections\Criteria;
+
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
@@ -72,7 +74,7 @@ class ShoppingListRepositoryTest extends WebTestCase
 
     public function testFindByUser()
     {
-        $shoppingLists = $this->getRepository()->findByUser($this->accountUser, ['list.updatedAt' => 'asc']);
+        $shoppingLists = $this->getRepository()->findByUser($this->accountUser, ['list.updatedAt' => Criteria::ASC]);
         $this->assertTrue(count($shoppingLists) > 0);
         /** @var ShoppingList $secondShoppingList */
         $shoppingList = array_shift($shoppingLists);

@@ -6,14 +6,12 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\AddressBundle\Entity\Country;
-use Oro\Bundle\DataAuditBundle\Metadata\Annotation as Oro;
 use Oro\Bundle\IntegrationBundle\Entity\Transport;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
  * @ORM\Entity
- * @Oro\Loggable()
  */
 class UPSTransport extends Transport
 {
@@ -26,11 +24,13 @@ class UPSTransport extends Transport
     const UNIT_OF_WEIGHT_KGS = 'KGS';
     const UNIT_OF_WEIGHT_LBS = 'LBS';
 
+    const UNIT_OF_LENGTH_INCH = 'IN';
+    const UNIT_OF_LENGTH_CM = 'CM';
+
     /**
      * @var string
      *
      * @ORM\Column(name="ups_base_url", type="string", length=255, nullable=false)
-     * @Oro\Versioned()
      */
     protected $baseUrl;
 
@@ -38,7 +38,6 @@ class UPSTransport extends Transport
      * @var string
      *
      * @ORM\Column(name="ups_api_user", type="string", length=255, nullable=false)
-     * @Oro\Versioned()
      */
     protected $apiUser;
 
@@ -46,7 +45,6 @@ class UPSTransport extends Transport
      * @var string
      *
      * @ORM\Column(name="ups_api_password", type="string", length=255, nullable=false)
-     * @Oro\Versioned()
      */
     protected $apiPassword;
 

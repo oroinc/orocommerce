@@ -11,10 +11,6 @@ define(function(require) {
      * @class oroorder.app.components.ProductsPricesComponent
      */
     ProductsPricesComponent = BaseProductsPricesComponent.extend({
-        initFieldsListeners: function() {
-            mediator.on('update:currency', this.setCurrency, this);
-        },
-
         /**
          * @param {Array} products
          * @param {Function} callback
@@ -25,33 +21,10 @@ define(function(require) {
             });
         },
 
-        /**
-         * @param {Array} items
-         * @param {Function} callback
-         */
-        loadLineItemsMatchedPrices: function(items, callback) {
-            mediator.once('entry-point:order:load', function(response) {
-                callback(response.matchedPrices || {});
-            });
-        },
-
         reloadPrices: function() {
             ProductsPricesComponent.__super__.reloadPrices.apply(this, arguments);
 
             mediator.trigger('entry-point:order:trigger');
-        },
-
-        /**
-         * @inheritDoc
-         */
-        dispose: function() {
-            if (this.disposed) {
-                return;
-            }
-
-            mediator.off('update:currency', this.setCurrency, this);
-
-            ProductsPricesComponent.__super__.dispose.call(this);
         }
     });
 

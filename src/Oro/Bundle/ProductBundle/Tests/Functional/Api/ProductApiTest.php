@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
-use Oro\Bundle\WarehouseBundle\Tests\Functional\DataFixtures\LoadWarehousesAndInventoryLevels;
+use Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures\LoadInventoryLevels;
 
 /**
  * @dbIsolation
@@ -29,7 +29,7 @@ class ProductApiTest extends RestJsonApiTestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->loadFixtures([LoadWarehousesAndInventoryLevels::class]);
+        $this->loadFixtures([LoadInventoryLevels::class]);
     }
 
     /**

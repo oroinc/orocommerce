@@ -14,12 +14,9 @@ class DataAuditEntityMappingPassTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $definition->expects($this->exactly(2))
+        $definition->expects($this->once())
             ->method('addMethodCall')
-            ->withConsecutive(
-                ['addAuditEntryClass', $this->isType('array')],
-                ['addAuditEntryFieldClass', $this->isType('array')]
-            );
+            ->with('addAuditEntryClasses', $this->isType('array'));
 
         /** @var ContainerBuilder|\PHPUnit_Framework_MockObject_MockObject $containerBuilder */
         $containerBuilder = $this->getMockBuilder('Symfony\Component\DependencyInjection\ContainerBuilder')

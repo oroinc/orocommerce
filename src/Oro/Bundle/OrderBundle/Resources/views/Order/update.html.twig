@@ -74,7 +74,6 @@
              data-page-component-options="{{ {
                  view: 'oroorder/js/app/views/line-items-view',
                  tierPrices: orderData.tierPrices|default({}),
-                 matchedPrices: orderData.matchedPrices|default({}),
                  currency: entity.currency,
                  account: entity.account is null ? null : entity.account.id,
                  subtotalType: subtotalType

@@ -2,30 +2,6 @@
   float: left;
   position: relative;
 
-  table {
-    min-width: 100px;
-
-    tr {
-      &:hover {
-        > td {
-          background-color: #fff;
-        }
-      }
-
-      &.matched-tier-price {
-        > td {
-          font-weight: 700;
-        }
-      }
-    }
-
-    td {
-      border: none;
-      padding: 2px;
-      height: 19px !important;
-    }
-  }
-
   i {
     padding-top: 5px;
     cursor: pointer;
@@ -36,8 +12,32 @@
     }
 
     &:before {
-      font-size: 20px;
+      font-size: 14px;
     }
+  }
+}
+
+table.product-tier-prices-table {
+  min-width: 100px;
+
+  tr {
+    &:hover {
+      > td {
+        background-color: #fff;
+      }
+    }
+
+    &.matched-tier-price {
+      > td {
+        font-weight: 700;
+      }
+    }
+  }
+
+  td {
+    border: none;
+    padding: 2px;
+    height: 19px !important;
   }
 }
 

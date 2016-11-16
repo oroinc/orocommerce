@@ -83,6 +83,7 @@ class AccountUserAddressControllerTest extends WebTestCase
         );
 
         $result = $this->getJsonResponseContent($this->client->getResponse(), 200);
+        sort($result['types']);
 
         $this->assertEquals('Badakhshān', $result['region']);
         $this->assertEquals([
@@ -154,6 +155,7 @@ class AccountUserAddressControllerTest extends WebTestCase
         );
 
         $result = $this->getJsonResponseContent($this->client->getResponse(), 200);
+        sort($result['types']);
 
         $this->assertEquals('Manicaland', $result['region']);
         $this->assertEquals([

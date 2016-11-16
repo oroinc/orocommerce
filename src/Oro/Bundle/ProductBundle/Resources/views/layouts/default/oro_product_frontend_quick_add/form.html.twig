@@ -51,7 +51,7 @@
                     </div>
                 </fieldset>
 
-                <div class="oro-item-collection" data-last-index="{{ form.children|length }}" data-row-count-add="{{ form.vars.row_count_add }}"
+                <div class="js-item-collection" data-last-index="{{ form.children|length }}" data-row-count-add="{{ form.vars.row_count_add }}"
                      data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %}>
                     {% if form.children|length %}
                         {% for child in form.children %}
@@ -65,10 +65,11 @@
                 </div>
             </div>
         </div>
+
         {% if allow_add %}
             <fieldset class="{{ class_prefix }}__form__row">
                 <div class="{{ class_prefix }}__form__col {{ class_prefix }}__form__col_full">
-                    <a href="#" class="add-more-rows-btn add-list-item" data-container=".oro-item-collection"
+                    <a href="#" class="add-more-rows-btn add-list-item" data-container=".js-item-collection"
                        href="javascript: void(0);">
                         <i class="cf-add_circle fs18 blue"></i>
                         <span>{{ form.vars.add_label|default('oro.form.collection.add')|trans }}</span>

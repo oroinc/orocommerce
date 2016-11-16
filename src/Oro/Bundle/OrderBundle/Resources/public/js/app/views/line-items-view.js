@@ -19,7 +19,6 @@ define(function(require) {
          */
         options: {
             tierPrices: null,
-            matchedPrices: {},
             currency: null,
             account: null,
             subtotalValidationSelector: '[data-ftid=oro_order_type_subtotalValidation]',
@@ -42,7 +41,9 @@ define(function(require) {
          */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});
-            this.initLayout().done(_.bind(this.handleLayoutInit, this));
+            this.initLayout({
+                prices: this.options.tierPrices
+            }).done(_.bind(this.handleLayoutInit, this));
 
             mediator.on('totals:update', this.updateValidators, this);
         },
@@ -58,7 +59,6 @@ define(function(require) {
             this.subview('productsPricesComponent', new ProductsPricesComponent({
                 _sourceElement: this.$el,
                 tierPrices: this.options.tierPrices,
-                matchedPrices: this.options.matchedPrices,
                 currency: this.options.currency,
                 account: this.options.account
             }));

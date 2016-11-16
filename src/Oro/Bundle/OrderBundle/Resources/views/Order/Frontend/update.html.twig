@@ -56,7 +56,6 @@
              data-page-component-options="{{ {
                  view: 'oroorder/js/app/views/line-items-view',
                  tierPrices: orderData.tierPrices|default({}),
-                 matchedPrices: orderData.matchedPrices|default({}),
                  currency: form.vars.value.currency
              }|json_encode }}"
              data-layout="separate">

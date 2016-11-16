@@ -10,11 +10,6 @@ oro_cms_frontend_page:
     options:
         frontend: true
 
-oro_cms_ajax:
-    resource:     "@OroCMSBundle/Controller/AjaxPageController.php"
-    type:         annotation
-    prefix:       /cms/ajax
-
 oro_cms_login_page:
     resource:     "@OroCMSBundle/Controller/LoginPageController.php"
     type:         annotation

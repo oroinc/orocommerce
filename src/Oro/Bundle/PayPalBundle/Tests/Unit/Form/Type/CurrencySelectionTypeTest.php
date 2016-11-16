@@ -129,7 +129,6 @@ class CurrencySelectionTypeTest extends FormIntegrationTestCase
                     'compact' => true,
                     'choices' => [
                         new ChoiceView('USD', 'USD', 'USD')
-
                     ]
                 ],
                 'submittedData' => 'USD'

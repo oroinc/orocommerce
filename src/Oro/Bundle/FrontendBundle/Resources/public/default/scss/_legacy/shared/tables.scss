@@ -14,10 +14,10 @@
     th {
       padding: 10px 12px;
       border: 0;
-      border-top: 1px solid $theme-lighter-gray-color;
-      border-bottom: 1px solid $theme-lighter-gray-color;
+      border-top: 1px solid get-color('additional', 'light');
+      border-bottom: 1px solid get-color('additional', 'light');
 
-      background: $theme-lightest-gray-color;
+      background: get-color('additional', 'base');
 
       small {
         font-size: $base-font-size;
@@ -39,7 +39,7 @@
           display: block;
           height: 1px;
 
-          background-color: $theme-lighter-gray-color;
+          background-color: get-color('additional', 'light');
         }
       }
 
@@ -52,7 +52,7 @@
           display: block;
           height: 1px;
 
-          background-color: $theme-lighter-gray-color;
+          background-color: get-color('additional', 'light');
         }
       }
     }
@@ -61,13 +61,13 @@
   tfoot {
     td {
       padding: 16px 12px;
-      border-bottom: 1px solid $theme-lighter-gray-color;
-      border-top: 1px solid $theme-lighter-gray-color;
+      border-bottom: 1px solid get-color('additional', 'light');
+      border-top: 1px solid get-color('additional', 'light');
 
-      background: $theme-lightest-gray-color;
+      background: get-color('additional', 'base');
 
       .disabled {
-        color: $base-font-color-lightest;
+        color: get-color('additional', 'light');
       }
     }
   }
@@ -141,6 +141,8 @@
 
     tr {
       &.checked {
+        $base-checked-item-in-cart-group: #eff6fb !default;
+
         background: $base-checked-item-in-cart-group;
       }
     }
@@ -222,7 +224,7 @@
   }
 
   &_b-bordered {
-    border-bottom: 1px solid $theme-lighter-gray-color;
+    border-bottom: 1px solid get-color('additional', 'light');
   }
 
   &__access {

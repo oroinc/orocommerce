@@ -1,4 +1,6 @@
 .credit-card-icon {
+  $paymentIconUrl: $global-url + '/orofrontend/default/images/payments';
+
   display: inline-block;
   vertical-align: middle;
 
@@ -6,28 +8,28 @@
     width: 39px;
     height: 25px;
 
-    background: url('#{$global-url}/orofrontend/default/images/payments/mastercard.png') no-repeat;
+    background: url('#{$paymentIconUrl}/mastercard.png') no-repeat;
   }
 
   &_visa {
     width: 41px;
     height: 25px;
 
-    background: url('#{$global-url}/orofrontend/default/images/payments/visa.png') no-repeat;
+    background: url('#{$paymentIconUrl}/visa.png') no-repeat;
   }
 
   &_american_express {
     width: 40px;
     height: 25px;
 
-    background: url('#{$global-url}/orofrontend/default/images/payments/american_express.png') no-repeat;
+    background: url('#{$paymentIconUrl}/american_express.png') no-repeat;
   }
 
   &_discover {
     width: 40px;
     height: 25px;
 
-    background: url('#{$global-url}/orofrontend/default/images/payments/discover.png') no-repeat;
+    background: url('#{$paymentIconUrl}/discover.png') no-repeat;
   }
 }
 
@@ -77,11 +79,11 @@
   }
 
   &--large {
-    font-size: $default-font-size-large;
+    font-size: 24px;
   }
 
   &--gray {
-    color: $base-font-color-lighter;
+    color: get-color('additional', 'dark');
   }
 
   &--hidden {

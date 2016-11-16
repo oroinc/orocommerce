@@ -141,8 +141,11 @@
                     <div class="fields-row">
                         {% for subSectionName, subSection in sections.data %}
                             <div
-                                {% if subSection.page_component is defined %} data-page-component-module="{{ subSection.page_component }}"
-                                    {% if subSection.page_component_options is defined %} data-page-component-options="{{ subSection.page_component_options }}"{% endif %}
+                                {% if subSection.page_component is defined %}
+                                    data-page-component-module="{{ subSection.page_component }}"
+                                    {% if subSection.page_component_options is defined %}
+                                        data-page-component-options="{{ subSection.page_component_options is iterable ? subSection.page_component_options|json_encode : subSection.page_component_options }}"
+                                    {% endif %}
                                 {% endif %}>
                                 {% placeholder 'order_edit_subsection_' ~ subSectionName ~ '_before' with {subSection: subSection} %}
                                 {% if subSectionName in form|keys %}
@@ -295,4 +298,104 @@
     <td>
         {{ form_widget(form.description) }}
     </td>
+{% endblock %}
+
+{% macro oro_order_shipping_tracking_collection_item_prototype(widget) %}
+    {% if 'collection' in widget.vars.block_prefixes %}
+        {% set form = widget.vars.prototype %}
+        {% set name = widget.vars.prototype.vars.name %}
+        {% set disabled = widget.vars.disabled %}
+        {% set allow_delete = widget.vars.allow_delete %}
+        {% set allow_add_after = widget.vars.allow_add_after %}
+    {% else %}
+        {% set form = widget %}
+        {% set name = widget.vars.full_name %}
+        {% set disabled = widget.parent.vars.disabled %}
+        {% set allow_delete = widget.parent.vars.allow_delete %}
+        {% set allow_add_after = widget.parent.vars.allow_add_after %}
+        {% if widget.vars.allow_delete is defined %}
+            {% set allow_delete = allow_delete and widget.vars.allow_delete %}
+        {% endif %}
+    {% endif %}
+    {{ form_widget(form, {disabled: disabled}) }}
+{% endmacro %}
+
+{% block oro_order_shipping_tracking_collection_widget %}
+    {% spaceless %}
+        {% if prototype is defined %}
+            {% set prototype_html = _self.oro_order_shipping_tracking_collection_item_prototype(form) %}
+        {% endif %}
+        {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection collection-fields-list' }) %}
+        {% set id = id ~ '_collection' %}
+        <div class="row-oro"
+                {% import 'OroUIBundle::macros.html.twig' as UI %}
+                {{ UI.renderPageComponentAttributes({
+                    module: form.vars.page_component,
+                    options: form.vars.page_component_options
+                }) }}>
+            {% set prototype_name = form.vars.prototype_name %}
+            <div>
+                <table class="grid table table-condensed table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>{{ 'oro.order.shipping_tracking.method.label'|trans }}</th>
+                            <th>{{ 'oro.order.shipping_tracking.number.label'|trans }}</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody {{ block('widget_container_attributes') }} data-last-index="{{ form.children|length}}" data-row-count-add="{{ form.vars.row_count_add }}" data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %}>
+                        {% if form.children|length %}
+                            {% for child in form.children %}
+                                {{ _self.oro_order_shipping_tracking_collection_item_prototype(child) }}
+                            {% endfor %}
+                        {% elseif show_form_when_empty and prototype_html is defined %}
+                            {% for i in 0..(form.vars.row_count_initial - 1) %}
+                                {{ prototype_html|replace({(prototype_name): i})|raw }}
+                            {% endfor %}
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+            {% if allow_add %}
+                <a class="btn add-list-item" href="javascript: void(0);"><i class="icon-plus"></i>{{ form.vars.add_label|default('oro.form.collection.add')|trans }}</a>
+            {% endif %}
+        </div>
+    {% endspaceless %}
+{% endblock %}
+
+{% block oro_order_shipping_tracking_widget %}
+    {% set name = form.vars.full_name %}
+
+    <tr data-content="{{ name }}" class="oro-multiselect-holder grid-row">
+        <td>{{ form_widget(form.method, { 'attr': {'class': 'order-shipping-tracking-method', 'style': 'width: 100px'}}) }}</td>
+        <td>{{ form_widget(form.number, { 'attr': {'class': 'order-shipping-tracking-number', 'style': 'width: 150px'} }) }}</td>
+        {% if form.parent.vars.allow_delete %}
+            <td><button class="removeRow btn icons-holder" type="button" data-related="{{ name }}"><i class="icon-remove"></i></button></td>
+        {% endif %}
+    </tr>
+
+{% endblock %}
+
+{% block oro_select_switch_input_widget %}
+    <div
+        {% import 'OroUIBundle::macros.html.twig' as UI %}
+        {{ UI.renderPageComponentAttributes({
+            module: form.vars.page_component,
+            options: form.vars.page_component_options
+        }) }}>
+        <div class="input-group select-switch-input-container">
+            <div class="select-container">
+                {{ form_widget(form) }}
+                <span class="input-group-btn">
+                    <button class="add-on btn select-to-input-btn"><i class="icon-plus"></i></button>
+                </span>
+            </div>
+            <div class="input-container">
+                <span class="input-group-btn input-to-select">
+                    <button class="add-on btn input-to-select-btn"><i class="icon-bars"></i></button>
+                </span>
+            </div>
+        </div>
+        {{ form_errors(form) }}
+    </div>
 {% endblock %}
