@@ -1,5 +1,9 @@
 .product-price-filter {
   display: inline-block;
+  vertical-align: top;
+
+  line-height: 37px;
+
   @media (max-width: 991px) {
     display: block;
   }
