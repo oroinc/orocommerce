@@ -59,7 +59,11 @@ class OrderPossibleShippingMethodsEventListenerTest extends \PHPUnit_Framework_T
         );
     }
 
-    public function testOnOrderEvent()
+    /**
+     * @dataProvider onOrderEventDataProvider
+     * @param array $submittedData
+     */
+    public function testOnOrderEvent(array $submittedData)
     {
         $order = new Order();
         $context = $this->getMock(ShippingContextInterface::class);
@@ -74,11 +78,7 @@ class OrderPossibleShippingMethodsEventListenerTest extends \PHPUnit_Framework_T
             ->with($context)
             ->willReturn($possibleShippingMethods);
 
-        $event = new OrderEvent(
-            $this->getMock(FormInterface::class),
-            $order,
-            [OrderPossibleShippingMethodsEventListener::CALCULATE_SHIPPING_KEY => 'true']
-        );
+        $event = new OrderEvent($this->getMock(FormInterface::class), $order, $submittedData);
 
         $this->listener->onOrderEvent($event);
 
@@ -88,5 +88,16 @@ class OrderPossibleShippingMethodsEventListenerTest extends \PHPUnit_Framework_T
             ]),
             $event->getData()
         );
+    }
+
+    /**
+     * @return array
+     */
+    public function onOrderEventDataProvider()
+    {
+        return [
+            ['submittedData' => []],
+            ['submittedData' => [OrderPossibleShippingMethodsEventListener::CALCULATE_SHIPPING_KEY => 'true']],
+        ];
     }
 }
