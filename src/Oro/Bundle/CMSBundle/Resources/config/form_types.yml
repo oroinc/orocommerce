@@ -14,7 +14,7 @@ services:
         tags:
             - { name: form.type, alias: oro_cms_login_page }
 
-    oro_cms.form.type.product_page_content_variant:
+    oro_cms.form.type.cms_page_content_variant:
         class: Oro\Bundle\CMSBundle\Form\Type\CmsPageVariantType
         arguments:
             - '@doctrine'
