@@ -7,7 +7,7 @@ use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class PageSelectTypeTest extends FormIntegrationTestCase
+class WebCatalogSelectTypeTest extends FormIntegrationTestCase
 {
     /**
      * @var WebCatalogSelectType
