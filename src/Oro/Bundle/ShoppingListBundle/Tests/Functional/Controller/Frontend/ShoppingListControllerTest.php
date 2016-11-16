@@ -236,6 +236,24 @@ class ShoppingListControllerTest extends WebTestCase
                 'user' => LoadShoppingListUserACLData::USER_ACCOUNT_1_1_ROLE_LOCAL,
                 'status' => 403,
             ],
+            'CREATE anon' => [
+                'route' => 'oro_shopping_list_frontend_create',
+                'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_1_USER_LOCAL,
+                'user' => '',
+                'status' => 401,
+            ],
+            'CREATE (user with create: LOCAL)' => [
+                'route' => 'oro_shopping_list_frontend_create',
+                'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_1_USER_LOCAL,
+                'user' => LoadShoppingListUserACLData::USER_ACCOUNT_1_1_ROLE_LOCAL,
+                'status' => 200,
+            ],
+            'CREATE (user with create: NONE)' => [
+                'route' => 'oro_shopping_list_frontend_create',
+                'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_1_USER_LOCAL,
+                'user' => LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_LOCAL_VIEW_ONLY,
+                'status' => 403,
+            ],
         ];
     }
 
