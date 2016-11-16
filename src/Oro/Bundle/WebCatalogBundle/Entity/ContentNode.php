@@ -190,7 +190,9 @@ class ContentNode extends ExtendContentNode implements ContentNodeInterface, Dat
      * @ORM\OneToMany(
      *     targetEntity="Oro\Bundle\WebCatalogBundle\Entity\ContentVariant",
      *     mappedBy="node",
-     *     cascade={"persist"}
+     *     cascade={"ALL"},
+     *     fetch="EAGER",
+     *     orphanRemoval=true
      * )
      */
     protected $contentVariants;
@@ -481,6 +483,7 @@ class ContentNode extends ExtendContentNode implements ContentNodeInterface, Dat
     public function addContentVariant(ContentVariant $page)
     {
         if (!$this->contentVariants->contains($page)) {
+            $page->setNode($this);
             $this->contentVariants->add($page);
         }
 

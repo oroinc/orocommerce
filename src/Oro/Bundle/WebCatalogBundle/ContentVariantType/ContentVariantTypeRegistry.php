@@ -57,4 +57,21 @@ class ContentVariantTypeRegistry
 
         return $types;
     }
+
+    /**
+     * @param string $type
+     * @return string
+     */
+    public function getFormTypeByType($type)
+    {
+        foreach ($this->getContentVariantTypes() as $contentVariantType) {
+            if ($contentVariantType->getName() === $type) {
+                return $contentVariantType->getFormType();
+            }
+        }
+
+        throw new InvalidArgumentException(
+            sprintf('Content variant type "%s" is not known.', $type)
+        );
+    }
 }

@@ -29,7 +29,7 @@ oro:
             titles.label: Titles
             parent_scope_used.label: Inherit Parent
             web_catalog.label: Web catalog
-            scopes.label: Used For
+            scopes.label: Use For
 
         contentvariant:
             entity_label: Content Variant
@@ -38,7 +38,7 @@ oro:
             type.label: Type
             system_page_route.label: System Page Route
             node.label: Content Node
-            scopes.label: Used For
+            scopes.label: Use For
 
             variant_type:
                 system_page.label: System Page

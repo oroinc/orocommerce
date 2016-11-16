@@ -47,7 +47,7 @@ class ProductPageContentVariantType implements ContentVariantTypeInterface
      */
     public function getTitle()
     {
-        return 'oro.product.entity_label';
+        return 'oro.product.content_variant.product_page.label';
     }
 
     /**

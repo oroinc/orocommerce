@@ -5,6 +5,7 @@ namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\ContentVariantType;
 use Oro\Bundle\WebCatalogBundle\Exception\InvalidArgumentException;
 use Oro\Component\WebCatalog\ContentVariantTypeInterface;
 use Oro\Bundle\WebCatalogBundle\ContentVariantType\ContentVariantTypeRegistry;
+use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 
 class ContentVariantTypeRegistryTest extends \PHPUnit_Framework_TestCase
 {
@@ -135,5 +136,28 @@ class ContentVariantTypeRegistryTest extends \PHPUnit_Framework_TestCase
             ],
             $this->registry->getAllowedContentVariantTypes()
         );
+    }
+
+    public function testGetFormType()
+    {
+        $type1 = $this->getMock(ContentVariantTypeInterface::class);
+        $type1->expects($this->any())
+            ->method('getName')
+            ->willReturn('type1');
+        $type1->expects($this->never())
+            ->method('getFormType');
+
+        $type2 = $this->getMock(ContentVariantTypeInterface::class);
+        $type2->expects($this->any())
+            ->method('getName')
+            ->willReturn('type2');
+        $type2->expects($this->once())
+            ->method('getFormType')
+            ->willReturn('form.type');
+
+        $this->registry->addContentVariantType($type1);
+        $this->registry->addContentVariantType($type2);
+
+        $this->assertEquals('form.type', $this->registry->getFormTypeByType('type2'));
     }
 }

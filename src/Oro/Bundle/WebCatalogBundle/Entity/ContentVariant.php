@@ -41,8 +41,11 @@ class ContentVariant extends ExtendContentVariant implements ContentVariantInter
     /**
      * @var ContentNode
      *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\WebCatalogBundle\Entity\ContentNode", inversedBy="contentVariants")
-     * @ORM\JoinColumn(name="node_id", referencedColumnName="id")
+     * @ORM\ManyToOne(
+     *     targetEntity="Oro\Bundle\WebCatalogBundle\Entity\ContentNode",
+     *     inversedBy="contentVariants"
+     * )
+     * @ORM\JoinColumn(name="node_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $node;
 
