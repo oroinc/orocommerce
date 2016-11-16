@@ -130,6 +130,7 @@ operations:
             page_component_options:
                 component_name: '[name$="[component]"]'
                 component_additional: '[name$="[additional]"]'
+                submitWithErrors: true
         preactions:
             - '@call_service_method':
                 service: oro_rfp.processor.quick_add

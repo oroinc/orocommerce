@@ -10,7 +10,10 @@ define(function(require) {
         /**
          * @property {Object}
          */
-        options: {},
+        options: {
+            errors: {},
+            submitWithErrors: false
+        },
 
         /**
          * @property {jQuery}
@@ -30,6 +33,10 @@ define(function(require) {
 
             this.$button = this.options._sourceElement;
             this.$form = this.$button.closest('form');
+
+            if (this.options.errors.length && !this.options.submitWithErrors) {
+                return;
+            }
 
             this.$button.on('click', _.bind(this.submit, this));
         },
