@@ -156,6 +156,7 @@ services:
         class: 'Oro\Bundle\RFPBundle\Layout\DataProvider\RFPFormProvider'
         arguments:
             - '@form.factory'
+            - '@router'
         tags:
             - { name: layout.data_provider, alias: oro_rfp_request_form }
 

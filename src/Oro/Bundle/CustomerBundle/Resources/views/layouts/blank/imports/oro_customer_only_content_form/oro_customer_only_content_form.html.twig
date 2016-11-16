@@ -39,7 +39,7 @@
         {% set childs = childs|merge([child]) %}
     {% endfor %}
     {% for child in childs %}
-        <div class="form-row {{ loop.last ? 'form-row--offset-none' }}">
+        <div class="form-row form-row--offset-s {{ loop.last ? 'form-row--offset-none' }}">
             {% set attr = layout_attr_defaults(child.vars.attr, {
                 '~class': ' link'
             }) %}
