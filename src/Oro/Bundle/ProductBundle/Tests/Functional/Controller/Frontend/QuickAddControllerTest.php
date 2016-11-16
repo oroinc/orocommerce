@@ -5,10 +5,12 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\Controller\Frontend;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
 
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadFrontendProductVisibilityData;
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadFrontendProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 
 abstract class QuickAddControllerTest extends WebTestCase
@@ -32,6 +34,7 @@ abstract class QuickAddControllerTest extends WebTestCase
         $this->loadFixtures(
             [
                 LoadFrontendProductData::class,
+                LoadFrontendProductVisibilityData::class,
                 LoadProductUnitPrecisions::class
             ]
         );
@@ -96,6 +99,37 @@ abstract class QuickAddControllerTest extends WebTestCase
         if ($expectedMessage) {
             $this->assertContains($expectedMessage, $this->client->getResponse()->getContent());
         }
+    }
+
+    public function testVisibilityCopyPasteAction()
+    {
+        $example = [
+            LoadProductData::PRODUCT_1 . ", 1",
+            LoadProductData::PRODUCT_2 . ",     2",
+            LoadProductData::PRODUCT_3 . "\t3",
+            LoadProductData::PRODUCT_4 . "\t1" //Hidden product
+        ];
+
+        $expectedValidationResult = [
+            self::VALIDATION_TOTAL_ROWS => 4,
+            self::VALIDATION_VALID_ROWS => 3,
+            self::VALIDATION_ERROR_ROWS => 1,
+            self::VALIDATION_ERRORS     => [
+                sprintf(self::VALIDATION_ERROR_NOT_FOUND, LoadProductData::PRODUCT_4),
+            ]
+        ];
+
+        $crawler = $this->client->request('GET', $this->getUrl('oro_product_frontend_quick_add'));
+        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+        $this->assertContains(htmlentities('Paste your order'), $crawler->html());
+
+        $form = $crawler->selectButton('Verify Order')->form();
+        $this->updateFormActionToDialog($form);
+        $form['oro_product_quick_add_copy_paste[copyPaste]'] = implode(PHP_EOL, $example);
+        $crawler = $this->client->submit($form);
+
+        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+        $this->assertEquals($expectedValidationResult, $this->parseValidationResult($crawler));
     }
 
     /**
