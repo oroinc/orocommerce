@@ -214,6 +214,5 @@ class QuickAddRowCollectionBuilderTest extends \PHPUnit_Framework_TestCase
         $qb = $this->getMockBuilder(QueryBuilder::class)->disableOriginalConstructor()->getMock();
         $qb->method('getQuery')->willReturn($query);
         $this->productManager->method('restrictQueryBuilder')->withAnyParameters()->willReturn($qb);
-
     }
 }
