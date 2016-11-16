@@ -17,7 +17,7 @@ class PriceResponse
      * @param array $data
      * @throws \LogicException on UPS fault
      * @throws \InvalidArgumentException
-     * @return self
+     * @return $this
      */
     public function parse($data)
     {
