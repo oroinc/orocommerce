@@ -7,6 +7,7 @@ use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\ScopeBundle\Form\Type\ScopeCollectionType;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -37,6 +38,14 @@ class ContentNodeType extends AbstractType
                 ]
             )
             ->add(
+                'parentScopeUsed',
+                CheckboxType::class,
+                [
+                    'label' => 'oro.webcatalog.contentnode.parent_scope_used.label',
+                    'required' => false
+                ]
+            )
+            ->add(
                 'scopes',
                 ScopeCollectionType::NAME,
                 [
@@ -47,6 +56,20 @@ class ContentNodeType extends AbstractType
             );
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);
+        $builder->addEventListener(FormEvents::SUBMIT, [$this, 'submit']);
+    }
+
+    /**
+     * @param FormEvent $event
+     */
+    public function submit(FormEvent $event)
+    {
+        /** @var ContentNode $contentNode */
+        $contentNode = $event->getData();
+
+        if ($contentNode->isParentScopeUsed()) {
+            $contentNode->resetScopes();
+        }
     }
 
     /**
