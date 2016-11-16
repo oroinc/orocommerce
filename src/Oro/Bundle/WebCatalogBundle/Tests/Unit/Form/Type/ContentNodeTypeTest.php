@@ -152,10 +152,12 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
                 [
                     'titles' => [['string' => 'new_content_node_title']],
                     'slugPrototypes' => [['string' => 'new_content_node_slug']],
+                    'parentScopeUsed' => true
                 ],
                 (new ContentNode())
                     ->addTitle((new LocalizedFallbackValue())->setString('new_content_node_title'))
-                    ->addSlugPrototype((new LocalizedFallbackValue())->setString('new_content_node_slug')),
+                    ->addSlugPrototype((new LocalizedFallbackValue())->setString('new_content_node_slug'))
+                    ->setParentScopeUsed(true),
             ],
             'existing entity' => [
                 (new ContentNode())
@@ -165,12 +167,14 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
                 [
                     'titles' => [['string' => 'content_node_title'], ['string' => 'another_node_title']],
                     'slugPrototypes' => [['string' => 'content_node_slug'], ['string' => 'another_node_slug']],
+                    'parentScopeUsed' => false
                 ],
                 (new ContentNode())
                     ->addTitle((new LocalizedFallbackValue())->setString('content_node_title'))
                     ->addTitle((new LocalizedFallbackValue())->setString('another_node_title'))
                     ->addSlugPrototype((new LocalizedFallbackValue())->setString('content_node_slug'))
-                    ->addSlugPrototype((new LocalizedFallbackValue())->setString('another_node_slug')),
+                    ->addSlugPrototype((new LocalizedFallbackValue())->setString('another_node_slug'))
+                    ->setParentScopeUsed(false),
             ],
             'added variant' => [
                 (new ContentNode())
@@ -184,11 +188,13 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
                         [
                             'type' => 'system_page',
                             'systemPageRoute' => 'some_route',
-                            'scopes' => []
+                            'scopes' => [],
                         ]
-                    ]
+                    ],
+                    'parentScopeUsed' => true
                 ],
                 (new ContentNode())
+                    ->setParentScopeUsed(true)
                     ->addTitle((new LocalizedFallbackValue())->setString('content_node_title'))
                     ->addTitle((new LocalizedFallbackValue())->setString('another_node_title'))
                     ->addSlugPrototype((new LocalizedFallbackValue())->setString('content_node_slug'))
@@ -226,6 +232,7 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
                     ]
                 ],
                 (new ContentNode())
+                    ->setParentScopeUsed(false)
                     ->addTitle((new LocalizedFallbackValue())->setString('content_node_title'))
                     ->addTitle((new LocalizedFallbackValue())->setString('another_node_title'))
                     ->addSlugPrototype((new LocalizedFallbackValue())->setString('content_node_slug'))

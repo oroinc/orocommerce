@@ -68,6 +68,24 @@
         form_row(form.titles)
     ] %}
 
+    {% set scopes %}
+    <div
+            data-page-component-module="oroui/js/app/components/view-component"
+            data-page-component-options="{{ {
+                view: 'orowebcatalog/js/app/views/scope-toggle-view',
+                selectors: {
+                    useParentScopeSelector: '#' ~ form.parentScopeUsed.vars.id,
+                    scopesSelector: '.scope-elements'
+                }
+            }|json_encode }}"
+    >
+            {{ form_row(form.parentScopeUsed) }}
+            <div class="scope-elements">
+                {{ form_widget(form.scopes) }}
+            </div>
+    </div>
+    {% endset %}
+
     {% if form.slugPrototypes is defined %}
         {% set formRows = formRows|merge([form_row(form.slugPrototypes)]) %}
     {% endif %}
@@ -85,7 +103,7 @@
             'title': 'oro.webcatalog.sections.use_for'|trans,
             'subblocks': [{
                 'title': '',
-                'data': [form_widget(form.scopes)]
+                'data': [scopes]
             }]
         },
         {

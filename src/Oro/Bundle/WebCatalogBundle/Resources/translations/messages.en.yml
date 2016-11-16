@@ -27,6 +27,7 @@ oro:
             slugs.label: Slugs
             slug_prototypes.label: Slug prototypes
             titles.label: Titles
+            parent_scope_used.label: Inherit Parent
             web_catalog.label: Web catalog
             scopes.label: Use For
 

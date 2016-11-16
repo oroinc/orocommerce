@@ -88,6 +88,13 @@ class ContentNode extends ExtendContentNode implements ContentNodeInterface, Dat
     protected $name;
 
     /**
+     * @var boolean
+     *
+     * @ORM\Column(name="parent_scope_used", type="boolean", options={"default"=true})
+     */
+    protected $parentScopeUsed = true;
+
+    /**
      * @var Collection|LocalizedFallbackValue[]
      *
      * @ORM\ManyToMany(
@@ -451,6 +458,16 @@ class ContentNode extends ExtendContentNode implements ContentNodeInterface, Dat
     }
 
     /**
+     * @return $this
+     */
+    public function resetScopes()
+    {
+        $this->scopes->clear();
+        
+        return $this;
+    }
+
+    /**
      * @return Collection|ContentVariant[]
      */
     public function getContentVariants()
@@ -522,6 +539,25 @@ class ContentNode extends ExtendContentNode implements ContentNodeInterface, Dat
     public function setWebCatalog(WebCatalog $webCatalog)
     {
         $this->webCatalog = $webCatalog;
+
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isParentScopeUsed()
+    {
+        return $this->parentScopeUsed;
+    }
+
+    /**
+     * @param boolean $parentScopeUsed
+     * @return $this
+     */
+    public function setParentScopeUsed($parentScopeUsed)
+    {
+        $this->parentScopeUsed = $parentScopeUsed;
 
         return $this;
     }

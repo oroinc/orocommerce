@@ -8,6 +8,7 @@ use Oro\Bundle\ScopeBundle\Form\Type\ScopeCollectionType;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -35,6 +36,14 @@ class ContentNodeType extends AbstractType
                 LocalizedFallbackValueCollectionType::NAME,
                 [
                     'label'    => 'oro.webcatalog.contentnode.titles.label',
+                ]
+            )
+            ->add(
+                'parentScopeUsed',
+                CheckboxType::class,
+                [
+                    'label' => 'oro.webcatalog.contentnode.parent_scope_used.label',
+                    'required' => false
                 ]
             )
             ->add(
@@ -82,15 +91,21 @@ class ContentNodeType extends AbstractType
      */
     public function onSubmit(FormEvent $event)
     {
+        /** @var ContentNode $contentNode */
         $data = $event->getData();
-        if ($data instanceof ContentNode && !$data->getContentVariants()->isEmpty()) {
-            $data->getContentVariants()->map(
-                function (ContentVariant $contentVariant) use ($data) {
-                    if (!$contentVariant->getNode()) {
-                        $contentVariant->setNode($data);
+        if ($data instanceof ContentNode) {
+            if ($data->isParentScopeUsed()) {
+                $data->resetScopes();
+            }
+            if (!$data->getContentVariants()->isEmpty()) {
+                $data->getContentVariants()->map(
+                    function (ContentVariant $contentVariant) use ($data) {
+                        if (!$contentVariant->getNode()) {
+                            $contentVariant->setNode($data);
+                        }
                     }
-                }
-            );
+                );
+            }
         }
     }
 
