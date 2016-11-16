@@ -2,7 +2,10 @@
 
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\Validator;
 
+use Symfony\Component\Translation\TranslatorInterface;
+
 use Oro\Bundle\EntityBundle\Fallback\EntityFallbackResolver;
+use Oro\Bundle\InventoryBundle\Tests\Unit\EventListener\Stub\ProductStub;
 use Oro\Bundle\InventoryBundle\Validator\QuantityToOrderValidatorService;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
@@ -19,12 +22,28 @@ class QuantityToOrderValidatorServiceTest extends \PHPUnit_Framework_TestCase
      */
     protected $quantityToOrderValidatorService;
 
+    /**
+     * @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $translator;
+
     protected function setUp()
     {
         $this->fallbackResolver = $this->getMockBuilder(EntityFallbackResolver::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->quantityToOrderValidatorService = new QuantityToOrderValidatorService($this->fallbackResolver);
+        $this->translator = $this->getMock(TranslatorInterface::class);
+        $this->translator->expects($this->any())
+            ->method('trans')
+            ->willReturnCallback(
+                function ($message) {
+                    return $message;
+                }
+            );
+        $this->quantityToOrderValidatorService = new QuantityToOrderValidatorService(
+            $this->fallbackResolver,
+            $this->translator
+        );
     }
 
     public function testIsLineItemListValidReturnsTrueIfNoProduct()
@@ -104,6 +123,43 @@ class QuantityToOrderValidatorServiceTest extends \PHPUnit_Framework_TestCase
             ->will($this->onConsecutiveCalls(5, 3));
 
         $this->assertTrue($this->quantityToOrderValidatorService->isMaxLimitLowerThenMinLimit($product));
+    }
+
+    public function testGetMaximumErrorIfInvalidOnZeroQuantity()
+    {
+        $product = new ProductStub();
+        $this->fallbackResolver->expects($this->once())
+            ->method('getFallbackValue')
+            ->willReturn(0);
+        $this->assertEquals(
+            'oro.inventory.product.error.quantity_limit_is_zero',
+            $this->quantityToOrderValidatorService->getMaximumErrorIfInvalid($product, 15)
+        );
+    }
+
+    public function testGetMaximumErrorIfInvalidWithQuantityOverMaxValue()
+    {
+        $product = new ProductStub();
+        $this->fallbackResolver->expects($this->once())
+            ->method('getFallbackValue')
+            ->willReturn(3);
+        $this->assertEquals(
+            'oro.inventory.product.error.quantity_over_max_limit',
+            $this->quantityToOrderValidatorService->getMaximumErrorIfInvalid($product, 5)
+        );
+    }
+
+    public function testGetMinimumErrorIfInvalidWithQuantityBelowMinValue()
+    {
+        $product = new ProductStub();
+        $this->fallbackResolver->expects($this->once())
+            ->method('getFallbackValue')
+            ->willReturn(3);
+
+        $this->assertEquals(
+            'oro.inventory.product.error.quantity_below_min_limit',
+            $this->quantityToOrderValidatorService->getMinimumErrorIfInvalid($product, 1)
+        );
     }
 
     public function testGetMinimumLimit()
