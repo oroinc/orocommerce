@@ -110,9 +110,8 @@ class ShoppingListRepository extends EntityRepository
                 $qb->addOrderBy($qb->expr()->desc($field));
             }
         }
-        $aclHelper->apply($qb, 'VIEW', false);
 
-        return $qb->getQuery()->getResult();
+        return $aclHelper->apply($qb, 'VIEW', false)->getResult();
     }
 
     /**
