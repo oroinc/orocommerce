@@ -64,7 +64,7 @@ class AccountUserAddressControllerTest extends WebTestCase
 
         $this->fillFormForCreate($form);
 
-        $this->client->followRedirects(false);
+        $this->client->followRedirects(true);
 
         $crawler = $this->client->submit($form);
 
