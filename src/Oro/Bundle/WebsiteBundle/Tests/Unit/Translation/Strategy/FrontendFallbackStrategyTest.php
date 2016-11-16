@@ -19,7 +19,7 @@ class FrontendFallbackStrategyTest extends \PHPUnit_Framework_TestCase
     protected $frontendStrategy;
 
     /**
-     * @var CompositeFallbackStrategy
+     * @var FrontendFallbackStrategy
      */
     protected $strategy;
 
