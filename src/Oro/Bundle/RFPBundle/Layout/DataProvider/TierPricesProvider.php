@@ -2,27 +2,71 @@
 
 namespace Oro\Bundle\RFPBundle\Layout\DataProvider;
 
-use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
+use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
+use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use Oro\Component\Layout\DataProvider\AbstractFormProvider;
+use Oro\Bundle\RFPBundle\Entity\Request as RFPRequest;
 
 class TierPricesProvider extends AbstractFormProvider
 {
     /**
-     * @var ProductPriceProvider
+     * @var ProductPriceRepository
      */
-    private $productPriceProvider;
+    private $productPriceRepository;
 
     /**
-     * @param ProductPriceProvider $productPriceProvider
+     * @var PriceListRequestHandler
      */
-    public function __construct(ProductPriceProvider $productPriceProvider)
+    private $priceListRequestHandler;
+
+    /**
+     * @param ProductPriceRepository $productPriceRepository
+     * @param PriceListRequestHandler $priceListRequestHandler
+     */
+    public function __construct(ProductPriceRepository $productPriceRepository, PriceListRequestHandler $priceListRequestHandler)
     {
-        $this->productPriceProvider = $productPriceProvider;
+        $this->productPriceRepository = $productPriceRepository;
+        $this->priceListRequestHandler = $priceListRequestHandler;
     }
 
-    public function getPrices($vars)
+    /**
+     * @param RFPRequest $rfpRequest
+     * @return array
+     */
+    public function getPrices(RFPRequest $rfpRequest)
     {
-        var_dump($vars);
-        exit;
+        $productIds = [];
+
+        foreach ($rfpRequest->getRequestProducts() as $requestProduct) {
+            $productIds[] = $requestProduct->getProduct()->getId();
+        }
+
+        $prices = $this->productPriceRepository->findByPriceListIdAndProductIds(
+            $this->priceListRequestHandler->getPriceList(),
+            $productIds,
+            true,
+            null,
+            null,
+            ['unit' => 'asc', 'value' => 'asc']
+        );
+
+        $result = [];
+
+        foreach ($prices as $price) {
+            $entryId = $price->getProduct()->getId();
+
+            if (!isset($result[$entryId])) {
+                $result[$entryId] = [];
+            }
+
+            $result[$entryId][] = [
+                'currency' => $price->getPrice()->getCurrency(),
+                'price' => $price->getPrice()->getValue(),
+                'quantity' => 1,
+                'unit' => $price->getUnit()->getCode()
+            ];
+        }
+
+        return $result;
     }
 }

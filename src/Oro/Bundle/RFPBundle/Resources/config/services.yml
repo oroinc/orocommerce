@@ -162,7 +162,8 @@ services:
     oro_rfp.layout.data_provider.tier_prices:
         class: 'Oro\Bundle\RFPBundle\Layout\DataProvider\TierPricesProvider'
         arguments:
-            - '@oro_pricing.provider.product_price'
+            - '@oro_pricing.repository.product_price'
+            - '@oro_pricing.model.price_list_request_handler'
         tags:
             - { name: layout.data_provider, alias: oro_rfp_tier_prices }
 

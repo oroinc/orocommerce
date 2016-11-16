@@ -58,15 +58,4 @@ layout:
         - '@appendOption':
             id: rfp_form_lineitems_container
             optionName: vars.tierPrices
-            optionValue:
-                7:
-                    0:
-                        currency: 'USD'
-                        price: '17.0900'
-                        quantity: '1'
-                        unit: 'item'
-                    1:
-                        currency: 'USD'
-                        price: '15.0900'
-                        quantity: '10'
-                        unit: 'item'
+            optionValue: '=data["oro_rfp_tier_prices"].getPrices(data["entity"])'

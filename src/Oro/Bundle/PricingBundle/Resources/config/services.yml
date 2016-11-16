@@ -890,3 +890,9 @@ services:
         public: false
         arguments:
             - '@doctrine'
+
+    oro_pricing.repository.product_price:
+        class: 'Oro\Bundle\PricingBundle\Entity\ProductPriceRepository'
+        parent: oro_entity.abstract_repository
+        arguments:
+            - 'Oro\Bundle\PricingBundle\Entity\ProductPrice'
