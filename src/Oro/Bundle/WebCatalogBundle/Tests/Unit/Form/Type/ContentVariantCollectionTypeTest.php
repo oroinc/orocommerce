@@ -2,9 +2,10 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\WebCatalogBundle\ContentVariantType\ContentVariantTypeRegistry;
+use Oro\Bundle\WebCatalogBundle\Form\EventListener\ContentVariantCollectionResizeSubscriber;
 use Oro\Bundle\WebCatalogBundle\Form\Type\ContentVariantCollectionType;
 use Symfony\Bridge\Doctrine\Form\EventListener\MergeDoctrineCollectionListener;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -18,15 +19,15 @@ class ContentVariantCollectionTypeTest extends \PHPUnit_Framework_TestCase
     protected $type;
 
     /**
-     * @var EventSubscriberInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ContentVariantTypeRegistry|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $resizeSubscriber;
+    private $variantTypeRegistry;
 
     protected function setUp()
     {
-        $this->resizeSubscriber = $this->getMock(EventSubscriberInterface::class);
+        $this->variantTypeRegistry = $this->getMock(ContentVariantTypeRegistry::class);
 
-        $this->type = new ContentVariantCollectionType($this->resizeSubscriber);
+        $this->type = new ContentVariantCollectionType($this->variantTypeRegistry);
     }
 
     public function testGetName()
@@ -71,7 +72,7 @@ class ContentVariantCollectionTypeTest extends \PHPUnit_Framework_TestCase
             ->method('addEventSubscriber')
             ->withConsecutive(
                 [$this->isInstanceOf(MergeDoctrineCollectionListener::class)],
-                [$this->resizeSubscriber]
+                [$this->isInstanceOf(ContentVariantCollectionResizeSubscriber::class)]
             );
 
         $this->type->buildForm($builder, []);

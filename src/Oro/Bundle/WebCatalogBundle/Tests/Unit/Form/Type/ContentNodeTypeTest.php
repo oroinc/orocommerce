@@ -12,7 +12,6 @@ use Oro\Bundle\ScopeBundle\Form\Type\ScopeCollectionType;
 use Oro\Bundle\WebCatalogBundle\ContentVariantType\ContentVariantTypeRegistry;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
-use Oro\Bundle\WebCatalogBundle\Form\EventListener\ContentVariantCollectionResizeSubscriber;
 use Oro\Bundle\WebCatalogBundle\Form\Type\ContentNodeType;
 use Oro\Bundle\WebCatalogBundle\Form\Type\ContentVariantCollectionType;
 use Oro\Bundle\WebCatalogBundle\Form\Type\SystemPageVariantType;
@@ -61,8 +60,7 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
             ->with('system_page')
             ->willReturn(SystemPageVariantType::class);
 
-        $resizeSubscriber = new ContentVariantCollectionResizeSubscriber($variantTypeRegistry);
-        $variantCollection = new ContentVariantCollectionType($resizeSubscriber);
+        $variantCollection = new ContentVariantCollectionType($variantTypeRegistry);
 
         return [
             new PreloadedExtension(
@@ -211,14 +209,10 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
                     ->addTitle((new LocalizedFallbackValue())->setString('content_node_title'))
                     ->addSlugPrototype((new LocalizedFallbackValue())->setString('content_node_slug'))
                     ->addContentVariant(
-                        (new ContentVariant())
-                            ->setType('system_page')
-                            ->setSystemPageRoute('some_route')
+                        (new ContentVariant())->setType('system_page')->setSystemPageRoute('some_route')
                     )
                     ->addContentVariant(
-                        (new ContentVariant())
-                            ->setType('system_page')
-                            ->setSystemPageRoute('other_route')
+                        (new ContentVariant())->setType('system_page')->setSystemPageRoute('other_route')
                     ),
                 [
                     'titles' => [['string' => 'content_node_title'], ['string' => 'another_node_title']],

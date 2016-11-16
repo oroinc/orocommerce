@@ -67,6 +67,7 @@ oro:
 
         form:
             choose: 'Choose a Web Catalog...'
+            add_variant.label: 'Add %variantName%'
 
         system_configuration:
             fields:
