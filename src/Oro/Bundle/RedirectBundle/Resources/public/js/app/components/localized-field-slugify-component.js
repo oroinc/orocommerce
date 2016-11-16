@@ -6,26 +6,45 @@ define(function(require) {
 
     LocalizedFieldSlugifyComponent = BaseSlugifyComponent.extend({
         /**
-         * Populate target and recipient fields with jQuery element(s)
-         *
-         * @param {Object} options
-         */
-        initTargetAndRecipient: function(options) {
-            this.target = options.target;
-            this.recipient = options.recipient;
-            this.$target = $('[name^="'+options.target+'[values]"]');
-            this.$recipient = $('[name^="'+options.recipient+'[values]"]');
-        },
-
-        /**
          * @inheritDoc
          */
-        dispose: function() {
-            if (this.disposed) {
+        syncField: function(event) {
+            var $source = $(event.target);
+            var $target;
+            $target = this.getTargetBySource($source);
+
+            if (!this.doSync) {
                 return;
             }
 
-            LocalizedFieldSlugifyComponent.__super__.dispose.call(this);
+            if ($source.is(':disabled')) {
+                return;
+            }
+
+            if ($source.prop('type') === 'checkbox') {
+                if ($source.prop('checked') === $target.prop('checked')) {
+                    return;
+                }
+            }
+
+            if ($source.prop('type') === 'text') {
+                this.slugifySourceToTarget($source, $target);
+            } else if ($source.prop('type') === 'checkbox') {
+                $target.prop('checked', $source.prop('checked'));
+                $target.change();
+            } else if ($source.is('select')) {
+                $target.val($source.val());
+                $target.change();
+            }
+        },
+
+        /**
+         * @param $source
+         * @returns {*|jQuery|HTMLElement}
+         */
+        getTargetBySource: function($source) {
+            var sourceIndex = this.$sources.index($source);
+            return $(this.$targets.get(sourceIndex));
         }
     });
 

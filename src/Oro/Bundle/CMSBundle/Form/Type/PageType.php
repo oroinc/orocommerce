@@ -50,10 +50,7 @@ class PageType extends AbstractType
                 [
                     'label'    => 'oro.cms.page.slugs.label',
                     'required' => true,
-                    'options'  => [
-                        'constraints' => [new NotBlank(), new UrlSafe()],
-                    ],
-                    'target_field_name' => 'titles',
+                    'options'  => ['constraints' => [new NotBlank(), new UrlSafe()]],
                 ]
             );
     }

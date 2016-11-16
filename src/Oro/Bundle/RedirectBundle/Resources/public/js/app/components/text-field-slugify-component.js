@@ -6,60 +6,18 @@ define(function(require) {
 
     TextFieldSlugifyComponent = BaseSlugifyComponent.extend({
         /**
-         * @property {Object}
-         */
-        $mode: null,
-
-        /**
-         * Initializes Slugify component
-         * @param {Object} options
-         */
-        initialize: function (options) {
-            TextFieldSlugifyComponent.__super__.initialize.call(this, options);
-
-            var modeName = options.modeName;
-            this.$mode = $('input[name="'+modeName+'"]').filter(':radio');
-
-            this.checkSlugAvailable();
-            this.$mode.on('change', _.bind(this.checkSlugAvailable, this));
-        },
-
-        /**
-         * Populate target and recipient fields with jQuery element(s)
-         *
-         * @param {Object} options
-         */
-        initTargetAndRecipient: function(options) {
-            this.target = options.target;
-            this.recipient = options.recipient;
-            this.$target = $('[name="'+options.target+'"]');
-            this.$recipient = $('[name="'+options.recipient+'"]');
-        },
-
-        /**
-         * Check slug is available
-         */
-        checkSlugAvailable: function() {
-            if (this.$mode.filter(':checked').val() === 'old') {
-                this.$recipient.attr('disabled', 'disabled')
-                    .closest('div').find('[type=checkbox]').attr('disabled', 'disabled');
-            } else {
-                this.$recipient.attr("disabled", false)
-                    .closest('div').find('[type=checkbox]').attr('disabled', false);
-            }
-        },
-
-        /**
          * @inheritDoc
          */
-        dispose: function() {
-            if (this.disposed) {
+        syncField: function(event) {
+            var $source = $(event.target);
+
+            if (!this.doSync) {
                 return;
             }
 
-            this.$mode.off('change', _.bind(this.checkSlugAvailable, this));
-
-            TextFieldSlugifyComponent.__super__.dispose.call(this);
+            var $target;
+            $target = this.$targets;
+            this.slugifySourceToTarget($source, $target);
         }
     });
 

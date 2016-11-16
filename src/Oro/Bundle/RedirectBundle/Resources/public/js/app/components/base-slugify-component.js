@@ -12,22 +12,17 @@ define(function (require) {
         /**
          * @property {Object}
          */
-        $target: null,
-
-        /**
-         * @property {String}
-         */
-        target: '',
+        $sources: null,
 
         /**
          * @property {Object}
          */
-        $recipient: null,
+        $targets: null,
 
         /**
          * @property {String}
          */
-        recipient: '',
+        slugifyRoute: '',
 
         /**
          * @property {Boolean}
@@ -39,128 +34,46 @@ define(function (require) {
          * @param {Object} options
          */
         initialize: function(options) {
-            this.initTargetAndRecipient(options);
-            this.initSlugifyTurningOff();
-            this.initSync();
+            this.$sources = $(options.source);
+            this.$targets = $(options.target);
+            this.slugifyRoute = options.slugify_route;
+
+            this.$targets.on('change', _.bind(this.slugTriggerOff, this));
+            this.$sources.on('change', _.bind(this.syncField, this))
         },
 
         /**
-         * Setup sync of target and receipt fields, on change
-         */
-        initSync: function() {
-            this.$target.on('change', _.bind(this.syncField, this))
-        },
-
-        /**
-         * Synchronize requested target field with it's recipient.
-         * Slugify during this target value by request to the slugify API.
-         *
          * @param event
          */
         syncField: function(event) {
-            var $target = $(event.target);
+            throw new Error('Method syncField should be defined in a inherited class.');
+        },
 
-            if (!this.doSync) {
-                return;
-            }
-
-            var $recipient;
-            var isBasic = (this.$target.length === 1);
-            if (isBasic) {
-                $recipient = this.$recipient;
-                if ($target.val() === $recipient.val()) {
-                    return;
-                }
-            } else {
-                $recipient = this.getRecipientByTarget($target);
-                if ($target.is(':disabled')) {
-                    return;
-                }
-                if ($target.prop('type') === 'text' || $target.is('select')) {
-                    if ($target.val() === $recipient.val()) {
-                        return;
+        slugifySourceToTarget: function($source, $target) {
+            $.ajax({
+                type: 'GET',
+                url: routing.generate(this.slugifyRoute, {'string': $source.val()}),
+                success: _.bind(function ($target, $source, result) {
+                    if (result.slug) {
+                        $target.val(result.slug);
+                        $target.change();
+                    } else {
+                        messenger.notificationFlashMessage(
+                            'error',
+                            __("oro.redirect.slugify_error", {'string': $source.val()})
+                        );
                     }
-                } else if ($target.prop('type') === 'checkbox') {
-                    if ($target.prop('checked') === $recipient.prop('checked')) {
-                        return;
-                    }
-                }
-            }
-
-            if ($target.prop('type') === 'text') {
-                $.ajax({
-                    type: 'GET',
-                    url: routing.generate('oro_api_slugify_slug', {'string': $target.val()}),
-                    success: _.bind(function ($recipient, result) {
-                        if (result.slug) {
-                            $recipient.val(result.slug);
-                            $recipient.change();
-                        } else {
-                            messenger.notificationFlashMessage(
-                                'error',
-                                __("oro.cms.slugify_error", {'string': targetInputValue})
-                            );
-                        }
-                    }, this, $recipient)
-                });
-            } else if ($target.prop('type') === 'checkbox') {
-                $recipient.prop('checked', $target.prop('checked'));
-                $recipient.change();
-            } else if ($target.is('select')) {
-                $recipient.val($target.val());
-                $recipient.change();
-            }
+                }, this, $target, $source)
+            });
         },
 
         /**
-         * Turn off slugify when already not needed
-         */
-        initSlugifyTurningOff: function() {
-            this.$recipient.on('change', _.bind(this.slugTriggerOff, this));
-        },
-
-        /**
-         * Turn off trigger for slug generation
-         *
          * @param event
          */
         slugTriggerOff: function(event) {
             if (event.originalEvent) {
                 this.doSync = false;
             }
-        },
-
-        /**
-         * Populate target and recipient fields with jQuery element(s)
-         *
-         * @param {Object} options
-         */
-        initTargetAndRecipient: function(options) {
-            throw new Error('Method initTargetAndRecipient should be defined in a inherited class.');
-        },
-
-        /**
-         * Find out related to the target recipient
-         *
-         * @param $target
-         * @returns {*|jQuery|HTMLElement}
-         */
-        getRecipientByTarget: function($target) {
-            var recipientSelector = $target.prop('name') + '';
-            recipientSelector = recipientSelector.replace(this.target, this.recipient);
-            return $('[name="'+recipientSelector+'"]');
-        },
-
-        /**
-         * Find out related to the recipient target
-         *
-         * @param $recipient
-         * @returns {*|jQuery|HTMLElement}
-         */
-        getTargetByRecipient: function($recipient) {
-            var targetSelector = $recipient.prop('name') + '';
-            targetSelector = targetSelector.replace(this.recipient, this.target);
-            return $('[name="'+targetSelector+'"]');
         },
 
         /**
@@ -171,8 +84,8 @@ define(function (require) {
                 return;
             }
 
-            this.$target.off('change', _.bind(this.syncField, this));
-            this.$recipient.off('change', _.bind(this.slugTriggerOff, this));
+            this.$sources.off('change', _.bind(this.syncField, this));
+            this.$targets.off('change', _.bind(this.slugTriggerOff, this));
 
             SlugifyComponent.__super__.dispose.call(this);
         }
