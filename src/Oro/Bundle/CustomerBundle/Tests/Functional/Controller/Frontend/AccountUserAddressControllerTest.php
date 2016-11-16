@@ -105,7 +105,10 @@ class AccountUserAddressControllerTest extends WebTestCase
             AddressType::TYPE_BILLING,
             AddressType::TYPE_SHIPPING
         ];
-        $form['oro_account_frontend_account_user_typed_address[defaults][default]'] = [false, AddressType::TYPE_SHIPPING];
+        $form['oro_account_frontend_account_user_typed_address[defaults][default]'] = [
+            false,
+            AddressType::TYPE_SHIPPING
+        ];
 
         $doc = new \DOMDocument("1.0");
         $doc->loadHTML(
