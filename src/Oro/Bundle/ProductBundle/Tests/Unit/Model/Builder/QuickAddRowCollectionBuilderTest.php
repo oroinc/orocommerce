@@ -33,7 +33,7 @@ class QuickAddRowCollectionBuilderTest extends \PHPUnit_Framework_TestCase
     /**
      * @var array
      */
-    protected $expectedElements = [
+    private $expectedElements = [
         'HSSUC' => 1,
         'HSTUC' => 2.55,
         'HCCM' => 3,
