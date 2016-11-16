@@ -3,11 +3,10 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Security;
 
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
-use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadFrontendProductVisibilityData;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
+use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
 
 /**
  * @group CommunityEdition
@@ -26,13 +25,13 @@ class ProductVisibilityTest extends WebTestCase
             [],
             $this->generateBasicAuthHeader(LoadAccountUserData::EMAIL, LoadAccountUserData::PASSWORD)
         );
-        $this->client->useHashNavigation(true);
         $this->loadFixtures(
             [
-                LoadFrontendProductVisibilityData::class,
+                LoadProductVisibilityData::class,
                 LoadAccountUserData::class,
             ]
         );
+        $this->getContainer()->get('oro_visibility.visibility.cache.cache_builder')->buildCache();
     }
 
     /**
@@ -43,16 +42,15 @@ class ProductVisibilityTest extends WebTestCase
      */
     public function testVisibility($configValue, $expectedData)
     {
-        $configManager = $this->getContainer()->get('oro_config.global');
+        $this->initClient(
+            [],
+            $this->generateBasicAuthHeader(LoadAccountUserData::EMAIL, LoadAccountUserData::PASSWORD)
+        );
+        $configManager = $this->getClientInstance()->getContainer()->get('oro_config.global');
         $configManager->set(self::VISIBILITY_SYSTEM_CONFIGURATION_PATH, $configValue);
         $configManager->flush();
-
-        $indexer = $this->getContainer()->get('oro_website_search.indexer');
         foreach ($expectedData as $productSKU => $resultCode) {
             $product = $this->getReference($productSKU);
-            $indexer->save($product);
-
-            $this->assertInstanceOf(Product::class, $product);
             $this->client->request(
                 'GET',
                 $this->getUrl('oro_product_frontend_product_view', ['id' => $product->getId()]),
@@ -77,25 +75,18 @@ class ProductVisibilityTest extends WebTestCase
                     LoadProductData::PRODUCT_1 => 200,
                     LoadProductData::PRODUCT_2 => 404,
                     LoadProductData::PRODUCT_3 => 404,
-                    LoadProductData::PRODUCT_4 => 404, // inventoryStatus: discontinued and visibility: hidden
+                    LoadProductData::PRODUCT_4 => 404,
                     LoadProductData::PRODUCT_5 => 200,
                     LoadProductData::PRODUCT_6 => 200,
                     LoadProductData::PRODUCT_7 => 200,
-                    LoadProductData::PRODUCT_8 => 200,
-                ]
+                ],
             ],
             'config hidden' => [
                 'configValue' => ProductVisibility::HIDDEN,
                 'expectedData' => [
-                    LoadProductData::PRODUCT_1 => 200,
-                    LoadProductData::PRODUCT_2 => 404,
-                    LoadProductData::PRODUCT_3 => 404,
-                    LoadProductData::PRODUCT_4 => 404, // inventoryStatus: discontinued and visibility: hidden
-                    LoadProductData::PRODUCT_5 => 404, // status: disabled
-                    LoadProductData::PRODUCT_6 => 404, // config for Default website only, visibility is for US
-                    LoadProductData::PRODUCT_7 => 200, // config for Default website only, visibility is for US
-                    LoadProductData::PRODUCT_8 => 200, // config for Default website only, visibility is for US
-                ]
+                    LoadProductData::PRODUCT_6 => 404,
+                    LoadProductData::PRODUCT_7 => 200,
+                ],
             ],
         ];
     }
@@ -103,9 +94,7 @@ class ProductVisibilityTest extends WebTestCase
     protected function tearDown()
     {
         $configManager = $this->getClientInstance()->getContainer()->get('oro_config.global');
-        $configManager->reset(self::VISIBILITY_SYSTEM_CONFIGURATION_PATH);
+        $configManager->set(self::VISIBILITY_SYSTEM_CONFIGURATION_PATH, ProductVisibility::VISIBLE);
         $configManager->flush();
-
-        parent::tearDown();
     }
 }

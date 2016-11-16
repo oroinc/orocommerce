@@ -15,6 +15,7 @@ class OroCatalogBundle implements Migration
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->addMaterializedPathField($schema, $queries);
+        $queries->addPostQuery(new RenameMasterCatalog());
     }
 
     /**
@@ -25,7 +26,7 @@ class OroCatalogBundle implements Migration
     {
         $table = $schema->getTable('oro_catalog_category');
         $table->addColumn('materialized_path', 'string', ['length' => 255, 'notnull' => false]);
-        
+
         $queries->addPostQuery(new UpdateMaterializedPathQuery());
     }
 }

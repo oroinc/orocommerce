@@ -3,7 +3,6 @@
 namespace Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category;
 
 use Doctrine\ORM\EntityManager;
-
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupCategoryVisibility;
@@ -181,11 +180,11 @@ class AccountGroupCategoryResolvedCacheBuilder extends AbstractResolvedCacheBuil
         // category fallback (visibility to all)
         if (null === $parentVisibility) {
             $resolvedVisibility = $parentCategoryVisibilityResolved;
-            // parent category fallback
+        // parent category fallback
         } elseif ($parentVisibility === AccountGroupCategoryVisibility::PARENT_CATEGORY) {
             $parentGroup = $groupVisibilities[$parentVisibilityId];
             $resolvedVisibility = $this->resolveVisibility($groupVisibilities, $parentGroup);
-            // static visibility
+        // static visibility
         } else {
             $resolvedVisibility
                 = $this->convertVisibility($parentVisibility === AccountGroupCategoryVisibility::VISIBLE);

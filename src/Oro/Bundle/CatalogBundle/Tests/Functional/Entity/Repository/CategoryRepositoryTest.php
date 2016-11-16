@@ -53,7 +53,7 @@ class CategoryRepositoryTest extends WebTestCase
             LoadMasterCatalogLocalizedTitles::MASTER_CATALOG_LOCALIZED_TITLES,
             $root->getTitles()->count()
         );
-        $this->assertEquals('Master catalog', $defaultTitle->getString());
+        $this->assertEquals('Products categories', $defaultTitle->getString());
     }
 
     public function testGetChildrenWithTitles()

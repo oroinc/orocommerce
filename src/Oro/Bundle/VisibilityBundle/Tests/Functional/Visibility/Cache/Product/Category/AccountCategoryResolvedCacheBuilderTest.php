@@ -3,7 +3,6 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Visibility\Cache\Product\Category;
 
 use Doctrine\ORM\AbstractQuery;
-
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
@@ -24,24 +23,13 @@ use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\Subtree\Visibi
  */
 class AccountCategoryResolvedCacheBuilderTest extends AbstractProductResolvedCacheBuilderTest
 {
-    /**
-     * @var Category
-     */
+    /** @var Category */
     protected $category;
 
-    /**
-     * @var Account
-     */
+    /** @var Account */
     protected $account;
 
-    /**
-     * @var Scope
-     */
-    protected $scope;
-
-    /**
-     * @var AccountCategoryResolvedCacheBuilder
-     */
+    /** @var AccountCategoryResolvedCacheBuilder */
     protected $builder;
 
     /**

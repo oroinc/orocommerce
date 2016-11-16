@@ -457,6 +457,7 @@ services:
             - "@oro_config.manager"
             - "@oro_website.manager"
             - "@oro_user.manager"
+            - '@router'
         tags:
             - { name: layout.data_provider, alias: oro_account_frontend_account_user_register }
 
@@ -488,6 +489,7 @@ services:
         arguments:
             - '@form.factory'
             - '@oro_customer.form.handler.update_account_user_role_frontend='
+            - '@router'
         tags:
             - { name: layout.data_provider, alias: oro_account_frontend_account_user_role_form }
 
@@ -495,6 +497,7 @@ services:
         class: Oro\Bundle\CustomerBundle\Layout\DataProvider\FrontendAccountUserAddressFormProvider
         arguments:
             - '@form.factory'
+            - '@router'
         tags:
             - { name: layout.data_provider, alias: oro_account_frontend_account_user_address_form }
 
@@ -502,6 +505,7 @@ services:
         class: Oro\Bundle\CustomerBundle\Layout\DataProvider\FrontendAccountAddressFormProvider
         arguments:
             - '@form.factory'
+            - '@router'
         tags:
             - { name: layout.data_provider, alias: oro_account_frontend_account_address_form }
 
@@ -509,6 +513,7 @@ services:
         class: 'Oro\Bundle\CustomerBundle\Layout\DataProvider\FrontendAccountUserFormProvider'
         arguments:
               - '@form.factory'
+              - '@router'
         tags:
             - { name: layout.data_provider, alias: oro_account_frontend_account_user_form }
 
@@ -614,4 +619,3 @@ services:
         arguments: ["@oro_organization.link.security_context", "@oro_entity_config.provider.ownership"]
         tags:
              - { name: doctrine.event_listener, event: prePersist }
-
