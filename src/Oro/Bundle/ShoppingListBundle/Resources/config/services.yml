@@ -105,6 +105,7 @@ services:
         class: 'Oro\Bundle\ShoppingListBundle\Layout\DataProvider\ShoppingListFormProvider'
         arguments:
             - "@form.factory"
+            - '@router'
         tags:
             - { name: layout.data_provider, alias: oro_shopping_list_shopping_list_form }
 
