@@ -6,45 +6,23 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
+use Oro\Bundle\CustomerBundle\Entity\AccountUserAddress;
 
-class LoadAccountAddressesACLData extends AbstractAddressesFixture implements DependentFixtureInterface
+class LoadAccountUserAddressesACLData extends AbstractAddressesFixture implements DependentFixtureInterface
 {
-    const ADDRESS_ACC_1_LEVEL_LOCAL = 'address_account1_level_local';
-    const ADDRESS_ACC_1_LEVEL_DEEP = 'address_account1_level_deep';
-    const ADDRESS_ACC_1_1_LEVEL_LOCAL = 'address_account1.1_level_local';
-    const ADDRESS_ACC_1_2_LEVEL_LOCAL = 'address_account1.2_level_local';
-    const ADDRESS_ACC_2_LEVEL_LOCAL = 'address_account2_level_local';
+    const ADDRESS_ACC_1_USER_LOCAL = 'address_account1_user_local';
+    const ADDRESS_ACC_1_USER_DEEP = 'address_account1_user_deep';
+    const ADDRESS_ACC_1_USER_BASIC = 'address_account1_user_basic';
+    const ADDRESS_ACC_1_1_USER_LOCAL = 'address_account1.1_user_local';
+    const ADDRESS_ACC_2_USER_LOCAL = 'address_account2_user_local';
 
     /**
      * @var array
      */
     protected $addresses = [
         [
-            'account' => 'account.level_1.1',
-            'label' => self::ADDRESS_ACC_1_LEVEL_LOCAL,
-            'street' => '2413 Capitol Avenue',
-            'city' => 'Romney',
-            'postalCode' => '47981',
-            'country' => 'US',
-            'region' => 'IN',
-            'primary' => false,
-            'types' => ['billing' => true]
-        ],
-        [
-            'account' => 'account.level_1.1',
-            'label' => self::ADDRESS_ACC_1_LEVEL_DEEP,
-            'street' => '722 Harvest Lane',
-            'city' => 'Sedalia',
-            'postalCode' => '65301',
-            'country' => 'US',
-            'region' => 'MO',
-            'primary' => false,
-            'types' => ['billing' => false, 'shipping' => false]
-        ],
-        [
-            'account' => 'account.level_1.1.2',
-            'label' => self::ADDRESS_ACC_1_2_LEVEL_LOCAL,
+            'account_user' => LoadAccountUserAddressACLData::USER_ACCOUNT_1_ROLE_LOCAL,
+            'label' => self::ADDRESS_ACC_1_USER_LOCAL,
             'street' => '1215 Caldwell Road',
             'city' => 'Rochester',
             'postalCode' => '14608',
@@ -54,8 +32,30 @@ class LoadAccountAddressesACLData extends AbstractAddressesFixture implements De
             'types' => ['billing' => false, 'shipping' => true]
         ],
         [
-            'account' => 'account.level_1.1.1',
-            'label' => self::ADDRESS_ACC_1_1_LEVEL_LOCAL,
+            'account_user' => LoadAccountUserAddressACLData::USER_ACCOUNT_1_ROLE_DEEP,
+            'label' => self::ADDRESS_ACC_1_USER_DEEP,
+            'street' => '2413 Capitol Avenue',
+            'city' => 'Romney',
+            'postalCode' => '47981',
+            'country' => 'US',
+            'region' => 'IN',
+            'primary' => false,
+            'types' => ['billing' => true]
+        ],
+        [
+            'account_user' => LoadAccountUserAddressACLData::USER_ACCOUNT_1_ROLE_BASIC,
+            'label' => self::ADDRESS_ACC_1_USER_BASIC,
+            'street' => '722 Harvest Lane',
+            'city' => 'Sedalia',
+            'postalCode' => '65301',
+            'country' => 'US',
+            'region' => 'MO',
+            'primary' => false,
+            'types' => ['billing' => false, 'shipping' => false]
+        ],
+        [
+            'account_user' => LoadAccountUserAddressACLData::USER_ACCOUNT_1_1_ROLE_LOCAL,
+            'label' => self::ADDRESS_ACC_1_1_USER_LOCAL,
             'street' => '1167 Marion Drive',
             'city' => 'Winter Haven',
             'postalCode' => '33830',
@@ -66,8 +66,8 @@ class LoadAccountAddressesACLData extends AbstractAddressesFixture implements De
             'defaults' => []
         ],
         [
-            'account' => 'account.level_1.2',
-            'label' => self::ADDRESS_ACC_2_LEVEL_LOCAL,
+            'account_user' => LoadAccountUserAddressACLData::USER_ACCOUNT_2_ROLE_LOCAL,
+            'label' => self::ADDRESS_ACC_2_USER_LOCAL,
             'street' => '2849 Junkins Avenue',
             'city' => 'Albany',
             'postalCode' => '31707',
@@ -84,7 +84,7 @@ class LoadAccountAddressesACLData extends AbstractAddressesFixture implements De
     public function getDependencies()
     {
         return [
-            LoadAccountAddressACLData::class,
+            LoadAccountUserAddressACLData::class
         ];
     }
 
@@ -95,9 +95,9 @@ class LoadAccountAddressesACLData extends AbstractAddressesFixture implements De
     public function load(ObjectManager $manager)
     {
         foreach ($this->addresses as $addressData) {
-            $address = new AccountAddress();
+            $address = new AccountUserAddress();
             $address->setSystemOrganization($this->getOrganization($manager));
-            $address->setFrontendOwner($this->getReference($addressData['account']));
+            $address->setFrontendOwner($this->getReference($addressData['account_user']));
             $this->addAddress($manager, $addressData, $address);
         }
 

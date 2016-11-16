@@ -13,32 +13,29 @@ use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountAddressACLData;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountAddressesACLData;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserAddressesACLData;
 
 /**
  * @dbIsolation
  */
 class AccountAddressControllerTest extends WebTestCase
 {
-    /**
-     * @var AccountUser
-     */
-    protected $currentUser;
-
     protected function setUp()
     {
         $this->initClient();
         $this->client->useHashNavigation(true);
         $this->loadFixtures(
             [
-                LoadAccountAddressesACLData::class
+                LoadAccountAddressesACLData::class,
+                LoadAccountUserAddressesACLData::class
             ]
         );
     }
 
     public function testCreate()
     {
-        $this->loginUser(LoadAccountAddressACLData::USER_ACCOUNT_2_ROLE_DEEP);
-        $user = $this->getReference(LoadAccountAddressACLData::USER_ACCOUNT_2_ROLE_DEEP);
+        $this->loginUser(LoadAccountAddressACLData::USER_ACCOUNT_2_ROLE_LOCAL);
+        $user = $this->getReference(LoadAccountAddressACLData::USER_ACCOUNT_2_ROLE_LOCAL);
         $crawler = $this->client->request(
             'GET',
             $this->getUrl(
@@ -113,6 +110,18 @@ class AccountAddressControllerTest extends WebTestCase
         $form->set($field);
         $form['oro_account_frontend_typed_address[region]'] = 'ZW-MA';
 
+        $doc->loadHTML(
+            '<select name="oro_account_frontend_typed_address[frontendOwner]" ' .
+            'id="oro_account_frontend_typed_address_frontend_owner" ' .
+            'tabindex="-1" class="select2-offscreen"> ' .
+            '<option value="" selected="selected"></option> ' .
+            '<option value="1">AccountUser</option> </select>'
+        );
+        $field = new ChoiceFormField($doc->getElementsByTagName('select')->item(0));
+        $form->set($field);
+        $form['oro_account_frontend_typed_address[frontendOwner]'] = '1';
+
+
         return $form;
     }
 
@@ -121,8 +130,8 @@ class AccountAddressControllerTest extends WebTestCase
      */
     public function testUpdate()
     {
-        $this->loginUser(LoadAccountAddressACLData::USER_ACCOUNT_2_ROLE_DEEP);
-        $user = $this->getReference(LoadAccountAddressACLData::USER_ACCOUNT_2_ROLE_DEEP);
+        $this->loginUser(LoadAccountAddressACLData::USER_ACCOUNT_2_ROLE_LOCAL);
+        $user = $this->getReference(LoadAccountAddressACLData::USER_ACCOUNT_2_ROLE_LOCAL);
         /** @var Account $account */
         $account = $user->getAccount();
         /** @var AccountAddress $address */
@@ -270,6 +279,7 @@ class AccountAddressControllerTest extends WebTestCase
             ],
         ];
     }
+
     /**
      * @group frontend-ACL
      * @dataProvider gridACLProvider
@@ -289,6 +299,7 @@ class AccountAddressControllerTest extends WebTestCase
                 'gridName' => 'frontend-account-account-address-grid',
             ]
         );
+
         self::assertResponseStatusCodeEquals($response, $gridResponseStatus);
         if (200 === $gridResponseStatus) {
             $result = self::jsonToArray($response->getContent());
@@ -305,6 +316,7 @@ class AccountAddressControllerTest extends WebTestCase
             $this->assertEquals($expected, $actual);
         }
     }
+
     /**
      * @return array
      */
@@ -322,14 +334,10 @@ class AccountAddressControllerTest extends WebTestCase
                 'indexResponseStatus' => 200,
                 'gridResponseStatus' => 200,
                 'data' => [
-                    LoadAccountAddressACLData::USER_ACCOUNT_1_ROLE_LOCAL,
-                    LoadAccountAddressACLData::USER_ACCOUNT_1_ROLE_DEEP,
-                    LoadAccountAddressACLData::USER_ACCOUNT_1_ROLE_LOCAL_VIEW_ONLY,
-                    LoadAccountAddressACLData::USER_ACCOUNT_1_ROLE_DEEP_VIEW_ONLY,
-                    LoadAccountAddressACLData::USER_ACCOUNT_1_1_ROLE_DEEP,
-                    LoadAccountAddressACLData::USER_ACCOUNT_1_1_ROLE_LOCAL,
-                    LoadAccountAddressACLData::USER_ACCOUNT_1_2_ROLE_DEEP,
-                    LoadAccountAddressACLData::USER_ACCOUNT_1_2_ROLE_LOCAL,
+                    LoadAccountAddressesACLData::ADDRESS_ACC_1_LEVEL_DEEP,
+                    LoadAccountAddressesACLData::ADDRESS_ACC_1_LEVEL_LOCAL,
+                    LoadAccountAddressesACLData::ADDRESS_ACC_1_1_LEVEL_LOCAL,
+                    LoadAccountAddressesACLData::ADDRESS_ACC_1_2_LEVEL_LOCAL,
                 ],
             ],
             'LOCAL: all siblings' => [
@@ -337,10 +345,8 @@ class AccountAddressControllerTest extends WebTestCase
                 'indexResponseStatus' => 200,
                 'gridResponseStatus' => 200,
                 'data' => [
-                    LoadAccountAddressACLData::USER_ACCOUNT_1_ROLE_LOCAL,
-                    LoadAccountAddressACLData::USER_ACCOUNT_1_ROLE_DEEP,
-                    LoadAccountAddressACLData::USER_ACCOUNT_1_ROLE_LOCAL_VIEW_ONLY,
-                    LoadAccountAddressACLData::USER_ACCOUNT_1_ROLE_DEEP_VIEW_ONLY,
+                    LoadAccountAddressesACLData::ADDRESS_ACC_1_LEVEL_DEEP,
+                    LoadAccountAddressesACLData::ADDRESS_ACC_1_LEVEL_LOCAL
                 ],
             ],
         ];

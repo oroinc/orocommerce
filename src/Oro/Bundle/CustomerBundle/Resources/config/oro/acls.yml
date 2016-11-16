@@ -38,3 +38,15 @@ acls:
         permission: DELETE
         group_name: "commerce"
         category: 'account_management'
+
+    oro_account_frontend_account_address_view:
+        type: entity
+        class: OroCustomerBundle:AccountAddress
+        permission: VIEW
+        group_name: "commerce"
+
+    oro_account_frontend_account_user_address_view:
+        type: entity
+        class: OroCustomerBundle:AccountUserAddress
+        permission: VIEW
+        group_name: "commerce"
