@@ -6,8 +6,9 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Event\OrderEvent;
 use Oro\Bundle\OrderBundle\EventListener\Order\OrderPossibleShippingMethodsEventListener;
 use Oro\Bundle\OrderBundle\Factory\OrderShippingContextFactory;
-use Oro\Bundle\ShippingBundle\Context\ShippingContext;
+use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider;
+use Symfony\Component\Form\FormInterface;
 
 class OrderPossibleShippingMethodsEventListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -21,7 +22,7 @@ class OrderPossibleShippingMethodsEventListenerTest extends \PHPUnit_Framework_T
      */
     protected $priceProvider;
 
-    /**l
+    /**
      * @var OrderPossibleShippingMethodsEventListener
      */
     protected $listener;
@@ -37,15 +38,31 @@ class OrderPossibleShippingMethodsEventListenerTest extends \PHPUnit_Framework_T
         $this->listener = new OrderPossibleShippingMethodsEventListener($this->factory, $this->priceProvider);
     }
 
-    /**
-     * @dataProvider onOrderEventDataProvider
-     * @param array $submitted
-     * @param bool $hasKey
-     */
-    public function testOnOrderEvent($submitted, $hasKey)
+    public function testOnOrderEventWithoutKey()
     {
         $order = new Order();
-        $context = $this->getMock(ShippingContext::class);
+        $this->factory->expects(static::any())
+            ->method('create')
+            ->with($order)
+            ->willReturn($this->getMock(ShippingContextInterface::class));
+
+        $this->priceProvider->expects(static::never())
+            ->method('getApplicableMethodsWithTypesData');
+
+        $event = new OrderEvent($this->getMock(FormInterface::class), $order, ['field' => 'value']);
+
+        $this->listener->onOrderEvent($event);
+
+        static::assertArrayNotHasKey(
+            OrderPossibleShippingMethodsEventListener::POSSIBLE_SHIPPING_METHODS_KEY,
+            $event->getData()
+        );
+    }
+
+    public function testOnOrderEvent()
+    {
+        $order = new Order();
+        $context = $this->getMock(ShippingContextInterface::class);
         $this->factory->expects(static::any())
             ->method('create')
             ->with($order)
@@ -57,49 +74,19 @@ class OrderPossibleShippingMethodsEventListenerTest extends \PHPUnit_Framework_T
             ->with($context)
             ->willReturn($possibleShippingMethods);
 
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
-
         $event = new OrderEvent(
-            $form,
+            $this->getMock(FormInterface::class),
             $order,
-            $submitted
+            [OrderPossibleShippingMethodsEventListener::CALCULATE_SHIPPING_KEY => 'true']
         );
 
         $this->listener->onOrderEvent($event);
-        $actualData = $event->getData()->getArrayCopy();
 
-        if ($hasKey) {
-            static::assertArrayHasKey(
-                OrderPossibleShippingMethodsEventListener::POSSIBLE_SHIPPING_METHODS_KEY,
-                $actualData
-            );
-            static::assertEquals(
-                $possibleShippingMethods,
-                $actualData[OrderPossibleShippingMethodsEventListener::POSSIBLE_SHIPPING_METHODS_KEY]
-            );
-        } else {
-            static::assertArrayNotHasKey(
-                OrderPossibleShippingMethodsEventListener::POSSIBLE_SHIPPING_METHODS_KEY,
-                $actualData
-            );
-        }
-    }
-
-    public function onOrderEventDataProvider()
-    {
-        return [
-            [
-                'submitted' => [],
-                'hasKey' => true,
-            ],
-            [
-                'submitted' => [OrderPossibleShippingMethodsEventListener::CALCULATE_SHIPPING_KEY => 'false'],
-                'hasKey' => false,
-            ],
-            [
-                'submitted' => [OrderPossibleShippingMethodsEventListener::CALCULATE_SHIPPING_KEY => 'true'],
-                'hasKey' => true,
-            ],
-        ];
+        static::assertEquals(
+            new \ArrayObject([
+                OrderPossibleShippingMethodsEventListener::POSSIBLE_SHIPPING_METHODS_KEY => $possibleShippingMethods
+            ]),
+            $event->getData()
+        );
     }
 }
