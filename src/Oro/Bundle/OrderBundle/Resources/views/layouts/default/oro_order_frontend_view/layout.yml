@@ -121,7 +121,7 @@ layout:
                     blockType: text
                     options:
                         visible: '=data["order"].getPaymentTerm()!=null'
-                        text: '=data["order"].getPaymentTerm().getLabel()'
+                        text: '=(data["order"].getPaymentTerm()!=null ? data["order"].getPaymentTerm().getLabel() : null)'
                         label: 'oro.order.payment_term.label'
                         additional_block_prefixes: ['order_body_column_element']
                 order_payment_status:
