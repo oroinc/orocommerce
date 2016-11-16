@@ -69,14 +69,6 @@ class ProductPageContentVariantType implements ContentVariantTypeInterface
     /**
      * {@inheritdoc}
      */
-    public function isSupportedVariant(ContentVariantInterface $contentVariant)
-    {
-        return $contentVariant->getType() === self::TYPE;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getRouteData(ContentVariantInterface $contentVariant)
     {
         /** @var Product $product */

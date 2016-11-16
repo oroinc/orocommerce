@@ -40,25 +40,6 @@ class SystemPageContentVariantTypeTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($this->type->isAllowed());
     }
 
-    public function testIsSupportedPageFalse()
-    {
-        /** @var ContentVariantInterface|\PHPUnit_Framework_MockObject_MockObject $contentVariant **/
-        $contentVariant = $this->getMock(ContentVariantInterface::class);
-
-        $this->assertFalse($this->type->isSupportedVariant($contentVariant));
-    }
-
-    public function testIsSupportedPageTrue()
-    {
-        /** @var ContentVariantInterface|\PHPUnit_Framework_MockObject_MockObject $contentVariant **/
-        $contentVariant = $this->getMock(ContentVariantInterface::class);
-        $contentVariant->expects($this->once())
-            ->method('getType')
-            ->willReturn('system_page');
-
-        $this->assertTrue($this->type->isSupportedVariant($contentVariant));
-    }
-
     public function testGetRouteData()
     {
         /** @var ContentVariant|\PHPUnit_Framework_MockObject_MockObject $contentVariant **/

@@ -39,14 +39,6 @@ interface ContentVariantTypeInterface
     public function isAllowed();
 
     /**
-     * Check if variant is supported by type.
-     *
-     * @param ContentVariantInterface $contentVariant
-     * @return bool
-     */
-    public function isSupportedVariant(ContentVariantInterface $contentVariant);
-
-    /**
      * Get routing data based on configured variant.
      *
      * @param ContentVariantInterface $contentVariant

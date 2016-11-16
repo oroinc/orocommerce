@@ -140,13 +140,7 @@ class ContentVariantTypeRegistryTest extends \PHPUnit_Framework_TestCase
 
     public function testGetFormType()
     {
-        $variant = $this->getMock(ContentVariantInterface::class);
-
         $type1 = $this->getMock(ContentVariantTypeInterface::class);
-        $type1->expects($this->any())
-            ->method('isSupportedVariant')
-            ->with($variant)
-            ->willReturn(false);
         $type1->expects($this->any())
             ->method('getName')
             ->willReturn('type1');
@@ -154,10 +148,6 @@ class ContentVariantTypeRegistryTest extends \PHPUnit_Framework_TestCase
             ->method('getFormType');
 
         $type2 = $this->getMock(ContentVariantTypeInterface::class);
-        $type2->expects($this->any())
-            ->method('isSupportedVariant')
-            ->with($variant)
-            ->willReturn(true);
         $type2->expects($this->any())
             ->method('getName')
             ->willReturn('type2');
@@ -168,6 +158,6 @@ class ContentVariantTypeRegistryTest extends \PHPUnit_Framework_TestCase
         $this->registry->addContentVariantType($type1);
         $this->registry->addContentVariantType($type2);
 
-        $this->assertEquals('form.type', $this->registry->getFormType($variant));
+        $this->assertEquals('form.type', $this->registry->getFormTypeByType('type2'));
     }
 }

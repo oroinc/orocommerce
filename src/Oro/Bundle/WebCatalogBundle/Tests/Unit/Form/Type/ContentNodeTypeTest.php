@@ -4,17 +4,24 @@ namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
+use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueCollectionTypeStub;
+use Oro\Bundle\NavigationBundle\Form\Type\RouteChoiceType;
+use Oro\Bundle\NavigationBundle\Tests\Unit\Form\Type\Stub\RouteChoiceTypeStub;
 use Oro\Bundle\ScopeBundle\Form\Type\ScopeCollectionType;
+use Oro\Bundle\WebCatalogBundle\ContentVariantType\ContentVariantTypeRegistry;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
+use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
+use Oro\Bundle\WebCatalogBundle\Form\EventListener\ContentVariantCollectionResizeSubscriber;
 use Oro\Bundle\WebCatalogBundle\Form\Type\ContentNodeType;
+use Oro\Bundle\WebCatalogBundle\Form\Type\ContentVariantCollectionType;
+use Oro\Bundle\WebCatalogBundle\Form\Type\SystemPageVariantType;
 use Oro\Bundle\WebCatalogBundle\Form\Type\WebCatalogType;
 use Oro\Bundle\WebCatalogBundle\Tests\Unit\Form\Type\Stub\ScopeCollectionTypeStub;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType as StubEntityIdentifierType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType as StubEntityIdentifierType;
-use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
-use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueCollectionTypeStub;
 
 class ContentNodeTypeTest extends FormIntegrationTestCase
 {
@@ -46,13 +53,31 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
+        $variantTypeRegistry = $this->getMockBuilder(ContentVariantTypeRegistry::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $variantTypeRegistry->expects($this->any())
+            ->method('getFormTypeByType')
+            ->with('system_page')
+            ->willReturn(SystemPageVariantType::class);
+
+        $resizeSubscriber = new ContentVariantCollectionResizeSubscriber($variantTypeRegistry);
+        $variantCollection = new ContentVariantCollectionType($resizeSubscriber);
+
         return [
             new PreloadedExtension(
                 [
-                    TextType::class                            => new TextType(),
-                    EntityIdentifierType::NAME                 => new StubEntityIdentifierType([]),
+                    TextType::class => new TextType(),
+                    EntityIdentifierType::NAME => new StubEntityIdentifierType([]),
                     LocalizedFallbackValueCollectionType::NAME => new LocalizedFallbackValueCollectionTypeStub(),
-                    ScopeCollectionType::NAME                  => new ScopeCollectionTypeStub()
+                    ScopeCollectionType::NAME => new ScopeCollectionTypeStub(),
+                    ContentVariantCollectionType::NAME => $variantCollection,
+                    RouteChoiceType::NAME => new RouteChoiceTypeStub(
+                        [
+                            'some_route' => 'some_route',
+                            'other_route' => 'other_route'
+                        ]
+                    )
                 ],
                 []
             ),
@@ -106,7 +131,13 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
 
-        $this->assertEquals($expectedData, $form->getData());
+        /** @var ContentNode $data */
+        $data = $form->getData();
+        $this->assertInstanceOf(ContentNode::class, $data);
+        $this->assertEquals($expectedData, $data);
+        foreach ($data->getContentVariants() as $contentVariant) {
+            $this->assertEquals($data, $contentVariant->getNode());
+        }
     }
 
     /**
@@ -115,12 +146,12 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
     public function submitDataProvider()
     {
         return [
-            'new entity'      => [
+            'new entity' => [
                 (new ContentNode())
                     ->setParentNode(new ContentNode()),
                 [
                     'titles' => [['string' => 'new_content_node_title']],
-                    'slugPrototypes'  => [['string' => 'new_content_node_slug']],
+                    'slugPrototypes' => [['string' => 'new_content_node_slug']],
                 ],
                 (new ContentNode())
                     ->addTitle((new LocalizedFallbackValue())->setString('new_content_node_title'))
@@ -133,13 +164,77 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
                     ->addSlugPrototype((new LocalizedFallbackValue())->setString('content_node_slug')),
                 [
                     'titles' => [['string' => 'content_node_title'], ['string' => 'another_node_title']],
-                    'slugPrototypes'  => [['string' => 'content_node_slug'], ['string' => 'another_node_slug']],
+                    'slugPrototypes' => [['string' => 'content_node_slug'], ['string' => 'another_node_slug']],
                 ],
                 (new ContentNode())
                     ->addTitle((new LocalizedFallbackValue())->setString('content_node_title'))
                     ->addTitle((new LocalizedFallbackValue())->setString('another_node_title'))
                     ->addSlugPrototype((new LocalizedFallbackValue())->setString('content_node_slug'))
                     ->addSlugPrototype((new LocalizedFallbackValue())->setString('another_node_slug')),
+            ],
+            'added variant' => [
+                (new ContentNode())
+                    ->setParentNode(new ContentNode())
+                    ->addTitle((new LocalizedFallbackValue())->setString('content_node_title'))
+                    ->addSlugPrototype((new LocalizedFallbackValue())->setString('content_node_slug')),
+                [
+                    'titles' => [['string' => 'content_node_title'], ['string' => 'another_node_title']],
+                    'slugPrototypes' => [['string' => 'content_node_slug'], ['string' => 'another_node_slug']],
+                    'contentVariants' => [
+                        [
+                            'type' => 'system_page',
+                            'systemPageRoute' => 'some_route',
+                            'scopes' => []
+                        ]
+                    ]
+                ],
+                (new ContentNode())
+                    ->addTitle((new LocalizedFallbackValue())->setString('content_node_title'))
+                    ->addTitle((new LocalizedFallbackValue())->setString('another_node_title'))
+                    ->addSlugPrototype((new LocalizedFallbackValue())->setString('content_node_slug'))
+                    ->addSlugPrototype((new LocalizedFallbackValue())->setString('another_node_slug'))
+                    ->addContentVariant(
+                        (new ContentVariant())
+                            ->setType('system_page')
+                            ->setSystemPageRoute('some_route')
+                    )
+            ],
+            'remove variant' => [
+                (new ContentNode())
+                    ->setParentNode(new ContentNode())
+                    ->addTitle((new LocalizedFallbackValue())->setString('content_node_title'))
+                    ->addSlugPrototype((new LocalizedFallbackValue())->setString('content_node_slug'))
+                    ->addContentVariant(
+                        (new ContentVariant())
+                            ->setType('system_page')
+                            ->setSystemPageRoute('some_route')
+                    )
+                    ->addContentVariant(
+                        (new ContentVariant())
+                            ->setType('system_page')
+                            ->setSystemPageRoute('other_route')
+                    ),
+                [
+                    'titles' => [['string' => 'content_node_title'], ['string' => 'another_node_title']],
+                    'slugPrototypes' => [['string' => 'content_node_slug'], ['string' => 'another_node_slug']],
+                    'contentVariants' => [
+                        [
+                            'type' => 'system_page',
+                            'systemPageRoute' => 'some_route',
+                            'scopes' => []
+                        ]
+                    ]
+                ],
+                (new ContentNode())
+                    ->addTitle((new LocalizedFallbackValue())->setString('content_node_title'))
+                    ->addTitle((new LocalizedFallbackValue())->setString('another_node_title'))
+                    ->addSlugPrototype((new LocalizedFallbackValue())->setString('content_node_slug'))
+                    ->addSlugPrototype((new LocalizedFallbackValue())->setString('another_node_slug'))
+                    ->addContentVariant(
+                        (new ContentVariant())
+                            ->setType('system_page')
+                            ->setSystemPageRoute('some_route')
+                    )
             ],
         ];
     }

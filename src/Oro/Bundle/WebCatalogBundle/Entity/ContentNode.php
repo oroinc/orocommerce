@@ -465,6 +465,7 @@ class ContentNode extends ExtendContentNode implements ContentNodeInterface, Dat
     public function addContentVariant(ContentVariant $page)
     {
         if (!$this->contentVariants->contains($page)) {
+            $page->setNode($this);
             $this->contentVariants->add($page);
         }
 

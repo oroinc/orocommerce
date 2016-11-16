@@ -206,5 +206,9 @@
 
         <h5>{{ form.scopes.vars.label|trans }}</h5>
         {{ form_widget(form.scopes) }}
+
+        <div class="hide">
+            {{ form_rest(form) }}
+        </div>
     </div>
 {% endblock %}

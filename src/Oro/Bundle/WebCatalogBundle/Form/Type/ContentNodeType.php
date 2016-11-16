@@ -6,6 +6,7 @@ use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\ScopeBundle\Form\Type\ScopeCollectionType;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
+use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -54,6 +55,7 @@ class ContentNodeType extends AbstractType
             );
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);
+        $builder->addEventListener(FormEvents::SUBMIT, [$this, 'onSubmit']);
     }
 
     /**
@@ -71,6 +73,23 @@ class ContentNodeType extends AbstractType
                     'required' => true,
                     'options'  => ['constraints' => [new NotBlank()]],
                 ]
+            );
+        }
+    }
+
+    /**
+     * @param FormEvent $event
+     */
+    public function onSubmit(FormEvent $event)
+    {
+        $data = $event->getData();
+        if ($data instanceof ContentNode && !$data->getContentVariants()->isEmpty()) {
+            $data->getContentVariants()->map(
+                function (ContentVariant $contentVariant) use ($data) {
+                    if (!$contentVariant->getNode()) {
+                        $contentVariant->setNode($data);
+                    }
+                }
             );
         }
     }

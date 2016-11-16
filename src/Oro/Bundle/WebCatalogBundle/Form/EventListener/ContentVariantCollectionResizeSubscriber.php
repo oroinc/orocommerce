@@ -8,7 +8,6 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\FormInterface;
 
 class ContentVariantCollectionResizeSubscriber implements EventSubscriberInterface
 {
@@ -33,12 +32,12 @@ class ContentVariantCollectionResizeSubscriber implements EventSubscriberInterfa
         return [
             FormEvents::PRE_SET_DATA => 'preSetData',
             FormEvents::PRE_SUBMIT => 'preSubmit',
-            FormEvents::SUBMIT => array('onSubmit', 50),
+            FormEvents::SUBMIT => ['onSubmit', 50],
         ];
     }
 
     /**
-     * {@inheritdoc}
+     * @param FormEvent $event
      */
     public function preSetData(FormEvent $event)
     {
@@ -49,7 +48,7 @@ class ContentVariantCollectionResizeSubscriber implements EventSubscriberInterfa
             $data = [];
         }
 
-        if ($this->isTraversable($data)) {
+        if (!$this->isTraversable($data)) {
             throw new UnexpectedTypeException($data, 'array or (\Traversable and \ArrayAccess)');
         }
 
@@ -60,19 +59,25 @@ class ContentVariantCollectionResizeSubscriber implements EventSubscriberInterfa
 
         // Then add all rows again in the correct order
         foreach ($data as $name => $value) {
-            $this->addVariant($form, $name, $value);
+            if ($value instanceof ContentVariantInterface) {
+                $form->add(
+                    $name,
+                    $this->variantTypeRegistry->getFormTypeByType($value->getType()),
+                    ['property_path' => '[' . $name . ']']
+                );
+            }
         }
     }
 
     /**
-     * {@inheritdoc}
+     * @param FormEvent $event
      */
     public function preSubmit(FormEvent $event)
     {
         $form = $event->getForm();
         $data = $event->getData();
 
-        if ($this->isTraversable($data)) {
+        if (!$this->isTraversable($data)) {
             $data = [];
         }
 
@@ -85,14 +90,18 @@ class ContentVariantCollectionResizeSubscriber implements EventSubscriberInterfa
 
         // Add all additional rows
         foreach ($data as $name => $value) {
-            if (!$form->has($name)) {
-                $this->addVariant($form, $name, $value);
+            if (array_key_exists('type', $value) && !$form->has($name)) {
+                $form->add(
+                    $name,
+                    $this->variantTypeRegistry->getFormTypeByType($value['type']),
+                    ['property_path' => '[' . $name . ']']
+                );
             }
         }
     }
 
     /**
-     * {@inheritdoc}
+     * @param FormEvent $event
      */
     public function onSubmit(FormEvent $event)
     {
@@ -107,7 +116,7 @@ class ContentVariantCollectionResizeSubscriber implements EventSubscriberInterfa
             $data = [];
         }
 
-        if ($this->isTraversable($data)) {
+        if (!$this->isTraversable($data)) {
             throw new UnexpectedTypeException($data, 'array or (\Traversable and \ArrayAccess)');
         }
 
@@ -140,22 +149,6 @@ class ContentVariantCollectionResizeSubscriber implements EventSubscriberInterfa
      */
     protected function isTraversable($data)
     {
-        return !is_array($data) && !($data instanceof \Traversable && $data instanceof \ArrayAccess);
-    }
-
-    /**
-     * @param FormInterface $form
-     * @param string $name
-     * @param ContentVariantInterface $value
-     */
-    protected function addVariant(FormInterface $form, $name, $value)
-    {
-        if ($value instanceof ContentVariantInterface) {
-            $form->add(
-                $name,
-                $this->variantTypeRegistry->getFormType($value),
-                ['property_path' => '[' . $name . ']']
-            );
-        }
+        return is_array($data) || $data instanceof \Traversable || $data instanceof \ArrayAccess;
     }
 }

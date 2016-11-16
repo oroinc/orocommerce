@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Form\Type;
 
+use Symfony\Bridge\Doctrine\Form\EventListener\MergeDoctrineCollectionListener;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -31,11 +32,7 @@ class ContentVariantCollectionType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(
-            [
-                'prototype_name' => '__name__'
-            ]
-        );
+        $resolver->setDefault('prototype_name', '__name__');
     }
 
     /**
@@ -43,12 +40,7 @@ class ContentVariantCollectionType extends AbstractType
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        $view->vars = array_replace(
-            $view->vars,
-            [
-                'prototype_name' => $options['prototype_name']
-            ]
-        );
+        $view->vars['prototype_name'] = $options['prototype_name'];
     }
 
     /**
@@ -56,6 +48,7 @@ class ContentVariantCollectionType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $builder->addEventSubscriber(new MergeDoctrineCollectionListener());
         $builder->addEventSubscriber($this->resizeSubscriber);
     }
 
