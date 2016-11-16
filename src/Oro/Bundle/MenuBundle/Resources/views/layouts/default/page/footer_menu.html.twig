@@ -15,6 +15,12 @@
     {% set attr = attr|merge({
         class: attr.class|default('') ~ " footer-nav__list",
     }) %}
+    {% set child_attr = layout_attr_defaults(child_attr, {
+        '~class': ' footer-nav__item'
+    }) %}
+    {% set link_attr = layout_attr_defaults(link_attr, {
+        '~class': 'footer-nav__link'
+    }) %}
     {% spaceless %}
         {% for child in item.children %}
             {% if child.extras.isAllowed %}

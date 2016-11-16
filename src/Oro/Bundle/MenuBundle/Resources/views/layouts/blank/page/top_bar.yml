@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'OroMenuBundle:layouts:default/page/top_nav.html.twig'
+            themes: 'OroMenuBundle:layouts:blank/page/top_bar.html.twig'
         - '@addTree':
             items:
                 top_nav_container:
@@ -17,9 +17,6 @@ layout:
                         allow_safe_labels: true
                 top_nav_controls:
                     blockType: container
-                    options:
-                        attr:
-                            class: pull-left
             tree:
                 page_header:
                     top_nav_container:
