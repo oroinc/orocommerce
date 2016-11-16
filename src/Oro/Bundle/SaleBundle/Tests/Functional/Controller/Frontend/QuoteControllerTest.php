@@ -246,33 +246,7 @@ class QuoteControllerTest extends WebTestCase
                         'action_configuration',
                     ],
                 ],
-            ],
-            'parent account user2 (only account user quotes)' => [
-                'input' => [
-                    'login' => LoadUserData::PARENT_ACCOUNT_USER2,
-                    'password' => LoadUserData::PARENT_ACCOUNT_USER2,
-                ],
-                'expected' => [
-                    'data' => [
-                        [
-                            'qid' => LoadQuoteData::QUOTE10
-                        ],
-                        [
-                            'qid' => LoadQuoteData::QUOTE11,
-                        ],
-                    ],
-                    'columns' => [
-                        'id',
-                        'qid',
-                        'createdAt',
-                        'validUntil',
-                        'poNumber',
-                        'shipUntil',
-                        'view_link',
-                        'action_configuration',
-                    ],
-                ],
-            ],
+            ]
         ];
     }
 
@@ -503,28 +477,22 @@ class QuoteControllerTest extends WebTestCase
      * @dataProvider ACLProvider
      *
      * @param string $route
-     * @param string $request
-     * @param string $login
-     * @param string $password
+     * @param string $quote
+     * @param string $user
      * @param int $status
      */
-    public function testACL($route, $request, $login, $password, $status)
+    public function testViewAccessDenied($route, $quote, $user, $status)
     {
-        if ('' !== $login) {
-            $this->initClient([], static::generateBasicAuthHeader($login, $password));
-        } else {
-            $this->initClient([]);
-            $this->client->getCookieJar()->clear();
-        }
+        $this->loginUser($user);
 
-        /* @var $request Request */
-        $request = $this->getReference($request);
+        /* @var $quote Quote */
+        $quote = $this->getReference($quote);
 
         $this->client->request(
             'GET',
             $this->getUrl(
                 $route,
-                ['id' => $request->getId()]
+                ['id' => $quote->getId()]
             )
         );
 
@@ -540,33 +508,42 @@ class QuoteControllerTest extends WebTestCase
         return [
             'VIEW (nanonymous user)' => [
                 'route' => 'oro_sale_quote_frontend_view',
-                'request' => LoadQuoteData::QUOTE2,
-                'login' => '',
-                'password' => '',
+                'quote' => LoadQuoteData::QUOTE2,
+                'user' => '',
                 'status' => 401
             ],
             'VIEW (user from another account)' => [
                 'route' => 'oro_sale_quote_frontend_view',
-                'request' => LoadQuoteData::QUOTE2,
-                'login' => LoadUserData::ACCOUNT2_USER1,
-                'password' => LoadUserData::ACCOUNT2_USER1,
+                'quote' => LoadQuoteData::QUOTE2,
+                'user' => LoadUserData::ACCOUNT2_USER1,
                 'status' => 403
-            ],
-            'VIEW (user from parent account : DEEP)' => [
-                'route' => 'oro_sale_quote_frontend_view',
-                'request' => LoadQuoteData::QUOTE3,
-                'login' => LoadUserData::PARENT_ACCOUNT_USER1,
-                'password' => LoadUserData::PARENT_ACCOUNT_USER1,
-                'status' => 200
             ],
             'VIEW (user from parent account : LOCAL)' => [
                 'route' => 'oro_sale_quote_frontend_view',
-                'request' => LoadQuoteData::QUOTE2,
-                'login' => LoadUserData::PARENT_ACCOUNT_USER2,
-                'password' => LoadUserData::PARENT_ACCOUNT_USER2,
+                'quote' => LoadQuoteData::QUOTE2,
+                'user' => LoadUserData::PARENT_ACCOUNT_USER2,
                 'status' => 403
             ],
         ];
+    }
+
+    public function testViewAccessGranted()
+    {
+        $this->loginUser(LoadUserData::PARENT_ACCOUNT_USER1);
+
+        /* @var $quote Quote */
+        $quote = $this->getReference(LoadQuoteData::QUOTE3);
+
+        $this->client->request(
+            'GET',
+            $this->getUrl(
+                'oro_sale_quote_frontend_view',
+                ['id' => $quote->getId()]
+            )
+        );
+
+        $response = $this->client->getResponse();
+        static::assertHtmlResponseStatusCodeEquals($response, 200);
     }
 
     public function testGridAccessDeniedForAnonymousUsers()
