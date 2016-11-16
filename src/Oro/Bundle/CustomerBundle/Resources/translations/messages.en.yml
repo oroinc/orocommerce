@@ -131,6 +131,15 @@ oro.customer:
                     password.label: 'Password'
                     roles.label: 'Roles'
 
+        placeholder:
+            company_name: 'Company Inc.'
+            first_name: 'John'
+            last_name: 'Smith'
+            email: 'name@domain.com'
+            password: 'Enter your password'
+            password_confirmation: 'Reenter your password'
+
+
     accountuserrole:
         entity_label:                    'Customer User Role'
         entity_plural_label:             'Customer User Roles'

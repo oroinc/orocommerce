@@ -38,6 +38,7 @@ services:
         class: 'Oro\Bundle\CheckoutBundle\Layout\DataProvider\TransitionFormProvider'
         arguments:
             - '@form.factory'
+            - '@router'
         calls:
             - [setTransitionProvider, ['@oro_checkout.layout.data_provider.transition']]
         tags:
