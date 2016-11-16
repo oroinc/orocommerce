@@ -68,8 +68,7 @@ class PageControllerTest extends WebTestCase
             $this->getContainer()->getParameter('oro_cms.entity.page.class')
         );
 
-        $pages = $repository->findAll();
-        return array_pop($pages);
+        return $repository->find(1);
     }
 
     /**
