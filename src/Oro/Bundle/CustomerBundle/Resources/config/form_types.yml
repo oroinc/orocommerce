@@ -21,13 +21,14 @@ services:
         tags:
             - { name: form.type, alias: oro_customer_account_select }
 
-    oro_customer_account.form.type.frontend.account_select:
+    oro_customer_account.form.type.frontend.owner_select:
         class: 'Oro\Bundle\CustomerBundle\Form\Type\FrontendAccountSelectType'
         arguments:
              - '@oro_security.acl_helper'
              - '@doctrine'
+             - '@oro_entity_config.provider.ownership'
         tags:
-            - { name: form.type, alias: oro_customer_frontend_account_select }
+            - { name: form.type, alias: oro_customer_frontend_owner_select }
 
     oro_customer.form.type.account_group_select:
         class: 'Oro\Bundle\CustomerBundle\Form\Type\AccountGroupSelectType'

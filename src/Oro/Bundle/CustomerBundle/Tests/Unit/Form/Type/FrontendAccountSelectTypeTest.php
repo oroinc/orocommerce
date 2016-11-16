@@ -5,17 +5,15 @@ namespace Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-
+use Oro\Bundle\CustomerBundle\Form\Type\FrontendOwnerSelectType;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
-use Oro\Bundle\CustomerBundle\Form\Type\FrontendAccountSelectType;
+use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class FrontendAccountSelectTypeTest extends FormIntegrationTestCase
 {
     /**
-     * @var FrontendAccountSelectType
+     * @var FrontendOwnerSelectType
      */
     protected $formType;
 
@@ -34,12 +32,12 @@ class FrontendAccountSelectTypeTest extends FormIntegrationTestCase
     {
         $this->aclHelper = $this->createAclHelperMock();
         $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
-        $this->formType = new FrontendAccountSelectType($this->aclHelper, $this->registry);
+        $this->formType = new FrontendOwnerSelectType($this->aclHelper, $this->registry);
     }
 
     public function testGetName()
     {
-        $this->assertEquals(FrontendAccountSelectType::NAME, $this->formType->getName());
+        $this->assertEquals(FrontendOwnerSelectType::NAME, $this->formType->getName());
     }
 
     public function testGetParent()
