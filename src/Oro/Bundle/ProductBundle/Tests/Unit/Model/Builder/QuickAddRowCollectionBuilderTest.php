@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Model\Builder;
 
-
-use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
@@ -114,7 +112,7 @@ class QuickAddRowCollectionBuilderTest extends \PHPUnit_Framework_TestCase
         if (extension_loaded('xdebug')) {
             $this->markTestSkipped('Skipped due to xdebug enabled (nesting level can be reached)');
         }
-
+        $this->prepareProductManager();
         $this->prepareProductRepository();
         $this->assertValidCollection($this->builder->buildFromFile($file));
     }
@@ -207,10 +205,12 @@ class QuickAddRowCollectionBuilderTest extends \PHPUnit_Framework_TestCase
             ->setMethods(array('setParameter', 'getResult', 'execute'))
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
-        $query->method('execute')->willReturn( [
-            'HSSUC' => $this->prepareProduct('HSSUC'),
-            'HSTUC' => $this->prepareProduct('HSTUC'),
-        ]);
+        $query->method('execute')->willReturn(
+            [
+                'HSSUC' => $this->prepareProduct('HSSUC'),
+                'HSTUC' => $this->prepareProduct('HSTUC'),
+            ]
+        );
         $qb = $this->getMockBuilder(QueryBuilder::class)->disableOriginalConstructor()->getMock();
         $qb->method('getQuery')->willReturn($query);
         $this->productManager->method('restrictQueryBuilder')->withAnyParameters()->willReturn($qb);
