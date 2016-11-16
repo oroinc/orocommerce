@@ -11,7 +11,6 @@ use Oro\Bundle\ProductBundle\Form\Type\ProductPageVariantType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Oro\Bundle\ProductBundle\Tests\Unit\ContentVariant\Stub\ContentVariantStub;
 use Oro\Bundle\ScopeBundle\Form\Type\ScopeCollectionType;
-use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Bundle\WebCatalogBundle\Form\Type\SystemPageVariantType;
 use Oro\Bundle\WebCatalogBundle\Tests\Unit\Form\Type\Stub\ScopeCollectionTypeStub;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -98,11 +97,11 @@ class ProductPageVariantTypeTest extends FormIntegrationTestCase
     /**
      * @dataProvider submitDataProvider
      *
-     * @param WebCatalog $existingData
+     * @param ContentVariantInterface $existingData
      * @param array $submittedData
-     * @param WebCatalog $expectedData
+     * @param int $expectedProductId
      */
-    public function testSubmit($existingData, $submittedData, $expectedData)
+    public function testSubmit(ContentVariantInterface $existingData, $submittedData, $expectedProductId)
     {
         $this->assertMetadataCall();
         $form = $this->factory->create($this->type, $existingData);
@@ -112,7 +111,11 @@ class ProductPageVariantTypeTest extends FormIntegrationTestCase
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
 
-        $this->assertEquals($expectedData, $form->getData());
+        /** @var ContentVariantStub $actualData */
+        $actualData = $form->getData();
+
+        $this->assertEquals('product_page', $actualData->getType());
+        $this->assertEquals($expectedProductId, $actualData->getProductPageProduct()->getId());
     }
 
     /**
@@ -123,30 +126,23 @@ class ProductPageVariantTypeTest extends FormIntegrationTestCase
         /** @var Product $product1 */
         $product1 = $this->getEntity(Product::class, ['id' => 1]);
 
-        /** @var Product $product2 */
-        $product2 = $this->getEntity(Product::class, ['id' => 2]);
-
         return [
             'new entity' => [
-                new ContentVariantStub(),
-                [
+                'existingData' => new ContentVariantStub(),
+                'submittedData' => [
                     'productPageProduct' => 1
                 ],
-                (new ContentVariantStub())
-                    ->setProductPageProduct($product1)
-                    ->setType(ProductPageContentVariantType::TYPE)
+                'expectedProductId' => 1
             ],
             'existing entity' => [
-                (new ContentVariantStub())
+                'existingData' => (new ContentVariantStub())
                     ->setProductPageProduct($product1)
                     ->setType(ProductPageContentVariantType::TYPE),
-                [
+                'submittedData' => [
                     'productPageProduct' => 2,
                     'type' => 'fakeType'
                 ],
-                (new ContentVariantStub())
-                    ->setProductPageProduct($product2)
-                    ->setType(ProductPageContentVariantType::TYPE)
+                'expectedProductId' => 2
             ],
         ];
     }

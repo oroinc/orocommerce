@@ -42,3 +42,15 @@ services:
         public: true
         tags:
             - { name: form.type_extension, alias: oro_product_step_one }
+
+    oro_catalog.form.type.category_page_content_variant:
+        class: Oro\Bundle\CatalogBundle\Form\Type\CategoryPageVariantType
+        arguments:
+            - '@doctrine'
+        tags:
+            - { name: form.type, alias: oro_catalog_category_page_variant }
+
+    oro_catalog.form.type.category_select:
+        class: Oro\Bundle\CatalogBundle\Form\Type\CategorySelectType
+        tags:
+            - { name: form.type, alias: oro_catalog_category_select }

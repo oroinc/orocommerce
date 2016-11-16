@@ -16,6 +16,11 @@ class ContentVariantStub implements ContentVariantInterface
     protected $type;
 
     /**
+     * @var Page
+     */
+    protected $cmsPage;
+
+    /**
      * @var ArrayCollection|Scope[]
      */
     protected $scopes;
@@ -58,11 +63,6 @@ class ContentVariantStub implements ContentVariantInterface
 
         return $this;
     }
-
-    /**
-     * @var Page
-     */
-    protected $cmsPage;
 
     /**
      * @return int

@@ -8,7 +8,6 @@ use Oro\Bundle\ProductBundle\Form\Type\ProductPageVariantType;
 use Oro\Bundle\ProductBundle\Tests\Unit\ContentVariant\Stub\ContentVariantStub;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 use Oro\Component\WebCatalog\RouteData;
 
 class ProductPageContentVariantTypeTest extends \PHPUnit_Framework_TestCase
@@ -56,25 +55,6 @@ class ProductPageContentVariantTypeTest extends \PHPUnit_Framework_TestCase
             ->with('oro_product_view')
             ->willReturn(true);
         $this->assertTrue($this->type->isAllowed());
-    }
-
-    public function testIsSupportedPageFalse()
-    {
-        /** @var ContentVariantInterface|\PHPUnit_Framework_MockObject_MockObject $contentVariant **/
-        $contentVariant = $this->getMock(ContentVariantInterface::class);
-
-        $this->assertFalse($this->type->isSupportedPage($contentVariant));
-    }
-
-    public function testIsSupportedPageTrue()
-    {
-        /** @var ContentVariantInterface|\PHPUnit_Framework_MockObject_MockObject $contentVariant **/
-        $contentVariant = $this->getMock(ContentVariantInterface::class);
-        $contentVariant->expects($this->once())
-            ->method('getType')
-            ->willReturn('product_page');
-
-        $this->assertTrue($this->type->isSupportedPage($contentVariant));
     }
 
     public function testGetRouteData()

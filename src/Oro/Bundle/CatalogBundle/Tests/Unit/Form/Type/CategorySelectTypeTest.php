@@ -1,16 +1,16 @@
 <?php
 
-namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\CatalogBundle\Tests\Unit\Form\Type;
 
-use Oro\Bundle\WebCatalogBundle\Form\Type\WebCatalogSelectType;
 use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Bundle\CatalogBundle\Form\Type\CategorySelectType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class WebCatalogSelectTypeTest extends FormIntegrationTestCase
+class CategorySelectTypeTest extends FormIntegrationTestCase
 {
     /**
-     * @var WebCatalogSelectType
+     * @var CategorySelectType
      */
     protected $formType;
 
@@ -19,12 +19,12 @@ class WebCatalogSelectTypeTest extends FormIntegrationTestCase
      */
     protected function setUp()
     {
-        $this->formType = new WebCatalogSelectType();
+        $this->formType = new CategorySelectType();
     }
 
     public function testGetName()
     {
-        $this->assertEquals(WebCatalogSelectType::NAME, $this->formType->getName());
+        $this->assertEquals(CategorySelectType::NAME, $this->formType->getName());
     }
 
     public function testGetParent()
@@ -35,7 +35,7 @@ class WebCatalogSelectTypeTest extends FormIntegrationTestCase
     public function testSetDefaultOptions()
     {
         /* @var $resolver OptionsResolver|\PHPUnit_Framework_MockObject_MockObject */
-        $resolver = $this->getMock(OptionsResolver::class);
+        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with($this->isType('array'))
@@ -44,11 +44,11 @@ class WebCatalogSelectTypeTest extends FormIntegrationTestCase
                     $this->assertArrayHasKey('autocomplete_alias', $options);
                     $this->assertArrayHasKey('create_form_route', $options);
                     $this->assertArrayHasKey('configs', $options);
-                    $this->assertEquals('oro_web_catalog', $options['autocomplete_alias']);
-                    $this->assertEquals('oro_web_catalog_create', $options['create_form_route']);
+                    $this->assertEquals('oro_category', $options['autocomplete_alias']);
+                    $this->assertEquals('oro_catalog_category_create', $options['create_form_route']);
                     $this->assertEquals(
                         [
-                            'placeholder' => 'oro.webcatalog.form.choose'
+                            'placeholder' => 'oro.catalog.category.form.choose'
                         ],
                         $options['configs']
                     );

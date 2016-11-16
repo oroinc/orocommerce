@@ -1,15 +1,15 @@
 <?php
 
-namespace Oro\Bundle\CMSBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\CatalogBundle\Tests\Unit\Form\Type;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Mapping\ClassMetadata;
-use Oro\Bundle\CMSBundle\ContentVariantType\CmsPageContentVariantType;
-use Oro\Bundle\CMSBundle\Entity\Page;
-use Oro\Bundle\CMSBundle\Form\Type\CmsPageVariantType;
-use Oro\Bundle\CMSBundle\Form\Type\PageSelectType;
-use Oro\Bundle\CMSBundle\Tests\Unit\ContentVariantType\Stub\ContentVariantStub;
+use Oro\Bundle\CatalogBundle\ContentVariantType\CategoryPageContentVariantType;
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Form\Type\CategoryPageVariantType;
+use Oro\Bundle\CatalogBundle\Form\Type\CategorySelectType;
+use Oro\Bundle\CatalogBundle\Tests\Unit\ContentVariantType\Stub\ContentVariantStub;
 use Oro\Bundle\ScopeBundle\Form\Type\ScopeCollectionType;
 use Oro\Bundle\WebCatalogBundle\Tests\Unit\Form\Type\Stub\ScopeCollectionTypeStub;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -18,12 +18,12 @@ use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 use Symfony\Component\Form\PreloadedExtension;
 
-class CmsPageVariantTypeTest extends FormIntegrationTestCase
+class CategoryPageVariantTypeTest extends FormIntegrationTestCase
 {
     use EntityTrait;
 
     /**
-     * @var CmsPageVariantType
+     * @var CategoryPageVariantType
      */
     protected $type;
 
@@ -40,7 +40,7 @@ class CmsPageVariantTypeTest extends FormIntegrationTestCase
         parent::setUp();
 
         $this->registry = $this->getMock(ManagerRegistry::class);
-        $this->type = new CmsPageVariantType($this->registry);
+        $this->type = new CategoryPageVariantType($this->registry);
     }
 
     /**
@@ -60,12 +60,12 @@ class CmsPageVariantTypeTest extends FormIntegrationTestCase
             new PreloadedExtension(
                 [
                     ScopeCollectionType::NAME => new ScopeCollectionTypeStub(),
-                    PageSelectType::NAME => new EntityType(
+                    CategorySelectType::NAME => new EntityType(
                         [
-                            1 => $this->getEntity(Page::class, ['id' => 1]),
-                            2 => $this->getEntity(Page::class, ['id' => 2]),
+                            1 => $this->getEntity(Category::class, ['id' => 1]),
+                            2 => $this->getEntity(Category::class, ['id' => 2]),
                         ],
-                        PageSelectType::NAME
+                        CategorySelectType::NAME
                     )
                 ],
                 []
@@ -78,19 +78,19 @@ class CmsPageVariantTypeTest extends FormIntegrationTestCase
         $this->assertMetadataCall();
         $form = $this->factory->create($this->type);
 
-        $this->assertTrue($form->has('cmsPage'));
+        $this->assertTrue($form->has('categoryPageCategory'));
         $this->assertTrue($form->has('scopes'));
         $this->assertTrue($form->has('type'));
     }
 
     public function testGetName()
     {
-        $this->assertEquals(CmsPageVariantType::NAME, $this->type->getName());
+        $this->assertEquals(CategoryPageVariantType::NAME, $this->type->getName());
     }
 
     public function testGetBlockPrefix()
     {
-        $this->assertEquals(CmsPageVariantType::NAME, $this->type->getBlockPrefix());
+        $this->assertEquals(CategoryPageVariantType::NAME, $this->type->getBlockPrefix());
     }
 
     /**
@@ -98,9 +98,9 @@ class CmsPageVariantTypeTest extends FormIntegrationTestCase
      *
      * @param ContentVariantInterface $existingData
      * @param array $submittedData
-     * @param int $expectedPageId
+     * @param int $expectedCategoryId
      */
-    public function testSubmit($existingData, $submittedData, $expectedPageId)
+    public function testSubmit(ContentVariantInterface $existingData, array $submittedData, $expectedCategoryId)
     {
         $this->assertMetadataCall();
         $form = $this->factory->create($this->type, $existingData);
@@ -113,8 +113,8 @@ class CmsPageVariantTypeTest extends FormIntegrationTestCase
         /** @var ContentVariantStub $actualData */
         $actualData = $form->getData();
 
-        $this->assertEquals('cms_page', $actualData->getType());
-        $this->assertEquals($expectedPageId, $actualData->getCmsPage()->getId());
+        $this->assertEquals('category_page', $actualData->getType());
+        $this->assertEquals($expectedCategoryId, $actualData->getCategoryPageCategory()->getId());
     }
 
     /**
@@ -122,26 +122,26 @@ class CmsPageVariantTypeTest extends FormIntegrationTestCase
      */
     public function submitDataProvider()
     {
-        /** @var Page $page1 */
-        $page1 = $this->getEntity(Page::class, ['id' => 1]);
+        /** @var Category $category1 */
+        $category1 = $this->getEntity(Category::class, ['id' => 1]);
 
         return [
             'new entity' => [
                 'existingData' => new ContentVariantStub(),
-                'submittedData' => [
-                    'cmsPage' => 1
+                'submittedData'=> [
+                    'categoryPageCategory' => 1
                 ],
-                'expectedPageId' => 1
+                'expectedCategoryId' => 1
             ],
             'existing entity' => [
                 'existingData' => (new ContentVariantStub())
-                    ->setCmsPage($page1)
-                    ->setType(CmsPageContentVariantType::TYPE),
+                    ->setCategoryPageCategory($category1)
+                    ->setType(CategoryPageContentVariantType::TYPE),
                 'submittedData' => [
-                    'cmsPage' => 2,
+                    'categoryPageCategory' => 2,
                     'type' => 'fakeType'
                 ],
-                'expectedPageId' => 2
+                'expectedCategoryId' => 2
             ],
         ];
     }
@@ -155,7 +155,7 @@ class CmsPageVariantTypeTest extends FormIntegrationTestCase
         $metadata->expects($this->once())
             ->method('getName')
             ->willReturn(ContentVariantStub::class);
-        
+
         /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
         $em = $this->getMock(EntityManagerInterface::class);
         $em->expects($this->once())

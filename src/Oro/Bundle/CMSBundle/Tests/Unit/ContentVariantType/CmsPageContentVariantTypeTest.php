@@ -7,7 +7,6 @@ use Oro\Bundle\CMSBundle\Form\Type\CmsPageVariantType;
 use Oro\Bundle\CMSBundle\Tests\Unit\ContentVariantType\Stub\ContentVariantStub;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 use Oro\Bundle\CMSBundle\ContentVariantType\CmsPageContentVariantType;
 use Oro\Component\WebCatalog\RouteData;
 
@@ -56,25 +55,6 @@ class CmsPageContentVariantTypeTest extends \PHPUnit_Framework_TestCase
             ->with('oro_cms_page_view')
             ->willReturn(true);
         $this->assertTrue($this->type->isAllowed());
-    }
-
-    public function testIsSupportedPageFalse()
-    {
-        /** @var ContentVariantInterface|\PHPUnit_Framework_MockObject_MockObject $contentVariant **/
-        $contentVariant = $this->getMock(ContentVariantInterface::class);
-
-        $this->assertFalse($this->type->isSupportedPage($contentVariant));
-    }
-
-    public function testIsSupportedPageTrue()
-    {
-        /** @var ContentVariantInterface|\PHPUnit_Framework_MockObject_MockObject $contentVariant **/
-        $contentVariant = $this->getMock(ContentVariantInterface::class);
-        $contentVariant->expects($this->once())
-            ->method('getType')
-            ->willReturn('cms_page');
-
-        $this->assertTrue($this->type->isSupportedPage($contentVariant));
     }
 
     public function testGetRouteData()

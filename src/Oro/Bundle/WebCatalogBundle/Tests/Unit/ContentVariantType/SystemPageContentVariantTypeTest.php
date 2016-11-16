@@ -4,7 +4,6 @@ namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\ContentVariantType;
 
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebCatalogBundle\Form\Type\SystemPageVariantType;
-use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 use Oro\Bundle\WebCatalogBundle\ContentVariantType\SystemPageContentVariantType;
 use Oro\Component\WebCatalog\RouteData;
 
@@ -38,25 +37,6 @@ class SystemPageContentVariantTypeTest extends \PHPUnit_Framework_TestCase
     public function testIsAllowed()
     {
         $this->assertTrue($this->type->isAllowed());
-    }
-
-    public function testIsSupportedPageFalse()
-    {
-        /** @var ContentVariantInterface|\PHPUnit_Framework_MockObject_MockObject $contentVariant **/
-        $contentVariant = $this->getMock(ContentVariantInterface::class);
-
-        $this->assertFalse($this->type->isSupportedPage($contentVariant));
-    }
-
-    public function testIsSupportedPageTrue()
-    {
-        /** @var ContentVariantInterface|\PHPUnit_Framework_MockObject_MockObject $contentVariant **/
-        $contentVariant = $this->getMock(ContentVariantInterface::class);
-        $contentVariant->expects($this->once())
-            ->method('getType')
-            ->willReturn('system_page');
-
-        $this->assertTrue($this->type->isSupportedPage($contentVariant));
     }
 
     public function testGetRouteData()

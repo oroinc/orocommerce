@@ -45,14 +45,6 @@ class SystemPageContentVariantType implements ContentVariantTypeInterface
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function isSupportedPage(ContentVariantInterface $contentVariant)
-    {
-        return $contentVariant->getType() === self::TYPE;
-    }
-
-    /**
      * @param ContentVariant $contentVariant
      *
      * {@inheritdoc}

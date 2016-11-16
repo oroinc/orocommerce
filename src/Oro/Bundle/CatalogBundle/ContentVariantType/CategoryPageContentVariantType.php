@@ -1,18 +1,18 @@
 <?php
 
-namespace Oro\Bundle\CMSBundle\ContentVariantType;
+namespace Oro\Bundle\CatalogBundle\ContentVariantType;
 
-use Oro\Bundle\CMSBundle\Entity\Page;
-use Oro\Bundle\CMSBundle\Form\Type\CmsPageVariantType;
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Form\Type\CategoryPageVariantType;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Component\WebCatalog\ContentVariantTypeInterface;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 use Oro\Component\WebCatalog\RouteData;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
-class CmsPageContentVariantType implements ContentVariantTypeInterface
+class CategoryPageContentVariantType implements ContentVariantTypeInterface
 {
-    const TYPE = 'cms_page';
+    const TYPE = 'category_page';
 
     /**
      * @var SecurityFacade
@@ -47,7 +47,7 @@ class CmsPageContentVariantType implements ContentVariantTypeInterface
      */
     public function getTitle()
     {
-        return 'oro.cms.page.entity_label';
+        return 'oro.catalog.category.entity_label';
     }
 
     /**
@@ -55,7 +55,7 @@ class CmsPageContentVariantType implements ContentVariantTypeInterface
      */
     public function getFormType()
     {
-        return CmsPageVariantType::class;
+        return CategoryPageVariantType::class;
     }
 
     /**
@@ -63,7 +63,7 @@ class CmsPageContentVariantType implements ContentVariantTypeInterface
      */
     public function isAllowed()
     {
-        return $this->securityFacade->isGranted('oro_cms_page_view');
+        return $this->securityFacade->isGranted('oro_catalog_category_view');
     }
 
     /**
@@ -71,9 +71,15 @@ class CmsPageContentVariantType implements ContentVariantTypeInterface
      */
     public function getRouteData(ContentVariantInterface $contentVariant)
     {
-        /** @var Page $cmsPage */
-        $cmsPage = $this->propertyAccessor->getValue($contentVariant, 'cmsPage');
+        /** @var Category $category */
+        $category = $this->propertyAccessor->getValue($contentVariant, 'categoryPageCategory');
 
-        return new RouteData('oro_cms_frontend_page_view', ['id' => $cmsPage->getId()]);
+        return new RouteData(
+            'oro_product_frontend_product_index',
+            [
+                'categoryId' => $category->getId(),
+                'includeSubcategories' => true
+            ]
+        );
     }
 }

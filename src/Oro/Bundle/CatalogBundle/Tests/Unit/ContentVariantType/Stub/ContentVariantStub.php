@@ -1,10 +1,10 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Tests\Unit\ContentVariant\Stub;
+namespace Oro\Bundle\CatalogBundle\Tests\Unit\ContentVariantType\Stub;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 
@@ -16,10 +16,10 @@ class ContentVariantStub implements ContentVariantInterface
     protected $type;
 
     /**
-     * @var Product
+     * @var Category
      */
-    protected $productPageProduct;
-
+    protected $categoryPageCategory;
+    
     /**
      * @var ArrayCollection|Scope[]
      */
@@ -92,20 +92,20 @@ class ContentVariantStub implements ContentVariantInterface
     }
 
     /**
-     * @return Product
+     * @return Category
      */
-    public function getProductPageProduct()
+    public function getCategoryPageCategory()
     {
-        return $this->productPageProduct;
+        return $this->categoryPageCategory;
     }
 
     /**
-     * @param Product $productPageProduct
+     * @param Category $category
      * @return ContentVariantStub
      */
-    public function setProductPageProduct($productPageProduct)
+    public function setCategoryPageCategory(Category $category)
     {
-        $this->productPageProduct = $productPageProduct;
+        $this->categoryPageCategory = $category;
 
         return $this;
     }
