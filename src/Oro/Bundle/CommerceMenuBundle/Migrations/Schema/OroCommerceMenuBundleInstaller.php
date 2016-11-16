@@ -51,7 +51,7 @@ class OroCommerceMenuBundleInstaller implements
         $this->createOroCommerceMenuUpdateDescriptionTable($schema);
 
         /** Foreign keys generation **/
-        $this->addOroNavigationTitleForeignKeys($schema);
+        $this->addOroCommerceMenuUpdateForeignKeys($schema);
         $this->addOroCommerceMenuUpdateTitleForeignKeys($schema);
         $this->addOroCommerceMenuUpdateDescriptionForeignKeys($schema);
 
@@ -177,7 +177,7 @@ class OroCommerceMenuBundleInstaller implements
      *
      * @param Schema $schema
      */
-    protected function addOroNavigationTitleForeignKeys(Schema $schema)
+    protected function addOroCommerceMenuUpdateForeignKeys(Schema $schema)
     {
         $table = $schema->getTable(self::ORO_COMMERCE_MENU_UPDATE_TABLE_NAME);
         $table->addForeignKeyConstraint(
