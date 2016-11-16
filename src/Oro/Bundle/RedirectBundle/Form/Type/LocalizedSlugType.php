@@ -41,8 +41,6 @@ class LocalizedSlugType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        parent::configureOptions($resolver);
-
         $resolver->setDefaults([
             'source_field' => 'titles',
             'slugify_component' => 'ororedirect/js/app/components/localized-field-slugify-component',

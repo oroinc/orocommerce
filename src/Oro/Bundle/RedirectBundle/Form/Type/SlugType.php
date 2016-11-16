@@ -42,8 +42,6 @@ class SlugType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        parent::configureOptions($resolver);
-
         $resolver->setDefaults([
             'source_field' => 'titles',
             'slugify_component' => 'ororedirect/js/app/components/text-field-slugify-component',
@@ -58,7 +56,7 @@ class SlugType extends AbstractType
     {
         $view->vars['slugify_component'] = $options['slugify_component'];
         $view->vars['slugify_component_options'] = [
-            'source' => '[name="'.$view->parent->vars['full_name'].'['.$options['source_field'].'"]',
+            'source' => '[name="'.$view->parent->vars['full_name'].'['.$options['source_field'].']"]',
             'target' => '[name="'.$view->vars['full_name'].'"]',
             'slugify_route' => $options['slugify_route'],
         ];
