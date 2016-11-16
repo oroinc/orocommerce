@@ -311,7 +311,7 @@ class OroWebCatalogBundleInstaller implements
             $schema->getTable('oro_web_catalog_content_node'),
             ['node_id'],
             ['id'],
-            ['onDelete' => null, 'onUpdate' => null]
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
     }
 

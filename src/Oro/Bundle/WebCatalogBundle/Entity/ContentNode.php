@@ -183,7 +183,8 @@ class ContentNode extends ExtendContentNode implements ContentNodeInterface, Dat
      * @ORM\OneToMany(
      *     targetEntity="Oro\Bundle\WebCatalogBundle\Entity\ContentVariant",
      *     mappedBy="node",
-     *     cascade={"all"},
+     *     cascade={"ALL"},
+     *     fetch="EAGER",
      *     orphanRemoval=true
      * )
      */
