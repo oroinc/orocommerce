@@ -15,6 +15,22 @@ class Configuration implements ConfigurationInterface
     const DEFAULT_MAXIMUM_QUANTITY_TO_ORDER = 100000;
 
     /**
+     * @return string
+     */
+    public static function getMaximumQuantityToOrderFullConfigurationName()
+    {
+        return OroInventoryExtension::ALIAS . '.' . self::MAXIMUM_QUANTITY_TO_ORDER;
+    }
+
+    /**
+     * @return string
+     */
+    public static function getMinimumQuantityToOrderFullConfigurationName()
+    {
+        return OroInventoryExtension::ALIAS . '.' . self::MINIMUM_QUANTITY_TO_ORDER;
+    }
+
+    /**
      * {@inheritDoc}
      */
     public function getConfigTreeBuilder()
