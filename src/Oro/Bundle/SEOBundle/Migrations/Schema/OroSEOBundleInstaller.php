@@ -55,7 +55,7 @@ class OroSEOBundleInstaller implements Installation, ExtendExtensionAwareInterfa
      */
     private function addMetaInformation(Schema $schema, $ownerTable)
     {
-        $this->addMetaInformationField($schema, $ownerTable, 'metaTitles');
+        $this->addMetaInformationField($schema, $ownerTable, 'metaTitles', true);
         $this->addMetaInformationField($schema, $ownerTable, 'metaDescriptions');
         $this->addMetaInformationField($schema, $ownerTable, 'metaKeywords');
     }
@@ -67,10 +67,11 @@ class OroSEOBundleInstaller implements Installation, ExtendExtensionAwareInterfa
      * @param Schema $schema
      * @param string $ownerTable
      * @param string $relationName
+     * @param bool $isString
      * @throws \Doctrine\DBAL\DBALException
      * @throws \Doctrine\DBAL\Schema\SchemaException
      */
-    private function addMetaInformationField(Schema $schema, $ownerTable, $relationName)
+    private function addMetaInformationField(Schema $schema, $ownerTable, $relationName, $isString = false)
     {
         $targetTable = $schema->getTable($ownerTable);
 
@@ -97,7 +98,10 @@ class OroSEOBundleInstaller implements Installation, ExtendExtensionAwareInterfa
                 ],
                 'form' => ['is_enabled' => false],
                 'view' => ['is_displayable' => false],
-                'importexport' => ['excluded' => true],
+                'importexport' => [
+                    'excluded' => false,
+                    'fallback_field' => $isString ? 'string' : 'text',
+                ],
             ]
         );
     }
