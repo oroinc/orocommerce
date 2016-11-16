@@ -23,8 +23,10 @@ class TierPricesProvider extends AbstractFormProvider
      * @param ProductPriceRepository $productPriceRepository
      * @param PriceListRequestHandler $priceListRequestHandler
      */
-    public function __construct(ProductPriceRepository $productPriceRepository, PriceListRequestHandler $priceListRequestHandler)
-    {
+    public function __construct(
+        ProductPriceRepository $productPriceRepository,
+        PriceListRequestHandler $priceListRequestHandler
+    ) {
         $this->productPriceRepository = $productPriceRepository;
         $this->priceListRequestHandler = $priceListRequestHandler;
     }
