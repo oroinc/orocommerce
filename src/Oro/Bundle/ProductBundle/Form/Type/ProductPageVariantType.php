@@ -65,7 +65,7 @@ class ProductPageVariantType extends AbstractType
             );
 
         $builder->addEventListener(
-            FormEvents::SUBMIT,
+            FormEvents::POST_SUBMIT,
             function (FormEvent $event) {
                 $data = $event->getData();
                 if ($data instanceof ContentVariantInterface) {
