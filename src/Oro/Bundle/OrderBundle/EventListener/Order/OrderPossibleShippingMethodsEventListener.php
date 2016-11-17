@@ -38,7 +38,12 @@ class OrderPossibleShippingMethodsEventListener
     public function onOrderEvent(OrderEvent $event)
     {
         $submittedData = $event->getSubmittedData();
-        if ($submittedData === null || array_key_exists(self::CALCULATE_SHIPPING_KEY, $submittedData)) {
+        if ($submittedData === null
+            || (
+                array_key_exists(self::CALCULATE_SHIPPING_KEY, $submittedData)
+                && $submittedData[self::CALCULATE_SHIPPING_KEY]
+            )
+        ) {
             $data = [];
             if ($this->priceProvider) {
                 $data = $this->priceProvider

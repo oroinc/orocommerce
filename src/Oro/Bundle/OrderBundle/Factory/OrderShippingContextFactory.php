@@ -47,6 +47,8 @@ class OrderShippingContextFactory
         $shippingContext->setBillingAddress($order->getBillingAddress());
         $shippingContext->setCurrency($order->getCurrency());
         $shippingContext->setSubtotal(Price::create($order->getSubtotal(), $order->getCurrency()));
+        $shippingContext->setSourceEntity($order);
+        $shippingContext->setSourceEntityIdentifier($order->getId());
 
         if ($order->getLineItems()) {
             $shippingContext->setLineItems($order->getLineItems()->toArray());

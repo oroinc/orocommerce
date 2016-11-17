@@ -138,14 +138,7 @@ class OrderType extends AbstractType
             )
             ->add('sourceEntityClass', HiddenType::class)
             ->add('sourceEntityId', HiddenType::class)
-            ->add('sourceEntityIdentifier', HiddenType::class)
-            ->add(
-                OrderPossibleShippingMethodsEventListener::CALCULATE_SHIPPING_KEY,
-                HiddenType::class,
-                [
-                    'mapped' => false
-                ]
-            );
+            ->add('sourceEntityIdentifier', HiddenType::class);
         $this->addPaymentTerm($builder, $order);
         $this->addShippingFields($builder, $order);
         $this->addAddresses($builder, $order);
@@ -335,6 +328,9 @@ class OrderType extends AbstractType
     protected function addShippingFields(FormBuilderInterface $builder, Order $order)
     {
         $builder
+            ->add(OrderPossibleShippingMethodsEventListener::CALCULATE_SHIPPING_KEY, HiddenType::class, [
+                'mapped' => false
+            ])
             ->add('shippingMethod', HiddenType::class)
             ->add('shippingMethodType', HiddenType::class)
             ->add('estimatedShippingCostAmount', HiddenType::class)
@@ -350,7 +346,8 @@ class OrderType extends AbstractType
                 function ($price) {
                     return $price instanceof Price ? $price->getValue() : $price;
                 }
-            ));
+            ))
+        ;
 
         return $this;
     }

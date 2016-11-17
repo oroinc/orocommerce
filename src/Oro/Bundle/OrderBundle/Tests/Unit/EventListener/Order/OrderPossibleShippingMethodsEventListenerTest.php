@@ -39,7 +39,11 @@ class OrderPossibleShippingMethodsEventListenerTest extends \PHPUnit_Framework_T
         $this->listener = new OrderPossibleShippingMethodsEventListener($this->factory, $this->priceProvider);
     }
 
-    public function testOnOrderEventWithoutKey()
+    /**
+     * @dataProvider onOrderEventEmptyKeyDataProvider
+     * @param array $submittedData
+     */
+    public function testOnOrderEventEmptyKey(array $submittedData)
     {
         $order = new Order();
         $this->factory->expects(static::never())
@@ -48,7 +52,7 @@ class OrderPossibleShippingMethodsEventListenerTest extends \PHPUnit_Framework_T
         $this->priceProvider->expects(static::never())
             ->method('getApplicableMethodsWithTypesData');
 
-        $event = new OrderEvent($this->getMock(FormInterface::class), $order, ['field' => 'value']);
+        $event = new OrderEvent($this->getMock(FormInterface::class), $order, $submittedData);
 
         $this->listener->onOrderEvent($event);
 
@@ -56,6 +60,17 @@ class OrderPossibleShippingMethodsEventListenerTest extends \PHPUnit_Framework_T
             OrderPossibleShippingMethodsEventListener::POSSIBLE_SHIPPING_METHODS_KEY,
             $event->getData()
         );
+    }
+
+    /**
+     * @return array
+     */
+    public function onOrderEventEmptyKeyDataProvider()
+    {
+        return [
+            ['submittedData' => ['field' => 'value']],
+            ['submittedData' => [OrderPossibleShippingMethodsEventListener::POSSIBLE_SHIPPING_METHODS_KEY => '']],
+        ];
     }
 
     /**
@@ -134,7 +149,7 @@ class OrderPossibleShippingMethodsEventListenerTest extends \PHPUnit_Framework_T
                         ]
                     ]
                 ],
-                'submittedData' => [OrderPossibleShippingMethodsEventListener::CALCULATE_SHIPPING_KEY => 'true'],
+                'submittedData' => [OrderPossibleShippingMethodsEventListener::CALCULATE_SHIPPING_KEY => 'false'],
                 'expectedMethods' => [
                     [
                         'types' => [
