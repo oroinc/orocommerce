@@ -34,14 +34,15 @@ define(function(require) {
         },
 
         _handleShipToBillingAddressCheckbox: function(e) {
+            var isOneOption = this.$addressSelector[0].length == 1;
             var disabled = Boolean(this.$shipToBillingCheckbox.attr('checked'));
-            if (!disabled && this._isFormVisible()) {
+            if (isOneOption || (!disabled && this._isFormVisible())) {
                 this._showForm();
             } else {
                 this._hideForm(true);
                 this.$addressSelector.focus();
             }
-            this.$addressSelector.prop('disabled', disabled).inputWidget('refresh');
+            this.$addressSelector.prop('disabled', disabled || isOneOption).inputWidget('refresh');
         },
 
         _onAddressChanged: function(e) {
