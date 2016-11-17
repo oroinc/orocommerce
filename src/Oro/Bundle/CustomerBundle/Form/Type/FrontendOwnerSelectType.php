@@ -62,8 +62,9 @@ class FrontendOwnerSelectType extends AbstractType
             ]
         );
         $resolver->setDefined('targetObject');
+        $resolver->setDefined('query_builder');
 
-        $resolver->setNormalizer('query_builder', function (Options $options, $value) {
+        $resolver->setNormalizer('query_builder', function (Options $options) {
             $data = $options['targetObject'];
             $class = ClassUtils::getClass($data);
             $permission = 'CREATE';
@@ -78,9 +79,6 @@ class FrontendOwnerSelectType extends AbstractType
             $ownerClass = AccountUser::class;
             if ($ownerType == 'FRONTEND_ACCOUNT') {
                 $ownerClass = Account::class;
-            }
-            if (!$class) {
-                $class = $ownerClass;
             }
 
             $criteria = new Criteria();

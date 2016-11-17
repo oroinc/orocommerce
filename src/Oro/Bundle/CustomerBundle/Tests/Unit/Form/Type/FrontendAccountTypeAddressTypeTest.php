@@ -16,6 +16,7 @@ use Oro\Bundle\CustomerBundle\Form\Type\FrontendOwnerSelectType;
 use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\AccountTypedAddressWithDefaultTypeStub;
 use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\AddressTypeStub;
 use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\EntityType;
+use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Symfony\Component\Form\PreloadedExtension;
 
@@ -33,6 +34,11 @@ class FrontendAccountTypedAddressTypeTest extends AccountTypedAddressTypeTest
     protected $registry;
 
     /**
+     * @var ConfigProvider
+     */
+    protected $configProvider;
+
+    /**
      * {@inheritdoc}
      */
     public function __construct($name = null, array $data = array(), $dataName = '')
@@ -40,6 +46,7 @@ class FrontendAccountTypedAddressTypeTest extends AccountTypedAddressTypeTest
         parent::__construct($name, $data, $dataName);
         $this->aclHelper = $this->createAclHelperMock();
         $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $this->configProvider = $this->getMockBuilder(ConfigProvider::class)->disableOriginalConstructor()->getMock();
     }
 
     /**
@@ -118,7 +125,11 @@ class FrontendAccountTypedAddressTypeTest extends AccountTypedAddressTypeTest
                         $this->billingType,
                         $this->shippingType
                     ], $this->em),
-                    FrontendOwnerSelectType::NAME => new FrontendOwnerSelectType($this->aclHelper, $this->registry),
+                    FrontendOwnerSelectType::NAME => new FrontendOwnerSelectType(
+                        $this->aclHelper,
+                        $this->registry,
+                        $this->configProvider
+                    ),
                     $addressTypeStub->getName()  => $addressTypeStub,
                     'genemu_jqueryselect2_translatable_entity' => new Select2Type('translatable_entity'),
                 ],

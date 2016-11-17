@@ -22,7 +22,7 @@ services:
             - { name: form.type, alias: oro_customer_account_select }
 
     oro_customer_account.form.type.frontend.owner_select:
-        class: 'Oro\Bundle\CustomerBundle\Form\Type\FrontendAccountSelectType'
+        class: 'Oro\Bundle\CustomerBundle\Form\Type\FrontendOwnerSelectType'
         arguments:
              - '@oro_security.acl_helper'
              - '@doctrine'

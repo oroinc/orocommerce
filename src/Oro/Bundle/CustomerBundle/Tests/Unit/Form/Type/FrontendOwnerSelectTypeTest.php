@@ -6,11 +6,12 @@ use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\CustomerBundle\Form\Type\FrontendOwnerSelectType;
+use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class FrontendAccountSelectTypeTest extends FormIntegrationTestCase
+class FrontendOwnerSelectTypeTest extends FormIntegrationTestCase
 {
     /**
      * @var FrontendOwnerSelectType
@@ -26,13 +27,19 @@ class FrontendAccountSelectTypeTest extends FormIntegrationTestCase
     protected $registry;
 
     /**
+     * @var ConfigProvider
+     */
+    protected $configProvider;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
         $this->aclHelper = $this->createAclHelperMock();
         $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
-        $this->formType = new FrontendOwnerSelectType($this->aclHelper, $this->registry);
+        $this->configProvider = $this->getMockBuilder(ConfigProvider::class)->disableOriginalConstructor()->getMock();
+        $this->formType = new FrontendOwnerSelectType($this->aclHelper, $this->registry, $this->configProvider);
     }
 
     public function testGetName()
@@ -102,7 +109,7 @@ class FrontendAccountSelectTypeTest extends FormIntegrationTestCase
     public function assertDefaults(array $defaults)
     {
         $this->assertArrayHasKey('class', $defaults);
-        $this->assertArrayHasKey('query_builder', $defaults);
+//        $this->assertArrayHasKey('query_builder', $defaults);
     }
 
     /**
