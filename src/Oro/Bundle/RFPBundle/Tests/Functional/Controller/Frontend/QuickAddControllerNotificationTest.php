@@ -31,6 +31,9 @@ class QuickAddControllerNotificationTest extends WebTestCase
                 'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData'
             ]
         );
+        $this->configManager = $this->getContainer()->get('oro_config.manager');
+        $this->configManager->set(self::RFP_PRODUCT_VISIBILITY_KEY, [Product::INVENTORY_STATUS_IN_STOCK]);
+        $this->configManager->flush();
 
         $this->configManager = $this->getContainer()->get('oro_config.global');
         $this->configManager->set(self::RFP_PRODUCT_VISIBILITY_KEY, [Product::INVENTORY_STATUS_IN_STOCK]);
