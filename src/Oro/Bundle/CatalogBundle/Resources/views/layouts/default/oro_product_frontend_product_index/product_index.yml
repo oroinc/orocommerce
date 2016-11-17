@@ -8,3 +8,4 @@ layout:
             blockType: category_breadcrumbs
             options:
                 currentCategory: '=data["category"].getCurrentCategory()'
+                parentCategories: '=data["category"].getParentCategories()'

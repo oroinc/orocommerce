@@ -8,9 +8,12 @@ services:
             - { name: layout.block_type, alias: category_list }
 
     oro_catalog.layout.block_type.navigation:
-        class: Oro\Bundle\CatalogBundle\Layout\Block\Type\CategoryBreadcrumbsType
+        parent: oro_layout.block_type.abstract_configurable_container
+        calls:
+            - [setOptionsConfig, [{parentCategories: {required: true}, currentCategory: {required: true}}]]
+            - [setName, ['category_breadcrumbs']]
         tags:
-            - { name: layout.block_type, alias: category_breadcrumbs }
+             - { name: layout.block_type, alias: category_breadcrumbs }
 
     oro_catalog.layout.data_provider.category:
         class: 'Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoryProvider'
