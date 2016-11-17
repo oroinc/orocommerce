@@ -1,5 +1,5 @@
-oro_website_search_frontend_search:
-    resource:     "@OroWebsiteSearchBundle/Controller/Frontend"
+oro_website_search_frontend_website_search:
+    resource:     "@OroWebsiteSearchBundle/Controller/Frontend/WebsiteSearchController.php"
     type:         annotation
     prefix:       /website-search
     options:

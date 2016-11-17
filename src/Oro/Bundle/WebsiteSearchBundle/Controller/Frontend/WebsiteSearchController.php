@@ -5,6 +5,7 @@ namespace Oro\Bundle\WebsiteSearchBundle\Controller\Frontend;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 class WebsiteSearchController extends Controller
@@ -13,7 +14,7 @@ class WebsiteSearchController extends Controller
      * @Route("/", name="oro_website_search_results")
      *
      * @param Request $request
-     * @return array
+     * @return RedirectResponse
      */
     public function searchResultsAction(Request $request)
     {
