@@ -176,22 +176,20 @@
     {% endif %}
 
     {% set shippingInformation %}
-        {% if entity.shippingMethod %}
-            {%- if entity.shippingMethodType -%}
-                {% set methodLabel = get_shipping_method_label(entity.shippingMethod) ? get_shipping_method_label(entity.shippingMethod)|trans ~ ', ' : '' %}
-                {{ UI.renderAttribute('oro.order.shipping_method.label'|trans,
-                '<div class="control-label selected-shipping-method">' ~
-                methodLabel ~
-                get_shipping_method_type_label(entity.shippingMethod, entity.shippingMethodType)|trans ~
-                ': ' ~ entity.estimatedShippingCost|oro_format_price ~ '</div>'
-                ) }}
-            {%- endif -%}
+        {% if entity.shippingMethod and entity.shippingMethodType and entity.estimatedShippingCost %}
+            {% set methodLabel = get_shipping_method_label(entity.shippingMethod) ? get_shipping_method_label(entity.shippingMethod)|trans ~ ', ' : '' %}
+            {{ UI.renderAttribute('oro.order.shipping_method.label'|trans,
+            '<div class="control-label selected-shipping-method">' ~
+            methodLabel ~
+            get_shipping_method_type_label(entity.shippingMethod, entity.shippingMethodType)|trans ~
+            ': ' ~ entity.estimatedShippingCost|oro_format_price() ~ '</div>'
+            ) }}
         {% endif %}
         {{ UI.renderAttribute('oro.order.form.shipping_options.label'|trans,
             SM.renderPossibleShippingMethods(
                 entity.shippingMethod,
                 entity.shippingMethodType,
-                entity.estimatedShippingCost ? entity.estimatedShippingCost.value : null,
+                entity.estimatedShippingCostAmount,
                 orderData.possibleShippingMethods,
                 form
             )
@@ -203,7 +201,7 @@
 
         <div data-page-component-module="oroui/js/app/components/view-component"
              data-page-component-options="{{ options|json_encode }}">
-            {{ form_row(form.overriddenShippingCost) }}
+            {{ form_row(form.overriddenShippingCostAmount) }}
         </div>
     {% endset %}
 

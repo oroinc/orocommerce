@@ -74,7 +74,8 @@ class CheckoutTotalsProviderTest extends \PHPUnit_Framework_TestCase
         $order = $this->getEntity(
             Order::class,
             [
-                'estimatedShippingCost' => $price,
+                'estimatedShippingCostAmount' => $price->getValue(),
+                'currency' => $price->getCurrency(),
                 'shippingAddress' => $address,
                 'billingAddress' => $address,
                 'account' => $account,
@@ -100,7 +101,7 @@ class CheckoutTotalsProviderTest extends \PHPUnit_Framework_TestCase
                 $this->returnCallback(
                     function (Order $order) use ($lineItems, $price, $address, $account, $website, $organization) {
                         $this->assertEquals($lineItems, $order->getLineItems());
-                        $this->assertSame($price, $order->getShippingCost());
+                        $this->assertEquals($price, $order->getShippingCost());
                         $this->assertSame($address, $order->getBillingAddress());
                         $this->assertSame($address, $order->getShippingAddress());
                         $this->assertSame($account, $order->getAccount());

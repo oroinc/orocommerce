@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Provider;
 
-use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Provider\ShippingCostSubtotalProvider;
@@ -65,7 +64,7 @@ class ShippingCostSubtotalProviderTest extends AbstractSubtotalProviderTest
         $currency = 'USD';
         $costAmount = 142.12;
         $order->setCurrency($currency);
-        $order->setEstimatedShippingCost(Price::create($costAmount, $order->getCurrency()));
+        $order->setEstimatedShippingCostAmount($costAmount);
 
         $subtotal = $this->provider->getSubtotal($order);
         $this->assertInstanceOf('Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal', $subtotal);

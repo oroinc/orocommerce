@@ -15,6 +15,9 @@ use Oro\Bundle\UPSBundle\Model\Package;
 use Oro\Bundle\UPSBundle\Model\PriceRequest;
 use Oro\Bundle\UPSBundle\Provider\UnitsMapper;
 
+/**
+ * TODO: refactor during https://magecore.atlassian.net/browse/BB-5536
+ */
 class PriceRequestFactory
 {
     const MAX_PACKAGE_WEIGHT_KGS = 70;
@@ -159,6 +162,8 @@ class PriceRequestFactory
      * @param ShippingLineItemInterface[] $lineItems
      * @param string $upsWeightUnit
      * @return array
+     *
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     protected function getProductsParamsByUnit($lineItems, $upsWeightUnit)
     {

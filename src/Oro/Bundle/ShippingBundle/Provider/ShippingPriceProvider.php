@@ -3,8 +3,6 @@
 namespace Oro\Bundle\ShippingBundle\Provider;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodConfig;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig;
@@ -40,10 +38,9 @@ class ShippingPriceProvider
 
     /**
      * @param ShippingContextInterface $context
-     * @param bool $isAjax
      * @return array
      */
-    public function getApplicableMethodsWithTypesData(ShippingContextInterface $context, $isAjax = false)
+    public function getApplicableMethodsWithTypesData(ShippingContextInterface $context)
     {
         $result = [];
 
@@ -55,13 +52,7 @@ class ShippingPriceProvider
                 if (!$method) {
                     continue;
                 }
-                if ($isAjax && $method->getLabel() instanceof LocalizedFallbackValue) {
-                    $label = $method->getLabel()->getString();
-                } else {
-                    $label = $method->getLabel();
-                }
-
-                $types = $this->getMethodTypesConfigs($context, $methodConfig, $isAjax);
+                $types = $this->getMethodTypesConfigs($context, $methodConfig);
                 if (count($types) === 0) {
                     continue;
                 }
@@ -70,7 +61,7 @@ class ShippingPriceProvider
                     $result[$methodId] = [
                         'identifier' => $methodId,
                         'isGrouped' => $method->isGrouped(),
-                        'label' => $label,
+                        'label' => $method->getLabel(),
                         'sortOrder' => $method->getSortOrder(),
                         'types' => $types
                     ];
@@ -138,14 +129,10 @@ class ShippingPriceProvider
     /**
      * @param ShippingContextInterface $context
      * @param ShippingRuleMethodConfig $methodConfig
-     * @param bool $isAjax
      * @return array
      */
-    protected function getMethodTypesConfigs(
-        ShippingContextInterface $context,
-        ShippingRuleMethodConfig $methodConfig,
-        $isAjax = false
-    ) {
+    protected function getMethodTypesConfigs(ShippingContextInterface $context, ShippingRuleMethodConfig $methodConfig)
+    {
         $method = $this->registry->getShippingMethod($methodConfig->getMethod());
         $methodId = $method->getIdentifier();
         $methodOptions = $methodConfig->getOptions();
@@ -179,14 +166,6 @@ class ShippingPriceProvider
                 $this->priceCache->savePrice($context, $methodId, $typeId, $price);
             }
             $type = $method->getType($typeId);
-            if ($isAjax) {
-                $val = $price->getValue();
-                $curr = $price->getCurrency();
-                $price = [
-                    'value' => $val,
-                    'currency' => $curr
-                ];
-            }
             $types[$typeId] = [
                 'identifier' => $type->getIdentifier(),
                 'label' => $type->getLabel(),

@@ -4,6 +4,7 @@ namespace Oro\Bundle\CheckoutBundle\Mapper;
 
 use Doctrine\Common\Util\ClassUtils;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
@@ -32,7 +33,9 @@ class OrderMapper implements MapperInterface
     {
         $order = new Order();
         $data = array_merge($this->getData($checkout), $data);
-        $data = array_merge($data, ['estimatedShippingCost' => $checkout->getShippingCost()]);
+        if ($checkout->getShippingCost() instanceof Price) {
+            $data = array_merge($data, ['estimatedShippingCostAmount' => $checkout->getShippingCost()->getValue()]);
+        }
 
         $sourceEntity = $checkout->getSourceEntity();
         if ($sourceEntity) {

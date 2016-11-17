@@ -159,7 +159,7 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
             ->setSubtotal($subtotalAmount)
             ->setTotal($totalAmount)
             ->setShippingAddress($shippingAddress)
-            ->setEstimatedShippingCost(Price::create($quoteShippingEstimateValue, self::CURRENCY))
+            ->setEstimatedShippingCostAmount($quoteShippingEstimateValue)
             ->setSourceEntityClass('Oro\Bundle\SaleBundle\Entity\Quote')
             ->setSourceEntityId(0);
 
@@ -211,7 +211,7 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
             ->setSubtotal($subtotalAmount)
             ->setTotal($totalAmount)
             ->setShippingAddress($shippingAddress)
-            ->setEstimatedShippingCost(Price::create($quoteShippingEstimateValue, self::CURRENCY))
+            ->setEstimatedShippingCostAmount($quoteShippingEstimateValue)
             ->setSourceEntityClass('Oro\Bundle\SaleBundle\Entity\Quote')
             ->setSourceEntityId(0);
 
@@ -252,7 +252,7 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
             ->setSubtotal($subtotalAmount)
             ->setTotal($totalAmount)
             ->setShippingAddress($shippingAddress)
-            ->setEstimatedShippingCost(Price::create($quoteShippingEstimateValue, self::CURRENCY))
+            ->setEstimatedShippingCostAmount($quoteShippingEstimateValue)
             ->setSourceEntityClass('Oro\Bundle\SaleBundle\Entity\Quote')
             ->setSourceEntityId(0);
 
@@ -309,7 +309,7 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
             )
             ->setSubtotal($subtotalAmount)
             ->setTotal($totalAmount)
-            ->setEstimatedShippingCost(Price::create($quoteShippingEstimateValue, self::CURRENCY))
+            ->setEstimatedShippingCostAmount($quoteShippingEstimateValue)
             ->setSourceEntityClass('Oro\Bundle\SaleBundle\Entity\Quote')
             ->setSourceEntityId(0);
 

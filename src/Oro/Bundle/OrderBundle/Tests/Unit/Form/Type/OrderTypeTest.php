@@ -225,8 +225,11 @@ class OrderTypeTest extends TypeTestCase
                     'currency' => 'USD',
                     'shippingMethod' => 'shippingMethod1',
                     'shippingMethodType' => 'shippingType1',
-                    'estimatedShippingCost' => 10,
-                    'overriddenShippingCost' => 5
+                    'estimatedShippingCostAmount' => 10,
+                    'overriddenShippingCostAmount' => [
+                        'value' => 5,
+                        'currency' => 'USD',
+                    ]
                 ],
                 'expectedOrder' => $this->getOrder(
                     [
@@ -257,8 +260,8 @@ class OrderTypeTest extends TypeTestCase
                         'currency' => 'USD',
                         'shippingMethod' => 'shippingMethod1',
                         'shippingMethodType' => 'shippingType1',
-                        'estimatedShippingCost' => Price::create(10, 'USD'),
-                        'overriddenShippingCost' => Price::create(5, 'USD')
+                        'estimatedShippingCostAmount' => '10',
+                        'overriddenShippingCostAmount' => 5
                     ]
                 )
             ]
@@ -359,11 +362,14 @@ class OrderTypeTest extends TypeTestCase
         ];
     }
 
-    public function testBuildFormWithPaymetTerm()
+    public function testBuildFormWithPaymentTerm()
     {
         /** @var FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder */
         $builder = $this->getMock(FormBuilderInterface::class);
         $order = new Order();
+        $builder->expects($this->any())
+            ->method('get')
+            ->willReturn($this->getMock(FormBuilderInterface::class));
         $accountPaymentTerm = $this->getMock(PaymentTerm::class);
         $accountGroupPaymentTerm = $this->getMock(PaymentTerm::class);
         $accountGroup = new AccountGroup();
@@ -401,7 +407,7 @@ class OrderTypeTest extends TypeTestCase
             ->willReturn($accountGroupPaymentTerm);
         $builder->expects($this->atMost(18))->method('add')->willReturn($builder);
         $builder
-            ->expects($this->at(19))
+            ->expects($this->at(13))
             ->method('add')
             ->with('paymentTerm', PaymentTermSelectType::NAME, $options)
             ->willReturn($builder);
@@ -414,7 +420,9 @@ class OrderTypeTest extends TypeTestCase
         /** @var FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder */
         $builder = $this->getMock(FormBuilderInterface::class);
         $order = new Order();
-
+        $builder->expects($this->any())
+            ->method('get')
+            ->willReturn($this->getMock(FormBuilderInterface::class));
         $this
             ->securityFacade
             ->expects($this->once())

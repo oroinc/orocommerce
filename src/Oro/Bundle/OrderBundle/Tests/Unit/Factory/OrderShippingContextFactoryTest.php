@@ -13,7 +13,6 @@ use Oro\Bundle\OrderBundle\Factory\OrderShippingContextFactory;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Entity\Repository\PaymentTransactionRepository;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
-use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
 use Oro\Bundle\ShippingBundle\Factory\ShippingContextFactory;
 
 class OrderShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
@@ -84,10 +83,7 @@ class OrderShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
         $context->setBillingAddress($address);
         $context->setShippingAddress($address);
         $context->setCurrency($currency);
-        $context->setLineItems([
-            (new ShippingLineItem())->setQuantity(10)->setPrice(Price::create($amount, $currency)),
-            (new ShippingLineItem())->setQuantity(20)->setPrice(Price::create($amount, $currency)),
-        ]);
+        $context->setLineItems($lineItems->toArray());
         $context->setPaymentMethod($paymentMethod);
         $context->setSubtotal(Price::create($amount, $currency));
 

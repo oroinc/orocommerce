@@ -19,8 +19,7 @@ define(function(require) {
             calculateShipping: '[name$="[calculateShipping]"]',
             shippingMethod: '[name$="[shippingMethod]"]',
             shippingMethodType: '[name$="[shippingMethodType]"]',
-            estimatedShippingCost: '[name$="[estimatedShippingCost]"]',
-            overriddenShippingCost: '[name$="[overriddenShippingCost]"]'
+            estimatedShippingCostAmount: '[name$="[estimatedShippingCostAmount]"]'
         },
 
         /**
@@ -296,7 +295,7 @@ define(function(require) {
          */
         getEstimatedShippingCostElement: function() {
             if (!this.hasOwnProperty('$estimatedShippingCostElement')) {
-                this.$estimatedShippingCostElement = this.$el.find(this.selectors.estimatedShippingCost);
+                this.$estimatedShippingCostElement = this.$el.find(this.selectors.estimatedShippingCostAmount);
             }
 
             return this.$estimatedShippingCostElement;

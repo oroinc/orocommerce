@@ -408,7 +408,10 @@ class OrderControllerTest extends WebTestCase
 
         /* @var $form Form */
         $form = $crawler->selectButton('Save')->form();
-        $form['oro_order_type[overriddenShippingCost]'] = self::$overriddenShippingCostAmount;
+        $form['oro_order_type[overriddenShippingCostAmount]'] = [
+            'value' => self::$overriddenShippingCostAmount,
+            'currency' => 'USD',
+        ];
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
@@ -433,7 +436,7 @@ class OrderControllerTest extends WebTestCase
 
         /* @var $form Form */
         $form = $crawler->selectButton('Save')->form();
-        $form['oro_order_type[overriddenShippingCost]'] = '';
+        $form['oro_order_type[overriddenShippingCostAmount][value]'] = '';
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
@@ -458,7 +461,7 @@ class OrderControllerTest extends WebTestCase
 
         /* @var $form Form */
         $form = $crawler->selectButton('Save')->form();
-        $form['oro_order_type[overriddenShippingCost]'] = '0';
+        $form['oro_order_type[overriddenShippingCostAmount][value]'] = 0;
       
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);

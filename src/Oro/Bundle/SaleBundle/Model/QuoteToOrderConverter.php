@@ -89,7 +89,7 @@ class QuoteToOrderConverter
         if ($needFlush) {
             $manager = $this->registry->getManagerForClass('OroOrderBundle:Order');
             $manager->persist($order);
-            $manager->flush($order);
+            $manager->flush();
         }
 
         return $order;
@@ -221,7 +221,7 @@ class QuoteToOrderConverter
             $estimatedShippingCostAmount *= $this->getExchangeRate($shippingEstimateCurrency, $orderCurrency);
         }
 
-        $order->setEstimatedShippingCost(Price::create($estimatedShippingCostAmount, $orderCurrency));
+        $order->setEstimatedShippingCostAmount($estimatedShippingCostAmount);
     }
 
     /**

@@ -293,16 +293,6 @@ class Order extends ExtendOrder implements
     protected $overriddenShippingCostAmount;
 
     /**
-     * @var Price
-     */
-    protected $estimatedShippingCost;
-
-    /**
-     * @var Price
-     */
-    protected $overriddenShippingCost;
-
-    /**
      * @var string
      *
      * @ORM\Column(name="source_entity_class", type="string", length=255, nullable=true)
@@ -741,7 +731,14 @@ class Order extends ExtendOrder implements
      */
     public function getShippingCost()
     {
-        return $this->overriddenShippingCostAmount ? $this->overriddenShippingCost : $this->estimatedShippingCost;
+        $amount = $this->estimatedShippingCostAmount;
+        if ($this->overriddenShippingCostAmount) {
+            $amount = $this->overriddenShippingCostAmount;
+        }
+        if ($amount && $this->currency) {
+            return Price::create($amount, $this->currency);
+        }
+        return null;
     }
 
     /**
@@ -749,39 +746,46 @@ class Order extends ExtendOrder implements
      */
     public function getEstimatedShippingCost()
     {
-        return $this->estimatedShippingCost;
+        if ($this->estimatedShippingCostAmount && $this->currency) {
+            return Price::create($this->estimatedShippingCostAmount, $this->currency);
+        }
+        return null;
     }
 
     /**
-     * @param Price $shippingCost
+     * @return float|null
+     */
+    public function getEstimatedShippingCostAmount()
+    {
+        return $this->estimatedShippingCostAmount;
+    }
+
+    /**
+     * @param float $amount
      * @return Order
      */
-    public function setEstimatedShippingCost(Price $shippingCost = null)
+    public function setEstimatedShippingCostAmount($amount)
     {
-        $this->estimatedShippingCost = $shippingCost;
-
-        $this->updateEstimatedShippingCost();
+        $this->estimatedShippingCostAmount = $amount;
 
         return $this;
     }
 
     /**
-     * @return Price|null
+     * @return float|null
      */
-    public function getOverriddenShippingCost()
+    public function getOverriddenShippingCostAmount()
     {
-        return $this->overriddenShippingCost;
+        return $this->overriddenShippingCostAmount;
     }
 
     /**
-     * @param Price $shippingCost
+     * @param float $amount
      * @return Order
      */
-    public function setOverriddenShippingCost(Price $shippingCost = null)
+    public function setOverriddenShippingCostAmount($amount)
     {
-        $this->overriddenShippingCost = $shippingCost;
-
-        $this->updateOverriddenShippingCost();
+        $this->overriddenShippingCostAmount = $amount;
 
         return $this;
     }
@@ -791,37 +795,9 @@ class Order extends ExtendOrder implements
      */
     public function postLoad()
     {
-        if (null !== $this->estimatedShippingCostAmount && null !== $this->currency) {
-            $this->estimatedShippingCost = Price::create($this->estimatedShippingCostAmount, $this->currency);
-        }
-
-        if (null !== $this->overriddenShippingCostAmount && null !== $this->currency) {
-            $this->overriddenShippingCost = Price::create($this->overriddenShippingCostAmount, $this->currency);
-        }
-
         if (null !== $this->totalDiscountsAmount && null !== $this->currency) {
             $this->totalDiscounts = Price::create($this->totalDiscountsAmount, $this->currency);
         }
-    }
-
-    /**
-     * @ORM\PrePersist
-     * @ORM\PreUpdate
-     */
-    public function updateEstimatedShippingCost()
-    {
-        $this->estimatedShippingCostAmount =
-            $this->estimatedShippingCost ? $this->estimatedShippingCost->getValue() : null;
-    }
-
-    /**
-     * @ORM\PrePersist
-     * @ORM\PreUpdate
-     */
-    public function updateOverriddenShippingCost()
-    {
-        $this->overriddenShippingCostAmount =
-            $this->overriddenShippingCost ? $this->overriddenShippingCost->getValue() : null;
     }
 
     /**

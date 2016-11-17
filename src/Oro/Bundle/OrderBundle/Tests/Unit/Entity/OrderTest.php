@@ -53,8 +53,8 @@ class OrderTest extends \PHPUnit_Framework_TestCase
             ['sourceEntityClass', 'EntityClass'],
             ['sourceEntityIdentifier', 'source-identifier-test-01'],
             ['sourceEntityId', 1],
-            ['estimatedShippingCost', new Price()],
-            ['overriddenShippingCost', new Price()],
+            ['estimatedShippingCostAmount', 10.1],
+            ['overriddenShippingCostAmount', 11.2],
             ['totalDiscounts', new Price()],
             ['shippingMethod', 'shipping_method'],
             ['shippingMethodType', 'shipping_method_type'],
@@ -65,6 +65,14 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         $this->assertPropertyCollection($order, 'lineItems', new OrderLineItem());
         $this->assertPropertyCollection($order, 'discounts', new OrderDiscount());
         $this->assertPropertyCollection($order, 'shippingTrackings', new OrderShippingTracking());
+
+    }
+
+    public function testToString()
+    {
+        $order = new Order();
+        $order->setIdentifier('test');
+        static::assertEquals('test', (string)$order);
     }
 
     public function testLineItemsSetter()
@@ -130,67 +138,27 @@ class OrderTest extends \PHPUnit_Framework_TestCase
     {
         $item = new Order();
 
-        $this->assertNull($item->getShippingCost());
         $this->assertNull($item->getTotalDiscounts());
 
         $value = 100;
         $currency = 'EUR';
-        $this->setProperty($item, 'estimatedShippingCostAmount', $value);
-        $this->setProperty($item, 'overriddenShippingCostAmount', $value);
         $this->setProperty($item, 'totalDiscountsAmount', $value);
         $this->setProperty($item, 'currency', $currency);
 
         $item->postLoad();
 
-        $this->assertEquals(Price::create($value, $currency), $item->getEstimatedShippingCost());
-        $this->assertEquals(Price::create($value, $currency), $item->getOverriddenShippingCost());
         $this->assertEquals(Price::create($value, $currency), $item->getTotalDiscounts());
     }
 
-    public function testUpdateShippingCost()
-    {
-        $item = new Order();
-        $value = 1000;
-        $currency = 'EUR';
-        $item->setEstimatedShippingCost(Price::create($value, $currency));
-
-        $item->updateEstimatedShippingCost();
-
-        $this->assertEquals($value, $this->getProperty($item, 'estimatedShippingCostAmount'));
-
-        $item->setOverriddenShippingCost(Price::create($value, $currency));
-
-        $item->updateOverriddenShippingCost();
-
-        $this->assertEquals($value, $this->getProperty($item, 'overriddenShippingCostAmount'));
-    }
-
-    public function testSetEstimatedShippingCost()
+    public function testGetEstimatedShippingCost()
     {
         $value = 10;
         $currency = 'USD';
-        $price = Price::create($value, $currency);
-
         $item = new Order();
-        $item->setEstimatedShippingCost($price);
-
-        $this->assertEquals($price, $item->getEstimatedShippingCost());
-
-        $this->assertEquals($value, $this->getProperty($item, 'estimatedShippingCostAmount'));
-    }
-
-    public function testSetOverriddenShippingCost()
-    {
-        $value = 10;
-        $currency = 'USD';
-        $price = Price::create($value, $currency);
-
-        $item = new Order();
-        $item->setOverriddenShippingCost($price);
-
-        $this->assertEquals($price, $item->getOverriddenShippingCost());
-
-        $this->assertEquals($value, $this->getProperty($item, 'overriddenShippingCostAmount'));
+        static::assertNull($item->getEstimatedShippingCost());
+        $item->setCurrency($currency);
+        $item->setEstimatedShippingCostAmount($value);
+        static::assertEquals(Price::create($value, $currency), $item->getEstimatedShippingCost());
     }
 
     /**
@@ -202,22 +170,19 @@ class OrderTest extends \PHPUnit_Framework_TestCase
     public function testGetShippingCost($estimated, $overridden, $expected)
     {
         $currency = 'USD';
-
         $item = new Order();
-        $item->setEstimatedShippingCost(Price::create($estimated, $currency));
-        $item->setOverriddenShippingCost(Price::create($overridden, $currency));
-
-        $this->assertEquals($expected, $item->getShippingCost()->getValue());
+        $item->setCurrency($currency);
+        $item->setEstimatedShippingCostAmount($estimated);
+        $item->setOverriddenShippingCostAmount($overridden);
+        static::assertEquals(Price::create($expected, $currency), $item->getShippingCost());
     }
 
+    /**
+     * @return array
+     */
     public function shippingCostDataProvider()
     {
         return [
-            [
-                'estimated' => null,
-                'overridden' => null,
-                'expected' => null
-            ],
             [
                 'estimated' => 10,
                 'overridden' => null,
@@ -234,6 +199,11 @@ class OrderTest extends \PHPUnit_Framework_TestCase
                 'expected' => 30
             ]
         ];
+    }
+
+    public function testGetShippingCostNull()
+    {
+        static::assertNull((new Order())->getShippingCost());
     }
 
     public function testUpdateTotalDiscounts()

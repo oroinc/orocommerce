@@ -4,6 +4,7 @@ namespace Oro\Bundle\OrderBundle\Form\Type;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\CustomerBundle\Form\Type\AccountSelectType;
 use Oro\Bundle\CustomerBundle\Form\Type\AccountUserSelectType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
@@ -16,13 +17,11 @@ use Oro\Bundle\PaymentBundle\Form\Type\PaymentTermSelectType;
 use Oro\Bundle\PaymentBundle\Provider\PaymentTermProvider;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\Exception\AccessException;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -110,14 +109,6 @@ class OrderType extends AbstractType
                 ]
             )
             ->add(
-                'overriddenShippingCost',
-                NumberType::class,
-                [
-                    'mapped' => false,
-                    'required' => false,
-                ]
-            )
-            ->add(
                 'discounts',
                 OrderDiscountItemsCollectionType::NAME,
                 [
@@ -145,13 +136,9 @@ class OrderType extends AbstractType
                     'data' => $order->getTotalDiscounts() ? $order->getTotalDiscounts()->getValue() : 0
                 ]
             )
-
             ->add('sourceEntityClass', HiddenType::class)
             ->add('sourceEntityId', HiddenType::class)
             ->add('sourceEntityIdentifier', HiddenType::class)
-            ->add('shippingMethod', HiddenType::class)
-            ->add('shippingMethodType', HiddenType::class)
-            ->add('estimatedShippingCost', HiddenType::class, ['mapped' => false])
             ->add(
                 OrderPossibleShippingMethodsEventListener::CALCULATE_SHIPPING_KEY,
                 HiddenType::class,
@@ -159,47 +146,11 @@ class OrderType extends AbstractType
                     'mapped' => false
                 ]
             );
-
+        $this->addPaymentTerm($builder, $order);
+        $this->addShippingFields($builder, $order);
         $this->addAddresses($builder, $order);
-        $builder->addEventListener(
-            FormEvents::POST_SET_DATA,
-            function (FormEvent $event) {
-
-                /** @var Order $order */
-                $order = $event->getData();
-                $form = $event->getForm();
-
-                if ($order->getEstimatedShippingCost()) {
-                    $form->get('estimatedShippingCost')->setData($order->getEstimatedShippingCost()->getValue());
-                }
-                if ($order->getOverriddenShippingCost()) {
-                    $form->get('overriddenShippingCost')->setData($order->getOverriddenShippingCost()->getValue());
-                }
-            }
-        );
-        $builder->addEventListener(
-            FormEvents::SUBMIT,
-            function (FormEvent $event) {
-                $this->addAddresses($event->getForm(), $event->getData());
-
-                /** @var Order $order */
-                $order = $event->getData();
-                $form = $event->getForm();
-
-                $currency = $form->get('currency')->getData();
-                $estimatedShippingCostAmount = $form->get('estimatedShippingCost')->getData();
-                $overriddenShippingCostAmount = $form->get('overriddenShippingCost')->getData();
-
-                $order->setEstimatedShippingCost(Price::create($estimatedShippingCostAmount, $currency));
-                $order->setOverriddenShippingCost(Price::create($overriddenShippingCostAmount, $currency));
-
-                $event->setData($order);
-            }
-        );
-
         $this->addBillingAddress($builder, $order, $options);
         $this->addShippingAddress($builder, $order, $options);
-        $this->addPaymentTerm($builder, $order);
 
         $builder->addEventSubscriber($this->subtotalSubscriber);
     }
@@ -374,5 +325,33 @@ class OrderType extends AbstractType
                     ]
                 );
         }
+    }
+
+    /**
+     * @param FormBuilderInterface $builder
+     * @param Order $order
+     * @return $this
+     */
+    protected function addShippingFields(FormBuilderInterface $builder, Order $order)
+    {
+        $builder
+            ->add('shippingMethod', HiddenType::class)
+            ->add('shippingMethodType', HiddenType::class)
+            ->add('estimatedShippingCostAmount', HiddenType::class)
+            ->add('overriddenShippingCostAmount', PriceType::class, [
+                'required' => false,
+                'validation_groups' => ['Optional'],
+                'hide_currency' => true,
+            ])
+            ->get('overriddenShippingCostAmount')->addModelTransformer(new CallbackTransformer(
+                function ($amount) use ($order) {
+                    return $amount ? Price::create($amount, $order->getCurrency()) : null;
+                },
+                function ($price) {
+                    return $price instanceof Price ? $price->getValue() : $price;
+                }
+            ));
+
+        return $this;
     }
 }
