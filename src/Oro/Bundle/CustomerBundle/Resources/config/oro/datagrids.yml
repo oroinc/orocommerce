@@ -244,7 +244,9 @@ datagrids:
                             THEN true ELSE false END
                         END) as hasGroup
             bind_parameters:
-                - group
+                -
+                    name: group
+                    default: null
         columns:
             hasGroup:
                 label: oro.customer.account.has_group.label
