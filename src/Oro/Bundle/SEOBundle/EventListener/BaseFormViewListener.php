@@ -27,6 +27,11 @@ abstract class BaseFormViewListener
     protected $requestStack;
 
     /**
+     * @var int
+     */
+    protected $blockPriority = 10;
+
+    /**
      * @param RequestStack $requestStack
      * @param TranslatorInterface $translator
      * @param DoctrineHelper $doctrineHelper
@@ -39,6 +44,17 @@ abstract class BaseFormViewListener
         $this->requestStack = $requestStack;
         $this->translator = $translator;
         $this->doctrineHelper = $doctrineHelper;
+    }
+
+    /**
+     * @param int $blockPriority
+     * @return BaseFormViewListener
+     */
+    public function setBlockPriority($blockPriority)
+    {
+        $this->blockPriority = $blockPriority;
+
+        return $this;
     }
 
     /**
@@ -90,7 +106,7 @@ abstract class BaseFormViewListener
     protected function addSEOBlock(ScrollData $scrollData, $html)
     {
         $blockLabel = $this->translator->trans('oro.seo.label');
-        $blockId = $scrollData->addBlock($blockLabel, 10);
+        $blockId = $scrollData->addBlock($blockLabel, $this->blockPriority);
         $subBlockId = $scrollData->addSubBlock($blockId);
         $scrollData->addSubBlockData($blockId, $subBlockId, $html);
     }
