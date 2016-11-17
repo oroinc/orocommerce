@@ -6,6 +6,7 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\ProductBundle\ComponentProcessor\DataStorageAwareComponentProcessor;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
@@ -31,7 +32,7 @@ class QuickAddControllerNotificationTest extends WebTestCase
             ]
         );
 
-        $this->configManager = $this->getContainer()->get('oro_config.manager');
+        $this->configManager = $this->getContainer()->get('oro_config.global');
         $this->configManager->set(self::RFP_PRODUCT_VISIBILITY_KEY, [Product::INVENTORY_STATUS_IN_STOCK]);
         $this->configManager->flush();
     }
@@ -88,7 +89,7 @@ class QuickAddControllerNotificationTest extends WebTestCase
                 'processorName' => 'oro_rfp.processor.quick_add',
                 'products' => [
                     [
-                        'productSku' => 'product.3',
+                        'productSku' => LoadProductData::PRODUCT_3,
                         'productQuantity' => 1,
                     ],
                 ],
@@ -98,11 +99,11 @@ class QuickAddControllerNotificationTest extends WebTestCase
                 'processorName' => 'oro_rfp.processor.quick_add',
                 'products' => [
                     [
-                        'productSku' => 'product.2',
+                        'productSku' => LoadProductData::PRODUCT_2,
                         'productQuantity' => 1,
                     ],
                     [
-                        'productSku' => 'product.3',
+                        'productSku' => LoadProductData::PRODUCT_3,
                         'productQuantity' => 1,
                     ],
                 ],
