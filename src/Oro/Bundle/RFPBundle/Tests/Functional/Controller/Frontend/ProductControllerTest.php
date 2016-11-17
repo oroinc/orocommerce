@@ -52,7 +52,7 @@ class ProductControllerTest extends WebTestCase
 
     public function testViewProductWithoutRequestQuoteAvailable()
     {
-        $this->configManager = $this->getContainer()->get('oro_config.manager');
+        $this->configManager = $this->getContainer()->get('oro_config.global');
         $this->configManager->set(self::RFP_PRODUCT_VISIBILITY_KEY, [Product::INVENTORY_STATUS_IN_STOCK]);
         $this->configManager->flush();
 
