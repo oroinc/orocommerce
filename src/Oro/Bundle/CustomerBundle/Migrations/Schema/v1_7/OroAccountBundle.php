@@ -105,16 +105,6 @@ class OroAccountBundle implements Migration, RenameExtensionAwareInterface
             'account_user_795f990e',
             RelationType::MANY_TO_MANY
         ));
-
-        // calendar event to account user association
-        $extension->renameTable($schema, $queries, 'oro_rel_46a29d19a6adb604a9b8e1', 'oro_rel_46a29d19a6adb604aeb863');
-        $queries->addQuery(new UpdateExtendRelationQuery(
-            'Oro\Bundle\CalendarBundle\Entity\CalendarEvent',
-            'Oro\Bundle\AccountBundle\Entity\AccountUser',
-            'account_user_489123cf',
-            'account_user_795f990e',
-            RelationType::MANY_TO_MANY
-        ));
     }
 
     /**
