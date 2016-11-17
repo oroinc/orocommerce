@@ -57,7 +57,10 @@ class CategoryPageVariantType extends AbstractType
             )
             ->add(
                 'type',
-                HiddenType::class
+                HiddenType::class,
+                [
+                    'data' => CategoryPageContentVariantType::TYPE
+                ]
             );
 
         $builder->addEventListener(

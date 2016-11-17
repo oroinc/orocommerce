@@ -57,7 +57,10 @@ class CmsPageVariantType extends AbstractType
             )
             ->add(
                 'type',
-                HiddenType::class
+                HiddenType::class,
+                [
+                    'data' => CmsPageContentVariantType::TYPE
+                ]
             );
 
         $builder->addEventListener(
