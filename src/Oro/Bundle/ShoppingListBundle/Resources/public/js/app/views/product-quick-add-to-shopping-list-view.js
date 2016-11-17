@@ -34,7 +34,7 @@ define(function(require) {
             e.stopPropagation();
 
             if (this.formHasErrors()) {
-                return;
+                e.stopImmediatePropagation();
             }
         },
 
