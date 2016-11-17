@@ -47,7 +47,7 @@ class ProductPageContentVariantType implements ContentVariantTypeInterface
      */
     public function getTitle()
     {
-        return 'oro.product.entity_label';
+        return 'oro.product.content_variant.product_page.label';
     }
 
     /**
@@ -64,14 +64,6 @@ class ProductPageContentVariantType implements ContentVariantTypeInterface
     public function isAllowed()
     {
         return $this->securityFacade->isGranted('oro_product_view');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isSupportedPage(ContentVariantInterface $contentVariant)
-    {
-        return $contentVariant->getType() === self::TYPE;
     }
 
     /**

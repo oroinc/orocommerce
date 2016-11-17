@@ -3,3 +3,4 @@ assets:
         'orocms':
             - 'bundles/orowebcatalog/css/less/styles.less'
             - 'bundles/orowebcatalog/css/less/tree.less'
+            - 'bundles/orowebcatalog/css/less/content-variant.less'

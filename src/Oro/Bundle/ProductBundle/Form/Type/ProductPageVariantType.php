@@ -41,7 +41,8 @@ class ProductPageVariantType extends AbstractType
                 ProductSelectType::NAME,
                 [
                     'label' => 'oro.product.entity_label',
-                    'required' => true
+                    'required' => true,
+                    'create_enabled' => false
                 ]
             )
             ->add(

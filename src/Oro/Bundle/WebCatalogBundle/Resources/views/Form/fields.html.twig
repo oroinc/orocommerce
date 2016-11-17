@@ -1,0 +1,45 @@
+{% macro oro_web_catalog_content_variant_collection_item_prototype(widget) %}
+    {% set form = widget %}
+    {% set name = widget.vars.full_name %}
+    {% set disabled = widget.parent.vars.disabled %}
+    <div data-content="{{ name }}"
+         data-validation-optional-group
+         {% if form.vars.attr['data-validation-optional-group-handler'] is defined %}
+             data-validation-optional-group-handler="{{ form.vars.attr['data-validation-optional-group-handler'] }}"
+         {% endif %}
+    >
+        <div class="content-variant-item">
+            {{ form_widget(form, {disabled: disabled}) }}
+            <button class="removeRow btn btn-action btn-link" type="button" data-related="{{ name }}">×</button>
+        </div>
+    </div>
+{% endmacro %}
+
+{% block oro_web_catalog_content_variant_collection_widget %}
+    {% spaceless %}
+        {% set prototype_name = form.vars.prototype_name %}
+        {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-content-variant-collection' }) %}
+        <div {{ block('widget_container_attributes') }} data-last-index="{{ form.children|length}}" data-prototype-name="{{ prototype_name }}">
+            {% if form.children|length %}
+                {% for child in form.children %}
+                    {{ _self.oro_web_catalog_content_variant_collection_item_prototype(child) }}
+                {% endfor %}
+            {% endif %}
+        </div>
+    {% endspaceless %}
+{% endblock %}
+
+{% block oro_web_catalog_system_page_variant_widget %}
+    <div class="row-oro">
+        <h5>{{ 'oro.webcatalog.contentvariant.variant_type.system_page.label'|trans }}</h5>
+
+        {{ form_row(form.systemPageRoute) }}
+
+        <h5>{{ form.scopes.vars.label|trans }}</h5>
+        {{ form_widget(form.scopes) }}
+
+        <div class="hide">
+            {{ form_rest(form) }}
+        </div>
+    </div>
+{% endblock %}

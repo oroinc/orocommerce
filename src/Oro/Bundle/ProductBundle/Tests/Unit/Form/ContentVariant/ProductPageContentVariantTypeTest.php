@@ -41,7 +41,7 @@ class ProductPageContentVariantTypeTest extends \PHPUnit_Framework_TestCase
 
     public function testGetTitle()
     {
-        $this->assertEquals('oro.product.entity_label', $this->type->getTitle());
+        $this->assertEquals('oro.product.content_variant.product_page.label', $this->type->getTitle());
     }
 
     public function testGetFormType()
@@ -56,25 +56,6 @@ class ProductPageContentVariantTypeTest extends \PHPUnit_Framework_TestCase
             ->with('oro_product_view')
             ->willReturn(true);
         $this->assertTrue($this->type->isAllowed());
-    }
-
-    public function testIsSupportedPageFalse()
-    {
-        /** @var ContentVariantInterface|\PHPUnit_Framework_MockObject_MockObject $contentVariant **/
-        $contentVariant = $this->getMock(ContentVariantInterface::class);
-
-        $this->assertFalse($this->type->isSupportedPage($contentVariant));
-    }
-
-    public function testIsSupportedPageTrue()
-    {
-        /** @var ContentVariantInterface|\PHPUnit_Framework_MockObject_MockObject $contentVariant **/
-        $contentVariant = $this->getMock(ContentVariantInterface::class);
-        $contentVariant->expects($this->once())
-            ->method('getType')
-            ->willReturn('product_page');
-
-        $this->assertTrue($this->type->isSupportedPage($contentVariant));
     }
 
     public function testGetRouteData()

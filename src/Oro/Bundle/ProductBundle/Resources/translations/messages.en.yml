@@ -29,6 +29,9 @@ oro:
         images.label: Images
         featured_products.label: Featured Products
 
+        content_variant:
+            product_page.label: Product Page
+
         status:
             enabled: Enabled
             disabled: Disabled

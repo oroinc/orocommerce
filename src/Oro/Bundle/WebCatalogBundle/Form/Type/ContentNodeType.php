@@ -8,6 +8,7 @@ use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugType;
 use Oro\Bundle\ValidationBundle\Validator\Constraints\UrlSafe;
 use Oro\Bundle\ScopeBundle\Form\Type\ScopeCollectionType;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
+use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -55,23 +56,17 @@ class ContentNodeType extends AbstractType
                         'scope_type' => 'web_content'
                     ]
                 ]
+            )
+            ->add(
+                'contentVariants',
+                ContentVariantCollectionType::NAME,
+                [
+                    'label' => 'oro.webcatalog.contentvariant.entity_plural_label'
+                ]
             );
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);
-        $builder->addEventListener(FormEvents::SUBMIT, [$this, 'submit']);
-    }
-
-    /**
-     * @param FormEvent $event
-     */
-    public function submit(FormEvent $event)
-    {
-        /** @var ContentNode $contentNode */
-        $contentNode = $event->getData();
-
-        if ($contentNode->isParentScopeUsed()) {
-            $contentNode->resetScopes();
-        }
+        $builder->addEventListener(FormEvents::SUBMIT, [$this, 'onSubmit']);
     }
 
     /**
@@ -91,6 +86,29 @@ class ContentNodeType extends AbstractType
                     'source_field' => 'titles',
                 ]
             );
+        }
+    }
+
+    /**
+     * @param FormEvent $event
+     */
+    public function onSubmit(FormEvent $event)
+    {
+        /** @var ContentNode $contentNode */
+        $data = $event->getData();
+        if ($data instanceof ContentNode) {
+            if ($data->isParentScopeUsed()) {
+                $data->resetScopes();
+            }
+            if (!$data->getContentVariants()->isEmpty()) {
+                $data->getContentVariants()->map(
+                    function (ContentVariant $contentVariant) use ($data) {
+                        if (!$contentVariant->getNode()) {
+                            $contentVariant->setNode($data);
+                        }
+                    }
+                );
+            }
         }
     }
 
