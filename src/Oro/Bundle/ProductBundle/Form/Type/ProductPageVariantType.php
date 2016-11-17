@@ -58,11 +58,14 @@ class ProductPageVariantType extends AbstractType
             )
             ->add(
                 'type',
-                HiddenType::class
+                HiddenType::class,
+                [
+                    'data' => ProductPageContentVariantType::TYPE
+                ]
             );
 
         $builder->addEventListener(
-            FormEvents::POST_SUBMIT,
+            FormEvents::SUBMIT,
             function (FormEvent $event) {
                 $data = $event->getData();
                 if ($data instanceof ContentVariantInterface) {

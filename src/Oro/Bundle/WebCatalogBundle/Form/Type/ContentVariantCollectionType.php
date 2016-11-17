@@ -34,7 +34,7 @@ class ContentVariantCollectionType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefault('prototype_name', '__name__');
+        $resolver->setDefault('prototype_name', '__variant_idx__');
     }
 
     /**
@@ -44,9 +44,10 @@ class ContentVariantCollectionType extends AbstractType
     {
         $view->vars['prototype_name'] = $options['prototype_name'];
         $view->vars['prototypes'] = [];
-        if ($form->getConfig()->hasAttribute('prototypes')) {
+        $formConfig = $form->getConfig();
+        if ($formConfig->hasAttribute('prototypes')) {
             /** @var ContentVariantFormPrototype[] $prototype */
-            $prototype = $form->getConfig()->getAttribute('prototypes');
+            $prototype = $formConfig->getAttribute('prototypes');
 
             foreach ($prototype as $name => $prototypeData) {
                 $view->vars['prototypes'][$name] = [

@@ -30,27 +30,34 @@
     {% import 'OroUIBundle::macros.html.twig' as UI %}
     {% set numberOfVariants = form.vars.prototypes|length %}
 
-    <div class="btn-group">
-    {% if numberOfVariants == 1 %}
+    <div class="btn-group pull-right">
+    {% if numberOfVariants > 0 %}
         {% set contentVarientTypeName = form.vars.prototypes|keys|first %}
-        {{ UI.button({
+        {% set variant = form.vars.prototypes[contentVarientTypeName] %}
+
+        {% set buttonsHtml = UI.button({
             'path': 'javascript: void(0);',
-            'label': 'oro.webcatalog.form.add_variant.label'|trans({'%variantName%': form.vars.prototypes[contentVarientTypeName].title|trans }),
+            'label': 'oro.webcatalog.form.add_variant.label'|trans({'%variantName%': variant.title|trans }),
             'data': {
-                'content-variant-type-name': contentVarientTypeName
+                'content-variant-type-name': contentVarientTypeName,
+                'role': 'variant-button'
             }
-        }) }}
-    {% else %}
-        {% for contentVarientTypeName, contentVariantPrototypeData in form.vars.prototypes %}
-            {# TODO: Add dropdown button #}
-            {{ UI.button({
+        }) %}
+
+        {% for contentVarientTypeName in form.vars.prototypes|keys|slice(1) %}
+            {% set variant = form.vars.prototypes[contentVarientTypeName] %}
+
+            {% set buttonsHtml = buttonsHtml ~ UI.button({
                 'path': 'javascript: void(0);',
-                'label': 'oro.webcatalog.form.add_variant.label'|trans({'%variantName%': contentVariantPrototypeData.title|trans }),
+                'label': 'oro.webcatalog.form.add_variant.label'|trans({'%variantName%': variant.title|trans }),
                 'data': {
-                    'content-variant-type-name': contentVarientTypeName
+                    'content-variant-type-name': contentVarientTypeName,
+                    'role': 'variant-button'
                 }
-            }) }}
+            }) %}
         {% endfor %}
+
+        {{ UI.pinnedDropdownButton({'html': buttonsHtml}) }}
     {% endif %}
     </div>
 {% endmacro %}
@@ -60,17 +67,24 @@
         {% set prototype_name = form.vars.prototype_name %}
         {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-content-variant-collection' }) %}
         <div {{ block('widget_container_attributes') }}
+            data-page-component-module="orowebcatalog/js/app/components/content-variant-collection-component"
             data-last-index="{{ form.children|length}}"
             data-prototype-name="{{ prototype_name }}"
             {{ _self.oro_web_catalog_content_variant_prototype_attributes(form) }}
         >
+            <input type="hidden" name="validate_{{ full_name }}" data-collection-name="{{ full_name }}" data-name="collection-validation" disabled data-validate-element>
+
+            <div class="content-variant-add-btn-container clearfix-oro">
+                {{ _self.oro_web_catalog_content_variant_button(form) }}
+            </div>
+
+            <div data-role="collection-container">
             {% if form.children|length %}
                 {% for child in form.children %}
                     {{ _self.oro_web_catalog_content_variant_collection_item_prototype(child, child.vars.full_name, form.vars.disabled) }}
                 {% endfor %}
             {% endif %}
-
-            {{ _self.oro_web_catalog_content_variant_button(form) }}
+            </div>
         </div>
     {% endspaceless %}
 {% endblock %}

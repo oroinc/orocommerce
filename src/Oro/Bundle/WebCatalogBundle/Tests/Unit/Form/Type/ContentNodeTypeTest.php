@@ -59,6 +59,9 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
             ->method('getFormTypeByType')
             ->with('system_page')
             ->willReturn(SystemPageVariantType::class);
+        $variantTypeRegistry->expects($this->any())
+            ->method('getAllowedContentVariantTypes')
+            ->willReturn([]);
 
         $variantCollection = new ContentVariantCollectionType($variantTypeRegistry);
 
