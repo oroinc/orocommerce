@@ -29,8 +29,6 @@ define(function(require) {
         },
 
         addScroll: function() {
-            console.log('sdf');
-            
             var windowHeight = $(window).height();
             var menuHeight = windowHeight - this.options._sourceElement.height();
             var dropdowns = this.options._sourceElement.find('.header-row__dropdown-mobile');
