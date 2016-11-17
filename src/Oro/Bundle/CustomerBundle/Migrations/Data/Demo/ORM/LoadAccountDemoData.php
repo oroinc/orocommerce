@@ -14,6 +14,8 @@ class LoadAccountDemoData extends AbstractEntityReferenceFixture implements Depe
 {
     const ACCOUNT_REFERENCE_PREFIX = 'account_demo_data';
 
+    const ACCOUNT_WHOLESALLER_B = 'Wholesaler B';
+
     /** @var array */
     protected $accounts = [
         'Company A' => [
@@ -27,7 +29,7 @@ class LoadAccountDemoData extends AbstractEntityReferenceFixture implements Depe
                 ],
             ],
         ],
-        'Wholesaler B' => [
+        self::ACCOUNT_WHOLESALLER_B => [
             'group' => 'Wholesale Accounts',
         ],
         'Partner C' => [
