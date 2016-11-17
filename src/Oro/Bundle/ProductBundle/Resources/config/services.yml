@@ -347,6 +347,7 @@ services:
         public: false
         arguments:
             - "@oro_product.repository.product"
+            - "@oro_product.product.manager"
 
     oro_product.datagrid_theme_helper:
         class: 'Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper'

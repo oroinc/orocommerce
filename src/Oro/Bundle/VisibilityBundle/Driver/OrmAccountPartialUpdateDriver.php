@@ -10,6 +10,7 @@ use Oro\Bundle\VisibilityBundle\Visibility\Provider\ProductVisibilityProvider;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexInteger;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
 use Oro\Bundle\WebsiteSearchBundle\Provider\PlaceholderProvider;
@@ -103,15 +104,14 @@ class OrmAccountPartialUpdateDriver extends AbstractAccountPartialUpdateDriver
     protected function addAccountVisibility(
         array $productIds,
         $productAlias,
-        $accountVisibilityFieldName,
-        $fieldValue
+        $accountVisibilityFieldName
     ) {
         $queryBuilder = $this->getItemQueryBuilder();
         $queryBuilder
             ->select(
                 'searchItem.id',
                 sprintf("'%s'", $accountVisibilityFieldName),
-                (string)$fieldValue
+                (string)BaseVisibilityResolved::VISIBILITY_VISIBLE
             )
             ->andWhere($queryBuilder->expr()->eq('searchItem.entity', ':entityClass'))
             ->andWhere($queryBuilder->expr()->eq('searchItem.alias', ':entityAlias'))
