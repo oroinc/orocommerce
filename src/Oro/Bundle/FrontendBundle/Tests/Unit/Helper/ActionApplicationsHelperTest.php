@@ -54,7 +54,7 @@ class ActionApplicationsHelperTest extends ApplicationsHelperTest
             ->method('getToken')
             ->willReturn($token);
 
-        $this->assertEquals($expectedRoutes['dialog'], $this->helper->getDialogRoute());
+        $this->assertEquals($expectedRoutes['dialog'], $this->helper->getFormDialogRoute());
     }
 
     /**

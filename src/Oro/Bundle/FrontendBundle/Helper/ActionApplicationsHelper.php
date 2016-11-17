@@ -51,7 +51,7 @@ class ActionApplicationsHelper implements ApplicationsHelperInterface
     /**
      * {@inheritdoc}
      */
-    public function getDialogRoute()
+    public function getFormDialogRoute()
     {
         return $this->isFrontend() ? $this->dialogRoute : $this->applicationsHelper->getDialogRoute();
     }
