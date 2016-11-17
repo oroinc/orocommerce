@@ -145,6 +145,7 @@ class PageTypeTest extends FormIntegrationTestCase
                         'label'    => 'oro.cms.page.slugs.label',
                         'required' => true,
                         'options'  => ['constraints' => [new NotBlank(), new UrlSafe()]],
+                        'source_field' => 'titles',
                     ]
                 )
                 ->will($this->returnSelf());

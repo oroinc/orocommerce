@@ -3,6 +3,7 @@ define(function(require) {
 
     var LocalizedFieldSlugifyComponent;
     var BaseSlugifyComponent = require('ororedirect/js/app/components/base-slugify-component');
+    var $ = require('jquery');
 
     LocalizedFieldSlugifyComponent = BaseSlugifyComponent.extend({
         /**

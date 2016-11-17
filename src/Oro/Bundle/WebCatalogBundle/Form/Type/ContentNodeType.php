@@ -88,6 +88,7 @@ class ContentNodeType extends AbstractType
                     'label'    => 'oro.webcatalog.contentnode.slug_prototypes.label',
                     'required' => true,
                     'options'  => ['constraints' => [new NotBlank(), new UrlSafe()]],
+                    'source_field' => 'titles',
                 ]
             );
         }

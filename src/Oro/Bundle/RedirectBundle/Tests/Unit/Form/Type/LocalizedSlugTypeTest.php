@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Form\Type;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -19,7 +20,7 @@ class LocalizedSlugTypeTest extends FormIntegrationTestCase
     {
         parent::setUp();
 
-        $registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $registry = $this->getMock(ManagerRegistry::class);
         $this->formType = new LocalizedSlugType($registry);
     }
 
@@ -35,29 +36,28 @@ class LocalizedSlugTypeTest extends FormIntegrationTestCase
 
     public function testConfigureOptions()
     {
-        /* @var $resolver \PHPUnit_Framework_MockObject_MockObject|OptionsResolver */
-        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
-        $resolver->expects($this->once())
-                 ->method('setDefaults')
-                 ->with($this->callback(function (array $options) {
-                     $this->assertEquals($options['source_field'], 'titles');
-                     $this->assertEquals(
-                         $options['slugify_component'],
-                         'ororedirect/js/app/components/localized-field-slugify-component'
-                     );
-                     $this->assertEquals($options['slugify_route'], 'oro_api_slugify_slug');
+        $resolver = $this->getMock(OptionsResolver::class);
+        $resolver->expects($this->once())->method('setDefaults')->with(
+            $this->callback(
+                function (array $options) {
+                    $this->assertEquals($options['source_field'], 'titles');
+                    $this->assertEquals(
+                        $options['slugify_component'],
+                        'ororedirect/js/app/components/localized-field-slugify-component'
+                    );
+                    $this->assertEquals($options['slugify_route'], 'oro_api_slugify_slug');
 
-                     return true;
-                 }))
-        ;
+                    return true;
+                }
+            )
+        );
 
         $this->formType->configureOptions($resolver);
     }
 
     public function testBuildView()
     {
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->getMock(FormInterface::class);
 
         $viewParent = new FormView();
         $viewParent->vars['full_name'] = 'form-name';

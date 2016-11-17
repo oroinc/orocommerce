@@ -34,29 +34,28 @@ class SlugTypeTest extends FormIntegrationTestCase
 
     public function testConfigureOptions()
     {
-        /* @var $resolver \PHPUnit_Framework_MockObject_MockObject|OptionsResolver */
-        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
-        $resolver->expects($this->once())
-                 ->method('setDefaults')
-                 ->with($this->callback(function (array $options) {
-                     $this->assertEquals($options['source_field'], 'titles');
-                     $this->assertEquals(
-                         $options['slugify_component'],
-                         'ororedirect/js/app/components/text-field-slugify-component'
-                     );
-                     $this->assertEquals($options['slugify_route'], 'oro_api_slugify_slug');
+        $resolver = $this->getMock(OptionsResolver::class);
+        $resolver->expects($this->once())->method('setDefaults')->with(
+            $this->callback(
+                function (array $options) {
+                    $this->assertEquals($options['source_field'], 'titles');
+                    $this->assertEquals(
+                        $options['slugify_component'],
+                        'ororedirect/js/app/components/text-field-slugify-component'
+                    );
+                    $this->assertEquals($options['slugify_route'], 'oro_api_slugify_slug');
 
-                     return true;
-                 }))
-        ;
+                    return true;
+                }
+            )
+        );
 
         $this->formType->configureOptions($resolver);
     }
 
     public function testBuildView()
     {
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->getMock(FormInterface::class);
 
         $viewParent = new FormView();
         $viewParent->vars['full_name'] = 'form-name';

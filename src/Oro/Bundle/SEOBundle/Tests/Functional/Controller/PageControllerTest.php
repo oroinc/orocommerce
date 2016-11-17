@@ -2,8 +2,7 @@
 
 namespace Oro\Bundle\SEOBundle\Tests\Functional\Controller;
 
-use Doctrine\Common\Persistence\ObjectRepository;
-use Oro\Bundle\CMSBundle\Entity\Page;
+use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\SEOBundle\Tests\Functional\DataFixtures\LoadPageMetaData;
 use Symfony\Component\DomCrawler\Crawler;
@@ -22,18 +21,14 @@ class PageControllerTest extends WebTestCase
 
     public function testViewLandingPage()
     {
-        $page = $this->getPage();
-
-        $crawler = $this->client->request('GET', $this->getUrl('oro_cms_page_view', ['id' => $page->getId()]));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_cms_page_view', ['id' => $this->getPageId()]));
 
         $this->checkSeoSectionExistence($crawler);
     }
 
     public function testEditLandingPage()
     {
-        $page = $this->getPage();
-
-        $crawler = $this->client->request('GET', $this->getUrl('oro_cms_page_update', ['id' => $page->getId()]));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_cms_page_update', ['id' => $this->getPageId()]));
 
         $this->checkSeoSectionExistence($crawler);
 
@@ -59,16 +54,22 @@ class PageControllerTest extends WebTestCase
     }
 
     /**
-     * @return Page
+     * @return int|null
      */
-    protected function getPage()
+    protected function getPageId()
     {
-        /** @var ObjectRepository $repository */
-        $repository = $this->getContainer()->get('doctrine')->getRepository(
-            $this->getContainer()->getParameter('oro_cms.entity.page.class')
-        );
+        $class = $this->getContainer()->getParameter('oro_cms.entity.page.class');
+        /** @var EntityRepository $repository */
+        $repository = $this->getContainer()->get('doctrine')->getManagerForClass($class)->getRepository($class);
+        $qb = $repository->createQueryBuilder('page');
 
-        return $repository->find(1);
+        return $qb
+            ->select('page.id')
+            ->innerJoin('page.slugs', 'slug')
+            ->andWhere('slug.string = :slug')
+            ->setParameter('slug', 'about')
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 
     /**

@@ -4,6 +4,7 @@ define(function (require) {
     var SlugifyComponent,
         $ = require('jquery'),
         __ = require('orotranslation/js/translator'),
+        _ = require('underscore'),
         routing = require('routing'),
         messenger = require('oroui/js/messenger'),
         BaseComponent = require('oroui/js/app/components/base/component');
@@ -39,7 +40,7 @@ define(function (require) {
             this.slugifyRoute = options.slugify_route;
 
             this.$targets.on('change', _.bind(this.slugTriggerOff, this));
-            this.$sources.on('change', _.bind(this.syncField, this))
+            this.$sources.on('change', _.bind(this.syncField, this));
         },
 
         /**
@@ -60,7 +61,7 @@ define(function (require) {
                     } else {
                         messenger.notificationFlashMessage(
                             'error',
-                            __("oro.redirect.slugify_error", {'string': $source.val()})
+                            __('oro.redirect.slugify_error', {'string': $source.val()})
                         );
                     }
                 }, this, $target, $source)

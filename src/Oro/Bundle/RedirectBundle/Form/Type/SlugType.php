@@ -43,10 +43,10 @@ class SlugType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'source_field' => 'titles',
             'slugify_component' => 'ororedirect/js/app/components/text-field-slugify-component',
             'slugify_route' => 'oro_api_slugify_slug',
         ]);
+        $resolver->setRequired('source_field');
     }
 
     /**
