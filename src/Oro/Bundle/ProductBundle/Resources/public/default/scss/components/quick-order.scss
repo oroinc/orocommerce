@@ -322,6 +322,10 @@
           @include ellipsis();
         }
       }
+
+      &.btn-inactive .btn-group {
+        background-color: get-color('additional', 'middle');
+      }
     }
 
     @include clearfix();
@@ -350,6 +354,10 @@
   .widget-content {
     .action-button {
       background-color: get-color('additional', 'darker');
+
+      &.btn-inactive {
+        background-color: get-color('additional', 'middle');
+      }
     }
   }
 }
