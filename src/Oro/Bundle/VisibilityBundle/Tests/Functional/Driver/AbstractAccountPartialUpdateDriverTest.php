@@ -80,6 +80,7 @@ abstract class AbstractAccountPartialUpdateDriverTest extends WebTestCase
     {
         $query = new Query();
         $query
+            ->select('sku')
             ->from('oro_product_WEBSITE_ID')
             ->getCriteria()
             ->andWhere(Criteria::expr()->exists($this->getVisibilityAccountFieldName($account)))
@@ -126,8 +127,8 @@ abstract class AbstractAccountPartialUpdateDriverTest extends WebTestCase
         $values = $searchResult->getElements();
 
         $this->assertEquals(2, $searchResult->getRecordsCount());
-        $this->assertStringStartsWith('product.2', $values[0]->getRecordTitle());
-        $this->assertStringStartsWith('product.3', $values[1]->getRecordTitle());
+        $this->assertStringStartsWith('product.2', $values[0]->getSelectedData()['sku']);
+        $this->assertStringStartsWith('product.3', $values[1]->getSelectedData()['sku']);
     }
 
     public function testUpdateAccountVisibility()
@@ -143,8 +144,8 @@ abstract class AbstractAccountPartialUpdateDriverTest extends WebTestCase
         $values = $searchResult->getElements();
 
         $this->assertEquals(2, $searchResult->getRecordsCount());
-        $this->assertStringStartsWith('product.2', $values[0]->getRecordTitle());
-        $this->assertStringStartsWith('product.3', $values[1]->getRecordTitle());
+        $this->assertStringStartsWith('product.2', $values[0]->getSelectedData()['sku']);
+        $this->assertStringStartsWith('product.3', $values[1]->getSelectedData()['sku']);
 
         $visibilityManager = $this
             ->getContainer()
@@ -176,7 +177,7 @@ abstract class AbstractAccountPartialUpdateDriverTest extends WebTestCase
         $values = $searchResult->getElements();
 
         $this->assertEquals(1, $searchResult->getRecordsCount());
-        $this->assertStringStartsWith('product.3', $values[0]->getRecordTitle());
+        $this->assertStringStartsWith('product.3', $values[0]->getSelectedData()['sku']);
     }
 
     public function testDeleteAccountVisibility()
@@ -192,8 +193,8 @@ abstract class AbstractAccountPartialUpdateDriverTest extends WebTestCase
         $values = $searchResult->getElements();
 
         $this->assertEquals(2, $searchResult->getRecordsCount());
-        $this->assertStringStartsWith('product.2', $values[0]->getRecordTitle());
-        $this->assertStringStartsWith('product.3', $values[1]->getRecordTitle());
+        $this->assertStringStartsWith('product.2', $values[0]->getSelectedData()['sku']);
+        $this->assertStringStartsWith('product.3', $values[1]->getSelectedData()['sku']);
 
         $manager = $this->getContainer()->get('doctrine')->getManagerForClass(Account::class);
         $manager->remove($account);

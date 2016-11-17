@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use Oro\Bundle\ProductBundle\Form\Type\QuickAddType;
 use Oro\Bundle\ProductBundle\Model\QuickAddRow;
 use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
@@ -27,11 +28,18 @@ class QuickAddRowCollectionBuilder
     protected $productRepository;
 
     /**
-     * @param EntityRepository $productRepository
+     * @var ProductManager
      */
-    public function __construct(EntityRepository $productRepository)
+    protected $productManager;
+
+    /**
+     * @param EntityRepository $productRepository
+     * @param ProductManager $productManager
+     */
+    public function __construct(EntityRepository $productRepository, ProductManager $productManager)
     {
         $this->productRepository = $productRepository;
+        $this->productManager = $productManager;
     }
 
     /**
@@ -130,15 +138,18 @@ class QuickAddRowCollectionBuilder
         return $collection;
     }
 
-
     /**
      * @param string[] $skus
      * @return Product[]
      */
-    private function getProductsBySkus(array $skus)
+    private function getVisibleProductsBySkus(array $skus)
     {
-        $products = $this->productRepository->getProductWithNamesBySku($skus);
+        $qb = $this->productRepository->getProductWithNamesQueryBuilder($skus);
+        $restricted = $this->productManager->restrictQueryBuilder($qb, []);
+        $query = $restricted->getQuery();
+        $products = $query->execute();
         $productsBySku = [];
+
         foreach ($products as $product) {
             $productsBySku[strtoupper($product->getSku())] = $product;
         }
@@ -170,7 +181,7 @@ class QuickAddRowCollectionBuilder
      */
     private function mapProductsAndValidate(QuickAddRowCollection $collection)
     {
-        $products = $this->getProductsBySkus($collection->getSkus());
+        $products = $this->getVisibleProductsBySkus($collection->getSkus());
         $collection->mapProducts($products)->validate();
     }
 }
