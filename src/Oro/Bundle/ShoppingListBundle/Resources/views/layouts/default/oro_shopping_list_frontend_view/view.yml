@@ -18,7 +18,7 @@ layout:
                 shopping_list_title:
                     blockType: shopping_list_awere_block
                     options:
-                        visible: '=data["entity"]!=null'
+                        visible: '!data["entity"]'
                         shoppingList: '=data["entity"]'
                 shopping_list_top_actions:
                     blockType: action_line_buttons
