@@ -70,6 +70,8 @@ class OrderPossibleShippingMethodsEventListenerTest extends \PHPUnit_Framework_T
         return [
             ['submittedData' => ['field' => 'value']],
             ['submittedData' => [OrderPossibleShippingMethodsEventListener::POSSIBLE_SHIPPING_METHODS_KEY => '']],
+            ['submittedData' => [OrderPossibleShippingMethodsEventListener::POSSIBLE_SHIPPING_METHODS_KEY => 0]],
+            ['submittedData' => [OrderPossibleShippingMethodsEventListener::POSSIBLE_SHIPPING_METHODS_KEY => '0']],
         ];
     }
 

@@ -1,4 +1,3 @@
-
 define(function(require) {
     'use strict';
 
@@ -10,7 +9,7 @@ define(function(require) {
         BaseComponent = require('oroui/js/app/components/base/component'),
         LoadingMaskView = require('oroui/js/app/views/loading-mask-view'),
         StandardConfirmation = require('oroui/js/standart-confirmation');
-    
+
     PossibleShippingMethodsComponent = BaseComponent.extend({
         selectors: {
             toggleBtn: '#possible_shipping_methods_btn',
@@ -33,7 +32,7 @@ define(function(require) {
             this.orderHasChanged = false;
             var self = this;
             this.getPossibleShippingMethodForm().hide();
-            this.getToggleButton().on('click', function(){
+            this.getToggleButton().on('click', function() {
                 self.getCalculateShippingElement().val(true);
                 mediator.trigger('entry-point:order:trigger');
             });
@@ -47,19 +46,16 @@ define(function(require) {
             mediator.on('entry-point:order:load', this.onOrderChange, this);
             mediator.on('entry-point:order:load:after', this.hideLoadingMask, this);
 
-            this.$el.closest('form').on('submit', function() {
-                return self.onSaveForm(self.orderHasChanged);
-            });
+            this.$el.closest('form').on('submit', _.bind(this.onSaveForm, this));
         },
 
         /**
          * Show error
-         *
          */
-        onSaveForm: function (orderChanged) {
-            if (orderChanged) {
+        onSaveForm: function (e) {
+            var form = $(e.target);
+            if (form.valid() && this.orderHasChanged) {
                 this.showConfirmation();
-
                 return false;
             }
 
@@ -78,16 +74,17 @@ define(function(require) {
                 cancelText: __('oro.order.continue_editing')
             });
 
-            return confirmation
+            confirmation
                 .off('ok')
                 .on('ok')
-                .open(function(){
+                .open(function() {
                     self.orderHasChanged = false;
                     self.$el.closest('form').trigger('submit');
                 });
         },
 
         showLoadingMask: function() {
+            this.orderHasChanged = true;
             if (this.getCalculateShippingElement().val() === 'true') {
                 this.loadingMaskView.show();
             }
@@ -101,8 +98,8 @@ define(function(require) {
 
         onOrderChange: function(e) {
             this.$totals = e.totals;
-            if (e.possibleShippingMethods != undefined ) {
-                this.getCalculateShippingElement().val();
+            if (e.possibleShippingMethods != undefined) {
+                this.getCalculateShippingElement().val(0);
                 this.getToggleButton().parent('div').hide();
                 this.$data = e.possibleShippingMethods;
                 this.updatePossibleShippingMethods(e.possibleShippingMethods);
@@ -122,35 +119,37 @@ define(function(require) {
             var selectedCost = this.getEstimatedShippingCostElement().val();
             var selectedFound = false;
             var priceMatched = false;
-            var len = $.map(methods, function(n, i) { return i; }).length;
+            var len = $.map(methods, function(n, i) {
+                return i;
+            }).length;
             var str = '';
-            if (len > 0 ) {
+            if (len > 0) {
                 var i = 0;
-                $.each( methods, function( name, method ) {
-                    if ($(method.types).length > 0 ) {
-                    str = str + '<div class="method_title">';
+                $.each(methods, function(name, method) {
+                    if ($(method.types).length > 0) {
+                        str = str + '<div class="method_title">';
                         if (method.isGrouped == true) {
                             str = str + '<span>' + __(method.label) + '</span>';
                         }
-                    str = str + '</div>';
-                    $.each( method.types, function( key, type ) {
-                        if (type.price.value != null) {
-                            str = str + '<div><label>';
-                            var checked = '';
-                            if (method.identifier === selectedMethod && type.identifier === selectedType) {
-                                checked = 'checked="checked"';
-                                selectedFound = true;
-                                if (parseFloat(selectedCost) === parseFloat(type.price.value)) {
-                                    priceMatched = true;
+                        str = str + '</div>';
+                        $.each(method.types, function(key, type) {
+                            if (type.price.value != null) {
+                                str = str + '<div><label>';
+                                var checked = '';
+                                if (method.identifier === selectedMethod && type.identifier === selectedType) {
+                                    checked = 'checked="checked"';
+                                    selectedFound = true;
+                                    if (parseFloat(selectedCost) === parseFloat(type.price.value)) {
+                                        priceMatched = true;
+                                    }
+                                    self.updateElementsValue(selectedType, selectedMethod, type.price.value, priceMatched);
                                 }
-                                self.updateElementsValue(selectedType, selectedMethod, type.price.value, priceMatched);
+                                str = str + '<input type="radio" ' + checked + ' name="possibleShippingMethodType" value="' + type.identifier +
+                                    '" data-shipping-method="' + method.identifier + '" data-shipping-price="' + type.price.value + '" data-choice="' + type.identifier + '" />';
+                                str = str + '<span>' + __(type.label) + ': <strong>' + type.price.currency + ' ' + type.price.value + '</strong></span>';
+                                str = str + '</label></div>';
                             }
-                            str = str + '<input type="radio" ' + checked + ' name="possibleShippingMethodType" value="' + type.identifier + 
-                            '" data-shipping-method="' + method.identifier + '" data-shipping-price="' + type.price.value + '" data-choice="' + type.identifier + '" />';
-                            str = str + '<span>' + __(type.label) + ': <strong>' + type.price.currency + ' ' + type.price.value + '</strong></span>';
-                            str = str + '</label></div>';
-                        }
-                    });   
+                        });
                     }
                     i = i + 1;
                     if (len > i) {
@@ -177,7 +176,7 @@ define(function(require) {
          * @param {string|null} method
          * @param {number|null} cost
          */
-        setElementsValue: function (type, method, cost) {
+        setElementsValue: function(type, method, cost) {
             this.getShippingMethodTypeElement().val(type);
             this.getShippingMethodElement().val(method);
             this.getEstimatedShippingCostElement().val(cost);
@@ -189,7 +188,7 @@ define(function(require) {
          * @param {number|null} cost
          * @param {boolean} matched
          */
-        updateSelectedShippingMethod: function (type, method, cost, matched) {
+        updateSelectedShippingMethod: function(type, method, cost, matched) {
             if (type !== null && method != null) {
                 var methodLabel = (this.$data[method].isGrouped == true) ? __(this.$data[method].label) + ', ' : '';
                 var typeLabel = __(this.$data[method].types[type].label);
@@ -222,7 +221,7 @@ define(function(require) {
          * @param {number|null} estimated_cost
          * @param {boolean} matched
          */
-        updateElementsValue: function (type, method, estimated_cost, matched) {
+        updateElementsValue: function(type, method, estimated_cost, matched) {
             var overridden_cost = this.getOverriddenShippingCostElement().val();
             var cost = (isNaN(parseFloat(overridden_cost))) ? estimated_cost : parseFloat(overridden_cost);
             this.setElementsValue(type, method, estimated_cost);
@@ -237,7 +236,7 @@ define(function(require) {
             if (cost !== null) {
                 var totals = _.clone(this.$totals);
                 var newTotalAmount = 0;
-                $.each( totals.subtotals, function( key, subtotal ) {
+                $.each(totals.subtotals, function(key, subtotal) {
                     if (subtotal.type === 'shipping_cost') {
                         totals.subtotals[key].amount = cost;
                         totals.subtotals[key].formattedAmount = subtotal.currency + ' ' + cost;
@@ -245,7 +244,7 @@ define(function(require) {
                     newTotalAmount = newTotalAmount + parseInt(totals.subtotals[key].amount, 10);
                 });
                 totals.total.amount = newTotalAmount;
-                totals.total.formattedAmount = totals.total.currency + ' ' +  newTotalAmount;
+                totals.total.formattedAmount = totals.total.currency + ' ' + newTotalAmount;
 
                 mediator.trigger('shipping-cost:updated', {'totals': totals});
             }
