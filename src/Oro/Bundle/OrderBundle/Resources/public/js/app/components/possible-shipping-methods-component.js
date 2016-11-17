@@ -19,7 +19,8 @@ define(function(require) {
             calculateShipping: '[name$="[calculateShipping]"]',
             shippingMethod: '[name$="[shippingMethod]"]',
             shippingMethodType: '[name$="[shippingMethodType]"]',
-            estimatedShippingCostAmount: '[name$="[estimatedShippingCostAmount]"]'
+            estimatedShippingCostAmount: '[name$="[estimatedShippingCostAmount]"]',
+            overriddenShippingCostAmount: '[name$="[overriddenShippingCostAmount]"]'
         },
 
         /**
@@ -99,8 +100,9 @@ define(function(require) {
         },
 
         onOrderChange: function(e) {
+            this.$totals = e.totals;
             if (e.possibleShippingMethods != undefined ) {
-                this.getCalculateShippingElement().val(false);
+                this.getCalculateShippingElement().val();
                 this.getToggleButton().parent('div').hide();
                 this.$data = e.possibleShippingMethods;
                 this.updatePossibleShippingMethods(e.possibleShippingMethods);
@@ -161,7 +163,7 @@ define(function(require) {
                 }
                 this.getPossibleShippingMethodForm().html(str);
             } else {
-                $(document).find('.selected-shipping-method').css('text-decoration', 'line-through');
+                $(document).find('.selected-shipping-method').find('input').css('text-decoration', 'line-through');
                 this.setElementsValue(null, null, null);
                 str = '<span class="notification notification_xmd notification_alert notification-radiused mb1-md">' +
                     __('oro.order.possible_shipping_methods.no_method') +
@@ -221,8 +223,32 @@ define(function(require) {
          * @param {boolean} matched
          */
         updateElementsValue: function (type, method, estimated_cost, matched) {
+            var overridden_cost = this.getOverriddenShippingCostElement().val();
+            var cost = (isNaN(parseFloat(overridden_cost))) ? estimated_cost : parseFloat(overridden_cost);
             this.setElementsValue(type, method, estimated_cost);
             this.updateSelectedShippingMethod(type, method, estimated_cost, matched);
+            this.updateTotals(cost);
+        },
+
+        /**
+         * @param {number} cost
+         */
+        updateTotals: function(cost) {
+            if (cost !== null) {
+                var totals = _.clone(this.$totals);
+                var newTotalAmount = 0;
+                $.each( totals.subtotals, function( key, subtotal ) {
+                    if (subtotal.type === 'shipping_cost') {
+                        totals.subtotals[key].amount = cost;
+                        totals.subtotals[key].formattedAmount = subtotal.currency + ' ' + cost;
+                    }
+                    newTotalAmount = newTotalAmount + parseInt(totals.subtotals[key].amount, 10);
+                });
+                totals.total.amount = newTotalAmount;
+                totals.total.formattedAmount = totals.total.currency + ' ' +  newTotalAmount;
+
+                mediator.trigger('shipping-cost:updated', {'totals': totals});
+            }
         },
 
         /**
@@ -299,6 +325,17 @@ define(function(require) {
             }
 
             return this.$estimatedShippingCostElement;
+        },
+
+        /**
+         * @returns {jQuery|HTMLElement}
+         */
+        getOverriddenShippingCostElement: function() {
+            if (!this.hasOwnProperty('$overriddenShippingCostElement')) {
+                this.$overriddenShippingCostElement = $(document).find(this.selectors.overriddenShippingCostAmount);
+            }
+
+            return this.$overriddenShippingCostElement;
         },
 
         /**
