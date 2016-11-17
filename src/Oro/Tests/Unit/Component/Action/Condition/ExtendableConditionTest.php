@@ -53,9 +53,11 @@ class ExtendableConditionTest extends \PHPUnit_Framework_TestCase
             ->willReturn(true);
         $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
-            ->willReturnCallback(function($eventName, $event) {
-                $event->addError('xxx');
-            });
+            ->willReturnCallback(
+                function ($eventName, $event) {
+                    $event->addError('xxx');
+                }
+            );
 
         $this->assertFalse($this->extendableCondition->isConditionAllowed([]));
     }

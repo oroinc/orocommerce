@@ -106,7 +106,6 @@ class QuickAddControllerTest extends WebTestCase
             ['%limit%' => $errorLimit, '%sku%' => $product->getSku(), '%product_name%' => $product->getName()]
         );
         $this->assertContains($errorMessage, $this->client->getResponse()->getContent());
-
     }
 
     /**
