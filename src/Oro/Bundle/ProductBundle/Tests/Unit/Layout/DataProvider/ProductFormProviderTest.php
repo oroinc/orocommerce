@@ -4,8 +4,9 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Layout\DataProvider;
 
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-use Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
 use Oro\Bundle\ProductBundle\Form\Type\QuickAddCopyPasteType;
@@ -21,10 +22,40 @@ class ProductFormProviderTest extends \PHPUnit_Framework_TestCase
     /** @var FormFactoryInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $formFactory;
 
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|UrlGeneratorInterface
+     */
+    protected $router;
+
     protected function setUp()
     {
         $this->formFactory = $this->getMock(FormFactoryInterface::class);
-        $this->provider = new ProductFormProvider($this->formFactory);
+        $this->router = $this->getMock('Symfony\Component\Routing\Generator\UrlGeneratorInterface');
+
+        $this->provider = new ProductFormProvider($this->formFactory, $this->router);
+    }
+
+    public function testGetQuickAddFormView()
+    {
+        $formView = $this->getMock(FormView::class);
+
+        $expectedForm = $this->getMock(FormInterface::class);
+        $expectedForm->expects($this->once())
+            ->method('createView')
+            ->willReturn($formView);
+
+        $this->formFactory->expects($this->once())
+            ->method('create')
+            ->with(QuickAddType::NAME)
+            ->willReturn($expectedForm);
+
+        // Get form without existing data in locale cache
+        $data = $this->provider->getQuickAddFormView();
+        $this->assertInstanceOf(FormView::class, $data);
+
+        // Get form with existing data in locale cache
+        $data = $this->provider->getQuickAddFormView();
+        $this->assertInstanceOf(FormView::class, $data);
     }
 
     public function testGetQuickAddForm()
@@ -38,11 +69,34 @@ class ProductFormProviderTest extends \PHPUnit_Framework_TestCase
 
         // Get form without existing data in locale cache
         $data = $this->provider->getQuickAddForm();
-        $this->assertInstanceOf(FormAccessor::class, $data);
+        $this->assertInstanceOf(FormInterface::class, $data);
 
         // Get form with existing data in locale cache
         $data = $this->provider->getQuickAddForm();
-        $this->assertInstanceOf(FormAccessor::class, $data);
+        $this->assertInstanceOf(FormInterface::class, $data);
+    }
+
+    public function testGetQuickAddCopyPasteFormView()
+    {
+        $formView = $this->getMock(FormView::class);
+
+        $expectedForm = $this->getMock(FormInterface::class);
+        $expectedForm->expects($this->once())
+            ->method('createView')
+            ->willReturn($formView);
+
+        $this->formFactory->expects($this->once())
+            ->method('create')
+            ->with(QuickAddCopyPasteType::NAME)
+            ->willReturn($expectedForm);
+
+        // Get form without existing data in locale cache
+        $data = $this->provider->getQuickAddCopyPasteFormView();
+        $this->assertInstanceOf(FormView::class, $data);
+
+        // Get form with existing data in locale cache
+        $data = $this->provider->getQuickAddCopyPasteFormView();
+        $this->assertInstanceOf(FormView::class, $data);
     }
 
     public function testGetQuickAddCopyPasteForm()
@@ -56,11 +110,34 @@ class ProductFormProviderTest extends \PHPUnit_Framework_TestCase
 
         // Get form without existing data in locale cache
         $data = $this->provider->getQuickAddCopyPasteForm();
-        $this->assertInstanceOf(FormAccessor::class, $data);
+        $this->assertInstanceOf(FormInterface::class, $data);
 
         // Get form with existing data in locale cache
         $data = $this->provider->getQuickAddCopyPasteForm();
-        $this->assertInstanceOf(FormAccessor::class, $data);
+        $this->assertInstanceOf(FormInterface::class, $data);
+    }
+
+    public function testGetQuickAddImportFormView()
+    {
+        $formView = $this->getMock(FormView::class);
+
+        $expectedForm = $this->getMock(FormInterface::class);
+        $expectedForm->expects($this->once())
+            ->method('createView')
+            ->willReturn($formView);
+
+        $this->formFactory->expects($this->once())
+            ->method('create')
+            ->with(QuickAddImportFromFileType::NAME)
+            ->willReturn($expectedForm);
+
+        // Get form without existing data in locale cache
+        $data = $this->provider->getQuickAddImportFormView();
+        $this->assertInstanceOf(FormView::class, $data);
+
+        // Get form with existing data in locale cache
+        $data = $this->provider->getQuickAddImportFormView();
+        $this->assertInstanceOf(FormView::class, $data);
     }
 
     public function testGetQuickAddImportForm()
@@ -74,16 +151,21 @@ class ProductFormProviderTest extends \PHPUnit_Framework_TestCase
 
         // Get form without existing data in locale cache
         $data = $this->provider->getQuickAddImportForm();
-        $this->assertInstanceOf(FormAccessor::class, $data);
+        $this->assertInstanceOf(FormInterface::class, $data);
 
         // Get form with existing data in locale cache
         $data = $this->provider->getQuickAddImportForm();
-        $this->assertInstanceOf(FormAccessor::class, $data);
+        $this->assertInstanceOf(FormInterface::class, $data);
     }
 
-    public function testGetLineItemForm()
+    public function testGetLineItemFormView()
     {
+        $formView = $this->getMock(FormView::class);
+
         $expectedForm = $this->getMock(FormInterface::class);
+        $expectedForm->expects($this->once())
+            ->method('createView')
+            ->willReturn($formView);
 
         $this->formFactory->expects($this->once())
             ->method('create')
@@ -91,17 +173,22 @@ class ProductFormProviderTest extends \PHPUnit_Framework_TestCase
             ->willReturn($expectedForm);
 
         // Get form without existing data in locale cache
-        $data = $this->provider->getLineItemForm();
-        $this->assertInstanceOf(FormAccessor::class, $data);
+        $data = $this->provider->getLineItemFormView();
+        $this->assertInstanceOf(FormView::class, $data);
 
         // Get form with existing data in locale cache
-        $data = $this->provider->getLineItemForm();
-        $this->assertInstanceOf(FormAccessor::class, $data);
+        $data = $this->provider->getLineItemFormView();
+        $this->assertInstanceOf(FormView::class, $data);
     }
 
-    public function testGetLineItemFormWithInstanceName()
+    public function testGetLineItemFormViewWithInstanceName()
     {
+        $formView = $this->getMock(FormView::class);
+
         $expectedForm = $this->getMock(FormInterface::class);
+        $expectedForm->expects($this->exactly(2))
+            ->method('createView')
+            ->willReturn($formView);
 
         $this->formFactory->expects($this->exactly(2))
             ->method('create')
@@ -109,21 +196,26 @@ class ProductFormProviderTest extends \PHPUnit_Framework_TestCase
             ->willReturn($expectedForm);
 
         // Get form without existing data in locale cache
-        $data1 = $this->provider->getLineItemForm(null, 'form1');
+        $data1 = $this->provider->getLineItemFormView(null, 'form1');
 
         // Get form with existing data in locale cache
-        $data1Cache = $this->provider->getLineItemForm(null, 'form1');
+        $data1Cache = $this->provider->getLineItemFormView(null, 'form1');
         $this->assertSame($data1, $data1Cache);
 
         // Get new form instance
-        $data2 = $this->provider->getLineItemForm(null, 'form2');
-        $this->assertNotSame($data1, $data2);
+        $data2 = $this->provider->getLineItemFormView(null, 'form2');
+        $this->assertSame($data1, $data2);
         $this->assertEquals($data1, $data2);
     }
 
-    public function testGetLineItemFormWithProduct()
+    public function testGetLineItemFormViewWithProduct()
     {
+        $formView = $this->getMock(FormView::class);
+
         $expectedForm = $this->getMock(FormInterface::class);
+        $expectedForm->expects($this->once())
+            ->method('createView')
+            ->willReturn($formView);
 
         $this->formFactory->expects($this->once())
             ->method('create')
@@ -136,11 +228,11 @@ class ProductFormProviderTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue(1));
 
         // Get form without existing data in locale cache
-        $data = $this->provider->getLineItemForm($product);
-        $this->assertInstanceOf(FormAccessor::class, $data);
+        $data = $this->provider->getLineItemFormView($product);
+        $this->assertInstanceOf(FormView::class, $data);
 
         // Get form with existing data in locale cache
-        $data = $this->provider->getLineItemForm($product);
-        $this->assertInstanceOf(FormAccessor::class, $data);
+        $data = $this->provider->getLineItemFormView($product);
+        $this->assertInstanceOf(FormView::class, $data);
     }
 }

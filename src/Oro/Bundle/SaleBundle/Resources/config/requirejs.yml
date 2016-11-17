@@ -9,5 +9,6 @@ config:
         'orosale/js/app/views/address-view': 'bundles/orosale/js/app/views/address-view.js'
         'orosale/js/app/views/product-add-to-rfq-view': 'bundles/orosale/js/app/views/product-add-to-rfq-view.js'
         'orosale/js/app/components/related-data-component': 'bundles/orosale/js/app/components/related-data-component.js'
+        'orosale/js/app/modules/validator-constraints-module': 'bundles/orosale/js/app/modules/validator-constraints-module.js'
     appmodules:
         - orosale/js/app/modules/validator-constraints-module
