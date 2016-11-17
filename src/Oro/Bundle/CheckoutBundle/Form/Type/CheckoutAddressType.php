@@ -71,9 +71,7 @@ class CheckoutAddressType extends AbstractOrderAddressType
                 $selectedKey = $defaultKey;
             }
 
-            if (count($addresses)){
-                $action = 'select';
-            } else $action = 'enter';
+            $action = count($addresses) ? 'select' : 'enter';
 
             $accountAddressOptions = [
                 'label' => sprintf('oro.checkout.form.address.%s.%s.label', $action, $type),

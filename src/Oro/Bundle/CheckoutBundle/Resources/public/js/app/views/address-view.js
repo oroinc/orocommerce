@@ -34,9 +34,9 @@ define(function(require) {
         },
 
         _handleShipToBillingAddressCheckbox: function(e) {
-            var isOneOption = this.$addressSelector[0].length == 1;
+            var isOneOption = this.$addressSelector[0].length === 1;
             var disabled = Boolean(this.$shipToBillingCheckbox.attr('checked'));
-            if (isOneOption || (!disabled && this._isFormVisible())) {
+            if (this._isFormVisible(isOneOption, disabled)) {
                 this._showForm();
             } else {
                 this._hideForm(true);
@@ -53,7 +53,9 @@ define(function(require) {
             }
         },
 
-        _isFormVisible: function() {
+        _isFormVisible: function(isOneOption, disabled) {
+            if (isOneOption) return true;
+            if (disabled === true) return false;
             return this.$addressSelector.val() === '0';
         },
 
