@@ -40,7 +40,6 @@ class LocalizedSlugTypeTest extends FormIntegrationTestCase
         $resolver->expects($this->once())->method('setDefaults')->with(
             $this->callback(
                 function (array $options) {
-                    $this->assertEquals($options['source_field'], 'titles');
                     $this->assertEquals(
                         $options['slugify_component'],
                         'ororedirect/js/app/components/localized-field-slugify-component'
@@ -51,6 +50,7 @@ class LocalizedSlugTypeTest extends FormIntegrationTestCase
                 }
             )
         );
+        $resolver->expects($this->once())->method('setRequired')->with('source_field');
 
         $this->formType->configureOptions($resolver);
     }
