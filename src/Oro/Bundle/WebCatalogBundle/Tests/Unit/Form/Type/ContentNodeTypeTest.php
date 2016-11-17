@@ -79,8 +79,8 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
                             'some_route' => 'some_route',
                             'other_route' => 'other_route'
                         ]
-                    )
-                    LocalizedSlugType::NAME                    => new LocalizedSlugTypeStub(),
+                    ),
+                    LocalizedSlugType::NAME => new LocalizedSlugTypeStub(),
                 ],
                 []
             ),
