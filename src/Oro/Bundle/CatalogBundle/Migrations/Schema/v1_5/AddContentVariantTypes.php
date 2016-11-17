@@ -37,7 +37,7 @@ class AddContentVariantTypes implements Migration, ExtendExtensionAwareInterface
             $this->extendExtension->addManyToOneRelation(
                 $schema,
                 $table,
-                'catalog_page_category',
+                'category_page_category',
                 'oro_catalog_category',
                 'id',
                 [

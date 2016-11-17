@@ -73,14 +73,4 @@
     }%}
 
     {{ parent() }}
-
-    {% set options = {
-        'targetInput': '#' ~ form.titles.vars.id,
-        'recipientInput': '[data-ftid="oro_cms_page_slugs_values_default"]',
-        'modeName': 'oro_cms_page[slug][mode]'
-    } %}
-    <div
-        data-page-component-module="orocms/js/app/components/slugify-component"
-        data-page-component-options="{{ options|json_encode }}"
-    ></div>
 {% endblock content_data %}

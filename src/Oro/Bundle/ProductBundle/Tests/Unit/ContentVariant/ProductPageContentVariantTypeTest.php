@@ -5,10 +5,9 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\ContentVariant;
 use Oro\Bundle\ProductBundle\ContentVariantType\ProductPageContentVariantType;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\ProductPageVariantType;
-use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ContentVariantStub;
+use Oro\Bundle\ProductBundle\Tests\Unit\ContentVariant\Stub\ContentVariantStub;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 use Oro\Component\WebCatalog\RouteData;
 
 class ProductPageContentVariantTypeTest extends \PHPUnit_Framework_TestCase

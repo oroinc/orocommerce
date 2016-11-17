@@ -13,3 +13,10 @@ services:
         class: 'Oro\Bundle\CMSBundle\Form\Type\LoginPageType'
         tags:
             - { name: form.type, alias: oro_cms_login_page }
+
+    oro_cms.form.type.cms_page_content_variant:
+        class: Oro\Bundle\CMSBundle\Form\Type\CmsPageVariantType
+        arguments:
+            - '@doctrine'
+        tags:
+            - { name: form.type, alias: oro_cms_page_variant }

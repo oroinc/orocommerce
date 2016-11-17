@@ -8,7 +8,7 @@ services:
         parent: oro_form.autocomplete.search_handler
         arguments:
             - '%oro_cms.entity.page.class%'
-            - ["title"]
+            - [ "defaultTitle.string"]
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: oro_cms_page, acl_resource: oro_cms_page_view }
 
@@ -29,3 +29,12 @@ services:
             - '@oro_locale.helper.localization.link'
         tags:
             - { name: oro_web_catalog.content_variant_title_provider }
+
+    oro_cms.content_variant_type.cms_page:
+        class: Oro\Bundle\CMSBundle\ContentVariantType\CmsPageContentVariantType
+        public: false
+        arguments:
+            - '@oro_security.security_facade'
+            - '@property_accessor'
+        tags:
+            - { name: oro_web_catalog.content_variant_type }

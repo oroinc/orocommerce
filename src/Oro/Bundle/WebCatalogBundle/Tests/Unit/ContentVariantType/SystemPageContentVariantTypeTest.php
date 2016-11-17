@@ -4,7 +4,6 @@ namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\ContentVariantType;
 
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebCatalogBundle\Form\Type\SystemPageVariantType;
-use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 use Oro\Bundle\WebCatalogBundle\ContentVariantType\SystemPageContentVariantType;
 use Oro\Component\WebCatalog\RouteData;
 

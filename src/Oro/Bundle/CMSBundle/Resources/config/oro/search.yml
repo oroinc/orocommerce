@@ -1,7 +1,7 @@
 search:
     Oro\Bundle\CMSBundle\Entity\Page:
         alias:                          oro_cms_page
-        title_fields:                   [title]
+        title_fields:                   [defaultTitle]
         route:
             name:                       oro_cms_page_view
             parameters:

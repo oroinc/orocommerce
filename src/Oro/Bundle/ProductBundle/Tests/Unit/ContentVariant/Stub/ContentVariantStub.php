@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\ContentVariant\Stub;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -14,6 +14,11 @@ class ContentVariantStub implements ContentVariantInterface
      * @var string
      */
     protected $type;
+
+    /**
+     * @var Product
+     */
+    protected $productPageProduct;
 
     /**
      * @var ArrayCollection|Scope[]
@@ -58,11 +63,6 @@ class ContentVariantStub implements ContentVariantInterface
 
         return $this;
     }
-
-    /**
-     * @var Product
-     */
-    protected $productPageProduct;
 
     /**
      * @return int

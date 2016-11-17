@@ -1,17 +1,16 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\CatalogBundle\Tests\Unit\Form\Type;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Mapping\ClassMetadata;
-use Oro\Bundle\ProductBundle\ContentVariantType\ProductPageContentVariantType;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Form\Type\ProductPageVariantType;
-use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
-use Oro\Bundle\ProductBundle\Tests\Unit\ContentVariant\Stub\ContentVariantStub;
+use Oro\Bundle\CatalogBundle\ContentVariantType\CategoryPageContentVariantType;
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Form\Type\CategoryPageVariantType;
+use Oro\Bundle\CatalogBundle\Form\Type\CategoryTreeType;
+use Oro\Bundle\CatalogBundle\Tests\Unit\ContentVariantType\Stub\ContentVariantStub;
 use Oro\Bundle\ScopeBundle\Form\Type\ScopeCollectionType;
-use Oro\Bundle\WebCatalogBundle\Form\Type\SystemPageVariantType;
 use Oro\Bundle\WebCatalogBundle\Tests\Unit\Form\Type\Stub\ScopeCollectionTypeStub;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
@@ -19,12 +18,12 @@ use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 use Symfony\Component\Form\PreloadedExtension;
 
-class ProductPageVariantTypeTest extends FormIntegrationTestCase
+class CategoryPageVariantTypeTest extends FormIntegrationTestCase
 {
     use EntityTrait;
 
     /**
-     * @var SystemPageVariantType
+     * @var CategoryPageVariantType
      */
     protected $type;
 
@@ -41,7 +40,7 @@ class ProductPageVariantTypeTest extends FormIntegrationTestCase
         parent::setUp();
 
         $this->registry = $this->getMock(ManagerRegistry::class);
-        $this->type = new ProductPageVariantType($this->registry);
+        $this->type = new CategoryPageVariantType($this->registry);
     }
 
     /**
@@ -61,12 +60,12 @@ class ProductPageVariantTypeTest extends FormIntegrationTestCase
             new PreloadedExtension(
                 [
                     ScopeCollectionType::NAME => new ScopeCollectionTypeStub(),
-                    ProductSelectType::NAME => new EntityType(
+                    CategoryTreeType::NAME => new EntityType(
                         [
-                            1 => $this->getEntity(Product::class, ['id' => 1]),
-                            2 => $this->getEntity(Product::class, ['id' => 2]),
+                            1 => $this->getEntity(Category::class, ['id' => 1]),
+                            2 => $this->getEntity(Category::class, ['id' => 2]),
                         ],
-                        ProductSelectType::NAME
+                        CategoryTreeType::NAME
                     )
                 ],
                 []
@@ -79,19 +78,19 @@ class ProductPageVariantTypeTest extends FormIntegrationTestCase
         $this->assertMetadataCall();
         $form = $this->factory->create($this->type);
 
-        $this->assertTrue($form->has('productPageProduct'));
+        $this->assertTrue($form->has('categoryPageCategory'));
         $this->assertTrue($form->has('scopes'));
         $this->assertTrue($form->has('type'));
     }
 
     public function testGetName()
     {
-        $this->assertEquals(ProductPageVariantType::NAME, $this->type->getName());
+        $this->assertEquals(CategoryPageVariantType::NAME, $this->type->getName());
     }
 
     public function testGetBlockPrefix()
     {
-        $this->assertEquals(ProductPageVariantType::NAME, $this->type->getBlockPrefix());
+        $this->assertEquals(CategoryPageVariantType::NAME, $this->type->getBlockPrefix());
     }
 
     /**
@@ -99,9 +98,9 @@ class ProductPageVariantTypeTest extends FormIntegrationTestCase
      *
      * @param ContentVariantInterface $existingData
      * @param array $submittedData
-     * @param int $expectedProductId
+     * @param int $expectedCategoryId
      */
-    public function testSubmit(ContentVariantInterface $existingData, $submittedData, $expectedProductId)
+    public function testSubmit(ContentVariantInterface $existingData, array $submittedData, $expectedCategoryId)
     {
         $this->assertMetadataCall();
         $form = $this->factory->create($this->type, $existingData);
@@ -114,8 +113,8 @@ class ProductPageVariantTypeTest extends FormIntegrationTestCase
         /** @var ContentVariantStub $actualData */
         $actualData = $form->getData();
 
-        $this->assertEquals('product_page', $actualData->getType());
-        $this->assertEquals($expectedProductId, $actualData->getProductPageProduct()->getId());
+        $this->assertEquals('category_page', $actualData->getType());
+        $this->assertEquals($expectedCategoryId, $actualData->getCategoryPageCategory()->getId());
     }
 
     /**
@@ -123,26 +122,26 @@ class ProductPageVariantTypeTest extends FormIntegrationTestCase
      */
     public function submitDataProvider()
     {
-        /** @var Product $product1 */
-        $product1 = $this->getEntity(Product::class, ['id' => 1]);
+        /** @var Category $category1 */
+        $category1 = $this->getEntity(Category::class, ['id' => 1]);
 
         return [
             'new entity' => [
                 'existingData' => new ContentVariantStub(),
-                'submittedData' => [
-                    'productPageProduct' => 1
+                'submittedData'=> [
+                    'categoryPageCategory' => 1
                 ],
-                'expectedProductId' => 1
+                'expectedCategoryId' => 1
             ],
             'existing entity' => [
                 'existingData' => (new ContentVariantStub())
-                    ->setProductPageProduct($product1)
-                    ->setType(ProductPageContentVariantType::TYPE),
+                    ->setCategoryPageCategory($category1)
+                    ->setType(CategoryPageContentVariantType::TYPE),
                 'submittedData' => [
-                    'productPageProduct' => 2,
+                    'categoryPageCategory' => 2,
                     'type' => 'fakeType'
                 ],
-                'expectedProductId' => 2
+                'expectedCategoryId' => 2
             ],
         ];
     }
@@ -156,6 +155,7 @@ class ProductPageVariantTypeTest extends FormIntegrationTestCase
         $metadata->expects($this->once())
             ->method('getName')
             ->willReturn(ContentVariantStub::class);
+
         /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
         $em = $this->getMock(EntityManagerInterface::class);
         $em->expects($this->once())

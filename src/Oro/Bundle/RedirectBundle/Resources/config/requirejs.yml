@@ -1,0 +1,4 @@
+config:
+    paths:
+        'ororedirect/js/app/components/text-field-slugify-component': 'bundles/ororedirect/js/app/components/text-field-slugify-component.js'
+        'ororedirect/js/app/components/localized-field-slugify-component': 'bundles/ororedirect/js/app/components/localized-field-slugify-component.js'

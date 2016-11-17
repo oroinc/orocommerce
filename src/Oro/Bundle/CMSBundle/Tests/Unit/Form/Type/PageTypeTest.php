@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Unit\Form\Type;
 
-use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Validator\Type\FormTypeValidatorExtension;
 use Symfony\Component\Form\Forms;
@@ -11,10 +10,14 @@ use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\ConstraintViolationList;
 
+use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugType;
+use Oro\Bundle\RedirectBundle\Tests\Unit\Form\Type\Stub\LocalizedSlugTypeStub;
+use Oro\Bundle\ValidationBundle\Validator\Constraints\UrlSafe;
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 use Oro\Bundle\CMSBundle\Form\Type\PageType;
 use Oro\Bundle\CMSBundle\Entity\Page;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueCollectionTypeStub;
 
@@ -94,6 +97,7 @@ class PageTypeTest extends FormIntegrationTestCase
                     'text' => new TextType(),
                     OroRichTextType::NAME => new OroRichTextType($configManager, $htmlTagProvider),
                     LocalizedFallbackValueCollectionType::NAME => new LocalizedFallbackValueCollectionTypeStub(),
+                    LocalizedSlugType::NAME => new LocalizedSlugTypeStub(),
                 ],
                 []
             )
@@ -136,11 +140,12 @@ class PageTypeTest extends FormIntegrationTestCase
                 ->method('add')
                 ->with(
                     'slugs',
-                    LocalizedFallbackValueCollectionType::NAME,
+                    LocalizedSlugType::NAME,
                     [
                         'label'    => 'oro.cms.page.slugs.label',
                         'required' => true,
-                        'options'  => ['constraints' => [new NotBlank()]],
+                        'options'  => ['constraints' => [new NotBlank(), new UrlSafe()]],
+                        'source_field' => 'titles',
                     ]
                 )
                 ->will($this->returnSelf());
