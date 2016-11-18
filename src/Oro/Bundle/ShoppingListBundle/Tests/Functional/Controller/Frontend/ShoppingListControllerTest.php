@@ -32,11 +32,6 @@ class ShoppingListControllerTest extends WebTestCase
     /** @var ConfigManager $configManager */
     protected $configManager;
 
-    /**
-     * @var ShoppingList
-     */
-    protected $shoppingListAcl;
-
     protected function setUp()
     {
         $this->initClient(
@@ -236,6 +231,12 @@ class ShoppingListControllerTest extends WebTestCase
                 'user' => LoadShoppingListUserACLData::USER_ACCOUNT_1_1_ROLE_LOCAL,
                 'status' => 403,
             ],
+            'VIEW (BASIC)' => [
+                'route' => 'oro_shopping_list_frontend_view',
+                'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_1_USER_BASIC,
+                'user' => LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_BASIC,
+                'status' => 200,
+            ],
             'CREATE anon' => [
                 'route' => 'oro_shopping_list_frontend_create',
                 'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_1_USER_LOCAL,
@@ -253,6 +254,12 @@ class ShoppingListControllerTest extends WebTestCase
                 'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_1_USER_LOCAL,
                 'user' => LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_LOCAL_VIEW_ONLY,
                 'status' => 403,
+            ],
+            'CREATE (BASIC)' => [
+                'route' => 'oro_shopping_list_frontend_create',
+                'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_1_USER_BASIC,
+                'user' => LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_BASIC,
+                'status' => 200,
             ],
         ];
     }
