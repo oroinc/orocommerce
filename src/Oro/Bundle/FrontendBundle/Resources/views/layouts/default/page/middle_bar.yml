@@ -15,6 +15,6 @@ layout:
             tree:
                 header:
                     middle_bar:
-                        middle_bar_center: ~
-                            #middle_bar_search: ~
+                        middle_bar_center:
+                            middle_bar_search: ~
                         middle_bar_logo: ~
