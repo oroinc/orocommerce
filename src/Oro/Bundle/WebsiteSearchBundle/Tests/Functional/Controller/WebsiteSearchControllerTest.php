@@ -24,7 +24,7 @@ class WebsiteSearchControllerTest extends WebTestCase
         $this->assertGreaterThan(0, $searchFieldBlock->count());
 
         // search form processing
-        $searchForm = $searchFieldBlock->selectButton('oro_website_search_search_button')->form();
+        $searchForm           = $searchFieldBlock->selectButton('oro_website_search_search_button')->form();
         $searchString         = 'string-to-search';
         $searchForm['search'] = $searchString;
 
@@ -35,10 +35,18 @@ class WebsiteSearchControllerTest extends WebTestCase
         // assert product page has been rendered
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('oro_product_frontend_product_index', $result->getContent());
+        $this->assertProductPageWithFilters($searchString);
+    }
 
-        // assert grid 'all_text' filter contains search string
-        $filterString = htmlspecialchars(json_encode(['all_text' => ['value' => $searchString, 'type' => '1']]));
-        $this->assertContains($filterString, $result->getContent());
+    /**
+     * @param string $searchString
+     */
+    private function assertProductPageWithFilters($searchString)
+    {
+        $urlParams = ['frontend-product-search-grid' => [
+            '_filter' => ['all_text' => ['value' => $searchString, 'type' => 1]]
+        ]];
+        $expectedUrl = $this->getContainer()->get('router')->generate('oro_product_frontend_product_index', $urlParams);
+        $this->assertEquals($expectedUrl, $this->client->getRequest()->getRequestUri());
     }
 }
