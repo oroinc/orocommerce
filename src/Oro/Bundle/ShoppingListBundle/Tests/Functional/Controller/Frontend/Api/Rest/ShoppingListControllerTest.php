@@ -2,9 +2,10 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Controller\Frontend\Api\Rest;
 
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
-use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
+use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListACLData;
+use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListUserACLData;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
  * @dbIsolation
@@ -20,32 +21,37 @@ class ShoppingListControllerTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists'
+                LoadShoppingListACLData::class,
             ]
         );
     }
 
-    public function testSetCurrent()
+    /**
+     * @dataProvider ACLProvider
+     * @param $resource
+     * @param $user
+     * @param $status
+     */
+    public function testSetCurrent($resource, $user, $status)
     {
-        $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_2);
+        $this->loginUser($user);
+        $shoppingList = $this->getReference($resource);
 
         $this->client->request(
             'PUT',
             $this->getUrl('oro_api_set_shoppinglist_current', ['id' => $shoppingList->getId()])
         );
         $result = $this->client->getResponse();
-        $this->assertJsonResponseStatusCodeEquals($result, 200);
+        $this->assertResponseStatusCodeEquals($result, $status);
+        if ($user && $status == 204) {
+            $currentUser = $this->getReference($user);
 
-        $currentUser = $this->getContainer()->get('doctrine')
-            ->getManager()
-            ->getRepository('OroCustomerBundle:AccountUser')
-            ->findOneBy(['username' => LoadAccountUserData::AUTH_USER]);
+            $currentShoppingList = $this->getContainer()->get('doctrine')
+                ->getRepository('OroShoppingListBundle:ShoppingList')
+                ->findCurrentForAccountUser($currentUser);
 
-        $currentShoppingList = $this->getContainer()->get('doctrine')
-            ->getRepository('OroShoppingListBundle:ShoppingList')
-            ->findCurrentForAccountUser($currentUser);
-
-        $this->assertEquals($currentShoppingList->getId(), $shoppingList->getId());
+            $this->assertEquals($currentShoppingList->getId(), $shoppingList->getId());
+        }
     }
 
     public function testSetCurrentFailsOnNonExistingList()
@@ -58,15 +64,62 @@ class ShoppingListControllerTest extends WebTestCase
         $this->assertJsonResponseStatusCodeEquals($result, 404);
     }
 
-    public function testDelete()
+    /**
+     * @dataProvider ACLProvider
+     * @param $resource
+     * @param $user
+     * @param $status
+     */
+    public function testDelete($resource, $user, $status)
     {
-        $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
+        $this->loginUser($user);
+        $shoppingList = $this->getReference($resource);
 
         $this->client->request(
             'DELETE',
             $this->getUrl('oro_api_delete_shoppinglist', ['id' => $shoppingList->getId()])
         );
         $result = $this->client->getResponse();
-        $this->assertEmptyResponseStatusCodeEquals($result, 204);
+        $this->assertResponseStatusCodeEquals($result, $status);
+    }
+
+    /**
+     * @return array
+     */
+    public function ACLProvider()
+    {
+        return [
+            'anonymous user' => [
+                'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_1_USER_LOCAL,
+                'user' => '',
+                'status' => 401,
+            ],
+            'user from another account' => [
+                'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_1_USER_LOCAL,
+                'user' => LoadShoppingListUserACLData::USER_ACCOUNT_2_ROLE_LOCAL,
+                'status' => 403,
+            ],
+            'user from parent account : DEEP_VIEW_ONLY' => [
+                'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_1_1_USER_LOCAL,
+                'user' => LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_DEEP_VIEW_ONLY,
+                'status' => 403,
+            ],
+            //TODO: uncomment in scope BB-5234
+//            'EDIT (user from parent account : LOCAL)' => [
+//                'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_1_1_USER_LOCAL,
+//                'user' => LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_DEEP,
+//                'status' => 200,
+//            ],
+//            'user from same account : LOCAL' => [
+//                'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_1_USER_LOCAL,
+//                'user' => LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_DEEP,
+//                'status' => 204,
+//            ],
+            'BASIC' => [
+                'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_1_USER_BASIC,
+                'user' => LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_BASIC,
+                'status' => 204,
+            ],
+        ];
     }
 }

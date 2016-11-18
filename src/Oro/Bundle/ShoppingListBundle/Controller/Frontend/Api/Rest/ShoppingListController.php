@@ -2,20 +2,18 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Controller\Frontend\Api\Rest;
 
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
-
-use FOS\RestBundle\Controller\Annotations\Put;
 use FOS\RestBundle\Controller\Annotations\NamePrefix;
+use FOS\RestBundle\Controller\Annotations\Put;
 use FOS\RestBundle\Controller\Annotations\RouteResource;
 use FOS\RestBundle\Routing\ClassResourceInterface;
-
+use FOS\RestBundle\Util\Codes;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
-
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @RouteResource("shoppinglist")
@@ -46,10 +44,16 @@ class ShoppingListController extends RestController implements ClassResourceInte
         if ($shoppingList === null) {
             throw $this->createNotFoundException('Can\'t find shopping list with id ' . $id);
         }
-
+        $isGranted = $this->get('oro_security.security_facade')->isGranted('EDIT', $shoppingList);
+        $isProcessed = false;
+        $view = $this->view([], Codes::HTTP_NO_CONTENT);
+        if (!$isGranted) {
+            $view = $this->view(['reason' => 'Access denied'], Codes::HTTP_FORBIDDEN);
+            $isProcessed = true;
+        }
         $manager->setCurrent($this->getUser(), $shoppingList);
 
-        return new JsonResponse(null, Response::HTTP_OK);
+        return$this->buildResponse($view, self::ACTION_UPDATE, ['id' => $id, 'success' => $isProcessed]);
     }
 
     /**
