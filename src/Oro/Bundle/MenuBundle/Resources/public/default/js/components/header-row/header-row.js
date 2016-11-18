@@ -32,7 +32,12 @@ define(function(require) {
             var windowHeight = $(window).height();
             var menuHeight = windowHeight - this.options._sourceElement.height();
             var dropdowns = this.options._sourceElement.find('.header-row__dropdown-mobile');
+            var isSticky = this.options._sourceElement.hasClass('header-row--fixed');
 
+            if (!isSticky) {
+                var menuHeight = windowHeight - (this.options._sourceElement.height() * 2);
+            }
+            
             $.each(dropdowns, function(index, dropdown) {
                 var dropdownHeight = $(dropdown).height();
 

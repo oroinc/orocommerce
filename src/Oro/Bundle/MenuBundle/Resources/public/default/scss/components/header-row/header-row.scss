@@ -136,16 +136,10 @@
             top: 0 !important;
             bottom: 0;
             overflow-y: scroll;
-
-            padding-bottom: 55px;
         }
 
         &--fixed {
             margin: 0;
-        }
-
-        &--fixed &__dropdown-mobile--scroll {
-            padding-bottom: 0;
         }
 
         & .main-menu__sublist-container {
