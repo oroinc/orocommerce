@@ -78,5 +78,4 @@ class ProductInventoryThresholdFormViewListener
 
         return $this->doctrineHelper->getEntityReference(Product::class, $productId);
     }
-
 }

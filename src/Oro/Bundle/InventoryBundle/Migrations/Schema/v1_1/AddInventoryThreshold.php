@@ -34,6 +34,9 @@ class AddInventoryThreshold implements Installation, ExtendExtensionAwareInterfa
         $this->addInventoryThresholdFieldToCategory($schema);
     }
 
+    /**
+     * @param Schema $schema
+     */
     public function addInventoryThresholdFieldToProduct(Schema $schema)
     {
         $productTable = $schema->getTable('oro_product');
@@ -70,6 +73,9 @@ class AddInventoryThreshold implements Installation, ExtendExtensionAwareInterfa
         );
     }
 
+    /**
+     * @param Schema $schema
+     */
     public function addInventoryThresholdFieldToCategory(Schema $schema)
     {
         $productTable = $schema->getTable('oro_catalog_category');
