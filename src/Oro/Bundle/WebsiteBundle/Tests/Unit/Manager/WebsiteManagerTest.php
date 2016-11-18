@@ -110,4 +110,18 @@ class WebsiteManagerTest extends \PHPUnit_Framework_TestCase
 
         $this->assertNull($this->manager->getCurrentWebsite());
     }
+
+
+    public function testOnClear()
+    {
+        $website = new Website();
+
+        $propertyReflection = new \ReflectionProperty(get_class($this->manager), 'currentWebsite');
+        $propertyReflection->setAccessible(true);
+        $propertyReflection->setValue($this->manager, $website);
+
+        $this->assertAttributeNotEmpty('currentWebsite', $this->manager);
+        $this->manager->onClear();
+        $this->assertAttributeEmpty('currentWebsite', $this->manager);
+    }
 }

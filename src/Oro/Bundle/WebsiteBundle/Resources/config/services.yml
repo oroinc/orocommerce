@@ -8,6 +8,8 @@ services:
         arguments:
             - "@doctrine"
             - "@oro_frontend.request.frontend_helper"
+        tags:
+            - { name: doctrine.event_listener, event: onClear }
 
     oro_website.twig.website_extension:
         class: 'Oro\Bundle\WebsiteBundle\Twig\OroWebsiteExtension'
