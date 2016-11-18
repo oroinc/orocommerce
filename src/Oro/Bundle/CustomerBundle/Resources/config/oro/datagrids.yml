@@ -19,6 +19,10 @@ datagrids:
         acl_resource: oro_customer_account_view
         options:
             entityHint:        account
+        inline_editing:
+            enable: true
+            behaviour: enable_selected
+            entity_name: %oro_customer.entity.account.class%
         source:
             type:         orm
             query:
