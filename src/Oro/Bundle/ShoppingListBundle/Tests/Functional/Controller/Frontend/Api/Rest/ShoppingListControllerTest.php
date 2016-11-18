@@ -28,9 +28,9 @@ class ShoppingListControllerTest extends WebTestCase
 
     /**
      * @dataProvider ACLProvider
-     * @param $resource
-     * @param $user
-     * @param $status
+     * @param string $resource
+     * @param string $user
+     * @param int $status
      */
     public function testSetCurrent($resource, $user, $status)
     {
@@ -66,9 +66,9 @@ class ShoppingListControllerTest extends WebTestCase
 
     /**
      * @dataProvider ACLProvider
-     * @param $resource
-     * @param $user
-     * @param $status
+     * @param string $resource
+     * @param string $user
+     * @param int $status
      */
     public function testDelete($resource, $user, $status)
     {
