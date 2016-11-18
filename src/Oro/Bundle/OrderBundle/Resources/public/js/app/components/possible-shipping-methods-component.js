@@ -147,7 +147,7 @@ define(function(require) {
                                 }
                                 str = str + '<input type="radio" ' + checked + ' name="possibleShippingMethodType" value="' + type.identifier +
                                     '" data-shipping-method="' + method.identifier + '" data-shipping-price="' + type.price.value + '" data-choice="' + type.identifier + '" />';
-                                str = str + '<span>' + __(type.label) + ': <strong>' + type.price.currency + ' ' + type.price.value + '</strong></span>';
+                                str = str + '<span class="radio_button_label">' + __(type.label) + ': <strong>' + type.price.currency + ' ' + type.price.value + '</strong></span>';
                                 str = str + '</label></div>';
                             }
                         });
