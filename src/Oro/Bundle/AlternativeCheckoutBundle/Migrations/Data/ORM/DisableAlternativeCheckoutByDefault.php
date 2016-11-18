@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\CheckoutBundle\Migrations\Data\ORM;
+namespace Oro\Bundle\AlternativeCheckoutBundle\Migrations\Data\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -10,7 +10,7 @@ use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowDefinition;
 
-class LoadEmailTemplates extends AbstractFixture implements ContainerAwareInterface
+class DisableAlternativeCheckoutByDefault extends AbstractFixture implements ContainerAwareInterface
 {
     use ContainerAwareTrait;
 
