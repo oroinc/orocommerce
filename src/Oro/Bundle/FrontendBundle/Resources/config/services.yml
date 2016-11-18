@@ -156,6 +156,6 @@ services:
             - '@security.token_storage'
         calls:
             - [setFormDialogRoute, ['oro_frontend_action_widget_form']]
-            - [setFormPageRoute, ['oro_frontend_action_widget_form']] #replace here
+            - [setFormPageRoute, ['oro_frontend_action_widget_form']]
             - [setExecutionRoute, ['oro_frontend_action_operation_execute']]
             - [setWidgetRoute, ['oro_frontend_action_widget_buttons']]
