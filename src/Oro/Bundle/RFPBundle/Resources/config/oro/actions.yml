@@ -124,6 +124,7 @@ operations:
         order: 10
         button_options:
             icon: icon-file-text
+            template: OroActionBundle:Operation:ajax-button.html.twig
             data:
                 component_name: oro_rfp_quick_add_processor
             page_component_module: oroproduct/js/app/components/quick-add-form-button-component

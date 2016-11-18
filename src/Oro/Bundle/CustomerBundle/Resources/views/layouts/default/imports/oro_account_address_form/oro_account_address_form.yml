@@ -11,11 +11,11 @@ layout:
                 __form_errors:
                     blockType: form_errors
                     options:
-                        form: '=data["oro_account_frontend_account_address_form"].getAddressForm(data["entity"], data["account"]).getView()'
+                        form: '=data["oro_account_frontend_account_address_form"].getAddressFormView(data["entity"], data["account"])'
                 __form:
                     blockType: form
                     options:
-                        form: '=data["oro_account_frontend_account_address_form"].getAddressForm(data["entity"], data["account"])'
+                        form: '=data["oro_account_frontend_account_address_form"].getAddressFormView(data["entity"], data["account"])'
                 __form_actions:
                     blockType: container
                 __form_actions_update:

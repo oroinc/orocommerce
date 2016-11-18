@@ -2,9 +2,10 @@
 
 namespace Oro\Bundle\ProductBundle\Layout\DataProvider;
 
-use Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor;
-use Oro\Component\Layout\DataProvider\AbstractFormProvider;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 
+use Oro\Bundle\LayoutBundle\Layout\DataProvider\AbstractFormProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
 use Oro\Bundle\ProductBundle\Form\Type\QuickAddCopyPasteType;
@@ -19,47 +20,88 @@ class ProductFormProvider extends AbstractFormProvider
     const PRODUCT_QUICK_ADD_IMPORT_ROUTE_NAME       = 'oro_product_frontend_quick_add_import';
 
     /**
-     * @param null $data
+     * @param null  $data
      * @param array $options
      *
-     * @return FormAccessor
+     * @return FormView
+     */
+    public function getQuickAddFormView($data = null, array $options = [])
+    {
+        $options['action'] = $this->generateUrl(self::PRODUCT_QUICK_ADD_ROUTE_NAME);
+
+        return $this->getFormView(QuickAddType::NAME, $data, $options);
+    }
+
+    /**
+     * @param null  $data
+     * @param array $options
+     *
+     * @return FormInterface
      */
     public function getQuickAddForm($data = null, array $options = [])
     {
-        return $this->getFormAccessor(QuickAddType::NAME, self::PRODUCT_QUICK_ADD_ROUTE_NAME, $data, [], $options);
+        $options['action'] = $this->generateUrl(self::PRODUCT_QUICK_ADD_ROUTE_NAME);
+
+        return $this->getForm(QuickAddType::NAME, $data, $options);
     }
 
     /**
-     * @return FormAccessor
+     * @return FormView
+     */
+    public function getQuickAddCopyPasteFormView()
+    {
+        $options['action'] = $this->generateUrl(self::PRODUCT_QUICK_ADD_COPY_PASTE_ROUTE_NAME);
+
+        return $this->getFormView(QuickAddCopyPasteType::NAME, null, $options);
+    }
+
+    /**
+     * @return FormInterface
      */
     public function getQuickAddCopyPasteForm()
     {
-        return $this->getFormAccessor(QuickAddCopyPasteType::NAME, self::PRODUCT_QUICK_ADD_COPY_PASTE_ROUTE_NAME);
+        $options['action'] = $this->generateUrl(self::PRODUCT_QUICK_ADD_COPY_PASTE_ROUTE_NAME);
+
+        return $this->getForm(QuickAddCopyPasteType::NAME, null, $options);
     }
 
     /**
-     * @return FormAccessor
+     * @return FormView
+     */
+    public function getQuickAddImportFormView()
+    {
+        $options['action'] = $this->generateUrl(self::PRODUCT_QUICK_ADD_IMPORT_ROUTE_NAME);
+
+        return $this->getFormView(QuickAddImportFromFileType::NAME, null, $options);
+    }
+
+    /**
+     * @return FormInterface
      */
     public function getQuickAddImportForm()
     {
-        return $this->getFormAccessor(QuickAddImportFromFileType::NAME, self::PRODUCT_QUICK_ADD_IMPORT_ROUTE_NAME);
+        $options['action'] = $this->generateUrl(self::PRODUCT_QUICK_ADD_IMPORT_ROUTE_NAME);
+
+        return $this->getForm(QuickAddImportFromFileType::NAME, null, $options);
     }
 
     /**
      * @param Product|null $product
-     * @param string $instanceName
+     * @param string       $instanceName
      *
-     * @return FormAccessor
+     * @return FormView
      */
-    public function getLineItemForm(Product $product = null, $instanceName = '')
+    public function getLineItemFormView(Product $product = null, $instanceName = '')
     {
+        $cacheKeyOptions = ['instanceName' => $instanceName];
+
         $lineItem = new ProductLineItem(null);
+
         if ($product) {
             $lineItem->setProduct($product);
+            $cacheKeyOptions['id'] = $product->getId();
         }
 
-        // in this context parameters used for generating local cache
-        $parameters = $product ? ['id' => $product->getId()] : [];
-        return $this->getFormAccessor(FrontendLineItemType::NAME, null, $lineItem, $parameters, [], $instanceName);
+        return $this->getFormView(FrontendLineItemType::NAME, $lineItem, [], $cacheKeyOptions);
     }
 }

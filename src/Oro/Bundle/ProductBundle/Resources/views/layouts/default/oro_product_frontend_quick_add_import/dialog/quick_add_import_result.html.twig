@@ -8,6 +8,7 @@
 {% endblock %}
 
 {% block _quick_add_form_start_widget %}
+    {% do set_class_prefix_to_form(form, class_prefix) %}
     {% set pageComponentOptions = {
         'componentSelector': '#' ~ form.component.vars.id,
         'additionalSelector': '#' ~ form.additional.vars.id,

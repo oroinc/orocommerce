@@ -44,7 +44,7 @@ class CategoryRepositoryTest extends WebTestCase
         $this->assertInstanceOf('Oro\Bundle\CatalogBundle\Entity\Category', $root);
 
         $defaultTitle = $root->getDefaultTitle();
-        $this->assertEquals('Master catalog', $defaultTitle->getString());
+        $this->assertEquals('Products categories', $defaultTitle->getString());
     }
 
     public function testGetChildrenWithTitles()
