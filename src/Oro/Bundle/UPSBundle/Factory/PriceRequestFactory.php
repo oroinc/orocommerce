@@ -9,6 +9,7 @@ use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
 use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
 use Oro\Bundle\ShippingBundle\Model\Weight;
 use Oro\Bundle\ShippingBundle\Provider\MeasureUnitConversion;
+use Oro\Bundle\UPSBundle\Encryptor\UpsEncryptorInterface;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 use Oro\Bundle\UPSBundle\Model\Package;
@@ -29,19 +30,27 @@ class PriceRequestFactory
     /** @var UnitsMapper */
     protected $unitsMapper;
 
+    /** @var UpsEncryptorInterface */
+    protected $upsEncryptor;
+
     /**
+     * PriceRequestFactory constructor.
+     *
      * @param ManagerRegistry $registry
-     * @param MeasureUnitConversion $measureUnitConversion,
+     * @param MeasureUnitConversion $measureUnitConversion
      * @param UnitsMapper $unitsMapper
+     * @param UpsEncryptorInterface $upsEncryptor
      */
     public function __construct(
         ManagerRegistry $registry,
         MeasureUnitConversion $measureUnitConversion,
-        UnitsMapper $unitsMapper
+        UnitsMapper $unitsMapper,
+        UpsEncryptorInterface $upsEncryptor
     ) {
         $this->registry = $registry;
         $this->measureUnitConversion = $measureUnitConversion;
         $this->unitsMapper = $unitsMapper;
+        $this->upsEncryptor = $upsEncryptor;
     }
 
     /**
@@ -57,9 +66,11 @@ class PriceRequestFactory
         $requestOption,
         ShippingService $shippingService = null
     ) {
+        $decryptedPassword = $this->upsEncryptor->decrypt($transport->getApiPassword());
+
         $priceRequest = (new PriceRequest())
             ->setUsername($transport->getApiUser())
-            ->setPassword($transport->getApiPassword())
+            ->setPassword($decryptedPassword)
             ->setAccessLicenseNumber($transport->getApiKey())
             ->setRequestOption($requestOption)
             ->setShipperName($transport->getShippingAccountName())

@@ -51,6 +51,7 @@ services:
             - '@doctrine'
             - '@oro_shipping.provider.measure_units.conversion'
             - '@oro_ups.shipping_units_mapper'
+            - '@oro_ups.encryptor.main'
 
     oro_ups.shipping_units_mapper:
         class: 'Oro\Bundle\UPSBundle\Provider\UnitsMapper'
@@ -64,3 +65,11 @@ services:
             - '@oro_ups.shipping_method_provider.ups'
         tags:
             - { name: kernel.event_listener, event: oro_shipping_method.config_data, method: onGetConfigData }
+
+    oro_ups.encryptor.main:
+        parent: oro_ups.encryptor.oro_security_encoder_mcrypt
+
+    oro_ups.encryptor.oro_security_encoder_mcrypt:
+        class: Oro\Bundle\UPSBundle\Encryptor\OroMcryptUpsEncryptor
+        arguments:
+            - '@oro_security.encoder.mcrypt'

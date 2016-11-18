@@ -15,6 +15,7 @@ use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueColl
 use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
 use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
 use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
+use Oro\Bundle\UPSBundle\Encryptor\UpsEncryptorInterface;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 use Oro\Bundle\UPSBundle\Form\Type\UPSTransportSettingsType;
@@ -52,6 +53,11 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
      */
     protected $formType;
 
+    /**
+     * @var UpsEncryptorInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $upsEncryptor;
+
     protected function setUp()
     {
         /** @var ShippingOriginProvider|\PHPUnit_Framework_MockObject_MockObject $shippingOriginProvider */
@@ -68,10 +74,16 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->upsEncryptor = $this
+            ->getMockBuilder(UpsEncryptorInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->formType = new UPSTransportSettingsType(
             $this->transport,
             $this->shippingOriginProvider,
-            $this->doctrineHelper
+            $this->doctrineHelper,
+            $this->upsEncryptor
         );
 
         parent::setUp();
@@ -174,6 +186,14 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
         $isValid,
         UPSTransport $expectedData
     ) {
+        if (count($submittedData) > 0) {
+            $this->upsEncryptor
+                ->expects($this->once())
+                ->method('encrypt')
+                ->with($submittedData['apiPassword'])
+                ->willReturn($submittedData['apiPassword']);
+        }
+
         $shippingOrigin = new ShippingOrigin(
             [
                 'country' => 'US',

@@ -18,6 +18,7 @@ use Oro\Bundle\ShippingBundle\Entity\WeightUnit;
 use Oro\Bundle\ShippingBundle\Model\Dimensions;
 use Oro\Bundle\ShippingBundle\Model\Weight;
 use Oro\Bundle\ShippingBundle\Provider\MeasureUnitConversion;
+use Oro\Bundle\UPSBundle\Encryptor\UpsEncryptorInterface;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 use Oro\Bundle\UPSBundle\Factory\PriceRequestFactory;
@@ -60,6 +61,11 @@ class PriceRequestFactoryTest extends \PHPUnit_Framework_TestCase
      */
     protected $priceRequestFactory;
 
+    /**
+     * @var UpsEncryptorInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $upsEncryptor;
+
     protected function setUp()
     {
         /** @var ManagerRegistry | \PHPUnit_Framework_MockObject_MockObject $doctrine */
@@ -96,10 +102,16 @@ class PriceRequestFactoryTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()->getMock();
         $this->unitsMapper->expects(static::any())->method('getShippingUnitCode')->willReturn('lbs');
 
+        $this->upsEncryptor = $this
+            ->getMockBuilder(UpsEncryptorInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->priceRequestFactory = new PriceRequestFactory(
             $this->registry,
             $this->measureUnitConversion,
-            $this->unitsMapper
+            $this->unitsMapper,
+            $this->upsEncryptor
         );
     }
 
@@ -113,6 +125,12 @@ class PriceRequestFactoryTest extends \PHPUnit_Framework_TestCase
      */
     public function testCreate($lineItemCnt, $productWeight, $unitOfWeight, $expectedPackages)
     {
+        $this->upsEncryptor
+            ->expects($this->once())
+            ->method('decrypt')
+            ->with('some password')
+            ->willReturn('some password');
+
         $this->transport->setUnitOfWeight($unitOfWeight);
 
         $lineItems = [];
