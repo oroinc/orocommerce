@@ -63,6 +63,8 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
     {
         $this->addManageInventoryFieldToProduct($schema);
         $this->addManageInventoryFieldToCategory($schema);
+        $this->addInventoryThresholdFieldToProduct($schema);
+        $this->addInventoryThresholdFieldToCategory($schema);
 
         if (($schema->hasTable(self::OLD_WAREHOUSE_INVENTORY_TABLE) ||
                 $schema->hasTable(self::ORO_B2B_WAREHOUSE_INVENTORY_TABLE))
@@ -243,6 +245,88 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
         );
     }
 
+    public function addInventoryThresholdFieldToProduct(Schema $schema)
+    {
+        $productTable = $schema->getTable('oro_product');
+
+        if ($productTable->hasColumn('inventoryThreshold_id')) {
+            return;
+        }
+
+        $fallbackTable = $schema->getTable('oro_entity_fallback_value');
+        $this->extendExtension->addManyToOneRelation(
+            $schema,
+            $productTable,
+            'inventoryThreshold',
+            $fallbackTable,
+            'id',
+            [
+                'entity' => [
+                    'label' => 'oro.inventory.inventory_threshold.label',
+                ],
+                'extend' => [
+                    'owner' => ExtendScope::OWNER_CUSTOM,
+                    'cascade' => ['all'],
+                ],
+                'form' => [
+                    'is_enabled' => false,
+                ],
+                'view' => [
+                    'is_displayable' => false,
+                ],
+                'fallback' => [
+                    'fallbackList' => [
+                        CategoryFallbackProvider::FALLBACK_ID => ['fieldName' => 'inventoryThreshold'],
+                        SystemConfigFallbackProvider::FALLBACK_ID => [
+                            'configName' => 'oro_inventory.inventory_threshold'
+                        ],
+                    ],
+                ],
+            ]
+        );
+    }
+
+    public function addInventoryThresholdFieldToCategory(Schema $schema)
+    {
+        $productTable = $schema->getTable('oro_catalog_category');
+
+        if ($productTable->hasColumn('inventoryThreshold_id')) {
+            return;
+        }
+
+        $fallbackTable = $schema->getTable('oro_entity_fallback_value');
+        $this->extendExtension->addManyToOneRelation(
+            $schema,
+            $productTable,
+            'inventoryThreshold',
+            $fallbackTable,
+            'id',
+            [
+                'entity' => [
+                    'label' => 'oro.inventory.inventory_threshold.label',
+                ],
+                'extend' => [
+                    'owner' => ExtendScope::OWNER_CUSTOM,
+                    'cascade' => ['all'],
+                ],
+                'form' => [
+                    'is_enabled' => false,
+                ],
+                'view' => [
+                    'is_displayable' => false,
+                ],
+                'fallback' => [
+                    'fallbackList' => [
+                        ParentCategoryFallbackProvider::FALLBACK_ID => ['fieldName' => 'inventoryThreshold'],
+                        SystemConfigFallbackProvider::FALLBACK_ID => [
+                            'configName' => 'oro_inventory.inventory_threshold'
+                        ],
+                    ],
+                ],
+            ]
+        );
+    }
+
     /**
      * @param QueryBag $queries
      */
@@ -317,6 +401,6 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
      */
     public function getMigrationVersion()
     {
-        return 'v1_0';
+        return 'v1_1';
     }
 }

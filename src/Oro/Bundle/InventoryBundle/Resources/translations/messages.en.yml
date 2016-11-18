@@ -60,3 +60,5 @@ oro:
             choice:
                 'true': Yes
                 'false': No
+        inventory_threshold:
+            label: Inventory Threshold
