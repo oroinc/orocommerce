@@ -46,7 +46,7 @@ define(function(require) {
             mediator.on('entry-point:order:load', this.onOrderChange, this);
             mediator.on('entry-point:order:load:after', this.hideLoadingMask, this);
 
-            this.$el.closest('form').on('submit', _.bind(this.onSaveForm, this));
+            this.$el.closest('form').on('submit', this.onSaveForm, this);
         },
 
         /**
@@ -54,6 +54,7 @@ define(function(require) {
          */
         onSaveForm: function (e) {
             var form = $(e.target);
+            form.validate();
             if (form.valid() && this.orderHasChanged) {
                 this.showConfirmation();
                 return false;

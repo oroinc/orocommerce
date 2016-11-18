@@ -86,6 +86,8 @@ class OrderShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
         $context->setLineItems($lineItems->toArray());
         $context->setPaymentMethod($paymentMethod);
         $context->setSubtotal(Price::create($amount, $currency));
+        $context->setSourceEntity($order);
+        $context->setSourceEntityIdentifier($order->getId());
 
         $this->shippingContextFactory
             ->expects(static::once())

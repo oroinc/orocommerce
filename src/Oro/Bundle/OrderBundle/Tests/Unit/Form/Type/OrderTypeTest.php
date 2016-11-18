@@ -407,7 +407,7 @@ class OrderTypeTest extends TypeTestCase
             ->willReturn($accountGroupPaymentTerm);
         $builder->expects($this->atMost(18))->method('add')->willReturn($builder);
         $builder
-            ->expects($this->at(13))
+            ->expects($this->at(12))
             ->method('add')
             ->with('paymentTerm', PaymentTermSelectType::NAME, $options)
             ->willReturn($builder);

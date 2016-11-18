@@ -520,8 +520,7 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
             ->method('persist')
             ->with($this->isInstanceOf('Oro\Bundle\OrderBundle\Entity\Order'));
         $manager->expects($this->once())
-            ->method('flush')
-            ->with($this->isInstanceOf('Oro\Bundle\OrderBundle\Entity\Order'));
+            ->method('flush');
 
         $this->registry->expects($this->once())
             ->method('getManagerForClass')

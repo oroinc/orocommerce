@@ -65,7 +65,6 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         $this->assertPropertyCollection($order, 'lineItems', new OrderLineItem());
         $this->assertPropertyCollection($order, 'discounts', new OrderDiscount());
         $this->assertPropertyCollection($order, 'shippingTrackings', new OrderShippingTracking());
-
     }
 
     public function testToString()
