@@ -142,4 +142,3 @@ services:
         class: Oro\Bundle\WebCatalogBundle\Generator\SlugGenerator
         arguments:
             - '@oro_web_catalog.content_variant_type.registry'
-            - '@doctrine'

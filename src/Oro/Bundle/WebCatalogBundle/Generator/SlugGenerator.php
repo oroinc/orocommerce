@@ -3,7 +3,6 @@
 namespace Oro\Bundle\WebCatalogBundle\Generator;
 
 use Doctrine\Common\Collections\Collection;
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
@@ -12,24 +11,20 @@ use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 
 class SlugGenerator
 {
+    const SLUG_PROTOTYPE_VALUE = 'slugPrototypeValue';
+    const LOCALIZATION = 'localization';
+
     /**
      * @var ContentVariantTypeRegistry
      */
     protected $contentVariantTypeRegistry;
 
     /**
-     * @var ManagerRegistry
-     */
-    protected $registry;
-
-    /**
      * @param ContentVariantTypeRegistry $contentVariantTypeRegistry
-     * @param ManagerRegistry $registry
      */
-    public function __construct(ContentVariantTypeRegistry $contentVariantTypeRegistry, ManagerRegistry $registry)
+    public function __construct(ContentVariantTypeRegistry $contentVariantTypeRegistry)
     {
         $this->contentVariantTypeRegistry = $contentVariantTypeRegistry;
-        $this->registry = $registry;
     }
 
     /**
@@ -50,8 +45,6 @@ class SlugGenerator
      */
     protected function createSlugs(ContentNode $contentNode, $slugUrl)
     {
-        $em = $this->registry->getManagerForClass(Slug::class);
-
         $contentVariants = $contentNode->getContentVariants();
 
         foreach ($contentVariants as $contentVariant) {
@@ -69,10 +62,8 @@ class SlugGenerator
             $slug->setRouteName($routeData->getRoute());
             $slug->setRouteParameters($routeData->getRouteParameters());
 
-            $em->persist($slug);
+            $contentNode->addSlug($slug);
         }
-
-        $em->flush();
     }
 
     /**
@@ -88,15 +79,15 @@ class SlugGenerator
 
         $slugUrls = [];
         foreach ($changedSlugPrototypes as $localeId => $changedSlugPrototypeValue) {
-            $slugPrototype = $changedSlugPrototypeValue['slugPrototypeValue'];
-            $locale = $changedSlugPrototypeValue['localization'];
+            $slugPrototype = $changedSlugPrototypeValue[self::SLUG_PROTOTYPE_VALUE];
+            $locale = $changedSlugPrototypeValue[self::LOCALIZATION];
             
             if (empty($parentNodeSlugUrls)) {
-                $slugUrls[] = $slugPrototype;
+                $slugUrls[] = Slug::DELIMITER . $slugPrototype;
             } elseif (array_key_exists($localeId, $parentNodeSlugUrls)) {
-                $slugUrls[] = $parentNodeSlugUrls[$localeId] . '/' . $slugPrototype;
+                $slugUrls[] = $parentNodeSlugUrls[$localeId] . Slug::DELIMITER . $slugPrototype;
             } elseif ($fallbackSlug = $this->findFallbackSlug($locale, $parentNodeSlugUrls)) {
-                $slugUrls[] = $fallbackSlug . '/' . $slugPrototype;
+                $slugUrls[] = $fallbackSlug . Slug::DELIMITER . $slugPrototype;
             }
         }
 
@@ -132,8 +123,8 @@ class SlugGenerator
             if (!$slugPrototype->getFallback()) {
                 $localeId = $slugPrototype->getLocalization() ? $slugPrototype->getLocalization()->getId() : null;
                 $changedSlugPrototypes[$localeId] = [
-                    'slugPrototypeValue' => $slugPrototype->getString(),
-                    'localization' => $slugPrototype->getLocalization()
+                    self::SLUG_PROTOTYPE_VALUE => $slugPrototype->getString(),
+                    self::LOCALIZATION => $slugPrototype->getLocalization()
                 ];
             }
         }
