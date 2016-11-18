@@ -30,7 +30,7 @@ class VisibilityScopeProvider
      */
     public function getProductVisibilityScope(Website $website)
     {
-        return $this->scopeManager->find(ProductVisibility::getScopeType());
+        return $this->scopeManager->findOrCreate(ProductVisibility::getScopeType());
     }
 
     /**
@@ -40,7 +40,7 @@ class VisibilityScopeProvider
      */
     public function getAccountProductVisibilityScope(Account $account, Website $website)
     {
-        return $this->scopeManager->find(
+        return $this->scopeManager->findOrCreate(
             AccountProductVisibility::getScopeType(),
             [
                 ScopeAccountCriteriaProvider::ACCOUNT => $account
@@ -55,7 +55,7 @@ class VisibilityScopeProvider
      */
     public function getAccountGroupProductVisibilityScope(AccountGroup $accountGroup, Website $website)
     {
-        return $this->scopeManager->find(
+        return $this->scopeManager->findOrCreate(
             AccountGroupProductVisibility::getScopeType(),
             [
                 ScopeAccountGroupCriteriaProvider::FIELD_NAME => $accountGroup

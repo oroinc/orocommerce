@@ -45,7 +45,7 @@ class VisibilityScopeProviderTest extends \PHPUnit_Framework_TestCase
     {
         $this->scopeManager
             ->expects($this->once())
-            ->method('find')
+            ->method('findOrCreate')
             ->with(ProductVisibility::getScopeType(), null);
 
         $this->provider->getProductVisibilityScope($this->website);
@@ -56,7 +56,7 @@ class VisibilityScopeProviderTest extends \PHPUnit_Framework_TestCase
         $account = $this->getMock(Account::class);
         $this->scopeManager
             ->expects($this->once())
-            ->method('find')
+            ->method('findOrCreate')
             ->with(AccountProductVisibility::getScopeType(), [
                 ScopeAccountCriteriaProvider::ACCOUNT => $account
             ]);
@@ -69,7 +69,7 @@ class VisibilityScopeProviderTest extends \PHPUnit_Framework_TestCase
         $accountGroup = $this->getMock(AccountGroup::class);
         $this->scopeManager
             ->expects($this->once())
-            ->method('find')
+            ->method('findOrCreate')
             ->with(AccountGroupProductVisibility::getScopeType(), [
                 ScopeAccountGroupCriteriaProvider::FIELD_NAME => $accountGroup
             ]);

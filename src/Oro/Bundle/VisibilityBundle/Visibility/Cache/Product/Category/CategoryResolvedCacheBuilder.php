@@ -112,6 +112,7 @@ class CategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder implemen
     public function categoryPositionChanged(Category $category)
     {
         $this->positionChangeCategorySubtreeCacheBuilder->categoryPositionChanged($category);
+        $this->triggerCategoryReindexation($category);
     }
 
     /**

@@ -1,4 +1,4 @@
 {% block _category_breadcrumbs_widget %}
-    {% for parentCategory in parentCategories %}{{ parentCategory.titles|localized_value }} &gt;{% endfor %}
+    {% for parentCategory in parentCategories %}{{ parentCategory.titles|localized_value }} &gt; {% endfor %}
     {{ currentCategory.titles|localized_value }}
 {% endblock %}
