@@ -114,7 +114,7 @@ services:
         class: 'Oro\Bundle\ShoppingListBundle\Layout\DataProvider\AccountUserShoppingListsProvider'
         arguments:
             - "@oro_entity.doctrine_helper"
-            - "@oro_security.security_facade"
+            - "@security.token_storage"
             - "@request_stack"
             - "@oro_shopping_list.manager.shopping_list_total"
             - "@oro_security.acl_helper"
