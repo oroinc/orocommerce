@@ -51,7 +51,6 @@ class FrontendOwnerSelectType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'class' => 'OroCustomerBundle:Account',
                 'choice_label' => function ($owner) {
                     if ($owner instanceof AccountUser) {
                         return $owner->getFullName();
@@ -59,10 +58,13 @@ class FrontendOwnerSelectType extends AbstractType
 
                     return (string)$owner;
                 },
+                'class' => null,
             ]
         );
+
         $resolver->setDefined('targetObject');
         $resolver->setDefined('query_builder');
+        $resolver->setDefined('class');
 
         $resolver->setNormalizer('query_builder', function (Options $options) {
             $data = $options['targetObject'];
@@ -70,16 +72,10 @@ class FrontendOwnerSelectType extends AbstractType
             $permission = 'CREATE';
             $em = $this->registry->getManagerForClass($class);
             if ($em->contains($data)) {
-                $permission = 'UPDATE';
+                $permission = 'EDIT';
             }
-
             $config = $this->configProvider->getConfig($class);
-
-            $ownerType = $config->get('frontend_owner_type');
-            $ownerClass = AccountUser::class;
-            if ($ownerType == 'FRONTEND_ACCOUNT') {
-                $ownerClass = Account::class;
-            }
+            $ownerClass = $this->getOwnerClass($config);
 
             $criteria = new Criteria();
             $ownerFieldName = $config->get('frontend_owner_field_name');
@@ -97,6 +93,24 @@ class FrontendOwnerSelectType extends AbstractType
 
             return $qb;
         });
+
+        $resolver->setNormalizer('class', function (Options $options) {
+            $data = $options['targetObject'];
+            $class = ClassUtils::getClass($data);
+            $config = $this->configProvider->getConfig($class);
+            return $this->getOwnerClass($config);
+        });
+    }
+
+    /**
+     * @param $config
+     * @return mixed
+     */
+    private function getOwnerClass($config)
+    {
+        $ownerType = $config->get('frontend_owner_type');
+        $ownerClass = ($ownerType == 'FRONTEND_ACCOUNT') ? Account::class : AccountUser::class;
+        return $ownerClass;
     }
 
     /**

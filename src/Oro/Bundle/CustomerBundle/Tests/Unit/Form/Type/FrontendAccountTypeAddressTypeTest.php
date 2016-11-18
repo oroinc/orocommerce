@@ -83,6 +83,17 @@ class FrontendAccountTypedAddressTypeTest extends AccountTypedAddressTypeTest
         );
 
         $addressTypeStub = new AddressTypeStub();
+        $config = $this->getMockBuilder('Oro\Bundle\EntityConfigBundle\Config\Config')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $config->expects($this->any())
+            ->method('get')
+            ->will($this->returnValue('ACCOUNT_USER'));
+
+        $this->configProvider->expects($this->any())
+            ->method('getConfig')
+            ->will($this->returnValue($config));
 
         $criteria = new Criteria();
         $queryBuilder = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')

@@ -6,6 +6,8 @@ use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\CustomerBundle\Form\Type\FrontendOwnerSelectType;
+use Oro\Bundle\EntityConfigBundle\Config\Config;
+use Oro\Bundle\EntityConfigBundle\Config\Id\EntityConfigId;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
@@ -62,6 +64,18 @@ class FrontendOwnerSelectTypeTest extends FormIntegrationTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $config = $this->getMockBuilder('Oro\Bundle\EntityConfigBundle\Config\Config')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $config->expects($this->any())
+            ->method('get')
+            ->will($this->returnValue('FRONTEND_ACCOUNT'));
+
+        $this->configProvider->expects($this->any())
+            ->method('getConfig')
+            ->will($this->returnValue($config));
+
         $criteria = new Criteria();
         $queryBuilder = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
             ->disableOriginalConstructor()
@@ -109,7 +123,6 @@ class FrontendOwnerSelectTypeTest extends FormIntegrationTestCase
     public function assertDefaults(array $defaults)
     {
         $this->assertArrayHasKey('class', $defaults);
-//        $this->assertArrayHasKey('query_builder', $defaults);
     }
 
     /**
