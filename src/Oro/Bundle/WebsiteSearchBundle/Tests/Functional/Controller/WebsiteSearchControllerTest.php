@@ -7,6 +7,8 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class WebsiteSearchControllerTest extends WebTestCase
 {
+    const SEARCH_STRING = 'string-to-search';
+
     protected function setUp()
     {
         $this->initClient(
@@ -25,8 +27,7 @@ class WebsiteSearchControllerTest extends WebTestCase
 
         // search form processing
         $searchForm           = $searchFieldBlock->selectButton('oro_website_search_search_button')->form();
-        $searchString         = 'string-to-search';
-        $searchForm['search'] = $searchString;
+        $searchForm['search'] = static::SEARCH_STRING;
 
         // submit the form
         $this->client->followRedirects(true);
@@ -35,7 +36,7 @@ class WebsiteSearchControllerTest extends WebTestCase
         // assert product page has been rendered
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertProductPageWithFilters($searchString);
+        $this->assertProductPageWithFilters(static::SEARCH_STRING);
     }
 
     /**
