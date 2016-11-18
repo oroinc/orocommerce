@@ -22,7 +22,7 @@ services:
 
     oro_web_catalog.content_variant_type.registry:
         class: 'Oro\Bundle\WebCatalogBundle\ContentVariantType\ContentVariantTypeRegistry'
-        public: false
+        public: true
 
     oro_web_catalog.content_variant_type.system_page:
         class: Oro\Bundle\WebCatalogBundle\ContentVariantType\SystemPageContentVariantType
@@ -137,3 +137,9 @@ services:
         public: false
         arguments:
             - '@oro_web_catalog.content_variant_title_provider'
+
+    oro_web_catalog.generator.slug_generator:
+        class: Oro\Bundle\WebCatalogBundle\Generator\SlugGenerator
+        arguments:
+            - '@oro_web_catalog.content_variant_type.registry'
+            - '@doctrine'

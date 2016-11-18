@@ -8,8 +8,8 @@ use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 /**
  * @method LocalizedFallbackValue getTitle(Localization $localization = null)
  * @method LocalizedFallbackValue getDefaultTitle()
- * @method LocalizedFallbackValue getSlug(Localization $localization = null)
- * @method LocalizedFallbackValue getDefaultSlug()
+ * @method LocalizedFallbackValue getSlugPrototype(Localization $localization = null)
+ * @method LocalizedFallbackValue getDefaultSlugPrototype()
  * @method setDefaultTitle($title)
  * @method setDefaultSlug($slug)
  */

@@ -6,6 +6,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 
 /**
@@ -96,6 +98,21 @@ class Slug
         $this->scopes = new ArrayCollection();
     }
 
+    /**
+     * @var Localization|null
+     *
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\LocaleBundle\Entity\Localization")
+     * @ORM\JoinColumn(name="localization_id", referencedColumnName="id", onDelete="CASCADE")
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "identity"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $localization;
+    
     /**
      * @return integer
      */
@@ -253,6 +270,25 @@ class Slug
         if ($this->redirects->contains($redirect)) {
             $this->redirects->removeElement($redirect);
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Localization|null
+     */
+    public function getLocalization()
+    {
+        return $this->localization;
+    }
+
+    /**
+     * @param Localization|null $localization
+     * @return $this
+     */
+    public function setLocalization(Localization $localization = null)
+    {
+        $this->localization = $localization;
 
         return $this;
     }
