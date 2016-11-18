@@ -93,9 +93,11 @@ class QuickAddHandler
         $form = $this->productFormProvider->getQuickAddForm([], $options);
         $form->submit($request);
 
+
+        /** @var Session $session */
+        $session = $request->getSession();
+
         if (!$processor || !$processor->isAllowed()) {
-            /** @var Session $session */
-            $session = $request->getSession();
             $session->getFlashBag()->add(
                 'error',
                 $this->translator->trans('oro.product.frontend.quick_add.messages.component_not_accessible')
@@ -130,6 +132,13 @@ class QuickAddHandler
             } elseif (!$response) {
                 $response = new RedirectResponse($this->router->generate($successDefaultRoute));
             }
+        //ToDo: provide validation here!
+        } else {
+            $session->getFlashBag()->add(
+                'error',
+                'Form is non valid!!!'
+            );
+
         }
 
         return $response;
