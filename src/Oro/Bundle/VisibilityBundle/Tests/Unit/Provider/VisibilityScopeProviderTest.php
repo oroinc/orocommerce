@@ -46,7 +46,7 @@ class VisibilityScopeProviderTest extends \PHPUnit_Framework_TestCase
         $this->scopeManager
             ->expects($this->once())
             ->method('find')
-            ->with(ProductVisibility::getScopeType());
+            ->with(ProductVisibility::getScopeType(), null);
 
         $this->provider->getProductVisibilityScope($this->website);
     }

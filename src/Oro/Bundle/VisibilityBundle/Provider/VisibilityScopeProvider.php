@@ -17,7 +17,7 @@ class VisibilityScopeProvider
     /**
      * @var ScopeManager
      */
-    private $scopeManager;
+    protected $scopeManager;
 
     public function __construct(ScopeManager $scopeManager)
     {
