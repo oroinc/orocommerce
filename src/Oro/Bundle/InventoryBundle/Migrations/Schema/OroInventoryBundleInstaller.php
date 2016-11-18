@@ -245,6 +245,9 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
         );
     }
 
+    /**
+     * @param Schema $schema
+     */
     public function addInventoryThresholdFieldToProduct(Schema $schema)
     {
         $productTable = $schema->getTable('oro_product');
@@ -286,18 +289,21 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
         );
     }
 
+    /**
+     * @param Schema $schema
+     */
     public function addInventoryThresholdFieldToCategory(Schema $schema)
     {
-        $productTable = $schema->getTable('oro_catalog_category');
+        $categoryTable = $schema->getTable('oro_catalog_category');
 
-        if ($productTable->hasColumn('inventoryThreshold_id')) {
+        if ($categoryTable->hasColumn('inventoryThreshold_id')) {
             return;
         }
 
         $fallbackTable = $schema->getTable('oro_entity_fallback_value');
         $this->extendExtension->addManyToOneRelation(
             $schema,
-            $productTable,
+            $categoryTable,
             'inventoryThreshold',
             $fallbackTable,
             'id',
@@ -401,6 +407,6 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
      */
     public function getMigrationVersion()
     {
-        return 'v1_1';
+        return 'v1_0';
     }
 }
