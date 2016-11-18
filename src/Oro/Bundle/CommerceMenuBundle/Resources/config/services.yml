@@ -25,4 +25,4 @@ services:
     oro_commerce_menu.scope_criteria_provider.account_group:
         parent: oro_customer.account_group_scope_criteria_provider
         tags:
-            - {name: oro_scope.provider, scopeType: menu_frontend_visibility, priority: 30}
+            - {name: oro_scope.provider, scopeType: menu_frontend_visibility, priority: 20}
