@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Driver;
 
+use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityScopedData;
 use Symfony\Component\HttpFoundation\Request;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
@@ -44,7 +45,7 @@ abstract class AbstractAccountPartialUpdateDriverTest extends WebTestCase
         $this->getContainer()->get('request_stack')->push(Request::create(''));
 
         if (!$this->isTestSkipped()) {
-            $this->loadFixtures([LoadProductVisibilityData::class]);
+            $this->loadFixtures([LoadProductVisibilityScopedData::class]);
 
             $anonymousGroupId = $this->getContainer()
                 ->get('oro_config.global')

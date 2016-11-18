@@ -15,16 +15,24 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Yaml\Yaml;
 
-class LoadProductVisibilityData extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
+class LoadProductVisibilityScopedData extends AbstractFixture implements
+    DependentFixtureInterface,
+    ContainerAwareInterface
 {
     /**
      * @var ContainerInterface
      */
     protected $container;
+
+    /**
+     * @var Website
+     */
+    protected $defaultWebsite;
 
     /**
      * {@inheritdoc}
@@ -51,6 +59,11 @@ class LoadProductVisibilityData extends AbstractFixture implements DependentFixt
      */
     public function load(ObjectManager $manager)
     {
+        $this->defaultWebsite = $this
+            ->container
+            ->get('oro_website.manager')
+            ->getDefaultWebsite();
+
         // set default fallback to categories
         $configVisibilities = $manager->getRepository('OroVisibilityBundle:Visibility\ProductVisibility')
             ->findBy(['visibility' => ProductVisibility::CONFIG]);
@@ -79,8 +92,8 @@ class LoadProductVisibilityData extends AbstractFixture implements DependentFixt
         $productVisibility->setProduct($product)
             ->setVisibility($data['all']['visibility']);
 
-        $scope = $this->container->get('oro_scope.scope_manager')
-            ->findOrCreate(ProductVisibility::VISIBILITY_TYPE);
+        $scope = $this->container->get('oro_visibility.provider.visibility_scope_provider')
+            ->getProductVisibilityScope($this->defaultWebsite);
         $productVisibility->setScope($scope);
 
         $manager->persist($productVisibility);
@@ -130,11 +143,8 @@ class LoadProductVisibilityData extends AbstractFixture implements DependentFixt
             $accountGroupProductVisibility->setProduct($product)
                 ->setVisibility($accountGroupData['visibility']);
 
-            $scopeManager = $this->container->get('oro_scope.scope_manager');
-            $scope = $scopeManager->findOrCreate(
-                AccountGroupProductVisibility::VISIBILITY_TYPE,
-                ['accountGroup' => $accountGroup]
-            );
+            $scope = $this->container->get('oro_visibility.provider.visibility_scope_provider')
+                ->getAccountGroupProductVisibilityScope($accountGroup, $this->defaultWebsite);
 
             $accountGroupProductVisibility->setScope($scope);
 
@@ -162,8 +172,8 @@ class LoadProductVisibilityData extends AbstractFixture implements DependentFixt
             $accountProductVisibility->setProduct($product)
                 ->setVisibility($accountData['visibility']);
 
-            $scopeManager = $this->container->get('oro_scope.scope_manager');
-            $scope = $scopeManager->findOrCreate('account_product_visibility', ['account' => $account]);
+            $scope = $this->container->get('oro_visibility.provider.visibility_scope_provider')
+                ->getAccountProductVisibilityScope($account, $this->defaultWebsite);
             $accountProductVisibility->setScope($scope);
 
             $manager->persist($accountProductVisibility);
