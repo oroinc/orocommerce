@@ -7,10 +7,7 @@ use Oro\Bundle\InstallerBundle\CacheWarmer\NamespaceMigrationProviderInterface;
 class NamespaceMigrationFixProductProvider implements NamespaceMigrationProviderInterface
 {
     /** @var string[] */
-    protected $additionConfig
-        = [
-            'OroductBundle'               => 'OroProductBundle',
-        ];
+    protected $additionConfig = ['OroductBundle' => 'OroProductBundle',];
 
     /**
      * (@inheritdoc}

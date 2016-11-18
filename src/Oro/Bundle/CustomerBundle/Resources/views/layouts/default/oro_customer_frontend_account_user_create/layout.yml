@@ -4,13 +4,11 @@ layout:
             id: oro_account_user_form
             root: page_content
     actions:
-        - '@appendOption':
+        - '@setOption':
             id: title
-            optionName: value
+            optionName: params
             optionValue:
-                - 'oro.customer.frontend.title.account_user.create'
-                - 'oro.customer.frontend.account_user.entity_plural_label'
-
+                '%entityName%': ''
         - '@setOption':
             id: page_title
             optionName: text

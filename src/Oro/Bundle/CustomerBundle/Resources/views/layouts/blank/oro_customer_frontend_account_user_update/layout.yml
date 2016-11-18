@@ -3,11 +3,4 @@ layout:
         -
             id: oro_customer_menu
             root: page_sidebar
-    actions:
-        - '@appendOption':
-            id: title
-            optionName: value
-            optionValue:
-                - '=data["entity"].getFullName()'
-                - 'oro.customer.frontend.title.account_user.edit'
-                - 'oro.customer.frontend.account_user.entity_plural_label'
+    actions: []

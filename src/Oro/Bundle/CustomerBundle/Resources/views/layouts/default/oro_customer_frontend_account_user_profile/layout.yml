@@ -4,13 +4,6 @@ layout:
             id: oro_account_user_view
             root: page_content
     actions:
-        - '@appendOption':
-            id: title
-            optionName: value
-            optionValue:
-                - 'oro.customer.menu.account_user.label'
-                - 'oro.customer.frontend.title.account_user.profile'
-
         - '@setOption':
             id: page_title
             optionName: text

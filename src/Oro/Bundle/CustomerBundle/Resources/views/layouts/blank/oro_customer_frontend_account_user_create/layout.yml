@@ -3,10 +3,4 @@ layout:
         -
             id: oro_customer_menu
             root: page_sidebar
-    actions:
-        - '@appendOption':
-            id: title
-            optionName: value
-            optionValue:
-                - 'oro.customer.frontend.title.account_user.create'
-                - 'oro.customer.frontend.account_user.entity_plural_label'
+    actions: []

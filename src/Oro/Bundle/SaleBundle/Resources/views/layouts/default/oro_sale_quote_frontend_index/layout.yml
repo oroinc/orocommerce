@@ -6,12 +6,6 @@ layout:
             namespace: quotes
 
     actions:
-        - '@appendOption':
-            id: title
-            optionName: value
-            optionValue:
-                - 'oro.customer.menu.account_user.label'
-                - 'oro.frontend.sale.quote.entity_plural_label'
         - '@setOption':
             id: page_title
             optionName: text

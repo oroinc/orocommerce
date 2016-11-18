@@ -91,6 +91,7 @@ operations:
         order: 20
         button_options:
             icon: icon-briefcase
+            template: OroActionBundle:Operation:ajax-button.html.twig
             data:
                 component_name: oro_shopping_list_to_checkout_quick_add_processor
             page_component_module: oroproduct/js/app/components/quick-add-form-button-component

@@ -9,7 +9,16 @@
 
 {% block _quick_access_menu_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " quick-access"
+        '~class': " quick-access",
+        'data-dom-relocation': true,
+        'data-dom-relocation-options': {
+            responsive: [
+                {
+                    breakpoint: 1099,
+                    moveTo: '[data-main-menu-axtra-container]'
+                }
+            ]
+        }
     }) %}
     {% set iconsClasses = ['cf-assignment', 'cf-local_offer', 'cf-flash'] %}
     {% set colorClasses = ['badge_yellow', 'badge_orange-light', 'badge_orange'] %}
@@ -18,15 +27,17 @@
         <ul class="quick-access__list">
         {% set i = 0 %}
         {% for children in item.children %}
-            <li class="quick-access__item">
-                <a class="quick-access__link" href="{{ children.uri }}">
-                    <span class="badge badge_circled-corners {{ colorClasses[i] }} quick-access__badge">
-                        <i class="{{ iconsClasses[i] }}"></i>
-                    </span>
-                    <span class="quick-access__text">{{ children.label }}</span>
-                </a>
-            </li>
-            {% set i = i+1 %}
+            {% if feature_resource_enabled(children.uri, "routes") %}
+                <li class="quick-access__item">
+                    <a class="quick-access__link" href="{{ children.uri }}">
+                        <span class="badge badge_circled-corners {{ colorClasses[i] }} quick-access__badge">
+                            <i class="{{ iconsClasses[i] }}"></i>
+                        </span>
+                        <span class="quick-access__text">{{ children.label }}</span>
+                    </a>
+                </li>
+                {% set i = i+1 %}
+            {% endif %}
         {% endfor %}
         </ul>
     </div>

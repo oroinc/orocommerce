@@ -52,6 +52,36 @@
 }
 
 @include breakpoint('tablet') {
+    .shown-on-desktop {
+        display: none !important;
+    }
+}
+
+@include breakpoint('desktop') {
+    %hidden-on-desktop {
+        &.hidden-on-desktop {
+            display: none !important;
+        }
+    }
+
+    .header-row {
+        &__container {
+            @extend %hidden-on-desktop;
+        }
+
+        &__trigger {
+            @extend %hidden-on-desktop;
+
+            padding: 0;
+        }
+
+        &__toggle {
+            @extend %hidden-on-desktop;
+        }
+    }
+}
+
+@include breakpoint('tablet') {
     .header-row {
         &__container {
             position: static;

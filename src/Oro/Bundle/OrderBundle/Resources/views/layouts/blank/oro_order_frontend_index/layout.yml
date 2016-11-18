@@ -3,10 +3,4 @@ layout:
         -
             id: oro_customer_menu
             root: page_sidebar
-    actions:
-        - '@appendOption':
-            id: title
-            optionName: value
-            optionValue:
-                - 'oro.customer.menu.account_user.label'
-                - 'oro.order.order_history.label'
+    actions: []

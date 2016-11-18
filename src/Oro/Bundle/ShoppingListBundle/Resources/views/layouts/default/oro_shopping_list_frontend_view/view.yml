@@ -2,10 +2,11 @@ layout:
     actions:
         - '@setBlockTheme':
             themes: 'view.html.twig'
-        - '@appendOption':
+        - '@setOption':
             id: title
-            optionName: value
-            optionValue: 'oro.shoppinglist.entity_plural_label'
+            optionName: params
+            optionValue:
+                '%label%': '=data["title"]'
         - '@addTree':
             items:
                 shopping_list_view_container:

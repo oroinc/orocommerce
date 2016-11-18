@@ -4,10 +4,4 @@ layout:
             id: oro_customer_menu
             root: page_sidebar
 
-    actions:
-        - '@appendOption':
-            id: title
-            optionName: value
-            optionValue:
-                - 'oro.customer.menu.account_user.label'
-                - 'oro.frontend.rfp.request.entity_plural_label'
+    actions: []

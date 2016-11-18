@@ -49,6 +49,8 @@ class ShippingContextProviderFactory
     {
         $shippingContext = $this->shippingContextFactory->create();
 
+        $shippingContext->setSourceEntity($checkout);
+        $shippingContext->setSourceEntityIdentifier($checkout->getId());
         $shippingContext->setShippingAddress($checkout->getShippingAddress());
         $shippingContext->setBillingAddress($checkout->getBillingAddress());
         $shippingContext->setCurrency($checkout->getCurrency());

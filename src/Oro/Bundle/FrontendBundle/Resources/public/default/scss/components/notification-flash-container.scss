@@ -1,6 +1,7 @@
 // @theme: default
 
 .notification-flash-container {
+    width: 100%;
     margin: $notification-flash-container-offset;
 
     &:empty {

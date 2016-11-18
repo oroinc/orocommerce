@@ -1,7 +1,7 @@
 {% extends 'form_div_layout.html.twig' %}
 
 {%- block form_label -%}
-    {% set label_attr = layout_attr_defaults(attr, {
+    {% set label_attr = layout_attr_defaults(label_attr, {
         '~class': ' label label--full'
     }) %}
 
@@ -26,11 +26,9 @@
 
 {%- block form_row -%}
     {% set class_prefix = form.vars.class_prefix|default(class_prefix|default('')) %}
-    {% set attr = attr|merge({
-        class: [
-            attr.class|default(''),
-            "form-field-" ~ form.vars.name,
-        ]|join(' ')
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " form-field-" ~ form.vars.name,
+        placeholder: label|default('')
     }) %}
 
     <fieldset class="{{ class_prefix }}__form__row">
