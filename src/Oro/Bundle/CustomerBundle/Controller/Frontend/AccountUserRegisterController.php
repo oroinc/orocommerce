@@ -18,7 +18,7 @@ class AccountUserRegisterController extends Controller
     /**
      * Create account user form
      *
-     * @Route("/register", name="oro_customer_frontend_account_user_register")
+     * @Route("/registration", name="oro_customer_frontend_account_user_register")
      * @Layout()
      * @param Request $request
      * @return array|RedirectResponse

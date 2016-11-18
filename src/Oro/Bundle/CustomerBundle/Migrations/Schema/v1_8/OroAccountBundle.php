@@ -59,16 +59,6 @@ class OroAccountBundle implements Migration, RenameExtensionAwareInterface
             'account_user_741cdecd',
             RelationType::MANY_TO_MANY
         ));
-
-        // calendar event to account user association
-        $extension->renameTable($schema, $queries, 'oro_rel_46a29d19a6adb604aeb863', 'oro_rel_46a29d19a6adb604264ef1');
-        $queries->addQuery(new UpdateExtendRelationQuery(
-            'Oro\Bundle\CalendarBundle\Entity\CalendarEvent',
-            'Oro\Bundle\CustomerBundle\Entity\AccountUser',
-            'account_user_795f990e',
-            'account_user_741cdecd',
-            RelationType::MANY_TO_MANY
-        ));
     }
 
     /**
@@ -137,15 +127,6 @@ class OroAccountBundle implements Migration, RenameExtensionAwareInterface
         // email to account user association
         $queries->addQuery(new UpdateExtendRelationQuery(
             'Oro\Bundle\EmailBundle\Entity\Email',
-            'Oro\Bundle\CustomerBundle\Entity\AccountUser',
-            'account_user_489123cf',
-            'account_user_741cdecd',
-            RelationType::MANY_TO_MANY
-        ));
-
-        // calendar event to account user association
-        $queries->addQuery(new UpdateExtendRelationQuery(
-            'Oro\Bundle\CalendarBundle\Entity\CalendarEvent',
             'Oro\Bundle\CustomerBundle\Entity\AccountUser',
             'account_user_489123cf',
             'account_user_741cdecd',
