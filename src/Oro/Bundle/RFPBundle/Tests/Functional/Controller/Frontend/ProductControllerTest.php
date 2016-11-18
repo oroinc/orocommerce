@@ -26,6 +26,9 @@ class ProductControllerTest extends WebTestCase
     /** @var ConfigManager $configManager */
     protected $configManager;
 
+    /** @var ConfigManager $globalConfigManager */
+    protected $globalConfigManager;
+
     protected function setUp()
     {
         $this->initClient(
@@ -40,6 +43,11 @@ class ProductControllerTest extends WebTestCase
         $this->configManager = $this->getContainer()->get('oro_config.manager');
         $this->configManager->set(self::RFP_PRODUCT_VISIBILITY_KEY, [Product::INVENTORY_STATUS_OUT_OF_STOCK]);
         $this->configManager->flush();
+
+
+        $this->globalConfigManager = $this->getContainer()->get('oro_config.global');
+        $this->globalConfigManager->set(self::RFP_PRODUCT_VISIBILITY_KEY, [Product::INVENTORY_STATUS_OUT_OF_STOCK]);
+        $this->globalConfigManager->flush();
     }
 
     public function testViewProductWithRequestQuoteAvailable()
@@ -56,9 +64,9 @@ class ProductControllerTest extends WebTestCase
         $this->configManager->set(self::RFP_PRODUCT_VISIBILITY_KEY, [Product::INVENTORY_STATUS_IN_STOCK]);
         $this->configManager->flush();
 
-        $this->configManager = $this->getContainer()->get('oro_config.global');
-        $this->configManager->set(self::RFP_PRODUCT_VISIBILITY_KEY, [Product::INVENTORY_STATUS_IN_STOCK]);
-        $this->configManager->flush();
+        $this->globalConfigManager = $this->getContainer()->get('oro_config.global');
+        $this->globalConfigManager->set(self::RFP_PRODUCT_VISIBILITY_KEY, [Product::INVENTORY_STATUS_IN_STOCK]);
+        $this->globalConfigManager->flush();
 
         $this->assertNotContains(
             $this->translator->trans('oro.frontend.product.view.request_a_quote'),
@@ -91,5 +99,8 @@ class ProductControllerTest extends WebTestCase
 
         $this->configManager->reset(self::RFP_PRODUCT_VISIBILITY_KEY);
         $this->configManager->flush();
+
+        $this->globalConfigManager->reset(self::RFP_PRODUCT_VISIBILITY_KEY);
+        $this->globalConfigManager->flush();
     }
 }
