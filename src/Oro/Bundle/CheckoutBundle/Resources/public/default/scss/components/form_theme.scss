@@ -149,6 +149,11 @@
     border-radius: 5px;
 
     background: get-color('additional', 'ultra');
+
+    .form-field-CVV2 {
+      width: 72px;
+      margin-right: 5px;
+    }
   }
 
   &__payment-methods-authorized-card {
