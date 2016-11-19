@@ -3,7 +3,7 @@
 
     display: flex;
 
-    position: $main-menu-position;
+    flex-grow: 1;
 
     &__item {
         flex-grow: 1;

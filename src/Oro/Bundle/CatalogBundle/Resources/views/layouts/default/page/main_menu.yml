@@ -9,14 +9,3 @@ layout:
             options:
                 text: '=data["category"].getRootCategory()'
             prepend: true
-
-        - '@add':
-            id: categories_main_menu_list
-            parentId: main_menu_container
-            siblingId: main_menu_list
-            prepend: true
-            blockType: container
-
-        - '@move':
-            id: categories_main_menu
-            parentId: categories_main_menu_list

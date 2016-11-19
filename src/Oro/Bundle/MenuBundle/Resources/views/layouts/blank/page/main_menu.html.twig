@@ -1,3 +1,13 @@
+{% block _main_menu_container_widget %}
+    {% set attr =  layout_attr_defaults(attr, {
+        '~class': ' main-menu-outer',
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
 {% block _header_row_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' header-row'

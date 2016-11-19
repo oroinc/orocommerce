@@ -4,6 +4,9 @@ layout:
             themes: 'main_menu.html.twig'
         - '@addTree':
             items:
+                categories_main_menu_list:
+                    blockType: container
+                    prepend: true
                 categories_main_menu:
                     blockType: category_list
                     siblingId: ~
@@ -23,9 +26,10 @@ layout:
                     blockType: block
             tree:
                 main_menu_container:
-                    categories_main_menu:
-                        categories_main_menu_first_level_item:
-                            categories_main_menu_second_level:
-                                categories_main_menu_second_level_item:
-                                    categories_main_menu_third_level:
-                                        categories_main_menu_third_level_item: ~
+                    categories_main_menu_list:
+                        categories_main_menu:
+                            categories_main_menu_first_level_item:
+                                categories_main_menu_second_level:
+                                    categories_main_menu_second_level_item:
+                                        categories_main_menu_third_level:
+                                            categories_main_menu_third_level_item: ~

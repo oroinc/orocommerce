@@ -9,6 +9,10 @@
         ~ .header-row-overlay {
             display: none;
         }
+
+        ~ .header-row__toggle {
+            display: block;
+        }
     }
 }
 

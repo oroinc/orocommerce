@@ -1,3 +1,14 @@
+{% block _categories_main_menu_list_widget %}
+    {% set attr =  layout_attr_defaults(attr, {
+        '~class': ' main-menu'
+    }) %}
+
+    <ul {{ block('block_attributes') }} data-collapse-container>
+        {{ block_widget(block) }}
+    </ul>
+{% endblock %}
+
+
 {% block _categories_main_menu_widget %}
     {% if (max_size is not null ) %}
         {% set categories = categories[0:max_size] %}
