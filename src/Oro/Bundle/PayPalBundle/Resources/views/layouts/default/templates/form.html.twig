@@ -10,9 +10,10 @@
         '~class': ' input input--full'
     }) %}
 
-    {%- set type = type|default('password') -%}
-    <input type="{{ type }}" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
-
+    <div class="field-cvv-wrapper">
+        {%- set type = type|default('password') -%}
+        <input type="{{ type }}" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
+    </div>
     <span class="ttip__wrap">
         <a href="javascript: void(0);" class="ttip__toggle">{{ 'oro.paypal.methods.whats_this'|trans }}</a>
         <span class="ttip">
