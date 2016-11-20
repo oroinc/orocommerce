@@ -9,7 +9,7 @@ class OroMcryptUpsEncryptor implements UpsEncryptorInterface
     /**
      * @var Mcrypt
      */
-    private $oroMcryptUpsEncryptor;
+    private $oroSecurityEncoderMcrypt;
 
     /**
      * OroMcryptUpsEncryptor constructor.
@@ -18,7 +18,7 @@ class OroMcryptUpsEncryptor implements UpsEncryptorInterface
      */
     public function __construct(Mcrypt $oroMcryptUpsEncryptor)
     {
-        $this->oroMcryptUpsEncryptor = $oroMcryptUpsEncryptor;
+        $this->oroSecurityEncoderMcrypt = $oroMcryptUpsEncryptor;
     }
 
     /**
@@ -26,7 +26,7 @@ class OroMcryptUpsEncryptor implements UpsEncryptorInterface
      */
     public function encrypt($data)
     {
-        return $this->oroMcryptUpsEncryptor->encryptData($data);
+        return $this->oroSecurityEncoderMcrypt->encryptData($data);
     }
 
     /**
@@ -34,6 +34,6 @@ class OroMcryptUpsEncryptor implements UpsEncryptorInterface
      */
     public function decrypt($data)
     {
-        return $this->oroMcryptUpsEncryptor->decryptData($data);
+        return $this->oroSecurityEncoderMcrypt->decryptData($data);
     }
 }
