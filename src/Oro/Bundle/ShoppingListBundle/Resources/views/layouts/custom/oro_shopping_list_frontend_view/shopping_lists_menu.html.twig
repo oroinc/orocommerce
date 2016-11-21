@@ -2,9 +2,11 @@
 
 {% block _shopping_list_view_tabs_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        'data-page-component-module': 'oroshoppinglist/js/app/components/shoppinglist-view-component',
+        'data-page-component-module': 'oroui/js/app/components/view-component',
         'data-page-component-options': {
-            eventChannelId: 'shopping-list-title'
+            view: 'oroui/js/app/views/layout-subtree-view',
+            blockId: id,
+            reloadEvents: ['shopping-list:created', 'shopping-list:updated', 'frontend:item:delete']
         },
         '~class': "shopping-list-tabs"
     }) %}
@@ -50,10 +52,6 @@
 {% block _shopping_list_view_more_widget %}
     {% if shoppingLists|length > 6 %}
     {% set attr = layout_attr_defaults(attr, {
-        'data-page-component-module': 'oroui/js/app/components/view-component',
-        'data-page-component-options': {
-            view: 'oroshoppinglist/js/app/views/shoppinglist-sidebar-view'
-        },
         '~class': ' shopping-list-dropdown'
     }) %}
 

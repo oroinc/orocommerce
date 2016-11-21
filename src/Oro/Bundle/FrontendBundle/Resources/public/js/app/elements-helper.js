@@ -8,6 +8,8 @@ define(function(require) {
     var _ = require('underscore');
 
     return {
+        elementsInitialized: false,
+
         $elements: null,
 
         elements: {},
@@ -21,6 +23,7 @@ define(function(require) {
         elementEventNamespace: '.elementEvent',
 
         initializeElements: function(options) {
+            this.elementsInitialized = true;
             $.extend(true, this, _.pick(options, ['elements', 'modelElements']));
             this.$elements = this.$elements || {};
             this.elementsEvents = $.extend({}, this.elementsEvents || {});
@@ -31,6 +34,9 @@ define(function(require) {
         },
 
         disposeElements: function() {
+            if (!this.elementsInitialized) {
+                return;
+            }
             this.undelegateElementsEvents();
 
             var props = ['$elements', 'elements', 'elementsEvents', 'modelElements', 'modelEvents'];
@@ -67,6 +73,9 @@ define(function(require) {
         },
 
         delegateElementsEvents: function() {
+            if (!this.elementsInitialized) {
+                return;
+            }
             _.each(this.elementsEvents, function(eventCallback, eventKey) {
                 if (!eventCallback) {
                     return;
@@ -107,12 +116,19 @@ define(function(require) {
         },
 
         undelegateElementsEvents: function() {
-            var elementEventNamespace = this.elementEventNamespace + this.cid;
-            _.each(this.$elements, function($element) {
-                $element.off(elementEventNamespace);
-            });
+            if (!this.elementsInitialized) {
+                return;
+            }
+            if (this.$elements) {
+                var elementEventNamespace = this.elementEventNamespace + this.cid;
+                _.each(this.$elements, function ($element) {
+                    $element.off(elementEventNamespace);
+                });
+            }
 
-            this.model.off(null, null, this);//off all events with this context.
+            if (this.model) {
+                this.model.off(null, null, this);//off all events with this context.
+            }
         },
 
         getElement: function(key, $default) {

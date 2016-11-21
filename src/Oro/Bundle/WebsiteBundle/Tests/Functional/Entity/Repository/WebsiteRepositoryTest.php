@@ -78,6 +78,7 @@ class WebsiteRepositoryTest extends WebTestCase
 
     /**
      * @dataProvider getAllWebsitesProvider
+     * @param array $websites
      */
     public function testGetWebsiteIdentifiers(array $websites)
     {

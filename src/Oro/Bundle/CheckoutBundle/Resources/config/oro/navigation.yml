@@ -1,0 +1,4 @@
+navigation:
+    titles:
+        oro_checkout_frontend_checkout: '%%step_label%% - oro.checkout.entity_label'
+        oro_checkout_frontend_open_orders: 'oro.checkout.entity_plural_label'

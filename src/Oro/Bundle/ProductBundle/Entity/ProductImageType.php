@@ -25,7 +25,7 @@ class ProductImageType
     /**
      * @var ProductImage
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\ProductImage", inversedBy="types")
-     * @ORM\JoinColumn(name="product_image_id", referencedColumnName="id", nullable=false)
+     * @ORM\JoinColumn(name="product_image_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     protected $productImage;
 

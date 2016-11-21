@@ -1,21 +1,13 @@
 layout:
     imports:
-        - oro_account_menu
         -
             id: oro_rfp_request_grid
-            root: content
+            root: page_content
             namespace: requests
 
     actions:
         - '@setBlockTheme':
             themes: 'OroRFPBundle:layouts:default/oro_rfp_frontend_request_index/layout.html.twig'
-
-        - '@appendOption':
-            id: title
-            optionName: value
-            optionValue:
-                - 'oro.customer.menu.account_user.label'
-                - 'oro.frontend.rfp.request.entity_plural_label'
 
         - '@setOption':
             id: page_title
@@ -23,7 +15,7 @@ layout:
             optionValue: 'oro.frontend.rfp.request.entity_plural_label'
 
         - '@setOption':
-            id: content
+            id: page_content
             optionName: class_prefix
             optionValue: 'requests'
 

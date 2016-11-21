@@ -1,3 +1,2 @@
 {% import 'OroShippingBundle:ShippingRule:macros.html.twig' as ShipRuleMacro %}
-{% set methodConfigs = record.getValue('methodConfigs').toArray() %}
-{{ ShipRuleMacro.renderShippingMethodsConfigs(methodConfigs)}}
+{{ ShipRuleMacro.renderShippingMethodsConfigs(record.getValue('methodConfigs').toArray(), record.getValue('currency'))}}

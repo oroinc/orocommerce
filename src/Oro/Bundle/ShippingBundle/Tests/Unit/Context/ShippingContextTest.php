@@ -97,6 +97,8 @@ class ShippingContextTest extends \PHPUnit_Framework_TestCase
                 ['paymentMethod', ''],
                 ['currency', ''],
                 ['subtotal', new Price()],
+                ['sourceEntity', new \stdClass()],
+                ['sourceEntityIdentifier', 1],
             ]
         );
     }

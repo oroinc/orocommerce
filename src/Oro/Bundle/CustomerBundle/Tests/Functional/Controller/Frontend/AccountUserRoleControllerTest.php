@@ -101,6 +101,9 @@ class AccountUserRoleControllerTest extends WebTestCase
     {
         $crawler = $this->client->request('GET', $this->getUrl('oro_customer_frontend_account_user_role_create'));
 
+        $this->assertContains('frontend-account-user-role-permission-grid', $crawler->html());
+        $this->assertContains('frontend-account-account-users-grid', $crawler->html());
+
         $form = $crawler->selectButton('Create')->form();
         $form['oro_account_frontend_account_user_role[label]'] = self::ACCOUNT_ROLE;
         $form['oro_account_frontend_account_user_role[privileges]'] = json_encode($this->privileges);

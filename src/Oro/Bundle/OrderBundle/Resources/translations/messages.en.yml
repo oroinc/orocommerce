@@ -47,6 +47,7 @@ oro:
         discountitem.add_label: Add Discount
         order_history.label: Order History
         top_selling_items.label: Top Selling Items
+        frontend_index_title: Order History - My Account - Home page
 
         shipping_tracking:
             entity_label: Shipping Tracking

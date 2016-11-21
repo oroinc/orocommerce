@@ -1,5 +1,4 @@
 {% block __oro_checkout_content__checkout_content_widget %}
-    {% set attr = attr|merge({class: attr.class|default('') ~ " page-container"}) %}
     <h1 class="page-title page-title--decreased">{{ 'oro.checkout.entity_label'|trans }}</h1>
     <div {{ block('block_attributes') }}
             data-layout="separate"
@@ -18,7 +17,7 @@
         <div class="checkout__head">
             <h2 class="checkout__title">
                 <span class="badge badge_md badge_circle badge_orange">{{ stepOrder }}</span>
-                {{ workflowStep.label }}
+                {{ workflowStep.label|trans({},'workflows') }}
             </h2>
         </div>
         <div class="checkout__body">
@@ -104,8 +103,8 @@
 {% endblock %}
 
 {% block __oro_checkout_content__checkout_order_summary_line_items_widget %}
-    <table class="oro-grid-table table-scrollable" 
-           data-page-component-module="oroui/js/app/components/view-component" 
+    <table class="oro-grid-table table-scrollable"
+           data-page-component-module="oroui/js/app/components/view-component"
            data-page-component-options="{{ {view: 'orofrontend/js/app/views/scrollable-table'}|json_encode }}">
         <thead class="hidden-xs">
         <tr data-scrollable-content-head>
