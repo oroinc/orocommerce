@@ -261,11 +261,13 @@ define(function(require) {
         },
 
         _onQuantityEnter: function(e) {
-            if (!this.dropdownWidget.validateForm()) {
-                return;
-            }
-            
-            if (e.keyCode === 13 && this.dropdownWidget.main.data('intention') === 'update') {
+            var ENTER_KEY_CODE = 13;
+
+            if (e.keyCode === ENTER_KEY_CODE && this.dropdownWidget.main.data('intention') == 'update') {
+                if (!this.dropdownWidget.validateForm()) {
+                    return;
+                }
+
                 this.model.set({
                     quantity: parseInt($(e.target).val(), 10)
                 });
