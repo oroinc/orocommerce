@@ -3,6 +3,7 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\EventListener;
 
 use Doctrine\ORM\EntityManager;
+
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
@@ -21,7 +22,7 @@ class CategoryListenerTest extends WebTestCase
      */
     protected $categoryManager;
 
-    /*r
+    /**
      * @var CategoryRepository
      */
     protected $categoryRepository;
@@ -111,5 +112,27 @@ class CategoryListenerTest extends WebTestCase
             $expectedMessages,
             $messages
         );
+    }
+
+    public function testPreRemove()
+    {
+        $newCategory = new Category();
+        $this->categoryManager->persist($newCategory);
+        $this->categoryManager->flush();
+
+        $id = $newCategory->getId();
+        $this->categoryManager->remove($newCategory);
+        $this->categoryManager->flush();
+        $this->messageProducer->clear();
+
+        $this->getContainer()->get('oro_catalog.model.category_message_handler')->sendScheduledMessages();
+        $messages = $this->messageProducer->getSentMessages();
+        $expectedMessages = [
+            [
+                'topic' => 'oro_visibility.visibility.category_remove',
+                'message' => ['id' => $id]
+            ]
+        ];
+        $this->assertEquals($expectedMessages, $messages);
     }
 }
