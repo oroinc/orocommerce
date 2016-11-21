@@ -115,16 +115,13 @@ class CategoryVisibleListener
 
         if ($account) {
             $isCategoryVisible = $this->categoryVisibilityResolver->isCategoryVisibleForAccount($category, $account);
-
         } elseif ($accountGroup) {
             $isCategoryVisible = $this->categoryVisibilityResolver->isCategoryVisibleForAccountGroup(
                 $category,
                 $accountGroup
             );
-
         } else {
             $isCategoryVisible = $this->categoryVisibilityResolver->isCategoryVisible($category);
-
         }
 
         return $isCategoryVisible;
