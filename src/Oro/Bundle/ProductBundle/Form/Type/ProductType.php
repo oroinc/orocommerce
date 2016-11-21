@@ -86,9 +86,6 @@ class ProductType extends AbstractType
                             'resize' => true,
                             'width' => 500,
                             'height' => 300,
-                            'plugins' => array_merge(OroRichTextType::$defaultPlugins, ['fullscreen']),
-                            'toolbar' =>
-                                [reset(OroRichTextType::$toolbars[OroRichTextType::TOOLBAR_DEFAULT]) . ' | fullscreen'],
                         ],
                     ],
                 ]
@@ -107,9 +104,6 @@ class ProductType extends AbstractType
                             'resize' => true,
                             'width' => 500,
                             'height' => 300,
-                            'plugins' => array_merge(OroRichTextType::$defaultPlugins, ['fullscreen']),
-                            'toolbar' =>
-                                [reset(OroRichTextType::$toolbars[OroRichTextType::TOOLBAR_DEFAULT]) . ' | fullscreen'],
                         ]
                     ]
                 ]

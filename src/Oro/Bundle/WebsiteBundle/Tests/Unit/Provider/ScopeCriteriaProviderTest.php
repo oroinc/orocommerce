@@ -6,7 +6,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Bundle\WebsiteBundle\Provider\ScopeCriteriaProvider;
 
-class ScopeProviderTest extends \PHPUnit_Framework_TestCase
+class ScopeCriteriaProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ScopeCriteriaProvider
@@ -78,5 +78,10 @@ class ScopeProviderTest extends \PHPUnit_Framework_TestCase
                 'criteria' => [],
             ],
         ];
+    }
+
+    public function testGetCriteriaValueType()
+    {
+        $this->assertEquals(Website::class, $this->provider->getCriteriaValueType());
     }
 }

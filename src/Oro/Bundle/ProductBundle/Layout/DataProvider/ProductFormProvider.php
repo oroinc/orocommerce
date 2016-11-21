@@ -28,8 +28,9 @@ class ProductFormProvider extends AbstractFormProvider
     public function getQuickAddFormView($data = null, array $options = [])
     {
         $options['action'] = $this->generateUrl(self::PRODUCT_QUICK_ADD_ROUTE_NAME);
+        $cacheKeyOptions = $this->getQuickAddFormCacheKeyOptions();
 
-        return $this->getFormView(QuickAddType::NAME, $data, $options);
+        return $this->getFormView(QuickAddType::NAME, $data, $options, $cacheKeyOptions);
     }
 
     /**
@@ -41,8 +42,9 @@ class ProductFormProvider extends AbstractFormProvider
     public function getQuickAddForm($data = null, array $options = [])
     {
         $options['action'] = $this->generateUrl(self::PRODUCT_QUICK_ADD_ROUTE_NAME);
+        $cacheKeyOptions = $this->getQuickAddFormCacheKeyOptions();
 
-        return $this->getForm(QuickAddType::NAME, $data, $options);
+        return $this->getForm(QuickAddType::NAME, $data, $options, $cacheKeyOptions);
     }
 
     /**
@@ -103,5 +105,16 @@ class ProductFormProvider extends AbstractFormProvider
         }
 
         return $this->getFormView(FrontendLineItemType::NAME, $lineItem, [], $cacheKeyOptions);
+    }
+
+    /**
+     * @return array
+     */
+    private function getQuickAddFormCacheKeyOptions()
+    {
+        return [
+            'products' => null,
+            'validation_required' => null
+        ];
     }
 }

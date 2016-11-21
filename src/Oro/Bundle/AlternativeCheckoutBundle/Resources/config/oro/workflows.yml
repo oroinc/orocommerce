@@ -11,6 +11,10 @@ workflows:
             - b2b_checkout_flow
         priority: 100
 
+        scopes:
+            -
+                account: 4
+
         attributes:
             billing_address:
                 property_path: checkout.billingAddress
@@ -379,9 +383,7 @@ workflows:
         transition_definitions:
             __start___definition:
                 preconditions:
-                    '@and':
-                        - '@assert_account': 4
-                        - '@payment_method_enabled': 'payment_term'
+                    '@payment_method_enabled': 'payment_term'
                 actions:
                     - '@generate_checkout_state_snapshot':
                         entity: $checkout
