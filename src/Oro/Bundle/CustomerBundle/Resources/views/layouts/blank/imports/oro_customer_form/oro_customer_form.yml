@@ -40,6 +40,12 @@ layout:
                             __form_submit_wrapper:
                                 __form_submit: ~
                             __links: ~
+
+        - '@move':
+            id: notification
+            parentId: wrapper
+            prepend: true
+
         - '@move':
             id: __form_submit_wrapper
             parentId: __form

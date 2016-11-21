@@ -1,0 +1,17 @@
+{% block _top_sign_in_item_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+    '~class': ' primary-menu__item'
+    }) %}
+
+    <li {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </li>
+{% endblock %}
+
+{% block _top_sign_in_link_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+    '~class': ' link'
+    }) %}
+
+    {{ block_widget(block, {attr: attr}) }}
+{% endblock %}
