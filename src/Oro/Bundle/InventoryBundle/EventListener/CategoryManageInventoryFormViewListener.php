@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\InventoryBundle\EventListener;
 
-use Oro\Bundle\InventoryBundle\Service\AbstractFallbackFieldsFormView;
+use Oro\Bundle\InventoryBundle\Fallback\AbstractFallbackFieldsFormView;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 
 class CategoryManageInventoryFormViewListener extends AbstractFallbackFieldsFormView
