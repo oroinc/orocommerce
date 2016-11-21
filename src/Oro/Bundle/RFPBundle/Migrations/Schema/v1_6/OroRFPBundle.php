@@ -36,16 +36,6 @@ class OroRFPBundle implements Migration, RenameExtensionAwareInterface
             RelationType::MANY_TO_MANY
         ));
 
-        // calendar event to request association
-        $extension->renameTable($schema, $queries, 'oro_rel_46a29d19f42ab603f15753', 'oro_rel_46a29d19f42ab603ec4b1d');
-        $queries->addQuery(new UpdateExtendRelationQuery(
-            'Oro\Bundle\CalendarBundle\Entity\CalendarEvent',
-            'Oro\Bundle\RFPBundle\Entity\Request',
-            'request_9fd4910b',
-            'request_d1d045e1',
-            RelationType::MANY_TO_MANY
-        ));
-
         // notes
         $notes = $schema->getTable('oro_note');
 
