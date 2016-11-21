@@ -13,37 +13,10 @@ define(function(require) {
          * @property {Object}
          */
         options: {
-            data: {
-                product: {
-                    id: 'any',
-                    name: 'any',
-                    category: 'any',
-                    status: ['ENABLED', 'DISABLED']
-                },
-                category: {
-                    id: 'any',
-                    name: 'any',
-                    parent: 'any'
-                },
-                account: {
-                    id: 'any',
-                    name: 'any',
-                    role: 'any'
-                },
-                pricelist: {
-                    id: 'any',
-                    name: 'any',
-                    parent: 'any'
-                },
-                products: {
-                    type: 'array',
-                    entity: 'product'
-                }
-            },
             operations: {
                 math: ['+', '-', '%', '*', '/'],
                 bool: ['and', 'or'],
-                compare: ['==', '!=', '>', '<', '<=', '>=', 'like'],
+                compare: ['=', '!=', '>', '<', '<=', '>=', 'like'],
                 inclusion: ['in', 'not in']
             },
             allowedOperations: ['math', 'bool', 'compare', 'inclusion']
@@ -287,6 +260,8 @@ define(function(require) {
                     if (this.allowed.math) {
                         result = _.union(result, getCases(wordUnderCaret, this.cases.math));
                     }
+                } else if (wordIs.isBool) {
+                    result = this.cases.data;
                 } else if (wordIs.hasTerm || wordIs.hasValue || wordIs.notOps) {
                     if (this.allowed.compare) {
                         result = _.union(result, getCases(wordUnderCaret, this.cases.compare));

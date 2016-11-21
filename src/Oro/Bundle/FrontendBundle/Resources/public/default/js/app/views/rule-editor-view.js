@@ -51,7 +51,7 @@ define(function(require) {
                     var update  = component.getUpdateValue(this.query, item, _position);
 
                     setTimeout(function() {
-                        el.selectionStart = update.position;
+                        el.selectionStart = el.selectionEnd = update.position;
                         $el.trigger('keyup');
                     }, 10);
 

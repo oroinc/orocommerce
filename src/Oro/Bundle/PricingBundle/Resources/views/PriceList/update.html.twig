@@ -56,7 +56,16 @@
                 'title': '',
                 'data': [
                     form_row(form.productAssignmentRule, {'attr': {
-                        'data-page-component-options': {allowedOperations: ['math', 'bool', 'compare', 'inclusion']}|json_encode,
+                        'data-page-component-options': {
+                            allowedOperations: ['math', 'bool', 'compare', 'inclusion'],
+                            data: {
+                                product: {id: 'any', name: 'any', category: 'any', status: ['ENABLED', 'DISABLED']},
+                                category: {id: 'any', name: 'any', parent: 'any'},
+                                account: {id: 'any', name: 'any', role: 'any'},
+                                pricelist: {id: 'any', name: 'any', parent: 'any'},
+                                products: {type: 'array', entity: 'product'}
+                            }
+                        }|json_encode,
                         'data-page-component-module': 'orofrontend/default/js/app/components/rule-editor-component'
                     }})
                 ]
