@@ -8,9 +8,9 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\EntityManager;
 
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccounts;
 use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
-use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
@@ -151,7 +151,7 @@ class CategoryControllerTest extends WebTestCase
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(LoadAccountUserData::LEVEL_1_EMAIL, LoadAccountUserData::LEVEL_1_PASSWORD)
+            $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)
         );
         $this->client->request('GET', $this->getUrl(
             'oro_product_frontend_product_index',
