@@ -94,6 +94,7 @@ class CreditCardType extends AbstractType
                         'attr' => [
                             'data-card-cvv' => true,
                             'data-gateway' => true,
+                            'placeholder' => false,
                         ],
                     ]
                 );
