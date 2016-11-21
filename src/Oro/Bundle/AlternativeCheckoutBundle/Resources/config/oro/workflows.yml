@@ -6,10 +6,14 @@ workflows:
         steps_display_ordered: true
 
         defaults:
-            active: false
+            active: true
         exclusive_record_groups:
             - b2b_checkout_flow
         priority: 100
+
+        scopes:
+            -
+                account: 4
 
         attributes:
             billing_address:
