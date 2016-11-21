@@ -30,6 +30,7 @@ class OroRedirectBundleInstaller implements Installation
         /** Foreign keys generation **/
         $this->addOroRedirectForeignKeys($schema);
         $this->addOroSlugScopeForeignKeys($schema);
+        $this->addOroRedirectSlugForeignKeys($schema);
     }
 
     /**
@@ -41,6 +42,7 @@ class OroRedirectBundleInstaller implements Installation
     {
         $table = $schema->createTable('oro_redirect_slug');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('localization_id', 'integer', ['notnull' => false]);
         $table->addColumn('url', 'string', ['length' => 1024]);
         $table->addColumn('url_hash', 'string', ['length' => 32]);
         $table->addColumn('route_name', 'string', ['notnull' => false, 'length' => 255]);
@@ -157,6 +159,22 @@ class OroRedirectBundleInstaller implements Installation
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_redirect_slug'),
             ['slug_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+    }
+
+    /**
+     * Add oro_redirect_slug foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOroRedirectSlugForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('oro_redirect_slug');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_localization'),
+            ['localization_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );

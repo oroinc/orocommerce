@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\WebCatalogBundle\Model\ExtendContentVariant;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
@@ -66,11 +67,31 @@ class ContentVariant extends ExtendContentVariant implements ContentVariantInter
      */
     protected $scopes;
 
+    /**
+     * @var Collection|Slug[]
+     *
+     * @ORM\ManyToMany(
+     *      targetEntity="Oro\Bundle\RedirectBundle\Entity\Slug",
+     *      cascade={"ALL"},
+     *      orphanRemoval=true
+     * )
+     * @ORM\JoinTable(name="oro_web_catalog_variant_slug",
+     *      joinColumns={
+     *          @ORM\JoinColumn(name="content_variant_id", referencedColumnName="id", onDelete="CASCADE")
+     *      },
+     *      inverseJoinColumns={
+     *          @ORM\JoinColumn(name="slug_id", referencedColumnName="id", unique=true, onDelete="CASCADE")
+     *      }
+     * )
+     */
+    protected $slugs;
+
     public function __construct()
     {
         parent::__construct();
 
         $this->scopes = new ArrayCollection();
+        $this->slugs = new ArrayCollection();
     }
 
     /**
@@ -171,6 +192,48 @@ class ContentVariant extends ExtendContentVariant implements ContentVariantInter
             $this->scopes->removeElement($scope);
         }
 
+        return $this;
+    }
+
+    /**
+     * @return Collection|Slug[]
+     */
+    public function getSlugs()
+    {
+        return $this->slugs;
+    }
+
+    /**
+     * @param Slug $slug
+     * @return $this
+     */
+    public function addSlug(Slug $slug)
+    {
+        if (!$this->slugs->contains($slug)) {
+            $this->slugs->add($slug);
+        }
+        return $this;
+    }
+
+    /**
+     * @param Slug $slug
+     * @return $this
+     */
+    public function removeSlug(Slug $slug)
+    {
+        if ($this->slugs->contains($slug)) {
+            $this->slugs->removeElement($slug);
+        }
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function resetSlugs()
+    {
+        $this->slugs->clear();
+        
         return $this;
     }
 }

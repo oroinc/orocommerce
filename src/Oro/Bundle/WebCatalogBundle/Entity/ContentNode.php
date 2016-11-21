@@ -11,7 +11,6 @@ use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
-use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\WebCatalogBundle\Model\ExtendContentNode;
 use Oro\Component\Tree\Entity\TreeTrait;
@@ -149,25 +148,6 @@ class ContentNode extends ExtendContentNode implements ContentNodeInterface, Dat
     protected $slugPrototypes;
 
     /**
-     * @var Collection|Slug[]
-     *
-     * @ORM\ManyToMany(
-     *      targetEntity="Oro\Bundle\RedirectBundle\Entity\Slug",
-     *      cascade={"ALL"},
-     *      orphanRemoval=true
-     * )
-     * @ORM\JoinTable(name="oro_web_catalog_node_slug",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="node_id", referencedColumnName="id", onDelete="CASCADE")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="slug_id", referencedColumnName="id", unique=true, onDelete="CASCADE")
-     *      }
-     * )
-     */
-    protected $slugs;
-
-    /**
      * @var Collection|Scope[]
      *
      * @ORM\ManyToMany(
@@ -222,7 +202,6 @@ class ContentNode extends ExtendContentNode implements ContentNodeInterface, Dat
         $this->titles = new ArrayCollection();
         $this->childNodes = new ArrayCollection();
         $this->slugPrototypes = new ArrayCollection();
-        $this->slugs = new ArrayCollection();
         $this->scopes = new ArrayCollection();
         $this->contentVariants = new ArrayCollection();
     }
@@ -388,38 +367,6 @@ class ContentNode extends ExtendContentNode implements ContentNodeInterface, Dat
             $this->slugPrototypes->removeElement($slug);
         }
 
-        return $this;
-    }
-
-    /**
-     * @return Collection|Slug[]
-     */
-    public function getSlugs()
-    {
-        return $this->slugs;
-    }
-
-    /**
-     * @param Slug $slug
-     * @return $this
-     */
-    public function addSlug(Slug $slug)
-    {
-        if (!$this->slugs->contains($slug)) {
-            $this->slugs->add($slug);
-        }
-        return $this;
-    }
-
-    /**
-     * @param Slug $slug
-     * @return $this
-     */
-    public function removeSlug(Slug $slug)
-    {
-        if ($this->slugs->contains($slug)) {
-            $this->slugs->removeElement($slug);
-        }
         return $this;
     }
 

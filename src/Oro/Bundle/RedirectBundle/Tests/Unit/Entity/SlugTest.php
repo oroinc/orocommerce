@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\RedirectBundle\Tests\Unit\Entity;
 
+use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\RedirectBundle\Entity\Redirect;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
@@ -18,6 +19,7 @@ class SlugTest extends \PHPUnit_Framework_TestCase
             ['url', 'test/page'],
             ['routeName', 'oro_cms_page_view'],
             ['routeParameters', ['id' => 1]],
+            ['localization', new Localization()]
         ];
 
         $this->assertPropertyAccessors(new Slug(), $properties);

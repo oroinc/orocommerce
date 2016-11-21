@@ -8,10 +8,13 @@ use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\WebCatalogBundle\ContentVariantType\ContentVariantTypeRegistry;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
+use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 
 class SlugGenerator
 {
+    const ROOT_SLUG = '/';
     const SLUG_PROTOTYPE_VALUE = 'slugPrototypeValue';
+    const SLUG_URL = 'slugUrl';
     const LOCALIZATION = 'localization';
 
     /**
@@ -32,18 +35,44 @@ class SlugGenerator
      */
     public function generate(ContentNode $contentNode)
     {
-        $slugUrls = $this->prepareSlugUrls($contentNode);
+        if (!$contentNode->getParentNode()) {
+            // Slug url for root content node
+            $slugUrls = [
+                [
+                    self::SLUG_URL => self::ROOT_SLUG,
+                    self::LOCALIZATION => null
+                ]
+            ];
+        } else {
+            $slugUrls = $this->prepareSlugUrls($contentNode);
+        }
 
+        // Clear all already existing content variant slugs before generating new
+        $this->clearNodeVariantSlugs($contentNode);
+        
         foreach ($slugUrls as $slugUrl) {
-            $this->createSlugs($contentNode, $slugUrl);
+            $this->createSlugs($contentNode, $slugUrl[self::SLUG_URL], $slugUrl[self::LOCALIZATION]);
         }
     }
 
     /**
      * @param ContentNode $contentNode
-     * @param string $slugUrl
      */
-    protected function createSlugs(ContentNode $contentNode, $slugUrl)
+    protected function clearNodeVariantSlugs(ContentNode $contentNode)
+    {
+        $contentVariants = $contentNode->getContentVariants();
+        
+        foreach ($contentVariants as $contentVariant) {
+            $contentVariant->resetSlugs();
+        }
+    }
+    
+    /**
+     * @param ContentNode $contentNode
+     * @param string $slugUrl
+     * @param Localization|null $localization
+     */
+    protected function createSlugs(ContentNode $contentNode, $slugUrl, Localization $localization = null)
     {
         $contentVariants = $contentNode->getContentVariants();
 
@@ -61,8 +90,9 @@ class SlugGenerator
 
             $slug->setRouteName($routeData->getRoute());
             $slug->setRouteParameters($routeData->getRouteParameters());
+            $slug->setLocalization($localization);
 
-            $contentNode->addSlug($slug);
+            $contentVariant->addSlug($slug);
         }
     }
 
@@ -83,15 +113,36 @@ class SlugGenerator
             $locale = $changedSlugPrototypeValue[self::LOCALIZATION];
             
             if (empty($parentNodeSlugUrls)) {
-                $slugUrls[] = Slug::DELIMITER . $slugPrototype;
+                $slugUrls[] = [
+                    self::SLUG_URL => Slug::DELIMITER . $slugPrototype,
+                    self::LOCALIZATION => $locale
+                ];
             } elseif (array_key_exists($localeId, $parentNodeSlugUrls)) {
-                $slugUrls[] = $parentNodeSlugUrls[$localeId] . Slug::DELIMITER . $slugPrototype;
+                $slugUrls[] = [
+                    self::SLUG_URL => $this->getUrl($parentNodeSlugUrls[$localeId], $slugPrototype),
+                    self::LOCALIZATION => $locale
+                ];
             } elseif ($fallbackSlug = $this->findFallbackSlug($locale, $parentNodeSlugUrls)) {
-                $slugUrls[] = $fallbackSlug . Slug::DELIMITER . $slugPrototype;
+                $slugUrls[] = [
+                    self::SLUG_URL => $this->getUrl($fallbackSlug, $slugPrototype),
+                    self::LOCALIZATION => $locale
+                ];
             }
         }
 
         return $slugUrls;
+    }
+
+    /**
+     * @param string $parentUrl
+     * @param string $slugPrototype
+     * @return string
+     */
+    protected function getUrl($parentUrl, $slugPrototype)
+    {
+        return $parentUrl == self::ROOT_SLUG
+            ? $parentUrl . $slugPrototype
+            : $parentUrl . Slug::DELIMITER . $slugPrototype;
     }
 
     /**
@@ -101,11 +152,14 @@ class SlugGenerator
     protected function getParentNodeSlugUrls(ContentNode $contentNode)
     {
         $parentNode = $contentNode->getParentNode();
+        /** @var ContentVariant $contentVariant */
+        $contentVariant = $parentNode->getContentVariants()->first();
 
         $parentNodeSlugUrls = [];
         if ($parentNode) {
-            foreach ($parentNode->getSlugs() as $parentNodeSlug) {
-                $parentNodeSlugUrls[$parentNodeSlug->getLocalization()->getId()] = $parentNodeSlug->getUrl();
+            foreach ($contentVariant->getSlugs() as $parentNodeSlug) {
+                $localeId = $parentNodeSlug->getLocalization() ? $parentNodeSlug->getLocalization()->getId() : null;
+                $parentNodeSlugUrls[$localeId] = $parentNodeSlug->getUrl();
             }
         }
 
@@ -162,6 +216,9 @@ class SlugGenerator
         if ($parent) {
             $localeHierarchy[] = $parent->getId();
             $localeHierarchy = array_merge($localeHierarchy, $this->getLocaleHierarchy($parent));
+        } else {
+            // For default value without locale
+            $localeHierarchy = [null];
         }
 
         return $localeHierarchy;

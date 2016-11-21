@@ -92,12 +92,6 @@ class Slug
      */
     protected $redirects;
 
-    public function __construct()
-    {
-        $this->redirects = new ArrayCollection();
-        $this->scopes = new ArrayCollection();
-    }
-
     /**
      * @var Localization|null
      *
@@ -112,6 +106,12 @@ class Slug
      * )
      */
     protected $localization;
+
+    public function __construct()
+    {
+        $this->redirects = new ArrayCollection();
+        $this->scopes = new ArrayCollection();
+    }
     
     /**
      * @return integer
