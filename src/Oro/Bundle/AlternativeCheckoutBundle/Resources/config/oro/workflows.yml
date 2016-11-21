@@ -879,16 +879,6 @@ workflows:
                                     '@not_empty': $.result.customerShippingAddress
                                 parameters: [$.result.customerShippingAddress]
 
-                    - '@remove_entity':
-                        conditions:
-                            '@or':
-                                - '@equal': [$auto_remove_source, true]
-                                - '@and':
-                                    - '@equal': [$allow_manual_source_remove, true]
-                                    - '@equal': [$remove_source, true]
-                        parameters: [$checkout.sourceEntity]
-                    - '@remove_entity': $checkout
-
                     - '@tree':
                         conditions:
                             '@not_empty': $.result.order.id
@@ -910,6 +900,16 @@ workflows:
                                 route: oro_order_frontend_success
                                 route_parameters:
                                     id: $.result.order.id
+
+                    - '@remove_entity':
+                        conditions:
+                            '@or':
+                                - '@equal': [$auto_remove_source, true]
+                                - '@and':
+                                    - '@equal': [$allow_manual_source_remove, true]
+                                    - '@equal': [$remove_source, true]
+                        parameters: [$checkout.sourceEntity]
+                    - '@remove_entity': $checkout
 
             continue_to_request_approval_definition:
                 preactions:

@@ -1,0 +1,18 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'footer_menu.html.twig'
+        - '@addTree':
+            items:
+                footer_menu_container:
+                    blockType: container
+                    prepend: true
+                footer_menu:
+                    blockType: menu
+                    options:
+                        item: '=data["menu"].getMenu("footer-links")'
+                        depth: 2
+            tree:
+                page_footer:
+                    footer_menu_container:
+                        footer_menu: ~

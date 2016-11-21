@@ -25,5 +25,5 @@ layout:
             optionValue: top_selling_products
         - '@add':
             id: top_selling_items_container
-            parentId: content
+            parentId: page_content
             blockType: container
