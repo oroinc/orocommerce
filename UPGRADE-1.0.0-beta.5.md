@@ -9,3 +9,9 @@ ProductBundle
 -------------
 - Product images filters config was removed from `app.yml`. 
 These filters are now added dynamically based on `images.yml` config.
+
+WebsiteSearchBundle
+-------------------
+- Website search index was added, to fill it with data command `php app/console oro:website-search:reindex --env=prod` 
+should be executed after upgrade. 
+
