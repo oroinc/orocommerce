@@ -93,8 +93,6 @@ class QuickAddHandler
         $form = $this->productFormProvider->getQuickAddForm([], $options);
         $form->submit($request);
 
-
-
         if (!$processor || !$processor->isAllowed()) {
             /** @var Session $session */
             $session = $request->getSession();
@@ -115,7 +113,7 @@ class QuickAddHandler
             );
 
             $additionalData = $request->get(
-                QuickAddType::NAME.'['.QuickAddType::ADDITIONAL_FIELD_NAME.']',
+                QuickAddType::NAME . '[' . QuickAddType::ADDITIONAL_FIELD_NAME . ']',
                 null,
                 true
             );
