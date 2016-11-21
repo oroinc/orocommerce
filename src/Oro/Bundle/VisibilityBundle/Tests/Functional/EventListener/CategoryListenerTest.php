@@ -113,26 +113,4 @@ class CategoryListenerTest extends WebTestCase
             $messages
         );
     }
-
-    public function testPreRemove()
-    {
-        $newCategory = new Category();
-        $this->categoryManager->persist($newCategory);
-        $this->categoryManager->flush();
-
-        $id = $newCategory->getId();
-        $this->categoryManager->remove($newCategory);
-        $this->categoryManager->flush();
-        $this->messageProducer->clear();
-
-        $this->getContainer()->get('oro_catalog.model.category_message_handler')->sendScheduledMessages();
-        $messages = $this->messageProducer->getSentMessages();
-        $expectedMessages = [
-            [
-                'topic' => 'oro_visibility.visibility.category_remove',
-                'message' => ['id' => $id]
-            ]
-        ];
-        $this->assertEquals($expectedMessages, $messages);
-    }
 }
