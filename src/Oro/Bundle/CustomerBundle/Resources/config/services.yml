@@ -30,6 +30,7 @@ services:
         public: false
         arguments:
             - "@oro_entity.doctrine_helper"
+            - "@security.authentication.trust_resolver"
         calls:
             - [setContainer, ["@service_container"]]
         tags:
