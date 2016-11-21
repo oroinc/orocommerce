@@ -241,9 +241,11 @@ define(function(require) {
                 $.each(totals.subtotals, function(key, subtotal) {
                     if (subtotal.type === 'shipping_cost') {
                         totals.subtotals[key].amount = cost;
-                        totals.subtotals[key].formattedAmount = subtotal.currency + ' ' + cost;
+                        totals.subtotals[key].currency = totals.total.currency;
+                        totals.subtotals[key].visible = true;
+                        totals.subtotals[key].formattedAmount = totals.total.currency + ' ' + cost;
                     }
-                    newTotalAmount = newTotalAmount + parseInt(totals.subtotals[key].amount, 10);
+                    newTotalAmount = parseFloat(newTotalAmount) + parseFloat(totals.subtotals[key].amount);
                 });
                 totals.total.amount = newTotalAmount;
                 totals.total.formattedAmount = totals.total.currency + ' ' + newTotalAmount;
