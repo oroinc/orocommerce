@@ -564,3 +564,13 @@ services:
         class: 'Oro\Bundle\VisibilityBundle\Provider\VisibilityScopeProvider'
         arguments:
             - '@oro_scope.scope_manager'
+
+    oro_visibility.event_listener.category_visible_listener:
+        class: Oro\Bundle\VisibilityBundle\EventListener\CategoryVisibleListener
+        arguments:
+            - '@oro_catalog.repository.category'
+            - '@oro_visibility.visibility.resolver.category_visibility_resolver'
+            - '@oro_customer.provider.account_user_relations_provider'
+            - '@security.token_storage'
+        tags:
+            - { name: kernel.event_listener, event: kernel.controller }

@@ -2,13 +2,15 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Controller;
 
-use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccounts;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\EntityManager;
 
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccounts;
+use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
@@ -139,6 +141,41 @@ class CategoryControllerTest extends WebTestCase
         $this->assertEquals(0, $this->getEntitiesCount($categoryVisibilityRepo));
         $this->assertEquals(0, $this->getEntitiesCount($accountCategoryVisibilityRepo));
         $this->assertEquals(0, $this->getEntitiesCount($accountGroupCategoryVisibilityRepo));
+    }
+
+    /**
+     * @dataProvider dataProviderForNotExistingCategories
+     * @param int|string $categoryId
+     */
+    public function testControllerActionWithNotExistingCategoryId($categoryId)
+    {
+        $this->initClient(
+            [],
+            $this->generateBasicAuthHeader(LoadAccountUserData::LEVEL_1_EMAIL, LoadAccountUserData::LEVEL_1_PASSWORD)
+        );
+        $this->client->request('GET', $this->getUrl(
+            'oro_product_frontend_product_index',
+            [
+                RequestProductHandler::CATEGORY_ID_KEY => $categoryId
+            ]
+        ));
+
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 404);
+    }
+
+    /**
+     * @return array
+     *
+     */
+    public function dataProviderForNotExistingCategories()
+    {
+        return [
+            [99999],
+            ['99999'],
+            ['dummy-string'],
+            [''],
+        ];
     }
 
     /**
