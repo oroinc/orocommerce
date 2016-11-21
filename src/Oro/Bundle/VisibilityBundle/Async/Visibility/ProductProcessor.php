@@ -7,7 +7,7 @@ use Doctrine\DBAL\Driver\DriverException;
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
 use Oro\Bundle\ProductBundle\Exception\InvalidArgumentException;
-use Oro\Bundle\visibilityBundle\Model\ProductMessageFactory;
+use Oro\Bundle\VisibilityBundle\Model\ProductMessageFactory;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\CacheBuilderInterface;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\ProductCaseCacheBuilderInterface;

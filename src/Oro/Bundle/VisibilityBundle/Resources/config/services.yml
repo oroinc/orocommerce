@@ -579,7 +579,7 @@ services:
             - { name: kernel.event_listener, event: kernel.terminate, method: sendScheduledMessages }
 
     oro_visibility.model.product_message_factory:
-        class: 'Oro\Bundle\visibilityBundle\Model\ProductMessageFactory'
+        class: 'Oro\Bundle\VisibilityBundle\Model\ProductMessageFactory'
         arguments:
             - '@doctrine'
 
