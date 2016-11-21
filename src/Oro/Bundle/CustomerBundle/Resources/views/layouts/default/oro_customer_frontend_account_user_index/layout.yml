@@ -1,9 +1,8 @@
 layout:
     imports:
-        - oro_account_menu
         -
             id: oro_account_user_grid
-            root: content
+            root: page_content
             namespace: account_users
 
     actions:

@@ -13,16 +13,20 @@
 
     margin: 0 0 50px;
 
-    li {
-      margin: 15px 0 0;
-    }
-
-    a {
-      color: get-color('additional', 'dark');
-    }
-
     @media (max-width: $screen-sm) {
       margin: 0 0 40px;
+    }
+  }
+
+  &__item {
+    margin: 15px 0 0;
+  }
+
+  &__link {
+    color: get-color('additional', 'dark');
+
+    &:hover {
+      color: get-color('additional', 'dark');
     }
   }
 }

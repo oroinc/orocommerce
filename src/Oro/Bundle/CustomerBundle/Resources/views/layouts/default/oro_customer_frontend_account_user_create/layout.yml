@@ -2,8 +2,7 @@ layout:
     imports:
         -
             id: oro_account_user_form
-            root: content
-        - oro_account_menu
+            root: page_content
     actions:
         - '@setOption':
             id: title

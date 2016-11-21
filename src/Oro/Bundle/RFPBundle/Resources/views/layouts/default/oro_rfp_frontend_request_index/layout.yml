@@ -1,9 +1,8 @@
 layout:
     imports:
-        - oro_account_menu
         -
             id: oro_rfp_request_grid
-            root: content
+            root: page_content
             namespace: requests
 
     actions:
