@@ -38,7 +38,7 @@ class OroRedirectBundle implements Migration, DatabasePlatformAwareInterface
         $this->addOroRedirectForeignKeys($schema);
         $this->addOroSlugScopeForeignKeys($schema);
 
-        $this->addUrlHashField($schema, $queries);
+        $this->updateSlugSchema($schema, $queries);
         $this->addUrlHashIndex($schema);
     }
 
@@ -81,9 +81,17 @@ class OroRedirectBundle implements Migration, DatabasePlatformAwareInterface
      * @param Schema $schema
      * @param QueryBag $queries
      */
-    protected function addUrlHashField(Schema $schema, QueryBag $queries)
+    protected function updateSlugSchema(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable('oro_redirect_slug');
+        $table->addColumn('localization_id', 'integer', ['notnull' => false]);
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_localization'),
+            ['localization_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        
         $table->addColumn('url_hash', 'string', ['length' => 32, 'notnull' => false]);
         $queries->addQuery(
             new ParametrizedSqlMigrationQuery(
