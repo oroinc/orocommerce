@@ -85,7 +85,7 @@ class UPSShippingMethod implements
     {
         /** @var UPSTransport $transport */
         $transport = $this->channel->getTransport();
-        return $this->localizationHelper->getLocalizedValue($transport->getLabels());
+        return (string)$this->localizationHelper->getLocalizedValue($transport->getLabels());
     }
 
     /**

@@ -752,7 +752,7 @@ workflows:
                             accountUser: $checkout.accountUser
                             billingAddress: $checkout.billingAddress
                             shippingAddress: $.result.shippingAddress
-                            shippingCost: $checkout.shippingCost
+                            estimatedShippingCostAmount: $checkout.shippingCost.value
                             poNumber: $checkout.poNumber
                             customerNotes: $checkout.customerNotes
                             shipUntil: $checkout.shipUntil

@@ -5,3 +5,14 @@ oro:
             button_ok: Yes, Delete
             title: Delete Confirmation
             success: Shipping rule and all related data were deleted
+
+        method:
+            flat_rate:
+                label: Flat Rate
+                type.label: Flat Rate
+                price.label: Price
+                handling_fee.label: Handling Fee
+                processing_type:
+                    label: Type
+                    per_item.label: Per Item
+                    per_order.label: Per Order

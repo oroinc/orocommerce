@@ -2,24 +2,19 @@
 
 namespace Oro\Bundle\OrderBundle\Controller;
 
-use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\AddressBundle\Entity\AddressType;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Event\OrderEvent;
+use Oro\Bundle\OrderBundle\Form\Type\OrderType;
+use Oro\Bundle\OrderBundle\RequestHandler\OrderRequestHandler;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
+use Oro\Bundle\SecurityBundle\Annotation\Acl;
+use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-
-use Oro\Bundle\AddressBundle\Entity\AddressType;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Oro\Bundle\SecurityBundle\Annotation\Acl;
-use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
-use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\OrderBundle\Form\Type\OrderType;
-use Oro\Bundle\OrderBundle\RequestHandler\OrderRequestHandler;
-use Oro\Bundle\OrderBundle\Form\Handler\OrderHandler;
-use Oro\Bundle\OrderBundle\Event\OrderEvent;
 
 class OrderController extends AbstractOrderController
 {
@@ -165,7 +160,7 @@ class OrderController extends AbstractOrderController
             null,
             function (Order $order, FormInterface $form, Request $request) {
 
-                $submittedData = $request->get($form->getName(), []);
+                $submittedData = $request->get($form->getName());
                 $event = new OrderEvent($form, $form->getData(), $submittedData);
                 $this->get('event_dispatcher')->dispatch(OrderEvent::NAME, $event);
                 $orderData = $event->getData()->getArrayCopy();
