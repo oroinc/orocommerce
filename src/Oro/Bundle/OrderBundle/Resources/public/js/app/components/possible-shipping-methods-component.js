@@ -18,8 +18,8 @@ define(function(require) {
             calculateShipping: '[name$="[calculateShipping]"]',
             shippingMethod: '[name$="[shippingMethod]"]',
             shippingMethodType: '[name$="[shippingMethodType]"]',
-            estimatedShippingCostAmount: '[name$="[estimatedShippingCostAmount]"]',
-            overriddenShippingCostAmount: '[name$="[overriddenShippingCostAmount]"]'
+            estimatedShippingCostAmount: '[name*="[estimatedShippingCostAmount]"]',
+            overriddenShippingCostAmount: '[name*="[overriddenShippingCostAmount]"]'
         },
 
         /**
@@ -42,6 +42,14 @@ define(function(require) {
                 _.bind(this.onShippingMethodTypeChange, this
                 )
             );
+            this.getOverriddenShippingCostElement().on(
+                'change',
+                _.bind(this.onOverriddenShippingCostChange, this
+                )
+            );
+            if ($(document).find('.selected-shipping-method').length > 0) {
+                this.savedShippingMethod = $(document).find('.selected-shipping-method').text();
+            }
             mediator.on('entry-point:order:load:before', this.showLoadingMask, this);
             mediator.on('entry-point:order:load', this.onOrderChange, this);
             mediator.on('entry-point:order:load:after', this.hideLoadingMask, this);
@@ -100,18 +108,25 @@ define(function(require) {
 
         onOrderChange: function(e) {
             this.$totals = e.totals;
-            if (e.possibleShippingMethods != undefined) {
+            if (e.possibleShippingMethods != undefined ) {
                 this.getCalculateShippingElement().val(null);
                 this.getToggleButton().parent('div').hide();
                 this.$data = e.possibleShippingMethods;
                 this.updatePossibleShippingMethods(e.possibleShippingMethods);
                 this.getPossibleShippingMethodForm().show();
                 this.orderHasChanged = false;
+            } else if (this.isOverriddenTrigger == true) {
+                this.orderHasChanged = false;
+                this.isOverriddenTrigger = false;
             } else {
                 this.getPossibleShippingMethodForm().hide();
                 this.getToggleButton().parent('div').show();
                 this.orderHasChanged = true;
             }
+        },
+        
+        onOverriddenShippingCostChange: function() {
+            this.isOverriddenTrigger = true;
         },
 
         updatePossibleShippingMethods: function(methods) {
@@ -195,20 +210,20 @@ define(function(require) {
                 var methodLabel = (this.$data[method].isGrouped == true) ? __(this.$data[method].label) + ', ' : '';
                 var typeLabel = __(this.$data[method].types[type].label);
                 var currency = this.$data[method].types[type].price.currency;
+                var selectedShippingMethod = methodLabel + typeLabel + ': ' + currency + ' ' + parseFloat(cost).toFixed(2);
                 var $div = $("<div>", {"class": "control-group"});
                 $div.append('<label class="control-label">' + __('oro.order.shipping_method.label') + '</label>');
                 $div.append('<div class="controls"><div class="control-label selected-shipping-method">' +
-                    methodLabel + typeLabel + ': ' + currency + ' ' + cost + '</div>');
+                    selectedShippingMethod + '</div>');
 
                 if ($(document).find('.selected-shipping-method').length > 0) {
-                    var prevVal = $(document).find('.selected-shipping-method').text();
                     $(document).find('.previously-selected-shipping-method').closest('.control-group').remove();
                     $(document).find('.selected-shipping-method').closest('.control-group').remove();
-                    if (!matched) {
+                    if (!matched && selectedShippingMethod != this.savedShippingMethod) {
                         var $prevDiv = $("<div>", {"class": "control-group"});
                         $prevDiv.append('<label class="control-label">' + __('oro.order.previous_shipping_method.label') + '</label>');
                         $prevDiv.append('<div class="controls"><div class="control-label previously-selected-shipping-method">' +
-                            prevVal + '</div>');
+                            this.savedShippingMethod + '</div>');
 
                         this.$el.closest('.responsive-cell').prepend($prevDiv);
                     }
