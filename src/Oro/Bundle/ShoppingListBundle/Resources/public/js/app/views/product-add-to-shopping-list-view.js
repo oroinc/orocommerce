@@ -16,6 +16,7 @@ define(function(require) {
             buttonTemplate: '',
             removeButtonTemplate: '',
             buttonsSelector: '.add-to-shopping-list-button',
+            quantityField: '[data-name="field__quantity"]',
             messages: {
                 success: 'oro.form.inlineEditing.successMessage'
             },
@@ -63,6 +64,8 @@ define(function(require) {
                 this.model.on('change:unit', this._onModelChanged, this);
                 this.model.on('editLineItem', this._editLineItem, this);
             }
+
+            this.$el.closest('form').find(this.options.quantityField).on('keydown', _.bind(this._onQuantityEnter, this));
         },
 
         initModel: function(options) {
@@ -254,6 +257,21 @@ define(function(require) {
                     quantity: this.editLineItem.quantity,
                     unit: this.editLineItem.unit
                 });
+            }
+        },
+
+        _onQuantityEnter: function(e) {
+            var ENTER_KEY_CODE = 13;
+
+            if (e.keyCode === ENTER_KEY_CODE && this.dropdownWidget.main.data('intention') == 'update') {
+                if (!this.dropdownWidget.validateForm()) {
+                    return;
+                }
+
+                this.model.set({
+                    quantity: parseInt($(e.target).val(), 10)
+                });
+                this._saveLineItem();
             }
         },
 
