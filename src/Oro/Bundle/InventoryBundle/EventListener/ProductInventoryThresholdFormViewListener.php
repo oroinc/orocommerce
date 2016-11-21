@@ -18,7 +18,7 @@ class ProductInventoryThresholdFormViewListener extends AbstractFallbackFieldsFo
             return;
         }
 
-        $this->onEntityView($event, 'OroInventoryBundle:Product:inventoryThreshold.html.twig', $product);
+        $this->addBlockToEntityView($event, 'OroInventoryBundle:Product:inventoryThreshold.html.twig', $product);
     }
 
     /**
@@ -26,6 +26,6 @@ class ProductInventoryThresholdFormViewListener extends AbstractFallbackFieldsFo
      */
     public function onProductEdit(BeforeListRenderEvent $event)
     {
-        $this->onEntityEdit($event, 'OroInventoryBundle:Product:inventoryThresholdFormWidget.html.twig');
+        $this->addBlockToEntityEdit($event, 'OroInventoryBundle:Product:inventoryThresholdFormWidget.html.twig');
     }
 }

@@ -12,7 +12,7 @@ class CategoryManageInventoryFormViewListener extends AbstractFallbackFieldsForm
      */
     public function onCategoryEdit(BeforeListRenderEvent $event)
     {
-        $this->onEntityEdit(
+        $this->addBlockToEntityEdit(
             $event,
             'OroInventoryBundle:Category:editManageInventory.html.twig',
             'oro.catalog.sections.default_options'

@@ -45,7 +45,7 @@ abstract class AbstractFallbackFieldsFormView
      * @param string $templateName
      * @param string $entity
      */
-    public function onEntityView(BeforeListRenderEvent $event, $templateName, $entity)
+    protected function addBlockToEntityView(BeforeListRenderEvent $event, $templateName, $entity)
     {
         $template = $event->getEnvironment()->render(
             $templateName,
@@ -61,7 +61,7 @@ abstract class AbstractFallbackFieldsFormView
      * @param string $templateName
      * @param null|string $sectionTitle
      */
-    public function onEntityEdit(BeforeListRenderEvent $event, $templateName, $sectionTitle = null)
+    protected function addBlockToEntityEdit(BeforeListRenderEvent $event, $templateName, $sectionTitle = null)
     {
         $template = $event->getEnvironment()->render(
             $templateName,

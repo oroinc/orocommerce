@@ -12,7 +12,7 @@ class CategoryInventoryThresholdFormViewListener extends AbstractFallbackFieldsF
      */
     public function onCategoryEdit(BeforeListRenderEvent $event)
     {
-        $this->onEntityEdit(
+        $this->addBlockToEntityEdit(
             $event,
             'OroInventoryBundle:Category:editInventoryThreshold.html.twig',
             'oro.catalog.sections.default_options'
