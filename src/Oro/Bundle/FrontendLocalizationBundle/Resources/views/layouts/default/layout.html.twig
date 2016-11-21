@@ -18,15 +18,15 @@
                     {% for localization in localizations %}
                         <li class="oro-toolbar__list-item">
                             {% set title = localization.titles|localized_value %}
-	                    {% if selected_localization == localization %}
+                            {% if selected_localization == localization %}
                                 <b class="oro-toolbar__link">
                                     {{ title }}
                                 </b>
-	                    {% else %}
+                            {% else %}
                                 <a class="oro-toolbar__link" href="javascript: void(0);" data-localization="{{ localization.id }}">
                                     {{ title }}
                                 </a>
-	                    {% endif %}
+                            {% endif %}
                         </li>
                     {% endfor %}
                 </ul>
