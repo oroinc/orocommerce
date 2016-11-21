@@ -33,7 +33,7 @@ class OrderMapper implements MapperInterface
     {
         $order = new Order();
         $data = array_merge($this->getData($checkout), $data);
-        if ($checkout->getShippingCost() instanceof Price) {
+        if ($checkout->getShippingCost()) {
             $data = array_merge($data, ['estimatedShippingCostAmount' => $checkout->getShippingCost()->getValue()]);
         }
 

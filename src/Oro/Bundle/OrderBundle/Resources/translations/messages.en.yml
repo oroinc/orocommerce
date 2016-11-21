@@ -31,6 +31,10 @@ oro:
         overridden_shipping_cost.label: 'Overridden Shipping Cost'
         estimated_shipping_cost_amount.label: 'Estimated Shipping Cost Amount'
         overridden_shipping_cost_amount.label: 'Overridden Shipping Cost Amount'
+
+        # TODO: remove after resolving https://magecore.atlassian.net/browse/BAP-3940
+        shipping_cost_amount.label: 'Shipping Cost Amount'
+
         shipping_method.label: Shipping Method
         shipping_method_type.label: Shipping Method Type
         source_document.label: Source Document

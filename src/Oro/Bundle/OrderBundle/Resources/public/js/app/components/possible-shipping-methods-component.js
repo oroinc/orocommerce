@@ -46,7 +46,7 @@ define(function(require) {
             mediator.on('entry-point:order:load', this.onOrderChange, this);
             mediator.on('entry-point:order:load:after', this.hideLoadingMask, this);
 
-            this.$el.closest('form').on('submit', this.onSaveForm, this);
+            this.$el.closest('form').on('submit', _.bind(this.onSaveForm, this));
         },
 
         /**
@@ -54,16 +54,17 @@ define(function(require) {
          */
         onSaveForm: function (e) {
             var form = $(e.target);
+            form.find(this.selectors.calculateShipping).val(true);
             form.validate();
             if (form.valid() && this.orderHasChanged) {
-                this.showConfirmation();
+                this.showConfirmation(form);
                 return false;
             }
 
             return true;
         },
 
-        showConfirmation: function() {
+        showConfirmation: function(form) {
             var self = this;
 
             var confirmation = new StandardConfirmation({
@@ -80,13 +81,13 @@ define(function(require) {
                 .on('ok')
                 .open(function() {
                     self.orderHasChanged = false;
-                    self.$el.closest('form').trigger('submit');
+                    form.trigger('submit');
                 });
         },
 
         showLoadingMask: function() {
             this.orderHasChanged = true;
-            if (this.getCalculateShippingElement().val() === 'true') {
+            if (this.getCalculateShippingElement().val()) {
                 this.loadingMaskView.show();
             }
         },
@@ -100,7 +101,7 @@ define(function(require) {
         onOrderChange: function(e) {
             this.$totals = e.totals;
             if (e.possibleShippingMethods != undefined) {
-                this.getCalculateShippingElement().val(0);
+                this.getCalculateShippingElement().val(null);
                 this.getToggleButton().parent('div').hide();
                 this.$data = e.possibleShippingMethods;
                 this.updatePossibleShippingMethods(e.possibleShippingMethods);
@@ -203,7 +204,7 @@ define(function(require) {
                     var prevVal = $(document).find('.selected-shipping-method').text();
                     $(document).find('.previously-selected-shipping-method').closest('.control-group').remove();
                     $(document).find('.selected-shipping-method').closest('.control-group').remove();
-                    if (matched === false) {
+                    if (!matched) {
                         var $prevDiv = $("<div>", {"class": "control-group"});
                         $prevDiv.append('<label class="control-label">' + __('oro.order.previous_shipping_method.label') + '</label>');
                         $prevDiv.append('<div class="controls"><div class="control-label previously-selected-shipping-method">' +

@@ -190,7 +190,7 @@
                 entity.shippingMethod,
                 entity.shippingMethodType,
                 entity.estimatedShippingCostAmount,
-                orderData.possibleShippingMethods,
+                orderData.possibleShippingMethods is defined ? orderData.possibleShippingMethods : [],
                 form
             )
         ) }}
