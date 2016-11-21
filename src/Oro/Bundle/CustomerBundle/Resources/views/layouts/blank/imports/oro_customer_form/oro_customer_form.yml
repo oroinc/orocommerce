@@ -1,16 +1,7 @@
 layout:
     actions:
-        - '@remove':
-            id: header
-        - '@remove':
-            id: sticky_panel
-        - '@remove':
-            id: page_container
-        - '@remove':
-            id: footer
-
         - '@setBlockTheme':
-            themes: 'oro_customer_only_content_form.html.twig'
+            themes: 'oro_customer_form.html.twig'
         - '@addTree':
             items:
                 __page_wrapper:
@@ -49,11 +40,6 @@ layout:
                             __form_submit_wrapper:
                                 __form_submit: ~
                             __links: ~
-
-        - '@move':
-            id: notification
-            parentId: wrapper
-            prepend: true
 
         - '@move':
             id: __form_submit_wrapper
