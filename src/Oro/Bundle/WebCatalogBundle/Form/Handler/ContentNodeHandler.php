@@ -57,7 +57,7 @@ class ContentNodeHandler
     {
         $this->form->setData($contentNode);
 
-        if (in_array($this->request->getMethod(), ['POST', 'PUT'])) {
+        if ($this->request->isMethod(Request::METHOD_POST)) {
             $this->form->submit($this->request);
             if ($this->form->isValid()) {
                 $this->onSuccess($contentNode);

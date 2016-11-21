@@ -112,12 +112,7 @@ class SlugGenerator
             $slugPrototype = $changedSlugPrototypeValue[self::SLUG_PROTOTYPE_VALUE];
             $locale = $changedSlugPrototypeValue[self::LOCALIZATION];
             
-            if (empty($parentNodeSlugUrls)) {
-                $slugUrls[] = [
-                    self::SLUG_URL => Slug::DELIMITER . $slugPrototype,
-                    self::LOCALIZATION => $locale
-                ];
-            } elseif (array_key_exists($localeId, $parentNodeSlugUrls)) {
+            if (array_key_exists($localeId, $parentNodeSlugUrls)) {
                 $slugUrls[] = [
                     self::SLUG_URL => $this->getUrl($parentNodeSlugUrls[$localeId], $slugPrototype),
                     self::LOCALIZATION => $locale
@@ -152,14 +147,20 @@ class SlugGenerator
     protected function getParentNodeSlugUrls(ContentNode $contentNode)
     {
         $parentNode = $contentNode->getParentNode();
-        /** @var ContentVariant $contentVariant */
-        $contentVariant = $parentNode->getContentVariants()->first();
 
         $parentNodeSlugUrls = [];
         if ($parentNode) {
-            foreach ($contentVariant->getSlugs() as $parentNodeSlug) {
-                $localeId = $parentNodeSlug->getLocalization() ? $parentNodeSlug->getLocalization()->getId() : null;
-                $parentNodeSlugUrls[$localeId] = $parentNodeSlug->getUrl();
+            // We can use any parent content variant.
+            // Content variant slugs are generated based on the Node data
+            // and are identical for all node content variants.
+            /** @var ContentVariant $contentVariant */
+            $contentVariant = $parentNode->getContentVariants()->first();
+            
+            if ($contentVariant) {
+                foreach ($contentVariant->getSlugs() as $parentNodeSlug) {
+                    $localeId = $parentNodeSlug->getLocalization() ? $parentNodeSlug->getLocalization()->getId() : null;
+                    $parentNodeSlugUrls[$localeId] = $parentNodeSlug->getUrl();
+                }
             }
         }
 
