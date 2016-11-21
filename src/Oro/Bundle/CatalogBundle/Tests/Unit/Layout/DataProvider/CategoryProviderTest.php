@@ -79,6 +79,19 @@ class CategoryProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($category, $result);
     }
 
+    public function testGetRootCategory()
+    {
+        $category = new Category();
+
+        $this->categoryRepository
+            ->expects($this->once())
+            ->method('getMasterCatalogRoot')
+            ->willReturn($category);
+
+        $result = $this->categoryProvider->getRootCategory();
+        $this->assertSame($category, $result);
+    }
+
     public function testGetCategoryTree()
     {
         $childCategory = new Category();

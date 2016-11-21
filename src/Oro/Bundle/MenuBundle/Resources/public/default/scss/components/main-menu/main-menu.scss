@@ -1,5 +1,11 @@
+.main-menu-outer {
+    position: relative;
+}
+
 .main-menu {
+    display: -webkit-flex;
     display: flex;
+    flex-grow: 1;
 
     margin: 0;
     padding: 0;
@@ -11,7 +17,37 @@
     border-bottom: 0;
 
     &__item {
+        -webkit-flex-grow: 1;
         flex-grow: 1;
+    }
+
+    &__link {
+        display: block;
+
+        padding: 14px 0;
+
+        line-height: 1.5;
+        text-align: center;
+        text-transform: uppercase;
+
+        color: get-color('additional', 'dark');
+
+        &:hover,
+        &:focus {
+            text-decoration: none;
+
+            color: get-color('additional', 'dark');
+        }
+    }
+}
+
+@include breakpoint('desktop') {
+    .main-menu-outer {
+        display: flex;
+    }
+
+    .main-menu {
+        display: flex !important;
     }
 }
 
@@ -20,16 +56,80 @@
         display: block;
 
         max-height: none;
-        padding: 10px 15px 0 15px;
+        padding: 7px 15px 0 15px;
 
-        &__item {
-            min-height: 0;
+        font-weight: bold;
+
+        &__sublist_subnested {
+            display: none;
         }
 
-        &__link {
-            padding: 5px 0;
+        &__categories {
+            display: none;
+            padding-top: 0;
+        }
+
+        &__item {
+            position: relative;
+
+            min-height: inherit;
+        }
+
+        &__sublist__link {
+            display: block;
+
+            line-height: 1.5;
+            text-transform: uppercase;
+
+            color: get-color('additional', 'dark');
+
+            &:hover,
+            &:focus {
+                text-decoration: none;
+
+                color: get-color('additional', 'dark');
+            }
+
+        }
+
+        &__link,
+        &__sublist__link {
+            font-size: 14px;
+            font-weight: bold;
+
+            padding: 8px 0 7px 8px;
 
             text-align: left;
+        }
+
+        &__item.expanded {
+            .main-menu__link {
+                position: relative;
+                padding-left: 15px;
+
+                .cf-down-open-mini {
+                    position: absolute;
+                    left: 0;
+                    top: 50%;
+
+                    margin: 0;
+                    margin-top: -7px;
+
+                    transform: rotate(90deg);
+                }
+            }
+        }
+
+        &__sublist__title {
+            display: none;
+        }
+
+        &__sublist--nested {
+            margin-top: 0;
+        }
+
+        &__sublist__item {
+            margin-top: 0;
         }
     }
 }

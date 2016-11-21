@@ -1,4 +1,5 @@
 .catalog__filter-controls {
+  display: -webkit-flex;
   display: flex;
   flex-wrap: wrap;
   align-content: stretch;
@@ -11,6 +12,7 @@
   font-size: 0;
 
   &__item {
+    -webkit-flex-grow: 1;
     flex-grow: 1;
     margin-right: 5px;
 
