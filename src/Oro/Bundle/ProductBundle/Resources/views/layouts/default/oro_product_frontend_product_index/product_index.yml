@@ -14,7 +14,7 @@ layout:
                 product_grid_container:
                     blockType: container
             tree:
-                content:
+                page_content:
                     product_index_page:
                         product_search_navigation: ~
                         product_grid_container:
