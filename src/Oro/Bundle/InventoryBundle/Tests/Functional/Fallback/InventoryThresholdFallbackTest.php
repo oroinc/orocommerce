@@ -17,8 +17,6 @@ class InventoryThresholdFallbackTest extends WebTestCase
 {
     const VIEW_INVENTORY_THRESHOLD_XPATH =
     "//label[text() = 'Inventory Threshold']/following-sibling::div/div[contains(@class,  'control-label')]";
-    const VIEW__CATEGORY_INVENTORY_THRESHOLD_XPATH =
-        "//input[@name='oro_catalog_category[inventoryThreshold][scalarValue]']";
 
     public function setUp()
     {
@@ -56,10 +54,9 @@ class InventoryThresholdFallbackTest extends WebTestCase
         );
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $inventoryThresholdValue = $crawler->filterXPath(self::VIEW__CATEGORY_INVENTORY_THRESHOLD_XPATH)->html();
-        $this->assertEmpty($inventoryThresholdValue);
-
         $form = $crawler->selectButton('Save')->form();
+        $inventoryThresholdValue = $form->get('oro_catalog_category[inventoryThreshold][scalarValue]')->getValue();
+        $this->assertEmpty($inventoryThresholdValue);
 
         $form['input_action'] = 'save';
         $form['oro_catalog_category[inventoryThreshold][useFallback]'] = false;
