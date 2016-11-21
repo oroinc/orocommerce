@@ -5,7 +5,7 @@ layout:
         - '@remove':
             id: sticky_panel
         - '@remove':
-            id: main
+            id: page_container
         - '@remove':
             id: footer
 
@@ -49,6 +49,12 @@ layout:
                             __form_submit_wrapper:
                                 __form_submit: ~
                             __links: ~
+
+        - '@move':
+            id: notification
+            parentId: wrapper
+            prepend: true
+
         - '@move':
             id: __form_submit_wrapper
             parentId: __form
