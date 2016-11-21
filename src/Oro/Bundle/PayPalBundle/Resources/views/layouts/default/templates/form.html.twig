@@ -7,7 +7,8 @@
 
 {% block _oro_paypal_credit_card_payment_credit_card_cvv_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' input input--full'
+        '~class': ' input input--full',
+        'autocomplete': 'off'
     }) %}
 
     <div class="field-cvv-wrapper">
