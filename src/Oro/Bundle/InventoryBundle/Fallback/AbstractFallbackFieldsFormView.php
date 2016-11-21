@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\InventoryBundle\Service;
+namespace Oro\Bundle\InventoryBundle\Fallback;
 
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Translation\TranslatorInterface;
