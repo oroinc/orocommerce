@@ -3,8 +3,8 @@
 namespace Oro\Bundle\VisibilityBundle\EventListener;
 
 use Oro\Bundle\CatalogBundle\Event\ProductsChangeRelationEvent;
-use Oro\Bundle\CatalogBundle\Model\CategoryMessageHandler;
-use Oro\Bundle\ProductBundle\Model\ProductMessageHandler;
+use Oro\Bundle\VisibilityBundle\Model\CategoryMessageHandler;
+use Oro\Bundle\VisibilityBundle\Model\ProductMessageHandler;
 
 class CategoryListener
 {
@@ -19,7 +19,7 @@ class CategoryListener
     protected $topic = '';
 
     /**
-     * @param ProductMessageHandler $productMessageHandler
+     * @param \Oro\Bundle\VisibilityBundle\Model\ProductMessageHandler $productMessageHandler
      */
     public function __construct(ProductMessageHandler $productMessageHandler)
     {

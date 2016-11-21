@@ -5,7 +5,7 @@ namespace Oro\Bundle\VisibilityBundle\Async\Visibility;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Driver\DriverException;
 use Doctrine\ORM\EntityManagerInterface;
-use Oro\Bundle\CatalogBundle\Model\CategoryMessageFactory;
+use Oro\Bundle\VisibilityBundle\Model\CategoryMessageFactory;
 use Oro\Bundle\CatalogBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
@@ -25,7 +25,7 @@ use Psr\Log\LoggerInterface;
 class CategoryProcessor implements MessageProcessorInterface
 {
     /**
-     * @var CategoryMessageFactory
+     * @var \Oro\Bundle\VisibilityBundle\Model\CategoryMessageFactory
      */
     protected $insertFromSelectQueryExecutor;
 
@@ -40,7 +40,7 @@ class CategoryProcessor implements MessageProcessorInterface
     protected $logger;
 
     /**
-     * @var CategoryMessageFactory
+     * @var \Oro\Bundle\VisibilityBundle\Model\CategoryMessageFactory
      */
     protected $messageFactory;
 
@@ -63,7 +63,7 @@ class CategoryProcessor implements MessageProcessorInterface
      * @param ManagerRegistry $registry
      * @param InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor
      * @param LoggerInterface $logger
-     * @param CategoryMessageFactory $messageFactory
+     * @param \Oro\Bundle\VisibilityBundle\Model\CategoryMessageFactory $messageFactory
      * @param CacheBuilder $cacheBuilder
      * @param ScopeManager $scopeManager
      * @param DatabaseExceptionHelper $databaseExceptionHelper

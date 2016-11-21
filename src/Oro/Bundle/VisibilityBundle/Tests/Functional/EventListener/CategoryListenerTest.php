@@ -4,7 +4,6 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Functional\EventListener;
 
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageCollector;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -43,7 +42,7 @@ class CategoryListenerTest extends WebTestCase
         $this->loadFixtures(['Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData']);
 
         $this->messageProducer = $this->getContainer()->get('oro_message_queue.client.message_producer');
-        $this->getContainer()->get('oro_product.model.product_message_handler')->sendScheduledMessages();
+        $this->getContainer()->get('oro_visibility.model.product_message_handler')->sendScheduledMessages();
         $this->messageProducer->clear();
         $this->messageProducer->enable();
     }
@@ -62,7 +61,7 @@ class CategoryListenerTest extends WebTestCase
         $newCategory->addProduct($product);
         $this->categoryManager->flush();
         $this->messageProducer->clear();
-        $this->getContainer()->get('oro_product.model.product_message_handler')->sendScheduledMessages();
+        $this->getContainer()->get('oro_visibility.model.product_message_handler')->sendScheduledMessages();
         $messages = $this->messageProducer->getSentMessages();
         $expectedMessages[] = [
             'topic' => 'oro_visibility.visibility.change_product_category',
@@ -83,7 +82,7 @@ class CategoryListenerTest extends WebTestCase
         $category->removeProduct($product);
         $this->categoryManager->flush();
         $this->messageProducer->clear();
-        $this->getContainer()->get('oro_product.model.product_message_handler')->sendScheduledMessages();
+        $this->getContainer()->get('oro_visibility.model.product_message_handler')->sendScheduledMessages();
         $messages = $this->messageProducer->getSentMessages();
         $expectedMessages = [
             [
@@ -99,7 +98,7 @@ class CategoryListenerTest extends WebTestCase
         $this->categoryManager->flush();
 
         $this->messageProducer->clear();
-        $this->getContainer()->get('oro_product.model.product_message_handler')->sendScheduledMessages();
+        $this->getContainer()->get('oro_visibility.model.product_message_handler')->sendScheduledMessages();
         $messages = $this->messageProducer->getSentMessages();
         $expectedMessages = [
             [

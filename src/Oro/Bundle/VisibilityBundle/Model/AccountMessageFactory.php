@@ -1,12 +1,11 @@
 <?php
 
-namespace Oro\Bundle\CustomerBundle\Model;
+namespace Oro\Bundle\VisibilityBundle\Model;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Model\Exception\InvalidArgumentException;
-use Oro\Bundle\VisibilityBundle\Model\MessageFactoryInterface;
 
 class AccountMessageFactory implements MessageFactoryInterface
 {

@@ -4,7 +4,7 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Async\Visibility;
 
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
-use Oro\Bundle\ProductBundle\Model\ProductMessageHandler;
+use Oro\Bundle\VisibilityBundle\Model\ProductMessageHandler;
 use Oro\Bundle\VisibilityBundle\Async\Visibility\CategoryVisibilityProcessor;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CategoryVisibilityResolved;
@@ -36,7 +36,7 @@ class CategoryVisibilityProcessorTest extends \PHPUnit_Framework_TestCase
      */
     protected $cacheBuilder;
     /**
-     * @var ProductMessageHandler|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Oro\Bundle\VisibilityBundle\Model\ProductMessageHandler|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $productMessageHandler;
     /**
