@@ -123,14 +123,9 @@ services:
     oro_web_catalog.form.type.oro_web_catalog_content_variant_collection:
         class: Oro\Bundle\WebCatalogBundle\Form\Type\ContentVariantCollectionType
         arguments:
-            - '@oro_web_catalog.form.event_listener.content_variant_collection_resize_subscriber'
+            - '@oro_web_catalog.content_variant_type.registry'
         tags:
             - { name: form.type, alias: oro_web_catalog_content_variant_collection }
-
-    oro_web_catalog.form.event_listener.content_variant_collection_resize_subscriber:
-        class: Oro\Bundle\WebCatalogBundle\Form\EventListener\ContentVariantCollectionResizeSubscriber
-        arguments:
-            - '@oro_web_catalog.content_variant_type.registry'
 
     oro_web_catalog.content_node_utils.content_node_name_filler:
         class: 'Oro\Bundle\WebCatalogBundle\ContentNodeUtils\ContentNodeNameFiller'

@@ -58,7 +58,10 @@ class ProductPageVariantType extends AbstractType
             )
             ->add(
                 'type',
-                HiddenType::class
+                HiddenType::class,
+                [
+                    'data' => ProductPageContentVariantType::TYPE
+                ]
             );
 
         $builder->addEventListener(

@@ -48,7 +48,10 @@ class SystemPageVariantType extends AbstractType
             )
             ->add(
                 'type',
-                HiddenType::class
+                HiddenType::class,
+                [
+                    'data' => SystemPageContentVariantType::TYPE
+                ]
             );
 
         $builder->addEventListener(
