@@ -1,0 +1,23 @@
+Oro\Bundle\OrderBundle\Entity\OrderAddress:
+    properties:
+        street:
+            - NotBlank:
+                groups: [ Checkout ]
+        city:
+            - NotBlank:
+                groups: [ Checkout ]
+        postalCode:
+            - NotBlank:
+                groups: [ Checkout ]
+        region:
+            - NotBlank:
+                groups: [ Checkout ]
+        firstName:
+            - NotBlank:
+                groups: [ Checkout ]
+        lastName:
+            - NotBlank:
+                groups: [ Checkout ]
+        phone:
+            - Length:
+                max: 255
