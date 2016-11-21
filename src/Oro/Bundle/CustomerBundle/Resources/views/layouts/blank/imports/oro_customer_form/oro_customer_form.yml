@@ -42,11 +42,6 @@ layout:
                             __links: ~
 
         - '@move':
-            id: notification
-            parentId: wrapper
-            prepend: true
-
-        - '@move':
             id: __form_submit_wrapper
             parentId: __form
             siblingId: __form_end
