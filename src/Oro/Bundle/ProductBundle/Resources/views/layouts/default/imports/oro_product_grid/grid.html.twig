@@ -23,12 +23,11 @@
 
 {% block __oro_product_grid__datagrid_toolbar_sorting_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ " sorting pull-left form-horizontal action-selectbox_custom_in-pager",
+        class: attr.class|default('') ~ " catalog__filter-controls__item catalog__filter-controls__item--sorting sorting form-horizontal action-selectbox_custom_in-pager",
     'data-grid-sorting': ''
     }) %}
-    <div class="catalog__filter-controls__item">
-        <div{{ block('block_attributes') }}></div>
-    </div>
+
+    <div{{ block('block_attributes') }}></div>
 {% endblock %}
 
 {% block __oro_product_grid__datagrid_toolbar_mass_actions_widget %}
@@ -52,7 +51,7 @@
 
 {% block __oro_product_grid__datagrid_toolbar_pagination_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ " oro-pagination",
+        class: attr.class|default('') ~ " catalog__filter-controls__item--pagination oro-pagination",
         'data-grid-pagination': ''
     }) %}
 
@@ -63,27 +62,29 @@
 
 {% block __oro_product_grid__datagrid_toolbar_page_size_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ " page-size pull-right form-horizontal",
+        class: attr.class|default('') ~ " catalog__filter-controls__item catalog__filter-controls__item--page-size page-size form-horizontal",
         'data-grid-pagesize': ''
     }) %}
-    <div class="catalog__filter-controls__item">
-        <div{{ block('block_attributes') }}>{{ block(block_type_widget_id) }}</div>
+
+    <div{{ block('block_attributes') }}>
+        {{ block(block_type_widget_id) }}
     </div>
 {% endblock %}
 
 {% block __oro_product_grid__datagrid_toolbar_actions_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ " actions-panel pull-right form-horizontal",
+        class: attr.class|default('') ~ " catalog__filter-controls__item actions-panel form-horizontal",
         'data-grid-actions-panel': ''
     }) %}
-    <div class="catalog__filter-controls__item">
-        <div{{ block('block_attributes') }}>{{ block(block_type_widget_id) }}</div>
+
+    <div{{ block('block_attributes') }}>
+        {{ block(block_type_widget_id) }}
     </div>
 {% endblock %}
 
 {% block __oro_product_grid__datagrid_toolbar_display_options_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ " catalog__filter-controls__item catalog__filter-controls__item_display-options pull-right"
+        class: attr.class|default('') ~ " catalog__filter-controls__item catalog__filter-controls__item--display-options pull-right"
     }) %}
     <div{{ block('block_attributes') }}>
         {% set row_view_key = constant('Oro\\Bundle\\ProductBundle\\DataGrid\\DataGridThemeHelper::GRID_THEME_PARAM_NAME') %}
