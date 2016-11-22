@@ -182,13 +182,13 @@ operations:
             - '@call_service_method':
                 service: 'oro_pricing.builder.price_list_product_assignment_builder'
                 method: 'buildByPriceList'
-                method_parameters: [$.entity]
+                method_parameters: [$.data]
             - '@call_service_method':
                 service: 'oro_pricing.builder.product_price_builder'
                 method: 'buildByPriceList'
-                method_parameters: [$.entity]
-            - '@assign_value': [$.entity.actual, true]
-            - '@flush_entity': $.entity
+                method_parameters: [$.data]
+            - '@assign_value': [$.data.actual, true]
+            - '@flush_entity': $.data
             - '@flash_message':
                 message: oro.pricing.pricelist.recalculate.message
                 type: 'success'
