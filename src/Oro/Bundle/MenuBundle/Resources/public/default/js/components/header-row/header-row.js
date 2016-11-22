@@ -45,7 +45,7 @@ define(function(require) {
             var middleBarHeight = this.$el.prev().outerHeight();
             var menuHeight = windowHeight - headerRowHeight;
             var isSticky = this.$el.hasClass('header-row--fixed');
-            var $dropdowns = this.$el.find('.header-row__dropdown-mobile');
+            var $dropdowns = this.$el.find('.header-row__dropdown');
 
             if (!isSticky) {
                 menuHeight = windowHeight - headerRowHeight - middleBarHeight;
