@@ -150,7 +150,9 @@ oro:
         form:
             address.manual: Enter other address
             address.select.billing.label: SELECT BILLING ADDRESS
+            address.enter.billing.label: ENTER BILLING ADDRESS
             address.select.shipping.label: SELECT SHIPPING ADDRESS
+            address.enter.shipping.label: ENTER SHIPPING ADDRESS
 
         grid:
             total.label: Total
