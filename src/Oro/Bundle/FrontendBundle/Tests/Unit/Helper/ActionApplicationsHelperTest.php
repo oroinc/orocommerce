@@ -21,7 +21,11 @@ class ActionApplicationsHelperTest extends ApplicationsHelperTest
     {
         parent::setUp();
 
-        $this->helper = new ActionApplicationsHelper($this->tokenStorage);
+        $this->helper = new ActionApplicationsHelper($this->helper, $this->tokenStorage);
+        $this->helper->setFormDialogRoute('oro_frontend_action_widget_form')
+            ->setFormPageRoute('oro_frontend_action_widget_form')
+            ->setWidgetRoute('oro_frontend_action_widget_buttons')
+            ->setExecutionRoute('oro_frontend_action_operation_execute');
     }
 
     /**
@@ -51,7 +55,22 @@ class ActionApplicationsHelperTest extends ApplicationsHelperTest
             ->method('getToken')
             ->willReturn($token);
 
-        $this->assertEquals($expectedRoutes['dialog'], $this->helper->getDialogRoute());
+        $this->assertEquals($expectedRoutes['dialog'], $this->helper->getFormDialogRoute());
+    }
+
+    /**
+     * @param TokenInterface|null $token
+     * @param array $expectedRoutes
+     *
+     * @dataProvider applicationRoutesProvider
+     */
+    public function testGetPageRoute(TokenInterface $token = null, array $expectedRoutes = [])
+    {
+        $this->tokenStorage->expects($this->any())
+            ->method('getToken')
+            ->willReturn($token);
+
+        $this->assertEquals($expectedRoutes['page'], $this->helper->getFormPageRoute());
     }
 
     /**
@@ -80,6 +99,7 @@ class ActionApplicationsHelperTest extends ApplicationsHelperTest
                 'routes' => [
                     'widget' => 'oro_action_widget_buttons',
                     'dialog' => 'oro_action_widget_form',
+                    'page' => 'oro_action_widget_form',
                     'execution' => 'oro_action_operation_execute',
                 ],
             ],
@@ -88,6 +108,7 @@ class ActionApplicationsHelperTest extends ApplicationsHelperTest
                 'routes' => [
                     'widget' => 'oro_frontend_action_widget_buttons',
                     'dialog' => 'oro_frontend_action_widget_form',
+                    'page' => 'oro_frontend_action_widget_form',
                     'execution' => 'oro_frontend_action_operation_execute',
                 ],
             ],
@@ -96,6 +117,7 @@ class ActionApplicationsHelperTest extends ApplicationsHelperTest
                 'routes' => [
                     'widget' => 'oro_action_widget_buttons',
                     'dialog' => 'oro_action_widget_form',
+                    'page' => 'oro_action_widget_form',
                     'execution' => 'oro_action_operation_execute',
                 ],
             ],
@@ -104,6 +126,7 @@ class ActionApplicationsHelperTest extends ApplicationsHelperTest
                 'routes' => [
                     'widget' => 'oro_action_widget_buttons',
                     'dialog' => 'oro_action_widget_form',
+                    'page' => 'oro_action_widget_form',
                     'execution' => 'oro_action_operation_execute',
                 ],
             ],

@@ -2,43 +2,74 @@
 
 namespace Oro\Bundle\FrontendBundle\Helper;
 
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+
 use Oro\Bundle\ActionBundle\Helper\ApplicationsHelper;
+use Oro\Bundle\ActionBundle\Helper\ApplicationsHelperInterface;
+use Oro\Bundle\ActionBundle\Helper\ApplicationsHelperTrait;
+use Oro\Bundle\ActionBundle\Helper\RouteHelperTrait;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 
-class ActionApplicationsHelper extends ApplicationsHelper
+class ActionApplicationsHelper implements ApplicationsHelperInterface
 {
+    use ApplicationsHelperTrait, RouteHelperTrait;
+
     const COMMERCE_APPLICATION = 'commerce';
 
+    /** @var ApplicationsHelper */
+    protected $applicationsHelper;
+
+    /** @var TokenStorageInterface */
+    protected $tokenStorage;
+
     /**
-     * @return string|null
+     * @param ApplicationsHelperInterface $applicationsHelper
+     * @param TokenStorageInterface $tokenStorage
+     */
+    public function __construct(ApplicationsHelperInterface $applicationsHelper, TokenStorageInterface $tokenStorage)
+    {
+        $this->applicationsHelper = $applicationsHelper;
+        $this->tokenStorage = $tokenStorage;
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function getCurrentApplication()
     {
-        return $this->isFrontend() ? self::COMMERCE_APPLICATION : parent::getCurrentApplication();
+        return $this->isFrontend() ? self::COMMERCE_APPLICATION : $this->applicationsHelper->getCurrentApplication();
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getWidgetRoute()
     {
-        return $this->isFrontend() ? 'oro_frontend_action_widget_buttons' : parent::getWidgetRoute();
+        return $this->isFrontend() ? $this->widgetRoute : $this->applicationsHelper->getWidgetRoute();
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
-    public function getDialogRoute()
+    public function getFormDialogRoute()
     {
-        return $this->isFrontend() ? 'oro_frontend_action_widget_form' : parent::getDialogRoute();
+        return $this->isFrontend() ? $this->formDialogRoute : $this->applicationsHelper->getFormDialogRoute();
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
+     */
+    public function getFormPageRoute()
+    {
+        return $this->isFrontend() ? $this->formPageRoute : $this->applicationsHelper->getFormPageRoute();
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function getExecutionRoute()
     {
-        return $this->isFrontend() ? 'oro_frontend_action_operation_execute' : parent::getExecutionRoute();
+        return $this->isFrontend() ? $this->executionRoute : $this->applicationsHelper->getExecutionRoute();
     }
 
     /**

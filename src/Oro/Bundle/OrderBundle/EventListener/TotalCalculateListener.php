@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\OrderBundle\EventListener;
 
+use Oro\Bundle\ActionBundle\Helper\ApplicationsHelperInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormFactory;
 use Symfony\Component\Form\Form;
@@ -18,7 +19,7 @@ class TotalCalculateListener
     /** @var array */
     protected $forms = [
         ActionApplicationsHelper::COMMERCE_APPLICATION => FrontendOrderType::NAME,
-        ActionApplicationsHelper::DEFAULT_APPLICATION => OrderType::NAME
+        ApplicationsHelper::DEFAULT_APPLICATION => OrderType::NAME
     ];
 
     /** @var FormFactory */
@@ -29,9 +30,9 @@ class TotalCalculateListener
 
     /**
      * @param FormFactory $formFactory
-     * @param ApplicationsHelper $applicationsHelper
+     * @param ApplicationsHelperInterface $applicationsHelper
      */
-    public function __construct(FormFactory $formFactory, ApplicationsHelper $applicationsHelper)
+    public function __construct(FormFactory $formFactory, ApplicationsHelperInterface $applicationsHelper)
     {
         $this->formFactory = $formFactory;
         $this->applicationsHelper = $applicationsHelper;
@@ -50,7 +51,7 @@ class TotalCalculateListener
             $currentApplication = $this->applicationsHelper->getCurrentApplication();
             $entity->resetLineItems();
 
-            if ($currentApplication === ActionApplicationsHelper::DEFAULT_APPLICATION) {
+            if ($currentApplication === ApplicationsHelper::DEFAULT_APPLICATION) {
                 $entity->resetDiscounts();
             }
 
