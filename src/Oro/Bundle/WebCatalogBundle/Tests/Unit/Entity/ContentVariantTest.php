@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Entity;
 
+use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
@@ -20,7 +21,8 @@ class ContentVariantTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $this->assertPropertyCollections(new ContentVariant(), [
-            ['scopes', new Scope()]
+            ['scopes', new Scope()],
+            ['slugs', new Slug()]
         ]);
     }
 }

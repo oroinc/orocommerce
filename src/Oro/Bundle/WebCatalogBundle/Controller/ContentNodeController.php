@@ -5,6 +5,7 @@ namespace Oro\Bundle\WebCatalogBundle\Controller;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
+use Oro\Bundle\WebCatalogBundle\Form\Handler\ContentNodeHandler;
 use Oro\Bundle\WebCatalogBundle\Form\Type\ContentNodeType;
 use Oro\Bundle\WebCatalogBundle\JsTree\ContentNodeTreeHandler;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -24,9 +25,10 @@ class ContentNodeController extends Controller
      * @Template("OroWebCatalogBundle:ContentNode:update.html.twig")
      *
      * @param WebCatalog $webCatalog
+     * @param Request $request
      * @return array
      */
-    public function createRootAction(WebCatalog $webCatalog)
+    public function createRootAction(WebCatalog $webCatalog, Request $request)
     {
         $rootNode = $this->getTreeHandler()->getTreeRootByWebCatalog($webCatalog);
         if (!$rootNode) {
@@ -34,7 +36,7 @@ class ContentNodeController extends Controller
             $rootNode->setWebCatalog($webCatalog);
         }
 
-        return $this->updateTreeNode($rootNode);
+        return $this->updateTreeNode($rootNode, $request);
     }
 
     /**
@@ -44,15 +46,16 @@ class ContentNodeController extends Controller
      * @Template("OroWebCatalogBundle:ContentNode:update.html.twig")
      *
      * @param ContentNode $parentNode
+     * @param Request $request
      * @return array
      */
-    public function createAction(ContentNode $parentNode)
+    public function createAction(ContentNode $parentNode, Request $request)
     {
         $contentNode = new ContentNode();
         $contentNode->setWebCatalog($parentNode->getWebCatalog());
         $contentNode->setParentNode($parentNode);
 
-        return $this->updateTreeNode($contentNode);
+        return $this->updateTreeNode($contentNode, $request);
     }
 
     /**
@@ -62,11 +65,12 @@ class ContentNodeController extends Controller
      * @Template("OroWebCatalogBundle:ContentNode:update.html.twig")
      *
      * @param ContentNode $contentNode
+     * @param Request $request
      * @return array
      */
-    public function updateAction(ContentNode $contentNode)
+    public function updateAction(ContentNode $contentNode, Request $request)
     {
-        return $this->updateTreeNode($contentNode);
+        return $this->updateTreeNode($contentNode, $request);
     }
 
     /**
@@ -90,11 +94,19 @@ class ContentNodeController extends Controller
 
     /**
      * @param ContentNode $node
+     * @param Request $request
      * @return array|RedirectResponse
      */
-    protected function updateTreeNode(ContentNode $node)
+    protected function updateTreeNode(ContentNode $node, Request $request)
     {
         $form = $this->createForm(ContentNodeType::NAME, $node);
+
+        $handler = new ContentNodeHandler(
+            $form,
+            $request,
+            $this->get('oro_web_catalog.generator.slug_generator'),
+            $this->getDoctrine()->getManagerForClass(ContentNode::class)
+        );
 
         $saveRedirectHandler = function (ContentNode $node) {
             if ($node->getParentNode()) {
@@ -115,7 +127,8 @@ class ContentNodeController extends Controller
             $form,
             $saveRedirectHandler,
             $saveRedirectHandler,
-            $this->get('translator')->trans('oro.webcatalog.controller.contentnode.saved.message')
+            $this->get('translator')->trans('oro.webcatalog.controller.contentnode.saved.message'),
+            $handler
         );
     }
 

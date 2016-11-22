@@ -1,6 +1,7 @@
 datagrids:
     web-catalog-select-grid:
         acl_resource: oro_web_catalog_view
+        extended_entity_name: '%oro_web_catalog.entity.web_catalog.class%'
         options:
             entityHint: 'web catalog'
         source:

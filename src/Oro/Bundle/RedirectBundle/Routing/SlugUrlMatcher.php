@@ -212,7 +212,7 @@ class SlugUrlMatcher implements RequestMatcherInterface, UrlMatcherInterface
         }
 
         $routeName = $slug->getRouteName();
-        $routeParameters = $slug->getRouteParameters();
+        $routeParameters = $slug->getRouteParameters() ?: [];
 
         $resolvedUrl = $this->getResolvedUrl($routeName, $routeParameters);
         $routeData = $this->router->match($resolvedUrl);
