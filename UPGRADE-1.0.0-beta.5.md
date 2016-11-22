@@ -1,26 +1,742 @@
 Upgrade from beta.4
 ===================
 
-####General
+General
+-------------------------
 - Added dependency to [fxpio/composer-asset-plugin](https://github.com/fxpio/composer-asset-plugin) сomposer plugin.
-- All original third-party asset libraries were moved out from commerce and added to composer.json as bower-asset/npm-asset dependency.
+- All original third-party asset libraries were moved out from commerce and added to composer.json as `bower-asset/npm-asset` dependency.
 
-AlternativeCheckoutBundle
+AccountBundle:
+-------------------------
+- Bundle renamed to [`CustomerBundle`](#customerbundle)
+
+AlternativeCheckoutBundle:
 -------------------------
 - Alternative checkout workflow now disabled by default.
-- Removed precondition `'@assert_account': 4` from Alternative checkout workflow configuration.
-- Removed class `Oro\Bundle\AlternativeCheckoutBundle\Condition\AssertAccount`.
-- removed service `oro_alternativecheckout.workflow_expression.user_in_group`.
 - Alternative checkout workflow will be enabled after loading demo data. Also, in demo data to it configuration added
 Scope configuration `account: 4`.
+- Removed class `Oro\Bundle\AlternativeCheckoutBundle\Condition\AssertAccount`.
+- Removed precondition `'@assert_account': 4` from Alternative checkout workflow configuration.
+- Removed service `oro_alternativecheckout.workflow_expression.user_in_group`.
+- Changed type from `Oro\Component\Action\Model\ContextAccessor` to `Oro\Component\ConfigExpression\ContextAccessor` of first argument of `Oro\Bundle\AlternativeCheckoutBundle\Model\Action\AlternativeCheckoutByQuote` constructor
 
-ProductBundle
--------------
-- Product images filters config was removed from `app.yml`. 
-These filters are now added dynamically based on `images.yml` config.
+ApplicationBundle:
+-------------------------
+- Added method `Oro\Bundle\ApplicationBundle\Tests\Behat\Context\CommerceMainContext::setPageFactory`
+- Added first argument `name` to method `Oro\Bundle\ApplicationBundle\Tests\Behat\Context\CommerceMainContext:getPage`
+
+CheckoutBundle:
+-------------------------
+- Removed classes:
+    - `Oro\Bundle\CheckoutBundle\Condition\ShippingMethodSupports`
+    - `Oro\Bundle\CheckoutBundle\Condition\HasApplicableShippingMethods`
+    - `Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\PaymentMethodEnabledMapper`
+    - `Oro\Bundle\CheckoutBundle\Tests\Unit\Condition\ToStringStub`
+- Added classes:
+    - `Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\ShippingMethodEnabledMapper`
+    - `Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\ShippingMethodDiffMapper`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountUser` to `Oro\Bundle\CustomerBundle\Entity\AccountUser` of first argument of method `Oro\Bundle\CheckoutBundle\Entity\Checkout:setAccountUser`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\Account` to `Oro\Bundle\CustomerBundle\Entity\Account` of first argument of method `Oro\Bundle\CheckoutBundle\Entity\Checkout:setAccount`
+- Changed type from `Oro\Bundle\AccountBundle\Security\AccountUserProvider` to `Oro\Bundle\CustomerBundle\Security\AccountUserProvider` of first argument of `Oro\Bundle\CheckoutBundle\Datagrid\CheckoutGridAccountUserNameListener` constructor
+- Changed type from `Oro\Component\Action\Model\ContextAccessor` to `Oro\Component\ConfigExpression\ContextAccessor` of first argument of `Oro\Bundle\CheckoutBundle\Model\Action\GetOrderLineItems` constructor
+- Changed type from `Oro\Component\Action\Model\ContextAccessor` to `Oro\Component\ConfigExpression\ContextAccessor` of first argument of `Oro\Bundle\CheckoutBundle\Model\Action\StartCheckout` constructor
+- Changed type from `Oro\Component\Action\Model\ContextAccessor` to `Oro\Component\ConfigExpression\ContextAccessor` of first argument of `Oro\Bundle\CheckoutBundle\Model\Action\CreateOrder` constructor
+- Changed type from `Oro\Component\Action\Model\ContextAccessor` to `Oro\Component\ConfigExpression\ContextAccessor` of first argument of `Oro\Bundle\CheckoutBundle\WorkflowState\Action\DeleteCheckoutStateAction` constructor
+- Changed type from `Oro\Component\Action\Model\ContextAccessor` to `Oro\Component\ConfigExpression\ContextAccessor` of first argument of `Oro\Bundle\CheckoutBundle\WorkflowState\Action\SaveCheckoutStateAction` constructor
+- Changed type from `Oro\Component\Action\Model\ContextAccessor` to `Oro\Component\ConfigExpression\ContextAccessor` of first argument of `Oro\Bundle\CheckoutBundle\WorkflowState\Action\GetCheckoutStateAction` constructor
+- Changed type from `Oro\Component\Action\Model\ContextAccessor` to `Oro\Component\ConfigExpression\ContextAccessor` of first argument of `Oro\Bundle\CheckoutBundle\WorkflowState\Action\GenerateCheckoutStateSnapshotAction` constructor
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface` to `Oro\Bundle\CustomerBundle\Entity\AccountOwnerAwareInterface` of third argument of method `Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressType:initAccountAddressField`
+
+CMSBundle:
+-------------------------
+- Removed classes:
+    - `Oro\Bundle\CMSBundle\Twig\PageExtension`
+    - `Oro\Bundle\CMSBundle\JsTree\PageTreeHandler`
+    - `Oro\Bundle\CMSBundle\Controller\AjaxPageController`
+- Added class `Oro\Bundle\CMSBundle\Form\Type\PageSelectType`
+- Removed methods:
+    - `Oro\Bundle\CMSBundle\Entity\Page::setParentPage`
+    - `Oro\Bundle\CMSBundle\Entity\Page::getParentPage`
+    - `Oro\Bundle\CMSBundle\Entity\Page::getChildPages`
+    - `Oro\Bundle\CMSBundle\Entity\Page::addChildPage`
+    - `Oro\Bundle\CMSBundle\Entity\Page::removeChildPage`
+    - `Oro\Bundle\CMSBundle\Entity\Page::preUpdate`
+    - `Oro\Bundle\CMSBundle\Entity\Page::getLeft`
+    - `Oro\Bundle\CMSBundle\Entity\Page::setLeft`
+    - `Oro\Bundle\CMSBundle\Entity\Page::getLevel`
+    - `Oro\Bundle\CMSBundle\Entity\Page::setLevel`
+    - `Oro\Bundle\CMSBundle\Entity\Page::getRight`
+    - `Oro\Bundle\CMSBundle\Entity\Page::setRight`
+    - `Oro\Bundle\CMSBundle\Entity\Page::getRoot`
+    - `Oro\Bundle\CMSBundle\Entity\Page::setRoot`
+    - `Oro\Bundle\CMSBundle\Form\Type\PageType::setDataClass`
+    - `Oro\Bundle\CMSBundle\Form\Type\PageType::setDefaultOptions`
+- Added methods:
+    - `Oro\Bundle\CMSBundle\Entity\Page::isUpdatedAtSet`
+    - `Oro\Bundle\CMSBundle\Form\Type\PageType::configureOptions`
+- Added type `DateTime` to first argument of method `Oro\Bundle\CMSBundle\Entity\Page:setCreatedAt`
+- Added type `DateTime` to first argument of method `Oro\Bundle\CMSBundle\Entity\Page:setUpdatedAt`
+- Removed first argument `id` from method `Oro\Bundle\CMSBundle\Controller\PageController:createAction`
+
+CurrencyBundle:
+-------------------------
+- Removed classes:
+    - `Oro\Bundle\CurrencyBundle\Migrations\Data\Demo\ORM\LoadAdditionalCurrencies`
+    - `Oro\Bundle\CurrencyBundle\Twig\CurrencyExtension`
+    - `Oro\Bundle\CurrencyBundle\Entity\Price`
+    - `Oro\Bundle\CurrencyBundle\Entity\CurrencyAwareInterface`
+    - `Oro\Bundle\CurrencyBundle\Validator\Constraints\OptionalPrice`
+    - `Oro\Bundle\CurrencyBundle\Validator\Constraints\OptionalPriceValidator`
+    - `Oro\Bundle\CurrencyBundle\OroCurrencyBundle`
+    - `Oro\Bundle\CurrencyBundle\Rounding\QuantityRoundingService`
+    - `Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface`
+    - `Oro\Bundle\CurrencyBundle\Rounding\AbstractRoundingService`
+    - `Oro\Bundle\CurrencyBundle\Rounding\PriceRoundingService`
+    - `Oro\Bundle\CurrencyBundle\Form\DataTransformer\PriceTransformer`
+    - `Oro\Bundle\CurrencyBundle\Form\Type\AbstractCurrencySelectionType`
+    - `Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType`
+    - `Oro\Bundle\CurrencyBundle\Form\Type\PriceType`
+    - `Oro\Bundle\CurrencyBundle\Tests\Unit\Form\Type\PriceTypeGenerator`
+
+CommerceMenuBundle:
+-------------------------
+- Removed classes:
+    - `Oro\Bundle\CommerceMenuBundle\Provider\MenuUpdateProvider`
+    - `Oro\Bundle\CommerceMenuBundle\Entity\Repository\MenuUpdateRepository`
+    - `Oro\Bundle\CommerceMenuBundle\Tests\Functional\DataFixtures\LoadMenuUpdateData`
+- Added classes:
+    - `Oro\Bundle\CommerceMenuBundle\CacheWarmer\NamespaceMigrationProvider`
+    - `Oro\Bundle\CommerceMenuBundle\Provider\AccountOwnershipProvider`
+
+CustomerBundle:
+-------------------------
+- Changed classes destination:
+    - `Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadProductVisibilityDemoData` to `Oro\Bundle\VisibilityBundle\Migrations\Data\Demo\ORM\LoadProductVisibilityDemoData` 
+    - `Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\AbstractLoadProductVisibilityDemoData` to `Oro\Bundle\VisibilityBundle\Migrations\Data\Demo\ORM\AbstractLoadProductVisibilityDemoData` 
+    - `Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCategoryVisibilityDemoData` to `Oro\Bundle\VisibilityBundle\Migrations\Data\Demo\ORM\LoadCategoryVisibilityDemoData` 
+    - `Oro\Bundle\CustomerBundle\Provider\VisibilityChoicesProvider` to `Oro\Bundle\VisibilityBundle\Provider\VisibilityChoicesProvider` 
+    - `Oro\Bundle\CustomerBundle\Entity\EntityListener\AbstractAffectVisibilityListener` to `Oro\Bundle\VisibilityBundle\Entity\EntityListener\AbstractAffectVisibilityListener` 
+    - `Oro\Bundle\CustomerBundle\Entity\EntityListener\CategoryListener` to `Oro\Bundle\VisibilityBundle\Entity\EntityListener\CategoryListener` 
+    - `Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\CategoryVisibilityResolved` to `Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CategoryVisibilityResolved` 
+    - `Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\AccountCategoryVisibilityResolved` to `Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountCategoryVisibilityResolved` 
+    - `Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved` to `Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved` 
+    - `Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\BaseVisibilityResolved` to `Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseVisibilityResolved` 
+    - `Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\Repository\ProductRepository` to `Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\ProductRepository` 
+    - `Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\Repository\AccountProductRepository` to `Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\AccountProductRepository` 
+    - `Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\Repository\AbstractVisibilityRepository` to `Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\AbstractVisibilityRepository` 
+    - `Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\Repository\CategoryRepository` to `Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CategoryRepository` 
+    - `Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\Repository\AccountGroupCategoryRepository` to `Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\AccountGroupCategoryRepository` 
+    - `Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\Repository\AccountCategoryRepository` to `Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\AccountCategoryRepository` 
+    - `Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\Repository\AccountGroupProductRepository` to `Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\AccountGroupProductRepository` 
+    - `Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved` to `Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved` 
+    - `Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\AccountGroupCategoryVisibilityResolved` to `Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountGroupCategoryVisibilityResolved` 
+    - `Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved` to `Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved` 
+    - `Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\AccountGroupProductVisibilityResolved` to `Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountGroupProductVisibilityResolved` 
+    - `Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\ProductVisibilityResolved` to `Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\ProductVisibilityResolved` 
+    - `Oro\Bundle\CustomerBundle\Entity\Visibility\AccountGroupProductVisibility` to `Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility` 
+    - `Oro\Bundle\CustomerBundle\Entity\Visibility\VisibilityInterface` to `Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface` 
+    - `Oro\Bundle\CustomerBundle\Entity\Visibility\CategoryVisibility` to `Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility` 
+    - `Oro\Bundle\CustomerBundle\Entity\Visibility\Repository\CategoryVisibilityRepository` to `Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\CategoryVisibilityRepository` 
+    - `Oro\Bundle\CustomerBundle\Entity\Visibility\Repository\ProductVisibilityRepository` to `Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\ProductVisibilityRepository` 
+    - `Oro\Bundle\CustomerBundle\Entity\Visibility\Repository\AccountGroupCategoryVisibilityRepository` to `Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\AccountGroupCategoryVisibilityRepository` 
+    - `Oro\Bundle\CustomerBundle\Entity\Visibility\Repository\AccountGroupProductVisibilityRepository` to `Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\AccountGroupProductVisibilityRepository` 
+    - `Oro\Bundle\CustomerBundle\Entity\Visibility\Repository\AccountProductVisibilityRepository` to `Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\AccountProductVisibilityRepository` 
+    - `Oro\Bundle\CustomerBundle\Entity\Visibility\AccountCategoryVisibility` to `Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountCategoryVisibility` 
+    - `Oro\Bundle\CustomerBundle\Entity\Visibility\AccountGroupCategoryVisibility` to `Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupCategoryVisibility` 
+    - `Oro\Bundle\CustomerBundle\Entity\Visibility\AccountProductVisibility` to `Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountProductVisibility` 
+    - `Oro\Bundle\CustomerBundle\Entity\Visibility\ProductVisibility` to `Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility` 
+    - `Oro\Bundle\CustomerBundle\EventListener\DefaultVisibilityListener` to `Oro\Bundle\VisibilityBundle\EventListener\DefaultVisibilityListener` 
+    - `Oro\Bundle\CustomerBundle\EventListener\ProductSelectDBQueryEventListener` to `Oro\Bundle\VisibilityBundle\EventListener\ProductSelectDBQueryEventListener` 
+    - `Oro\Bundle\CustomerBundle\EventListener\CategoryTreeHandlerListener` to `Oro\Bundle\VisibilityBundle\EventListener\CategoryTreeHandlerListener` 
+    - `Oro\Bundle\CustomerBundle\EventListener\VisibilityGridListener` to `Oro\Bundle\VisibilityBundle\EventListener\VisibilityGridListener` 
+    - `Oro\Bundle\CustomerBundle\EventListener\CategoryListener` to `Oro\Bundle\VisibilityBundle\EventListener\CategoryListener` 
+    - `Oro\Bundle\CustomerBundle\EventListener\ProductDuplicateListener` to `Oro\Bundle\VisibilityBundle\EventListener\ProductDuplicateListener` 
+    - `Oro\Bundle\CustomerBundle\Async\Visibility\ProductVisibilityProcessor` to `Oro\Bundle\VisibilityBundle\Async\Visibility\ProductVisibilityProcessor` 
+    - `Oro\Bundle\CustomerBundle\Async\Visibility\AbstractVisibilityProcessor` to `Oro\Bundle\VisibilityBundle\Async\Visibility\AbstractVisibilityProcessor` 
+    - `Oro\Bundle\CustomerBundle\Async\Visibility\CategoryProcessor` to `Oro\Bundle\VisibilityBundle\Async\Visibility\CategoryProcessor` 
+    - `Oro\Bundle\CustomerBundle\Async\Visibility\ProductProcessor` to `Oro\Bundle\VisibilityBundle\Async\Visibility\ProductProcessor` 
+    - `Oro\Bundle\CustomerBundle\Async\Visibility\CategoryVisibilityProcessor` to `Oro\Bundle\VisibilityBundle\Async\Visibility\CategoryVisibilityProcessor` 
+    - `Oro\Bundle\CustomerBundle\Model\VisibilityMessageFactory` to `Oro\Bundle\VisibilityBundle\Model\VisibilityMessageFactory` 
+    - `Oro\Bundle\CustomerBundle\Model\MessageFactoryInterface` to `Oro\Bundle\VisibilityBundle\Model\MessageFactoryInterface` 
+    - `Oro\Bundle\CustomerBundle\Model\VisibilityMessageHandler` to `Oro\Bundle\VisibilityBundle\Model\VisibilityMessageHandler` 
+    - `Oro\Bundle\CustomerBundle\Model\ProductVisibilityQueryBuilderModifier` to `Oro\Bundle\VisibilityBundle\Model\ProductVisibilityQueryBuilderModifier` 
+    - `Oro\Bundle\CustomerBundle\Validator\Constraints\VisibilityChangeSetValidator` to `Oro\Bundle\VisibilityBundle\Validator\Constraints\VisibilityChangeSetValidator` 
+    - `Oro\Bundle\CustomerBundle\Validator\Constraints\VisibilityChangeSet` to `Oro\Bundle\VisibilityBundle\Validator\Constraints\VisibilityChangeSet` 
+    - `Oro\Bundle\CustomerBundle\Command\VisibilityCacheBuildCommand` to `Oro\Bundle\VisibilityBundle\Command\VisibilityCacheBuildCommand` 
+    - `Oro\Bundle\CustomerBundle\Visibility\Cache\CacheBuilderInterface` to `Oro\Bundle\VisibilityBundle\Visibility\Cache\CacheBuilderInterface` 
+    - `Oro\Bundle\CustomerBundle\Visibility\Cache\Product\AccountGroupProductResolvedCacheBuilder` to `Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\AccountGroupProductResolvedCacheBuilder` 
+    - `Oro\Bundle\CustomerBundle\Visibility\Cache\Product\Category\CategoryResolvedCacheBuilder` to `Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\CategoryResolvedCacheBuilder` 
+    - `Oro\Bundle\CustomerBundle\Visibility\Cache\Product\Category\AccountCategoryResolvedCacheBuilder` to `Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\AccountCategoryResolvedCacheBuilder` 
+    - `Oro\Bundle\CustomerBundle\Visibility\Cache\Product\Category\CacheBuilder` to `Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\CacheBuilder` 
+    - `Oro\Bundle\CustomerBundle\Visibility\Cache\Product\Category\Subtree\VisibilityChangeGroupSubtreeCacheBuilder` to `Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\Subtree\VisibilityChangeGroupSubtreeCacheBuilder` 
+    - `Oro\Bundle\CustomerBundle\Visibility\Cache\Product\Category\Subtree\VisibilityChangeCategorySubtreeCacheBuilder` to `Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\Subtree\VisibilityChangeCategorySubtreeCacheBuilder` 
+    - `Oro\Bundle\CustomerBundle\Visibility\Cache\Product\Category\Subtree\PositionChangeCategorySubtreeCacheBuilder` to `Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\Subtree\PositionChangeCategorySubtreeCacheBuilder` 
+    - `Oro\Bundle\CustomerBundle\Visibility\Cache\Product\Category\Subtree\VisibilityChangeAccountSubtreeCacheBuilder` to `Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\Subtree\VisibilityChangeAccountSubtreeCacheBuilder` 
+    - `Oro\Bundle\CustomerBundle\Visibility\Cache\Product\Category\Subtree\AbstractSubtreeCacheBuilder` to `Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\Subtree\AbstractSubtreeCacheBuilder` 
+    - `Oro\Bundle\CustomerBundle\Visibility\Cache\Product\Category\Subtree\AbstractRelatedEntitiesAwareSubtreeCacheBuilder` to `Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\Subtree\AbstractRelatedEntitiesAwareSubtreeCacheBuilder` 
+    - `Oro\Bundle\CustomerBundle\Visibility\Cache\Product\Category\AccountGroupCategoryResolvedCacheBuilder` to `Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\AccountGroupCategoryResolvedCacheBuilder` 
+    - `Oro\Bundle\CustomerBundle\Visibility\Cache\Product\AccountProductResolvedCacheBuilder` to `Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\AccountProductResolvedCacheBuilder` 
+    - `Oro\Bundle\CustomerBundle\Visibility\Cache\Product\ProductResolvedCacheBuilder` to `Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\ProductResolvedCacheBuilder` 
+    - `Oro\Bundle\CustomerBundle\Visibility\Cache\Product\AbstractResolvedCacheBuilder` to `Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\AbstractResolvedCacheBuilder` 
+    - `Oro\Bundle\CustomerBundle\Visibility\Cache\Product\CacheBuilder` to `Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\CacheBuilder` 
+    - `Oro\Bundle\CustomerBundle\Visibility\Cache\CompositeCacheBuilder` to `Oro\Bundle\VisibilityBundle\Visibility\Cache\CompositeCacheBuilder` 
+    - `Oro\Bundle\CustomerBundle\Visibility\Resolver\CategoryVisibilityResolverInterface` to `Oro\Bundle\VisibilityBundle\Visibility\Resolver\CategoryVisibilityResolverInterface` 
+    - `Oro\Bundle\CustomerBundle\Visibility\Resolver\CategoryVisibilityResolver` to `Oro\Bundle\VisibilityBundle\Visibility\Resolver\CategoryVisibilityResolver` 
+    - `Oro\Bundle\CustomerBundle\Controller\ProductVisibilityController` to `Oro\Bundle\VisibilityBundle\Controller\ProductVisibilityController` 
+    - `Oro\Bundle\CustomerBundle\Form\Extension\CategoryFormExtension` to `Oro\Bundle\VisibilityBundle\Form\Extension\CategoryFormExtension` 
+    - `Oro\Bundle\CustomerBundle\Form\EventListener\CategoryVisibilityPostSubmitListener` to `Oro\Bundle\VisibilityBundle\Form\EventListener\CategoryVisibilityPostSubmitListener` 
+    - `Oro\Bundle\CustomerBundle\Form\EventListener\ProductVisibilityPostSubmitListener` to `Oro\Bundle\VisibilityBundle\Form\EventListener\ProductVisibilityPostSubmitListener` 
+    - `Oro\Bundle\CustomerBundle\Form\EventListener\FormViewListener` to `Oro\Bundle\VisibilityBundle\Form\EventListener\FormViewListener` 
+    - `Oro\Bundle\CustomerBundle\Form\EventListener\VisibilityPostSetDataListener` to `Oro\Bundle\VisibilityBundle\Form\EventListener\VisibilityPostSetDataListener` 
+    - `Oro\Bundle\CustomerBundle\Form\Type\ProductVisibilityType` to `Oro\Bundle\VisibilityBundle\Form\Type\ProductVisibilityType` 
+    - `Oro\Bundle\CustomerBundle\Form\Type\EntityVisibilityType` to `Oro\Bundle\VisibilityBundle\Form\Type\EntityVisibilityType` 
+    - `Oro\Bundle\CustomerBundle\Form\Type\CatalogVisibilityType` to `Oro\Bundle\VisibilityBundle\Form\Type\CatalogVisibilityType` 
+    - `Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityResolvedData` to `Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityResolvedData` 
+    - `Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadProductVisibilityFallbackCategoryData` to `Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityFallbackCategoryData` 
+    - `Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData` to `Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData` 
+    - `Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData` to `Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData` 
+    - `Oro\Bundle\CustomerBundle\Acl\Voter\ProductVisibilityVoter` to `Oro\Bundle\VisibilityBundle\Acl\Voter\ProductVisibilityVoter` 
+- Removed classes:
+    - `Oro\Bundle\CustomerBundle\Model\CategoryVisibilityMessageFactory`
+    - `Oro\Bundle\CustomerBundle\Model\ProductVisibilityMessageFactory`
+    - `Oro\Bundle\CustomerBundle\Form\Handler\WebsiteScopedDataHandler`
+    - `Oro\Bundle\CustomerBundle\Form\EventListener\AbstractPostSubmitVisibilityListener`
+    - `Oro\Bundle\CustomerBundle\Form\EventListener\AbstractVisibilityListener`
+    - `Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\EntityVisibilityType`
+- Added classes:
+    - `Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadScopeAccountDemoData`
+    - `Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadScopeAccountGroupDemoData`
+    - `Oro\Bundle\CustomerBundle\Provider\ScopeAccountCriteriaProvider`
+    - `Oro\Bundle\CustomerBundle\Provider\ScopeAccountGroupCriteriaProvider`
+    - `Oro\Bundle\CustomerBundle\EventListener\RecordOwnerDataListener`
+    - `Oro\Bundle\CustomerBundle\Tests\Unit\Fixtures\Entity\User`
+
+FrontendBundle:
+-------------------------
+- Added protected method `prepareFrom` to class `Oro\Bundle\FrontendBundle\CacheWarmer\ClassMigration`
+- Added classes:
+    - `Oro\Bundle\FrontendBundle\CacheWarmer\NamespaceMigrationProvider`
+    - `Oro\Bundle\FrontendBundle\CacheWarmer\NamespaceMigrationFixProductProvider`
+
+FrontendNavigationBundle:
+-------------------------
+- Bundle renamed to [`CommerceMenuBundle`](#commercemenubundle)
+
+InventoryBundle:
+-------------------------
+- Added classes:
+    - `Oro\Bundle\InventoryBundle\Migrations\Data\Demo\ORM\LoadManagedInventoryData`
+    - `Oro\Bundle\InventoryBundle\Migrations\Data\Demo\ORM\LoadInventoryLevelDemoData`
+    - `Oro\Bundle\InventoryBundle\OroInventoryBundle`
+    - `Oro\Bundle\InventoryBundle\Entity\InventoryLevel`
+    - `Oro\Bundle\InventoryBundle\EventListener\InventoryLevelsImportListener`
+    - `Oro\Bundle\InventoryBundle\EventListener\CategoryManageInventoryFormViewListener`
+    - `Oro\Bundle\InventoryBundle\EventListener\ProductManageInventoryFormViewListener`
+    - `Oro\Bundle\InventoryBundle\Model\ExtendInventoryLevel`
+    - `Oro\Bundle\InventoryBundle\Model\Data\ProductUnitTransformer`
+    - `Oro\Bundle\InventoryBundle\Controller\InventoryLevelController`
+    - `Oro\Bundle\InventoryBundle\Controller\Api\Rest\InventoryLevelController`
+    - `Oro\Bundle\InventoryBundle\ImportExport\Serializer\InventoryLevelNormalizer`
+    - `Oro\Bundle\InventoryBundle\ImportExport\TemplateFixture\InventoryLevelFixture`
+    - `Oro\Bundle\InventoryBundle\ImportExport\DataConverter\InventoryLevelDataConverter`
+    - `Oro\Bundle\InventoryBundle\ImportExport\Strategy\ProductUnitStrategyHelper`
+    - `Oro\Bundle\InventoryBundle\ImportExport\Strategy\AbstractInventoryLevelStrategyHelper`
+    - `Oro\Bundle\InventoryBundle\ImportExport\Strategy\InventoryLevelStrategyHelperInterface`
+    - `Oro\Bundle\InventoryBundle\ImportExport\Strategy\InventoryLevelStrategyHelper`
+    - `Oro\Bundle\InventoryBundle\ImportExport\Strategy\InventoryStatusesStrategyHelper`
+    - `Oro\Bundle\InventoryBundle\ImportExport\Strategy\InventoryLevelStrategy`
+    - `Oro\Bundle\InventoryBundle\ImportExport\Reader\InventoryLevelReader`
+    - `Oro\Bundle\InventoryBundle\Form\DataTransformer\InventoryLevelGridDataTransformer`
+    - `Oro\Bundle\InventoryBundle\Form\Extension\CategoryManageInventoryFormExtension`
+    - `Oro\Bundle\InventoryBundle\Form\Extension\ProductManageInventoryFormExtension`
+    - `Oro\Bundle\InventoryBundle\Form\Extension\InventoryLevelExportTemplateTypeExtension`
+    - `Oro\Bundle\InventoryBundle\Form\Extension\InventoryLevelExportTypeExtension`
+    - `Oro\Bundle\InventoryBundle\Form\Handler\InventoryLevelHandler`
+    - `Oro\Bundle\InventoryBundle\Form\Type\InventoryLevelGridType`
+    - `Oro\Bundle\InventoryBundle\Api\Processor\BuildSingleInventoryLevelQuery`
+    - `Oro\Bundle\InventoryBundle\Api\Processor\NormalizeInventoryLevelRequestData`
+    - `Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures\LoadInventoryLevelWithPrimaryUnit`
+    - `Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures\LoadInventoryLevels`
+
+InvoiceBundle:
+-------------------------
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountUser` to `Oro\Bundle\CustomerBundle\Entity\AccountUser` of first argument of method `Oro\Bundle\InvoiceBundle\Entity\Invoice:setAccountUser`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\Account` to `Oro\Bundle\CustomerBundle\Entity\Account` of first argument of method `Oro\Bundle\InvoiceBundle\Entity\Invoice:setAccount`
+- Changed type from `Oro\Bundle\CurrencyBundle\Rounding\PriceRoundingService` to `Oro\Bundle\PricingBundle\Rounding\PriceRoundingService` of third argument of `Oro\Bundle\InvoiceBundle\Form\Type\InvoiceLineItemType` constructor
+
+OrderBundle:
+-------------------------
+- Added classes:
+    - `Oro\Bundle\OrderBundle\Entity\OrderShippingTracking`
+    - `Oro\Bundle\OrderBundle\Formatter\ShippingMethodFormatter`
+    - `Oro\Bundle\OrderBundle\Formatter\ShippingTrackingFormatter`
+    - `Oro\Bundle\OrderBundle\Form\Type\SelectSwitchInputType`
+    - `Oro\Bundle\OrderBundle\Form\Type\OrderShippingTrackingCollectionType`
+    - `Oro\Bundle\OrderBundle\Form\Type\OrderShippingTrackingType`
+    - `Oro\Bundle\OrderBundle\Tests\Unit\Formatter\Stub\ShippingMethodStub`
+    - `Oro\Bundle\OrderBundle\Handler\OrderShippingTrackingHandler`
+- Added methods:
+    - `Oro\Bundle\OrderBundle\Entity\Order::getShippingTrackings`
+    - `Oro\Bundle\OrderBundle\Entity\Order::setShippingTrackings`
+    - `Oro\Bundle\OrderBundle\Entity\Order::hasShippingTracking`
+    - `Oro\Bundle\OrderBundle\Entity\Order::addShippingTracking`
+    - `Oro\Bundle\OrderBundle\Entity\Order::removeShippingTracking`
+    - `Oro\Bundle\OrderBundle\Twig\OrderExtension::getFunctions`
+- Added second argument `shippingTrackingFormatter` to `Oro\Bundle\OrderBundle\Twig\OrderExtension` constructor
+- Added third argument `shippingMethodFormatter` to `Oro\Bundle\OrderBundle\Twig\OrderExtension` constructor
+- Changed type from `Oro\Bundle\AccountBundle\Entity\Account` to `Oro\Bundle\CustomerBundle\Entity\Account` of second argument of method `Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider:isAccountAddressGranted`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountUser` to `Oro\Bundle\CustomerBundle\Entity\AccountUser` of second argument of method `Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider:isAccountUserAddressGranted`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\Account` to `Oro\Bundle\CustomerBundle\Entity\Account` of first argument of method `Oro\Bundle\OrderBundle\Provider\OrderAddressProvider:getAccountAddresses`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountUser` to `Oro\Bundle\CustomerBundle\Entity\AccountUser` of first argument of method `Oro\Bundle\OrderBundle\Provider\OrderAddressProvider:getAccountUserAddresses`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\Account` to `Oro\Bundle\CustomerBundle\Entity\Account` of first argument of method `Oro\Bundle\OrderBundle\Provider\AddressProviderInterface:getAccountAddresses`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountUser` to `Oro\Bundle\CustomerBundle\Entity\AccountUser` of first argument of method `Oro\Bundle\OrderBundle\Provider\AddressProviderInterface:getAccountUserAddresses`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountUser` to `Oro\Bundle\CustomerBundle\Entity\AccountUser` of first argument of method `Oro\Bundle\OrderBundle\Entity\Order:setAccountUser`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\Account` to `Oro\Bundle\CustomerBundle\Entity\Account` of first argument of method `Oro\Bundle\OrderBundle\Entity\Order:setAccount`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountAddress` to `Oro\Bundle\CustomerBundle\Entity\AccountAddress` of first argument of method `Oro\Bundle\OrderBundle\Entity\OrderAddress:setAccountAddress`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountUserAddress` to `Oro\Bundle\CustomerBundle\Entity\AccountUserAddress` of first argument of method `Oro\Bundle\OrderBundle\Entity\OrderAddress:setAccountUserAddress`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface` to `Oro\Bundle\CustomerBundle\Entity\AccountOwnerAwareInterface` of first argument of method `Oro\Bundle\OrderBundle\Manager\AbstractAddressManager:getGroupedAddresses`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface` to `Oro\Bundle\CustomerBundle\Entity\AccountOwnerAwareInterface` of third argument of method `Oro\Bundle\OrderBundle\Form\Type\OrderAddressType:initAccountAddressField`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface` to `Oro\Bundle\CustomerBundle\Entity\AccountOwnerAwareInterface` of first argument of method `Oro\Bundle\OrderBundle\Form\Type\AbstractOrderAddressType:getDefaultAddressKey`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface` to `Oro\Bundle\CustomerBundle\Entity\AccountOwnerAwareInterface` of third argument of method `Oro\Bundle\OrderBundle\Form\Type\AbstractOrderAddressType:initAccountAddressField`
+
+PaymentBundle:
+-------------------------
+- Added methods:
+    - `Oro\Bundle\PaymentBundle\Entity\PaymentTransaction::getOwner`
+    - `Oro\Bundle\PaymentBundle\Entity\PaymentTransaction::setOwner`
+- Changed type from `Oro\Component\Action\Model\ContextAccessor` to `Oro\Component\ConfigExpression\ContextAccessor` of first argument of `Oro\Bundle\PaymentBundle\Action\AbstractPaymentMethodAction` constructor
+- Changed type from `Oro\Bundle\AccountBundle\Entity\Account` to `Oro\Bundle\CustomerBundle\Entity\Account` of first argument of method `Oro\Bundle\PaymentBundle\Provider\PaymentTermProvider:getPaymentTerm`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\Account` to `Oro\Bundle\CustomerBundle\Entity\Account` of first argument of method `Oro\Bundle\PaymentBundle\Provider\PaymentTermProvider:getAccountPaymentTerm`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountGroup` to `Oro\Bundle\CustomerBundle\Entity\AccountGroup` of first argument of method `Oro\Bundle\PaymentBundle\Provider\PaymentTermProvider:getAccountGroupPaymentTerm`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountGroup` to `Oro\Bundle\CustomerBundle\Entity\AccountGroup` of first argument of method `Oro\Bundle\PaymentBundle\Entity\PaymentTerm:addAccountGroup`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountGroup` to `Oro\Bundle\CustomerBundle\Entity\AccountGroup` of first argument of method `Oro\Bundle\PaymentBundle\Entity\PaymentTerm:removeAccountGroup`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\Account` to `Oro\Bundle\CustomerBundle\Entity\Account` of first argument of method `Oro\Bundle\PaymentBundle\Entity\PaymentTerm:addAccount`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\Account` to `Oro\Bundle\CustomerBundle\Entity\Account` of first argument of method `Oro\Bundle\PaymentBundle\Entity\PaymentTerm:removeAccount`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountUser` to `Oro\Bundle\CustomerBundle\Entity\AccountUser` of first argument of method `Oro\Bundle\PaymentBundle\Entity\PaymentTransaction:setFrontendOwner`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountGroup` to `Oro\Bundle\CustomerBundle\Entity\AccountGroup` of first argument of method `Oro\Bundle\PaymentBundle\Entity\Repository\PaymentTermRepository:getOnePaymentTermByAccountGroup`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\Account` to `Oro\Bundle\CustomerBundle\Entity\Account` of first argument of method `Oro\Bundle\PaymentBundle\Entity\Repository\PaymentTermRepository:getOnePaymentTermByAccount`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountGroup` to `Oro\Bundle\CustomerBundle\Entity\AccountGroup` of first argument of method `Oro\Bundle\PaymentBundle\Entity\Repository\PaymentTermRepository:setPaymentTermToAccountGroup`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\Account` to `Oro\Bundle\CustomerBundle\Entity\Account` of first argument of method `Oro\Bundle\PaymentBundle\Entity\Repository\PaymentTermRepository:setPaymentTermToAccount`
+
+PricingBundle:
+-------------------------
+- Changed classes destination:
+    - `Oro\Bundle\PricingBundle\Expression\ValueNode` to `Oro\Component\Expression\Node\ValueNode`
+    - `Oro\Bundle\PricingBundle\Expression\NodeInterface` to `Oro\Component\Expression\Node\NodeInterface`
+    - `Oro\Bundle\PricingBundle\Expression\ExpressionLanguageConverter` to `Oro\Component\Expression\ExpressionLanguageConverter`
+    - `Oro\Bundle\PricingBundle\Expression\QueryExpressionConverter\UnaryNodeConverter` to `Oro\Component\Expression\QueryExpressionConverter\UnaryNodeConverter`
+    - `Oro\Bundle\PricingBundle\Expression\QueryExpressionConverter\ValueNodeConverter` to `Oro\Component\Expression\QueryExpressionConverter\ValueNodeConverter`
+    - `Oro\Bundle\PricingBundle\Expression\QueryExpressionConverter\ConverterAwareInterface` to `Oro\Component\Expression\QueryExpressionConverter\ConverterAwareInterface`
+    - `Oro\Bundle\PricingBundle\Expression\QueryExpressionConverter\RelationNodeConverter` to `Oro\Component\Expression\QueryExpressionConverter\RelationNodeConverter`
+    - `Oro\Bundle\PricingBundle\Expression\QueryExpressionConverter\QueryExpressionConverterInterface` to `Oro\Component\Expression\QueryExpressionConverter\QueryExpressionConverterInterface`
+    - `Oro\Bundle\PricingBundle\Expression\QueryExpressionConverter\NameNodeConverter` to `Oro\Component\Expression\QueryExpressionConverter\NameNodeConverter`
+    - `Oro\Bundle\PricingBundle\Expression\QueryExpressionConverter\BinaryNodeConverter` to `Oro\Component\Expression\QueryExpressionConverter\BinaryNodeConverter`
+    - `Oro\Bundle\PricingBundle\Expression\RelationNode` to `Oro\Component\Expression\Node\RelationNode`
+    - `Oro\Bundle\PricingBundle\Expression\ExpressionParser` to `Oro\Component\Expression\ExpressionParser`
+    - `Oro\Bundle\PricingBundle\Expression\UnaryNode` to `Oro\Component\Expression\Node\UnaryNode`
+    - `Oro\Bundle\PricingBundle\Expression\NameNode` to `Oro\Component\Expression\Node\NameNode`
+    - `Oro\Bundle\PricingBundle\Expression\ContainerHolderNodeInterface` to `Oro\Component\Expression\Node\ContainerHolderNodeInterface`
+    - `Oro\Bundle\PricingBundle\Expression\BinaryNode` to `Oro\Component\Expression\Node\BinaryNode`
+    - `Oro\Bundle\PricingBundle\Expression\Preprocessor\ExpressionPreprocessorInterface` to `Oro\Component\Expression\Preprocessor\ExpressionPreprocessorInterface`
+    - `Oro\Bundle\PricingBundle\Expression\Preprocessor\ExpressionPreprocessor` to `Oro\Component\Expression\Preprocessor\ExpressionPreprocessor`
+    - `Oro\Bundle\PricingBundle\Expression\QueryExpressionBuilder` to `Oro\Component\Expression\QueryExpressionBuilder`
+- Removed classes:
+    - `Oro\Bundle\PricingBundle\Expression\NodeToQueryDesignerConverter`
+    - `Oro\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider`
+    - `Oro\Bundle\PricingBundle\Query\PriceListExpressionQueryConverter`
+    - `Oro\Bundle\PricingBundle\Model\PriceListQueryDesigner`
+    - `Oro\Bundle\PricingBundle\Validator\Constraints\LogicalExpressionValidator`
+    - `Oro\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpression`
+    - `Oro\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpressionValidator`
+    - `Oro\Bundle\PricingBundle\Validator\Constraints\LogicalExpression`
+    - `Oro\Bundle\PricingBundle\Form\Type\EnabledCurrencySelectionType`
+- Added classes:
+    - `Oro\Bundle\PricingBundle\Expression\PriceListQueryConverterExtension`
+    - `Oro\Bundle\PricingBundle\Expression\ColumnInformation\PriceListProvider`
+    - `Oro\Bundle\PricingBundle\Rounding\PriceRoundingService`
+- Changed type from `Oro\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider` to `Oro\Component\Expression\FieldsProviderInterface` of first argument of `Oro\Bundle\PricingBundle\Expression\QueryExpressionConverter\AssignedProductsConverter` constructor
+- Changed type from `Oro\Bundle\PricingBundle\Expression\NodeInterface` to `Oro\Component\Expression\Node\NodeInterface` of first argument of method `Oro\Bundle\PricingBundle\Expression\QueryExpressionConverter\AssignedProductsConverter:convert`
+- Changed type from `Oro\Bundle\PricingBundle\Expression\NodeInterface` to `Oro\Component\Expression\Node\NodeInterface` of first argument of method `Oro\Bundle\PricingBundle\Expression\QueryExpressionConverter\AssignedProductsConverter:assertLeftOperand`
+- Changed type from `Oro\Bundle\PricingBundle\Expression\ContainerHolderNodeInterface` to `Oro\Component\Expression\Node\ContainerHolderNodeInterface` of second argument of method `Oro\Bundle\PricingBundle\Expression\QueryExpressionConverter\AssignedProductsConverter:getTableAliasByNode`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\Account` to `Oro\Bundle\CustomerBundle\Entity\Account` of second argument of method `Oro\Bundle\PricingBundle\Builder\AccountCombinedPriceListsBuilder:build`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountGroup` to `Oro\Bundle\CustomerBundle\Entity\AccountGroup` of second argument of method `Oro\Bundle\PricingBundle\Builder\AccountCombinedPriceListsBuilder:buildByAccountGroup`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\Account` to `Oro\Bundle\CustomerBundle\Entity\Account` of second argument of method `Oro\Bundle\PricingBundle\Builder\AccountCombinedPriceListsBuilder:updatePriceListsOnCurrentLevel`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\Account` to `Oro\Bundle\CustomerBundle\Entity\Account` of second argument of method `Oro\Bundle\PricingBundle\Builder\AccountCombinedPriceListsBuilder:isBuiltForAccount`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\Account` to `Oro\Bundle\CustomerBundle\Entity\Account` of second argument of method `Oro\Bundle\PricingBundle\Builder\AccountCombinedPriceListsBuilder:setBuiltForAccount`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountGroup` to `Oro\Bundle\CustomerBundle\Entity\AccountGroup` of second argument of method `Oro\Bundle\PricingBundle\Builder\AccountCombinedPriceListsBuilder:isBuiltForAccountGroup`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountGroup` to `Oro\Bundle\CustomerBundle\Entity\AccountGroup` of second argument of method `Oro\Bundle\PricingBundle\Builder\AccountCombinedPriceListsBuilder:setBuiltForAccountGroup`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\Account` to `Oro\Bundle\CustomerBundle\Entity\Account` of second argument of method `Oro\Bundle\PricingBundle\Builder\AccountCombinedPriceListsBuilder:hasFallbackOnNextLevel`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountGroup` to `Oro\Bundle\CustomerBundle\Entity\AccountGroup` of second argument of method `Oro\Bundle\PricingBundle\Builder\AccountGroupCombinedPriceListsBuilder:build`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountGroup` to `Oro\Bundle\CustomerBundle\Entity\AccountGroup` of second argument of method `Oro\Bundle\PricingBundle\Builder\AccountGroupCombinedPriceListsBuilder:updatePriceListsOnCurrentLevel`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountGroup` to `Oro\Bundle\CustomerBundle\Entity\AccountGroup` of second argument of method `Oro\Bundle\PricingBundle\Builder\AccountGroupCombinedPriceListsBuilder:isBuiltForAccountGroup`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountGroup` to `Oro\Bundle\CustomerBundle\Entity\AccountGroup` of second argument of method `Oro\Bundle\PricingBundle\Builder\AccountGroupCombinedPriceListsBuilder:setBuiltForAccountGroup`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountGroup` to `Oro\Bundle\CustomerBundle\Entity\AccountGroup` of second argument of method `Oro\Bundle\PricingBundle\Builder\AccountGroupCombinedPriceListsBuilder:hasFallbackOnNextLevel`
+- Changed type from `Oro\Bundle\PricingBundle\Expression\ExpressionParser` to `Oro\Component\Expression\ExpressionParser` of second argument of `Oro\Bundle\PricingBundle\Handler\PriceRuleLexemeHandler` constructor
+- Changed type from `Oro\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider` to `Oro\Component\Expression\FieldsProviderInterface` of third argument of `Oro\Bundle\PricingBundle\Handler\PriceRuleLexemeHandler` constructor
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountGroup` to `Oro\Bundle\CustomerBundle\Entity\AccountGroup` of first argument of method `Oro\Bundle\PricingBundle\Provider\PriceListCollectionProvider:getPriceListsByAccountGroup`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\Account` to `Oro\Bundle\CustomerBundle\Entity\Account` of first argument of method `Oro\Bundle\PricingBundle\Provider\PriceListCollectionProvider:getPriceListsByAccount`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\Account` to `Oro\Bundle\CustomerBundle\Entity\Account` of first argument of method `Oro\Bundle\PricingBundle\Entity\CombinedPriceListToAccount:setAccount`
+- Changed type from `Oro\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider` to `Oro\Component\Expression\FieldsProviderInterface` of second argument of `Oro\Bundle\PricingBundle\Entity\EntityListener\AbstractRuleEntityListener` constructor
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountGroup` to `Oro\Bundle\CustomerBundle\Entity\AccountGroup` of first argument of method `Oro\Bundle\PricingBundle\Entity\CombinedPriceListToAccountGroup:setAccountGroup`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\Account` to `Oro\Bundle\CustomerBundle\Entity\Account` of first argument of method `Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository:getPriceListByAccount`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountGroup` to `Oro\Bundle\CustomerBundle\Entity\AccountGroup` of first argument of method `Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository:getPriceListByAccountGroup`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\Account` to `Oro\Bundle\CustomerBundle\Entity\Account` of second argument of method `Oro\Bundle\PricingBundle\Entity\Repository\PriceListToAccountRepository:findByPrimaryKey`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountGroup` to `Oro\Bundle\CustomerBundle\Entity\AccountGroup` of first argument of method `Oro\Bundle\PricingBundle\Entity\Repository\PriceListToAccountRepository:getAccountIteratorByDefaultFallback`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountGroup` to `Oro\Bundle\CustomerBundle\Entity\AccountGroup` of first argument of method `Oro\Bundle\PricingBundle\Entity\Repository\PriceListToAccountRepository:getAccountWebsitePairsByAccountGroupIterator`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\Account` to `Oro\Bundle\CustomerBundle\Entity\Account` of first argument of method `Oro\Bundle\PricingBundle\Entity\Repository\PriceListToAccountRepository:getAccountWebsitePairsByAccount`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\Account` to `Oro\Bundle\CustomerBundle\Entity\Account` of first argument of method `Oro\Bundle\PricingBundle\Entity\Repository\PriceListToAccountRepository:delete`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountGroup` to `Oro\Bundle\CustomerBundle\Entity\AccountGroup` of second argument of method `Oro\Bundle\PricingBundle\Entity\Repository\PriceListToAccountGroupRepository:findByPrimaryKey`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountGroup` to `Oro\Bundle\CustomerBundle\Entity\AccountGroup` of first argument of method `Oro\Bundle\PricingBundle\Entity\Repository\PriceListToAccountGroupRepository:delete`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountGroup` to `Oro\Bundle\CustomerBundle\Entity\AccountGroup` of first argument of method `Oro\Bundle\PricingBundle\Entity\PriceListToAccountGroup:setAccountGroup`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\Account` to `Oro\Bundle\CustomerBundle\Entity\Account` of first argument of method `Oro\Bundle\PricingBundle\Entity\PriceListToAccount:setAccount`
+- Changed type from `Oro\Bundle\AccountBundle\Event\AccountGroupEvent` to `Oro\Bundle\CustomerBundle\Event\AccountGroupEvent` of first argument of method `Oro\Bundle\PricingBundle\EventListener\AccountGroupListener:onGroupRemove`
+- Changed type from `Oro\Bundle\AccountBundle\Event\AccountEvent` to `Oro\Bundle\CustomerBundle\Event\AccountEvent` of first argument of method `Oro\Bundle\PricingBundle\EventListener\AccountListener:onAccountGroupChange`
+- Changed type from `Oro\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider` to `Oro\Component\Expression\FieldsProviderInterface` of first argument of method `Oro\Bundle\PricingBundle\Compiler\PriceListRuleCompiler:setFieldsProvider`
+- Changed type from `Oro\Bundle\PricingBundle\Expression\NodeInterface` to `Oro\Component\Expression\Node\NodeInterface` of first argument of method `Oro\Bundle\PricingBundle\Compiler\PriceListRuleCompiler:saveUsedPriceRelations`
+- Changed type from `Oro\Bundle\PricingBundle\Expression\ExpressionParser` to `Oro\Component\Expression\ExpressionParser` of first argument of `Oro\Bundle\PricingBundle\Compiler\AbstractRuleCompiler` constructor
+- Changed type from `Oro\Bundle\PricingBundle\Expression\Preprocessor\ExpressionPreprocessorInterface` to `Oro\Component\Expression\Preprocessor\ExpressionPreprocessorInterface` of second argument of `Oro\Bundle\PricingBundle\Compiler\AbstractRuleCompiler` constructor
+- Changed type from `Oro\Bundle\PricingBundle\Expression\NodeToQueryDesignerConverter` to `Oro\Bundle\ProductBundle\Expression\NodeToQueryDesignerConverter` of third argument of `Oro\Bundle\PricingBundle\Compiler\AbstractRuleCompiler` constructor
+- Changed type from `Oro\Bundle\PricingBundle\Query\PriceListExpressionQueryConverter` to `Oro\Bundle\ProductBundle\Expression\QueryConverter` of fourth argument of `Oro\Bundle\PricingBundle\Compiler\AbstractRuleCompiler` constructor
+- Changed type from `Oro\Bundle\PricingBundle\Expression\QueryExpressionBuilder` to `Oro\Component\Expression\QueryExpressionBuilder` of fifth argument of `Oro\Bundle\PricingBundle\Compiler\AbstractRuleCompiler` constructor
+- Changed type from `Oro\Bundle\AccountBundle\Entity\Account` to `Oro\Bundle\CustomerBundle\Entity\Account` of first argument of method `Oro\Bundle\PricingBundle\Model\PriceListTreeHandler:getPriceList`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\Account` to `Oro\Bundle\CustomerBundle\Entity\Account` of first argument of method `Oro\Bundle\PricingBundle\Model\PriceListTreeHandler:getPriceListByAccount`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\Account` to `Oro\Bundle\CustomerBundle\Entity\Account` of first argument of method `Oro\Bundle\PricingBundle\Model\PriceListTreeHandler:getPriceListByAccountGroup`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\Account` to `Oro\Bundle\CustomerBundle\Entity\Account` of first argument of method `Oro\Bundle\PricingBundle\Model\PriceListTreeHandler:getUniqueKey`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\Account` to `Oro\Bundle\CustomerBundle\Entity\Account` of first argument of method `Oro\Bundle\PricingBundle\Model\PriceListRelationTriggerHandler:handleAccountChange`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountGroup` to `Oro\Bundle\CustomerBundle\Entity\AccountGroup` of first argument of method `Oro\Bundle\PricingBundle\Model\PriceListRelationTriggerHandler:handleAccountGroupChange`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountGroup` to `Oro\Bundle\CustomerBundle\Entity\AccountGroup` of first argument of method `Oro\Bundle\PricingBundle\Model\PriceListRelationTriggerHandler:handleAccountGroupRemove`
+- Changed type from `Oro\Component\Action\Model\ContextAccessor` to `Oro\Component\ConfigExpression\ContextAccessor` of first argument of `Oro\Bundle\PricingBundle\Model\AssignUserCurrencyAction` constructor
+- Changed type from `Oro\Bundle\AccountBundle\Entity\Account` to `Oro\Bundle\CustomerBundle\Entity\Account` of first argument of `Oro\Bundle\PricingBundle\Model\DTO\AccountWebsiteDTO` constructor
+- Changed type from `Oro\Bundle\AccountBundle\Entity\Account` to `Oro\Bundle\CustomerBundle\Entity\Account` of first argument of method `Oro\Bundle\PricingBundle\Model\DTO\PriceListRelationTrigger:setAccount`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountGroup` to `Oro\Bundle\CustomerBundle\Entity\AccountGroup` of first argument of method `Oro\Bundle\PricingBundle\Model\DTO\PriceListRelationTrigger:setAccountGroup`
+- Changed type from `Oro\Bundle\AccountBundle\Provider\AccountUserRelationsProvider` to `Oro\Bundle\CustomerBundle\Provider\AccountUserRelationsProvider` of fifth argument of `Oro\Bundle\PricingBundle\Model\PriceListRequestHandler` constructor
+- Changed type from `Oro\Bundle\PricingBundle\Expression\ExpressionParser` to `Oro\Component\Expression\ExpressionParser` of first argument of `Oro\Bundle\PricingBundle\Validator\Constraints\PriceRuleRelationExpressionsValidator` constructor
+- Changed type from `Oro\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider` to `Oro\Component\Expression\FieldsProviderInterface` of second argument of `Oro\Bundle\PricingBundle\Validator\Constraints\PriceRuleRelationExpressionsValidator` constructor
+- Changed type from `Oro\Bundle\PricingBundle\Expression\NodeInterface` to `Oro\Component\Expression\Node\NodeInterface` of first argument of method `Oro\Bundle\PricingBundle\Validator\Constraints\PriceRuleRelationExpressionsValidator:validateIsRelationNode`
+- Changed type from `Oro\Bundle\PricingBundle\Expression\RelationNode` to `Oro\Component\Expression\Node\RelationNode` of second argument of method `Oro\Bundle\PricingBundle\Validator\Constraints\PriceRuleRelationExpressionsValidator:validateIsRelationInRule`
+- Changed type from `Oro\Bundle\PricingBundle\Expression\RelationNode` to `Oro\Component\Expression\Node\RelationNode` of second argument of method `Oro\Bundle\PricingBundle\Validator\Constraints\PriceRuleRelationExpressionsValidator:isRelationInRule`
+- Changed type from `Oro\Bundle\PricingBundle\Expression\RelationNode` to `Oro\Component\Expression\Node\RelationNode` of first argument of method `Oro\Bundle\PricingBundle\Validator\Constraints\PriceRuleRelationExpressionsValidator:isSameRelation`
+- Changed type from `Oro\Bundle\PricingBundle\Expression\RelationNode` to `Oro\Component\Expression\Node\RelationNode` of second argument of method `Oro\Bundle\PricingBundle\Validator\Constraints\PriceRuleRelationExpressionsValidator:isSameRelation`
+- Changed type from `Oro\Bundle\PricingBundle\Expression\ExpressionParser` to `Oro\Component\Expression\ExpressionParser` of first argument of `Oro\Bundle\PricingBundle\Validator\Constraints\LexemeCircularReferenceValidator` constructor
+- Changed type from `Oro\Bundle\PricingBundle\Expression\NodeInterface` to `Oro\Component\Expression\Node\NodeInterface` of first argument of method `Oro\Bundle\PricingBundle\Validator\Constraints\LexemeCircularReferenceValidator:isSupportedNode`
+- Changed type from `Oro\Bundle\ConfigBundle\Config\ConfigManager` to `Oro\Bundle\CurrencyBundle\Config\CurrencyConfigInterface` of first argument of `Oro\Bundle\PricingBundle\Form\Type\DefaultCurrencySelectionType` constructor
+- Changed type from `Oro\Bundle\AccountBundle\Entity\Account` to `Oro\Bundle\CustomerBundle\Entity\Account` of first argument of method `Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\EntityNotPricedStub:setAccount`
+- Added fifth argument `nameHelper` to `Oro\Bundle\PricingBundle\Form\Type\DefaultCurrencySelectionType` constructor
+
+ProductBundle:
+-------------------------
+- Removed class `Oro\Bundle\ProductBundle\EventListener\ProductListener`
+- Added classes:
+    - `Oro\Bundle\ProductBundle\Expression\FieldsProvider`
+    - `Oro\Bundle\ProductBundle\Expression\ColumnInformation\DefaultProvider`
+    - `Oro\Bundle\ProductBundle\Expression\NodeToQueryDesignerConverter`
+    - `Oro\Bundle\ProductBundle\Expression\QueryConverter`
+    - `Oro\Bundle\ProductBundle\Expression\QueryConverterExtensionInterface`
+    - `Oro\Bundle\ProductBundle\EventListener\ProductImageListener`
+    - `Oro\Bundle\ProductBundle\Model\NodeExpressionQueryDesigner`
+    - `Oro\Bundle\ProductBundle\Validator\Constraints\LogicalExpressionValidator`
+    - `Oro\Bundle\ProductBundle\Validator\Constraints\ExpressionValidator`
+    - `Oro\Bundle\ProductBundle\Validator\Constraints\LogicalExpression`
+    - `Oro\Bundle\ProductBundle\Validator\Constraints\Expression`
+    - `Oro\Bundle\ProductBundle\Rounding\QuantityRoundingService`
+- Added methods:
+    - `Oro\Bundle\ProductBundle\Entity\ProductImage::setUpdatedAtToNow`
+    - `Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProductImage::setId`
+- Product images filters config was removed from `app.yml`. These filters are now added dynamically based on `images.yml` config.
+- Removed sixth argument `container` from  `Oro\Bundle\ProductBundle\ComponentProcessor\DataStorageAwareComponentProcessor` constructor
+
+RFPBundle:
+-------------------------
+- Added class `Oro\Bundle\RFPBundle\ComponentProcessor\DataStorageComponentProcessor`
+- Added methods:
+    - `Oro\Bundle\RFPBundle\Entity\Request::getOwner`
+    - `Oro\Bundle\RFPBundle\Entity\Request::setOwner`
+- Added protected method `getFirstUser` to class `Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountUser` to `Oro\Bundle\CustomerBundle\Entity\AccountUser` of first argument of method `Oro\Bundle\RFPBundle\Entity\Request:addAssignedAccountUser`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountUser` to `Oro\Bundle\CustomerBundle\Entity\AccountUser` of first argument of method `Oro\Bundle\RFPBundle\Entity\Request:removeAssignedAccountUser`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountUser` to `Oro\Bundle\CustomerBundle\Entity\AccountUser` of first argument of method `Oro\Bundle\RFPBundle\Entity\Request:setAccountUser`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\Account` to `Oro\Bundle\CustomerBundle\Entity\Account` of first argument of method `Oro\Bundle\RFPBundle\Entity\Request:setAccount`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountUserRole` to `Oro\Bundle\CustomerBundle\Entity\AccountUserRole` of second argument of method `Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadUserData:setRolePermissions`
+
+SaleBundle:
+-------------------------
+- Changed type from `Oro\Bundle\AccountBundle\Entity\Account` to `Oro\Bundle\CustomerBundle\Entity\Account` of second argument of method `Oro\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider:isAccountAddressGranted`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountUser` to `Oro\Bundle\CustomerBundle\Entity\AccountUser` of second argument of method `Oro\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider:isAccountUserAddressGranted`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountAddress` to `Oro\Bundle\CustomerBundle\Entity\AccountAddress` of first argument of method `Oro\Bundle\SaleBundle\Entity\QuoteAddress:setAccountAddress`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountUserAddress` to `Oro\Bundle\CustomerBundle\Entity\AccountUserAddress` of first argument of method `Oro\Bundle\SaleBundle\Entity\QuoteAddress:setAccountUserAddress`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountUser` to `Oro\Bundle\CustomerBundle\Entity\AccountUser` of first argument of method `Oro\Bundle\SaleBundle\Entity\Quote:addAssignedAccountUser`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountUser` to `Oro\Bundle\CustomerBundle\Entity\AccountUser` of first argument of method `Oro\Bundle\SaleBundle\Entity\Quote:removeAssignedAccountUser`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountUser` to `Oro\Bundle\CustomerBundle\Entity\AccountUser` of first argument of method `Oro\Bundle\SaleBundle\Entity\Quote:setAccountUser`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\Account` to `Oro\Bundle\CustomerBundle\Entity\Account` of first argument of method `Oro\Bundle\SaleBundle\Entity\Quote:setAccount`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountUser` to `Oro\Bundle\CustomerBundle\Entity\AccountUser` of second argument of method `Oro\Bundle\SaleBundle\Model\QuoteToOrderConverter:convert`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountUser` to `Oro\Bundle\CustomerBundle\Entity\AccountUser` of second argument of method `Oro\Bundle\SaleBundle\Model\QuoteToOrderConverter:createOrder`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountUser` to `Oro\Bundle\CustomerBundle\Entity\AccountUser` of first argument of method `Oro\Bundle\SaleBundle\Controller\AjaxQuoteController:getAccount`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountUser` to `Oro\Bundle\CustomerBundle\Entity\AccountUser` of first argument of method `Oro\Bundle\SaleBundle\Controller\AjaxQuoteController:validateRelation`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\Account` to `Oro\Bundle\CustomerBundle\Entity\Account` of second argument of method `Oro\Bundle\SaleBundle\Controller\AjaxQuoteController:validateRelation`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountUserRole` to `Oro\Bundle\CustomerBundle\Entity\AccountUserRole` of second argument of method `Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData:setRolePermissions`
+
+SEOBundle:
+-------------------------
+- Added third argument `isString` to method `Oro\Bundle\SEOBundle\Migrations\Data\Demo\ORM\LoadCategoryDemoMetaData:getSeoMetaFieldData`
+- Added third argument `isString` to method `Oro\Bundle\SEOBundle\Migrations\Data\Demo\ORM\LoadPageDemoMetaData:getSeoMetaFieldData`
+- Added third argument `isString` to method `Oro\Bundle\SEOBundle\Migrations\Data\Demo\ORM\LoadProductDemoMetaData:getSeoMetaFieldData`
+
+ShippingBundle:
+-------------------------
+- Removed classes:
+    - `Oro\Bundle\ShippingBundle\Migrations\Data\Demo\ORM\LoadShippingOriginDemoData`
+    - `Oro\Bundle\ShippingBundle\Entity\ShippingOriginWarehouse`
+    - `Oro\Bundle\ShippingBundle\Form\Extension\WarehouseShippingOriginExtension`
+    - `Oro\Bundle\ShippingBundle\Form\Type\ShippingOriginWarehouseType`
+    - `Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\FlatRatePricesAwareShippingMethod`
+- Removed methods:
+    - `Oro\Bundle\ShippingBundle\Context\ShippingLineItem::setEntityIdentifier`
+    - `Oro\Bundle\ShippingBundle\Migrations\Data\ORM\AbstractUnitsAndFreightClassesFixture::addWeightUnits`
+    - `Oro\Bundle\ShippingBundle\Migrations\Data\ORM\AbstractUnitsAndFreightClassesFixture::addLengthUnits`
+    - `Oro\Bundle\ShippingBundle\Migrations\Data\ORM\AbstractUnitsAndFreightClassesFixture::addFreightClasses`
+    - `Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider::getShippingOriginByWarehouse`
+    - `Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider::getWarehouseShippingOriginRepository`
+    - `Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider::getApplicableShippingRules`
+    - `Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider::expressionApplicable`
+    - `Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider::destinationApplicable`
+    - `Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider::getPostalCodesArray`
+    - `Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider::getSortedShippingRules`
+    - `Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider::createTypeData`
+    - `Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider::getOptionsByTypes`
+    - `Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider::getEnabledTypeConfigs`
+    - `Oro\Bundle\ShippingBundle\EventListener\FormViewListener::onWarehouseView`
+    - `Oro\Bundle\ShippingBundle\EventListener\FormViewListener::onWarehouseEdit`
+- Added classes:
+    - `Oro\Bundle\ShippingBundle\Context\ShippingContextCacheKeyGenerator`
+    - `Oro\Bundle\ShippingBundle\QueryDesigner\ShippingProductQueryDesigner`
+    - `Oro\Bundle\ShippingBundle\QueryDesigner\SelectQueryConverter`
+    - `Oro\Bundle\ShippingBundle\Provider\Cache\ShippingPriceCache`
+    - `Oro\Bundle\ShippingBundle\Provider\MeasureUnitConversion`
+    - `Oro\Bundle\ShippingBundle\Provider\ShippingRulesProvider`
+    - `Oro\Bundle\ShippingBundle\Event\ShippingMethodConfigDataEvent`
+    - `Oro\Bundle\ShippingBundle\Condition\HasApplicableShippingMethods`
+    - `Oro\Bundle\ShippingBundle\ExpressionLanguage\ProductDecorator`
+    - `Oro\Bundle\ShippingBundle\ExpressionLanguage\LineItemDecorator`
+    - `Oro\Bundle\ShippingBundle\ExpressionLanguage\LineItemDecoratorFactory`
+    - `Oro\Bundle\ShippingBundle\Method\ShippingTrackingAwareInterface`
+    - `Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingMethodStub`
+    - `Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\PriceAwareShippingMethodStub`
+    - `Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingMethodTypeStub`
+    - `Oro\Bundle\ShippingBundle\Tests\Unit\Condition\ToStringStub`
+    - `Oro\Bundle\ShippingBundle\Tests\Unit\Method\Stub\TrackingAwareShippingMethodStub`
+- Added methods:
+    - `Oro\Bundle\ShippingBundle\Context\ShippingLineItem::setProductHolder`
+    - `Oro\Bundle\ShippingBundle\Context\ShippingContextInterface::getSourceEntity`
+    - `Oro\Bundle\ShippingBundle\Context\ShippingContextInterface::getSourceEntityIdentifier`
+    - `Oro\Bundle\ShippingBundle\Context\ShippingContext::getSourceEntity`
+    - `Oro\Bundle\ShippingBundle\Context\ShippingContext::setSourceEntity`
+    - `Oro\Bundle\ShippingBundle\Context\ShippingContext::getSourceEntityIdentifier`
+    - `Oro\Bundle\ShippingBundle\Context\ShippingContext::setSourceEntityIdentifier`
+    - `Oro\Bundle\ShippingBundle\Migrations\Data\ORM\LoadUnitsAndFreightClassesData::getVersion`
+    - `Oro\Bundle\ShippingBundle\Twig\ShippingMethodExtension::getShippingMethodConfigRenderData`
+    - `Oro\Bundle\ShippingBundle\Entity\Repository\ShippingRuleRepository::getLastUpdateAt`
+    - `Oro\Bundle\ShippingBundle\Entity\ShippingRule::prePersist`
+    - `Oro\Bundle\ShippingBundle\Entity\ShippingRule::preUpdate`
+    - `Oro\Bundle\ShippingBundle\Entity\ShippingRule::getCreatedAt`
+    - `Oro\Bundle\ShippingBundle\Entity\ShippingRule::setCreatedAt`
+    - `Oro\Bundle\ShippingBundle\Entity\ShippingRule::getUpdatedAt`
+    - `Oro\Bundle\ShippingBundle\Entity\ShippingRule::setUpdatedAt`
+    - `Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry::getTrackingAwareShippingMethods`
+    - `Oro\Bundle\ShippingBundle\Tests\Behat\Context\FeatureContext::setPageFactory`
+- Added protected methods:
+    - `Oro\Bundle\ShippingBundle\Migrations\Data\ORM\AbstractUnitsAndFreightClassesFixture::addUpdateWeightUnits`
+    - `Oro\Bundle\ShippingBundle\Migrations\Data\ORM\AbstractUnitsAndFreightClassesFixture::addUpdateLengthUnits`
+    - `Oro\Bundle\ShippingBundle\Migrations\Data\ORM\AbstractUnitsAndFreightClassesFixture::addUpdateFreightClasses`
+    - `Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider::getEnabledTypesOptions`
+- Changed name from `doctrineHelper` to `configManager`, type from `Oro\Bundle\EntityBundle\ORM\DoctrineHelper` to `Oro\Bundle\ConfigBundle\Config\ConfigManager` of first argument of `Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider` constructor
+- Changed name from `configManager` to `shippingOriginModelFactory`, type from `Oro\Bundle\ConfigBundle\Config\ConfigManager` to `Oro\Bundle\ShippingBundle\Factory\ShippingOriginModelFactory` of second argument of `Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider` constructor
+- Changed name from `doctrineHelper` to `shippingRulesProvider`, type from `Oro\Bundle\EntityBundle\ORM\DoctrineHelper` to `Oro\Bundle\ShippingBundle\Provider\ShippingRulesProvider` of first argument of `Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider` constructor
+- Changed name from `methodIdentifier` to `methodId`second argument of method `Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider:getPrice`
+- Changed name from `typeIdentifier` to `typeId`third argument of method `Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider:getPrice`
+- Changed name from `shippingOriginProvider` to `requestStack`, type from `Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider` to `Symfony\Component\HttpFoundation\RequestStack` of third argument of `Oro\Bundle\ShippingBundle\EventListener\FormViewListener` constructor
+- Changed name from `name` to `identifier`first argument of method `Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry:getShippingMethod`
+- Added first argument `name` to method `Oro\Bundle\ShippingBundle\Tests\Behat\Context\FeatureContext:getPage`
+- Added second argument `dispatcher` to `Oro\Bundle\ShippingBundle\Twig\ShippingMethodExtension` constructor
+- Added third argument `priceCache` to `Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider` constructor
+
+ShoppingListBundle:
+-------------------------
+- Removed methods:
+    - `Oro\Bundle\ShoppingListBundle\Entity\ShoppingList::getIsAllowedRFP`
+    - `Oro\Bundle\ShoppingListBundle\Entity\ShoppingList::setIsAllowedRFP`
+- Added class `Oro\Bundle\ShoppingListBundle\Condition\RfpAllowed`
+- Added methods:
+    - `Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository::getLastProductsGroupedByShoppingList`
+    - `Oro\Bundle\ShoppingListBundle\Entity\ShoppingList::getOwner`
+    - `Oro\Bundle\ShoppingListBundle\Entity\ShoppingList::setOwner`
+    - `Oro\Bundle\ShoppingListBundle\Entity\LineItem::getOwner`
+    - `Oro\Bundle\ShoppingListBundle\Entity\LineItem::setOwner`
+    - `Oro\Bundle\ShoppingListBundle\Controller\Frontend\Api\Rest\ShoppingListController::setCurrentAction`
+- Added protected method `getFirstUser` to class `Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountUser` to `Oro\Bundle\CustomerBundle\Entity\AccountUser` of second argument of method `Oro\Bundle\ShoppingListBundle\Migrations\Data\Demo\ORM\LoadShoppingListDemoData:createShoppingList`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountUser` to `Oro\Bundle\CustomerBundle\Entity\AccountUser` of first argument of method `Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler:prepareLineItemWithProduct`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountUser` to `Oro\Bundle\CustomerBundle\Entity\AccountUser` of first argument of method `Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository:findCurrentForAccountUser`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountUser` to `Oro\Bundle\CustomerBundle\Entity\AccountUser` of first argument of method `Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository:findOneForAccountUser`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountUser` to `Oro\Bundle\CustomerBundle\Entity\AccountUser` of first argument of method `Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository:findAvailableForAccountUser`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountUser` to `Oro\Bundle\CustomerBundle\Entity\AccountUser` of first argument of method `Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository:createFindForAccountUserQueryBuilder`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountUser` to `Oro\Bundle\CustomerBundle\Entity\AccountUser` of first argument of method `Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository:findByUser`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountUser` to `Oro\Bundle\CustomerBundle\Entity\AccountUser` of first argument of method `Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository:findByUserAndId`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountUser` to `Oro\Bundle\CustomerBundle\Entity\AccountUser` of first argument of method `Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository:findAllExceptCurrentForAccountUser`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountUser` to `Oro\Bundle\CustomerBundle\Entity\AccountUser` of first argument of method `Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository:findLatestForAccountUserExceptCurrent`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountUser` to `Oro\Bundle\CustomerBundle\Entity\AccountUser` of second argument of method `Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository:getOneProductLineItemsWithShoppingListNames`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountUser` to `Oro\Bundle\CustomerBundle\Entity\AccountUser` of first argument of method `Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:setAccountUser`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\Account` to `Oro\Bundle\CustomerBundle\Entity\Account` of first argument of method `Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:setAccount`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountUser` to `Oro\Bundle\CustomerBundle\Entity\AccountUser` of first argument of method `Oro\Bundle\ShoppingListBundle\Entity\LineItem:setAccountUser`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountUser` to `Oro\Bundle\CustomerBundle\Entity\AccountUser` of second argument of method `Oro\Bundle\ShoppingListBundle\EventListener\ShoppingListListener:setNewCurrent`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountUser` to `Oro\Bundle\CustomerBundle\Entity\AccountUser` of second argument of method `Oro\Bundle\ShoppingListBundle\EventListener\FrontendProductDatagridListener:getCurrentShoppingList`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountUser` to `Oro\Bundle\CustomerBundle\Entity\AccountUser` of third argument of method `Oro\Bundle\ShoppingListBundle\EventListener\FrontendProductDatagridListener:getGroupedLineItems`
+- Changed type from `Oro\Bundle\CurrencyBundle\Rounding\QuantityRoundingService` to `Oro\Bundle\ProductBundle\Rounding\QuantityRoundingService` of fourth argument of `Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager` constructor
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountUser` to `Oro\Bundle\CustomerBundle\Entity\AccountUser` of first argument of method `Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager:setCurrent`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountUser` to `Oro\Bundle\CustomerBundle\Entity\AccountUser` of second argument of method `Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists:createShoppingList`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountUserRole` to `Oro\Bundle\CustomerBundle\Entity\AccountUserRole` of second argument of method `Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadUserData:setRolePermissions`
+- Added sixth argument `owner` to method `Oro\Bundle\ShoppingListBundle\Migrations\Data\Demo\ORM\LoadShoppingListDemoData:createShoppingList`
+
+TaxBundle:
+-------------------------
+- Changed type from `Oro\Bundle\AccountBundle\Entity\Account` to `Oro\Bundle\CustomerBundle\Entity\Account` of first argument of method `Oro\Bundle\TaxBundle\Entity\Repository\AccountTaxCodeRepository:findOneByAccount`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountGroup` to `Oro\Bundle\CustomerBundle\Entity\AccountGroup` of first argument of method `Oro\Bundle\TaxBundle\Entity\Repository\AccountTaxCodeRepository:findOneByAccountGroup`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\Account` to `Oro\Bundle\CustomerBundle\Entity\Account` of first argument of method `Oro\Bundle\TaxBundle\Entity\AccountTaxCode:addAccount`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\Account` to `Oro\Bundle\CustomerBundle\Entity\Account` of first argument of method `Oro\Bundle\TaxBundle\Entity\AccountTaxCode:removeAccount`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountGroup` to `Oro\Bundle\CustomerBundle\Entity\AccountGroup` of first argument of method `Oro\Bundle\TaxBundle\Entity\AccountTaxCode:addAccountGroup`
+- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountGroup` to `Oro\Bundle\CustomerBundle\Entity\AccountGroup` of first argument of method `Oro\Bundle\TaxBundle\Entity\AccountTaxCode:removeAccountGroup`
+
+UPSBundle:
+-------------------------
+- Removed methods:
+    - `Oro\Bundle\UPSBundle\EventListener\UPSChannelEntityListener::__construct`
+    - `Oro\Bundle\UPSBundle\EventListener\UPSTransportEntityListener::__construct`
+    - `Oro\Bundle\UPSBundle\Validator\Constraints\RemoveUsedShippingServiceValidator::getName`
+- Added classes:
+    - `Oro\Bundle\UPSBundle\Provider\UnitsMapper`
+    - `Oro\Bundle\UPSBundle\EventListener\ShippingMethodConfigDataListener`
+- Added methods:
+    - `Oro\Bundle\UPSBundle\Entity\UPSTransport::getLabels`
+    - `Oro\Bundle\UPSBundle\Entity\UPSTransport::addLabel`
+    - `Oro\Bundle\UPSBundle\Entity\UPSTransport::removeLabel`
+    - `Oro\Bundle\UPSBundle\Method\UPSShippingMethod::getTrackingLink`
+- Added protected method `getChannelId` to class `Oro\Bundle\UPSBundle\Validator\Constraints\RemoveUsedShippingServiceValidator`
+- Added second argument `measureUnitConversion` to `Oro\Bundle\UPSBundle\Factory\PriceRequestFactory` constructor
+- Added second argument `upsWeightUnit` to method `Oro\Bundle\UPSBundle\Factory\PriceRequestFactory:getProductsParamsByUnit`
+- Added third argument `unitsMapper` to `Oro\Bundle\UPSBundle\Factory\PriceRequestFactory` constructor
+- Added fourth argument `localizationHelper` to `Oro\Bundle\UPSBundle\Method\UPSShippingMethod` constructor
+- Added fourth argument `localizationHelper` to `Oro\Bundle\UPSBundle\Method\UPSShippingMethodProvider` constructor
+
+VisibilityBundle:
+-------------------------
+- Added classes:
+    - `Oro\Bundle\VisibilityBundle\Provider\VisibilityRootScopesProvider`
+    - `Oro\Bundle\VisibilityBundle\Provider\VisibilityRootScopesProviderInterface`
+    - `Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\RepositoryHolder`
+    - `Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\VisibilityRepositoryInterface`
+    - `Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\AbstractProductVisibilityRepository`
+    - `Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\AbstractCategoryVisibilityRepository`
+    - `Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\AccountCategoryVisibilityRepository`
+    - `Oro\Bundle\VisibilityBundle\OroVisibilityBundle`
+    - `Oro\Bundle\VisibilityBundle\Form\Handler\VisibilityFormDataHandler`
+    - `Oro\Bundle\VisibilityBundle\Form\EventListener\VisibilityFormPostSubmitDataHandler`
+    - `Oro\Bundle\VisibilityBundle\Form\EventListener\VisibilityFormFieldDataProvider`
+
+WarehouseBundle:
+-------------------------
+- Removed classes:
+    - `Oro\Bundle\WarehouseBundle\Migrations\Data\Demo\ORM\LoadManagedInventoryData`
+    - `Oro\Bundle\WarehouseBundle\Migrations\Data\Demo\ORM\LoadWarehouseDemoData`
+    - `Oro\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel`
+    - `Oro\Bundle\WarehouseBundle\Entity\Repository\WarehouseRepository`
+    - `Oro\Bundle\WarehouseBundle\Entity\Warehouse`
+    - `Oro\Bundle\WarehouseBundle\Entity\Helper\WarehouseCounter`
+    - `Oro\Bundle\WarehouseBundle\EventListener\InventoryLevelsImportListener`
+    - `Oro\Bundle\WarehouseBundle\EventListener\CategoryManageInventoryFormViewListener`
+    - `Oro\Bundle\WarehouseBundle\EventListener\WarehouseSystemConfigSubscriber`
+    - `Oro\Bundle\WarehouseBundle\EventListener\OrderWarehouseBeforeRenderListener`
+    - `Oro\Bundle\WarehouseBundle\EventListener\OrderLineItemWarehouseGridListener`
+    - `Oro\Bundle\WarehouseBundle\EventListener\ProductManageInventoryFormViewListener`
+    - `Oro\Bundle\WarehouseBundle\EventListener\OrderFormViewListener`
+    - `Oro\Bundle\WarehouseBundle\EventListener\OrderWarehouseGridListener`
+    - `Oro\Bundle\WarehouseBundle\Model\ExtendWarehouse`
+    - `Oro\Bundle\WarehouseBundle\Model\ExtendWarehouseInventoryLevel`
+    - `Oro\Bundle\WarehouseBundle\Model\Data\ProductUnitTransformer`
+    - `Oro\Bundle\WarehouseBundle\Validator\Constraints\UniqueWarehouse`
+    - `Oro\Bundle\WarehouseBundle\Validator\Constraints\UniqueWarehouseValidator`
+    - `Oro\Bundle\WarehouseBundle\SystemConfig\WarehouseConfig`
+    - `Oro\Bundle\WarehouseBundle\SystemConfig\WarehouseConfigConverter`
+    - `Oro\Bundle\WarehouseBundle\Controller\WarehouseInventoryLevelController`
+    - `Oro\Bundle\WarehouseBundle\Controller\Api\Rest\WarehouseInventoryLevelController`
+    - `Oro\Bundle\WarehouseBundle\Controller\WarehouseController`
+    - `Oro\Bundle\WarehouseBundle\ImportExport\Serializer\WarehouseInventoryLevelNormalizer`
+    - `Oro\Bundle\WarehouseBundle\ImportExport\TemplateFixture\WarehouseInventoryLevelFixture`
+    - `Oro\Bundle\WarehouseBundle\ImportExport\DataConverter\InventoryLevelDataConverter`
+    - `Oro\Bundle\WarehouseBundle\ImportExport\Strategy\WarehouseInventoryLevelStrategy`
+    - `Oro\Bundle\WarehouseBundle\ImportExport\Strategy\AbstractWarehouseInventoryLevelStrategyHelper`
+    - `Oro\Bundle\WarehouseBundle\ImportExport\Strategy\WarehouseStrategyHelper`
+    - `Oro\Bundle\WarehouseBundle\ImportExport\Strategy\ProductUnitStrategyHelper`
+    - `Oro\Bundle\WarehouseBundle\ImportExport\Strategy\WarehouseInventoryLevelStrategyHelperInterface`
+    - `Oro\Bundle\WarehouseBundle\ImportExport\Strategy\InventoryStatusesStrategyHelper`
+    - `Oro\Bundle\WarehouseBundle\ImportExport\Strategy\WarehouseInventoryLevelStrategyHelper`
+    - `Oro\Bundle\WarehouseBundle\ImportExport\Reader\InventoryLevelReader`
+    - `Oro\Bundle\WarehouseBundle\Form\DataTransformer\WarehouseInventoryLevelGridDataTransformer`
+    - `Oro\Bundle\WarehouseBundle\Form\Extension\CategoryManageInventoryFormExtension`
+    - `Oro\Bundle\WarehouseBundle\Form\Extension\ProductManageInventoryFormExtension`
+    - `Oro\Bundle\WarehouseBundle\Form\Extension\OrderLineItemFormExtension`
+    - `Oro\Bundle\WarehouseBundle\Form\Extension\OrderFormExtension`
+    - `Oro\Bundle\WarehouseBundle\Form\Extension\InventoryLevelExportTemplateTypeExtension`
+    - `Oro\Bundle\WarehouseBundle\Form\Extension\InventoryLevelExportTypeExtension`
+    - `Oro\Bundle\WarehouseBundle\Form\Handler\WarehouseInventoryLevelHandler`
+    - `Oro\Bundle\WarehouseBundle\Form\Type\WarehouseSelectWithPriorityType`
+    - `Oro\Bundle\WarehouseBundle\Form\Type\WarehouseSystemConfigType`
+    - `Oro\Bundle\WarehouseBundle\Form\Type\WarehouseCollectionType`
+    - `Oro\Bundle\WarehouseBundle\Form\Type\WarehouseSelectType`
+    - `Oro\Bundle\WarehouseBundle\Form\Type\WarehouseInventoryLevelGridType`
+    - `Oro\Bundle\WarehouseBundle\Form\Type\WarehouseType`
+    - `Oro\Bundle\WarehouseBundle\Api\Processor\NormalizeInventoryLevelRequestData`
+    - `Oro\Bundle\WarehouseBundle\Api\Processor\BuildSingleWarehouseInventoryLevelQuery`
+    - `Oro\Bundle\WarehouseBundle\Tests\Functional\DataFixtures\LoadWarehousesWithOrders`
+    - `Oro\Bundle\WarehouseBundle\Tests\Functional\DataFixtures\LoadSingleWarehousesAndInventoryLevels`
+    - `Oro\Bundle\WarehouseBundle\Tests\Functional\DataFixtures\LoadWarehousesInventoryLevelWithPrimaryUnit`
+    - `Oro\Bundle\WarehouseBundle\Tests\Functional\DataFixtures\LoadWarehousesAndInventoryLevels`
+    - `Oro\Bundle\WarehouseBundle\Tests\Unit\Form\Type\Stub\WarehouseSelectTypeStub`
+
+WebsiteBundle:
+-------------------------
+- Removed classes:
+    - `Oro\Bundle\WebsiteBundle\Translation\CacheWarmer\CompositeTranslationCacheWarmer`
+    - `Oro\Bundle\WebsiteBundle\Translation\Strategy\CompositeFallbackStrategy`
+- Added classes:
+    - `Oro\Bundle\WebsiteBundle\Translation\Strategy\FrontendFallbackStrategy`
+    - `Oro\Bundle\WebsiteBundle\Provider\ScopeCriteriaProvider`
+    - `Oro\Bundle\WebsiteBundle\Entity\EntityListener\WebsiteEntityListener`
+    - `Oro\Bundle\WebsiteBundle\Tests\Unit\Form\Type\Stub\StubType`
+- Changed type from `Oro\Component\Action\Model\ContextAccessor` to `Oro\Component\ConfigExpression\ContextAccessor` of first argument of `Oro\Bundle\WebsiteBundle\Model\Action\AssignCurrentWebsite` constructor
 
 WebsiteSearchBundle
--------------------
+-------------------------
 - Website search index was added, to fill it with data command `php app/console oro:website-search:reindex --env=prod` 
 should be executed after upgrade. 
 
+Duplicator Component:
+-------------------------
+- Removed classes:
+    - `Oro\Component\Duplicator\Test\Stub\ProductUnit`
+    - `Oro\Component\Duplicator\Test\Stub\Status`
+    - `Oro\Component\Duplicator\Test\Stub\RequestProductItem`
+    - `Oro\Component\Duplicator\Test\Stub\RequestProduct`
+    - `Oro\Component\Duplicator\Test\Stub\RFPRequest`
+- Added classes:
+    - `Oro\Component\Duplicator\Tests\Unit\Stub\ProductUnit`
+    - `Oro\Component\Duplicator\Tests\Unit\Stub\Status`
+    - `Oro\Component\Duplicator\Tests\Unit\Stub\RequestProductItem`
+    - `Oro\Component\Duplicator\Tests\Unit\Stub\RequestProduct`
+    - `Oro\Component\Duplicator\Tests\Unit\Stub\RFPRequest`
+
+Expression Component:
+-------------------------
+- Added component that control price rules. Moved logic from [`PricingBundle`](#pricingbundle)
+
+Testing Component:
+-------------------------
+- Removed class `Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue` 
