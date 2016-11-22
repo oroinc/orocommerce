@@ -10,7 +10,8 @@ class AccountEvent extends Event
 {
     const ON_ACCOUNT_GROUP_CHANGE = 'oro_customer.account.on_account_group_change';
 
-    /**@var  Account
+    /**
+     * @var  Account
      */
     protected $account;
 

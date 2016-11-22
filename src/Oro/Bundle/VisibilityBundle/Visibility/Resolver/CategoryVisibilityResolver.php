@@ -15,6 +15,8 @@ use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseCategoryVisibility
 
 class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
 {
+    const OPTION_CATEGORY_VISIBILITY = 'oro_visibility.category_visibility';
+
     /**
      * @var ScopeManager
      */
@@ -206,7 +208,7 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
      */
     protected function getCategoryVisibilityConfigValue()
     {
-        return ($this->configManager->get('oro_visibility.category_visibility') === CategoryVisibility::HIDDEN)
+        return ($this->configManager->get(self::OPTION_CATEGORY_VISIBILITY) === CategoryVisibility::HIDDEN)
             ? BaseCategoryVisibilityResolved::VISIBILITY_HIDDEN
             : BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE;
     }

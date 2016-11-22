@@ -22,6 +22,7 @@ oro:
             unit_precision.label:        'Unit Precision'
             unit.label:                  'Unit of Quantity'
             precision.label:             'Precision'
+            materialized_path.label:     'Materialized path'
 
         sections:
             general: 'General'

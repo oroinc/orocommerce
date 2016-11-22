@@ -8,6 +8,8 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
+use Oro\Bundle\UPSBundle\Cache\ShippingPriceCache;
+use Oro\Bundle\UPSBundle\Cache\ShippingPriceCacheKey;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 use Oro\Bundle\UPSBundle\Factory\PriceRequestFactory;
@@ -58,6 +60,11 @@ class UPSShippingMethodTest extends \PHPUnit_Framework_TestCase
      */
     protected $localizationHelper;
 
+    /**
+     * @var ShippingPriceCache|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $cache;
+
     protected function setUp()
     {
         $this->transportProvider = $this->getMockBuilder(UPSTransportProvider::class)
@@ -88,12 +95,18 @@ class UPSShippingMethodTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->cache = $this
+            ->getMockBuilder(ShippingPriceCache::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->upsShippingMethod =
             new UPSShippingMethod(
                 $this->transportProvider,
                 $this->channel,
                 $this->priceRequestFactory,
-                $this->localizationHelper
+                $this->localizationHelper,
+                $this->cache
             );
     }
 
@@ -169,13 +182,25 @@ class UPSShippingMethodTest extends \PHPUnit_Framework_TestCase
 
         $this->priceRequestFactory->expects(self::once())->method('create')->willReturn($priceRequest);
 
-        $priceResponse = $this->getMockBuilder(PriceResponse::class)->disableOriginalConstructor()->getMock();
-        $priceResponse->expects(self::once())
-            ->method('getPricesByServices')
-            ->willReturn(['01' => Price::create(50, 'USD')]);
+        $this->transportProvider->expects(self::never())->method('getPriceResponse');
 
-        $this->transportProvider->expects(self::once())->method('getPrices')->willReturn($priceResponse);
+        $cacheKey = (new ShippingPriceCacheKey())->setTransport($this->transport)->setPriceRequest($priceRequest)
+            ->setMethodId($this->upsShippingMethod->getIdentifier())->setTypeId(null);
 
+        $this->cache->expects(static::once())
+            ->method('createKey')
+            ->with($this->transport, $priceRequest, $this->upsShippingMethod->getIdentifier(), null)
+            ->willReturn($cacheKey);
+
+        $this->cache->expects(static::once())
+            ->method('containsPrice')
+            ->with($cacheKey)
+            ->willReturn(true);
+
+        $this->cache->expects(static::once())
+            ->method('fetchPrice')
+            ->with($cacheKey)
+            ->willReturn(Price::create(50, 'USD'));
 
         $prices = $this->upsShippingMethod->calculatePrices($context, $methodOptions, $optionsByTypes);
 
@@ -243,5 +268,190 @@ class UPSShippingMethodTest extends \PHPUnit_Framework_TestCase
                 'resultURL' => UPSShippingMethod::TRACKING_URL.'1Z111E111111111111',
             ],
         ];
+    }
+
+    public function testCalculatePricesWithoutCache()
+    {
+        /** @var ShippingContextInterface|\PHPUnit_Framework_MockObject_MockObject $context **/
+        $context = $this->getMock(ShippingContextInterface::class);
+
+        $methodOptions = ['surcharge' => 10];
+        $optionsByTypes = [
+            '01' => ['surcharge' => 20],
+            '02' => ['surcharge' => 30],
+            '03' => ['surcharge' => 40],
+            '04' => ['surcharge' => 50],
+        ];
+
+        $priceRequest = $this->getMockBuilder(PriceRequest::class)->disableOriginalConstructor()->getMock();
+        $priceRequest->expects(self::once())->method('getPackages')->willReturn([new Package(), new Package()]);
+
+        $this->priceRequestFactory->expects(self::once())->method('create')->willReturn($priceRequest);
+
+        $cacheKey = (new ShippingPriceCacheKey())->setTransport($this->transport)->setPriceRequest($priceRequest)
+            ->setMethodId($this->upsShippingMethod->getIdentifier());
+
+        $this->cache->expects(static::at(0))
+            ->method('createKey')
+            ->with($this->transport, $priceRequest, $this->upsShippingMethod->getIdentifier(), null)
+            ->willReturn($cacheKey);
+
+        $this->cache->expects(static::at(1))
+            ->method('containsPrice')
+            ->with($cacheKey->setTypeId('01'))
+            ->willReturn(true);
+
+        $this->cache->expects(static::at(2))
+            ->method('fetchPrice')
+            ->with($cacheKey)
+            ->willReturn(Price::create(60, 'USD'));
+
+        $this->cache->expects(static::at(3))
+            ->method('containsPrice')
+            ->with($cacheKey->setTypeId('02'))
+            ->willReturn(true);
+
+        $this->cache->expects(static::at(4))
+            ->method('fetchPrice')
+            ->with($cacheKey)
+            ->willReturn(Price::create(70, 'USD'));
+
+        $this->cache->expects(static::at(5))
+            ->method('containsPrice')
+            ->with($cacheKey->setTypeId('03'))
+            ->willReturn(false);
+
+        $this->cache->expects(static::at(6))
+            ->method('containsPrice')
+            ->with($cacheKey->setTypeId('04'))
+            ->willReturn(false);
+
+        $priceResponse = $this->getMockBuilder(PriceResponse::class)->disableOriginalConstructor()->getMock();
+        $priceResponse->expects(self::at(0))
+            ->method('getPriceByService')
+            ->with('03')
+            ->willReturn(Price::create(80, 'USD'));
+
+        $priceResponse->expects(self::at(1))
+            ->method('getPriceByService')
+            ->with('04')
+            ->willReturn(Price::create(90, 'USD'));
+
+        $this->transportProvider->expects(self::once())->method('getPriceResponse')->willReturn($priceResponse);
+
+        $this->cache->expects(static::at(7))
+            ->method('savePrice')
+            ->with($cacheKey->setTypeId('03'))
+            ->willReturn(Price::create(80, 'USD'));
+
+        $this->cache->expects(static::at(8))
+            ->method('savePrice')
+            ->with($cacheKey->setTypeId('03'))
+            ->willReturn(Price::create(90, 'USD'));
+
+        $prices = $this->upsShippingMethod->calculatePrices($context, $methodOptions, $optionsByTypes);
+
+        static::assertEquals([
+            '01' => Price::create(90, 'USD'),
+            '02' => Price::create(110, 'USD'),
+            '03' => Price::create(130, 'USD'),
+            '04' => Price::create(150, 'USD'),
+        ], $prices);
+    }
+
+    public function testCalculatePricesOneWithoutCache()
+    {
+        /** @var ShippingContextInterface|\PHPUnit_Framework_MockObject_MockObject $context **/
+        $context = $this->getMock(ShippingContextInterface::class);
+
+        $methodOptions = ['surcharge' => 10];
+        $optionsByTypes = [
+            '01' => ['surcharge' => 20],
+            '02' => ['surcharge' => 30],
+        ];
+
+        $priceRequest = $this->getMockBuilder(PriceRequest::class)->disableOriginalConstructor()->getMock();
+        $priceRequest->expects(self::once())->method('getPackages')->willReturn([new Package(), new Package()]);
+
+        $this->priceRequestFactory->expects(self::once())->method('create')->willReturn($priceRequest);
+
+        $cacheKey = (new ShippingPriceCacheKey())->setTransport($this->transport)->setPriceRequest($priceRequest)
+            ->setMethodId($this->upsShippingMethod->getIdentifier());
+
+        $this->cache->expects(static::at(0))
+            ->method('createKey')
+            ->with($this->transport, $priceRequest, $this->upsShippingMethod->getIdentifier(), null)
+            ->willReturn($cacheKey);
+
+        $this->cache->expects(static::at(1))
+            ->method('containsPrice')
+            ->with($cacheKey->setTypeId('01'))
+            ->willReturn(true);
+
+        $this->cache->expects(static::at(2))
+            ->method('fetchPrice')
+            ->with($cacheKey)
+            ->willReturn(Price::create(60, 'USD'));
+
+        $this->cache->expects(static::at(3))
+            ->method('containsPrice')
+            ->with($cacheKey->setTypeId('02'))
+            ->willReturn(false);
+
+        $priceResponse = $this->getMockBuilder(PriceResponse::class)->disableOriginalConstructor()->getMock();
+        $priceResponse->expects(self::at(0))
+            ->method('getPriceByService')
+            ->with('02')
+            ->willReturn(Price::create(70, 'USD'));
+
+        $this->transport = $this->getMockBuilder(UPSTransport::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->transport->expects(static::exactly(2))
+            ->method('getApplicableShippingServices')
+            ->willReturn([
+                $this->getEntity(ShippingService::class, [
+                    'code' => '01'
+                ]),
+                $this->getEntity(ShippingService::class, [
+                    'code' => '02',
+                    'description' => 'Air',
+                ]),
+            ]);
+        $this->channel = $this->getEntity(
+            Channel::class,
+            ['id' => 1, 'transport' => $this->transport]
+        );
+
+        $priceRequest->expects(self::once())
+            ->method('setServiceCode')
+            ->with('02')
+            ->willReturn($priceRequest);
+
+        $priceRequest->expects(self::once())
+            ->method('setServiceDescription')
+            ->with('Air')
+            ->willReturn($priceRequest);
+
+        $this->transportProvider->expects(self::once())->method('getPriceResponse')->willReturn($priceResponse);
+
+        $this->cache->expects(static::at(4))
+            ->method('savePrice')
+            ->with($cacheKey->setTypeId('02'))
+            ->willReturn(Price::create(70, 'USD'));
+
+        $this->upsShippingMethod = new UPSShippingMethod(
+            $this->transportProvider,
+            $this->channel,
+            $this->priceRequestFactory,
+            $this->localizationHelper,
+            $this->cache
+        );
+        $prices = $this->upsShippingMethod->calculatePrices($context, $methodOptions, $optionsByTypes);
+
+        static::assertEquals([
+            '01' => Price::create(90, 'USD'),
+            '02' => Price::create(110, 'USD'),
+        ], $prices);
     }
 }

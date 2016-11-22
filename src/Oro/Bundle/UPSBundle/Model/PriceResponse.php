@@ -100,7 +100,7 @@ class PriceResponse
     public function getPriceByService($code)
     {
         if (!array_key_exists($code, $this->pricesByServices)) {
-            throw new \InvalidArgumentException(sprintf('Price data is missing for service %s', $code));
+            return null;
         }
 
         return $this->pricesByServices[$code];
