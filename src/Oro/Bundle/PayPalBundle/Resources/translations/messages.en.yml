@@ -51,7 +51,7 @@ oro:
         credit_card:
             card_number.label: Credit Card Number
             expiration_date.label: Expiration Date
-            cvv2.label: Credit Card Verification Number
+            cvv2.label: CVV
             save_for_later.label: Save this card for later use
 
         payflow:

@@ -136,9 +136,14 @@ class ProductRepository extends EntityRepository
         return $queryBuilder;
     }
 
+    /**
+     * @param QueryBuilder $queryBuilder
+     * @return $this
+     */
     public function selectNames(QueryBuilder $queryBuilder)
     {
         $queryBuilder->addSelect('product_names')->innerJoin('product.names', 'product_names');
+
         return $this;
     }
 
@@ -210,7 +215,7 @@ class ProductRepository extends EntityRepository
         foreach ($productImages as $productImage) {
             $images[$productImage['product_id']] = $productImage['image'];
         }
-        
+
         return $images;
     }
 
@@ -231,6 +236,19 @@ class ProductRepository extends EntityRepository
             ->getOneOrNullResult(AbstractQuery::HYDRATE_SINGLE_SCALAR);
     }
 
+    /**
+     * @param array $ids
+     * @return Product[]
+     */
+    public function getProductsByIds(array $ids)
+    {
+        return $this->getProductsQueryBuilder($ids)->getQuery()->getResult();
+    }
+
+    /**
+     * @param QueryBuilder $queryBuilder
+     * @return $this
+     */
     public function selectImages(QueryBuilder $queryBuilder)
     {
         $queryBuilder->addSelect('product_images,product_images_types,product_images_file')
@@ -239,6 +257,7 @@ class ProductRepository extends EntityRepository
             ->join('product_images.image', 'product_images_file')
             ->andWhere($queryBuilder->expr()->eq('product_images_types.type', ':imageType'))
             ->setParameter('imageType', ProductImageType::TYPE_MAIN);
+
         return $this;
     }
 }

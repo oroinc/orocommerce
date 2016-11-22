@@ -35,11 +35,11 @@ operations:
     UPDATE:
         exclude_datagrids:
             - products-select-grid
-            - frontend-products-grid
+            - frontend-product-search-grid
     DELETE:
         exclude_datagrids:
             - products-select-grid
-            - frontend-products-grid
+            - frontend-product-search-grid
 
 action_groups:
     oro_product_duplicate:

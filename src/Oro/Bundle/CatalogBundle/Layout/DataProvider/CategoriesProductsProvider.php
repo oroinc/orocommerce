@@ -35,6 +35,10 @@ class CategoriesProductsProvider
         $this->productManager = $productManager;
     }
 
+    /**
+     * @param $categories
+     * @return array
+     */
     public function getCountByCategories($categories)
     {
         $qb = $this->categoryRepository->getCategoriesProductsCountQueryBuilder($categories);

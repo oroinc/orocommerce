@@ -11,8 +11,8 @@ use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Event\OrderEvent;
 use Oro\Bundle\OrderBundle\EventListener\Order\OrderPaymentTermEventListener;
-use Oro\Bundle\PaymentBundle\Entity\PaymentTerm;
-use Oro\Bundle\PaymentBundle\Provider\PaymentTermProvider;
+use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
+use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
 
 class OrderPaymentTermEventListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -26,7 +26,7 @@ class OrderPaymentTermEventListenerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->paymentTermProvider = $this->getMockBuilder('Oro\Bundle\PaymentBundle\Provider\PaymentTermProvider')
+        $this->paymentTermProvider = $this->getMockBuilder('Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -202,7 +202,7 @@ class OrderPaymentTermEventListenerTest extends \PHPUnit_Framework_TestCase
         $accountWithoutGroup = new Account();
 
         $paymentTermWithId = $this->getEntity(
-            'Oro\Bundle\PaymentBundle\Entity\PaymentTerm',
+            'Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm',
             ['id' => 1]
         );
 
