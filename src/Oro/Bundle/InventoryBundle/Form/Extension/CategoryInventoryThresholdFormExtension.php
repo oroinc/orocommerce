@@ -7,6 +7,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryType;
 use Oro\Bundle\EntityBundle\Form\Type\EntityFieldFallbackValueType;
+use Oro\Bundle\ValidationBundle\Validator\Constraints\Integer;
 
 class CategoryInventoryThresholdFormExtension extends AbstractTypeExtension
 {
@@ -28,6 +29,9 @@ class CategoryInventoryThresholdFormExtension extends AbstractTypeExtension
             EntityFieldFallbackValueType::NAME,
             [
                 'label' => 'oro.inventory.inventory_threshold.label',
+                'value_options' => [
+                    'constraints' => [new Integer()]
+                ]
             ]
         );
     }
