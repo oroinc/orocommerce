@@ -32,7 +32,9 @@ class AddSeoToWebCatalog implements Migration, ExtendExtensionAwareInterface
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        $this->addMetaInformationToWebCatalogNode($schema);
+        if ($schema->hasTable(self::WEB_CATALOG_NODE_TABLE_NAME)) {
+            $this->addMetaInformationToWebCatalogNode($schema);
+        }
     }
 
     /**

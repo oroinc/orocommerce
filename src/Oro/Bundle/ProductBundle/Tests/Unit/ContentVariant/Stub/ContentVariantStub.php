@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
+use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 
 class ContentVariantStub implements ContentVariantInterface
@@ -108,5 +109,13 @@ class ContentVariantStub implements ContentVariantInterface
         $this->productPageProduct = $productPageProduct;
 
         return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getNode()
+    {
+        return null;
     }
 }

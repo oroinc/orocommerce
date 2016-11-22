@@ -109,4 +109,12 @@ class ContentVariantStub implements ContentVariantInterface
 
         return $this;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getNode()
+    {
+        return null;
+    }
 }
