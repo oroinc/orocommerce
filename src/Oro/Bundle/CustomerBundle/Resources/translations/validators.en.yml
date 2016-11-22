@@ -1,0 +1,7 @@
+"One of addresses must be set as primary.": "One of addresses must be set as primary."
+"Role with this name already exists": "Role with this name already exists"
+
+oro:
+    customer:
+          message:
+              password_mismatch: 'The password fields must match.'

@@ -3,7 +3,7 @@
 namespace Oro\Bundle\SaleBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
 
@@ -18,6 +18,7 @@ class AccountControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], static::generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
 
         $this->loadFixtures([
             'Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData',
@@ -30,7 +31,8 @@ class AccountControllerTest extends WebTestCase
         $quote = $this->getReference('sale.quote.3');
         /** @var Account $account */
         $account = $quote->getAccount();
-        $crawler = $this->client->request('GET', $this->getUrl('oro_account_view', ['id' => $account->getId()]));
+        $urlCustomerAccountView = $this->getUrl('oro_customer_account_view', ['id' => $account->getId()]);
+        $crawler = $this->client->request('GET', $urlCustomerAccountView);
         $gridAttr = $crawler->filter('[id^=grid-account-view-quote-grid]')
             ->first()->attr('data-page-component-options');
         $this->assertContains($quote->getOwner()->getFullName(), $gridAttr);

@@ -91,27 +91,19 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
             'without currency' => [
                 'product' => 'product.1',
                 'expected' => [
-                    'bottle' => [
-                        ['price' => 12.2, 'currency' => 'EUR', 'qty' => 1],
-                        ['price' => 13.1, 'currency' => 'USD', 'qty' => 1],
-                        ['price' => 12.2, 'currency' => 'EUR', 'qty' => 11],
-                    ],
-                    'liter' => [
-                        ['price' => 10, 'currency' => 'USD', 'qty' => 1],
-                        ['price' => 12.2, 'currency' => 'USD', 'qty' => 10],
-                    ]
+                    ['price' => 12.2, 'currency' => 'EUR', 'quantity' => 1, 'unit' => 'bottle'],
+                    ['price' => 13.1, 'currency' => 'USD', 'quantity' => 1, 'unit' => 'bottle'],
+                    ['price' => 12.2, 'currency' => 'EUR', 'quantity' => 11, 'unit' => 'bottle'],
+                    ['price' => 10, 'currency' => 'USD', 'quantity' => 1, 'unit' => 'liter'],
+                    ['price' => 12.2, 'currency' => 'USD', 'quantity' => 10, 'unit' => 'liter'],
                 ],
             ],
             'with currency' => [
                 'product' => 'product.1',
                 'expected' => [
-                    'liter' => [
-                        ['price' => 10.0000, 'currency' => 'USD', 'qty' => 1],
-                        ['price' => 12.2000, 'currency' => 'USD', 'qty' => 10],
-                    ],
-                    'bottle' => [
-                        ['price' => 13.1, 'currency' => 'USD', 'qty' => 1],
-                    ],
+                    ['price' => 10.0000, 'currency' => 'USD', 'quantity' => 1, 'unit' => 'liter'],
+                    ['price' => 12.2000, 'currency' => 'USD', 'quantity' => 10, 'unit' => 'liter'],
+                    ['price' => 13.1, 'currency' => 'USD', 'quantity' => 1, 'unit' => 'bottle'],
                 ],
                 'currency' => 'USD'
             ]

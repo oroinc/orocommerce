@@ -1,0 +1,39 @@
+{% block _page_title_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+    '~class': " title title--uppercase"
+    }) %}
+
+    <h1{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </h1>
+{% endblock %}
+
+{% block __oro_account_address_form__container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " address-form"
+    }) %}
+
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __oro_account_address_form__form_actions_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " address-form-actions"
+    }) %}
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __oro_account_address_form__form_required_label_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " required-label"
+    }) %}
+
+    <p {{ block('block_attributes') }}>
+        <sup>*</sup>
+        {{ 'oro.customer.form.label.required'|trans }}
+    </p>
+{% endblock %}

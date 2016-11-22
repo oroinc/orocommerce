@@ -1,0 +1,3 @@
+css:
+    'orocustomer':
+        - 'bundles/orocustomer/css/less/style.less'

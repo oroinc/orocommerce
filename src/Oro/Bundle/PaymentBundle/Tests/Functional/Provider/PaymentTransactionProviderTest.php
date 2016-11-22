@@ -8,7 +8,7 @@ use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 
@@ -22,7 +22,7 @@ class PaymentTransactionProviderTest extends WebTestCase
     public function testGetActiveAuthorizePaymentTransactionShouldNotRelyOnFrontendOwnerFromBackend()
     {
         $this->initClient();
-
+        $this->client->useHashNavigation(true);
         $this->loadFixtures(
             [
                 'Oro\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTransactionData'

@@ -10,6 +10,7 @@ use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 class PriceListToProductRepository extends EntityRepository
 {
@@ -55,8 +56,9 @@ class PriceListToProductRepository extends EntityRepository
 
     /**
      * @param PriceList $priceList
+     * @param Product|null $product
      */
-    public function deleteGeneratedRelations(PriceList $priceList)
+    public function deleteGeneratedRelations(PriceList $priceList, Product $product = null)
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->delete(PriceListToProduct::class, 'pltp')
@@ -65,6 +67,11 @@ class PriceListToProductRepository extends EntityRepository
             ->setParameter('priceList', $priceList)
             ->setParameter('isManual', true);
 
+        if ($product) {
+            $qb->andWhere($qb->expr()->eq('pltp.product', ':product'))
+                ->setParameter('product', $product);
+        }
+
         $qb->getQuery()->execute();
     }
 
@@ -72,7 +79,6 @@ class PriceListToProductRepository extends EntityRepository
      * @param PriceList $sourcePriceList
      * @param PriceList $targetPriceList
      * @param InsertFromSelectQueryExecutor $insertQueryExecutor
-     * @internal param PriceList $priceList
      */
     public function copyRelations(
         PriceList $sourcePriceList,

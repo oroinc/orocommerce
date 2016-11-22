@@ -14,15 +14,12 @@ define(function(require) {
          */
         initialize: function(options) {
             this.defaults.selectors.shippingForm = '[data-content="shipping_method_form"]';
-            this.defaults.selectors.shippingMethodSelector = '[name$="shippingMethod"]';
             this.defaults.selectors.shippingMethodTypeSelector = '[name$="shippingMethodType"]';
             this.defaults.selectors.shippingMethod = '[name$="[shipping_method]"]';
             this.defaults.selectors.shippingMethodType = '[name$="[shipping_method_type]"]';
-            this.defaults.selectors.shippingRuleConfig = '[name$="[shipping_rule_config]"]';
 
             ShippingTransitionButtonComponent.__super__.initialize.call(this, options);
             
-            this.getShippingMethodSelector().on('change', $.proxy(this.onShippingMethodChange, this));
             this.getShippingMethodTypeSelector().on('change', $.proxy(this.onShippingMethodTypeChange, this));
             this.initShippingMethod();
         },
@@ -30,27 +27,22 @@ define(function(require) {
         initShippingMethod: function() {
             var selectedTypeValue = this.getShippingMethodTypeElement().val();
             var selectedMethodValue = this.getShippingMethodElement().val();
-            if (this.getShippingMethodTypeSelector().length && selectedTypeValue) {
-                var selectedEl = this.getShippingMethodTypeSelector().filter('[value="' + selectedTypeValue + '"]');
-                selectedEl.prop('checked', 'checked');
-                selectedEl.trigger('change');
-            }else if(this.getShippingMethodSelector().length && selectedMethodValue){
-                var selectedEl = this.getShippingMethodSelector().filter('[value="' + selectedMethodValue + '"]');
+            if (this.getShippingMethodTypeSelector().length && selectedTypeValue && selectedMethodValue) {
+                var selectedEl = this
+                  .getShippingMethodTypeSelector()
+                  .filter('[value="' + selectedTypeValue + '"]')
+                  .filter('[data-shipping-method="' + selectedMethodValue + '"]');
                 selectedEl.prop('checked', 'checked');
                 selectedEl.trigger('change');
             } else {
                 var selectedType = this.getShippingMethodTypeSelector().filter(':checked');
-                var selectedMethod = this.getShippingMethodSelector().filter(':checked');
                 if (selectedType.val()) {
                     var method = $(selectedType).data('shipping-method');
-                    var shippingRuleConfig = $(selectedType).data('shipping-rule-config');
-                    this.setElementsValue(selectedType.val(), method, shippingRuleConfig);
-                } else if (selectedMethod.val()) {
-                    var shippingRuleConfig = $(selectedMethod).data('shipping-rule-config');
-                    this.setElementsValue(null, selectedMethod.val(), shippingRuleConfig);
+                    this.setElementsValue(selectedType.val(), method);
                 } else {
-                    this.setElementsValue(null, null, null);
+                    this.setElementsValue(null, null);
                 }
+
             }
         },
 
@@ -62,7 +54,6 @@ define(function(require) {
                 return;
             }
 
-            this.getShippingMethodSelector().off('change', $.proxy(this.onShippingMethodChange, this));
             this.getShippingMethodTypeSelector().off('change', $.proxy(this.onShippingMethodTypeChange, this));
 
             ShippingTransitionButtonComponent.__super__.dispose.call(this);
@@ -72,12 +63,10 @@ define(function(require) {
          *
          * @param {string} type
          * @param {string} method
-         * @param {int} config
          */
-        setElementsValue: function (type, method, config) {
+        setElementsValue: function (type, method) {
             this.getShippingMethodTypeElement().val(type);
             this.getShippingMethodElement().val(method);
-            this.getShippingRuleConfigElement().val(config);
         },
 
         /**
@@ -87,18 +76,7 @@ define(function(require) {
             mediator.trigger('checkout:shipping-method:changed');
             var method_type = $(event.target);
             var method = method_type.data('shipping-method');
-            var shippingRuleConfig = method_type.data('shipping-rule-config');
-            this.setElementsValue(method_type.val(), method, shippingRuleConfig);
-        },
-
-        /**
-         * @param {Event} event
-         */
-        onShippingMethodChange: function(event) {
-            mediator.trigger('checkout:shipping-method:changed');
-            var method = $(event.target);
-            var shippingRuleConfig = method.data('shipping-rule-config');
-            this.setElementsValue(null, method.val(), shippingRuleConfig);
+            this.setElementsValue(method_type.val(), method);
         },
 
         /**
@@ -137,17 +115,6 @@ define(function(require) {
         /**
          * @returns {jQuery|HTMLElement}
          */
-        getShippingMethodSelector: function() {
-            if (!this.hasOwnProperty('$shippingMethodSelector')) {
-                this.$shippingMethodSelector = this.getShippingForm().find(this.options.selectors.shippingMethodSelector);
-            }
-
-            return this.$shippingMethodSelector;
-        },
-
-        /**
-         * @returns {jQuery|HTMLElement}
-         */
         getShippingMethodTypeElement: function() {
             if (!this.hasOwnProperty('$shippingMethodTypeElement')) {
                 this.$shippingMethodTypeElement = this.getContent().find(this.options.selectors.shippingMethodType);
@@ -165,17 +132,6 @@ define(function(require) {
             }
 
             return this.$shippingMethodElement;
-        },
-
-        /**
-         * @returns {jQuery|HTMLElement}
-         */
-        getShippingRuleConfigElement: function() {
-            if (!this.hasOwnProperty('$shippingRuleConfigElement')) {
-                this.$shippingRuleConfigElement = this.getContent().find(this.options.selectors.shippingRuleConfig);
-            }
-
-            return this.$shippingRuleConfigElement;
         }
     });
 

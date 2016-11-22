@@ -25,6 +25,39 @@ class ShoppingListControllerTest extends WebTestCase
         );
     }
 
+    public function testSetCurrent()
+    {
+        $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_2);
+
+        $this->client->request(
+            'PUT',
+            $this->getUrl('oro_api_set_shoppinglist_current', ['id' => $shoppingList->getId()])
+        );
+        $result = $this->client->getResponse();
+        $this->assertJsonResponseStatusCodeEquals($result, 200);
+
+        $currentUser = $this->getContainer()->get('doctrine')
+            ->getManager()
+            ->getRepository('OroCustomerBundle:AccountUser')
+            ->findOneBy(['username' => LoadAccountUserData::AUTH_USER]);
+
+        $currentShoppingList = $this->getContainer()->get('doctrine')
+            ->getRepository('OroShoppingListBundle:ShoppingList')
+            ->findCurrentForAccountUser($currentUser);
+
+        $this->assertEquals($currentShoppingList->getId(), $shoppingList->getId());
+    }
+
+    public function testSetCurrentFailsOnNonExistingList()
+    {
+        $this->client->request(
+            'PUT',
+            $this->getUrl('oro_api_set_shoppinglist_current', ['id' => -1])
+        );
+        $result = $this->client->getResponse();
+        $this->assertJsonResponseStatusCodeEquals($result, 404);
+    }
+
     public function testDelete()
     {
         $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);

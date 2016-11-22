@@ -1,6 +1,5 @@
 layout:
     imports:
-        - oro_account_menu
         -
             id: oro_line_items_grid
             root: order_container
@@ -9,16 +8,11 @@ layout:
     actions:
         - '@setBlockTheme':
             themes: 'OroOrderBundle:layouts:default/oro_order_frontend_view/layout.html.twig'
-        - '@appendOption':
+        - '@setOption':
             id: title
-            optionName: value
+            optionName: params
             optionValue:
-                - 'oro.account.menu.account_user.label'
-                - 'oro.frontend.order.entity_plural_label'
-                -
-                    label: 'oro.order.navigation.view'
-                    parameters:
-                        '%identifier%': '=data["order"].getIdentifier()'
+                '%identifier%': '=data["order"].getIdentifier()'
         - '@setOption':
             id: page_title
             optionName: text
@@ -27,7 +21,7 @@ layout:
                 parameters:
                     '%identifier%': '=data["order"].getIdentifier()'
         - '@setOption':
-            id: content
+            id: page_content
             optionName: class_prefix
             optionValue: 'account'
         - '@addTree':
@@ -97,6 +91,12 @@ layout:
                         address: '=data["order"].getShippingAddress()'
                         label: 'oro.order.shipping_address.label'
                         additional_block_prefixes: ['order_body_column_element']
+                order_shipping_tracking:
+                    blockType: shipping_trackings
+                    options:
+                        trackings: '=data["order"].getShippingTrackings()'
+                        label: 'oro.order.shipping_trackings.label'
+                        additional_block_prefixes: ['order_body_column_element']
                 order_po_number:
                     blockType: text
                     options:
@@ -144,20 +144,13 @@ layout:
                         dateType: 3
                         label: 'oro.order.ship_until.label'
                         additional_block_prefixes: ['order_body_column_element']
-                order_po_number:
-                    blockType: text
-                    options:
-                        visible: '=data["order"].getPoNumber()!=null'
-                        text: '=data["order"].getPoNumber()'
-                        label: 'oro.order.po_number.label'
-                        additional_block_prefixes: ['order_body_column_element']
                 order_total:
                     blockType: order_total
                     options:
                         total: '=data["totals"].total'
                         subtotals: '=data["totals"].subtotals'
             tree:
-                content:
+                page_content:
                     order_view_page:
                         order_container:
                             order_body:
@@ -168,6 +161,7 @@ layout:
                                         order_date: ~
                                         order_billing_address: ~
                                         order_shipping_address: ~
+                                        order_shipping_tracking: ~
                                     order_body_column_right:
                                         order_po_number: ~
                                         order_shipping_method: ~
@@ -175,7 +169,6 @@ layout:
                                         order_payment_term: ~
                                         order_payment_status: ~
                                         order_ship_until: ~
-                                        order_po_number: ~
                                         order_customer_notes: ~
                             order_after_line_items_grid:
                                 order_list_link: ~

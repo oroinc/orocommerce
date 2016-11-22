@@ -13,7 +13,7 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Component\PropertyAccess\PropertyAccessor;
-use Oro\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
+use Oro\Bundle\CustomerBundle\Entity\AccountOwnerAwareInterface;
 
 class AbstractAddressManager
 {

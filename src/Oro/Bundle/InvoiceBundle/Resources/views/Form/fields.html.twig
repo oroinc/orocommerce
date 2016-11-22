@@ -114,7 +114,11 @@
         {{ form_errors(form.quantity) }}
         {{ form_errors(form.productUnit) }}
     </td>
-    <td class="invoice-line-item-price">
+    <td class="invoice-line-item-price"
+        data-page-component-module="oroui/js/app/components/view-component"
+        data-page-component-options="{{ {
+            view: 'oropricing/js/app/views/line-item-product-prices-view'
+        }|json_encode }}">
         <div class="fields-row">
             {{ form_widget(form.price) }}
             {{ form_widget(form.priceType) }}

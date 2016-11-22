@@ -145,10 +145,10 @@ datagrids:
                         - { join: paymentTerm.accounts, alias: relatedEntity }
         columns:
             name:
-                label: oro.account.name.label
+                label: oro.customer.account.name.label
         properties:
             view_link:
-                route:  oro_account_group_view
+                route:  oro_customer_account_group_view
         actions:
             view:
                 acl_resource: oro_account_group_view
@@ -164,13 +164,13 @@ datagrids:
                         - { join: paymentTerm.accountGroups, alias: relatedEntity }
         columns:
             name:
-                label: oro.account.accountgroup.name.label
+                label: oro.customer.accountgroup.name.label
         properties:
             view_link:
-                route: oro_account_view
+                route: oro_customer_account_view
         actions:
             view:
-                acl_resource: oro_account_view
+                acl_resource: oro_customer_account_view
 
     base-payment-term-select-relations-grid:
         acl_resource: oro_payment_term_update
@@ -225,7 +225,7 @@ datagrids:
         source:
             query:
                 from:
-                    - { table: %oro_account.entity.account_group.class%, alias: relatedEntity }
+                    - { table: %oro_customer.entity.account_group.class%, alias: relatedEntity }
                 join:
                     left:
                         -
@@ -235,7 +235,7 @@ datagrids:
                             condition: 'relatedEntity MEMBER OF paymentTerm.accountGroups'
         columns:
             name:
-                label: oro.account.accountgroup.name.label
+                label: oro.customer.accountgroup.name.label
         options:
             rowSelection:
                 selectors:
@@ -247,7 +247,7 @@ datagrids:
         source:
             query:
                 from:
-                    - { table: %oro_account.entity.account.class%, alias: relatedEntity }
+                    - { table: %oro_customer.entity.account.class%, alias: relatedEntity }
                 join:
                     left:
                         -
@@ -257,7 +257,7 @@ datagrids:
                             condition: 'relatedEntity MEMBER OF paymentTerm.accounts'
         columns:
             name:
-                label: oro.account.name.label
+                label: oro.customer.name.label
         options:
             rowSelection:
                 selectors:

@@ -16,3 +16,4 @@ oro:
             line_items_in_shopping_list: '{{ lineItems }} in {{ shoppingList }}'
             in_shopping_lists: In Shopping Lists ({{ count }})
             update_shopping_list: Update {{ shoppingList }}
+            shopping_list_set_as_default: Shopping list {{ shoppingList }} has been set as default.

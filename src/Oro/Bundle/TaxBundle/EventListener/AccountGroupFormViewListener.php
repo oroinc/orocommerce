@@ -3,7 +3,7 @@
 namespace Oro\Bundle\TaxBundle\EventListener;
 
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\TaxBundle\Entity\Repository\AccountTaxCodeRepository;
 
 class AccountGroupFormViewListener extends AbstractFormViewListener

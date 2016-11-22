@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\AccountBundle\Tests\Unit\Entity;
+namespace Oro\Bundle\CustomerBundle\Tests\Unit\Entity;
 
 use Brick\Math\BigDecimal;
 use Oro\Bundle\TaxBundle\Model\ResultElement;

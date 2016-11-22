@@ -26,6 +26,7 @@ class SlugManagerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient();
+        $this->client->useHashNavigation(true);
         $this->registry    = $this->getContainer()->get('doctrine');
         $this->slugManager = $this->getContainer()->get('oro_redirect.slug.manager');
     }

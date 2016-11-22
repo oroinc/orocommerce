@@ -5,8 +5,8 @@ namespace Oro\Bundle\OrderBundle\Tests\Unit\Validator\Constraints;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-use Oro\Bundle\AccountBundle\Entity\AccountAddress;
-use Oro\Bundle\AccountBundle\Entity\AccountUserAddress;
+use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
+use Oro\Bundle\CustomerBundle\Entity\AccountUserAddress;
 use Oro\Bundle\OrderBundle\Validator\Constraints\OrderAddressValidator;
 use Oro\Bundle\OrderBundle\Validator\Constraints\OrderAddress;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress as OrderAddressEntity;

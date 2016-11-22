@@ -7,9 +7,9 @@ use Symfony\Component\Form\FormView;
 use Doctrine\ORM\EntityRepository;
 
 use Oro\Bundle\TaxBundle\EventListener\AccountFormViewListener;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\TaxBundle\Entity\AccountTaxCode;
-use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Account;
 
 class AccountFormViewListenerTest extends AbstractFormViewListenerTest
 {
@@ -27,7 +27,7 @@ class AccountFormViewListenerTest extends AbstractFormViewListenerTest
             $this->doctrineHelper,
             $this->requestStack,
             'Oro\Bundle\TaxBundle\Entity\AccountTaxCode',
-            'Oro\Bundle\AccountBundle\Entity\Account'
+            'Oro\Bundle\CustomerBundle\Entity\Account'
         );
     }
 

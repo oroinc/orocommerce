@@ -16,3 +16,19 @@ operations:
             - applications
             - preconditions
             - datagrids
+action_groups:
+    oro_update_shipping_price:
+        parameters:
+            checkout:
+                type: Oro\Bundle\CheckoutBundle\Entity\Checkout
+        actions:
+            - '@call_service_method':
+                service: oro_checkout.factory.shipping_context_provider_factory
+                method: create
+                method_parameters: [$.checkout]
+                attribute: $.context
+            - '@call_service_method':
+                service: oro_shipping.shipping_price.provider
+                method: getPrice
+                method_parameters: [$.context, $.checkout.shippingMethod, $.checkout.shippingMethodType]
+                attribute: $.checkout.shippingCost

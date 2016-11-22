@@ -17,8 +17,8 @@ use Oro\Bundle\LocaleBundle\Formatter\AddressFormatter;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Model\QuoteAddressManager;
 use Oro\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider;
-use Oro\Bundle\AccountBundle\Entity\AccountUserAddress;
-use Oro\Bundle\AccountBundle\Entity\AbstractDefaultTypedAddress;
+use Oro\Bundle\CustomerBundle\Entity\AccountUserAddress;
+use Oro\Bundle\CustomerBundle\Entity\AbstractDefaultTypedAddress;
 
 class QuoteAddressType extends AbstractType
 {

@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CheckoutBundle\WorkflowState\Mapper;
 
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
-use Oro\Bundle\AccountBundle\Entity\AddressPhoneAwareInterface;
+use Oro\Bundle\CustomerBundle\Entity\AddressPhoneAwareInterface;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 

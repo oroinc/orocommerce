@@ -15,6 +15,7 @@ class WebsiteRepositoryTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
         $this->loadFixtures([LoadWebsiteData::class]);
     }
 
@@ -77,6 +78,7 @@ class WebsiteRepositoryTest extends WebTestCase
 
     /**
      * @dataProvider getAllWebsitesProvider
+     * @param array $websites
      */
     public function testGetWebsiteIdentifiers(array $websites)
     {

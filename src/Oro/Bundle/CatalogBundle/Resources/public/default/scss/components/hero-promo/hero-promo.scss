@@ -10,4 +10,12 @@
     .slick-dots {
         bottom: $offset-y-m;
     }
+
+    .embedded-list__item {
+        &:not(:first-child)&:not(.slick-slide) {
+            //hide until slick not loaded
+            display: none;
+        }
+        width: 100%;
+    }
 }

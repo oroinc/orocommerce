@@ -1,0 +1,26 @@
+layout:
+    imports:
+        -
+            id: datagrid
+            root: widget_content
+            namespace: widget
+    actions:
+        - '@setBlockTheme':
+            themes: 'datagrid.html.twig'
+        - '@setOption':
+            id: widget_datagrid
+            optionName: grid_name
+            optionValue: '=context["gridName"]'
+        - '@setOption':
+            id: widget_datagrid
+            optionName: grid_parameters
+            optionValue: '=context["params"]'
+        - '@setOption':
+            id: widget_datagrid
+            optionName: grid_render_parameters
+            optionValue: '=context["renderParams"]'
+        - '@setOption':
+            id: widget_datagrid
+            optionName: vars
+            optionValue:
+                multiselect: '=context["multiselect"]'

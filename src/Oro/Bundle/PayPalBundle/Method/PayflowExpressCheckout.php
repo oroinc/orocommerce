@@ -9,7 +9,6 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
 
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
-use Oro\Bundle\PaymentBundle\Model\LineItemOptionModel;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PayPalBundle\Method\Config\PayflowExpressCheckoutConfigInterface;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway;
@@ -19,7 +18,8 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\ResponseInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Oro\Bundle\PayPalBundle\Provider\ExtractOptionsProvider;
+use Oro\Bundle\PaymentBundle\Provider\ExtractOptionsProvider;
+use Oro\Bundle\PaymentBundle\Provider\SurchargeProvider;
 
 class PayflowExpressCheckout implements PaymentMethodInterface
 {
@@ -48,25 +48,31 @@ class PayflowExpressCheckout implements PaymentMethodInterface
     /** @var ExtractOptionsProvider */
     protected $optionsProvider;
 
+    /** @var SurchargeProvider */
+    protected $surchargeProvider;
+
     /**
      * @param Gateway $gateway
      * @param PayflowExpressCheckoutConfigInterface $config
      * @param RouterInterface $router
      * @param DoctrineHelper $doctrineHelper
      * @param ExtractOptionsProvider $optionsProvider
+     * @param SurchargeProvider $surchargeProvider
      */
     public function __construct(
         Gateway $gateway,
         PayflowExpressCheckoutConfigInterface $config,
         RouterInterface $router,
         DoctrineHelper $doctrineHelper,
-        ExtractOptionsProvider $optionsProvider
+        ExtractOptionsProvider $optionsProvider,
+        SurchargeProvider $surchargeProvider
     ) {
         $this->gateway = $gateway;
         $this->config = $config;
         $this->router = $router;
         $this->doctrineHelper = $doctrineHelper;
         $this->optionsProvider = $optionsProvider;
+        $this->surchargeProvider = $surchargeProvider;
     }
 
     /**
@@ -283,6 +289,7 @@ class PayflowExpressCheckout implements PaymentMethodInterface
     {
         return array_merge(
             $this->getLineItemOptions($paymentTransaction),
+            $this->getSurcharges($paymentTransaction),
             [
                 ECOption\PaymentType::PAYMENTTYPE => ECOption\PaymentType::INSTANTONLY,
                 ECOption\ShippingAddressOverride::ADDROVERRIDE => ECOption\ShippingAddressOverride::TRUE,
@@ -410,11 +417,36 @@ class PayflowExpressCheckout implements PaymentMethodInterface
                 Option\LineItems::NAME => $lineItemOption->getName(),
                 Option\LineItems::DESC => $lineItemOption->getDescription(),
                 Option\LineItems::COST => $lineItemOption->getCost(),
-                Option\LineItems::QTY => $lineItemOption->getQty()
+                Option\LineItems::QTY => $lineItemOption->getQty(),
             ];
         }
 
         return Option\LineItems::prepareOptions($options);
+    }
+
+    /**
+     * @param PaymentTransaction $paymentTransaction
+     * @return array
+     */
+    protected function getSurcharges(PaymentTransaction $paymentTransaction)
+    {
+        $entity = $this->doctrineHelper->getEntityReference(
+            $paymentTransaction->getEntityClass(),
+            $paymentTransaction->getEntityIdentifier()
+        );
+
+        if (!$entity) {
+            return [];
+        }
+
+        $surcharge = $this->surchargeProvider->getSurcharges($entity);
+
+        return [
+            Option\Amount::FREIGHTAMT => $surcharge->getShippingAmount(),
+            Option\Amount::HANDLINGAMT => $surcharge->getHandlingAmount(),
+            Option\Amount::DISCOUNT => $surcharge->getDiscountAmount(),
+            Option\Amount::INSURANCEAMT => $surcharge->getInsuranceAmount(),
+        ];
     }
 
     /**

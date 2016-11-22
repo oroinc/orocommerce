@@ -1,18 +1,18 @@
 <?php
 namespace Oro\Bundle\OrderBundle\Tests\Functional\Controller;
 
+use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
+use Oro\Bundle\LocaleBundle\Formatter\NameFormatter;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Entity\OrderDiscount;
+use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\UserBundle\Entity\User;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
-
-use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\LocaleBundle\Formatter\NameFormatter;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
-use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\OrderBundle\Entity\OrderDiscount;
-use Oro\Bundle\OrderBundle\Entity\Order;
 
 /**
  * @dbIsolation
@@ -105,12 +105,13 @@ class OrderControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], array_merge($this->generateBasicAuthHeader(), ['HTTP_X-CSRF-Header' => 1]));
+        $this->client->useHashNavigation(true);
 
         $this->loadFixtures(
             [
                 'Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders',
-                'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData',
-                'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountAddresses',
+                'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData',
+                'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountAddresses',
                 'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
             ]
         );
@@ -133,10 +134,20 @@ class OrderControllerTest extends WebTestCase
 
         $result = static::getJsonResponseContent($response, 200);
 
-        $first = reset($result['data']);
+        $myOrderData = [];
+        foreach ($result['data'] as $row) {
+            if ($row['identifier'] === LoadOrders::MY_ORDER) {
+                $myOrderData = $row;
+                break;
+            }
+        }
 
-        $this->assertArrayHasKey('shippingMethod', $first);
-        $this->assertEquals('N/A', $first['shippingMethod']);
+        $order = $this->getReference(LoadOrders::MY_ORDER);
+        $shippingMethodLabel = $this->getContainer()->get('oro_order.formatter.shipping_method')
+            ->formatShippingMethodWithTypeLabel($order->getShippingMethod(), $order->getShippingMethodType());
+        $shippingMethodLabel = $this->getContainer()->get('translator')->trans($shippingMethodLabel);
+        $this->assertArrayHasKey('shippingMethod', $myOrderData);
+        $this->assertEquals($shippingMethodLabel, $myOrderData['shippingMethod']);
     }
 
     /**
@@ -406,8 +417,8 @@ class OrderControllerTest extends WebTestCase
         $titleBlock = $crawler->filter('.responsive-section')->eq(2)->filter('.scrollspy-title')->html();
         self::assertEquals('Shipping Information', $titleBlock);
 
-        $value  = $crawler->filter('.responsive-section')->eq(2)->filter('.controls .control-label')->eq(1)->html();
-        self::assertEquals('$999.99', $value);
+        $value  = $crawler->filter('.responsive-section')->eq(2)->filter('.controls .control-label')->html();
+        self::assertEquals('USD 999.99', $value);
 
         $result = $this->client->getResponse();
         static::assertHtmlResponseStatusCodeEquals($result, 200);
@@ -458,8 +469,8 @@ class OrderControllerTest extends WebTestCase
         $titleBlock = $crawler->filter('.responsive-section')->eq(2)->filter('.scrollspy-title')->html();
         self::assertEquals('Shipping Information', $titleBlock);
 
-        $value  = $crawler->filter('.responsive-section')->eq(2)->filter('.controls .control-label')->eq(1)->html();
-        self::assertEquals('$0.00', $value);
+        $value  = $crawler->filter('.responsive-section')->eq(2)->filter('.controls .control-label')->html();
+        self::assertEquals('USD 0.00', $value);
 
         $result = $this->client->getResponse();
         static::assertHtmlResponseStatusCodeEquals($result, 200);

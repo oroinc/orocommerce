@@ -108,7 +108,6 @@ class ProductSelectPriceListAwareListenerTest extends \PHPUnit_Framework_TestCas
                     ->method('applyPriceListLimitations')
                     ->with($this->queryBuilder);
             }
-
         } else {
             $this->modifier->expects($this->never())
                 ->method('applyPriceListLimitations');

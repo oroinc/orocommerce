@@ -6,10 +6,10 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
-use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts;
-use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups;
+use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccounts;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\TaxBundle\Entity\AccountTaxCode;
 
 class LoadAccountTaxCodes extends AbstractFixture implements DependentFixtureInterface
@@ -27,7 +27,7 @@ class LoadAccountTaxCodes extends AbstractFixture implements DependentFixtureInt
      */
     public function getDependencies()
     {
-        return ['Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts'];
+        return ['Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccounts'];
     }
 
     /**

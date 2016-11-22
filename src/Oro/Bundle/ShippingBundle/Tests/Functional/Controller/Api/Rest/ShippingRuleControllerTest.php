@@ -14,6 +14,7 @@ class ShippingRuleControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([]);
+        $this->client->useHashNavigation(true);
         $this->loadFixtures(
             [
                 'Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingRules',

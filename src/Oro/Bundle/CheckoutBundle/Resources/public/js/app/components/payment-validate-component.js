@@ -23,20 +23,13 @@ define(function(require) {
         },
 
         /**
-         * @property {Boolean}
-         */
-        defaultState: true,
-
-        /**
          * @inheritDoc
          */
         initialize: function(options) {
             this.$el = $(options._sourceElement);
-            this.defaultState = this.getCheckboxState();
 
             mediator.on('checkout:payment:validate:get-value', this.onGetValue, this);
             mediator.on('checkout:payment:validate:change', this.onChange, this);
-            mediator.on('checkout:payment:validate:restore-default', this.onRestoreDefault, this);
         },
 
         /**
@@ -44,10 +37,6 @@ define(function(require) {
          */
         onChange: function(state) {
             this.setCheckboxState(state);
-        },
-
-        onRestoreDefault: function() {
-            this.setCheckboxState(this.defaultState);
         },
 
         /**
@@ -94,7 +83,6 @@ define(function(require) {
 
             mediator.off('checkout:payment:validate:get-value', this.onGetValue, this);
             mediator.off('checkout:payment:validate:change', this.onChange, this);
-            mediator.off('checkout:payment:validate:restore-default', this.onRestoreDefault, this);
 
             PaymentValidateComponent.__super__.dispose.call(this);
         }

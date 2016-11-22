@@ -1,13 +1,13 @@
 <?php
 
-namespace Oro\Bundle\AccountBundle\Tests\Functional\Controller\Frontend;
+namespace Oro\Bundle\CustomerBundle\Tests\Functional\Controller\Frontend;
 
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\Response;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAddressBookUserData;
 
 /**

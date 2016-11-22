@@ -3,7 +3,7 @@
 namespace Oro\Bundle\RFPBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
 
@@ -18,6 +18,7 @@ class AccountUserControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], static::generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
 
         $this->loadFixtures([
             'Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData',
@@ -33,7 +34,7 @@ class AccountUserControllerTest extends WebTestCase
         $crawler = $this->client->request(
             'GET',
             $this->getUrl(
-                'oro_account_account_user_view',
+                'oro_customer_account_user_view',
                 ['id' => $accountUser->getId()]
             )
         );

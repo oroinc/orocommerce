@@ -12,11 +12,12 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\Ownership\AuditableOrganizationAwareTrait;
 use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\AccountBundle\Doctrine\SoftDeleteableInterface;
-use Oro\Bundle\AccountBundle\Doctrine\SoftDeleteableTrait;
-use Oro\Bundle\AccountBundle\Entity\AccountUser;
-use Oro\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
-use Oro\Bundle\AccountBundle\Entity\Ownership\AuditableFrontendAccountUserAwareTrait;
+use Oro\Bundle\CustomerBundle\Doctrine\SoftDeleteableInterface;
+use Oro\Bundle\CustomerBundle\Doctrine\SoftDeleteableTrait;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\AccountOwnerAwareInterface;
+use Oro\Bundle\CustomerBundle\Entity\Ownership\AuditableFrontendAccountUserAwareTrait;
+use Oro\Bundle\UserBundle\Entity\Ownership\AuditableUserAwareTrait;
 use Oro\Bundle\RFPBundle\Model\ExtendRequest;
 
 /**
@@ -38,6 +39,9 @@ use Oro\Bundle\RFPBundle\Model\ExtendRequest;
  *              "category"="quotes"
  *          },
  *          "ownership"={
+ *              "owner_type"="USER",
+ *              "owner_field_name"="owner",
+ *              "owner_column_name"="user_owner_id",
  *              "frontend_owner_type"="FRONTEND_USER",
  *              "frontend_owner_field_name"="accountUser",
  *              "frontend_owner_column_name"="account_user_id",
@@ -61,8 +65,8 @@ class Request extends ExtendRequest implements
 {
     use SoftDeleteableTrait;
     use DatesAwareTrait;
-    use AuditableOrganizationAwareTrait;
     use AuditableFrontendAccountUserAwareTrait;
+    use AuditableUserAwareTrait;
 
     /**
      * @var integer
@@ -260,7 +264,7 @@ class Request extends ExtendRequest implements
     /**
      * @var Collection|AccountUser[]
      *
-     * @ORM\ManyToMany(targetEntity="Oro\Bundle\AccountBundle\Entity\AccountUser")
+     * @ORM\ManyToMany(targetEntity="Oro\Bundle\CustomerBundle\Entity\AccountUser")
      * @ORM\JoinTable(
      *      name="oro_rfp_assigned_acc_users",
      *      joinColumns={

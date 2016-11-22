@@ -1,21 +1,14 @@
 layout:
-    imports:
-        - oro_account_menu
     actions:
         - '@setBlockTheme':
             themes: 'OroRFPBundle:layouts:default/oro_rfp_frontend_request_view/layout.html.twig'
-        - '@appendOption':
+        - '@setOption':
             id: title
-            optionName: value
+            optionName: params
             optionValue:
-                - 'oro.account.menu.account_user.label'
-                - 'oro.frontend.rfp.request.entity_plural_label'
-                -
-                    label: 'oro.frontend.rfp.request.page_title.label'
-                    parameters:
-                        '%id%': '=data["entity"].getId()'
-                        '%firstName%': '=data["entity"].getFirstName()'
-                        '%lastName%': '=data["entity"].getLastName()'
+                '%id%': '=data["entity"].getId()'
+                '%firstName%': '=data["entity"].getFirstName()'
+                '%lastName%': '=data["entity"].getLastName()'
         - '@setOption':
             id: page_title
             optionName: class_prefix
@@ -75,7 +68,7 @@ layout:
                         route_name: oro_rfp_frontend_request_index
                         text: 'oro.frontend.rfp.request.sections.back.label'
             tree:
-                content:
+                page_content:
                     rfp_request_view_page:
                         rfp_request_view_top:
                             rfp_request_view_top_actions: ~

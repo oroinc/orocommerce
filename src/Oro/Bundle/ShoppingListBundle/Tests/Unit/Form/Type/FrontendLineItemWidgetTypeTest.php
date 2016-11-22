@@ -15,7 +15,7 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
-use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
@@ -206,7 +206,7 @@ class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
         $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|AccountUser $accountUser */
-        $accountUser = $this->getMockBuilder('Oro\Bundle\AccountBundle\Entity\AccountUser')
+        $accountUser = $this->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\AccountUser')
             ->disableOriginalConstructor()
             ->getMock();
 

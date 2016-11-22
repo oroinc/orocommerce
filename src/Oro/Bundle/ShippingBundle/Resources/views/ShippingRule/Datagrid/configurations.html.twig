@@ -1,5 +1,2 @@
-{% spaceless %}
-    {% set configurations = record.getValue('configurations').toArray() %}
-
-    {{ configurations|join('</br>')|raw }}
-{% endspaceless %}
+{% import 'OroShippingBundle:ShippingRule:macros.html.twig' as ShipRuleMacro %}
+{{ ShipRuleMacro.renderShippingMethodsConfigs(record.getValue('methodConfigs').toArray(), record.getValue('currency'))}}

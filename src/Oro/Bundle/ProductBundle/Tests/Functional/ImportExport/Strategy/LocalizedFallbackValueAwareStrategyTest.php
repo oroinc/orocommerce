@@ -25,6 +25,7 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient();
+        $this->client->useHashNavigation(true);
 
         $container = $this->getContainer();
 
@@ -40,7 +41,7 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
         $this->strategy = new LocalizedFallbackValueAwareStrategy(
             $container->get('event_dispatcher'),
             $container->get('oro_importexport.strategy.import.helper'),
-            $container->get('oro_importexport.field.field_helper'),
+            $container->get('oro_entity.helper.field_helper'),
             $container->get('oro_importexport.field.database_helper'),
             $container->get('oro_entity.entity_class_name_provider'),
             $container->get('translator'),

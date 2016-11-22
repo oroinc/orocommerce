@@ -2,11 +2,11 @@ system_configuration:
     groups:
         websites:
             title: oro.website.system_configuration.groups.webistes.title
-        general:
-            title: oro.website.system_configuration.groups.general.title
         routing:
             title: oro.website.system_configuration.groups.routing.title
             icon: 'icon-sitemap'
+        websites_routing_general:
+            title: oro.website.system_configuration.groups.general.title
     fields:
         oro_website.url:
             data_type: string
@@ -37,7 +37,7 @@ system_configuration:
                             routing:
                                 priority: 100
                                 children:
-                                    general:
+                                    websites_routing_general:
                                         priority: 100
                                         children:
                                             - oro_website.url

@@ -15,8 +15,6 @@ define(function(require) {
         options: {
             buttonTemplate: '',
             removeButtonTemplate: '',
-            defaultClass: '',
-            editClass: '',
             buttonsSelector: '.add-to-shopping-list-button',
             messages: {
                 success: 'oro.form.inlineEditing.successMessage'
@@ -59,6 +57,7 @@ define(function(require) {
 
             mediator.on('shopping-list:updated', this._onShoppingListUpdate, this);
             mediator.on('shopping-list:created', this._onShoppingListCreate, this);
+            mediator.on('shopping-list:change-current', this._onCurrentShoppingListChange, this);
             if (this.model) {
                 this.model.on('change:shopping_lists', this._onModelChanged, this);
                 this.model.on('change:unit', this._onModelChanged, this);
@@ -196,6 +195,28 @@ define(function(require) {
             }
         },
 
+        _onCurrentShoppingListChange: function(shoppingListId) {
+            var modelCurrentShoppingList = this.findCurrentShoppingList();
+            var modelNewCurrentShoppingList = this.findShoppingListById(shoppingListId);
+
+            var $newCurrentButton = this.findDropdownButtons('[data-id=' + shoppingListId + ']');
+            var shoppingList = $newCurrentButton.data('shoppinglist');
+
+            $newCurrentButton.remove();
+
+            this._onShoppingListCreate(shoppingList);
+
+            if (modelCurrentShoppingList || modelNewCurrentShoppingList) {
+                if (modelCurrentShoppingList) {
+                    modelCurrentShoppingList.is_current = false;
+                }
+                if (modelNewCurrentShoppingList) {
+                    modelNewCurrentShoppingList.is_current = true;
+                }
+                this.model.trigger('change:shopping_lists');
+            }
+        },
+
         _editLineItem: function(lineItemId) {
             this._setEditLineItem(lineItemId);
             this.updateMainButton();
@@ -216,7 +237,7 @@ define(function(require) {
                 }
 
                 if (lineItemId) {
-                    this.editLineItem = _.findWhere(shoppingList.line_items, {line_item_id: lineItemId});
+                    this.editLineItem = _.findWhere(shoppingList.line_items, {id: lineItemId});
                 } else if (setFirstLineItem) {
                     this.editLineItem = shoppingList.line_items[0] || null;
                 } else {
@@ -248,8 +269,6 @@ define(function(require) {
 
         updateMainButton: function() {
             if (this.dropdownWidget.main && this.dropdownWidget.main.data('shoppinglist')) {
-                this.toggleButtonsClass();
-
                 this.setButtonLabel(this.dropdownWidget.main);
                 this.setButtonLabel(this.dropdownWidget.main.data('clone'));
 
@@ -257,18 +276,6 @@ define(function(require) {
             }
 
             this.initButtons();
-        },
-
-        toggleButtonsClass: function() {
-            if (!this.model) {
-                return;
-            }
-
-            if (_.isEmpty(this.editShoppingList)) {
-                this.dropdownWidget.group.removeClass(this.options.editClass).addClass(this.options.defaultClass);
-            } else {
-                this.dropdownWidget.group.removeClass(this.options.defaultClass).addClass(this.options.editClass);
-            }
         },
 
         setButtonLabel: function($button) {
@@ -284,17 +291,19 @@ define(function(require) {
                 $button.data('intention', 'add');
             } else {
                 label =  _.__('oro.shoppinglist.actions.update_shopping_list', {
-                    shoppingList: this.editShoppingList.shopping_list_label
+                    shoppingList: this.editShoppingList.label
                 });
                 $button.data('intention', 'update');
             }
+
+            $button.attr('title', label);
 
             if (this.dropdownWidget.options.truncateLength &&
                 $button.get(0) === this.dropdownWidget.main.get(0)) {
                 label = _.trunc(label, this.dropdownWidget.options.truncateLength, false, '...');
             }
 
-            $button.attr('title', label).html(label);
+            $button.text(label);
         },
 
         toggleRemoveButton: function() {
@@ -320,6 +329,12 @@ define(function(require) {
         findCurrentShoppingList: function() {
             return _.find(this.model.get('shopping_lists'), function(list) {
                 return list.is_current;
+            }) || null;
+        },
+
+        findShoppingListById: function(id) {
+            return _.find(this.model.get('shopping_lists'), function(list) {
+                return list.shopping_list_id === id;
             }) || null;
         },
 
@@ -386,7 +401,7 @@ define(function(require) {
             mediator.execute('showLoading');
 
             var savePromise = this.saveApiAccessor.send({
-                id: this.editLineItem.line_item_id
+                id: this.editLineItem.id
             }, {
                 quantity: this.model.get('quantity'),
                 unit: this.model.get('unit')

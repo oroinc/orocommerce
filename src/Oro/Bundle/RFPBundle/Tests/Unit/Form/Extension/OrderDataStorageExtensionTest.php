@@ -209,7 +209,7 @@ class OrderDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
                 ->getEntity('Oro\Bundle\ProductBundle\Entity\ProductUnit', $lineItem['productUnit']);
             $lineItems->add($this->getEntity('Oro\Bundle\OrderBundle\Entity\OrderLineItem', $lineItem));
         }
-        $data['account'] = $this->getEntity('Oro\Bundle\AccountBundle\Entity\Account', $data['account']);
+        $data['account'] = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account', $data['account']);
         $data['website'] = $this->getEntity('Oro\Bundle\WebsiteBundle\Entity\Website', $data['website']);
         $data['lineItems'] = $lineItems;
         return $this->getEntity('Oro\Bundle\OrderBundle\Entity\Order', $data);

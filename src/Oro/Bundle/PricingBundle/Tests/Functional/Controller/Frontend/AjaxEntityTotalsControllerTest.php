@@ -6,8 +6,8 @@ use Doctrine\Common\Util\ClassUtils;
 
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\AccountBundle\Entity\AccountUser;
-use Oro\Bundle\AccountBundle\Entity\AccountUserSettings;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\AccountUserSettings;
 use Oro\Bundle\PricingBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
@@ -50,9 +50,10 @@ class AjaxEntityTotalsControllerTest extends WebTestCase
         $em->persist($settings);
         $em->flush();
 
+        $classNameHelper = $this->getContainer()->get('oro_entity.entity_class_name_helper');
 
         $params = [
-            'entityClassName' => ClassUtils::getClass($shoppingList),
+            'entityClassName' => $classNameHelper->resolveEntityClass(ClassUtils::getClass($shoppingList)),
             'entityId' => $shoppingList->getId()
         ];
 
@@ -92,7 +93,7 @@ class AjaxEntityTotalsControllerTest extends WebTestCase
     protected function getCurrentUser()
     {
         return $this->getContainer()->get('doctrine')
-            ->getRepository('OroAccountBundle:AccountUser')
+            ->getRepository('OroCustomerBundle:AccountUser')
             ->findOneBy(['username' => LoadAccountUserData::AUTH_USER]);
     }
 

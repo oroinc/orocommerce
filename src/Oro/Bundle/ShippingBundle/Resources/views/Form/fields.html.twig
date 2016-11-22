@@ -38,28 +38,6 @@
     {{ _self.shipping_origin_block(form, use_parent_scope_value) }}
 {% endblock %}
 
-{% block oro_shipping_origin_warehouse_widget %}
-    <div
-        data-page-component-module="oroui/js/app/components/view-component"
-        data-page-component-options="{{ {
-            view: 'oroshipping/js/app/views/shipping-origin-view',
-            selectors: {
-                useSystem: '#' ~ form.system.vars.id
-            }
-        }|json_encode }}"
-    >
-        {{ form_row(form.system) }}
-        {{ _self.shipping_origin_block(form.country, form.system.vars.data) }}
-        {{ _self.shipping_origin_block(form.region_text, form.system.vars.data) }}
-        {{ _self.shipping_origin_block(form.region, form.system.vars.data) }}
-        {{ _self.shipping_origin_block(form.postalCode, form.system.vars.data) }}
-        {{ _self.shipping_origin_block(form.city, form.system.vars.data) }}
-        {{ _self.shipping_origin_block(form.street, form.system.vars.data) }}
-        {{ _self.shipping_origin_block(form.street2, form.system.vars.data) }}
-        {{ form_rest(form) }}
-    </div>
-{% endblock %}
-
 {% block oro_shipping_weight_widget %}
     <div class="float-holder shipping-weight">
         <table>
@@ -187,27 +165,60 @@
     <td>{{ form_widget(form.freightClass) }}</td>
 {% endblock %}
 
-{% block oro_shipping_flat_rate_rule_config_widget %}
-    <div data-validation-ignore="">
-        {{ form_row(form.enabled) }}
-        {{ form_row(form.value) }}
-        {{ form_row(form.processingType) }}
-        {{ form_row(form.handlingFeeValue) }}
-        {{ form_rest(form) }}
+{% block oro_shipping_rule_method_config_widget %}
+    {% if form.method.vars.value %}
+        <div class="control-group control-group-choice">
+            <div class="control-label wrap">
+                {{ form_label(form.method) }}
+            </div>
+            <div class="controls">
+                <input type="text" disabled="disabled" value="{{ methods_labels[form.method.vars.value]|trans }}"/>
+                {{ form_widget(form.method) }}
+            </div>
+        </div>
+    {% endif %}
+    {{ form_widget(form.typeConfigs) }}
+    <div class="control-group control-group-choice">
+        <div class="controls">
+            {{ form_errors(form.typeConfigs) }}
+        </div>
     </div>
+    {{ form_widget(form.options) }}
+    {{ form_rest(form) }}
+{% endblock %}
+
+{% block oro_shipping_rule_method_type_config_collection_widget %}
+    {% if is_grouped %}
+        {{- block('collection_widget') -}}
+    {% else %}
+        {% if prototype is defined %}
+            {%- set attr = attr|merge({'data-prototype': form_row(prototype) }) -%}
+        {% endif %}
+        <div {{ block('widget_container_attributes') }}>
+            {%- if form.parent is empty -%}
+                {{ form_errors(form) }}
+            {%- endif -%}
+            {% for child in form %}
+                {{- form_widget(child) -}}
+            {% endfor %}
+            {{- form_rest(form) -}}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block oro_shipping_rule_method_type_config_widget %}
+    {% if form.enabled is defined %}
+        {{ form_row(form.enabled) }}
+    {% endif %}
+<div data-validation-ignore="">
+    {{ form_widget(form.options) }}
+</div>
+    {{ form_rest(form) }}
 {% endblock %}
 
 {% block oro_shipping_rule_destination_widget %}
-    <div class="row">
-        <div class="small-row">
-            {{ form_row(form.country) }}
-        </div>
-        <div class="small-row">
-            {{ form_row(form.region) }}
-        </div>
-        <div class="small-row">
-            {{ form_row(form.postalCode) }}
-        </div>
-        {{ form_rest(form) }}
-    </div>
+    {{ form_row(form.country) }}
+    {{ form_row(form.region) }}
+    {{ form_row(form.postalCode) }}
+    {{ form_rest(form) }}
 {% endblock %}

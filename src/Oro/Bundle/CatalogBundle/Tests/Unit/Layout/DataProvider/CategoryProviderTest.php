@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\Layout\DataProvider;
 
-use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
@@ -76,6 +76,19 @@ class CategoryProviderTest extends \PHPUnit_Framework_TestCase
             ->willReturn($category);
 
         $result = $this->categoryProvider->getCurrentCategory();
+        $this->assertSame($category, $result);
+    }
+
+    public function testGetRootCategory()
+    {
+        $category = new Category();
+
+        $this->categoryRepository
+            ->expects($this->once())
+            ->method('getMasterCatalogRoot')
+            ->willReturn($category);
+
+        $result = $this->categoryProvider->getRootCategory();
         $this->assertSame($category, $result);
     }
 

@@ -2,41 +2,33 @@
 
 namespace Oro\Bundle\ShippingBundle\Method;
 
-class ShippingMethodRegistry
+class ShippingMethodRegistry implements ShippingMethodProviderInterface
 {
     /**
-     * @var ShippingMethodInterface[]
+     * @var ShippingMethodProviderInterface[]
      */
-    protected $shippingMethods = [];
+    private $providers = [];
 
     /**
-     * @param ShippingMethodInterface $shippingMethod
+     * @param ShippingMethodProviderInterface $provider
      */
-    public function addShippingMethod(ShippingMethodInterface $shippingMethod)
+    public function addProvider(ShippingMethodProviderInterface $provider)
     {
-        $this->shippingMethods[$shippingMethod->getName()] = $shippingMethod;
+        $this->providers[] = $provider;
     }
 
     /**
-     * @param string $name
-     * @return ShippingMethodInterface
+     * @param string $identifier
+     * @return null|ShippingMethodInterface
      */
-    public function getShippingMethod($name)
+    public function getShippingMethod($identifier)
     {
-        $name = (string)$name;
-
-        if (array_key_exists($name, $this->shippingMethods)) {
-            return $this->shippingMethods[$name];
+        foreach ($this->providers as $provider) {
+            if ($provider->hasShippingMethod($identifier)) {
+                return $provider->getShippingMethod($identifier);
+            }
         }
-
-        // TODO: return null instead of exception, will be fixed during BB-2812
-        throw new \InvalidArgumentException(
-            sprintf(
-                'Shipping method "%s" is missing. Registered shipping methods are "%s"',
-                $name,
-                implode(', ', array_keys($this->shippingMethods))
-            )
-        );
+        return null;
     }
 
     /**
@@ -44,6 +36,40 @@ class ShippingMethodRegistry
      */
     public function getShippingMethods()
     {
-        return $this->shippingMethods;
+        $result = [];
+        foreach ($this->providers as $provider) {
+            $result = array_merge($result, $provider->getShippingMethods());
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $name
+     * @return bool
+     */
+    public function hasShippingMethod($name)
+    {
+        foreach ($this->providers as $provider) {
+            if ($provider->hasShippingMethod($name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @return ShippingMethodInterface[]
+     */
+    public function getTrackingAwareShippingMethods()
+    {
+        $result = [];
+        foreach ($this->providers as $provider) {
+            foreach ($provider->getShippingMethods() as $shippingMethod) {
+                if ($shippingMethod instanceof ShippingTrackingAwareInterface) {
+                    $result[$shippingMethod->getIdentifier()] = $shippingMethod;
+                }
+            }
+        }
+        return $result;
     }
 }

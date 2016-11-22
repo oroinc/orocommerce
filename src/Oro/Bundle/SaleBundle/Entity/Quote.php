@@ -14,9 +14,9 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\UserBundle\Entity\Ownership\AuditableUserAwareTrait;
 use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
-use Oro\Bundle\AccountBundle\Entity\AccountUser;
-use Oro\Bundle\AccountBundle\Entity\Ownership\AuditableFrontendAccountUserAwareTrait;
+use Oro\Bundle\CustomerBundle\Entity\AccountOwnerAwareInterface;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\Ownership\AuditableFrontendAccountUserAwareTrait;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTerm;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\SaleBundle\Model\ExtendQuote;
@@ -241,7 +241,7 @@ class Quote extends ExtendQuote implements
     /**
      * @var Collection|AccountUser[]
      *
-     * @ORM\ManyToMany(targetEntity="Oro\Bundle\AccountBundle\Entity\AccountUser")
+     * @ORM\ManyToMany(targetEntity="Oro\Bundle\CustomerBundle\Entity\AccountUser")
      * @ORM\JoinTable(
      *      name="oro_quote_assigned_acc_users",
      *      joinColumns={

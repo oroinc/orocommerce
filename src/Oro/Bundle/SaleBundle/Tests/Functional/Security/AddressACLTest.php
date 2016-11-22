@@ -34,6 +34,7 @@ class AddressACLTest extends AbstractAddressACLTest
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
 
         $this->role = $this->getContainer()
             ->get('doctrine')

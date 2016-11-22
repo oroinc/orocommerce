@@ -36,6 +36,15 @@ class AmountTest extends AbstractOptionTest
                     'FREIGHTAMT' => '10.00',
                 ],
             ],
+            'sum amounts with negative' => [
+                ['AMT' => 10, 'ITEMAMT' => 100, 'FREIGHTAMT' => 10, 'DISCOUNT' => 15],
+                [
+                    'AMT' => '95.00',
+                    'ITEMAMT' => '100.00',
+                    'FREIGHTAMT' => '10.00',
+                    'DISCOUNT' => '15.00'
+                ],
+            ],
             'use value from options' => [
                 ['AMT' => 10],
                 ['AMT' => '10.00'],

@@ -1,0 +1,16 @@
+services:
+    oro_pricing.notification_message.transport.database:
+        class: Oro\Bundle\PricingBundle\NotificationMessage\Transport\DatabaseTransport
+        arguments:
+            - '@doctrine'
+
+    oro_pricing.notification_message.messenger:
+        class: Oro\Bundle\PricingBundle\NotificationMessage\Messenger
+        arguments:
+            - '@oro_pricing.notification_message.transport.database'
+            - '@event_dispatcher'
+
+    oro_pricing.notification_message.renderer.flash_message:
+        class: Oro\Bundle\PricingBundle\NotificationMessage\Renderer\FlashMessageRenderer
+        arguments:
+            - '@session.flash_bag'

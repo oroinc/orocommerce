@@ -13,19 +13,6 @@ services:
         tags:
             - { name: form.type }
 
-    oro_shipping.form.type.shipping_origin_warehouse:
-        class: Oro\Bundle\ShippingBundle\Form\Type\ShippingOriginWarehouseType
-        tags:
-            - { name: form.type }
-
-    oro_shipping.form.extension.warehouse_shipping_origin:
-        class: Oro\Bundle\ShippingBundle\Form\Extension\WarehouseShippingOriginExtension
-        arguments:
-            - '@oro_shipping.shipping_origin.provider'
-            - '@doctrine'
-        tags:
-            - { name: form.type_extension, alias: oro_warehouse }
-
     oro_shipping.form.type.length_unit_select:
         class: Oro\Bundle\ShippingBundle\Form\Type\LengthUnitSelectType
         arguments:
@@ -65,13 +52,16 @@ services:
 
     oro_shipping.form.type.rule:
         class: Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleType
-        tags:
-            - { name: form.type, alias: oro_shipping_rule }
-
-    oro_shipping.form.type.rule_config_collection:
-        class: Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleConfigurationCollectionType
         arguments:
-            - '@oro_shipping.form_event_subscriber.rule_configuration_subscriber'
+            - '@oro_shipping.shipping_method.registry'
+            - '@translator'
+        tags:
+            - { name: form.type }
+
+    oro_shipping.form.type.rule_method_type_config_collection:
+        class: Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleMethodTypeConfigCollectionType
+        arguments:
+            - '@oro_shipping.form_event_subscriber.rule_method_type_config_collection_subscriber'
         tags:
             - { name: form.type }
 
@@ -82,15 +72,18 @@ services:
         tags:
             - { name: form.type}
 
-    oro_shipping.form.type.rule_configuration:
-        class: Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleConfigurationType
-        tags:
-            - { name: form.type, alias: oro_shipping_rule_configuration }
-
-    oro_shipping.form.type.flat_rate_rule_config:
-        class: Oro\Bundle\ShippingBundle\Form\Type\FlatRateShippingConfigurationType
+    oro_shipping.form.type.flat_rate_rule_method_type_config_options:
+        class: Oro\Bundle\ShippingBundle\Form\Type\FlatRateShippingMethodTypeOptionsType
         arguments:
             - '@oro_currency.rounding.price_rounding_service'
+        tags:
+            - { name: form.type }
+
+    oro_shipping.form.type.shipping_rule_method_config:
+        class: Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleMethodConfigType
+        arguments:
+            - '@oro_shipping.form_event_subscriber.rule_method_config_subscriber'
+            - '@oro_shipping.shipping_method.registry'
         tags:
             - { name: form.type }
 
@@ -100,8 +93,18 @@ services:
             - '@doctrine.orm.entity_manager'
             - '@form.factory'
 
-    oro_shipping.form_event_subscriber.rule_configuration_subscriber:
-        class: 'Oro\Bundle\ShippingBundle\Form\EventSubscriber\RuleConfigurationSubscriber'
+    oro_shipping.form_event_subscriber.rule_method_type_config_collection_subscriber:
+        class: 'Oro\Bundle\ShippingBundle\Form\EventSubscriber\RuleMethodTypeConfigCollectionSubscriber'
+        arguments:
+            - '@oro_shipping.shipping_method.registry'
+
+    oro_shipping.form_event_subscriber.rule_method_config_collection_subscriber:
+        class: 'Oro\Bundle\ShippingBundle\Form\EventSubscriber\RuleMethodConfigCollectionSubscriber'
+        arguments:
+            - '@oro_shipping.shipping_method.registry'
+
+    oro_shipping.form_event_subscriber.rule_method_config_subscriber:
+        class: 'Oro\Bundle\ShippingBundle\Form\EventSubscriber\RuleMethodConfigSubscriber'
         arguments:
             - '@form.factory'
             - '@oro_shipping.shipping_method.registry'
@@ -140,3 +143,10 @@ services:
             - "@doctrine"
         tags:
             - { name: form.type_extension, alias: oro_product }
+
+    oro_shipping.form.type.rule_method_config_collection:
+        class: Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleMethodConfigCollectionType
+        arguments:
+            - '@oro_shipping.form_event_subscriber.rule_method_config_collection_subscriber'
+        tags:
+            - { name: form.type }

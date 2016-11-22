@@ -33,16 +33,17 @@ define(function(require) {
                     this.getPaymentForm().replaceWith(filledForm);
                     delete this.$paymentForm;
                 } else {
+                    mediator.trigger('checkout:payment:remove-filled-form', filledForm);
                     filledForm.remove();
                 }
+            }
+
+            if (selectedValue) {
+                var selectedEl = this.getPaymentMethodSelector().filter('[value="' + selectedValue + '"]');
+                selectedEl.prop('checked', 'checked');
+                selectedEl.trigger('change');
             } else {
-                if (selectedValue) {
-                    var selectedEl = this.getPaymentMethodSelector().filter('[value="' + selectedValue + '"]');
-                    selectedEl.prop('checked', 'checked');
-                    selectedEl.trigger('change');
-                } else {
-                    this.getPaymentMethodElement().val(this.getPaymentMethodSelector().filter(':checked').val());
-                }
+                this.getPaymentMethodElement().val(this.getPaymentMethodSelector().filter(':checked').val());
             }
         },
 

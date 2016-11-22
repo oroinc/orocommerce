@@ -4,14 +4,14 @@ namespace Oro\Bundle\OrderBundle\Tests\Unit\Layout\DataProvider;
 
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Layout\DataProvider\OrderShippingMethodProvider;
-use Oro\Bundle\ShippingBundle\Formatter\ShippingMethodLabelFormatter;
+use Oro\Bundle\OrderBundle\Formatter\ShippingMethodFormatter;
 
 class OrderShippingMethodProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var ShippingMethodLabelFormatter|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingMethodFormatter|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $shippingMethodLabelFormatter;
+    protected $shippingMethodFormatter;
 
     /**
      * @var OrderShippingMethodProvider
@@ -20,67 +20,29 @@ class OrderShippingMethodProviderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->shippingMethodLabelFormatter = $this
-            ->getMockBuilder('Oro\Bundle\ShippingBundle\Formatter\ShippingMethodLabelFormatter')
+        $this->shippingMethodFormatter = $this
+            ->getMockBuilder('Oro\Bundle\OrderBundle\Formatter\ShippingMethodFormatter')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->orderShippingMethodProvider = new OrderShippingMethodProvider($this->shippingMethodLabelFormatter);
+
+        $this->orderShippingMethodProvider = new OrderShippingMethodProvider($this->shippingMethodFormatter);
     }
 
-    /**
-     * @dataProvider labelsDataProvider
-     * @param string $method
-     * @param string $type
-     * @param string $expected
-     */
-    public function testGetData($method, $type, $expected)
+    public function testGetData()
     {
+        $method = 'Some Method';
+        $type = 'Some Type';
+        $expected = sprintf('%s, %s', $method, $type);
         $order = new Order();
         $order->setShippingMethod($method)->setShippingMethodType($type);
 
-        $this->shippingMethodLabelFormatter->expects($this->once())
-            ->method('formatShippingMethodLabel')
-            ->willReturnMap(
-                [
-                    [null, null],
-                    ['flat_rate', 'Flat Rate']
-                ]
-            );
-        $this->shippingMethodLabelFormatter->expects($this->any())
-            ->method('formatShippingMethodTypeLabel')
-            ->willReturnMap(
-                [
-                    [null, null, null],
-                    ['flat_rate', null, null],
-                    ['flat_rate', 'per_order', 'Per Order']
-                ]
-            );
+
+        $this->shippingMethodFormatter->expects($this->once())
+            ->method('formatShippingMethodWithTypeLabel')
+            ->with($method, $type)
+            ->willReturn($expected);
 
         $label = $this->orderShippingMethodProvider->getData($order);
         $this->assertEquals($expected, $label);
-    }
-
-    /**
-     * @return array
-     */
-    public function labelsDataProvider()
-    {
-        return [
-            'no_method' => [
-                'method' => null,
-                'type' => null,
-                'expected' => null,
-            ],
-            'no_type' => [
-                'method' => 'flat_rate',
-                'type' => null,
-                'expected' => 'Flat Rate',
-            ],
-            'method_with_type' => [
-                'method' => 'flat_rate',
-                'type' => 'per_order',
-                'expected' => 'Flat Rate, Per Order',
-            ]
-        ];
     }
 }

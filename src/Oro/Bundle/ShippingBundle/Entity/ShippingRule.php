@@ -15,7 +15,9 @@ use Oro\Bundle\ShippingBundle\Model\ExtendShippingRule;
  * @ORM\Table(
  *     name="oro_shipping_rule",
  *     indexes={
- *         @ORM\Index(name="oro_shipping_rl_en_cur_idx", columns={"enabled", "currency"}),
+ *         @ORM\Index(name="oro_shipping_rule_en_cur_idx", columns={"enabled", "currency"}),
+ *         @ORM\Index(name="idx_oro_shipping_rule_created_at", columns={"created_at"}),
+ *         @ORM\Index(name="idx_oro_shipping_rule_updated_at", columns={"updated_at"})
  *     }
  * )
  * @ORM\HasLifecycleCallbacks()
@@ -37,6 +39,9 @@ use Oro\Bundle\ShippingBundle\Model\ExtendShippingRule;
  *          }
  *      }
  * )
+ *
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class ShippingRule extends ExtendShippingRule
 {
@@ -139,16 +144,17 @@ class ShippingRule extends ExtendShippingRule
     protected $destinations;
 
     /**
-     * @var Collection|ShippingRuleConfiguration[]
+     * @var Collection|ShippingRuleMethodConfig[]
      *
      * @ORM\OneToMany(
-     *     targetEntity="Oro\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration",
+     *     targetEntity="Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodConfig",
      *     mappedBy="rule",
      *     cascade={"ALL"},
-     *     fetch="EAGER"
+     *     fetch="EAGER",
+     *     orphanRemoval=true
      * )
      */
-    protected $configurations;
+    protected $methodConfigs;
 
     /**
      * @var string
@@ -185,13 +191,69 @@ class ShippingRule extends ExtendShippingRule
     protected $stopProcessing = false;
 
     /**
+     * @var \DateTime $createdAt
+     *
+     * @ORM\Column(name="created_at", type="datetime")
+     * @ConfigField(
+     *      defaultValues={
+     *          "entity"={
+     *              "label"="oro.ui.created_at"
+     *          },
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $createdAt;
+
+    /**
+     * @var \DateTime $updatedAt
+     *
+     * @ORM\Column(name="updated_at", type="datetime")
+     * @ConfigField(
+     *      defaultValues={
+     *          "entity"={
+     *              "label"="oro.ui.updated_at"
+     *          },
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $updatedAt;
+
+
+    /**
      * {@inheritdoc}
      */
     public function __construct()
     {
         parent::__construct();
         $this->destinations = new ArrayCollection();
-        $this->configurations = new ArrayCollection();
+        $this->methodConfigs = new ArrayCollection();
+    }
+
+    /**
+     * Pre persist event handler
+     *
+     * @ORM\PrePersist
+     */
+    public function prePersist()
+    {
+        $this->createdAt = new \DateTime('now', new \DateTimeZone('UTC'));
+        $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
+    }
+
+    /**
+     * Pre update event handler
+     *
+     * @ORM\PreUpdate
+     */
+    public function preUpdate()
+    {
+        $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
     }
 
     /**
@@ -280,22 +342,22 @@ class ShippingRule extends ExtendShippingRule
     }
 
     /**
-     * @param ShippingRuleConfiguration $lineItem
+     * @param ShippingRuleMethodConfig $lineItem
      * @return bool
      */
-    public function hasConfiguration(ShippingRuleConfiguration $lineItem)
+    public function hasMethodConfig(ShippingRuleMethodConfig $lineItem)
     {
-        return $this->configurations->contains($lineItem);
+        return $this->methodConfigs->contains($lineItem);
     }
 
     /**
-     * @param ShippingRuleConfiguration $configuration
+     * @param ShippingRuleMethodConfig $configuration
      * @return $this
      */
-    public function addConfiguration(ShippingRuleConfiguration $configuration)
+    public function addMethodConfig(ShippingRuleMethodConfig $configuration)
     {
-        if (!$this->hasConfiguration($configuration)) {
-            $this->configurations[] = $configuration;
+        if (!$this->hasMethodConfig($configuration)) {
+            $this->methodConfigs[] = $configuration;
             $configuration->setRule($this);
         }
 
@@ -303,38 +365,24 @@ class ShippingRule extends ExtendShippingRule
     }
 
     /**
-     * @param ShippingRuleConfiguration $configuration
+     * @param ShippingRuleMethodConfig $configuration
      * @return $this
      */
-    public function removeConfiguration(ShippingRuleConfiguration $configuration)
+    public function removeMethodConfig(ShippingRuleMethodConfig $configuration)
     {
-        if ($this->hasConfiguration($configuration)) {
-            $this->configurations->removeElement($configuration);
+        if ($this->hasMethodConfig($configuration)) {
+            $this->methodConfigs->removeElement($configuration);
         }
 
         return $this;
     }
 
     /**
-     * @param Collection|ShippingRuleConfiguration[] $configurations
-     * @return $this
+     * @return Collection|ShippingRuleMethodConfig[]
      */
-    public function setConfigurations(Collection $configurations)
+    public function getMethodConfigs()
     {
-        foreach ($configurations as $configuration) {
-            $configuration->setRule($this);
-        }
-        $this->configurations = $configurations;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|ShippingRuleConfiguration[]
-     */
-    public function getConfigurations()
-    {
-        return $this->configurations;
+        return $this->methodConfigs;
     }
 
     /**
@@ -423,6 +471,44 @@ class ShippingRule extends ExtendShippingRule
     public function setStopProcessing($stopProcessing)
     {
         $this->stopProcessing = $stopProcessing;
+        return $this;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * @param \DateTime $createdAt
+     * @return $this
+     */
+    public function setCreatedAt($createdAt)
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getUpdatedAt()
+    {
+        return $this->updatedAt;
+    }
+
+    /**
+     * @param \DateTime $updatedAt
+     * @return $this
+     */
+    public function setUpdatedAt($updatedAt)
+    {
+        $this->updatedAt = $updatedAt;
+
         return $this;
     }
 }

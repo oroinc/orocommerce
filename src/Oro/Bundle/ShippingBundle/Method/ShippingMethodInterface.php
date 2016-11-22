@@ -2,16 +2,17 @@
 
 namespace Oro\Bundle\ShippingBundle\Method;
 
-use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration;
-use Oro\Bundle\ShippingBundle\Provider\ShippingContextAwareInterface;
-
 interface ShippingMethodInterface
 {
     /**
+     * @return bool
+     */
+    public function isGrouped();
+
+    /**
      * @return string
      */
-    public function getName();
+    public function getIdentifier();
 
     /**
      * @return string
@@ -19,41 +20,23 @@ interface ShippingMethodInterface
     public function getLabel();
 
     /**
-     * @return array
+     * @return ShippingMethodTypeInterface[]
      */
-    public function getShippingTypes();
+    public function getTypes();
 
     /**
-     * @param string $type
-     * @return string|null
+     * @param string $identifier
+     * @return ShippingMethodTypeInterface|null
      */
-    public function getShippingTypeLabel($type);
-
-    /**
-     * @return string
-     */
-    public function getRuleConfigurationClass();
+    public function getType($identifier);
 
     /**
      * @return string
      */
-    public function getFormType();
-
-    /**
-     * @param array $context
-     * @return array
-     */
-    public function getOptions(array $context = []);
+    public function getOptionsConfigurationFormType();
 
     /**
      * @return int
      */
     public function getSortOrder();
-
-    /**
-     * @param ShippingContextAwareInterface $context
-     * @param ShippingRuleConfiguration $configEntity
-     * @return null|Price
-     */
-    public function calculatePrice(ShippingContextAwareInterface $context, ShippingRuleConfiguration $configEntity);
 }

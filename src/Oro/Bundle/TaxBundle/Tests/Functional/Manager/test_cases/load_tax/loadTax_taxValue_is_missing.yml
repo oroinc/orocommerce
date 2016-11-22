@@ -5,6 +5,6 @@ databaseBefore:
     'Oro\Bundle\OrderBundle\Entity\Order':
         empty_order:
             poNumber: { property_value: empty_order }
-            account: { class: 'Oro\Bundle\AccountBundle\Entity\Account', query: {} }
+            account: { class: 'Oro\Bundle\CustomerBundle\Entity\Account', query: {} }
             currency: 'USD'
 expectedResult: []

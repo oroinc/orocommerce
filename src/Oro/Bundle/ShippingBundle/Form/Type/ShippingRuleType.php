@@ -2,20 +2,45 @@
 
 namespace Oro\Bundle\ShippingBundle\Form\Type;
 
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class ShippingRuleType extends AbstractType
 {
-    const NAME = 'oro_shipping_rule';
+    const BLOCK_PREFIX = 'oro_shipping_rule';
+
+    /**
+     * @var ShippingMethodRegistry
+     */
+    protected $methodRegistry;
+
+    /**
+     * @var TranslatorInterface
+     */
+    protected $translator;
+
+    /**
+     * @param ShippingMethodRegistry $methodRegistry
+     * @param TranslatorInterface $translator
+     */
+    public function __construct(ShippingMethodRegistry $methodRegistry, TranslatorInterface $translator)
+    {
+        $this->methodRegistry = $methodRegistry;
+        $this->translator = $translator;
+    }
 
     /**
      * {@inheritdoc}
@@ -38,15 +63,25 @@ class ShippingRuleType extends AbstractType
                 'required' => false,
                 'label' => 'oro.shipping.shippingrule.conditions.label',
             ])
-            ->add('configurations', ShippingRuleConfigurationCollectionType::class, [
+            ->add('methodConfigs', ShippingRuleMethodConfigCollectionType::class, [
                 'required' => false,
-                'entry_type' => ShippingRuleConfigurationType::class,
-                'label' => 'oro.shipping.shippingrule.configurations.label',
             ])
             ->add('stopProcessing', CheckboxType::class, [
                 'required' => false,
                 'label' => 'oro.shipping.shippingrule.stop_processing.label',
+            ])
+            ->add('method', ChoiceType::class, [
+                'mapped' => false,
+                'choices' => $this->getMethods(),
             ]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function buildView(FormView $view, FormInterface $form, array $options)
+    {
+        $view->vars['methods'] = $this->getMethods(true);
     }
 
     /**
@@ -64,6 +99,26 @@ class ShippingRuleType extends AbstractType
      */
     public function getBlockPrefix()
     {
-        return self::NAME;
+        return self::BLOCK_PREFIX;
+    }
+
+    /**
+     * @param bool $translate
+     * @return array
+     */
+    protected function getMethods($translate = false)
+    {
+        return array_reduce(
+            $this->methodRegistry->getShippingMethods(),
+            function (array $result, ShippingMethodInterface $method) use ($translate) {
+                $label = $method->getLabel();
+                if ($translate) {
+                    $label = $this->translator->trans($label);
+                }
+                $result[$method->getIdentifier()] = $label;
+                return $result;
+            },
+            []
+        );
     }
 }

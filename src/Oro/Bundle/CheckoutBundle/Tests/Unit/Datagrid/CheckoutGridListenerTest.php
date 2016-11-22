@@ -144,7 +144,6 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
             $this->cache,
             $this->checkoutGridHelper
         );
-
     }
 
     public function testGetMetadataNoRelations()

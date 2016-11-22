@@ -8,10 +8,10 @@ use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Entity\AccountAddress;
-use Oro\Bundle\AccountBundle\Entity\AccountUser;
-use Oro\Bundle\AccountBundle\Entity\AccountUserAddress;
+use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\AccountUserAddress;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Manager\OrderAddressManager;
@@ -170,8 +170,8 @@ class OrderAddressManagerTest extends AbstractAddressManagerTest
         $this->provider->expects($this->any())->method('getAccountAddresses')->willReturn($accountAddresses);
         $this->provider->expects($this->any())->method('getAccountUserAddresses')->willReturn($accountUserAddresses);
 
-        $this->manager->addEntity('au', 'Oro\Bundle\AccountBundle\Entity\AccountUserAddress');
-        $this->manager->addEntity('a', 'Oro\Bundle\AccountBundle\Entity\AccountAddress');
+        $this->manager->addEntity('au', 'Oro\Bundle\CustomerBundle\Entity\AccountUserAddress');
+        $this->manager->addEntity('a', 'Oro\Bundle\CustomerBundle\Entity\AccountAddress');
 
         $this->assertEquals($expected, $this->manager->getGroupedAddresses($order, AddressType::TYPE_BILLING));
     }
@@ -187,17 +187,17 @@ class OrderAddressManagerTest extends AbstractAddressManagerTest
                 (new Order())->setAccountUser(new AccountUser()),
                 [],
                 [
-                    $this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountUserAddress', 1),
-                    $this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountUserAddress', 2),
+                    $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountUserAddress', 1),
+                    $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountUserAddress', 2),
                 ],
                 [
                     OrderAddressManager::ACCOUNT_USER_LABEL => [
                         'au_1' => $this->getEntity(
-                            'Oro\Bundle\AccountBundle\Entity\AccountUserAddress',
+                            'Oro\Bundle\CustomerBundle\Entity\AccountUserAddress',
                             1
                         ),
                         'au_2' => $this->getEntity(
-                            'Oro\Bundle\AccountBundle\Entity\AccountUserAddress',
+                            'Oro\Bundle\CustomerBundle\Entity\AccountUserAddress',
                             2
                         ),
                     ],
@@ -206,18 +206,18 @@ class OrderAddressManagerTest extends AbstractAddressManagerTest
             'account' => [
                 (new Order())->setAccountUser(new AccountUser())->setAccount(new Account()),
                 [
-                    $this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountAddress', 1),
-                    $this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountAddress', 2),
+                    $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountAddress', 1),
+                    $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountAddress', 2),
                 ],
                 [],
                 [
                     OrderAddressManager::ACCOUNT_LABEL => [
                         'a_1' => $this->getEntity(
-                            'Oro\Bundle\AccountBundle\Entity\AccountAddress',
+                            'Oro\Bundle\CustomerBundle\Entity\AccountAddress',
                             1
                         ),
                         'a_2' => $this->getEntity(
-                            'Oro\Bundle\AccountBundle\Entity\AccountAddress',
+                            'Oro\Bundle\CustomerBundle\Entity\AccountAddress',
                             2
                         ),
                     ],
@@ -226,31 +226,31 @@ class OrderAddressManagerTest extends AbstractAddressManagerTest
             'full' => [
                 (new Order())->setAccountUser(new AccountUser())->setAccount(new Account()),
                 [
-                    $this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountAddress', 1),
-                    $this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountAddress', 2),
+                    $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountAddress', 1),
+                    $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountAddress', 2),
                 ],
                 [
-                    $this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountUserAddress', 1),
-                    $this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountUserAddress', 2),
+                    $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountUserAddress', 1),
+                    $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountUserAddress', 2),
                 ],
                 [
                     OrderAddressManager::ACCOUNT_LABEL => [
                         'a_1' => $this->getEntity(
-                            'Oro\Bundle\AccountBundle\Entity\AccountAddress',
+                            'Oro\Bundle\CustomerBundle\Entity\AccountAddress',
                             1
                         ),
                         'a_2' => $this->getEntity(
-                            'Oro\Bundle\AccountBundle\Entity\AccountAddress',
+                            'Oro\Bundle\CustomerBundle\Entity\AccountAddress',
                             2
                         ),
                     ],
                     OrderAddressManager::ACCOUNT_USER_LABEL => [
                         'au_1' => $this->getEntity(
-                            'Oro\Bundle\AccountBundle\Entity\AccountUserAddress',
+                            'Oro\Bundle\CustomerBundle\Entity\AccountUserAddress',
                             1
                         ),
                         'au_2' => $this->getEntity(
-                            'Oro\Bundle\AccountBundle\Entity\AccountUserAddress',
+                            'Oro\Bundle\CustomerBundle\Entity\AccountUserAddress',
                             2
                         ),
                     ],
@@ -286,8 +286,8 @@ class OrderAddressManagerTest extends AbstractAddressManagerTest
             ->method('getManagerForClass')
             ->willReturnMap(
                 [
-                    ['OroAccountBundle:AccountAddressToAddressType', $accountManager],
-                    ['OroAccountBundle:AccountUserAddressToAddressType', $accountUserManager]
+                    ['OroCustomerBundle:AccountAddressToAddressType', $accountManager],
+                    ['OroCustomerBundle:AccountUserAddressToAddressType', $accountUserManager]
                 ]
             );
 
@@ -303,8 +303,8 @@ class OrderAddressManagerTest extends AbstractAddressManagerTest
             }
         }
 
-        $this->manager->addEntity('au', 'Oro\Bundle\AccountBundle\Entity\AccountUserAddress');
-        $this->manager->addEntity('a', 'Oro\Bundle\AccountBundle\Entity\AccountAddress');
+        $this->manager->addEntity('au', 'Oro\Bundle\CustomerBundle\Entity\AccountUserAddress');
+        $this->manager->addEntity('a', 'Oro\Bundle\CustomerBundle\Entity\AccountAddress');
         $this->assertEquals($expectedTypes, $this->manager->getAddressTypes($addresses));
     }
 
@@ -340,7 +340,7 @@ class OrderAddressManagerTest extends AbstractAddressManagerTest
             foreach ($types as $type) {
                 $typeEntity = new AddressType($type);
                 $typeToEntity = $this
-                    ->getMockBuilder('Oro\Bundle\AccountBundle\Entity\AbstractAddressToAddressType')
+                    ->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\AbstractAddressToAddressType')
                     ->disableOriginalConstructor()
                     ->setMethods(['getAddress', 'getType'])
                     ->getMockForAbstractClass();

@@ -91,6 +91,7 @@ operations:
         order: 20
         button_options:
             icon: icon-briefcase
+            template: OroActionBundle:Operation:ajax-button.html.twig
             data:
                 component_name: oro_shopping_list_to_checkout_quick_add_processor
             page_component_module: oroproduct/js/app/components/quick-add-form-button-component
@@ -234,8 +235,10 @@ operations:
             icon: icon-briefcase
         preconditions:
             '@and':
+                - '@route_exists': oro_rfp_frontend_request_create
+                - '@service_exists': oro_rfp.form.type.extension.frontend_request_data_storage
                 - '@has_elements': $lineItems
-                - '@equal': [$.data.isAllowedRFP, true]
+                - '@rfp_allowed': $lineItems
         actions:
             - '@call_service_method':
                 service: oro_shopping_list.service.product_data_storage

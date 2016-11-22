@@ -32,7 +32,7 @@ class ProductController extends Controller
      */
     protected function createCurrenciesForm()
     {
-        $relationsProvider = $this->get('oro_account.provider.account_user_relations_provider');
+        $relationsProvider = $this->get('oro_customer.provider.account_user_relations_provider');
 
         $priceList = $this->get('oro_pricing.model.price_list_tree_handler')
             ->getPriceList($relationsProvider->getAccountIncludingEmpty($this->getUser()));

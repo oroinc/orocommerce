@@ -35,7 +35,7 @@ oro:
         methods:
             label: "Payment Method"
             select_method: 'Select a Payment Method'
-            no_method: 'No payment methods are available, Please contact us to complete the order submission.'
+            no_method: 'No payment methods are available, please contact us to complete the order submission.'
             required_field: 'Required Field'
             term_method.label: 'Payment Term'
 
@@ -45,8 +45,10 @@ oro:
                 general.title: 'General'
                 merchant_location.title: 'Merchant Location'
                 payment_terms.title: 'Payment Terms'
+                display_options.title: 'Display Options'
             fields:
                 merchant_country.label: 'Merchant Country'
+                merchant_country.placeholder: 'Please select country...'
                 enabled.label: 'Enabled'
                 label.label: 'Checkout Label'
                 label.tooltip: 'This label is used on the checkout screens'

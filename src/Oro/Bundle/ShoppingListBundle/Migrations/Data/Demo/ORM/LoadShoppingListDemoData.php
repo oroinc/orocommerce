@@ -11,8 +11,9 @@ use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\UserBundle\Entity\User;
 
 class LoadShoppingListDemoData extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
 {
@@ -37,16 +38,20 @@ class LoadShoppingListDemoData extends AbstractFixture implements DependentFixtu
     {
         return [
             'Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadAdminUserData',
-            'Oro\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountUserDemoData'
+            'Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadAccountUserDemoData'
         ];
     }
 
     /**
+     * @param EntityManager $manager
      * {@inheritdoc}
      */
     public function load(ObjectManager $manager)
     {
-        $accountUser = $manager->getRepository('OroAccountBundle:AccountUser')->findOneBy([]);
+        $accountUser = $manager->getRepository('OroCustomerBundle:AccountUser')->findOneBy([]);
+
+        /** @var User $user */
+        $owner = $manager->getRepository('OroUserBundle:User')->findOneBy([]);
 
         $locator = $this->container->get('file_locator');
         $filePath = $locator->locate('@OroShoppingListBundle/Migrations/Data/Demo/ORM/data/shopping_lists.csv');
@@ -62,7 +67,7 @@ class LoadShoppingListDemoData extends AbstractFixture implements DependentFixtu
         while (($data = fgetcsv($handler, 1000, ',')) !== false) {
             $row = array_combine($headers, array_values($data));
             $website = $this->getWebsite($manager, $row['websiteName']);
-            $this->createShoppingList($manager, $accountUser, $row['label'], $first, $website);
+            $this->createShoppingList($manager, $accountUser, $row['label'], $first, $website, $owner);
             $first = false;
         }
 
@@ -77,13 +82,21 @@ class LoadShoppingListDemoData extends AbstractFixture implements DependentFixtu
      * @param string        $label
      * @param boolean       $current
      * @param Website       $website
+     * @param User          $owner
      *
      * @return ShoppingList
      */
-    protected function createShoppingList(ObjectManager $manager, AccountUser $accountUser, $label, $current, $website)
-    {
+    protected function createShoppingList(
+        ObjectManager $manager,
+        AccountUser $accountUser,
+        $label,
+        $current,
+        $website,
+        $owner
+    ) {
         $shoppingList = new ShoppingList();
         $shoppingList->setOrganization($accountUser->getOrganization());
+        $shoppingList->setOwner($owner);
         $shoppingList->setAccountUser($accountUser);
         $shoppingList->setAccount($accountUser->getAccount());
         $shoppingList->setNotes('Some notes for ' . $label);

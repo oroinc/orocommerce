@@ -8,3 +8,4 @@ config:
         'orocheckout/js/app/components/payment-save-for-later-component': 'bundles/orocheckout/js/app/components/payment-save-for-later-component.js'
         'orocheckout/js/app/components/payment-validate-component': 'bundles/orocheckout/js/app/components/payment-validate-component.js'
         'orocheckout/js/app/views/checkout-content-view': 'bundles/orocheckout/js/app/views/checkout-content-view.js'
+        'orocheckout/js/app/views/checkout-inner-content-view': 'bundles/orocheckout/js/app/views/checkout-inner-content-view.js'

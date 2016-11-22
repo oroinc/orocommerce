@@ -13,11 +13,7 @@ layout:
             prepend: true
             options:
                 class_prefix: 'checkout'
-                methods: '=data["shipping_methods_data_provider"].getMethods(data["checkout"])'
+                methods: '=data["shipping_methods"].getMethods(data["checkout_shipping_context"].getContext(data["checkout"]))'
                 currentShippingMethod: '=data["checkout"].getShippingMethod()'
                 currentShippingMethodType: '=data["checkout"].getShippingMethodType()'
-        - '@move':
-            id: checkout_form_buttons
-            parentId: checkout_form
-            siblingId: checkout_form_fields
     conditions: 'context["workflowStepName"]=="enter_shipping_method"'

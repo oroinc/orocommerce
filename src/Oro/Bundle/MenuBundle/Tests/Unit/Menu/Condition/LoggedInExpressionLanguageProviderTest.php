@@ -4,6 +4,7 @@ namespace Oro\Bundle\MenuBundle\Tests\Unit\Menu\Condition;
 
 use Symfony\Component\ExpressionLanguage\ExpressionFunction;
 
+use Oro\Component\DependencyInjection\ServiceLink;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\MenuBundle\Menu\Condition\LoggedInExpressionLanguageProvider;
 
@@ -21,9 +22,35 @@ class LoggedInExpressionLanguageProviderTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
-            ->disableOriginalConstructor()->getMock();
-        $this->provider = new LoggedInExpressionLanguageProvider($this->securityFacade);
+        $this->securityFacade = $this
+            ->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $securityFacadeLink = $this->getSecurityFacadeLink($this->securityFacade);
+        $this->provider = new LoggedInExpressionLanguageProvider($securityFacadeLink);
+    }
+
+    /**
+     * @param \PHPUnit_Framework_MockObject_MockObject $securityFacade
+     *
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function getSecurityFacadeLink(\PHPUnit_Framework_MockObject_MockObject $securityFacade)
+    {
+        /**
+         * @var $securityFacadeLink ServiceLink
+         */
+        $securityFacadeLink = $this
+            ->getMockBuilder('Oro\Component\DependencyInjection\ServiceLink')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $securityFacadeLink
+            ->expects($this->any())
+            ->method('getService')
+            ->willReturn($securityFacade);
+
+        return $securityFacadeLink;
     }
 
     /**
@@ -43,7 +70,7 @@ class LoggedInExpressionLanguageProviderTest extends \PHPUnit_Framework_TestCase
 
         $loggedUser = null;
         if ($isLoggedUser) {
-            $loggedUser = $this->getMock('Oro\Bundle\AccountBundle\Entity\AccountUser');
+            $loggedUser = $this->getMock('Oro\Bundle\CustomerBundle\Entity\AccountUser');
         }
 
         $this->securityFacade->expects($this->once())

@@ -1,45 +1,99 @@
 .main-menu {
-    display: flex;
-
-    margin: 0;
-    padding: 0;
-
-    list-style: none;
-
-    vertical-align: middle;
-
-    border-bottom: 0;
-
-    &__item {
-        flex-grow: 1;
-    }
+    flex-grow: 1;
 
     &__link {
-        display: block;
-
-        padding: 14px 0;
-
         text-transform: uppercase;
 
-        color: $theme-middle-gray-color;
+        &:hover,
+        &:focus {
+            text-decoration: none;
+        }
+    }
+}
+
+@include breakpoint('desktop') {
+    .main-menu-outer {
+        display: flex;
+    }
+
+    .main-menu {
+        display: flex !important;
     }
 }
 
 @include breakpoint('tablet') {
     .main-menu {
-        display: block;
 
-        max-height: none;
-        padding: 10px 15px;
+        font-weight: bold;
 
-        &__item {
-            min-height: 0;
+        &__sublist_subnested {
+            display: none;
         }
 
-        &__link {
-            padding: 5px 0;
+        &__categories {
+            display: none;
+            padding-top: 0;
+        }
 
-            text-align: left;
+        &__item {
+            position: relative;
+
+            min-height: inherit;
+        }
+
+        &__sublist__link {
+            display: block;
+
+            line-height: 1.5;
+            text-transform: uppercase;
+
+            color: get-color('additional', 'dark');
+
+            &:hover,
+            &:focus {
+                text-decoration: none;
+
+                color: get-color('additional', 'dark');
+            }
+
+        }
+
+        &__link,
+        &__sublist__link {
+            font-size: 14px;
+            font-weight: bold;
+
+            padding: 8px 0 7px 8px;
+        }
+
+        &__item.expanded {
+            .main-menu__link {
+                position: relative;
+                padding-left: 15px;
+
+                .cf-down-open-mini {
+                    position: absolute;
+                    left: 0;
+                    top: 50%;
+
+                    margin: 0;
+                    margin-top: -7px;
+
+                    transform: rotate(90deg);
+                }
+            }
+        }
+
+        &__sublist__title {
+            display: none;
+        }
+
+        &__sublist--nested {
+            margin-top: 0;
+        }
+
+        &__sublist__item {
+            margin-top: 0;
         }
     }
 }

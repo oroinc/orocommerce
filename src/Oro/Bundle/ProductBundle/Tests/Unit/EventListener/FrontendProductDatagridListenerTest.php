@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
+use Liip\ImagineBundle\Imagine\Cache\CacheManager;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -16,6 +17,7 @@ use Oro\Bundle\LocaleBundle\Datagrid\Formatter\Property\LocalizedValueProperty;
 
 use Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
 use Oro\Bundle\ProductBundle\EventListener\FrontendProductDatagridListener;
+use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 
 class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -41,6 +43,16 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
      */
     protected $attachmentManager;
 
+    /**
+     * @var CacheManager|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $imagineCacheManager;
+
+    /**
+     * @var ProductUnitLabelFormatter|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $unitFormatter;
+
     public function setUp()
     {
         $this->themeHelper = $this->getMockBuilder('Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper')
@@ -52,10 +64,18 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $this->attachmentManager = $this->getMockBuilder('Oro\Bundle\AttachmentBundle\Manager\AttachmentManager')
             ->disableOriginalConstructor()->getMock();
 
+        $this->imagineCacheManager = $this->getMockBuilder('Liip\ImagineBundle\Imagine\Cache\CacheManager')
+            ->disableOriginalConstructor()->getMock();
+
+        $this->unitFormatter = $this->getMockBuilder('Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter')
+            ->disableOriginalConstructor()->getMock();
+
         $this->listener = new FrontendProductDatagridListener(
             $this->themeHelper,
             $this->doctrine,
-            $this->attachmentManager
+            $this->attachmentManager,
+            $this->imagineCacheManager,
+            $this->unitFormatter
         );
     }
 
@@ -228,7 +248,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
                 ->method('getFilteredImageUrl')
                 ->with(
                     $image,
-                    FrontendProductDatagridListener::PRODUCT_IMAGE_FILTER
+                    FrontendProductDatagridListener::PRODUCT_IMAGE_FILTER_MEDIUM
                 )
                 ->willReturn($productId);
         }
@@ -242,6 +262,13 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getProductsUnits')
             ->with($ids)
             ->willReturn($units);
+        $this->unitFormatter->expects($this->any())
+            ->method('format')
+            ->willReturnCallback(
+                function ($string) {
+                    return $string . 'Formatted';
+                }
+            );
 
         $this->listener->onResultAfter($event);
         foreach ($expectedData as $expectedRecord) {
@@ -280,7 +307,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
                         'id' => 2,
                         'image' => null,
                         'expectedUnits' => [
-                            'bottle',
+                            'bottle'
                         ]
                     ],
                     [

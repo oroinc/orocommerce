@@ -1,13 +1,29 @@
 types:
     main:
         label: oro.product.productimage.type.main.label
-        dimensions: ~
+        dimensions:
+            - product_original
+            - product_large
+            - product_extra_large
+            - product_medium
+            - product_small
         max_number: 1
     listing:
         label: oro.product.productimage.type.listing.label
-        dimensions: ~
+        dimensions:
+            - product_extra_large
+            - product_small
         max_number: 1
     additional:
         label: oro.product.productimage.type.additional.label
-        dimensions: ~
+        dimensions:
+            - product_original
+            - product_extra_large
+            - product_small
         max_number: ~
+dimensions:
+    product_original: { width: ~, height: ~ }
+    product_extra_large: { width: 378, height: 378 }
+    product_large: { width: 268, height: 268 }
+    product_medium: { width: 203, height: 203 }
+    product_small: { width: 82, height: 82 }

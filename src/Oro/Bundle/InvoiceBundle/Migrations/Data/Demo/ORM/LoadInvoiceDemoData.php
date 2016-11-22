@@ -12,7 +12,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\InvoiceBundle\Entity\Invoice;
 
 class LoadInvoiceDemoData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
@@ -25,8 +25,8 @@ class LoadInvoiceDemoData extends AbstractFixture implements ContainerAwareInter
     public function getDependencies()
     {
         return [
-            'Oro\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountDemoData',
-            'Oro\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountUserDemoData',
+            'Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadAccountDemoData',
+            'Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadAccountUserDemoData',
         ];
     }
 
@@ -49,7 +49,7 @@ class LoadInvoiceDemoData extends AbstractFixture implements ContainerAwareInter
         $owner = $manager->getRepository('OroUserBundle:User')->findOneBy([]);
 
         /** @var Account $account */
-        $account = $manager->getRepository('OroAccountBundle:Account')->findOneBy([]);
+        $account = $manager->getRepository('OroCustomerBundle:Account')->findOneBy([]);
 
         $website = $manager->getRepository('OroWebsiteBundle:Website')
             ->findOneBy(['name' => LoadWebsiteData::DEFAULT_WEBSITE_NAME]);

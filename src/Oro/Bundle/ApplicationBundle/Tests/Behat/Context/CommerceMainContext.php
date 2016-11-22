@@ -5,12 +5,12 @@ namespace Oro\Bundle\ApplicationBundle\Tests\Behat\Context;
 use Behat\Gherkin\Node\TableNode;
 use Oro\Bundle\FormBundle\Tests\Behat\Element\OroForm;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
-use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroElementFactoryAware;
-use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\ElementFactoryDictionary;
+use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
+use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
 
-class CommerceMainContext extends OroFeatureContext implements OroElementFactoryAware
+class CommerceMainContext extends OroFeatureContext implements OroPageObjectAware
 {
-    use ElementFactoryDictionary;
+    use PageObjectDictionary;
 
     /**
      * Example: Given I login as AmandaRCole@example.org buyer

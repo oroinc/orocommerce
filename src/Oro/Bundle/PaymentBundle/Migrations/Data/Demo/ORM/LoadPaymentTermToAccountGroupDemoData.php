@@ -28,7 +28,7 @@ class LoadPaymentTermToAccountGroupDemoData extends AbstractFixture implements
     {
         return [
             'Oro\Bundle\PaymentBundle\Migrations\Data\Demo\ORM\LoadPaymentTermDemoData',
-            'Oro\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountGroupDemoData',
+            'Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadAccountGroupDemoData',
         ];
     }
 
@@ -46,7 +46,7 @@ class LoadPaymentTermToAccountGroupDemoData extends AbstractFixture implements
     public function load(ObjectManager $manager)
     {
         $doctrine = $this->container->get('doctrine');
-        $accountGroupRepository = $doctrine->getRepository('OroAccountBundle:AccountGroup');
+        $accountGroupRepository = $doctrine->getRepository('OroCustomerBundle:AccountGroup');
 
         $paymentTermsAll       = $this->getLoadedPaymentTerms();
         $accountGroupsIterator = $accountGroupRepository->getBatchIterator();

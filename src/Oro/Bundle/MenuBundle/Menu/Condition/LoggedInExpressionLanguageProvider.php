@@ -5,21 +5,21 @@ namespace Oro\Bundle\MenuBundle\Menu\Condition;
 use Symfony\Component\ExpressionLanguage\ExpressionFunction;
 use Symfony\Component\ExpressionLanguage\ExpressionFunctionProviderInterface;
 
-use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Oro\Component\DependencyInjection\ServiceLink;
 
 class LoggedInExpressionLanguageProvider implements ExpressionFunctionProviderInterface
 {
     /**
-     * @var SecurityFacade
+     * @var ServiceLink
      */
-    protected $securityFacade;
+    protected $securityFacadeLink;
 
     /**
-     * @param SecurityFacade $securityFacade
+     * @param ServiceLink $securityFacadeLink
      */
-    public function __construct(SecurityFacade $securityFacade)
+    public function __construct(ServiceLink $securityFacadeLink)
     {
-        $this->securityFacade = $securityFacade;
+        $this->securityFacadeLink = $securityFacadeLink;
     }
 
     /**
@@ -39,6 +39,6 @@ class LoggedInExpressionLanguageProvider implements ExpressionFunctionProviderIn
      */
     public function isLoggedIn()
     {
-        return $this->securityFacade->getLoggedUser() !== null;
+        return $this->securityFacadeLink->getService()->getLoggedUser() !== null;
     }
 }

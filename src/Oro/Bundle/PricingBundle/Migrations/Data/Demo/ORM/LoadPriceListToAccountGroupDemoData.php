@@ -5,7 +5,7 @@ namespace Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
 use Oro\Bundle\WebsiteBundle\Migrations\Data\ORM\LoadWebsiteData;
 
@@ -55,7 +55,7 @@ class LoadPriceListToAccountGroupDemoData extends LoadBasePriceListRelationDemoD
      */
     protected function getAccountGroupByName(EntityManager $manager, $name)
     {
-        $website = $manager->getRepository('OroAccountBundle:AccountGroup')->findOneBy(['name' => $name]);
+        $website = $manager->getRepository('OroCustomerBundle:AccountGroup')->findOneBy(['name' => $name]);
 
         if (!$website) {
             throw new \LogicException(sprintf('There is no account group with name "%s" .', $name));

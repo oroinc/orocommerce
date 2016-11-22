@@ -7,10 +7,10 @@ use Doctrine\Common\Util\ClassUtils;
 
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Entity\AccountUser;
-use Oro\Bundle\AccountBundle\Entity\Repository\AccountAddressRepository;
-use Oro\Bundle\AccountBundle\Entity\Repository\AccountUserAddressRepository;
+use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\Repository\AccountAddressRepository;
+use Oro\Bundle\CustomerBundle\Entity\Repository\AccountUserAddressRepository;
 
 class OrderAddressProvider implements AddressProviderInterface
 {

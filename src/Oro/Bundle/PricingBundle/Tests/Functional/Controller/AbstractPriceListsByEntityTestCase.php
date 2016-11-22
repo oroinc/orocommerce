@@ -51,11 +51,12 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
     public function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
         $this->loadFixtures(
             [
                 'Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
-                'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
-                'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups',
+                'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccounts',
+                'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups',
                 'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists',
             ]
         );
@@ -131,9 +132,9 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
                     1 => [
                         'fallback' => 0,
                         'priceLists' => [
-                            ['priceList' => 'price_list_2', 'priority' => 23, 'mergeAllowed' => true],
-                            ['priceList' => 'price_list_3', 'priority' => 22, 'mergeAllowed' => true],
                             ['priceList' => 'price_list_1', 'priority' => 3, 'mergeAllowed' => false],
+                            ['priceList' => 'price_list_3', 'priority' => 22, 'mergeAllowed' => true],
+                            ['priceList' => 'price_list_2', 'priority' => 23, 'mergeAllowed' => true],
                         ],
                     ],
                 ],

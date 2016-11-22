@@ -2,24 +2,20 @@
 
 namespace Oro\Bundle\PricingBundle\Entity\EntityListener;
 
-use Oro\Bundle\PricingBundle\Async\Topics;
-use Oro\Bundle\PricingBundle\Entity\PriceList;
-use Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme;
-use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
-use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
-use Oro\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
+use Oro\Bundle\PricingBundle\Model\PriceRuleLexemeTriggerHandler;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Component\Expression\FieldsProviderInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 abstract class AbstractRuleEntityListener
 {
     /**
-     * @var PriceListTriggerHandler
+     * @var PriceRuleLexemeTriggerHandler
      */
-    protected $priceRuleChangeTriggerHandler;
+    protected $priceRuleLexemeTriggerHandler;
 
     /**
-     * @var PriceRuleFieldsProvider
+     * @var FieldsProviderInterface
      */
     protected $fieldProvider;
 
@@ -29,16 +25,16 @@ abstract class AbstractRuleEntityListener
     protected $registry;
 
     /**
-     * @param PriceListTriggerHandler $priceRuleChangeTriggerHandler
-     * @param PriceRuleFieldsProvider $fieldsProvider
+     * @param PriceRuleLexemeTriggerHandler $priceRuleLexemeTriggerHandler
+     * @param FieldsProviderInterface $fieldsProvider
      * @param RegistryInterface $registry
      */
     public function __construct(
-        PriceListTriggerHandler $priceRuleChangeTriggerHandler,
-        PriceRuleFieldsProvider $fieldsProvider,
+        PriceRuleLexemeTriggerHandler $priceRuleLexemeTriggerHandler,
+        FieldsProviderInterface $fieldsProvider,
         RegistryInterface $registry
     ) {
-        $this->priceRuleChangeTriggerHandler = $priceRuleChangeTriggerHandler;
+        $this->priceRuleLexemeTriggerHandler = $priceRuleLexemeTriggerHandler;
         $this->fieldsProvider = $fieldsProvider;
         $this->registry = $registry;
     }
@@ -47,55 +43,6 @@ abstract class AbstractRuleEntityListener
      * @return string
      */
     abstract protected function getEntityClassName();
-
-    /**
-     * @param PriceRuleLexeme[] $lexemes
-     * @param Product|null $product
-     */
-    protected function addTriggersByLexemes(array $lexemes, Product $product = null)
-    {
-        $priceLists = [];
-
-        foreach ($lexemes as $lexeme) {
-            $priceList = $lexeme->getPriceList();
-            $priceLists[$priceList->getId()] = $priceList;
-        }
-
-        $this->priceRuleChangeTriggerHandler->addTriggersForPriceLists(Topics::CALCULATE_RULE, $priceLists, $product);
-        $this->updatePriceListActuality($priceLists);
-    }
-
-    /**
-     * @param array $updatedFields
-     * @param null|int $relationId
-     * @return array|\Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme[]
-     */
-    protected function findEntityLexemes(array $updatedFields = [], $relationId = null)
-    {
-        $criteria = ['className' => $this->getEntityClassName()];
-        if ($updatedFields) {
-            $criteria['fieldName'] = $updatedFields;
-        }
-        if ($relationId) {
-            $criteria['relationId'] = $relationId;
-        }
-        $lexemes = $this->registry->getManagerForClass(PriceRuleLexeme::class)
-            ->getRepository(PriceRuleLexeme::class)
-            ->findBy($criteria);
-
-        return $lexemes;
-    }
-
-    /**
-     * @param array|PriceList[] $priceLists
-     */
-    protected function updatePriceListActuality(array $priceLists)
-    {
-        /** @var PriceListRepository $priceListRepository */
-        $priceListRepository = $this->registry->getManagerForClass(PriceList::class)
-            ->getRepository(PriceList::class);
-        $priceListRepository->updatePriceListsActuality($priceLists, false);
-    }
 
     /**
      * @param array $changeSet
@@ -108,8 +55,12 @@ abstract class AbstractRuleEntityListener
         $updatedFields = array_intersect($fields, array_keys($changeSet));
 
         if ($updatedFields) {
-            $lexemes = $this->findEntityLexemes($updatedFields, $relationId);
-            $this->addTriggersByLexemes($lexemes, $product);
+            $lexemes = $this->priceRuleLexemeTriggerHandler->findEntityLexemes(
+                $this->getEntityClassName(),
+                $updatedFields,
+                $relationId
+            );
+            $this->priceRuleLexemeTriggerHandler->addTriggersByLexemes($lexemes, $product);
         }
     }
 
@@ -119,8 +70,9 @@ abstract class AbstractRuleEntityListener
      */
     protected function recalculateByEntity(Product $product = null, $relationId = null)
     {
-        $lexemes = $this->findEntityLexemes([], $relationId);
-        $this->addTriggersByLexemes($lexemes, $product);
+        $lexemes = $this->priceRuleLexemeTriggerHandler
+            ->findEntityLexemes($this->getEntityClassName(), [], $relationId);
+        $this->priceRuleLexemeTriggerHandler->addTriggersByLexemes($lexemes, $product);
     }
 
     /**

@@ -25,7 +25,7 @@ class ProductImageValidator extends ConstraintValidator
      */
     public function validate($value, Constraint $constraint)
     {
-        if (!$value->getImage() || (!$value->getImage()->getFilename() && !$value->getImage()->getFile())) {
+        if (!$value->getImage() || (!$value->getImage()->getFilename() && null === $value->getImage()->getFile())) {
             $this->context
                 ->buildViolation($constraint->message)
                 ->addViolation();

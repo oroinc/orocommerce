@@ -217,48 +217,36 @@
 
 //Colors
 .red {
-  color: $theme-red-color;
+  color: get-color('primary', 'dark');
 }
 
 .orange {
-  color: $theme-orange-color;
+  color: get-color('primary', 'base');
 }
 
 .base-color {
-  color: $base-font-color !important;
+  color: get-color('additional', 'dark') !important;
 }
 
 .gray {
-  color: $theme-bucket-color;
+  color: get-color('additional', 'middle');
 }
 
 .blue {
-  color: $base-link-color;
-}
-
-.green2 {
-  color: $product_color-green2;
-}
-
-.green3 {
-  color: $theme-green-color;
-}
-
-.price-up-color {
-  color: $theme-orange-color-light;
+  color: get-color('ui', 'normal');
 }
 
 .price-old-color {
-  color: $theme-edit-mode-btn-color;
+  color: get-color('additional', 'middle');
 }
 
 .price-out-of-stock-color {
-  color: $theme-red-color;
+  color: get-color('primary', 'dark');
 }
 
 //Notifications colors
 .warning {
-  color: $theme-warning-color;
+  color: get-color('ui', 'warning');
 }
 
 //Alignments
@@ -294,8 +282,8 @@
 
   &.buttons-flex-container_in-cart {
     padding: 20px 0;
-    border-bottom: 1px solid $theme-lighter-gray-color;
-    border-top: 1px solid $theme-lighter-gray-color;
+    border-bottom: 1px solid get-color('additional', 'light');
+    border-top: 1px solid get-color('additional', 'light');
   }
 
   &.buttons-flex-container_equal-btns {

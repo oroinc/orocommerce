@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Controller;
 
+use Oro\Bundle\PricingBundle\Async\NotificationMessages;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
@@ -35,6 +36,7 @@ class PriceListController extends Controller
                 $this->get('translator')->trans('oro.pricing.pricelist.not_actual.recalculation')
             );
         }
+        $this->renderNotificationMessages(NotificationMessages::CHANNEL_PRICE_LIST, $priceList);
 
         return [
             'entity' => $priceList,
@@ -132,5 +134,19 @@ class PriceListController extends Controller
             },
             $this->get('translator')->trans('oro.pricing.controller.price_list.saved.message')
         );
+    }
+
+    /**
+     * @param string|array $channel
+     * @param PriceList $priceList
+     */
+    protected function renderNotificationMessages($channel, PriceList $priceList)
+    {
+        $messenger = $this->container->get('oro_pricing.notification_message.messenger');
+        $messageRenderer = $this->container->get('oro_pricing.notification_message.renderer.flash_message');
+        $messages = $messenger->receive($channel, PriceList::class, $priceList->getId());
+        foreach ($messages as $message) {
+            $messageRenderer->render($message);
+        }
     }
 }

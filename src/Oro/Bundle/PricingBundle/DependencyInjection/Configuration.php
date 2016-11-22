@@ -2,13 +2,14 @@
 
 namespace Oro\Bundle\PricingBundle\DependencyInjection;
 
-use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
-use Oro\Bundle\CurrencyBundle\Rounding\PriceRoundingService;
-use Oro\Bundle\LocaleBundle\DependencyInjection\Configuration as LocaleConfiguration;
-use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilder;
-
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
+
+use Oro\Bundle\CurrencyBundle\Rounding\PriceRoundingService;
+use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
+use Oro\Bundle\CurrencyBundle\DependencyInjection\Configuration as CurrencyConfiguration;
+use Oro\Bundle\PricingBundle\Builder\CombinedPriceListQueueConsumer;
+use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilder;
 
 class Configuration implements ConfigurationInterface
 {
@@ -51,8 +52,8 @@ class Configuration implements ConfigurationInterface
                 self::OFFSET_OF_PROCESSING_CPL_PRICES => [
                     'value' => CombinedPriceListsBuilder::DEFAULT_OFFSET_OF_PROCESSING_CPL_PRICES
                 ],
-                self::ENABLED_CURRENCIES => ['value' => [LocaleConfiguration::DEFAULT_CURRENCY], 'type' => 'array'],
-                self::DEFAULT_CURRENCY => ['value' => LocaleConfiguration::DEFAULT_CURRENCY]
+                self::ENABLED_CURRENCIES => ['value' => [CurrencyConfiguration::DEFAULT_CURRENCY], 'type' => 'array'],
+                self::DEFAULT_CURRENCY => ['value' => CurrencyConfiguration::DEFAULT_CURRENCY]
             ]
         );
 

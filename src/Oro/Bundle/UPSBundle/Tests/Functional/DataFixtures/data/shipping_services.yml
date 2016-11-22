@@ -1,0 +1,29 @@
+ups.shipping_service.1:
+    code: '102'
+    description: 'UPS 2nd Day Air'
+    country: 'ZX'
+
+ups.shipping_service.2:
+    code: '103'
+    description: 'UPS Ground'
+    country: 'ZX'
+
+ups.shipping_service.3:
+    code: '112'
+    description: '3 Day Select'
+    country: 'ZY'
+
+ups.shipping_service.4:
+    code: '113'
+    description: 'Next Day Air Saver'
+    country: 'ZY'
+
+ups.shipping_service.5:
+    code: '154'
+    description: 'Express Plus'
+    country: 'ZZ'
+
+ups.shipping_service.6:
+    code: '183'
+    description: 'Today Dedicated Courrier'
+    country: 'ZZ'

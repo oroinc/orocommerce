@@ -7,6 +7,7 @@ use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Intl\Intl;
 
 use Oro\Bundle\PayPalBundle\Form\Type\CurrencySelectionType;
+use Oro\Bundle\CurrencyBundle\Tests\Unit\Utils\CurrencyNameHelperStub;
 
 class CurrencySelectionTypeTest extends FormIntegrationTestCase
 {
@@ -26,14 +27,18 @@ class CurrencySelectionTypeTest extends FormIntegrationTestCase
     protected $localeSettings;
 
     /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|\Oro\Bundle\CurrencyBundle\Utils\CurrencyNameHelper
+     */
+    protected $currencyNameHelper;
+
+    /**
      * {@inheritDoc}
      */
     protected function setUp()
     {
         parent::setUp();
 
-        $this->configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
-            ->setMethods(['get'])
+        $this->configManager = $this->getMockBuilder('Oro\Bundle\CurrencyBundle\Config\CurrencyConfigManager')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -46,7 +51,14 @@ class CurrencySelectionTypeTest extends FormIntegrationTestCase
             ->method('getLocale')
             ->willReturn(\Locale::getDefault());
 
-        $this->formType = new CurrencySelectionType($this->configManager, $this->localeSettings);
+        /** @var \PHPUnit_Framework_MockObject_MockObject|\Oro\Bundle\CurrencyBundle\Utils\CurrencyNameHelper */
+        $this->currencyNameHelper = new CurrencyNameHelperStub();
+
+        $this->formType = new CurrencySelectionType(
+            $this->configManager,
+            $this->localeSettings,
+            $this->currencyNameHelper
+        );
     }
 
     /**
@@ -60,20 +72,14 @@ class CurrencySelectionTypeTest extends FormIntegrationTestCase
      */
     public function testSubmit(
         array $allowedCurrencies,
-        $localeCurrency,
         array $inputOptions,
         array $expectedOptions,
         $submittedData
     ) {
         $hasCustomCurrencies = isset($inputOptions['currencies_list']) || !empty($inputOptions['full_currency_list']);
         $this->configManager->expects($hasCustomCurrencies ? $this->never() : $this->once())
-            ->method('get')
-            ->with('oro_currency.allowed_currencies')
+            ->method('getCurrencyList')
             ->willReturn($allowedCurrencies);
-
-        $this->localeSettings->expects(count($allowedCurrencies) ? $this->never() : $this->once())
-            ->method('getCurrency')
-            ->willReturn($localeCurrency);
 
         $form = $this->factory->create($this->formType, null, $inputOptions);
 
@@ -83,7 +89,7 @@ class CurrencySelectionTypeTest extends FormIntegrationTestCase
         }
         $this->assertEquals($expectedOptions['choices'], $form->createView()->vars['choices']);
 
-        $this->assertNull($form->getData());
+        $this->assertEquals($form->getData(), '');
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
         $this->assertEquals($submittedData, $form->getData());
@@ -105,7 +111,6 @@ class CurrencySelectionTypeTest extends FormIntegrationTestCase
         return [
             'full currency name and data from system config' => [
                 'allowedCurrencies' => ['USD'],
-                'localeCurrency' => 'EUR',
                 'inputOptions' => [],
                 'expectedOptions' => [
                     'compact' => false,
@@ -117,7 +122,6 @@ class CurrencySelectionTypeTest extends FormIntegrationTestCase
             ],
             'compact currency name and data from system config' => [
                 'allowedCurrencies' => ['USD'],
-                'localeCurrency' => 'EUR',
                 'inputOptions' => [
                     'compact' => true
                 ],
@@ -130,8 +134,7 @@ class CurrencySelectionTypeTest extends FormIntegrationTestCase
                 'submittedData' => 'USD'
             ],
             'full currency name and data from locale settings' => [
-                'allowedCurrencies' => [],
-                'localeCurrency' => 'EUR',
+                'allowedCurrencies' => ['EUR'],
                 'inputOptions' => [
                     'compact' => false,
                     'currencies_list' => null
@@ -146,7 +149,6 @@ class CurrencySelectionTypeTest extends FormIntegrationTestCase
             ],
             'full currency name and data from currencies_list option' => [
                 'allowedCurrencies' => ['USD'],
-                'localeCurrency' => 'EUR',
                 'inputOptions' => [
                     'compact' => false,
                     'currencies_list' => ['RUB']
@@ -161,22 +163,20 @@ class CurrencySelectionTypeTest extends FormIntegrationTestCase
             ],
             'full currency name, data from system config and additional currencies' => [
                 'allowedCurrencies' => ['USD'],
-                'localeCurrency' => 'EUR',
                 'inputOptions' => [
                     'additional_currencies' => ['GBP']
                 ],
                 'expectedOptions' => [
                     'compact' => false,
                     'choices' => [
-                        new ChoiceView('GBP', 'GBP', $gbpName),
-                        new ChoiceView('USD', 'USD', $usdName)
+                        new ChoiceView('USD', 'USD', $usdName),
+                        new ChoiceView('GBP', 'GBP', $gbpName)
                     ]
                 ],
                 'submittedData' => 'GBP'
             ],
             'compact currency name, data from currencies_list option and additional currencies' => [
                 'allowedCurrencies' => ['USD'],
-                'localeCurrency' => 'EUR',
                 'inputOptions' => [
                     'compact' => true,
                     'currencies_list' => ['RUB'],
@@ -185,19 +185,9 @@ class CurrencySelectionTypeTest extends FormIntegrationTestCase
                 'expectedOptions' => [
                     'compact' => true,
                     'choices' => [
-                        new ChoiceView('GBP', 'GBP', 'GBP'),
                         new ChoiceView('RUB', 'RUB', 'RUB'),
+                        new ChoiceView('GBP', 'GBP', 'GBP')
                     ]
-                ],
-                'submittedData' => 'GBP'
-            ],
-            'full currencies list' => [
-                'allowedCurrencies' => ['USD'],
-                'localeCurrency' => 'EUR',
-                'inputOptions' => ['full_currency_list' => true],
-                'expectedOptions' => [
-                    'full_currency_list' => true,
-                    'choices' => $this->getChoiceViews($currencyBundle->getCurrencyNames('en'))
                 ],
                 'submittedData' => 'GBP'
             ]

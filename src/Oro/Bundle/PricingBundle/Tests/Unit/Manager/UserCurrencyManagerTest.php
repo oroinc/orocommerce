@@ -9,7 +9,7 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\UserBundle\Entity\BaseUserManager;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-use Oro\Bundle\AccountBundle\Entity\AccountUserSettings;
+use Oro\Bundle\CustomerBundle\Entity\AccountUserSettings;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
@@ -99,7 +99,7 @@ class UserCurrencyManagerTest extends \PHPUnit_Framework_TestCase
         $userWebsiteSettings = new AccountUserSettings($website);
         $userWebsiteSettings->setCurrency('EUR');
 
-        $user = $this->getMockBuilder('Oro\Bundle\AccountBundle\Entity\AccountUser')
+        $user = $this->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\AccountUser')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -128,7 +128,7 @@ class UserCurrencyManagerTest extends \PHPUnit_Framework_TestCase
     {
         /** @var Website $website **/
         $website = $this->getEntity('Oro\Bundle\WebsiteBundle\Entity\Website', ['id' => 1]);
-        $user = $this->getMockBuilder('Oro\Bundle\AccountBundle\Entity\AccountUser')
+        $user = $this->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\AccountUser')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -237,7 +237,7 @@ class UserCurrencyManagerTest extends \PHPUnit_Framework_TestCase
         /** @var Website|\PHPUnit_Framework_MockObject_MockObject $website **/
         $website = $this->getMock('Oro\Bundle\WebsiteBundle\Entity\Website');
 
-        $user = $this->getMockBuilder('Oro\Bundle\AccountBundle\Entity\AccountUser')
+        $user = $this->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\AccountUser')
             ->disableOriginalConstructor()
             ->getMock();
 

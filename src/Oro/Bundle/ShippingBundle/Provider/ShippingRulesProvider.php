@@ -2,13 +2,16 @@
 
 namespace Oro\Bundle\ShippingBundle\Provider;
 
-use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
-
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
+use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
 use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingRuleRepository;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRuleDestination;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
+use Oro\Bundle\ShippingBundle\Entity\ShippingRuleDestination;
+use Oro\Bundle\ShippingBundle\ExpressionLanguage\LineItemDecoratorFactory;
+use Oro\Component\ExpressionLanguage\ExpressionLanguage;
+use Psr\Log\LoggerInterface;
 
 class ShippingRulesProvider
 {
@@ -18,84 +21,99 @@ class ShippingRulesProvider
     protected $doctrineHelper;
 
     /**
-     * @param DoctrineHelper $doctrineHelper
+     * @var LineItemDecoratorFactory
      */
-    public function __construct(DoctrineHelper $doctrineHelper)
-    {
+    protected $lineItemDecoratorFactory;
+
+    /**
+     * @var LoggerInterface
+     */
+    protected $logger;
+
+    /**
+     * @param DoctrineHelper $doctrineHelper
+     * @param LineItemDecoratorFactory $lineItemDecoratorFactory
+     * @param LoggerInterface $logger
+     */
+    public function __construct(
+        DoctrineHelper $doctrineHelper,
+        LineItemDecoratorFactory $lineItemDecoratorFactory,
+        LoggerInterface $logger
+    ) {
         $this->doctrineHelper = $doctrineHelper;
+        $this->lineItemDecoratorFactory = $lineItemDecoratorFactory;
+        $this->logger = $logger;
     }
 
     /**
-     * @param ShippingContextAwareInterface $context
+     * @param ShippingContextInterface $context
      * @return ShippingRule[]
      */
-    public function getApplicableShippingRules(ShippingContextAwareInterface $context)
+    public function getApplicableShippingRules(ShippingContextInterface $context)
     {
-        $shippingRuleContext = $context->getShippingContext();
         $applicableRules = [];
-        if ($shippingRuleContext) {
-            $rules = $this->getSortedShippingRules($shippingRuleContext);
-            foreach ($rules as $rule) {
-                if ($this->expressionApplicable($rule->getConditions(), $shippingRuleContext)
-                    && $this->destinationApplicable($rule->getDestinations(), $shippingRuleContext)
-                ) {
-                    $applicableRules[] = $rule;
-                    if ($rule->isStopProcessing()) {
-                        break;
-                    }
+        foreach ($this->getSortedShippingRules($context) as $rule) {
+            if ($this->expressionApplicable($rule, $context)
+                && $this->destinationApplicable($rule->getDestinations(), $context)
+            ) {
+                $applicableRules[] = $rule;
+                if ($rule->isStopProcessing()) {
+                    break;
                 }
             }
         }
+
         return $applicableRules;
     }
 
     /**
-     * @param array $shippingRuleContext
-     * @return ShippingRule[]
-     */
-    protected function getSortedShippingRules(array $shippingRuleContext)
-    {
-        /** @var AbstractAddress $shippingAddress */
-        $shippingAddress = $shippingRuleContext['shippingAddress'];
-
-        /** @var ShippingRuleRepository $repository */
-        $repository = $this->doctrineHelper
-            ->getEntityManagerForClass('OroShippingBundle:ShippingRule')
-            ->getRepository('OroShippingBundle:ShippingRule');
-        return $repository->getEnabledOrderedRulesByCurrencyAndCountry(
-            $shippingRuleContext['currency'],
-            $shippingAddress->getCountry()
-        );
-    }
-
-    /**
-     * @param string $condition
-     * @param array $shippingRuleContext
+     * @param ShippingRule $rule
+     * @param ShippingContextInterface $context
      * @return mixed
      */
-    protected function expressionApplicable($condition, array $shippingRuleContext)
+    protected function expressionApplicable(ShippingRule $rule, ShippingContextInterface $context)
     {
-        $result = true;
-        if ($condition) {
-            $language = new ExpressionLanguage();
-            try {
-                $result = $language->evaluate($condition, $shippingRuleContext);
-            } catch (\Exception $e) {
-                $result = false;
-            }
+        $condition = $rule->getConditions();
+        if (!$condition) {
+            return true;
         }
-        return $result;
+        $language = new ExpressionLanguage();
+        $language->register('count', function ($field) {
+            return sprintf('count(%s)', $field);
+        }, function ($arguments, $field) {
+            return count($field);
+        });
+        $lineItems = $context->getLineItems();
+        try {
+            return $language->evaluate($condition, [
+                'lineItems' => array_map(function (ShippingLineItemInterface $lineItem) use ($lineItems) {
+                    return $this->lineItemDecoratorFactory->createOrderLineItemDecorator($lineItems, $lineItem);
+                }, $lineItems),
+                'billingAddress' => $context->getBillingAddress(),
+                'shippingAddress' => $context->getShippingAddress(),
+                'shippingOrigin' => $context->getShippingOrigin(),
+                'paymentMethod' => $context->getPaymentMethod(),
+                'currency' => $context->getCurrency(),
+                'subtotal' => $context->getSubtotal(),
+            ]);
+        } catch (\Exception $e) {
+            $this->logger->error(
+                'Shipping rule condition evaluation error: ' . $e->getMessage(),
+                ['ShippingRule::$id' => $rule->getId()]
+            );
+        }
+        return false;
     }
 
     /**
      * @param ShippingRuleDestination[]|\Traversable $destinations
-     * @param array $shippingRuleContext
+     * @param ShippingContextInterface $context
      * @return mixed
      */
-    protected function destinationApplicable(\Traversable $destinations, array $shippingRuleContext)
+    protected function destinationApplicable(\Traversable $destinations, ShippingContextInterface $context)
     {
         /** @var AbstractAddress $shippingAddress */
-        $shippingAddress = $shippingRuleContext['shippingAddress'];
+        $shippingAddress = $context->getShippingAddress();
 
         foreach ($destinations as $destination) {
             if ($destination->getCountry()->getIso2Code() === $shippingAddress->getCountry()->getIso2Code()) {
@@ -118,7 +136,7 @@ class ShippingRulesProvider
     }
 
     /**
-     * @param $postalCode
+     * @param string $postalCode
      * @return array
      */
     protected function getPostalCodesArray($postalCode)
@@ -126,5 +144,22 @@ class ShippingRulesProvider
         return array_map(function ($postalCode) {
             return trim($postalCode);
         }, explode(',', $postalCode));
+    }
+
+    /**
+     * @param ShippingContextInterface $context
+     * @return ShippingRule[]
+     */
+    protected function getSortedShippingRules(ShippingContextInterface $context)
+    {
+        /** @var ShippingRuleRepository $repository */
+        $repository = $this->doctrineHelper
+            ->getEntityManagerForClass('OroShippingBundle:ShippingRule')
+            ->getRepository('OroShippingBundle:ShippingRule');
+
+        return $repository->getEnabledOrderedRulesByCurrencyAndCountry(
+            $context->getCurrency(),
+            $context->getShippingAddress()->getCountryIso2()
+        );
     }
 }

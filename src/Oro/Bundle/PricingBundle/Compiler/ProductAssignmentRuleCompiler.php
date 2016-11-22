@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 class ProductAssignmentRuleCompiler extends AbstractRuleCompiler
 {
@@ -20,9 +21,10 @@ class ProductAssignmentRuleCompiler extends AbstractRuleCompiler
 
     /**
      * @param PriceList $priceList
+     * @param Product|null $product
      * @return QueryBuilder|null
      */
-    public function compile(PriceList $priceList)
+    public function compile(PriceList $priceList, Product $product = null)
     {
         if (!$priceList->getProductAssignmentRule()) {
             return null;
@@ -42,6 +44,7 @@ class ProductAssignmentRuleCompiler extends AbstractRuleCompiler
 
             $this->cache->save($cacheKey, $qb);
         }
+        $this->restrictByGivenProduct($qb, $product);
 
         return $qb;
     }
@@ -52,7 +55,8 @@ class ProductAssignmentRuleCompiler extends AbstractRuleCompiler
      */
     protected function createQueryBuilder(PriceList $priceList)
     {
-        $node = $this->expressionParser->parse($priceList->getProductAssignmentRule());
+        $rule = $this->getProcessedAssignmentRule($priceList);
+        $node = $this->expressionParser->parse($rule);
         $source = $this->nodeConverter->convert($node);
 
         return $this->queryConverter->convert($source);
@@ -90,9 +94,10 @@ class ProductAssignmentRuleCompiler extends AbstractRuleCompiler
     protected function applyRuleConditions(QueryBuilder $qb, PriceList $priceList)
     {
         $params = [];
+        $rule = $this->getProcessedAssignmentRule($priceList);
         $qb->andWhere(
             $this->expressionBuilder->convert(
-                $this->expressionParser->parse($priceList->getProductAssignmentRule()),
+                $this->expressionParser->parse($rule),
                 $qb->expr(),
                 $params,
                 $this->queryConverter->getTableAliasByColumn()
@@ -132,5 +137,28 @@ class ProductAssignmentRuleCompiler extends AbstractRuleCompiler
                     )
                 )
             );
+    }
+
+    /**
+     * @param QueryBuilder $qb
+     * @param Product $product
+     */
+    protected function restrictByGivenProduct(QueryBuilder $qb, Product $product = null)
+    {
+        if ($product) {
+            $aliases = $qb->getRootAliases();
+            $rootAlias = reset($aliases);
+            $qb->andWhere($qb->expr()->eq($rootAlias, ':product'))
+                ->setParameter('product', $product->getId());
+        }
+    }
+
+    /**
+     * @param PriceList $priceList
+     * @return string
+     */
+    protected function getProcessedAssignmentRule(PriceList $priceList)
+    {
+        return $this->expressionPreprocessor->process($priceList->getProductAssignmentRule());
     }
 }

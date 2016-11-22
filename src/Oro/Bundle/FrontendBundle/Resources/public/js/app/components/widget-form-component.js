@@ -11,10 +11,10 @@ define(
                     options._wid,
                     function(widget) {
                         if (!options.message) {
-                            options.message = 'oro_frontend.widget_form_component.save_flash_success';
+                            options.message = __('oro_frontend.widget_form_component.save_flash_success');
                         }
 
-                        messenger.notificationFlashMessage('success', __(options.message));
+                        messenger.notificationFlashMessage('success', options.message);
                         mediator.trigger('widget_success:' + widget.getAlias(), options);
                         mediator.trigger('widget_success:' + widget.getWid(), options);
                         widget.trigger('formSave', options.savedId);

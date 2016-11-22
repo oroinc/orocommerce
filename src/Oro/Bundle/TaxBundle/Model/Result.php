@@ -73,6 +73,8 @@ final class Result extends AbstractResult
             $this->unsetOffset(self::ITEMS);
         }
 
+        $this->unlockResult();
+
         return parent::serialize();
     }
 

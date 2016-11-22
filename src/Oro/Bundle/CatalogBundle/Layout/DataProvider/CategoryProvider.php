@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CatalogBundle\Layout\DataProvider;
 
-use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
@@ -46,6 +46,14 @@ class CategoryProvider
     public function getCurrentCategory()
     {
         return $this->loadCategory((int) $this->requestProductHandler->getCategoryId());
+    }
+
+    /**
+     * @return Category
+     */
+    public function getRootCategory()
+    {
+        return $this->loadCategory();
     }
 
     /**

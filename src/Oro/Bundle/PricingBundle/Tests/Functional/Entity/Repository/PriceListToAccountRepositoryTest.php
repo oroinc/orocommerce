@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
-use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups;
+use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListAccountFallback;
@@ -26,8 +26,7 @@ class PriceListToAccountRepositoryTest extends WebTestCase
 {
     protected function setUp()
     {
-        $this->initClient([], $this->generateBasicAuthHeader());
-
+        $this->initClient();
         $this->loadFixtures(
             [
                 LoadPriceListRelations::class,
@@ -44,8 +43,8 @@ class PriceListToAccountRepositoryTest extends WebTestCase
     public function testRestrictByPriceList($priceList, array $expectedAccounts)
     {
         $qb = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroAccountBundle:Account')
-            ->getRepository('OroAccountBundle:Account')
+            ->getManagerForClass('OroCustomerBundle:Account')
+            ->getRepository('OroCustomerBundle:Account')
             ->createQueryBuilder('account');
 
         /** @var BasePriceList $priceList */
@@ -287,13 +286,29 @@ class PriceListToAccountRepositoryTest extends WebTestCase
     {
         /** @var Account $account */
         $account = $this->getReference('account.level_1_1');
-        /** @var Website $website */
-        $website = $this->getReference('US');
+
         /** @var AccountWebsiteDTO[] $result */
         $result = $this->getRepository()->getAccountWebsitePairsByAccount($account);
-        $this->assertCount(1, $result);
-        $this->assertEquals($result[0]->getAccount()->getId(), $account->getId());
-        $this->assertEquals($result[0]->getWebsite()->getId(), $website->getId());
+        $this->assertCount(2, $result);
+
+        $expected = [
+            $account->getId() => [
+                $this->getReference('US')->getId(),
+                $this->getReference('Canada')->getId()
+            ]
+        ];
+
+        $actual = [];
+        foreach ($result as $item) {
+            $actual[$item->getAccount()->getId()][] = $item->getWebsite()->getId();
+        }
+
+        foreach ($actual as $accountId => $websites) {
+            $this->assertEquals($account->getId(), $accountId);
+            foreach ($websites as $website) {
+                $this->assertContains($website, $expected[$accountId]);
+            }
+        }
     }
 
     public function testDelete()
@@ -302,10 +317,10 @@ class PriceListToAccountRepositoryTest extends WebTestCase
         $account = $this->getReference('account.level_1_1');
         /** @var Website $website */
         $website = $this->getReference('US');
-        $this->assertCount(7, $this->getRepository()->findAll());
+        $this->assertCount(8, $this->getRepository()->findAll());
         $this->assertCount(2, $this->getRepository()->findBy(['account' => $account, 'website' => $website]));
         $this->getRepository()->delete($account, $website);
-        $this->assertCount(5, $this->getRepository()->findAll());
+        $this->assertCount(6, $this->getRepository()->findAll());
         $this->assertCount(0, $this->getRepository()->findBy(['account' => $account, 'website' => $website]));
     }
 
@@ -348,9 +363,9 @@ class PriceListToAccountRepositoryTest extends WebTestCase
                 ],
                 'expectsResult' => [
                     ['account.level_1.2', 'US', 'priceList2'],
-                    ['account.level_1.3', 'US', 'priceList6'],
-                    ['account.level_1.3', 'US', 'priceList2'],
                     ['account.level_1.3', 'US', 'priceList4'],
+                    ['account.level_1.3', 'US', 'priceList2'],
+                    ['account.level_1.3', 'US', 'priceList6'],
                 ],
             ],
         ];

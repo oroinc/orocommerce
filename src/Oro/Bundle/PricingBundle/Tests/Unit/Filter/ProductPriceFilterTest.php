@@ -111,6 +111,10 @@ class ProductPriceFilterTest extends \PHPUnit_Framework_TestCase
                 'data' => ['value' => 10, 'value_end' => 20, 'type' => 'type'],
                 'expected' => false
             ],
+            'negative prica value' => [
+                'data' => ['value' => -10, 'value_end' => -20, 'type' => 'type', 'unit' => 'unit'],
+                'expected' => ['value' => 10, 'value_end' => 20, 'type' => 'type', 'unit' => 'unit']
+            ]
         ];
     }
 

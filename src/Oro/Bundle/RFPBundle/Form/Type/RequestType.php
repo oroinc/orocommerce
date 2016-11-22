@@ -8,9 +8,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
-use Oro\Bundle\AccountBundle\Form\Type\AccountSelectType;
-use Oro\Bundle\AccountBundle\Form\Type\AccountUserMultiSelectType;
-use Oro\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
+use Oro\Bundle\CustomerBundle\Form\Type\AccountSelectType;
+use Oro\Bundle\CustomerBundle\Form\Type\AccountUserMultiSelectType;
+use Oro\Bundle\CustomerBundle\Form\Type\AccountUserSelectType;
 
 class RequestType extends AbstractType
 {

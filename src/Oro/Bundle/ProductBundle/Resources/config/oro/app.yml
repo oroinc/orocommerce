@@ -1,24 +1,3 @@
-liip_imagine:
-    filter_sets:
-        product_original:
-            quality:          95
-            filters:
-                strip:        ~
-        product_large:
-            quality:          95
-            filters:
-                upscale: { min: [378, 378] }
-                thumbnail:    { size: [378, 378], mode: inset }
-                background: { size: [378, 378], color: '#fff' }
-                strip:        ~
-        product_small:
-            quality:          95
-            filters:
-                upscale: { min: [82, 82] }
-                thumbnail:    { size: [82, 82], mode: inset}
-                background: { size: [82, 82], color: '#fff' }
-                strip:        ~
-
 assetic:
     assets:
         tinymce_fullscreen:

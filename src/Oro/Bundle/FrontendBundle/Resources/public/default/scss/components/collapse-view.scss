@@ -1,0 +1,49 @@
+.collapse-view {
+  &__trigger {
+    display: inline-block;
+    vertical-align: middle;
+
+    color: get-color('ui', 'normal');
+
+    cursor: pointer;
+
+    &-icon {
+      transition: all 200ms linear;
+
+      &:hover {
+        color: get-color('additional', 'dark');
+      }
+    }
+
+    &:focus,
+    &:hover {
+      text-decoration: none;
+    }
+
+    &.orange {
+      color: get-color('primary', 'base');
+    }
+  }
+
+  &__container {
+    display: none;
+  }
+
+  // Init widget
+  &.init {}
+
+  // Open widget
+  &.expanded {
+    .collapse-view {
+      &__trigger {
+        &-icon {
+          transform: rotate(90deg);
+        }
+      }
+
+      &__container {
+        display: block;
+      }
+    }
+  }
+}

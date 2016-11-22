@@ -22,6 +22,7 @@ use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Oro\Bundle\PricingBundle\Form\Type\ProductAttributePriceCollectionType;
 use Oro\Bundle\PricingBundle\Form\Type\ProductAttributePriceType;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Extension\Stub\RoundingServiceStub;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class PriceAttributesProductFormExtensionTest extends FormIntegrationTestCase
 {
@@ -47,11 +48,18 @@ class PriceAttributesProductFormExtensionTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
+        $translator = $this->getMockForAbstractClass(TranslatorInterface::class);
+        $translator->expects(static::any())
+            ->method('trans')
+            ->will(static::returnCallback(function ($string) {
+                return $string . '_translated';
+            }));
+
         $extensions = [
             new PreloadedExtension(
                 [
                     ProductType::NAME => new ProductTypeStub(),
-                    ProductAttributePriceCollectionType::NAME => new ProductAttributePriceCollectionType(),
+                    ProductAttributePriceCollectionType::NAME => new ProductAttributePriceCollectionType($translator),
                     ProductAttributePriceType::NAME => new ProductAttributePriceType(new RoundingServiceStub())
                 ],
                 [

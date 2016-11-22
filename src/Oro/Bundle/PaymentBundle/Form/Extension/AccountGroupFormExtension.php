@@ -4,8 +4,8 @@ namespace Oro\Bundle\PaymentBundle\Form\Extension;
 
 use Symfony\Component\Form\FormEvent;
 
-use Oro\Bundle\AccountBundle\Form\Type\AccountGroupType;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Form\Type\AccountGroupType;
+use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTerm;
 
 class AccountGroupFormExtension extends AbstractPaymentTermExtension

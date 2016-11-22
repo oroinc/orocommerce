@@ -350,10 +350,8 @@ class FrontendOrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
             'currency' => null,
             'data_class' => 'Oro\Bundle\OrderBundle\Entity\OrderLineItem',
             'intention' => 'order_line_item',
-            'page_component' => 'oroui/js/app/components/view-component',
-            'page_component_options' => [
-                'view' => 'oroorder/js/app/views/frontend-line-item-view',
-            ],
+            'page_component' => '',
+            'page_component_options' => [],
         ];
     }
 }

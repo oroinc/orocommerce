@@ -9,11 +9,11 @@ use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
 
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
-use Oro\Bundle\AccountBundle\Entity\AccountUser;
-use Oro\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
-use Oro\Bundle\AccountBundle\Form\Type\AccountSelectType;
+use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Form\Type\AccountUserSelectType;
+use Oro\Bundle\CustomerBundle\Form\Type\AccountSelectType;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
@@ -149,11 +149,11 @@ class QuoteTypeTest extends AbstractTest
         $quote->setOwner($owner);
 
         if (null !== $accountUserId) {
-            $account = $this->getMockBuilder('Oro\Bundle\AccountBundle\Entity\Account')->getMock();
+            $account = $this->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\Account')->getMock();
             $role = $this->getMockBuilder('Symfony\Component\Security\Core\Role\RoleInterface')->getMock();
 
             /** @var AccountUser $accountUser */
-            $accountUser = $this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountUser', $accountUserId);
+            $accountUser = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountUser', $accountUserId);
             $accountUser->setEmail('test@test.test')
                 ->setFirstName('First Name')
                 ->setLastName('Last Name')
@@ -166,7 +166,7 @@ class QuoteTypeTest extends AbstractTest
 
         if (null !== $accountId) {
             /** @var Account $account */
-            $account = $this->getEntity('Oro\Bundle\AccountBundle\Entity\Account', $accountId);
+            $account = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account', $accountId);
             $account->setName('Name');
             $quote->setAccount($account);
         }
@@ -434,16 +434,16 @@ class QuoteTypeTest extends AbstractTest
 
         $accountSelectType = new StubEntityType(
             [
-                1 => $this->getEntity('Oro\Bundle\AccountBundle\Entity\Account', 1),
-                2 => $this->getEntity('Oro\Bundle\AccountBundle\Entity\Account', 2),
+                1 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account', 1),
+                2 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account', 2),
             ],
             AccountSelectType::NAME
         );
 
         $accountUserSelectType = new StubEntityType(
             [
-                1 => $this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountUser', 1),
-                2 => $this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountUser', 2),
+                1 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountUser', 1),
+                2 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountUser', 2),
             ],
             AccountUserSelectType::NAME
         );

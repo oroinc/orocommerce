@@ -7,7 +7,7 @@ use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Common\Collections\Criteria;
 
-use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class ShoppingListRepository extends EntityRepository
@@ -55,10 +55,18 @@ class ShoppingListRepository extends EntityRepository
      */
     public function findAvailableForAccountUser(AccountUser $accountUser, $selectRelations = false)
     {
-        $shoppingList = $this->findCurrentForAccountUser($accountUser, $selectRelations);
+        /** @var ShoppingList $shoppingList */
+        $shoppingList = $this->createQueryBuilder('list')
+            ->where('list.accountUser = :accountUser')
+            ->setParameter('accountUser', $accountUser)
+            ->orderBy('list.current', 'DESC')
+            ->addOrderBy('list.id', 'DESC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
 
-        if (!$shoppingList) {
-            $shoppingList = $this->findOneForAccountUser($accountUser, $selectRelations);
+        if ($shoppingList && $selectRelations) {
+            $this->findOneByIdWithRelations($shoppingList->getId());
         }
 
         return $shoppingList;

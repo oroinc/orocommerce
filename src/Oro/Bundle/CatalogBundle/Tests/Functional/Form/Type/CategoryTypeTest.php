@@ -39,6 +39,7 @@ class CategoryTypeTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient();
+        $this->client->useHashNavigation(true);
         $this->loadFixtures(['Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData']);
 
         $this->formFactory = $this->getContainer()->get('form.factory');

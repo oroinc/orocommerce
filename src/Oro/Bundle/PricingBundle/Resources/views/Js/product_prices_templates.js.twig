@@ -4,7 +4,7 @@
     </div>
 </script>
 <script type="text/template" id="product-prices-tier-table-template">
-    <table>
+    <table class="product-tier-prices-table">
         <% if (clickable) { %>
         <tr>
             <td colspan="2">
@@ -12,15 +12,15 @@
             </td>
         </tr>
         <% } %>
-        <% _.each(tierPrices, function(prices, unit) { %>
+        <% _.each(prices, function(unitPrices, unit) { %>
         <tr>
             <td colspan="2">
                 <b><%= _.__('oro.product.product_unit.' + unit + '.label.full') %></b>
             </td>
         </tr>
-        <% _.each(prices, function(price) { %>
-        <tr class="<% if (!_.isNull(matchedPrice) && unit === unitCode && parseFloat(price.price) === parseFloat(matchedPrice)) { %>matched-tier-price<% } %>">
-            <td><div class="text-right"><%= price.qty %>:</div></td>
+        <% _.each(unitPrices, function(price) { %>
+        <tr class="<% if (!_.isNull(modelPrice) && unit === modelUnit && parseFloat(price.price) === parseFloat(modelPrice)) { %>matched-tier-price<% } %>">
+            <td><div class="text-right"><%= price.quantity %>:</div></td>
             <td>
                 <div class="text-left">
                     <% if (clickable) { %>

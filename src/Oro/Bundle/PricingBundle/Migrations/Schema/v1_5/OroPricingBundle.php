@@ -27,7 +27,7 @@ class OroPricingBundle implements Migration, DatabasePlatformAwareInterface, Ren
     /**
      * @var AbstractPlatform
      */
-    protected $platform;
+    private $platform;
 
     /**
      * @var RenameExtension
@@ -56,13 +56,22 @@ class OroPricingBundle implements Migration, DatabasePlatformAwareInterface, Ren
         $this->renameIndexes($schema, $queries);
 
         $queries->addPostQuery(new RenameConfigSectionQuery('oro_b2b_pricing', 'oro_pricing'));
+
+        $table = $schema->getTable('oro_price_rule');
+        $table->addColumn('quantity_expression', 'text', ['notnull' => false]);
+        $table->addColumn('currency_expression', 'text', ['notnull' => false]);
+        $table->addColumn('product_unit_expression', 'text', ['notnull' => false]);
+
+        $this->createOroNotificationMessageTable($schema);
+
+        $queries->addQuery(new OroPriceListPriorityQuery());
     }
 
     /**
      * @param Schema $schema
      * @param QueryBag $queries
      */
-    protected function alterOroPriceAttributeTable(Schema $schema, QueryBag $queries)
+    private function alterOroPriceAttributeTable(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable('orob2b_price_attribute_pl');
         $table->addColumn('field_name', 'string', ['length' => 255, 'notnull' => false]);
@@ -85,7 +94,7 @@ class OroPricingBundle implements Migration, DatabasePlatformAwareInterface, Ren
      *
      * @param Schema $schema
      */
-    protected function createOroPriceRuleTable(Schema $schema)
+    private function createOroPriceRuleTable(Schema $schema)
     {
         $table = $schema->createTable('oro_price_rule');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -104,7 +113,7 @@ class OroPricingBundle implements Migration, DatabasePlatformAwareInterface, Ren
      *
      * @param Schema $schema
      */
-    protected function createOroPriceRuleLexemeTable(Schema $schema)
+    private function createOroPriceRuleLexemeTable(Schema $schema)
     {
         $table = $schema->createTable('oro_price_rule_lexeme');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -122,7 +131,7 @@ class OroPricingBundle implements Migration, DatabasePlatformAwareInterface, Ren
      * @param Schema $schema
      * @param QueryBag $queries
      */
-    protected function addOroPriceRuleForeignKeys(Schema $schema, QueryBag $queries)
+    private function addOroPriceRuleForeignKeys(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable('oro_price_rule');
         $table->addForeignKeyConstraint(
@@ -147,7 +156,7 @@ class OroPricingBundle implements Migration, DatabasePlatformAwareInterface, Ren
      *
      * @param Schema $schema
      */
-    protected function addOroPriceRuleLexemeForeignKeys(Schema $schema)
+    private function addOroPriceRuleLexemeForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('oro_price_rule_lexeme');
         $table->addForeignKeyConstraint(
@@ -168,7 +177,7 @@ class OroPricingBundle implements Migration, DatabasePlatformAwareInterface, Ren
     /**
      * @param Schema $schema
      */
-    protected function updateProductPriceTable(Schema $schema)
+    private function updateProductPriceTable(Schema $schema)
     {
         $table = $schema->getTable('orob2b_price_product');
         $table->addColumn('price_rule_id', 'integer', ['notnull' => false]);
@@ -183,7 +192,7 @@ class OroPricingBundle implements Migration, DatabasePlatformAwareInterface, Ren
     /**
      * @param Schema $schema
      */
-    protected function updatePriceListTable(Schema $schema)
+    private function updatePriceListTable(Schema $schema)
     {
         $table = $schema->getTable('orob2b_price_list');
         $table->addColumn('product_assignment_rule', 'text', ['notnull' => false]);
@@ -195,12 +204,35 @@ class OroPricingBundle implements Migration, DatabasePlatformAwareInterface, Ren
      * @param Schema $toSchema
      * @return array
      */
-    protected function getSchemaDiff(Schema $schema, Schema $toSchema)
+    private function getSchemaDiff(Schema $schema, Schema $toSchema)
     {
         $comparator = new Comparator();
         return $comparator->compare($schema, $toSchema)->toSql($this->platform);
     }
 
+    /**
+     * Create oro_notification_message table
+     *
+     * @param Schema $schema
+     */
+    private function createOroNotificationMessageTable(Schema $schema)
+    {
+        $table = $schema->createTable('oro_notification_message');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('message', 'text', []);
+        $table->addColumn('message_status', 'string', ['length' => 255]);
+        $table->addColumn('channel', 'string', ['length' => 255]);
+        $table->addColumn('receiver_entity_fqcn', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('receiver_entity_id', 'integer', ['notnull' => false]);
+        $table->addColumn('is_resolved', 'boolean', []);
+        $table->addColumn('resolved_at', 'datetime', ['notnull' => false, 'comment' => '(DC2Type:datetime)']);
+        $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
+        $table->addColumn('topic', 'string', ['length' => 255]);
+        $table->addIndex(['channel', 'topic'], 'oro_notif_msg_channel', []);
+        $table->addIndex(['receiver_entity_fqcn', 'receiver_entity_id'], 'oro_notif_msg_entity', []);
+        $table->setPrimaryKey(['id']);
+    }
+    
     /**
      * @param Schema $schema
      * @param QueryBag $queries

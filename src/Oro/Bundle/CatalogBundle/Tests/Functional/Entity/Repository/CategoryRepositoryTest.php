@@ -28,6 +28,7 @@ class CategoryRepositoryTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient();
+        $this->client->useHashNavigation(true);
         $this->registry = $this->getContainer()->get('doctrine');
         $this->repository = $this->registry->getRepository('OroCatalogBundle:Category');
         $this->loadFixtures(
@@ -43,7 +44,7 @@ class CategoryRepositoryTest extends WebTestCase
         $this->assertInstanceOf('Oro\Bundle\CatalogBundle\Entity\Category', $root);
 
         $defaultTitle = $root->getDefaultTitle();
-        $this->assertEquals('Master catalog', $defaultTitle->getString());
+        $this->assertEquals('Products categories', $defaultTitle->getString());
     }
 
     public function testGetChildrenWithTitles()

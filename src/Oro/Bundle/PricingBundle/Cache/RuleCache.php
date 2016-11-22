@@ -92,10 +92,14 @@ class RuleCache implements Cache
 
     /**
      * @param array $data
-     * @return QueryBuilder
+     * @return QueryBuilder|bool
      */
     protected function restoreQueryBuilder(array $data)
     {
+        if (empty($data[self::DQL_PARTS_KEY]) || !array_key_exists(self::PARAMETERS_KEY, $data)) {
+            return false;
+        }
+
         /** @var EntityManagerInterface $em */
         $em = $this->registry->getManager();
         $qb = $em->createQueryBuilder();

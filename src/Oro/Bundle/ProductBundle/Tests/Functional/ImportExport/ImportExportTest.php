@@ -29,6 +29,7 @@ class ImportExportTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
     }
 
     /**
@@ -185,7 +186,7 @@ class ImportExportTest extends WebTestCase
                 'success'    => true,
                 'message'    => 'File was successfully imported.',
                 'errorsUrl'  => null,
-                'importInfo' => '1 entities were added, 0 entities were updated',
+                'importInfo' => '1 products were added, 0 products were updated',
             ],
             $data
         );

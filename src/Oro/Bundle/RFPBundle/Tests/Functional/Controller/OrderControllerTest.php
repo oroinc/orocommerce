@@ -17,6 +17,7 @@ class OrderControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
 
         if (!$this->client->getContainer()->hasParameter('oro_order.entity.order.class')) {
             $this->markTestSkipped('OrderBundle disabled');

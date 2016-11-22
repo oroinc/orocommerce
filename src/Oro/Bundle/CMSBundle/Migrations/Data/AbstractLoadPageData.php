@@ -11,7 +11,6 @@ use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\CMSBundle\Entity\Page;
-use Oro\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 
 abstract class AbstractLoadPageData extends AbstractFixture implements ContainerAwareInterface
 {
@@ -73,12 +72,6 @@ abstract class AbstractLoadPageData extends AbstractFixture implements Container
             $page->setContent($row['content']);
             $page->setOrganization($organization);
             $page->setCurrentSlugUrl($row['slug']);
-
-            if (array_key_exists('parent', $row) && array_key_exists($row['parent'], $this->pages)) {
-                /** @var Page $parent */
-                $parent = $this->pages[$row['parent']];
-                $parent->addChildPage($page);
-            }
 
             $pages[$reference] = $page;
         }

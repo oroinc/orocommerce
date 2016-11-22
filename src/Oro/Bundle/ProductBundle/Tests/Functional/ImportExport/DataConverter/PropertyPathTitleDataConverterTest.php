@@ -19,6 +19,7 @@ class PropertyPathTitleDataConverterTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient();
+        $this->client->useHashNavigation(true);
 
         $this->loadFixtures(
             ['Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData']
@@ -27,7 +28,7 @@ class PropertyPathTitleDataConverterTest extends WebTestCase
         $container = $this->getContainer();
 
         $this->converter = new PropertyPathTitleDataConverter(
-            $container->get('oro_importexport.field.field_helper'),
+            $container->get('oro_entity.helper.field_helper'),
             $container->get('oro_importexport.data_converter.relation_calculator')
         );
         $this->converter->setDispatcher($container->get('event_dispatcher'));

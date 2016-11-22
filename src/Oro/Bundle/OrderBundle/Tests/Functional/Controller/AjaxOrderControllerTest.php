@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Functional\Controller;
 
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Entity\AccountUser;
-use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountAddresses;
-use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserAddresses;
+use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountAddresses;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserAddresses;
 use Oro\Bundle\OrderBundle\Form\Type\OrderType;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -19,6 +19,7 @@ class AjaxOrderControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
 
         $this->loadFixtures(
             [

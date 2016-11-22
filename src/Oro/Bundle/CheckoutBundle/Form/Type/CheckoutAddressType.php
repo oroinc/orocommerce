@@ -7,7 +7,7 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
-use Oro\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
+use Oro\Bundle\CustomerBundle\Entity\AccountOwnerAwareInterface;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Form\Type\AbstractOrderAddressType;
@@ -38,10 +38,10 @@ class CheckoutAddressType extends AbstractOrderAddressType
     }
 
     /**
-     * @param array $data
+     * @param array|null $data
      * @return array
      */
-    private function clearCustomFields(array $data)
+    private function clearCustomFields($data)
     {
         if (isset($data['accountAddress']) && $data['accountAddress']) {
             return [

@@ -16,6 +16,7 @@ config:
         'oroproduct/js/app/views/product-quantity-editable-view': 'bundles/oroproduct/js/app/views/product-quantity-editable-view.js'
         'oroproduct/js/app/datagrid/frontend-product-display-options-builder': 'bundles/oroproduct/js/app/datagrid/frontend-product-display-options-builder.js'
         'oroproduct/js/app/views/base-product-view': 'bundles/oroproduct/js/app/views/base-product-view.js'
+        'oroproduct/js/app/views/line-item-product-view': 'bundles/oroproduct/js/app/views/line-item-product-view.js'
         'oroproduct/js/content-processor/product-add-to-dropdown-button': 'bundles/oroproduct/js/content-processor/product-add-to-dropdown-button.js'
         'oroproduct/js/vendors/elevatezoom/jquery-elevatezoom': 'bundles/oroproduct/js/vendors/elevatezoom/jquery-elevatezoom.js'
         'oroproduct/js/app/components/product-image-type-radio-control-component': 'bundles/oroproduct/js/app/components/product-image-type-radio-control-component.js'

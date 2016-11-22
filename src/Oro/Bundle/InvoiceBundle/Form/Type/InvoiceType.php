@@ -8,8 +8,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
-use Oro\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
-use Oro\Bundle\AccountBundle\Form\Type\AccountSelectType;
+use Oro\Bundle\CustomerBundle\Form\Type\AccountUserSelectType;
+use Oro\Bundle\CustomerBundle\Form\Type\AccountSelectType;
 use Oro\Bundle\InvoiceBundle\Entity\Invoice;
 
 class InvoiceType extends AbstractType

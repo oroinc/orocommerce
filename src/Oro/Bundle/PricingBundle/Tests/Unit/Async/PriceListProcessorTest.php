@@ -2,7 +2,10 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Async;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\DBAL\Driver\PDOException;
+use Doctrine\ORM\EntityManagerInterface;
+use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
 use Oro\Bundle\PricingBundle\Async\PriceListProcessor;
 use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
@@ -19,7 +22,6 @@ use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Psr\Log\LoggerInterface;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
@@ -47,12 +49,7 @@ class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
     protected $logger;
 
     /**
-     * @var PriceListProcessor
-     */
-    protected $priceRuleProcessor;
-
-    /**
-     * @var RegistryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $registry;
 
@@ -60,6 +57,16 @@ class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
      * @var CombinedPriceListRepository|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $repository;
+
+    /**
+     * @var DatabaseExceptionHelper|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $databaseExceptionHelper;
+
+    /**
+     * @var PriceListProcessor
+     */
+    protected $priceRuleProcessor;
 
     protected function setUp()
     {
@@ -78,25 +85,39 @@ class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $manager = $this->getMock(ObjectManager::class);
-        $manager->method('getRepository')->willReturn($this->repository);
+        $this->registry = $this->getMock(ManagerRegistry::class);
 
-        $this->registry = $this->getMock(RegistryInterface::class);
-        $this->registry->method('getManagerForClass')->willReturn($manager);
+        $this->databaseExceptionHelper = $this->getMockBuilder(DatabaseExceptionHelper::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->priceRuleProcessor = new PriceListProcessor(
             $this->triggerFactory,
             $this->registry,
             $this->priceResolver,
             $this->eventDispatcher,
-            $this->logger
+            $this->logger,
+            $this->databaseExceptionHelper
         );
     }
 
-    public function testProcessException()
+    public function testProcessInvalidArgumentException()
     {
         $data = ['test' => 1];
         $body = json_encode($data);
+
+        $em = $this->getMock(EntityManagerInterface::class);
+
+        $em->expects($this->once())
+            ->method('beginTransaction');
+
+        $em->expects(($this->once()))
+            ->method('rollback');
+
+        $this->registry->expects($this->once())
+            ->method('getManagerForClass')
+            ->with(CombinedPriceList::class)
+            ->willReturn($em);
 
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
         $message = $this->getMock(MessageInterface::class);
@@ -125,10 +146,109 @@ class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(MessageProcessorInterface::REJECT, $this->priceRuleProcessor->process($message, $session));
     }
 
+    public function testProcessDeadlock()
+    {
+        /** @var PDOException $exception */
+        $exception = $this->getMockBuilder(PDOException::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $em = $this->getMock(EntityManagerInterface::class);
+
+        $em->expects($this->once())
+            ->method('beginTransaction');
+
+        $em->expects(($this->once()))
+            ->method('rollback');
+
+        $this->registry->expects($this->once())
+            ->method('getManagerForClass')
+            ->with(CombinedPriceList::class)
+            ->willReturn($em);
+
+        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
+        $message = $this->getMock(MessageInterface::class);
+        $message->expects($this->any())
+            ->method('getBody')
+            ->willThrowException($exception);
+
+        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
+        $session = $this->getMock(SessionInterface::class);
+
+        $this->logger->expects($this->once())
+            ->method('error')
+            ->with('Unexpected exception occurred during Combined Price Lists build', ['exception' => $exception]);
+
+        $this->triggerFactory->expects($this->never())
+            ->method('createFromArray');
+
+        $this->databaseExceptionHelper->expects($this->once())
+            ->method('isDeadlock')
+            ->willReturn(true);
+
+        $this->assertEquals(MessageProcessorInterface::REQUEUE, $this->priceRuleProcessor->process($message, $session));
+    }
+
+    public function testProcessException()
+    {
+        $exception = new \Exception('Some error');
+
+        $em = $this->getMock(EntityManagerInterface::class);
+
+        $em->expects($this->once())
+            ->method('beginTransaction');
+
+        $em->expects(($this->once()))
+            ->method('rollback');
+
+        $this->registry->expects($this->once())
+            ->method('getManagerForClass')
+            ->with(CombinedPriceList::class)
+            ->willReturn($em);
+
+        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
+        $message = $this->getMock(MessageInterface::class);
+        $message->expects($this->any())
+            ->method('getBody')
+            ->will($this->throwException($exception));
+
+        $this->logger->expects($this->once())
+            ->method('error')
+            ->with('Unexpected exception occurred during Combined Price Lists build', ['exception' => $exception]);
+
+        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
+        $session = $this->getMock(SessionInterface::class);
+
+        $this->databaseExceptionHelper->expects($this->never())
+            ->method('isDeadlock');
+
+        $this->assertEquals(
+            MessageProcessorInterface::REJECT,
+            $this->priceRuleProcessor->process($message, $session)
+        );
+    }
+
     public function testProcess()
     {
         $data = ['test' => 1];
         $body = json_encode($data);
+
+        $em = $this->getMock(EntityManagerInterface::class);
+
+        $em->expects($this->once())
+            ->method('beginTransaction');
+
+        $em->expects(($this->once()))
+            ->method('commit');
+
+        $em->expects($this->any())
+            ->method('getRepository')
+            ->willReturn($this->repository);
+
+        $this->registry->expects($this->any())
+            ->method('getManagerForClass')
+            ->with(CombinedPriceList::class)
+            ->willReturn($em);
 
         /** @var PriceList $priceList */
         $priceList = $this->getEntity(PriceList::class, ['id' => 1]);
@@ -152,7 +272,9 @@ class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
 
         $cplId = 1;
         $cpl = $this->getMock(CombinedPriceList::class);
-        $cpl->method('getId')->willReturn($cplId);
+        $cpl->expects($this->once())
+            ->method('getId')
+            ->willReturn($cplId);
 
         $this->repository->method('getCombinedPriceListsByPriceList')
             ->with($priceList, true)
@@ -172,6 +294,6 @@ class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
 
     public function testGetSubscribedTopics()
     {
-        $this->assertEquals([Topics::PRICE_LIST_CHANGE], $this->priceRuleProcessor->getSubscribedTopics());
+        $this->assertEquals([Topics::RESOLVE_COMBINED_PRICES], $this->priceRuleProcessor->getSubscribedTopics());
     }
 }

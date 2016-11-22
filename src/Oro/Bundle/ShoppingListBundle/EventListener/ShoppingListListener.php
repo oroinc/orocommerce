@@ -5,7 +5,7 @@ namespace Oro\Bundle\ShoppingListBundle\EventListener;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 
-use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class ShoppingListListener

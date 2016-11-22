@@ -155,7 +155,7 @@ class MoneyOrderMethodCheckoutTest extends CheckoutControllerTestCase
         $form = $this->getTransitionForm($crawler);
 
         $values = $this->explodeArrayPaths($form->getValues());
-        $values = $this->setShippingRuleFormData($values);
+        $values = $this->setShippingFormData($crawler, $values);
 
         $crawler = $this->client->request(
             'POST',

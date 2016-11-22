@@ -1,0 +1,50 @@
+{% block _top_nav_logged_user_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' topbar-navigation__item shown-on-desktop'
+    }) %}
+
+    <li {{ block('block_attributes') }}>
+        {% for child in block %}
+            {{ block_widget(child) }}{% if not loop.last %} {% endif %}
+        {% endfor %}
+    </li>
+{% endblock %}
+
+{% block _top_nav_sign_out_item_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' topbar-navigation__item'
+    }) %}
+
+    <li {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </li>
+{% endblock %}
+
+{% block _top_nav_my_account_item_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' topbar-navigation__item shown-on-desktop'
+    }) %}
+
+    <li {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </li>
+{% endblock %}
+
+{% block _top_nav_sign_out_link_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' topbar-navigation__link',
+        'href': path(route_name)
+    }) %}
+
+    <a {{ block('block_attributes') }}>
+        <i class="icon-signout"></i> {{ text|trans }}
+    </a>
+{% endblock %}
+
+{% block _top_nav_my_account_link_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' topbar-navigation__link'
+    }) %}
+
+    {{ block_widget(block, {attr: attr}) }}
+{% endblock %}

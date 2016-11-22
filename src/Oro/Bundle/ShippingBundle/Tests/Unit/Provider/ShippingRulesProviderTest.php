@@ -2,20 +2,20 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Provider;
 
-use Doctrine\Common\Collections\ArrayCollection;
-
-use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Component\Testing\Unit\EntityTrait;
-
+use Oro\Bundle\ShippingBundle\Context\ShippingContext;
+use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingRuleRepository;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRuleDestination;
-use Oro\Bundle\ShippingBundle\Provider\ShippingContextAwareInterface;
+use Oro\Bundle\ShippingBundle\ExpressionLanguage\LineItemDecoratorFactory;
 use Oro\Bundle\ShippingBundle\Provider\ShippingRulesProvider;
-use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\Address;
+use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingAddressStub;
+use Oro\Component\Testing\Unit\EntityTrait;
+use Psr\Log\LoggerInterface;
 
 class ShippingRulesProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -27,16 +27,25 @@ class ShippingRulesProviderTest extends \PHPUnit_Framework_TestCase
     protected $repository;
 
     /**
+     * @var LineItemDecoratorFactory|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $factory;
+
+    /**
+     * @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $logger;
+
+    /**
      * @var ShippingRulesProvider
      */
     protected $provider;
 
-    protected function setUp()
+    public function setUp()
     {
         $doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->provider = new ShippingRulesProvider($doctrineHelper);
 
         $this->repository = $this->getMockBuilder(ShippingRuleRepository::class)
             ->disableOriginalConstructor()->getMock();
@@ -53,41 +62,38 @@ class ShippingRulesProviderTest extends \PHPUnit_Framework_TestCase
             ->method('getEntityManagerForClass')
             ->with('OroShippingBundle:ShippingRule')
             ->willReturn($entityManager);
+
+        $this->factory = $this->getMockBuilder(LineItemDecoratorFactory::class)
+            ->disableOriginalConstructor()->getMock();
+
+        $this->logger = $this->getMockForAbstractClass(LoggerInterface::class);
+
+        $this->provider = new ShippingRulesProvider($doctrineHelper, $this->factory, $this->logger);
     }
 
     /**
      * @dataProvider getApplicableShippingRulesProvider
      *
+     * @param ShippingContextInterface $context
      * @param ShippingRule $shippingRule
-     * @param array $context
-     * @param bool $expectedApplicability
+     * @param bool $isApplicable
      */
     public function testGetApplicableShippingRules(
+        ShippingContextInterface $context,
         ShippingRule $shippingRule,
-        array $context,
-        $expectedApplicability
+        $isApplicable
     ) {
-        /** @var AbstractAddress $shippingAddress */
-        $shippingAddress = $context['shippingAddress'];
-
-        $this->repository->expects($this->once())
+        $this->repository->expects(static::once())
             ->method('getEnabledOrderedRulesByCurrencyAndCountry')
-            ->with($context['currency'], $shippingAddress->getCountry())
+            ->with($context->getCurrency(), $context->getShippingAddress()->getCountryIso2())
             ->willReturn([$shippingRule]);
 
-        $shippingContext = $this->getMock(ShippingContextAwareInterface::class);
-
-        $shippingContext->expects($this->any())
-            ->method('getShippingContext')
-            ->willReturn($context);
-
-        $rules = $this->provider->getApplicableShippingRules($shippingContext);
-
-        if ($expectedApplicability) {
-            $this->assertCount(1, $rules);
-            $this->assertEquals($shippingRule, $rules[0]);
+        $result = $this->provider->getApplicableShippingRules($context);
+        if ($isApplicable) {
+            $this->assertCount(1, $result);
+            $this->assertSame($shippingRule, reset($result));
         } else {
-            $this->assertEmpty($rules);
+            $this->assertEmpty($result);
         }
     }
 
@@ -98,259 +104,299 @@ class ShippingRulesProviderTest extends \PHPUnit_Framework_TestCase
     public function getApplicableShippingRulesProvider()
     {
         return [
-            'condition and currency and empty destinations' => [
-                'data' => $this->createShippingRule([
-                    'name' => 'ShippingRule.1',
-                    'conditions' => 'true',
+            'applicable country' => [
+                'context' => $this->getEntity(ShippingContext::class, [
                     'currency' => 'USD',
+                    'shippingAddress' => $this->getEntity(ShippingAddressStub::class, [
+                        'country' => new Country('US'),
+                    ]),
                 ]),
-                'context' => $this->createContext('USD', 'US'),
-                'expectedApplicability' => true,
+                'shippingRule' => $this->getEntity(ShippingRule::class, [
+                    'destinations' => [
+                        $this->getEntity(ShippingRuleDestination::class, [
+                            'country' => new Country('US')
+                        ])
+                    ]
+                ]),
+                'isApplicable' => true,
+            ],
+            'applicable region' => [
+                'context' => $this->getEntity(ShippingContext::class, [
+                    'currency' => 'EUR',
+                    'shippingAddress' => $this->getEntity(ShippingAddressStub::class, [
+                        'country' => new Country('US'),
+                        'region' => $this->getEntity(Region::class, [
+                            'combinedCode' => 'US-CA',
+                            'code' => 'CA',
+                        ]),
+                        'postalCode' => '90401',
+                    ]),
+                ]),
+                'shippingRule' => $this->getEntity(ShippingRule::class, [
+                    'destinations' => [
+                        $this->getEntity(ShippingRuleDestination::class, [
+                            'country' => new Country('US'),
+                            'region' => $this->getEntity(Region::class, [
+                                'combinedCode' => 'US-CA',
+                                'code' => 'CA',
+                            ]),
+                        ])
+                    ]
+                ]),
+                'isApplicable' => true,
+            ],
+            'applicable postal code' => [
+                'context' => $this->getEntity(ShippingContext::class, [
+                    'currency' => 'USD',
+                    'shippingAddress' => $this->getEntity(ShippingAddressStub::class, [
+                        'country' => new Country('US'),
+                        'region' => $this->getEntity(Region::class, [
+                            'combinedCode' => 'US-CA',
+                            'code' => 'CA',
+                        ]),
+                        'postalCode' => '90401',
+                    ]),
+                ]),
+                'shippingRule' => $this->getEntity(ShippingRule::class, [
+                    'destinations' => [
+                        $this->getEntity(ShippingRuleDestination::class, [
+                            'country' => new Country('US'),
+                            'region' => $this->getEntity(Region::class, [
+                                'combinedCode' => 'US-CA',
+                                'code' => 'CA',
+                            ]),
+                            'postalCode' => '90402, 90401',
+                        ])
+                    ]
+                ]),
+                'isApplicable' => true,
+            ],
+            'not applicable  country' => [
+                'context' => $this->getEntity(ShippingContext::class, [
+                    'currency' => 'EUR',
+                    'shippingAddress' => $this->getEntity(ShippingAddressStub::class, [
+                        'country' => new Country('US'),
+                    ]),
+                ]),
+                'shippingRule' => $this->getEntity(ShippingRule::class, [
+                    'destinations' => [
+                        $this->getEntity(ShippingRuleDestination::class, [
+                            'country' => new Country('FR')
+                        ])
+                    ]
+                ]),
+                'isApplicable' => false,
+            ],
+            'not applicable region' => [
+                'context' => $this->getEntity(ShippingContext::class, [
+                    'currency' => 'USD',
+                    'shippingAddress' => $this->getEntity(ShippingAddressStub::class, [
+                        'country' => new Country('US'),
+                        'region' => $this->getEntity(Region::class, [
+                            'combinedCode' => 'US-CA',
+                            'code' => 'CA',
+                        ]),
+                        'postalCode' => '90401',
+                    ]),
+                ]),
+                'shippingRule' => $this->getEntity(ShippingRule::class, [
+                    'destinations' => [
+                        $this->getEntity(ShippingRuleDestination::class, [
+                            'country' => new Country('US'),
+                            'region' => $this->getEntity(Region::class, [
+                                'combinedCode' => 'US-MI',
+                                'code' => 'MI',
+                            ]),
+                        ])
+                    ]
+                ]),
+                'isApplicable' => false,
+            ],
+            'not applicable postal code' => [
+                'context' => $this->getEntity(ShippingContext::class, [
+                    'currency' => 'USD',
+                    'shippingAddress' => $this->getEntity(ShippingAddressStub::class, [
+                        'country' => new Country('US'),
+                        'region' => $this->getEntity(Region::class, [
+                            'combinedCode' => 'US-CA',
+                            'code' => 'CA',
+                        ]),
+                        'postalCode' => '90401',
+                    ]),
+                ]),
+                'shippingRule' => $this->getEntity(ShippingRule::class, [
+                    'destinations' => [
+                        $this->getEntity(ShippingRuleDestination::class, [
+                            'country' => new Country('US'),
+                            'region' => $this->getEntity(Region::class, [
+                                'combinedCode' => 'US-CA',
+                                'code' => 'CA',
+                            ]),
+                            'postalCode' => '90402, 90403',
+                        ])
+                    ]
+                ]),
+                'isApplicable' => false,
+            ],
+            'condition' => [
+                'context' => $this->getEntity(ShippingContext::class, [
+                    'currency' => 'USD',
+                    'shippingOrigin' => $this->getEntity(ShippingAddressStub::class, [
+                        'region' => $this->getEntity(Region::class, [
+                            'code' => 'CA',
+                        ]),
+                    ]),
+                    'billingAddress' => $this->getEntity(ShippingAddressStub::class, [
+                        'country' => new Country('US'),
+                    ]),
+                    'shippingAddress' => $this->getEntity(ShippingAddressStub::class, [
+                        'country' => new Country('US'),
+                        'region' => $this->getEntity(Region::class, [
+                            'combinedCode' => 'US-CA',
+                            'code' => 'CA',
+                        ]),
+                        'postalCode' => '90401',
+                    ]),
+                    'subtotal' => Price::create(1039.0, 'USD'),
+                    'paymentMethod' => 'integration_payment_method'
+                ]),
+                'shippingRule' => $this->getEntity(ShippingRule::class, [
+                    'conditions' => <<<'EXPRESSION'
+currency = "USD"
+and
+count(lineItems) = 0
+and
+shippingAddress.postalCode = "90401"
+and
+billingAddress.country.iso2Code = "US"
+and
+shippingOrigin.region.code = "CA"
+and
+subtotal.value > 1000
+and
+paymentMethod = "integration_payment_method"
+EXPRESSION
+                    ,
+                    'destinations' => [
+                        $this->getEntity(ShippingRuleDestination::class, [
+                            'country' => new Country('US'),
+                            'region' => $this->getEntity(Region::class, [
+                                'combinedCode' => 'US-CA',
+                                'code' => 'CA',
+                            ]),
+                            'postalCode' => '90401',
+                        ])
+                    ]
+                ]),
+                'isApplicable' => true,
             ],
             'false condition' => [
-                'data' => $this->createShippingRule([
-                    'name' => 'ShippingRule.1',
-                    'conditions' => 'false',
+                'context' => $this->getEntity(ShippingContext::class, [
                     'currency' => 'USD',
+                    'shippingAddress' => $this->getEntity(ShippingAddressStub::class, [
+                        'country' => new Country('US'),
+                    ]),
                 ]),
-                'context' => $this->createContext('USD', 'US'),
-                'expectedApplicability' => false,
+                'shippingRule' => $this->getEntity(ShippingRule::class, [
+                    'conditions' => 'currency = "EUR"',
+                ]),
+                'isApplicable' => false,
             ],
-            'country' => [
-                'data' => $this->createShippingRule([
-                    'name' => 'ShippingRule.1',
-                    'conditions' => null,
+            'unknown parameter condition' => [
+                'context' => $this->getEntity(ShippingContext::class, [
                     'currency' => 'USD',
-                    'destinations' => [
-                        ['country' => 'US'],
-                    ]
+                    'shippingAddress' => $this->getEntity(ShippingAddressStub::class, [
+                        'country' => new Country('US'),
+                    ]),
                 ]),
-                'context' => $this->createContext('USD', 'US'),
-                'expectedApplicability' => true,
-            ],
-            'wrong country' => [
-                'data' => $this->createShippingRule([
-                    'name' => 'ShippingRule.1',
-                    'conditions' => null,
-                    'currency' => 'USD',
-                    'destinations' => [
-                        ['country' => 'FR'],
-                    ]
+                'shippingRule' => $this->getEntity(ShippingRule::class, [
+                    'conditions' => 'unknown = "value"',
                 ]),
-                'context' => $this->createContext('USD', 'US'),
-                'expectedApplicability' => false,
-            ],
-            'several countries' => [
-                'data' => $this->createShippingRule([
-                    'name' => 'ShippingRule.1',
-                    'conditions' => null,
-                    'currency' => 'USD',
-                    'destinations' => [
-                        ['country' => 'FR'],
-                        ['country' => 'US'],
-                    ]
-                ]),
-                'context' => $this->createContext('USD', 'US'),
-                'expectedApplicability' => true,
-            ],
-            'wrong several countries' => [
-                'data' => $this->createShippingRule([
-                    'name' => 'ShippingRule.1',
-                    'conditions' => null,
-                    'currency' => 'USD',
-                    'destinations' => [
-                        ['country' => 'FR'],
-                        ['country' => 'TH'],
-                    ]
-                ]),
-                'context' => $this->createContext('USD', 'US'),
-                'expectedApplicability' => false,
-            ],
-            'region' => [
-                'data' => $this->createShippingRule([
-                    'name' => 'ShippingRule.1',
-                    'conditions' => null,
-                    'currency' => 'USD',
-                    'destinations' => [
-                        ['country' => 'TH', 'region' => 'TH-83',]
-                    ]
-                ]),
-                'context' => $this->createContext('USD', 'TH', 'TH-83'),
-                'expectedApplicability' => true,
-            ],
-            'wrong region' => [
-                'data' => $this->createShippingRule([
-                    'name' => 'ShippingRule.1',
-                    'conditions' => null,
-                    'currency' => 'USD',
-                    'destinations' => [
-                        ['country' => 'TH', 'region' => 'TH-82'],
-                    ]
-                ]),
-                'context' => $this->createContext('USD', 'TH', 'TH-83'),
-                'expectedApplicability' => false,
-            ],
-            'postal code' => [
-                'data' => $this->createShippingRule([
-                    'name' => 'ShippingRule.1',
-                    'conditions' => null,
-                    'currency' => 'USD',
-                    'destinations' => [
-                        ['country' => 'TH', 'region' => 'TH-83', 'postalCode' => '12345']
-                    ]
-                ]),
-                'context' => $this->createContext('USD', 'TH', 'TH-83', '12345'),
-                'expectedApplicability' => true,
-            ],
-            'several postal codes' => [
-                'data' => $this->createShippingRule([
-                    'name' => 'ShippingRule.1',
-                    'conditions' => null,
-                    'currency' => 'USD',
-                    'destinations' => [
-                        ['country' => 'TH', 'region' => 'TH-83', 'postalCode' => '54321, 12345']
-                    ]
-                ]),
-                'context' => $this->createContext('USD', 'TH', 'TH-83', '12345'),
-                'expectedApplicability' => true,
-            ],
-            'wrong postal codes' => [
-                'data' => $this->createShippingRule([
-                    'name' => 'ShippingRule.1',
-                    'conditions' => null,
-                    'currency' => 'USD',
-                    'destinations' => [
-                        ['country' => 'TH', 'region' => 'TH-83', 'postalCode' => '54321, 12345']
-                    ]
-                ]),
-                'context' => $this->createContext('USD', 'TH', 'TH-83', '12346'),
-                'expectedApplicability' => false,
+                'isApplicable' => false,
             ],
         ];
     }
 
-    public function testGetApplicableShippingRulesMultiple()
+    public function testGetApplicableShippingRulesMultipleRules()
     {
-        $context = $this->createContext('USD', 'TH', 'TH-83');
-        /** @var AbstractAddress $shippingAddress */
-        $shippingAddress = $context['shippingAddress'];
-
-        $firstShippingRule = $this->createShippingRule([
-            'name' => 'ShippingRule.1',
-            'conditions' => null,
+        $context = $this->getEntity(ShippingContext::class, [
             'currency' => 'USD',
-            'destinations' => [
-                ['country' => 'TH']
-            ]
-        ]);
-        $secondShippingRule = $this->createShippingRule([
-            'name' => 'ShippingRule.1',
-            'conditions' => null,
-            'currency' => 'USD',
-            'destinations' => [
-                ['country' => 'TH', 'region' => 'TH-83']
-            ]
-        ]);
-        $this->repository->expects($this->once())
-            ->method('getEnabledOrderedRulesByCurrencyAndCountry')
-            ->with($context['currency'], $shippingAddress->getCountry())
-            ->willReturn([$firstShippingRule, $secondShippingRule]);
-
-        $shippingContext = $this->getMock(ShippingContextAwareInterface::class);
-
-        $shippingContext->expects($this->any())
-            ->method('getShippingContext')
-            ->willReturn($context);
-
-        $rules = $this->provider->getApplicableShippingRules($shippingContext);
-
-        $this->assertCount(2, $rules);
-        $this->assertEquals($firstShippingRule, $rules[0]);
-        $this->assertEquals($secondShippingRule, $rules[1]);
-    }
-
-    public function testGetApplicableShippingRulesStopProcessing()
-    {
-        $context = $this->createContext('USD', 'TH');
-        /** @var AbstractAddress $shippingAddress */
-        $shippingAddress = $context['shippingAddress'];
-
-        $firstShippingRule = $this->createShippingRule([
-            'name' => 'ShippingRule.1',
-            'conditions' => null,
-            'currency' => 'USD',
-            'stopProcessing' => true,
-            'destinations' => [
-                ['country' => 'TH']
-            ]
-        ]);
-        $secondShippingRule = $this->createShippingRule([
-            'name' => 'ShippingRule.1',
-            'conditions' => null,
-            'currency' => 'USD',
-            'destinations' => [
-                ['country' => 'TH']
-            ]
-        ]);
-        $this->repository->expects($this->once())
-            ->method('getEnabledOrderedRulesByCurrencyAndCountry')
-            ->with($context['currency'], $shippingAddress->getCountry())
-            ->willReturn([$firstShippingRule, $secondShippingRule]);
-
-        $shippingContext = $this->getMock(ShippingContextAwareInterface::class);
-
-        $shippingContext->expects($this->any())
-            ->method('getShippingContext')
-            ->willReturn($context);
-
-        $rules = $this->provider->getApplicableShippingRules($shippingContext);
-
-        $this->assertCount(1, $rules);
-        $this->assertEquals($firstShippingRule, $rules[0]);
-    }
-
-    /**
-     * @param string $currency
-     * @param string $country
-     * @param string|null $region
-     * @param string|null $postalCode
-     * @return array
-     */
-    protected function createContext($currency, $country, $region = null, $postalCode = null)
-    {
-        return [
-            'currency' => $currency,
-            'shippingAddress' => $this->getEntity(Address::class, [
-                'country' => $this->getEntity(Country::class, ['iso2Code' => $country]),
-                'region' => $region ? $this->getEntity(Region::class, ['code' => $region]) : null,
-                'postalCode' => $postalCode,
+            'shippingAddress' => $this->getEntity(ShippingAddressStub::class, [
+                'country' => new Country('US'),
+                'region' => $this->getEntity(Region::class, [
+                    'combinedCode' => 'US-CA',
+                    'code' => 'CA',
+                ]),
+                'postalCode' => '90401',
             ]),
-        ];
+        ]);
+        $shippingRule1 = $this->getEntity(ShippingRule::class, [
+            'id' => 1,
+            'destinations' => [
+                $this->getEntity(ShippingRuleDestination::class, [
+                    'country' => new Country('US'),
+                    'region' => $this->getEntity(Region::class, [
+                        'combinedCode' => 'US-CA',
+                        'code' => 'CA',
+                    ]),
+                    'postalCode' => '90402, 90401',
+                ])
+            ]
+        ]);
+        $shippingRule2 = $this->getEntity(ShippingRule::class, [
+            'id' => 2,
+            'destinations' => [
+                $this->getEntity(ShippingRuleDestination::class, [
+                    'country' => new Country('FR'),
+                ])
+            ]
+        ]);
+        $shippingRule3 = $this->getEntity(ShippingRule::class, [
+            'id' => 3,
+            'destinations' => [
+                $this->getEntity(ShippingRuleDestination::class, [
+                    'country' => new Country('US'),
+                    'region' => $this->getEntity(Region::class, [
+                        'combinedCode' => 'US-CA',
+                        'code' => 'CA',
+                    ]),
+                    'postalCode' => '90401',
+                ])
+            ]
+        ]);
+
+        $this->repository->expects(static::once())
+            ->method('getEnabledOrderedRulesByCurrencyAndCountry')
+            ->with($context->getCurrency(), $context->getShippingAddress()->getCountryIso2())
+            ->willReturn([$shippingRule1, $shippingRule2, $shippingRule3]);
+
+        $this->assertSame([$shippingRule1, $shippingRule3], $this->provider->getApplicableShippingRules($context));
     }
 
-    /**
-     * @param array $data
-     * @return ShippingRule
-     */
-    protected function createShippingRule(array $data)
+    public function testGetApplicableShippingRulesLogger()
     {
-        if (array_key_exists('destinations', $data)) {
-            $data['destinations'] = new ArrayCollection(array_map(function ($destinationData) {
-                $region = null;
-                if (array_key_exists('region', $destinationData)) {
-                    $region = $this->getEntity(Region::class, ['code' => $destinationData['region']]);
-                }
-                $postalCode = null;
-                if (array_key_exists('postalCode', $destinationData)) {
-                    $postalCode = $destinationData['postalCode'];
-                }
-                return $this->getEntity(ShippingRuleDestination::class, [
-                    'country' => $this->getEntity(Country::class, ['iso2Code' => $destinationData['country']]),
-                    'region' => $region,
-                    'postalCode' => $postalCode,
-                ]);
-            }, $data['destinations']));
-        }
-        return $this->getEntity(ShippingRule::class, $data);
+        $context = $this->getEntity(ShippingContext::class, [
+            'currency' => 'USD',
+            'shippingAddress' => $this->getEntity(ShippingAddressStub::class, [
+                'country' => new Country('US'),
+            ]),
+        ]);
+
+        $this->repository->expects(static::once())
+            ->method('getEnabledOrderedRulesByCurrencyAndCountry')
+            ->with($context->getCurrency(), $context->getShippingAddress()->getCountryIso2())
+            ->willReturn([
+                $this->getEntity(ShippingRule::class, [
+                    'id' => 20,
+                    'conditions' => 'unknown = "value"',
+                ])
+            ]);
+
+        $this->logger->expects(static::once())
+            ->method('error')
+            ->with('Shipping rule condition evaluation error: Undefined index: unknown', ['ShippingRule::$id' => 20]);
+
+        $result = $this->provider->getApplicableShippingRules($context);
+        $this->assertEmpty($result);
     }
 }

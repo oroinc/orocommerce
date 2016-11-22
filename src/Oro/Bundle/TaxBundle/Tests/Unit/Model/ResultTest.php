@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\AccountBundle\Tests\Unit\Entity;
+namespace Oro\Bundle\CustomerBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\TaxBundle\Model\Result;
 use Oro\Bundle\TaxBundle\Model\ResultElement;
@@ -107,19 +107,23 @@ class ResultTest extends \PHPUnit_Framework_TestCase
     public function testItemsDropped()
     {
         $result = $this->createResultModel();
+        $result->lockResult();
 
         /** @var Result $newResult */
         $newResult = unserialize(serialize($result));
         $this->assertEquals([], $newResult->getItems());
+        $this->assertFalse($newResult->isResultLocked());
     }
 
     public function testSerializeWithoutItems()
     {
         $result = $this->createResultModel();
         $result->unsetOffset(Result::TAXES);
+        $result->lockResult();
 
         $newResult = unserialize(serialize($result));
         $this->assertEquals([], $newResult->getItems());
+        $this->assertFalse($newResult->isResultLocked());
     }
 
     public function testLock()

@@ -54,7 +54,7 @@ class PriceListTriggerHandlerTest extends \PHPUnit_Framework_TestCase
             ->with($priceList, $product)
             ->willReturn($trigger);
 
-        $this->handler->addTriggersForPriceList(Topics::CALCULATE_RULE, $priceList, $product);
+        $this->handler->addTriggerForPriceList(Topics::RESOLVE_PRICE_RULES, $priceList, $product);
         $this->assertAttributeCount(1, 'scheduledTriggers', $this->handler);
     }
 
@@ -70,7 +70,7 @@ class PriceListTriggerHandlerTest extends \PHPUnit_Framework_TestCase
             ->with($priceList, $product)
             ->willReturn($trigger);
 
-        $this->handler->addTriggersForPriceLists(Topics::CALCULATE_RULE, [$priceList], $product);
+        $this->handler->addTriggersForPriceLists(Topics::RESOLVE_PRICE_RULES, [$priceList], $product);
         $this->assertAttributeCount(1, 'scheduledTriggers', $this->handler);
     }
 
@@ -85,7 +85,7 @@ class PriceListTriggerHandlerTest extends \PHPUnit_Framework_TestCase
             ->with($priceList)
             ->willReturn($trigger);
 
-        $this->handler->addTriggersForPriceList(Topics::CALCULATE_RULE, $priceList);
+        $this->handler->addTriggerForPriceList(Topics::RESOLVE_PRICE_RULES, $priceList);
         $this->assertAttributeCount(1, 'scheduledTriggers', $this->handler);
     }
 
@@ -100,7 +100,7 @@ class PriceListTriggerHandlerTest extends \PHPUnit_Framework_TestCase
             ->with($priceList)
             ->willReturn($trigger);
 
-        $this->handler->addTriggersForPriceLists(Topics::CALCULATE_RULE, [$priceList]);
+        $this->handler->addTriggersForPriceLists(Topics::RESOLVE_PRICE_RULES, [$priceList]);
         $this->assertAttributeCount(1, 'scheduledTriggers', $this->handler);
     }
 
@@ -116,8 +116,8 @@ class PriceListTriggerHandlerTest extends \PHPUnit_Framework_TestCase
             ->with($priceList)
             ->willReturn($trigger);
 
-        $this->handler->addTriggersForPriceList(Topics::CALCULATE_RULE, $priceList, $product);
-        $this->handler->addTriggersForPriceList(Topics::CALCULATE_RULE, $priceList, $product);
+        $this->handler->addTriggerForPriceList(Topics::RESOLVE_PRICE_RULES, $priceList, $product);
+        $this->handler->addTriggerForPriceList(Topics::RESOLVE_PRICE_RULES, $priceList, $product);
 
         $this->assertAttributeCount(1, 'scheduledTriggers', $this->handler);
     }
@@ -140,8 +140,8 @@ class PriceListTriggerHandlerTest extends \PHPUnit_Framework_TestCase
                 ]
             );
 
-        $this->handler->addTriggersForPriceList(Topics::CALCULATE_RULE, $priceList);
-        $this->handler->addTriggersForPriceList(Topics::CALCULATE_RULE, $priceList, $product);
+        $this->handler->addTriggerForPriceList(Topics::RESOLVE_PRICE_RULES, $priceList);
+        $this->handler->addTriggerForPriceList(Topics::RESOLVE_PRICE_RULES, $priceList, $product);
 
         $this->assertAttributeCount(1, 'scheduledTriggers', $this->handler);
     }
@@ -164,8 +164,8 @@ class PriceListTriggerHandlerTest extends \PHPUnit_Framework_TestCase
                 ]
             );
 
-        $this->handler->addTriggersForPriceList(Topics::CALCULATE_RULE, $priceList, $product);
-        $this->handler->addTriggersForPriceList(Topics::CALCULATE_RULE, $priceList);
+        $this->handler->addTriggerForPriceList(Topics::RESOLVE_PRICE_RULES, $priceList, $product);
+        $this->handler->addTriggerForPriceList(Topics::RESOLVE_PRICE_RULES, $priceList);
 
         $this->assertAttributeCount(1, 'scheduledTriggers', $this->handler);
     }
@@ -190,15 +190,15 @@ class PriceListTriggerHandlerTest extends \PHPUnit_Framework_TestCase
                 ]
             );
 
-        $this->handler->addTriggersForPriceList(Topics::CALCULATE_RULE, $priceList, $product1);
-        $this->handler->addTriggersForPriceList(Topics::CALCULATE_RULE, $priceList, $product2);
+        $this->handler->addTriggerForPriceList(Topics::RESOLVE_PRICE_RULES, $priceList, $product1);
+        $this->handler->addTriggerForPriceList(Topics::RESOLVE_PRICE_RULES, $priceList, $product2);
 
         $this->assertAttributeCount(1, 'scheduledTriggers', $this->handler);
         $this->messageProducer->expects($this->exactly(2))
             ->method('send')
             ->withConsecutive(
-                [Topics::CALCULATE_RULE, null],
-                [Topics::CALCULATE_RULE, null]
+                [Topics::RESOLVE_PRICE_RULES, null],
+                [Topics::RESOLVE_PRICE_RULES, null]
             );
 
         $this->handler->sendScheduledTriggers();
@@ -212,7 +212,7 @@ class PriceListTriggerHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->triggerFactory->expects($this->never())->method('create');
 
-        $this->handler->addTriggersForPriceList(Topics::CALCULATE_RULE, $priceList);
+        $this->handler->addTriggerForPriceList(Topics::RESOLVE_PRICE_RULES, $priceList);
         $this->assertAttributeEmpty('scheduledTriggers', $this->handler);
     }
 
@@ -242,9 +242,9 @@ class PriceListTriggerHandlerTest extends \PHPUnit_Framework_TestCase
                 ]
             );
 
-        $this->handler->addTriggersForPriceList(Topics::CALCULATE_RULE, $priceList1, $product1);
-        $this->handler->addTriggersForPriceList(Topics::CALCULATE_RULE, $priceList1);
-        $this->handler->addTriggersForPriceList(Topics::CALCULATE_RULE, $priceList2, $product2);
+        $this->handler->addTriggerForPriceList(Topics::RESOLVE_PRICE_RULES, $priceList1, $product1);
+        $this->handler->addTriggerForPriceList(Topics::RESOLVE_PRICE_RULES, $priceList1);
+        $this->handler->addTriggerForPriceList(Topics::RESOLVE_PRICE_RULES, $priceList2, $product2);
 
         $this->assertAttributeCount(1, 'scheduledTriggers', $this->handler);
 
@@ -265,8 +265,8 @@ class PriceListTriggerHandlerTest extends \PHPUnit_Framework_TestCase
         $this->messageProducer->expects($this->exactly(2))
             ->method('send')
             ->withConsecutive(
-                [Topics::CALCULATE_RULE, $trigger1Data],
-                [Topics::CALCULATE_RULE, $trigger3Data]
+                [Topics::RESOLVE_PRICE_RULES, $trigger1Data],
+                [Topics::RESOLVE_PRICE_RULES, $trigger3Data]
             );
 
         $this->handler->sendScheduledTriggers();

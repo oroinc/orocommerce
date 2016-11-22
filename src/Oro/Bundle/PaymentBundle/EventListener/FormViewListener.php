@@ -7,8 +7,8 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\PaymentBundle\Entity\Repository\PaymentTermRepository;
 
 class FormViewListener
@@ -63,7 +63,7 @@ class FormViewListener
 
         $accountId = (int)$request->get('id');
         /** @var Account $account */
-        $account = $this->doctrineHelper->getEntityReference('OroAccountBundle:Account', $accountId);
+        $account = $this->doctrineHelper->getEntityReference('OroCustomerBundle:Account', $accountId);
 
         $paymentTermRepository = $this->getPaymentTermRepository();
         $paymentTerm = $paymentTermRepository->getOnePaymentTermByAccount($account);
@@ -127,7 +127,7 @@ class FormViewListener
 
         $groupId = (int)$request->get('id');
         /** @var AccountGroup $group */
-        $group = $this->doctrineHelper->getEntityReference('OroAccountBundle:AccountGroup', $groupId);
+        $group = $this->doctrineHelper->getEntityReference('OroCustomerBundle:AccountGroup', $groupId);
         $paymentTermRepository = $this->getPaymentTermRepository();
         $paymentTerm = $paymentTermRepository->getOnePaymentTermByAccountGroup($group);
 

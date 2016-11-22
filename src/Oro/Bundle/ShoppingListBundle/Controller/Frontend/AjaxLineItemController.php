@@ -189,10 +189,11 @@ class AjaxLineItemController extends Controller
         $link = $this->get('router')->generate('oro_shopping_list_frontend_view', ['id' => $shoppingList->getId()]);
 
         $translator = $this->get('translator');
+        $label = htmlspecialchars($shoppingList->getLabel());
 
         return $translator->trans(
             $translationKey,
-            ['%shoppinglist%' => sprintf('<a href="%s">%s</a>', $link, $shoppingList->getLabel())]
+            ['%shoppinglist%' => sprintf('<a href="%s">%s</a>', $link, $label)]
         );
     }
 

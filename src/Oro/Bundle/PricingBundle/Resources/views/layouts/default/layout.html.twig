@@ -36,7 +36,7 @@
             subtotalTemplate: '#frontend-subtotals-template',
             template: '#frontend-totals-template',
         }|merge(selectors|default({})),
-        entityClassName: entityClassName,
+        entityClassName: oro_url_class_name(entityClassName),
         entityId: entityId,
         skipMaskView: skipMaskView,
         data: totals

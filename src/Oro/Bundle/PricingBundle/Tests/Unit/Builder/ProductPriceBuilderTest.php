@@ -81,8 +81,8 @@ class ProductPriceBuilderTest extends \PHPUnit_Framework_TestCase
             ->method($this->anything());
 
         $this->priceListTriggerHandler->expects($this->once())
-            ->method('addTriggersForPriceList')
-            ->with(Topics::PRICE_LIST_CHANGE, $priceList, $product);
+            ->method('addTriggerForPriceList')
+            ->with(Topics::RESOLVE_COMBINED_PRICES, $priceList, $product);
 
         $this->productPriceBuilder->buildByPriceList($priceList, $product);
     }
@@ -102,8 +102,8 @@ class ProductPriceBuilderTest extends \PHPUnit_Framework_TestCase
 
         $product = null;
         $this->priceListTriggerHandler->expects($this->once())
-            ->method('addTriggersForPriceList')
-            ->with(Topics::PRICE_LIST_CHANGE, $priceList, $product);
+            ->method('addTriggerForPriceList')
+            ->with(Topics::RESOLVE_COMBINED_PRICES, $priceList, $product);
 
         $this->productPriceBuilder->buildByPriceList($priceList);
     }
@@ -140,8 +140,8 @@ class ProductPriceBuilderTest extends \PHPUnit_Framework_TestCase
             );
 
         $this->priceListTriggerHandler->expects($this->once())
-            ->method('addTriggersForPriceList')
-            ->with(Topics::PRICE_LIST_CHANGE, $priceList, $product);
+            ->method('addTriggerForPriceList')
+            ->with(Topics::RESOLVE_COMBINED_PRICES, $priceList, $product);
 
         $this->productPriceBuilder->buildByPriceList($priceList, $product);
     }

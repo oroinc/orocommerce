@@ -1,0 +1,4 @@
+oro_ups:
+    resource:     "@OroUPSBundle/Controller/AjaxUPSController.php"
+    type:         annotation
+    prefix:       /ups

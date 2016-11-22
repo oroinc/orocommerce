@@ -155,7 +155,7 @@ class BaseProductPrice implements ProductUnitHolderInterface, ProductHolderInter
 
     /**
      * @param Product $product
-     * @return ProductPrice
+     * @return $this
      */
     public function setProduct(Product $product)
     {
@@ -175,7 +175,7 @@ class BaseProductPrice implements ProductUnitHolderInterface, ProductHolderInter
 
     /**
      * @param BasePriceList $priceList
-     * @return ProductPrice
+     * @return $this
      */
     public function setPriceList(BasePriceList $priceList)
     {
@@ -194,7 +194,7 @@ class BaseProductPrice implements ProductUnitHolderInterface, ProductHolderInter
 
     /**
      * @param float $quantity
-     * @return ProductPrice
+     * @return $this
      */
     public function setQuantity($quantity)
     {
@@ -221,7 +221,7 @@ class BaseProductPrice implements ProductUnitHolderInterface, ProductHolderInter
 
     /**
      * @param ProductUnit $unit
-     * @return ProductPrice
+     * @return $this
      */
     public function setUnit(ProductUnit $unit)
     {
@@ -232,7 +232,7 @@ class BaseProductPrice implements ProductUnitHolderInterface, ProductHolderInter
 
     /**
      * @param Price $price
-     * @return ProductPrice
+     * @return $this
      */
     public function setPrice(Price $price)
     {

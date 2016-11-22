@@ -11,7 +11,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
-use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -22,7 +22,7 @@ class ShoppingListController extends Controller
 {
     /**
      * @Route("/{id}", name="oro_shopping_list_frontend_view", defaults={"id" = null}, requirements={"id"="\d+"})
-     * @Layout(vars={"title"})
+     * @Layout
      * @Acl(
      *      id="oro_shopping_list_frontend_view",
      *      type="entity",
@@ -50,31 +50,14 @@ class ShoppingListController extends Controller
         if ($shoppingList) {
             $title = $shoppingList->getLabel();
             $totalWithSubtotalsAsArray = $this->getTotalProcessor()->getTotalWithSubtotalsAsArray($shoppingList);
-
-            $lineItems = $shoppingList->getLineItems();
-
-            if (!empty($lineItems)) {
-                $products = [];
-                foreach ($lineItems as $lineItem) {
-                    /** @var LineItem $lineItem */
-                    $products[]['productSku'] = $lineItem->getProduct()->getSku();
-                }
-                if (!empty($this->container)) {
-                    $shoppingList->setIsAllowedRFP(
-                        $this->container
-                            ->get('oro_rfp.form.type.extension.frontend_request_data_storage')
-                            ->isAllowedRFP($products)
-                    );
-                }
-            }
         } else {
             $title = null;
             $totalWithSubtotalsAsArray = [];
         }
 
         return [
-            'title' => $title,
             'data' => [
+                'title' => $title,
                 'entity' => $shoppingList,
                 'totals' => [
                     'identifier' => 'totals',

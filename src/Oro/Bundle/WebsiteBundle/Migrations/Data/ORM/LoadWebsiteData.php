@@ -45,7 +45,16 @@ class LoadWebsiteData extends AbstractFixture implements DependentFixtureInterfa
     public function load(ObjectManager $manager)
     {
         /** @var OrganizationInterface $organization */
-        $organization = $this->getReference('default_organization');
+        if ($this->hasReference('default_organization')) {
+            $organization = $this->getReference('default_organization');
+        } else {
+            /**
+             * Get first organization when install OroCommerce over OroCRM
+             */
+            $organization = $manager
+                ->getRepository('OroOrganizationBundle:Organization')
+                ->getFirst();
+        }
 
         $businessUnit = $manager
             ->getRepository('OroOrganizationBundle:BusinessUnit')

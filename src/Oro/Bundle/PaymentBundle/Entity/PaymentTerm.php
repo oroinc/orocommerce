@@ -8,8 +8,8 @@ use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 
 /**
  * @ORM\Table(name="oro_payment_term")
@@ -62,7 +62,7 @@ class PaymentTerm
     /**
      * @var AccountGroup[]|Collection
      *
-     * @ORM\ManyToMany(targetEntity="Oro\Bundle\AccountBundle\Entity\AccountGroup")
+     * @ORM\ManyToMany(targetEntity="Oro\Bundle\CustomerBundle\Entity\AccountGroup")
      * @ORM\JoinTable(
      *      name="oro_payment_term_to_acc_grp",
      *      joinColumns={
@@ -78,7 +78,7 @@ class PaymentTerm
     /**
      * @var Account[]|Collection
      *
-     * @ORM\ManyToMany(targetEntity="Oro\Bundle\AccountBundle\Entity\Account")
+     * @ORM\ManyToMany(targetEntity="Oro\Bundle\CustomerBundle\Entity\Account")
      * @ORM\JoinTable(
      *      name="oro_payment_term_to_account",
      *      joinColumns={

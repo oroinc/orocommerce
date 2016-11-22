@@ -64,9 +64,7 @@
              data-page-component-options="{{ {
                  view: 'oroinvoice/js/app/views/invoice-line-items-view',
                  tierPrices: tierPrices|default({}),
-                 matchedPrices: matchedPrices|default({}),
                  tierPricesRoute: 'oro_pricing_price_by_account',
-                 matchedPricesRoute: 'oro_pricing_matching_price',
                  currency: entity.currency,
                  account: entity.account is null ? null : entity.account.id
              }|json_encode }}"
@@ -86,7 +84,7 @@
                     account: 'input[name$="[account]"]'
                 }
             }|json_encode }}">
-            <div data-page-component-module="oroaccount/js/app/components/account-selection-component">
+            <div data-page-component-module="orocustomer/js/app/components/account-selection-component">
                 {{ form_row(form.account) }}
                 {{ form_row(form.accountUser) }}
             </div>

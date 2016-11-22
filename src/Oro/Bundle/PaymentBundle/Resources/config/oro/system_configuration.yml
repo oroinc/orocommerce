@@ -2,7 +2,7 @@ system_configuration:
     groups:
         payment:
             title: oro.payment.system_configuration.groups.payment.title
-        general:
+        payment_general:
             title: oro.payment.system_configuration.groups.general.title
         merchant_location:
             title: oro.payment.system_configuration.groups.merchant_location.title
@@ -18,6 +18,7 @@ system_configuration:
             type: oro_locale_country
             options:
                 label: oro.payment.system_configuration.fields.merchant_country.label
+                placeholder: oro.payment.system_configuration.fields.merchant_country.placeholder
 
         # Payment Term
         oro_payment.payment_term_enabled:
@@ -99,7 +100,7 @@ system_configuration:
                     payment:
                         priority: 400
                         children:
-                            general:
+                            payment_general:
                                 priority: 100
                                 children:
                                     merchant_location:

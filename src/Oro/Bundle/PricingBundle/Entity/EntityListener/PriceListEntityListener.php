@@ -6,12 +6,14 @@ use Doctrine\Common\Cache\Cache;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Model\PriceListRelationTriggerHandler;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
+use Oro\Bundle\PricingBundle\Model\PriceRuleLexemeTriggerHandler;
 
 class PriceListEntityListener
 {
-    const FIELD_PRODUCT_ASSIGNMENT_RULES = 'productAssignmentRule';
+    const FIELD_PRODUCT_ASSIGNMENT_RULE = 'productAssignmentRule';
 
     /**
      * @var PriceListRelationTriggerHandler
@@ -26,21 +28,29 @@ class PriceListEntityListener
     /**
      * @var PriceListTriggerHandler
      */
-    protected $priceRuleChangeTriggerHandler;
+    protected $priceListTriggerHandler;
+
+    /**
+     * @var PriceRuleLexemeTriggerHandler
+     */
+    protected $priceRuleLexemeTriggerHandler;
 
     /**
      * @param PriceListRelationTriggerHandler $triggerHandler
      * @param Cache $cache
-     * @param PriceListTriggerHandler $priceRuleChangeTriggerHandler
+     * @param PriceListTriggerHandler $priceListTriggerHandler
+     * @param PriceRuleLexemeTriggerHandler $priceRuleLexemeTriggerHandler
      */
     public function __construct(
         PriceListRelationTriggerHandler $triggerHandler,
         Cache $cache,
-        PriceListTriggerHandler $priceRuleChangeTriggerHandler
+        PriceListTriggerHandler $priceListTriggerHandler,
+        PriceRuleLexemeTriggerHandler $priceRuleLexemeTriggerHandler
     ) {
         $this->triggerHandler = $triggerHandler;
         $this->cache = $cache;
-        $this->priceRuleChangeTriggerHandler = $priceRuleChangeTriggerHandler;
+        $this->priceListTriggerHandler = $priceListTriggerHandler;
+        $this->priceRuleLexemeTriggerHandler = $priceRuleLexemeTriggerHandler;
     }
 
     /**
@@ -51,22 +61,32 @@ class PriceListEntityListener
      */
     public function preUpdate(PriceList $priceList, PreUpdateEventArgs $event)
     {
-        if ($event->hasChangedField(self::FIELD_PRODUCT_ASSIGNMENT_RULES)) {
-            $this->clearCache($priceList);
+        if ($event->hasChangedField(self::FIELD_PRODUCT_ASSIGNMENT_RULE)) {
+            $this->clearAssignmentRuleCache($priceList);
             $priceList->setActual(false);
-            $this->priceRuleChangeTriggerHandler->addTriggersForPriceList(Topics::CALCULATE_RULE, $priceList);
+            $this->priceListTriggerHandler
+                ->addTriggerForPriceList(Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS, $priceList);
+
+            $this->scheduleDependentPriceListsUpdate($priceList);
         }
     }
 
     /**
-     * Recalculate Combined Price Lists on price list remove
-     *
      * @param PriceList $priceList
      */
     public function preRemove(PriceList $priceList)
     {
-        $this->clearCache($priceList);
+        // Remove caches
+        $this->clearAssignmentRuleCache($priceList);
+        foreach ($priceList->getPriceRules() as $priceRule) {
+            $this->clearPriceRuleCache($priceRule);
+        }
+
+        // Recalculate Combined Price Lists
         $this->triggerHandler->handleFullRebuild();
+
+        // Schedule dependent price lists recalculation
+        $this->scheduleDependentPriceListsUpdate($priceList);
     }
 
     /**
@@ -76,15 +96,55 @@ class PriceListEntityListener
     {
         if ($priceList->getProductAssignmentRule()) {
             $priceList->setActual(false);
-            $this->priceRuleChangeTriggerHandler->addTriggersForPriceList(Topics::CALCULATE_RULE, $priceList);
+            $this->priceListTriggerHandler
+                ->addTriggerForPriceList(Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS, $priceList);
         }
     }
 
     /**
      * @param PriceList $priceList
      */
-    protected function clearCache(PriceList $priceList)
+    protected function clearAssignmentRuleCache(PriceList $priceList)
     {
         $this->cache->delete('ar_' . $priceList->getId());
+    }
+
+    /**
+     * @param PriceRule $priceRule
+     */
+    protected function clearPriceRuleCache(PriceRule $priceRule)
+    {
+        $this->cache->delete('pr_' . $priceRule->getId());
+    }
+
+    /**
+     * @param PriceList $priceList
+     */
+    protected function scheduleDependentPriceListsUpdate(PriceList $priceList)
+    {
+        $lexemes = $this->priceRuleLexemeTriggerHandler->findEntityLexemes(
+            PriceList::class,
+            [self::FIELD_PRODUCT_ASSIGNMENT_RULE],
+            $priceList->getId()
+        );
+
+        if (count($lexemes) > 0) {
+            $dependentPriceLists = [];
+            foreach ($lexemes as $lexeme) {
+                $dependentPriceList = $lexeme->getPriceList();
+                $dependentPriceLists[$dependentPriceList->getId()] = $dependentPriceList;
+
+                if ($lexeme->getPriceRule()) {
+                    $this->clearPriceRuleCache($lexeme->getPriceRule());
+                } else {
+                    $this->clearAssignmentRuleCache($dependentPriceList);
+                }
+            }
+            $this->priceRuleLexemeTriggerHandler->addTriggersByLexemes($lexemes);
+
+            foreach ($dependentPriceLists as $dependentPriceList) {
+                $this->scheduleDependentPriceListsUpdate($dependentPriceList);
+            }
+        }
     }
 }

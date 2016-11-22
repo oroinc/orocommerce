@@ -14,6 +14,7 @@ class RedirectControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateWsseAuthHeader());
+        $this->client->useHashNavigation(true);
     }
 
     /**

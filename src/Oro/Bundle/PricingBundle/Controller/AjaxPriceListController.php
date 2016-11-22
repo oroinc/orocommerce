@@ -36,7 +36,6 @@ class AjaxPriceListController extends Controller
                     ]
                 )
             ];
-
         } catch (\Exception $e) {
             $this->get('logger')->error(
                 sprintf(

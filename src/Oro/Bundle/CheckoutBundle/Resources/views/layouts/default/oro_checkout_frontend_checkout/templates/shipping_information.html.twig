@@ -34,7 +34,9 @@
                     {{ form_row(form.ship_to_billing_address) }}
                 </fieldset>
             {% endif %}
-            {{ form_row(form.state_token) }}
+            {%  if  form.state_token is defined %}
+                {{ form_row(form.state_token) }}
+            {% endif %}
         </div>
     {% endif %}
 {%- endblock %}

@@ -48,6 +48,7 @@ class CategoryControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
         $this->loadFixtures([
             'Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData',
             'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData'

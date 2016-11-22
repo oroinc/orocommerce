@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ShoppingListBundle\DataProvider;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
@@ -84,15 +84,15 @@ class ProductShoppingListsDataProvider
             $productShoppingLists = isset($shoppingLists[$productId]) ? $shoppingLists[$productId] : [];
             if (!isset($productShoppingLists[$shoppingListId])) {
                 $productShoppingLists[$shoppingListId] = [
-                    'shopping_list_id' => $shoppingListId,
-                    'shopping_list_label' => $shoppingList->getLabel(),
+                    'id' => $shoppingListId,
+                    'label' => $shoppingList->getLabel(),
                     'is_current' => $shoppingList->isCurrent(),
                     'line_items' => [],
                 ];
             }
 
             $productShoppingLists[$shoppingListId]['line_items'][] = [
-                'line_item_id' => $lineItem->getId(),
+                'id' => $lineItem->getId(),
                 'unit' => $lineItem->getProductUnitCode(),
                 'quantity' => $lineItem->getQuantity()
             ];

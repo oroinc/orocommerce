@@ -3,7 +3,7 @@
 namespace Oro\Bundle\TaxBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\TaxBundle\Entity\AccountTaxCode;
 use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadAccountTaxCodes;
 
@@ -17,10 +17,11 @@ class AccountGroupControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
 
         $this->loadFixtures(
             [
-                'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups',
+                'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups',
                 'Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadAccountTaxCodes',
             ]
         );
@@ -28,7 +29,7 @@ class AccountGroupControllerTest extends WebTestCase
 
     public function testCreate()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('oro_account_group_create'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_customer_account_group_create'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
@@ -49,14 +50,14 @@ class AccountGroupControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
 
-        $this->assertContains('Account group has been saved', $html);
+        $this->assertContains('Customer group has been saved', $html);
         $this->assertContains(self::ACCOUNT_GROUP_NAME, $html);
         $this->assertContains($accountTaxCode->getCode(), $html);
 
         /** @var AccountGroup $taxAccountGroup */
         $taxAccountGroup = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroAccountBundle:AccountGroup')
-            ->getRepository('OroAccountBundle:AccountGroup')
+            ->getManagerForClass('OroCustomerBundle:AccountGroup')
+            ->getRepository('OroCustomerBundle:AccountGroup')
             ->findOneBy(['name' => self::ACCOUNT_GROUP_NAME]);
         $this->assertNotEmpty($taxAccountGroup);
 
@@ -71,7 +72,7 @@ class AccountGroupControllerTest extends WebTestCase
     {
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('oro_account_group_view', ['id' => $id])
+            $this->getUrl('oro_customer_account_group_view', ['id' => $id])
         );
 
         $result = $this->client->getResponse();

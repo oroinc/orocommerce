@@ -34,6 +34,7 @@ oro:
         checkout_type.label: Checkout Type
         line_items_count.label: Items
         started_from.label: Started From
+        order_history.label: Order History
 
         basecheckout:
             entity_label: Base Checkout
@@ -97,8 +98,6 @@ oro:
             step.label: '%step_label%'
 
         workflow:
-            condition:
-                shipping_method_supports.message: Shipping Method is not supported
             view_options.label: View Options for this Order
             unavailable_transition.message: 'This action is not available, reason:'
             b2b_flow_checkout:
@@ -161,6 +160,13 @@ oro:
 
         workflow.condition:
             order_line_item_has_count.message: No products can be added to this order. Please create an RFQ to request price.
+            payment_method_is_not_applicable.message: |
+                Selected payment method is disabled or not applicable.
+                Please choose another payment method.
+            payment_method_is_not_applicable_please_return_to_payment_step.message: |
+                Selected payment method is disabled or not applicable.
+                Please return to the payment method selection step
+                and choose another payment method.
             content_of_order_was_changed.message: |-
                 There was a change to the contents of your order.
                 Please review the order information before proceeding to the next step.

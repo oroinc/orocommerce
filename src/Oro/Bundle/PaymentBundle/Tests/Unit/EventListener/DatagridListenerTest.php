@@ -185,7 +185,6 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
     protected function tearDown()
     {
         unset($this->listener);
-
     }
 
     public function testOnBuildBeforeAccounts()

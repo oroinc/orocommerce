@@ -2,10 +2,11 @@
 
 namespace Oro\Bundle\PricingBundle\EventListener;
 
+use Doctrine\Common\Collections\Criteria;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\PricingBundle\Entity\PriceListAccountGroupFallback;
 use Oro\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 
 class AccountGroupFormViewListener extends AbstractAccountFormViewListener
 {
@@ -31,14 +32,17 @@ class AccountGroupFormViewListener extends AbstractAccountFormViewListener
 
         /** @var AccountGroup $accountGroup */
         $accountGroup = $this->doctrineHelper->getEntityReference(
-            'OroAccountBundle:AccountGroup',
+            'OroCustomerBundle:AccountGroup',
             (int)$request->get('id')
         );
         
         /** @var PriceListToAccountGroup[] $priceLists */
         $priceLists = $this->doctrineHelper
             ->getEntityRepository('OroPricingBundle:PriceListToAccountGroup')
-            ->findBy(['accountGroup' => $accountGroup, 'website' => $this->websiteProvider->getWebsites()]);
+            ->findBy(
+                ['accountGroup' => $accountGroup, 'website' => $this->websiteProvider->getWebsites()],
+                ['priority' => Criteria::ASC]
+            );
         
         /** @var PriceListAccountGroupFallback $fallbackEntity */
         $fallbackEntity = $this->doctrineHelper
