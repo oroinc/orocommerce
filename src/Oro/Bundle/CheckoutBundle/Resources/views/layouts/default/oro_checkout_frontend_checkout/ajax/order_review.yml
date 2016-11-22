@@ -5,7 +5,7 @@ layout:
                 - '../templates/right_buttons.html.twig'
                 - '../templates/order_review.html.twig'
                 - 'OroPaymentBundle:layouts:default/templates/additional_information.html.twig'
-                - 'OroPaymentBundle:layouts:default/templates/order_review.html.twig'
+                - 'OroPaymentTermBundle:layouts:default/templates/order_review.html.twig'
         - '@setFormTheme':
             themes: '../templates/form_theme.html.twig'
         - '@setOption':
