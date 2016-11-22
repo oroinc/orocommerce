@@ -36,7 +36,7 @@ class InventoryThresholdFallbackTest extends WebTestCase
 
     public function testProductInventoryThresholdUpdate()
     {
-        $newValue = 5;
+        $newValue = 2.5;
         $product = $this->getReference(LoadProductData::PRODUCT_1);
         $crawler = $this->setProductInventoryThresholdField($product, $newValue, false, null);
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
@@ -46,7 +46,7 @@ class InventoryThresholdFallbackTest extends WebTestCase
 
     public function testCategoryInventoryThreshold()
     {
-        $newCategoryFallbackValue = 5;
+        $newCategoryFallbackValue = 3.5;
         $category = $this->getReference(LoadCategoryData::FIRST_LEVEL);
         $crawler = $this->client->request(
             'GET',
