@@ -50,9 +50,9 @@ class ScopeAccountCriteriaProvider extends AbstractScopeCriteriaProvider
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
-    protected function getCriteriaValueType()
+    public function getCriteriaValueType()
     {
         return Account::class;
     }

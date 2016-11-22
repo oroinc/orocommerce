@@ -3,6 +3,7 @@
 namespace Oro\Bundle\UPSBundle\Form\Type;
 
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\UPSBundle\Method\UPSShippingMethod;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -29,7 +30,7 @@ class UPSShippingMethodOptionsType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('surcharge', NumberType::class, [
+        $builder->add(UPSShippingMethod::OPTION_SURCHARGE, NumberType::class, [
             'required' => true,
             'label' => 'oro.ups.form.shipping_method_config_options.surcharge.label',
             'scale' => $this->roundingService->getPrecision(),

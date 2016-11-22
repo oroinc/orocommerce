@@ -6,5 +6,5 @@ layout:
             optionValue: checkout-sidebar--inner-invader
         - '@move':
             id: checkout_sidebar
-            parentId: content
+            parentId: page_content
             prepend: true

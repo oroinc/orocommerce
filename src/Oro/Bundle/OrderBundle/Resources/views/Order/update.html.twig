@@ -1,5 +1,6 @@
 {% extends 'OroUIBundle:actions:update.html.twig' %}
 {% import 'OroUIBundle::macros.html.twig' as UI %}
+{% import 'OroOrderBundle:Order:macros.html.twig' as SM %}
 
 {% oro_title_set({params : {
     '%identifier%': entity.identifier|default('N/A'|trans),
@@ -175,13 +176,32 @@
     {% endif %}
 
     {% set shippingInformation %}
+        {% if entity.shippingMethod and entity.shippingMethodType and entity.estimatedShippingCost %}
+            {% set methodLabel = get_shipping_method_label(entity.shippingMethod) ? get_shipping_method_label(entity.shippingMethod)|trans ~ ', ' : '' %}
+            {{ UI.renderAttribute('oro.order.shipping_method.label'|trans,
+            '<div class="control-label selected-shipping-method">' ~
+            methodLabel ~
+            get_shipping_method_type_label(entity.shippingMethod, entity.shippingMethodType)|trans ~
+            ': ' ~ entity.estimatedShippingCost|oro_format_price() ~ '</div>'
+            ) }}
+        {% endif %}
+        {{ UI.renderAttribute('oro.order.form.shipping_options.label'|trans,
+            SM.renderPossibleShippingMethods(
+                entity.shippingMethod,
+                entity.shippingMethodType,
+                entity.estimatedShippingCostAmount,
+                orderData.possibleShippingMethods is defined ? orderData.possibleShippingMethods : [],
+                form
+            )
+        ) }}
+
         {%  set options = {
             view: 'oroorder/js/app/views/shipping-cost-view'
         } %}
 
         <div data-page-component-module="oroui/js/app/components/view-component"
              data-page-component-options="{{ options|json_encode }}">
-            {{ form_row(form.shippingCost) }}
+            {{ form_row(form.overriddenShippingCostAmount) }}
         </div>
     {% endset %}
 
