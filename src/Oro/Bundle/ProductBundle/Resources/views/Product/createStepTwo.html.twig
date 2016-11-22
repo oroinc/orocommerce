@@ -12,6 +12,7 @@
     {% set html = UI.saveAndCloseButton() %}
     {% if resource_granted('oro_product_create') %}
         {% set saveAndDuplicateButton = UI.buttonType({
+            'type': 'submit',
             'class': 'btn-success main-group',
             'label': 'oro.product.ui.save_and_duplicate'|trans,
             'action': 'save_and_duplicate'
@@ -92,7 +93,7 @@
             'data': [
                 form_row(form.shortDescriptions),
             ],
-            'spanClass': 'responsive-cell-right'
+            'spanClass': 'responsive-cell'
         }]
     } %}
 

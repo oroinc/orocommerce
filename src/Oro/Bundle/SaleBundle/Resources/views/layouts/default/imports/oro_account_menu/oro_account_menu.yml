@@ -8,3 +8,5 @@ layout:
                 visible: '=data["acl"].isGranted("oro_sale_quote_frontend_index")'
                 route_name: oro_sale_quote_frontend_index
                 text: oro.frontend.sale.quote.entity_plural_label
+            siblingId: account_sidebar_sign_out
+            prepend: true

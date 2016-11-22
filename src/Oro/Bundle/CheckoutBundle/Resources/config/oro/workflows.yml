@@ -1063,8 +1063,6 @@ workflows:
             unblock_and_recalculate_definition:
                 actions:
                     - '@assign_value': [$payment_method, null]
-                    - '@assign_value': [$shipping_method, null]
-                    - '@assign_value': [$checkout.shippingCost, null]
                     - '@assign_value': [$payment_in_progress, false]
                     - '@generate_checkout_state_snapshot':
                         entity: $checkout

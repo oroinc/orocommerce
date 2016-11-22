@@ -1,10 +1,11 @@
 $product-specification-container-width: 240px !default;
+$product-gallery-container-width: 380px !default;
 
 /*Product description widget*/
 .product__description-container {
   position: relative;
 
-  width: 955px;
+  width: calc(100% - 35px - #{$product-gallery-container-width});
   margin-left: 35px;
   float: left;
 

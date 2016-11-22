@@ -3,13 +3,15 @@
 namespace Oro\Bundle\PricingBundle\Entity\EntityListener;
 
 use Doctrine\ORM\Event\PreUpdateEventArgs;
-use Oro\Bundle\B2BEntityBundle\Storage\ExtraActionEntityStorageInterface;
+
+use Oro\Bundle\CommerceEntityBundle\Storage\ExtraActionEntityStorageInterface;
 use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
 use Oro\Bundle\ProductBundle\Entity\Product;
+
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 class ProductPriceCPLEntityListener

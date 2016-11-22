@@ -98,7 +98,7 @@ class ImportExportTest extends AbstractImportExportTestCase
                 'success' => true,
                 'message' => 'File was successfully imported.',
                 'errorsUrl' => null,
-                'importInfo' => '0 entities were added, 1 entities were updated',
+                'importInfo' => '0 inventory levels were added, 1 inventory levels were updated',
             ],
             $data
         );

@@ -87,27 +87,29 @@ class UPSTransport extends AbstractRestTransport
      * @throws \InvalidArgumentException
      * @return PriceResponse|null
      */
-    public function getPrices(PriceRequest $priceRequest, Transport $transportEntity)
+    public function getPriceResponse(PriceRequest $priceRequest, Transport $transportEntity)
     {
-        if ($transportEntity) {
+        try {
             $this->client = $this->createRestClient($transportEntity);
             $data = $this->client->post(static::API_RATES_PREFIX, $priceRequest->toJson())->json();
-            $priceResponse = new PriceResponse();
+
             if (!is_array($data)) {
                 return null;
             }
 
-            try {
-                $priceResponse->parse($data);
-            } catch (\LogicException $e) {
-                $this->logger->error(
-                    sprintf('Price request failed for transport #%s. %s', $transportEntity->getId(), $e->getMessage())
-                );
-
-                return null;
-            }
-
-            return $priceResponse;
+            return (new PriceResponse())->parse($data);
+        } catch (\LogicException $e) {
+            $this->logger->error(
+                sprintf('Price request failed for transport #%s. %s', $transportEntity->getId(), $e->getMessage())
+            );
+        } catch (RestException $restException) {
+            $this->logger->error(
+                sprintf(
+                    'Price REST request failed for transport #%s. %s',
+                    $transportEntity->getId(),
+                    $restException->getMessage()
+                )
+            );
         }
 
         return null;

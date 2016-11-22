@@ -44,8 +44,7 @@ class AccountUserProfileController extends Controller
     {
         $accountUser = $this->getUser();
         $form = $this->get('oro_customer.provider.frontend_account_user_form')
-            ->getProfileForm($accountUser)
-            ->getForm();
+            ->getProfileForm($accountUser);
         $handler = new FrontendAccountUserHandler(
             $form,
             $request,
