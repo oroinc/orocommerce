@@ -3,7 +3,7 @@
 namespace Oro\Bundle\WebCatalogBundle\EventListener;
 
 use Doctrine\ORM\Event\PreUpdateEventArgs;
-use Oro\Bundle\B2BEntityBundle\Storage\ExtraActionEntityStorageInterface;
+use Oro\Bundle\CommerceEntityBundle\Storage\ExtraActionEntityStorageInterface;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\ContentNodeUtils\ContentNodeNameFiller;
 use Oro\Bundle\WebCatalogBundle\Model\ContentNodeMaterializedPathModifier;

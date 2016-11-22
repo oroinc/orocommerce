@@ -87,7 +87,7 @@ class UserLocalizationManager
 
     /**
      * @param Website|null $website
-     * @return Localization
+     * @return Localization|null
      */
     public function getCurrentLocalization(Website $website = null)
     {

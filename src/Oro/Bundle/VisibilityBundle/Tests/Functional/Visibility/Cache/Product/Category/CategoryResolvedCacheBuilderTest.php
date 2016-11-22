@@ -4,6 +4,7 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Visibility\Cache\Product\
 
 use Doctrine\ORM\AbstractQuery;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
@@ -43,10 +44,15 @@ class CategoryResolvedCacheBuilderTest extends AbstractProductResolvedCacheBuild
         $this->category = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
 
         $container = $this->client->getContainer();
+        $indexScheduler = new ProductIndexScheduler(
+            $container->get('oro_entity.doctrine_helper'),
+            $container->get('event_dispatcher')
+        );
         $this->scopeManager = $container->get('oro_scope.scope_manager');
         $this->builder = new CategoryResolvedCacheBuilder(
             $container->get('doctrine'),
-            $this->scopeManager
+            $this->scopeManager,
+            $indexScheduler
         );
         $this->scope = $this->scopeManager->findOrCreate(CategoryVisibility::VISIBILITY_TYPE);
         $this->builder->setCacheClass(

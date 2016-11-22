@@ -38,7 +38,7 @@ class OroCatalogBundleInstaller implements
      * @var NoteExtension
      */
     protected $noteExtension;
-    
+
     /**
      * @var AttachmentExtension
      */
@@ -48,7 +48,7 @@ class OroCatalogBundleInstaller implements
      * @var ExtendExtension
      */
     protected $extendExtension;
-    
+
     /**
      * {@inheritdoc}
      */
@@ -56,7 +56,7 @@ class OroCatalogBundleInstaller implements
     {
         return 'v1_5';
     }
-    
+
     /**
      * Sets the NoteExtension
      *
@@ -105,7 +105,7 @@ class OroCatalogBundleInstaller implements
         $this->addOroCategoryDefaultProductOptionsForeignKeys($schema);
         $this->addCategoryImageAssociation($schema, 'largeImage');
         $this->addCategoryImageAssociation($schema, 'smallImage');
-        
+
         $this->addContentVariantTypes($schema);
     }
 
@@ -126,6 +126,7 @@ class OroCatalogBundleInstaller implements
         $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('default_product_options_id', 'integer', ['notnull' => false]);
+        $table->addColumn('materialized_path', 'string', ['length' => 255, 'notnull' => false]);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['default_product_options_id']);
         $this->noteExtension->addNoteAssociation($schema, 'oro_catalog_category');

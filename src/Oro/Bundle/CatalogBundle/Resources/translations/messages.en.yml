@@ -23,6 +23,7 @@ oro:
             unit.label:                  'Unit of Quantity'
             precision.label:             'Precision'
             content_variant_type.label:  'Category Page'
+            materialized_path.label:     'Materialized path'
 
         sections:
             general: 'General'

@@ -40,7 +40,7 @@ class ScopeCriteriaProvider extends AbstractScopeCriteriaProvider
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getCriteriaValueType()
     {

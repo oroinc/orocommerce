@@ -50,7 +50,7 @@ class ScopeAccountCriteriaProvider extends AbstractScopeCriteriaProvider
     }
     
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getCriteriaValueType()
     {

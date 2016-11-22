@@ -55,6 +55,14 @@ services:
         tags:
             - { name: form.type_extension, alias: oro_catalog_category }
 
+    oro_seo.event_listener.website_search_index:
+        class: 'Oro\Bundle\SEOBundle\EventListener\ProductSearchIndexListener'
+        arguments:
+            - '@oro_website.provider.website_localization'
+            - '@oro_website_search.manager.website_context_manager'
+        tags:
+            - { name: kernel.event_listener, event: oro_website_search.event.index_entity.product, method: onWebsiteSearchIndex }
+
     oro_seo.form.extension.content_node_type:
         class: 'Oro\Bundle\SEOBundle\Form\Extension\ContentNodeFormExtension'
         tags:

@@ -1,0 +1,6 @@
+Oro\Bundle\TestFrameworkBundle\Entity\TestProduct:
+    alias: test_product_WEBSITE_ID
+    fields:
+        name:
+            name: name
+            type: text

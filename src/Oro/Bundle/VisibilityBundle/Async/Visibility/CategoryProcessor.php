@@ -139,7 +139,7 @@ class CategoryProcessor implements MessageProcessorInterface
         $repository = $this->registry->getManagerForClass(ProductVisibility::class)
             ->getRepository(ProductVisibility::class);
         foreach ($scopes as $scope) {
-            $repository->setToDefaultWithoutCategory($this->insertFromSelectQueryExecutor, $scope);
+            $repository->setToDefaultWithoutCategory($scope);
         }
     }
 

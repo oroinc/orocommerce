@@ -1,11 +1,4 @@
 services:
-    oro_alternativecheckout.workflow_expression.user_in_group:
-        class: 'Oro\Bundle\AlternativeCheckoutBundle\Condition\AssertAccount'
-        arguments:
-            - '@oro_security.security_facade'
-        tags:
-            - { name: oro_action.condition, alias: assert_account }
-
     oro_alternativecheckout.conditions.less_order_total_limit:
         class: 'Oro\Bundle\AlternativeCheckoutBundle\Condition\OrderTotalLimit'
         arguments:

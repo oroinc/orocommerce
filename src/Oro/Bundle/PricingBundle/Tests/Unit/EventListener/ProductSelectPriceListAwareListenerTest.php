@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 
 use Oro\Bundle\PricingBundle\EventListener\ProductSelectPriceListAwareListener;
 use Oro\Bundle\PricingBundle\Model\FrontendProductListModifier;
-use Oro\Bundle\ProductBundle\Event\ProductSelectDBQueryEvent;
+use Oro\Bundle\ProductBundle\Event\ProductDBQueryRestrictionEvent;
 
 class ProductSelectPriceListAwareListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -27,7 +27,7 @@ class ProductSelectPriceListAwareListenerTest extends \PHPUnit_Framework_TestCas
     protected $modifier;
 
     /**
-     * @var ProductSelectDBQueryEvent|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductDBQueryRestrictionEvent|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $event;
 
@@ -50,7 +50,7 @@ class ProductSelectPriceListAwareListenerTest extends \PHPUnit_Framework_TestCas
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->event = $this->getMockBuilder('Oro\Bundle\ProductBundle\Event\ProductSelectDBQueryEvent')
+        $this->event = $this->getMockBuilder('Oro\Bundle\ProductBundle\Event\ProductDBQueryRestrictionEvent')
             ->disableOriginalConstructor()
             ->getMock();
 
