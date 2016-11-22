@@ -9,7 +9,7 @@ use Oro\Bundle\CatalogBundle\Fallback\Provider\CategoryFallbackProvider;
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\EntityBundle\Form\Type\EntityFieldFallbackValueType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductType;
-use Oro\Bundle\ValidationBundle\Validator\Constraints\Integer;
+use Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal;
 
 class ProductInventoryThresholdFormExtension extends AbstractTypeExtension
 {
@@ -40,7 +40,7 @@ class ProductInventoryThresholdFormExtension extends AbstractTypeExtension
             [
                 'label' => 'oro.inventory.inventory_threshold.label',
                 'value_options' => [
-                    'constraints' => [new Integer()]
+                    'constraints' => [new Decimal()]
                 ]
             ]
         );

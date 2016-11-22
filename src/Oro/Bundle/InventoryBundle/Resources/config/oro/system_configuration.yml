@@ -17,15 +17,16 @@ system_configuration:
                     false: oro.inventory.manage_inventory.choice.false
                     true: oro.inventory.manage_inventory.choice.true
         oro_inventory.inventory_threshold:
-            data_type: integer
-            type: integer
+            data_type: number
+            type: number
             options:
                 label: oro.inventory.system_configuration.fields.inventory_threshold.label
                 required: true
+                scale: 1
                 constraints:
                     - NotBlank: ~
                     - Type:
-                        type: 'integer'
+                        type: 'decimal'
 
     tree:
         system_configuration:
