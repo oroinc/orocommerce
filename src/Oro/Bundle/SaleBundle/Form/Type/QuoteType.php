@@ -13,10 +13,6 @@ use Oro\Bundle\CustomerBundle\Form\Type\AccountSelectType;
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
-use Oro\Bundle\PaymentBundle\Form\Type\PaymentTermSelectType;
-use Oro\Bundle\PaymentBundle\Provider\PaymentTermProvider;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider;
 use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
 
@@ -24,31 +20,18 @@ class QuoteType extends AbstractType
 {
     const NAME = 'oro_sale_quote';
 
-    /** @var SecurityFacade */
-    protected $securityFacade;
-
     /** @var QuoteAddressSecurityProvider */
     protected $quoteAddressSecurityProvider;
-
-    /** @var PaymentTermProvider */
-    protected $paymentTermProvider;
 
     /** @var string */
     protected $dataClass;
 
     /**
-     * @param SecurityFacade $securityFacade
      * @param QuoteAddressSecurityProvider $quoteAddressSecurityProvider
-     * @param PaymentTermProvider $paymentTermProvider
      */
-    public function __construct(
-        SecurityFacade $securityFacade,
-        QuoteAddressSecurityProvider $quoteAddressSecurityProvider,
-        PaymentTermProvider $paymentTermProvider
-    ) {
-        $this->securityFacade = $securityFacade;
+    public function __construct(QuoteAddressSecurityProvider $quoteAddressSecurityProvider)
+    {
         $this->quoteAddressSecurityProvider = $quoteAddressSecurityProvider;
-        $this->paymentTermProvider = $paymentTermProvider;
     }
 
     /**
@@ -138,8 +121,6 @@ class QuoteType extends AbstractType
                     ]
                 );
         }
-
-        $this->addPaymentTerm($builder, $quote);
     }
 
     /**
@@ -168,68 +149,5 @@ class QuoteType extends AbstractType
     public function getBlockPrefix()
     {
         return self::NAME;
-    }
-
-    /**
-     * @param FormBuilderInterface $builder
-     * @param Quote $quote
-     */
-    protected function addPaymentTerm(FormBuilderInterface $builder, Quote $quote)
-    {
-        if ($this->isOverridePaymentTermGranted()) {
-            $builder
-                ->add(
-                    'paymentTerm',
-                    PaymentTermSelectType::NAME,
-                    [
-                        'label' => 'oro.sale.quote.payment_term.label',
-                        'required' => false,
-                        'attr' => [
-                            'data-account-payment-term' => $this->getAccountPaymentTermId($quote),
-                            'data-account-group-payment-term' => $this->getAccountGroupPaymentTermId($quote),
-                        ],
-                    ]
-                );
-        }
-    }
-
-    /**
-     * @return bool
-     */
-    protected function isOverridePaymentTermGranted()
-    {
-        return $this->securityFacade->isGranted('oro_quote_payment_term_account_can_override');
-    }
-
-    /**
-     * @param Quote $quote
-     * @return int|null
-     */
-    protected function getAccountPaymentTermId(Quote $quote)
-    {
-        $account = $quote->getAccount();
-        if (!$account) {
-            return null;
-        }
-
-        $paymentTerm = $this->paymentTermProvider->getAccountPaymentTerm($account);
-
-        return $paymentTerm ? $paymentTerm->getId() : null;
-    }
-
-    /**
-     * @param Quote $quote
-     * @return int|null
-     */
-    protected function getAccountGroupPaymentTermId(Quote $quote)
-    {
-        $account = $quote->getAccount();
-        if (!$account || !$account->getGroup()) {
-            return null;
-        }
-
-        $paymentTerm = $this->paymentTermProvider->getAccountGroupPaymentTerm($account->getGroup());
-
-        return $paymentTerm ? $paymentTerm->getId() : null;
     }
 }

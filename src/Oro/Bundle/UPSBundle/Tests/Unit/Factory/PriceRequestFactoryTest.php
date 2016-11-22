@@ -26,6 +26,9 @@ use Oro\Bundle\UPSBundle\Model\PriceRequest;
 use Oro\Bundle\UPSBundle\Provider\UnitsMapper;
 use Oro\Component\Testing\Unit\EntityTrait;
 
+/**
+ * TODO: refactor during https://magecore.atlassian.net/browse/BB-5536
+ */
 class PriceRequestFactoryTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;

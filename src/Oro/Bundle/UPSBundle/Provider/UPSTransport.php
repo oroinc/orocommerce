@@ -87,7 +87,7 @@ class UPSTransport extends AbstractRestTransport
      * @throws \InvalidArgumentException
      * @return PriceResponse|null
      */
-    public function getPrices(PriceRequest $priceRequest, Transport $transportEntity)
+    public function getPriceResponse(PriceRequest $priceRequest, Transport $transportEntity)
     {
         try {
             $this->client = $this->createRestClient($transportEntity);

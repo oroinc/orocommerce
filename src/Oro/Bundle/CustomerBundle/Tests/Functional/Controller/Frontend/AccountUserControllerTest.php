@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\CustomerBundle\Tests\Functional\Controller\Frontend;
 
-use Symfony\Bundle\SwiftmailerBundle\DataCollector\MessageDataCollector;
-
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\CustomerBundle\Entity\AccountUserRole;
@@ -130,7 +128,7 @@ class AccountUserControllerTest extends AbstractUserControllerTest
      */
     public function testUpdate()
     {
-        $response = $this->client->requestGrid(
+        $response = $this->client->requestFrontendGrid(
             'frontend-account-account-user-grid',
             [
                 'frontend-account-account-user-grid[_filter][firstName][value]' => self::FIRST_NAME,
