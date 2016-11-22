@@ -1,9 +1,6 @@
 Upgrade from beta.5
 ===================
 
-General
--------
-
 FrontendBundle:
 ---------------
 - Changes in `Oro\Bundle\FrontendBundle\Helper\ActionApplicationsHelper`
