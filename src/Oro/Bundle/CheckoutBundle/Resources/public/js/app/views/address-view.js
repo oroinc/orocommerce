@@ -54,10 +54,7 @@ define(function(require) {
         },
 
         _isFormVisible: function() {
-            if (this.$addressSelector[0].length === 1) {
-                return true;
-            }
-            return this.$addressSelector.val() === '0';
+            return this.$addressSelector[0].length === 1 || this.$addressSelector.val() === '0';
         },
 
         _showForm: function() {
