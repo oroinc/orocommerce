@@ -90,4 +90,30 @@ class CheckoutRepositoryTest extends WebTestCase
 
         $this->assertEquals($withSource, $found);
     }
+
+    public function testDeleteWithoutWorkflowItem()
+    {
+        $repository = $this->getRepository();
+
+        $checkouts = $repository->findBy(['deleted' => false]);
+
+        $this->deleteAllWorkflowItems();
+        $repository->deleteWithoutWorkflowItem();
+
+        $this->assertCount(count($checkouts), $repository->findBy(['deleted' => true]));
+    }
+
+    protected function deleteAllWorkflowItems()
+    {
+        $manager = $this->getContainer()->get('doctrine')->getManagerForClass('OroWorkflowBundle:WorkflowItem');
+        $repository = $manager->getRepository('OroWorkflowBundle:WorkflowItem');
+
+        $workflowItems = $repository->findAll();
+
+        foreach ($workflowItems as $workflowItem) {
+            $manager->remove($workflowItem);
+        }
+
+        $manager->flush();
+    }
 }
