@@ -88,7 +88,7 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
             ->getRepository('OroCustomerBundle:AccountUser')
             ->findOneBy(['username' => TestAccountUserData::AUTH_USER]);
         $user->setAccount($this->getReference('account.level_1'));
-        $token = new UsernamePasswordToken($user, false, 'key');
+        $token = new UsernamePasswordToken($user, false, 'key', $user->getRoles());
         $this->client->getContainer()->get('security.token_storage')->setToken($token);
         $data = $this->getCheckoutData($shoppingList);
         $action = $this->client->getContainer()->get('oro_checkout.model.action.start_checkout');
