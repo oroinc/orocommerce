@@ -1,6 +1,6 @@
 // @theme: default
 
-@mixin header-row-dropdown {
+%header-row-dropdown {
     position: absolute;
     top: 100%;
     z-index: z('dropdown');
@@ -45,9 +45,8 @@
     }
 
     &__dropdown {
+        @extend %header-row-dropdown;
         right: 0;
-
-        @include header-row-dropdown;
     }
 }
 
@@ -103,6 +102,7 @@
             left: 0;
 
             visibility: hidden;
+            overflow-y: auto;
 
             transition: opacity .2s, visibility .2s;
 
@@ -115,16 +115,9 @@
         }
 
         &__dropdown-mobile {
-            right: 0;
-            left: 0;
+            @extend %header-row-dropdown;
 
-            @include header-row-dropdown;
-        }
-
-        &__dropdown-mobile--scroll {
-            top: 0 !important;
-            bottom: 0;
-            overflow-y: scroll;
+            position: static;
         }
 
         &--fixed {
