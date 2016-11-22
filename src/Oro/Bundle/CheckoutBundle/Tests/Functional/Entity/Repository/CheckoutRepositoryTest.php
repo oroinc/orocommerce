@@ -4,6 +4,7 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository;
+use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 
 /**
  * @dbIsolation
@@ -105,8 +106,8 @@ class CheckoutRepositoryTest extends WebTestCase
 
     protected function deleteAllWorkflowItems()
     {
-        $manager = $this->getContainer()->get('doctrine')->getManagerForClass('OroWorkflowBundle:WorkflowItem');
-        $repository = $manager->getRepository('OroWorkflowBundle:WorkflowItem');
+        $manager = $this->getContainer()->get('doctrine')->getManagerForClass(WorkflowItem::class);
+        $repository = $manager->getRepository(WorkflowItem::class);
 
         $workflowItems = $repository->findAll();
 
