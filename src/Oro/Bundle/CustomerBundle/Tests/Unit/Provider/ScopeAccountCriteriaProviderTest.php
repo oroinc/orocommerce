@@ -90,4 +90,9 @@ class ScopeAccountCriteriaProviderTest extends \PHPUnit_Framework_TestCase
             ],
         ];
     }
+
+    public function testGetCriteriaValueType()
+    {
+        $this->assertEquals(Account::class, $this->provider->getCriteriaValueType());
+    }
 }

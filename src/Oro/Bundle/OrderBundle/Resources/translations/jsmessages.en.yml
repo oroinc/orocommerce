@@ -1,6 +1,14 @@
 oro:
     order:
+        shipping_method.label: Shipping Method
+        previous_shipping_method.label: Previously selected Shipping Method
+        possible_shipping_methods.no_method: No shipping methods are available
+        possible_shipping_methods.confirmation.title: Content changed
+        possible_shipping_methods.confirmation.content: Content has been changed. Please, recalculate shipping methods to proceed.
+
         notes_widget:
             edit: Edit Notes
             add: Add Notes
             remove: Remove Notes
+
+        continue_editing: Continue Editing
