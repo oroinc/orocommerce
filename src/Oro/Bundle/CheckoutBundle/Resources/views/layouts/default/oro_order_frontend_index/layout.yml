@@ -10,18 +10,10 @@ layout:
             themes: 'OroCheckoutBundle:layouts:default/oro_order_frontend_index/layout.html.twig'
 
         - '@add':
-            id: order_history
-            parentId: page_content
-            blockType: text
-            prepend: true
-            options:
-                text: 'oro.checkout.order_history.label'
-
-        - '@add':
             id: checkouts_container
             parentId: page_content
             blockType: container
-            siblingId: order_history
+            siblingId: page_title
 
         - '@add':
             id: checkouts_title
@@ -32,6 +24,11 @@ layout:
             options:
                 text: 'oro.checkout.entity_plural_label'
                 visible: '=data["oro_checkout_separate_open_orders"].getOpenOrdersSeparatePageConfig()!=true'
+
+        - '@setOption':
+            id: page_title
+            optionName: text
+            optionValue: 'oro.checkout.order_history.label'
 
         - '@setOption':
             id: checkouts_datagrid

@@ -20,12 +20,8 @@ layout:
             blockType: block
 
         - '@add':
-            id: page_title_container
-            parentId: page_content
-            blockType: container
-        - '@add':
             id: page_title
-            parentId: page_title_container
+            parentId: page_content
             blockType: text
             options:
                 text: ~

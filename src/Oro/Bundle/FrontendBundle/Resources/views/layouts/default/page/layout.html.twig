@@ -82,18 +82,22 @@
     </div>
 {% endblock %}
 
-{% block _page_title_container_widget %}
-    {% set content = block_widget(block)|trim %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': ' page-title ' ~ (class_prefix ? ' {{ class_prefix }}-page-title')
-    }) %}
-    {% if content|length %}
-        <h1{{ block('block_attributes') }}>{{ content|raw }}</h1>
-    {% endif %}
-{% endblock %}
-
 {% block _page_title_widget %}
-    {{ block_widget(block) }}
+    {% set titleClass = 'page-title' %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': titleClass
+    }) %}
+    {% set content = block_widget(block)|trim %}
+    {% if content|length %}
+        <h1{{ block('block_attributes') }}>
+            {% if titleIcon is defined %}
+            <span class="badge badge_sm badge_circle badge_orange badge_has-inline-sibling">
+                <i class="{{ titleIcon }}"></i>
+            </span>
+            {% endif %}
+            <span class="{{ titleClass }}__text">{{ content|raw }}</span>
+        </h1>
+    {% endif %}
 {% endblock %}
 
 {% block _notification_widget %}
