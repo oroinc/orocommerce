@@ -3,8 +3,7 @@ layout:
         -
             id: oro_account_user_address_form
             namespace: account_user_address_edit
-            root: content
-        - oro_account_menu
+            root: page_content
     actions:
         - '@setOption':
             id: page_title

@@ -2,12 +2,12 @@
 
 namespace Oro\Bundle\ShoppingListBundle\EventListener;
 
-use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Bundle\DoctrineBundle\Registry;
 
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface;
-use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
+use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultAfter;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
@@ -28,12 +28,20 @@ class FrontendProductDatagridListener
     protected $securityFacade;
 
     /**
+     * @var Registry
+     */
+    protected $manager;
+
+    /**
      * @param SecurityFacade $securityFacade
+     * @param Registry       $manager
      */
     public function __construct(
-        SecurityFacade $securityFacade
+        SecurityFacade $securityFacade,
+        Registry $manager
     ) {
         $this->securityFacade = $securityFacade;
+        $this->manager        = $manager;
     }
 
     /**
@@ -47,7 +55,7 @@ class FrontendProductDatagridListener
             '[properties]',
             [
                 self::COLUMN_LINE_ITEMS => [
-                    'type' => 'field',
+                    'type'          => 'field',
                     'frontend_type' => PropertyInterface::TYPE_ROW_ARRAY,
                 ],
             ]
@@ -55,9 +63,9 @@ class FrontendProductDatagridListener
     }
 
     /**
-     * @param OrmResultAfter $event
+     * @param SearchResultAfter $event
      */
-    public function onResultAfter(OrmResultAfter $event)
+    public function onResultAfter(SearchResultAfter $event)
     {
         $accountUser = $this->getLoggedAccountUser();
         if (!$accountUser) {
@@ -65,14 +73,13 @@ class FrontendProductDatagridListener
         }
 
         /** @var ResultRecord[] $records */
-        $records = $event->getRecords();
-        $em = $event->getQuery()->getEntityManager();
-        $shoppingList = $this->getCurrentShoppingList($em, $accountUser);
+        $records      = $event->getRecords();
+        $shoppingList = $this->getCurrentShoppingList($accountUser);
         if (!$shoppingList || count($records) === 0) {
             return;
         }
 
-        $groupedUnits = $this->getGroupedLineItems($records, $em, $accountUser, $shoppingList);
+        $groupedUnits = $this->getGroupedLineItems($records, $accountUser, $shoppingList);
         foreach ($records as $record) {
             $productId = $record->getValue('id');
             if (array_key_exists($productId, $groupedUnits)) {
@@ -82,14 +89,13 @@ class FrontendProductDatagridListener
     }
 
     /**
-     * @param EntityManagerInterface $em
      * @param AccountUser $accountUser
      * @return null|ShoppingList
      */
-    protected function getCurrentShoppingList(EntityManagerInterface $em, AccountUser $accountUser)
+    protected function getCurrentShoppingList(AccountUser $accountUser)
     {
         /** @var ShoppingListRepository $repository */
-        $repository = $em->getRepository('OroShoppingListBundle:ShoppingList');
+        $repository = $this->manager->getRepository('OroShoppingListBundle:ShoppingList');
 
         return $repository->findAvailableForAccountUser($accountUser);
     }
@@ -109,19 +115,17 @@ class FrontendProductDatagridListener
 
     /**
      * @param ResultRecord[] $records
-     * @param EntityManagerInterface $em
-     * @param AccountUser $accountUser
-     * @param ShoppingList $currentShoppingList
+     * @param AccountUser    $accountUser
+     * @param ShoppingList   $currentShoppingList
      * @return array
      */
     protected function getGroupedLineItems(
         array $records,
-        EntityManagerInterface $em,
         AccountUser $accountUser,
         ShoppingList $currentShoppingList
     ) {
         /** @var LineItemRepository $lineItemRepository */
-        $lineItemRepository = $em->getRepository('OroShoppingListBundle:LineItem');
+        $lineItemRepository = $this->manager->getRepository('OroShoppingListBundle:LineItem');
         /** @var LineItem[] $lineItems */
         $lineItems = $lineItemRepository->getProductItemsWithShoppingListNames(
             array_map(
@@ -133,14 +137,14 @@ class FrontendProductDatagridListener
             $accountUser
         );
 
-        $groupedUnits = [];
+        $groupedUnits       = [];
         $shoppingListLabels = [];
         foreach ($lineItems as $lineItem) {
-            $shoppingListId = $lineItem->getShoppingList()->getId();
-            $productId = $lineItem->getProduct()->getId();
+            $shoppingListId                              = $lineItem->getShoppingList()->getId();
+            $productId                                   = $lineItem->getProduct()->getId();
             $groupedUnits[$productId][$shoppingListId][] = [
-                'id' => $lineItem->getId(),
-                'unit' => $lineItem->getProductUnitCode(),
+                'id'       => $lineItem->getId(),
+                'unit'     => $lineItem->getProductUnitCode(),
                 'quantity' => $lineItem->getQuantity()
             ];
             if (!isset($shoppingListLabels[$shoppingListId])) {
@@ -154,8 +158,8 @@ class FrontendProductDatagridListener
             /* Active shopping list goes first*/
             if (isset($productGroupedUnits[$activeShoppingListId])) {
                 $productShoppingLists[$productId][] = [
-                    'id' => $activeShoppingListId,
-                    'label' => $shoppingListLabels[$activeShoppingListId],
+                    'id'         => $activeShoppingListId,
+                    'label'      => $shoppingListLabels[$activeShoppingListId],
                     'is_current' => true,
                     'line_items' => $groupedUnits[$productId][$activeShoppingListId],
                 ];
@@ -164,8 +168,8 @@ class FrontendProductDatagridListener
 
             foreach ($productGroupedUnits as $shoppingListId => $lineItems) {
                 $productShoppingLists[$productId][] = [
-                    'id' => $shoppingListId,
-                    'label' => $shoppingListLabels[$shoppingListId],
+                    'id'         => $shoppingListId,
+                    'label'      => $shoppingListLabels[$shoppingListId],
                     'is_current' => false,
                     'line_items' => $lineItems,
                 ];

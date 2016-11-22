@@ -575,6 +575,7 @@
 
         .filter-start {
           display: inline-block;
+          vertical-align: middle;
 
           input[type=text] {
             width: 100px !important;
@@ -583,6 +584,7 @@
         }
         .filter-end {
           display: inline-block;
+          vertical-align: middle;
 
           input[type=text] {
             width: 100px !important;
@@ -591,6 +593,11 @@
         }
         .filter-separator {
           position: static;
+
+          display: inline-block;
+          margin-bottom: 15px;
+
+          vertical-align: middle;
         }
       }
     }
