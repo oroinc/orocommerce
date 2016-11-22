@@ -10,6 +10,8 @@ layout:
                     prepend: false
                 header_row_main_menu:
                     blockType: container
+                main_menu_extra_container:
+                    blockType: container
                 main_menu_container:
                     blockType: container
                 main_menu_list:
@@ -23,6 +25,7 @@ layout:
                 page_header:
                     header_row:
                         header_row_main_menu:
+                            main_menu_extra_container: ~
                             main_menu_container:
                                 main_menu_list:
                                     main_menu: ~
