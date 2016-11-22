@@ -6,9 +6,13 @@ use Doctrine\ORM\EntityRepository;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\SaleBundle\Entity\Quote;
+use Oro\Bundle\WorkflowBundle\Entity\WorkflowDefinition;
+use Oro\Bundle\WorkflowBundle\Helper\WorkflowQueryTrait;
 
 class CheckoutRepository extends EntityRepository
 {
+    use WorkflowQueryTrait;
+
     /**
      * This method is returning the count of all line items,
      * whether originated from a quote, or a shopping list,
@@ -135,5 +139,38 @@ class CheckoutRepository extends EntityRepository
             ->setParameter('quote', $quote)
             ->getQuery()
             ->getOneOrNullResult();
+    }
+
+    public function deleteWithoutWorkflowItem()
+    {
+        $qb = $this->joinWorkflowItem($this->createQueryBuilder('checkout'), 'wi');
+        $checkouts = $qb->select('checkout.id AS checkoutId, checkoutSource.id AS checkoutSourceId')
+            ->join('checkout.source', 'checkoutSource')
+            ->where($qb->expr()->eq('checkout.deleted', ':deleted'), $qb->expr()->isNull('wi.id'))
+            ->setParameter('deleted', false)
+            ->getQuery()
+            ->getResult();
+
+        if (!$checkouts) {
+            return;
+        }
+
+        $qb = $this->createQueryBuilder('checkout');
+        $qb->update()
+            ->set('checkout.deleted', ':deleted')
+            ->where($qb->expr()->in('checkout.id', ':checkouts'))
+            ->setParameter('deleted', true)
+            ->setParameter('checkouts', array_column($checkouts, 'checkoutId'))
+            ->getQuery()
+            ->execute();
+
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->update('Oro\Bundle\CheckoutBundle\Entity\CheckoutSource', 'checkoutSource')
+            ->set('checkoutSource.deleted', ':deleted')
+            ->where($qb->expr()->in('checkoutSource.id', ':checkoutSources'))
+            ->setParameter('deleted', true)
+            ->setParameter('checkoutSources', array_column($checkouts, 'checkoutSourceId'))
+            ->getQuery()
+            ->execute();
     }
 }

@@ -29,8 +29,13 @@ operations:
             icon: icon-briefcase
         preconditions:
             '@and':
+                - '@action_available': start_checkout
+                - '@condition_available': workflow_available_by_record_group
                 - '@has_elements': $lineItems
                 - '@has_price_in_shopping_line_items': $lineItems
+                - '@workflow_available_by_record_group':
+                    group_name: b2b_checkout_flow
+                    entity_class: Oro\Bundle\CheckoutBundle\Entity\Checkout
         actions:
             - '@assign_url':
                 attribute: $.editLink
