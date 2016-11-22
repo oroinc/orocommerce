@@ -2,15 +2,17 @@
 
 namespace Oro\Bundle\CustomerBundle\Tests\Unit\Layout\DataProvider;
 
-use Oro\Bundle\CustomerBundle\Form\Type\AccountUserPasswordResetType;
 use Symfony\Component\Form\FormConfigInterface;
 use Symfony\Component\Form\FormFactory;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 use Oro\Component\Testing\Unit\EntityTrait;
+
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\CustomerBundle\Form\Type\AccountUserPasswordRequestType;
+use Oro\Bundle\CustomerBundle\Form\Type\AccountUserPasswordResetType;
 use Oro\Bundle\CustomerBundle\Layout\DataProvider\FrontendAccountUserFormProvider;
 
 class FrontendAccountUserFormProviderTest extends \PHPUnit_Framework_TestCase
@@ -23,15 +25,22 @@ class FrontendAccountUserFormProviderTest extends \PHPUnit_Framework_TestCase
     /** @var FrontendAccountUserFormProvider */
     protected $provider;
 
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|UrlGeneratorInterface
+     */
+    protected $router;
+
     protected function setUp()
     {
+        $this->router = $this->getMock('Symfony\Component\Routing\Generator\UrlGeneratorInterface');
+
         $this->formFactory = $this
             ->getMockBuilder('Symfony\Component\Form\FormFactory')
             ->disableOriginalConstructor()
             ->setMethods(['create'])
             ->getMock();
 
-        $this->provider = new FrontendAccountUserFormProvider($this->formFactory);
+        $this->provider = new FrontendAccountUserFormProvider($this->formFactory, $this->router);
     }
 
     protected function tearDown()
@@ -46,18 +55,66 @@ class FrontendAccountUserFormProviderTest extends \PHPUnit_Framework_TestCase
      * @param string $route
      * @param array $routeParameters
      */
+    public function testGetAccountUserFormView(AccountUser $accountUser, $route, array $routeParameters = [])
+    {
+        $this->router->expects($this->exactly(2))
+            ->method('generate')
+            ->with($route, $routeParameters);
+
+        $form = $this->assertAccountUserFormHandlerCalled();
+        $actual = $this->provider->getAccountUserFormView($accountUser);
+
+        $this->assertInstanceOf(FormView::class, $actual);
+        $this->assertSame($form->createView(), $actual);
+
+        /** test local cache */
+        $this->assertSame($actual, $this->provider->getAccountUserFormView($accountUser));
+    }
+
+    /**
+     * @dataProvider getAccountUserFormProvider
+     *
+     * @param AccountUser $accountUser
+     * @param string $route
+     * @param array $routeParameters
+     */
     public function testGetAccountUserForm(AccountUser $accountUser, $route, array $routeParameters = [])
     {
+        $this->router->expects($this->exactly(2))
+            ->method('generate')
+            ->with($route, $routeParameters);
+
         $form = $this->assertAccountUserFormHandlerCalled();
         $actual = $this->provider->getAccountUserForm($accountUser);
-        $this->assertInstanceOf('Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor', $actual);
-        $this->assertSame($form, $actual->getForm());
-        $action = $actual->getAction();
-        $this->assertEquals($route, $action->getRouteName());
-        $this->assertEquals($routeParameters, $action->getRouteParameters());
+
+        $this->assertInstanceOf(FormInterface::class, $actual);
+        $this->assertSame($form, $actual);
 
         /** test local cache */
         $this->assertSame($actual, $this->provider->getAccountUserForm($accountUser));
+    }
+
+    public function testGetForgotPasswordFormView()
+    {
+        $formView = $this->getMock(FormView::class);
+
+        $expectedForm = $this->getMock('Symfony\Component\Form\Test\FormInterface');
+        $expectedForm->expects($this->once())
+            ->method('createView')
+            ->willReturn($formView);
+
+        $this->formFactory->expects($this->once())
+            ->method('create')
+            ->with(AccountUserPasswordRequestType::NAME)
+            ->willReturn($expectedForm);
+
+        // Get form without existing data in locale cache
+        $data = $this->provider->getForgotPasswordFormView();
+        $this->assertInstanceOf(FormView::class, $data);
+
+        // Get form with existing data in locale cache
+        $data = $this->provider->getForgotPasswordFormView();
+        $this->assertInstanceOf(FormView::class, $data);
     }
 
     public function testGetForgotPasswordForm()
@@ -71,11 +128,34 @@ class FrontendAccountUserFormProviderTest extends \PHPUnit_Framework_TestCase
 
         // Get form without existing data in locale cache
         $data = $this->provider->getForgotPasswordForm();
-        $this->assertInstanceOf('Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor', $data);
+        $this->assertInstanceOf(FormInterface::class, $data);
 
         // Get form with existing data in locale cache
         $data = $this->provider->getForgotPasswordForm();
-        $this->assertInstanceOf('Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor', $data);
+        $this->assertInstanceOf(FormInterface::class, $data);
+    }
+
+    public function testGetResetPasswordFormView()
+    {
+        $formView = $this->getMock(FormView::class);
+
+        $expectedForm = $this->getMock('Symfony\Component\Form\Test\FormInterface');
+        $expectedForm->expects($this->once())
+            ->method('createView')
+            ->willReturn($formView);
+
+        $this->formFactory->expects($this->once())
+            ->method('create')
+            ->with(AccountUserPasswordResetType::NAME)
+            ->willReturn($expectedForm);
+
+        // Get form without existing data in locale cache
+        $data = $this->provider->getResetPasswordFormView();
+        $this->assertInstanceOf(FormView::class, $data);
+
+        // Get form with existing data in locale cache
+        $data = $this->provider->getResetPasswordFormView();
+        $this->assertInstanceOf(FormView::class, $data);
     }
 
     public function testGetResetPasswordForm()
@@ -89,11 +169,34 @@ class FrontendAccountUserFormProviderTest extends \PHPUnit_Framework_TestCase
 
         // Get form without existing data in locale cache
         $data = $this->provider->getResetPasswordForm();
-        $this->assertInstanceOf('Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor', $data);
+        $this->assertInstanceOf(FormInterface::class, $data);
 
         // Get form with existing data in locale cache
         $data = $this->provider->getResetPasswordForm();
-        $this->assertInstanceOf('Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor', $data);
+        $this->assertInstanceOf(FormInterface::class, $data);
+    }
+
+    /**
+     * @dataProvider getProfileFormProvider
+     *
+     * @param AccountUser $accountUser
+     * @param string $route
+     * @param array $routeParameters
+     */
+    public function testGetProfileFormView(AccountUser $accountUser, $route, array $routeParameters = [])
+    {
+        $this->router->expects($this->exactly(2))
+            ->method('generate')
+            ->with($route, $routeParameters);
+
+        $form = $this->assertAccountUserProfileFormHandlerCalled();
+        $actual = $this->provider->getProfileFormView($accountUser);
+
+        $this->assertInstanceOf(FormView::class, $actual);
+        $this->assertSame($form->createView(), $actual);
+
+        /** test local cache */
+        $this->assertSame($actual, $this->provider->getProfileFormView($accountUser));
     }
 
     /**
@@ -105,13 +208,15 @@ class FrontendAccountUserFormProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetProfileForm(AccountUser $accountUser, $route, array $routeParameters = [])
     {
+        $this->router->expects($this->exactly(2))
+            ->method('generate')
+            ->with($route, $routeParameters);
+
         $form = $this->assertAccountUserProfileFormHandlerCalled();
         $actual = $this->provider->getProfileForm($accountUser);
-        $this->assertInstanceOf('Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor', $actual);
-        $this->assertSame($form, $actual->getForm());
-        $action = $actual->getAction();
-        $this->assertEquals($route, $action->getRouteName());
-        $this->assertEquals($routeParameters, $action->getRouteParameters());
+
+        $this->assertInstanceOf(FormInterface::class, $actual);
+        $this->assertSame($form, $actual);
 
         /** test local cache */
         $this->assertSame($actual, $this->provider->getProfileForm($accountUser));
