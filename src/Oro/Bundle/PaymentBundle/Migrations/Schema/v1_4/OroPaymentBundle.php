@@ -7,14 +7,18 @@ use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\ConfigBundle\Migration\RenameConfigSectionQuery;
 use Oro\Bundle\EntityExtendBundle\Extend\RelationType;
 use Oro\Bundle\FrontendBundle\Migration\UpdateClassNamesQuery;
+use Oro\Bundle\FrontendBundle\Migration\UpdateExtendRelationTrait;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Oro\Bundle\FrontendBundle\Migration\UpdateExtendRelationQuery;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
-class OroPaymentBundle implements Migration, RenameExtensionAwareInterface
+class OroPaymentBundle implements Migration, RenameExtensionAwareInterface, ContainerAwareInterface
 {
+    use ContainerAwareTrait, UpdateExtendRelationTrait;
+
     /**
      * @var RenameExtension
      */
@@ -49,13 +53,15 @@ class OroPaymentBundle implements Migration, RenameExtensionAwareInterface
             ['id'],
             ['onDelete' => 'SET NULL']
         );
-        $queries->addQuery(new UpdateExtendRelationQuery(
+
+        $this->migrateConfig(
+            $this->container->get('oro_entity_config.config_manager'),
             'Oro\Bundle\NoteBundle\Entity\Note',
-            'Oro\Bundle\PaymentBundle\Entity\PaymentTerm',
+            'Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm',
             'payment_term_5f8a1ef5',
             'payment_term_3dd15035',
             RelationType::MANY_TO_ONE
-        ));
+        );
 
         // entity tables
         $extension->renameTable($schema, $queries, 'orob2b_payment_term', 'oro_payment_term');
