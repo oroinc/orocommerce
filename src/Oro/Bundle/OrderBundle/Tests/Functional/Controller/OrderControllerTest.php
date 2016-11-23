@@ -420,7 +420,7 @@ class OrderControllerTest extends WebTestCase
         self::assertEquals('Shipping Information', $titleBlock);
 
         $value  = $crawler->filter('.responsive-section')->eq(2)->filter('.controls .control-label')->html();
-        self::assertEquals('USD 999.99', $value);
+        self::assertEquals('$999.99', $value);
 
         $result = $this->client->getResponse();
         static::assertHtmlResponseStatusCodeEquals($result, 200);
@@ -470,7 +470,7 @@ class OrderControllerTest extends WebTestCase
         self::assertEquals('Shipping Information', $titleBlock);
 
         $value  = $crawler->filter('.responsive-section')->eq(2)->filter('.controls .control-label')->html();
-        self::assertEquals('USD 0.00', $value);
+        self::assertEquals('$0.00', $value);
 
         $result = $this->client->getResponse();
         static::assertHtmlResponseStatusCodeEquals($result, 200);

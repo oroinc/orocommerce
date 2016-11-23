@@ -12,16 +12,13 @@ use Oro\Bundle\OrderBundle\Entity\OrderDiscount;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Entity\OrderShippingTracking;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use Oro\Bundle\PaymentBundle\Entity\PaymentTerm;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 /**
- * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
- * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  */
 class OrderTest extends \PHPUnit_Framework_TestCase
 {
@@ -46,7 +43,6 @@ class OrderTest extends \PHPUnit_Framework_TestCase
             ['currency', 'USD'],
             ['subtotal', 999.99],
             ['total', 999.99],
-            ['paymentTerm', new PaymentTerm()],
             ['account', new Account()],
             ['accountUser', new AccountUser()],
             ['website', new Website()],
