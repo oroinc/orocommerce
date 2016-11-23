@@ -6,6 +6,7 @@ use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
+use Oro\Bundle\UPSBundle\Cache\ShippingPriceCache;
 use Oro\Bundle\UPSBundle\Factory\PriceRequestFactory;
 use Oro\Bundle\UPSBundle\Provider\ChannelType;
 use Oro\Bundle\UPSBundle\Provider\UPSTransport;
@@ -39,21 +40,29 @@ class UPSShippingMethodProvider implements ShippingMethodProviderInterface
     protected $localizationHelper;
 
     /**
+     * @var ShippingPriceCache
+     */
+    protected $shippingPriceCache;
+
+    /**
      * @param UPSTransport $transportProvider
      * @param ManagerRegistry $doctrine
      * @param PriceRequestFactory $priceRequestFactory
      * @param LocalizationHelper $localizationHelper
+     * @param ShippingPriceCache $shippingPriceCache
      */
     public function __construct(
         UPSTransport $transportProvider,
         ManagerRegistry $doctrine,
         PriceRequestFactory $priceRequestFactory,
-        LocalizationHelper $localizationHelper
+        LocalizationHelper $localizationHelper,
+        ShippingPriceCache $shippingPriceCache
     ) {
         $this->transportProvider = $transportProvider;
         $this->doctrine = $doctrine;
         $this->priceRequestFactory = $priceRequestFactory;
         $this->localizationHelper = $localizationHelper;
+        $this->shippingPriceCache = $shippingPriceCache;
     }
 
     /**
@@ -74,7 +83,8 @@ class UPSShippingMethodProvider implements ShippingMethodProviderInterface
                         $this->transportProvider,
                         $channel,
                         $this->priceRequestFactory,
-                        $this->localizationHelper
+                        $this->localizationHelper,
+                        $this->shippingPriceCache
                     );
                     $this->methods[$method->getIdentifier()] = $method;
                 }

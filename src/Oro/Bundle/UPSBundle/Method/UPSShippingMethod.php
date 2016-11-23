@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\UPSBundle\Method;
 
-use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
@@ -10,6 +9,7 @@ use Oro\Bundle\ShippingBundle\Method\PricesAwareShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingTrackingAwareInterface;
+use Oro\Bundle\UPSBundle\Cache\ShippingPriceCache;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 use Oro\Bundle\UPSBundle\Factory\PriceRequestFactory;
@@ -44,22 +44,28 @@ class UPSShippingMethod implements
     /** @var LocalizationHelper */
     protected $localizationHelper;
 
+    /** @var ShippingPriceCache */
+    protected $cache;
+
     /**
      * @param UPSTransportProvider $transportProvider
      * @param Channel $channel
      * @param PriceRequestFactory $priceRequestFactory
      * @param LocalizationHelper $localizationHelper
+     * @param ShippingPriceCache $cache
      */
     public function __construct(
         UPSTransportProvider $transportProvider,
         Channel $channel,
         PriceRequestFactory $priceRequestFactory,
-        LocalizationHelper $localizationHelper
+        LocalizationHelper $localizationHelper,
+        ShippingPriceCache $cache
     ) {
         $this->transportProvider = $transportProvider;
         $this->channel = $channel;
         $this->priceRequestFactory = $priceRequestFactory;
         $this->localizationHelper = $localizationHelper;
+        $this->cache = $cache;
     }
 
     /**
@@ -85,7 +91,7 @@ class UPSShippingMethod implements
     {
         /** @var UPSTransport $transport */
         $transport = $this->channel->getTransport();
-        return $this->localizationHelper->getLocalizedValue($transport->getLabels());
+        return (string)$this->localizationHelper->getLocalizedValue($transport->getLabels());
     }
 
     /**
@@ -99,15 +105,15 @@ class UPSShippingMethod implements
         $transport = $this->channel->getTransport();
         /** @var ShippingService[] $shippingServices */
         $shippingServices = $transport->getApplicableShippingServices();
-        if (count($shippingServices) > 0) {
-            foreach ($shippingServices as $shippingService) {
-                $types[] = new UPSShippingMethodType(
-                    $transport,
-                    $this->transportProvider,
-                    $shippingService,
-                    $this->priceRequestFactory
-                );
-            }
+        foreach ($shippingServices as $shippingService) {
+            $types[] = new UPSShippingMethodType(
+                $this->getIdentifier(),
+                $transport,
+                $this->transportProvider,
+                $shippingService,
+                $this->priceRequestFactory,
+                $this->cache
+            );
         }
 
         return $types;
@@ -115,7 +121,7 @@ class UPSShippingMethod implements
 
     /**
      * @param string $identifier
-     * @return ShippingMethodTypeInterface|null
+     * @return UPSShippingMethodType|null
      */
     public function getType($identifier)
     {
@@ -152,35 +158,23 @@ class UPSShippingMethod implements
      */
     public function calculatePrices(ShippingContextInterface $context, array $methodOptions, array $optionsByTypes)
     {
-        $prices = [];
+        $optionsDefaults = [static::OPTION_SURCHARGE => 0];
+        $methodOptions = array_merge($optionsDefaults, $methodOptions);
 
-        $methodSurcharge = array_key_exists(UPSShippingMethod::OPTION_SURCHARGE, $methodOptions) ?
-            $methodOptions[self::OPTION_SURCHARGE] :
-            0
-        ;
+        if (count($this->getTypes()) < 1) {
+            return [];
+        }
 
-        /** @var UPSTransport $transport */
-        $transport = $this->channel->getTransport();
+        $prices = $this->fetchPrices($context, array_keys($optionsByTypes));
 
-        $types = $this->getTypes();
-        if (count($types) > 0) {
-            $priceRequest = $this->priceRequestFactory->create($transport, $context, self::REQUEST_OPTION);
- 
-            if (count($priceRequest->getPackages()) > 0) {
-                $upsPrices = $this->transportProvider->getPrices($priceRequest, $transport);
-                if ($upsPrices) {
-                    foreach ($upsPrices->getPricesByServices() as $service => $price) {
-                        if (array_key_exists($service, $optionsByTypes)) {
-                            $typeSurcharge = $optionsByTypes[$service][self::OPTION_SURCHARGE] ?: 0;
-
-                            $prices[$service] = Price::create(
-                                (float)$price->getValue() + (float)$methodSurcharge + (float)$typeSurcharge,
-                                $price->getCurrency()
-                            );
-                        }
-                    }
-                }
-            }
+        foreach ($prices as $typeId => $price) {
+            $typeOptions = array_merge($optionsDefaults, $optionsByTypes[$typeId]);
+            $prices[$typeId] = $price
+                ->setValue(array_sum([
+                    (float)$price->getValue(),
+                    (float)$methodOptions[static::OPTION_SURCHARGE],
+                    (float)$typeOptions[static::OPTION_SURCHARGE]
+                ]));
         }
 
         return $prices;
@@ -197,5 +191,55 @@ class UPSShippingMethod implements
         }
 
         return self::TRACKING_URL . $match[0];
+    }
+
+    /**
+     * @param ShippingContextInterface $context
+     * @param array $types
+     * @return array
+     */
+    public function fetchPrices(ShippingContextInterface $context, array $types)
+    {
+        $prices = [];
+
+        /** @var UPSTransport $transport */
+        $transport = $this->channel->getTransport();
+        $priceRequest = $this->priceRequestFactory->create($transport, $context, self::REQUEST_OPTION);
+        if (count($priceRequest->getPackages()) < 1) {
+            return $prices;
+        }
+
+        $cacheKey = $this->cache->createKey($transport, $priceRequest, $this->getIdentifier(), null);
+
+        foreach ($types as $typeId) {
+            $cacheKey->setTypeId($typeId);
+            if ($this->cache->containsPrice($cacheKey)) {
+                $prices[$typeId] = $this->cache->fetchPrice($cacheKey);
+            }
+        }
+
+        $notCachedTypes = array_diff($types, array_keys($prices));
+        $notCachedTypesNumber = count($notCachedTypes);
+
+        if ($notCachedTypesNumber > 0) {
+            if ($notCachedTypesNumber === 1) {
+                $typeId = reset($notCachedTypes);
+                $shippingService = $this->getType($typeId)->getShippingService();
+                $priceRequest->setServiceCode($shippingService->getCode())
+                    ->setServiceDescription($shippingService->getDescription());
+            }
+            $priceResponse = $this->transportProvider->getPriceResponse($priceRequest, $transport);
+            if ($priceResponse) {
+                foreach ($notCachedTypes as $typeId) {
+                    $price = $priceResponse->getPriceByService($typeId);
+                    if ($price) {
+                        $cacheKey->setTypeId($typeId);
+                        $this->cache->savePrice($cacheKey, $price);
+                        $prices[$typeId] = $price;
+                    }
+                }
+            }
+        }
+        return $prices;
     }
 }

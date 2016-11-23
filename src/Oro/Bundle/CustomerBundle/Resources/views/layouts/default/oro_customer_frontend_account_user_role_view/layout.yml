@@ -1,6 +1,5 @@
 layout:
     imports:
-        - oro_account_menu
         -
             id: oro_account_user_role_permission_grid
             root: account_user_role_items
@@ -41,7 +40,7 @@ layout:
                         grid_parameters:
                             role: '=data["entity"].getId()'
             tree:
-                content:
+                page_content:
                     account_user_role_view_container:
                         account_user_role_title: ~
                         account_user_role_back_link: ~

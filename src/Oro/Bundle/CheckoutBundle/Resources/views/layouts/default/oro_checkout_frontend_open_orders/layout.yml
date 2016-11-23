@@ -1,18 +1,17 @@
 layout:
     imports:
-        - oro_account_menu
         -
             id: oro_checkout_grid
-            root: content
+            root: page_content
             namespace: checkouts
 
     actions:
         - '@setBlockTheme':
-            themes: 'OroCheckoutBundle:layouts:default/oro_checkout_frontend_open_orders/layout.html.twig'
+            themes: 'layout.html.twig'
 
         - '@add':
             id: checkouts_title
-            parentId: content
+            parentId: page_content
             blockType: text
             siblingId: ~
             prepend: true

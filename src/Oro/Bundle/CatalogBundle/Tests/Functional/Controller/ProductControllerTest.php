@@ -102,7 +102,7 @@ class ProductControllerTest extends WebTestCase
         $this->assertEquals($arr['defaultCategoryId'], $categoryId);
         $this->assertCount(8, $arr['data']);
     }
-
+    
     /**
      * @dataProvider defaultUnitPrecisionDataProvider
      *

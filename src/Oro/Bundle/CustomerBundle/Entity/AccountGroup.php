@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
+use Oro\Bundle\CustomerBundle\Model\ExtendAccountGroup;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
@@ -35,7 +36,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
  *      }
  * )
  */
-class AccountGroup
+class AccountGroup extends ExtendAccountGroup
 {
     /**
      * @var integer

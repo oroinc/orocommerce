@@ -6,7 +6,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Event\OrderEvent;
-use Oro\Bundle\PaymentBundle\Provider\PaymentTermProvider;
+use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
 
 class OrderPaymentTermEventListener
 {

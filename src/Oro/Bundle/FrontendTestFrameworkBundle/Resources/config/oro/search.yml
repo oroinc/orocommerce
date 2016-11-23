@@ -1,0 +1,11 @@
+search:
+    Oro\Bundle\TestFrameworkBundle\Entity\TestProduct:
+        label:           Test Search Product
+        alias:           oro_test_product
+        search_template: OroSearchBundle:Test:searchResult.html.twig
+        route:
+            name: oro_search_results
+        fields:
+            -
+                name: name
+                target_type: text
