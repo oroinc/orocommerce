@@ -53,7 +53,6 @@ abstract class AbstractFallbackFieldsFormView
         );
 
         $event->getScrollData()->addSubBlockData(0, 0, $template);
-
     }
 
     /**

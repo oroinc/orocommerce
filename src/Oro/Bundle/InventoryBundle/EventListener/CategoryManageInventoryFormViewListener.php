@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\InventoryBundle\EventListener;
 
+use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\InventoryBundle\Fallback\AbstractFallbackFieldsFormView;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 
@@ -12,6 +13,11 @@ class CategoryManageInventoryFormViewListener extends AbstractFallbackFieldsForm
      */
     public function onCategoryEdit(BeforeListRenderEvent $event)
     {
+        $category = $this->getEntityFromRequest(Category::class);
+        if ($category === null) {
+            return null;
+        }
+
         $this->addBlockToEntityEdit(
             $event,
             'OroInventoryBundle:Category:editManageInventory.html.twig',

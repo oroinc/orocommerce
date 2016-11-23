@@ -39,7 +39,8 @@ class ProductManageInventoryFormViewListenerTest extends FormViewListenerTestCas
         $this->requestStack->expects($this->any())->method('getCurrentRequest')->willReturn($this->request);
         $this->productWarehouseFormViewListener = new ProductManageInventoryFormViewListener(
             $this->requestStack,
-            $this->doctrineHelper
+            $this->doctrineHelper,
+            $this->translator
         );
         $this->event = $this->getBeforeListRenderEventMock();
     }
