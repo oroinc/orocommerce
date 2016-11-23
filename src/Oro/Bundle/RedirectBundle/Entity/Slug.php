@@ -112,7 +112,7 @@ class Slug
         $this->redirects = new ArrayCollection();
         $this->scopes = new ArrayCollection();
     }
-    
+
     /**
      * @return integer
      */
