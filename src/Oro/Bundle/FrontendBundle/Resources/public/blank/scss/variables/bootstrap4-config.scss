@@ -1,0 +1,42 @@
+// @theme: blank
+
+@mixin box-shadow($shadow...) {
+    @if $enable-shadows {
+        box-shadow: $shadow;
+    }
+}
+
+
+// Mixins Utilities
+@import '../vendors/bootstrap4/scss/mixins/breakpoints';
+@import '../vendors/bootstrap4/scss/mixins/hover';
+@import '../vendors/bootstrap4/scss/mixins/image';
+@import '../vendors/bootstrap4/scss/mixins/resize';
+@import '../vendors/bootstrap4/scss/mixins/screen-reader';
+@import '../vendors/bootstrap4/scss/mixins/tab-focus';
+@import '../vendors/bootstrap4/scss/mixins/reset-text';
+@import '../vendors/bootstrap4/scss/mixins/text-hide';
+@import '../vendors/bootstrap4/scss/mixins/reset-filter';
+
+
+// Mixins Skins
+@import '../vendors/bootstrap4/scss/mixins/border-radius';
+
+
+// Mixins Components
+@import '../vendors/bootstrap4/scss/mixins/nav-divider';
+
+
+// Mixins Layout
+@import '../vendors/bootstrap4/scss/mixins/grid-framework';
+@import '../vendors/bootstrap4/scss/mixins/grid';
+
+
+// Components
+@import '../vendors/bootstrap4/scss/dropdown';
+
+
+// Components w/ JavaScript
+@import '../vendors/bootstrap4/scss/modal';
+@import '../vendors/bootstrap4/scss/tooltip';
+@import '../vendors/bootstrap4/scss/popover';
