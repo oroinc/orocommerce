@@ -17,7 +17,7 @@ use Oro\Bundle\SecurityBundle\Acl\Persistence\AclManager;
 /**
  * This fixture adds root permissions to all existing frontend roles.
  */
-class LoadWorkflowACL extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
+class LoadWorkflowAcl extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
 {
     /**
      * @var ContainerInterface
@@ -61,7 +61,7 @@ class LoadWorkflowACL extends AbstractFixture implements DependentFixtureInterfa
             $securityManager->setPermission($sid, $rootOid, WorkflowMaskBuilder::GROUP_SYSTEM, true);
         }
 
-        $manager->flush();
+        $securityManager->flush();
     }
 
     /**
