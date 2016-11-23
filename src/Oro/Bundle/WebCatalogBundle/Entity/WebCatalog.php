@@ -22,7 +22,9 @@ use Oro\Component\WebCatalog\Entity\WebCatalogInterface;
  *          "ownership"={
  *              "owner_type"="BUSINESS_UNIT",
  *              "owner_field_name"="owner",
- *              "owner_column_name"="business_unit_owner_id"
+ *              "owner_column_name"="business_unit_owner_id",
+ *              "organization_field_name"="organization",
+ *              "organization_column_name"="organization_id"
  *          },
  *          "dataaudit"={
  *              "auditable"=true

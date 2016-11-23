@@ -24,7 +24,6 @@ oro:
             organization.label: Organization
             owner.label: Owner
             parent_node.label: Parent Content Node
-            slugs.label: Slugs
             slug_prototypes.label: Slug prototypes
             titles.label: Titles
             parent_scope_used.label: Inherit Parent
@@ -39,6 +38,7 @@ oro:
             system_page_route.label: System Page Route
             node.label: Content Node
             scopes.label: Use For
+            slugs.label: Slugs
 
             variant_type:
                 system_page.label: System Page
