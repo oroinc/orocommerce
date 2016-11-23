@@ -346,25 +346,14 @@ datagrids:
                     left:
                         - { join: product.inventory_status, alias: productInventoryStatus}
         columns:
+            createdAt:
+                label:         oro.product.time_period.label
+                frontend_type: datetime
             sku:
                 label:         oro.product.sku.label
             productName:
-                label:         oro.product.names.label
-            inventoryStatus:
-                label:         oro.product.inventory_status.label
-                type:          twig
-                frontend_type: html
-                template:      OroProductBundle:Product:Datagrid/inventoryStatus.html.twig
-            status:
-                label:         oro.product.status.label
-                frontend_type: select
-                choices:       "@oro_product.provider.product_status_provider->getAvailableProductStatuses"
-            createdAt:
-                label:         oro.ui.created_at
-                frontend_type: datetime
-            updatedAt:
-                label:         oro.ui.updated_at
-                frontend_type: datetime
+                label:         oro.product.entity_label
+
         properties:
             id: ~
             productName:
@@ -376,37 +365,26 @@ datagrids:
                     data_name: product.sku
                 productName:
                     data_name: productName
-                inventoryStatus:
-                    data_name: inventoryStatusName
-                status:
-                    data_name: product.status
                 createdAt:
                     data_name: product.createdAt
-                updatedAt:
-                    data_name: product.updatedAt
             default:
                 createdAt: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
         filters:
             columns:
+                createdAt:
+                    type:      datetime
+                    data_name: product.createdAt
                 sku:
                     type:      string
                     data_name: product.sku
                 productName:
                     type:      string
                     data_name: productName
-                inventoryStatus:
-                    type:      enum
-                    data_name: inventoryStatusId
-                    enum_code: prod_inventory_status
-                status:
-                    data_name: product.status
-                    type: choice
-                    options:
-                        field_options:
-                            choices: "@oro_product.provider.product_status_provider->getAvailableProductStatuses"
-                createdAt:
-                    type:      date-grouping
+                grouping:
+                    type:      date_grouping
                     data_name: product.createdAt
-                updatedAt:
-                    type:      date-grouping
-                    data_name: product.updatedAt
+                    label:     oro.product.grouping.label
+                skip_empty_periods:
+                    type:      skip_empty_periods
+                    data_name: product.createdAt
+                    label:     oro.product.skip_empty_periods.label
