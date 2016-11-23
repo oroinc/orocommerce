@@ -343,7 +343,7 @@ class Checkout implements
      * @param Price $shippingCost
      * @return $this
      */
-    public function setShippingCost($shippingCost = null)
+    public function setShippingCost(Price $shippingCost = null)
     {
         $this->shippingCost = $shippingCost;
 

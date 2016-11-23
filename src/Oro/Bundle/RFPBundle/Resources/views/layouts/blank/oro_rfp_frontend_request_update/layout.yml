@@ -1,0 +1,6 @@
+layout:
+    imports:
+        -
+            id: oro_customer_menu
+            root: page_sidebar
+    actions: []

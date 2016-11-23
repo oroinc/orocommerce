@@ -1,3 +1,5 @@
+// @theme: default
+
 .credit-card-icon {
   $paymentIconUrl: $global-url + '/orofrontend/default/images/payments';
 
@@ -49,8 +51,6 @@
 [class*=" cf-"] {
   display: inline-block;
   vertical-align: middle;
-
-  margin-right: 3px;
 
   font-family: $base-font-icon;
   font-weight: normal;

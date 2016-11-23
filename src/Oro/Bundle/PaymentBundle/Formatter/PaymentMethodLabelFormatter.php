@@ -53,15 +53,10 @@ class PaymentMethodLabelFormatter
      */
     public function formatPaymentMethodAdminLabel($paymentMethod)
     {
-        $adminPaymentMethodLabel = $this->translator->trans(
-            sprintf(
-                'oro.payment.admin.%s.label',
-                $paymentMethod
-            )
-        );
+        $adminPaymentMethodLabel = $this->translator->trans(sprintf('oro.payment.admin.%s.label', $paymentMethod));
         $adminPaymentMethodShortLabel = $this->formatPaymentMethodLabel($paymentMethod);
 
-        if ($adminPaymentMethodLabel == $adminPaymentMethodShortLabel) {
+        if ($adminPaymentMethodLabel === $adminPaymentMethodShortLabel) {
             return $adminPaymentMethodLabel;
         } else {
             return sprintf(

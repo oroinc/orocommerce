@@ -1,7 +1,20 @@
-{% block _top_sign_in_widget %}
-    <li>
-        <a href="{{ path(route_name) }}">
-            <i class="icon-signin"></i> {{ text|trans }}
-        </a>
+{% block _top_sign_in_item_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' topbar-navigation__item'
+    }) %}
+
+    <li {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
     </li>
+{% endblock %}
+
+{% block _top_sign_in_link_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' topbar-navigation__link',
+        'href': path(route_name)
+    }) %}
+
+    <a {{ block('block_attributes') }}>
+        <i class="icon-signin"></i> {{ text|trans }}
+    </a>
 {% endblock %}

@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use Oro\Bundle\ProductBundle\Form\Type\QuickAddType;
 use Oro\Bundle\ProductBundle\Model\QuickAddRow;
 use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
@@ -28,17 +29,27 @@ class QuickAddRowCollectionBuilder
     protected $productRepository;
 
     /**
+     * @var ProductManager
+     */
+    protected $productManager;
+
+    /**
      * @var EventDispatcherInterface
      */
     protected $eventDispatcher;
 
     /**
      * @param EntityRepository $productRepository
+     * @param ProductManager $productManager
      * @param EventDispatcherInterface $eventDispatcher
      */
-    public function __construct(EntityRepository $productRepository, EventDispatcherInterface $eventDispatcher)
-    {
+    public function __construct(
+        EntityRepository $productRepository,
+        ProductManager $productManager,
+        EventDispatcherInterface $eventDispatcher
+    ) {
         $this->productRepository = $productRepository;
+        $this->productManager = $productManager;
         $this->eventDispatcher = $eventDispatcher;
     }
 
@@ -171,10 +182,14 @@ class QuickAddRowCollectionBuilder
      * @param string[] $skus
      * @return Product[]
      */
-    private function getProductsBySkus(array $skus)
+    private function getVisibleProductsBySkus(array $skus)
     {
-        $products = $this->productRepository->getProductWithNamesBySku($skus);
+        $qb = $this->productRepository->getProductWithNamesQueryBuilder($skus);
+        $restricted = $this->productManager->restrictQueryBuilder($qb, []);
+        $query = $restricted->getQuery();
+        $products = $query->execute();
         $productsBySku = [];
+
         foreach ($products as $product) {
             $productsBySku[strtoupper($product->getSku())] = $product;
         }
@@ -206,7 +221,7 @@ class QuickAddRowCollectionBuilder
      */
     private function mapProductsAndValidate(QuickAddRowCollection $collection)
     {
-        $products = $this->getProductsBySkus($collection->getSkus());
+        $products = $this->getVisibleProductsBySkus($collection->getSkus());
         $collection->mapProducts($products)->validate();
     }
 }

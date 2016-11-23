@@ -10,6 +10,7 @@ use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccounts;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
+use Oro\Bundle\CustomerBundle\Migrations\Data\ORM\LoadAnonymousAccountGroup;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountProductVisibility;
@@ -92,6 +93,26 @@ class LoadProductVisibilityData extends AbstractFixture implements DependentFixt
     }
 
     /**
+     * @param string $groupReference
+     * @return AccountGroup
+     */
+    private function getAccountGroup($groupReference)
+    {
+        if ($groupReference === 'account_group.anonymous') {
+            $accountGroup = $this->container
+                ->get('doctrine')
+                ->getManagerForClass('OroCustomerBundle:AccountGroup')
+                ->getRepository('OroCustomerBundle:AccountGroup')
+                ->findOneBy(['name' => LoadAnonymousAccountGroup::GROUP_NAME_NON_AUTHENTICATED]);
+        } else {
+            /** @var AccountGroup $accountGroup */
+            $accountGroup = $this->getReference($groupReference);
+        }
+
+        return $accountGroup;
+    }
+
+    /**
      * @param ObjectManager $manager
      * @param Product $product
      * @param array $accountGroupsData
@@ -103,7 +124,7 @@ class LoadProductVisibilityData extends AbstractFixture implements DependentFixt
     ) {
         foreach ($accountGroupsData as $groupReference => $accountGroupData) {
             /** @var AccountGroup $accountGroup */
-            $accountGroup = $this->getReference($groupReference);
+            $accountGroup = $this->getAccountGroup($groupReference);
 
             $accountGroupProductVisibility = new AccountGroupProductVisibility();
             $accountGroupProductVisibility->setProduct($product)

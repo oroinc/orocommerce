@@ -124,6 +124,20 @@ class QuickAddProcessorTest extends AbstractQuickAddProcessorTest
                 [1, 2],
                 [1 => 2, 2 => 3],
             ],
+            'shopping list with same products couple of times' => [
+                [
+                    ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
+                        ['productSku' => 'sku1', 'productQuantity' => 2],
+                        ['productSku' => 'sku1', 'productQuantity' => 3],
+                        ['productSku' => 'sku1', 'productQuantity' => 4],
+                        ['productSku' => 'sku2', 'productQuantity' => 5],
+                        ['productSku' => 'sku2', 'productQuantity' => 6],
+                    ]
+                ],
+                new Request(),
+                [1, 2],
+                [1 => 9, 2 => 11],
+            ],
             'existing shopping list' => [
                 [
                     ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [

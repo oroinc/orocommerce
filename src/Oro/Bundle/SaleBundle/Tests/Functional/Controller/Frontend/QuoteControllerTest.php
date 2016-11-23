@@ -43,7 +43,7 @@ class QuoteControllerTest extends WebTestCase
         static::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
         $this->assertContains('frontend-quotes-grid', $crawler->html());
 
-        $response = $this->client->requestGrid([
+        $response = $this->client->requestFrontendGrid([
             'gridName' => 'frontend-quotes-grid',
             'frontend-quotes-grid[_sort_by][qid]' => 'ASC',
         ]);
@@ -420,8 +420,8 @@ class QuoteControllerTest extends WebTestCase
                             'property' => 'ship_until',
                         ],
                         [
-                            'label' => 'oro.sale.quote.payment_term.label',
-                            'property' => 'payment_term.label',
+                            'label' => 'oro.paymentterm.entity_label',
+                            'property' => 'payment_term_7c4f1e8e.label',
                         ],
                     ],
                 ],

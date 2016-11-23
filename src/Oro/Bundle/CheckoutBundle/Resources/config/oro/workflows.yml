@@ -820,7 +820,7 @@ workflows:
                           - [[shallowCopy], [propertyType, ['\DateTime']]]
                     - '@flush_entity': $.result.shippingAddress
                     - '@call_service_method':
-                        service: oro_payment.provider.payment_term
+                        service: oro_payment_term.provider.payment_term
                         method: getCurrentPaymentTerm
                         attribute: $.result.paymentTerm
                     - '@get_order_line_items':
@@ -1070,8 +1070,6 @@ workflows:
             unblock_and_recalculate_definition:
                 actions:
                     - '@assign_value': [$payment_method, null]
-                    - '@assign_value': [$shipping_method, null]
-                    - '@assign_value': [$checkout.shippingCost, null]
                     - '@assign_value': [$payment_in_progress, false]
                     - '@generate_checkout_state_snapshot':
                         entity: $checkout
