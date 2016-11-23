@@ -231,3 +231,8 @@ oro:
                     account: Global Address Book
                     account_user: My Address Book
             past_orders.label: Past Orders
+            method_type:
+                grid:
+                    label: '%translatedMethodType%'
+                view:
+                    label: '%translatedMethodType%'

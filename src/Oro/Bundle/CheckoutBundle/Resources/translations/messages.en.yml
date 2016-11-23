@@ -183,3 +183,7 @@ oro:
 
         privilege:
             category.checkout.label: 'Checkout'
+
+        method_type:
+            sidebar:
+                label: '<div>%translatedMethodType%: <div><strong>%price%</strong></div></div>'
