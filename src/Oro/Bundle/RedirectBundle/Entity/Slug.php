@@ -230,6 +230,16 @@ class Slug
     }
 
     /**
+     * @return $this
+     */
+    public function resetScopes()
+    {
+        $this->scopes->clear();
+        
+        return $this;
+    }
+
+    /**
      * @return string
      */
     public function __toString()

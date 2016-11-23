@@ -20,3 +20,4 @@ oro:
             url_hash.label: URL Hash
             redirects.label: Redirects
             scopes.label: Scopes
+            localization: Localization

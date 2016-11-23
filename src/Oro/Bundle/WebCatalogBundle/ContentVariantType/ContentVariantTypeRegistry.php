@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\WebCatalogBundle\ContentVariantType;
 
-use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebCatalogBundle\Exception\InvalidArgumentException;
 use Oro\Component\WebCatalog\ContentVariantTypeInterface;
+use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 
 class ContentVariantTypeRegistry
 {
@@ -37,10 +37,10 @@ class ContentVariantTypeRegistry
     }
 
     /**
-     * @param ContentVariant $contentVariant
+     * @param ContentVariantInterface $contentVariant
      * @return ContentVariantTypeInterface
      */
-    public function getContentVariantTypeByContentVariant(ContentVariant $contentVariant)
+    public function getContentVariantTypeByContentVariant(ContentVariantInterface $contentVariant)
     {
         return $this->getContentVariantType($contentVariant->getType());
     }
