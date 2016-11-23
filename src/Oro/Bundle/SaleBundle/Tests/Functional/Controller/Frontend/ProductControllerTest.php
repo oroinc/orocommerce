@@ -55,8 +55,8 @@ class ProductControllerTest extends WebTestCase
     {
         return [
             'unit without prices'       => ['product' => LoadProductData::PRODUCT_2, 'contains' => 'Request A Quote'],
-            'unit with empty price'     => ['product' => LoadProductData::PRODUCT_6, 'contains' => 'USD 200.50'],
-            'unit with not empty price' => ['product' => LoadProductData::PRODUCT_7, 'contains' => 'USD 0.00']
+            'unit with empty price'     => ['product' => LoadProductData::PRODUCT_6, 'contains' => '$200.50'],
+            'unit with not empty price' => ['product' => LoadProductData::PRODUCT_7, 'contains' => '$0.00']
         ];
     }
 
