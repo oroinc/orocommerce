@@ -2,23 +2,24 @@
 
 namespace Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\Subtree;
 
+use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\RepositoryHolder;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\AccountCategoryRepository;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\AccountGroupCategoryRepository;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CategoryRepository;
 
 class PositionChangeCategorySubtreeCacheBuilder extends VisibilityChangeCategorySubtreeCacheBuilder
 {
     /**
-     * @var RepositoryHolder
+     * @var AccountCategoryRepository
      */
-    protected $accountCategoryRepositoryHolder;
+    protected $accountCategoryRepository;
 
     /**
-     * @var RepositoryHolder
+     * @var AccountGroupCategoryRepository
      */
-    protected $accountGroupCategoryRepositoryHolder;
+    protected $accountGroupCategoryRepositoryRepository;
 
     /** @var array */
     protected $accountGroupIdsWithInverseVisibility = [];
@@ -38,10 +39,11 @@ class PositionChangeCategorySubtreeCacheBuilder extends VisibilityChangeCategory
     public function categoryPositionChanged(Category $category)
     {
         $parentCategory = $category->getParentCategory();
-        $visibility = $this->registry
+        /** @var CategoryRepository $repository */
+        $repository = $this->registry
             ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved')
-            ->getRepository('OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved')
-            ->getFallbackToAllVisibility($parentCategory);
+            ->getRepository('OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved');
+        $visibility = $repository->getFallbackToAllVisibility($parentCategory);
 
         $childCategoryIds = $this->getChildCategoryIdsForUpdate($category);
         $categoryIds = $this->getCategoryIdsForUpdate($category, $childCategoryIds);
@@ -98,8 +100,9 @@ class PositionChangeCategorySubtreeCacheBuilder extends VisibilityChangeCategory
         $accountGroupIdsWithInverseVisibility = [];
         $accountGroupIdsWithConfigVisibility = [];
 
-        $parentAccountGroupsVisibilities = $this->getAccountGroupCategoryRepository()
+        $parentAccountGroupsVisibilities = $this->accountGroupCategoryRepository
             ->getVisibilitiesForAccountGroups(
+                $this->scopeManager,
                 $category->getParentCategory(),
                 $accountGroupIdsWithFallbackToParent
             );
@@ -144,7 +147,11 @@ class PositionChangeCategorySubtreeCacheBuilder extends VisibilityChangeCategory
         $accountIdsWithConfigVisibility = [];
 
         $parentAccountsVisibilities = $this->getAccountCategoryRepository()
-            ->getVisibilitiesForAccounts($category->getParentCategory(), $accountIdsWithFallbackToParent);
+            ->getVisibilitiesForAccounts(
+                $this->scopeManager,
+                $category->getParentCategory(),
+                $accountIdsWithFallbackToParent
+            );
 
         foreach ($parentAccountsVisibilities as $accountId => $accountVisibility) {
             if ($accountVisibility === $visibility) {
@@ -243,11 +250,11 @@ class PositionChangeCategorySubtreeCacheBuilder extends VisibilityChangeCategory
     }
 
     /**
-     * @param RepositoryHolder $repositoryHolder
+     * @param EntityRepository $repositoryHolder
      */
-    public function setAccountCategoryRepositoryHolder(RepositoryHolder $repositoryHolder)
+    public function setAccountCategoryRepository(EntityRepository $repositoryHolder)
     {
-        $this->accountCategoryRepositoryHolder = $repositoryHolder;
+        $this->accountCategoryRepository = $repositoryHolder;
     }
 
     /**
@@ -255,22 +262,6 @@ class PositionChangeCategorySubtreeCacheBuilder extends VisibilityChangeCategory
      */
     protected function getAccountCategoryRepository()
     {
-        return $this->accountCategoryRepositoryHolder->getRepository();
-    }
-
-    /**
-     * @param RepositoryHolder $repositoryHolder
-     */
-    public function setAccountGroupCategoryRepositoryHolder(RepositoryHolder $repositoryHolder)
-    {
-        $this->accountGroupCategoryRepositoryHolder = $repositoryHolder;
-    }
-
-    /**
-     * @return AccountGroupCategoryRepository
-     */
-    protected function getAccountGroupCategoryRepository()
-    {
-        return $this->accountGroupCategoryRepositoryHolder->getRepository();
+        return $this->accountCategoryRepository;
     }
 }
