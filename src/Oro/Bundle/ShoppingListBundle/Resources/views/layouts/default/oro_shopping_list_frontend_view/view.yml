@@ -21,14 +21,10 @@ layout:
                         visible: '!data["entity"]'
                         shoppingList: '=data["entity"]'
                 shopping_list_top_actions:
-                    blockType: action_line_buttons
+                    blockType: line_buttons
                     options:
                         visible: '=data["entity"]!=null'
-                        actions: '=data["actions"].getAll(data["entity"])'
-                        entityId: '=data["action_buttons"].getEntityId(data["entity"])'
-                        entityClass: '=data["action_buttons"].getEntityClass(data["entity"])'
-                        dialogRoute: '=data["action_buttons"].getDialogRoute()'
-                        executionRoute: '=data["action_buttons"].getExecutionRoute()'
+                        buttons: '=data["button_provider"].getAll(data["entity"])'
                 shopping_list_options:
                     blockType: shopping_list_awere_block
                     options:
@@ -69,14 +65,18 @@ layout:
                         entityId: '=data["entity"]!=null ? data["entity"].getId() : null'
                         skipMaskView: true
                 shopping_list_combined_button:
-                    blockType: action_combined_buttons
+#                    blockType: action_combined_buttons
+#                    options:
+#                        visible: '=data["entity"]!=null'
+#                        actions: '=data["actions"].getAll(data["entity"])'
+#                        entityId: '=data["action_buttons"].getEntityId(data["entity"])'
+#                        entityClass: '=data["action_buttons"].getEntityClass(data["entity"])'
+#                        dialogRoute: '=data["action_buttons"].getDialogRoute()'
+#                        executionRoute: '=data["action_buttons"].getExecutionRoute()'
+                    blockType: combined_buttons
                     options:
                         visible: '=data["entity"]!=null'
-                        actions: '=data["actions"].getAll(data["entity"])'
-                        entityId: '=data["action_buttons"].getEntityId(data["entity"])'
-                        entityClass: '=data["action_buttons"].getEntityClass(data["entity"])'
-                        dialogRoute: '=data["action_buttons"].getDialogRoute()'
-                        executionRoute: '=data["action_buttons"].getExecutionRoute()'
+                        buttons: '=data["button_provider"].getAll(data["entity"])'
                 shopping_list_view_container_content:
                     blockType: container
             tree:

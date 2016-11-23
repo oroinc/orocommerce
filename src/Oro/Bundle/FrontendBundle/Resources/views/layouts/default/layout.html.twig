@@ -132,7 +132,7 @@
         {% set attr = attr|merge({ class: attr.class|default('') ~ additionalCss}) %}
         <div{{ block('block_attributes') }}>
             {% set button = buttons|first %}
-            {% include button.template with button.templateData|merge({onlyLink: true}) %}
+            {% include button.template with button.templateData|merge({onlyLink: true, aClass: 'direct-link '}) %}
             {% if hasVariants %}
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                     <i class="cf-arrow_drop_down"></i>
