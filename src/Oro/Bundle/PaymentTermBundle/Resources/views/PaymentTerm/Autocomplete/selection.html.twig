@@ -1,0 +1,6 @@
+<%= label %>
+<% if (isAccountDefault) { %>
+    (<%= _.__('oro.paymentterm.autocomplete.account') %>)
+<% } else if (isAccountGroupDefault) { %>
+    (<%= _.__('oro.paymentterm.autocomplete.account_group') %>)
+<% } %>
