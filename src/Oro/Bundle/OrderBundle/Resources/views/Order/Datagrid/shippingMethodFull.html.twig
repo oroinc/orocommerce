@@ -1,7 +1,7 @@
 {% set shippingMethod  =  record.getValue('shippingMethod') %}
 {% set shippingMethodType  =  record.getValue('shippingMethodType') %}
 {%- if shippingMethod -%}
-    {{ 'oro.frontend.order.method_type.grid.label'|trans({
+    {{ 'oro.order.method_type.grid.label'|trans({
         '%translatedMethodType%': get_shipping_method_type_label(shippingMethod, shippingMethodType)|trans,
         '%translatedMethod%': get_shipping_method_label(shippingMethod)|trans
     })|raw }}
