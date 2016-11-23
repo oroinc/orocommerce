@@ -46,7 +46,7 @@ class CheckoutSource extends ExtendCheckoutSource
     /**
      * Get first not empty relation
      *
-     * @return mixed|null
+     * @return CheckoutSourceEntityInterface|null
      */
     public function getEntity()
     {
