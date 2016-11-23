@@ -7,6 +7,11 @@ use Doctrine\DBAL\Platforms\MySqlPlatform;
 use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
 use Doctrine\DBAL\Schema\Schema;
 
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
 use Oro\Bundle\EntityExtendBundle\Extend\RelationType;
 use Oro\Bundle\FrontendBundle\Migration\UpdateExtendRelationTrait;
 use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareInterface;
@@ -15,21 +20,16 @@ use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
-use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
 use Oro\Bundle\PaymentTermBundle\Migration\Extension\PaymentTermExtensionAwareInterface;
 use Oro\Bundle\PaymentTermBundle\Migration\Extension\PaymentTermExtensionAwareTrait;
 
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
-
 class OroPaymentTermBundleInstaller implements
     Installation,
-    NoteExtensionAwareInterface,
     PaymentTermExtensionAwareInterface,
     DatabasePlatformAwareInterface,
     RenameExtensionAwareInterface,
-    ContainerAwareInterface
+    ContainerAwareInterface,
+    ActivityExtensionAwareInterface
 {
     use PaymentTermExtensionAwareTrait, ContainerAwareTrait, UpdateExtendRelationTrait;
 
@@ -38,6 +38,11 @@ class OroPaymentTermBundleInstaller implements
 
     /** @var RenameExtension */
     protected $renameExtension;
+
+    /**
+     * @var ActivityExtension
+     */
+    protected $activityExtension;
 
     /**
      * Table name for PaymentTerm
@@ -49,24 +54,11 @@ class OroPaymentTermBundleInstaller implements
     const ACCOUNT_GROUP_TABLE = 'oro_account_group';
 
     /**
-     * @var NoteExtension
-     */
-    protected $noteExtension;
-
-    /**
      * {@inheritdoc}
      */
     public function getMigrationVersion()
     {
         return 'v1_0';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setNoteExtension(NoteExtension $noteExtension)
-    {
-        $this->noteExtension = $noteExtension;
     }
 
     /**
@@ -98,7 +90,7 @@ class OroPaymentTermBundleInstaller implements
 
         $this->createOroPaymentTermTable($schema);
 
-        $this->noteExtension->addNoteAssociation($schema, self::TABLE_NAME);
+        $this->activityExtension->addActivityAssociation($schema, 'oro_note', self::TABLE_NAME);
 
         $this->paymentTermExtension->addPaymentTermAssociation($schema, 'oro_account');
         $this->paymentTermExtension->addPaymentTermAssociation($schema, 'oro_account_group');
@@ -232,5 +224,13 @@ QUERY;
         $queries->addPostQuery($queryGroup);
         $queries->addPostQuery('DROP TABLE oro_payment_term_to_account;');
         $queries->addPostQuery('DROP TABLE oro_payment_term_to_acc_grp;');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setActivityExtension(ActivityExtension $activityExtension)
+    {
+        $this->activityExtension = $activityExtension;
     }
 }
