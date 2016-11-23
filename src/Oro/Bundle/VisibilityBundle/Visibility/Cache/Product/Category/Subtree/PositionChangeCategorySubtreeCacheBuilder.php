@@ -19,7 +19,7 @@ class PositionChangeCategorySubtreeCacheBuilder extends VisibilityChangeCategory
     /**
      * @var AccountGroupCategoryRepository
      */
-    protected $accountGroupCategoryRepositoryRepository;
+    protected $accountGroupCategoryRepository;
 
     /** @var array */
     protected $accountGroupIdsWithInverseVisibility = [];
@@ -100,7 +100,7 @@ class PositionChangeCategorySubtreeCacheBuilder extends VisibilityChangeCategory
         $accountGroupIdsWithInverseVisibility = [];
         $accountGroupIdsWithConfigVisibility = [];
 
-        $parentAccountGroupsVisibilities = $this->accountGroupCategoryRepository
+        $parentAccountGroupsVisibilities = $this->getAccountGroupCategoryRepository()
             ->getVisibilitiesForAccountGroups(
                 $this->scopeManager,
                 $category->getParentCategory(),
@@ -263,5 +263,21 @@ class PositionChangeCategorySubtreeCacheBuilder extends VisibilityChangeCategory
     protected function getAccountCategoryRepository()
     {
         return $this->accountCategoryRepository;
+    }
+
+    /**
+     * @return AccountGroupCategoryRepository
+     */
+    public function getAccountGroupCategoryRepository()
+    {
+        return $this->accountGroupCategoryRepository;
+    }
+
+    /**
+     * @param AccountGroupCategoryRepository $accountGroupCategoryRepository
+     */
+    public function setAccountGroupCategoryRepository($accountGroupCategoryRepository)
+    {
+        $this->accountGroupCategoryRepository = $accountGroupCategoryRepository;
     }
 }
