@@ -102,6 +102,54 @@
     {% endif %}
 {% endblock %}
 
+{#Buttons#}
+
+{% block line_buttons_widget %}
+    {% import 'OroActionBundle:layouts/base:layout.html.twig' as _layout %}
+    <ul{{ block('block_attributes') }}>
+        {% for button in buttons %}
+            <li>
+                {% include button.template with button.templateData|merge({onlyLink: true}) %}
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
+
+{% block combined_buttons_widget %}
+    {% set buttonsCount = buttons|length %}
+    {% if buttonsCount > 0 %}
+        {% import 'OroActionBundle:layouts/base:layout.html.twig' as _layout %}
+        {% set hasVariants = buttonsCount > 1 %}
+        {% set additionalCss = "btn" %}
+        {% if block.parent.vars.class_prefix == 'datagrid_toolbar_button_container' %}
+            {% set additionalCss = additionalCss ~ " btn_xsm btn-dark btn-block oq-group-btn" %}
+        {% else %}
+            {% set additionalCss = additionalCss ~ " btn_xlg theme-btn theme-btn_xlg btn-orange" %}
+        {% endif %}
+        {% if hasVariants %}
+            {% set additionalCss = additionalCss ~ " btn_has-dropdown btn_has-dropdown_xlg" %}
+        {% endif %}
+        {% set attr = attr|merge({ class: attr.class|default('') ~ additionalCss}) %}
+        <div{{ block('block_attributes') }}>
+            {% set button = buttons|first %}
+            {% include button.template with button.templateData|merge({onlyLink: true}) %}
+            {% if hasVariants %}
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    <i class="cf-arrow_drop_down"></i>
+                </a>
+
+                <ul class="dropdown-menu">
+                    {% for button in buttons|slice(1) %}
+                        <li>
+                            {% include button.template with button.templateData|merge({onlyLink: true}) %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+    {% endif %}
+{% endblock %}
+
 {% block button_widget %}
     {% if style|default('') == 'auto' %}
         {% if action == 'submit' %}
