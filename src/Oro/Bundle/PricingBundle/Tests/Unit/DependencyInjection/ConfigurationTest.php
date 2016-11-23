@@ -2,13 +2,11 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\DependencyInjection;
 
-use Symfony\Component\Config\Definition\Processor;
-
-use Oro\DBAL\Types\MoneyType;
-
-use Oro\Bundle\PricingBundle\DependencyInjection\Configuration;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\PricingBundle\DependencyInjection\Configuration;
 use Oro\Bundle\PricingBundle\DependencyInjection\OroPricingExtension;
+use Oro\DBAL\Types\MoneyType;
+use Symfony\Component\Config\Definition\Processor;
 
 class ConfigurationTest extends \PHPUnit_Framework_TestCase
 {
@@ -52,19 +50,12 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                     'value' => null,
                     'scope' => 'app'
                 ],
-                'enabled_currencies' => [
-                    'value' => ['USD'],
-                    'scope' => 'app'
-                ],
-                'default_currency' => [
-                    'value' => 'USD',
-                    'scope' => 'app'
-                ]
             ]
         ];
 
         $this->assertEquals($expected, $processor->processConfiguration($configuration, []));
     }
+
     public function testGetConfigKeyByName()
     {
         $configKey = Configuration::getConfigKeyToPriceList();

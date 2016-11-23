@@ -15,7 +15,6 @@ use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 
 class SystemCurrencyFormExtension extends AbstractTypeExtension
 {
-    const ALLOWED_CURRENCIES = 'oro_currency.allowed_currencies';
     const ENABLED_CURRENCIES = 'oro_pricing.enabled_currencies';
 
     /**

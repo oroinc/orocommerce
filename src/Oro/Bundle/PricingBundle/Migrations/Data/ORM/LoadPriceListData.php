@@ -36,7 +36,7 @@ class LoadPriceListData extends AbstractFixture implements ContainerAwareInterfa
         $priceList = new PriceList();
         $priceList
             ->setDefault(true)
-            ->setCurrencies(['USD', 'EUR'])
+            ->setCurrencies($this->container->get('oro_currency.config.currency')->getCurrencyList())
             ->setName(self::DEFAULT_PRICE_LIST_NAME);
         $manager->persist($priceList);
         $manager->flush();
