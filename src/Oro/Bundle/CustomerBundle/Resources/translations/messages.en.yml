@@ -99,7 +99,7 @@ oro.customer:
         profile:
             company_name: 'Company Name'
             registration.title: 'Registration'
-            register: 'Register'
+            register: 'Registration'
             register.description: 'Please register if you do not have an account. A sales representative will contact you shortly.'
             create_an_account: 'Create An Account'
             forgot_password: 'Forgot Your Password?'

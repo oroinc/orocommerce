@@ -23,12 +23,7 @@ class AccountControllerTest extends WebTestCase
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
         $this->loadFixtures(
-            [
-                'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccounts',
-                'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups',
-                'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadInternalRating',
-                'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadUserData'
-            ]
+            $this->getFixtureList()
         );
     }
 
@@ -134,16 +129,7 @@ class AccountControllerTest extends WebTestCase
         AbstractEnumValue $internalRating
     ) {
         $form = $crawler->selectButton('Save and Close')->form(
-            [
-                'oro_account_type[name]' => $name,
-                'oro_account_type[parent]' => $parent->getId(),
-                'oro_account_type[group]' => $group->getId(),
-                'oro_account_type[internal_rating]' => $internalRating->getId(),
-                'oro_account_type[salesRepresentatives]' => implode(',', [
-                    $this->getReference(LoadUserData::USER1)->getId(),
-                    $this->getReference(LoadUserData::USER2)->getId()
-                ])
-            ]
+            $this->prepareFormValues($name, $parent, $group, $internalRating)
         );
 
         $this->client->followRedirects(true);
@@ -177,5 +163,44 @@ class AccountControllerTest extends WebTestCase
         $this->assertContains($parent->getName(), $html);
         $this->assertContains($group->getName(), $html);
         $this->assertContains($internalRating->getName(), $html);
+    }
+
+    /**
+     * @param $name
+     * @param Account $parent
+     * @param AccountGroup $group
+     * @param AbstractEnumValue $internalRating
+     *
+     * @return array
+     */
+    protected function prepareFormValues(
+        $name,
+        Account $parent,
+        AccountGroup $group,
+        AbstractEnumValue $internalRating
+    ) {
+        return [
+            'oro_account_type[name]' => $name,
+            'oro_account_type[parent]' => $parent->getId(),
+            'oro_account_type[group]' => $group->getId(),
+            'oro_account_type[internal_rating]' => $internalRating->getId(),
+            'oro_account_type[salesRepresentatives]' => implode(',', [
+                $this->getReference(LoadUserData::USER1)->getId(),
+                $this->getReference(LoadUserData::USER2)->getId()
+            ])
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    protected function getFixtureList()
+    {
+        return [
+            'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccounts',
+            'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups',
+            'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadInternalRating',
+            'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadUserData'
+        ];
     }
 }

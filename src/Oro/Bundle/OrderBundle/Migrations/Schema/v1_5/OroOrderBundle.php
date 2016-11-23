@@ -38,16 +38,6 @@ class OroOrderBundle implements Migration, RenameExtensionAwareInterface
             RelationType::MANY_TO_MANY
         ));
 
-        // calendar event to order association
-        $extension->renameTable($schema, $queries, 'oro_rel_46a29d1934e8bc9c23a92e', 'oro_rel_46a29d1934e8bc9c2ddbe0');
-        $queries->addQuery(new UpdateExtendRelationQuery(
-            'Oro\Bundle\CalendarBundle\Entity\CalendarEvent',
-            'Oro\Bundle\OrderBundle\Entity\Order',
-            'order_19226b65',
-            'order_5726bf8f',
-            RelationType::MANY_TO_MANY
-        ));
-
         // attachments
         $attachments = $schema->getTable('oro_attachment');
 

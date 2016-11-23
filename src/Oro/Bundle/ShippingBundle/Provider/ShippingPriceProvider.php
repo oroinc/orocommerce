@@ -52,7 +52,6 @@ class ShippingPriceProvider
                 if (!$method) {
                     continue;
                 }
-
                 $types = $this->getMethodTypesConfigs($context, $methodConfig);
                 if (count($types) === 0) {
                     continue;

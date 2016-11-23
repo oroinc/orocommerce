@@ -97,12 +97,8 @@ class PriceResponseTest extends \PHPUnit_Framework_TestCase
         $this->priceResponse->getPricesByServices();
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Price data is missing for service fakeService
-     */
-    public function testGetPriceByServiceException()
+    public function testGetPriceByService()
     {
-        $this->priceResponse->getPriceByService('fakeService');
+        static::assertNull($this->priceResponse->getPriceByService('fakeService'));
     }
 }

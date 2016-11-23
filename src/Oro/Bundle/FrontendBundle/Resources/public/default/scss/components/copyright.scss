@@ -1,0 +1,16 @@
+.copyright {
+    padding: $copyright-inner-offset $offset-y ($copyright-inner-offset - $offset-y);
+
+    font-size: $base-font-size - 2;
+    line-height: normal;
+    text-align: center;
+
+    border-top: 1px solid get-color('additional', 'light');
+}
+
+@include breakpoint('mobile') {
+    .copyright {
+        margin: 0;
+        padding: 22px 0;
+    }
+}
