@@ -205,7 +205,7 @@ class UPSShippingMethod implements
         /** @var UPSTransport $transport */
         $transport = $this->channel->getTransport();
         $priceRequest = $this->priceRequestFactory->create($transport, $context, self::REQUEST_OPTION);
-        if (count($priceRequest->getPackages()) < 1) {
+        if (!$priceRequest || count($priceRequest->getPackages()) < 1) {
             return $prices;
         }
 

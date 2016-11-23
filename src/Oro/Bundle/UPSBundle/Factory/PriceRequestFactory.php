@@ -86,9 +86,8 @@ class PriceRequestFactory
         if (count($packages) > 0) {
             $priceRequest->setPackages($packages);
             return $priceRequest;
-        } else {
-            return null;
         }
+        return null;
     }
 
     /**
@@ -191,8 +190,9 @@ class PriceRequestFactory
         }
 
         foreach ($allProductsShippingOptions as $productShippingOptions) {
+            $productId = $productShippingOptions->getProduct()->getId();
             if ($productShippingOptions->getProductUnit()->getCode() !==
-                $productsInfo[$productShippingOptions->getProduct()->getId()]['productUnitCode']
+                $productsInfo[$productId]['productUnitCode']
             ) {
                 return [];
             }
@@ -216,7 +216,7 @@ class PriceRequestFactory
                 return [];
             }
 
-            for ($i = 0; $i < $productsInfo[$productShippingOptions->getProduct()->getId()]['quantity']; $i++) {
+            for ($i = 0; $i < $productsInfo[$productId]['quantity']; $i++) {
                 $productsParamsByUnit[strtoupper(substr($dimensionUnit, 0, 2))][] = [
                     'dimensionUnit' => $dimensionUnit,
                     'dimensionHeight' => $productDimensions->getValue()->getHeight(),
