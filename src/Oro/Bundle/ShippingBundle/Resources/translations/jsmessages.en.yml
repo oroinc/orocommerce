@@ -16,3 +16,9 @@ oro:
                     label: Type
                     per_item.label: Per Item
                     per_order.label: Per Order
+        method_type:
+            backend:
+                method_with_type_and_price:
+                    label: '{{ translatedMethod }}, {{ translatedMethodType }}: {{ price }}'
+                method_type_and_price:
+                    label: '{{ translatedMethodType }}: {{ price }}'
