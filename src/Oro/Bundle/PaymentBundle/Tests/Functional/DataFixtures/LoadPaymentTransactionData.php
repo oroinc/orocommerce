@@ -10,6 +10,7 @@ use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use Oro\Bundle\PaymentBundle\Method\PaymentTerm;
 
 class LoadPaymentTransactionData extends AbstractFixture implements DependentFixtureInterface
 {
@@ -34,8 +35,8 @@ class LoadPaymentTransactionData extends AbstractFixture implements DependentFix
             'currency' => 'USD',
             'action' => PaymentMethodInterface::AUTHORIZE,
             'entityIdentifier' => 1,
-            'paymentMethod' => 'payment_method',
-            'entityClass' => PaymentTransaction::class,
+            'paymentMethod' => PaymentTerm::TYPE,
+            'entityClass' => 'Oro\Bundle\PaymentBundle\Entity\PaymentTerm',
             'frontendOwner' => LoadAccountUserData::EMAIL,
             'response' => [
                 'SECURETOKEN' => 'SECURETOKEN',
@@ -49,8 +50,8 @@ class LoadPaymentTransactionData extends AbstractFixture implements DependentFix
             'entityIdentifier' => 1,
             'active' => true,
             'successful' => true,
-            'paymentMethod' => 'payment_method',
-            'entityClass' => PaymentTransaction::class,
+            'paymentMethod' => PaymentTerm::TYPE,
+            'entityClass' => 'Oro\Bundle\PaymentBundle\Entity\PaymentTerm',
             'frontendOwner' => LoadAccountUserData::EMAIL,
             'response' => [
                 'SECURETOKEN' => 'SECURETOKEN',
@@ -64,8 +65,8 @@ class LoadPaymentTransactionData extends AbstractFixture implements DependentFix
             'entityIdentifier' => 1,
             'active' => true,
             'successful' => true,
-            'paymentMethod' => 'payment_method',
-            'entityClass' => PaymentTransaction::class,
+            'paymentMethod' => PaymentTerm::TYPE,
+            'entityClass' => 'Oro\Bundle\PaymentBundle\Entity\PaymentTerm',
             'frontendOwner' => LoadAccountUserData::EMAIL,
             'response' => [
                 'SECURETOKEN' => 'SECURETOKEN',

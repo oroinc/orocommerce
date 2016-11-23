@@ -11,18 +11,13 @@ use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
-use Oro\Bundle\PaymentTermBundle\Migration\Extension\PaymentTermExtensionAwareInterface;
-use Oro\Bundle\PaymentTermBundle\Migration\Extension\PaymentTermExtensionAwareTrait;
 
 class OroOrderBundleInstaller implements
     Installation,
     NoteExtensionAwareInterface,
     AttachmentExtensionAwareInterface,
-    ActivityExtensionAwareInterface,
-    PaymentTermExtensionAwareInterface
+    ActivityExtensionAwareInterface
 {
-    use PaymentTermExtensionAwareTrait;
-
     /** @var  NoteExtension */
     protected $noteExtension;
 
@@ -83,10 +78,7 @@ class OroOrderBundleInstaller implements
         $this->addOroOrderAddressForeignKeys($schema);
         $this->addOroOrderLineItemForeignKeys($schema);
         $this->addOroOrderDiscountForeignKeys($schema);
-
         $this->addOroOrderShippingTrackingForeignKeys($schema);
-
-        $this->paymentTermExtension->addPaymentTermAssociation($schema, 'oro_order');
     }
 
     /**
@@ -137,6 +129,7 @@ class OroOrderBundleInstaller implements
             'money',
             ['notnull' => false, 'precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']
         );
+        $table->addColumn('payment_term_id', 'integer', ['notnull' => false]);
         $table->addColumn('account_id', 'integer', ['notnull' => false]);
         $table->addColumn('account_user_id', 'integer', ['notnull' => false]);
         $table->addColumn('source_entity_class', 'string', ['notnull' => false, 'length' => 255]);
@@ -268,6 +261,12 @@ class OroOrderBundleInstaller implements
     protected function addOroOrderForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('oro_order');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_payment_term'),
+            ['payment_term_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_organization'),
             ['organization_id'],

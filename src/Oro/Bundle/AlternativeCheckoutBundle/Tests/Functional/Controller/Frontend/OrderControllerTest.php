@@ -191,8 +191,7 @@ class OrderControllerTest extends FrontendWebTestCase
         foreach ($sorters as $sorter => $value) {
             $result[$gridName . '[_sort_by]' . $sorter] = $value;
         }
-
-        $response = $this->client->requestFrontendGrid(['gridName' => $gridName], $result);
+        $response = $this->client->requestGrid(['gridName' => $gridName], $result);
 
         return json_decode($response->getContent(), true)['data'];
     }

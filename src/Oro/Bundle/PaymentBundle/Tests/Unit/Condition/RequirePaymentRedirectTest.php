@@ -41,7 +41,7 @@ class RequirePaymentRedirectTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertInstanceOf(
             AbstractCondition::class,
-            $this->condition->initialize([self::PAYMENT_METHOD_KEY => 'payment_method'])
+            $this->condition->initialize([self::PAYMENT_METHOD_KEY => 'payment_term'])
         );
     }
 
@@ -61,7 +61,7 @@ class RequirePaymentRedirectTest extends \PHPUnit_Framework_TestCase
 
         $this->paymentMethodRegistry->expects($this->once())
             ->method('getPaymentMethod')
-            ->with('payment_method')
+            ->with('payment_term')
             ->willReturn($paymentMethod);
 
         $event = new RequirePaymentRedirectEvent($paymentMethod);
@@ -70,30 +70,30 @@ class RequirePaymentRedirectTest extends \PHPUnit_Framework_TestCase
             ->method('dispatch')
             ->withConsecutive(
                 ['oro_payment.require_payment_redirect', $event],
-                ['oro_payment.require_payment_redirect.payment_method', $event]
+                ['oro_payment.require_payment_redirect.payment_term', $event]
             );
 
-        $this->condition->initialize([self::PAYMENT_METHOD_KEY => 'payment_method']);
+        $this->condition->initialize([self::PAYMENT_METHOD_KEY => 'payment_term']);
         $this->assertFalse($this->condition->evaluate($context, $errors));
     }
 
     public function testToArray()
     {
-        $this->condition->initialize([self::PAYMENT_METHOD_KEY => 'payment_method']);
+        $this->condition->initialize([self::PAYMENT_METHOD_KEY => 'payment_term']);
         $result = $this->condition->toArray();
         $this->assertInternalType('array', $result);
         $this->assertArrayHasKey('@' . RequirePaymentRedirect::NAME, $result);
         $resultSection = $result['@' . RequirePaymentRedirect::NAME];
         $this->assertInternalType('array', $resultSection);
         $this->assertArrayHasKey('parameters', $resultSection);
-        $this->assertContains('payment_method', $resultSection['parameters']);
+        $this->assertContains('payment_term', $resultSection['parameters']);
     }
 
     public function testCompile()
     {
-        $this->condition->initialize([self::PAYMENT_METHOD_KEY => 'payment_method']);
+        $this->condition->initialize([self::PAYMENT_METHOD_KEY => 'payment_term']);
         $result = $this->condition->compile('');
         $this->assertContains(RequirePaymentRedirect::NAME, $result);
-        $this->assertContains('payment_method', $result);
+        $this->assertContains('payment_term', $result);
     }
 }

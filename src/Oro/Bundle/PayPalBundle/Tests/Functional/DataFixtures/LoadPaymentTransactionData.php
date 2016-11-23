@@ -35,7 +35,7 @@ class LoadPaymentTransactionData extends AbstractFixture implements DependentFix
             'action' => PaymentMethodInterface::AUTHORIZE,
             'entityIdentifier' => 1,
             'paymentMethod' => PayflowGateway::TYPE,
-            'entityClass' => '\stdClass',
+            'entityClass' => 'Oro\Bundle\PaymentBundle\Entity\PaymentTerm',
             'frontendOwner' => LoadAccountUserData::EMAIL,
             'response' => [
                 'SECURETOKEN' => 'SECURETOKEN',
@@ -48,7 +48,7 @@ class LoadPaymentTransactionData extends AbstractFixture implements DependentFix
             'action' => PaymentMethodInterface::AUTHORIZE,
             'entityIdentifier' => 1,
             'paymentMethod' => PayflowGateway::TYPE,
-            'entityClass' => '\stdClass',
+            'entityClass' => 'Oro\Bundle\PaymentBundle\Entity\PaymentTerm',
             'frontendOwner' => LoadAccountUserData::EMAIL,
             'response' => [
                 'SECURETOKEN' => 'SECURETOKEN',

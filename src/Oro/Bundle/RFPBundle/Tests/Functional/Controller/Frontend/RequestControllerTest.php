@@ -59,7 +59,7 @@ class RequestControllerTest extends WebTestCase
 
         static::assertContains('frontend-requests-grid', $crawler->html());
 
-        $response = $this->client->requestFrontendGrid(
+        $response = $this->client->requestGrid(
             [
                 'gridName' => 'frontend-requests-grid',
             ]
@@ -462,7 +462,7 @@ class RequestControllerTest extends WebTestCase
         $authParams = static::generateBasicAuthHeader(LoadUserData::ACCOUNT1_USER1, LoadUserData::ACCOUNT1_USER1);
         $this->initClient([], $authParams);
 
-        $response = $this->client->requestFrontendGrid(
+        $response = $this->client->requestGrid(
             'frontend-requests-grid',
             [
                 'frontend-requests-grid[_filter][poNumber][value]' => static::PO_NUMBER

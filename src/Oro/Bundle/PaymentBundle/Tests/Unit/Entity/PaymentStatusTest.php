@@ -15,7 +15,7 @@ class PaymentStatusTest extends \PHPUnit_Framework_TestCase
             ['id', '1'],
             ['entityIdentifier', 10],
             ['entityClass', 'Some\Class'],
-            ['paymentStatus', 'pending'],
+            ['paymentStatus', 'payment_term'],
         ];
 
         $this->assertPropertyAccessors(new PaymentStatus(), $properties);

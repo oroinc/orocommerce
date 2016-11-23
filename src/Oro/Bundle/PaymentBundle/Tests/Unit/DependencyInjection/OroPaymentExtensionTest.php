@@ -12,13 +12,13 @@ class OroPaymentExtensionTest extends ExtensionTestCase
         $this->loadExtension(new OroPaymentExtension());
 
         $expectedParameters = [
-            'oro_payment.entity.payment_transaction.class',
+            'oro_payment.entity.payment_term.class',
         ];
         $this->assertParametersLoaded($expectedParameters);
 
         $expectedDefinitions = [
-            'oro_payment.formatter.payment_method_label',
-            'oro_payment.twig.payment_method_extension',
+            'oro_payment.payment_term.manager.api',
+            'oro_payment.form.type.payment_term'
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
     }

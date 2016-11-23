@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\PaymentTermBundle\Method\PaymentTerm;
+use Oro\Bundle\PaymentBundle\Method\PaymentTerm;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 
 class LoadShoppingListsCheckoutsData extends AbstractLoadCheckouts

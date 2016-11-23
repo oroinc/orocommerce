@@ -4,3 +4,4 @@ config:
         'oropayment/js/app/components/payment-method-selector-component': 'bundles/oropayment/js/app/components/payment-method-selector-component.js'
         'oropayment/js/app/components/config-hide-fields-component': 'bundles/oropayment/js/app/components/config-hide-fields-component.js'
         'oropayment/js/app/components/payment-method-component': 'bundles/oropayment/js/app/components/payment-method-component.js'
+        'oropayment/js/app/views/payment-term-view': 'bundles/oropayment/js/app/views/payment-term-view.js'

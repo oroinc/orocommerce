@@ -3,7 +3,7 @@ define(function(require) {
 
     var PaymentTermView;
     var mediator = require('oroui/js/mediator');
-    var BasePaymentTermView = require('oropaymentterm/js/app/views/payment-term-view');
+    var BasePaymentTermView = require('oropayment/js/app/views/payment-term-view');
 
     /**
      * @export oroorder/js/app/views/payment-term-view

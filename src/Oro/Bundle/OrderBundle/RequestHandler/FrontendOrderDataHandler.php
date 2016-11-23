@@ -8,8 +8,8 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
-use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTerm;
+use Oro\Bundle\PaymentBundle\Provider\PaymentTermProvider;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 

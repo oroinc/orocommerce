@@ -285,11 +285,9 @@ class OroAccountBundle implements Migration, RenameExtensionAwareInterface
         } elseif ($notes->hasForeignKey('fk_oro_note_account_8d93c122_id')) {
             $notes->removeForeignKey('fk_oro_note_account_8d93c122_id');
         }
-
         if ($notes->hasIndex('IDX_BA066CE1140E2435')) {
             $notes->dropIndex('IDX_BA066CE1140E2435');
         }
-
         $extension->renameColumn(
             $schema,
             $queries,
