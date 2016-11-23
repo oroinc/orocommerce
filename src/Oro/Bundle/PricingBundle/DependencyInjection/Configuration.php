@@ -12,7 +12,6 @@ class Configuration implements ConfigurationInterface
 {
     const DEFAULT_PRICE_LISTS = 'default_price_lists';
     const ROUNDING_TYPE = 'rounding_type';
-    const ENABLED_CURRENCIES = 'enabled_currencies';
     const PRECISION = 'precision';
     const COMBINED_PRICE_LIST = 'combined_price_list';
     const FULL_COMBINED_PRICE_LIST = 'full_combined_price_list';
