@@ -25,6 +25,30 @@ ApplicationBundle:
 - Added method `Oro\Bundle\ApplicationBundle\Tests\Behat\Context\CommerceMainContext::setPageFactory`
 - Added first argument `name` to method `Oro\Bundle\ApplicationBundle\Tests\Behat\Context\CommerceMainContext:getPage`
 
+B2BEntityBundle:
+-------------------------
+- Bundle renamed to [`CommerceEntityBundle`]
+
+CatalogBundle:
+-------------------------
+- Added classes:
+    - `Oro\Bundle\CatalogBundle\Event\ProductsChangeRelationEvent`
+    - `Oro\Bundle\CatalogBundle\Entity\EntityListener\CategoryEntityListener`
+    - `Oro\Bundle\CatalogBundle\EventListener\WebsiteSearchCategoryIndexerListener`
+    - `Oro\Bundle\CatalogBundle\EventListener\ProductsChangeRelationListener`
+    - `Oro\Bundle\CatalogBundle\EventListener\ORM\CategoryListener`
+    - `Oro\Bundle\CatalogBundle\EventListener\CategoryExistsListener`
+    - `Oro\Bundle\CatalogBundle\EventListener\SearchCategoryFilteringEventListener`
+    - `Oro\Bundle\CatalogBundle\Model\CategoryMaterializedPathModifier`
+    - `Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler`
+    - `Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadMasterCatalogLocalizedTitles`
+    - `Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadFrontendCategoryProductData`
+- Added methods:
+    - `Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository::getProductIdsByCategories`
+    - `Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository::getCategoryMapByProducts`
+    - `Oro\Bundle\CatalogBundle\Entity\Category::getMaterializedPath`
+    - `Oro\Bundle\CatalogBundle\Entity\Category::setMaterializedPath`
+
 CheckoutBundle:
 -------------------------
 - Removed classes:
@@ -46,6 +70,7 @@ CheckoutBundle:
 - Changed type from `Oro\Component\Action\Model\ContextAccessor` to `Oro\Component\ConfigExpression\ContextAccessor` of first argument of `Oro\Bundle\CheckoutBundle\WorkflowState\Action\GetCheckoutStateAction` constructor
 - Changed type from `Oro\Component\Action\Model\ContextAccessor` to `Oro\Component\ConfigExpression\ContextAccessor` of first argument of `Oro\Bundle\CheckoutBundle\WorkflowState\Action\GenerateCheckoutStateSnapshotAction` constructor
 - Changed type from `Oro\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface` to `Oro\Bundle\CustomerBundle\Entity\AccountOwnerAwareInterface` of third argument of method `Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressType:initAccountAddressField`
+- Added type `Oro\Bundle\CurrencyBundle\Entity\Price` to first argument of method `Oro\Bundle\CheckoutBundle\Entity\Checkout:setShippingCost`
 
 CMSBundle:
 -------------------------
@@ -210,6 +235,8 @@ CustomerBundle:
     - `Oro\Bundle\CustomerBundle\Provider\ScopeAccountGroupCriteriaProvider`
     - `Oro\Bundle\CustomerBundle\EventListener\RecordOwnerDataListener`
     - `Oro\Bundle\CustomerBundle\Tests\Unit\Fixtures\Entity\User`
+    - `Oro\Bundle\CustomerBundle\Model\AccountMessageFactory`
+    - `Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadFrontendProductVisibilityData`
 
 FrontendBundle:
 -------------------------
@@ -266,6 +293,9 @@ InvoiceBundle:
 
 OrderBundle:
 -------------------------
+- Removed methods
+    - `Oro\Bundle\OrderBundle\Entity\Order::setShippingCost`
+    - `Oro\Bundle\OrderBundle\Entity\Order::updateShippingCost`
 - Added classes:
     - `Oro\Bundle\OrderBundle\Entity\OrderShippingTracking`
     - `Oro\Bundle\OrderBundle\Formatter\ShippingMethodFormatter`
@@ -275,6 +305,8 @@ OrderBundle:
     - `Oro\Bundle\OrderBundle\Form\Type\OrderShippingTrackingType`
     - `Oro\Bundle\OrderBundle\Tests\Unit\Formatter\Stub\ShippingMethodStub`
     - `Oro\Bundle\OrderBundle\Handler\OrderShippingTrackingHandler`
+    - `Oro\Bundle\OrderBundle\Factory\OrderShippingContextFactory`
+    - `Oro\Bundle\OrderBundle\EventListener\Order\OrderPossibleShippingMethodsEventListener`
 - Added methods:
     - `Oro\Bundle\OrderBundle\Entity\Order::getShippingTrackings`
     - `Oro\Bundle\OrderBundle\Entity\Order::setShippingTrackings`
@@ -282,6 +314,12 @@ OrderBundle:
     - `Oro\Bundle\OrderBundle\Entity\Order::addShippingTracking`
     - `Oro\Bundle\OrderBundle\Entity\Order::removeShippingTracking`
     - `Oro\Bundle\OrderBundle\Twig\OrderExtension::getFunctions`
+    - `Oro\Bundle\OrderBundle\Entity\Order::getEstimatedShippingCost`
+    - `Oro\Bundle\OrderBundle\Entity\Order::getEstimatedShippingCostAmount`
+    - `Oro\Bundle\OrderBundle\Entity\Order::setEstimatedShippingCostAmount`
+    - `Oro\Bundle\OrderBundle\Entity\Order::getOverriddenShippingCostAmount`
+    - `Oro\Bundle\OrderBundle\Entity\Order::setOverriddenShippingCostAmount`
+- Added protected method `addShippingFields` to class `Oro\Bundle\OrderBundle\Form\Type\OrderType`
 - Added second argument `shippingTrackingFormatter` to `Oro\Bundle\OrderBundle\Twig\OrderExtension` constructor
 - Added third argument `shippingMethodFormatter` to `Oro\Bundle\OrderBundle\Twig\OrderExtension` constructor
 - Changed type from `Oro\Bundle\AccountBundle\Entity\Account` to `Oro\Bundle\CustomerBundle\Entity\Account` of second argument of method `Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider:isAccountAddressGranted`
@@ -350,10 +388,19 @@ PricingBundle:
     - `Oro\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpressionValidator`
     - `Oro\Bundle\PricingBundle\Validator\Constraints\LogicalExpression`
     - `Oro\Bundle\PricingBundle\Form\Type\EnabledCurrencySelectionType`
+- Removed methods:
+    - `Oro\Bundle\PricingBundle\Entity\EntityListener\CategoryEntityListener::onFlush`
+    - `Oro\Bundle\PricingBundle\EventListener\FrontendProductPriceDatagridListener::addConfigProductPriceJoin`
+    - `Oro\Bundle\PricingBundle\EventListener\FrontendProductPriceDatagridListener::prepareResultPrice`
+    - `Oro\Bundle\PricingBundle\EventListener\FrontendProductPriceDatagridListener::getPriceList`
 - Added classes:
     - `Oro\Bundle\PricingBundle\Expression\PriceListQueryConverterExtension`
     - `Oro\Bundle\PricingBundle\Expression\ColumnInformation\PriceListProvider`
     - `Oro\Bundle\PricingBundle\Rounding\PriceRoundingService`
+    - `Oro\Bundle\PricingBundle\Datagrid\Provider\CombinedProductPriceProvider`
+    - `Oro\Bundle\PricingBundle\Datagrid\Provider\CombinedProductPriceProviderInterface`
+    - `Oro\Bundle\PricingBundle\Tests\Unit\Entity\Repository\Stub\CombinedProductPriceRepository`
+- Added method `onProductsChangeRelation` to class `Oro\Bundle\PricingBundle\Entity\EntityListener\CategoryEntityListener`
 - Changed type from `Oro\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider` to `Oro\Component\Expression\FieldsProviderInterface` of first argument of `Oro\Bundle\PricingBundle\Expression\QueryExpressionConverter\AssignedProductsConverter` constructor
 - Changed type from `Oro\Bundle\PricingBundle\Expression\NodeInterface` to `Oro\Component\Expression\Node\NodeInterface` of first argument of method `Oro\Bundle\PricingBundle\Expression\QueryExpressionConverter\AssignedProductsConverter:convert`
 - Changed type from `Oro\Bundle\PricingBundle\Expression\NodeInterface` to `Oro\Component\Expression\Node\NodeInterface` of first argument of method `Oro\Bundle\PricingBundle\Expression\QueryExpressionConverter\AssignedProductsConverter:assertLeftOperand`
@@ -421,11 +468,28 @@ PricingBundle:
 - Changed type from `Oro\Bundle\PricingBundle\Expression\NodeInterface` to `Oro\Component\Expression\Node\NodeInterface` of first argument of method `Oro\Bundle\PricingBundle\Validator\Constraints\LexemeCircularReferenceValidator:isSupportedNode`
 - Changed type from `Oro\Bundle\ConfigBundle\Config\ConfigManager` to `Oro\Bundle\CurrencyBundle\Config\CurrencyConfigInterface` of first argument of `Oro\Bundle\PricingBundle\Form\Type\DefaultCurrencySelectionType` constructor
 - Changed type from `Oro\Bundle\AccountBundle\Entity\Account` to `Oro\Bundle\CustomerBundle\Entity\Account` of first argument of method `Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\EntityNotPricedStub:setAccount`
+- Changed type from `Oro\Bundle\B2BEntityBundle\Storage\ExtraActionEntityStorageInterface` to `Oro\Bundle\CommerceEntityBundle\Storage\ExtraActionEntityStorageInterface` of first argument of `Oro\Bundle\PricingBundle\Entity\EntityListener\ProductPriceCPLEntityListener` constructor
+- Changed name from `translator` to `priceListRequestHandler`, type from `Symfony\Component\Translation\TranslatorInterface` to `Oro\Bundle\PricingBundle\Model\PriceListRequestHandler` of first argument of `Oro\Bundle\PricingBundle\EventListener\FrontendProductPriceDatagridListener` constructor
+- Changed name from `priceListRequestHandler` to `currencyManager`, type from `Oro\Bundle\PricingBundle\Model\PriceListRequestHandler` to `Oro\Bundle\PricingBundle\Manager\UserCurrencyManager` of second argument of `Oro\Bundle\PricingBundle\EventListener\FrontendProductPriceDatagridListener` constructor
+- Changed name from `numberFormatter` to `combinedProductPriceProvider`, type from `Oro\Bundle\LocaleBundle\Formatter\NumberFormatter` to `Oro\Bundle\PricingBundle\Datagrid\Provider\CombinedProductPriceProviderInterface` of third argument of `Oro\Bundle\PricingBundle\EventListener\FrontendProductPriceDatagridListener` constructor
+- Changed type from `Oro\Bundle\DataGridBundle\Event\OrmResultAfter` to `Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultAfter` of first argument of method `Oro\Bundle\PricingBundle\EventListener\FrontendProductPriceDatagridListener:onResultAfter`
+- Changed type from `Oro\Bundle\ProductBundle\Event\ProductSelectDBQueryEvent` to `Oro\Bundle\ProductBundle\Event\ProductDBQueryRestrictionEvent` of first argument of method `Oro\Bundle\PricingBundle\EventListener\ProductSelectPriceListAwareListener:onDBQuery`
+- Removed fourth argument `unitLabelFormatter` from  ``Oro\Bundle\PricingBundle\EventListener\FrontendProductPriceDatagridListener` constructor
+- Removed fifth argument `unitValueFormatter` from  ``Oro\Bundle\PricingBundle\EventListener\FrontendProductPriceDatagridListener` constructor
 - Added fifth argument `nameHelper` to `Oro\Bundle\PricingBundle\Form\Type\DefaultCurrencySelectionType` constructor
 
 ProductBundle:
 -------------------------
-- Removed class `Oro\Bundle\ProductBundle\EventListener\ProductListener`
+- Product images filters config was removed from `app.yml`. These filters are now added dynamically based on `images.yml` config.
+- Removed classes:
+    - `Oro\Bundle\ProductBundle\EventListener\ProductListener`
+    - `Oro\Bundle\ProductBundle\Event\ProductSelectDBQueryEvent`
+    - `Oro\Bundle\ProductBundle\EventListener\ScopedProductSelectDBQueryEventListener`
+    - `Oro\Bundle\ProductBundle\EventListener\ProductSelectDBQueryEventListener`
+- Removed methods:
+    - `Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorFilter::setProductClass`
+    - `Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorFilter::getRepository`
+    - `Oro\Bundle\ProductBundle\Controller\Frontend\AjaxProductController::getProductRepository`
 - Added classes:
     - `Oro\Bundle\ProductBundle\Expression\FieldsProvider`
     - `Oro\Bundle\ProductBundle\Expression\ColumnInformation\DefaultProvider`
@@ -439,11 +503,44 @@ ProductBundle:
     - `Oro\Bundle\ProductBundle\Validator\Constraints\LogicalExpression`
     - `Oro\Bundle\ProductBundle\Validator\Constraints\Expression`
     - `Oro\Bundle\ProductBundle\Rounding\QuantityRoundingService`
+    - `Oro\Bundle\ProductBundle\Event\ProductSearchQueryRestrictionEvent`
+    - `Oro\Bundle\ProductBundle\Event\ProductDBQueryRestrictionEvent`
+    - `Oro\Bundle\ProductBundle\EventListener\ProductAccessExceptionListener`
+    - `Oro\Bundle\ProductBundle\EventListener\ScopedProductDBQueryRestrictionEventListener`
+    - `Oro\Bundle\ProductBundle\EventListener\WebsiteSearchProductIndexerListener`
+    - `Oro\Bundle\ProductBundle\EventListener\ProductSearchQueryRestrictionEventListener`
+    - `Oro\Bundle\ProductBundle\EventListener\ProductDBQueryRestrictionEventListener`
+    - `Oro\Bundle\ProductBundle\EventListener\ProductVisibilityRestrictionListener`
+    - `Oro\Bundle\ProductBundle\EventListener\ScopedProductSearchQueryRestrictionEventListener`
+    - `Oro\Bundle\ProductBundle\EventListener\RestrictIndexProductsEventListener`
+    - `Oro\Bundle\ProductBundle\Model\ProductVisibilitySearchQueryModifier`
+    - `Oro\Bundle\ProductBundle\Search\ProductRepository`
+    - `Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadFrontendProductData`
 - Added methods:
     - `Oro\Bundle\ProductBundle\Entity\ProductImage::setUpdatedAtToNow`
     - `Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProductImage::setId`
-- Product images filters config was removed from `app.yml`. These filters are now added dynamically based on `images.yml` config.
+    - `getProductsByIds` to class `Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository`
+    - `restrictSearchQuery` to class `Oro\Bundle\ProductBundle\Entity\Manager\ProductManager`
+    - `onSearchQuery` to class `Oro\Bundle\ProductBundle\EventListener\RestrictDisabledProductsEventListener`
+    - `setFrontendHelper` to class `Oro\Bundle\ProductBundle\Autocomplete\ProductVisibilityLimitedSearchHandler`
+    - `setSearchRepository` to class `Oro\Bundle\ProductBundle\Autocomplete\ProductVisibilityLimitedSearchHandler`
+    - `convertItem` to class `Oro\Bundle\ProductBundle\Autocomplete\ProductVisibilityLimitedSearchHandler`
+    - `getProperties` to class `Oro\Bundle\ProductBundle\Autocomplete\ProductVisibilityLimitedSearchHandler`
+- Added protected methods:
+    - `Oro\Bundle\ProductBundle\Autocomplete\ProductVisibilityLimitedSearchHandler::searchEntitiesUsingOrm`
+    - `Oro\Bundle\ProductBundle\Autocomplete\ProductVisibilityLimitedSearchHandler::searchEntitiesUsingIndex`
+    - `Oro\Bundle\ProductBundle\Autocomplete\ProductVisibilityLimitedSearchHandler::getSelectedData`
+    - `Oro\Bundle\ProductBundle\Autocomplete\ProductVisibilityLimitedSearchHandler::isItem`
+- Changed name from `modifier` to `searchQueryModifier`, type from `Oro\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier` to `Oro\Bundle\ProductBundle\Model\ProductVisibilitySearchQueryModifier` of first argument of `Oro\Bundle\ProductBundle\EventListener\RestrictDisabledProductsEventListener` constructor
+- Changed type from `Oro\Bundle\DataGridBundle\Event\OrmResultAfter` to `Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultAfter` of first argument of method `Oro\Bundle\ProductBundle\EventListener\FrontendProductDatagridListener:onResultAfter`
+- Changed type from `Oro\Bundle\DataGridBundle\Event\OrmResultAfter` to `Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultAfter` of first argument of method `Oro\Bundle\ProductBundle\EventListener\FrontendProductDatagridListener:addProductImages`
+- Changed type from `Oro\Bundle\ProductBundle\Event\ProductSelectDBQueryEvent` to `Oro\Bundle\ProductBundle\Event\ProductDBQueryRestrictionEvent` of first argument of method `Oro\Bundle\ProductBundle\EventListener\RestrictDisabledProductsEventListener:onDBQuery`
+- Removed second argument `registry` from  ``Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorFilter` constructor
 - Removed sixth argument `container` from  `Oro\Bundle\ProductBundle\ComponentProcessor\DataStorageAwareComponentProcessor` constructor
+- Added second argument `queryBuilderModifier` to `Oro\Bundle\ProductBundle\EventListener\RestrictDisabledProductsEventListener` constructor
+- Added second argument `productManager` to `Oro\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder` constructor
+- Changed name from `productManager` to `repository`, type from `Oro\Bundle\ProductBundle\Entity\Manager\ProductManager` to `Oro\Bundle\ProductBundle\Search\ProductRepository` of first argument of `Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorFilter` constructor
+
 
 RFPBundle:
 -------------------------
@@ -573,6 +670,9 @@ ShoppingListBundle:
     - `Oro\Bundle\ShoppingListBundle\Entity\LineItem::setOwner`
     - `Oro\Bundle\ShoppingListBundle\Controller\Frontend\Api\Rest\ShoppingListController::setCurrentAction`
 - Added protected method `getFirstUser` to class `Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems`
+- Changed name from `em` to `accountUser`, type from `Doctrine\ORM\EntityManagerInterface` to `Oro\Bundle\CustomerBundle\Entity\AccountUser` of first argument of method `Oro\Bundle\ShoppingListBundle\EventListener\FrontendProductDatagridListener:getCurrentShoppingList`
+- Changed name from `em` to `accountUser`, type from `Doctrine\ORM\EntityManagerInterface` to `Oro\Bundle\CustomerBundle\Entity\AccountUser` of second argument of method `Oro\Bundle\ShoppingListBundle\EventListener\FrontendProductDatagridListener:getGroupedLineItems`
+- Changed name from `accountUser` to `currentShoppingList`, type from `Oro\Bundle\AccountBundle\Entity\AccountUser` to `Oro\Bundle\ShoppingListBundle\Entity\ShoppingList` of third argument of method `Oro\Bundle\ShoppingListBundle\EventListener\FrontendProductDatagridListener:getGroupedLineItems`
 - Changed type from `Oro\Bundle\AccountBundle\Entity\AccountUser` to `Oro\Bundle\CustomerBundle\Entity\AccountUser` of second argument of method `Oro\Bundle\ShoppingListBundle\Migrations\Data\Demo\ORM\LoadShoppingListDemoData:createShoppingList`
 - Changed type from `Oro\Bundle\AccountBundle\Entity\AccountUser` to `Oro\Bundle\CustomerBundle\Entity\AccountUser` of first argument of method `Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler:prepareLineItemWithProduct`
 - Changed type from `Oro\Bundle\AccountBundle\Entity\AccountUser` to `Oro\Bundle\CustomerBundle\Entity\AccountUser` of first argument of method `Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository:findCurrentForAccountUser`
@@ -588,13 +688,13 @@ ShoppingListBundle:
 - Changed type from `Oro\Bundle\AccountBundle\Entity\Account` to `Oro\Bundle\CustomerBundle\Entity\Account` of first argument of method `Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:setAccount`
 - Changed type from `Oro\Bundle\AccountBundle\Entity\AccountUser` to `Oro\Bundle\CustomerBundle\Entity\AccountUser` of first argument of method `Oro\Bundle\ShoppingListBundle\Entity\LineItem:setAccountUser`
 - Changed type from `Oro\Bundle\AccountBundle\Entity\AccountUser` to `Oro\Bundle\CustomerBundle\Entity\AccountUser` of second argument of method `Oro\Bundle\ShoppingListBundle\EventListener\ShoppingListListener:setNewCurrent`
-- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountUser` to `Oro\Bundle\CustomerBundle\Entity\AccountUser` of second argument of method `Oro\Bundle\ShoppingListBundle\EventListener\FrontendProductDatagridListener:getCurrentShoppingList`
-- Changed type from `Oro\Bundle\AccountBundle\Entity\AccountUser` to `Oro\Bundle\CustomerBundle\Entity\AccountUser` of third argument of method `Oro\Bundle\ShoppingListBundle\EventListener\FrontendProductDatagridListener:getGroupedLineItems`
 - Changed type from `Oro\Bundle\CurrencyBundle\Rounding\QuantityRoundingService` to `Oro\Bundle\ProductBundle\Rounding\QuantityRoundingService` of fourth argument of `Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager` constructor
 - Changed type from `Oro\Bundle\AccountBundle\Entity\AccountUser` to `Oro\Bundle\CustomerBundle\Entity\AccountUser` of first argument of method `Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager:setCurrent`
 - Changed type from `Oro\Bundle\AccountBundle\Entity\AccountUser` to `Oro\Bundle\CustomerBundle\Entity\AccountUser` of second argument of method `Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists:createShoppingList`
 - Changed type from `Oro\Bundle\AccountBundle\Entity\AccountUserRole` to `Oro\Bundle\CustomerBundle\Entity\AccountUserRole` of second argument of method `Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadUserData:setRolePermissions`
+- Changed type from `Oro\Bundle\DataGridBundle\Event\OrmResultAfter` to `Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultAfter` of first argument of method `Oro\Bundle\ShoppingListBundle\EventListener\FrontendProductDatagridListener:onResultAfter`
 - Added sixth argument `owner` to method `Oro\Bundle\ShoppingListBundle\Migrations\Data\Demo\ORM\LoadShoppingListDemoData:createShoppingList`
+- Added second argument `manager` to `Oro\Bundle\ShoppingListBundle\EventListener\FrontendProductDatagridListener` constructor
 
 TaxBundle:
 -------------------------
@@ -611,20 +711,39 @@ UPSBundle:
     - `Oro\Bundle\UPSBundle\EventListener\UPSChannelEntityListener::__construct`
     - `Oro\Bundle\UPSBundle\EventListener\UPSTransportEntityListener::__construct`
     - `Oro\Bundle\UPSBundle\Validator\Constraints\RemoveUsedShippingServiceValidator::getName`
+    - `Oro\Bundle\UPSBundle\Provider\UPSTransport::getPrices`
+    - `Oro\Bundle\UPSBundle\Method\UPSShippingMethodType::setIdentifier`
+    - `Oro\Bundle\UPSBundle\Method\UPSShippingMethodType::setLabel`
 - Added classes:
     - `Oro\Bundle\UPSBundle\Provider\UnitsMapper`
     - `Oro\Bundle\UPSBundle\EventListener\ShippingMethodConfigDataListener`
+    - `Oro\Bundle\UPSBundle\Cache\ShippingPriceCache`
+    - `Oro\Bundle\UPSBundle\Cache\ShippingPriceCacheKey`
+    - `Oro\Bundle\UPSBundle\Handler\InvalidateCacheAtHandler`
 - Added methods:
     - `Oro\Bundle\UPSBundle\Entity\UPSTransport::getLabels`
     - `Oro\Bundle\UPSBundle\Entity\UPSTransport::addLabel`
     - `Oro\Bundle\UPSBundle\Entity\UPSTransport::removeLabel`
     - `Oro\Bundle\UPSBundle\Method\UPSShippingMethod::getTrackingLink`
+    - `Oro\Bundle\UPSBundle\Provider\UPSTransport::getPriceResponse`
+    - `Oro\Bundle\UPSBundle\Entity\UPSTransport::setInvalidateCacheAt`
+    - `Oro\Bundle\UPSBundle\Entity\UPSTransport::getInvalidateCacheAt`
+    - `Oro\Bundle\UPSBundle\Method\UPSShippingMethodType::getShippingService`
+    - `Oro\Bundle\UPSBundle\Method\UPSShippingMethod::fetchPrices`
 - Added protected method `getChannelId` to class `Oro\Bundle\UPSBundle\Validator\Constraints\RemoveUsedShippingServiceValidator`
+- Changed name from `transportProvider` to `transport`, type from `Oro\Bundle\UPSBundle\Provider\UPSTransport` to `Oro\Bundle\UPSBundle\Entity\UPSTransport` of second argument of `Oro\Bundle\UPSBundle\Method\UPSShippingMethodType` constructor
+- Changed name from `shippingService` to `transportProvider`, type from `Oro\Bundle\UPSBundle\Entity\ShippingService` to `Oro\Bundle\UPSBundle\Provider\UPSTransport` of third argument of `Oro\Bundle\UPSBundle\Method\UPSShippingMethodType` constructor
+- Changed name from `priceRequestFactory` to `shippingService`, type from `Oro\Bundle\UPSBundle\Factory\PriceRequestFactory` to `Oro\Bundle\UPSBundle\Entity\ShippingService` of fourth argument of `Oro\Bundle\UPSBundle\Method\UPSShippingMethodType` constructor
+- Removed name from `transport` to `methodId`, type `Oro\Bundle\UPSBundle\Entity\UPSTransport` of first argument of `Oro\Bundle\UPSBundle\Method\UPSShippingMethodType` constructor
 - Added second argument `measureUnitConversion` to `Oro\Bundle\UPSBundle\Factory\PriceRequestFactory` constructor
 - Added second argument `upsWeightUnit` to method `Oro\Bundle\UPSBundle\Factory\PriceRequestFactory:getProductsParamsByUnit`
 - Added third argument `unitsMapper` to `Oro\Bundle\UPSBundle\Factory\PriceRequestFactory` constructor
 - Added fourth argument `localizationHelper` to `Oro\Bundle\UPSBundle\Method\UPSShippingMethod` constructor
 - Added fourth argument `localizationHelper` to `Oro\Bundle\UPSBundle\Method\UPSShippingMethodProvider` constructor
+- Added fifth argument `priceRequestFactory` to `Oro\Bundle\UPSBundle\Method\UPSShippingMethodType` constructor
+- Added fifth argument `cache` to `Oro\Bundle\UPSBundle\Method\UPSShippingMethod` constructor
+- Added fifth argument `shippingPriceCache` to `Oro\Bundle\UPSBundle\Method\UPSShippingMethodProvider` constructor
+- Added sixth argument `cache` to `Oro\Bundle\UPSBundle\Method\UPSShippingMethodType` constructor
 
 VisibilityBundle:
 -------------------------
@@ -640,6 +759,20 @@ VisibilityBundle:
     - `Oro\Bundle\VisibilityBundle\Form\Handler\VisibilityFormDataHandler`
     - `Oro\Bundle\VisibilityBundle\Form\EventListener\VisibilityFormPostSubmitDataHandler`
     - `Oro\Bundle\VisibilityBundle\Form\EventListener\VisibilityFormFieldDataProvider`
+    - `Oro\Bundle\VisibilityBundle\Provider\VisibilityScopeProvider`
+    - `Oro\Bundle\VisibilityBundle\Entity\EntityListener\AccountListener`
+    - `Oro\Bundle\VisibilityBundle\EventListener\RestrictProductsIndexEventListener`
+    - `Oro\Bundle\VisibilityBundle\EventListener\WebsiteSearchProductVisibilityIndexerListener`
+    - `Oro\Bundle\VisibilityBundle\EventListener\ProductSearchQueryRestrictionEventListener`
+    - `Oro\Bundle\VisibilityBundle\EventListener\ProductDBQueryRestrictionEventListener`
+    - `Oro\Bundle\VisibilityBundle\Async\Visibility\AccountProcessor`
+    - `Oro\Bundle\VisibilityBundle\Model\ProductVisibilitySearchQueryModifier`
+    - `Oro\Bundle\VisibilityBundle\Visibility\Provider\ProductVisibilityProvider`
+    - `Oro\Bundle\VisibilityBundle\Indexer\ProductVisibilityIndexer`
+    - `Oro\Bundle\VisibilityBundle\Driver\OrmAccountPartialUpdateDriver`
+    - `Oro\Bundle\VisibilityBundle\Driver\AccountPartialUpdateDriverInterface`
+    - `Oro\Bundle\VisibilityBundle\Driver\AbstractAccountPartialUpdateDriver`
+    - `Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityScopedData`
 
 WarehouseBundle:
 -------------------------
@@ -711,6 +844,11 @@ WebsiteBundle:
     - `Oro\Bundle\WebsiteBundle\Provider\ScopeCriteriaProvider`
     - `Oro\Bundle\WebsiteBundle\Entity\EntityListener\WebsiteEntityListener`
     - `Oro\Bundle\WebsiteBundle\Tests\Unit\Form\Type\Stub\StubType`
+    - `Oro\Bundle\WebsiteBundle\Provider\WebsiteLocalizationProvider`
+    - `Oro\Bundle\WebsiteBundle\Provider\AbstractWebsiteLocalizationProvider`
+- Added methods:
+    - `Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository::checkWebsiteExists`
+    - `Oro\Bundle\WebsiteBundle\Manager\WebsiteManager::onClear`
 - Changed type from `Oro\Component\Action\Model\ContextAccessor` to `Oro\Component\ConfigExpression\ContextAccessor` of first argument of `Oro\Bundle\WebsiteBundle\Model\Action\AssignCurrentWebsite` constructor
 
 WebsiteSearchBundle
@@ -735,7 +873,7 @@ Duplicator Component:
 
 Expression Component:
 -------------------------
-- Added component that control price rules. Moved logic from [`PricingBundle`](#pricingbundle)
+- Added component that extends [Symfony ExpressionLanguage Component](https://symfony.com/doc/current/components/expression_language/introduction.html) to introduce expressions that are easier to use and that can additionally handle the collections of items.
 
 Testing Component:
 -------------------------
