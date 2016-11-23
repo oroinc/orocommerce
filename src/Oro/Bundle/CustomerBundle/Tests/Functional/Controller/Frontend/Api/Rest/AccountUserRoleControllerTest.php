@@ -5,6 +5,7 @@ namespace Oro\Bundle\CustomerBundle\Tests\Functional\Controller\Frontend\Api\Res
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserRoleACLData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
@@ -21,21 +22,19 @@ class AccountUserRoleControllerTest extends WebTestCase
      */
     protected function setUp()
     {
-        $this->initClient(
-            [],
-            $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)
-        );
+        $this->initClient();
         $this->client->useHashNavigation(true);
         $this->loadFixtures(
             [
-                'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserRoleData'
+                LoadAccountUserRoleACLData::class
             ]
         );
     }
 
     public function testDeletePredefinedRole()
     {
-        $predefinedRole = $this->getRoleByLabel(LoadAccountUserRoleData::ROLE_EMPTY);
+        $this->loginUser(LoadAccountUserRoleACLData::USER_ACCOUNT_1_ROLE_LOCAL);
+        $predefinedRole = $this->getRoleByLabel(LoadAccountUserRoleACLData::ROLE_WITH_ACCOUNT_1_USER_LOCAL);
         $this->assertNotNull($predefinedRole);
 
         $this->client->request(
@@ -46,18 +45,21 @@ class AccountUserRoleControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertJsonResponseStatusCodeEquals($result, 403);
 
-        $this->assertNotNull($this->getRoleByLabel(LoadAccountUserRoleData::ROLE_EMPTY));
+        $this->assertNotNull($this->getRoleByLabel(LoadAccountUserRoleACLData::ROLE_WITH_ACCOUNT_1_USER_LOCAL));
     }
 
-    public function testDeleteCustomizedRole()
+    /**
+     * @dataProvider deleteDataProvider
+     *
+     * @param string $login
+     * @param string $resource
+     * @param int $status
+     */
+    public function testDeleteCustomizedRole($login, $resource, $status)
     {
-        $currentUser = $this->getCurrentUser();
-        $currentUser->setAccount($this->getReference('account.orphan'));
-        $this->getObjectManager()->flush();
-
-
+        $this->loginUser($login);
         /** @var AccountUserRole $customizedRole */
-        $customizedRole = $this->getRoleByLabel(LoadAccountUserRoleData::ROLE_WITH_ACCOUNT);
+        $customizedRole = $this->getRoleByLabel($resource);
         $this->assertNotNull($customizedRole);
 
         $this->client->request(
@@ -67,8 +69,54 @@ class AccountUserRoleControllerTest extends WebTestCase
 
         $result = $this->client->getResponse();
 
-        $this->assertEmptyResponseStatusCodeEquals($result, 204);
-        $this->assertNull($this->getRoleByLabel(LoadAccountUserRoleData::ROLE_WITH_ACCOUNT));
+        $this->assertEmptyResponseStatusCodeEquals($result, $status);
+        if ($status === 204) {
+            $this->assertNull($this->getRoleByLabel($resource));
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function deleteDataProvider()
+    {
+        return [
+            'anonymous user' => [
+                'login' => '',
+                'resource' => LoadAccountUserRoleACLData::ROLE_WITH_ACCOUNT_1_USER_LOCAL,
+                'status' => 401,
+            ],
+            'sibling user: LOCAL_VIEW_ONLY' => [
+                'login' => LoadAccountUserRoleACLData::USER_ACCOUNT_1_ROLE_LOCAL_VIEW_ONLY,
+                'resource' => LoadAccountUserRoleACLData::ROLE_WITH_ACCOUNT_1_USER_LOCAL,
+                'status' => 403,
+            ],
+            'parent account: LOCAL' => [
+                'login' => LoadAccountUserRoleACLData::USER_ACCOUNT_1_ROLE_LOCAL,
+                'resource' => LoadAccountUserRoleACLData::ROLE_WITH_ACCOUNT_1_2_USER_LOCAL,
+                'status' => 403,
+            ],
+            'parent account: DEEP_VIEW_ONLY' => [
+                'login' => LoadAccountUserRoleACLData::USER_ACCOUNT_1_ROLE_DEEP_VIEW_ONLY,
+                'resource' => LoadAccountUserRoleACLData::ROLE_WITH_ACCOUNT_1_2_USER_LOCAL,
+                'status' => 403,
+            ],
+            'different account: DEEP' => [
+                'login' => LoadAccountUserRoleACLData::USER_ACCOUNT_2_ROLE_DEEP,
+                'resource' => LoadAccountUserRoleACLData::ROLE_WITH_ACCOUNT_1_2_USER_LOCAL,
+                'status' => 403,
+            ],
+            'same account: LOCAL' => [
+                'login' => LoadAccountUserRoleACLData::USER_ACCOUNT_1_ROLE_LOCAL,
+                'resource' => LoadAccountUserRoleACLData::ROLE_WITH_ACCOUNT_1_USER_DEEP,
+                'status' => 204,
+            ],
+            'parent account: DEEP' => [
+                'login' => LoadAccountUserRoleACLData::USER_ACCOUNT_1_ROLE_DEEP,
+                'resource' => LoadAccountUserRoleACLData::ROLE_WITH_ACCOUNT_1_2_USER_LOCAL,
+                'status' => 204,
+            ],
+        ];
     }
 
     /**
@@ -88,14 +136,6 @@ class AccountUserRoleControllerTest extends WebTestCase
     }
 
     /**
-     * @return ObjectRepository
-     */
-    protected function getUserRepository()
-    {
-        return $this->getObjectManager()->getRepository('OroCustomerBundle:AccountUser');
-    }
-
-    /**
      * @param string $label
      * @return AccountUserRole
      */
@@ -103,13 +143,5 @@ class AccountUserRoleControllerTest extends WebTestCase
     {
         return $this->getUserRoleRepository()
             ->findOneBy(['label' => $label]);
-    }
-
-    /**
-     * @return AccountUser
-     */
-    protected function getCurrentUser()
-    {
-        return $this->getUserRepository()->findOneBy(['username' => LoadAccountUserData::AUTH_USER]);
     }
 }

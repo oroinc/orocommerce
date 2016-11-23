@@ -9,7 +9,7 @@ use Oro\Bundle\CustomerBundle\Entity\AccountUserRole;
 /**
  * @dbIsolation
  */
-class AccountUserRoleACLTest extends WebTestCase
+class AccountUserRoleControllerACLTest extends WebTestCase
 {
     protected function setUp()
     {
