@@ -14,6 +14,10 @@ use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseProductVisibilityR
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\BasicOperationRepositoryTrait;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\CacheBuilderInterface;
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 abstract class AbstractResolvedCacheBuilder implements CacheBuilderInterface
 {
@@ -43,15 +47,23 @@ abstract class AbstractResolvedCacheBuilder implements CacheBuilderInterface
     protected $repositoryHolder;
 
     /**
+     * @var ProductIndexScheduler
+     */
+    protected $indexScheduler;
+
+    /**
      * @param ManagerRegistry $registry
      * @param ScopeManager $scopeManager
+     * @param ProductIndexScheduler $indexScheduler
      */
     public function __construct(
         ManagerRegistry $registry,
-        ScopeManager $scopeManager
+        ScopeManager $scopeManager,
+        ProductIndexScheduler $indexScheduler
     ) {
         $this->registry = $registry;
         $this->scopeManager = $scopeManager;
+        $this->indexScheduler = $indexScheduler;
     }
 
     /**
@@ -163,6 +175,27 @@ abstract class AbstractResolvedCacheBuilder implements CacheBuilderInterface
         }
 
         return $indexedVisibilities;
+    }
+
+    /**
+     * @param Product $product
+     * @param Website $website
+     */
+    protected function triggerProductReindexation(Product $product, Website $website = null)
+    {
+        $this->indexScheduler->triggerReindexationRequestEvent(
+            [$product->getId()],
+            $website ? $website->getId() : null,
+            false
+        );
+    }
+
+    /**
+     * @param Category $category
+     */
+    protected function triggerCategoryReindexation(Category $category)
+    {
+        $this->indexScheduler->scheduleProductsReindex([$category], null, false);
     }
 
     /**

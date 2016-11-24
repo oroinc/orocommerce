@@ -73,9 +73,9 @@ class ProductVisibilityTest extends WebTestCase
                 'configValue' => ProductVisibility::VISIBLE,
                 'expectedData' => [
                     LoadProductData::PRODUCT_1 => 200,
-                    LoadProductData::PRODUCT_2 => 403,
-                    LoadProductData::PRODUCT_3 => 403,
-                    LoadProductData::PRODUCT_4 => 403,
+                    LoadProductData::PRODUCT_2 => 404,
+                    LoadProductData::PRODUCT_3 => 404,
+                    LoadProductData::PRODUCT_4 => 404,
                     LoadProductData::PRODUCT_5 => 200,
                     LoadProductData::PRODUCT_6 => 200,
                     LoadProductData::PRODUCT_7 => 200,
@@ -84,7 +84,7 @@ class ProductVisibilityTest extends WebTestCase
             'config hidden' => [
                 'configValue' => ProductVisibility::HIDDEN,
                 'expectedData' => [
-                    LoadProductData::PRODUCT_6 => 403,
+                    LoadProductData::PRODUCT_6 => 404,
                     LoadProductData::PRODUCT_7 => 200,
                 ],
             ],

@@ -10,7 +10,6 @@ use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use Oro\Bundle\PaymentBundle\Entity\PaymentTerm;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -46,6 +45,7 @@ class OrderMapperTest extends \PHPUnit_Framework_TestCase
                 ['name' => 'paymentTerm'],
                 ['name' => 'shippingAddress'],
                 ['name' => 'billingAddress'],
+                ['name' => 'currency'],
             ]
         );
 
@@ -58,14 +58,13 @@ class OrderMapperTest extends \PHPUnit_Framework_TestCase
             ->setWebsite($website)
             ->setShippingAddress($address)
             ->setBillingAddress($address)
-            ->setShippingCost($shippingCost);
+            ->setShippingCost($shippingCost)
+            ->setCurrency('USD');
 
         $newAddress = new OrderAddress();
         $newAddress->setLabel('address2');
-        $paymentTerm = new PaymentTerm();
         $data = [
             'shippingAddress' => $newAddress,
-            'paymentTerm' => $paymentTerm,
         ];
 
         $order = $this->mapper->map($checkout, $data);
@@ -74,8 +73,7 @@ class OrderMapperTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($address, $order->getBillingAddress());
         $this->assertEquals($newAddress, $order->getShippingAddress());
         $this->assertEquals($website, $order->getWebsite());
-        $this->assertEquals($paymentTerm, $order->getPaymentTerm());
-        $this->assertSame($shippingCost, $order->getShippingCost());
+        $this->assertEquals($shippingCost, $order->getShippingCost());
     }
 
     public function testMapWithSourceEntity()

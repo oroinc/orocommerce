@@ -71,6 +71,7 @@ class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder im
         }
 
         $this->executeDbQuery($er, $insert, $delete, $update, $where);
+        $this->triggerProductReindexation($product, $scope->getWebsite());
     }
 
     /**
@@ -100,6 +101,8 @@ class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder im
 
         $this->getRepository()->deleteByProduct($product);
         $this->getRepository()->insertByProduct($product, $category);
+
+        $this->triggerProductReindexation($product);
     }
 
     /**

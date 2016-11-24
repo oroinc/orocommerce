@@ -82,7 +82,7 @@ define(function(require) {
                     }
                     self.updateProduct();
                 },
-                error: function() {
+                error: function(xhr) {
                     self.updateProduct();
                 }
             });

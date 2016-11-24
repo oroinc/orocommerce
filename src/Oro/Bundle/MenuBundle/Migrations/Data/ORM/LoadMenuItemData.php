@@ -95,7 +95,7 @@ class LoadMenuItemData extends AbstractFixture implements
     protected function createQuickAccessMenu(ObjectManager $manager)
     {
         $item = $this->factory->createItem('quick-access');
-        $item->addChild('Orders');
+        $item->addChild('Orders', ['uri' => $this->router->generate('oro_order_frontend_index')]);
         $item->addChild('Quotes', ['uri' => $this->router->generate('oro_sale_quote_frontend_index')]);
         $item->addChild('Quick Order Form', ['uri' => $this->router->generate('oro_product_frontend_quick_add')]);
 
