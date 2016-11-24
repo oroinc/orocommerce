@@ -8,6 +8,8 @@ operations:
         acl_resource: [UPDATE, entity:Oro\Bundle\IntegrationBundle\Entity\Channel]
         button_options:
             icon: icon-time
+            page_component_module:
+                'oroups/js/app/components/invalidate-cache-button-component'
         frontend_options:
             template: OroUPSBundle:Action:invalidateCache.html.twig
             title: oro.ups.form.invalidate_cache.label

@@ -21,6 +21,7 @@ config:
         'oroproduct/js/vendors/elevatezoom/jquery-elevatezoom': 'bundles/oroproduct/js/vendors/elevatezoom/jquery-elevatezoom.js'
         'oroproduct/js/app/components/product-image-type-radio-control-component': 'bundles/oroproduct/js/app/components/product-image-type-radio-control-component.js'
         'oroproduct/js/app/components/breadcrumbs-navigation-block': 'bundles/oroproduct/js/app/components/breadcrumbs-navigation-block.js'
+        'oroproduct/js/app/datagrid/frontend-product-filters-events-dispatcher-builder': 'bundles/oroproduct/js/app/datagrid/frontend-product-filters-events-dispatcher-builder.js'
 
     shim:
         'tinymce/plugins/fullscreen/plugin.min':
