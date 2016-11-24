@@ -5,10 +5,13 @@ namespace Oro\Bundle\CatalogBundle\Tests\Functional\Entity\Repository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\PersistentCollection;
 
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
+use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
+use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadMasterCatalogLocalizedTitles;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
  * @dbIsolation
@@ -33,7 +36,9 @@ class CategoryRepositoryTest extends WebTestCase
         $this->repository = $this->registry->getRepository('OroCatalogBundle:Category');
         $this->loadFixtures(
             [
-                'Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData',
+                LoadMasterCatalogLocalizedTitles::class,
+                LoadCategoryData::class,
+                LoadCategoryProductData::class,
             ]
         );
     }
@@ -41,10 +46,14 @@ class CategoryRepositoryTest extends WebTestCase
     public function testGetMasterCatalogRoot()
     {
         $root = $this->repository->getMasterCatalogRoot();
-        $this->assertInstanceOf('Oro\Bundle\CatalogBundle\Entity\Category', $root);
+        $this->assertInstanceOf(Category::class, $root);
 
         $defaultTitle = $root->getDefaultTitle();
-        $this->assertEquals('Master catalog', $defaultTitle->getString());
+        $this->assertEquals(
+            LoadMasterCatalogLocalizedTitles::MASTER_CATALOG_LOCALIZED_TITLES,
+            $root->getTitles()->count()
+        );
+        $this->assertEquals('Products categories', $defaultTitle->getString());
     }
 
     public function testGetChildrenWithTitles()
@@ -58,7 +67,7 @@ class CategoryRepositoryTest extends WebTestCase
         $category = current($categories);
         /** @var PersistentCollection $titles */
         $titles = $category->getTitles();
-        $this->assertInstanceOf('Doctrine\ORM\PersistentCollection', $titles);
+        $this->assertInstanceOf(PersistentCollection::class, $titles);
         $this->assertTrue($titles->isInitialized());
         $this->assertNotEmpty($titles->toArray());
     }
@@ -86,11 +95,34 @@ class CategoryRepositoryTest extends WebTestCase
         $expectedTitle = $expectedCategory->getDefaultTitle()->getString();
 
         $actualCategory = $this->repository->findOneByDefaultTitle($expectedTitle);
-        $this->assertInstanceOf('Oro\Bundle\CatalogBundle\Entity\Category', $actualCategory);
+        $this->assertInstanceOf(Category::class, $actualCategory);
         $this->assertEquals($expectedCategory->getId(), $actualCategory->getId());
         $this->assertEquals($expectedTitle, $actualCategory->getDefaultTitle()->getString());
 
         $this->assertNull($this->repository->findOneByDefaultTitle('Not existing category'));
+    }
+
+    public function testGetCategoryMapByProducts()
+    {
+        $product1 = $this->getReference(LoadProductData::PRODUCT_1);
+        $product2 = $this->getReference(LoadProductData::PRODUCT_2);
+        $product3 = $this->getReference(LoadProductData::PRODUCT_5);
+        $category1 = $this->getReference(LoadCategoryData::FIRST_LEVEL);
+        $category2 = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
+        $category3 = $this->getReference(LoadCategoryData::SECOND_LEVEL2);
+        $expectedMap = [
+            $product1->getId() => $category1,
+            $product2->getId() => $category2,
+            $product3->getId() => $category3
+        ];
+
+        $actualCategory = $this->repository->getCategoryMapByProducts([$product1, $product2, $product3]);
+        $this->assertEquals($expectedMap, $actualCategory);
+    }
+
+    public function testGetCategoryMapByProductsEmpty()
+    {
+        $this->assertEmpty($this->repository->getCategoryMapByProducts([]));
     }
 
     /**
@@ -105,6 +137,26 @@ class CategoryRepositoryTest extends WebTestCase
                 return $category;
             }
         }
+
         return null;
+    }
+
+    public function testGetProductIdsByCategories()
+    {
+        $severalCategories[] = $this->getReference(LoadCategoryData::FIRST_LEVEL);
+        $severalCategories[] = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
+        $severalCategories[] = $this->getReference(LoadCategoryData::FOURTH_LEVEL2);
+        $productIds = $this->repository->getProductIdsByCategories($severalCategories);
+        $this->assertCount(4, $productIds);
+        $this->assertEquals($this->getReference(LoadProductData::PRODUCT_1)->getId(), $productIds[0]);
+        $this->assertEquals($this->getReference(LoadProductData::PRODUCT_2)->getId(), $productIds[1]);
+        $this->assertEquals($this->getReference(LoadProductData::PRODUCT_7)->getId(), $productIds[2]);
+        $this->assertEquals($this->getReference(LoadProductData::PRODUCT_8)->getId(), $productIds[3]);
+    }
+
+    public function testNoOneCategoryInArray()
+    {
+        $productIds = $this->repository->getProductIdsByCategories([]);
+        $this->assertCount(0, $productIds);
     }
 }

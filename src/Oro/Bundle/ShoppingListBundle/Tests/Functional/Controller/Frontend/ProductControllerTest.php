@@ -3,6 +3,8 @@
 namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadFrontendProductData;
+use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
@@ -22,11 +24,10 @@ class ProductControllerTest extends WebTestCase
             $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)
         );
 
-        $this->loadFixtures(
-            [
-                'Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems',
-            ]
-        );
+        $this->loadFixtures([
+            LoadFrontendProductData::class,
+            LoadShoppingListLineItems::class,
+        ]);
     }
 
     public function testProductAddToShoppingListForm()
@@ -63,15 +64,15 @@ class ProductControllerTest extends WebTestCase
             $this->getUrl(
                 'oro_shopping_list_frontend_add_product',
                 [
-                    'productId' => $product->getId(),
+                    'productId'      => $product->getId(),
                     'shoppingListId' => $shoppingList->getId()
                 ]
             ),
             [
                 'oro_product_frontend_line_item' => [
                     'quantity' => 5,
-                    'unit' => 'liter',
-                    '_token' => $tokenManager->getToken('oro_product_frontend_line_item')->getValue()
+                    'unit'     => 'liter',
+                    '_token'   => $tokenManager->getToken('oro_product_frontend_line_item')->getValue()
                 ]
             ]
         );

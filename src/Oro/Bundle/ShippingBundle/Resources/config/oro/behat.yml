@@ -1,4 +1,8 @@
 elements:
+  CheckoutTotalTrigger:
+    selector: '.checkout-order-summary__header [data-collapse-trigger]'
+    class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
   CheckoutTotalSum:
     selector: 'td.order-checkout-widget__total span.blue'
     class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element

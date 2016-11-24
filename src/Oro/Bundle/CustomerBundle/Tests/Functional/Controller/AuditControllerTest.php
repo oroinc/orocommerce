@@ -23,18 +23,16 @@ class AuditControllerTest extends WebTestCase
     public function testAuditHistory()
     {
         $user = $this->getCurrentUser();
-
         $this->client->request(
             'GET',
             $this->getUrl(
                 'oro_customer_frontend_dataaudit_history',
                 [
                     'entity' => 'Oro_Bundle_CustomerBundle_Entity_AccountUser',
-                    'id'     => $user->getId()
+                    'id' => $user->getId(),
                 ]
             )
         );
-
         self::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
     }
 

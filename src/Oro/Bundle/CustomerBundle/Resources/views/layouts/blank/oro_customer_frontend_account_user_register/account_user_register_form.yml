@@ -1,9 +1,9 @@
 layout:
     imports:
         -
-            id: oro_customer_only_content_form
+            id: oro_customer_form
             namespace: registration
-            root: wrapper
+            root: page_content
     actions:
         - '@setBlockTheme':
             themes: 'account_user_register_form.html.twig'
@@ -18,7 +18,7 @@ layout:
         - '@setOption':
             id: registration_form
             optionName: form
-            optionValue: '=data["oro_account_frontend_account_user_register"].getRegisterForm()'
+            optionValue: '=data["oro_account_frontend_account_user_register"].getRegisterFormView()'
         - '@setOption':
             id: registration_form_submit
             optionName: text

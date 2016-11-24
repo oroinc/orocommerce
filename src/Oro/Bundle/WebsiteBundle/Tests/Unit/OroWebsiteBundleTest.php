@@ -10,7 +10,6 @@ class OroWebsiteBundleTest extends \PHPUnit_Framework_TestCase
 {
     public function testBuild()
     {
-        $strategyCompilerClass = 'Oro\Bundle\WebsiteBundle\DependencyInjection\CompilerPass\TranslationStrategyPass';
         $twigSandboxConfigurationPass =
             'Oro\Bundle\WebsiteBundle\DependencyInjection\CompilerPass\TwigSandboxConfigurationPass';
 
@@ -19,10 +18,6 @@ class OroWebsiteBundleTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $container->expects($this->at(0))
-            ->method('addCompilerPass')
-            ->with($this->isInstanceOf($strategyCompilerClass))
-            ->willReturn(false);
-        $container->expects($this->at(1))
             ->method('addCompilerPass')
             ->with($this->isInstanceOf($twigSandboxConfigurationPass))
             ->willReturn(false);

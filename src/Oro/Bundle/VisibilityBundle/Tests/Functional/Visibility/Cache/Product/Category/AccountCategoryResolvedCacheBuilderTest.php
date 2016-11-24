@@ -4,6 +4,7 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Visibility\Cache\Product\
 
 use Doctrine\ORM\AbstractQuery;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
@@ -22,24 +23,13 @@ use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\Subtree\Visibi
  */
 class AccountCategoryResolvedCacheBuilderTest extends AbstractProductResolvedCacheBuilderTest
 {
-    /**
-     * @var Category
-     */
+    /** @var Category */
     protected $category;
 
-    /**
-     * @var Account
-     */
+    /** @var Account */
     protected $account;
 
-    /**
-     * @var Scope
-     */
-    protected $scope;
-
-    /**
-     * @var AccountCategoryResolvedCacheBuilder
-     */
+    /** @var AccountCategoryResolvedCacheBuilder */
     protected $builder;
 
     /**
@@ -61,9 +51,15 @@ class AccountCategoryResolvedCacheBuilderTest extends AbstractProductResolvedCac
             ['account' => $this->account]
         );
 
+        $indexScheduler = new ProductIndexScheduler(
+            $container->get('oro_entity.doctrine_helper'),
+            $container->get('event_dispatcher')
+        );
+
         $this->builder = new AccountCategoryResolvedCacheBuilder(
             $container->get('doctrine'),
-            $this->scopeManager
+            $this->scopeManager,
+            $indexScheduler
         );
         $this->builder->setCacheClass(
             $container->getParameter('oro_visibility.entity.account_category_visibility_resolved.class')

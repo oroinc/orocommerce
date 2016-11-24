@@ -26,9 +26,9 @@ class OrderEvent extends Event
     /**
      * @param FormInterface $form
      * @param Order $order
-     * @param array $submittedData
+     * @param array|null $submittedData
      */
-    public function __construct(FormInterface $form, Order $order, array $submittedData = [])
+    public function __construct(FormInterface $form, Order $order, array $submittedData = null)
     {
         $this->form = $form;
         $this->order = $order;

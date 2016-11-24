@@ -1,0 +1,68 @@
+operations:
+    oro_integration_invalidate_cache:
+        label: oro.ups.form.invalidate_cache.label
+        entities:
+            - Oro\Bundle\IntergrationBundle\Entity\Channel
+        routes:
+            - oro_integration_update
+        acl_resource: [UPDATE, entity:Oro\Bundle\IntegrationBundle\Entity\Channel]
+        button_options:
+            icon: icon-time
+            page_component_module:
+                'oroups/js/app/components/invalidate-cache-button-component'
+        frontend_options:
+            template: OroUPSBundle:Action:invalidateCache.html.twig
+            title: oro.ups.form.invalidate_cache.label
+            options:
+                width: 550
+                modal: false
+                stateEnabled: false
+                incrementalPosition: false
+                allowMaximize: false
+                allowMinimize: false
+                maximizedHeightDecreaseBy: minimize-bar
+        attributes:
+            invalidateCacheAt:
+                label: oro.ups.form.invalidate_cache_at.label
+                type: entity
+                property_path: data.transport.invalidateCacheAt
+                options:
+                    class: Oro\Bundle\IntegrationBundle\Entity\Channel
+            invalidateNow:
+                label: 'invalidate_cache.action.invalidate_now'
+                type: entity
+                property_path: data.transport.invalidateCacheAt
+                options:
+                    class: Oro\Bundle\IntegrationBundle\Entity\Channel
+        form_options:
+            attribute_fields:
+                invalidateCacheAt:
+                    form_type: Oro\Bundle\FormBundle\Form\Type\OroDateTimeType
+                invalidateNow:
+                    form_type: hidden
+            attribute_default_values:
+                invalidateCacheAt: $.data.transport.invalidateCacheAt
+        form_init:
+            - '@assign_value': [$.invalidateCacheAt, $.data.transport.invalidateCacheAt]
+        preactions:
+            - '@assign_constant_value':
+                attribute: $.upstype
+                value: Oro\Bundle\UPSBundle\Provider\ChannelType::TYPE
+        actions:
+            - '@call_service_method':
+                service: oro_ups.handler.invalidate_cache_at
+                method: process
+                method_parameters: [$.data, $.form]
+            - '@flash_message':
+                conditions:
+                    '@not_empty': $.invalidateNow
+                message: oro.ups.form.invalidate_cache.flash.invalidate_success
+                type: 'success'
+            - '@flash_message':
+                conditions:
+                    '@empty': $.invalidateNow
+                message: oro.ups.form.invalidate_cache.flash.save_success
+                type: 'success'
+            - '@refresh_grid': unknown-grid
+        preconditions:
+            '@equal': [$type, $.upstype]

@@ -2,7 +2,8 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\Provider;
 
-use Doctrine\ORM\EntityRepository;
+use Doctrine\Common\Persistence\ManagerRegistry;
+
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
@@ -18,11 +19,6 @@ class AccountOwnershipProviderTest extends \PHPUnit_Framework_TestCase
     private $provider;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|EntityRepository
-     */
-    private $entityRepository;
-
-    /**
      * @var \PHPUnit_Framework_MockObject_MockObject|TokenStorageInterface
      */
     private $tokenStorage;
@@ -30,10 +26,13 @@ class AccountOwnershipProviderTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->tokenStorage = $this->getMock(TokenStorageInterface::class);
-        $this->entityRepository = $this->getMockBuilder(EntityRepository::class)
+
+        /** @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject $registry */
+        $registry = $this->getMockBuilder(ManagerRegistry::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->provider = new AccountOwnershipProvider($this->entityRepository, $this->tokenStorage);
+
+        $this->provider = new AccountOwnershipProvider($registry, '\EntityClass', $this->tokenStorage);
     }
 
     public function testGetType()
