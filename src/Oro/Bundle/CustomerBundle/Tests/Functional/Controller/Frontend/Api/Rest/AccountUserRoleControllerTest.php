@@ -2,15 +2,10 @@
 
 namespace Oro\Bundle\CustomerBundle\Tests\Functional\Controller\Frontend\Api\Rest;
 
-use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
-
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserRoleACLData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\CustomerBundle\Entity\AccountUserRole;
-use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserRoleData;
 
 /**
  * @dbIsolation
@@ -34,7 +29,7 @@ class AccountUserRoleControllerTest extends WebTestCase
     public function testDeletePredefinedRole()
     {
         $this->loginUser(LoadAccountUserRoleACLData::USER_ACCOUNT_1_ROLE_LOCAL);
-        $predefinedRole = $this->getRoleByLabel(LoadAccountUserRoleACLData::ROLE_WITH_ACCOUNT_1_USER_LOCAL);
+        $predefinedRole = $this->getReference(LoadAccountUserRoleACLData::ROLE_WITHOUT_ACCOUNT_1_USER_LOCAL);
         $this->assertNotNull($predefinedRole);
 
         $this->client->request(
@@ -45,7 +40,7 @@ class AccountUserRoleControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertJsonResponseStatusCodeEquals($result, 403);
 
-        $this->assertNotNull($this->getRoleByLabel(LoadAccountUserRoleACLData::ROLE_WITH_ACCOUNT_1_USER_LOCAL));
+        $this->assertNotNull($this->getReference(LoadAccountUserRoleACLData::ROLE_WITHOUT_ACCOUNT_1_USER_LOCAL));
     }
 
     /**
@@ -59,7 +54,8 @@ class AccountUserRoleControllerTest extends WebTestCase
     {
         $this->loginUser($login);
         /** @var AccountUserRole $customizedRole */
-        $customizedRole = $this->getRoleByLabel($resource);
+        $customizedRole = $this->getReference($resource);
+        $customizedRole1 = $this->getRepository()->findOneBy(['label' => $resource]);
         $this->assertNotNull($customizedRole);
 
         $this->client->request(
@@ -69,9 +65,11 @@ class AccountUserRoleControllerTest extends WebTestCase
 
         $result = $this->client->getResponse();
 
-        $this->assertEmptyResponseStatusCodeEquals($result, $status);
+        $this->assertResponseStatusCodeEquals($result, $status);
         if ($status === 204) {
-            $this->assertNull($this->getRoleByLabel($resource));
+            /** @var AccountUserRole $role */
+            $role = $this->getRepository()->findOneBy(['label' => $resource]);
+            $this->assertNull($role);
         }
     }
 
@@ -120,28 +118,10 @@ class AccountUserRoleControllerTest extends WebTestCase
     }
 
     /**
-     * @return ObjectManager
-     */
-    protected function getObjectManager()
-    {
-        return $this->getContainer()->get('doctrine')->getManager();
-    }
-
-    /**
      * @return ObjectRepository
      */
-    protected function getUserRoleRepository()
+    private function getRepository()
     {
-        return $this->getObjectManager()->getRepository('OroCustomerBundle:AccountUserRole');
-    }
-
-    /**
-     * @param string $label
-     * @return AccountUserRole
-     */
-    protected function getRoleByLabel($label)
-    {
-        return $this->getUserRoleRepository()
-            ->findOneBy(['label' => $label]);
+        return $this->getContainer()->get('doctrine')->getRepository(AccountUserRole::class);
     }
 }

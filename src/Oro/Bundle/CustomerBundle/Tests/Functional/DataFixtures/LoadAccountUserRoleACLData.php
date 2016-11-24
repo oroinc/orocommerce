@@ -9,6 +9,7 @@ use Oro\Bundle\CustomerBundle\Entity\AccountUserRole;
 
 class LoadAccountUserRoleACLData extends AbstractLoadACLData
 {
+    const ROLE_WITHOUT_ACCOUNT_1_USER_LOCAL = 'Role without account user local';
     const ROLE_WITH_ACCOUNT_1_USER_LOCAL = 'Role with account user local';
     const ROLE_WITH_ACCOUNT_1_USER_DEEP = 'Role with account user deep';
     const ROLE_WITH_ACCOUNT_1_2_USER_LOCAL = 'Role with account 1.2 user local';
@@ -18,6 +19,9 @@ class LoadAccountUserRoleACLData extends AbstractLoadACLData
      * @var array
      */
     protected static $roles = [
+        self::ROLE_WITHOUT_ACCOUNT_1_USER_LOCAL => [
+            'accountUser' => self::USER_ACCOUNT_1_ROLE_LOCAL
+        ],
         self::ROLE_WITH_ACCOUNT_1_USER_DEEP => [
             'accountUser' => self::USER_ACCOUNT_1_ROLE_DEEP
         ],
@@ -29,7 +33,7 @@ class LoadAccountUserRoleACLData extends AbstractLoadACLData
         ],
         self::ROLE_WITH_ACCOUNT_2_USER_LOCAL => [
             'accountUser' => self::USER_ACCOUNT_2_ROLE_LOCAL
-        ],
+        ]
     ];
 
     /**
@@ -53,11 +57,19 @@ class LoadAccountUserRoleACLData extends AbstractLoadACLData
 
             /** @var AccountUser $accountUser */
             $accountUser = $this->getReference($role['accountUser']);
-            $entity->setAccount($accountUser->getAccount());
+            if ($name !== self::ROLE_WITHOUT_ACCOUNT_1_USER_LOCAL) {
+                $entity->setAccount($accountUser->getAccount());
+            }
+            $entity->setOrganization($accountUser->getOrganization());
+            $entityForDelete = clone $entity;
+
+            //need to have role to get permission
+            //role with users can't be deleted
+            $entity->setLabel($entity->getLabel() . ' for user');
             $accountUser->addRole($entity);
 
-            $entity->setOrganization($accountUser->getOrganization());
-            $this->setReference($entity->getLabel(), $entity);
+            $this->setReference($entityForDelete->getLabel(), $entityForDelete);
+            $manager->persist($entityForDelete);
             $manager->persist($entity);
         }
 
