@@ -1,0 +1,20 @@
+// @theme: default
+
+.primary-menu-title {
+    position: relative;
+
+    margin: $primary-menu-title-offset;
+
+    font-size: $primary-menu-title-size;
+    font-weight: $primary-menu-title-font-weight;
+    text-transform: $primary-menu-title-text-transform;
+}
+
+@include breakpoint('tablet-small') {
+    .primary-menu-title {
+        margin: $primary-menu-title-offset-tablet-small;
+        padding: $primary-menu-title-inner-offset-tablet-small;
+
+        font-size: $base-font-size;
+    }
+}

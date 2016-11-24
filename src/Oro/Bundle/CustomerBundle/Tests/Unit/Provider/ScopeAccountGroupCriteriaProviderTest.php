@@ -105,4 +105,9 @@ class ScopeAccountGroupCriteriaProviderTest extends \PHPUnit_Framework_TestCase
             ],
         ];
     }
+
+    public function testGetCriteriaValueType()
+    {
+        $this->assertEquals(AccountGroup::class, $this->provider->getCriteriaValueType());
+    }
 }

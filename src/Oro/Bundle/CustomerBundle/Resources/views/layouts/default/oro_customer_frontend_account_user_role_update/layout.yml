@@ -2,8 +2,7 @@ layout:
     imports:
         -
             id: oro_account_user_role_form
-            root: content
-        - oro_account_menu
+            root: page_content
         -
             id: oro_account_user_role_permission_grid
             root: account_user_role_container

@@ -3,13 +3,14 @@
 namespace Oro\Bundle\ShoppingListBundle\Layout\DataProvider;
 
 use Doctrine\Common\Collections\Criteria;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListTotalManager;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class AccountUserShoppingListsProvider
 {
@@ -26,9 +27,9 @@ class AccountUserShoppingListsProvider
     protected $doctrineHelper;
 
     /**
-     * @var SecurityFacade
+     * @var TokenStorageInterface
      */
-    protected $securityFacade;
+    protected $tokenStorage;
 
     /**
      * @var RequestStack
@@ -52,20 +53,20 @@ class AccountUserShoppingListsProvider
 
     /**
      * @param DoctrineHelper $doctrineHelper
-     * @param SecurityFacade $securityFacade
+     * @param TokenStorageInterface $tokenStorage
      * @param RequestStack $requestStack
      * @param ShoppingListTotalManager $totalManager
      * @param AclHelper $aclHelper
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
-        SecurityFacade $securityFacade,
+        TokenStorageInterface $tokenStorage,
         RequestStack $requestStack,
         ShoppingListTotalManager $totalManager,
         AclHelper $aclHelper
     ) {
         $this->doctrineHelper = $doctrineHelper;
-        $this->securityFacade = $securityFacade;
+        $this->tokenStorage = $tokenStorage;
         $this->requestStack = $requestStack;
         $this->totalManager = $totalManager;
         $this->aclHelper = $aclHelper;
@@ -80,14 +81,14 @@ class AccountUserShoppingListsProvider
     }
 
     /**
-     * @return array
+     * @return array|ShoppingList[]
      */
     public function getShoppingLists()
     {
         if (!array_key_exists('shoppingLists', $this->options)) {
-            $accountUser = $this->securityFacade->getLoggedUser();
+            $token = $this->tokenStorage->getToken();
             $shoppingLists = [];
-            if ($accountUser) {
+            if ($token && $token->getUser() instanceof AccountUser) {
                 /** @var ShoppingListRepository $shoppingListRepository */
                 $shoppingListRepository = $this->doctrineHelper->getEntityRepositoryForClass($this->shoppingListClass);
 

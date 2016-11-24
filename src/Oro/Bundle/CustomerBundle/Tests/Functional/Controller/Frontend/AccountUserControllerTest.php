@@ -145,7 +145,7 @@ class AccountUserControllerTest extends AbstractUserControllerTest
     public function testUpdate()
     {
         $this->loginUser(LoadAccountUserACLData::USER_ACCOUNT_2_ROLE_DEEP);
-        $response = $this->client->requestGrid(
+        $response = $this->client->requestFrontendGrid(
             'frontend-account-account-user-grid',
             [
                 'frontend-account-account-user-grid[_filter][firstName][value]' => self::FIRST_NAME,

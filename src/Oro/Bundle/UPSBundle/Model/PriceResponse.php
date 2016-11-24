@@ -17,6 +17,7 @@ class PriceResponse
      * @param array $data
      * @throws \LogicException on UPS fault
      * @throws \InvalidArgumentException
+     * @return $this
      */
     public function parse($data)
     {
@@ -37,6 +38,8 @@ class PriceResponse
         } else {
             $this->addRatedShipments($data['RateResponse']['RatedShipment']);
         }
+
+        return $this;
     }
 
     /**
@@ -97,7 +100,7 @@ class PriceResponse
     public function getPriceByService($code)
     {
         if (!array_key_exists($code, $this->pricesByServices)) {
-            throw new \InvalidArgumentException(sprintf('Price data is missing for service %s', $code));
+            return null;
         }
 
         return $this->pricesByServices[$code];

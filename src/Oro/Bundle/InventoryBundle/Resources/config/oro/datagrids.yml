@@ -10,10 +10,14 @@ datagrids:
                     - IDENTITY(precision.unit) as productUnit
                     - level.quantity as levelQuantity
                 from:
-                    - { table: %oro_inventory.entity.inventory_level.class%, alias: level }
+                    - { table: %oro_product.entity.product_unit_precision.class%, alias: precision }
                 join:
                     left:
-                        - { join: %oro_product.entity.product_unit_precision.class%, alias: precision, conditionType: WITH, condition: "level.productUnitPrecision = precision" }
+                        -
+                            join: %oro_inventory.entity.inventory_level.class%
+                            alias: level
+                            conditionType: WITH
+                            condition: "level.productUnitPrecision = precision.id"
                 where:
                     and:
                         - IDENTITY(precision.product) = :productId

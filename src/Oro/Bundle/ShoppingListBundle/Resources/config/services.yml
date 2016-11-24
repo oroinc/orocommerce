@@ -93,14 +93,14 @@ services:
         arguments:
             - "@oro_product.storage.product_data_storage"
 
-    oro_shopping_list.event_listener.product_select_db_query:
-        class: '%oro_product.event_listener.scoped_product_select_db_query.common_class%'
-        parent: oro_product.event_listener.abstract_product_select_db_query
+    oro_shopping_list.event_listener.product_db_query_restriction:
+        class: '%oro_product.event_listener.scoped_product_db_query_restriction.common_class%'
+        parent: oro_product.event_listener.abstract_product_db_query_restriction
         calls:
             - [setScope, ['shopping_list']]
             - [setBackendSystemConfigurationPath, ['oro_shopping_list.backend_product_visibility']]
         tags:
-            - { name: kernel.event_listener, event: oro_product.product_select.db.query, method: onDBQuery }
+            - { name: kernel.event_listener, event: oro_product.product_db_query.restriction, method: onDBQuery }
 
     oro_shopping_list.layout.data_provider.shopping_list_form:
         class: 'Oro\Bundle\ShoppingListBundle\Layout\DataProvider\ShoppingListFormProvider'
@@ -114,7 +114,7 @@ services:
         class: 'Oro\Bundle\ShoppingListBundle\Layout\DataProvider\AccountUserShoppingListsProvider'
         arguments:
             - "@oro_entity.doctrine_helper"
-            - "@oro_security.security_facade"
+            - "@security.token_storage"
             - "@request_stack"
             - "@oro_shopping_list.manager.shopping_list_total"
             - "@oro_security.acl_helper"
@@ -172,9 +172,10 @@ services:
         class: 'Oro\Bundle\ShoppingListBundle\EventListener\FrontendProductDatagridListener'
         arguments:
             - "@oro_security.security_facade"
+            - "@doctrine"
         tags:
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-products-grid, method: onPreBuild }
-            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-products-grid, method: onResultAfter }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid, method: onPreBuild }
+            - { name: kernel.event_listener, event: oro_datagrid.search_datasource.result.after.frontend-product-search-grid, method: onResultAfter }
 
     oro_shopping_list.data_provider.product_shopping_lists:
         class: 'Oro\Bundle\ShoppingListBundle\DataProvider\ProductShoppingListsDataProvider'

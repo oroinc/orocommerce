@@ -2,16 +2,15 @@
 
 namespace Oro\Bundle\CustomerBundle\Tests\Functional\Controller\Frontend;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
-use Symfony\Component\DomCrawler\Field\ChoiceFormField;
-use Symfony\Component\DomCrawler\Form;
-
 use Oro\Bundle\AddressBundle\Entity\AddressType;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\CustomerBundle\Entity\AccountUserAddress;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserAddressACLData;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserAddressesACLData;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Symfony\Component\DomCrawler\Field\ChoiceFormField;
+use Symfony\Component\DomCrawler\Form;
 
 /**
  * @dbIsolation
@@ -116,16 +115,18 @@ class AccountUserAddressControllerTest extends WebTestCase
         $form->set($field);
         $form['oro_account_frontend_account_user_typed_address[country]'] = 'ZW';
 
+        $selectedOwner = $this->getReference(LoadAccountUserAddressACLData::USER_ACCOUNT_2_ROLE_BASIC);
         $doc->loadHTML(
             '<select name="oro_account_frontend_account_user_typed_address[frontendOwner]" ' .
             'id="oro_account_frontend_account_user_typed_address_frontend_owner" ' .
             'tabindex="-1" class="select2-offscreen"> ' .
             '<option value="" selected="selected"></option> ' .
-            '<option value="1">AccountUser</option> </select>'
+            '<option value="' . $selectedOwner->getId() . '">AccountUser</option> </select>'
         );
         $field = new ChoiceFormField($doc->getElementsByTagName('select')->item(0));
         $form->set($field);
-        $form['oro_account_frontend_account_user_typed_address[frontendOwner]'] = '1';
+
+        $form['oro_account_frontend_account_user_typed_address[frontendOwner]'] = $selectedOwner->getId();
 
         $doc->loadHTML(
             '<select name="oro_account_frontend_account_user_typed_address[region]" ' .

@@ -7,7 +7,7 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\PaymentBundle\Method\PaymentTerm;
+use Oro\Bundle\PaymentTermBundle\Method\PaymentTerm;
 
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
@@ -24,7 +24,7 @@ class LoadPaymentTermToOrderDemoData extends AbstractFixture implements
     public function getDependencies()
     {
         return [
-            'Oro\Bundle\PaymentBundle\Migrations\Data\Demo\ORM\LoadPaymentTermDemoData',
+            'Oro\Bundle\PaymentTermBundle\Migrations\Data\Demo\ORM\LoadPaymentTermDemoData',
             'Oro\Bundle\OrderBundle\Migrations\Data\Demo\ORM\LoadOrderDemoData',
         ];
     }

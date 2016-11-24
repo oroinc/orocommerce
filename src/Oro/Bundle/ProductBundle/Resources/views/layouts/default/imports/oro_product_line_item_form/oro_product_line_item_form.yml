@@ -18,7 +18,3 @@ layout:
             id: __line_item_form_buttons
             parentId: __line_item_form
             siblingId: __line_item_form_fields
-        - '@setOption':
-            id: __line_item_form_fields
-            optionName: class_prefix
-            optionValue: line_item_form_fields
