@@ -40,7 +40,6 @@
 
 @include breakpoint('tablet') {
     .product-view {
-
         &__gallery,
         &__title-container {
             float: none;
