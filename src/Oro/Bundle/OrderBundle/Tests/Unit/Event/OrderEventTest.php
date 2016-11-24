@@ -18,4 +18,10 @@ class OrderEventTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($form, $event->getForm());
         $this->assertInstanceOf('\ArrayObject', $event->getData());
     }
+
+    public function testEventNullSubmitted()
+    {
+        $event = new OrderEvent($this->getMock('Symfony\Component\Form\FormInterface'), new Order());
+        static::assertNull($event->getSubmittedData());
+    }
 }

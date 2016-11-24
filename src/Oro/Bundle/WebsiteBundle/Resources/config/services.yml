@@ -8,6 +8,8 @@ services:
         arguments:
             - "@doctrine"
             - "@oro_frontend.request.frontend_helper"
+        tags:
+            - { name: doctrine.event_listener, event: onClear }
 
     oro_website.twig.website_extension:
         class: 'Oro\Bundle\WebsiteBundle\Twig\OroWebsiteExtension'
@@ -80,3 +82,10 @@ services:
         public: false
         tags:
             - { name: doctrine.orm.entity_listener, entity: '%oro_website.entity.website.class%', event: prePersist }
+
+    oro_website.provider.website_localization:
+        class: 'Oro\Bundle\WebsiteBundle\Provider\WebsiteLocalizationProvider'
+        arguments:
+            - '@oro_config.manager'
+            - '@oro_locale.manager.localization'
+            - '@oro_entity.doctrine_helper'
