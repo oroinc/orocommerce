@@ -8,8 +8,10 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountGroupCategoryVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountGroupProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\AccountGroupCategoryRepository;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\AccountGroupProductRepository;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\ProductCaseCacheBuilderInterface;
 
@@ -50,12 +52,14 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuild
                 ->findOneByProduct($product);
             if ($category) {
                 $categoryScope = $this->scopeManager->findOrCreate('account_group_category_visibility', $scope);
-                $visibility = $this->registry
-                    ->getManagerForClass(
-                        'OroVisibilityBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved'
-                    )
-                    ->getRepository('OroVisibilityBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
+
+                /** @var AccountGroupCategoryRepository $accountGroupCategoryRepository */
+                $accountGroupCategoryRepository = $this->registry
+                    ->getManagerForClass(AccountGroupCategoryVisibilityResolved::class)
+                    ->getRepository(AccountGroupCategoryVisibilityResolved::class);
+                $visibility = $accountGroupCategoryRepository
                     ->getFallbackToGroupVisibility($category, $categoryScope);
+
                 $update = [
                     'sourceProductVisibility' => $visibilitySettings,
                     'visibility' => $visibility,
@@ -105,7 +109,7 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuild
         }
 
         $this->getRepository()->deleteByProduct($product);
-        $this->getRepository()->insertByProduct($product, $category);
+        $this->getRepository()->insertByProduct($this->insertExecutor, $product, $category);
 
         $this->triggerProductReindexation($product);
     }
@@ -119,8 +123,8 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuild
         try {
             $repository = $this->getRepository();
             $repository->clearTable($scope);
-            $repository->insertStatic($scope);
-            $repository->insertByCategory($scope);
+            $repository->insertStatic($this->insertExecutor, $scope);
+            $repository->insertByCategory($this->insertExecutor, $this->scopeManager, $scope);
             $this->getManager()->commit();
         } catch (\Exception $exception) {
             $this->getManager()->rollback();
@@ -133,7 +137,7 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuild
      */
     protected function getRepository()
     {
-        return $this->repositoryHolder->getRepository();
+        return $this->repository;
     }
 
     /**
