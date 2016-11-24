@@ -71,6 +71,7 @@ class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder im
         }
 
         $this->executeDbQuery($er, $insert, $delete, $update, $where);
+        $this->triggerProductReindexation($product, $scope->getWebsite());
     }
 
     /**
@@ -99,7 +100,9 @@ class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder im
         }
 
         $this->getRepository()->deleteByProduct($product);
-        $this->getRepository()->insertByProduct($product, $category);
+        $this->getRepository()->insertByProduct($this->insertExecutor, $product, $category);
+
+        $this->triggerProductReindexation($product);
     }
 
     /**
@@ -111,8 +114,8 @@ class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder im
         try {
             $repository = $this->getRepository();
             $repository->clearTable($scope);
-            $repository->insertStatic($scope);
-            $repository->insertByCategory($scope);
+            $repository->insertStatic($this->insertExecutor, $scope);
+            $repository->insertByCategory($this->insertExecutor, $this->scopeManager, $scope);
             $this->getManager()->commit();
         } catch (\Exception $exception) {
             $this->getManager()->rollback();
@@ -125,7 +128,7 @@ class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder im
      */
     protected function getRepository()
     {
-        return $this->repositoryHolder->getRepository();
+        return $this->repository;
     }
 
     /**

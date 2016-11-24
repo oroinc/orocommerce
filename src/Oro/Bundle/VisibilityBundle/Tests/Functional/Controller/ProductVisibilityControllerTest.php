@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Controller;
 
+use Oro\Bundle\CustomerBundle\Migrations\Data\ORM\LoadAnonymousAccountGroup;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
@@ -169,10 +170,26 @@ class ProductVisibilityControllerTest extends WebTestCase
             'account visibility form data'
         );
         $this->assertSame(
-            json_encode([$this->getReference(LoadGroups::GROUP1)->getId() => ['visibility' => 'hidden']]),
+            json_encode([
+                $this->getReference(LoadGroups::GROUP1)->getId() => ['visibility' => 'hidden'],
+                $this->getAnonymousGroupId() => ['visibility' => 'visible']
+            ]),
             $crawler->filter(sprintf('[name = "oro_scoped_data_type[%s][accountGroup]"]', $scope->getId()))
                 ->attr('value'),
             'account group visibility form data'
         );
+    }
+
+    /**
+     * @return int
+     */
+    private function getAnonymousGroupId()
+    {
+        return $this->getContainer()
+            ->get('doctrine')
+            ->getManagerForClass('OroCustomerBundle:AccountGroup')
+            ->getRepository('OroCustomerBundle:AccountGroup')
+            ->findOneBy(['name' => LoadAnonymousAccountGroup::GROUP_NAME_NON_AUTHENTICATED])
+            ->getId();
     }
 }

@@ -4,7 +4,7 @@ layout:
             themes: 'OroOrderBundle:layouts:default/oro_order_frontend_success/success.html.twig'
         - '@add':
             id: success_order
-            parentId: content
+            parentId: page_content
             blockType: success_order
             options:
                 order: '=data["order"]'
