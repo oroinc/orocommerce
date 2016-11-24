@@ -6,36 +6,35 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormFactory;
 use Symfony\Component\Form\Form;
 
-use Oro\Bundle\ActionBundle\Helper\ApplicationsHelper;
-use Oro\Bundle\ActionBundle\Helper\ApplicationsHelperInterface;
+use Oro\Bundle\ActionBundle\Provider\CurrentApplicationProviderInterface;
+use Oro\Bundle\FrontendBundle\Provider\ActionCurrentApplicationProvider;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Form\Type\FrontendOrderType;
 use Oro\Bundle\OrderBundle\Form\Type\OrderType;
 use Oro\Bundle\PricingBundle\Event\TotalCalculateBeforeEvent;
-use Oro\Bundle\FrontendBundle\Helper\ActionApplicationsHelper;
 
 class TotalCalculateListener
 {
     /** @var array */
     protected $forms = [
-        ActionApplicationsHelper::COMMERCE_APPLICATION => FrontendOrderType::NAME,
-        ApplicationsHelper::DEFAULT_APPLICATION => OrderType::NAME
+        ActionCurrentApplicationProvider::COMMERCE_APPLICATION => FrontendOrderType::NAME,
+        ActionCurrentApplicationProvider::DEFAULT_APPLICATION => OrderType::NAME
     ];
 
     /** @var FormFactory */
     protected $formFactory;
 
-    /** @var ApplicationsHelperInterface */
-    protected $applicationsHelper;
+    /** @var CurrentApplicationProviderInterface */
+    protected $applicationProvider;
 
     /**
      * @param FormFactory $formFactory
-     * @param ApplicationsHelperInterface $applicationsHelper
+     * @param CurrentApplicationProviderInterface $applicationProvider
      */
-    public function __construct(FormFactory $formFactory, ApplicationsHelperInterface $applicationsHelper)
+    public function __construct(FormFactory $formFactory, CurrentApplicationProviderInterface $applicationProvider)
     {
         $this->formFactory = $formFactory;
-        $this->applicationsHelper = $applicationsHelper;
+        $this->applicationProvider = $applicationProvider;
     }
 
     /**
@@ -48,10 +47,10 @@ class TotalCalculateListener
         $request = $event->getRequest();
 
         if ($entity instanceof Order) {
-            $currentApplication = $this->applicationsHelper->getCurrentApplication();
+            $currentApplication = $this->applicationProvider->getCurrentApplication();
             $entity->resetLineItems();
 
-            if ($currentApplication === ApplicationsHelper::DEFAULT_APPLICATION) {
+            if ($currentApplication === ActionCurrentApplicationProvider::DEFAULT_APPLICATION) {
                 $entity->resetDiscounts();
             }
 

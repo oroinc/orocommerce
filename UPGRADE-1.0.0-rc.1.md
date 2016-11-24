@@ -9,10 +9,8 @@
 
 ##FrontendBundle
 - `oro_frontend.listener.datagrid.fields` and `oro_frontend.listener.enum_filter_frontend_listener` priority fixed to make them executed first
-- Changes in `Oro\Bundle\FrontendBundle\Helper\ActionApplicationsHelper`:
-    - implemented `Oro\Bundle\ActionBundle\Helper\ApplicationsHelperInterface` without extending from `Oro\Bundle\ActionBundle\Helper\ApplicationsHelper`
-    - used traits `Oro\Bundle\ActionBundle\Helper\ApplicationsHelperTrait` and `Oro\Bundle\ActionBundle\Helper\RouteHelperTrait`
-    - registered as service `oro_frontend.helper.applications` with configured routes, now it decorate `oro_action.helper.applications`
+- Deleted `Oro\Bundle\FrontendBundle\Helper\ActionApplicationsHelper`.
+Please use `Oro\Bundle\FrontendBundle\Provider\ActionCurrentApplicationProvider` and `Oro\Bundle\FrontendBundle\ActionProvider\RouteProvider` instead.
 
 ##OrderBundle
 - `Oro\Bundle\SaleBundle\Entity\Quote` `paymentTerm` removed with getter `getPaymentTerm` and setter `setPaymentTerm`, use `oro_payment_term.provider.payment_term_association` to assign PaymentTerm to entity
