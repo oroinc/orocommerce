@@ -43,11 +43,6 @@ class ProductControllerTest extends WebTestCase
         $this->configManager = $this->getContainer()->get('oro_config.manager');
         $this->configManager->set(self::RFP_PRODUCT_VISIBILITY_KEY, [Product::INVENTORY_STATUS_OUT_OF_STOCK]);
         $this->configManager->flush();
-
-
-        $this->globalConfigManager = $this->getContainer()->get('oro_config.global');
-        $this->globalConfigManager->set(self::RFP_PRODUCT_VISIBILITY_KEY, [Product::INVENTORY_STATUS_OUT_OF_STOCK]);
-        $this->globalConfigManager->flush();
     }
 
     public function testViewProductWithRequestQuoteAvailable()
@@ -95,12 +90,7 @@ class ProductControllerTest extends WebTestCase
 
     protected function tearDown()
     {
-        unset($this->translator, $this->client);
-
         $this->configManager->reset(self::RFP_PRODUCT_VISIBILITY_KEY);
         $this->configManager->flush();
-
-        $this->globalConfigManager->reset(self::RFP_PRODUCT_VISIBILITY_KEY);
-        $this->globalConfigManager->flush();
     }
 }

@@ -6,6 +6,7 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\ProductBundle\ComponentProcessor\DataStorageAwareComponentProcessor;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadFrontendProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
@@ -29,18 +30,10 @@ class QuickAddControllerNotificationTest extends WebTestCase
             $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)
         );
 
-        $this->loadFixtures(
-            [
-                'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData'
-            ]
-        );
+        $this->loadFixtures([LoadFrontendProductData::class]);
         $this->configManager = $this->getContainer()->get('oro_config.manager');
         $this->configManager->set(self::RFP_PRODUCT_VISIBILITY_KEY, [Product::INVENTORY_STATUS_IN_STOCK]);
         $this->configManager->flush();
-
-        $this->globalConfigManager = $this->getContainer()->get('oro_config.global');
-        $this->globalConfigManager->set(self::RFP_PRODUCT_VISIBILITY_KEY, [Product::INVENTORY_STATUS_IN_STOCK]);
-        $this->globalConfigManager->flush();
     }
 
     /**
@@ -122,8 +115,5 @@ class QuickAddControllerNotificationTest extends WebTestCase
     {
         $this->configManager->reset(self::RFP_PRODUCT_VISIBILITY_KEY);
         $this->configManager->flush();
-
-        $this->globalConfigManager->reset(self::RFP_PRODUCT_VISIBILITY_KEY);
-        $this->globalConfigManager->flush();
     }
 }
