@@ -11,6 +11,10 @@ workflows:
             - b2b_checkout_flow
         priority: 100
 
+        scopes:
+            -
+                account: 4
+
         attributes:
             billing_address:
                 property_path: checkout.billingAddress
@@ -379,9 +383,7 @@ workflows:
         transition_definitions:
             __start___definition:
                 preconditions:
-                    '@and':
-                        - '@assert_account': 4
-                        - '@payment_method_enabled': 'payment_term'
+                    '@payment_method_enabled': 'payment_term'
                 actions:
                     - '@generate_checkout_state_snapshot':
                         entity: $checkout
@@ -750,7 +752,7 @@ workflows:
                             accountUser: $checkout.accountUser
                             billingAddress: $checkout.billingAddress
                             shippingAddress: $.result.shippingAddress
-                            shippingCost: $checkout.shippingCost
+                            estimatedShippingCostAmount: $checkout.shippingCost.value
                             poNumber: $checkout.poNumber
                             customerNotes: $checkout.customerNotes
                             shipUntil: $checkout.shipUntil
@@ -879,16 +881,6 @@ workflows:
                                     '@not_empty': $.result.customerShippingAddress
                                 parameters: [$.result.customerShippingAddress]
 
-                    - '@remove_entity':
-                        conditions:
-                            '@or':
-                                - '@equal': [$auto_remove_source, true]
-                                - '@and':
-                                    - '@equal': [$allow_manual_source_remove, true]
-                                    - '@equal': [$remove_source, true]
-                        parameters: [$checkout.sourceEntity]
-                    - '@remove_entity': $checkout
-
                     - '@tree':
                         conditions:
                             '@not_empty': $.result.order.id
@@ -910,6 +902,16 @@ workflows:
                                 route: oro_order_frontend_success
                                 route_parameters:
                                     id: $.result.order.id
+
+                    - '@remove_entity':
+                        conditions:
+                            '@or':
+                                - '@equal': [$auto_remove_source, true]
+                                - '@and':
+                                    - '@equal': [$allow_manual_source_remove, true]
+                                    - '@equal': [$remove_source, true]
+                        parameters: [$checkout.sourceEntity]
+                    - '@remove_entity': $checkout
 
             continue_to_request_approval_definition:
                 preactions:

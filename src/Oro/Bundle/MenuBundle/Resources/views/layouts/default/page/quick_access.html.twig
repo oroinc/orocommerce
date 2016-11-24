@@ -3,15 +3,22 @@
         '~class': " middlebar__right"
     }) %}
     <div {{ block('block_attributes') }}>
-        <ul class="shopping-list pull-right">
-            {{ block_widget(block) }}
-        </ul>
+        {{ block_widget(block) }}
     </div>
 {% endblock %}
 
 {% block _quick_access_menu_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " quick-access"
+        '~class': " quick-access",
+        'data-dom-relocation': true,
+        'data-dom-relocation-options': {
+            responsive: [
+                {
+                    breakpoint: 1099,
+                    moveTo: '[data-main-menu-extra-container]'
+                }
+            ]
+        }
     }) %}
     <div {{ block('block_attributes') }}>
         <ul class="quick-access__list">
@@ -32,14 +39,14 @@
                 </a>
             </li>
             {% if feature_resource_enabled("oro_product_frontend_quick_add", "routes") %}
-            <li class="quick-access__item">
-                <a class="quick-access__link" href="{{ path('oro_product_frontend_quick_add') }}">
+                <li class="quick-access__item">
+                    <a class="quick-access__link" href="{{ path('oro_product_frontend_quick_add') }}">
                     <span class="badge badge_circled-corners badge_orange quick-access__badge">
                         <i class="cf-flash"></i>
                     </span>
-                    <span class="quick-access__text">Quick Order Form</span>
-                </a>
-            </li>
+                        <span class="quick-access__text">Quick Order Form</span>
+                    </a>
+                </li>
             {% endif %}
         </ul>
     </div>

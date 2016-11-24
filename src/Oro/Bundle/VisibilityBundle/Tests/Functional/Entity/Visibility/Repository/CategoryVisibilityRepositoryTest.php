@@ -13,7 +13,7 @@ use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadCategoryVisibi
  */
 class CategoryVisibilityRepositoryTest extends WebTestCase
 {
-    const ROOT_CATEGORY = 'Master Catalog';
+    const ROOT_CATEGORY = 'Products categories';
 
     /**
      * @var CategoryVisibilityRepository
@@ -27,9 +27,7 @@ class CategoryVisibilityRepositoryTest extends WebTestCase
         $this->repository = $this->getContainer()
             ->get('doctrine')
             ->getRepository('OroVisibilityBundle:Visibility\CategoryVisibility');
-        $a = $this->repository->getCategoriesVisibilities();
         $this->loadFixtures([LoadCategoryVisibilityData::class]);
-        $a = $this->repository->getCategoriesVisibilities();
     }
 
     /**

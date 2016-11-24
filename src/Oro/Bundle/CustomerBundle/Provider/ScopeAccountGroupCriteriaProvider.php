@@ -58,17 +58,17 @@ class ScopeAccountGroupCriteriaProvider extends AbstractScopeCriteriaProvider
             return [];
         }
         $loggedUser = $token->getUser();
-        if (null === $loggedUser || $loggedUser instanceof AccountUser) {
-            return [$this->getCriteriaField() => $this->accountUserProvider->getAccountGroup($loggedUser)];
+        if (!($loggedUser instanceof AccountUser)) {
+            $loggedUser = null;
         }
 
-        return [];
+        return [$this->getCriteriaField() => $this->accountUserProvider->getAccountGroup($loggedUser)];
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
-    protected function getCriteriaValueType()
+    public function getCriteriaValueType()
     {
         return AccountGroup::class;
     }

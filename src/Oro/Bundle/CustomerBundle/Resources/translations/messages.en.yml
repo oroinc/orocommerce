@@ -99,7 +99,7 @@ oro.customer:
         profile:
             company_name: 'Company Name'
             registration.title: 'Registration'
-            register: 'Register'
+            register: 'Registration'
             register.description: 'Please register if you do not have an account. A sales representative will contact you shortly.'
             create_an_account: 'Create An Account'
             forgot_password: 'Forgot Your Password?'
@@ -130,6 +130,15 @@ oro.customer:
                     profile_information.label: 'Profile information'
                     password.label: 'Password'
                     roles.label: 'Roles'
+
+        placeholder:
+            company_name: 'Company Inc.'
+            first_name: 'John'
+            last_name: 'Smith'
+            email: 'name@domain.com'
+            password: 'Enter your password'
+            password_confirmation: 'Reenter your password'
+
 
     accountuserrole:
         entity_label:                    'Customer User Role'

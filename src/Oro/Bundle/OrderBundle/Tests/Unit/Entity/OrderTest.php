@@ -50,11 +50,11 @@ class OrderTest extends \PHPUnit_Framework_TestCase
             ['account', new Account()],
             ['accountUser', new AccountUser()],
             ['website', new Website()],
-            ['shippingCost', new Price()],
             ['sourceEntityClass', 'EntityClass'],
             ['sourceEntityIdentifier', 'source-identifier-test-01'],
             ['sourceEntityId', 1],
-            ['shippingCost', new Price()],
+            ['estimatedShippingCostAmount', 10.1],
+            ['overriddenShippingCostAmount', 11.2],
             ['totalDiscounts', new Price()],
             ['shippingMethod', 'shipping_method'],
             ['shippingMethodType', 'shipping_method_type'],
@@ -65,6 +65,13 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         $this->assertPropertyCollection($order, 'lineItems', new OrderLineItem());
         $this->assertPropertyCollection($order, 'discounts', new OrderDiscount());
         $this->assertPropertyCollection($order, 'shippingTrackings', new OrderShippingTracking());
+    }
+
+    public function testToString()
+    {
+        $order = new Order();
+        $order->setIdentifier('test');
+        static::assertEquals('test', (string)$order);
     }
 
     public function testLineItemsSetter()
@@ -130,45 +137,72 @@ class OrderTest extends \PHPUnit_Framework_TestCase
     {
         $item = new Order();
 
-        $this->assertNull($item->getShippingCost());
         $this->assertNull($item->getTotalDiscounts());
 
         $value = 100;
         $currency = 'EUR';
-        $this->setProperty($item, 'shippingCostAmount', $value);
         $this->setProperty($item, 'totalDiscountsAmount', $value);
         $this->setProperty($item, 'currency', $currency);
 
         $item->postLoad();
 
-        $this->assertEquals(Price::create($value, $currency), $item->getShippingCost());
         $this->assertEquals(Price::create($value, $currency), $item->getTotalDiscounts());
     }
 
-    public function testUpdateShippingCost()
-    {
-        $item = new Order();
-        $value = 1000;
-        $currency = 'EUR';
-        $item->setShippingCost(Price::create($value, $currency));
-
-        $item->updateShippingCost();
-
-        $this->assertEquals($value, $this->getProperty($item, 'shippingCostAmount'));
-    }
-
-    public function testSetShippingEstimate()
+    public function testGetEstimatedShippingCost()
     {
         $value = 10;
         $currency = 'USD';
-        $price = Price::create($value, $currency);
-
         $item = new Order();
-        $item->setShippingCost($price);
+        static::assertNull($item->getEstimatedShippingCost());
+        $item->setCurrency($currency);
+        $item->setEstimatedShippingCostAmount($value);
+        static::assertEquals(Price::create($value, $currency), $item->getEstimatedShippingCost());
+    }
 
-        $this->assertEquals($price, $item->getShippingCost());
+    /**
+     * @dataProvider shippingCostDataProvider
+     * @param $estimated
+     * @param $overridden
+     * @param $expected
+     */
+    public function testGetShippingCost($estimated, $overridden, $expected)
+    {
+        $currency = 'USD';
+        $item = new Order();
+        $item->setCurrency($currency);
+        $item->setEstimatedShippingCostAmount($estimated);
+        $item->setOverriddenShippingCostAmount($overridden);
+        static::assertEquals(Price::create($expected, $currency), $item->getShippingCost());
+    }
 
-        $this->assertEquals($value, $this->getProperty($item, 'shippingCostAmount'));
+    /**
+     * @return array
+     */
+    public function shippingCostDataProvider()
+    {
+        return [
+            [
+                'estimated' => 10,
+                'overridden' => null,
+                'expected' => 10
+            ],
+            [
+                'estimated' => null,
+                'overridden' => 20,
+                'expected' => 20
+            ],
+            [
+                'estimated' => 10,
+                'overridden' => 30,
+                'expected' => 30
+            ]
+        ];
+    }
+
+    public function testGetShippingCostNull()
+    {
+        static::assertNull((new Order())->getShippingCost());
     }
 
     public function testUpdateTotalDiscounts()

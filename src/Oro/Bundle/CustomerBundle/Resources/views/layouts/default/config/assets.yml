@@ -1,4 +1,6 @@
 styles:
     inputs:
         - 'bundles/orocustomer/default/scss/settings/global-settings.scss'
+        - 'bundles/orocustomer/default/scss/variables/primary-menu-container-config.scss'
+        - 'bundles/orocustomer/default/scss/variables/primary-menu-title-config.scss'
         - 'bundles/orocustomer/default/scss/styles.scss'

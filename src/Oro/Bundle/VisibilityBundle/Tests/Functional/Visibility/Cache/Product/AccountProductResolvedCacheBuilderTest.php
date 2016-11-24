@@ -3,6 +3,7 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Visibility\Cache\Product;
 
 use Doctrine\ORM\EntityRepository;
+use Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\AccountProductRepository;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\AccountProductResolvedCacheBuilder;
 
@@ -29,7 +30,7 @@ class AccountProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
      */
     protected function getRepository()
     {
-        return $this->getContainer()->get('oro_visibility.account_product_repository_holder')->getRepository();
+        return $this->getContainer()->get('oro_visibility.account_product_repository');
     }
 
     /**
@@ -39,14 +40,21 @@ class AccountProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
     {
         $container = $this->client->getContainer();
 
+        $indexScheduler = new ProductIndexScheduler(
+            $container->get('oro_entity.doctrine_helper'),
+            $container->get('event_dispatcher')
+        );
+
         $builder = new AccountProductResolvedCacheBuilder(
             $container->get('doctrine'),
-            $container->get('oro_scope.scope_manager')
+            $container->get('oro_scope.scope_manager'),
+            $indexScheduler,
+            $container->get('oro_entity.orm.insert_from_select_query_executor')
         );
         $builder->setCacheClass(
             $container->getParameter('oro_visibility.entity.account_product_visibility_resolved.class')
         );
-        $builder->setRepositoryHolder($container->get('oro_visibility.account_product_repository_holder'));
+        $builder->setRepository($container->get('oro_visibility.account_product_repository'));
 
         return $builder;
     }

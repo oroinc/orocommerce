@@ -4,16 +4,16 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Visibility\Cache\Product\
 
 use Doctrine\ORM\AbstractQuery;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
-use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\AccountCategoryRepository;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountCategoryVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\AccountCategoryRepository;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\AccountCategoryResolvedCacheBuilder;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\Subtree\VisibilityChangeAccountSubtreeCacheBuilder;
 
@@ -22,24 +22,13 @@ use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\Subtree\Visibi
  */
 class AccountCategoryResolvedCacheBuilderTest extends AbstractProductResolvedCacheBuilderTest
 {
-    /**
-     * @var Category
-     */
+    /** @var Category */
     protected $category;
 
-    /**
-     * @var Account
-     */
+    /** @var Account */
     protected $account;
 
-    /**
-     * @var Scope
-     */
-    protected $scope;
-
-    /**
-     * @var AccountCategoryResolvedCacheBuilder
-     */
+    /** @var AccountCategoryResolvedCacheBuilder */
     protected $builder;
 
     /**
@@ -61,15 +50,22 @@ class AccountCategoryResolvedCacheBuilderTest extends AbstractProductResolvedCac
             ['account' => $this->account]
         );
 
+        $indexScheduler = new ProductIndexScheduler(
+            $container->get('oro_entity.doctrine_helper'),
+            $container->get('event_dispatcher')
+        );
+
         $this->builder = new AccountCategoryResolvedCacheBuilder(
             $container->get('doctrine'),
-            $this->scopeManager
+            $this->scopeManager,
+            $indexScheduler,
+            $container->get('oro_entity.orm.insert_from_select_query_executor')
         );
         $this->builder->setCacheClass(
             $container->getParameter('oro_visibility.entity.account_category_visibility_resolved.class')
         );
-        $this->builder->setRepositoryHolder(
-            $container->get('oro_visibility.account_category_repository_holder')
+        $this->builder->setRepository(
+            $container->get('oro_visibility.account_category_repository')
         );
         $subtreeBuilder = new VisibilityChangeAccountSubtreeCacheBuilder(
             $container->get('doctrine'),

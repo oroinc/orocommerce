@@ -38,6 +38,7 @@ services:
         class: 'Oro\Bundle\CheckoutBundle\Layout\DataProvider\TransitionFormProvider'
         arguments:
             - '@form.factory'
+            - '@router'
         calls:
             - [setTransitionProvider, ['@oro_checkout.layout.data_provider.transition']]
         tags:
@@ -385,3 +386,11 @@ services:
             - '@oro_checkout.mapper.order_mapper'
         tags:
             - { name: oro_action.action, alias: create_order }
+
+    oro_checkout.listener.checkout_workflow:
+        class: 'Oro\Bundle\CheckoutBundle\EventListener\CheckoutWorkflowListener'
+        arguments:
+            - '@doctrine'
+            - '%oro_checkout.entity.checkout.class%'
+        tags:
+            - { name: oro_workflow.changes.listener, event: oro.workflow.deactivated, method: onDeactivationWorkflowDefinition }
