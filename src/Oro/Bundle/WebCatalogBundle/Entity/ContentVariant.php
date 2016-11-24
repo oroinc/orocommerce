@@ -12,7 +12,7 @@ use Oro\Bundle\WebCatalogBundle\Model\ExtendContentVariant;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentVariantRepository")
  * @ORM\Table(name="oro_web_catalog_variant")
  * @Config
  */
@@ -142,7 +142,7 @@ class ContentVariant extends ExtendContentVariant implements ContentVariantInter
     }
 
     /**
-     * @return ContentNode
+     * {@inheritdoc}
      */
     public function getNode()
     {

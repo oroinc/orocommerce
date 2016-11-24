@@ -56,8 +56,10 @@ class OroSEOBundleInstaller implements Installation, ExtendExtensionAwareInterfa
      */
     private function addMetaInformation(Schema $schema, $ownerTable)
     {
-        $this->addMetaInformationField($schema, $ownerTable, 'metaDescriptions');
-        $this->addMetaInformationField($schema, $ownerTable, 'metaKeywords');
+        if ($schema->hasTable($ownerTable)) {
+            $this->addMetaInformationField($schema, $ownerTable, 'metaDescriptions');
+            $this->addMetaInformationField($schema, $ownerTable, 'metaKeywords');
+        }
     }
 
     /**

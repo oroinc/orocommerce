@@ -6,11 +6,11 @@ layout:
             blockType: meta
             options:
                 name: 'description'
-                content: '=data["category"].getCurrentCategory()!=null ? data["locale"].getLocalizedValue(data["category"].getCurrentCategory().getMetaDescriptions()) : null'
+                content: '=data["category"].getCurrentCategory()!=null ? =data["seo"].getMetaInformation(data["category"].getCurrentCategory(), "metaDescriptions") : null'
         - '@add':
             id: meta_keywords
             parentId: head
             blockType: meta
             options:
                 name: 'keywords'
-                content: '=data["category"].getCurrentCategory()!=null ? data["locale"].getLocalizedValue(data["category"].getCurrentCategory().getMetaKeywords()) : null'
+                content: '=data["category"].getCurrentCategory()!=null ? =data["seo"].getMetaInformation(data["category"].getCurrentCategory(), "metaKeywords") : null'

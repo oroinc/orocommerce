@@ -6,11 +6,11 @@ layout:
             blockType: meta
             options:
                 name: 'description'
-                content: '=data["locale"].getLocalizedValue(data["product"].getMetaDescriptions())'
+                content: '=data["seo"].getMetaInformation(data["product"], "metaDescriptions")'
         - '@add':
             id: meta_keywords
             parentId: head
             blockType: meta
             options:
                 name: 'keywords'
-                content: '=data["locale"].getLocalizedValue(data["product"].getMetaKeywords())'
+                content: '=data["seo"].getMetaInformation(data["product"], "metaKeywords")'

@@ -223,6 +223,7 @@ class SlugUrlMatcher implements RequestMatcherInterface, UrlMatcherInterface
             $attributes = array_merge($attributes, $routeParameters);
             $attributes['_route_params'] = $routeParameters;
             $attributes['_resolved_slug_url'] = $resolvedUrl;
+            $attributes['_used_slug'] = $slug;
         }
 
         return $attributes;

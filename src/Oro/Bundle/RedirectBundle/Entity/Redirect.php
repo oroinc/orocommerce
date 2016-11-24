@@ -72,7 +72,7 @@ class Redirect
     protected $website;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\RedirectBundle\Entity\Slug")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\RedirectBundle\Entity\Slug", inversedBy="redirects")
      * @ORM\JoinColumn(name="slug_id", referencedColumnName="id", nullable=true, onDelete="CASCADE")
      *
      * @var Slug

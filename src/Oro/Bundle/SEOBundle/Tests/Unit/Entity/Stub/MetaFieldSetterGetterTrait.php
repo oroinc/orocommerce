@@ -3,6 +3,7 @@
 namespace Oro\Bundle\SEOBundle\Tests\Unit\Entity\Stub;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 
 trait MetaFieldSetterGetterTrait
@@ -44,7 +45,7 @@ trait MetaFieldSetterGetterTrait
     }
 
     /**
-     * @return LocalizedFallbackValue[]
+     * @return LocalizedFallbackValue[]|Collection
      */
     public function getMetaKeywords()
     {
@@ -52,7 +53,7 @@ trait MetaFieldSetterGetterTrait
     }
 
     /**
-     * @return LocalizedFallbackValue[]
+     * @return LocalizedFallbackValue[]|Collection
      */
     public function getMetaDescriptions()
     {

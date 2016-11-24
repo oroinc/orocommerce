@@ -284,6 +284,7 @@ class SlugUrlMatcherTest extends \PHPUnit_Framework_TestCase
             '_route_params' => $routeParameters,
             '_controller' => 'Some::action',
             '_resolved_slug_url' => '/' . $realUrl,
+            '_used_slug' => $slug,
             'id' => 1
         ];
 
@@ -494,6 +495,7 @@ class SlugUrlMatcherTest extends \PHPUnit_Framework_TestCase
             '_route_params' => $routeParameters,
             '_controller' => 'Some::action',
             '_resolved_slug_url' => '/' . $realUrl,
+            '_used_slug' => $slug,
             'id' => 1
         ];
 
