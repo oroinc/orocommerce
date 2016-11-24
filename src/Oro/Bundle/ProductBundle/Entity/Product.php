@@ -71,6 +71,9 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
     const INVENTORY_STATUS_OUT_OF_STOCK = 'out_of_stock';
     const INVENTORY_STATUS_DISCONTINUED = 'discontinued';
 
+    const TYPE_SIMPLE_PRODUCT = 'simple';
+    const TYPE_CONFIGURABLE_PRODUCT = 'configurable';
+
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")
@@ -121,7 +124,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
     protected $hasVariants = false;
 
     /**
-     * @var bool
+     * @var string
      *
      * @ORM\Column(name="status", type="string", length=16, nullable=false)
      * @ConfigField(
@@ -398,6 +401,23 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
      * )
      */
     protected $images;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="type", type="string", length=16, nullable=false)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          },
+     *          "importexport"={
+     *              "order"=90
+     *          }
+     *      }
+     *  )
+     */
+    protected $type = self::TYPE_SIMPLE_PRODUCT;
 
     /**
      * {@inheritdoc}
@@ -889,6 +909,26 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
         if ($this->shortDescriptions->contains($shortDescription)) {
             $this->shortDescriptions->removeElement($shortDescription);
         }
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * @param string $type
+     *
+     * @return Product
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
 
         return $this;
     }

@@ -34,7 +34,8 @@ class ProductTest extends \PHPUnit_Framework_TestCase
             ['primaryUnitPrecision',  null],
             ['createdAt', $now, false],
             ['updatedAt', $now, false],
-            ['status', Product::STATUS_ENABLED, Product::STATUS_DISABLED]
+            ['status', Product::STATUS_ENABLED, Product::STATUS_DISABLED],
+            ['type', Product::TYPE_CONFIGURABLE_PRODUCT, Product::TYPE_SIMPLE_PRODUCT]
         ];
 
         $this->assertPropertyAccessors(new Product(), $properties);
