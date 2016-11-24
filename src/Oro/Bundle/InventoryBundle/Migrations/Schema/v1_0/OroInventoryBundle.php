@@ -117,7 +117,7 @@ class OroInventoryBundle implements Installation, ExtendExtensionAwareInterface
     protected function addManageInventoryFieldToCategory(Schema $schema)
     {
         $categoryTable = $schema->getTable('oro_catalog_category');
-        $this->addManageInventoryField($schema, $categoryTable);
+        $this->addManageInventoryField($schema, $categoryTable, ParentCategoryFallbackProvider::FALLBACK_ID);
     }
 
     /**
@@ -135,7 +135,7 @@ class OroInventoryBundle implements Installation, ExtendExtensionAwareInterface
     public function addInventoryThresholdFieldToCategory(Schema $schema)
     {
         $categoryTable = $schema->getTable('oro_catalog_category');
-        $this->addInventoryThresholdField($schema, $categoryTable);
+        $this->addInventoryThresholdField($schema, $categoryTable, ParentCategoryFallbackProvider::FALLBACK_ID);
     }
 
     /**
@@ -219,8 +219,11 @@ class OroInventoryBundle implements Installation, ExtendExtensionAwareInterface
      * @param Schema $schema
      * @param Table $table
      */
-    private function addInventoryThresholdField(Schema $schema, Table $table)
-    {
+    private function addInventoryThresholdField(
+        Schema $schema,
+        Table $table,
+        $defaultFallback = CategoryFallbackProvider::FALLBACK_ID
+    ) {
         $fallbackTable = $schema->getTable('oro_entity_fallback_value');
         $this->extendExtension->addManyToOneRelation(
             $schema,
@@ -244,7 +247,7 @@ class OroInventoryBundle implements Installation, ExtendExtensionAwareInterface
                 ],
                 'fallback' => [
                     'fallbackList' => [
-                        CategoryFallbackProvider::FALLBACK_ID => ['fieldName' => 'inventoryThreshold'],
+                        $defaultFallback => ['fieldName' => 'inventoryThreshold'],
                         SystemConfigFallbackProvider::FALLBACK_ID => [
                             'configName' => 'oro_inventory.inventory_threshold'
                         ],
@@ -258,8 +261,11 @@ class OroInventoryBundle implements Installation, ExtendExtensionAwareInterface
      * @param Schema $schema
      * @param Table $table
      */
-    private function addManageInventoryField(Schema $schema, Table $table)
-    {
+    private function addManageInventoryField(
+        Schema $schema,
+        Table $table,
+        $defaultFallback = CategoryFallbackProvider::FALLBACK_ID
+    ) {
         $fallbackTable = $schema->getTable('oro_entity_fallback_value');
         $this->extendExtension->addManyToOneRelation(
             $schema,
@@ -283,7 +289,7 @@ class OroInventoryBundle implements Installation, ExtendExtensionAwareInterface
                 ],
                 'fallback' => [
                     'fallbackList' => [
-                        ParentCategoryFallbackProvider::FALLBACK_ID => ['fieldName' => 'manageInventory'],
+                        $defaultFallback => ['fieldName' => 'manageInventory'],
                         SystemConfigFallbackProvider::FALLBACK_ID => ['configName' => 'oro_inventory.manage_inventory'],
                     ],
                 ],
