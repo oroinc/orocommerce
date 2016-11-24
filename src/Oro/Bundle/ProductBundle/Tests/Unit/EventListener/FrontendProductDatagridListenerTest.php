@@ -12,9 +12,8 @@ use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\Datagrid;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
-use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\LocaleBundle\Datagrid\Formatter\Property\LocalizedValueProperty;
-
+use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultAfter;
 use Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
 use Oro\Bundle\ProductBundle\EventListener\FrontendProductDatagridListener;
 use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
@@ -181,9 +180,9 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
         }
 
         /**
-         * @var OrmResultAfter|\PHPUnit_Framework_MockObject_MockObject $event
+         * @var SearchResultAfter|\PHPUnit_Framework_MockObject_MockObject $event
          */
-        $event = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Event\OrmResultAfter')
+        $event = $this->getMockBuilder(SearchResultAfter::class)
             ->disableOriginalConstructor()
             ->getMock();
         $event->expects($this->once())
@@ -358,8 +357,8 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
      */
     public function testOnResultAfterViewWithoutImage($themeName)
     {
-        /** @var OrmResultAfter|\PHPUnit_Framework_MockObject_MockObject $event */
-        $event = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Event\OrmResultAfter')
+        /** @var SearchResultAfter|\PHPUnit_Framework_MockObject_MockObject $event */
+        $event = $this->getMockBuilder(SearchResultAfter::class)
             ->disableOriginalConstructor()->getMock();
         $event->expects($this->once())
             ->method('getRecords')

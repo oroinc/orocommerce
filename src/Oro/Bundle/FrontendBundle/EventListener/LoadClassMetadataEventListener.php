@@ -38,7 +38,7 @@ class LoadClassMetadataEventListener
             foreach ($classMetadata->associationMappings as $name => $associationMapping) {
                 if (array_key_exists('targetEntity', $associationMapping)) {
                     $classMetadata->associationMappings[$name]['targetEntity'] =
-                       $this->classMigration->replaceStringValues($associationMapping['targetEntity']);
+                        $this->classMigration->replaceStringValues($associationMapping['targetEntity']);
                 }
             }
         }

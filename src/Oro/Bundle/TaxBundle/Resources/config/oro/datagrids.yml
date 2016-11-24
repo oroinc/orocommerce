@@ -30,8 +30,7 @@ datagrids:
                     data_name: tax_code.createdAt
                 updatedAt:
                     data_name: tax_code.updatedAt
-            default:
-                id: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+            disable_default_sorting: true
         filters:
             columns:
                 code:
@@ -153,8 +152,7 @@ datagrids:
                     data_name: tax.createdAt
                 updatedAt:
                     data_name: tax.updatedAt
-            default:
-                id: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+            disable_default_sorting: true
         filters:
             columns:
                 code:
@@ -249,8 +247,7 @@ datagrids:
                     data_name: tax_rule.createdAt
                 updatedAt:
                     data_name: tax_rule.updatedAt
-            default:
-                id: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+            disable_default_sorting: true
         filters:
             columns:
                 description:
@@ -323,8 +320,7 @@ datagrids:
                     data_name: tax_code.createdAt
                 updatedAt:
                     data_name: tax_code.updatedAt
-            default:
-                id: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+            disable_default_sorting: true
         filters:
             columns:
                 code:

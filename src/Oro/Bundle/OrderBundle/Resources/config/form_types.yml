@@ -2,9 +2,7 @@ services:
     oro_order.form.type.order:
         class: 'Oro\Bundle\OrderBundle\Form\Type\OrderType'
         arguments:
-            - '@oro_security.security_facade'
             - '@oro_order.order.provider.order_address_security'
-            - '@oro_payment.provider.payment_term'
             - '@oro_order.handler.order_currency_handler'
             - '@oro_order.form.type.event_listener.subtotals_subscriber'
         tags:
@@ -16,8 +14,6 @@ services:
         class: 'Oro\Bundle\OrderBundle\Form\Type\FrontendOrderType'
         arguments:
             - '@oro_order.order.provider.order_address_security'
-            - '@oro_security.security_facade'
-            - '@oro_payment.provider.payment_term'
             - '@oro_pricing.provider.combined_product_price'
             - '@oro_order.handler.order_currency_handler'
             - '@oro_order.form.type.event_listener.subtotals_subscriber'
@@ -77,7 +73,7 @@ services:
         parent: oro_product.form.type.extension.product_data_storage.abstract
         calls:
             - [setDataClass, ['%oro_order.entity.order.class%']]
-            - [setExtendedType, [oro_order_frontend_type]]
+            - [setExtendedType, ['oro_order_frontend_type']]
         tags:
             - { name: form.type_extension, alias: oro_order_frontend_type }
 
@@ -86,7 +82,7 @@ services:
         parent: oro_product.form.type.extension.product_data_storage.abstract
         calls:
             - [setDataClass, ['%oro_order.entity.order.class%']]
-            - [setExtendedType, [oro_order_type]]
+            - [setExtendedType, ['oro_order_type']]
         tags:
             - { name: form.type_extension, alias: oro_order_type }
 

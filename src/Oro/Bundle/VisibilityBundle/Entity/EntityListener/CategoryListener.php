@@ -8,8 +8,6 @@ use Oro\Bundle\CatalogBundle\Model\CategoryMessageHandler;
 
 class CategoryListener
 {
-    const FIELD_PARENT_CATEGORY = 'parentCategory';
-
     /**
      * @var CategoryMessageHandler
      */
@@ -29,7 +27,7 @@ class CategoryListener
      */
     public function preUpdate(Category $category, PreUpdateEventArgs $event)
     {
-        if ($event->hasChangedField(self::FIELD_PARENT_CATEGORY)) {
+        if ($event->hasChangedField(Category::FIELD_PARENT_CATEGORY)) {
             $this->categoryMessageHandler->addCategoryMessageToSchedule(
                 'oro_visibility.visibility.category_position_change',
                 $category
@@ -37,8 +35,14 @@ class CategoryListener
         }
     }
 
-    public function postRemove()
+    /**
+     * @param Category $category
+     */
+    public function preRemove(Category $category)
     {
-        $this->categoryMessageHandler->addCategoryMessageToSchedule('oro_visibility.visibility.category_remove');
+        $this->categoryMessageHandler->addCategoryMessageToSchedule(
+            'oro_visibility.visibility.category_remove',
+            $category
+        );
     }
 }

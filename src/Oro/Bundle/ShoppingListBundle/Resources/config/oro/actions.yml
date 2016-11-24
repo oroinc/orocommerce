@@ -29,8 +29,12 @@ operations:
             icon: icon-briefcase
         preconditions:
             '@and':
+                - '@action_available': start_checkout
                 - '@has_elements': $lineItems
                 - '@has_price_in_shopping_line_items': $lineItems
+                - '@workflow_available_by_record_group':
+                    group_name: b2b_checkout_flow
+                    entity_class: Oro\Bundle\CheckoutBundle\Entity\Checkout
         actions:
             - '@assign_url':
                 attribute: $.editLink
@@ -91,6 +95,7 @@ operations:
         order: 20
         button_options:
             icon: icon-briefcase
+            template: OroActionBundle:Operation:ajax-button.html.twig
             data:
                 component_name: oro_shopping_list_to_checkout_quick_add_processor
             page_component_module: oroproduct/js/app/components/quick-add-form-button-component
@@ -109,7 +114,7 @@ operations:
         label: oro.shoppinglist.product.add_to_shopping_list.label
         applications: [commerce]
         acl_resource: [CREATE, entity:commerce@Oro\Bundle\ShoppingListBundle\Entity\LineItem]
-        datagrids: [frontend-products-grid]
+        datagrids: [frontend-product-search-grid]
         datagrid_options:
             mass_action_provider: oro_shopping_list_add_products
         button_options:
@@ -138,7 +143,7 @@ operations:
                     line_item: $.lineItem
                     form: $.form
             - '@flash_message: { message: $.success_message, type': success }
-            - '@refresh_grid': frontend-products-grid
+            - '@refresh_grid': frontend-product-search-grid
 
     oro_shoppinglist_lineitem_base:
         label: ' '

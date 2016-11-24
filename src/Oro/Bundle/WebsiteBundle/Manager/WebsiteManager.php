@@ -76,4 +76,12 @@ class WebsiteManager
 
         return $this->currentWebsite;
     }
+
+    /**
+     * Method should be called to reset saved website
+     */
+    public function onClear()
+    {
+        $this->currentWebsite = null;
+    }
 }

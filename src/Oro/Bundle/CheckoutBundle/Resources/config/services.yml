@@ -38,6 +38,7 @@ services:
         class: 'Oro\Bundle\CheckoutBundle\Layout\DataProvider\TransitionFormProvider'
         arguments:
             - '@form.factory'
+            - '@router'
         calls:
             - [setTransitionProvider, ['@oro_checkout.layout.data_provider.transition']]
         tags:
@@ -123,8 +124,9 @@ services:
         arguments:
             - '@request_stack'
             - '@event_dispatcher'
+            - '@oro_payment_term.provider.payment_term'
         tags:
-            - { name: kernel.event_listener, event: oro_payment.resolve.payment_term, method: onResolvePaymentTerm }
+            - { name: kernel.event_listener, event: oro_payment_term.resolve.payment_term, method: onResolvePaymentTerm }
 
     oro_checkout.event_listener.shopping_list:
         class: 'Oro\Bundle\CheckoutBundle\EventListener\ShoppingListListener'
@@ -385,3 +387,11 @@ services:
             - '@oro_checkout.mapper.order_mapper'
         tags:
             - { name: oro_action.action, alias: create_order }
+
+    oro_checkout.listener.checkout_workflow:
+        class: 'Oro\Bundle\CheckoutBundle\EventListener\CheckoutWorkflowListener'
+        arguments:
+            - '@doctrine'
+            - '%oro_checkout.entity.checkout.class%'
+        tags:
+            - { name: oro_workflow.changes.listener, event: oro.workflow.deactivated, method: onDeactivationWorkflowDefinition }

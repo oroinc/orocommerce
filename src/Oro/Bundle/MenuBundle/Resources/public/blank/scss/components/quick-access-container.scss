@@ -1,0 +1,15 @@
+// @theme: blank
+
+.quick-access-container {
+  margin: $offset-y-m 0;
+
+  float: right;
+}
+
+@include breakpoint('mobile') {
+  .quick-access-container {
+    display: inline-block;
+
+    float: none;
+  }
+}

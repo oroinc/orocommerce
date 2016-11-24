@@ -49,6 +49,14 @@ class CategoryProvider
     }
 
     /**
+     * @return Category
+     */
+    public function getRootCategory()
+    {
+        return $this->loadCategory();
+    }
+
+    /**
      * @param AccountUser|null $user
      *
      * @return Category[]
@@ -66,6 +74,28 @@ class CategoryProvider
         }
 
         return $this->tree[$userId];
+    }
+
+    /**
+     * @return array
+     */
+    public function getParentCategories()
+    {
+        $parentCategories = [];
+
+        $category = $this->getCurrentCategory();
+
+        $currentCategory = $category->getParentCategory();
+
+        while ($currentCategory) {
+            $parentCategories[] = $currentCategory;
+
+            $currentCategory = $currentCategory->getParentCategory();
+        }
+
+        $parentCategories = array_reverse($parentCategories);
+
+        return $parentCategories;
     }
 
     /**
