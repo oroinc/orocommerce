@@ -2,12 +2,12 @@
 
 namespace Oro\Bundle\OrderBundle\EventListener;
 
-use Oro\Bundle\ActionBundle\Helper\ApplicationsHelperInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormFactory;
 use Symfony\Component\Form\Form;
 
 use Oro\Bundle\ActionBundle\Helper\ApplicationsHelper;
+use Oro\Bundle\ActionBundle\Helper\ApplicationsHelperInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Form\Type\FrontendOrderType;
 use Oro\Bundle\OrderBundle\Form\Type\OrderType;
@@ -25,7 +25,7 @@ class TotalCalculateListener
     /** @var FormFactory */
     protected $formFactory;
 
-    /** @var ActionApplicationsHelper */
+    /** @var ApplicationsHelperInterface */
     protected $applicationsHelper;
 
     /**
