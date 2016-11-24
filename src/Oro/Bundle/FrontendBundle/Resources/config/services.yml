@@ -148,18 +148,6 @@ services:
         tags:
             - {name: oro_installer.namespace_migration_provider, priority: 25}
 
-#    oro_frontend.helper.applications:
-#        class: 'Oro\Bundle\FrontendBundle\Helper\ActionApplicationsHelper'
-#        decorates: oro_action.helper.applications
-#        arguments:
-#            - '@oro_frontend.helper.applications.inner'
-#            - '@security.token_storage'
-#        calls:
-#            - [setFormDialogRoute, ['oro_frontend_action_widget_form']]
-#            - [setFormPageRoute, ['oro_frontend_action_widget_form']]
-#            - [setExecutionRoute, ['oro_frontend_action_operation_execute']]
-#            - [setWidgetRoute, ['oro_frontend_action_widget_buttons']]
-
     oro_frontend.provider.current_application:
         class: 'Oro\Bundle\FrontendBundle\Provider\ActionCurrentApplicationProvider'
         decorates: oro_action.provider.current_application
