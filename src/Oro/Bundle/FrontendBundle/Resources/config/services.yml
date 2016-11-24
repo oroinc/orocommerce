@@ -171,4 +171,3 @@ services:
             - [setFormPageRoute, ['oro_frontend_workflow_start_transition_form']]
             - [setExecutionRoute, ['oro_api_frontend_workflow_start']]
             - [setWidgetRoute, ['oro_frontend_workflow_widget_buttons']]
-            
