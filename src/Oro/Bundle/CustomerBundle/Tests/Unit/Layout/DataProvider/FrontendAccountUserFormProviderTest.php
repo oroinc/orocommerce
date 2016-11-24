@@ -10,6 +10,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 use Oro\Component\Testing\Unit\EntityTrait;
 
+use Oro\Bundle\CustomerBundle\Form\Type\FrontendOwnerSelectType;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\CustomerBundle\Form\Type\AccountUserPasswordRequestType;
 use Oro\Bundle\CustomerBundle\Form\Type\AccountUserPasswordResetType;
@@ -174,6 +175,24 @@ class FrontendAccountUserFormProviderTest extends \PHPUnit_Framework_TestCase
         // Get form with existing data in locale cache
         $data = $this->provider->getResetPasswordForm();
         $this->assertInstanceOf(FormInterface::class, $data);
+    }
+
+    public function testGetAccountUserSelectFormView()
+    {
+        $form = $this->getMock(FormInterface::class);
+        $view = $this->getMock(FormView::class);
+
+        $form->expects($this->once())
+            ->method('createView')
+            ->willReturn($view);
+
+        $target = new \stdClass();
+        $selectedAccountUser = new AccountUser();
+        $this->formFactory->expects($this->once())
+            ->method('create')
+            ->with(FrontendOwnerSelectType::NAME, $selectedAccountUser, ['targetObject' => $target])
+            ->willReturn($form);
+        $this->assertSame($view, $this->provider->getAccountUserSelectFormView($selectedAccountUser, $target));
     }
 
     /**

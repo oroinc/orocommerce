@@ -241,9 +241,9 @@ abstract class AbstractLoadACLData extends AbstractFixture implements
 
         $roles = [
             static::ROLE_BASIC => [['VIEW_BASIC', 'CREATE_BASIC', 'EDIT_BASIC'], ['DELETE_BASIC']],
-            static::ROLE_LOCAL => [['VIEW_LOCAL', 'CREATE_LOCAL', 'EDIT_LOCAL'], ['DELETE_LOCAL']],
+            static::ROLE_LOCAL => [['VIEW_LOCAL', 'CREATE_LOCAL', 'EDIT_LOCAL'], ['DELETE_LOCAL', 'ASSIGN_LOCAL']],
             static::ROLE_LOCAL_VIEW_ONLY => [['VIEW_LOCAL'], []],
-            static::ROLE_DEEP => [['VIEW_DEEP', 'CREATE_DEEP', 'EDIT_DEEP'], ['DELETE_DEEP']],
+            static::ROLE_DEEP => [['VIEW_DEEP', 'CREATE_DEEP', 'EDIT_DEEP'], ['DELETE_DEEP', 'ASSIGN_DEEP']],
             static::ROLE_DEEP_VIEW_ONLY => [['VIEW_DEEP'], []],
         ];
 

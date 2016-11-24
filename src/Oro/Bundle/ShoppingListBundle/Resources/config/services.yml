@@ -37,6 +37,13 @@ services:
             - "@oro_shopping_list.manager.shopping_list_total"
             - "@oro_security.acl_helper"
 
+    oro_shopping_list.shopping_list.owner_manager:
+        class: 'Oro\Bundle\ShoppingListBundle\Manager\ShoppingListOwnerManager'
+        arguments:
+            - "@oro_security.acl_helper"
+            - "@doctrine"
+            - "@oro_entity_config.provider.ownership"
+
     oro_shopping_list.placeholder.filter:
         class: 'Oro\Bundle\ShoppingListBundle\Placeholder\PlaceholderFilter'
         public: false

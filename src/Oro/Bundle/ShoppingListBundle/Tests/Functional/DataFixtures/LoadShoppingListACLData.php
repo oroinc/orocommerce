@@ -17,7 +17,12 @@ class LoadShoppingListACLData extends AbstractFixture implements
     const SHOPPING_LIST_ACC_1_USER_BASIC = 'shopping_list_account1_user_basic';
     const SHOPPING_LIST_ACC_1_USER_DEEP = 'shopping_list_account1_user_deep';
 
+    const SHOPPING_LIST_ACC_2_USER_LOCAL = 'shopping_list_account2_user_local';
+    const SHOPPING_LIST_ACC_2_USER_BASIC = 'shopping_list_account2_user_basic';
+    const SHOPPING_LIST_ACC_2_USER_DEEP = 'shopping_list_account2_user_deep';
+
     const SHOPPING_LIST_ACC_1_1_USER_LOCAL = 'shopping_list_account1.1_user_local';
+    const SHOPPING_LIST_ACC_1_2_USER_LOCAL = 'shopping_list_account1.2_user_local';
 
     /**
      * @var array
@@ -32,8 +37,20 @@ class LoadShoppingListACLData extends AbstractFixture implements
         self::SHOPPING_LIST_ACC_1_USER_DEEP => [
             'accountUser' => LoadAccountUserACLData::USER_ACCOUNT_1_ROLE_DEEP
         ],
+        self::SHOPPING_LIST_ACC_2_USER_LOCAL => [
+            'accountUser' => LoadAccountUserACLData::USER_ACCOUNT_2_ROLE_LOCAL
+        ],
+        self::SHOPPING_LIST_ACC_2_USER_BASIC => [
+            'accountUser' => LoadAccountUserACLData::USER_ACCOUNT_2_ROLE_BASIC
+        ],
+        self::SHOPPING_LIST_ACC_2_USER_DEEP => [
+            'accountUser' => LoadAccountUserACLData::USER_ACCOUNT_2_ROLE_DEEP
+        ],
         self::SHOPPING_LIST_ACC_1_1_USER_LOCAL => [
             'accountUser' => LoadAccountUserACLData::USER_ACCOUNT_1_1_ROLE_LOCAL
+        ],
+        self::SHOPPING_LIST_ACC_1_2_USER_LOCAL => [
+            'accountUser' => LoadAccountUserACLData::USER_ACCOUNT_1_2_ROLE_LOCAL
         ],
     ];
 

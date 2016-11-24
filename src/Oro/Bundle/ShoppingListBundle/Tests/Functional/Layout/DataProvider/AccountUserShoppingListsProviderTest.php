@@ -57,13 +57,10 @@ class AccountUserShoppingListsProviderTest extends WebTestCase
                 'shoppingLists' => [],
                 'user' => '',
             ],
-            'VIEW (user from another account)' => [
-                'shoppingLists' => [],
-                'user' => LoadShoppingListUserACLData::USER_ACCOUNT_2_ROLE_BASIC,
-            ],
             'VIEW (user from parent account : DEEP_VIEW_ONLY)' => [
                 'shoppingLists' => [
                     LoadShoppingListACLData::SHOPPING_LIST_ACC_1_1_USER_LOCAL,
+                    LoadShoppingListACLData::SHOPPING_LIST_ACC_1_2_USER_LOCAL,
                     LoadShoppingListACLData::SHOPPING_LIST_ACC_1_USER_BASIC,
                     LoadShoppingListACLData::SHOPPING_LIST_ACC_1_USER_DEEP,
                     LoadShoppingListACLData::SHOPPING_LIST_ACC_1_USER_LOCAL,

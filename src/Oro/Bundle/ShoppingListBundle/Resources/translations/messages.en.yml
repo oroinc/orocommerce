@@ -24,6 +24,7 @@ oro:
             create_order: 'Create Order'
         flash:
             success: 'Shopping list "%shoppinglist%" was created successfully'
+            update_success: 'Shopping list "%shoppinglist%" was updated successfully'
 
         create_new_form:
             input_label: Shopping List Name

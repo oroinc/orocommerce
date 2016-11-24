@@ -5,8 +5,10 @@ namespace Oro\Bundle\CustomerBundle\Form\Type;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Util\ClassUtils;
+use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\EntityConfigBundle\Config\ConfigInterface;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Symfony\Component\Form\AbstractType;
@@ -87,7 +89,9 @@ class FrontendOwnerSelectType extends AbstractType
                 [$ownerFieldName => 'owner.id', $organizationFieldName => 'owner.organization']
             );
 
-            $qb = $this->registry->getRepository($ownerClass)
+            /** @var EntityRepository $repo */
+            $repo = $this->registry->getRepository($ownerClass);
+            $qb = $repo
                 ->createQueryBuilder('owner')
                 ->addCriteria($criteria);
 
@@ -103,10 +107,10 @@ class FrontendOwnerSelectType extends AbstractType
     }
 
     /**
-     * @param $config
-     * @return mixed
+     * @param ConfigInterface $config
+     * @return string
      */
-    private function getOwnerClass($config)
+    private function getOwnerClass(ConfigInterface $config)
     {
         $ownerType = $config->get('frontend_owner_type');
         $ownerClass = ($ownerType == 'FRONTEND_ACCOUNT') ? Account::class : AccountUser::class;

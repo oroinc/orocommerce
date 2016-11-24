@@ -3,6 +3,8 @@
 namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Controller\Frontend\Api\Rest;
 
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
+use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListACLData;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListUserACLData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -46,9 +48,10 @@ class ShoppingListControllerTest extends WebTestCase
         if ($user && $status == 204) {
             $currentUser = $this->getReference($user);
 
-            $currentShoppingList = $this->getContainer()->get('doctrine')
-                ->getRepository('OroShoppingListBundle:ShoppingList')
-                ->findCurrentForAccountUser($currentUser);
+            /** @var ShoppingListRepository $repo */
+            $repo = $this->getContainer()->get('doctrine')
+                ->getRepository('OroShoppingListBundle:ShoppingList');
+            $currentShoppingList = $repo->findCurrentForAccountUser($currentUser);
 
             $this->assertEquals($currentShoppingList->getId(), $shoppingList->getId());
         }
@@ -108,7 +111,7 @@ class ShoppingListControllerTest extends WebTestCase
 //            'EDIT (user from parent account : LOCAL)' => [
 //                'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_1_1_USER_LOCAL,
 //                'user' => LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_DEEP,
-//                'status' => 200,
+//                'status' => 204,
 //            ],
 //            'user from same account : LOCAL' => [
 //                'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_1_USER_LOCAL,
@@ -119,6 +122,79 @@ class ShoppingListControllerTest extends WebTestCase
                 'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_1_USER_BASIC,
                 'user' => LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_BASIC,
                 'status' => 204,
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider ownerProvider
+     * @param string $resource
+     * @param string $user
+     * @param int $status
+     * @param string $assignedUserEmail
+     */
+    public function testSetOwner($resource, $user, $assignedUserEmail, $status)
+    {
+        $this->loginUser($user);
+        $shoppingList = $this->getReference($resource);
+        $assignedUser = $this->getReference($assignedUserEmail);
+
+        $this->client->request(
+            'PUT',
+            $this->getUrl('oro_api_set_shoppinglist_owner', ['id' => $shoppingList->getId()]),
+            ["ownerId" => $assignedUser->getId()]
+        );
+        $result = $this->client->getResponse();
+        $this->assertResponseStatusCodeEquals($result, $status);
+    }
+
+    /**
+     * @return array
+     */
+    public function ownerProvider()
+    {
+        return [
+            'anonymous user' => [
+                'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_2_USER_LOCAL,
+                'user' => '',
+                'assignedUserEmail' => LoadShoppingListUserACLData::USER_ACCOUNT_2_ROLE_BASIC,
+                'status' => 401,
+            ],
+            'user from another account' => [
+                'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_2_USER_LOCAL,
+                'user' => LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_LOCAL,
+                'assignedUserEmail' => LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_LOCAL,
+                'status' => 403,
+            ],
+            'user from parent account : DEEP_VIEW_ONLY' => [
+                'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_1_2_USER_LOCAL,
+                'user' => LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_DEEP_VIEW_ONLY,
+                'assignedUserEmail' => LoadShoppingListUserACLData::USER_ACCOUNT_1_1_ROLE_LOCAL,
+                'status' => 403,
+            ],
+            'assign to user from another account : LOCAL' => [
+                'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_2_USER_DEEP,
+                'user' => LoadShoppingListUserACLData::USER_ACCOUNT_2_ROLE_DEEP,
+                'assignedUserEmail' => LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_LOCAL,
+                'status' => 403,
+            ],
+            'assign to user in same account : BASIC' => [
+                'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_2_USER_BASIC,
+                'user' => LoadShoppingListUserACLData::USER_ACCOUNT_2_ROLE_BASIC,
+                'assignedUserEmail' => LoadShoppingListUserACLData::USER_ACCOUNT_2_ROLE_LOCAL,
+                'status' => 403,
+            ],
+            'assign to user in same account : LOCAL' => [
+                'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_2_USER_LOCAL,
+                'user' => LoadShoppingListUserACLData::USER_ACCOUNT_2_ROLE_LOCAL,
+                'assignedUserEmail' => LoadShoppingListUserACLData::USER_ACCOUNT_2_ROLE_BASIC,
+                'status' => 200,
+            ],
+            'assign to user in child account : DEEP' => [
+                'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_1_2_USER_LOCAL,
+                'user' => LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_DEEP,
+                'assignedUserEmail' => LoadShoppingListUserACLData::USER_ACCOUNT_1_1_ROLE_BASIC,
+                'status' => 200,
             ],
         ];
     }
