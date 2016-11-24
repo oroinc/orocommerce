@@ -72,11 +72,7 @@ class CategoryVisibleListener
         /** @var Category $category */
         $category = $this->categoryRepository->find((int)$request->get(RequestProductHandler::CATEGORY_ID_KEY));
 
-        if ($category === null) {
-            $this->throwCategoryNotFound($request);
-        }
-
-        if (!$this->isCategoryVisible($category)) {
+        if (!$category || !$this->isCategoryVisible($category)) {
             $this->throwCategoryNotFound($request);
         }
     }
@@ -87,27 +83,20 @@ class CategoryVisibleListener
      */
     private function isApplicable(Request $request)
     {
-        $isApplicable = true;
-        $route        = $request->attributes->get('_route', null);
+        $route = $request->attributes->get('_route');
 
         if ($route === null || $route !== static::PRODUCT_INDEX_ROUTE) {
-            $isApplicable = false;
+            return false;
         }
 
-        $categoryExistsInUri = $request->get(RequestProductHandler::CATEGORY_ID_KEY, null) !== null;
-
-        if (!$categoryExistsInUri) {
-            $isApplicable = false;
-        }
-
-        return $isApplicable;
+        return $request->get(RequestProductHandler::CATEGORY_ID_KEY) !== null;
     }
 
     /**
-     * @param $category
+     * @param Category $category
      * @return bool
      */
-    private function isCategoryVisible($category)
+    private function isCategoryVisible(Category $category)
     {
         $user         = $this->getUser();
         $account      = $this->accountUserRelationsProvider->getAccount($user);
