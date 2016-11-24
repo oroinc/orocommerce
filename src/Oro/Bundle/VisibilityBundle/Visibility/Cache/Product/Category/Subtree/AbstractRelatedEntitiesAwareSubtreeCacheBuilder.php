@@ -161,7 +161,7 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
         $accountGroupsCategoryVisibilities = $this->registry
             ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
             ->getRepository('OroVisibilityBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
-            ->getVisibilitiesForAccountGroups($category, $accountGroupIds);
+            ->getVisibilitiesForAccountGroups($this->scopeManager, $category, $accountGroupIds);
 
         $accountGroupsWithConfigCallbackIds = [];
         foreach ($accountGroupsCategoryVisibilities as $accountGroupId => $visibility) {
@@ -353,7 +353,7 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
                 'category' => $category
             ]);
 
-        $res = $qb->getQuery()->execute();
+        $qb->getQuery()->execute();
     }
 
     /**

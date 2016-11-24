@@ -150,7 +150,12 @@ class StartCheckoutTest extends \PHPUnit_Framework_TestCase
         $checkoutSourceRepository = $this->getMockWithoutConstructor('Doctrine\ORM\EntityRepository');
         $checkoutSourceRepository->expects($this->once())
             ->method('findOneBy')
-            ->with([$options[StartCheckout::SOURCE_FIELD_KEY] => $options[StartCheckout::SOURCE_ENTITY_KEY]])
+            ->with(
+                [
+                    $options[StartCheckout::SOURCE_FIELD_KEY] => $options[StartCheckout::SOURCE_ENTITY_KEY],
+                    'deleted' => false
+                ]
+            )
             ->willReturn($checkoutSource);
 
         $em = $this->getMockBuilder('\Doctrine\ORM\EntityManager')

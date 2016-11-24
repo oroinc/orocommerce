@@ -196,7 +196,7 @@ class StartCheckout extends AbstractAction
         $sourceEntity = $this->contextAccessor->getValue($context, $this->options[self::SOURCE_ENTITY_KEY]);
 
         $sourceRepository = $em->getRepository('OroCheckoutBundle:CheckoutSource');
-        $checkoutSource = $sourceRepository->findOneBy([$sourceFieldName => $sourceEntity])
+        $checkoutSource = $sourceRepository->findOneBy([$sourceFieldName => $sourceEntity, 'deleted' => false])
             ?: $this->createCheckoutSource($sourceFieldName, $sourceEntity);
 
         $checkout = $this->getCheckout($checkoutSource);

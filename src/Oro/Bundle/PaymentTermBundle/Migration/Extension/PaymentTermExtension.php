@@ -5,9 +5,7 @@ namespace Oro\Bundle\PaymentTermBundle\Migration\Extension;
 use Doctrine\DBAL\Schema\Schema;
 
 use Oro\Bundle\EntityBundle\EntityConfig\DatagridScope;
-use Oro\Bundle\EntityConfigBundle\Entity\ConfigModel;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
-use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManager;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
@@ -51,7 +49,6 @@ class PaymentTermExtension implements ExtendExtensionAwareInterface
             'label',
             ArrayUtil::arrayMergeRecursiveDistinct(
                 [
-                    ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_READONLY,
                     'extend' => ['is_extend' => true, 'owner' => ExtendScope::OWNER_CUSTOM],
                     'entity' => ['label' => 'oro.paymentterm.entity_label'],
                     'datagrid' => [

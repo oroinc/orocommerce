@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\CustomerBundle\Tests\Unit\Form\Extension\Stub;
+namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Form\Extension\Stub;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
 
