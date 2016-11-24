@@ -1,0 +1,64 @@
+// @theme: blank
+
+.product-view {
+    &__title-container {
+        float: right;
+        width: calc(100% - #{$product-gallery-container-width});
+    }
+
+    &__gallery {
+        float: left;
+
+        margin-bottom: $product-gallery-container-offset-bottom;
+        width: $product-gallery-container-width;
+    }
+
+    &__main-data {
+        display: flex;
+
+        margin-bottom: $product-block-offset-bottom;
+
+        clear: right;
+
+        &__first {
+            width: $product-main-data-first-block-width;
+        }
+
+        &__second {
+            margin-left: $product-main-data-second-block-left-offset;
+
+            flex-grow: 1;
+        }
+    }
+
+    &__additional {
+        margin-bottom: $product-block-offset-bottom;
+
+        clear: both;
+    }
+}
+
+@include breakpoint('tablet') {
+    .product-view {
+
+        &__gallery,
+        &__title-container {
+            float: none;
+            width: 100%;
+        }
+    }
+}
+
+@include breakpoint('mobile') {
+    .product-view {
+        &__main-data {
+            display: block;
+
+            &__first,
+            &__second {
+                width: 100%;
+                margin: 0;
+            }
+        }
+    }
+}

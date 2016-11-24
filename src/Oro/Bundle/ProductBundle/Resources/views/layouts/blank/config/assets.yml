@@ -1,0 +1,4 @@
+styles:
+    inputs:
+        - 'bundles/oroproduct/blank/scss/styles.scss'
+        - 'bundles/oroproduct/blank/scss/variables/product-layout-config.scss'

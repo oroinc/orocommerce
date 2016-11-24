@@ -1,0 +1,67 @@
+{% block _product_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-view'
+    }) %}
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _product_title_container_widget %}
+    {% set attr = attr|merge({
+    class: attr.class|default('') ~ " product-view__title-container"
+    }) %}
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _product_gallery_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+    '~class': ' product-view__gallery'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _product_main_data_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+    '~class': ' product-view__main-data'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _product_main_data_first_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+    '~class': ' product-view__main-data__first'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _product_main_data_second_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+    '~class': ' product-view__main-data__second'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _product_additional_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+    '~class': ' product-view__additional'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
