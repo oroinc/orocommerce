@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CustomerBundle\Tests\Functional\Controller\Frontend\Api\Rest;
 
 use Doctrine\Common\Persistence\ObjectRepository;
+
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserRoleACLData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\CustomerBundle\Entity\AccountUserRole;
@@ -55,7 +56,6 @@ class AccountUserRoleControllerTest extends WebTestCase
         $this->loginUser($login);
         /** @var AccountUserRole $customizedRole */
         $customizedRole = $this->getReference($resource);
-        $customizedRole1 = $this->getRepository()->findOneBy(['label' => $resource]);
         $this->assertNotNull($customizedRole);
 
         $this->client->request(
