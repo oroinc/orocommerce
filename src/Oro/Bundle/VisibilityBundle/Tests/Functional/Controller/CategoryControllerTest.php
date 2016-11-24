@@ -283,7 +283,7 @@ class CategoryControllerTest extends WebTestCase
             if (!$pos = strpos($key, '[')) {
                 continue;
             }
-            $key = '[' . substr($key, 0, $pos) . ']' . substr($key, $pos);
+            $key = '['.substr($key, 0, $pos).']'.substr($key, $pos);
             $accessor->setValue($parameters, $key, $val);
         }
 
@@ -292,7 +292,7 @@ class CategoryControllerTest extends WebTestCase
 
     /**
      * @param Crawler $crawler
-     * @param string  $changeSetId
+     * @param string $changeSetId
      * @return array
      */
     protected function getChangeSetData(Crawler $crawler, $changeSetId)
@@ -305,7 +305,7 @@ class CategoryControllerTest extends WebTestCase
     }
 
     /**
-     * @param array  $data
+     * @param array $data
      * @param string $id
      * @param string $visibility
      */
