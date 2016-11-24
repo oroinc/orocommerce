@@ -56,7 +56,7 @@
             &__first,
             &__second {
                 width: 100%;
-                margin: 0;
+                margin: 0 0 $product-block-offset-bottom;
             }
         }
     }
