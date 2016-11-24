@@ -30,7 +30,7 @@ class RenameTableUpdateRelations implements Migration, RenameExtensionAwareInter
     {
         $extension = $this->renameExtension;
 
-        $toTable = self::INVENTORY_LEVEL_TABLE_NAME;
+        $toTable = self::NEW_INVENTORY_TABLE;
         $fromTable = self::OLD_WAREHOUSE_INVENTORY_TABLE;
         $indexToDrop = 'uidx_oro_wh_wh_inventory_lev';
 

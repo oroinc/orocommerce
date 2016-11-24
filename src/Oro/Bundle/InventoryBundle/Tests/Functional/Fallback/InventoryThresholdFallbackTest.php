@@ -3,6 +3,7 @@
 namespace Oro\Bundle\InventoryBundle\Tests\Functional\Fallback;
 
 use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\DomCrawler\Form;
 
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
@@ -54,6 +55,7 @@ class InventoryThresholdFallbackTest extends WebTestCase
         );
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        /** @var Form $form */
         $form = $crawler->selectButton('Save')->form();
         $inventoryThresholdValue = $form->get('oro_catalog_category[inventoryThreshold][scalarValue]')->getValue();
         $this->assertEmpty($inventoryThresholdValue);
@@ -83,6 +85,7 @@ class InventoryThresholdFallbackTest extends WebTestCase
     {
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_update', ['id' => $product->getId()]));
 
+        /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
         $form['input_action'] = 'save_and_close';
         if (is_null($ownValue)) {

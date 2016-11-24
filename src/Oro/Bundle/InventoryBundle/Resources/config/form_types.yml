@@ -22,7 +22,7 @@ services:
         tags:
             - { name: form.type_extension, extended_type: Oro\Bundle\ProductBundle\Form\Type\ProductType }
 
-    oro_inventory.form.type.extension.category_manage_inventory_type_extension:
+    oro_inventory.form.type.extension.category_manage_inventory_extension:
         class: Oro\Bundle\InventoryBundle\Form\Extension\CategoryManageInventoryFormExtension
         tags:
             - { name: form.type_extension, extended_type: Oro\Bundle\CatalogBundle\Form\Type\CategoryType }
@@ -32,7 +32,7 @@ services:
         tags:
             - { name: form.type_extension, extended_type: Oro\Bundle\ProductBundle\Form\Type\ProductType }
 
-    oro_inventory.form.type.extension.category_inventory_threshold_type_extension:
+    oro_inventory.form.type.extension.category_inventory_threshold_extension:
         class: Oro\Bundle\InventoryBundle\Form\Extension\CategoryInventoryThresholdFormExtension
         tags:
             - { name: form.type_extension, extended_type: Oro\Bundle\CatalogBundle\Form\Type\CategoryType }
