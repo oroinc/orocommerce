@@ -1,0 +1,2 @@
+bundles:
+    - OroPaymentTermBundle:PaymentTerm:fields.html.twig

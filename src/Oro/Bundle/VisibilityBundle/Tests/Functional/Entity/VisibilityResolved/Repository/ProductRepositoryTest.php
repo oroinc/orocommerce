@@ -43,17 +43,22 @@ class ProductRepositoryTest extends WebTestCase
      */
     protected $scopeManager;
 
+    /**
+     * @var InsertFromSelectQueryExecutor
+     */
+    protected $insertExecutor;
+
     protected function setUp()
     {
         $this->initClient();
         $this->client->useHashNavigation(true);
 
         $this->scopeManager = $this->getContainer()->get('oro_scope.scope_manager');
+        $this->insertExecutor = $this->getContainer()->get('oro_entity.orm.insert_from_select_query_executor');
 
         $this->entityManager = $this->getResolvedVisibilityManager();
         $this->repository = $this->getContainer()
-            ->get('oro_visibility.product_repository_holder')
-            ->getRepository();
+            ->get('oro_visibility.product_repository');
 
         $this->loadFixtures([LoadProductVisibilityData::class]);
     }
@@ -100,7 +105,7 @@ class ProductRepositoryTest extends WebTestCase
     {
         $this->repository->clearTable();
 
-        $this->repository->insertStatic();
+        $this->repository->insertStatic($this->insertExecutor);
         $actual = $this->getActualArray();
 
         $this->assertCount(3, $actual);
@@ -120,7 +125,7 @@ class ProductRepositoryTest extends WebTestCase
         $scope = $this->getScope();
         $categoryScope = $this->scopeManager->findOrCreate('category_visibility', $scope);
 
-        $this->repository->insertByCategory($scope, $categoryScope);
+        $this->repository->insertByCategory($this->insertExecutor, $scope, $categoryScope);
 
         $actual = $this->getActualArray();
 
@@ -133,8 +138,8 @@ class ProductRepositoryTest extends WebTestCase
         $scope = $this->getScope();
         $categoryScope = $this->scopeManager->findOrCreate('category_visibility', $scope);
         $this->repository->clearTable();
-        $this->repository->insertStatic();
-        $this->repository->insertByCategory($scope, $categoryScope);
+        $this->repository->insertStatic($this->insertExecutor);
+        $this->repository->insertByCategory($this->insertExecutor, $scope, $categoryScope);
 
         $product = $this->getReference(LoadProductData::PRODUCT_1);
 
@@ -329,6 +334,7 @@ class ProductRepositoryTest extends WebTestCase
         $category = $this->getCategoryByProduct($product);
         $this->repository->deleteByProduct($product);
         $this->repository->insertByProduct(
+            $this->insertExecutor,
             $product,
             ProductVisibilityResolved::VISIBILITY_HIDDEN,
             $this->getScope(),
@@ -346,6 +352,7 @@ class ProductRepositoryTest extends WebTestCase
         $category = $this->getCategoryByProduct($product);
         $this->repository->deleteByProduct($product);
         $this->repository->insertByProduct(
+            $this->insertExecutor,
             $product,
             ProductVisibilityResolved::VISIBILITY_VISIBLE,
             $this->getScope(),

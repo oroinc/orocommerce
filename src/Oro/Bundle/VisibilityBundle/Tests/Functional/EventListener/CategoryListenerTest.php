@@ -3,6 +3,7 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\EventListener;
 
 use Doctrine\ORM\EntityManager;
+
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageCollector;
@@ -20,7 +21,7 @@ class CategoryListenerTest extends WebTestCase
      */
     protected $categoryManager;
 
-    /*r
+    /**
      * @var CategoryRepository
      */
     protected $categoryRepository;

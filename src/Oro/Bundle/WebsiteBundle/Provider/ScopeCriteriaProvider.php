@@ -40,9 +40,9 @@ class ScopeCriteriaProvider extends AbstractScopeCriteriaProvider
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
-    protected function getCriteriaValueType()
+    public function getCriteriaValueType()
     {
         return Website::class;
     }

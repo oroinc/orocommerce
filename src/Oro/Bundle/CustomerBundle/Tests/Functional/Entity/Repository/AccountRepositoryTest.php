@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\CustomerBundle\Tests\Functional\Entity\Repository;
 
+use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\Repository\AccountRepository;
-use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountCategoryVisibility;
@@ -35,7 +35,6 @@ class AccountRepositoryTest extends WebTestCase
         $this->loadFixtures(
             [
                 'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccounts',
-                'Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData',
             ]
         );
 

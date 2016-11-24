@@ -2,8 +2,7 @@ layout:
     imports:
         -
             id: oro_account_user_view
-            root: content
-        - oro_account_menu
+            root: page_content
     actions:
         - '@setOption':
             id: page_title
@@ -12,7 +11,7 @@ layout:
                 label: 'oro.customer.frontend.title.account_user.profile'
 
         - '@setOption':
-            id: content
+            id: page_content
             optionName: class_prefix
             optionValue: 'user'
 
