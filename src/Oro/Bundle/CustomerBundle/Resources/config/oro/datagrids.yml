@@ -15,6 +15,20 @@ datagrids:
         options:
             access_level_route: oro_customer_frontend_acl_access_levels
 
+    account-user-workflow-permission-grid:
+        extends: workflow-permission-grid
+        source:
+            type: account-user-workflow-permission-grid-provider
+        acl_resource: oro_account_account_user_role_update
+        options:
+            access_level_route: oro_account_acl_access_levels
+
+    frontend-account-user-workflow-permission-grid:
+        extends: workflow-permission-grid
+        acl_resource: oro_account_frontend_account_user_role_update
+        options:
+            access_level_route: oro_customer_frontend_acl_access_levels
+
     account-accounts-select-grid:
         extended_entity_name: %oro_customer.entity.account.class%
         acl_resource: oro_customer_account_view
