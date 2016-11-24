@@ -250,10 +250,10 @@ class CategoryControllerTest extends WebTestCase
         $parameters['oro_catalog_category'] = array_merge(
             $parameters['oro_catalog_category'],
             [
-                '_token'     => $token,
+                '_token' => $token,
                 'visibility' => [
-                    'all'          => $categoryVisibility,
-                    'account'      => $visibilityForAccount,
+                    'all' => $categoryVisibility,
+                    'account' => $visibilityForAccount,
                     'accountGroup' => $visibilityForAccountGroup,
                 ],
             ]
