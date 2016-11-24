@@ -15,7 +15,7 @@ class CategoryInventoryThresholdFormViewListener extends AbstractFallbackFieldsF
     {
         $category = $this->getEntityFromRequest(Category::class);
         if ($category === null) {
-            return null;
+            return;
         }
 
         $this->addBlockToEntityEdit(

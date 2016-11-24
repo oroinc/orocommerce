@@ -15,7 +15,7 @@ class CategoryManageInventoryFormViewListener extends AbstractFallbackFieldsForm
     {
         $category = $this->getEntityFromRequest(Category::class);
         if ($category === null) {
-            return null;
+            return;
         }
 
         $this->addBlockToEntityEdit(
