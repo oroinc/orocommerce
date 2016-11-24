@@ -26,7 +26,7 @@ class ContentNodeNameFiller
      */
     public function fillName(ContentNode $contentNode)
     {
-        if ($contentNode->getName()) {
+        if (!$this->isEmptyString($contentNode->getName())) {
             return;
         }
 
@@ -34,19 +34,28 @@ class ContentNodeNameFiller
         if ($contentNode->getDefaultTitle() instanceof LocalizedFallbackValue) {
             $title = $contentNode->getDefaultTitle()->getString();
         }
-        if (!$title) {
+        if ($this->isEmptyString($title)) {
             foreach ($contentNode->getTitles() as $localizedTitle) {
-                if ($localizedTitle->getString()) {
+                if (!$this->isEmptyString($localizedTitle->getString())) {
                     $title = $localizedTitle->getString();
                     break;
                 }
             }
         }
 
-        if (!$title) {
+        if ($this->isEmptyString($title)) {
             $title = $this->contentVariantTitleProvider->getFirstTitle($contentNode->getContentVariants());
         }
 
         $contentNode->setName($title);
+    }
+
+    /**
+     * @param string $string
+     * @return bool
+     */
+    protected function isEmptyString($string)
+    {
+        return $string === null || $string === '';
     }
 }

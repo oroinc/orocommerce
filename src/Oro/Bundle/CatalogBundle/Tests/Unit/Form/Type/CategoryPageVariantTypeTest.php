@@ -69,7 +69,8 @@ class CategoryPageVariantTypeTest extends FormIntegrationTestCase
                     )
                 ],
                 []
-            )
+            ),
+            $this->getValidatorExtension(true)
         ];
     }
 

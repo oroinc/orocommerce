@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CatalogBundle\Provider;
 
+use Oro\Bundle\CatalogBundle\ContentVariantType\CategoryPageContentVariantType;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Component\DependencyInjection\ServiceLink;
@@ -11,7 +12,6 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 class CategoryTitleProvider implements ContentVariantTitleProviderInterface
 {
-    const SUPPORTED_TYPE ='catalog_page_category';
     const FIELD_NAME = 'catalogPageCategory';
 
     /**
@@ -47,7 +47,7 @@ class CategoryTitleProvider implements ContentVariantTitleProviderInterface
      */
     public function getTitle(ContentVariantInterface $contentVariant)
     {
-        if ($contentVariant->getType() !== self::SUPPORTED_TYPE) {
+        if ($contentVariant->getType() !== CategoryPageContentVariantType::TYPE) {
             return null;
         }
 

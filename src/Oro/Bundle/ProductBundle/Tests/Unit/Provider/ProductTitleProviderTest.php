@@ -4,6 +4,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
+use Oro\Bundle\ProductBundle\ContentVariantType\ProductPageContentVariantType;
 use Oro\Bundle\ProductBundle\Provider\ProductTitleProvider;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Component\DependencyInjection\ServiceLink;
@@ -54,7 +55,7 @@ class ProductTitleProviderTest extends \PHPUnit_Framework_TestCase
         $contentVariant
             ->expects($this->once())
             ->method('getType')
-            ->will($this->returnValue(ProductTitleProvider::SUPPORTED_TYPE));
+            ->will($this->returnValue(ProductPageContentVariantType::TYPE));
 
         $contentVariant
             ->expects($this->any())

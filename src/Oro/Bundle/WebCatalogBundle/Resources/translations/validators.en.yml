@@ -1,0 +1,4 @@
+oro:
+    webcatalog:
+        scope:
+            unique.message: 'Content Variants contains overlapping Use For rules'

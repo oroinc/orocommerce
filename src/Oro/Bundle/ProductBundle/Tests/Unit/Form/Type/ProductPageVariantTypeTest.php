@@ -70,7 +70,8 @@ class ProductPageVariantTypeTest extends FormIntegrationTestCase
                     )
                 ],
                 []
-            )
+            ),
+            $this->getValidatorExtension(true)
         ];
     }
 

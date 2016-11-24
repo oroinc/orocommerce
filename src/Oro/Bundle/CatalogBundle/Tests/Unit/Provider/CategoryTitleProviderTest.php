@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CategoryBundle\Tests\Unit\Provider;
 
+use Oro\Bundle\CatalogBundle\ContentVariantType\CategoryPageContentVariantType;
 use Oro\Bundle\CatalogBundle\Provider\CategoryTitleProvider;
 use Oro\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Category;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
@@ -54,7 +55,7 @@ class CategoryTitleProviderTest extends \PHPUnit_Framework_TestCase
         $contentVariant
             ->expects($this->once())
             ->method('getType')
-            ->will($this->returnValue(CategoryTitleProvider::SUPPORTED_TYPE));
+            ->will($this->returnValue(CategoryPageContentVariantType::TYPE));
 
         $contentVariant
             ->expects($this->any())

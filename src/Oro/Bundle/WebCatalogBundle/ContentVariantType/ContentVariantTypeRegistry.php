@@ -44,7 +44,7 @@ class ContentVariantTypeRegistry
     {
         return $this->getContentVariantType($contentVariant->getType());
     }
-    
+
     /**
      * @return ContentVariantTypeInterface[]
      */

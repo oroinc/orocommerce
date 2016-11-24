@@ -12,6 +12,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class ProductPageVariantType extends AbstractType
 {
@@ -42,7 +43,8 @@ class ProductPageVariantType extends AbstractType
                 [
                     'label' => 'oro.product.entity_label',
                     'required' => true,
-                    'create_enabled' => false
+                    'create_enabled' => false,
+                    'constraints' => [new NotBlank()]
                 ]
             )
             ->add(

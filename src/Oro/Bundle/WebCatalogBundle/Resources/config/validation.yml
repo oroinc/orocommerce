@@ -4,3 +4,13 @@ Oro\Bundle\WebCatalogBundle\Entity\WebCatalog:
             - NotBlank: ~
             - Length:
                 max: 255
+
+Oro\Bundle\WebCatalogBundle\Entity\ContentNode:
+    properties:
+        name:
+            - NotBlank:
+                message: 'oro.webcatalog.validators.name.not_blank.message'
+            - Length:
+                max: 255
+        contentVariants:
+            - Oro\Bundle\WebCatalogBundle\Validator\Constraint\UniqueScope: ~

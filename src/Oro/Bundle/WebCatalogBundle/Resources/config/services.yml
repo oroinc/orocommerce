@@ -119,6 +119,8 @@ services:
 
     oro_web_catalog.form.type.content_node:
         class: Oro\Bundle\WebCatalogBundle\Form\Type\ContentNodeType
+        arguments:
+            - '@oro_web_catalog.content_node_utils.content_node_name_filler'
         tags:
             - { name: form.type, alias: oro_web_catalog_content_node }
 
@@ -136,7 +138,7 @@ services:
 
     oro_web_catalog.content_node_utils.content_node_name_filler:
         class: 'Oro\Bundle\WebCatalogBundle\ContentNodeUtils\ContentNodeNameFiller'
-        public: false
+        public: true
         arguments:
             - '@oro_web_catalog.content_variant_title_provider'
 

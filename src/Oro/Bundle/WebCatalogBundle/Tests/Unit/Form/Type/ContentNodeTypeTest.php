@@ -11,25 +11,34 @@ use Oro\Bundle\NavigationBundle\Tests\Unit\Form\Type\Stub\RouteChoiceTypeStub;
 use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugType;
 use Oro\Bundle\RedirectBundle\Tests\Unit\Form\Type\Stub\LocalizedSlugTypeStub;
 use Oro\Bundle\ScopeBundle\Form\Type\ScopeCollectionType;
+use Oro\Bundle\WebCatalogBundle\ContentNodeUtils\ContentNodeNameFiller;
 use Oro\Bundle\WebCatalogBundle\ContentVariantType\ContentVariantTypeRegistry;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebCatalogBundle\Form\Type\ContentNodeType;
 use Oro\Bundle\WebCatalogBundle\Form\Type\ContentVariantCollectionType;
 use Oro\Bundle\WebCatalogBundle\Form\Type\SystemPageVariantType;
-use Oro\Bundle\WebCatalogBundle\Form\Type\WebCatalogType;
 use Oro\Bundle\WebCatalogBundle\Tests\Unit\Form\Type\Stub\ScopeCollectionTypeStub;
+use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType as StubEntityIdentifierType;
+use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\PreloadedExtension;
-use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 class ContentNodeTypeTest extends FormIntegrationTestCase
 {
+    use EntityTrait;
+
     /**
-     * @var WebCatalogType
+     * @var ContentNodeType
      */
     protected $type;
+
+    /**
+     * @var ContentNodeNameFiller|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $nameFiller;
 
     /**
      * {@inheritDoc}
@@ -38,7 +47,11 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
     {
         parent::setUp();
 
-        $this->type = new ContentNodeType();
+        $this->nameFiller = $this->getMockBuilder(ContentNodeNameFiller::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->type = new ContentNodeType($this->nameFiller);
     }
 
     /**
@@ -85,6 +98,7 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
                 ],
                 []
             ),
+            $this->getValidatorExtension(true)
         ];
     }
 
@@ -109,6 +123,17 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
         $this->assertTrue($form->has('scopes'));
     }
 
+    public function testBuildFormForExistingEntity()
+    {
+        $node = $this->getEntity(ContentNode::class, ['id' => 1]);
+        $form = $this->factory->create($this->type, $node);
+
+        $this->assertTrue($form->has('parentNode'));
+        $this->assertTrue($form->has('titles'));
+        $this->assertTrue($form->has('name'));
+        $this->assertTrue($form->has('scopes'));
+    }
+
     public function testGetName()
     {
         $this->assertEquals(ContentNodeType::NAME, $this->type->getName());
@@ -116,7 +141,7 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
 
     public function testGetBlockPrefix()
     {
-        $this->assertEquals(ContentNodeType::NAME, $this->type->getName());
+        $this->assertEquals(ContentNodeType::NAME, $this->type->getBlockPrefix());
     }
 
     /**
@@ -128,11 +153,27 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
      */
     public function testSubmit($existingData, $submittedData, $expectedData)
     {
+        $this->nameFiller->expects($this->once())
+            ->method('fillName')
+            ->with($existingData)
+            ->willReturnCallback(
+                function (ContentNode $data) {
+                    $data->setName('filled_name');
+                }
+            );
+
         $form = $this->factory->create($this->type, $existingData);
 
         $this->assertEquals($existingData, $form->getData());
 
         $form->submit($submittedData);
+        $errors = array_map(
+            function (FormError $error) {
+                return $error->getMessage();
+            },
+            iterator_to_array($form->getErrors())
+        );
+        $this->assertEquals([], $errors);
         $this->assertTrue($form->isValid());
 
         /** @var ContentNode $data */
@@ -145,6 +186,7 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
     }
 
     /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @return array
      */
     public function submitDataProvider()
@@ -159,6 +201,7 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
                     'parentScopeUsed' => true
                 ],
                 (new ContentNode())
+                    ->setName('filled_name')
                     ->addTitle((new LocalizedFallbackValue())->setString('new_content_node_title'))
                     ->addSlugPrototype((new LocalizedFallbackValue())->setString('new_content_node_slug'))
                     ->setParentScopeUsed(true),
@@ -174,6 +217,7 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
                     'parentScopeUsed' => false
                 ],
                 (new ContentNode())
+                    ->setName('filled_name')
                     ->addTitle((new LocalizedFallbackValue())->setString('content_node_title'))
                     ->addTitle((new LocalizedFallbackValue())->setString('another_node_title'))
                     ->addSlugPrototype((new LocalizedFallbackValue())->setString('content_node_slug'))
@@ -198,6 +242,7 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
                     'parentScopeUsed' => true
                 ],
                 (new ContentNode())
+                    ->setName('filled_name')
                     ->setParentScopeUsed(true)
                     ->addTitle((new LocalizedFallbackValue())->setString('content_node_title'))
                     ->addTitle((new LocalizedFallbackValue())->setString('another_node_title'))
@@ -232,6 +277,7 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
                     ]
                 ],
                 (new ContentNode())
+                    ->setName('filled_name')
                     ->setParentScopeUsed(false)
                     ->addTitle((new LocalizedFallbackValue())->setString('content_node_title'))
                     ->addTitle((new LocalizedFallbackValue())->setString('another_node_title'))

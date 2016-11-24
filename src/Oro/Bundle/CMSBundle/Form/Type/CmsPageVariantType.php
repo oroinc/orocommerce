@@ -12,6 +12,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class CmsPageVariantType extends AbstractType
 {
@@ -41,7 +42,8 @@ class CmsPageVariantType extends AbstractType
                 PageSelectType::NAME,
                 [
                     'label' => 'oro.cms.page.entity_label',
-                    'required' => true
+                    'required' => true,
+                    'constraints' => [new NotBlank()]
                 ]
             )
             ->add(

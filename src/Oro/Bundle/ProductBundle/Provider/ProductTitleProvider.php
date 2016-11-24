@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Provider;
 
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
+use Oro\Bundle\ProductBundle\ContentVariantType\ProductPageContentVariantType;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Component\DependencyInjection\ServiceLink;
 use Oro\Component\WebCatalog\ContentVariantTitleProviderInterface;
@@ -11,7 +12,6 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 class ProductTitleProvider implements ContentVariantTitleProviderInterface
 {
-    const SUPPORTED_TYPE ='product_page_product';
     const FIELD_NAME = 'productPageProduct';
 
     /**
@@ -47,7 +47,7 @@ class ProductTitleProvider implements ContentVariantTitleProviderInterface
      */
     public function getTitle(ContentVariantInterface $contentVariant)
     {
-        if ($contentVariant->getType() !== self::SUPPORTED_TYPE) {
+        if ($contentVariant->getType() !== ProductPageContentVariantType::TYPE) {
             return null;
         }
 

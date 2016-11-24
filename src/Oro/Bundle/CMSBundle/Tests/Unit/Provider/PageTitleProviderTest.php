@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Unit\Provider;
 
+use Oro\Bundle\CMSBundle\ContentVariantType\CmsPageContentVariantType;
 use Oro\Bundle\CMSBundle\Provider\PageTitleProvider;
 use Oro\Bundle\CMSBundle\Tests\Unit\Entity\Stub\Page;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
@@ -54,7 +55,7 @@ class PageTitleProviderTest extends \PHPUnit_Framework_TestCase
         $contentVariant
             ->expects($this->once())
             ->method('getType')
-            ->will($this->returnValue(PageTitleProvider::SUPPORTED_TYPE));
+            ->will($this->returnValue(CmsPageContentVariantType::TYPE));
 
         $contentVariant
             ->expects($this->any())

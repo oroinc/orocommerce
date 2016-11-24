@@ -90,6 +90,10 @@
         {% set formRows = formRows|merge([form_row(form.slugPrototypes)]) %}
     {% endif %}
 
+    {% if form.name is defined %}
+        {% set formRows = formRows|merge([form_row(form.name)]) %}
+    {% endif %}
+
     {% set dataBlocks = [
         {
             'title': 'oro.webcatalog.sections.general'|trans,
@@ -117,10 +121,6 @@
 
     {% set data = {
         'formErrors': form_errors(form),
-        'dataBlocks': dataBlocks
-    }%}
-
-    {% set data = {
         'dataBlocks': dataBlocks
     }%}
 

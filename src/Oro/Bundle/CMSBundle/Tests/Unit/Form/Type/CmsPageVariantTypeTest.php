@@ -69,7 +69,8 @@ class CmsPageVariantTypeTest extends FormIntegrationTestCase
                     )
                 ],
                 []
-            )
+            ),
+            $this->getValidatorExtension(true)
         ];
     }
 

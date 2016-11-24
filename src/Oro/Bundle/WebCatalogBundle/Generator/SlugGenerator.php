@@ -152,7 +152,7 @@ class SlugGenerator
             // and are identical for all node content variants.
             /** @var ContentVariant $contentVariant */
             $contentVariant = $parentNode->getContentVariants()->first();
-            
+
             if ($contentVariant) {
                 foreach ($contentVariant->getSlugs() as $parentNodeSlug) {
                     $localeId = $this->getLocaleId($parentNodeSlug->getLocalization());

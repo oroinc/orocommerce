@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CMSBundle\Provider;
 
+use Oro\Bundle\CMSBundle\ContentVariantType\CmsPageContentVariantType;
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Component\DependencyInjection\ServiceLink;
@@ -11,7 +12,6 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 class PageTitleProvider implements ContentVariantTitleProviderInterface
 {
-    const SUPPORTED_TYPE ='landing_page_cms_page';
     const FIELD_NAME = 'landingPageCMSPage';
 
     /**
@@ -47,7 +47,7 @@ class PageTitleProvider implements ContentVariantTitleProviderInterface
      */
     public function getTitle(ContentVariantInterface $contentVariant)
     {
-        if ($contentVariant->getType() !== self::SUPPORTED_TYPE) {
+        if ($contentVariant->getType() !== CmsPageContentVariantType::TYPE) {
             return null;
         }
 

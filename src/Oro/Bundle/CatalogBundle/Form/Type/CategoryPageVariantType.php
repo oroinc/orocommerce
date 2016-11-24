@@ -12,6 +12,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class CategoryPageVariantType extends AbstractType
 {
@@ -41,7 +42,8 @@ class CategoryPageVariantType extends AbstractType
                 CategoryTreeType::NAME,
                 [
                     'label' => 'oro.catalog.category.entity_label',
-                    'required' => true
+                    'required' => true,
+                    'constraints' => [new NotBlank()]
                 ]
             )
             ->add(
