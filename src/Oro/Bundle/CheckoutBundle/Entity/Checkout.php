@@ -156,6 +156,13 @@ class Checkout implements
     protected $source;
 
     /**
+     * @var bool
+     *
+     * @ORM\Column(name="deleted", type="boolean", options={"default"=false})
+     */
+    protected $deleted = false;
+
+    /**
      * @return int
      */
     public function getId()
@@ -369,6 +376,26 @@ class Checkout implements
         $this->currency = $currency;
 
         return $this;
+    }
+
+    /**
+     * @param bool $deleted
+     *
+     * @return $this
+     */
+    public function setDeleted($deleted)
+    {
+        $this->deleted = (bool)$deleted;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDeleted()
+    {
+        return $this->deleted;
     }
 
     /**
