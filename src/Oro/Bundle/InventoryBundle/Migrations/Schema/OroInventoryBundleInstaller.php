@@ -278,6 +278,7 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
     /**
      * @param Schema $schema
      * @param Table $table
+     * @param string $defaultFallback
      */
     private function addInventoryThresholdField(
         Schema $schema,
@@ -324,6 +325,7 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
     /**
      * @param Schema $schema
      * @param Table $table
+     * @param string $defaultFallBack
      */
     private function addManageInventoryField(
         Schema $schema,
