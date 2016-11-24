@@ -152,6 +152,10 @@ class ShippingRulesProvider
      */
     protected function getSortedShippingRules(ShippingContextInterface $context)
     {
+        if ($context->getCurrency() === null || $context->getShippingAddress() === null) {
+            return [];
+        }
+
         /** @var ShippingRuleRepository $repository */
         $repository = $this->doctrineHelper
             ->getEntityManagerForClass('OroShippingBundle:ShippingRule')

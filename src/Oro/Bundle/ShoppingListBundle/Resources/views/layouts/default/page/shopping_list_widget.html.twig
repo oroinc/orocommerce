@@ -4,7 +4,7 @@
         '~data-page-component-options': {
             view: 'oroui/js/app/views/layout-subtree-view',
             blockId: id,
-            reloadEvents: ['shopping-list:created', 'shopping-list:updated', 'frontend:item:delete'],
+            reloadEvents: ['shopping-list:created', 'shopping-list:updated', 'frontend:shopping-list-item-quantity:update', 'frontend:item:delete'],
         },
         'data-dropdown-trigger': true,
         '~class': " main-menu__item main-menu__item--nested shopping-lists-frontend-widget"
@@ -26,7 +26,7 @@
         '~class': " header-row__toggle hidden-on-desktop"
     }) %}
     <div {{ block('block_attributes') }}>
-        <div class="header-row__dropdown-mobile">
+        <div class="header-row__dropdown">
             {{ block_widget(block) }}
         </div>
     </div>

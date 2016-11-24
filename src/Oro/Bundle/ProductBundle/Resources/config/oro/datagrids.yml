@@ -113,63 +113,6 @@ datagrids:
                 acl_resource:  oro_product_view
                 rowAction:     true
 
-    frontend-products-grid:
-        extended_entity_name: %oro_product.entity.product.class%
-        options:
-            entityHint:        product
-            entity_pagination: true
-            displayOptions:
-                selector: '.catalog__filter-controls__item_display-options'
-            requireJSModules:
-                - oroproduct/js/app/datagrid/frontend-product-display-options-builder
-        source:
-            type:         orm
-            query:
-                select:
-                    - product.id
-                    - product.sku
-                    - productInventoryStatus.id as inventoryStatusId
-                    - productInventoryStatus.name as inventoryStatusName
-                from:
-                    - { table: %oro_product.entity.product.class%, alias: product }
-                join:
-                    left:
-                        - { join: product.inventory_status, alias: productInventoryStatus}
-        columns:
-            sku:
-                label: oro.product.sku.label
-            name:
-                label: oro.product.names.label
-        properties:
-            id: ~
-            name:
-                type: localized_value
-                data_name: names
-            view_link:
-                type:  url
-                route: oro_product_frontend_product_view
-                params: [ id ]
-        sorters:
-            columns:
-                sku:
-                    data_name: product.sku
-                    type: string
-            default:
-                createdAt: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
-            toolbar_sorting: true
-        filters:
-            columns:
-                sku:
-                    type:      string
-                    data_name: product.sku
-        actions:
-            view:
-                type:          navigate
-                label:         oro.grid.action.view
-                link:          view_link
-                icon:          eye-open
-                rowAction:     true
-
     oro_product-product_variants:
         acl_resource: oro_product_view
         options:
@@ -324,6 +267,67 @@ datagrids:
             default:
                 visible: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
                 sku: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+
+    frontend-product-search-grid:
+        options:
+            entityHint:        product
+            displayOptions:
+                selector: '.catalog__filter-controls__item_display-options'
+            requireJSModules:
+                - oroproduct/js/app/datagrid/frontend-product-display-options-builder
+                - oroproduct/js/app/datagrid/frontend-product-filters-events-dispatcher-builder
+        source:
+            type: search
+            search_index: website
+            query:
+                select:
+                    - text.sku as sku
+                    - text.name_LOCALIZATION_ID as name
+                    - text.short_description_LOCALIZATION_ID as shortDescription
+                from:
+                    - oro_product_WEBSITE_ID
+        columns:
+            sku:
+                label:         oro.product.sku.label
+            name:
+                label:         oro.product.names.label
+            shortDescription:
+                label:         oro.product.short_descriptions.label
+        filters:
+            columns:
+                all_text:
+                    type:      string
+                    data_name: all_text_LOCALIZATION_ID
+                    label:     oro.product.anything.label
+                sku:
+                    type:      string
+                    data_name: sku
+                name:
+                    type:      string
+                    data_name: name_LOCALIZATION_ID
+        properties:
+            id: ~
+            view_link:
+                type:  url
+                route: oro_product_frontend_product_view
+                params: [ id ]
+        sorters:
+            toolbar_sorting: true
+            disable_default_sorting: true
+            columns:
+                sku:
+                    data_name: sku
+                    type: string
+                name:
+                    data_name: name_LOCALIZATION_ID
+                    type: string
+        actions:
+            view:
+                type:          navigate
+                label:         oro.grid.action.view
+                link:          view_link
+                icon:          eye-open
+                rowAction:     true
 
     best-selling-products:
         extended_entity_name: %oro_product.entity.product.class%

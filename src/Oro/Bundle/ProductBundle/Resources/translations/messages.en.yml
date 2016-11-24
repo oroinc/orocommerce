@@ -29,6 +29,7 @@ oro:
         is_variant.label: Is Variant
         variant_links.label: Product Variant Links
         images.label: Images
+        anything.label: Any Text
         featured_products.label: Featured Products
         time_period.label: Time Period
 

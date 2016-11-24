@@ -1,4 +1,5 @@
 {% block _quick_add_copy_paste_form_start_widget %}
+    {% do set_class_prefix_to_form(form, class_prefix) %}
     {% set attr = {
         'data-page-component-module': 'oroproduct/js/app/components/quick-add-copy-paste-form-component',
     }|merge(attr) %}
