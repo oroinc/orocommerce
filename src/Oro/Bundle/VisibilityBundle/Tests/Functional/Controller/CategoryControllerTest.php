@@ -54,14 +54,14 @@ class CategoryControllerTest extends WebTestCase
         $this->scopeManager = $this->getContainer()->get('oro_scope.scope_manager');
 
         $this->category = $this->getReference(LoadCategoryData::THIRD_LEVEL1);
-        $this->account  = $this->getReference('account.level_1');
-        $this->group    = $this->getReference(LoadGroups::GROUP1);
+        $this->account = $this->getReference('account.level_1');
+        $this->group = $this->getReference(LoadGroups::GROUP1);
     }
 
     public function testEdit()
     {
-        $categoryVisibility        = CategoryVisibility::HIDDEN;
-        $visibilityForAccount      = AccountCategoryVisibility::VISIBLE;
+        $categoryVisibility = CategoryVisibility::HIDDEN;
+        $visibilityForAccount = AccountCategoryVisibility::VISIBLE;
         $visibilityForAccountGroup = AccountGroupCategoryVisibility::VISIBLE;
 
         $crawler = $this->submitForm(
@@ -237,15 +237,15 @@ class CategoryControllerTest extends WebTestCase
     protected function submitForm($categoryVisibility, $visibilityForAccount, $visibilityForAccountGroup)
     {
         $this->client->followRedirects();
-        $crawler  = $this->client->request(
+        $crawler = $this->client->request(
             'GET',
             $this->getUrl('oro_catalog_category_update', ['id' => $this->category->getId()])
         );
         $response = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($response, 200);
-        $form       = $crawler->selectButton('Save')->form();
+        $form = $crawler->selectButton('Save')->form();
         $parameters = $this->explodeArrayPaths($form->getValues());
-        $token      = $crawler->filterXPath('//input[@name="oro_catalog_category[_token]"]/@value')->text();
+        $token = $crawler->filterXPath('//input[@name="oro_catalog_category[_token]"]/@value')->text();
 
         $parameters['oro_catalog_category'] = array_merge(
             $parameters['oro_catalog_category'],
@@ -277,7 +277,7 @@ class CategoryControllerTest extends WebTestCase
      */
     protected function explodeArrayPaths($values)
     {
-        $accessor   = PropertyAccess::createPropertyAccessor();
+        $accessor = PropertyAccess::createPropertyAccessor();
         $parameters = [];
         foreach ($values as $key => $val) {
             if (!$pos = strpos($key, '[')) {
