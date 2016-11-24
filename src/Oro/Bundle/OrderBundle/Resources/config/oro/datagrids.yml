@@ -17,6 +17,7 @@ datagrids:
                     - order1.shipUntil
                     - order1.createdAt
                     - order1.updatedAt
+                    - paymentTerm.label as paymentTermLabel
                     - payment_status.paymentStatus
                     - order1.shippingMethod
                     - order1.shippingMethodType
@@ -24,6 +25,7 @@ datagrids:
                     - { table: %oro_order.entity.order.class%, alias: order1 }
                 join:
                     left:
+                        - { join: order1.paymentTerm, alias: paymentTerm }
                         - { join: '%oro_payment.entity.payment_status.class%', alias: payment_status, conditionType: WITH, condition: "payment_status.entityIdentifier = order1.id AND payment_status.entityClass = '%oro_order.entity.order.class%'" }
         properties:
             id: ~
@@ -94,6 +96,9 @@ datagrids:
                 frontend_type: html
                 template:      OroOrderBundle:Order:Datagrid/subtotal.html.twig
                 renderable:    false
+            paymentTermLabel:
+                label:         oro.order.payment_term.label
+                renderable:    false
             shippingMethod:
                 label:         oro.order.shipping_method.label
                 type:          twig
@@ -113,6 +118,8 @@ datagrids:
                 renderable:    false
         sorters:
             columns:
+                paymentTermLabel:
+                    data_name: paymentTermLabel
                 poNumber:
                     data_name: order1.poNumber
                 shipUntil:
@@ -137,6 +144,9 @@ datagrids:
                 createdAt: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
         filters:
             columns:
+                paymentTermLabel:
+                    type:      string
+                    data_name: paymentTermLabel
                 poNumber:
                     type:      string
                     data_name: order1.poNumber
@@ -241,6 +251,8 @@ datagrids:
                 type: twig
                 template: 'OroOrderBundle:Order:Datagrid/paymentMethodAdmin.html.twig'
                 frontend_type: html
+            paymentTermLabel:
+                label:         oro.order.payment_term.label
             shippingMethod:
                 label:         oro.order.shipping_method.label
                 type:          twig
@@ -288,6 +300,8 @@ datagrids:
                     data_name: accountUserName
                 owner:
                     data_name: owner
+                paymentTermLabel:
+                    data_name: paymentTermLabel
                 poNumber:
                     data_name: order1.poNumber
                 shipUntil:
@@ -333,6 +347,15 @@ datagrids:
                 owner:
                     type:      string
                     data_name: owner
+                paymentTermLabel:
+                    type:      entity
+                    data_name: paymentTerm.id
+                    options:
+                        field_type: entity
+                        field_options:
+                            class:    %oro_payment.entity.payment_term.class%
+                            property: label
+                            multiple: true
                 paymentStatus:
                     type:      choice
                     data_name: payment_status.paymentStatus
@@ -495,6 +518,7 @@ datagrids:
     account-orders-grid:
         extends: embed-orders-grid
         source:
+            query:
             query:
                 select:
                     - CONCAT(accountUser.firstName, ' ', accountUser.lastName) as accountUserName

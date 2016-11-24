@@ -47,7 +47,7 @@ class PaymentStatusManagerTest extends \PHPUnit_Framework_TestCase
         $this->transaction = new PaymentTransaction();
         $this->transaction->setEntityClass('\stdClass');
         $this->transaction->setEntityIdentifier(1);
-        $this->transaction->setPaymentMethod('payment_method');
+        $this->transaction->setPaymentMethod('payment_term');
 
         $this->manager = new PaymentStatusManager(
             $this->statusProviderMock,

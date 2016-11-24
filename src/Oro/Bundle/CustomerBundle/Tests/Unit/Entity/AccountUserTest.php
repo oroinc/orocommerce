@@ -16,7 +16,7 @@ use Oro\Bundle\CustomerBundle\Tests\Unit\Traits\AddressEntityTestTrait;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
- * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class AccountUserTest extends AbstractUserTest
 {

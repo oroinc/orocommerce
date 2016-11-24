@@ -13,9 +13,9 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteType;
-use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\PaymentBundle\Provider\PaymentTermProvider;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Model\QuoteRequestHandler;
 
@@ -107,7 +107,7 @@ class AjaxQuoteController extends Controller
      */
     protected function getPaymentTermProvider()
     {
-        return $this->get('oro_payment_term.provider.payment_term');
+        return $this->get('oro_payment.provider.payment_term');
     }
 
     /**

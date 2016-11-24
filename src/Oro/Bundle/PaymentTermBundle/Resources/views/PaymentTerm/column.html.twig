@@ -1,7 +1,0 @@
-{% set accountGroupPaymentTermLabel = record.getValue('account_group_payment_term') %}
-
-{% if accountGroupPaymentTermLabel is defined and accountGroupPaymentTermLabel and not value %}
-    {{ 'oro.paymentterm.account.account_group_defined'|trans({'{{ payment_term }}': accountGroupPaymentTermLabel }) }}
-{% elseif value %}
-    {{ value }}
-{% endif %}

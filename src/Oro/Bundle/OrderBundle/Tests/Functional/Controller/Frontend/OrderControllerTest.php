@@ -63,7 +63,7 @@ class OrderControllerTest extends WebTestCase
 
     public function testOrdersGrid()
     {
-        $response = $this->client->requestFrontendGrid('frontend-orders-grid');
+        $response = $this->client->requestGrid('frontend-orders-grid');
 
         $result = static::getJsonResponseContent($response, 200);
 
@@ -271,7 +271,7 @@ class OrderControllerTest extends WebTestCase
      */
     protected function findInGrid($gridName, array $filters)
     {
-        $response = $this->client->requestFrontendGrid($gridName, $filters);
+        $response = $this->client->requestGrid($gridName, $filters);
 
         $result = $this->getJsonResponseContent($response, 200);
         $result = reset($result['data']);

@@ -126,7 +126,7 @@ class AccountUserRoleControllerTest extends WebTestCase
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $response = $this->client->requestFrontendGrid('frontend-account-account-user-roles-grid');
+        $response = $this->client->requestGrid('frontend-account-account-user-roles-grid');
 
         $this->assertJsonResponseStatusCodeEquals($response, 200);
         $this->assertContains(LoadAccountUserRoleData::ROLE_WITH_ACCOUNT_USER, $response->getContent());
@@ -139,7 +139,7 @@ class AccountUserRoleControllerTest extends WebTestCase
      */
     public function testUpdate()
     {
-        $response = $this->client->requestFrontendGrid(
+        $response = $this->client->requestGrid(
             'frontend-account-account-user-roles-grid',
             [
                 'frontend-account-account-user-roles-grid[_filter][label][value]' => self::ACCOUNT_ROLE
@@ -206,7 +206,7 @@ class AccountUserRoleControllerTest extends WebTestCase
 
         $this->assertResponseStatusCodeEquals($this->client->getResponse(), 200);
 
-        $response = $this->client->requestFrontendGrid(
+        $response = $this->client->requestGrid(
             'frontend-account-account-users-grid-view',
             [
                 'frontend-account-account-users-grid-view[role]' => $id,
@@ -261,7 +261,7 @@ class AccountUserRoleControllerTest extends WebTestCase
         $this->assertContains('Customer User Role has been saved', $content);
 
         // Find id of new role
-        $response = $this->client->requestFrontendGrid(
+        $response = $this->client->requestGrid(
             'frontend-account-account-user-roles-grid',
             [
                 'frontend-account-account-user-roles-grid[_filter][label][value]' => self::CUSTOMIZED_ROLE
@@ -294,7 +294,7 @@ class AccountUserRoleControllerTest extends WebTestCase
      */
     public function testIndexFromPredefined()
     {
-        $response = $this->client->requestFrontendGrid(
+        $response = $this->client->requestGrid(
             'frontend-account-account-user-roles-grid',
             [
                 'frontend-account-account-user-roles-grid[_filter][label][value]' => self::CUSTOMIZED_ROLE
@@ -312,7 +312,7 @@ class AccountUserRoleControllerTest extends WebTestCase
 
     public function testDisplaySelfManagedPublicRoles()
     {
-        $response = $this->client->requestFrontendGrid('frontend-account-account-user-roles-grid');
+        $response = $this->client->requestGrid('frontend-account-account-user-roles-grid');
         $result = $this->getJsonResponseContent($response, 200);
 
         $visibleRoleIds = array_map(

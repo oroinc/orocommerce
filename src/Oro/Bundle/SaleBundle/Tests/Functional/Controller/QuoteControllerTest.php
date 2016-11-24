@@ -4,8 +4,8 @@ namespace Oro\Bundle\SaleBundle\Tests\Functional\Controller;
 
 use Symfony\Component\DomCrawler\Form;
 
-use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
-use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
+use Oro\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTerm;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\SaleBundle\Entity\Quote;
@@ -161,8 +161,6 @@ class QuoteControllerTest extends WebTestCase
         /** @var PaymentTerm $paymentTerm */
         $paymentTerm = $this
             ->getReference(LoadPaymentTermData::PAYMENT_TERM_REFERENCE_PREFIX . LoadPaymentTermData::TERM_LABEL_NET_10);
-        $paymentTermProperty = $this->getContainer()->get('oro_payment_term.provider.payment_term_association')
-            ->getDefaultAssociationName();
 
         /* @var $form Form */
         $form = $crawler->selectButton('Save and Close')->form();
@@ -172,7 +170,7 @@ class QuoteControllerTest extends WebTestCase
         $form['oro_sale_quote[validUntil]'] = self::$validUntilUpdated;
         $form['oro_sale_quote[poNumber]'] = self::$poNumberUpdated;
         $form['oro_sale_quote[shipUntil]'] = self::$shipUntilUpdated;
-        $form[sprintf('oro_sale_quote[%s]', $paymentTermProperty)] = $paymentTerm->getId();
+        $form['oro_sale_quote[paymentTerm]'] = $paymentTerm->getId();
 
         $form['oro_sale_quote[assignedUsers]'] = $this->getReference(LoadUserData::USER1)->getId();
         $form['oro_sale_quote[assignedAccountUsers]'] = implode(',', [
@@ -202,9 +200,7 @@ class QuoteControllerTest extends WebTestCase
         $this->assertEquals(strtotime(self::$validUntilUpdated), $quote->getValidUntil()->getTimestamp());
         $this->assertEquals(self::$poNumberUpdated, $quote->getPoNumber());
         $this->assertEquals(strtotime(self::$shipUntilUpdated), $quote->getShipUntil()->getTimestamp());
-
-        $accessor = $this->getContainer()->get('oro_payment_term.provider.payment_term_association');
-        $this->assertEquals($paymentTerm->getId(), $accessor->getPaymentTerm($quote)->getId());
+        $this->assertEquals($paymentTerm->getId(), $quote->getPaymentTerm()->getId());
 
         return $id;
     }

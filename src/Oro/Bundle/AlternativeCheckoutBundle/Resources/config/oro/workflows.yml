@@ -236,7 +236,7 @@ workflows:
                     is_checkout_show_errors: true
                 form_options:
                     form_init:
-                        - '@assign_constant_value': [$payment_method, 'Oro\Bundle\PaymentTermBundle\Method\PaymentTerm::TYPE']
+                        - '@assign_constant_value': [$payment_method, 'Oro\Bundle\PaymentBundle\Method\PaymentTerm::TYPE']
                         - '@generate_checkout_state_snapshot':
                             entity: $checkout
                             attribute: $.result.initCheckoutState
@@ -737,7 +737,7 @@ workflows:
                         object: $checkout.sourceEntity.sourceDocument
                         attribute: $.result.sourceDocumentEntityClassName
                     - '@call_service_method':
-                        service: oro_payment_term.provider.payment_term
+                        service: oro_payment.provider.payment_term
                         method: getCurrentPaymentTerm
                         attribute: $.result.paymentTerm
                     - '@create_entity':

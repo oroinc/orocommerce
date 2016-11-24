@@ -6,11 +6,11 @@ use Psr\Log\LoggerInterface;
 
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
-use Oro\Bundle\TestFrameworkBundle\Entity\Item;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
  * @dbIsolation
@@ -36,10 +36,10 @@ class PaymentTransactionProviderTest extends WebTestCase
 
         $this->assertNotEmpty(
             $paymentTransactionProvider->getActiveAuthorizePaymentTransaction(
-                $this->getEntity(PaymentTransaction::class, ['id' => 1]),
+                $this->getEntity('Oro\Bundle\PaymentBundle\Entity\PaymentTerm', ['id' => 1]),
                 '1000',
                 'USD',
-                'payment_method'
+                'payment_term'
             )
         );
     }
@@ -68,10 +68,10 @@ class PaymentTransactionProviderTest extends WebTestCase
 
         $this->assertNotEmpty(
             $paymentTransactionProvider->getActiveAuthorizePaymentTransaction(
-                $this->getEntity(PaymentTransaction::class, ['id' => 1]),
+                $this->getEntity('Oro\Bundle\PaymentBundle\Entity\PaymentTerm', ['id' => 1]),
                 '1000',
                 'USD',
-                'payment_method'
+                'payment_term'
             )
         );
     }
@@ -99,7 +99,7 @@ class PaymentTransactionProviderTest extends WebTestCase
         );
 
         $this->assertEmpty(
-            $paymentTransactionProvider->getActiveValidatePaymentTransaction('payment_method')
+            $paymentTransactionProvider->getActiveValidatePaymentTransaction('payment_term')
         );
     }
 
@@ -123,7 +123,7 @@ class PaymentTransactionProviderTest extends WebTestCase
         );
 
         $this->assertNotEmpty(
-            $paymentTransactionProvider->getActiveValidatePaymentTransaction('payment_method')
+            $paymentTransactionProvider->getActiveValidatePaymentTransaction('payment_term')
         );
     }
 
@@ -137,7 +137,7 @@ class PaymentTransactionProviderTest extends WebTestCase
         $this->getContainer()->get('security.token_storage')->setToken(null);
 
         $this->assertEmpty(
-            $paymentTransactionProvider->getActiveValidatePaymentTransaction('payment_method')
+            $paymentTransactionProvider->getActiveValidatePaymentTransaction('payment_term')
         );
     }
 
@@ -164,7 +164,7 @@ class PaymentTransactionProviderTest extends WebTestCase
         $paymentTransaction = $paymentTransactionProvider->createPaymentTransaction(
             'paymentMethod',
             'authorize',
-            $this->getEntity(PaymentTransaction::class, ['id' => 1])
+            $this->getEntity('Oro\Bundle\PaymentBundle\Entity\PaymentTerm', ['id' => 1])
         );
 
         $paymentTransaction
@@ -220,7 +220,7 @@ class PaymentTransactionProviderTest extends WebTestCase
         $paymentTransaction = $paymentTransactionProvider->createPaymentTransaction(
             'paymentMethod',
             'authorize',
-            new Item()
+            new PaymentTerm()
         );
         $paymentTransactionProvider->savePaymentTransaction($paymentTransaction);
     }

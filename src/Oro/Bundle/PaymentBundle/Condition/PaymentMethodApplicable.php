@@ -13,7 +13,7 @@ use Oro\Bundle\PaymentBundle\Provider\PaymentContextProvider;
  * Check payment method enabled and applicable
  * Usage:
  * @payment_method_applicable:
- *      payment_method: 'payment_method_name'
+ *      payment_method: 'payment_term'
  *      entity: ~
  */
 class PaymentMethodApplicable extends AbstractCondition implements ContextAccessorAwareInterface

@@ -34,8 +34,6 @@ layout:
                     blockType: quote_view_information
                     options:
                         quote: '=data["entity"]'
-                        vars:
-                            paymentTerm: '=data["oro_payment_term_provider"].getObjectPaymentTerm(data["quote"])'
                 quote_view_line_items:
                     blockType: quote_products_container
                     options:
