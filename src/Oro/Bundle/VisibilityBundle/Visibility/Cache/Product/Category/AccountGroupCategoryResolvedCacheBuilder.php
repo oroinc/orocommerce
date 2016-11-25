@@ -3,13 +3,13 @@
 namespace Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupCategoryVisibility;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\AccountGroupCategoryVisibilityRepository;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\RepositoryHolder;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountGroupCategoryVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\AccountGroupCategoryRepository;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CategoryRepository;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\AbstractResolvedCacheBuilder;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\Subtree\VisibilityChangeGroupSubtreeCacheBuilder;
@@ -20,9 +20,9 @@ class AccountGroupCategoryResolvedCacheBuilder extends AbstractResolvedCacheBuil
     protected $visibilityChangeAccountGroupSubtreeCacheBuilder;
 
     /**
-     * @var RepositoryHolder
+     * @var EntityRepository
      */
-    protected $accountGroupCategoryVisibilityHolder;
+    protected $accountGroupCategoryVisibilityRepository;
 
     /**
      * @param VisibilityChangeGroupSubtreeCacheBuilder $visibilityChangeAccountGroupSubtreeCacheBuilder
@@ -137,7 +137,7 @@ class AccountGroupCategoryResolvedCacheBuilder extends AbstractResolvedCacheBuil
         $resolvedRepository->clearTable();
 
         // resolve static values
-        $resolvedRepository->insertStaticValues();
+        $resolvedRepository->insertStaticValues($this->insertExecutor);
 
         // resolve parent category values
         $groupVisibilities = $this->indexVisibilities(
@@ -154,7 +154,7 @@ class AccountGroupCategoryResolvedCacheBuilder extends AbstractResolvedCacheBuil
             $groupVisibilityIds[$resolvedVisibility][] = $visibilityId;
         }
         foreach ($groupVisibilityIds as $visibility => $ids) {
-            $resolvedRepository->insertParentCategoryValues($ids, $visibility);
+            $resolvedRepository->insertParentCategoryValues($this->insertExecutor, $ids, $visibility);
         }
     }
 
@@ -201,19 +201,19 @@ class AccountGroupCategoryResolvedCacheBuilder extends AbstractResolvedCacheBuil
     }
 
     /**
-     * @param RepositoryHolder $categoryVisibilityHolder
+     * @param EntityRepository $repository
      */
-    public function setAccountGroupCategoryVisibilityHolder($categoryVisibilityHolder)
+    public function setAccountGroupCategoryVisibilityRepository(EntityRepository $repository)
     {
-        $this->accountGroupCategoryVisibilityHolder = $categoryVisibilityHolder;
+        $this->accountGroupCategoryVisibilityRepository = $repository;
     }
 
     /**
-     * @return AccountGroupCategoryVisibilityRepository
+     * @return AccountGroupCategoryRepository
      */
-    protected function getAccountGroupCategoryVisibilityRepository()
+    public function getAccountGroupCategoryVisibilityRepository()
     {
-        return $this->accountGroupCategoryVisibilityHolder->getRepository();
+        return $this->accountGroupCategoryVisibilityRepository;
     }
 
     /**
@@ -230,6 +230,6 @@ class AccountGroupCategoryResolvedCacheBuilder extends AbstractResolvedCacheBuil
      */
     protected function getRepository()
     {
-        return $this->repositoryHolder->getRepository();
+        return $this->repository;
     }
 }

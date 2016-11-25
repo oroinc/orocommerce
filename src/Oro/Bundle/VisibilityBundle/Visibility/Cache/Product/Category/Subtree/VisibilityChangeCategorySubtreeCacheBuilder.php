@@ -4,9 +4,11 @@ namespace Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\Subtree;
 
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupCategoryVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CategoryVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CategoryRepository;
 
 class VisibilityChangeCategorySubtreeCacheBuilder extends AbstractRelatedEntitiesAwareSubtreeCacheBuilder
 {
@@ -18,8 +20,10 @@ class VisibilityChangeCategorySubtreeCacheBuilder extends AbstractRelatedEntitie
     {
         $childCategoryIds = $this->getChildCategoryIdsForUpdate($category);
 
-        $this->registry->getManagerForClass('OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved')
-            ->getRepository('OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved')
+        /** @var CategoryRepository $repository */
+        $repository = $this->registry->getManagerForClass(CategoryVisibilityResolved::class)
+            ->getRepository(CategoryVisibilityResolved::class);
+        $repository
             ->updateCategoryVisibilityByCategory($childCategoryIds, $visibility);
 
         $categoryIds = $this->getCategoryIdsForUpdate($category, $childCategoryIds);
