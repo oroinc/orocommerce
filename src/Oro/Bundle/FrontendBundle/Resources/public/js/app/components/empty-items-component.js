@@ -40,10 +40,10 @@ define(function (require) {
          * @inheritDoc
          */
         dispose: function() {
-            delete this.hideElements;
             if (this.disposed) {
                 return;
             }
+            delete this.hideElements;
 
             mediator.off(this.options.eventName, this.showEmptyMessage, this);
 
