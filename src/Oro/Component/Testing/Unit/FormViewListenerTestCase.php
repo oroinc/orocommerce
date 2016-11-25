@@ -5,9 +5,9 @@ namespace Oro\Component\Testing\Unit;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Translation\TranslatorInterface;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 
@@ -19,9 +19,9 @@ class FormViewListenerTestCase extends \PHPUnit_Framework_TestCase
     protected $translator;
 
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $doctrine;
+    protected $doctrineHelper;
 
     /**
      * @var EntityManager|\PHPUnit_Framework_MockObject_MockObject
@@ -39,7 +39,7 @@ class FormViewListenerTestCase extends \PHPUnit_Framework_TestCase
                 }
             );
 
-        $this->doctrine = $this->getMockBuilder('Doctrine\Common\Persistence\ManagerRegistry')
+        $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
             ->disableOriginalConstructor()
             ->getMock();
         $this->em = $this->getMockBuilder(EntityManager::class)->disableOriginalConstructor()->getMock();
@@ -47,7 +47,7 @@ class FormViewListenerTestCase extends \PHPUnit_Framework_TestCase
 
     protected function tearDown()
     {
-        unset($this->doctrine, $this->listener);
+        unset($this->doctrineHelper, $this->listener);
     }
 
     /**
