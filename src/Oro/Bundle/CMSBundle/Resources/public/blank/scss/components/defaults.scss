@@ -68,6 +68,10 @@
         text-align: $cms-page-figcaption-text-align;
     }
 
+    a {
+        @include link();
+    }
+
     & &__figure_right,
     & &__figure_left {
         clear: both;
