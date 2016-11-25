@@ -315,8 +315,8 @@ operations:
             - account-accounts-select-grid
             - account-group-accounts-grid-basic
             - account-group-accounts-grid-view
+            - account-group-accounts-grid-create
             - account-group-accounts-grid-update
-            - account-group-accounts-grid-update-by-group
             - account-group-accounts-grid-update-basic
             - account-groups-select-grid
             - account-user-by-account-grid

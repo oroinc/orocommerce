@@ -260,7 +260,7 @@ datagrids:
                     included: '#groupAppendAccounts'
                     excluded: '#groupRemoveAccounts'
 
-    account-group-accounts-grid-update-by-group:
+    account-group-accounts-grid-update:
         extends: account-group-accounts-grid-update-basic
         source:
             query:
@@ -272,7 +272,7 @@ datagrids:
                 -
                     name: group
 
-    account-group-accounts-grid-update:
+    account-group-accounts-grid-create:
         extends: account-group-accounts-grid-update-basic
         source:
             query:

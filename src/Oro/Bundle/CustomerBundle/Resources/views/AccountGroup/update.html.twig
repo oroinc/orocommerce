@@ -8,9 +8,9 @@
 {% oro_title_set({params : {"%accountGroupName%": entity.name|default('N/A'|trans), '%entityName%': 'oro.customer.accountgroup.entity_label'|trans} }) %}
 
 {% if entity.id %}
-    {% set gridName = 'account-group-accounts-grid-update-by-group' %}
-{% else %}
     {% set gridName = 'account-group-accounts-grid-update' %}
+{% else %}
+    {% set gridName = 'account-group-accounts-grid-create' %}
 {% endif %}
 
 {% block navButtons %}
