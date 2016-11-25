@@ -65,7 +65,7 @@
         >
             <div class="checkout-order-summary__header">
                 <div data-collapse-trigger>
-                    <div class="checkout-order-summary__header__icon-group">
+                    <div class="checkout-order-summary__icon-group">
                         <span class="badge badge_sm badge_orange badge_circled-corners mmr7-md mmr7-sm">
                           <i class="cf-basket"></i>
                         </span>
@@ -73,15 +73,15 @@
                             <i class="collapse-view__trigger-icon cf-play cf--gray"></i>
                         </span>
                     </div>
-                    <h3 class="checkout-order-summary__header__title">{{ 'oro.checkout.order_summary.label'|trans }}</h3>
-                    <div class="checkout-order-summary__header__desc">
+                    <h3 class="checkout-order-summary__title">{{ 'oro.checkout.order_summary.label'|trans }}</h3>
+                    <div class="checkout-order-summary__desc">
                         <span class="mr1-md mr1-sm"><strong>{{ lineItemsWithTotals|length }}</strong> {{ 'oro.checkout.order_summary.items'|trans }}</span>
                         <span>{{ 'oro.checkout.order_summary.subtotal'|trans }}: <strong>{{ total.amount|oro_format_currency({'currency': total.currency}) }}</strong></span>
                     </div>
                 </div>
                 {% set editLink = workflowItem.data.get('edit_order_link') %}
                 {% if editLink %}
-                    <a href="{{ editLink }}" class="checkout-order-summary__header__edit-link">
+                    <a href="{{ editLink }}" class="checkout-order-summary__edit-link">
                         <i class="cf-pencil"></i>
                         {{ 'oro.checkout.order_summary.edit_order'|trans }}
                     </a>
@@ -141,7 +141,7 @@
                                 {% set quantity = lineItem.quantity %}
                                 <td class="text-center va-t_md checkout-order-summary__qty">{{ quantity ? quantity|oro_format_short_product_unit_value(lineItem.productUnit) : 'N/A'|trans }}</td>
                                 <td class="va-t_md text-right checkout-order-summary__price">
-                                    <div class="checkout-order-summary__price-table checkout-order-summary__price-inner">
+                                    <div class="checkout-order-summary__price-table">
                                         <table class="table">
                                             <tbody>
                                             <tr>
