@@ -271,7 +271,6 @@ datagrids:
             bind_parameters:
                 -
                     name: group
-                    default: null
 
     account-group-accounts-grid-update:
         extends: account-group-accounts-grid-update-basic
