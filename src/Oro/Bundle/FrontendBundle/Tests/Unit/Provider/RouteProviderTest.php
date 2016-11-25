@@ -2,15 +2,16 @@
 
 namespace Oro\Bundle\FrontendBundle\Tests\Unit\Provider;
 
-use Oro\Bundle\ActionBundle\Tests\Unit\Provider\RouteProviderTest;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\FrontendBundle\Provider\RouteProvider;
-use Oro\Bundle\UserBundle\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-class RouteProviderTest extends RouteProviderTest
+use Oro\Bundle\ActionBundle\Tests\Unit\Provider\RouteProviderTest as BaseRouteProviderTest;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\FrontendBundle\Provider\RouteProvider;
+use Oro\Bundle\UserBundle\Entity\User;
+
+class RouteProviderTest extends BaseRouteProviderTest
 {
     /** @var RouteProvider */
     protected $provider;
