@@ -32,6 +32,7 @@ class LoadAccounts extends AbstractFixture implements DependentFixtureInterface
      * account.level_1
      *     account.level_1.1
      *         account.level_1.1.1
+     *         account.level_1.1.2
      *     account.level_1.2
      *         account.level_1.2.1
      *             account.level_1.2.1.1
@@ -57,6 +58,7 @@ class LoadAccounts extends AbstractFixture implements DependentFixtureInterface
 
         $levelTwoFirst = $this->createAccount($manager, 'account.level_1.1', $owner, $levelOne);
         $this->createAccount($manager, 'account.level_1.1.1', $owner, $levelTwoFirst);
+        $this->createAccount($manager, 'account.level_1.1.2', $owner, $levelTwoFirst);
 
         $levelTwoSecond = $this->createAccount($manager, 'account.level_1.2', $owner, $levelOne, $group2);
         $levelTreeFirst = $this->createAccount($manager, 'account.level_1.2.1', $owner, $levelTwoSecond, $group2);

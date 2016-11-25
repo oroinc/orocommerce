@@ -3,22 +3,29 @@
 namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Entity\Repository;
 
 use Doctrine\Common\Collections\Criteria;
-use Doctrine\ORM\QueryBuilder;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
 /**
  * @dbIsolation
  */
 class ShoppingListRepositoryTest extends WebTestCase
 {
-    /** @var AccountUser */
+    /**
+     * @var AccountUser
+     */
     protected $accountUser;
+
+    /**
+     * @var AclHelper
+     */
+    protected $aclHelper;
 
     protected function setUp()
     {
@@ -35,46 +42,24 @@ class ShoppingListRepositoryTest extends WebTestCase
             ->get('doctrine')
             ->getRepository(AccountUser::class)
             ->findOneBy(['username' => LoadAccountUserData::AUTH_USER]);
-    }
 
-    public function testFindCurrentForAccountUser()
-    {
-        $shoppingList = $this->getRepository()->findCurrentForAccountUser($this->accountUser);
-        $this->assertInstanceOf(ShoppingList::class, $shoppingList);
-        $this->assertTrue($shoppingList->isCurrent());
-        $this->assertEquals($this->accountUser, $shoppingList->getAccountUser());
-    }
-
-    public function findOneForAccountUser()
-    {
-        $shoppingList = $this->getRepository()->findOneForAccountUser($this->accountUser);
-        $this->assertInstanceOf(ShoppingList::class, $shoppingList);
-        $this->assertEquals($this->accountUser, $shoppingList->getAccountUser());
+        $this->aclHelper = $this->getContainer()->get('oro_security.acl_helper');
     }
 
     public function testFindAvailableForAccountUser()
     {
         // Isset current shopping list
-        $currentShoppingList = $this->getRepository()->findCurrentForAccountUser($this->accountUser);
-        $availableShoppingList = $this->getRepository()->findAvailableForAccountUser($this->accountUser);
+        $availableShoppingList = $this->getRepository()->findAvailableForAccountUser($this->aclHelper);
         $this->assertInstanceOf(ShoppingList::class, $availableShoppingList);
-        $this->assertEquals($currentShoppingList->getId(), $availableShoppingList->getId());
 
-        // Remove current shopping list
-        $em = $this->getContainer()->get('doctrine')->getManagerForClass(ShoppingList::class);
-        $em->remove($currentShoppingList);
-        $em->flush();
-
-        $availableShoppingList = $this->getRepository()->findAvailableForAccountUser($this->accountUser);
-
-        // Check shopping list is current for account user
-        $this->assertTrue($availableShoppingList->isCurrent());
-        $this->assertEquals($this->accountUser, $availableShoppingList->getAccountUser());
+        // the latest shopping list for current user
+        $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_6);
+        $this->assertEquals($shoppingList, $availableShoppingList);
     }
 
     public function testFindByUser()
     {
-        $shoppingLists = $this->getRepository()->findByUser($this->accountUser, ['list.updatedAt' => Criteria::ASC]);
+        $shoppingLists = $this->getRepository()->findByUser($this->aclHelper, ['list.updatedAt' => Criteria::ASC]);
         $this->assertTrue(count($shoppingLists) > 0);
         /** @var ShoppingList $secondShoppingList */
         $shoppingList = array_shift($shoppingLists);
@@ -90,59 +75,9 @@ class ShoppingListRepositoryTest extends WebTestCase
         /** @var ShoppingList $shoppingList */
         $shoppingListReference = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
         $shoppingList = $this->getRepository()
-            ->findByUserAndId($this->accountUser, $shoppingListReference->getId());
+            ->findByUserAndId($this->aclHelper, $shoppingListReference->getId());
         $this->assertInstanceOf(ShoppingList::class, $shoppingList);
         $this->assertEquals($this->accountUser, $shoppingList->getAccountUser());
-    }
-
-    public function testCreateFindForAccountUserQueryBuilder()
-    {
-        $repository = $this->getRepository();
-        $account = $this->getAccountUser();
-
-        $qb = $repository->createFindForAccountUserQueryBuilder($account);
-        $this->assertInstanceOf(QueryBuilder::class, $qb);
-
-        /** @var ShoppingList[] $accountShoppingLists */
-        $accountShoppingLists = $qb->getQuery()->execute();
-        foreach ($accountShoppingLists as $shoppingList) {
-            if ($shoppingList->getAccount() instanceof Account) {
-                $this->assertEquals($account->getAccount()->getId(), $shoppingList->getAccount()->getId());
-            } else {
-                $this->assertEquals($account->getId(), $shoppingList->getAccountUser()->getId());
-            }
-        }
-    }
-
-    public function testFindAllExceptCurrentForAccountUser()
-    {
-        $repository = $this->getRepository();
-        $account = $this->getAccountUser();
-        $lists = $repository->findAllExceptCurrentForAccountUser($account);
-        $this->assertGreaterThan(0, $lists);
-        /** @var ShoppingList $list */
-        foreach ($lists as $list) {
-            $this->assertInstanceOf(ShoppingList::class, $list);
-            $this->assertFalse($list->isCurrent());
-        }
-    }
-
-    public function testFindLatestForAccountUserExceptCurrent()
-    {
-        $repository = $this->getRepository();
-        $account = $this->getAccountUser();
-        $list = $repository->findLatestForAccountUserExceptCurrent($account);
-        $this->assertInstanceOf(ShoppingList::class, $list);
-        $this->assertFalse($list->isCurrent());
-    }
-
-    public function testFindOneByIdWithRelations()
-    {
-        $repository = $this->getRepository();
-        /** @var ShoppingList $shoppingListReference */
-        $expectedList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
-        $actualList = $repository->findOneByIdWithRelations($expectedList->getId());
-        $this->assertSame($expectedList, $actualList);
     }
 
     /**

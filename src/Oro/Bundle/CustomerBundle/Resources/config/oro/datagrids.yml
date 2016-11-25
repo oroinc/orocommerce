@@ -990,11 +990,7 @@ datagrids:
                     left:
                         - { join: address.country, alias: country}
                         - { join: address.region, alias: region}
-                where:
-                    and:
-                        - IDENTITY(address.frontendOwner) = :frontend_owner_id
-            bind_parameters:
-                - frontend_owner_id
+
         properties:
             id: ~
         columns:
@@ -1048,7 +1044,7 @@ datagrids:
                 icon:          map-marker
 
     frontend-account-account-address-grid:
-        acl_resource: oro_account_frontend_account_view
+        acl_resource: oro_account_frontend_account_address_view
         extends: frontend-account-address-grid-base
         source:
             type: orm
@@ -1078,7 +1074,7 @@ datagrids:
                 acl_resource:  oro_account_frontend_account_address_remove
 
     frontend-account-account-user-address-grid:
-        acl_resource: oro_account_frontend_account_user_view
+        acl_resource: oro_account_frontend_account_user_address_view
         extends: frontend-account-address-grid-base
         source:
             type: orm
