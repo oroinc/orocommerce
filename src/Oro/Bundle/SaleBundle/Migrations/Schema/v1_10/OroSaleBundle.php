@@ -46,16 +46,6 @@ class OroSaleBundle implements Migration, RenameExtensionAwareInterface
             RelationType::MANY_TO_MANY
         ));
 
-        // calendar event to quote association
-        $extension->renameTable($schema, $queries, 'oro_rel_46a29d19aab0e4f0a0472d', 'oro_rel_46a29d19aab0e4f0b5ec88');
-        $queries->addQuery(new UpdateExtendRelationQuery(
-            'Oro\Bundle\CalendarBundle\Entity\CalendarEvent',
-            'Oro\Bundle\SaleBundle\Entity\Quote',
-            'quote_54b6ea15',
-            'quote_54e154f7',
-            RelationType::MANY_TO_MANY
-        ));
-
         // attachments
         $attachments = $schema->getTable('oro_attachment');
 

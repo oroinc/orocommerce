@@ -1,0 +1,8 @@
+Oro\Bundle\ProductBundle\Entity\Product:
+    fields:
+        -
+            name: category_id
+            type: integer
+        -
+            name: category_path
+            type: text

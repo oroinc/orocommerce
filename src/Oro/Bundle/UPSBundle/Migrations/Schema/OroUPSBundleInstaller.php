@@ -47,6 +47,11 @@ class OroUPSBundleInstaller implements Installation
         $table->addColumn('ups_pickup_type', 'string', ['notnull' => false, 'length' => 2]);
         $table->addColumn('ups_unit_of_weight', 'string', ['notnull' => false, 'length' => 3]);
         $table->addColumn('ups_country_code', 'string', ['notnull' => false, 'length' => 2]);
+        $table->addColumn(
+            'ups_invalidate_cache_at',
+            'datetime',
+            ['notnull' => false, 'comment' => '(DC2Type:datetime)']
+        );
     }
 
     /**

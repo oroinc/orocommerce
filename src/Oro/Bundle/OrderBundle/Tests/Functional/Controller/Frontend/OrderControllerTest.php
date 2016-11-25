@@ -63,7 +63,7 @@ class OrderControllerTest extends WebTestCase
 
     public function testOrdersGrid()
     {
-        $response = $this->client->requestGrid('frontend-orders-grid');
+        $response = $this->client->requestFrontendGrid('frontend-orders-grid');
 
         $result = static::getJsonResponseContent($response, 200);
 

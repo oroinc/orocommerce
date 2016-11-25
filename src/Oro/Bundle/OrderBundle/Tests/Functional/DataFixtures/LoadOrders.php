@@ -5,12 +5,11 @@ namespace Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
-use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData as TestAccountUserData;
 use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\PaymentBundle\Entity\PaymentTerm;
+use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
@@ -122,7 +121,6 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface, C
             ->setIdentifier($name)
             ->setOwner($user)
             ->setOrganization($user->getOrganization())
-            ->setPaymentTerm($paymentTerm)
             ->setShipUntil(new \DateTime())
             ->setCurrency($orderData['currency'])
             ->setPoNumber($orderData['poNumber'])
@@ -132,6 +130,9 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface, C
             ->setWebsite($website)
             ->setAccountUser($accountUser);
 
+        $this->container->get('oro_payment_term.provider.payment_term_association')
+            ->setPaymentTerm($order, $paymentTerm);
+
         if (array_key_exists('shippingMethod', $orderData)) {
             $order->setShippingMethod($orderData['shippingMethod']);
         }
@@ -139,8 +140,9 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface, C
             $order->setShippingMethodType($orderData['shippingMethodType']);
         }
         if (array_key_exists('shippingCostAmount', $orderData)) {
-            $order->setShippingCost(Price::create($orderData['shippingCostAmount'], $orderData['currency']));
+            $order->setEstimatedShippingCostAmount($orderData['shippingCostAmount']);
         }
+
         $manager->persist($order);
         $this->addReference($name, $order);
 

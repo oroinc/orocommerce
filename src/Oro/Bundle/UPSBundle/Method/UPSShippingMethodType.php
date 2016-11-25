@@ -2,26 +2,21 @@
 
 namespace Oro\Bundle\UPSBundle\Method;
 
-use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
+use Oro\Bundle\UPSBundle\Cache\ShippingPriceCache;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 use Oro\Bundle\UPSBundle\Factory\PriceRequestFactory;
-use Oro\Bundle\UPSBundle\Provider\UPSTransport as UPSTransportProvider;
 use Oro\Bundle\UPSBundle\Form\Type\UPSShippingMethodOptionsType;
+use Oro\Bundle\UPSBundle\Provider\UPSTransport as UPSTransportProvider;
 
 class UPSShippingMethodType implements ShippingMethodTypeInterface
 {
     const REQUEST_OPTION = 'Rate';
 
-    const OPTION_SURCHARGE = 'surcharge';
-
-    /** @var string|int */
-    protected $identifier;
-
     /** @var string */
-    protected $label;
+    protected $methodId;
 
     /** @var UPSTransport */
     protected $transport;
@@ -35,55 +30,40 @@ class UPSShippingMethodType implements ShippingMethodTypeInterface
     /** @var PriceRequestFactory */
     protected $priceRequestFactory;
 
+    /** @var ShippingPriceCache */
+    protected $cache;
+
     /**
+     * @param string $methodId
      * @param UPSTransport $transport
      * @param UPSTransportProvider $transportProvider
      * @param ShippingService $shippingService
      * @param PriceRequestFactory $priceRequestFactory
+     * @param ShippingPriceCache $cache
      */
     public function __construct(
+        $methodId,
         UPSTransport $transport,
         UPSTransportProvider $transportProvider,
         ShippingService $shippingService,
-        PriceRequestFactory $priceRequestFactory
+        PriceRequestFactory $priceRequestFactory,
+        ShippingPriceCache $cache
     ) {
-        $this->setIdentifier($shippingService->getCode());
-        $this->setLabel($shippingService->getDescription());
-
+        $this->methodId = $methodId;
         $this->transport = $transport;
         $this->transportProvider = $transportProvider;
         $this->shippingService = $shippingService;
         $this->priceRequestFactory = $priceRequestFactory;
+        $this->cache = $cache;
     }
 
-    /**
-     * @param int|string $identifier
-     * @return $this
-     */
-    public function setIdentifier($identifier)
-    {
-        $this->identifier = $identifier;
-
-        return $this;
-    }
-
-    /**
-     * @param string $label
-     * @return $this
-     */
-    public function setLabel($label)
-    {
-        $this->label = $label;
-
-        return $this;
-    }
 
     /**
      * {@inheritdoc}
      */
     public function getIdentifier()
     {
-        return $this->identifier;
+        return $this->shippingService->getCode();
     }
 
     /**
@@ -91,7 +71,7 @@ class UPSShippingMethodType implements ShippingMethodTypeInterface
      */
     public function getLabel()
     {
-        return $this->label;
+        return $this->shippingService->getDescription();
     }
 
     /**
@@ -111,46 +91,54 @@ class UPSShippingMethodType implements ShippingMethodTypeInterface
     }
 
     /**
+     * @return ShippingService
+     */
+    public function getShippingService()
+    {
+        return $this->shippingService;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function calculatePrice(ShippingContextInterface $context, array $methodOptions, array $typeOptions)
     {
-        $price = null;
-
         $priceRequest = $this->priceRequestFactory->create(
             $this->transport,
             $context,
-            self::REQUEST_OPTION,
+            static::REQUEST_OPTION,
             $this->shippingService
         );
-        
-        if (count($priceRequest->getPackages()) > 0) {
-            $prices = $this->transportProvider->getPrices($priceRequest, $this->transport);
-            if ($prices === null) {
-                return null;
-            }
-            $packagePrice = $prices->getPriceByService($this->shippingService->getCode());
-            if ($packagePrice !== null) {
-                $price += (float)$packagePrice->getValue();
-            } else {
-                return null;
-            }
 
-            $methodSurcharge = array_key_exists(UPSShippingMethod::OPTION_SURCHARGE, $methodOptions) ?
-                $methodOptions[self::OPTION_SURCHARGE] :
-                0
-            ;
-
-            $typeSurcharge = array_key_exists(self::OPTION_SURCHARGE, $typeOptions) ?
-                $typeOptions[self::OPTION_SURCHARGE] :
-                0
-            ;
-
-            return Price::create(
-                $price + (float)$methodSurcharge + (float)$typeSurcharge,
-                $packagePrice->getCurrency()
-            );
+        if (count($priceRequest->getPackages()) < 1) {
+            return null;
         }
-        return null;
+
+        $cacheKey = $this->cache->createKey($this->transport, $priceRequest, $this->methodId, $this->getIdentifier());
+        if (!$this->cache->containsPrice($cacheKey)) {
+            $priceResponse = $this->transportProvider->getPriceResponse($priceRequest, $this->transport);
+            if (!$priceResponse) {
+                return null;
+            }
+            $price = $priceResponse->getPriceByService($this->shippingService->getCode());
+            if (!$price) {
+                return null;
+            }
+            $this->cache->savePrice($cacheKey, $price);
+        } else {
+            $price = $this->cache->fetchPrice($cacheKey);
+        }
+
+        $optionsDefaults = [
+            UPSShippingMethod::OPTION_SURCHARGE => 0,
+        ];
+        $methodOptions = array_merge($optionsDefaults, $methodOptions);
+        $typeOptions = array_merge($optionsDefaults, $typeOptions);
+
+        return $price->setValue(array_sum([
+            (float)$price->getValue(),
+            (float)$methodOptions[UPSShippingMethod::OPTION_SURCHARGE],
+            (float)$typeOptions[UPSShippingMethod::OPTION_SURCHARGE]
+        ]));
     }
 }

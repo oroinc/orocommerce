@@ -1,12 +1,12 @@
-@import './components/top_nav';
+@import './components/top-bar';
 @import './components/quick-access/quick-access';
-@import './components/main_menu';
 @import './components/footer_menu';
 
-@import './components/header-row/header-row';
-@import './components/header-row-helper/header-row-helper';
-@import './components/header-row-overlay/header-row-overlay';
+@import './components/header-row';
+@import './components/header-row-helper';
+@import './components/main-menu';
+@import './components/nav-trigger';
+
 @import './components/main-menu-outer/main-menu-outer';
 @import './components/main-menu/main-menu';
-@import './components/nav-trigger/nav-trigger';
 @import './components/sales-block';
