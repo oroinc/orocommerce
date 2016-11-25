@@ -30,7 +30,7 @@ define(function (require) {
         showEmptyMessage: function() {
             var itemsSelector = this.$el.data('items-selector') || '.itemsSelectorContainer';
             var emptyBlockSelector = this.$el.data('empty-block-selector') || '.emptyBlockSelectorContainer';
-            if (this.$el.find(itemsSelector).length == 0) {
+            if (this.$el.find(itemsSelector).length === 0) {
                 this.$el.remove();
                 $(emptyBlockSelector).removeClass(this.options.hiddenClass);
                 $(this.hideElements).remove();
@@ -40,6 +40,7 @@ define(function (require) {
          * @inheritDoc
          */
         dispose: function() {
+            delete this.hideElements;
             if (this.disposed) {
                 return;
             }
