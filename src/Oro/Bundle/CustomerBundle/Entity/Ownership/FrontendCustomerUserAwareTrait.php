@@ -4,12 +4,9 @@ namespace Oro\Bundle\CustomerBundle\Entity\Ownership;
 
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 
-/**
- * @deprecated Use FrontendCustomerUserAwareTrait
- */
-trait FrontendAccountUserAwareTrait
+trait FrontendCustomerUserAwareTrait
 {
-    use FrontendAccountAwareTrait;
+    use FrontendCustomerAwareTrait;
 
     /**
      * @var AccountUser
@@ -22,21 +19,21 @@ trait FrontendAccountUserAwareTrait
     /**
      * @return AccountUser|null
      */
-    public function getAccountUser()
+    public function getCustomerUser()
     {
         return $this->accountUser;
     }
 
     /**
-     * @param AccountUser|null $accountUser
+     * @param AccountUser|null $customerUser
      * @return $this
      */
-    public function setAccountUser(AccountUser $accountUser = null)
+    public function setCustomerUser(AccountUser $customerUser = null)
     {
-        $this->accountUser = $accountUser;
+        $this->accountUser = $customerUser;
 
-        if ($accountUser && $accountUser->getAccount()) {
-            $this->setAccount($accountUser->getAccount());
+        if ($customerUser && $customerUser->getCustomer()) {
+            $this->setCustomer($customerUser->getCustomer());
         }
 
         return $this;

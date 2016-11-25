@@ -2,18 +2,15 @@
 
 namespace Oro\Bundle\CustomerBundle\Entity;
 
-/**
- * @deprecated Use CustomerOwnerAwareInterface
- */
-interface AccountOwnerAwareInterface
+interface CustomerOwnerAwareInterface
 {
     /**
      * @return \Oro\Bundle\CustomerBundle\Entity\Account
      */
-    public function getAccount();
+    public function getCustomer();
 
     /**
      * @return \Oro\Bundle\CustomerBundle\Entity\AccountUser
      */
-    public function getAccountUser();
+    public function getCustomerUser();
 }

@@ -4,10 +4,7 @@ namespace Oro\Bundle\CustomerBundle\Entity\Ownership;
 
 use Oro\Bundle\CustomerBundle\Entity\Account;
 
-/**
- * @deprecated Use FrontendCustomerAwareTrait
- */
-trait FrontendAccountAwareTrait
+trait FrontendCustomerAwareTrait
 {
     /**
      * @var Account
@@ -23,18 +20,18 @@ trait FrontendAccountAwareTrait
     /**
      * @return Account|null
      */
-    public function getAccount()
+    public function getCustomer()
     {
         return $this->account;
     }
 
     /**
-     * @param Account|null $account
+     * @param Account|null $customer
      * @return $this
      */
-    public function setAccount(Account $account = null)
+    public function setCustomer(Account $customer = null)
     {
-        $this->account = $account;
+        $this->account = $customer;
 
         return $this;
     }

@@ -390,6 +390,7 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
     }
 
     /**
+     * @deprecated Use getCustomer()
      * @return Account|null
      */
     public function getAccount()
@@ -398,12 +399,32 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
     }
 
     /**
+     * @deprecated Use setCustomer()
      * @param Account $account
      * @return AccountUser
      */
     public function setAccount(Account $account = null)
     {
         $this->account = $account;
+
+        return $this;
+    }
+
+    /**
+     * @return Account|null
+     */
+    public function getCustomer()
+    {
+        return $this->account;
+    }
+
+    /**
+     * @param Account|null $customer
+     * @return $this
+     */
+    public function setCustomer(Account $customer = null)
+    {
+        $this->account = $customer;
 
         return $this;
     }
