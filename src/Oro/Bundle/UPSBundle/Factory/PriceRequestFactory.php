@@ -175,7 +175,7 @@ class PriceRequestFactory
         foreach ($lineItems as $lineItem) {
             $productsInfo[$lineItem->getProduct()->getId()] = [
                 'product' => $lineItem->getProduct(),
-                'productUnitCode' => $lineItem->getProductUnit()->getCode(),
+                'productUnit' => $lineItem->getProductUnit(),
                 'quantity' => $lineItem->getQuantity()
             ];
         }
@@ -183,19 +183,18 @@ class PriceRequestFactory
         $allProductsShippingOptions = $this->registry
             ->getManagerForClass('OroShippingBundle:ProductShippingOptions')
             ->getRepository('OroShippingBundle:ProductShippingOptions')
-            ->findBy(['product' => array_column($productsInfo, 'product')]);
+            ->findBy([
+                'product' => array_column($productsInfo, 'product'),
+                'productUnit' => array_column($productsInfo, 'productUnit')
+            ]);
 
-        if (!$allProductsShippingOptions) {
+        if (!$allProductsShippingOptions ||
+            count(array_column($productsInfo, 'product')) !== count($allProductsShippingOptions)) {
             return [];
         }
 
         foreach ($allProductsShippingOptions as $productShippingOptions) {
             $productId = $productShippingOptions->getProduct()->getId();
-            if ($productShippingOptions->getProductUnit()->getCode() !==
-                $productsInfo[$productId]['productUnitCode']
-            ) {
-                return [];
-            }
             $productDimensions = $productShippingOptions->getDimensions();
 
             $dimensionUnit = $productDimensions->getUnit() ? $productDimensions->getUnit()->getCode() : null;
