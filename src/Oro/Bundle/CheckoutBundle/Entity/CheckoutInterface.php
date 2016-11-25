@@ -2,12 +2,10 @@
 
 namespace Oro\Bundle\CheckoutBundle\Entity;
 
-use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
-
 interface CheckoutInterface
 {
     /**
-     * @return CheckoutSourceEntityInterface|null
+     * @return CheckoutSource
      */
     public function getSourceEntity();
 

@@ -11,7 +11,7 @@ use Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
 /**
  * Check payment method enabled
  * Usage:
- * @payment_method_enabled: 'payment_method_name'
+ * @payment_method_enabled: 'payment_term'
  */
 class PaymentMethodEnabled extends AbstractCondition implements ContextAccessorAwareInterface
 {

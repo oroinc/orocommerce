@@ -1,9 +1,0 @@
-operations:
-    UPDATE:
-        exclude_datagrids:
-            - payment-terms-select-grid
-    DELETE:
-        exclude_entities:
-            - Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm
-        exclude_datagrids:
-            - payment-terms-select-grid

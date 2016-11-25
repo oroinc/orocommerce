@@ -29,10 +29,7 @@ class AjaxOrderController extends BaseAjaxOrderController
         if ($order) {
             $order->setAccountUser($this->getOrderHandler()->getAccountUser());
             $order->setAccount($this->getOrderHandler()->getAccount());
-            $this->get('oro_payment_term.provider.payment_term_association')->setPaymentTerm(
-                $order,
-                $this->getOrderHandler()->getPaymentTerm()
-            );
+            $order->setPaymentTerm($this->getOrderHandler()->getPaymentTerm());
             $order->setOwner($this->getOrderHandler()->getOwner());
         }
 

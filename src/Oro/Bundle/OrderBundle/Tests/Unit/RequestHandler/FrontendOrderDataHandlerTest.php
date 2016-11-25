@@ -12,8 +12,8 @@ use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\OrderBundle\RequestHandler\FrontendOrderDataHandler;
-use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
-use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTerm;
+use Oro\Bundle\PaymentBundle\Provider\PaymentTermProvider;
 
 class FrontendOrderDataHandlerTest extends \PHPUnit_Framework_TestCase
 {
@@ -63,7 +63,7 @@ class FrontendOrderDataHandlerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->paymentTermProvider = $this->getMockBuilder('Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider')
+        $this->paymentTermProvider = $this->getMockBuilder('Oro\Bundle\PaymentBundle\Provider\PaymentTermProvider')
             ->disableOriginalConstructor()
             ->getMock();
 

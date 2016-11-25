@@ -5,13 +5,14 @@ namespace Oro\Bundle\PaymentBundle\Condition;
 use Oro\Component\ConfigExpression\Condition\AbstractCondition;
 use Oro\Component\ConfigExpression\ContextAccessorAwareInterface;
 use Oro\Component\ConfigExpression\ContextAccessorAwareTrait;
+use Oro\Component\ConfigExpression\Exception;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
 
 /**
  * Check payment method supports action
  * Usage:
  * @payment_method_supports:
- *      payment_method: 'payment_method_name'
+ *      payment_method: 'payment_term'
  *      action: 'validate'
  */
 class PaymentMethodSupports extends AbstractCondition implements ContextAccessorAwareInterface

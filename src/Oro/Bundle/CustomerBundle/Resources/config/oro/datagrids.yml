@@ -16,7 +16,6 @@ datagrids:
             access_level_route: oro_customer_frontend_acl_access_levels
 
     account-accounts-select-grid:
-        extended_entity_name: %oro_customer.entity.account.class%
         acl_resource: oro_customer_account_view
         options:
             entityHint:        account
@@ -104,7 +103,6 @@ datagrids:
                 rowAction:    true
 
     account-groups-select-grid:
-        extended_entity_name: %oro_customer.entity.account_group.class%
         acl_resource: oro_customer_account_group_view
         options:
             entityHint:        account group

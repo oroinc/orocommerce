@@ -14,7 +14,7 @@ use Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
  * Check that the payment method requires method verification after page refresh
  * Usage:
  * @require_payment_redirect:
- *      payment_method: 'payment_method_name'
+ *      payment_method: 'payment_term'
  */
 class RequirePaymentRedirect extends AbstractCondition implements ContextAccessorAwareInterface
 {

@@ -1,6 +1,5 @@
 {% import 'OroUIBundle::macros.html.twig' as UI %}
 {% import 'OroEmailBundle::actions.html.twig' as EmailActions %}
-{% import 'OroEntityConfigBundle::macros.html.twig' as entityConfig %}
 
 <div class="widget-content">
     <div class="row-fluid form-horizontal">
@@ -29,8 +28,6 @@
             {% if entity.assignedAccountUsers | length %}
                 {{ UI.renderHtmlProperty('oro.rfp.request.assigned_account_users.label'|trans, UI.entityViewLinks(entity.assignedAccountUsers, 'fullName', 'oro_customer_account_user_view')) }}
             {% endif %}
-
-            {{ entityConfig.renderDynamicFields(entity) }}
         </div>
     </div>
 </div>

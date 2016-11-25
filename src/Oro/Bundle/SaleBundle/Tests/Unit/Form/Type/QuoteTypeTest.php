@@ -18,6 +18,9 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTerm;
+use Oro\Bundle\PaymentBundle\Form\Type\PaymentTermSelectType;
+use Oro\Bundle\PaymentBundle\Provider\PaymentTermProvider;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
@@ -35,6 +38,7 @@ use Oro\Bundle\SaleBundle\Form\Type\QuoteProductType;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteType;
 use Oro\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider;
 use Oro\Bundle\SaleBundle\Tests\Unit\Form\Type\Stub\EntityType as StubEntityType;
+use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\UserBundle\Entity\User;
 
 class QuoteTypeTest extends AbstractTest
@@ -47,9 +51,19 @@ class QuoteTypeTest extends AbstractTest
     protected $formType;
 
     /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|SecurityFacade
+     */
+    protected $securityFacade;
+
+    /**
      * @var \PHPUnit_Framework_MockObject_MockObject|QuoteAddressSecurityProvider
      */
     protected $quoteAddressSecurityProvider;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|PaymentTermProvider
+     */
+    protected $paymentTermProvider;
 
     /**
      * {@inheritdoc}
@@ -58,12 +72,24 @@ class QuoteTypeTest extends AbstractTest
     {
         parent::setUp();
 
+        $this->securityFacade = $this
+            ->getMockBuilder(SecurityFacade::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->quoteAddressSecurityProvider = $this
             ->getMockBuilder(QuoteAddressSecurityProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
+        $this->paymentTermProvider = $this
+            ->getMockBuilder(PaymentTermProvider::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        $this->formType = new QuoteType($this->quoteAddressSecurityProvider);
+        $this->formType = new QuoteType(
+            $this->securityFacade,
+            $this->quoteAddressSecurityProvider,
+            $this->paymentTermProvider
+        );
         $this->formType->setDataClass(Quote::class);
     }
 
@@ -311,12 +337,47 @@ class QuoteTypeTest extends AbstractTest
         /** @var FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder */
         $builder = $this->getMock(FormBuilderInterface::class);
         $quote = new Quote();
+        $accountPaymentTerm = $this->getMock(PaymentTerm::class);
+        $accountGroupPaymentTerm = $this->getMock(PaymentTerm::class);
         $accountGroup = new AccountGroup();
         $account = new Account();
         $account->setGroup($accountGroup);
         $quote->setAccount($account);
+        $options = [
+            'label' => 'oro.sale.quote.payment_term.label',
+            'required' => false,
+            'attr' => [
+                'data-account-payment-term' => 10,
+                'data-account-group-payment-term' => 100,
+            ],
+        ];
 
+        $this
+            ->securityFacade
+            ->expects($this->once())
+            ->method('isGranted')
+            ->with('oro_quote_payment_term_account_can_override')
+            ->willReturn(true);
+        $accountPaymentTerm->expects($this->once())->method('getId')->willReturn(10);
+        $accountGroupPaymentTerm->expects($this->once())->method('getId')->willReturn(100);
+        $this
+            ->paymentTermProvider
+            ->expects($this->once())
+            ->method('getAccountPaymentTerm')
+            ->with($account)
+            ->willReturn($accountPaymentTerm);
+        $this
+            ->paymentTermProvider
+            ->expects($this->once())
+            ->method('getAccountGroupPaymentTerm')
+            ->with($accountGroup)
+            ->willReturn($accountGroupPaymentTerm);
         $builder->expects($this->atMost(13))->method('add')->willReturn($builder);
+        $builder
+            ->expects($this->at(12))
+            ->method('add')
+            ->with('paymentTerm', PaymentTermSelectType::NAME, $options)
+            ->willReturn($builder);
 
         $this->formType->buildForm($builder, ['data' => $quote]);
     }
@@ -327,6 +388,14 @@ class QuoteTypeTest extends AbstractTest
         $builder = $this->getMock(FormBuilderInterface::class);
         $quote = new Quote();
 
+        $this
+            ->securityFacade
+            ->expects($this->once())
+            ->method('isGranted')
+            ->with('oro_quote_payment_term_account_can_override')
+            ->willReturn(false);
+        $this->paymentTermProvider->expects($this->never())->method('getAccountPaymentTerm');
+        $this->paymentTermProvider->expects($this->never())->method('getAccountGroupPaymentTerm');
         $builder->expects($this->atMost(12))->method('add')->willReturn($builder);
 
         $this->formType->buildForm($builder, ['data' => $quote]);

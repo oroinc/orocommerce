@@ -11,11 +11,13 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
+use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Form\Type\EventListener\SubtotalSubscriber;
 use Oro\Bundle\OrderBundle\Handler\OrderCurrencyHandler;
 use Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
+use Oro\Bundle\PaymentBundle\Provider\PaymentTermProvider;
 use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
@@ -29,6 +31,12 @@ class FrontendOrderType extends AbstractType
 
     /** @var OrderAddressSecurityProvider */
     protected $orderAddressSecurityProvider;
+
+    /** @var SecurityFacade */
+    protected $securityFacade;
+
+    /** @var PaymentTermProvider */
+    protected $paymentTermProvider;
 
     /** @var ProductPriceProvider */
     protected $productPriceProvider;
@@ -44,6 +52,8 @@ class FrontendOrderType extends AbstractType
 
     /**
      * @param OrderAddressSecurityProvider $orderAddressSecurityProvider
+     * @param SecurityFacade $securityFacade
+     * @param PaymentTermProvider $paymentTermProvider
      * @param ProductPriceProvider $productPriceProvider
      * @param OrderCurrencyHandler $orderCurrencyHandler
      * @param SubtotalSubscriber $subtotalSubscriber
@@ -51,12 +61,16 @@ class FrontendOrderType extends AbstractType
      */
     public function __construct(
         OrderAddressSecurityProvider $orderAddressSecurityProvider,
+        SecurityFacade $securityFacade,
+        PaymentTermProvider $paymentTermProvider,
         ProductPriceProvider $productPriceProvider,
         OrderCurrencyHandler $orderCurrencyHandler,
         SubtotalSubscriber $subtotalSubscriber,
         PriceListRequestHandler $priceListRequestHandler
     ) {
         $this->orderAddressSecurityProvider = $orderAddressSecurityProvider;
+        $this->securityFacade = $securityFacade;
+        $this->paymentTermProvider = $paymentTermProvider;
         $this->productPriceProvider = $productPriceProvider;
         $this->orderCurrencyHandler = $orderCurrencyHandler;
         $this->subtotalSubscriber = $subtotalSubscriber;
