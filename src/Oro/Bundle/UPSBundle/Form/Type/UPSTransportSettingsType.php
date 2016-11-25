@@ -8,8 +8,8 @@ use Oro\Bundle\EntityBundle\Exception\NotManageableEntityException;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\IntegrationBundle\Provider\TransportInterface;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
+use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
-use Oro\Bundle\UPSBundle\Encryptor\UpsEncryptorInterface;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
@@ -50,29 +50,27 @@ class UPSTransportSettingsType extends AbstractType
      */
     protected $doctrineHelper;
 
-    /**
-     * @var UpsEncryptorInterface
-     */
-    protected $upsEncryptor;
+    /** @var SymmetricCrypterInterface */
+    protected $symmetricCrypter;
 
     /**
      * UPSTransportSettingsType constructor.
      *
-     * @param TransportInterface $transport
-     * @param ShippingOriginProvider $shippingOriginProvider
-     * @param DoctrineHelper $doctrineHelper
-     * @param UpsEncryptorInterface $encoder
+     * @param TransportInterface        $transport
+     * @param ShippingOriginProvider    $shippingOriginProvider
+     * @param DoctrineHelper            $doctrineHelper
+     * @param SymmetricCrypterInterface $symmetricCrypter
      */
     public function __construct(
         TransportInterface $transport,
         ShippingOriginProvider $shippingOriginProvider,
         DoctrineHelper $doctrineHelper,
-        UpsEncryptorInterface $encoder
+        SymmetricCrypterInterface $symmetricCrypter
     ) {
         $this->transport = $transport;
         $this->shippingOriginProvider = $shippingOriginProvider;
         $this->doctrineHelper = $doctrineHelper;
-        $this->upsEncryptor = $encoder;
+        $this->symmetricCrypter = $symmetricCrypter;
     }
 
     /**
@@ -123,7 +121,7 @@ class UPSTransportSettingsType extends AbstractType
                     return $password;
                 },
                 function ($password) {
-                    return $this->upsEncryptor->encrypt($password);
+                    return $this->symmetricCrypter->encryptData($password);
                 }
             ));
         $builder->add(

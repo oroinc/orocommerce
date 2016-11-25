@@ -5,7 +5,7 @@ namespace Oro\Bundle\UPSBundle\Migrations\Schema\v1_2;
 use Doctrine\DBAL\Connection;
 use Oro\Bundle\MigrationBundle\Migration\ConnectionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\MigrationQuery;
-use Oro\Bundle\UPSBundle\Encryptor\UpsEncryptorInterface;
+use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -53,16 +53,16 @@ class UpdatePasswordMigrationQuery implements MigrationQuery, ConnectionAwareInt
     public function execute(LoggerInterface $logger)
     {
         /**
-         * @var UpsEncryptorInterface $encryptor
+         * @var SymmetricCrypterInterface $encryptor
          */
-        $encryptor = $this->container->get('oro_ups.encryptor.oro_security_encoder_mcrypt');
+        $encryptor = $this->container->get('oro_security.encoder.mcrypt');
 
         $getIntegrationsSQL = "SELECT id, ups_api_password FROM oro_integration_transport WHERE type = 'upstransport'";
 
         $integrations = $this->connection->fetchAll($getIntegrationsSQL);
 
         foreach ($integrations as $integration) {
-            $encrypterPassword = $encryptor->encrypt($integration['ups_api_password']);
+            $encrypterPassword = $encryptor->encryptData($integration['ups_api_password']);
 
             $updateSQL = sprintf(
                 "UPDATE oro_integration_transport SET ups_api_password = '%s' WHERE id = %s",

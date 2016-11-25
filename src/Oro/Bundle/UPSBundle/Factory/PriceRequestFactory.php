@@ -4,12 +4,12 @@ namespace Oro\Bundle\UPSBundle\Factory;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
+use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
 use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
 use Oro\Bundle\ShippingBundle\Model\Weight;
 use Oro\Bundle\ShippingBundle\Provider\MeasureUnitConversion;
-use Oro\Bundle\UPSBundle\Encryptor\UpsEncryptorInterface;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 use Oro\Bundle\UPSBundle\Model\Package;
@@ -30,27 +30,27 @@ class PriceRequestFactory
     /** @var UnitsMapper */
     protected $unitsMapper;
 
-    /** @var UpsEncryptorInterface */
-    protected $upsEncryptor;
+    /** @var SymmetricCrypterInterface */
+    protected $symmetricCrypter;
 
     /**
      * PriceRequestFactory constructor.
      *
-     * @param ManagerRegistry $registry
-     * @param MeasureUnitConversion $measureUnitConversion
-     * @param UnitsMapper $unitsMapper
-     * @param UpsEncryptorInterface $upsEncryptor
+     * @param ManagerRegistry           $registry
+     * @param MeasureUnitConversion     $measureUnitConversion
+     * @param UnitsMapper               $unitsMapper
+     * @param SymmetricCrypterInterface $symmetricCrypter
      */
     public function __construct(
         ManagerRegistry $registry,
         MeasureUnitConversion $measureUnitConversion,
         UnitsMapper $unitsMapper,
-        UpsEncryptorInterface $upsEncryptor
+        SymmetricCrypterInterface $symmetricCrypter
     ) {
         $this->registry = $registry;
         $this->measureUnitConversion = $measureUnitConversion;
         $this->unitsMapper = $unitsMapper;
-        $this->upsEncryptor = $upsEncryptor;
+        $this->symmetricCrypter = $symmetricCrypter;
     }
 
     /**
@@ -66,7 +66,7 @@ class PriceRequestFactory
         $requestOption,
         ShippingService $shippingService = null
     ) {
-        $decryptedPassword = $this->upsEncryptor->decrypt($transport->getApiPassword());
+        $decryptedPassword = $this->symmetricCrypter->decryptData($transport->getApiPassword());
 
         $priceRequest = (new PriceRequest())
             ->setUsername($transport->getApiUser())

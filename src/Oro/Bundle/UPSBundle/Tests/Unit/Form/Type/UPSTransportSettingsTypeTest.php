@@ -11,11 +11,10 @@ use Oro\Bundle\LocaleBundle\Form\Type\LocalizationCollectionType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedPropertyType;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizationCollectionTypeStub;
-use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueCollectionTypeStub;
+use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
 use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
 use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
-use Oro\Bundle\UPSBundle\Encryptor\UpsEncryptorInterface;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 use Oro\Bundle\UPSBundle\Form\Type\UPSTransportSettingsType;
@@ -54,9 +53,9 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
     protected $formType;
 
     /**
-     * @var UpsEncryptorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var SymmetricCrypterInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $upsEncryptor;
+    protected $symmetricCrypter;
 
     protected function setUp()
     {
@@ -74,16 +73,15 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->upsEncryptor = $this
-            ->getMockBuilder(UpsEncryptorInterface::class)
-            ->disableOriginalConstructor()
+        $this->symmetricCrypter = $this
+            ->getMockBuilder(SymmetricCrypterInterface::class)
             ->getMock();
 
         $this->formType = new UPSTransportSettingsType(
             $this->transport,
             $this->shippingOriginProvider,
             $this->doctrineHelper,
-            $this->upsEncryptor
+            $this->symmetricCrypter
         );
 
         parent::setUp();
@@ -187,9 +185,9 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
         UPSTransport $expectedData
     ) {
         if (count($submittedData) > 0) {
-            $this->upsEncryptor
+            $this->symmetricCrypter
                 ->expects($this->once())
-                ->method('encrypt')
+                ->method('encryptData')
                 ->with($submittedData['apiPassword'])
                 ->willReturn($submittedData['apiPassword']);
         }
