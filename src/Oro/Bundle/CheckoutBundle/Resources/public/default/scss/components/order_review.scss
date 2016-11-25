@@ -1,21 +1,16 @@
 .checkout-order-summary {
-  margin: 2px 0 0;
-  border-radius: 5px;
+    margin: 2px 0 0;
+    border-radius: 5px;
 
-  background: get-color('additional', 'light');
+    background: get-color('additional', 'light');
 
-  &__tab {
-    &.active {
-      .checkout-order-summary__content {
+    &__tab.active  &__content {
         display: block;
-      }
-
-      .cf-play {
-        transform: rotate(90deg);
-      }
     }
-  }
-  // tab
+
+    &__tab.active  &__icon-play {
+        transform: rotate(90deg);
+    }
 
   &__content {
       display: block;
@@ -86,68 +81,67 @@
       }
     }
   }
-  // content
 
-  &__header {
-    position: relative;
+    &__header {
+        position: relative;
 
-    padding: 21px 135px 21px 90px;
+        padding: 21px 135px 21px 90px;
 
-    font-size: $base-font-size;
-    line-height: 1.3;
+        font-size: $base-font-size;
+        line-height: 1.3;
 
-    cursor: pointer;
-  }
-
-  &__icon-group {
-    position: absolute;
-    left: 35px;
-    top: 19px;
-
-    .cf-play {
-      color: get-color('additional', 'dark');
-
-      transition: transform .2s linear;
+        cursor: pointer;
     }
-  }
 
-  &__title {
-    font-size: $base-font-size;
-    line-height: 1.4;
-    text-transform: uppercase;
-  }
+    &__icon-group {
+        position: absolute;
+        left: 35px;
+        top: 19px;
+    }
 
-  &__desc {
-    font-size: 13px;
-  }
+    &__icon-play {
+        color: get-color('additional', 'dark');
 
-  &__edit-link {
-    position: absolute;
-    top: 22px;
-    right: 30px;
-  }
+        transition: transform .2s linear;
+    }
 
-  &__price-table {
-    max-width: 225px;
+    &__title {
+        font-size: $base-font-size;
+        line-height: 1.4;
+        text-transform: uppercase;
+    }
 
-    margin-left: auto;
+    &__desc {
+        font-size: 13px;
+    }
 
-    .table {
-      margin: 0;
+    &__edit-link {
+        position: absolute;
+        top: 22px;
+        right: 30px;
+    }
 
-      tbody {
-        td {
-          padding: 0 0 3px;
-          border: 0;
+    &__price-table {
+        max-width: 225px;
 
-          &:first-child {
-            text-align: left;
-            padding-right: 40px;
-          }
+        margin-left: auto;
+
+        .table {
+            margin: 0;
+
+            tbody {
+                td {
+                    padding: 0 0 3px;
+                    border: 0;
+
+                    &:first-child {
+                        text-align: left;
+                        padding-right: 40px;
+                    }
+                }
+            }
         }
-      }
     }
-  }
 
     &__price-table-total {
         padding: 10px 0 10px;
