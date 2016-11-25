@@ -11,6 +11,7 @@ use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigInterface;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
+use Oro\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -73,8 +74,9 @@ class FrontendOwnerSelectType extends AbstractType
             $class = ClassUtils::getClass($data);
             $permission = 'CREATE';
             $em = $this->registry->getManagerForClass($class);
-            if ($em->contains($data)) {
-                $permission = 'EDIT';
+            $isObjectNew = !$em->contains($data);
+            if (!$isObjectNew) {
+                $permission = 'ASSIGN';
             }
             $config = $this->configProvider->getConfig($class);
             $ownerClass = $this->getOwnerClass($config);
@@ -94,6 +96,15 @@ class FrontendOwnerSelectType extends AbstractType
             $qb = $repo
                 ->createQueryBuilder('owner')
                 ->addCriteria($criteria);
+
+            if (!$isObjectNew) {
+                $propertyAccessor = new PropertyAccessor();
+                $currentOwner = $propertyAccessor->getValue($data, $ownerFieldName);
+                if ($currentOwner) {
+                    $qb->orWhere($qb->expr()->eq('owner.id', ':currentOwner'))
+                        ->setParameter('currentOwner', $currentOwner);
+                }
+            }
 
             return $qb;
         });
