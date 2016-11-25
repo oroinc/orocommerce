@@ -137,10 +137,11 @@ define(function(require) {
         getProductUnits: function() {
             var units = {};
             var that = this;
-            $.each($(':data(' + this.options.unitsAttribute + ')'), function (index, element) {
+            $.each($(':data(' + this.options.unitsAttribute + ')'), function(index, element) {
                 var elementUnits = $(element).data(that.options.unitsAttribute) || {};
                 units = $.extend(units, elementUnits);
-            })
+            });
+
             return units;
         },
 
