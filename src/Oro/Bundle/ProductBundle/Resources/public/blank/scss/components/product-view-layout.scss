@@ -20,12 +20,13 @@
 
         clear: right;
 
-        &__first {
-            width: $product-main-data-first-block-width;
+        &__specification {
+            width: $product-main-data-specification-block-width;
+            flex: 0 0 auto;
         }
 
-        &__second {
-            margin-left: $product-main-data-second-block-left-offset;
+        &__description {
+            margin-left: $product-main-data-description-block-left-offset;
 
             flex-grow: 1;
         }
@@ -53,8 +54,8 @@
         &__main-data {
             display: block;
 
-            &__first,
-            &__second {
+            &__specification,
+            &__description {
                 width: 100%;
                 margin: 0 0 $product-block-offset-bottom;
             }

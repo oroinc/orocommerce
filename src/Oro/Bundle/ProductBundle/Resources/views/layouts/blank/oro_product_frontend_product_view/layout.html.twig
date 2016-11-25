@@ -16,6 +16,10 @@
     </div>
 {% endblock %}
 
+{% block _product_title_widget %}
+    <h1 class="page-title">{{ text }}</h1>
+{% endblock %}
+
 {% block _product_gallery_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
     '~class': ' product-view__gallery'
@@ -36,9 +40,9 @@
     </div>
 {% endblock %}
 
-{% block _product_main_data_first_container_widget %}
+{% block _product_main_data_specification_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
-    '~class': ' product-view__main-data__first'
+    '~class': ' product-view__main-data__specification'
     }) %}
 
     <div {{ block('block_attributes') }}>
@@ -46,9 +50,15 @@
     </div>
 {% endblock %}
 
-{% block _product_main_data_second_container_widget %}
+{% block _product_sku_widget %}
+    <div>
+        {{ 'oro.product.frontend.index.item'|trans }} <span class="red">{{ block_widget(block) }}</span>
+    </div>
+{% endblock %}
+
+{% block _product_main_data_description_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
-    '~class': ' product-view__main-data__second'
+    '~class': ' product-view__main-data__description'
     }) %}
 
     <div {{ block('block_attributes') }}>
