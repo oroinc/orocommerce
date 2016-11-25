@@ -4,28 +4,14 @@ namespace Oro\Bundle\CustomerBundle\Migrations\Schema\v1_8;
 
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\CustomerBundle\Migrations\Schema\OroAccountBundleInstaller;
-use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
-use Oro\Bundle\EntityExtendBundle\Extend\RelationType;
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Oro\Bundle\ScopeBundle\Migrations\Schema\OroScopeBundleInstaller;
+use Oro\Bundle\ScopeBundle\Migration\Extension\ScopeExtensionAwareInterface;
+use Oro\Bundle\ScopeBundle\Migration\Extension\ScopeExtensionAwareTrait;
 
-class OroAccountBundleScopeRelations implements Migration, ExtendExtensionAwareInterface
+class OroAccountBundleScopeRelations implements Migration, ScopeExtensionAwareInterface
 {
-    /**
-     * @var ExtendExtension
-     */
-    private $extendExtension;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setExtendExtension(ExtendExtension $extendExtension)
-    {
-        $this->extendExtension = $extendExtension;
-    }
+    use ScopeExtensionAwareTrait;
 
     /**
      * {@inheritdoc}
@@ -40,38 +26,18 @@ class OroAccountBundleScopeRelations implements Migration, ExtendExtensionAwareI
      */
     private function addRelationsToScope(Schema $schema)
     {
-        $this->extendExtension->addManyToOneRelation(
+        $this->scopeExtension->addScopeAssociation(
             $schema,
-            OroScopeBundleInstaller::ORO_SCOPE,
             'account',
             OroAccountBundleInstaller::ORO_ACCOUNT_TABLE_NAME,
-            'id',
-            [
-                'extend' => [
-                    'owner' => ExtendScope::OWNER_CUSTOM,
-                    'cascade' => ['all'],
-                    'on_delete' => 'CASCADE',
-                    'nullable' => true
-                ]
-            ],
-            RelationType::MANY_TO_ONE
+            'name'
         );
 
-        $this->extendExtension->addManyToOneRelation(
+        $this->scopeExtension->addScopeAssociation(
             $schema,
-            OroScopeBundleInstaller::ORO_SCOPE,
             'accountGroup',
             OroAccountBundleInstaller::ORO_ACCOUNT_GROUP_TABLE_NAME,
-            'id',
-            [
-                'extend' => [
-                    'owner' => ExtendScope::OWNER_CUSTOM,
-                    'cascade' => ['all'],
-                    'on_delete' => 'CASCADE',
-                    'nullable' => true
-                ]
-            ],
-            RelationType::MANY_TO_ONE
+            'name'
         );
     }
 }

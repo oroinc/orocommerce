@@ -5,8 +5,10 @@ namespace Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
+
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
+use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
+use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
@@ -24,6 +26,8 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
     const QUOTE7    = 'sale.quote.7';
     const QUOTE8    = 'sale.quote.8';
     const QUOTE9    = 'sale.quote.9';
+    const QUOTE10    = 'sale.quote.10';
+    const QUOTE11    = 'sale.quote.11';
 
     const PRODUCT1  = 'product.1';
     const PRODUCT2  = 'product.2';
@@ -138,6 +142,18 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
             'products'      => [],
             'paymentTerm'   => LoadPaymentTermData::TERM_LABEL_NET_10,
         ],
+        self::QUOTE10 => [
+            'qid'           => self::QUOTE10,
+            'account'       => LoadUserData::PARENT_ACCOUNT,
+            'accountUser'   => LoadUserData::PARENT_ACCOUNT_USER1,
+            'products'      => [],
+        ],
+        self::QUOTE11 => [
+            'qid'           => self::QUOTE11,
+            'account'       => LoadUserData::PARENT_ACCOUNT,
+            'accountUser'   => LoadUserData::PARENT_ACCOUNT_USER2,
+            'products'      => [],
+        ],
     ];
 
     /**
@@ -175,6 +191,8 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
         /** @var Website $website */
         $website = $manager->getRepository(Website::class)->findOneBy(['default' => true]);
 
+        $paymentTermAssociationProvider = $this->container->get('oro_payment_term.provider.payment_term_association');
+
         foreach (self::$items as $item) {
             $poNumber = 'CA' . mt_rand(1000, 9999) . 'USD';
 
@@ -202,9 +220,12 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
             }
 
             if (!empty($item['paymentTerm'])) {
-                $quote->setPaymentTerm(
-                    $this->getReference(LoadPaymentTermData::PAYMENT_TERM_REFERENCE_PREFIX. $item['paymentTerm'])
+                /** @var PaymentTerm $paymentTerm */
+                $paymentTerm = $this->getReference(
+                    LoadPaymentTermData::PAYMENT_TERM_REFERENCE_PREFIX.$item['paymentTerm']
                 );
+
+                $paymentTermAssociationProvider->setPaymentTerm($quote, $paymentTerm);
             }
 
             foreach ($item['products'] as $sku => $items) {

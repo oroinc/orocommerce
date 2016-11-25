@@ -17,7 +17,6 @@ use Oro\Bundle\OrderBundle\Model\DiscountAwareInterface;
 use Oro\Bundle\OrderBundle\Model\ExtendOrder;
 use Oro\Bundle\OrderBundle\Model\ShippingAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
-use Oro\Bundle\PaymentBundle\Entity\PaymentTerm;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
 use Oro\Bundle\UserBundle\Entity\Ownership\AuditableUserAwareTrait;
@@ -217,21 +216,6 @@ class Order extends ExtendOrder implements
      * )
      */
     protected $total;
-
-    /**
-     * @var PaymentTerm
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\PaymentBundle\Entity\PaymentTerm")
-     * @ORM\JoinColumn(name="payment_term_id", referencedColumnName="id", onDelete="SET NULL")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $paymentTerm;
 
     /**
      * @var Website
@@ -604,30 +588,6 @@ class Order extends ExtendOrder implements
     public function getTotal()
     {
         return $this->total;
-    }
-
-    /**
-     * Set paymentTerm
-     *
-     * @param PaymentTerm|null $paymentTerm
-     *
-     * @return Order
-     */
-    public function setPaymentTerm(PaymentTerm $paymentTerm = null)
-    {
-        $this->paymentTerm = $paymentTerm;
-
-        return $this;
-    }
-
-    /**
-     * Get paymentTerm
-     *
-     * @return PaymentTerm|null
-     */
-    public function getPaymentTerm()
-    {
-        return $this->paymentTerm;
     }
 
     /**

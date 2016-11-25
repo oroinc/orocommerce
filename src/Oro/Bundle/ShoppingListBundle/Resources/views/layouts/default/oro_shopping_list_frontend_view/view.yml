@@ -20,6 +20,11 @@ layout:
                     options:
                         visible: '!data["entity"]'
                         shoppingList: '=data["entity"]'
+                shopping_list_owner:
+                    blockType: shopping_list_owner_select_block
+                    options:
+                        form: '=data["oro_account_frontend_account_user_form"].getAccountUserSelectFormView(data["entity"].getAccountUser(), data["entity"])'
+                        shoppingList: '=data["entity"]'
                 shopping_list_top_actions:
                     blockType: action_line_buttons
                     options:
@@ -87,6 +92,7 @@ layout:
                             shopping_list_title: ~
                             shopping_list_top_actions: ~
                             shopping_list_line_items:
+                                shopping_list_owner: ~
                                 shopping_list_options: ~
                                 shopping_list_line_items_list: ~
                                 shopping_list_line_items_empty: ~

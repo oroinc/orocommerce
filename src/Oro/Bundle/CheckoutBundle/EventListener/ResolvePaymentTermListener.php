@@ -2,14 +2,14 @@
 
 namespace Oro\Bundle\CheckoutBundle\EventListener;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
-
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface;
 use Oro\Bundle\CheckoutBundle\Event\CheckoutEntityEvent;
 use Oro\Bundle\CheckoutBundle\Event\CheckoutEvents;
-use Oro\Bundle\PaymentBundle\Event\ResolvePaymentTermEvent;
-use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
+use Oro\Bundle\PaymentTermBundle\Event\ResolvePaymentTermEvent;
+use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
+
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class ResolvePaymentTermListener
 {
@@ -21,14 +21,22 @@ class ResolvePaymentTermListener
     /** @var  EventDispatcherInterface */
     protected $eventDispatcher;
 
+    /** @var PaymentTermProvider */
+    private $paymentTermProvider;
+
     /**
      * @param RequestStack $requestStack
      * @param EventDispatcherInterface $eventDispatcher
+     * @param PaymentTermProvider $paymentTermProvider
      */
-    public function __construct(RequestStack $requestStack, EventDispatcherInterface $eventDispatcher)
-    {
+    public function __construct(
+        RequestStack $requestStack,
+        EventDispatcherInterface $eventDispatcher,
+        PaymentTermProvider $paymentTermProvider
+    ) {
         $this->requestStack = $requestStack;
         $this->eventDispatcher = $eventDispatcher;
+        $this->paymentTermProvider = $paymentTermProvider;
     }
 
     /**
@@ -42,9 +50,16 @@ class ResolvePaymentTermListener
         }
 
         $source = $checkout->getSourceEntity();
-        if ($source && $source instanceof QuoteDemand && $source->getQuote()->getPaymentTerm()) {
-            $event->setPaymentTerm($source->getQuote()->getPaymentTerm());
+        if (!$source) {
+            return;
         }
+
+        $paymentTerm = $this->paymentTermProvider->getObjectPaymentTerm($source);
+        if (!$paymentTerm) {
+            return;
+        }
+
+        $event->setPaymentTerm($paymentTerm);
     }
 
     /**
