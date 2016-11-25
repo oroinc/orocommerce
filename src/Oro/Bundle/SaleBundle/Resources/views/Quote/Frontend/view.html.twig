@@ -74,11 +74,11 @@
     {% endset %}
 
     {% set shippingInformation %}
-        {% if entity.shippingEstimate is not null %}
-            {{ UI.renderHtmlProperty('oro.sale.quote.shipping_estimate.label'|trans,
-            entity.shippingEstimate.value|oro_format_currency({'currency': entity.shippingEstimate.currency})) }}
+        {% if entity.shippingCost is not null %}
+            {{ UI.renderHtmlProperty('oro.sale.quote.shipping_cost.label'|trans,
+            entity.shippingCost.value|oro_format_currency({'currency': entity.shippingCost.currency})) }}
         {% else %}
-            {{ UI.renderHtmlProperty('oro.sale.quote.shipping_estimate.label'|trans, 'N/A'|trans) }}
+            {{ UI.renderHtmlProperty('oro.sale.quote.shipping_cost.label'|trans, 'N/A'|trans) }}
         {% endif %}
     {% endset %}
 

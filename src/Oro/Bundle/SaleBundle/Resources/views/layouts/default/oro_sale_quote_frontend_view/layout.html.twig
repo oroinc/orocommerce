@@ -52,10 +52,10 @@
                                 <td class="account-oq__order-info__title">{{ 'oro.frontend.sale.quote.ship_until.label'|trans }}</td>
                                 <td>{{ quote.shipUntil|oro_format_date|default('N/A'|trans) }}</td>
                             </tr>
-                            {% if quote.shippingEstimate is not empty %}
+                            {% if quote.shippingCost is not empty %}
                             <tr class="account-oq__order-info__control">
                                 <td class="account-oq__order-info__title">{{ 'oro.frontend.sale.quote.ship_estimate.label'|trans }}</td>
-                                <td>{{ quote.shippingEstimate|oro_format_price }}</td>
+                                <td>{{ quote.shippingCost|oro_format_price }}</td>
                             </tr>
                             {% endif %}
                             {% if paymentTerm is defined and paymentTerm is not empty %}

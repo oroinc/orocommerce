@@ -293,7 +293,7 @@ class QuoteControllerTest extends WebTestCase
                         ],
                         [
                             'label' => 'oro.frontend.sale.quote.ship_estimate.label',
-                            'property' => 'shipping_estimate',
+                            'property' => 'shipping_cost',
                         ],
                         [
                             'label' => 'oro.sale.quote.sections.shipping_address',
@@ -329,7 +329,7 @@ class QuoteControllerTest extends WebTestCase
                         ],
                         [
                             'label' => 'oro.frontend.sale.quote.ship_estimate.label',
-                            'property' => 'shipping_estimate',
+                            'property' => 'shipping_cost',
                         ],
                         [
                             'label' => 'oro.sale.quote.sections.shipping_address',
