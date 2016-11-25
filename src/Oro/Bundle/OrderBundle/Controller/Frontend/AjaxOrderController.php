@@ -4,14 +4,12 @@ namespace Oro\Bundle\OrderBundle\Controller\Frontend;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
-use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\OrderBundle\Controller\AjaxOrderController as BaseAjaxOrderController;
 use Oro\Bundle\OrderBundle\RequestHandler\FrontendOrderDataHandler;
-use Oro\Bundle\OrderBundle\Form\Type\FrontendOrderType;
 use Oro\Bundle\OrderBundle\Entity\Order;
 
 class AjaxOrderController extends BaseAjaxOrderController
@@ -37,15 +35,6 @@ class AjaxOrderController extends BaseAjaxOrderController
         }
 
         return parent::entryPointAction($request, $order);
-    }
-
-    /**
-     * @param Order $order
-     * @return Form
-     */
-    protected function getType(Order $order)
-    {
-        return $this->createForm(FrontendOrderType::NAME, $order);
     }
 
     /**
