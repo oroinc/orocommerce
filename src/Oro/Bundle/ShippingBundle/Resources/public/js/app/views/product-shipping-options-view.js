@@ -135,7 +135,13 @@ define(function(require) {
          * @returns {Object}
          */
         getProductUnits: function() {
-            return $(':data(' + this.options.unitsAttribute + ')').data(this.options.unitsAttribute) || {};
+            var units = {};
+            var that = this;
+            $.each($(':data(' + this.options.unitsAttribute + ')'), function (index, element) {
+                var elementUnits = $(element).data(that.options.unitsAttribute) || {};
+                units = $.extend(units, elementUnits);
+            })
+            return units;
         },
 
         /**
