@@ -1,0 +1,31 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'layout.html.twig'
+        - '@addTree':
+            items:
+                product_container:
+                    blockType: product_view_container
+                    options:
+                        product: '=data["product"]'
+                product_title_container:
+                    blockType: container
+                product_gallery_container:
+                    blockType: container
+                product_main_data_container:
+                    blockType: container
+                product_main_data_first_container:
+                    blockType: container
+                product_main_data_second_container:
+                    blockType: container
+                product_additional_container:
+                    blockType: container
+            tree:
+                page_content:
+                    product_container:
+                        product_title_container: ~
+                        product_gallery_container: ~
+                        product_main_data_container:
+                            product_main_data_first_container: ~
+                            product_main_data_second_container: ~
+                        product_additional_container: ~
