@@ -34,6 +34,7 @@ class CheckoutWorkflowListenerTest extends \PHPUnit_Framework_TestCase
             ->with(self::ENTITY_CLASS)
             ->willReturn($this->repository);
 
+        /** @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject $registry */
         $registry = $this->getMock(ManagerRegistry::class);
         $registry->expects($this->any())
             ->method('getManagerForClass')

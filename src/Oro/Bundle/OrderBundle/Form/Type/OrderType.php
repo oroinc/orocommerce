@@ -13,9 +13,6 @@ use Oro\Bundle\OrderBundle\EventListener\Order\OrderPossibleShippingMethodsEvent
 use Oro\Bundle\OrderBundle\Form\Type\EventListener\SubtotalSubscriber;
 use Oro\Bundle\OrderBundle\Handler\OrderCurrencyHandler;
 use Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
-use Oro\Bundle\PaymentBundle\Form\Type\PaymentTermSelectType;
-use Oro\Bundle\PaymentBundle\Provider\PaymentTermProvider;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -37,12 +34,6 @@ class OrderType extends AbstractType
     /** @var OrderAddressSecurityProvider */
     protected $orderAddressSecurityProvider;
 
-    /** @var PaymentTermProvider */
-    protected $paymentTermProvider;
-
-    /** @var SecurityFacade */
-    protected $securityFacade;
-
     /** @var OrderCurrencyHandler */
     protected $orderCurrencyHandler;
 
@@ -50,22 +41,16 @@ class OrderType extends AbstractType
     protected $subtotalSubscriber;
 
     /**
-     * @param SecurityFacade $securityFacade
      * @param OrderAddressSecurityProvider $orderAddressSecurityProvider
-     * @param PaymentTermProvider $paymentTermProvider
      * @param OrderCurrencyHandler $orderCurrencyHandler
      * @param SubtotalSubscriber $subtotalSubscriber
      */
     public function __construct(
-        SecurityFacade $securityFacade,
         OrderAddressSecurityProvider $orderAddressSecurityProvider,
-        PaymentTermProvider $paymentTermProvider,
         OrderCurrencyHandler $orderCurrencyHandler,
         SubtotalSubscriber $subtotalSubscriber
     ) {
-        $this->securityFacade = $securityFacade;
         $this->orderAddressSecurityProvider = $orderAddressSecurityProvider;
-        $this->paymentTermProvider = $paymentTermProvider;
         $this->orderCurrencyHandler = $orderCurrencyHandler;
         $this->subtotalSubscriber = $subtotalSubscriber;
     }
@@ -139,7 +124,6 @@ class OrderType extends AbstractType
             ->add('sourceEntityClass', HiddenType::class)
             ->add('sourceEntityId', HiddenType::class)
             ->add('sourceEntityIdentifier', HiddenType::class);
-        $this->addPaymentTerm($builder, $order);
         $this->addShippingFields($builder, $order);
         $this->addAddresses($builder, $order);
         $this->addBillingAddress($builder, $order, $options);
@@ -209,69 +193,6 @@ class OrderType extends AbstractType
     public function getBlockPrefix()
     {
         return self::NAME;
-    }
-
-    /**
-     * @return bool
-     */
-    protected function isOverridePaymentTermGranted()
-    {
-        return $this->securityFacade->isGranted('oro_order_payment_term_account_can_override');
-    }
-
-    /**
-     * @param Order $order
-     * @return int|null
-     */
-    protected function getAccountPaymentTermId(Order $order)
-    {
-        $account = $order->getAccount();
-        if (!$account) {
-            return null;
-        }
-
-        $paymentTerm = $this->paymentTermProvider->getAccountPaymentTerm($account);
-
-        return $paymentTerm ? $paymentTerm->getId() : null;
-    }
-
-    /**
-     * @param Order $order
-     * @return int|null
-     */
-    protected function getAccountGroupPaymentTermId(Order $order)
-    {
-        $account = $order->getAccount();
-        if (!$account || !$account->getGroup()) {
-            return null;
-        }
-
-        $paymentTerm = $this->paymentTermProvider->getAccountGroupPaymentTerm($account->getGroup());
-
-        return $paymentTerm ? $paymentTerm->getId() : null;
-    }
-
-    /**
-     * @param FormBuilderInterface $builder
-     * @param Order $order
-     */
-    protected function addPaymentTerm(FormBuilderInterface $builder, Order $order)
-    {
-        if ($this->isOverridePaymentTermGranted()) {
-            $builder
-                ->add(
-                    'paymentTerm',
-                    PaymentTermSelectType::NAME,
-                    [
-                        'label' => 'oro.order.payment_term.label',
-                        'required' => false,
-                        'attr' => [
-                            'data-account-payment-term' => $this->getAccountPaymentTermId($order),
-                            'data-account-group-payment-term' => $this->getAccountGroupPaymentTermId($order),
-                        ],
-                    ]
-                );
-        }
     }
 
     /**
