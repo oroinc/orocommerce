@@ -46,8 +46,7 @@ use Oro\Bundle\CustomerBundle\Model\ExtendAccount;
  *              "group_name"="commerce"
  *          },
  *          "grid"={
- *              "default"="account-accounts-select-grid",
- *              "context"="account-accounts-select-grid"
+ *              "default"="account-accounts-select-grid"
  *          },
  *          "dataaudit"={
  *              "auditable"=true
