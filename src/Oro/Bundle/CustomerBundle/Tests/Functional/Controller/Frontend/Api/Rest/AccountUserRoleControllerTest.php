@@ -51,6 +51,7 @@ class AccountUserRoleControllerTest extends WebTestCase
 
     public function testDeleteCustomizedRole()
     {
+        $this->markTestSkipped('Should be fixed after BB-4518');
         $currentUser = $this->getCurrentUser();
         $currentUser->setAccount($this->getReference('account.orphan'));
         $this->getObjectManager()->flush();
