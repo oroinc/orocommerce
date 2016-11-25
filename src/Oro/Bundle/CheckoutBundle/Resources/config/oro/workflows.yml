@@ -128,7 +128,7 @@ workflows:
                                     - Valid: ~
                                     - NotBlank: ~
                                     - Oro\Bundle\OrderBundle\Validator\Constraints\OrderAddress:
-                                        validationGroups: ['Default', 'Frontend', 'PersonInfo']
+                                        validationGroups: ['Checkout']
                                 disabled: $disallow_billing_address_edit
                         save_billing_address:
                             options:
@@ -164,7 +164,7 @@ workflows:
                                     - Valid: ~
                                     - NotBlank: ~
                                     - Oro\Bundle\OrderBundle\Validator\Constraints\OrderAddress:
-                                        validationGroups: ['Default', 'Frontend']
+                                        validationGroups: ['Checkout']
                         save_shipping_address:
                             options:
                         ship_to_billing_address:
@@ -813,7 +813,7 @@ workflows:
                           - [[shallowCopy], [propertyType, ['\DateTime']]]
                     - '@flush_entity': $.result.shippingAddress
                     - '@call_service_method':
-                        service: oro_payment.provider.payment_term
+                        service: oro_payment_term.provider.payment_term
                         method: getCurrentPaymentTerm
                         attribute: $.result.paymentTerm
                     - '@get_order_line_items':

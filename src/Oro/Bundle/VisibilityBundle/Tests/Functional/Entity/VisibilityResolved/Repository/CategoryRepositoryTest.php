@@ -139,7 +139,7 @@ class CategoryRepositoryTest extends AbstractCategoryRepositoryTest
 
         $this->repository->clearTable();
         $scope = $this->scopeManager->findOrCreate(CategoryVisibility::VISIBILITY_TYPE);
-        $this->repository->insertStaticValues($scope);
+        $this->repository->insertStaticValues($this->getInsertExecutor(), $scope);
 
         $resolvedVisibilities = $this->getResolvedVisibilities();
 
@@ -178,6 +178,7 @@ class CategoryRepositoryTest extends AbstractCategoryRepositoryTest
         $scope = $this->scopeManager->findOrCreate(CategoryVisibility::VISIBILITY_TYPE);
         $this->repository->clearTable();
         $this->repository->insertParentCategoryValues(
+            $this->getInsertExecutor(),
             array_merge($parentCategoryFallbackCategoryIds, [$staticCategoryId]),
             $visibility,
             $scope
@@ -242,7 +243,7 @@ class CategoryRepositoryTest extends AbstractCategoryRepositoryTest
      */
     protected function getRepository()
     {
-        return $this->getContainer()->get('oro_visibility.category_repository_holder')->getRepository();
+        return $this->getContainer()->get('oro_visibility.category_repository');
     }
 
     /**
