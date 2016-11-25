@@ -10,6 +10,7 @@ define(function (require) {
     var $ = require('jquery');
 
     EmptyItemsComponent = BaseComponent.extend({
+        hideElements: '[data-name="empty-items__hide"]',
         /**
          * @property {Object}
          */
@@ -32,6 +33,7 @@ define(function (require) {
             if (this.$el.find(itemsSelector).length == 0) {
                 this.$el.remove();
                 $(emptyBlockSelector).removeClass(this.options.hiddenClass);
+                $(this.hideElements).remove();
             }
         },
         /**
