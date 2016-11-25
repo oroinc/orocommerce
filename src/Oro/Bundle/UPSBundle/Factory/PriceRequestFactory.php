@@ -4,6 +4,7 @@ namespace Oro\Bundle\UPSBundle\Factory;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
+use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
 use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
@@ -29,19 +30,27 @@ class PriceRequestFactory
     /** @var UnitsMapper */
     protected $unitsMapper;
 
+    /** @var SymmetricCrypterInterface */
+    protected $symmetricCrypter;
+
     /**
-     * @param ManagerRegistry $registry
-     * @param MeasureUnitConversion $measureUnitConversion,
-     * @param UnitsMapper $unitsMapper
+     * PriceRequestFactory constructor.
+     *
+     * @param ManagerRegistry           $registry
+     * @param MeasureUnitConversion     $measureUnitConversion
+     * @param UnitsMapper               $unitsMapper
+     * @param SymmetricCrypterInterface $symmetricCrypter
      */
     public function __construct(
         ManagerRegistry $registry,
         MeasureUnitConversion $measureUnitConversion,
-        UnitsMapper $unitsMapper
+        UnitsMapper $unitsMapper,
+        SymmetricCrypterInterface $symmetricCrypter
     ) {
         $this->registry = $registry;
         $this->measureUnitConversion = $measureUnitConversion;
         $this->unitsMapper = $unitsMapper;
+        $this->symmetricCrypter = $symmetricCrypter;
     }
 
     /**
@@ -58,9 +67,11 @@ class PriceRequestFactory
         $requestOption,
         ShippingService $shippingService = null
     ) {
+        $decryptedPassword = $this->symmetricCrypter->decryptData($transport->getApiPassword());
+
         $priceRequest = (new PriceRequest())
             ->setUsername($transport->getApiUser())
-            ->setPassword($transport->getApiPassword())
+            ->setPassword($decryptedPassword)
             ->setAccessLicenseNumber($transport->getApiKey())
             ->setRequestOption($requestOption)
             ->setShipperName($transport->getShippingAccountName())

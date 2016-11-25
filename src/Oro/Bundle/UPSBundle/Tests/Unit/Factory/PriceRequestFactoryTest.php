@@ -10,6 +10,7 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Formatter\Stubs\AddressStub;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
 use Oro\Bundle\ShippingBundle\Entity\LengthUnit;
@@ -60,6 +61,11 @@ class PriceRequestFactoryTest extends \PHPUnit_Framework_TestCase
      */
     protected $priceRequestFactory;
 
+    /**
+     * @var SymmetricCrypterInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $symmetricCrypter;
+
     protected function setUp()
     {
         /** @var ManagerRegistry | \PHPUnit_Framework_MockObject_MockObject $doctrine */
@@ -96,10 +102,15 @@ class PriceRequestFactoryTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()->getMock();
         $this->unitsMapper->expects(static::any())->method('getShippingUnitCode')->willReturn('lbs');
 
+        $this->symmetricCrypter = $this
+            ->getMockBuilder(SymmetricCrypterInterface::class)
+            ->getMock();
+
         $this->priceRequestFactory = new PriceRequestFactory(
             $this->registry,
             $this->measureUnitConversion,
-            $this->unitsMapper
+            $this->unitsMapper,
+            $this->symmetricCrypter
         );
     }
 
@@ -113,6 +124,12 @@ class PriceRequestFactoryTest extends \PHPUnit_Framework_TestCase
      */
     public function testCreate($lineItemCnt, $productWeight, $unitOfWeight, $expectedRequest)
     {
+        $this->symmetricCrypter
+            ->expects($this->once())
+            ->method('decryptData')
+            ->with('some password')
+            ->willReturn('some password');
+
         $this->transport->setUnitOfWeight($unitOfWeight);
 
         $lineItems = [];
