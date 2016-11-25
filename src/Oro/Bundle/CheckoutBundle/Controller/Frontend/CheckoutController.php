@@ -168,6 +168,7 @@ class CheckoutController extends Controller
 
                 if ($transitionForm) {
                     $transitionForm->submit($request);
+
                     if ($transitionForm->isValid()) {
                         $this->getWorkflowManager()->transit($workflowItem, $continueTransition->getTransition());
                     } else {
