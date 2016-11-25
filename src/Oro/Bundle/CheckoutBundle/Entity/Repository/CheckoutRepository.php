@@ -5,8 +5,8 @@ namespace Oro\Bundle\CheckoutBundle\Entity\Repository;
 use Doctrine\ORM\EntityRepository;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use Oro\Bundle\SaleBundle\Entity\Quote;
-use Oro\Bundle\WorkflowBundle\Entity\WorkflowDefinition;
 use Oro\Bundle\WorkflowBundle\Helper\WorkflowQueryTrait;
 
 class CheckoutRepository extends EntityRepository
@@ -165,7 +165,7 @@ class CheckoutRepository extends EntityRepository
             ->execute();
 
         $qb = $this->getEntityManager()->createQueryBuilder();
-        $qb->update('Oro\Bundle\CheckoutBundle\Entity\CheckoutSource', 'checkoutSource')
+        $qb->update(CheckoutSource::class, 'checkoutSource')
             ->set('checkoutSource.deleted', ':deleted')
             ->where($qb->expr()->in('checkoutSource.id', ':checkoutSources'))
             ->setParameter('deleted', true)

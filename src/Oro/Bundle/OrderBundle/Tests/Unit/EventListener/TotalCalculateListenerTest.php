@@ -4,7 +4,7 @@ namespace Oro\Bundle\OrderBundle\Tests\Unit\EventListener;
 
 use Symfony\Component\Form\FormFactory;
 
-use Oro\Bundle\ActionBundle\Helper\ApplicationsHelper;
+use Oro\Bundle\ActionBundle\Provider\CurrentApplicationProviderInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\PricingBundle\Event\TotalCalculateBeforeEvent;
@@ -15,8 +15,8 @@ class TotalCalculateListenerTest extends \PHPUnit_Framework_TestCase
     /** @var \PHPUnit_Framework_MockObject_MockObject|FormFactory */
     protected $formFactory;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ApplicationsHelper */
-    protected $applicationsHelper;
+    /** @var \PHPUnit_Framework_MockObject_MockObject|CurrentApplicationProviderInterface */
+    protected $applicationProvider;
 
     /** @var TotalCalculateListener */
     protected $listener;
@@ -29,10 +29,9 @@ class TotalCalculateListenerTest extends \PHPUnit_Framework_TestCase
         $this->formFactory = $this->getMockBuilder('Symfony\Component\Form\FormFactory')
             ->disableOriginalConstructor()->getMock();
 
-        $this->applicationsHelper = $this->getMockBuilder('Oro\Bundle\ActionBundle\Helper\ApplicationsHelper')
-            ->disableOriginalConstructor()->getMock();
+        $this->applicationProvider = $this->getMock(CurrentApplicationProviderInterface::class);
 
-        $this->listener = new TotalCalculateListener($this->formFactory, $this->applicationsHelper);
+        $this->listener = new TotalCalculateListener($this->formFactory, $this->applicationProvider);
     }
 
     /**
@@ -40,7 +39,7 @@ class TotalCalculateListenerTest extends \PHPUnit_Framework_TestCase
      */
     protected function tearDown()
     {
-        unset($this->formFactory, $this->listener);
+        unset($this->formFactory, $this->listener, $this->applicationProvider);
     }
 
     /**
@@ -51,7 +50,7 @@ class TotalCalculateListenerTest extends \PHPUnit_Framework_TestCase
      */
     public function testOnBeforeTotalCalculate($application, $expected)
     {
-        $this->applicationsHelper->expects($this->once())->method('getCurrentApplication')->willReturn($application);
+        $this->applicationProvider->expects($this->once())->method('getCurrentApplication')->willReturn($application);
 
         $request = $this->getMockBuilder('Symfony\Component\HttpFoundation\Request')
             ->disableOriginalConstructor()
@@ -78,6 +77,9 @@ class TotalCalculateListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener->onBeforeTotalCalculate($event);
     }
 
+    /**
+     * @return array
+     */
     public function testOnBeforeTotalCalculateProvider()
     {
         return [
@@ -100,7 +102,7 @@ class TotalCalculateListenerTest extends \PHPUnit_Framework_TestCase
     public function testOnBeforeTotalCalculateUnexpectedApplication()
     {
         $application  = 'unexpected application';
-        $this->applicationsHelper->expects($this->once())->method('getCurrentApplication')->willReturn($application);
+        $this->applicationProvider->expects($this->once())->method('getCurrentApplication')->willReturn($application);
 
         $request = $this->getMockBuilder('Symfony\Component\HttpFoundation\Request')
             ->disableOriginalConstructor()
