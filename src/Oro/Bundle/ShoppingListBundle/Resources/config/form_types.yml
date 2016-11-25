@@ -17,8 +17,9 @@ services:
         class: 'Oro\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemWidgetType'
         arguments:
             - "@doctrine"
-            - "@security.token_storage"
             - "@translator"
+            - '@oro_security.acl_helper'
+            - '@oro_shopping_list.shopping_list.manager'
         calls:
             - [setShoppingListClass, ['%oro_shopping_list.entity.shopping_list.class%']]
         tags:

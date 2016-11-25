@@ -9,7 +9,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
-use Oro\Bundle\CustomerBundle\Form\Type\AccountTypedAddressType;
+use Oro\Bundle\CustomerBundle\Form\Type\FrontendAccountTypedAddressType;
 use Oro\Bundle\CustomerBundle\Layout\DataProvider\FrontendAccountAddressFormProvider;
 
 class FrontendAccountAddressFormProviderTest extends \PHPUnit_Framework_TestCase
@@ -75,7 +75,7 @@ class FrontendAccountAddressFormProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->mockFormFactory->expects($this->once())
             ->method('create')
-            ->with(AccountTypedAddressType::NAME, $mockAccountUserAddress)
+            ->with(FrontendAccountTypedAddressType::NAME, $mockAccountUserAddress)
             ->willReturn($mockForm);
 
         $form = $this->provider->getAddressFormView($mockAccountUserAddress, $mockAccountUser);

@@ -12,3 +12,4 @@ config:
         'oroshoppinglist/js/shopping-list-item-errors-handler': 'bundles/oroshoppinglist/js/shopping-list-item-errors-handler.js'
         'oroshoppinglist/js/app/components/shoppinglist-widget-view-component': 'bundles/oroshoppinglist/js/app/components/shoppinglist-widget-view-component.js'
         'oroshoppinglist/js/app/components/shoppinglist-title-inline-editable-view-component': 'bundles/oroshoppinglist/js/app/components/shoppinglist-title-inline-editable-view-component.js'
+        'oroshoppinglist/js/app/components/shoppinglist-owner-inline-editable-view-component': 'bundles/oroshoppinglist/js/app/components/shoppinglist-owner-inline-editable-view-component.js'

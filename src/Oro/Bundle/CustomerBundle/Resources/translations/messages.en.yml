@@ -345,7 +345,7 @@ oro.customer:
         access-level:
             BASIC: 'Customer User'
             LOCAL: 'Customer'
-            DEEP: 'Not supported'
+            DEEP: 'Сorporate'
             GLOBAL: 'Not supported'
             SYSTEM: 'Full'
             NONE: 'None'
@@ -388,8 +388,8 @@ oro.customer:
         security:
             access-level:
                 BASIC: 'Individual'
-                LOCAL: 'All'
-                DEEP: 'Not supported'
+                LOCAL: 'Сorporate'
+                DEEP: 'All'
                 GLOBAL: 'Not supported'
                 SYSTEM: 'System'
                 NONE: 'None'
