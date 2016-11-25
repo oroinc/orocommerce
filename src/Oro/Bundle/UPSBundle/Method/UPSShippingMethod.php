@@ -197,8 +197,6 @@ class UPSShippingMethod implements
      * @param ShippingContextInterface $context
      * @param array $types
      * @return array
-     *
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function fetchPrices(ShippingContextInterface $context, array $types)
     {
@@ -207,7 +205,7 @@ class UPSShippingMethod implements
         /** @var UPSTransport $transport */
         $transport = $this->channel->getTransport();
         $priceRequest = $this->priceRequestFactory->create($transport, $context, self::REQUEST_OPTION);
-        if (!$priceRequest || count($priceRequest->getPackages()) < 1) {
+        if (!$priceRequest) {
             return $prices;
         }
 
