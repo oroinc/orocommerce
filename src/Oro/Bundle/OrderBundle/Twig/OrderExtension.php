@@ -21,23 +21,17 @@ class OrderExtension extends \Twig_Extension
     protected $shippingTrackingFormatter;
 
     /**
-     * @var ShippingMethodFormatter
-     */
-    protected $shippingMethodFormatter;
-
-    /**
+     * OrderExtension constructor.
+     *
      * @param SourceDocumentFormatter $sourceDocumentFormatter
      * @param ShippingTrackingFormatter $shippingTrackingFormatter
-     * @param ShippingMethodFormatter $shippingMethodFormatter
      */
     public function __construct(
         SourceDocumentFormatter $sourceDocumentFormatter,
-        ShippingTrackingFormatter $shippingTrackingFormatter,
-        ShippingMethodFormatter $shippingMethodFormatter
+        ShippingTrackingFormatter $shippingTrackingFormatter
     ) {
         $this->sourceDocumentFormatter = $sourceDocumentFormatter;
         $this->shippingTrackingFormatter = $shippingTrackingFormatter;
-        $this->shippingMethodFormatter = $shippingMethodFormatter;
     }
 
     /**
@@ -66,12 +60,7 @@ class OrderExtension extends \Twig_Extension
             new \Twig_SimpleFunction(
                 'oro_order_format_shipping_tracking_link',
                 [$this->shippingTrackingFormatter, 'formatShippingTrackingLink']
-            ),
-            new \Twig_SimpleFunction(
-                'oro_order_shipping_method_with_type_label',
-                [$this->shippingMethodFormatter, 'formatShippingMethodWithTypeLabel']
-            ),
-
+            )
         ];
     }
 

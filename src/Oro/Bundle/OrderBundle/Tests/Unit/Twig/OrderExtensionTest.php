@@ -75,10 +75,6 @@ class OrderExtensionTest extends \PHPUnit_Framework_TestCase
             new \Twig_SimpleFunction(
                 'oro_order_format_shipping_tracking_link',
                 [$this->shippingTrackingFormatter, 'formatShippingTrackingLink']
-            ),
-            new \Twig_SimpleFunction(
-                'oro_order_shipping_method_with_type_label',
-                [$this->shippingMethodFormatter, 'formatShippingMethodWithTypeLabel']
             )
         ];
         static::assertEquals($expected, $this->extension->getFunctions());
