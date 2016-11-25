@@ -197,6 +197,8 @@ class UPSShippingMethod implements
      * @param ShippingContextInterface $context
      * @param array $types
      * @return array
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function fetchPrices(ShippingContextInterface $context, array $types)
     {
