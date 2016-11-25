@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CheckoutBundle\WorkflowState\Mapper;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\Factory\ShippingContextProviderFactory;
+use Oro\Bundle\CheckoutBundle\Factory\CheckoutShippingContextFactory;
 use Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider;
 
 class ShippingMethodEnabledMapper implements CheckoutStateDiffMapperInterface
@@ -16,17 +16,17 @@ class ShippingMethodEnabledMapper implements CheckoutStateDiffMapperInterface
     protected $shippingPriceProvider;
 
     /**
-     * @var ShippingContextProviderFactory
+     * @var CheckoutShippingContextFactory
      */
     protected $shippingContextProviderFactory;
 
     /**
-     * @param ShippingPriceProvider $shippingPriceProvider
-     * @param ShippingContextProviderFactory $shippingContextProviderFactory
+     * @param ShippingPriceProvider          $shippingPriceProvider
+     * @param CheckoutShippingContextFactory $shippingContextProviderFactory
      */
     public function __construct(
         ShippingPriceProvider $shippingPriceProvider,
-        ShippingContextProviderFactory $shippingContextProviderFactory
+        CheckoutShippingContextFactory $shippingContextProviderFactory
     ) {
         $this->shippingPriceProvider = $shippingPriceProvider;
         $this->shippingContextProviderFactory = $shippingContextProviderFactory;

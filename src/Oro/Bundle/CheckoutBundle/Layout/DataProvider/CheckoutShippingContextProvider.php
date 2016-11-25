@@ -3,18 +3,18 @@
 namespace Oro\Bundle\CheckoutBundle\Layout\DataProvider;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\Factory\ShippingContextProviderFactory;
+use Oro\Bundle\CheckoutBundle\Factory\CheckoutShippingContextFactory;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 
 class CheckoutShippingContextProvider
 {
-    /** @var ShippingContextProviderFactory */
+    /** @var CheckoutShippingContextFactory */
     protected $shippingContextProviderFactory;
 
     /**
-     * @param ShippingContextProviderFactory $shippingContextProviderFactory
+     * @param CheckoutShippingContextFactory $shippingContextProviderFactory
      */
-    public function __construct(ShippingContextProviderFactory $shippingContextProviderFactory)
+    public function __construct(CheckoutShippingContextFactory $shippingContextProviderFactory)
     {
         $this->shippingContextProviderFactory = $shippingContextProviderFactory;
     }

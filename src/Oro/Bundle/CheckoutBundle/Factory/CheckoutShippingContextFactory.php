@@ -9,7 +9,7 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
 use Oro\Bundle\ShippingBundle\Factory\ShippingContextFactory;
 
-class ShippingContextProviderFactory
+class CheckoutShippingContextFactory
 {
     /**
      * @var CheckoutLineItemsManager
