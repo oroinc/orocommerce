@@ -44,7 +44,6 @@ class ShoppingListControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertResponseStatusCodeEquals($result, $status);
         if ($user && $status == 204) {
-
             $currentShoppingList = $this->getContainer()->get('oro_shopping_list.shopping_list.manager')
                 ->getCurrent();
 
