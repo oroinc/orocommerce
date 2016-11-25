@@ -230,23 +230,8 @@ datagrids:
             view:
                 rowAction: true
 
-    account-group-accounts-grid-update:
+    account-group-accounts-grid-update-basic:
         extends: account-group-accounts-grid-basic
-        source:
-            query:
-                select:
-                    - >
-                        (CASE WHEN (:group IS NOT NULL) THEN
-                            CASE WHEN (:group = account.group OR account.id IN (:data_in)) AND account.id NOT IN (:data_not_in)
-                            THEN true ELSE false END
-                        ELSE
-                            CASE WHEN account.id IN (:data_in) AND account.id NOT IN (:data_not_in)
-                            THEN true ELSE false END
-                        END) as hasGroup
-            bind_parameters:
-                -
-                    name: group
-                    default: null
         columns:
             hasGroup:
                 label: oro.customer.account.has_group.label
@@ -274,6 +259,28 @@ datagrids:
                 selectors:
                     included: '#groupAppendAccounts'
                     excluded: '#groupRemoveAccounts'
+
+    account-group-accounts-grid-update-by-group:
+        extends: account-group-accounts-grid-update-basic
+        source:
+            query:
+                select:
+                    - >
+                        (CASE WHEN (:group = account.group OR account.id IN (:data_in)) AND account.id NOT IN (:data_not_in)
+                        THEN true ELSE false END) as hasGroup
+            bind_parameters:
+                -
+                    name: group
+                    default: null
+
+    account-group-accounts-grid-update:
+        extends: account-group-accounts-grid-update-basic
+        source:
+            query:
+                select:
+                    - >
+                        (CASE WHEN account.id IN (:data_in) AND account.id NOT IN (:data_not_in)
+                        THEN true ELSE false END) as hasGroup
 
     account-account-user-grid-no-filter-base:
         entity_name: %oro_customer.entity.account_user.class%
