@@ -175,9 +175,7 @@ define(function(require) {
         },
 
         validateIfMonthAndYearNotBlank: function () {
-            if (this.year && this.month) {
-                this.validate(this.options.selectors.expirationDate);
-            }
+            this.validate(this.options.selectors.expirationDate);
         },
 
         setExpirationDate: function() {
@@ -212,42 +210,43 @@ define(function(require) {
          */
         validate: function(elementSelector) {
             var virtualForm = $('<form>');
-            var clonedForm = this.$form.clone();
+
+            var appendElement;
+            if (elementSelector) {
+                appendElement = this.$form.find(elementSelector).clone();
+            } else {
+                appendElement = this.$form.clone();
+            }
+
+            virtualForm.append(appendElement);
 
             var self = this;
+            var validator = virtualForm.validate({
+                ignore: '', // required to validate all fields in virtual form
+                errorPlacement: function(error, element) {
+                    var $el = self.$form.find('#' + $(element).attr('id'));
+                    var parentWithValidation = $el.parents(self.options.selectors.validation);
 
-            clonedForm.find('select').each(function(index, item) {
+                    if (parentWithValidation.length) {
+                        error.appendTo(parentWithValidation.first());
+                    } else {
+                        error.appendTo($el.parent());
+                    }
+                }
+            });
+
+            virtualForm.find('select').each(function(index, item) {
                 //set new select to value of old select
                 //http://stackoverflow.com/questions/742810/clone-isnt-cloning-select-values
                 $(item).val(self.$form.find('select').eq(index).val());
             });
 
-            var validator = virtualForm
-                .append(clonedForm)
-                .validate({
-                    ignore: '',
-                    errorPlacement: function(error, element) {
-                        var $el = self.$form.find('#' + $(element).attr('id'));
-                        var parentWithValidation = $el.parents(self.options.selectors.validation);
-
-                        if (parentWithValidation.length) {
-                            error.appendTo(parentWithValidation.first());
-                        } else {
-                            error.appendTo($el.parent());
-                        }
-                    }
-                });
 
             // Add validator to form
             $.data(virtualForm, 'validator', validator);
 
-            // Emulate that elements are nested into the form
-            $.each(this.options.selectors, function (index, selector) {
-                virtualForm.find(selector).prop('form', virtualForm);
-            });
-
             // Add CC type validation rule
-            var cardNumberField = clonedForm.find(this.options.selectors.cardNumber);
+            var cardNumberField = this.$form.find(this.options.selectors.cardNumber);
             var cardNumberValidation = cardNumberField.data('validation');
             var creditCardTypeValidator = cardNumberField.data('credit-card-type-validator');
 
@@ -266,14 +265,7 @@ define(function(require) {
             errors.find(validator.settings.errorElement + '.' + validator.settings.errorClass).remove();
             errors.parent().find('.error').removeClass('error');
 
-            var isValid;
-            if (elementSelector) {
-                isValid = validator.element(virtualForm.find(elementSelector));
-            } else {
-                isValid = validator.form();
-            }
-
-            return isValid;
+            return validator.form();
         },
 
         /**

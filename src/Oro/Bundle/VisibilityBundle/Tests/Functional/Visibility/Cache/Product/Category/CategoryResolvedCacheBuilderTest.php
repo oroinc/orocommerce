@@ -52,13 +52,14 @@ class CategoryResolvedCacheBuilderTest extends AbstractProductResolvedCacheBuild
         $this->builder = new CategoryResolvedCacheBuilder(
             $container->get('doctrine'),
             $this->scopeManager,
-            $indexScheduler
+            $indexScheduler,
+            $container->get('oro_entity.orm.insert_from_select_query_executor')
         );
         $this->scope = $this->scopeManager->findOrCreate(CategoryVisibility::VISIBILITY_TYPE);
         $this->builder->setCacheClass(
             $container->getParameter('oro_visibility.entity.category_visibility_resolved.class')
         );
-        $this->builder->setRepositoryHolder($container->get('oro_visibility.category_repository_holder'));
+        $this->builder->setRepository($container->get('oro_visibility.category_repository'));
 
         $subtreeBuilder = new VisibilityChangeCategorySubtreeCacheBuilder(
             $container->get('doctrine'),
@@ -75,11 +76,11 @@ class CategoryResolvedCacheBuilderTest extends AbstractProductResolvedCacheBuild
             $container->get('oro_config.manager'),
             $this->scopeManager
         );
-        $positionChangeBuilder->setAccountCategoryRepositoryHolder(
-            $container->get('oro_visibility.account_category_repository_holder')
+        $positionChangeBuilder->setAccountCategoryRepository(
+            $container->get('oro_visibility.account_category_repository')
         );
-        $positionChangeBuilder->setAccountGroupCategoryRepositoryHolder(
-            $container->get('oro_visibility.account_group_category_repository_holder')
+        $positionChangeBuilder->setAccountGroupCategoryRepository(
+            $container->get('oro_visibility.account_group_category_repository')
         );
 
         $this->builder->setPositionChangeCategorySubtreeCacheBuilder($positionChangeBuilder);
