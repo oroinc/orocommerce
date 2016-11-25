@@ -2,12 +2,12 @@
 
 namespace Oro\Bundle\ProductBundle\DependencyInjection;
 
+use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
+use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
+
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
-
-use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 
 class Configuration implements ConfigurationInterface
 {
@@ -29,6 +29,8 @@ class Configuration implements ConfigurationInterface
             $rootNode,
             [
                 'unit_rounding_type' => ['value' => RoundingServiceInterface::ROUND_HALF_UP],
+                'single_unit_mode' => ['value' => false, 'type' => 'boolean'],
+                'single_unit_mode_show_code' => ['value' => false, 'type' => 'boolean'],
                 'default_unit' => ['value' => 'each'],
                 'default_unit_precision' => ['value' => 0],
                 'general_frontend_product_visibility' => [
