@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\EventListener;
 
+use Doctrine\ORM\EntityManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -39,7 +40,7 @@ class CategoryInventoryThresholdFormViewListenerTest extends FormViewListenerTes
         $this->requestStack->expects($this->any())->method('getCurrentRequest')->willReturn($this->request);
         $this->categoryFormViewListener = new CategoryInventoryThresholdFormViewListener(
             $this->requestStack,
-            $this->doctrineHelper,
+            $this->doctrine,
             $this->translator
         );
         $this->event = $this->getBeforeListRenderEventMock();
@@ -47,13 +48,17 @@ class CategoryInventoryThresholdFormViewListenerTest extends FormViewListenerTes
 
     public function testOnCategoryEditIgnoredIfNoCategoryId()
     {
-        $this->doctrineHelper->expects($this->never())->method('getEntityReference');
+        $this->doctrine->expects($this->never())->method('getManagerForClass');
         $this->categoryFormViewListener->onCategoryEdit($this->event);
     }
 
     public function testOnCategoryEditIgnoredIfNoCategoryFound()
     {
-        $this->doctrineHelper->expects($this->once())->method('getEntityReference');
+        $this->em->expects($this->once())->method('getReference');
+        $this->doctrine->expects($this->once())
+            ->method('getManagerForClass')
+            ->with(Category::class)
+            ->willReturn($this->em);
         $this->request->expects($this->once())->method('get')->willReturn('1');
         $this->categoryFormViewListener->onCategoryEdit($this->event);
     }
@@ -62,7 +67,11 @@ class CategoryInventoryThresholdFormViewListenerTest extends FormViewListenerTes
     {
         $this->request->expects($this->once())->method('get')->willReturn('1');
         $category = new Category();
-        $this->doctrineHelper->expects($this->once())->method('getEntityReference')->willReturn($category);
+        $this->em->expects($this->once())->method('getReference')->willReturn($category);
+        $this->doctrine->expects($this->once())
+            ->method('getManagerForClass')
+            ->with(Category::class)
+            ->willReturn($this->em);
         $env = $this->getMockBuilder(\Twig_Environment::class)->disableOriginalConstructor()->getMock();
         $this->event->expects($this->once())->method('getEnvironment')->willReturn($env);
         $scrollData = $this->getMock(ScrollData::class);

@@ -39,7 +39,7 @@ class ProductInventoryThresholdFormViewListenerTest extends FormViewListenerTest
         $this->requestStack->expects($this->any())->method('getCurrentRequest')->willReturn($this->request);
         $this->productWarehouseFormViewListener = new ProductInventoryThresholdFormViewListener(
             $this->requestStack,
-            $this->doctrineHelper,
+            $this->doctrine,
             $this->translator
         );
         $this->event = $this->getBeforeListRenderEventMock();
@@ -47,12 +47,17 @@ class ProductInventoryThresholdFormViewListenerTest extends FormViewListenerTest
 
     public function testOnProductViewIgnoredIfNoProductId()
     {
-        $this->doctrineHelper->expects($this->never())->method('getEntityReference');
+        $this->doctrine->expects($this->never())->method('getManagerForClass');
         $this->productWarehouseFormViewListener->onProductView($this->event);
     }
 
     public function testOnProductViewIgnoredIfNoProductFound()
     {
+        $this->em->expects($this->once())->method('getReference')->willReturn(null);
+        $this->doctrine->expects($this->once())
+            ->method('getManagerForClass')
+            ->with(Product::class)
+            ->willReturn($this->em);
         $this->request->expects($this->once())->method('get')->willReturn('1');
         $this->event->expects($this->never())->method('getEnvironment');
         $this->productWarehouseFormViewListener->onProductView($this->event);
@@ -62,7 +67,11 @@ class ProductInventoryThresholdFormViewListenerTest extends FormViewListenerTest
     {
         $this->request->expects($this->once())->method('get')->willReturn('1');
         $product = new Product();
-        $this->doctrineHelper->expects($this->once())->method('getEntityReference')->willReturn($product);
+        $this->em->expects($this->once())->method('getReference')->willReturn($product);
+        $this->doctrine->expects($this->once())
+            ->method('getManagerForClass')
+            ->with(Product::class)
+            ->willReturn($this->em);
         $env = $this->getMockBuilder(\Twig_Environment::class)->disableOriginalConstructor()->getMock();
         $this->event->expects($this->once())->method('getEnvironment')->willReturn($env);
         $this->event->expects($this->once())->method('getScrollData')->willReturn($this->getMock(ScrollData::class));

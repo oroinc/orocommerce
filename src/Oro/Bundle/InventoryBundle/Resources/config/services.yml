@@ -38,7 +38,7 @@ services:
         abstract: true
         arguments:
             - "@request_stack"
-            - "@oro_entity.doctrine_helper"
+            - "@doctrine"
             - "@translator"
 
     oro_inventory.event_listener.product_manage_inventory_form_view_listener:
