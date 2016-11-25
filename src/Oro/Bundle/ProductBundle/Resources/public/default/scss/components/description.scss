@@ -13,6 +13,7 @@ $product-gallery-container-width: 380px !default;
 
   @include breakpoint('tablet-small') {
     max-width: 100%;
+    width: 100%;
     margin: 15px 0 0;
   }
 }
@@ -34,7 +35,15 @@ $product-gallery-container-width: 380px !default;
     z-index: 2;
 
     @include breakpoint('tablet-small') {
+      float: left;
+      width: 50%;
+      padding-right: 40px;
+    }
+
+    @include breakpoint('mobile') {
       float: none;
+      width: auto;
+      padding-right: 0;
     }
   }
 
