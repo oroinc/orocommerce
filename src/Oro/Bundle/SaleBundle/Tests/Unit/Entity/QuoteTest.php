@@ -3,15 +3,15 @@
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteAddress;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
+use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
@@ -39,7 +39,9 @@ class QuoteTest extends AbstractTest
             ['locked', true],
             ['request', new Request()],
             ['website', new Website()],
-            ['shippingEstimate', new Price()],
+            ['currency', 'UAH'],
+            ['estimatedShippingCostAmount', 15],
+            ['overriddenShippingCostAmount', 15],
         ];
 
         static::assertPropertyAccessors(new Quote(), $properties);
@@ -107,50 +109,6 @@ class QuoteTest extends AbstractTest
         $quote->addQuoteProduct($quoteProduct);
 
         $this->assertEquals($quote, $quoteProduct->getQuote());
-    }
-
-    public function testPostLoad()
-    {
-        $item = new Quote();
-
-        $this->assertNull($item->getShippingEstimate());
-
-        $value = 100;
-        $currency = 'EUR';
-        $this->setProperty($item, 'shippingEstimateAmount', $value)
-            ->setProperty($item, 'shippingEstimateCurrency', $currency);
-
-        $item->postLoad();
-
-        $this->assertEquals(Price::create($value, $currency), $item->getShippingEstimate());
-    }
-
-    public function testUpdateShippingEstimate()
-    {
-        $item = new Quote();
-        $value = 1000;
-        $currency = 'EUR';
-        $item->setShippingEstimate(Price::create($value, $currency));
-
-        $item->updateShippingEstimate();
-
-        $this->assertEquals($value, $this->getProperty($item, 'shippingEstimateAmount'));
-        $this->assertEquals($currency, $this->getProperty($item, 'shippingEstimateCurrency'));
-    }
-
-    public function testSetShippingEstimate()
-    {
-        $value = 10;
-        $currency = 'USD';
-        $price = Price::create($value, $currency);
-
-        $item = new Quote();
-        $item->setShippingEstimate($price);
-
-        $this->assertEquals($price, $item->getShippingEstimate());
-
-        $this->assertEquals($value, $this->getProperty($item, 'shippingEstimateAmount'));
-        $this->assertEquals($currency, $this->getProperty($item, 'shippingEstimateCurrency'));
     }
 
     /**

@@ -80,9 +80,8 @@ class QuoteToOrderConverter
             }
         }
 
-        $this->orderCurrencyHandler->setOrderCurrency($order);
-        if ($quote->getShippingEstimate() !== null) {
-            $this->fillShippingCost($quote->getShippingEstimate(), $order);
+        if ($order->getCurrency() === null) {
+            $this->orderCurrencyHandler->setOrderCurrency($order);
         }
         $this->fillSubtotals($order);
 
@@ -117,7 +116,10 @@ class QuoteToOrderConverter
             ->setShippingAddress($orderShippingAddress)
             ->setSourceEntityClass(ClassUtils::getClass($quote))
             ->setSourceEntityId($quote->getId())
-            ->setSourceEntityIdentifier($quote->getPoNumber());
+            ->setSourceEntityIdentifier($quote->getPoNumber())
+            ->setCurrency($quote->getCurrency())
+            ->setEstimatedShippingCostAmount($quote->getEstimatedShippingCostAmount())
+            ->setOverriddenShippingCostAmount($quote->getOverriddenShippingCostAmount());
 
         return $order;
     }
@@ -206,31 +208,5 @@ class QuoteToOrderConverter
 
         $order->setSubtotal($subtotal->getAmount());
         $order->setTotal($total->getAmount());
-    }
-
-    /**
-     * @param Price $shippingEstimate
-     * @param Order $order
-     */
-    protected function fillShippingCost(Price $shippingEstimate, Order $order)
-    {
-        $estimatedShippingCostAmount = $shippingEstimate->getValue();
-        $shippingEstimateCurrency = $shippingEstimate->getCurrency();
-        $orderCurrency = $order->getCurrency();
-        if ($orderCurrency !== $shippingEstimateCurrency) {
-            $estimatedShippingCostAmount *= $this->getExchangeRate($shippingEstimateCurrency, $orderCurrency);
-        }
-
-        $order->setEstimatedShippingCostAmount($estimatedShippingCostAmount);
-    }
-
-    /**
-     * @param string $fromCurrency
-     * @param string $toCurrency
-     * @return float
-     */
-    protected function getExchangeRate($fromCurrency, $toCurrency)
-    {
-        return 1.0;
     }
 }

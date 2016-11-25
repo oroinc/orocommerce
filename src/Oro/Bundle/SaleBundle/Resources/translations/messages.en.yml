@@ -26,9 +26,15 @@ oro:
             expired.label: 'Expired'
             assigned_users.label: 'Assigned To'
             assigned_account_users.label: 'Assigned Customers'
-            shipping_estimate.label: 'Shipping Estimate'
-            shipping_estimate_amount.label: 'Shipping Estimate Ammount'
-            shipping_estimate_currency.label: 'Shipping Estimate Currency'
+            shipping_cost.label: 'Shipping Cost'
+            estimated_shipping_cost.label: 'Estimated Shipping Cost'
+            overridden_shipping_cost.label: 'Overridden Shipping Cost'
+            estimated_shipping_cost_amount.label: 'Estimated Shipping Cost Amount'
+            overridden_shipping_cost_amount.label: 'Overridden Shipping Cost Amount'
+            shipping_cost_amount.label: 'Shipping Cost Amount'
+            shipping_method.label: 'Shipping Method'
+            shipping_method_type.label: 'Shipping Method Type'
+            currency.label: 'Currency'
             shipping_address.label: 'Shipping Address'
 
             sections:
@@ -76,6 +82,7 @@ oro:
                     choose: Select an address
                     choose_or_create: Select an existing address or enter a new address below
                     manual: Enter other address
+                shipping_options.label: 'Shipping Options'
 
             datagrid:
                 account.label: 'Quotes'

@@ -5,20 +5,19 @@ namespace Oro\Bundle\SaleBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\CustomerBundle\Entity\AccountOwnerAwareInterface;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\Ownership\AuditableFrontendAccountUserAwareTrait;
 use Oro\Bundle\EmailBundle\Model\EmailHolderInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
-use Oro\Bundle\UserBundle\Entity\Ownership\AuditableUserAwareTrait;
-use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\CustomerBundle\Entity\AccountOwnerAwareInterface;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Entity\Ownership\AuditableFrontendAccountUserAwareTrait;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\SaleBundle\Model\ExtendQuote;
+use Oro\Bundle\UserBundle\Entity\Ownership\AuditableUserAwareTrait;
+use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
@@ -254,23 +253,39 @@ class Quote extends ExtendQuote implements
     protected $assignedAccountUsers;
 
     /**
-     * @var float
+     * @var string
      *
-     * @ORM\Column(name="shipping_estimate_amount", type="money", nullable=true)
+     * @ORM\Column(name="shipping_method", type="string", length=255, nullable=true)
      */
-    protected $shippingEstimateAmount;
+    protected $shippingMethod;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="shipping_estimate_currency", type="string", nullable=true, length=3)
+     * @ORM\Column(name="shipping_method_type", type="string", length=255, nullable=true)
      */
-    protected $shippingEstimateCurrency;
+    protected $shippingMethodType;
 
     /**
-     * @var Price
+     * @var float
+     *
+     * @ORM\Column(name="estimated_shipping_cost_amount", type="money", nullable=true)
      */
-    protected $shippingEstimate;
+    protected $estimatedShippingCostAmount;
+
+    /**
+     * @var float
+     *
+     * @ORM\Column(name="override_shipping_cost_amount", type="money", nullable=true)
+     */
+    protected $overriddenShippingCostAmount;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="currency", type="string", nullable=true, length=3)
+     */
+    protected $currency;
 
     /**
      * Constructor
@@ -657,26 +672,127 @@ class Quote extends ExtendQuote implements
     }
 
     /**
-     * Get shipping estimate
+     * Set currency
      *
-     * @return Price|null
+     * @param string $currency
+     *
+     * @return $this
      */
-    public function getShippingEstimate()
+    public function setCurrency($currency)
     {
-        return $this->shippingEstimate;
+        $this->currency = $currency;
+
+        return $this;
     }
 
     /**
-     * Set shipping estimate
+     * Get currency
      *
-     * @param Price $shippingEstimate
+     * @return string
+     */
+    public function getCurrency()
+    {
+        return $this->currency;
+    }
+
+    /**
+     * @return string
+     */
+    public function getShippingMethod()
+    {
+        return $this->shippingMethod;
+    }
+
+    /**
+     * @param string $shippingMethod
      * @return $this
      */
-    public function setShippingEstimate($shippingEstimate = null)
+    public function setShippingMethod($shippingMethod)
     {
-        $this->shippingEstimate = $shippingEstimate;
+        $this->shippingMethod = $shippingMethod;
 
-        $this->updateShippingEstimate();
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getShippingMethodType()
+    {
+        return $this->shippingMethodType;
+    }
+
+    /**
+     * @param string $shippingMethodType
+     * @return $this
+     */
+    public function setShippingMethodType($shippingMethodType)
+    {
+        $this->shippingMethodType = $shippingMethodType;
+
+        return $this;
+    }
+
+    /**
+     * @return Price|null
+     */
+    public function getShippingCost()
+    {
+        $amount = $this->estimatedShippingCostAmount;
+        if ($this->overriddenShippingCostAmount) {
+            $amount = $this->overriddenShippingCostAmount;
+        }
+        if ($amount && $this->currency) {
+            return Price::create($amount, $this->currency);
+        }
+        return null;
+    }
+
+    /**
+     * @return Price|null
+     */
+    public function getEstimatedShippingCost()
+    {
+        if ($this->estimatedShippingCostAmount && $this->currency) {
+            return Price::create($this->estimatedShippingCostAmount, $this->currency);
+        }
+        return null;
+    }
+
+    /**
+     * @return float|null
+     */
+    public function getEstimatedShippingCostAmount()
+    {
+        return $this->estimatedShippingCostAmount;
+    }
+
+    /**
+     * @param float $amount
+     * @return $this
+     */
+    public function setEstimatedShippingCostAmount($amount)
+    {
+        $this->estimatedShippingCostAmount = $amount;
+
+        return $this;
+    }
+
+    /**
+     * @return float|null
+     */
+    public function getOverriddenShippingCostAmount()
+    {
+        return $this->overriddenShippingCostAmount;
+    }
+
+    /**
+     * @param float $amount
+     * @return $this
+     */
+    public function setOverriddenShippingCostAmount($amount)
+    {
+        $this->overriddenShippingCostAmount = $amount;
 
         return $this;
     }
@@ -690,25 +806,5 @@ class Quote extends ExtendQuote implements
     {
         return !$this->isExpired()
             && (!$this->getValidUntil() || $this->getValidUntil() >= new \DateTime('now', new \DateTimeZone('UTC')));
-    }
-
-    /**
-     * @ORM\PostLoad
-     */
-    public function postLoad()
-    {
-        if (null !== $this->shippingEstimateAmount && null !==  $this->shippingEstimateCurrency) {
-            $this->shippingEstimate = Price::create($this->shippingEstimateAmount, $this->shippingEstimateCurrency);
-        }
-    }
-
-    /**
-     * @ORM\PrePersist
-     * @ORM\PreUpdate
-     */
-    public function updateShippingEstimate()
-    {
-        $this->shippingEstimateAmount = $this->shippingEstimate ? $this->shippingEstimate->getValue() : null;
-        $this->shippingEstimateCurrency = $this->shippingEstimate ? $this->shippingEstimate->getCurrency() : null;
     }
 }
