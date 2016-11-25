@@ -102,7 +102,7 @@ class PriceRequestFactoryTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()->getMock();
         $this->unitsMapper->expects(static::any())->method('getShippingUnitCode')->willReturn('lbs');
 
-        $this->symmetricEncrypter = $this
+        $this->symmetricCrypter = $this
             ->getMockBuilder(SymmetricCrypterInterface::class)
             ->getMock();
 
