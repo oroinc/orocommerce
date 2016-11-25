@@ -2,18 +2,17 @@
 
 namespace Oro\Bundle\CustomerBundle\Tests\Functional\Controller\Frontend;
 
-use Symfony\Component\DomCrawler\Field\ChoiceFormField;
-use Symfony\Component\DomCrawler\Form;
-
 use Oro\Bundle\AddressBundle\Entity\AddressType;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Entity\AccountUserAddress;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\AccountUserAddress;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountAddressACLData;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountAddressesACLData;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserAddressesACLData;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Symfony\Component\DomCrawler\Field\ChoiceFormField;
+use Symfony\Component\DomCrawler\Form;
 
 /**
  * @dbIsolation
@@ -109,18 +108,17 @@ class AccountAddressControllerTest extends WebTestCase
         $field = new ChoiceFormField($doc->getElementsByTagName('select')->item(0));
         $form->set($field);
         $form['oro_account_frontend_typed_address[region]'] = 'ZW-MA';
-
+        $user = $this->getReference(LoadAccountAddressACLData::USER_ACCOUNT_2_ROLE_LOCAL);
         $doc->loadHTML(
             '<select name="oro_account_frontend_typed_address[frontendOwner]" ' .
             'id="oro_account_frontend_typed_address_frontend_owner" ' .
             'tabindex="-1" class="select2-offscreen"> ' .
             '<option value="" selected="selected"></option> ' .
-            '<option value="1">AccountUser</option> </select>'
+            '<option value="' . $user->getAccount()->getId() . '">AccountUser</option> </select>'
         );
         $field = new ChoiceFormField($doc->getElementsByTagName('select')->item(0));
         $form->set($field);
-        $form['oro_account_frontend_typed_address[frontendOwner]'] = '1';
-
+        $form['oro_account_frontend_typed_address[frontendOwner]'] = $user->getAccount()->getId();
 
         return $form;
     }

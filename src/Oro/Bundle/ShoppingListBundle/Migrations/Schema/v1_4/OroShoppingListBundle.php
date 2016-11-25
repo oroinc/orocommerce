@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ShoppingListBundle\Migrations\Schema\v1_4;
 
 use Doctrine\DBAL\Schema\Schema;
-
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
@@ -32,6 +31,7 @@ class OroShoppingListBundle implements Migration
     {
         $table = $schema->getTable('oro_shopping_list');
         $table->addColumn('user_owner_id', 'integer', ['notnull' => false]);
+        $table->dropColumn('is_current');
     }
 
     /**

@@ -2,8 +2,10 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Manager;
 
+use Doctrine\Common\Cache\Cache;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\ORM\EntityManager;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -15,7 +17,6 @@ use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class ShoppingListManager
@@ -74,6 +75,7 @@ class ShoppingListManager
      * @param WebsiteManager $websiteManager
      * @param ShoppingListTotalManager $totalManager
      * @param AclHelper $aclHelper
+     * @param Cache $cache
      */
     public function __construct(
         ManagerRegistry $managerRegistry,
@@ -83,7 +85,8 @@ class ShoppingListManager
         UserCurrencyManager $userCurrencyManager,
         WebsiteManager $websiteManager,
         ShoppingListTotalManager $totalManager,
-        AclHelper $aclHelper
+        AclHelper $aclHelper,
+        Cache $cache
     ) {
         $this->managerRegistry = $managerRegistry;
         $this->tokenStorage = $tokenStorage;
@@ -93,14 +96,17 @@ class ShoppingListManager
         $this->websiteManager = $websiteManager;
         $this->totalManager = $totalManager;
         $this->aclHelper = $aclHelper;
+        $this->cache = $cache;
     }
 
     /**
      * Creates new shopping list
      *
+     * @param string $label
+     * @param bool $flush
      * @return ShoppingList
      */
-    public function create()
+    public function create($flush = false, $label = '')
     {
         $shoppingList = new ShoppingList();
         $shoppingList
@@ -109,6 +115,15 @@ class ShoppingListManager
             ->setAccountUser($this->getAccountUser())
             ->setWebsite($this->websiteManager->getCurrentWebsite());
 
+        $shoppingList->setLabel($label !== '' ? $label : $this->translator->trans('oro.shoppinglist.default.label'));
+
+        if ($flush) {
+            /** @var EntityManager $em */
+            $em = $this->managerRegistry->getManagerForClass(ShoppingList::class);
+            $em->persist($shoppingList);
+            $em->flush($shoppingList);
+        }
+
         return $shoppingList;
     }
 
@@ -116,14 +131,11 @@ class ShoppingListManager
      * Creates current shopping list
      *
      * @param string $label
-     *
      * @return ShoppingList
      */
     public function createCurrent($label = '')
     {
-        $shoppingList = $this->create();
-        $shoppingList->setLabel($label !== '' ? $label : $this->translator->trans('oro.shoppinglist.default.label'));
-
+        $shoppingList = $this->create(true, $label);
         $this->setCurrent($this->getAccountUser(), $shoppingList);
 
         return $shoppingList;
@@ -135,18 +147,8 @@ class ShoppingListManager
      */
     public function setCurrent(AccountUser $accountUser, ShoppingList $shoppingList)
     {
-        $em = $this->managerRegistry->getManagerForClass('OroShoppingListBundle:ShoppingList');
-        /** @var ShoppingListRepository $shoppingListRepository */
-        $shoppingListRepository = $em->getRepository('OroShoppingListBundle:ShoppingList');
-        $currentList = $shoppingListRepository->findCurrentForAccountUser($accountUser);
-
-        if ($currentList instanceof ShoppingList && $currentList->getId() !== $shoppingList->getId()) {
-            $currentList->setCurrent(false);
-        }
+        $this->cache->save($accountUser->getId(), $shoppingList->getId());
         $shoppingList->setCurrent(true);
-
-        $em->persist($shoppingList);
-        $em->flush();
     }
 
     /**
@@ -195,6 +197,7 @@ class ShoppingListManager
     public function removeProduct(ShoppingList $shoppingList, Product $product, $flush = true)
     {
         $objectManager = $this->managerRegistry->getManagerForClass('OroShoppingListBundle:LineItem');
+        /** @var LineItemRepository $repository */
         $repository = $objectManager->getRepository('OroShoppingListBundle:LineItem');
 
         $lineItems = $repository->getItemsByShoppingListAndProducts($shoppingList, [$product]);
@@ -253,14 +256,13 @@ class ShoppingListManager
         $em = $this->managerRegistry->getManagerForClass('OroShoppingListBundle:ShoppingList');
         /** @var ShoppingListRepository $repository */
         $repository = $em->getRepository('OroShoppingListBundle:ShoppingList');
-        if ($shoppingListId === null) {
-            $shoppingList = $repository->findCurrentForAccountUser($this->getAccountUser());
-        } else {
-            $shoppingList = $repository->findByUserAndId($this->getAccountUser(), $shoppingListId);
+        $shoppingList = null;
+        if ($shoppingListId) {
+            $shoppingList = $repository->findByUserAndId($this->aclHelper, $shoppingListId);
         }
 
         if (!$shoppingList instanceof ShoppingList) {
-            $shoppingList = $this->createCurrent();
+            $shoppingList = $this->getCurrent(true);
         }
 
         return $shoppingList;
@@ -275,27 +277,57 @@ class ShoppingListManager
     {
         /* @var $repository ShoppingListRepository */
         $repository = $this->getRepository('OroShoppingListBundle:ShoppingList');
-        $shoppingList = $repository->findCurrentForAccountUser($this->getAccountUser());
-
+        if (!$this->getAccountUser()) {
+            return null;
+        }
+        $currentListId = $this->cache->fetch($this->getAccountUser()->getId());
+        $shoppingList = null;
+        if ($currentListId) {
+            $shoppingList = $repository->findByUserAndId($this->aclHelper, $currentListId);
+        }
+        if (!$shoppingList) {
+            $shoppingList  = $repository->findAvailableForAccountUser($this->aclHelper);
+        }
         if ($create && !$shoppingList instanceof ShoppingList) {
             $label = $this->translator->trans($label ?: 'oro.shoppinglist.default.label');
 
-            $shoppingList = $this->create();
+            $shoppingList = $this->createCurrent();
             $shoppingList->setLabel($label);
+        }
+        if ($shoppingList) {
+            $shoppingList->setCurrent(true);
         }
 
         return $shoppingList;
     }
 
     /**
+     * @param array $sortCriteria
      * @return array
      */
-    public function getShoppingLists()
+    public function getShoppingLists(array $sortCriteria = [])
     {
         /* @var $repository ShoppingListRepository */
         $repository = $this->getRepository('OroShoppingListBundle:ShoppingList');
 
-        return $repository->findByUser($this->aclHelper);
+        return $repository->findByUser($this->aclHelper, $sortCriteria);
+    }
+
+    /**
+     * @param array $sortCriteria
+     * @return array
+     */
+    public function getShoppingListsWithCurrentFirst(array $sortCriteria = [])
+    {
+        $shoppingLists = [];
+        $currentShoppingList = $this->getCurrent();
+        if ($currentShoppingList) {
+            /* @var $repository ShoppingListRepository */
+            $repository = $this->getRepository('OroShoppingListBundle:ShoppingList');
+            $shoppingLists = $repository->findByUser($this->aclHelper, $sortCriteria, $currentShoppingList);
+            $shoppingLists = array_merge([$currentShoppingList], $shoppingLists);
+        }
+        return $shoppingLists;
     }
 
     /**
@@ -320,7 +352,7 @@ class ShoppingListManager
         }
 
         if (!$this->accountUser || !is_object($this->accountUser)) {
-            throw new AccessDeniedException();
+            return null;
         }
 
         return $this->accountUser;

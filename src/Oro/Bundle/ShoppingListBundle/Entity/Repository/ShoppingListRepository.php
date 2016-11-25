@@ -6,102 +6,45 @@ use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\QueryBuilder;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class ShoppingListRepository extends EntityRepository
 {
-    /**
-     * @param AccountUser $accountUser
-     * @param bool        $selectRelations
-     *
-     * @return null|ShoppingList
-     * @throws NonUniqueResultException
-     */
-    public function findCurrentForAccountUser(AccountUser $accountUser, $selectRelations = false)
-    {
-        $qb = $this->getShoppingListQueryBuilder($selectRelations);
-        $qb->where('list.accountUser = :accountUser')
-            ->andWhere('list.current = true')
-            ->setParameter('accountUser', $accountUser)
-            ->setMaxResults(1);
-
-        return $qb->getQuery()->getOneOrNullResult();
-    }
 
     /**
-     * @param AccountUser $accountUser
-     * @param bool        $selectRelations
-     *
-     * @return null|ShoppingList
-     * @throws NonUniqueResultException
-     */
-    public function findOneForAccountUser(AccountUser $accountUser, $selectRelations = false)
-    {
-        $qb = $this->getShoppingListQueryBuilder($selectRelations)
-            ->where('list.accountUser = :accountUser')
-            ->setParameter('accountUser', $accountUser)
-            ->setMaxResults(1);
-
-        return $qb->getQuery()->getOneOrNullResult();
-    }
-
-    /**
-     * @param AccountUser $accountUser
-     * @param bool        $selectRelations
-     *
+     * @param AclHelper $aclHelper
+     * @param bool $selectRelations
      * @return null|ShoppingList
      */
-    public function findAvailableForAccountUser(AccountUser $accountUser, $selectRelations = false)
+    public function findAvailableForAccountUser(AclHelper $aclHelper, $selectRelations = false)
     {
         /** @var ShoppingList $shoppingList */
-        $shoppingList = $this->createQueryBuilder('list')
-            ->where('list.accountUser = :accountUser')
-            ->setParameter('accountUser', $accountUser)
-            ->orderBy('list.current', 'DESC')
-            ->addOrderBy('list.id', 'DESC')
-            ->setMaxResults(1)
-            ->getQuery()
-            ->getOneOrNullResult();
-
-        if ($shoppingList && $selectRelations) {
-            $this->findOneByIdWithRelations($shoppingList->getId());
-        }
+        $qb = $this->getShoppingListQueryBuilder($selectRelations);
+        $qb->addOrderBy('list.id', 'DESC')
+            ->setMaxResults(1);
+        $shoppingList = $aclHelper->apply($qb)->getOneOrNullResult();
 
         return $shoppingList;
     }
 
     /**
-     * @param AccountUser $accountUser
-     *
-     * @return QueryBuilder
-     */
-    public function createFindForAccountUserQueryBuilder(AccountUser $accountUser)
-    {
-        $qb = $this->createQueryBuilder('sl');
-
-        return $qb->where(
-            $qb->expr()->orX(
-                'sl.accountUser = :accountUser',
-                'sl.account = :account'
-            )
-        )
-            ->setParameter('accountUser', $accountUser)
-            ->setParameter('account', $accountUser->getAccount());
-    }
-
-    /**
      * @param AclHelper $aclHelper
      * @param array $sortCriteria
+     * @param ShoppingList|int|null $excludeShoppingList
      *
      * @return array
      */
-    public function findByUser(AclHelper $aclHelper, array $sortCriteria = [])
+    public function findByUser(AclHelper $aclHelper, array $sortCriteria = [], $excludeShoppingList = null)
     {
         $qb = $this->createQueryBuilder('list')
             ->select('list, items')
             ->leftJoin('list.lineItems', 'items');
+
+        if ($excludeShoppingList) {
+            $qb->andWhere($qb->expr()->neq('list.id', ':excludeShoppingList'))
+                ->setParameter('excludeShoppingList', $excludeShoppingList);
+        }
 
         foreach ($sortCriteria as $field => $sortOrder) {
             if ($sortOrder === Criteria::ASC) {
@@ -115,68 +58,20 @@ class ShoppingListRepository extends EntityRepository
     }
 
     /**
-     * @param AccountUser $accountUser
-     * @param int         $id
+     * @param AclHelper $aclHelper
+     * @param int $id
      *
      * @return mixed
      * @throws NonUniqueResultException
      */
-    public function findByUserAndId(AccountUser $accountUser, $id)
+    public function findByUserAndId(AclHelper $aclHelper, $id)
     {
-        return $this->createQueryBuilder('list')
+         $qb = $this->createQueryBuilder('list')
             ->select('list')
-            ->where('list.accountUser = :accountUser')
             ->andWhere('list.id = :id')
-            ->setParameter('accountUser', $accountUser)
-            ->setParameter('id', $id)
-            ->getQuery()->getOneOrNullResult();
-    }
-
-    /**
-     * @param AccountUser $accountUser
-     *
-     * @return array
-     */
-    public function findAllExceptCurrentForAccountUser(AccountUser $accountUser)
-    {
-        return $this->createQueryBuilder('list')
-            ->select('list')
-            ->where('list.accountUser = :accountUser')
-            ->andWhere('list.current = false')
-            ->setParameter('accountUser', $accountUser)
-            ->getQuery()->getResult();
-    }
-
-    /**
-     * @param AccountUser $accountUser
-     *
-     * @return ShoppingList|null
-     */
-    public function findLatestForAccountUserExceptCurrent(AccountUser $accountUser)
-    {
-        $qb = $this->createQueryBuilder('list');
-
-        return $qb
-            ->select('list')
-            ->where('list.accountUser = :accountUser')
-            ->andWhere('list.current = false')
-            ->setParameter('accountUser', $accountUser)
-            ->orderBy($qb->expr()->desc('list.id'))
-            ->setMaxResults(1)
-            ->getQuery()->getOneOrNullResult();
-    }
-
-    /**
-     * @param int $id
-     * @return ShoppingList|null
-     */
-    public function findOneByIdWithRelations($id)
-    {
-        $qb = $this->getShoppingListQueryBuilder(true);
-        $qb->where('list.id = :id')
             ->setParameter('id', $id);
 
-        return $qb->getQuery()->getOneOrNullResult();
+        return $aclHelper->apply($qb)->getOneOrNullResult();
     }
 
     /**
@@ -189,15 +84,23 @@ class ShoppingListRepository extends EntityRepository
         $qb = $this->createQueryBuilder('list')
             ->select('list');
         if ($selectRelations) {
-            $qb->addSelect('items', 'product', 'images', 'imageTypes', 'imageFile', 'unitPrecisions')
-                ->leftJoin('list.lineItems', 'items')
-                ->leftJoin('items.product', 'product')
-                ->leftJoin('product.images', 'images')
-                ->leftJoin('images.types', 'imageTypes')
-                ->leftJoin('images.image', 'imageFile')
-                ->leftJoin('product.unitPrecisions', 'unitPrecisions');
+            $this->modifyQbWithRelations($qb);
         }
         
         return $qb;
+    }
+
+    /**
+     * @param QueryBuilder $qb
+     */
+    protected function modifyQbWithRelations(QueryBuilder $qb)
+    {
+        $qb->addSelect('items', 'product', 'images', 'imageTypes', 'imageFile', 'unitPrecisions')
+            ->leftJoin('list.lineItems', 'items')
+            ->leftJoin('items.product', 'product')
+            ->leftJoin('product.images', 'images')
+            ->leftJoin('images.types', 'imageTypes')
+            ->leftJoin('images.image', 'imageFile')
+            ->leftJoin('product.unitPrecisions', 'unitPrecisions');
     }
 }

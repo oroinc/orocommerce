@@ -2,11 +2,9 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Controller\Frontend;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
-use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Form\Handler\ShoppingListHandler;
 use Oro\Bundle\ShoppingListBundle\Form\Type\ShoppingListType;
@@ -34,14 +32,8 @@ class ShoppingListController extends Controller
      */
     public function viewAction(ShoppingList $shoppingList = null)
     {
-        /** @var ShoppingListRepository $repo */
-        $repo = $this->getDoctrine()->getRepository('OroShoppingListBundle:ShoppingList');
-
         if (!$shoppingList) {
-            $user = $this->getUser();
-            if ($user instanceof AccountUser) {
-                $shoppingList = $repo->findAvailableForAccountUser($user, true);
-            }
+            $shoppingList = $this->get('oro_shopping_list.shopping_list.manager')->getCurrent();
         }
         if ($shoppingList) {
             $title = $shoppingList->getLabel();

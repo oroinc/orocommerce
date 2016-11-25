@@ -3,8 +3,6 @@
 namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Controller\Frontend\Api\Rest;
 
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
-use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
-use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListACLData;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListUserACLData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -46,12 +44,9 @@ class ShoppingListControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertResponseStatusCodeEquals($result, $status);
         if ($user && $status == 204) {
-            $currentUser = $this->getReference($user);
 
-            /** @var ShoppingListRepository $repo */
-            $repo = $this->getContainer()->get('doctrine')
-                ->getRepository('OroShoppingListBundle:ShoppingList');
-            $currentShoppingList = $repo->findCurrentForAccountUser($currentUser);
+            $currentShoppingList = $this->getContainer()->get('oro_shopping_list.shopping_list.manager')
+                ->getCurrent();
 
             $this->assertEquals($currentShoppingList->getId(), $shoppingList->getId());
         }
@@ -107,17 +102,16 @@ class ShoppingListControllerTest extends WebTestCase
                 'user' => LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_DEEP_VIEW_ONLY,
                 'status' => 403,
             ],
-            //TODO: uncomment in scope BB-5234
-//            'EDIT (user from parent account : LOCAL)' => [
-//                'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_1_1_USER_LOCAL,
-//                'user' => LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_DEEP,
-//                'status' => 204,
-//            ],
-//            'user from same account : LOCAL' => [
-//                'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_1_USER_LOCAL,
-//                'user' => LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_DEEP,
-//                'status' => 204,
-//            ],
+            'EDIT (user from parent account : LOCAL)' => [
+                'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_1_1_USER_LOCAL,
+                'user' => LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_DEEP,
+                'status' => 204,
+            ],
+            'user from same account : LOCAL' => [
+                'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_1_USER_LOCAL,
+                'user' => LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_DEEP,
+                'status' => 204,
+            ],
             'BASIC' => [
                 'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_1_USER_BASIC,
                 'user' => LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_BASIC,
