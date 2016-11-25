@@ -1,3 +1,5 @@
 styles:
     inputs:
+        - 'bundles/orofrontend/blank/scss/variables/table-config.scss'
+        - 'bundles/orofrontend/blank/scss/settings/global-settings.scss'
         - 'bundles/orofrontend/blank/scss/styles.scss'
