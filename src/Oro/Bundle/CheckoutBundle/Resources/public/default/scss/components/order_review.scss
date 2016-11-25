@@ -161,6 +161,67 @@
   }
 }
 
+@include breakpoint('mobile') {
+    .checkout-order-summary__header {
+        padding-left: 60px;
+        padding-right: 60px;
+    }
+
+    .checkout-order-summary__header__icon-group {
+        left: 10px;
+    }
+
+    .checkout-order-summary__header__edit-link {
+        right: 10px;
+
+        width: 40px;
+    }
+
+    .checkout-order-summary__tab__content {
+        padding: 0 10px !important;
+    }
+
+    .checkout-order-summary {
+        &__table,
+        &__table-row,
+        &__price {
+            display: block;
+        }
+
+        &__table-row {
+            white-space: nowrap;
+        }
+
+        &__product,
+        &__qty {
+            display: inline-block;
+
+            white-space: normal;
+
+            border-bottom: none !important;
+        }
+
+        &__product {
+            width: 75%;
+        }
+
+        &__qty {
+            width: 25%;
+        }
+
+        &__product,
+        &__qty,
+        &__price {
+            border-top: none !important;
+        }
+
+        &__price-inner {
+            max-width: 100% !important;
+            margin-left: 0;
+        }
+    }
+}
+
 .datepicker-icon {
   position: absolute;
   top: 50%;

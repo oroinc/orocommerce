@@ -63,9 +63,9 @@
                  animationSpeed: 0
              }|json_encode() }}"
         >
-            <div class="checkout-order-summary__header order-header">
+            <div class="checkout-order-summary__header">
                 <div data-collapse-trigger>
-                    <div class="checkout-order-summary__header__icon-group order-header__icon">
+                    <div class="checkout-order-summary__header__icon-group">
                         <span class="badge badge_sm badge_orange badge_circled-corners mmr7-md mmr7-sm">
                           <i class="cf-basket"></i>
                         </span>
@@ -81,7 +81,7 @@
                 </div>
                 {% set editLink = workflowItem.data.get('edit_order_link') %}
                 {% if editLink %}
-                    <a href="{{ editLink }}" class="checkout-order-summary__header__edit-link order-header__edit">
+                    <a href="{{ editLink }}" class="checkout-order-summary__header__edit-link">
                         <i class="cf-pencil"></i>
                         {{ 'oro.checkout.order_summary.edit_order'|trans }}
                     </a>
@@ -96,7 +96,7 @@
 
 {% block __oro_checkout_content__checkout_order_summary_table_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " checkout-order-summary__tab__content order-summary"
+        '~class': " checkout-order-summary__tab__content"
     }) %}
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
@@ -119,15 +119,15 @@
         <tr>
             <td colspan="3">
                 <div data-scrollable-content class="scrollable-content">
-                    <table data-scrollable-inner-content class="scrollable-content__table order-summary__table">
+                    <table data-scrollable-inner-content class="scrollable-content__table checkout-order-summary__table">
                         {% for lineItem in lineItemsWithTotals %}
                             {% set lineItemInfo = lineItemsWithTotals.getInfo() %}
                             {% set productSku = lineItem.productSku %}
                             {% if lineItem.product is not null %}
                                 {% set productSku = lineItem.product.sku %}
                             {% endif %}
-                            <tr data-scrollable-content-body class="order-summary__table-row">
-                                <td class="va-t_md order-summary__product">
+                            <tr data-scrollable-content-body class="checkout-order-summary__table-row">
+                                <td class="va-t_md checkout-order-summary__product">
                                     <h3 class="product-item__title product-item__title_in-cart mb1-md">
                                         {% if lineItem.product is not null %}
                                             <a href="{{ path('oro_product_frontend_product_view', {'id':lineItem.product.id}) }}" tabindex="-1">{{ lineItem.product.defaultName }}</a>
@@ -139,9 +139,9 @@
                                                 class="red">{{ productSku }}</span></div>
                                 </td>
                                 {% set quantity = lineItem.quantity %}
-                                <td class="text-center va-t_md order-summary__qty">{{ quantity ? quantity|oro_format_short_product_unit_value(lineItem.productUnit) : 'N/A'|trans }}</td>
-                                <td class="va-t_md text-right order-summary__price">
-                                    <div class="checkout-order-summary__price-table order-summary__price-inner">
+                                <td class="text-center va-t_md checkout-order-summary__qty">{{ quantity ? quantity|oro_format_short_product_unit_value(lineItem.productUnit) : 'N/A'|trans }}</td>
+                                <td class="va-t_md text-right checkout-order-summary__price">
+                                    <div class="checkout-order-summary__price-table checkout-order-summary__price-inner">
                                         <table class="table">
                                             <tbody>
                                             <tr>
