@@ -50,13 +50,14 @@ class ProductResolvedCacheBuilderBuildCacheTest extends WebTestCase
         $this->cacheBuilder = new ProductResolvedCacheBuilder(
             $container->get('doctrine'),
             $container->get('oro_scope.scope_manager'),
-            $indexScheduler
+            $indexScheduler,
+            $container->get('oro_entity.orm.insert_from_select_query_executor')
         );
         $this->cacheBuilder->setCacheClass(
             $container->getParameter('oro_visibility.entity.product_visibility_resolved.class')
         );
-        $this->cacheBuilder->setRepositoryHolder(
-            $container->get('oro_visibility.product_repository_holder')
+        $this->cacheBuilder->setRepository(
+            $container->get('oro_visibility.product_repository')
         );
         $this->getContainer()->get('oro_visibility.visibility.cache.cache_builder')->buildCache();
     }

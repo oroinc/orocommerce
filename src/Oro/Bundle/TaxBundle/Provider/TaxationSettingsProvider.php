@@ -9,7 +9,7 @@ use Oro\Bundle\TaxBundle\Model\TaxBaseExclusion;
 use Oro\Bundle\TaxBundle\Factory\TaxBaseExclusionFactory;
 
 /**
- * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class TaxationSettingsProvider
 {
