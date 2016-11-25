@@ -156,7 +156,7 @@ services:
             - '@security.token_storage'
 
     oro_frontend.provider.action_route:
-        class: 'Oro\Bundle\FrontendBundle\Provider\ActionRouteProvider'
+        class: 'Oro\Bundle\FrontendBundle\Provider\RouteProvider'
         decorates: oro_action.provider.route
         arguments:
             - '@oro_frontend.provider.action_route.inner'
@@ -167,8 +167,8 @@ services:
             - 'oro_frontend_action_widget_buttons'
 
     oro_frontend.provider.workflow_route:
-        class: 'Oro\Bundle\FrontendBundle\Provider\ActionRouteProvider'
-        decorates: oro_action.provider.route
+        class: 'Oro\Bundle\FrontendBundle\Provider\RouteProvider'
+        decorates: oro_workflow.provider.route
         arguments:
             - '@oro_frontend.provider.workflow_route.inner'
             - '@security.token_storage'
