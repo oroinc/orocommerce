@@ -169,10 +169,3 @@ services:
             - '@event_dispatcher'
         tags:
             - { name: doctrine.event_listener, event: onFlush }
-
-    oro_catalog.category_exists_listener:
-        class: Oro\Bundle\CatalogBundle\EventListener\CategoryExistsListener
-        arguments:
-            - '@oro_catalog.repository.category'
-        tags:
-            - { name: kernel.event_listener, event: kernel.controller }

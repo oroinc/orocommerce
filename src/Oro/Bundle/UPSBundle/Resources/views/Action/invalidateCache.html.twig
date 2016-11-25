@@ -4,14 +4,15 @@
     {% set pageComponentOptions = {} %}
      <div class="widget-content">
         <form id="{{ form.vars.id }}" name="{{ form.vars.name }}" action="{{ app.request.uri }}" {{ form_enctype(form) }}
-              method="{{ form.vars.method }}" data-collect="true" class="form-dialog"
+              method="{{ form.vars.method }}" data-collect="true" class="form-dialog invalidate-cache-form"
+
                 {% if buttonOptions.page_component_module is defined %}data-page-component-module="{{ buttonOptions.page_component_module }}"{% endif %}
         >
-            <button onClick="document.getElementsByName('oro_action_operation[invalidateNow]')[0].value ='1'; return true;" type="submit" class="btn">{{ 'oro.ups.form.invalidate_cache.action.invalidate_now'|trans }}</button>
+            <button id="invalidate_cache_submit_button" type="submit" class="btn">{{ 'oro.ups.form.invalidate_cache.action.invalidate_now'|trans }}</button>
             <hr>
             {{ form_widget(form.invalidateNow)}}
             <div>
-                <input id="fix" type="text" name="to_avoid_datapicker_focus" style="visibility: hidden; position:absolute">
+                <input id="fix" type="text" name="to_avoid_datepicker_focus" style="visibility: hidden; position:absolute">
                 <div>{{'oro.ups.form.set_date_and_time_for_cache_invalidation'|trans}}</div>
                 {{ form_widget(form.invalidateCacheAt)}}
             </div>

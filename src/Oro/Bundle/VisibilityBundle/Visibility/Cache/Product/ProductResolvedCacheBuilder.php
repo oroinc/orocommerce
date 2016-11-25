@@ -101,7 +101,7 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implement
             foreach ($scopes as $scope) {
                 $this->registry->getManagerForClass('OroVisibilityBundle:Visibility\ProductVisibility')
                     ->getRepository('OroVisibilityBundle:Visibility\ProductVisibility')
-                    ->setToDefaultWithoutCategory($scope, $product);
+                    ->setToDefaultWithoutCategory($this->insertExecutor, $scope, $product);
             }
             $visibility = ProductVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG;
         }
@@ -111,6 +111,7 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implement
         $scopes = $this->scopeManager->findRelatedScopes(ProductVisibility::VISIBILITY_TYPE);
         foreach ($scopes as $scope) {
             $repository->insertByProduct(
+                $this->insertExecutor,
                 $product,
                 $visibility,
                 $scope,
@@ -131,15 +132,15 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implement
         try {
             $repository = $this->getRepository();
             $repository->clearTable($scope);
-            $repository->insertStatic($scope);
+            $repository->insertStatic($this->insertExecutor, $scope);
             if ($scope) {
                 $categoryScope = $this->scopeManager->findOrCreate(CategoryVisibility::VISIBILITY_TYPE, $scope);
-                $repository->insertByCategory($scope, $categoryScope);
+                $repository->insertByCategory($this->insertExecutor, $scope, $categoryScope);
             } else {
                 $scopes = $this->scopeManager->findRelatedScopes(ProductVisibility::VISIBILITY_TYPE);
                 foreach ($scopes as $scope) {
                     $categoryScope = $this->scopeManager->findOrCreate(CategoryVisibility::VISIBILITY_TYPE, $scope);
-                    $repository->insertByCategory($scope, $categoryScope);
+                    $repository->insertByCategory($this->insertExecutor, $scope, $categoryScope);
                 }
             }
             $manager->commit();
@@ -178,7 +179,7 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implement
      */
     protected function getRepository()
     {
-        return $this->repositoryHolder->getRepository();
+        return $this->repository;
     }
 
     /**
