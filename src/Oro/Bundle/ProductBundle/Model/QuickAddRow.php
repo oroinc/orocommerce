@@ -124,10 +124,11 @@ class QuickAddRow
 
     /**
      * @param string $errorMessage
+     * @param array $additionalParameters
      */
-    public function addError($errorMessage)
+    public function addError($errorMessage, $additionalParameters = [])
     {
-        $this->errors[] = $errorMessage;
+        $this->errors[] = ['message' => $errorMessage, 'parameters' => $additionalParameters];
         $this->valid = false;
     }
 

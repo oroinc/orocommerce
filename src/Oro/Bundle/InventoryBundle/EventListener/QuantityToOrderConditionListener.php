@@ -106,12 +106,12 @@ class QuantityToOrderConditionListener
             }
 
             if ($maxError = $this->validatorService->getMaximumErrorIfInvalid($product, $quickAddRow->getQuantity())) {
-                $quickAddRow->addError($maxError);
+                $quickAddRow->addError($maxError, ['allowedRFP' => true]);
                 continue;
             }
 
             if ($minError = $this->validatorService->getMinimumErrorIfInvalid($product, $quickAddRow->getQuantity())) {
-                $quickAddRow->addError($minError);
+                $quickAddRow->addError($minError, ['allowedRFP' => true]);
             }
         }
     }

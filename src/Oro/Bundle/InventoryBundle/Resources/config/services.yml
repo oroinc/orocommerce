@@ -113,3 +113,11 @@ services:
             - "@oro_inventory.validator.quantity_to_order_validator"
         tags:
             - { name: validator.constraint_validator, alias: oro_inventory_product_quantity_to_order_limit_validator }
+
+    oro_inventory.event_listener.on_rfp_form_error_submit_check_listener:
+        class: 'Oro\Bundle\InventoryBundle\EventListener\RFPOperationListener'
+        arguments:
+            - '@oro_product.layout.data_provider.quick_add_collection'
+        tags:
+            - { name: kernel.event_listener, event: rfp.form_submit_check.oro_product_frontend_quick_add_copy_paste, method: onCopyPasteRFPFormSubmitCheck }
+            - { name: kernel.event_listener, event: rfp.form_submit_check.oro_product_frontend_quick_add_import, method: onQuickAddImportRFPFormSubmitCheck }

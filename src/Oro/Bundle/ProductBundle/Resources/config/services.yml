@@ -497,3 +497,11 @@ services:
            - "@request_stack"
         tags:
             - { name: kernel.event_listener, event: kernel.exception, method: onAccessException }
+
+    oro_product.layout.data_provider.quick_add_collection:
+        class: 'Oro\Bundle\ProductBundle\Provider\QuickAddCollectionProvider'
+        arguments:
+            - '@oro_product.form_handler.quick_add'
+            - '@request_stack'
+        tags:
+            - { name: layout.data_provider, alias: oro_product_quick_add_collection }
