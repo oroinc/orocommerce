@@ -299,6 +299,7 @@ datagrids:
                     type:      string
                     data_name: all_text_LOCALIZATION_ID
                     label:     oro.product.anything.label
+                    visible: false
                 sku:
                     type:      string
                     data_name: sku

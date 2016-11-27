@@ -55,7 +55,7 @@ define(function(require) {
                 filterState = datagrid['collection']['state']['filters'][filterName];
 
                 datagrid['metadata']['filters'].forEach(function (filterDefinition) {
-                    if (filterDefinition['name'] == filterName) {
+                    if (filterDefinition['name'] == filterName && filterDefinition['visible']) {
                         var choiceTypeName;
 
                         filterDefinition['choices'].forEach(function (choiceDefinition) {
