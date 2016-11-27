@@ -4,6 +4,7 @@ namespace Oro\Bundle\ShippingBundle\Context;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Entity\PriceAwareInterface;
+use Oro\Bundle\CustomerBundle\Entity\Ownership\FrontendCustomerUserAwareTrait;
 use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
@@ -12,6 +13,8 @@ use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptionsInterface;
 
 class ShippingContext implements ShippingContextInterface
 {
+    use FrontendCustomerUserAwareTrait;
+
     /**
      * @var object
      */
