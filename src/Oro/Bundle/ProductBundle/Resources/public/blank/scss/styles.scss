@@ -1,3 +1,11 @@
 // @theme: blank
 
-@import 'components/product-view-layout';
+// Layout
+@import './components/product-view-layout';
+
+// Components
+
+@import './components/product-view-desc';
+@import './components/product-view-desc-title';
+@import './components/product-view-desc-list';
+@import './components/sku';

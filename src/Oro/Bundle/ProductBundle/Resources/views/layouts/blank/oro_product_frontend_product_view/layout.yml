@@ -9,44 +9,47 @@ layout:
                 '%name%': '=data["locale"].getLocalizedValue(data["product"].getNames())'
         - '@addTree':
             items:
-                product_container:
+                product_view_container:
                     blockType: product_view_container
                     options:
                         product: '=data["product"]'
-                product_title_container:
+                product_view_primary_container:
                     blockType: container
-                product_title: 
+                product_view_title:
                     blockType: text
                     options:
                         text: '=data["locale"].getLocalizedValue(data["product"].getNames())'
-                product_gallery_container:
+                product_view_aside_container:
                     blockType: container
-                product_main_data_container:
+                product_view_main_container:
                     blockType: container
-                product_main_data_specification_container:
+                product_view_content_container:
                     blockType: container
-                product_sku:
+                product_view_specification_container:
+                    blockType: container
+                product_view_sku:
                     blockType: text
                     options:
                         text: '=data["product"].getSku()'
-                product_main_data_description_container:
+                product_view_description_container:
                     blockType: container
-                product_description:
+                product_view_description:
                     blockType: text
                     options:
                         text: '=data["locale"].getLocalizedValue(data["product"].getDescriptions())'
                         escape: false
-                product_additional_container:
+                product_view_additional_container:
                     blockType: container
             tree:
                 page_content:
-                    product_container:
-                        product_title_container:
-                            product_title: ~
-                        product_gallery_container: ~
-                        product_main_data_container:
-                            product_main_data_specification_container:
-                                product_sku: ~
-                            product_main_data_description_container:
-                                product_description: ~
-                        product_additional_container: ~
+                    product_view_container:
+                        product_view_primary_container:
+                            product_view_title: ~
+                        product_view_aside_container: ~
+                        product_view_main_container:
+                                product_view_sku: ~
+                                product_view_description: ~
+                                product_view_content_container:
+                                    product_view_specification_container: ~
+                                    product_view_description_container: ~
+                        product_view_additional_container: ~

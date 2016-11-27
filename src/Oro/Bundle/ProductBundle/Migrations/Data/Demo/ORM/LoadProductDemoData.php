@@ -75,17 +75,17 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
             $name = new LocalizedFallbackValue();
             $name->setString($row['name']);
 
-            $text = '<p>' . $row['description'] . '</p>'
+            $text = '<p  class="product-view-desc">' . $row['description'] . '</p>'
                 . (
                     array_key_exists('information', $row) && !empty($row['information']) ?
-                    '<p style="text-decoration: underline; font-weight: bold;">Product Information &amp; Features:</p>'
-                    . '<ul><li>' . implode('</li><li>', explode("\n", $row['information'])) . '</li></ul>'
+                    '<p class="product-view-desc-title">Product Information &amp; Features:</p>'
+                    . '<ul class="product-view-desc-list"><li class="product-view-desc-list__item">' . implode('</li><li class="product-view-desc-list__item">', explode("\n", $row['information'])) . '</li></ul>'
                     : ''
                 )
                 . (
                     array_key_exists('specifications', $row) && !empty($row['specifications'])  ?
-                    '<p style="text-decoration: underline; font-weight: bold;">Technical Specs:</p>'
-                    . '<ul><li>' . implode('</li><li>', explode("\n", $row['specifications'])) . '</li></ul>'
+                    '<p class="product-view-desc-title">Technical Specs:</p>'
+                    . '<ul class="product-view-desc-list"><li class="product-view-desc-list__item">' . implode('</li><li class="product-view-desc-list__item">', explode("\n", $row['specifications'])) . '</li></ul>'
                     : ''
                 );
 
