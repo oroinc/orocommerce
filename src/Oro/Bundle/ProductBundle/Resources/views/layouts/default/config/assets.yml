@@ -1,3 +1,4 @@
 styles:
     inputs:
+        - 'bundles/oroproduct/default/scss/variables/sku-config.scss'
         - 'bundles/oroproduct/default/scss/styles.scss'
