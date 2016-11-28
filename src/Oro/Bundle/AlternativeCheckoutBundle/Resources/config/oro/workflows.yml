@@ -353,7 +353,6 @@ workflows:
                             entity: $checkout
                             attribute: $.result.initCheckoutState
                     attribute_fields:
-                        remove_source: ~
                         po_number: ~
                         ship_until: ~
                         customer_notes:
