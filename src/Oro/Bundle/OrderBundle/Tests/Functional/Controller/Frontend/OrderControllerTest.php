@@ -9,10 +9,9 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrdersACLData;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderUserACLData;
-use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Crawler;
+use Oro\Bundle\FrontendTestFrameworkBundle\Test\Client;
 
 /**
  * @dbIsolation
@@ -22,6 +21,11 @@ class OrderControllerTest extends WebTestCase
     const ORDER_PO_NUMBER = 'PO-NUMBER';
     const QUICK_ADD_ORDER_PO_NUMBER = 'QUICK-ADD-PO-NUMBER';
     const ORDER_PO_NUMBER_UPDATED = 'PO-NUMBER-UP';
+
+    /**
+     * @var Client
+     */
+    protected $client;
 
     /**
      * @var DateTimeFormatter
@@ -76,11 +80,8 @@ class OrderControllerTest extends WebTestCase
             }
         }
 
-        $shippingMethodLabel = $this->getContainer()->get('oro_order.formatter.shipping_method')
-            ->formatShippingMethodWithTypeLabel('flat_rate', 'primary');
-        $shippingMethodLabel = $this->getContainer()->get('translator')->trans($shippingMethodLabel);
-        $this->assertArrayHasKey('shippingMethod', $myOrderData);
-        $this->assertEquals($shippingMethodLabel, $myOrderData['shippingMethod']);
+        $this->assertArrayHasKey('poNumber', $myOrderData);
+        $this->assertEquals('PO_NUM', $myOrderData['poNumber']);
     }
 
     /**

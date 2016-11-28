@@ -9,7 +9,7 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
 use Oro\Bundle\ShippingBundle\Factory\ShippingContextFactory;
 
-class ShippingContextProviderFactory
+class CheckoutShippingContextFactory
 {
     /**
      * @var CheckoutLineItemsManager
@@ -58,6 +58,8 @@ class ShippingContextProviderFactory
         $shippingContext->setLineItems(
             $this->checkoutLineItemsManager->getData($checkout)->toArray()
         );
+        $shippingContext->setCustomer($checkout->getAccount());
+        $shippingContext->setCustomerUser($checkout->getAccountUser());
 
         $total = $this->totalProcessor->getTotal($checkout);
         $subtotal = Price::create(

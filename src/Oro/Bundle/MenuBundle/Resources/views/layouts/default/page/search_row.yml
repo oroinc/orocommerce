@@ -1,0 +1,11 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'seatch_row.html.twig'
+
+        - '@add':
+            id: search_row
+            parentId: header_row
+            siblingId: header_row_main_menu
+            prepend: false
+            blockType: container

@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\CustomerBundle\Entity;
 
+/**
+ * @deprecated Use CustomerOwnerAwareInterface
+ */
 interface AccountOwnerAwareInterface
 {
     /**

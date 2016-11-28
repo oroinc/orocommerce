@@ -3,11 +3,11 @@
 namespace Oro\Bundle\InventoryBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\DBAL\Schema\Table;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Fallback\Provider\CategoryFallbackProvider;
 use Oro\Bundle\CatalogBundle\Fallback\Provider\ParentCategoryFallbackProvider;
-use Oro\Bundle\EntityBundle\EntityConfig\DatagridScope;
 use Oro\Bundle\EntityBundle\Fallback\Provider\SystemConfigFallbackProvider;
 use Oro\Bundle\EntityConfigBundle\Migration\UpdateEntityConfigEntityValueQuery;
 use Oro\Bundle\EntityConfigBundle\Migration\UpdateEntityConfigFieldValueQuery;
@@ -64,6 +64,8 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
     {
         $this->addManageInventoryFieldToProduct($schema);
         $this->addManageInventoryFieldToCategory($schema);
+        $this->addInventoryThresholdFieldToProduct($schema);
+        $this->addInventoryThresholdFieldToCategory($schema);
 
         if (($schema->hasTable(self::OLD_WAREHOUSE_INVENTORY_TABLE) ||
                 $schema->hasTable(self::ORO_B2B_WAREHOUSE_INVENTORY_TABLE))
@@ -166,43 +168,7 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
     protected function addManageInventoryFieldToProduct(Schema $schema)
     {
         $productTable = $schema->getTable('oro_product');
-        
-        if ($productTable->hasColumn('manageinventory_id')) {
-            return;
-        }
-        
-        $fallbackTable = $schema->getTable('oro_entity_fallback_value');
-        $this->extendExtension->addManyToOneRelation(
-            $schema,
-            $productTable,
-            'manageInventory',
-            $fallbackTable,
-            'id',
-            [
-                'entity' => [
-                    'label' => 'oro.inventory.manage_inventory.label',
-                ],
-                'extend' => [
-                    'owner' => ExtendScope::OWNER_CUSTOM,
-                    'cascade' => ['all'],
-                ],
-                'form' => [
-                    'is_enabled' => false,
-                ],
-                'view' => [
-                    'is_displayable' => false,
-                ],
-                'datagrid' => [
-                    'is_visible' => DatagridScope::IS_VISIBLE_FALSE,
-                ],
-                'fallback' => [
-                    'fallbackList' => [
-                        CategoryFallbackProvider::FALLBACK_ID => ['fieldName' => 'manageInventory'],
-                        SystemConfigFallbackProvider::FALLBACK_ID => ['configName' => 'oro_inventory.manage_inventory'],
-                    ],
-                ],
-            ]
-        );
+        $this->addManageInventoryField($schema, $productTable);
     }
 
     /**
@@ -211,43 +177,25 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
     protected function addManageInventoryFieldToCategory(Schema $schema)
     {
         $categoryTable = $schema->getTable('oro_catalog_category');
+        $this->addManageInventoryField($schema, $categoryTable, ParentCategoryFallbackProvider::FALLBACK_ID);
+    }
 
-        if ($categoryTable->hasColumn('manageinventory_id')) {
-            return;
-        }
+    /**
+     * @param Schema $schema
+     */
+    public function addInventoryThresholdFieldToProduct(Schema $schema)
+    {
+        $productTable = $schema->getTable('oro_product');
+        $this->addInventoryThresholdField($schema, $productTable);
+    }
 
-        $fallbackTable = $schema->getTable('oro_entity_fallback_value');
-        $this->extendExtension->addManyToOneRelation(
-            $schema,
-            $categoryTable,
-            'manageInventory',
-            $fallbackTable,
-            'id',
-            [
-                'entity' => [
-                    'label' => 'oro.inventory.manage_inventory.label',
-                ],
-                'extend' => [
-                    'owner' => ExtendScope::OWNER_CUSTOM,
-                    'cascade' => ['all'],
-                ],
-                'form' => [
-                    'is_enabled' => false,
-                ],
-                'view' => [
-                    'is_displayable' => false,
-                ],
-                'datagrid' => [
-                    'is_visible' => DatagridScope::IS_VISIBLE_FALSE,
-                ],
-                'fallback' => [
-                    'fallbackList' => [
-                        ParentCategoryFallbackProvider::FALLBACK_ID => ['fieldName' => 'manageInventory'],
-                        SystemConfigFallbackProvider::FALLBACK_ID => ['configName' => 'oro_inventory.manage_inventory'],
-                    ],
-                ],
-            ]
-        );
+    /**
+     * @param Schema $schema
+     */
+    public function addInventoryThresholdFieldToCategory(Schema $schema)
+    {
+        $categoryTable = $schema->getTable('oro_catalog_category');
+        $this->addInventoryThresholdField($schema, $categoryTable, ParentCategoryFallbackProvider::FALLBACK_ID);
     }
 
     /**
@@ -325,5 +273,97 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
     public function getMigrationVersion()
     {
         return 'v1_0';
+    }
+
+    /**
+     * @param Schema $schema
+     * @param Table $table
+     * @param string $defaultFallback
+     */
+    private function addInventoryThresholdField(
+        Schema $schema,
+        Table $table,
+        $defaultFallback = CategoryFallbackProvider::FALLBACK_ID
+    ) {
+        if ($table->hasColumn('inventoryThreshold_id')) {
+            return;
+        }
+
+        $fallbackTable = $schema->getTable('oro_entity_fallback_value');
+        $this->extendExtension->addManyToOneRelation(
+            $schema,
+            $table,
+            'inventoryThreshold',
+            $fallbackTable,
+            'id',
+            [
+                'entity' => [
+                    'label' => 'oro.inventory.inventory_threshold.label',
+                ],
+                'extend' => [
+                    'owner' => ExtendScope::OWNER_CUSTOM,
+                    'cascade' => ['all'],
+                ],
+                'form' => [
+                    'is_enabled' => false,
+                ],
+                'view' => [
+                    'is_displayable' => false,
+                ],
+                'fallback' => [
+                    'fallbackList' => [
+                        $defaultFallback => ['fieldName' => 'inventoryThreshold'],
+                        SystemConfigFallbackProvider::FALLBACK_ID => [
+                            'configName' => 'oro_inventory.inventory_threshold'
+                        ],
+                    ],
+                ],
+            ]
+        );
+    }
+
+    /**
+     * @param Schema $schema
+     * @param Table $table
+     * @param string $defaultFallBack
+     */
+    private function addManageInventoryField(
+        Schema $schema,
+        Table $table,
+        $defaultFallBack = CategoryFallbackProvider::FALLBACK_ID
+    ) {
+        if ($table->hasColumn('manageinventory_id')) {
+            return;
+        }
+
+        $fallbackTable = $schema->getTable('oro_entity_fallback_value');
+        $this->extendExtension->addManyToOneRelation(
+            $schema,
+            $table,
+            'manageInventory',
+            $fallbackTable,
+            'id',
+            [
+                'entity' => [
+                    'label' => 'oro.inventory.manage_inventory.label',
+                ],
+                'extend' => [
+                    'owner' => ExtendScope::OWNER_CUSTOM,
+                    'cascade' => ['all'],
+                ],
+                'form' => [
+                    'is_enabled' => false,
+                ],
+                'view' => [
+                    'is_displayable' => false,
+                ],
+                'fallback' => [
+                    'fallbackList' => [
+                        $defaultFallBack => ['fieldName' => 'manageInventory'],
+                        SystemConfigFallbackProvider::FALLBACK_ID => ['configName' => 'oro_inventory.manage_inventory'],
+                    ],
+                ],
+            ]
+        );
     }
 }

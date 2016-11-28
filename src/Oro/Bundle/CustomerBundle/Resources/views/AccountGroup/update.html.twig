@@ -7,7 +7,11 @@
 
 {% oro_title_set({params : {"%accountGroupName%": entity.name|default('N/A'|trans), '%entityName%': 'oro.customer.accountgroup.entity_label'|trans} }) %}
 
-{% set gridName = 'account-group-accounts-grid-update' %}
+{% if entity.id %}
+    {% set gridName = 'account-group-accounts-grid-update' %}
+{% else %}
+    {% set gridName = 'account-group-accounts-grid-create' %}
+{% endif %}
 
 {% block navButtons %}
     {% if entity.id and resource_granted('DELETE', entity) %}
