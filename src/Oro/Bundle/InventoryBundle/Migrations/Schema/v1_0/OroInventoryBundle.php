@@ -50,6 +50,15 @@ class OroInventoryBundle implements Installation, ExtendExtensionAwareInterface
         $this->addInventoryThresholdFieldToProduct($schema);
         $this->addInventoryThresholdFieldToCategory($schema);
 
+        if (($schema->hasTable(self::OLD_WAREHOUSE_INVENTORY_TABLE) ||
+                $schema->hasTable(self::ORO_B2B_WAREHOUSE_INVENTORY_TABLE))
+            && !$schema->hasTable(self::INVENTORY_LEVEL_TABLE_NAME)
+        ) {
+            $this->renameTablesUpdateRelation($schema, $queries);
+
+            return;
+        }
+
         /** Tables generation **/
         $this->createOroInventoryLevelTable($schema);
 
@@ -59,6 +68,40 @@ class OroInventoryBundle implements Installation, ExtendExtensionAwareInterface
         $queries->addPostQuery(
             new RenameInventoryConfigSectionQuery('oro_warehouse', 'oro_inventory', 'manage_inventory')
         );
+    }
+
+    /**
+     * @param Schema $schema
+     * @param QueryBag $queries
+     * @throws \Doctrine\DBAL\Schema\SchemaException
+     */
+    protected function renameTablesUpdateRelation(Schema $schema, QueryBag $queries)
+    {
+        $extension = $this->renameExtension;
+
+        $toTable = self::INVENTORY_LEVEL_TABLE_NAME;
+        $fromTable = self::OLD_WAREHOUSE_INVENTORY_TABLE;
+        $indexToDrop = 'uidx_oro_wh_wh_inventory_lev';
+
+        if ($schema->hasTable(self::ORO_B2B_WAREHOUSE_INVENTORY_TABLE)) {
+            $fromTable = self::ORO_B2B_WAREHOUSE_INVENTORY_TABLE;
+            $indexToDrop = 'uidx_orob2b_wh_wh_inventory_lev';
+        }
+
+        //rename table
+        $extension->renameTable($schema, $queries, $fromTable, $toTable);
+
+        $inventoryTable = $schema->getTable($fromTable);
+
+        // drop warehouse indexes
+        $inventoryTable->dropIndex($indexToDrop);
+
+        // drop warehouse column
+        $warehouseForeignKey = $this->getConstraintName($inventoryTable, 'warehouse_id');
+        $inventoryTable->removeForeignKey($warehouseForeignKey);
+        $inventoryTable->dropColumn('warehouse_id');
+
+        $this->addEntityConfigUpdateQueries($queries);
     }
 
     /**
