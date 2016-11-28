@@ -3,9 +3,7 @@ services:
     oro_sale.form.type.quote:
         class: 'Oro\Bundle\SaleBundle\Form\Type\QuoteType'
         arguments:
-            - "@oro_security.security_facade"
             - "@oro_sale.provider.quote_address_security"
-            - "@oro_payment.provider.payment_term"
         calls:
             - [setDataClass, ['%oro_sale.entity.quote.class%']]
         tags:

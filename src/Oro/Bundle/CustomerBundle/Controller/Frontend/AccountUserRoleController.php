@@ -2,17 +2,15 @@
 
 namespace Oro\Bundle\CustomerBundle\Controller\Frontend;
 
+use Oro\Bundle\CustomerBundle\Entity\AccountUserRole;
+use Oro\Bundle\LayoutBundle\Annotation\Layout;
+use Oro\Bundle\SecurityBundle\Annotation\Acl;
+use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-
-use Oro\Bundle\LayoutBundle\Annotation\Layout;
-use Oro\Bundle\SecurityBundle\Annotation\Acl;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Bundle\CustomerBundle\Entity\AccountUserRole;
 
 class AccountUserRoleController extends Controller
 {
@@ -38,6 +36,13 @@ class AccountUserRoleController extends Controller
     /**
      * @Route("/view/{id}", name="oro_customer_frontend_account_user_role_view", requirements={"id"="\d+"})
      * @Layout()
+     * @Acl(
+     *      id="oro_account_frontend_account_user_role_view",
+     *      type="entity",
+     *      class="OroCustomerBundle:AccountUserRole",
+     *      permission="VIEW",
+     *      group_name="commerce"
+     * )
      *
      * @param AccountUserRole $role
      *
@@ -81,6 +86,14 @@ class AccountUserRoleController extends Controller
     /**
      * @Route("/update/{id}", name="oro_customer_frontend_account_user_role_update", requirements={"id"="\d+"})
      * @Layout()
+     * @Acl(
+     *      id="oro_account_frontend_account_user_role_update",
+     *      type="entity",
+     *      class="OroCustomerBundle:AccountUserRole",
+     *      permission="UPDATE",
+     *      group_name="commerce"
+     * )
+     *
      * @param AccountUserRole $role
      * @param Request $request
      * @return array

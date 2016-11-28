@@ -92,7 +92,7 @@ services:
             - '@doctrine'
             - '@request_stack'
             - '@oro_security.security_facade'
-            - '@oro_payment.provider.payment_term'
+            - '@oro_payment_term.provider.payment_term'
 
     oro_order.handler.order_currency_handler:
         class: 'Oro\Bundle\OrderBundle\Handler\OrderCurrencyHandler'
@@ -158,7 +158,7 @@ services:
     oro_order.event_listener.order.payment_term:
         class: 'Oro\Bundle\OrderBundle\EventListener\Order\OrderPaymentTermEventListener'
         arguments:
-            - '@oro_payment.provider.payment_term'
+            - '@oro_payment_term.provider.payment_term'
         tags:
             - { name: kernel.event_listener, event: oro_order.order, method: onOrderEvent }
 

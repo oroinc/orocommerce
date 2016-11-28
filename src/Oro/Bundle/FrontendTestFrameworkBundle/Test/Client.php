@@ -36,18 +36,7 @@ class Client extends BaseClient
      */
     public function requestFrontendGrid($gridParameters, $filter = [], $isRealRequest = false)
     {
-        if ($isRealRequest) {
-            list($gridName, $gridParameters) = $this->parseGridParameters($gridParameters, $filter);
-
-            $this->request(
-                'GET',
-                $this->getUrl('oro_frontend_datagrid_index', $gridParameters)
-            );
-
-            return $this->getResponse();
-        } else {
-            return $this->requestGrid($gridParameters, $filter, $isRealRequest);
-        }
+        return $this->requestGrid($gridParameters, $filter, $isRealRequest, 'oro_frontend_datagrid_index');
     }
 
     /**
