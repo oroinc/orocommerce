@@ -127,7 +127,7 @@
                                 {% set productSku = lineItem.product.sku %}
                             {% endif %}
                             <tr data-scrollable-content-body class="checkout-order-summary__table-row">
-                                <td class="va-t_md checkout-order-summary__product">
+                                <td class="checkout-order-summary__product">
                                     <h3 class="product-item__title product-item__title_in-cart mb1-md">
                                         {% if lineItem.product is not null %}
                                             <a href="{{ path('oro_product_frontend_product_view', {'id':lineItem.product.id}) }}" tabindex="-1">{{ lineItem.product.defaultName }}</a>
@@ -139,8 +139,8 @@
                                                 class="red">{{ productSku }}</span></div>
                                 </td>
                                 {% set quantity = lineItem.quantity %}
-                                <td class="text-center va-t_md checkout-order-summary__qty">{{ quantity ? quantity|oro_format_short_product_unit_value(lineItem.productUnit) : 'N/A'|trans }}</td>
-                                <td class="va-t_md text-right checkout-order-summary__price">
+                                <td class="checkout-order-summary__qty">{{ quantity ? quantity|oro_format_short_product_unit_value(lineItem.productUnit) : 'N/A'|trans }}</td>
+                                <td class="checkout-order-summary__price">
                                     <div class="checkout-order-summary__price-table">
                                         <table class="table">
                                             <tbody>
