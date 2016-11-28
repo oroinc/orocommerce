@@ -141,18 +141,18 @@
                                 {% set quantity = lineItem.quantity %}
                                 <td class="checkout-order-summary__qty">{{ quantity ? quantity|oro_format_short_product_unit_value(lineItem.productUnit) : 'N/A'|trans }}</td>
                                 <td class="checkout-order-summary__price">
-                                    <div class="checkout-order-summary__price-table">
-                                        <table class="table">
+                                    <div class="checkout-order-summary__price-inner">
+                                        <table class="checkout-order-summary__price-table">
                                             <tbody>
                                             <tr>
-                                                <td>{{ 'oro.checkout.order_summary.price_per_item'|trans }}:</td>
-                                                <td data-scrollable-item-has-offset>{{ lineItem.price is not null ? lineItem.price|oro_format_price : 'N/A'|trans }}</td>
+                                                <td class="checkout-order-summary__price-line">{{ 'oro.checkout.order_summary.price_per_item'|trans }}:</td>
+                                                <td class="checkout-order-summary__price-line" data-scrollable-item-has-offset>{{ lineItem.price is not null ? lineItem.price|oro_format_price : 'N/A'|trans }}</td>
                                             </tr>
                                             <tr>
-                                                <td>
+                                                <td class="checkout-order-summary__price-line">
                                                     <span>{{ 'oro.checkout.order_summary.total_price'|trans }}</span>
                                                 </td>
-                                                <td data-scrollable-item-has-offset>
+                                                <td class="checkout-order-summary__price-line" data-scrollable-item-has-offset>
                                                     <span class="fs16 blue">{{ lineItemInfo.total|oro_format_price }}</span>
                                                 </td>
                                             </tr>

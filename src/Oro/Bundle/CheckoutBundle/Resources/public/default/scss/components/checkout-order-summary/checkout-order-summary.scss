@@ -1,7 +1,9 @@
+// @theme: default;
+
 .checkout-order-summary {
     margin: 2px 0 0;
-    border-radius: 5px;
 
+    border-radius: 5px;
     background: get-color('additional', 'light');
 
     &__tab.active  &__content {
@@ -13,68 +15,71 @@
     }
 
     &__content {
-      display: block;
-      padding: 0 30px 10px 90px;
+        display: block;
 
-    .oro-grid-table {
-      display: table;
+        padding: 0 30px 10px 90px;
 
-      &__head {
-        th {
-          border-top: 0;
+        .oro-grid-table {
+            display: table;
 
-          background: transparent;
+            &__head {
+                th {
+                    border-top: 0;
+                    background: transparent;
 
-          &:first-child {
-            padding-left: 0;
-          }
+                    &:first-child {
+                        padding-left: 0;
+                    }
+                }
+            }
+
+            & > tbody {
+                td {
+                    padding: 10px 12px;
+
+                    vertical-align: top;
+
+                    border-top: 1px solid get-color('additional', 'middle');
+                    border-bottom: 1px solid get-color('additional', 'middle');
+
+                    &:first-child {
+                        padding-left: 0;
+                    }
+
+                    &:last-child {
+                        padding-right: 0;
+                    }
+                }
+            }
+
+            .table {
+                td:first-child {
+                    text-align: left;
+                }
+
+                td:last-child {
+                    text-align: right;
+                }
+            }
         }
-      }
 
-      & > tbody {
-        td {
-          padding: 10px 12px;
-          vertical-align: top;
-          border-top: 1px solid get-color('additional', 'middle');
-          border-bottom: 1px solid get-color('additional', 'middle');
+        table.table-scrollable {
+            & > tbody > tr > td {
+                padding: 0;
 
-          &:first-child {
-            padding-left: 0;
-          }
+                border: none;
+            }
 
-          &:last-child {
-            padding-right: 0;
-          }
+            thead {
+                th {
+                    border-color: transparent;
+
+                    &:last-child {
+                        padding-right: 0;
+                    }
+                }
+            }
         }
-      }
-
-      .table {
-        td:first-child {
-          text-align: left;
-        }
-
-        td:last-child {
-          text-align: right;
-        }
-      }
-    }
-
-    table.table-scrollable {
-      & > tbody > tr > td {
-        border: none;
-        padding: 0;
-      }
-
-      thead {
-        th {
-          border-color: transparent;
-
-          &:last-child {
-            padding-right: 0;
-          }
-        }
-      }
-    }
     }
 
     &__header {
@@ -90,19 +95,20 @@
 
     &__icon-group {
         position: absolute;
-        left: 35px;
         top: 19px;
+        left: 35px;
     }
 
     &__icon-play {
-        color: get-color('additional', 'dark');
-
         transition: transform .2s linear;
+
+        color: get-color('additional', 'dark');
     }
 
     &__title {
         font-size: $base-font-size;
         line-height: 1.4;
+
         text-transform: uppercase;
     }
 
@@ -116,26 +122,21 @@
         right: 30px;
     }
 
-    &__price-table {
+    &__price-inner {
         max-width: 225px;
-
         margin-left: auto;
+    }
 
-        .table {
-            margin: 0;
+    &__price-line {
+        padding: 0 0 3px !important;
 
-            tbody {
-                td {
-                    padding: 0 0 3px;
-                    border: 0;
+        border: 0 !important;
+    }
 
-                    &:first-child {
-                        text-align: left;
-                        padding-right: 40px;
-                    }
-                }
-            }
-        }
+    &__price-line:first-child {
+        padding-right: 40px !important;
+
+        text-align: left !important;
     }
 
     &__price-table-total {
@@ -159,25 +160,19 @@
 
 @include breakpoint('mobile') {
     .checkout-order-summary {
-
         .oro-grid-table {
-            & > tbody {
-                td {
-                    &:last-child {
-                        padding-left: 0;
-                        padding-right: 0;
-                    }
-                }
+            &__head {
+                display: none;
             }
         }
 
         &__content {
-            padding: 0 10px !important;
+            padding: 0 10px;
         }
 
         &__header {
-            padding-left: 60px;
             padding-right: 60px;
+            padding-left: 60px;
         }
 
         &__icon-group {
@@ -188,12 +183,6 @@
             right: 10px;
 
             width: 40px;
-        }
-
-        &__price-table {
-            display: block;
-            max-width: 100% !important;
-            margin-left: 0;
         }
 
         &__table,
@@ -231,6 +220,17 @@
         &__qty,
         &__price {
             border-top: none !important;
+        }
+
+        &__price-inner {
+            display: block;
+
+            max-width: 100%;
+            margin-left: 0;
+        }
+
+        &__price-table {
+            width: 100%;
         }
     }
 }
