@@ -2,15 +2,15 @@
 
 namespace Oro\Bundle\CustomerBundle\Layout\DataProvider;
 
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
-
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\CustomerBundle\Form\Type\AccountUserPasswordRequestType;
 use Oro\Bundle\CustomerBundle\Form\Type\AccountUserPasswordResetType;
 use Oro\Bundle\CustomerBundle\Form\Type\FrontendAccountUserProfileType;
 use Oro\Bundle\CustomerBundle\Form\Type\FrontendAccountUserType;
+use Oro\Bundle\CustomerBundle\Form\Type\FrontendOwnerSelectType;
 use Oro\Bundle\LayoutBundle\Layout\DataProvider\AbstractFormProvider;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 
 class FrontendAccountUserFormProvider extends AbstractFormProvider
 {
@@ -161,6 +161,20 @@ class FrontendAccountUserFormProvider extends AbstractFormProvider
                 'Entity with type "%s" must be loaded. Method getId() return NULL.',
                 AccountUser::class
             )
+        );
+    }
+
+    /**
+     * @param AccountUser $accountUser
+     * @param object $target
+     * @return FormInterface
+     */
+    public function getAccountUserSelectFormView(AccountUser $accountUser, $target)
+    {
+        return $this->getFormView(
+            FrontendOwnerSelectType::NAME,
+            $accountUser,
+            ['targetObject' => $target]
         );
     }
 }

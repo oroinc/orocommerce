@@ -35,12 +35,6 @@ layout:
 
         - '@setOption':
             id: __addresses_datagrid
-            optionName: grid_parameters
-            optionValue:
-                frontend_owner_id: '=data["entity"].getAccount().getId()'
-
-        - '@setOption':
-            id: __addresses_datagrid
             optionName: grid_render_parameters
             optionValue:
                 themeOptions:
