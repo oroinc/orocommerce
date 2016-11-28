@@ -45,12 +45,13 @@ class AccountRolePageListener
         }
 
         $route = $this->request->attributes->get('_route');
-        $routeParameters = $this->request->attributes->get('_route_params');
 
-        if (!(($route === 'oro_action_widget_f2orm' && $routeParameters['operationName'] === 'clone_role')
-            || in_array($route, ['oro_customer_account_user_role_update', 'oro_customer_account_user_role_create'], true))
-        ) {
-            // we are not at manipulate role page
+        if (!in_array(
+            $route,
+            ['oro_customer_account_user_role_update', 'oro_customer_account_user_role_create'],
+            true
+        )) {
+            // not a manipulate role page
             return;
         }
 
@@ -96,8 +97,12 @@ class AccountRolePageListener
      *
      * @return array
      */
-    protected function addWorkflowACLDatagrid($pageData, \Twig_Environment $twigEnvironment, AccountUserRole $entity, $readOnly)
-    {
+    protected function addWorkflowACLDatagrid(
+        $pageData,
+        \Twig_Environment $twigEnvironment,
+        AccountUserRole $entity,
+        $readOnly
+    ) {
         $dataBlocks = $pageData['dataBlocks'];
         $resultBlocks = [];
         foreach ($dataBlocks as $id => $dataBlock) {
