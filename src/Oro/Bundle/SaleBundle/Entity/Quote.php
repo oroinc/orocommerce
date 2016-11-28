@@ -693,6 +693,14 @@ class Quote extends ExtendQuote implements
     }
 
     /**
+     * @return string
+     */
+    public function getCurrency()
+    {
+        return $this->shippingEstimateCurrency;
+    }
+
+    /**
      * @ORM\PostLoad
      */
     public function postLoad()
