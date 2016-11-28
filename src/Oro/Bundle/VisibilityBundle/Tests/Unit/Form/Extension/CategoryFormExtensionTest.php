@@ -3,39 +3,37 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Form\Extension;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
-use Oro\Bundle\CatalogBundle\Entity\Category;
-use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
-use Symfony\Component\Form\PreloadedExtension;
-use Symfony\Component\Form\Test\FormIntegrationTestCase;
-use Symfony\Component\Validator\Validation;
-
-use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 use Oro\Bundle\AttachmentBundle\Form\Type\ImageType;
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Form\Type\CategoryDefaultProductOptionsType;
+use Oro\Bundle\CatalogBundle\Form\Type\CategoryType;
+use Oro\Bundle\CatalogBundle\Form\Type\CategoryUnitPrecisionType;
+use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Extension\Stub\ImageTypeStub;
+use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Extension\Stub\OroRichTextTypeStub;
+use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\DataChangesetTypeStub;
+use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\EntityChangesetTypeStub;
+use Oro\Bundle\FormBundle\Form\Type\DataChangesetType;
 use Oro\Bundle\FormBundle\Form\Type\EntityChangesetType;
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
-use Oro\Bundle\FormBundle\Form\Type\DataChangesetType;
+use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizationCollectionType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedPropertyType;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizationCollectionTypeStub;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType as EntityIdentifierTypeStub;
-use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Extension\Stub\OroRichTextTypeStub;
-use Oro\Bundle\VisibilityBundle\Form\Type\EntityVisibilityType;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Form\Extension\IntegerExtension;
+use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 use Oro\Bundle\VisibilityBundle\Form\EventListener\VisibilityPostSetDataListener;
 use Oro\Bundle\VisibilityBundle\Form\Extension\CategoryFormExtension;
+use Oro\Bundle\VisibilityBundle\Form\Type\EntityVisibilityType;
 use Oro\Bundle\VisibilityBundle\Provider\VisibilityChoicesProvider;
-use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\EntityChangesetTypeStub;
-use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Extension\Stub\ImageTypeStub;
-use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Extension\Stub\CategoryStub;
-use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\DataChangesetTypeStub;
-use Oro\Bundle\CatalogBundle\Form\Type\CategoryType;
-use Oro\Bundle\CatalogBundle\Form\Type\CategoryDefaultProductOptionsType;
-use Oro\Bundle\CatalogBundle\Form\Type\CategoryUnitPrecisionType;
-use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use Oro\Bundle\ProductBundle\Form\Extension\IntegerExtension;
-use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
+use Oro\Bundle\VisibilityBundle\Tests\Unit\Form\Extension\Stub\CategoryStub;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType as EntityIdentifierTypeStub;
+use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
+use Symfony\Component\Form\PreloadedExtension;
+use Symfony\Component\Form\Test\FormIntegrationTestCase;
+use Symfony\Component\Validator\Validation;
 
 class CategoryFormExtensionTest extends FormIntegrationTestCase
 {

@@ -4,9 +4,9 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
-
-use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData as LoadBaseAccountUserData;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
@@ -18,6 +18,7 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
     const SHOPPING_LIST_3 = 'shopping_list_3';
     const SHOPPING_LIST_4 = 'shopping_list_4';
     const SHOPPING_LIST_5 = 'shopping_list_5';
+    const SHOPPING_LIST_6 = 'shopping_list_6';
 
     /**
      * @var array
@@ -33,7 +34,8 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
     public function getDependencies()
     {
         return [
-            LoadWebsiteData::class
+            LoadWebsiteData::class,
+            LoadAccountUserData::class
         ];
     }
 
@@ -53,6 +55,13 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
                 $isCurrent
             );
         }
+        $accountUser = $this->getReference(LoadAccountUserData::LEVEL_1_1_EMAIL);
+        $this->createShoppingList(
+            $manager,
+            $accountUser,
+            self::SHOPPING_LIST_6,
+            false
+        );
 
         $manager->flush();
     }
@@ -97,7 +106,7 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
     protected function getAccountUser(ObjectManager $manager)
     {
         $accountUser = $manager->getRepository('OroCustomerBundle:AccountUser')
-            ->findOneBy(['username' => LoadAccountUserData::AUTH_USER]);
+            ->findOneBy(['username' => LoadBaseAccountUserData::AUTH_USER]);
 
         if (!$accountUser) {
             throw new \LogicException('Test account user not loaded');

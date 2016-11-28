@@ -7,6 +7,14 @@ services:
         tags:
              - { name: layout.block_type, alias: shopping_list_awere_block }
 
+    oro_shopping_list.layout.type.shopping_list_owner_select_block:
+        parent: oro_layout.block_type.abstract_configurable
+        calls:
+            - [setOptionsConfig, [{shoppingList: {required: true}, form: {required: true}}]]
+            - [setName, ['shopping_list_owner_select_block']]
+        tags:
+             - { name: layout.block_type, alias: shopping_list_owner_select_block }
+
     oro_shopping_list.layout.type.shopping_list_line_items_list:
         parent: oro_layout.block_type.abstract_configurable
         calls:

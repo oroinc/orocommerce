@@ -7,6 +7,7 @@ use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Fallback\Provider\CategoryFallbackProvider;
 use Oro\Bundle\CatalogBundle\Fallback\Provider\ParentCategoryFallbackProvider;
+use Oro\Bundle\EntityBundle\EntityConfig\DatagridScope;
 use Oro\Bundle\EntityBundle\Fallback\Provider\SystemConfigFallbackProvider;
 use Oro\Bundle\EntityConfigBundle\Migration\UpdateEntityConfigEntityValueQuery;
 use Oro\Bundle\EntityConfigBundle\Migration\UpdateEntityConfigFieldValueQuery;
@@ -369,6 +370,9 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
                 ],
                 'view' => [
                     'is_displayable' => false,
+                ],
+                'datagrid' => [
+                    'is_visible' => DatagridScope::IS_VISIBLE_FALSE,
                 ],
                 'fallback' => [
                     'fallbackList' => $fallbackList,
