@@ -4,7 +4,6 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Functional;
 
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\FrontendActionTestCase;
-use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 
@@ -15,7 +14,6 @@ class ShoppingListFrontendActionsTest extends FrontendActionTestCase
 {
     protected function setUp()
     {
-        $this->markTestSkipped('Will be done in scope BB-2098');
         $this->initClient(
             [],
             $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)
@@ -29,7 +27,7 @@ class ShoppingListFrontendActionsTest extends FrontendActionTestCase
         );
     }
 
-    public function testCreateOrder()
+    public function testCreateCheckout()
     {
         if (!$this->client->getContainer()->hasParameter('oro_order.entity.order.class')) {
             $this->markTestSkipped('OrderBundle disabled');
@@ -47,14 +45,11 @@ class ShoppingListFrontendActionsTest extends FrontendActionTestCase
 
         $this->assertArrayHasKey('redirectUrl', $data);
 
-        $this->assertStringStartsWith(
-            $this->getUrl('oro_order_frontend_create', [ProductDataStorage::STORAGE_KEY => 1]),
-            $data['redirectUrl']
-        );
+        $this->assertTrue($data['success']);
 
         $crawler = $this->client->request('GET', $data['redirectUrl']);
 
-        $content = $crawler->filter('[data-ftid=oro_order_frontend_type_lineItems]')->html();
+        $content = $crawler->filter('.checkout-order-summary')->html();
         foreach ($shoppingList->getLineItems() as $lineItem) {
             $this->assertContains($lineItem->getProduct()->getSku(), $content);
         }
@@ -78,14 +73,11 @@ class ShoppingListFrontendActionsTest extends FrontendActionTestCase
 
         $this->assertArrayHasKey('redirectUrl', $data);
 
-        $this->assertStringStartsWith(
-            $this->getUrl('oro_rfp_frontend_request_create', [ProductDataStorage::STORAGE_KEY => 1]),
-            $data['redirectUrl']
-        );
+        $this->assertTrue($data['success']);
 
         $crawler = $this->client->request('GET', $data['redirectUrl']);
 
-        $lineItems = $crawler->filter('[data-ftid=oro_rfp_frontend_request_requestProducts]');
+        $lineItems = $crawler->filter('.rfp-lineitem-product');
         $this->assertNotEmpty($lineItems);
         $content = $lineItems->html();
         foreach ($shoppingList->getLineItems() as $lineItem) {
