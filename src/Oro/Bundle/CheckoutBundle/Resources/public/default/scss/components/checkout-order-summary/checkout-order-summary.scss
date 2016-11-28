@@ -44,11 +44,6 @@
 
           &:last-child {
             padding-right: 0;
-
-            @media (max-width: $screen-sm) {
-              padding-left: 0;
-              padding-right: 0;
-            }
           }
         }
       }
@@ -164,6 +159,18 @@
 
 @include breakpoint('mobile') {
     .checkout-order-summary {
+
+        .oro-grid-table {
+            & > tbody {
+                td {
+                    &:last-child {
+                        padding-left: 0;
+                        padding-right: 0;
+                    }
+                }
+            }
+        }
+
         &__content {
             padding: 0 10px !important;
         }
@@ -197,6 +204,10 @@
 
         &__table-row {
             white-space: nowrap;
+        }
+
+        &__table-inner {
+            display: block;
         }
 
         &__product,
