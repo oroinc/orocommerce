@@ -2,19 +2,23 @@
 
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\EventListener;
 
+use Symfony\Component\Translation\TranslatorInterface;
+
 use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use Oro\Bundle\InventoryBundle\Tests\Unit\EventListener\Stub\CheckoutSourceStub;
 use Oro\Bundle\InventoryBundle\Validator\QuantityToOrderValidatorService;
 use Oro\Bundle\CheckoutBundle\Event\CheckoutValidateEvent;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Event\QuickAddRowCollectionValidateEvent;
+use Oro\Bundle\ProductBundle\Model\QuickAddRow;
+use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
 use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Component\Action\Event\ExtendableConditionEvent;
 use Oro\Bundle\InventoryBundle\EventListener\QuantityToOrderConditionListener;
-
-use Symfony\Component\Translation\TranslatorInterface;
 
 class QuantityToOrderConditionListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -174,5 +178,26 @@ class QuantityToOrderConditionListenerTest extends \PHPUnit_Framework_TestCase
             ->method('addError');
 
         $this->quantityToOrderConditionListener->onCheckoutConditionCheck($event);
+    }
+
+    public function testOnQuickAddRowCollectionValidate()
+    {
+        $event = new QuickAddRowCollectionValidateEvent();
+        $row = new QuickAddRow(1, 'testSKu', 2);
+        $row->setProduct(new Product());
+        $collection = new QuickAddRowCollection();
+        $collection->add($row);
+        $event->setQuickAddRowCollection($collection);
+        $this->validatorService->expects($this->once())
+            ->method('getMaximumErrorIfInvalid')
+            ->willReturn('errorString');
+        $this->quantityToOrderConditionListener->onQuickAddRowCollectionValidate($event);
+        $errors = $row->getErrors();
+        $this->assertCount(1, $errors);
+        $this->assertArrayHasKey('message', $errors[0]);
+        $this->assertArrayHasKey('parameters', $errors[0]);
+        $this->assertArrayHasKey('allowedRFP', $errors[0]['parameters']);
+        $this->assertEquals($errors[0]['message'], 'errorString');
+        $this->assertTrue($errors[0]['parameters']['allowedRFP']);
     }
 }
