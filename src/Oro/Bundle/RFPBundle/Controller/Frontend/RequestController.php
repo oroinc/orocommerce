@@ -28,7 +28,7 @@ class RequestController extends Controller
      *      id="oro_rfp_frontend_request_view",
      *      type="entity",
      *      class="OroRFPBundle:Request",
-     *      permission="ACCOUNT_VIEW",
+     *      permission="VIEW",
      *      group_name="commerce"
      * )
      *
@@ -100,7 +100,7 @@ class RequestController extends Controller
      *      id="oro_rfp_frontend_request_update",
      *      type="entity",
      *      class="OroRFPBundle:Request",
-     *      permission="ACCOUNT_EDIT",
+     *      permission="EDIT",
      *      group_name="commerce"
      * )
      *

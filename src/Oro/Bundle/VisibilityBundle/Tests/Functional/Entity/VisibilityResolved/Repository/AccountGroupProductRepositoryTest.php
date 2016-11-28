@@ -151,8 +151,7 @@ class AccountGroupProductRepositoryTest extends VisibilityResolvedRepositoryTest
      */
     protected function getRepository()
     {
-        return $this->getContainer()->get('oro_visibility.account_group_product_repository_holder')
-            ->getRepository();
+        return $this->getContainer()->get('oro_visibility.account_group_product_repository');
     }
 
     /**

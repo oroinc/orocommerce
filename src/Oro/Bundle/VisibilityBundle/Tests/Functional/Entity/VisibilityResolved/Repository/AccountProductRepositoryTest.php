@@ -71,7 +71,7 @@ class AccountProductRepositoryTest extends VisibilityResolvedRepositoryTestCase
         $product = $this->getReference(LoadProductData::PRODUCT_1);
         /** @var $product Product */
         $repository->deleteByProduct($product);
-        $repository->insertByProduct($product);
+        $repository->insertByProduct($this->getInsertFromSelectExecutor(), $product);
         $visibilities = $repository->findBy(['product' => $product]);
         $this->assertSame(1, count($visibilities));
     }
@@ -162,8 +162,7 @@ class AccountProductRepositoryTest extends VisibilityResolvedRepositoryTestCase
     protected function getRepository()
     {
         return $this->getContainer()
-            ->get('oro_visibility.account_product_repository_holder')
-            ->getRepository();
+            ->get('oro_visibility.account_product_repository');
     }
     /**
      * @param AccountProductVisibilityResolved $visibilityResolved

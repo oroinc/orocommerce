@@ -4,14 +4,13 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Form\Handler;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\Common\Persistence\ObjectManager;
-
-use Symfony\Component\Form\Test\FormInterface;
-use Symfony\Component\HttpFoundation\Request;
-
+use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Form\Handler\ShoppingListHandler;
+use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
+use Symfony\Component\Form\Test\FormInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 class ShoppingListHandlerTest extends \PHPUnit_Framework_TestCase
 {
@@ -87,6 +86,9 @@ class ShoppingListHandlerTest extends \PHPUnit_Framework_TestCase
         $this->form->expects($this->once())
             ->method('isValid')
             ->will($this->returnValue(true));
+
+        $em = $this->getMock(EntityManagerInterface::class);
+        $this->registry->method('getManagerForClass')->willReturn($em);
 
         $handler = new ShoppingListHandler($this->form, $this->request, $this->manager, $this->registry);
         $this->assertTrue($handler->process($this->shoppingList));
