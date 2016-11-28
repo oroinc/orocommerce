@@ -128,7 +128,7 @@ class ShippingMethodRegistryTest extends \PHPUnit_Framework_TestCase
     protected function mockShippingMethod($class, $identifier)
     {
         $method = $this->getMock($class);
-        $method->expects(static::once())
+        $method->expects(static::any())
             ->method('getIdentifier')
             ->willReturn($identifier);
         return $method;

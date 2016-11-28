@@ -88,7 +88,7 @@ operations:
         routes:
             - oro_sale_quote_frontend_view
         order: 20
-        acl_resource: [CREATE, entity:commerce@Oro\Bundle\OrderBundle\Entity\Order]
+        acl_resource: [CREATE, entity:commerce@Oro\Bundle\CheckoutBundle\Entity\Checkout]
         button_options:
             icon: icon-edit
             class:  quota-accept-btn

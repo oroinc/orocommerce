@@ -66,6 +66,7 @@ define(function(require) {
          */
         render: function() {
             this.collectElements();
+            this.onResize();
             return this;
         },
 

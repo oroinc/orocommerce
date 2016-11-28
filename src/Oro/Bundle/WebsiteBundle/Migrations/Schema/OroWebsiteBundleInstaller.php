@@ -4,35 +4,21 @@ namespace Oro\Bundle\WebsiteBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
 
-use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
-use Oro\Bundle\EntityExtendBundle\Extend\RelationType;
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
-use Oro\Bundle\ScopeBundle\Migrations\Schema\OroScopeBundleInstaller;
+use Oro\Bundle\ScopeBundle\Migration\Extension\ScopeExtensionAwareInterface;
+use Oro\Bundle\ScopeBundle\Migration\Extension\ScopeExtensionAwareTrait;
 
-class OroWebsiteBundleInstaller implements Installation, NoteExtensionAwareInterface, ExtendExtensionAwareInterface
+class OroWebsiteBundleInstaller implements Installation, NoteExtensionAwareInterface, ScopeExtensionAwareInterface
 {
-    const WEBSITE_TABLE_NAME = 'oro_website';
+    use ScopeExtensionAwareTrait;
 
-    /**
-     * @var ExtendExtension
-     */
-    private $extendExtension;
+    const WEBSITE_TABLE_NAME = 'oro_website';
 
     /** @var NoteExtension */
     protected $noteExtension;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setExtendExtension(ExtendExtension $extendExtension)
-    {
-        $this->extendExtension = $extendExtension;
-    }
 
     /**
      * @inheritDoc
@@ -47,7 +33,7 @@ class OroWebsiteBundleInstaller implements Installation, NoteExtensionAwareInter
      */
     public function getMigrationVersion()
     {
-        return 'v1_5';
+        return 'v1_6';
     }
 
     /**
@@ -160,21 +146,11 @@ class OroWebsiteBundleInstaller implements Installation, NoteExtensionAwareInter
      */
     private function addRelationsToScope(Schema $schema)
     {
-        $this->extendExtension->addManyToOneRelation(
+        $this->scopeExtension->addScopeAssociation(
             $schema,
-            OroScopeBundleInstaller::ORO_SCOPE,
             'website',
             OroWebsiteBundleInstaller::WEBSITE_TABLE_NAME,
-            'id',
-            [
-                'extend' => [
-                    'owner' => ExtendScope::OWNER_CUSTOM,
-                    'cascade' => ['all'],
-                    'on_delete' => 'CASCADE',
-                    'nullable' => true
-                ]
-            ],
-            RelationType::MANY_TO_ONE
+            'name'
         );
     }
 }

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\EventListener;
 
 use Doctrine\ORM\EntityManager;
+
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
@@ -45,7 +46,6 @@ class CategoryListenerTest extends WebTestCase
         $this->messageProducer = $this->getContainer()->get('oro_message_queue.client.message_producer');
         $this->getContainer()->get('oro_product.model.product_message_handler')->sendScheduledMessages();
         $this->messageProducer->clear();
-        $this->messageProducer->enable();
     }
 
     public function testChangeProductCategory()

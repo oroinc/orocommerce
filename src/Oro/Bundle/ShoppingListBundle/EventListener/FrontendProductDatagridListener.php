@@ -2,18 +2,20 @@
 
 namespace Oro\Bundle\ShoppingListBundle\EventListener;
 
-use Doctrine\ORM\EntityManagerInterface;
-
-use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
-use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface;
-use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
-use Oro\Bundle\DataGridBundle\Event\PreBuild;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
+use Oro\Bundle\DataGridBundle\Event\PreBuild;
+use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface;
+use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultAfter;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
+use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Symfony\Bridge\Doctrine\RegistryInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 /**
  * Add to frontend products grid information about how much qty of some unit were added to current shopping list
@@ -23,17 +25,33 @@ class FrontendProductDatagridListener
     const COLUMN_LINE_ITEMS = 'shopping_lists';
 
     /**
-     * @var SecurityFacade
+     * @var AclHelper
      */
-    protected $securityFacade;
+    protected $aclHelper;
 
     /**
-     * @param SecurityFacade $securityFacade
+     * @var SecurityFacade
+     */
+    protected $tokenStorage;
+
+    /**
+     * @var RegistryInterface
+     */
+    protected $registry;
+
+    /**
+     * @param TokenStorage $tokenStorage
+     * @param AclHelper $aclHelper
+     * @param RegistryInterface $manager
      */
     public function __construct(
-        SecurityFacade $securityFacade
+        TokenStorage $tokenStorage,
+        AclHelper $aclHelper,
+        RegistryInterface $manager
     ) {
-        $this->securityFacade = $securityFacade;
+        $this->tokenStorage = $tokenStorage;
+        $this->aclHelper = $aclHelper;
+        $this->registry = $manager;
     }
 
     /**
@@ -47,7 +65,7 @@ class FrontendProductDatagridListener
             '[properties]',
             [
                 self::COLUMN_LINE_ITEMS => [
-                    'type' => 'field',
+                    'type'          => 'field',
                     'frontend_type' => PropertyInterface::TYPE_ROW_ARRAY,
                 ],
             ]
@@ -55,9 +73,9 @@ class FrontendProductDatagridListener
     }
 
     /**
-     * @param OrmResultAfter $event
+     * @param SearchResultAfter $event
      */
-    public function onResultAfter(OrmResultAfter $event)
+    public function onResultAfter(SearchResultAfter $event)
     {
         $accountUser = $this->getLoggedAccountUser();
         if (!$accountUser) {
@@ -66,13 +84,12 @@ class FrontendProductDatagridListener
 
         /** @var ResultRecord[] $records */
         $records = $event->getRecords();
-        $em = $event->getQuery()->getEntityManager();
-        $shoppingList = $this->getCurrentShoppingList($em, $accountUser);
+        $shoppingList = $this->getCurrentShoppingList();
         if (!$shoppingList || count($records) === 0) {
             return;
         }
 
-        $groupedUnits = $this->getGroupedLineItems($records, $em, $accountUser, $shoppingList);
+        $groupedUnits = $this->getGroupedLineItems($records, $accountUser, $shoppingList);
         foreach ($records as $record) {
             $productId = $record->getValue('id');
             if (array_key_exists($productId, $groupedUnits)) {
@@ -82,16 +99,14 @@ class FrontendProductDatagridListener
     }
 
     /**
-     * @param EntityManagerInterface $em
-     * @param AccountUser $accountUser
      * @return null|ShoppingList
      */
-    protected function getCurrentShoppingList(EntityManagerInterface $em, AccountUser $accountUser)
+    protected function getCurrentShoppingList()
     {
         /** @var ShoppingListRepository $repository */
-        $repository = $em->getRepository('OroShoppingListBundle:ShoppingList');
+        $repository = $this->registry->getRepository('OroShoppingListBundle:ShoppingList');
 
-        return $repository->findAvailableForAccountUser($accountUser);
+        return $repository->findAvailableForAccountUser($this->aclHelper);
     }
 
     /**
@@ -99,29 +114,27 @@ class FrontendProductDatagridListener
      */
     protected function getLoggedAccountUser()
     {
-        $user = $this->securityFacade->getLoggedUser();
-        if (!$user instanceof AccountUser) {
+        $token = $this->tokenStorage->getToken(TokenInterface::class);
+        if (!$token || !($token->getUser() instanceof AccountUser)) {
             return null;
         }
 
-        return $user;
+        return $token->getUser();
     }
 
     /**
      * @param ResultRecord[] $records
-     * @param EntityManagerInterface $em
-     * @param AccountUser $accountUser
-     * @param ShoppingList $currentShoppingList
+     * @param AccountUser    $accountUser
+     * @param ShoppingList   $currentShoppingList
      * @return array
      */
     protected function getGroupedLineItems(
         array $records,
-        EntityManagerInterface $em,
         AccountUser $accountUser,
         ShoppingList $currentShoppingList
     ) {
         /** @var LineItemRepository $lineItemRepository */
-        $lineItemRepository = $em->getRepository('OroShoppingListBundle:LineItem');
+        $lineItemRepository = $this->registry->getRepository('OroShoppingListBundle:LineItem');
         /** @var LineItem[] $lineItems */
         $lineItems = $lineItemRepository->getProductItemsWithShoppingListNames(
             array_map(
@@ -133,14 +146,14 @@ class FrontendProductDatagridListener
             $accountUser
         );
 
-        $groupedUnits = [];
+        $groupedUnits       = [];
         $shoppingListLabels = [];
         foreach ($lineItems as $lineItem) {
-            $shoppingListId = $lineItem->getShoppingList()->getId();
-            $productId = $lineItem->getProduct()->getId();
+            $shoppingListId                              = $lineItem->getShoppingList()->getId();
+            $productId                                   = $lineItem->getProduct()->getId();
             $groupedUnits[$productId][$shoppingListId][] = [
-                'id' => $lineItem->getId(),
-                'unit' => $lineItem->getProductUnitCode(),
+                'id'       => $lineItem->getId(),
+                'unit'     => $lineItem->getProductUnitCode(),
                 'quantity' => $lineItem->getQuantity()
             ];
             if (!isset($shoppingListLabels[$shoppingListId])) {
@@ -154,8 +167,8 @@ class FrontendProductDatagridListener
             /* Active shopping list goes first*/
             if (isset($productGroupedUnits[$activeShoppingListId])) {
                 $productShoppingLists[$productId][] = [
-                    'id' => $activeShoppingListId,
-                    'label' => $shoppingListLabels[$activeShoppingListId],
+                    'id'         => $activeShoppingListId,
+                    'label'      => $shoppingListLabels[$activeShoppingListId],
                     'is_current' => true,
                     'line_items' => $groupedUnits[$productId][$activeShoppingListId],
                 ];
@@ -164,8 +177,8 @@ class FrontendProductDatagridListener
 
             foreach ($productGroupedUnits as $shoppingListId => $lineItems) {
                 $productShoppingLists[$productId][] = [
-                    'id' => $shoppingListId,
-                    'label' => $shoppingListLabels[$shoppingListId],
+                    'id'         => $shoppingListId,
+                    'label'      => $shoppingListLabels[$shoppingListId],
                     'is_current' => false,
                     'line_items' => $lineItems,
                 ];

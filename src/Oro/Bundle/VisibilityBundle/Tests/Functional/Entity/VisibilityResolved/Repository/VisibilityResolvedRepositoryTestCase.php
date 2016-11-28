@@ -86,7 +86,7 @@ abstract class VisibilityResolvedRepositoryTestCase extends WebTestCase
         $scope = $this->getScope($targetEntityReference);
         /** @var AccountGroupProductRepository $repository */
         $repository = $this->getRepository();
-        $repository->insertByCategory($scope);
+        $repository->insertByCategory($this->getInsertFromSelectExecutor(), $this->scopeManager, $scope);
         $resolvedEntities = $this->getResolvedValues();
         $this->assertCount(count($expectedData), $resolvedEntities);
         foreach ($expectedData as $data) {
@@ -114,7 +114,7 @@ abstract class VisibilityResolvedRepositoryTestCase extends WebTestCase
         /** @var AccountGroupProductRepository $repository */
         $repository = $this->getRepository();
         $repository->clearTable();
-        $repository->insertStatic();
+        $repository->insertStatic($this->getInsertFromSelectExecutor());
         $resolved = $this->getResolvedValues();
         $this->assertCount($expectedRows, $resolved);
         $visibilities = $this->getSourceRepository()->findAll();

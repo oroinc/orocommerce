@@ -6,15 +6,19 @@ use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadFrontendProductVisibilityData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadFrontendProductData;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 
 abstract class QuickAddControllerTest extends WebTestCase
 {
-    const VALIDATION_TOTAL_ROWS = 'Total number of records';
-    const VALIDATION_VALID_ROWS = 'Valid items';
-    const VALIDATION_ERROR_ROWS = 'Records with errors';
-    const VALIDATION_ERRORS = 'Errors';
+    const VALIDATION_TOTAL_ROWS      = 'Total number of records';
+    const VALIDATION_VALID_ROWS      = 'Valid items';
+    const VALIDATION_ERROR_ROWS      = 'Records with errors';
+    const VALIDATION_ERRORS          = 'Errors';
     const VALIDATION_RESULT_SELECTOR = 'div.validation-info table tbody tr';
     const VALIDATION_ERRORS_SELECTOR = 'div.import-errors ol li';
     const VALIDATION_ERROR_NOT_FOUND = 'Item number %s does not found.';
@@ -27,16 +31,19 @@ abstract class QuickAddControllerTest extends WebTestCase
             $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)
         );
 
-        $this->loadFixtures([
-            'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
-            'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions'
-        ]);
+        $this->loadFixtures(
+            [
+                LoadFrontendProductData::class,
+                LoadFrontendProductVisibilityData::class,
+                LoadProductUnitPrecisions::class
+            ]
+        );
     }
 
     /**
      * @param string $processorName
      * @param string $routerName
-     * @param array $routerParams
+     * @param array  $routerParams
      * @param string $expectedMessage
      *
      * @dataProvider validationResultProvider
@@ -54,7 +61,7 @@ abstract class QuickAddControllerTest extends WebTestCase
             self::VALIDATION_TOTAL_ROWS => 4,
             self::VALIDATION_VALID_ROWS => 3,
             self::VALIDATION_ERROR_ROWS => 1,
-            self::VALIDATION_ERRORS => [
+            self::VALIDATION_ERRORS     => [
                 sprintf(self::VALIDATION_ERROR_NOT_FOUND, 'not-existing-product'),
             ]
         ];
@@ -77,8 +84,8 @@ abstract class QuickAddControllerTest extends WebTestCase
         $this->updateFormActionToDialog($resultForm);
         $resultForm['oro_product_quick_add[component]'] = $processorName;
         $this->client->submit($resultForm);
-        $response = $this->client->getResponse();
-        $result = static::getJsonResponseContent($response, 200);
+        $response  = $this->client->getResponse();
+        $result    = static::getJsonResponseContent($response, 200);
         $targetUrl = $result['redirectUrl'];
 
         $expectedTargetUrl = $this->getUrl($routerName, $routerParams);
@@ -94,9 +101,40 @@ abstract class QuickAddControllerTest extends WebTestCase
         }
     }
 
+    public function testVisibilityCopyPasteAction()
+    {
+        $example = [
+            LoadProductData::PRODUCT_1 . ", 1",
+            LoadProductData::PRODUCT_2 . ",     2",
+            LoadProductData::PRODUCT_3 . "\t3",
+            LoadProductData::PRODUCT_4 . "\t1" //Hidden product
+        ];
+
+        $expectedValidationResult = [
+            self::VALIDATION_TOTAL_ROWS => 4,
+            self::VALIDATION_VALID_ROWS => 3,
+            self::VALIDATION_ERROR_ROWS => 1,
+            self::VALIDATION_ERRORS     => [
+                sprintf(self::VALIDATION_ERROR_NOT_FOUND, LoadProductData::PRODUCT_4),
+            ]
+        ];
+
+        $crawler = $this->client->request('GET', $this->getUrl('oro_product_frontend_quick_add'));
+        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+        $this->assertContains(htmlentities('Paste your order'), $crawler->html());
+
+        $form = $crawler->selectButton('Verify Order')->form();
+        $this->updateFormActionToDialog($form);
+        $form['oro_product_quick_add_copy_paste[copyPaste]'] = implode(PHP_EOL, $example);
+        $crawler = $this->client->submit($form);
+
+        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+        $this->assertEquals($expectedValidationResult, $this->parseValidationResult($crawler));
+    }
+
     /**
-     * @param string $file
-     * @param null|array $expectedValidationResult
+     * @param string      $file
+     * @param null|array  $expectedValidationResult
      * @param null|string $formErrorMessage
      *
      * @dataProvider importFromFileProvider
@@ -146,18 +184,18 @@ abstract class QuickAddControllerTest extends WebTestCase
      */
     public function importFromFileProvider()
     {
-        $dir = __DIR__ . '/files/';
-        $correctCSV = $dir . 'quick-order.csv';
+        $dir         = __DIR__ . '/files/';
+        $correctCSV  = $dir . 'quick-order.csv';
         $correctXLSX = $dir . 'quick-order.xlsx';
-        $correctODS = $dir . 'quick-order.ods';
-        $invalidDOC = $dir . 'quick-order.doc';
-        $emptyCSV = $dir . 'quick-order-empty.csv';
+        $correctODS  = $dir . 'quick-order.ods';
+        $invalidDOC  = $dir . 'quick-order.doc';
+        $emptyCSV    = $dir . 'quick-order-empty.csv';
 
         $expectedValidationResult = [
             self::VALIDATION_TOTAL_ROWS => 6,
             self::VALIDATION_VALID_ROWS => 3,
             self::VALIDATION_ERROR_ROWS => 3,
-            self::VALIDATION_ERRORS => [
+            self::VALIDATION_ERRORS     => [
                 sprintf(self::VALIDATION_ERROR_NOT_FOUND, 'SKU1'),
                 sprintf(self::VALIDATION_ERROR_MALFORMED, 5),
                 sprintf(self::VALIDATION_ERROR_MALFORMED, 6)
@@ -165,32 +203,32 @@ abstract class QuickAddControllerTest extends WebTestCase
         ];
 
         return [
-            'valid CSV' => [
-                'file' => $correctCSV,
+            'valid CSV'    => [
+                'file'                     => $correctCSV,
                 'expectedValidationResult' => $expectedValidationResult
             ],
-            'valid XLSX' => [
-                'file' => $correctXLSX,
+            'valid XLSX'   => [
+                'file'                     => $correctXLSX,
                 'expectedValidationResult' => $expectedValidationResult
             ],
-            'valid ODS' => [
-                'file' => $correctODS,
+            'valid ODS'    => [
+                'file'                     => $correctODS,
                 'expectedValidationResult' => $expectedValidationResult
             ],
-            'empty CSV' => [
-                'file' => $emptyCSV,
+            'empty CSV'    => [
+                'file'                     => $emptyCSV,
                 'expectedValidationResult' => null,
-                'formErrorMessage' => 'An empty file is not allowed.'
+                'formErrorMessage'         => 'An empty file is not allowed.'
             ],
-            'invalid DOC' => [
-                'file' => $invalidDOC,
+            'invalid DOC'  => [
+                'file'                     => $invalidDOC,
                 'expectedValidationResult' => null,
-                'formErrorMessage' => 'This file type is not allowed'
+                'formErrorMessage'         => 'This file type is not allowed'
             ],
             'without file' => [
-                'file' => null,
+                'file'                     => null,
                 'expectedValidationResult' => null,
-                'formErrorMessage' => 'This value should not be blank'
+                'formErrorMessage'         => 'This value should not be blank'
             ]
         ];
     }
@@ -204,7 +242,7 @@ abstract class QuickAddControllerTest extends WebTestCase
         $result = [];
         $crawler->filter(self::VALIDATION_RESULT_SELECTOR)->each(
             function (Crawler $node) use (&$result) {
-                $result[trim($node->children()->eq(0)->text())] = (int) $node->children()->eq(1)->text();
+                $result[trim($node->children()->eq(0)->text())] = (int)$node->children()->eq(1)->text();
             }
         );
 

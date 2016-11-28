@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityManager;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\IntegrationBundle\Entity\Repository\ChannelRepository;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
+use Oro\Bundle\UPSBundle\Cache\ShippingPriceCache;
 use Oro\Bundle\UPSBundle\Factory\PriceRequestFactory;
 use Oro\Bundle\UPSBundle\Method\UPSShippingMethod;
 use Oro\Bundle\UPSBundle\Method\UPSShippingMethodProvider;
@@ -22,6 +23,7 @@ class UPSShippingMethodProviderTest extends \PHPUnit_Framework_TestCase
      * @var UPSShippingMethodProvider
      */
     protected $provider;
+
 
     public function setUp()
     {
@@ -68,11 +70,15 @@ class UPSShippingMethodProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $cache = $this->getMockBuilder(ShippingPriceCache::class)
+            ->disableOriginalConstructor()->getMock();
+
         $this->provider = new UPSShippingMethodProvider(
             $transportProvider,
             $doctrine,
             $priceRequestFactory,
-            $localizationHelper
+            $localizationHelper,
+            $cache
         );
     }
 

@@ -5,8 +5,11 @@ namespace Oro\Bundle\OrderBundle\Tests\Functional\Controller\Frontend;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatter;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
+use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Form\Type\FrontendOrderType;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
+use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrdersACLData;
+use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderUserACLData;
 use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -41,8 +44,8 @@ class OrderControllerTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders',
-                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices',
+                LoadOrders::class,
+                LoadOrdersACLData::class,
             ]
         );
 
@@ -63,7 +66,7 @@ class OrderControllerTest extends WebTestCase
 
     public function testOrdersGrid()
     {
-        $response = $this->client->requestGrid('frontend-orders-grid');
+        $response = $this->client->requestFrontendGrid('frontend-orders-grid');
 
         $result = static::getJsonResponseContent($response, 200);
 
@@ -82,8 +85,90 @@ class OrderControllerTest extends WebTestCase
         $this->assertEquals($shippingMethodLabel, $myOrderData['shippingMethod']);
     }
 
+    /**
+     * @group frontend-ACL
+     * @dataProvider gridACLProvider
+     *
+     * @param string $user
+     * @param string $indexResponseStatus
+     * @param string $gridResponseStatus
+     * @param array $data
+     */
+    public function testOrdersGridACL($user, $indexResponseStatus, $gridResponseStatus, array $data = [])
+    {
+        $this->loginUser($user);
+        $this->client->request('GET', $this->getUrl('oro_order_frontend_index'));
+        $this->assertSame($indexResponseStatus, $this->client->getResponse()->getStatusCode());
+        $response = $this->client->requestGrid(
+            [
+                'gridName' => 'frontend-orders-grid',
+            ]
+        );
+
+        self::assertResponseStatusCodeEquals($response, $gridResponseStatus);
+        if (200 === $gridResponseStatus) {
+            $result = self::jsonToArray($response->getContent());
+            $actual = array_column($result['data'], 'id');
+            $actual = array_map('intval', $actual);
+            $expected = array_map(
+                function ($ref) {
+                    return $this->getReference($ref)->getId();
+                },
+                $data
+            );
+            sort($expected);
+            sort($actual);
+            $this->assertEquals($expected, $actual);
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function gridACLProvider()
+    {
+        return [
+            'NOT AUTHORISED' => [
+                'user' => '',
+                'indexResponseStatus' => 401,
+                'gridResponseStatus' => 403,
+                'data' => [],
+            ],
+            'BASIC: own orders' => [
+                'user' => LoadOrderUserACLData::USER_ACCOUNT_1_ROLE_BASIC,
+                'indexResponseStatus' => 200,
+                'gridResponseStatus' => 200,
+                'data' => [
+                    LoadOrdersACLData::ORDER_ACC_1_USER_BASIC
+                ],
+            ],
+            'LOCAL: all orders on account level' => [
+                'user' => LoadOrderUserACLData::USER_ACCOUNT_1_ROLE_LOCAL,
+                'indexResponseStatus' => 200,
+                'gridResponseStatus' => 200,
+                'data' => [
+                    LoadOrdersACLData::ORDER_ACC_1_USER_BASIC,
+                    LoadOrdersACLData::ORDER_ACC_1_USER_DEEP,
+                    LoadOrdersACLData::ORDER_ACC_1_USER_LOCAL,
+                ],
+            ],
+            'DEEP: all orders on account level and child accounts' => [
+                'user' => LoadOrderUserACLData::USER_ACCOUNT_1_ROLE_DEEP,
+                'indexResponseStatus' => 200,
+                'gridResponseStatus' => 200,
+                'data' => [
+                    LoadOrdersACLData::ORDER_ACC_1_USER_BASIC,
+                    LoadOrdersACLData::ORDER_ACC_1_USER_DEEP,
+                    LoadOrdersACLData::ORDER_ACC_1_USER_LOCAL,
+                    LoadOrdersACLData::ORDER_ACC_1_1_USER_LOCAL,
+                ],
+            ],
+        ];
+    }
+
     public function testCreate()
     {
+        // cover (CREATE, UPDATE) with ACL tests after fix
         $this->markTestIncomplete('Should be fixed in scope of task BB-3686');
         $crawler = $this->client->request('GET', $this->getUrl('oro_order_frontend_create'));
         $result = $this->client->getResponse();
@@ -224,17 +309,70 @@ class OrderControllerTest extends WebTestCase
     }
 
     /**
-     * @depends testUpdate
+     * @dataProvider testViewDataProvider
      *
-     * @param int $id
+     * @param string $resource
+     * @param string $user
+     * @param int $status
      */
-    public function testView($id)
+    public function testView($resource, $user, $status)
     {
-        $crawler = $this->client->request('GET', $this->getUrl('oro_order_frontend_view', ['id' => $id]));
-        $result = $this->client->getResponse();
+        $this->loginUser($user);
 
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertViewPage($crawler, ['Notes']);
+        /** @var Order $order */
+        $order = $this->getReference($resource);
+        $crawler = $this->client->request('GET', $this->getUrl('oro_order_frontend_view', ['id' => $order->getId()]));
+
+        $response = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($response, $status);
+
+        if (200 === $status) {
+            $this->assertViewPage($crawler, ['Notes']);
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function testViewDataProvider()
+    {
+        return [
+            'anonymous user' => [
+                'resource' => LoadOrdersACLData::ORDER_ACC_1_USER_BASIC,
+                'user' => '',
+                'status' => 401,
+            ],
+            'user from another account' => [
+                'resource' => LoadOrdersACLData::ORDER_ACC_1_USER_BASIC,
+                'user' => LoadOrderUserACLData::USER_ACCOUNT_2_ROLE_LOCAL,
+                'status' => 403,
+            ],
+            'user from parent account : LOCAL' => [
+                'resource' => LoadOrdersACLData::ORDER_ACC_1_1_USER_LOCAL,
+                'user' => LoadOrderUserACLData::USER_ACCOUNT_1_ROLE_LOCAL,
+                'status' => 403,
+            ],
+            'user from same account : BASIC' => [
+                'resource' => LoadOrdersACLData::ORDER_ACC_1_USER_LOCAL,
+                'user' => LoadOrderUserACLData::USER_ACCOUNT_1_ROLE_BASIC,
+                'status' => 403,
+            ],
+            'user from same account : LOCAL' => [
+                'resource' => LoadOrdersACLData::ORDER_ACC_1_USER_BASIC,
+                'user' => LoadOrderUserACLData::USER_ACCOUNT_1_ROLE_LOCAL,
+                'status' => 200,
+            ],
+            'user from parent account : DEEP' => [
+                'resource' => LoadOrdersACLData::ORDER_ACC_1_1_USER_LOCAL,
+                'user' => LoadOrderUserACLData::USER_ACCOUNT_1_ROLE_DEEP,
+                'status' => 200,
+            ],
+            'resource owner' => [
+                'resource' => LoadOrdersACLData::ORDER_ACC_1_USER_BASIC,
+                'user' => LoadOrderUserACLData::USER_ACCOUNT_1_ROLE_BASIC,
+                'status' => 200,
+            ],
+        ];
     }
 
     /**
@@ -271,7 +409,7 @@ class OrderControllerTest extends WebTestCase
      */
     protected function findInGrid($gridName, array $filters)
     {
-        $response = $this->client->requestGrid($gridName, $filters);
+        $response = $this->client->requestFrontendGrid($gridName, $filters);
 
         $result = $this->getJsonResponseContent($response, 200);
         $result = reset($result['data']);

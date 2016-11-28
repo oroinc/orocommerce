@@ -2,7 +2,7 @@
   padding-right: 15px;
 }
 
-@include breakpoint('tablet') {
+@include breakpoint('tablet-small') {
   .checkout-sidebar {
     display: none;
   }

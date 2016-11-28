@@ -369,6 +369,7 @@ datagrids:
         action_configuration: ['@oro_rfp.datagrid.action_permission_provider', "getRequestStatusDefinitionPermissions"]
 
     frontend-requests-grid:
+        acl_resource: oro_rfp_frontend_request_view
         extended_entity_name: %oro_rfp.entity.request.class%
         options:
             entityHint:        request
@@ -427,8 +428,7 @@ datagrids:
                     data_name: request.shipUntil
                 createdAt:
                     data_name: request.createdAt
-            default:
-                id: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+            disable_default_sorting: true
         filters:
             columns:
                 accountUserName:
