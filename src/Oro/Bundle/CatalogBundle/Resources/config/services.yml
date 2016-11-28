@@ -179,13 +179,6 @@ services:
         tags:
             - { name: doctrine.event_listener, event: onFlush }
 
-    oro_catalog.category_exists_listener:
-        class: Oro\Bundle\CatalogBundle\EventListener\CategoryExistsListener
-        arguments:
-            - '@oro_catalog.repository.category'
-        tags:
-            - { name: kernel.event_listener, event: kernel.controller }
-
     oro_catalog.content_variant_type.category_page:
         class: Oro\Bundle\CatalogBundle\ContentVariantType\CategoryPageContentVariantType
         public: false

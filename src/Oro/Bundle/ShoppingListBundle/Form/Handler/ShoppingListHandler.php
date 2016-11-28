@@ -3,12 +3,10 @@
 namespace Oro\Bundle\ShoppingListBundle\Form\Handler;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
-
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\Request;
-
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 class ShoppingListHandler
 {
@@ -61,15 +59,16 @@ class ShoppingListHandler
 
         if (in_array($this->request->getMethod(), ['POST', 'PUT'], true)) {
             $this->form->submit($this->request);
-
+            $em = $this->doctrine->getManagerForClass('OroShoppingListBundle:ShoppingList');
             if ($this->form->isValid()) {
                 if ($shoppingList->getId() === null) {
+                    $em->persist($shoppingList);
+                    $em->flush();
                     $this->manager->setCurrent(
                         $shoppingList->getAccountUser(),
                         $shoppingList
                     );
                 } else {
-                    $em = $this->doctrine->getManagerForClass('OroShoppingListBundle:ShoppingList');
                     $em->persist($shoppingList);
                     $em->flush();
                 }

@@ -1,0 +1,23 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'layout.html.twig'
+        - '@setOption':
+            id: title
+            optionName: params
+            optionValue:
+                '%title%': '=data["locale"].getLocalizedValue(data["page"].getTitles())'
+        - '@setOption':
+            id: page_title
+            optionName: text
+            optionValue: '=data["locale"].getLocalizedValue(data["page"].getTitles())'
+        - '@addTree':
+            items:
+                cms_page_content:
+                    blockType: text
+                    options:
+                        text: '=data["page"].getContent()'
+                        escape: false
+            tree:
+                page_content:
+                    cms_page_content: ~

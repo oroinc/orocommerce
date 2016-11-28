@@ -12,22 +12,22 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 class ScopeAccountGroupCriteriaProvider extends AbstractScopeCriteriaProvider
 {
     const FIELD_NAME = 'accountGroup';
-    
+
     /**
      * @var SecurityFacade
      */
     protected $tokenStorage;
-    
+
     /**
      * @var PropertyAccessor
      */
     protected $propertyAccessor;
-    
+
     /**
      * @var AccountUserRelationsProvider
      */
     protected $accountUserProvider;
-    
+
     /**
      * @param TokenStorageInterface $tokenStorage
      * @param AccountUserRelationsProvider $accountUserRelationsProvider
@@ -39,7 +39,7 @@ class ScopeAccountGroupCriteriaProvider extends AbstractScopeCriteriaProvider
         $this->tokenStorage = $tokenStorage;
         $this->accountUserProvider = $accountUserRelationsProvider;
     }
-    
+
     /**
      * @return string
      */
@@ -47,7 +47,7 @@ class ScopeAccountGroupCriteriaProvider extends AbstractScopeCriteriaProvider
     {
         return self::FIELD_NAME;
     }
-    
+
     /**
      * @return array
      */
@@ -58,13 +58,13 @@ class ScopeAccountGroupCriteriaProvider extends AbstractScopeCriteriaProvider
             return [];
         }
         $loggedUser = $token->getUser();
-        if (null === $loggedUser || $loggedUser instanceof AccountUser) {
-            return [$this->getCriteriaField() => $this->accountUserProvider->getAccountGroup($loggedUser)];
+        if (!($loggedUser instanceof AccountUser)) {
+            $loggedUser = null;
         }
-    
-        return [];
+
+        return [$this->getCriteriaField() => $this->accountUserProvider->getAccountGroup($loggedUser)];
     }
-    
+
     /**
      * {@inheritdoc}
      */
