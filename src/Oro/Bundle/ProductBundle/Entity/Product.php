@@ -405,7 +405,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
     /**
      * @var string
      *
-     * @ORM\Column(name="type", type="string", length=16, nullable=false)
+     * @ORM\Column(name="type", type="string", length=32, nullable=false)
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={

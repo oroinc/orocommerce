@@ -7,6 +7,8 @@ use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Factory\ShippingContextProviderFactory;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
@@ -77,6 +79,8 @@ class ShippingContextProviderFactoryTest extends \PHPUnit_Framework_TestCase
         $currency = 'USD';
         $paymentMethod = 'SomePaymentMethod';
         $amount = 100;
+        $customer = new Account();
+        $customerUser = new AccountUser();
 
         $subtotal = (new Subtotal())
             ->setAmount($amount)
@@ -86,7 +90,9 @@ class ShippingContextProviderFactoryTest extends \PHPUnit_Framework_TestCase
             ->setBillingAddress($address)
             ->setShippingAddress($address)
             ->setCurrency($currency)
-            ->setPaymentMethod($paymentMethod);
+            ->setPaymentMethod($paymentMethod)
+            ->setAccount($customer)
+            ->setAccountUser($customerUser);
 
         $context = new ShippingContext();
         $context->setSourceEntity($checkout);
@@ -96,6 +102,8 @@ class ShippingContextProviderFactoryTest extends \PHPUnit_Framework_TestCase
         $context->setCurrency($currency);
         $context->setPaymentMethod($paymentMethod);
         $context->setSubtotal(Price::create($amount, $currency));
+        $context->setCustomer($customer);
+        $context->setCustomerUser($customerUser);
 
         $this->checkoutLineItemsManager
             ->expects(static::once())
