@@ -7,7 +7,7 @@
     }
 }
 
-@include breakpoint('mobile') {
+@include breakpoint('tablet-small') {
     .checkout-sidebar {
         display: none;
     }
