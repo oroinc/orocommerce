@@ -52,3 +52,18 @@ services:
             - "@translator"
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.category-edit, method: onCategoryEdit }
+
+    oro_inventory.listener.update_entity_config_relations:
+        class: 'Oro\Bundle\InventoryBundle\CacheWarmer\UpdateEntityConfigRelationsWarmer'
+        arguments:
+            - '@oro_inventory.entity_config_relations_migration'
+        tags:
+            - { name: oro_entity_extend.warmer, priority: 500 }
+
+    oro_inventory.entity_config_relations_migration:
+        class: 'Oro\Bundle\InventoryBundle\CacheWarmer\EntityConfigRelationsMigration'
+        arguments:
+            - '@doctrine'
+            - '@oro_entity_config.config_manager'
+            - '@logger'
+            - '%installed%'

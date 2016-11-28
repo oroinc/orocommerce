@@ -31,6 +31,16 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
     const INVENTORY_LEVEL_TABLE_NAME = 'oro_inventory_level';
     const OLD_WAREHOUSE_INVENTORY_TABLE = 'oro_warehouse_inventory_lev';
     const ORO_B2B_WAREHOUSE_INVENTORY_TABLE = 'orob2b_warehouse_inventory_lev';
+    const WAREHOUSE_TABLE = 'oro_warehouse';
+    const NOTE_TABLE = 'oro_note';
+    const ORDER_TABLE = 'oro_order';
+    const ORDER_LINE_ITEM_TABLE = 'oro_order_line_item';
+    const NOTE_WAREHOUSE_ASSOCIATION = 'warehouse_c913b87';
+    const NOTE_WAREHOUSE_ASSOCIATION_COLUMN = 'warehouse_c913b87_id';
+    const ACTIVITY_LIST_WAREHOUSE_ASSOCIATION = 'warehouse_901db874';
+    const ORDER_WAREHOUSE_ASSOCIATION = 'warehouse';
+    const ORDER_WAREHOUSE_ASSOCIATION_COLUMN = 'warehouse_id';
+
 
     /** @var ExtendExtension */
     protected $extendExtension;
@@ -71,6 +81,10 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
             $this->renameTablesUpdateRelation($schema, $queries);
 
             return;
+        }
+
+        if (!class_exists('Oro\Bundle\WarehouseBundle\Entity\Warehouse')) {
+            $this->updateWarehouseEntityRelations($schema);
         }
 
         /** Tables generation **/
@@ -116,6 +130,35 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
         $inventoryTable->dropColumn('warehouse_id');
 
         $this->addEntityConfigUpdateQueries($queries);
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    protected function updateWarehouseEntityRelations(Schema $schema)
+    {
+        if (!$schema->hasTable(self::WAREHOUSE_TABLE)) {
+            return;
+        }
+
+        $this->dropForeignKeyAndColumn($schema, self::NOTE_TABLE, self::NOTE_WAREHOUSE_ASSOCIATION_COLUMN);
+        $this->dropForeignKeyAndColumn($schema, self::ORDER_TABLE, self::ORDER_WAREHOUSE_ASSOCIATION_COLUMN);
+        $this->dropForeignKeyAndColumn($schema, self::ORDER_LINE_ITEM_TABLE, self::ORDER_WAREHOUSE_ASSOCIATION_COLUMN);
+        $schema->dropTable(self::WAREHOUSE_TABLE);
+    }
+
+    /**
+     * @param Schema $schema
+     * @param string $tableName
+     * @param string $relationColumn
+     * @throws \Doctrine\DBAL\Schema\SchemaException
+     */
+    protected function dropForeignKeyAndColumn(Schema $schema, $tableName, $relationColumn)
+    {
+        $table = $schema->getTable($tableName);
+        $foreignKey = $this->getConstraintName($table, $relationColumn);
+        $table->removeForeignKey($foreignKey);
+        $table->dropColumn($relationColumn);
     }
 
     /**
