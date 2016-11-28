@@ -25,5 +25,5 @@ layout:
             optionValue: featured_products
         - '@add':
             id: featured_products_container
-            parentId: content
+            parentId: page_content
             blockType: container

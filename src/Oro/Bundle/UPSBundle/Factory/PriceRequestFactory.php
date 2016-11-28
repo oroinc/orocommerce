@@ -49,7 +49,8 @@ class PriceRequestFactory
      * @param ShippingContextInterface $context
      * @param string $requestOption
      * @param ShippingService|null $shippingService
-     * @return PriceRequest
+     * @return PriceRequest|null
+     * @throws \UnexpectedValueException
      */
     public function create(
         UPSTransport $transport,
@@ -84,9 +85,9 @@ class PriceRequestFactory
         $packages = $this->createPackages($context->getLineItems(), $unitOfWeight, $weightLimit);
         if (count($packages) > 0) {
             $priceRequest->setPackages($packages);
+            return $priceRequest;
         }
-
-        return $priceRequest;
+        return null;
     }
 
     /**
@@ -94,6 +95,7 @@ class PriceRequestFactory
      * @param string $unitOfWeight
      * @param int $weightLimit
      * @return Package[]|array
+     * @throws \UnexpectedValueException
      */
     protected function createPackages($lineItems, $unitOfWeight, $weightLimit)
     {
@@ -159,24 +161,48 @@ class PriceRequestFactory
      * @param ShippingLineItemInterface[] $lineItems
      * @param string $upsWeightUnit
      * @return array
+     * @throws \UnexpectedValueException
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     protected function getProductsParamsByUnit($lineItems, $upsWeightUnit)
     {
         $productsParamsByUnit = [];
         $shippingWeightUnitCode = $this->unitsMapper->getShippingUnitCode($upsWeightUnit);
 
+        $productsInfo =[];
         foreach ($lineItems as $lineItem) {
-            /** @var ProductShippingOptions $productShippingOptions */
-            $productShippingOptions = $this->registry
-                ->getManagerForClass('OroShippingBundle:ProductShippingOptions')
-                ->getRepository('OroShippingBundle:ProductShippingOptions')
-                ->findOneBy(['product' => $lineItem->getProduct()]);
+            $productsInfo[$lineItem->getProduct()->getId()] = [
+                'product' => $lineItem->getProduct(),
+                'productUnit' => $lineItem->getProductUnit(),
+                'quantity' => $lineItem->getQuantity()
+            ];
+        }
 
+        $allProductsShippingOptions = $this->registry
+            ->getManagerForClass('OroShippingBundle:ProductShippingOptions')
+            ->getRepository('OroShippingBundle:ProductShippingOptions')
+            ->findBy([
+                'product' => array_column($productsInfo, 'product'),
+                'productUnit' => array_column($productsInfo, 'productUnit')
+            ]);
+
+        if (!$allProductsShippingOptions ||
+            count(array_column($productsInfo, 'product')) !== count($allProductsShippingOptions)) {
+            return [];
+        }
+
+        foreach ($allProductsShippingOptions as $productShippingOptions) {
+            $productId = $productShippingOptions->getProduct()->getId();
             $productDimensions = $productShippingOptions->getDimensions();
 
             $dimensionUnit = $productDimensions->getUnit() ? $productDimensions->getUnit()->getCode() : null;
             $lineItemWeight = null;
             if ($productShippingOptions->getWeight() instanceof Weight) {
+                if (!$productShippingOptions->getWeight()->getValue()) {
+                    return [];
+                }
                 /** @var Weight|null $lineItemWeight */
                 $lineItemWeight = $this->measureUnitConversion->convert(
                     $productShippingOptions->getWeight(),
@@ -189,7 +215,7 @@ class PriceRequestFactory
                 return [];
             }
 
-            for ($i = 0; $i < $lineItem->getQuantity(); $i++) {
+            for ($i = 0; $i < $productsInfo[$productId]['quantity']; $i++) {
                 $productsParamsByUnit[strtoupper(substr($dimensionUnit, 0, 2))][] = [
                     'dimensionUnit' => $dimensionUnit,
                     'dimensionHeight' => $productDimensions->getValue()->getHeight(),

@@ -77,7 +77,7 @@ class UPSTransportTest extends \PHPUnit_Framework_TestCase
         $rateRequest = $this->getMock(PriceRequest::class);
 
         $integration = new Channel();
-        $transportEntity = new \Oro\Bundle\UPSBundle\Entity\UPSTransport();
+        $transportEntity = new UPSTransportEntity();
         $integration->setTransport($transportEntity);
 
         $this->clientFactory->expects(static::once())
@@ -108,7 +108,7 @@ class UPSTransportTest extends \PHPUnit_Framework_TestCase
             ->method('post')
             ->willReturn($restResponse);
 
-        $this->transport->getPrices($rateRequest, $transportEntity);
+        $this->transport->getPriceResponse($rateRequest, $transportEntity);
     }
 
     public function testGetPricesException()
@@ -167,6 +167,6 @@ class UPSTransportTest extends \PHPUnit_Framework_TestCase
             )
         ;
 
-        $this->transport->getPrices($rateRequest, $transportEntity);
+        $this->transport->getPriceResponse($rateRequest, $transportEntity);
     }
 }

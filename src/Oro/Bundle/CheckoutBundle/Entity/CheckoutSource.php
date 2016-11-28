@@ -25,6 +25,13 @@ class CheckoutSource extends ExtendCheckoutSource
     protected $id;
 
     /**
+     * @var bool
+     *
+     * @ORM\Column(name="deleted", type="boolean", options={"default"=false})
+     */
+    protected $deleted = false;
+
+    /**
      * @param int $id
      * @return CheckoutSource
      */
@@ -41,6 +48,26 @@ class CheckoutSource extends ExtendCheckoutSource
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * @param bool $deleted
+     *
+     * @return $this
+     */
+    public function setDeleted($deleted)
+    {
+        $this->deleted = (bool)$deleted;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDeleted()
+    {
+        return $this->deleted;
     }
 
     /**

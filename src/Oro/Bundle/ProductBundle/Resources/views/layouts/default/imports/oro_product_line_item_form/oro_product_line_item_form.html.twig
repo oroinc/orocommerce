@@ -6,6 +6,11 @@
 {% endblock %}
 
 {% block __oro_product_line_item_form__line_item_form_fields_widget %}
+    {% set class_prefix = 'line_item_form_fields' %}
+    {% do block|merge_context({
+        class_prefix: class_prefix
+    }) %}
+    {% do set_class_prefix_to_form(form, class_prefix) %}
     {% if renderCache is not defined %}
         {% set renderCache %}
             {% set attr = layout_attr_defaults(attr, {

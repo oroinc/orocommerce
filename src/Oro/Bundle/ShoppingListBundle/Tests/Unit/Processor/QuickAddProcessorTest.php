@@ -64,7 +64,7 @@ class QuickAddProcessorTest extends AbstractQuickAddProcessorTest
                 ->method('createForShoppingList')
                 ->with(
                     $this->isInstanceOf('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList'),
-                    $productIds,
+                    array_values($productIds),
                     $productQuantities
                 )
                 ->willReturn($entitiesCount);
@@ -121,8 +121,33 @@ class QuickAddProcessorTest extends AbstractQuickAddProcessorTest
                     ]
                 ],
                 new Request(),
-                [1, 2],
+                ['sku1' => 1, 'sku2' => 2],
                 [1 => 2, 2 => 3],
+            ],
+            'shopping list with same products couple of times' => [
+                [
+                    ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
+                        ['productSku' => 'sku1', 'productQuantity' => 2],
+                        ['productSku' => 'sku1', 'productQuantity' => 3],
+                        ['productSku' => 'sku1', 'productQuantity' => 4],
+                        ['productSku' => 'sku2', 'productQuantity' => 5],
+                        ['productSku' => 'sku2', 'productQuantity' => 6],
+                    ]
+                ],
+                new Request(),
+                ['sku1' => 1, 'sku2' => 2],
+                [1 => 9, 2 => 11],
+            ],
+            'shopping list with products skus in descending order' => [
+                [
+                    ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
+                        ['productSku' => 'sku1', 'productQuantity' => 11],
+                        ['productSku' => 'sku2', 'productQuantity' => 12],
+                    ]
+                ],
+                new Request(),
+                ['sku2' => 2, 'sku1' => 1],
+                [1 => 11, 2 => 12],
             ],
             'existing shopping list' => [
                 [
@@ -132,7 +157,7 @@ class QuickAddProcessorTest extends AbstractQuickAddProcessorTest
                     ],
                 ],
                 new Request(['oro_product_quick_add' => ['additional' => 1]]),
-                [1, 2],
+                ['sku1' => 1, 'sku2' => 2],
                 [1 => 2, 2 => 3],
             ],
             'ids sorting' => [
@@ -143,7 +168,7 @@ class QuickAddProcessorTest extends AbstractQuickAddProcessorTest
                     ],
                 ],
                 new Request(['oro_product_quick_add' => ['additional' => 1]]),
-                [2, 1],
+                ['sku2' => 2, 'sku1' => 1],
                 [1 => 2, 2 => 3],
             ],
             'process failed' => [
@@ -154,7 +179,7 @@ class QuickAddProcessorTest extends AbstractQuickAddProcessorTest
                     ],
                 ],
                 new Request(),
-                [1, 2],
+                ['sku1' => 1, 'sku2' => 2],
                 [1 => 2, 2 => 3],
                 true
             ],
