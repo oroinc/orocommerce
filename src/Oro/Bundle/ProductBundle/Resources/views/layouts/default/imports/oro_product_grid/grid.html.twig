@@ -51,7 +51,7 @@
 
 {% block __oro_product_grid__datagrid_toolbar_pagination_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ " catalog__filter-controls__item--pagination oro-pagination",
+        class: attr.class|default('') ~ " catalog__filter-controls__item oro-pagination",
         'data-grid-pagination': ''
     }) %}
 
@@ -84,7 +84,7 @@
 
 {% block __oro_product_grid__datagrid_toolbar_display_options_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ " catalog__filter-controls__item catalog__filter-controls__item--display-options pull-right"
+        class: attr.class|default('') ~ " catalog__filter-controls__item display-options pull-right"
     }) %}
     <div{{ block('block_attributes') }}>
         {% set row_view_key = constant('Oro\\Bundle\\ProductBundle\\DataGrid\\DataGridThemeHelper::GRID_THEME_PARAM_NAME') %}

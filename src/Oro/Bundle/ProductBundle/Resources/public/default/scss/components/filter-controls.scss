@@ -36,11 +36,11 @@
       flex-basis: 315px;
     }
 
-    &--pagination {
+    &.oro-pagination {
       text-align: center;
     }
 
-    &--display-options {
+    &.display-options {
       flex-basis: 170px;
       flex-grow: 0;
       flex-shrink: 0;
@@ -104,12 +104,12 @@
         flex-basis: auto;
       }
 
-      &--display-options {
+      &.display-options {
         flex-basis: auto;
         order: 2;
       }
 
-      &--pagination {
+      &.oro-pagination {
         order: 1;
       }
 
