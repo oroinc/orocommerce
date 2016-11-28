@@ -30,6 +30,7 @@ class ShoppingListController extends Controller
      *
      * @param ShoppingList $shoppingList
      * @return array
+     *
      */
     public function viewAction(ShoppingList $shoppingList = null)
     {

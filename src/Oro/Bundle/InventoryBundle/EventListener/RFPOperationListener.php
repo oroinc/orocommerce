@@ -64,7 +64,7 @@ class RFPOperationListener
         /** @var QuickAddRow $row */
         foreach ($collection->getInvalidRows() as $row) {
             if (!$row->isComplete()
-                || is_null($row->getProduct())
+                || null === $row->getProduct()
                 || !$this->isRFPAllowedErrors($row->getErrors())
             ) {
                 return false;
@@ -83,7 +83,7 @@ class RFPOperationListener
         foreach ($errors as $errorMessage) {
             if (!array_key_exists('parameters', $errorMessage)
                 || !array_key_exists('allowedRFP', $errorMessage['parameters'])
-                || false == $errorMessage['parameters']['allowedRFP']
+                || false === $errorMessage['parameters']['allowedRFP']
             ) {
                 return false;
             }

@@ -257,15 +257,15 @@ services:
         tags:
             - { name: oro_action.condition, alias: 'rfp_allowed' }
 
+    oro_shopping_list.shopping_list_provider.cache:
+        public: false
+        parent: oro.cache.abstract
+        calls:
+            - [ setNamespace, [ 'shopping_list' ] ]
+
     oro_shopping_list.validator_service.line_item:
         class: 'Oro\Bundle\ShoppingListBundle\Validator\LineItemErrorsProvider'
         arguments:
             - '@validator'
         tags:
             - { name: layout.data_provider, alias: oro_line_item_errors }
-
-    oro_shopping_list.shopping_list_provider.cache:
-        public: false
-        parent: oro.cache.abstract
-        calls:
-            - [ setNamespace, [ 'shopping_list' ] ]
