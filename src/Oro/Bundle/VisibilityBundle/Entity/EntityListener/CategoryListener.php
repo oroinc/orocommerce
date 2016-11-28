@@ -35,8 +35,14 @@ class CategoryListener
         }
     }
 
-    public function postRemove()
+    /**
+     * @param Category $category
+     */
+    public function preRemove(Category $category)
     {
-        $this->categoryMessageHandler->addCategoryMessageToSchedule('oro_visibility.visibility.category_remove');
+        $this->categoryMessageHandler->addCategoryMessageToSchedule(
+            'oro_visibility.visibility.category_remove',
+            $category
+        );
     }
 }
