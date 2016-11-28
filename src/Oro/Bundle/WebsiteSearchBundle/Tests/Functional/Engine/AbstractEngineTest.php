@@ -211,35 +211,6 @@ abstract class AbstractEngineTest extends WebTestCase
     }
 
     /**
-     * @return WebsiteSearchMappingProvider|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function getMappingProvider()
-    {
-        $mappingProvider = $this->getMockBuilder(WebsiteSearchMappingProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $mappingProvider
-            ->expects($this->once())
-            ->method('isClassSupported')
-            ->willReturn(true);
-
-        $mappingProvider
-            ->expects($this->any())
-            ->method('getEntityAlias')
-            ->with(TestEntity::class)
-            ->willReturn($this->mappingConfig[TestEntity::class]['alias']);
-
-        $mappingProvider
-            ->expects($this->any())
-            ->method('getEntityConfig')
-            ->with(TestEntity::class)
-            ->willReturn($this->mappingConfig[TestEntity::class]);
-
-        return $mappingProvider;
-    }
-
-    /**
      * @param string $field
      * @param Item $item
      */
