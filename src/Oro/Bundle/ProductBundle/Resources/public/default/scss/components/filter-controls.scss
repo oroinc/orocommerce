@@ -31,11 +31,13 @@
       }
     }
 
-
-
     &--sorting {
       flex-grow: 0;
       flex-basis: 315px;
+    }
+
+    &--pagination {
+      text-align: center;
     }
 
     &--display-options {
@@ -46,6 +48,13 @@
       margin: 0;
 
       text-align: right;
+    }
+
+    &--page-size {
+      .oro-select2,
+      .select {
+        min-width: 64px;
+      }
     }
   }
 }
