@@ -23,7 +23,7 @@
 
 {% block __oro_product_grid__datagrid_toolbar_sorting_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ " catalog__filter-controls__item catalog__filter-controls__item--sorting sorting form-horizontal action-selectbox_custom_in-pager",
+        class: attr.class|default('') ~ " catalog__filter-controls__item sorting form-horizontal action-selectbox_custom_in-pager",
     'data-grid-sorting': ''
     }) %}
 
@@ -62,7 +62,7 @@
 
 {% block __oro_product_grid__datagrid_toolbar_page_size_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ " catalog__filter-controls__item catalog__filter-controls__item--page-size page-size form-horizontal",
+        class: attr.class|default('') ~ " catalog__filter-controls__item page-size form-horizontal",
         'data-grid-pagesize': ''
     }) %}
 

@@ -31,7 +31,7 @@
       }
     }
 
-    &--sorting {
+    &.sorting {
       flex-grow: 0;
       flex-basis: 315px;
     }
@@ -50,7 +50,7 @@
       text-align: right;
     }
 
-    &--page-size {
+    &.page-size {
       .oro-select2,
       .select {
         min-width: 64px;
@@ -100,7 +100,7 @@
 @include breakpoint('tablet') {
   .catalog__filter-controls {
     &__item {
-      &--sorting {
+      &.sorting {
         flex-basis: auto;
       }
 
@@ -113,7 +113,7 @@
         order: 1;
       }
 
-      &--page-size {
+      &.page-size {
         order: 2;
       }
     }
