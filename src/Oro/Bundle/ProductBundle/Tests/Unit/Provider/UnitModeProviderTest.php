@@ -27,23 +27,23 @@ class UnitModeProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testIsSingleUnitMode()
     {
-        $single_unit_mode = true;
+        $singleUnitMode = true;
         $this->configManager->expects($this->once())
             ->method('get')
             ->with('oro_product.single_unit_mode')
-            ->willReturn($single_unit_mode);
+            ->willReturn($singleUnitMode);
 
-        $this->assertEquals($single_unit_mode, $this->unitModeProvider->isSingleUnitMode());
+        $this->assertEquals($singleUnitMode, $this->unitModeProvider->isSingleUnitMode());
     }
 
     public function testIsSingleUnitModeCodeVisible()
     {
-        $single_unit_mode = true;
+        $singleUnitModeShowCode = true;
         $this->configManager->expects($this->once())
             ->method('get')
             ->with('oro_product.single_unit_mode_show_code')
-            ->willReturn($single_unit_mode);
+            ->willReturn($singleUnitModeShowCode);
 
-        $this->assertEquals($single_unit_mode, $this->unitModeProvider->isSingleUnitModeCodeVisible());
+        $this->assertEquals($singleUnitModeShowCode, $this->unitModeProvider->isSingleUnitModeCodeVisible());
     }
 }

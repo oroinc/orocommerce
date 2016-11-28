@@ -12,8 +12,8 @@ system_configuration:
             icon: 'icon-briefcase'
         product_unit_rounding:
             title: oro.product.system_configuration.groups.product_unit_rounding.title
-        product_unit_allow_multiple:
-            title: oro.product.system_configuration.groups.product_unit_allow_multiple.title
+        product_single_unit_mode:
+            title: oro.product.system_configuration.groups.product_single_unit_mode.title
         default_product_unit:
             title: oro.product.system_configuration.groups.default_product_unit.title
             icon: 'icon-briefcase'
@@ -133,10 +133,10 @@ system_configuration:
                                     product_unit_rounding:
                                         children:
                                             - oro_product.unit_rounding_type
-                                    product_unit_allow_multiple:
+                                    product_single_unit_mode:
                                         children:
-                                            - oro_product.unit_allow_multiple
-                                            - oro_product.unit_allow_multiple_show_code
+                                            - oro_product.single_unit_mode
+                                            - oro_product.single_unit_mode_show_code
                                     default_product_unit:
                                         children:
                                             - oro_product.default_unit

@@ -50,7 +50,16 @@ class ProductUnitValueExtension extends \Twig_Extension
                 'oro_format_product_unit_code',
                 [$this->formatter, 'formatCode'],
                 ['is_safe' => ['html']]
-            ),
+            )
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getFunctions()
+    {
+        return [
             new \Twig_SimpleFunction(
                 'oro_is_single_unit_mode',
                 [$this->unitModeProvider, 'isSingleUnitMode']
@@ -61,6 +70,7 @@ class ProductUnitValueExtension extends \Twig_Extension
             )
         ];
     }
+
 
     /**
      * {@inheritdoc}
