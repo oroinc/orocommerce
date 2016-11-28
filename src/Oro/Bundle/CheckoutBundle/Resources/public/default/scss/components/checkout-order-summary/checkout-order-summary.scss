@@ -106,7 +106,7 @@
     }
 
     &__title {
-        font-size: $base-font-size;
+        font-size: $base-font-size - 1;
         line-height: 1.4;
 
         text-transform: uppercase;
@@ -214,12 +214,18 @@
 
         &__qty {
             width: 25%;
+
+            text-align: right;
         }
 
         &__product,
         &__qty,
         &__price {
             border-top: none !important;
+        }
+
+        &__price {
+            padding-left: 0 !important;
         }
 
         &__price-inner {
