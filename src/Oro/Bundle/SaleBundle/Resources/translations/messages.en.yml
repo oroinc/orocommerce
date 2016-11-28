@@ -26,6 +26,8 @@ oro:
             expired.label: 'Expired'
             assigned_users.label: 'Assigned To'
             assigned_account_users.label: 'Assigned Customers'
+            shipping_estimate_amount.label: 'Shipping Estimate Ammount'
+            shipping_estimate_currency.label: 'Shipping Estimate Currency'
             shipping_cost.label: 'Shipping Cost'
             estimated_shipping_cost.label: 'Estimated Shipping Cost'
             overridden_shipping_cost.label: 'Overridden Shipping Cost'
