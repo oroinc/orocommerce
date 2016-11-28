@@ -19,11 +19,6 @@ class OrderExtensionTest extends \PHPUnit_Framework_TestCase
     protected $shippingTrackingFormatter;
 
     /**
-     * @var ShippingMethodFormatter|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $shippingMethodFormatter;
-
-    /**
      * @var OrderExtension
      */
     protected $extension;
@@ -38,14 +33,9 @@ class OrderExtensionTest extends \PHPUnit_Framework_TestCase
             ->getMockBuilder('Oro\Bundle\OrderBundle\Formatter\ShippingTrackingFormatter')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->shippingMethodFormatter = $this
-            ->getMockBuilder('Oro\Bundle\OrderBundle\Formatter\ShippingMethodFormatter')
-            ->disableOriginalConstructor()
-            ->getMock();
         $this->extension = new OrderExtension(
             $this->sourceDocumentFormatter,
-            $this->shippingTrackingFormatter,
-            $this->shippingMethodFormatter
+            $this->shippingTrackingFormatter
         );
     }
 

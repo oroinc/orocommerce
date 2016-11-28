@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\OrderBundle\Twig;
 
-use Oro\Bundle\OrderBundle\Formatter\ShippingMethodFormatter;
 use Oro\Bundle\OrderBundle\Formatter\ShippingTrackingFormatter;
 use Oro\Bundle\OrderBundle\Formatter\SourceDocumentFormatter;
 
