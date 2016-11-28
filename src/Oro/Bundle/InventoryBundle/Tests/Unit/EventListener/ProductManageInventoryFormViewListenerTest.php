@@ -7,11 +7,11 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
-use Oro\Component\Testing\Unit\FormViewListenerTestCase;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\InventoryBundle\EventListener\ProductManageInventoryFormViewListener;
+use Oro\Component\Testing\Unit\FormViewListenerTestCase;
 
 class ProductManageInventoryFormViewListenerTest extends FormViewListenerTestCase
 {

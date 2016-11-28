@@ -17,7 +17,7 @@ system_configuration:
                     false: oro.inventory.manage_inventory.choice.false
                     true: oro.inventory.manage_inventory.choice.true
         oro_inventory.inventory_threshold:
-            data_type: number
+            data_type: decimal
             type: number
             options:
                 label: oro.inventory.system_configuration.fields.inventory_threshold.label
@@ -25,8 +25,7 @@ system_configuration:
                 scale: 1
                 constraints:
                     - NotBlank: ~
-                    - Type:
-                        type: 'float'
+                    - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
 
     tree:
         system_configuration:

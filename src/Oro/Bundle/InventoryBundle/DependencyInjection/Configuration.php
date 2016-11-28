@@ -23,7 +23,7 @@ class Configuration implements ConfigurationInterface
             $rootNode,
             [
                 self::MANAGE_INVENTORY => ['type' => 'boolean', 'value' => false],
-                self::INVENTORY_THRESHOLD => ['type' => 'integer', 'value' => 0],
+                self::INVENTORY_THRESHOLD => ['type' => 'decimal', 'value' => 0],
             ]
         );
 
