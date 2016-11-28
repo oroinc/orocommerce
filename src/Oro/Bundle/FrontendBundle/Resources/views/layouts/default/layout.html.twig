@@ -109,7 +109,7 @@
     <ul{{ block('block_attributes') }}>
         {% for button in buttons %}
             <li>
-                {% include button.template with button.templateData|merge({onlyLink: true}) %}
+	            {% include button.template with button.templateData|merge({onlyLink: true, noIconText: true}) %}
             </li>
         {% endfor %}
     </ul>
@@ -132,7 +132,7 @@
         {% set attr = attr|merge({ class: attr.class|default('') ~ additionalCss}) %}
         <div{{ block('block_attributes') }}>
             {% set button = buttons|first %}
-            {% include button.template with button.templateData|merge({onlyLink: true, aClass: 'direct-link '}) %}
+            {% include button.template with button.templateData|merge({onlyLink: true, aClass: 'direct-link ', noIcon: true, noIconText: true}) %}
             {% if hasVariants %}
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                     <i class="cf-arrow_drop_down"></i>
@@ -141,7 +141,7 @@
                 <ul class="dropdown-menu">
                     {% for button in buttons|slice(1) %}
                         <li>
-                            {% include button.template with button.templateData|merge({onlyLink: true}) %}
+                            {% include button.template with button.templateData|merge({onlyLink: true, noIcon: true, noIconText: true}) %}
                         </li>
                     {% endfor %}
                 </ul>
