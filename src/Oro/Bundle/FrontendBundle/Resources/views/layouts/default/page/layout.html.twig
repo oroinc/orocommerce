@@ -82,10 +82,16 @@
     </div>
 {% endblock %}
 
-{% block _page_title_widget %}
-    {% set titleClass = 'page-title' %}
+{% block _page_title_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': titleClass
+        '~class': ' page-title-wrapper' ~ (class_prefix ? ' {{ class_prefix }}-page-title-wrapper')
+    }) %}
+    <div{{ block('block_attributes') }}>{{ block_widget(block) }}</div>
+{% endblock %}
+
+{% block _page_title_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' page-title' ~ (class_prefix ? ' {{ class_prefix }}-page-title')
     }) %}
     {% set content = block_widget(block)|trim %}
     {% if content|length %}
@@ -95,7 +101,7 @@
                 <i class="{{ titleIcon }}"></i>
             </span>
             {% endif %}
-            <span class="{{ titleClass }}__text">{{ content|raw }}</span>
+            <span class="page-title__text">{{ content|raw }}</span>
         </h1>
     {% endif %}
 {% endblock %}
