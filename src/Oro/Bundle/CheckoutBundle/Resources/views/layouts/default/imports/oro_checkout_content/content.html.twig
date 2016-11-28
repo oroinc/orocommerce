@@ -107,7 +107,7 @@
     <table class="oro-grid-table table-scrollable"
            data-page-component-module="oroui/js/app/components/view-component"
            data-page-component-options="{{ {view: 'orofrontend/js/app/views/scrollable-table'}|json_encode }}">
-        <thead class="hidden-xs">
+        <thead class="oro-grid-table__head">
         <tr data-scrollable-content-head>
             <th>{{ 'oro.checkout.order_summary.item'|trans }}</th>
             <th class="text-center">{{ 'oro.checkout.order_summary.quantity'|trans }}</th>
@@ -171,7 +171,7 @@
             {% set editLink = workflowItem.data.get('edit_order_link') %}
             {% set hasEditList = editLink and workflowStep.name == 'order_review' %}
             {% if hasEditList %}
-                <td class="va-t_md hidden-xs">
+                <td class="oro-grid-table__edit">
                     <a href="{{ editLink }}">
                         <i class="cf-pencil"></i>
                         {{ 'oro.checkout.order_summary.edit_order'|trans }}
