@@ -7,7 +7,7 @@
     }
 }
 
-@include breakpoint('tablet-small') {
+@include breakpoint('tablet') {
     .checkout-sidebar {
         display: none;
     }
