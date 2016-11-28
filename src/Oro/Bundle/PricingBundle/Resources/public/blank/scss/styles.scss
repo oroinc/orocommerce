@@ -1,5 +1,6 @@
 // @theme: blank
 
 .pricing-table {
-    @include table-base(100%, transparent, center);
+    @include table-base(100%, center);
+    @include table-styled();
 }

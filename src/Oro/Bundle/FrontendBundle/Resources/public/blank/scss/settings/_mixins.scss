@@ -1,83 +1,73 @@
 // @theme: blank
 
 @mixin table-base(
-    $table-width:         $table-base-width,
-    $table-bg:            $table-base-bg,
-    $table-text-align:    $table-base-text-align,
-    $table-margin-bottom: $table-base-margin-bottom,
-    $table-border-style:  $table-base-border-style,
-    $table-border-size:   $table-base-border-size,
-    $table-border-color:  $table-base-border-color,
-    $row-padding:         $table-base-row-padding,
-    $row-font-size:       $table-base-row-font-size,
-    $row-font-color:      $table-base-row-font-color,
-    $row-even-bg:         $table-base-even-row-bg,
-    $head-bg:             $table-base-head-bg,
-    $head-font-size:      $table-base-head-font-size,
-    $head-font-color:     $table-base-head-font-color,
-    $head-font-weight:    $table-base-head-font-weight,
-    $head-padding:        $table-base-head-padding,
-    $tfoot-bg:            $table-base-tfoot-bg,
-    $tfoot-font-size:     $table-base-tfoot-font-size,
-    $tfoot-font-color:    $table-base-tfoot-font-color,
-    $tfoot-font-weight:   $table-base-tfoot-font-weight,
-    $tfoot-padding:       $table-base-tfoot-padding
+    $table-width:         $table-width,
+    $table-text-align:    $table-text-align,
+    $table-margin-bottom: $table-margin-bottom,
+
+    $row-padding:         $table-row-padding
 ) {
     width: $table-width;
     margin-bottom: $table-margin-bottom;
 
     text-align: $table-text-align;
 
-    background: $table-bg;
-    border: $table-border-size $table-border-style $table-border-color;
     border-spacing: 0;
     border-collapse: collapse;
+    
+    &__th,
+    &__td {
+        padding: $row-padding;
+    }
+}
 
-    > thead {
+@mixin table-styled(
+    $table-bg:            $table-bg,
+    $table-border-style:  $table-border-style,
+    $table-border-size:   $table-border-size,
+    $table-border-color:  $table-border-color,
+    $row-font-size:       $table-row-font-size,
+    $row-font-color:      $table-row-font-color,
+    $row-even-bg:         $table-even-row-bg,
+    $head-bg:             $table-head-bg,
+    $head-font-size:      $table-head-font-size,
+    $head-font-color:     $table-head-font-color,
+    $foot-bg:             $table-foot-bg,
+    $foot-font-size:      $table-foot-font-size,
+    $foot-font-color:     $table-foot-font-color
+){
+
+    background: $table-bg;
+    border: $table-border-size $table-border-style $table-border-color;
+
+    &__th,
+    &__td {
+        border-bottom: $table-border-size $table-border-style $table-border-color;
+    }
+
+    &__tr {
+        &:nth-child(even) {
+            background: $row-even-bg;
+        }
+    }
+
+    &__tbody {
+        font-size: $row-font-size;
+
+        color: $row-font-color;
+    }
+
+    &__thead {
+        font-size: $head-font-size;
+
+        color: $head-font-color;
         background: $head-bg;
-
-        > tr {
-            > th {
-                padding: $head-padding;
-
-                font-size: $head-font-size;
-                font-weight: $head-font-weight;
-
-                color: $head-font-color;
-                border-bottom: $table-border-size $table-border-style $table-border-color;
-            }
-        }
     }
 
-    > tbody {
-        > tr {
-            &:nth-child(even) {
-                background: $row-even-bg;
-            }
+    &__tfoot {
+        font-size: $foot-font-size;
 
-            > td {
-                padding: $row-padding;
-
-                font-size: $row-font-size;
-
-                color: $row-font-color;
-                border-bottom: $table-border-size $table-border-style $table-border-color;
-            }
-        }
-    }
-
-    > tfoot {
-        background: $tfoot-bg;
-
-        > tr {
-            > td {
-                padding: $tfoot-padding;
-
-                font-size: $tfoot-font-size;
-                font-weight: $tfoot-font-weight;
-
-                color: $tfoot-font-color;
-            }
-        }
+        background: $foot-bg;
+        color: $foot-font-color;
     }
 }

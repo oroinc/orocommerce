@@ -12,30 +12,30 @@
     }) %}
 
     <div {{ block('block_attributes') }}>
-        <table class="table pricing-table">
-            <thead class="pricing-table__thead">
-            <tr class="pricing-table__tr">
-                <th style="width: 40%" class="pricing-table__th text-uppercase">qty</th>
-                <th style="width: 60%" class="pricing-table__th">Unit Price</th>
+        <table class="table">
+            <thead>
+            <tr>
+                <th style="width: 40%" class="text-uppercase">qty</th>
+                <th style="width: 60%">Unit Price</th>
             </tr>
             </thead>
-            <tbody class="pricing-table__tbody">
+            <tbody>
             {% set shownUnit = '' %}
             {% for price in productPrices %}
                 {% if shownUnit != price.formatted_unit %}
                     {% set shownUnit = price.formatted_unit %}
-                    <tr class="pricing-table__tr">
-                        <td colspan="2" class="pricing-table__td">
+                    <tr>
+                        <td colspan="2">
                             {% if loop.index > 1 %}<br/>{% endif %}
                             <strong>{{ shownUnit|capitalize }}</strong>
                         </td>
                     </tr>
                 {% endif %}
-                <tr class="pricing-table__tr">
-                    <td class="pricing-table__td text-center">
+                <tr>
+                    <td class="text-center">
                         {{ price.quantity }}
                     </td>
-                    <td class="pricing-table__td text-center">
+                    <td class="text-center">
                         {{ price.formatted_price }}
                     </td>
                 </tr>

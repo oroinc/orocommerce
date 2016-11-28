@@ -1,33 +1,30 @@
 // @theme: blank
 
 // Controlling of table
-$table-base-width: 100%;
-$table-base-margin-bottom: $offset-y;
-$table-base-text-align: left;
-$table-base-bg: transparent;
+$table-width: 100%;
+$table-margin-bottom: $offset-y;
+$table-text-align: left;
+$table-bg: transparent;
 
-$table-base-even-row-bg: get-color('additional', 'base');
+$table-even-row-bg: get-color('additional', 'base');
 
 // Control the table border style
-$table-base-border-style: solid;
-$table-base-border-size: 1px;
-$table-base-border-color: get-color('additional', 'middle');
-
-// Control the table head styles
-$table-base-head-bg: get-color('additional', 'light');
-$table-base-head-font-size: $base-font-size - 1;
-$table-base-head-font-color: get-color('additional', 'darker');
-$table-base-head-font-weight: bold;
-$table-base-head-padding: $offset-y-m;
-
-// Control the table foot styles
-$table-base-tfoot-bg: get-color('additional', 'light');
-$table-base-tfoot-font-size: $base-font-size - 1;
-$table-base-tfoot-font-color: get-color('additional', 'darker');
-$table-base-tfoot-font-weight: bold;
-$table-base-tfoot-padding: $offset-y-m;
+$table-border-style: solid;
+$table-border-size: 1px;
+$table-border-color: get-color('additional', 'middle');
 
 // Control the row padding and font styles
-$table-base-row-padding: $offset-y-s;
-$table-base-row-font-size: $base-font-size - 2;
-$table-base-row-font-color: get-color('additional', 'dark');
+$table-row-padding: $offset-y-s;
+$table-row-font-size: $base-font-size - 2;
+$table-row-font-color: get-color('additional', 'dark');
+
+// Control the table head styles
+$table-head-bg: get-color('additional', 'light');
+$table-head-font-size: $base-font-size - 1;
+$table-head-font-color: get-color('additional', 'darker');
+$table-head-padding: $offset-y-m;
+
+// Control the table foot styles
+$table-foot-bg: get-color('additional', 'light');
+$table-foot-font-size: $base-font-size - 1;
+$table-foot-font-color: get-color('additional', 'darker');
