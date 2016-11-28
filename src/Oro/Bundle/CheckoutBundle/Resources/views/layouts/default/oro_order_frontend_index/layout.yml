@@ -13,7 +13,7 @@ layout:
             id: checkouts_container
             parentId: page_content
             blockType: container
-            siblingId: page_title
+            siblingId: page_title_container
 
         - '@add':
             id: checkouts_title
