@@ -2,5 +2,4 @@
 
 .pricing-table {
     @include table-base(100%, center);
-    @include table-styled();
 }

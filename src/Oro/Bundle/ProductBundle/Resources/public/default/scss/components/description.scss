@@ -437,27 +437,15 @@ $product-gallery-container-width: 380px !default;
     max-width: 100%;
   }
 
-  .table {
-    margin-bottom: 5px;
+  .pricing-table {
+    @include table-base(100%, center, 5px, 9px, 4px);
 
-    &.table_has-padding {
-      > thead > tr > th,
-      > tbody > tr > td {
-        padding-left: 15px;
-        padding-right: 15px;
-      }
+    &__th {
+      border-width: 1px;
     }
 
-    > thead > tr > th {
-      padding: 9px 0;
-      border-bottom-width: 1px;
-
-      font-weight: 400;
-    }
-
-    > tbody > tr > td {
+    &__td {
       border: 0;
-      padding: 4px 0;
     }
   }
 }

@@ -4,27 +4,6 @@
 $table-width: 100%;
 $table-margin-bottom: $offset-y;
 $table-text-align: left;
-$table-bg: transparent;
-
-$table-even-row-bg: get-color('additional', 'base');
-
-// Control the table border style
-$table-border-style: solid;
-$table-border-size: 1px;
-$table-border-color: get-color('additional', 'middle');
-
-// Control the row padding and font styles
 $table-row-padding: $offset-y-s;
-$table-row-font-size: $base-font-size - 2;
-$table-row-font-color: get-color('additional', 'dark');
-
-// Control the table head styles
-$table-head-bg: get-color('additional', 'light');
-$table-head-font-size: $base-font-size - 1;
-$table-head-font-color: get-color('additional', 'darker');
 $table-head-padding: $offset-y-m;
 
-// Control the table foot styles
-$table-foot-bg: get-color('additional', 'light');
-$table-foot-font-size: $base-font-size - 1;
-$table-foot-font-color: get-color('additional', 'darker');

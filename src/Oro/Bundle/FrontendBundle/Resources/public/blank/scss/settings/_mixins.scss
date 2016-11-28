@@ -4,70 +4,24 @@
     $table-width:         $table-width,
     $table-text-align:    $table-text-align,
     $table-margin-bottom: $table-margin-bottom,
-
+    $head-padding:        $table-head-padding,
     $row-padding:         $table-row-padding
 ) {
     width: $table-width;
     margin-bottom: $table-margin-bottom;
 
-    text-align: $table-text-align;
-
     border-spacing: 0;
     border-collapse: collapse;
-    
-    &__th,
+
     &__td {
         padding: $row-padding;
-    }
-}
 
-@mixin table-styled(
-    $table-bg:            $table-bg,
-    $table-border-style:  $table-border-style,
-    $table-border-size:   $table-border-size,
-    $table-border-color:  $table-border-color,
-    $row-font-size:       $table-row-font-size,
-    $row-font-color:      $table-row-font-color,
-    $row-even-bg:         $table-even-row-bg,
-    $head-bg:             $table-head-bg,
-    $head-font-size:      $table-head-font-size,
-    $head-font-color:     $table-head-font-color,
-    $foot-bg:             $table-foot-bg,
-    $foot-font-size:      $table-foot-font-size,
-    $foot-font-color:     $table-foot-font-color
-){
-
-    background: $table-bg;
-    border: $table-border-size $table-border-style $table-border-color;
-
-    &__th,
-    &__td {
-        border-bottom: $table-border-size $table-border-style $table-border-color;
+        text-align: $table-text-align;
     }
 
-    &__tr {
-        &:nth-child(even) {
-            background: $row-even-bg;
-        }
-    }
+    &__th {
+        padding: $head-padding;
 
-    &__tbody {
-        font-size: $row-font-size;
-
-        color: $row-font-color;
-    }
-
-    &__thead {
-        font-size: $head-font-size;
-
-        color: $head-font-color;
-        background: $head-bg;
-    }
-
-    &__tfoot {
-        font-size: $foot-font-size;
-
-        background: $foot-bg;
-        color: $foot-font-color;
+        text-align: $table-text-align;
     }
 }
