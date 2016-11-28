@@ -1,5 +1,4 @@
 {% extends 'OroUIBundle:actions:update.html.twig' %}
-{% import 'OroOrderBundle:Order:macros.html.twig' as SM %}
 {% form_theme form with ['OroFormBundle:Form:fields.html.twig'] %}
 
 {% oro_title_set({params : {'%entityName%' : 'oro.sale.quote.entity_label'|trans, '%id%': entity.qid} }) %}
@@ -131,41 +130,11 @@
         }]) %}
     {% endif %}
 
-    {% set shippingInformation %}
-        {% if entity.shippingMethod and entity.shippingMethodType and entity.estimatedShippingCost %}
-            {% set methodLabel = get_shipping_method_label(entity.shippingMethod) ? get_shipping_method_label(entity.shippingMethod)|trans ~ ', ' : '' %}
-            {{ UI.renderAttribute('oro.sale.quote.shipping_method.label'|trans,
-            '<div class="control-label selected-shipping-method">' ~
-            methodLabel ~
-            get_shipping_method_type_label(entity.shippingMethod, entity.shippingMethodType)|trans ~
-            ': ' ~ entity.estimatedShippingCost|oro_format_price() ~ '</div>'
-            ) }}
-        {% endif %}
-        {{ UI.renderAttribute('oro.sale.quote.form.shipping_options.label'|trans,
-        SM.renderPossibleShippingMethods(
-        entity.shippingMethod,
-        entity.shippingMethodType,
-        entity.estimatedShippingCostAmount,
-        [],
-        form
-        )
-        ) }}
-
-        {%  set options = {
-        view: 'oroorder/js/app/views/shipping-cost-view'
-        } %}
-
-        <div data-page-component-module="oroui/js/app/components/view-component"
-             data-page-component-options="{{ options|json_encode }}">
-            {{ form_row(form.overriddenShippingCostAmount) }}
-        </div>
-    {% endset %}
-
     {% set dataBlocks = dataBlocks|merge([{
         'title': 'oro.sale.quote.sections.shipping_information'|trans,
         'subblocks': [{
             'title': '',
-            'data': [shippingInformation]
+            'data': [form_row(form.overriddenShippingCostAmount)]
         }]
     }]) %}
 
