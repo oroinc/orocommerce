@@ -219,7 +219,7 @@ define(function(require) {
                 if ($(document).find('.selected-shipping-method').length > 0) {
                     $(document).find('.previously-selected-shipping-method').closest('.control-group').remove();
                     $(document).find('.selected-shipping-method').closest('.control-group').remove();
-                    if (!matched && selectedShippingMethod != this.savedShippingMethod) {
+                    if (!matched && this.savedShippingMethod && selectedShippingMethod != this.savedShippingMethod) {
                         var $prevDiv = $("<div>", {"class": "control-group"});
                         $prevDiv.append('<label class="control-label">' + __('oro.order.previous_shipping_method.label') + '</label>');
                         $prevDiv.append('<div class="controls"><div class="control-label previously-selected-shipping-method">' +

@@ -31,6 +31,8 @@ define(function(require) {
 
             this.initPricesListeners();
             this.initFieldsListeners();
+
+            mediator.trigger('pricing:refresh:products-tier-prices', this.options.tierPrices);
         },
 
         initPricesListeners: function() {

@@ -4,6 +4,7 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Visibility\Cache\Product\
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData;
 
@@ -13,6 +14,9 @@ abstract class AbstractProductResolvedCacheBuilderTest extends WebTestCase
 
     /** @var Registry */
     protected $registry;
+
+    /** @var Scope */
+    protected $scope;
 
     protected function setUp()
     {

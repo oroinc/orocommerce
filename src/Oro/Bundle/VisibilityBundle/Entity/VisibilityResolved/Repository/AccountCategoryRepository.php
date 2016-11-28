@@ -25,16 +25,6 @@ class AccountCategoryRepository extends EntityRepository
     use BasicOperationRepositoryTrait;
 
     /**
-     * @var ScopeManager
-     */
-    protected $scopeManager;
-
-    /**
-     * @var InsertFromSelectQueryExecutor
-     */
-    protected $insertExecutor;
-
-    /**
      * @param Category $category
      * @param Scope $accountScope
      * @param Scope|null $accountGroupScope
@@ -122,11 +112,12 @@ class AccountCategoryRepository extends EntityRepository
     }
 
     /**
+     * @param ScopeManager $scopeManager
      * @param Category $category
      * @param array $accountIds
      * @return array
      */
-    public function getVisibilitiesForAccounts(Category $category, array $accountIds)
+    public function getVisibilitiesForAccounts(ScopeManager $scopeManager, Category $category, array $accountIds)
     {
         $configFallback = BaseCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG;
 
@@ -162,11 +153,11 @@ class AccountCategoryRepository extends EntityRepository
         ->setParameter('category', $category)
         ->setParameter('accountIds', $accountIds);
 
-        $this->scopeManager
+        $scopeManager
             ->getCriteriaForRelatedScopes(AccountCategoryVisibility::VISIBILITY_TYPE, [])
             ->applyToJoin($qb, 'acvr_scope');
 
-        $this->scopeManager
+        $scopeManager
             ->getCriteriaForRelatedScopes(AccountGroupCategoryVisibility::VISIBILITY_TYPE, [])
             ->applyToJoin($qb, 'agcvr_scope');
 
@@ -215,7 +206,10 @@ class AccountCategoryRepository extends EntityRepository
             ->execute();
     }
 
-    public function insertStaticValues()
+    /**
+     * @param InsertFromSelectQueryExecutor $insertExecutor
+     */
+    public function insertStaticValues(InsertFromSelectQueryExecutor $insertExecutor)
     {
         $visibilityCondition = sprintf(
             "CASE WHEN acv.visibility = '%s' THEN %s ELSE %s END",
@@ -239,14 +233,17 @@ class AccountCategoryRepository extends EntityRepository
                 [AccountCategoryVisibility::VISIBLE, AccountCategoryVisibility::HIDDEN]
             );
 
-        $this->insertExecutor->execute(
+        $insertExecutor->execute(
             $this->getClassName(),
             ['sourceCategoryVisibility', 'category', 'scope', 'visibility', 'source'],
             $queryBuilder
         );
     }
 
-    public function insertCategoryValues()
+    /**
+     * @param InsertFromSelectQueryExecutor $insertExecutor
+     */
+    public function insertCategoryValues(InsertFromSelectQueryExecutor $insertExecutor)
     {
         $visibilityCondition = sprintf(
             'CASE WHEN cvr.visibility IS NOT NULL THEN cvr.visibility ELSE %s END',
@@ -271,7 +268,7 @@ class AccountCategoryRepository extends EntityRepository
             ->where('acv.visibility = :category')
             ->setParameter('category', AccountCategoryVisibility::CATEGORY);
 
-        $this->insertExecutor->execute(
+        $insertExecutor->execute(
             $this->getClassName(),
             ['sourceCategoryVisibility', 'category', 'scope', 'visibility', 'source'],
             $queryBuilder
@@ -344,10 +341,12 @@ class AccountCategoryRepository extends EntityRepository
     }
 
     /**
+     * @param InsertFromSelectQueryExecutor $insertExecutor
      * @param array $visibilityIds
      * @param int $visibility
      */
     public function insertParentCategoryValues(
+        InsertFromSelectQueryExecutor $insertExecutor,
         array $visibilityIds,
         $visibility
     ) {
@@ -370,7 +369,7 @@ class AccountCategoryRepository extends EntityRepository
 
         foreach (array_chunk($visibilityIds, CategoryRepository::INSERT_BATCH_SIZE) as $ids) {
             $queryBuilder->setParameter('visibilityIds', $ids);
-            $this->insertExecutor->execute(
+            $insertExecutor->execute(
                 $this->getClassName(),
                 ['sourceCategoryVisibility', 'category', 'visibility', 'source', 'scope'],
                 $queryBuilder
@@ -397,21 +396,5 @@ class AccountCategoryRepository extends EntityRepository
             ->setParameters(['scope' => $scope, 'categoryIds' => $categoryIds]);
 
         $qb->getQuery()->execute();
-    }
-
-    /**
-     * @param ScopeManager $scopeManager
-     */
-    public function setScopeManager($scopeManager)
-    {
-        $this->scopeManager = $scopeManager;
-    }
-
-    /**
-     * @param InsertFromSelectQueryExecutor $insertExecutor
-     */
-    public function setInsertExecutor($insertExecutor)
-    {
-        $this->insertExecutor = $insertExecutor;
     }
 }

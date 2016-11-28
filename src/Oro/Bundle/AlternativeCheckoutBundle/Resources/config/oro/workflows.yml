@@ -148,7 +148,6 @@ workflows:
                                 required: true
                                 constraints:
                                     - Valid: ~
-                                    - NotBlank: ~
                                     - Oro\Bundle\OrderBundle\Validator\Constraints\OrderAddress:
                                         validationGroups: ['Default', 'Frontend', 'PersonInfo']
                                 disabled: $disallow_billing_address_edit
@@ -187,7 +186,7 @@ workflows:
                                     - Valid: ~
                                     - NotBlank: ~
                                     - Oro\Bundle\OrderBundle\Validator\Constraints\OrderAddress:
-                                        validationGroups: ['Default', 'Frontend']
+                                        validationGroups: ['Checkout']
                         save_shipping_address:
                             options:
                         ship_to_billing_address:
@@ -354,7 +353,6 @@ workflows:
                             entity: $checkout
                             attribute: $.result.initCheckoutState
                     attribute_fields:
-                        remove_source: ~
                         po_number: ~
                         ship_until: ~
                         customer_notes:
