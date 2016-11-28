@@ -17,7 +17,7 @@ use Oro\Bundle\ShippingBundle\Context\ShippingContext;
 use Oro\Bundle\ShippingBundle\Factory\ShippingContextFactory;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
-class ShippingContextProviderFactoryTest extends \PHPUnit_Framework_TestCase
+class ShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
 {
     /** @var CheckoutShippingContextFactory|\PHPUnit_Framework_MockObject_MockObject */
     protected $factory;

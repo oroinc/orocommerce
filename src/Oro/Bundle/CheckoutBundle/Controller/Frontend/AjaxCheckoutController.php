@@ -54,10 +54,10 @@ class AjaxCheckoutController extends Controller
             return $checkout->getShippingCost();
         }
 
-        $shippingContextProviderFactory = $this->get('oro_checkout.factory.shipping_context_factory');
+        $shippingContextFactory = $this->get('oro_checkout.factory.shipping_context_factory');
 
         return $this->get('oro_shipping.shipping_price.provider')->getPrice(
-            $shippingContextProviderFactory->create($checkout),
+            $shippingContextFactory->create($checkout),
             $workflowTransitionData['shipping_method'],
             $workflowTransitionData['shipping_method_type']
         );

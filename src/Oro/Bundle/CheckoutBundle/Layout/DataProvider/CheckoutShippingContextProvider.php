@@ -9,14 +9,14 @@ use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 class CheckoutShippingContextProvider
 {
     /** @var CheckoutShippingContextFactory */
-    protected $shippingContextProviderFactory;
+    protected $shippingContextFactory;
 
     /**
-     * @param CheckoutShippingContextFactory $shippingContextProviderFactory
+     * @param CheckoutShippingContextFactory $shippingContextFactory
      */
-    public function __construct(CheckoutShippingContextFactory $shippingContextProviderFactory)
+    public function __construct(CheckoutShippingContextFactory $shippingContextFactory)
     {
-        $this->shippingContextProviderFactory = $shippingContextProviderFactory;
+        $this->shippingContextFactory = $shippingContextFactory;
     }
 
     /**
@@ -25,6 +25,6 @@ class CheckoutShippingContextProvider
      */
     public function getContext(Checkout $entity)
     {
-        return $this->shippingContextProviderFactory->create($entity);
+        return $this->shippingContextFactory->create($entity);
     }
 }

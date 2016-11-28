@@ -18,18 +18,18 @@ class ShippingMethodDiffMapper implements CheckoutStateDiffMapperInterface
     /**
      * @var CheckoutShippingContextFactory
      */
-    protected $shippingContextProviderFactory;
+    protected $shippingContextFactory;
 
     /**
      * @param ShippingPriceProvider          $shippingPriceProvider
-     * @param CheckoutShippingContextFactory $shippingContextProviderFactory
+     * @param CheckoutShippingContextFactory $shippingContextFactory
      */
     public function __construct(
         ShippingPriceProvider $shippingPriceProvider,
-        CheckoutShippingContextFactory $shippingContextProviderFactory
+        CheckoutShippingContextFactory $shippingContextFactory
     ) {
         $this->shippingPriceProvider = $shippingPriceProvider;
-        $this->shippingContextProviderFactory = $shippingContextProviderFactory;
+        $this->shippingContextFactory = $shippingContextFactory;
     }
 
     /**
@@ -58,7 +58,7 @@ class ShippingMethodDiffMapper implements CheckoutStateDiffMapperInterface
         if ($shippingMethod) {
             $shippingMethodType = $checkout->getShippingMethodType();
             $price = $this->shippingPriceProvider->getPrice(
-                $this->shippingContextProviderFactory->create($checkout),
+                $this->shippingContextFactory->create($checkout),
                 $shippingMethod,
                 $shippingMethodType
             );

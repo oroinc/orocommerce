@@ -12,7 +12,7 @@ class CheckoutShippingContextProviderTest extends \PHPUnit_Framework_TestCase
     /**
      * @var CheckoutShippingContextFactory| \PHPUnit_Framework_MockObject_MockObject
      */
-    protected $shippingContextProviderFactory;
+    protected $shippingContextFactory;
 
     /**
      * @var Checkout| \PHPUnit_Framework_MockObject_MockObject
@@ -30,18 +30,18 @@ class CheckoutShippingContextProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->shippingContextProviderFactory = $this->getMockBuilder(CheckoutShippingContextFactory::class)
+        $this->shippingContextFactory = $this->getMockBuilder(CheckoutShippingContextFactory::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->provider = new CheckoutShippingContextProvider($this->shippingContextProviderFactory);
+        $this->provider = new CheckoutShippingContextProvider($this->shippingContextFactory);
     }
 
     public function testGetPaymentStatus()
     {
         $context = new ShippingContext();
 
-        $this->shippingContextProviderFactory->expects($this->once())
+        $this->shippingContextFactory->expects($this->once())
             ->method('create')
             ->with($this->checkout)
             ->willReturn($context);

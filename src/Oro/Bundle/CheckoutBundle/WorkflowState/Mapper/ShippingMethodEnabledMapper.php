@@ -18,18 +18,18 @@ class ShippingMethodEnabledMapper implements CheckoutStateDiffMapperInterface
     /**
      * @var CheckoutShippingContextFactory
      */
-    protected $shippingContextProviderFactory;
+    protected $shippingContextFactory;
 
     /**
      * @param ShippingPriceProvider          $shippingPriceProvider
-     * @param CheckoutShippingContextFactory $shippingContextProviderFactory
+     * @param CheckoutShippingContextFactory $shippingContextFactory
      */
     public function __construct(
         ShippingPriceProvider $shippingPriceProvider,
-        CheckoutShippingContextFactory $shippingContextProviderFactory
+        CheckoutShippingContextFactory $shippingContextFactory
     ) {
         $this->shippingPriceProvider = $shippingPriceProvider;
-        $this->shippingContextProviderFactory = $shippingContextProviderFactory;
+        $this->shippingContextFactory = $shippingContextFactory;
     }
 
     /**
@@ -74,7 +74,7 @@ class ShippingMethodEnabledMapper implements CheckoutStateDiffMapperInterface
         $shippingMethod = $entity->getShippingMethod();
         if ($shippingMethod) {
             return null !== $this->shippingPriceProvider->getPrice(
-                $this->shippingContextProviderFactory->create($entity),
+                $this->shippingContextFactory->create($entity),
                 $shippingMethod,
                 $entity->getShippingMethodType()
             );
