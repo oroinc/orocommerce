@@ -61,6 +61,14 @@
       color: get-color('additional', 'dark');
       text-decoration: none;
     }
+
+    &-icon {
+      position: absolute;
+      left: 0;
+      top: 0;
+
+      @include badge(33px, 18px);
+    }
   }
 }
 

@@ -16,7 +16,7 @@
     <div{{ block('block_attributes') }}>
         <div class="checkout__head">
             <h2 class="checkout__title">
-                <span class="badge badge_md badge_circle badge_orange">{{ stepOrder }}</span>
+                <span class="checkout__title-icon">{{ stepOrder }}</span>
                 {{ workflowStep.label|trans({},'workflows') }}
             </h2>
         </div>
@@ -65,7 +65,7 @@
             <div class="checkout-order-summary__header">
                 <div data-collapse-trigger>
                     <div class="checkout-order-summary__header__icon-group">
-                        <span class="badge badge_sm badge_orange badge_circled-corners mmr7-md mmr7-sm">
+                        <span class="badge-square">
                           <i class="cf-basket"></i>
                         </span>
                         <span class="collapse-view__trigger">

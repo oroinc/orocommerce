@@ -12,7 +12,7 @@
 
 {% block _no_shopping_lists_widget %}
     <div class="cart-list_empty">
-        <span class="badge badge_orange badge_xlg badge_circle"><i class="cf-basket"></i></span>
+        <span class="cart-list_empty__icon"><i class="cf-basket"></i></span>
         <span class="fs24 va-m_md">{{ 'oro.frontend.shoppinglist.view.not_have_available'|trans }}</span>
     </div>
 {% endblock %}
@@ -387,9 +387,9 @@
 {% block _shopping_list_line_items_empty_widget %}
     {% set attr = attr|merge({ class: attr.class|default('') ~ " cart-list_empty"}) %}
     <div {{ block('block_attributes') }}>
-          <span class="badge badge_orange badge_xlg badge_circle">
+        <span class="cart-list_empty__icon">
             <i class="cf-basket"></i>
-          </span>
+        </span>
         <span class="fs24 va-m_md">{{ 'oro.frontend.shoppinglist.view.empty'|trans }}</span>
     </div>
 {% endblock %}

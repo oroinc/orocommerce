@@ -219,6 +219,18 @@
       }
     }
   }
+
+  &__icon {
+    $icon-size: 50px;
+
+    position: absolute;
+    top: 50%;
+    left: 20px;
+
+    margin-top: -$icon-size / 2;
+
+    @include badge(50px, 24px);
+  }
 }
 
 /*END CART*/

@@ -1,5 +1,34 @@
+// @theme: default;
+
 @mixin ellipsis() {
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+@mixin badge(
+    $badge-size:       26px,
+    $badge-f-size:     14px,
+    $badge-bg:         get-color('primary', 'base'),
+    $badge-radius:     50%,
+    $badge-color:      get-color('additional', 'ultra'),
+    $badge-icon-align: baseline
+) {
+    display: inline-block;
+    vertical-align: middle;
+    width: $badge-size;
+    height: $badge-size;
+
+    text-align: center;
+    font-size: $badge-f-size;
+    line-height: strip-units($badge-size/ $badge-f-size);
+
+    background-color: $badge-bg;
+    border-radius: $badge-radius;
+    color: $badge-color;
+
+    [class^="cf-"],
+    [class^="fa-"] {
+        vertical-align: $badge-icon-align;
+    }
 }
