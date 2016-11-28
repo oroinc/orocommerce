@@ -8,9 +8,9 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\InventoryBundle\EventListener\CategoryManageInventoryFormViewListener;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
-use Oro\Bundle\InventoryBundle\EventListener\CategoryManageInventoryFormViewListener;
 use Oro\Component\Testing\Unit\FormViewListenerTestCase;
 
 class CategoryManageInventoryFormViewListenerTest extends FormViewListenerTestCase
