@@ -4,9 +4,8 @@ namespace Oro\Bundle\CustomerBundle\Tests\Functional\Controller\Frontend\Api\Res
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
-
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserACLData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData as LoadLoginAccountUserData;
 
 /**
  * @dbIsolation
@@ -18,37 +17,77 @@ class AccountUserControllerTest extends WebTestCase
      */
     protected function setUp()
     {
-        $this->initClient(
-            [],
-            $this->generateBasicAuthHeader(LoadLoginAccountUserData::AUTH_USER, LoadLoginAccountUserData::AUTH_PW)
-        );
+        $this->initClient();
         $this->client->useHashNavigation(true);
         $this->loadFixtures(
             [
-                'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData'
+                LoadAccountUserACLData::class,
             ]
         );
     }
 
-    public function testDelete()
+    /**
+     * @dataProvider deleteDataProvider
+     * @param string $login
+     * @param string $resource
+     * @param int $status
+     */
+    public function testDelete($login, $resource, $status)
     {
-        /** @var \Oro\Bundle\CustomerBundle\Entity\AccountUser $user */
-        $user = $this->getUserRepository()->findOneBy(['email' => 'account.user2@test.com']);
-
-        $this->assertNotNull($user);
-        $id = $user->getId();
-
+        $this->loginUser($login);
         $this->client->request(
             'DELETE',
-            $this->getUrl('oro_api_account_frontend_delete_account_user', ['id' => $id])
+            $this->getUrl(
+                'oro_api_account_frontend_delete_account_user',
+                ['id' => $this->getReference($resource)->getId()]
+            )
         );
-        $result = $this->client->getResponse();
-        $this->assertEmptyResponseStatusCodeEquals($result, 204);
+        $this->assertResponseStatusCodeEquals($this->client->getResponse(), $status);
 
-        $this->getObjectManager()->clear();
-        $user = $this->getUserRepository()->find($id);
+        if ($status === 204) {
+            /** @var \Oro\Bundle\CustomerBundle\Entity\AccountUser $user */
+            $user = $this->getUserRepository()->findOneBy(['email' => $resource]);
+            $this->assertNull($user);
+        }
+    }
 
-        $this->assertNull($user);
+    /**
+     * @return array
+     */
+    public function deleteDataProvider()
+    {
+        return [
+            'anonymous user' => [
+                'login' => '',
+                'resource' => LoadAccountUserACLData::USER_ACCOUNT_1_1_ROLE_LOCAL,
+                'status' => 401,
+            ],
+            'same account: LOCAL_VIEW_ONLY' => [
+                'login' => LoadAccountUserACLData::USER_ACCOUNT_1_ROLE_LOCAL_VIEW_ONLY,
+                'resource' => LoadAccountUserACLData::USER_ACCOUNT_1_ROLE_LOCAL,
+                'status' => 403,
+            ],
+            'parent account: LOCAL' => [
+                'login' => LoadAccountUserACLData::USER_ACCOUNT_1_ROLE_LOCAL,
+                'resource' => LoadAccountUserACLData::USER_ACCOUNT_1_1_ROLE_LOCAL,
+                'status' => 403,
+            ],
+            'parent account: DEEP_VIEW_ONLY' => [
+                'login' => LoadAccountUserACLData::USER_ACCOUNT_1_ROLE_DEEP_VIEW_ONLY,
+                'resource' => LoadAccountUserACLData::USER_ACCOUNT_1_1_ROLE_LOCAL,
+                'status' => 403,
+            ],
+            'parent account: DEEP' => [
+                'login' => LoadAccountUserACLData::USER_ACCOUNT_1_ROLE_DEEP,
+                'resource' => LoadAccountUserACLData::USER_ACCOUNT_1_1_ROLE_LOCAL,
+                'status' => 204,
+            ],
+            'same account: LOCAL' => [
+                'login' => LoadAccountUserACLData::USER_ACCOUNT_1_ROLE_LOCAL,
+                'resource' => LoadAccountUserACLData::USER_ACCOUNT_1_ROLE_DEEP_VIEW_ONLY,
+                'status' => 204,
+            ],
+        ];
     }
 
     /**
