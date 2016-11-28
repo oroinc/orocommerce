@@ -272,7 +272,7 @@ datagrids:
             query:
                 select:
                     - >
-                        (CASE WHEN (:group = account.group OR account.id IN (:data_in)) AND account.id NOT IN (:data_not_in)
+                        (CASE WHEN (:group = customer.group OR customer.id IN (:data_in)) AND customer.id NOT IN (:data_not_in)
                         THEN true ELSE false END) as hasGroup
             bind_parameters:
                 -
@@ -284,7 +284,7 @@ datagrids:
             query:
                 select:
                     - >
-                        (CASE WHEN account.id IN (:data_in) AND account.id NOT IN (:data_not_in)
+                        (CASE WHEN customer.id IN (:data_in) AND customer.id NOT IN (:data_not_in)
                         THEN true ELSE false END) as hasGroup
 
     account-account-user-grid-no-filter-base:
