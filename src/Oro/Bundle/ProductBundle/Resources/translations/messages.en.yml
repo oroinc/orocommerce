@@ -29,6 +29,7 @@ oro:
         images.label: Images
         anything.label: Any Text
         featured_products.label: Featured Products
+        type.label: Type
 
         status:
             enabled: Enabled
