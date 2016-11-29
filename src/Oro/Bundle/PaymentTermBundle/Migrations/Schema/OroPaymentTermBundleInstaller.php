@@ -7,12 +7,13 @@ use Doctrine\DBAL\Platforms\MySqlPlatform;
 use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
 use Doctrine\DBAL\Schema\Schema;
 
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
-
+use Oro\Bundle\NoteBundle\Migrations\Schema\v1_3\UpdateAssociationKindQuery;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
-use Oro\Bundle\EntityExtendBundle\Extend\RelationType;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
+use Oro\Bundle\MigrationBundle\Migration\Extension\NameGeneratorAwareInterface;
+use Oro\Bundle\MigrationBundle\Tools\DbIdentifierNameGenerator;
 use Oro\Bundle\FrontendBundle\Migration\UpdateExtendRelationTrait;
 use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
@@ -28,10 +29,11 @@ class OroPaymentTermBundleInstaller implements
     PaymentTermExtensionAwareInterface,
     DatabasePlatformAwareInterface,
     RenameExtensionAwareInterface,
-    ContainerAwareInterface,
-    ActivityExtensionAwareInterface
+    ActivityExtensionAwareInterface,
+    NameGeneratorAwareInterface,
+    ExtendExtensionAwareInterface
 {
-    use PaymentTermExtensionAwareTrait, ContainerAwareTrait, UpdateExtendRelationTrait;
+    use PaymentTermExtensionAwareTrait, UpdateExtendRelationTrait;
 
     /** @var AbstractPlatform */
     protected $platform;
@@ -43,6 +45,16 @@ class OroPaymentTermBundleInstaller implements
      * @var ActivityExtension
      */
     protected $activityExtension;
+
+    /**
+     * @var ExtendExtension
+     */
+    protected $extendExtension;
+
+    /**
+     * @var DbIdentifierNameGenerator
+     */
+    protected $nameGenerator;
 
     /**
      * Table name for PaymentTerm
@@ -117,35 +129,21 @@ class OroPaymentTermBundleInstaller implements
         $this->paymentTermExtension->addPaymentTermAssociation($schema, 'oro_account');
         $this->paymentTermExtension->addPaymentTermAssociation($schema, 'oro_account_group');
 
-        $notes = $schema->getTable('oro_note');
-        if ($notes->hasForeignKey('fk_ba066ce1b2856c4b')) {
-            $notes->removeForeignKey('fk_ba066ce1b2856c4b');
-        }
-        $this->renameExtension->renameColumn(
-            $schema,
-            $queries,
-            $notes,
-            'payment_term_3dd15035_id',
-            'payment_term_7c4f1e8e_id'
-        );
-        $this->renameExtension->addForeignKeyConstraint(
-            $schema,
-            $queries,
-            'oro_note',
-            'oro_payment_term',
-            ['payment_term_7c4f1e8e_id'],
-            ['id'],
-            ['onDelete' => 'SET NULL']
-        );
+        $associationTableName = $this->activityExtension->getAssociationTableName('oro_note', self::TABLE_NAME);
+        if (!$schema->hasTable($associationTableName)) {
+            $updateAssociationKindQuery = new UpdateAssociationKindQuery(
+                $schema,
+                $this->activityExtension,
+                $this->extendExtension,
+                $this->nameGenerator
+            );
+            $updateAssociationKindQuery->registerOldClassNameForClass(
+                'Oro\Bundle\PaymentTermBundle\Entity\PaymentTransaction',
+                'Oro\Bundle\PaymentBundle\Entity\PaymentTerm'
+            );
 
-        $this->migrateConfig(
-            $this->container->get('oro_entity_config.config_manager'),
-            'Oro\Bundle\NoteBundle\Entity\Note',
-            'Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm',
-            'payment_term_3dd15035',
-            'payment_term_7c4f1e8e',
-            RelationType::MANY_TO_ONE
-        );
+            $queries->addPostQuery($updateAssociationKindQuery);
+        }
     }
 
     /**
@@ -232,5 +230,21 @@ QUERY;
     public function setActivityExtension(ActivityExtension $activityExtension)
     {
         $this->activityExtension = $activityExtension;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setExtendExtension(ExtendExtension $extendExtension)
+    {
+        $this->extendExtension = $extendExtension;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setNameGenerator(DbIdentifierNameGenerator $nameGenerator)
+    {
+        $this->nameGenerator = $nameGenerator;
     }
 }

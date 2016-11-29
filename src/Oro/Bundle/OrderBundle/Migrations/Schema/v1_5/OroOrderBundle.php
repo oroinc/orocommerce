@@ -60,29 +60,6 @@ class OroOrderBundle implements Migration, RenameExtensionAwareInterface
             RelationType::MANY_TO_ONE
         ));
 
-        // notes
-        $notes = $schema->getTable('oro_note');
-
-        $notes->removeForeignKey('fk_oro_note_order_f0cd67_id');
-        $extension->renameColumn($schema, $queries, $notes, 'order_f0cd67_id', 'order_50627d4f_id');
-        $extension->addForeignKeyConstraint(
-            $schema,
-            $queries,
-            'oro_note',
-            'orob2b_order',
-            ['order_50627d4f_id'],
-            ['id'],
-            ['onDelete' => 'SET NULL'],
-            'fk_oro_note_order_50627d4f_id'
-        );
-        $queries->addQuery(new UpdateExtendRelationQuery(
-            'Oro\Bundle\NoteBundle\Entity\Note',
-            'Oro\Bundle\OrderBundle\Entity\Order',
-            'order_f0cd67',
-            'order_50627d4f',
-            RelationType::MANY_TO_ONE
-        ));
-
         // entity tables
         $extension->renameTable($schema, $queries, 'orob2b_order', 'oro_order');
         $extension->renameTable($schema, $queries, 'orob2b_order_address', 'oro_order_address');

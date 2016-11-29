@@ -36,28 +36,6 @@ class OroRFPBundle implements Migration, RenameExtensionAwareInterface
             RelationType::MANY_TO_MANY
         ));
 
-        // notes
-        $notes = $schema->getTable('oro_note');
-
-        $notes->removeForeignKey('FK_BA066CE1EF5A4BE2');
-        $extension->renameColumn($schema, $queries, $notes, 'request_86063709_id', 'request_d6948721_id');
-        $extension->addForeignKeyConstraint(
-            $schema,
-            $queries,
-            'oro_note',
-            'orob2b_rfp_request',
-            ['request_d6948721_id'],
-            ['id'],
-            ['onDelete' => 'SET NULL']
-        );
-        $queries->addQuery(new UpdateExtendRelationQuery(
-            'Oro\Bundle\NoteBundle\Entity\Note',
-            'Oro\Bundle\RFPBundle\Entity\Request',
-            'request_86063709',
-            'request_d6948721',
-            RelationType::MANY_TO_ONE
-        ));
-
         // rename tables
         $extension->renameTable($schema, $queries, 'orob2b_rfp_request', 'oro_rfp_request');
         $extension->renameTable($schema, $queries, 'orob2b_rfp_status', 'oro_rfp_status');

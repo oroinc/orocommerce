@@ -68,29 +68,6 @@ class OroSaleBundle implements Migration, RenameExtensionAwareInterface
             RelationType::MANY_TO_ONE
         ));
 
-        // notes
-        $notes = $schema->getTable('oro_note');
-
-        $notes->removeForeignKey('fk_oro_note_quote_ea269983_id');
-        $extension->renameColumn($schema, $queries, $notes, 'quote_ea269983_id', 'quote_7de78df3_id');
-        $extension->addForeignKeyConstraint(
-            $schema,
-            $queries,
-            'oro_note',
-            'orob2b_sale_quote',
-            ['quote_7de78df3_id'],
-            ['id'],
-            ['onDelete' => 'SET NULL'],
-            'fk_oro_note_quote_7de78df3_id'
-        );
-        $queries->addQuery(new UpdateExtendRelationQuery(
-            'Oro\Bundle\NoteBundle\Entity\Note',
-            'Oro\Bundle\SaleBundle\Entity\Quote',
-            'quote_ea269983',
-            'quote_7de78df3',
-            RelationType::MANY_TO_ONE
-        ));
-
         // rename tables
         $extension->renameTable($schema, $queries, 'orob2b_sale_quote', 'oro_sale_quote');
         $extension->renameTable($schema, $queries, 'orob2b_quote_address', 'oro_quote_address');

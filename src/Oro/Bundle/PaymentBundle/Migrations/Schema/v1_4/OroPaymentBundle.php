@@ -5,19 +5,16 @@ namespace Oro\Bundle\PaymentBundle\Migrations\Schema\v1_4;
 use Doctrine\DBAL\Schema\Schema;
 
 use Oro\Bundle\ConfigBundle\Migration\RenameConfigSectionQuery;
-use Oro\Bundle\EntityExtendBundle\Extend\RelationType;
 use Oro\Bundle\FrontendBundle\Migration\UpdateClassNamesQuery;
 use Oro\Bundle\FrontendBundle\Migration\UpdateExtendRelationTrait;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
-class OroPaymentBundle implements Migration, RenameExtensionAwareInterface, ContainerAwareInterface
+class OroPaymentBundle implements Migration, RenameExtensionAwareInterface
 {
-    use ContainerAwareTrait, UpdateExtendRelationTrait;
+    use UpdateExtendRelationTrait;
 
     /**
      * @var RenameExtension
@@ -38,30 +35,6 @@ class OroPaymentBundle implements Migration, RenameExtensionAwareInterface, Cont
         $table->setPrimaryKey(['id']);
 
         $extension = $this->renameExtension;
-
-        // notes
-        $notes = $schema->getTable('oro_note');
-
-        $notes->removeForeignKey('FK_BA066CE1C77ACA7D');
-        $extension->renameColumn($schema, $queries, $notes, 'payment_term_5f8a1ef5_id', 'payment_term_3dd15035_id');
-        $extension->addForeignKeyConstraint(
-            $schema,
-            $queries,
-            'oro_note',
-            'orob2b_payment_term',
-            ['payment_term_3dd15035_id'],
-            ['id'],
-            ['onDelete' => 'SET NULL']
-        );
-
-        $this->migrateConfig(
-            $this->container->get('oro_entity_config.config_manager'),
-            'Oro\Bundle\NoteBundle\Entity\Note',
-            'Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm',
-            'payment_term_5f8a1ef5',
-            'payment_term_3dd15035',
-            RelationType::MANY_TO_ONE
-        );
 
         // entity tables
         $extension->renameTable($schema, $queries, 'orob2b_payment_term', 'oro_payment_term');
