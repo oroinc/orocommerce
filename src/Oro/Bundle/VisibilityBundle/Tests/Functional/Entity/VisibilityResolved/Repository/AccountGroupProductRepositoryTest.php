@@ -69,12 +69,24 @@ class AccountGroupProductRepositoryTest extends VisibilityResolvedRepositoryTest
         ];
     }
 
+    public function testInsertByProduct()
+    {
+        $repository = $this->getRepository();
+        $product = $this->getReference(LoadProductData::PRODUCT_1);
+        /** @var $product Product */
+        $repository->deleteByProduct($product);
+        $category = $this->getCategory($product);
+        $repository->insertByProduct($this->getInsertFromSelectExecutor(), $product, $category);
+        $visibilities = $repository->findBy(['product' => $product]);
+        $this->assertSame(1, count($visibilities));
+    }
+
     /**
      * @inheritDoc
      */
     public function insertStaticDataProvider()
     {
-        return ['expected_rows' => [6]];
+        return ['expected_rows' => [8]];
     }
 
     /**
@@ -151,8 +163,7 @@ class AccountGroupProductRepositoryTest extends VisibilityResolvedRepositoryTest
      */
     protected function getRepository()
     {
-        return $this->getContainer()->get('oro_visibility.account_group_product_repository_holder')
-            ->getRepository();
+        return $this->getContainer()->get('oro_visibility.account_group_product_repository');
     }
 
     /**

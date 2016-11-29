@@ -23,6 +23,7 @@ services:
             - '@doctrine'
             - '@oro_ups.factory.price_request_factory'
             - '@oro_locale.helper.localization'
+            - '@oro_ups.shipping_price_cache'
         tags:
             - { name: oro_shipping_method_provider }
 
@@ -51,6 +52,7 @@ services:
             - '@doctrine'
             - '@oro_shipping.provider.measure_units.conversion'
             - '@oro_ups.shipping_units_mapper'
+            - '@oro_security.encoder.mcrypt'
 
     oro_ups.shipping_units_mapper:
         class: 'Oro\Bundle\UPSBundle\Provider\UnitsMapper'
@@ -64,3 +66,21 @@ services:
             - '@oro_ups.shipping_method_provider.ups'
         tags:
             - { name: kernel.event_listener, event: oro_shipping_method.config_data, method: onGetConfigData }
+
+    oro_ups.handler.invalidate_cache_at:
+        class: 'Oro\Bundle\UPSBundle\Handler\InvalidateCacheAtHandler'
+        arguments:
+            - "@doctrine"
+            - '@oro_ups.shipping_price_cache'
+
+    oro_ups.shipping_price_cache:
+        class: 'Oro\Bundle\UPSBundle\Cache\ShippingPriceCache'
+        public: false
+        arguments:
+            - "@oro_ups.cache.shipping_price"
+
+    oro_ups.cache.shipping_price:
+        public: false
+        parent: oro.cache.abstract
+        calls:
+            - [setNamespace, ['oro_ups_shipping_price']]

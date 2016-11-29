@@ -79,7 +79,6 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
             'oro_customer.security.account_user_provider' => $this->securityProvider,
             'oro_security.security_facade' => $this->securityFacade,
             'oro_customer.provider.account_user_relations_provider' => $this->relationsProvider,
-            'security.authentication.trust_resolver' => $this->trustResolver
         ];
 
         /* @var $container ContainerInterface|\PHPUnit_Framework_MockObject_MockObject */
@@ -90,7 +89,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
                 return $services[$id];
             });
 
-        $this->voter = new AccountVoter($this->doctrineHelper);
+        $this->voter = new AccountVoter($this->doctrineHelper, $this->trustResolver);
         $this->voter->setContainer($container);
     }
 
@@ -663,7 +662,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
      */
     public function testWithoutContainer()
     {
-        $voter = new AccountVoter($this->doctrineHelper);
+        $voter = new AccountVoter($this->doctrineHelper, $this->trustResolver);
         $accountUser = $this->getAccountUser(1);
         $object = $this->getObject(1);
 

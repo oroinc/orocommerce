@@ -5,10 +5,15 @@ layout:
             optionName: params
             optionValue:
                  '%step_label%': '=data["translator"].getTrans(data["workflowStep"].getLabel(),[],"workflows")'
+        - '@setOption':
+            id: page_title
+            optionName: text
+            optionValue: 'oro.checkout.entity_label'
+
     imports:
         -
             id: oro_checkout_content
-            root: content
+            root: page_content
         -
             id: oro_checkout_sidebar
-            root: sidebar_left
+            root: page_sidebar

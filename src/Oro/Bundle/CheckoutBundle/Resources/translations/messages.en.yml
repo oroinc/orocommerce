@@ -35,6 +35,7 @@ oro:
         line_items_count.label: Items
         started_from.label: Started From
         order_history.label: Order History
+        deleted.label: Deleted
 
         basecheckout:
             entity_label: Base Checkout
@@ -66,6 +67,7 @@ oro:
             entity_label: Checkout Source
             entity_plural_label: Checkout Sources
             id.label: Id
+            deleted.label: Deleted
 
         billing_information: Billing Information
         shipping_information: Shipping Information
@@ -150,7 +152,9 @@ oro:
         form:
             address.manual: Enter other address
             address.select.billing.label: SELECT BILLING ADDRESS
+            address.enter.billing.label: ENTER BILLING ADDRESS
             address.select.shipping.label: SELECT SHIPPING ADDRESS
+            address.enter.shipping.label: ENTER SHIPPING ADDRESS
 
         grid:
             total.label: Total
@@ -181,3 +185,7 @@ oro:
 
         privilege:
             category.checkout.label: 'Checkout'
+
+        method_type:
+            sidebar:
+                label: '<div>%translatedMethodType%: <div><strong>%price%</strong></div></div>'

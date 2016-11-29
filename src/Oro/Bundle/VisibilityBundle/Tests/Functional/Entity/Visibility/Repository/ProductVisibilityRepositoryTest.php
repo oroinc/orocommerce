@@ -5,6 +5,7 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Entity\Visibility\Reposit
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
+use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\ProductVisibilityRepository;
@@ -22,6 +23,11 @@ class ProductVisibilityRepositoryTest extends AbstractProductVisibilityRepositor
     protected $repository;
 
     /**
+     * @var InsertFromSelectQueryExecutor
+     */
+    protected $insertExecutor;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -29,8 +35,8 @@ class ProductVisibilityRepositoryTest extends AbstractProductVisibilityRepositor
         $this->initClient();
         $this->client->useHashNavigation(true);
         $this->repository = static::getContainer()
-            ->get('oro_visibility.product_raw_repository_holder')
-            ->getRepository();
+            ->get('oro_visibility.product_raw_repository');
+        $this->insertExecutor = $this->getContainer()->get('oro_entity.orm.insert_from_select_query_executor');
 
         $this->loadFixtures(
             [
@@ -53,7 +59,7 @@ class ProductVisibilityRepositoryTest extends AbstractProductVisibilityRepositor
         $scopes = static::getContainer()->get('oro_scope.scope_manager')
             ->findRelatedScopes(ProductVisibility::VISIBILITY_TYPE);
         foreach ($scopes as $scope) {
-            $this->repository->setToDefaultWithoutCategory($scope);
+            $this->repository->setToDefaultWithoutCategory($this->insertExecutor, $scope);
             $actual = $this->getProductsByVisibilitiesScope($scope);
             static::assertSameSize($expected, $actual);
             foreach ($actual as $value) {

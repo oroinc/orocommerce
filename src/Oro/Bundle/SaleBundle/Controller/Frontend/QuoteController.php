@@ -29,7 +29,7 @@ class QuoteController extends Controller
      *      id="oro_sale_quote_frontend_view",
      *      type="entity",
      *      class="OroSaleBundle:Quote",
-     *      permission="ACCOUNT_VIEW",
+     *      permission="VIEW",
      *      group_name="commerce"
      * )
      * @ParamConverter("quote", options={"repository_method" = "getQuote"})
@@ -90,7 +90,7 @@ class QuoteController extends Controller
      *      id="oro_sale_quote_frontend_choice",
      *      type="entity",
      *      class="OroSaleBundle:Quote",
-     *      permission="ACCOUNT_VIEW",
+     *      permission="VIEW",
      *      group_name="commerce"
      * )
      *
@@ -143,7 +143,7 @@ class QuoteController extends Controller
      *      id="oro_sale_quote_frontend_subtotals",
      *      type="entity",
      *      class="OroSaleBundle:Quote",
-     *      permission="ACCOUNT_VIEW",
+     *      permission="VIEW",
      *      group_name="commerce"
      * )
      *

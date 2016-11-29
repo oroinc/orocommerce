@@ -1,3 +1,5 @@
+// @theme: default
+
 .credit-card-icon {
   $paymentIconUrl: $global-url + '/orofrontend/default/images/payments';
 
@@ -50,8 +52,6 @@
   display: inline-block;
   vertical-align: middle;
 
-  margin-right: 3px;
-
   font-family: $base-font-icon;
   font-weight: normal;
   font-style: normal;
@@ -83,7 +83,7 @@
   }
 
   &--gray {
-    color: get-color('additional', 'dark');
+    color: lighten(get-color('additional', 'dark'), 17.5%);
   }
 
   &--hidden {

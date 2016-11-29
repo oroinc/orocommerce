@@ -5,7 +5,7 @@ namespace Oro\Bundle\PricingBundle\EventListener;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 
 use Oro\Bundle\PricingBundle\Model\FrontendProductListModifier;
-use Oro\Bundle\ProductBundle\Event\ProductSelectDBQueryEvent;
+use Oro\Bundle\ProductBundle\Event\ProductDBQueryRestrictionEvent;
 
 /**
  * Remove product prices by unit on ProductUnitPrecision delete.
@@ -15,7 +15,7 @@ class ProductSelectPriceListAwareListener
     const DEFAULT_ACCOUNT_USER = 'default_account_user';
 
     /**
-     * @var ProductSelectDBQueryEvent
+     * @var ProductDBQueryRestrictionEvent
      */
     protected $event;
 
@@ -40,9 +40,9 @@ class ProductSelectPriceListAwareListener
     }
 
     /**
-     * @param ProductSelectDBQueryEvent $event
+     * @param ProductDBQueryRestrictionEvent $event
      */
-    public function onDBQuery(ProductSelectDBQueryEvent $event)
+    public function onDBQuery(ProductDBQueryRestrictionEvent $event)
     {
         $this->event = $event;
 

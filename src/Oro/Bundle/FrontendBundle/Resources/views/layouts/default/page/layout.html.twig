@@ -13,14 +13,14 @@
     {% endif %}
 {% endblock %}
 
-{% block _header_widget %}
+{% block _page_header_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' header'
+        '~class': ' page-header'
     }) %}
 
-    <header{{ block('block_attributes') }}>
+    <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
-    </header>
+    </div>
 {% endblock %}
 
 {% block _require_js_config_widget %}
@@ -82,73 +82,36 @@
     </div>
 {% endblock %}
 
-{% block _main_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': ' main'
-    }) %}
-
-    <main{{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </main>
-{% endblock %}
-
-{% block _content_widget %}
-    {% set visibleSidebarChildren = [] %}
-    {% if blocks.sidebar_left is defined %}
-        {% for child in blocks.sidebar_left.children %}
-            {% if child.vars.visible %}
-                {% set visibleSidebarChildren  = visibleSidebarChildren|merge([child]) %}
-            {% endif %}
-        {% endfor %}
-    {% endif %}
-
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': ' content' ~ (visibleSidebarChildren|length > 0 ? ' content--has-sidebar')
-    }) %}
-
-    <div{{ block('block_attributes') }}>
-        <div class="content__container">
-            <div class="container-fluid">
-                <div class="content__inner">
-                    {{ block_widget(block) }}
-                </div>
-            </div>
-        </div>
-    </div>
-{% endblock %}
-
 {% block _page_title_container_widget %}
-    {% set content = block_widget(block)|trim %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' page-title ' ~ (class_prefix ? ' {{ class_prefix }}-page-title')
+        '~class': ' page-title-wrapper' ~ (class_prefix ? ' {{ class_prefix }}-page-title-wrapper')
     }) %}
-    {% if content|length %}
-        <h1{{ block('block_attributes') }}>{{ content|raw }}</h1>
-    {% endif %}
+    <div{{ block('block_attributes') }}>{{ block_widget(block) }}</div>
 {% endblock %}
 
 {% block _page_title_widget %}
-    {{ block_widget(block) }}
-{% endblock %}
-
-{% block _sidebar_left_widget %}
-    {% if block.count > 0 %}
-        {% set attr = layout_attr_defaults(attr, {
-            class: attr.class|default('') ~ " sidebar sidebar_left"
-        }) %}
-        <aside{{ block('block_attributes') }}>
-            {{ block_widget(block) }}
-        </aside>
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' page-title' ~ (class_prefix ? ' {{ class_prefix }}-page-title')
+    }) %}
+    {% set content = block_widget(block)|trim %}
+    {% if content|length %}
+        <h1{{ block('block_attributes') }}>
+            {% if titleIcon is defined %}
+            <span class="badge badge_sm badge_circle badge_orange badge_has-inline-sibling">
+                <i class="{{ titleIcon }}"></i>
+            </span>
+            {% endif %}
+            <span class="page-title__text">{{ content|raw }}</span>
+        </h1>
     {% endif %}
 {% endblock %}
 
 {% block _notification_widget %}
     {% set attr = layout_attr_defaults(attr, {
         'id': 'flash-messages',
-        '~class': ' notification-flash',
+        '~class': ' notification-flash-container container-fluid',
         'data-sticky': {
-            'placeholderId': 'sticky-element-notification',
-            'toggleClass': 'notification-flash--medium'
+            'placeholderId': 'sticky-element-notification'
         }
     }) %}
     <div{{ block('block_attributes') }}></div>
@@ -157,10 +120,12 @@
         <% if (type === "error" || type === "warning") {
             iconClass = 'cf-attention';
         }%>
-        <div class="container-fluid alert notification notification_<%= type %> notification_lg">
-            <span class="badge badge_sm_xs badge_<%= type %>"><i class="<%= iconClass %>"></i></span>
-            <span class="fs16 ml1-sm"><%= message %></span>
-            <i class="cf-clear" data-dismiss="alert"></i>
+        <div class="notification-flash--<%= type %> alert">
+            <div class="notification-flash__badge">
+                <i class="<%= iconClass %>"></i>
+            </div>
+            <button class="notification-flash__close" data-dismiss="alert"><i class="cf-clear"></i></button>
+            <div class="notification-flash__text"><%= message %></div>
         </div>
     </script>
     <script type="text/javascript">

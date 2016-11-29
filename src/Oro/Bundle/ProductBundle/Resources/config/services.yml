@@ -8,6 +8,8 @@ parameters:
 
     oro_product.event_listener.scoped_product_select_db_query.common_class: Oro\Bundle\ProductBundle\EventListener\ScopedProductSelectDBQueryEventListener
     oro.product.event_listener.product_images_configuration_listener.class: 'Oro\Bundle\ProductBundle\EventListener\ProductImagesConfigurationListener'
+    oro_product.event_listener.scoped_product_db_query_restriction.common_class: Oro\Bundle\ProductBundle\EventListener\ScopedProductDBQueryRestrictionEventListener
+    oro_product.event_listener.scoped_product_search_query_restriction.common_class: Oro\Bundle\ProductBundle\EventListener\ScopedProductSearchQueryRestrictionEventListener
 
 services:
     oro_product.product.manager.api:
@@ -144,10 +146,16 @@ services:
         class: 'Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorFilter'
         public: false
         arguments:
-            - "@oro_product.product.manager"
-            - "@doctrine"
+            - "@oro_product.website_search.repository.product"
+
+    oro_product.website_search.repository.product:
+        parent: oro_website_search.repository.abstract
+        class: 'Oro\Bundle\ProductBundle\Search\ProductRepository'
+        arguments:
+            - "@oro_website_search.query_factory"
+            - "@oro_search.provider.search_mapping"
         calls:
-            - [setProductClass, ['%oro_product.entity.product.class%']]
+            - [setEntityName, ['%oro_product.entity.product.class%']]
 
     oro_product.component_processor.registry:
         class: 'Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry'
@@ -248,7 +256,6 @@ services:
             - "@request_stack"
             - "@oro_product.product.manager"
         tags:
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.frontend-products-grid, method: onBuildAfter }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.products-select-grid, method: onBuildAfter }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.products-select-grid-frontend, method: onBuildAfter }
 
@@ -263,17 +270,23 @@ services:
         class: 'Oro\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier'
         public: false
 
+    oro_product.model.product_visibility_search_query_modifier:
+        class: 'Oro\Bundle\ProductBundle\Model\ProductVisibilitySearchQueryModifier'
+        public: false
+
     oro_product.autocomplete.product_visibility_limited.search_handler:
         class: 'Oro\Bundle\ProductBundle\Autocomplete\ProductVisibilityLimitedSearchHandler'
         public: false
         arguments:
             - '%oro_product.entity.product.class%'
-            - ["sku", "defaultName.string"]
+            - { search: {sku: "sku", name: "defaultName.string"}, orm: {sku: "sku", defaultName.string: "defaultName.string"}}
             - "@request_stack"
             - "@oro_product.product.manager"
         calls:
             - [initDoctrinePropertiesByManagerRegistry, ["@doctrine"]]
             - [setAclHelper,["@oro_security.acl_helper"]]
+            - [setFrontendHelper,["@oro_frontend.request.frontend_helper"]]
+            - [setSearchRepository,["@oro_product.website_search.repository.product"]]
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: "oro_product_visibility_limited" }
 
@@ -285,24 +298,40 @@ services:
     oro_product.event_listener.restrict_disabled_products:
         class: 'Oro\Bundle\ProductBundle\EventListener\RestrictDisabledProductsEventListener'
         arguments:
+            - "@oro_product.model.product_visibility_search_query_modifier"
             - "@oro_product.model.product_visibility_query_builder_modifier"
         tags:
-            - { name: kernel.event_listener, event: oro_product.product_select.db.query, method: onDBQuery }
+            - { name: kernel.event_listener, event: oro_product.product_search_query.restriction, method: onSearchQuery }
+            - { name: kernel.event_listener, event: oro_product.product_db_query.restriction, method: onDBQuery }
 
-    oro_product.event_listener.abstract_product_select_db_query:
+    oro_product.event_listener.abstract_product_db_query_restriction:
         abstract: true
         arguments:
             - "@oro_config.manager"
             - "@oro_product.model.product_visibility_query_builder_modifier"
             - "@oro_frontend.request.frontend_helper"
 
-    oro_product.event_listener.product_select_db_query:
-        class: 'Oro\Bundle\ProductBundle\EventListener\ProductSelectDBQueryEventListener'
-        parent: oro_product.event_listener.abstract_product_select_db_query
+    oro_product.event_listener.product_db_query_restriction:
+        class: 'Oro\Bundle\ProductBundle\EventListener\ProductDBQueryRestrictionEventListener'
+        parent: oro_product.event_listener.abstract_product_db_query_restriction
         calls:
             - [setFrontendSystemConfigurationPath, ['oro_product.general_frontend_product_visibility']]
         tags:
-            - { name: kernel.event_listener, event: oro_product.product_select.db.query, method: onDBQuery }
+            - { name: kernel.event_listener, event: oro_product.product_db_query.restriction, method: onDBQuery }
+
+    oro_product.event_listener.abstract_product_search_query_restriction:
+        abstract: true
+        arguments:
+            - "@oro_config.manager"
+            - "@oro_product.model.product_visibility_search_query_modifier"
+            - "@oro_frontend.request.frontend_helper"
+            - "oro_product.general_frontend_product_visibility"
+
+    oro_product.event_listener.product_search_query_restriction:
+        class: 'Oro\Bundle\ProductBundle\EventListener\ProductSearchQueryRestrictionEventListener'
+        parent: oro_product.event_listener.abstract_product_search_query_restriction
+        tags:
+            - { name: kernel.event_listener, event: oro_product.product_search_query.restriction, method: onSearchQuery }
 
     oro_product.repository.product:
         class: 'Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository'
@@ -321,6 +350,7 @@ services:
         public: false
         arguments:
             - "@oro_product.repository.product"
+            - "@oro_product.product.manager"
 
     oro_product.datagrid_theme_helper:
         class: 'Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper'
@@ -329,7 +359,7 @@ services:
             - '@request_stack'
             - '@session'
 
-    oro_product.event_listener.frontend_product_datagrid:
+    oro_product.event_listener.frontend_product_search_datagrid:
         class: 'Oro\Bundle\ProductBundle\EventListener\FrontendProductDatagridListener'
         arguments:
             - '@oro_product.datagrid_theme_helper'
@@ -337,8 +367,8 @@ services:
             - '@oro_attachment.manager'
             - '@liip_imagine.cache.manager'
         tags:
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-products-grid, method: onPreBuild }
-            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-products-grid, method: onResultAfter }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid, method: onPreBuild }
+            - { name: kernel.event_listener, event: oro_datagrid.search_datasource.result.after.frontend-product-search-grid, method: onResultAfter }
 
     oro_product.layout.data_provider.frontend_datagrid_row_view:
         class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\FrontendDatagridRowViewProvider'
@@ -351,6 +381,7 @@ services:
         class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\ProductFormProvider'
         arguments:
             - "@form.factory"
+            - '@router'
         tags:
             - { name: layout.data_provider, alias: oro_product_form }
 
@@ -371,6 +402,23 @@ services:
         class: 'Oro\Bundle\ProductBundle\Api\Processor\LoadEntityId'
         tags:
             - { name: oro.api.processor, action: update, group: load_data, priority: -50, class: '%oro_product.entity.product.class%'}
+
+    oro_product.event_listener.website_search_index:
+        class: 'Oro\Bundle\ProductBundle\EventListener\WebsiteSearchProductIndexerListener'
+        arguments:
+            - '@oro_website.provider.website_localization'
+            - '@oro_website_search.manager.website_context_manager'
+        tags:
+            - { name: kernel.event_listener, event: oro_website_search.event.index_entity.product, method: onWebsiteSearchIndex }
+
+    oro_product.event_listener.restrict_index_products:
+        class: 'Oro\Bundle\ProductBundle\EventListener\RestrictIndexProductsEventListener'
+        arguments:
+            - '@oro_config.manager'
+            - '@oro_product.model.product_visibility_query_builder_modifier'
+            - 'oro_product.general_frontend_product_visibility'
+        tags:
+            - { name: kernel.event_listener, event: oro_website_search.event.restrict_index_entity.product, method: onRestrictIndexEntityEvent }
 
     oro_product.layout.data_provider.featured_products:
         class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\FeaturedProductsProvider'
@@ -436,3 +484,18 @@ services:
             - '@oro_message_queue.client.message_producer'
         tags:
             - { name: kernel.event_listener, event: kernel.terminate, method: sendScheduledMessages }
+
+    oro_product.product_visibility_restriction_listener:
+        class: 'Oro\Bundle\ProductBundle\EventListener\ProductVisibilityRestrictionListener'
+        arguments:
+            - '@oro_product.product.manager'
+            - '@oro_website_search.provider.search_mapping'
+        tags:
+            - { name: kernel.event_listener, event: oro_website_search.before_search, method: process }
+
+    oro_product.exception.product_access_listener:
+        class: 'Oro\Bundle\ProductBundle\EventListener\ProductAccessExceptionListener'
+        arguments:
+           - "@request_stack"
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception, method: onAccessException }

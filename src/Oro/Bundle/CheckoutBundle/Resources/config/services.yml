@@ -38,6 +38,7 @@ services:
         class: 'Oro\Bundle\CheckoutBundle\Layout\DataProvider\TransitionFormProvider'
         arguments:
             - '@form.factory'
+            - '@router'
         calls:
             - [setTransitionProvider, ['@oro_checkout.layout.data_provider.transition']]
         tags:
@@ -68,7 +69,7 @@ services:
     oro_checkout.layout.data_provider.shipping_context:
         class: 'Oro\Bundle\CheckoutBundle\Layout\DataProvider\CheckoutShippingContextProvider'
         arguments:
-            - '@oro_checkout.factory.shipping_context_provider_factory'
+            - '@oro_checkout.factory.shipping_context_factory'
         tags:
             - { name: layout.data_provider, alias: checkout_shipping_context }
 
@@ -123,8 +124,9 @@ services:
         arguments:
             - '@request_stack'
             - '@event_dispatcher'
+            - '@oro_payment_term.provider.payment_term'
         tags:
-            - { name: kernel.event_listener, event: oro_payment.resolve.payment_term, method: onResolvePaymentTerm }
+            - { name: kernel.event_listener, event: oro_payment_term.resolve.payment_term, method: onResolvePaymentTerm }
 
     oro_checkout.event_listener.shopping_list:
         class: 'Oro\Bundle\CheckoutBundle\EventListener\ShoppingListListener'
@@ -274,7 +276,7 @@ services:
         class: 'Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\ShippingMethodDiffMapper'
         arguments:
             - '@oro_shipping.shipping_price.provider'
-            - '@oro_checkout.factory.shipping_context_provider_factory'
+            - '@oro_checkout.factory.shipping_context_factory'
         public: false
         tags:
             - { name: checkout.workflow_state.mapper }
@@ -283,7 +285,7 @@ services:
         class: 'Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\ShippingMethodEnabledMapper'
         arguments:
             - '@oro_shipping.shipping_price.provider'
-            - '@oro_checkout.factory.shipping_context_provider_factory'
+            - '@oro_checkout.factory.shipping_context_factory'
         public: false
         tags:
             - { name: checkout.workflow_state.mapper }
@@ -356,11 +358,11 @@ services:
     oro_checkout.action.default_shipping_method_setter:
         class: 'Oro\Bundle\CheckoutBundle\Action\DefaultShippingMethodSetter'
         arguments:
-            - '@oro_checkout.factory.shipping_context_provider_factory'
+            - '@oro_checkout.factory.shipping_context_factory'
             - '@oro_shipping.shipping_price.provider'
 
-    oro_checkout.factory.shipping_context_provider_factory:
-        class: 'Oro\Bundle\CheckoutBundle\Factory\ShippingContextProviderFactory'
+    oro_checkout.factory.shipping_context_factory:
+        class: 'Oro\Bundle\CheckoutBundle\Factory\CheckoutShippingContextFactory'
         arguments:
             - '@oro_checkout.data_provider.manager.checkout_line_items'
             - '@oro_pricing.subtotal_processor.total_processor_provider'
@@ -385,3 +387,11 @@ services:
             - '@oro_checkout.mapper.order_mapper'
         tags:
             - { name: oro_action.action, alias: create_order }
+
+    oro_checkout.listener.checkout_workflow:
+        class: 'Oro\Bundle\CheckoutBundle\EventListener\CheckoutWorkflowListener'
+        arguments:
+            - '@doctrine'
+            - '%oro_checkout.entity.checkout.class%'
+        tags:
+            - { name: oro_workflow.changes.listener, event: oro.workflow.deactivated, method: onDeactivationWorkflowDefinition }

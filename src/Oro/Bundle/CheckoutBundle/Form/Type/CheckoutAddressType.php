@@ -5,6 +5,8 @@ namespace Oro\Bundle\CheckoutBundle\Form\Type;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\CustomerBundle\Entity\AccountOwnerAwareInterface;
@@ -71,8 +73,10 @@ class CheckoutAddressType extends AbstractOrderAddressType
                 $selectedKey = $defaultKey;
             }
 
+            $action = count($addresses) ? 'select' : 'enter';
+
             $accountAddressOptions = [
-                'label' => sprintf('oro.checkout.form.address.select.%s.label', $type),
+                'label' => sprintf('oro.checkout.form.address.%s.%s.label', $action, $type),
                 'required' => true,
                 'mapped' => false,
                 'choices' => $this->getChoices($addresses),
@@ -92,7 +96,7 @@ class CheckoutAddressType extends AbstractOrderAddressType
             }
             $builder
                 ->add('accountAddress', 'choice', $accountAddressOptions)
-                ->add('country', 'oro_frontend_country', ['required' => true, 'label' => 'oro.address.country.label'])
+                ->add('country', 'oro_frontend_country', ['label' => 'oro.address.country.label'])
                 ->add('region', 'oro_frontend_region', ['required' => false, 'label' => 'oro.address.region.label']);
 
             if ($type === AddressType::TYPE_BILLING) {
@@ -160,5 +164,22 @@ class CheckoutAddressType extends AbstractOrderAddressType
         }
 
         return $selectedKey;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function finishView(FormView $view, FormInterface $form, array $options)
+    {
+        parent::finishView($view, $form, $options);
+
+        foreach ($view->children as $child) {
+            $child->vars['required'] = false;
+            unset(
+                $child->vars['attr']['data-validation'],
+                $child->vars['attr']['data-required'],
+                $child->vars['label_attr']['data-required']
+            );
+        }
     }
 }

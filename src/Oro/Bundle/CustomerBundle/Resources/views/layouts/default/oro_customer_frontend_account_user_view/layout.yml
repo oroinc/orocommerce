@@ -2,8 +2,7 @@ layout:
     imports:
         -
             id: oro_account_user_view
-            root: content
-        - oro_account_menu
+            root: page_content
     actions:
         - '@setOption':
             id: title
@@ -18,11 +17,6 @@ layout:
                 label: 'oro.customer.frontend.title.account_user.view'
                 parameters:
                     '%identifier%': '=data["entity"].getFullName()'
-
-        - '@setOption':
-            id: content
-            optionName: class_prefix
-            optionValue: 'user'
 
         - '@add':
             id: account_user_list_link

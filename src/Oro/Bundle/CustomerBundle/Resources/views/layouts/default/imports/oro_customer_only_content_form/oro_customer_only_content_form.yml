@@ -1,4 +1,0 @@
-layout:
-    actions:
-        - '@setBlockTheme':
-            themes: 'oro_customer_only_content_form.html.twig'

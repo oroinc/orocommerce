@@ -12,15 +12,6 @@
     margin-bottom: 15px;
   }
 
-  .notification.notification_error {
-    margin-top: -15px !important;
-    margin-bottom: 10px;
-
-    .mml5-md {
-      margin-left: 0 !important;
-    }
-  }
-
   &__tabs {
     position: relative;
 
@@ -48,7 +39,7 @@
   color: get-color('additional', 'base');
 }
 
-.quick-order-page-title {
+.quick-order-page-title-wrapper {
   position: relative;
 
   margin: 0 0 15px;

@@ -245,7 +245,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('This value is already used.', $crawler->filter('.notification_error')->html());
+        $this->assertContains('This value is already used.', $crawler->filter('.notification--error')->html());
     }
 
     /**
@@ -370,7 +370,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
         $crawler = $this->client->submit($form, $submittedData);
         $this->assertEquals('Forgot Your Password?', $crawler->filter('h2')->html());
         $this->assertContains(
-            'Email address "'. $unknownEmail .'" is not known',
+            'Email address "'. $unknownEmail .'" does not exist.',
             $crawler->html()
         );
     }

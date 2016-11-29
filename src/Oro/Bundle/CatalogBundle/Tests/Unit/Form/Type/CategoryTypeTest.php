@@ -159,9 +159,6 @@ class CategoryTypeTest extends \PHPUnit_Framework_TestCase
                     'resize' => true,
                     'width' => 500,
                     'height' => 200,
-                    'plugins' => array_merge(OroRichTextType::$defaultPlugins, ['fullscreen']),
-                    'toolbar' =>
-                        [reset(OroRichTextType::$toolbars[OroRichTextType::TOOLBAR_DEFAULT]) . ' | fullscreen'],
                 ],
             ]
         ];

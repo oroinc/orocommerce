@@ -5,39 +5,21 @@ namespace Oro\Bundle\VisibilityBundle\Model;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\VisibilityBundle\Visibility\ProductVisibilityTrait;
+use Oro\Bundle\SearchBundle\Query\Modifier\QueryBuilderModifierInterface;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
-use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
 
-class ProductVisibilityQueryBuilderModifier
+class ProductVisibilityQueryBuilderModifier implements QueryBuilderModifierInterface
 {
-    /**
-     * @var string
-     */
-    protected $productConfigPath;
-
-    /**
-     * @var string
-     */
-    protected $categoryConfigPath;
-
-    /**
-     * @var ConfigManager
-     */
-    protected $configManager;
+    use ProductVisibilityTrait;
 
     /**
      * @var ScopeManager
      */
     protected $scopeManager;
-
-    /**
-     * @var array
-     */
-    protected $configValue = [];
 
     /**
      * @param ConfigManager $configManager
@@ -47,22 +29,6 @@ class ProductVisibilityQueryBuilderModifier
     {
         $this->configManager = $configManager;
         $this->scopeManager = $scopeManager;
-    }
-
-    /**
-     * @param string $path
-     */
-    public function setProductVisibilitySystemConfigurationPath($path)
-    {
-        $this->productConfigPath = $path;
-    }
-
-    /**
-     * @param string $path
-     */
-    public function setCategoryVisibilitySystemConfigurationPath($path)
-    {
-        $this->categoryConfigPath = $path;
     }
 
     /**
@@ -178,87 +144,5 @@ TERM;
             $this->getProductConfigValue(),
             $accountFallback
         );
-    }
-
-    /**
-     * @return int
-     */
-    protected function getProductConfigValue()
-    {
-        return $this->getConfigValue($this->productConfigPath);
-    }
-
-    /**
-     * @return int
-     */
-    protected function getCategoryConfigValue()
-    {
-        return $this->getConfigValue($this->categoryConfigPath);
-    }
-
-    /**
-     * @param string $path
-     * @return integer
-     */
-    protected function getConfigValue($path)
-    {
-        if (!empty($this->configValue[$path])) {
-            return $this->configValue[$path];
-        }
-
-        if (!$this->productConfigPath) {
-            throw new \LogicException(
-                sprintf('%s::productConfigPath not configured', get_class($this))
-            );
-        }
-        if (!$this->categoryConfigPath) {
-            throw new \LogicException(
-                sprintf('%s::categoryConfigPath not configured', get_class($this))
-            );
-        }
-
-        $this->configValue = [
-            $this->productConfigPath => $this->configManager->get($this->productConfigPath),
-            $this->categoryConfigPath => $this->configManager->get($this->categoryConfigPath),
-        ];
-
-        foreach ($this->configValue as $key => $value) {
-            $this->configValue[$key] = $value === VisibilityInterface::VISIBLE
-                ? BaseVisibilityResolved::VISIBILITY_VISIBLE
-                : BaseVisibilityResolved::VISIBILITY_HIDDEN;
-        }
-
-        return $this->configValue[$path];
-    }
-
-    /**
-     * @param QueryBuilder $queryBuilder
-     * @return mixed
-     */
-    protected function getRootAlias(QueryBuilder $queryBuilder)
-    {
-        return $queryBuilder->getRootAliases()[0];
-    }
-
-    /**
-     * @param string $field
-     * @return string
-     */
-    protected function addCategoryConfigFallback($field)
-    {
-        return sprintf(
-            'CASE WHEN %1$s = %2$s THEN %3$s ELSE %1$s END',
-            $field,
-            BaseVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG,
-            $this->getCategoryConfigValue()
-        );
-    }
-
-    /**
-     * @param ScopeManager $scopeManager
-     */
-    public function setScopeManager(ScopeManager $scopeManager)
-    {
-        $this->scopeManager = $scopeManager;
     }
 }

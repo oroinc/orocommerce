@@ -50,8 +50,14 @@
 
     {% set shippingInformation %}
         {%- if entity.shippingMethod and entity.shippingMethodType -%}
-            {{ UI.renderHtmlProperty('oro.order.shipping_method.label'|trans, oro_order_shipping_method_with_type_label(entity.shippingMethod, entity.shippingMethodType)) }}
+            {% set shoppingMethod = 'oro.shipping.method_type.backend.label'|transchoice(3, {
+                '%translatedMethodType%': get_shipping_method_type_label(entity.shippingMethod, entity.shippingMethodType)|trans,
+                '%translatedMethod%': get_shipping_method_label(entity.shippingMethod)|trans
+            }) %}
+
+            {{ UI.renderHtmlProperty('oro.order.shipping_method.label'|trans, shoppingMethod) }}
         {%- endif -%}
+
         {% if entity.shippingCost is not null %}
             {{ UI.renderHtmlProperty('oro.order.shipping_cost.label'|trans,
                     entity.shippingCost.value|oro_format_currency({'currency': entity.shippingCost.currency})) }}
@@ -60,19 +66,6 @@
         {% endif %}
         {% if entity.shippingTrackings is defined %}
             {{ UI.renderHtmlProperty('oro.order.shipping_tracking.entity_label'|trans, dataGrid.renderGrid('order-shipping-trackings-grid', { order_id: entity.id }, { cssClass: 'inner-grid order-shipping-trackings-grid' })) }}
-        {% endif %}
-    {% endset %}
-
-    {% set paymentTerm %}
-        {% if entity.paymentTerm is not empty %}
-            {% if resource_granted('VIEW', entity.paymentTerm) %}
-                {% set paymentTermView = UI.renderUrl(path('oro_payment_term_view', {'id': entity.paymentTerm.id}), entity.paymentTerm.label) %}
-            {% else %}
-                {% set paymentTermView = entity.paymentTerm.label|escape %}
-            {% endif %}
-            {{ UI.renderHtmlProperty('oro.order.payment_term.label'|trans, paymentTermView) }}
-        {% else %}
-            {{ UI.renderHtmlProperty('oro.order.payment_term.label'|trans, 'N/A'|trans) }}
         {% endif %}
     {% endset %}
 
@@ -86,12 +79,6 @@
         'title': 'oro.order.sections.shipping_information'|trans,
         'priority': -100,
         'subblocks': [{'data' : [shippingInformation]}]
-    }]) %}
-
-    {% set dataBlocks = dataBlocks|merge([{
-        'title': 'oro.order.form.payment.label'|trans,
-        'priority': -75,
-        'subblocks': [{'data' : [paymentTerm]}]
     }]) %}
 
     {% set dataBlocks = dataBlocks|merge([{
