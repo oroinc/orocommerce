@@ -71,8 +71,8 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
     const INVENTORY_STATUS_OUT_OF_STOCK = 'out_of_stock';
     const INVENTORY_STATUS_DISCONTINUED = 'discontinued';
 
-    const TYPE_SIMPLE_PRODUCT = 'simple';
-    const TYPE_CONFIGURABLE_PRODUCT = 'configurable';
+    const TYPE_SIMPLE = 'simple';
+    const TYPE_CONFIGURABLE = 'configurable';
 
     /**
      * @ORM\Id
@@ -417,7 +417,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
      *      }
      *  )
      */
-    protected $type = self::TYPE_SIMPLE_PRODUCT;
+    protected $type = self::TYPE_SIMPLE;
 
     /**
      * {@inheritdoc}
@@ -440,6 +440,14 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
     public static function getStatuses()
     {
         return [self::STATUS_ENABLED, self::STATUS_DISABLED];
+    }
+
+    /**
+     * @return array
+     */
+    public static function getTypes()
+    {
+        return [self::TYPE_SIMPLE, self::TYPE_CONFIGURABLE];
     }
 
     /**
@@ -924,7 +932,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
     /**
      * @param string $type
      *
-     * @return Product
+     * @return $this
      */
     public function setType($type)
     {
