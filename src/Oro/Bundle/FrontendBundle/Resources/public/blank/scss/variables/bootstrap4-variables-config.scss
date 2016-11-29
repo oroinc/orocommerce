@@ -1,3 +1,87 @@
 // @theme: blank
 
+// Original variables
 @import "../vendors/bootstrap4/scss/variables";
+
+// Bootstrap override variables
+
+// Colors
+$gray-dark:     update-default($gray-dark, get-color('additional', 'darker'));
+$gray:          update-default($gray, get-color('additional', 'dark'));
+$gray-light:    update-default($gray-light, get-color('additional', 'light'));
+$gray-lighter:  update-default($gray-lighter, get-color('additional', 'base'));
+$gray-lightest: update-default($gray-lightest, get-color('additional', 'ultra'));
+
+$brand-primary: update-default($brand-primary, get-color('primary', 'base'));
+$brand-success: update-default($brand-success, get-color('secondary', 'base'));
+$brand-info:    update-default($brand-info, get-color('ui', 'success-dark'));
+$brand-warning: update-default($brand-warning, get-color('ui', 'warning-dark'));
+$brand-danger:  update-default($brand-danger, get-color('ui', 'error-dark'));
+
+
+// Options
+$enable-shadows: update-default($enable-shadows, true);
+
+
+// Spacing
+$spacer: update-default($spacer,  1px);
+
+
+// Body
+
+
+// Links
+$link-color:       update-default($link-color, get-color('ui', 'normal'));
+$link-hover-color: update-default($link-hover-color, get-color('ui', 'focus'));
+
+
+// Grid breakpoints
+
+
+// Grid containers
+
+
+// Grid columns
+
+
+// Fonts
+$font-family-sans-serif: update-default($font-family-sans-serif, $base-font);
+$font-family-serif:      update-default($font-family-serif, $base-font);
+$font-family-monospace:  update-default($font-family-monospace, $base-font);
+$font-family-base:       update-default($font-family-base, $base-font);
+
+$font-size-root: update-default($font-size-root, $base-font-size);
+
+$font-size-base: update-default($font-size-base, $base-font-size);
+$font-size-lg:   update-default($font-size-lg, $base-font-size--l);
+$font-size-sm:   update-default($font-size-sm, $base-font-size--m);
+$font-size-xs:   update-default($font-size-xs, $base-font-size - 2px);
+
+$line-height-base: update-default($line-height-base, $base-line-height);
+
+// Components
+// update-default(, );
+// Dropdowns
+//
+// Dropdown menu container and contents.
+
+$dropdown-min-width:      update-default($dropdown-min-width, 160px);
+$dropdown-padding-y:      update-default($dropdown-padding-y, 5px);
+$dropdown-margin-top:     update-default($dropdown-padding-y, 2px);
+
+$dropdown-box-shadow:     update-default($dropdown-box-shadow, 0 6px 12px rgba(0, 0, 0, .175));
+
+$dropdown-item-padding-x: update-default($dropdown-item-padding-x, 20px);
+
+
+// Z-index master list
+
+$zindex-dropdown-backdrop: update-default($zindex-dropdown-backdrop, z('dropdown'));
+$zindex-navbar:            update-default($zindex-navbar, z('dropdown') + 1);
+$zindex-dropdown:          update-default($zindex-dropdown, z('dropdown') + 1);
+$zindex-popover:           update-default($zindex-popover, z('dropdown') + 6);
+$zindex-tooltip:           update-default($zindex-tooltip, z('dropdown') + 7);
+$zindex-navbar-fixed:      update-default($zindex-navbar-fixed, z('dropdown') + 3);
+$zindex-navbar-sticky:     update-default($zindex-navbar-sticky, z('dropdown') + 3);
+$zindex-modal-bg:          update-default($zindex-modal-bg, z('dropdown') + 4);
+$zindex-modal:             update-default($zindex-modal, z('dropdown') + 5);
