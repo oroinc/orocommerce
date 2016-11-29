@@ -103,22 +103,27 @@
 {% endblock %}
 
 {% block __oro_checkout_content__checkout_order_summary_line_items_widget %}
-    <table class="oro-grid-table table-scrollable"
-           data-page-component-module="oroui/js/app/components/view-component"
-           data-page-component-options="{{ {view: 'orofrontend/js/app/views/scrollable-table'}|json_encode }}">
-        <thead class="oro-grid-table__head">
+    {% set attr = layout_attr_defaults(attr, {
+        'data-page-component-module': 'oroui/js/app/components/view-component',
+        '~data-page-component-options': {
+            view: 'orofrontend/js/app/views/scrollable-table'
+        },
+        '~class': " checkout-order-summary__grid"
+    }) %}
+
+    <table {{ block('block_attributes') }}>
+        <thead class="checkout-order-summary__grid-head">
         <tr data-scrollable-content-head>
             <th>{{ 'oro.checkout.order_summary.item'|trans }}</th>
             <th class="text-center">{{ 'oro.checkout.order_summary.quantity'|trans }}</th>
             <th class="text-right" data-scrollable-item-has-offset>{{ 'oro.checkout.order_summary.price'|trans }}</th>
         </tr>
         </thead>
-
         <tbody>
         <tr>
-            <td colspan="3">
+            <td class="checkout-order-summary__grid-col" colspan="3">
                 <div data-scrollable-content class="scrollable-content">
-                    <table data-scrollable-inner-content class="scrollable-content__table checkout-order-summary__table">
+                    <table data-scrollable-inner-content class="checkout-order-summary__table">
                         <tbody class="checkout-order-summary__table-inner">
                         {% for lineItem in lineItemsWithTotals %}
                             {% set lineItemInfo = lineItemsWithTotals.getInfo() %}
@@ -126,9 +131,9 @@
                             {% if lineItem.product is not null %}
                                 {% set productSku = lineItem.product.sku %}
                             {% endif %}
-                            <tr data-scrollable-content-body class="checkout-order-summary__table-row">
-                                <td class="checkout-order-summary__product">
-                                    <h3 class="product-item__title product-item__title_in-cart mb1-md">
+                            <tr data-scrollable-content-body>
+                                <td class="checkout-order-summary__table-col checkout-order-summary__product">
+                                    <h3 class="product-item__title product-item__title_in-cart">
                                         {% if lineItem.product is not null %}
                                             <a href="{{ path('oro_product_frontend_product_view', {'id':lineItem.product.id}) }}" tabindex="-1">{{ lineItem.product.defaultName }}</a>
                                         {% else %}
@@ -139,8 +144,8 @@
                                                 class="red">{{ productSku }}</span></div>
                                 </td>
                                 {% set quantity = lineItem.quantity %}
-                                <td class="checkout-order-summary__qty">{{ quantity ? quantity|oro_format_short_product_unit_value(lineItem.productUnit) : 'N/A'|trans }}</td>
-                                <td class="checkout-order-summary__price">
+                                <td class="checkout-order-summary__table-col checkout-order-summary__qty">{{ quantity ? quantity|oro_format_short_product_unit_value(lineItem.productUnit) : 'N/A'|trans }}</td>
+                                <td class="checkout-order-summary__table-col checkout-order-summary__price">
                                     <div class="checkout-order-summary__price-inner">
                                         <table class="checkout-order-summary__price-table">
                                             <tbody>
