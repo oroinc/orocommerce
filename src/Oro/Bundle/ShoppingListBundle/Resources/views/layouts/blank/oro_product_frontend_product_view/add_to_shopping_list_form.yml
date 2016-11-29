@@ -1,0 +1,15 @@
+layout:
+    imports:
+        -
+            id: shopping_list_buttons
+            root: line_item_buttons
+            namespace: product
+    actions:
+        - '@setOption':
+            id: product_shopping_lists
+            optionName: productShoppingLists
+            optionValue: '=data["oro_shopping_list_product_units_quantity"].getByProduct(data.offsetExists("product")?data["product"])'
+        - '@setOption':
+            id: product_line_item_form_buttons_shopping_list
+            optionName: productShoppingLists
+            optionValue: '=data["oro_shopping_list_product_units_quantity"].getByProduct(data.offsetExists("product")?data["product"])'

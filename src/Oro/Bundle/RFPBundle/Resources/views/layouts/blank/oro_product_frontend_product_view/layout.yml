@@ -1,0 +1,12 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'layout.html.twig'
+        - '@add':
+            id: request_a_quote_form_button
+            parentId: line_item_buttons
+            blockType: block
+            options:
+                visible: '=data["product_units_without_prices"].getProductUnits(data["product"])!=null && data["feature"].isFeatureEnabled("rfp_frontend")'
+                vars:
+                    product: '=data["product"]'
