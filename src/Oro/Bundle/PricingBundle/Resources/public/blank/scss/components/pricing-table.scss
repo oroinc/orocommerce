@@ -1,0 +1,24 @@
+// @theme: blank
+
+.pricing-table {
+    width: $pricing-table-width;
+    margin: $pricing-table-offset;
+
+    border: $pricing-table-border;
+    border-spacing: 0;
+    border-collapse: collapse;
+
+    &__th {
+        padding: $pricing-table-head-inner-offset;
+
+        text-align: $pricing-table-head-text-align;
+
+        border-bottom: $pricing-table-head-border-bottom;
+    }
+
+    &__td {
+        padding: $pricing-table-cell-inner-offset;
+
+        text-align: $pricing-table-cell-text-align;
+    }
+}

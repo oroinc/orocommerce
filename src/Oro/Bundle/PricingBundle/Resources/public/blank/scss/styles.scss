@@ -1,5 +1,3 @@
 // @theme: blank
 
-.pricing-table {
-    @include table-base(100%, center);
-}
+@import 'components/pricing-table';

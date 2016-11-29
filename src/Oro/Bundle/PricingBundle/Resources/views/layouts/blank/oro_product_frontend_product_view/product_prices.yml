@@ -4,7 +4,7 @@ layout:
             themes: 'layout.html.twig'
         - '@add':
             id: product_prices
-            parentId: product_main_data_first_container
+            parentId: product_view_price_container
             blockType: product_prices
             options:
                 visible: '=data["product"].getUnitPrecisions()!=null'
