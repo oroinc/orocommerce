@@ -1,19 +1,9 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'OroProductBundle:layouts:default/oro_product_frontend_product_view/layout.html.twig'
-        - '@setOption':
-            id: title
-            optionName: params
-            optionValue:
-                '%name%': '=data["locale"].getLocalizedValue(data["product"].getNames())'
-        - '@setOption':
-            id: page_title
-            optionName: text
-            optionValue: '=data["locale"].getLocalizedValue(data["product"].getNames())'
-        - '@move':
-            id: page_title
-            parentId: product_title_container
+            themes: 'layout.html.twig'
+        
+        
         - '@addTree':
             items:
                 product_view_page:
