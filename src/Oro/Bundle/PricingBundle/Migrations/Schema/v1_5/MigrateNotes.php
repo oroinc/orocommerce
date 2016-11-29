@@ -4,14 +4,14 @@ namespace Oro\Bundle\PricingBundle\Migrations\Schema\v1_5;
 
 use Doctrine\DBAL\Schema\Schema;
 
-use Oro\Bundle\FrontendBundle\Migration\UpdateNoteAssociationKindMigration;
+use Oro\Bundle\NoteBundle\Migration\UpdateNoteAssociationKindForRenamedEntitiesMigration;
 
-class MigrateNotes extends UpdateNoteAssociationKindMigration
+class MigrateNotes extends UpdateNoteAssociationKindForRenamedEntitiesMigration
 {
     /**
      * {@inheritdoc}
      */
-    protected function getRenamedClasses(Schema $schema)
+    protected function getRenamedEntitiesNames(Schema $schema)
     {
         return [
             'Oro\Bundle\PricingBundle\Entity\ProductPrice' => 'OroB2B\Bundle\PricingBundle\Entity\ProductPrice',

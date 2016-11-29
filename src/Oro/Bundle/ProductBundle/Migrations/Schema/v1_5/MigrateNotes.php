@@ -4,14 +4,14 @@ namespace Oro\Bundle\ProductBundle\Migrations\Schema\v1_5;
 
 use Doctrine\DBAL\Schema\Schema;
 
-use Oro\Bundle\FrontendBundle\Migration\UpdateNoteAssociationKindMigration;
+use Oro\Bundle\NoteBundle\Migration\UpdateNoteAssociationKindForRenamedEntitiesMigration;
 
-class MigrateNotes extends UpdateNoteAssociationKindMigration
+class MigrateNotes extends UpdateNoteAssociationKindForRenamedEntitiesMigration
 {
     /**
      * {@inheritdoc}
      */
-    protected function getRenamedClasses(Schema $schema)
+    protected function getRenamedEntitiesNames(Schema $schema)
     {
         return [
             'Oro\Bundle\ProductBundle\Entity\Product' => 'OroB2B\Bundle\ProductBundle\Entity\Product',
