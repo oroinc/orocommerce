@@ -73,7 +73,6 @@ class CheckoutEntityListener
 
     /**
      * @param CheckoutEntityEvent $event
-     * @return null|CheckoutInterface
      */
     public function onGetCheckoutEntity(CheckoutEntityEvent $event)
     {
@@ -106,7 +105,7 @@ class CheckoutEntityListener
             $checkout = $this->getRepository()->findOneBy(['source' => $event->getSource()]);
         }
 
-        return isset($checkout) ? $this->actualizeCheckoutCurrency($checkout) : null;
+        return isset($checkout) && !$checkout->isDeleted() ? $this->actualizeCheckoutCurrency($checkout) : null;
     }
 
     /**

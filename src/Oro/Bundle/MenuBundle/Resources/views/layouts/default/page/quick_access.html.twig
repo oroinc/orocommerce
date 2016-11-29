@@ -9,13 +9,13 @@
 
 {% block _quick_access_menu_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " quick-access",
-        'data-dom-relocation': true,
+        '~class': ' quick-access',
+        'data-dom-relocation': '',
         'data-dom-relocation-options': {
             responsive: [
                 {
                     breakpoint: 1099,
-                    moveTo: '[data-main-menu-axtra-container]'
+                    moveTo: '[data-main-menu-extra-container]'
                 }
             ]
         }

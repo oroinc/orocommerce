@@ -370,7 +370,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
         $crawler = $this->client->submit($form, $submittedData);
         $this->assertEquals('Forgot Your Password?', $crawler->filter('h2')->html());
         $this->assertContains(
-            'Email address "'. $unknownEmail .'" is not known',
+            'Email address "'. $unknownEmail .'" does not exist.',
             $crawler->html()
         );
     }

@@ -84,6 +84,7 @@ class FrontendAccountUserRoleType extends AbstractAccountUserRoleType
             [
                 'access_level_route' => 'oro_account_frontend_acl_access_levels',
                 'predefined_role' => null,
+                'hide_self_managed' => true
             ]
         );
     }

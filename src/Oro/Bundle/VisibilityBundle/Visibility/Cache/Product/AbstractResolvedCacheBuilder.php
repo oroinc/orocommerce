@@ -7,16 +7,16 @@ use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\UnitOfWork;
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler;
+use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\RepositoryHolder;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\BasicOperationRepositoryTrait;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\CacheBuilderInterface;
-use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 abstract class AbstractResolvedCacheBuilder implements CacheBuilderInterface
@@ -42,9 +42,9 @@ abstract class AbstractResolvedCacheBuilder implements CacheBuilderInterface
     protected $visibilityFromConfig;
 
     /**
-     * @var RepositoryHolder
+     * @var EntityRepository
      */
-    protected $repositoryHolder;
+    protected $repository;
 
     /**
      * @var ProductIndexScheduler
@@ -52,18 +52,27 @@ abstract class AbstractResolvedCacheBuilder implements CacheBuilderInterface
     protected $indexScheduler;
 
     /**
+     * @var InsertFromSelectQueryExecutor
+     */
+    protected $insertExecutor;
+
+    /**
      * @param ManagerRegistry $registry
      * @param ScopeManager $scopeManager
      * @param ProductIndexScheduler $indexScheduler
+     * @param InsertFromSelectQueryExecutor $insertExecutor
+     * @param ScopeManager $scopeManager
      */
     public function __construct(
         ManagerRegistry $registry,
         ScopeManager $scopeManager,
-        ProductIndexScheduler $indexScheduler
+        ProductIndexScheduler $indexScheduler,
+        InsertFromSelectQueryExecutor $insertExecutor
     ) {
         $this->registry = $registry;
         $this->scopeManager = $scopeManager;
         $this->indexScheduler = $indexScheduler;
+        $this->insertExecutor = $insertExecutor;
     }
 
     /**
@@ -199,10 +208,10 @@ abstract class AbstractResolvedCacheBuilder implements CacheBuilderInterface
     }
 
     /**
-     * @param RepositoryHolder $repositoryHolder
+     * @param EntityRepository $repository
      */
-    public function setRepositoryHolder($repositoryHolder)
+    public function setRepository($repository)
     {
-        $this->repositoryHolder = $repositoryHolder;
+        $this->repository = $repository;
     }
 }

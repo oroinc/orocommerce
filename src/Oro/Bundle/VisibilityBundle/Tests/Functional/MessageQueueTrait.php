@@ -22,7 +22,6 @@ trait MessageQueueTrait
     protected function cleanScheduledMessages()
     {
         $this->sendScheduledMessages();
-        $this->getMessageCollector()->enable();
         $this->getMessageCollector()->clear();
     }
 
@@ -61,7 +60,7 @@ trait MessageQueueTrait
     /**
      * @return TraceableMessageProducer
      */
-    protected function getMessageProducer()
+    protected static function getMessageProducer()
     {
         return self::getContainer()->get('oro_message_queue.message_producer');
     }
