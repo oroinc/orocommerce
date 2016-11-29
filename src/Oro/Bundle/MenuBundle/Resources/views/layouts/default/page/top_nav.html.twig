@@ -24,7 +24,9 @@
         '~class': 'topbar-navigation__link'
     }) %}
 
-    {{ block('menu_widget') }}
+    <div class="topbar-navigation-wrap">
+        {{ block('menu_widget') }}
+    </div>
 {% endblock %}
 
 {% block _top_nav_menu_container_widget %}
@@ -43,7 +45,7 @@
     {% set dom_relocation_options =  {
         responsive: [
             {
-                breakpoint: 990,
+                breakpoint: 1099,
                 moveTo: '[data-main-menu-container]'
             }
         ]

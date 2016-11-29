@@ -66,6 +66,7 @@ define(function(require) {
          */
         render: function() {
             this.collectElements();
+            this.onResize();
             return this;
         },
 
@@ -115,7 +116,7 @@ define(function(require) {
             var breakpoints = [];
 
             for (var i = 0; i <= responsiveOptions.length - 1 ; i++) {
-                if (windowSize < responsiveOptions[i].breakpoint) {
+                if (windowSize <= responsiveOptions[i].breakpoint) {
                     breakpoints.push(responsiveOptions[i]);
                 }
             }

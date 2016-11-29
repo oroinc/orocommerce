@@ -50,10 +50,10 @@ class FrontendOwnershipMetadata extends OwnershipMetadata
         }
 
         if ($this->isBasicLevelOwned()) {
-            $maxLevel = AccessLevel::LOCAL_LEVEL;
+            $maxLevel = AccessLevel::DEEP_LEVEL;
             $minLevel = AccessLevel::BASIC_LEVEL;
         } elseif ($this->isLocalLevelOwned()) {
-            $maxLevel = AccessLevel::LOCAL_LEVEL;
+            $maxLevel = AccessLevel::DEEP_LEVEL;
             $minLevel = AccessLevel::LOCAL_LEVEL;
         } else {
             throw new \BadMethodCallException(sprintf('Owner type %s is not supported', $this->ownerType));

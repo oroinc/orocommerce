@@ -22,7 +22,7 @@ class WebsiteSearchControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_frontend_root'));
 
         // assert search widget exists on page
-        $searchFieldBlock = $crawler->filter('div.search-widget');
+        $searchFieldBlock = $crawler->filter('form.search-widget');
         $this->assertGreaterThan(0, $searchFieldBlock->count());
 
         // search form processing

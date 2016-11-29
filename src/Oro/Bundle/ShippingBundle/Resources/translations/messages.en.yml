@@ -101,6 +101,16 @@ oro:
                     label: Type
                     per_item.label: Per Item
                     per_order.label: Per Order
+
+        method_type:
+            shipping_methods_widget:
+                label: '%translatedMethodType%: <strong>%price%</strong>'
+            backend:
+                label: >
+                    {0}%translatedMethodType%|
+                    {1}%translatedMethodType%: %price%|
+                    {2}%translatedMethod%, %translatedMethodType%: %price%|
+                    {3}%translatedMethod%, %translatedMethodType%
         methods:
             label: "Shipping Method"
             select_method: 'Select a Shipping Method'

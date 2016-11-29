@@ -7,7 +7,7 @@ use Symfony\Component\Form\FormView;
 
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
-use Oro\Bundle\CustomerBundle\Form\Type\AccountTypedAddressType;
+use Oro\Bundle\CustomerBundle\Form\Type\FrontendAccountTypedAddressType;
 use Oro\Bundle\LayoutBundle\Layout\DataProvider\AbstractFormProvider;
 
 class FrontendAccountAddressFormProvider extends AbstractFormProvider
@@ -27,7 +27,7 @@ class FrontendAccountAddressFormProvider extends AbstractFormProvider
     {
         $options = $this->getFormOptions($accountAddress, $account);
 
-        return $this->getFormView(AccountTypedAddressType::NAME, $accountAddress, $options);
+        return $this->getFormView(FrontendAccountTypedAddressType::NAME, $accountAddress, $options);
     }
 
     /**
@@ -42,7 +42,7 @@ class FrontendAccountAddressFormProvider extends AbstractFormProvider
     {
         $options = $this->getFormOptions($accountAddress, $account);
 
-        return $this->getForm(AccountTypedAddressType::NAME, $accountAddress, $options);
+        return $this->getForm(FrontendAccountTypedAddressType::NAME, $accountAddress, $options);
     }
 
     /**
