@@ -899,3 +899,35 @@ services:
             - '@oro_locale.formatter.number'
             - '@oro_product.formatter.product_unit_label'
             - '@oro_product.formatter.product_unit_value'
+
+    oro_pricing.event_listener.website_search_index:
+        class: 'Oro\Bundle\PricingBundle\EventListener\WebsiteSearchProductPriceIndexerListener'
+        arguments:
+            - '@oro_website_search.manager.website_context_manager'
+            - '@doctrine'
+            - '@oro_config.manager'
+        tags:
+            - { name: kernel.event_listener, event: oro_website_search.event.index_entity.product, method: onWebsiteSearchIndex }
+
+    oro_pricing.cpl.placeholder:
+        class: 'Oro\Bundle\PricingBundle\Placeholder\CPLIdPlaceholder'
+        public: false
+        arguments:
+            - '@oro_pricing.model.price_list_tree_handler'
+            - '@security.token_storage'
+        tags:
+            - { name: website_search.placeholder }
+
+    oro_pricing.currency.placeholder:
+        class: 'Oro\Bundle\PricingBundle\Placeholder\CurrencyPlaceholder'
+        public: false
+        arguments:
+            - '@oro_pricing.user_currency_manager'
+        tags:
+            - { name: website_search.placeholder }
+
+    oro_pricing.unit.placeholder:
+        class: 'Oro\Bundle\PricingBundle\Placeholder\UnitPlaceholder'
+        public: false
+        tags:
+            - { name: website_search.placeholder }
