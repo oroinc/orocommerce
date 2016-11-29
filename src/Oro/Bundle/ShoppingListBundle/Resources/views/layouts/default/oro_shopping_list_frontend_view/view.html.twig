@@ -66,6 +66,16 @@
     </div>
 {% endblock %}
 
+{% block _shopping_list_owner_widget %}
+    <div data-page-component-module="oroshoppinglist/js/app/components/shoppinglist-owner-inline-editable-view-component"
+         data-page-component-options="{{ {
+             shoppingListId: shoppingList.id,
+         }|json_encode() }}"
+    >
+        {{ form(form) }}
+    </div>
+{% endblock %}
+
 {% block _shopping_list_options_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
 

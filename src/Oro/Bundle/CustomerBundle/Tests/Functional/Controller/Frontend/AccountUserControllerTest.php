@@ -2,12 +2,10 @@
 
 namespace Oro\Bundle\CustomerBundle\Tests\Functional\Controller\Frontend;
 
-use Symfony\Bundle\SwiftmailerBundle\DataCollector\MessageDataCollector;
-
-use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Entity\AccountUserRole;
 use Oro\Bundle\CustomerBundle\Tests\Functional\Controller\AbstractUserControllerTest;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserACLData;
+use Symfony\Component\DomCrawler\Field\ChoiceFormField;
 
 /**
  * @dbIsolation
@@ -33,21 +31,18 @@ class AccountUserControllerTest extends AbstractUserControllerTest
      */
     protected function setUp()
     {
-        $this->initClient(
-            [],
-            $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)
-        );
+        $this->initClient();
         $this->client->useHashNavigation(true);
         $this->loadFixtures(
             [
-                'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccounts',
-                'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserRoleData'
+                LoadAccountUserACLData::class,
             ]
         );
     }
 
     /**
      * @dataProvider createDataProvider
+     *
      * @param string $email
      * @param string $password
      * @param bool $isPasswordGenerate
@@ -56,26 +51,9 @@ class AccountUserControllerTest extends AbstractUserControllerTest
      */
     public function testCreate($email, $password, $isPasswordGenerate, $isSendEmail, $emailsCount)
     {
+        $this->loginUser(LoadAccountUserACLData::USER_ACCOUNT_2_ROLE_DEEP);
+
         $crawler = $this->client->request('GET', $this->getUrl('oro_customer_frontend_account_user_create'));
-
-        /** @var AccountUser $loggedUser */
-        $loggedUser = $this->getContainer()->get('oro_security.security_facade')->getLoggedUser();
-
-        $this->assertInstanceOf('Oro\Bundle\CustomerBundle\Entity\AccountUser', $loggedUser);
-
-        /** @var AccountUserRole[] $roles */
-        $roles = $this->getUserRoleRepository()
-            ->getAvailableSelfManagedRolesByAccountUserQueryBuilder(
-                $loggedUser->getOrganization(),
-                $loggedUser->getAccount()
-            )
-            ->getQuery()
-            ->getResult();
-
-        $role = reset($roles);
-
-        $this->assertNotNull($role);
-
         $form = $crawler->selectButton('Save')->form();
         $form['oro_account_frontend_account_user[enabled]'] = true;
         $form['oro_account_frontend_account_user[namePrefix]'] = self::NAME_PREFIX;
@@ -89,8 +67,11 @@ class AccountUserControllerTest extends AbstractUserControllerTest
         $form['oro_account_frontend_account_user[plainPassword][second]'] = $password;
         $form['oro_account_frontend_account_user[passwordGenerate]'] = $isPasswordGenerate;
         $form['oro_account_frontend_account_user[sendEmail]'] = $isSendEmail;
-        $form['oro_account_frontend_account_user[roles]'] = [$role->getId()];
 
+        /** @var ChoiceFormField[] $roleChoices */
+        $roleChoices = $form['oro_account_frontend_account_user[roles]'];
+        $this->assertCount(6, $roleChoices);
+        $roleChoices[0]->tick();
         $this->client->submit($form);
 
         /** @var \Swift_Plugins_MessageLogger $emailLogging */
@@ -111,10 +92,43 @@ class AccountUserControllerTest extends AbstractUserControllerTest
     }
 
     /**
+     * @dataProvider testCreatePermissionDeniedDataProvider
+     * @group frontend-ACL
+     * @param string $login
+     * @param int $status
+     */
+    public function testCreatePermissionDenied($login, $status)
+    {
+        $this->loginUser($login);
+        $this->client->request('GET', $this->getUrl('oro_customer_frontend_account_user_create'));
+
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, $status);
+    }
+
+    /**
+     * @return array
+     */
+    public function testCreatePermissionDeniedDataProvider()
+    {
+        return [
+            'anonymous user' => [
+                'login' => '',
+                'status' => 401,
+            ],
+            'user without create permissions' => [
+                'login' => LoadAccountUserACLData::USER_ACCOUNT_1_ROLE_DEEP_VIEW_ONLY,
+                'status' => 403,
+            ],
+        ];
+    }
+
+    /**
      * @depends testCreate
      */
     public function testIndex()
     {
+        $this->loginUser(LoadAccountUserACLData::USER_ACCOUNT_2_ROLE_DEEP);
         $this->client->request('GET', $this->getUrl('oro_customer_frontend_account_user_index'));
         $result = $this->client->getResponse();
 
@@ -130,12 +144,13 @@ class AccountUserControllerTest extends AbstractUserControllerTest
      */
     public function testUpdate()
     {
-        $response = $this->client->requestGrid(
+        $this->loginUser(LoadAccountUserACLData::USER_ACCOUNT_2_ROLE_DEEP);
+        $response = $this->client->requestFrontendGrid(
             'frontend-account-account-user-grid',
             [
                 'frontend-account-account-user-grid[_filter][firstName][value]' => self::FIRST_NAME,
                 'frontend-account-account-user-grid[_filter][LastName][value]' => self::LAST_NAME,
-                'frontend-account-account-user-grid[_filter][email][value]' => self::EMAIL
+                'frontend-account-account-user-grid[_filter][email][value]' => self::EMAIL,
             ]
         );
 
@@ -175,6 +190,7 @@ class AccountUserControllerTest extends AbstractUserControllerTest
      */
     public function testView($id)
     {
+        $this->loginUser(LoadAccountUserACLData::USER_ACCOUNT_2_ROLE_DEEP);
         $this->client->request('GET', $this->getUrl('oro_customer_frontend_account_user_view', ['id' => $id]));
 
         $result = $this->client->getResponse();
@@ -185,6 +201,186 @@ class AccountUserControllerTest extends AbstractUserControllerTest
         $this->assertContains(self::UPDATED_EMAIL, $content);
 
         return $id;
+    }
+
+    /**
+     * @group frontend-ACL
+     * @dataProvider ACLProvider
+     *
+     * @param string $route
+     * @param string $resource
+     * @param string $user
+     * @param int $status
+     */
+    public function testACL($route, $resource, $user, $status)
+    {
+        $this->loginUser($user);
+        /* @var $resource AccountUser */
+        $resource = $this->getReference($resource);
+
+        $this->client->request(
+            'GET',
+            $this->getUrl(
+                $route,
+                ['id' => $resource->getId()]
+            )
+        );
+
+        $response = $this->client->getResponse();
+        static::assertHtmlResponseStatusCodeEquals($response, $status);
+    }
+
+    /**
+     * @return array
+     */
+    public function ACLProvider()
+    {
+        return [
+            'VIEW (anonymous user)' => [
+                'route' => 'oro_customer_frontend_account_user_view',
+                'resource' => LoadAccountUserACLData::USER_ACCOUNT_1_1_ROLE_LOCAL,
+                'user' => '',
+                'status' => 401,
+            ],
+            'VIEW (user from another account)' => [
+                'route' => 'oro_customer_frontend_account_user_view',
+                'resource' => LoadAccountUserACLData::USER_ACCOUNT_1_1_ROLE_LOCAL,
+                'user' => LoadAccountUserACLData::USER_ACCOUNT_2_ROLE_LOCAL,
+                'status' => 403,
+            ],
+            'VIEW (user from parent account : DEEP_VIEW_ONLY)' => [
+                'route' => 'oro_customer_frontend_account_user_view',
+                'resource' => LoadAccountUserACLData::USER_ACCOUNT_1_1_ROLE_LOCAL,
+                'user' => LoadAccountUserACLData::USER_ACCOUNT_1_ROLE_DEEP_VIEW_ONLY,
+                'status' => 200,
+            ],
+            'VIEW (user from parent account : LOCAL)' => [
+                'route' => 'oro_customer_frontend_account_user_view',
+                'resource' => LoadAccountUserACLData::USER_ACCOUNT_1_1_ROLE_LOCAL,
+                'user' => LoadAccountUserACLData::USER_ACCOUNT_1_ROLE_LOCAL,
+                'status' => 403,
+            ],
+            'VIEW (user from same account : LOCAL)' => [
+                'route' => 'oro_customer_frontend_account_user_view',
+                'resource' => LoadAccountUserACLData::USER_ACCOUNT_1_1_ROLE_DEEP,
+                'user' => LoadAccountUserACLData::USER_ACCOUNT_1_1_ROLE_LOCAL,
+                'status' => 200,
+            ],
+            'UPDATE (anonymous user)' => [
+                'route' => 'oro_customer_frontend_account_user_update',
+                'resource' => LoadAccountUserACLData::USER_ACCOUNT_1_1_ROLE_LOCAL,
+                'user' => '',
+                'status' => 401,
+            ],
+            'UPDATE (user from another account)' => [
+                'route' => 'oro_customer_frontend_account_user_update',
+                'resource' => LoadAccountUserACLData::USER_ACCOUNT_1_1_ROLE_LOCAL,
+                'user' => LoadAccountUserACLData::USER_ACCOUNT_2_ROLE_LOCAL,
+                'status' => 403,
+            ],
+            'UPDATE (user from parent account : DEEP)' => [
+                'route' => 'oro_customer_frontend_account_user_update',
+                'resource' => LoadAccountUserACLData::USER_ACCOUNT_1_1_ROLE_LOCAL,
+                'user' => LoadAccountUserACLData::USER_ACCOUNT_1_ROLE_DEEP,
+                'status' => 200,
+            ],
+            'UPDATE (user from parent account : LOCAL_VIEW_ONLY)' => [
+                'route' => 'oro_customer_frontend_account_user_update',
+                'resource' => LoadAccountUserACLData::USER_ACCOUNT_1_1_ROLE_LOCAL,
+                'user' => LoadAccountUserACLData::USER_ACCOUNT_1_ROLE_DEEP_VIEW_ONLY,
+                'status' => 403,
+            ],
+            'UPDATE (user from same account : LOCAL_VIEW_ONLY)' => [
+                'route' => 'oro_customer_frontend_account_user_update',
+                'resource' => LoadAccountUserACLData::USER_ACCOUNT_1_ROLE_LOCAL,
+                'user' => LoadAccountUserACLData::USER_ACCOUNT_1_ROLE_LOCAL_VIEW_ONLY,
+                'status' => 403,
+            ],
+            'UPDATE (user from same account : LOCAL)' => [
+                'route' => 'oro_customer_frontend_account_user_update',
+                'resource' => LoadAccountUserACLData::USER_ACCOUNT_1_ROLE_DEEP,
+                'user' => LoadAccountUserACLData::USER_ACCOUNT_1_ROLE_LOCAL,
+                'status' => 200,
+            ],
+        ];
+    }
+
+    /**
+     * @group frontend-ACL
+     * @dataProvider gridACLProvider
+     *
+     * @param string $user
+     * @param string $indexResponseStatus
+     * @param string $gridResponseStatus
+     * @param array $data
+     */
+    public function testGridACL($user, $indexResponseStatus, $gridResponseStatus, array $data = [])
+    {
+        $this->loginUser($user);
+        $this->client->request('GET', $this->getUrl('oro_customer_frontend_account_user_index'));
+        $this->assertSame($indexResponseStatus, $this->client->getResponse()->getStatusCode());
+        $response = $this->client->requestGrid(
+            [
+                'gridName' => 'frontend-account-account-user-grid',
+            ]
+        );
+
+        self::assertResponseStatusCodeEquals($response, $gridResponseStatus);
+        if (200 === $gridResponseStatus) {
+            $result = self::jsonToArray($response->getContent());
+            $actual = array_column($result['data'], 'id');
+            $actual = array_map('intval', $actual);
+            $expected = array_map(
+                function ($ref) {
+                    return $this->getReference($ref)->getId();
+                },
+                $data
+            );
+            sort($expected);
+            sort($actual);
+            $this->assertEquals($expected, $actual);
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function gridACLProvider()
+    {
+        return [
+            'NOT AUTHORISED' => [
+                'user' => '',
+                'indexResponseStatus' => 401,
+                'gridResponseStatus' => 403,
+                'data' => [],
+            ],
+            'DEEP: all siblings and children' => [
+                'user' => LoadAccountUserACLData::USER_ACCOUNT_1_ROLE_DEEP,
+                'indexResponseStatus' => 200,
+                'gridResponseStatus' => 200,
+                'data' => [
+                    LoadAccountUserACLData::USER_ACCOUNT_1_ROLE_LOCAL,
+                    LoadAccountUserACLData::USER_ACCOUNT_1_ROLE_DEEP,
+                    LoadAccountUserACLData::USER_ACCOUNT_1_ROLE_LOCAL_VIEW_ONLY,
+                    LoadAccountUserACLData::USER_ACCOUNT_1_ROLE_DEEP_VIEW_ONLY,
+                    LoadAccountUserACLData::USER_ACCOUNT_1_1_ROLE_DEEP,
+                    LoadAccountUserACLData::USER_ACCOUNT_1_1_ROLE_LOCAL,
+                    LoadAccountUserACLData::USER_ACCOUNT_1_2_ROLE_DEEP,
+                    LoadAccountUserACLData::USER_ACCOUNT_1_2_ROLE_LOCAL,
+                ],
+            ],
+            'LOCAL: all siblings' => [
+                'user' => LoadAccountUserACLData::USER_ACCOUNT_1_ROLE_LOCAL,
+                'indexResponseStatus' => 200,
+                'gridResponseStatus' => 200,
+                'data' => [
+                    LoadAccountUserACLData::USER_ACCOUNT_1_ROLE_LOCAL,
+                    LoadAccountUserACLData::USER_ACCOUNT_1_ROLE_DEEP,
+                    LoadAccountUserACLData::USER_ACCOUNT_1_ROLE_LOCAL_VIEW_ONLY,
+                    LoadAccountUserACLData::USER_ACCOUNT_1_ROLE_DEEP_VIEW_ONLY,
+                ],
+            ],
+        ];
     }
 
     /**

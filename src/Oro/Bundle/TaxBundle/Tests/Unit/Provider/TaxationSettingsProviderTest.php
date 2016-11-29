@@ -11,7 +11,6 @@ use Oro\Bundle\TaxBundle\Factory\TaxBaseExclusionFactory;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
- * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class TaxationSettingsProviderTest extends \PHPUnit_Framework_TestCase
 {

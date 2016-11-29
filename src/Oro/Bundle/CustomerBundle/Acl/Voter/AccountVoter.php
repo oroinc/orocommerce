@@ -8,6 +8,7 @@ use Symfony\Component\Security\Acl\Permission\BasicPermissionMap;
 use Symfony\Component\Security\Core\Authentication\AuthenticationTrustResolverInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityBundle\Exception\NotManageableEntityException;
 use Oro\Bundle\SecurityBundle\Acl\Voter\AbstractEntityVoter;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
@@ -43,6 +44,25 @@ class AccountVoter extends AbstractEntityVoter implements ContainerAwareInterfac
      * @var AccountUser
      */
     protected $user;
+
+    /**
+     * @var AuthenticationTrustResolverInterface
+     */
+    private $authenticationTrustResolver;
+
+    /**
+     * Constructor.
+     *
+     * @param DoctrineHelper $doctrineHelper
+     * @param AuthenticationTrustResolverInterface $authenticationTrustResolver
+     */
+    public function __construct(
+        DoctrineHelper $doctrineHelper,
+        AuthenticationTrustResolverInterface $authenticationTrustResolver
+    ) {
+        parent::__construct($doctrineHelper);
+        $this->authenticationTrustResolver = $authenticationTrustResolver;
+    }
 
     /**
      * {@inheritdoc}
@@ -254,7 +274,7 @@ class AccountVoter extends AbstractEntityVoter implements ContainerAwareInterfac
      */
     protected function getAuthenticationTrustResolver()
     {
-        return $this->getContainer()->get('security.authentication.trust_resolver');
+        return $this->authenticationTrustResolver;
     }
 
     /**

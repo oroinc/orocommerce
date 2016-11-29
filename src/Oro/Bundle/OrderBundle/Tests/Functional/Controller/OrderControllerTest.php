@@ -143,11 +143,9 @@ class OrderControllerTest extends WebTestCase
         }
 
         $order = $this->getReference(LoadOrders::MY_ORDER);
-        $shippingMethodLabel = $this->getContainer()->get('oro_order.formatter.shipping_method')
-            ->formatShippingMethodWithTypeLabel($order->getShippingMethod(), $order->getShippingMethodType());
-        $shippingMethodLabel = $this->getContainer()->get('translator')->trans($shippingMethodLabel);
-        $this->assertArrayHasKey('shippingMethod', $myOrderData);
-        $this->assertEquals($shippingMethodLabel, $myOrderData['shippingMethod']);
+
+        $this->assertArrayHasKey('poNumber', $myOrderData);
+        $this->assertEquals($order->getPoNumber(), $myOrderData['poNumber']);
     }
 
     /**
@@ -420,7 +418,7 @@ class OrderControllerTest extends WebTestCase
         self::assertEquals('Shipping Information', $titleBlock);
 
         $value  = $crawler->filter('.responsive-section')->eq(2)->filter('.controls .control-label')->html();
-        self::assertEquals('USD 999.99', $value);
+        self::assertEquals('$999.99', $value);
 
         $result = $this->client->getResponse();
         static::assertHtmlResponseStatusCodeEquals($result, 200);
@@ -470,7 +468,7 @@ class OrderControllerTest extends WebTestCase
         self::assertEquals('Shipping Information', $titleBlock);
 
         $value  = $crawler->filter('.responsive-section')->eq(2)->filter('.controls .control-label')->html();
-        self::assertEquals('USD 0.00', $value);
+        self::assertEquals('$0.00', $value);
 
         $result = $this->client->getResponse();
         static::assertHtmlResponseStatusCodeEquals($result, 200);

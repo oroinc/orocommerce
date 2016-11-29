@@ -3,10 +3,8 @@
 namespace Oro\Bundle\ShoppingListBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
-
-use Oro\Bundle\EntityConfigBundle\Entity\ConfigModel;
+use Oro\Bundle\EntityBundle\EntityConfig\DatagridScope;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
-use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManager;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
@@ -92,7 +90,6 @@ class OroShoppingListBundleInstaller implements Installation, ExtendExtensionAwa
         $table->addColumn('notes', 'text', ['notnull' => false]);
         $table->addColumn('created_at', 'datetime');
         $table->addColumn('updated_at', 'datetime');
-        $table->addColumn('is_current', 'boolean', ['default' => false]);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['created_at'], 'oro_shop_lst_created_at_idx', []);
     }
@@ -236,14 +233,13 @@ class OroShoppingListBundleInstaller implements Installation, ExtendExtensionAwa
                 'oro_shopping_list',
                 'id',
                 [
-                    ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_READONLY,
                     'entity' => ['label' => 'oro.shoppinglist.entity_label'],
                     'extend' => [
                         'is_extend' => true,
                         'owner' => ExtendScope::OWNER_CUSTOM
                     ],
                     'datagrid' => [
-                        'is_visible' => false
+                        'is_visible' => DatagridScope::IS_VISIBLE_FALSE,
                     ],
                     'form' => [
                         'is_enabled' => false

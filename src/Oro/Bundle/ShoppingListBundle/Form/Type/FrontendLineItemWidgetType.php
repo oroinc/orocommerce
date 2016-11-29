@@ -2,26 +2,35 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Form\Type;
 
+use Doctrine\Common\Collections\Criteria;
+use Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
+use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
+use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
-use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Translation\TranslatorInterface;
-
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
-use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
-use Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
 
 class FrontendLineItemWidgetType extends AbstractType
 {
     const NAME = 'oro_shopping_list_frontend_line_item_widget';
+
+    /**
+     * @var ShoppingListManager
+     */
+    protected $shoppingListManager;
+
+    /**
+     * @var AclHelper
+     */
+    protected $aclHelper;
 
     /**
      * @var ManagerRegistry
@@ -29,35 +38,33 @@ class FrontendLineItemWidgetType extends AbstractType
     protected $registry;
 
     /**
-     * @var AccountUser
-     */
-    private $accountUser;
-
-    /**
      * @var string
      */
     protected $shoppingListClass;
 
-    /**
-     * @var TokenStorage
-     */
-    protected $tokenStorage;
 
     /**
      * @var TranslatorInterface
      */
     protected $translator;
 
+
     /**
      * @param ManagerRegistry $registry
-     * @param TokenStorage    $tokenStorage
      * @param TranslatorInterface $translator
+     * @param AclHelper $aclHelper
+     * @param ShoppingListManager $shoppingListManager
      */
-    public function __construct(ManagerRegistry $registry, TokenStorage $tokenStorage, TranslatorInterface $translator)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        TranslatorInterface $translator,
+        AclHelper $aclHelper,
+        ShoppingListManager $shoppingListManager
+    ) {
         $this->registry = $registry;
-        $this->tokenStorage = $tokenStorage;
         $this->translator = $translator;
+        $this->aclHelper = $aclHelper;
+        $this->shoppingListManager = $shoppingListManager;
     }
 
     /**
@@ -75,7 +82,17 @@ class FrontendLineItemWidgetType extends AbstractType
                     'label' => 'oro.shoppinglist.lineitem.shopping_list.label',
                     'class' => $this->shoppingListClass,
                     'query_builder' => function (ShoppingListRepository $repository) {
-                        return $repository->createFindForAccountUserQueryBuilder($this->getAccountUser());
+                        $qb = $repository->createQueryBuilder('shoppingList');
+                        $criteria = new Criteria();
+                        $this->aclHelper->applyAclToCriteria(
+                            $this->shoppingListClass,
+                            $criteria,
+                            'EDIT',
+                            ['accountUser' => 'shoppingList.accountUser']
+                        );
+                        $qb->addCriteria($criteria);
+
+                        return $qb;
                     },
                     'empty_value' => 'oro.shoppinglist.lineitem.create_new_shopping_list',
                 ]
@@ -123,12 +140,7 @@ class FrontendLineItemWidgetType extends AbstractType
      */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
-        /** @var ShoppingListRepository $shoppingListRepository */
-        $shoppingListRepository = $currentShoppingList = $this->registry
-            ->getManagerForClass($this->shoppingListClass)
-            ->getRepository($this->shoppingListClass);
-        $currentShoppingList = $shoppingListRepository->findCurrentForAccountUser($this->getAccountUser());
-
+        $currentShoppingList = $this->shoppingListManager->getCurrent();
         $view->children['shoppingList']->vars['currentShoppingList'] = $currentShoppingList;
     }
 
@@ -162,24 +174,5 @@ class FrontendLineItemWidgetType extends AbstractType
     public function setShoppingListClass($shoppingListClass)
     {
         $this->shoppingListClass = $shoppingListClass;
-    }
-
-    /**
-     * @return string|AccountUser
-     */
-    protected function getAccountUser()
-    {
-        if (!$this->accountUser) {
-            $token = $this->tokenStorage->getToken();
-            if ($token) {
-                $this->accountUser = $token->getUser();
-            }
-        }
-
-        if (!$this->accountUser || !is_object($this->accountUser)) {
-            throw new AccessDeniedException();
-        }
-
-        return $this->accountUser;
     }
 }

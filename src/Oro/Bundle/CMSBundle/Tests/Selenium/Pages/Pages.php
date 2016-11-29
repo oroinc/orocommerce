@@ -5,7 +5,7 @@ namespace Oro\Bundle\CMSBundle\Tests\Selenium\Pages;
 use Oro\Bundle\TestFrameworkBundle\Pages\AbstractPage;
 
 /**
- * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class Pages extends AbstractPage
 {

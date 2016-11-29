@@ -148,7 +148,6 @@ workflows:
                                 required: true
                                 constraints:
                                     - Valid: ~
-                                    - NotBlank: ~
                                     - Oro\Bundle\OrderBundle\Validator\Constraints\OrderAddress:
                                         validationGroups: ['Default', 'Frontend', 'PersonInfo']
                                 disabled: $disallow_billing_address_edit
@@ -187,7 +186,7 @@ workflows:
                                     - Valid: ~
                                     - NotBlank: ~
                                     - Oro\Bundle\OrderBundle\Validator\Constraints\OrderAddress:
-                                        validationGroups: ['Default', 'Frontend']
+                                        validationGroups: ['Checkout']
                         save_shipping_address:
                             options:
                         ship_to_billing_address:
@@ -236,7 +235,7 @@ workflows:
                     is_checkout_show_errors: true
                 form_options:
                     form_init:
-                        - '@assign_constant_value': [$payment_method, 'Oro\Bundle\PaymentBundle\Method\PaymentTerm::TYPE']
+                        - '@assign_constant_value': [$payment_method, 'Oro\Bundle\PaymentTermBundle\Method\PaymentTerm::TYPE']
                         - '@generate_checkout_state_snapshot':
                             entity: $checkout
                             attribute: $.result.initCheckoutState
@@ -644,7 +643,7 @@ workflows:
                                 state: $.result.currentCheckoutState
                                 token: $state_token
                     - '@call_service_method':
-                        service: oro_checkout.factory.shipping_context_provider_factory
+                        service: oro_checkout.factory.shipping_context_factory
                         method: create
                         method_parameters: [$checkout]
                         attribute: $.result.shippingContext
@@ -736,7 +735,7 @@ workflows:
                         object: $checkout.sourceEntity.sourceDocument
                         attribute: $.result.sourceDocumentEntityClassName
                     - '@call_service_method':
-                        service: oro_payment.provider.payment_term
+                        service: oro_payment_term.provider.payment_term
                         method: getCurrentPaymentTerm
                         attribute: $.result.paymentTerm
                     - '@create_entity':
