@@ -2,14 +2,11 @@
 
 namespace Oro\Bundle\SaleBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-
-use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-
+use Doctrine\ORM\Mapping as ORM;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\OrderBundle\Model\ShippingAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
@@ -176,7 +173,7 @@ class QuoteDemand implements
     public function getShippingCost()
     {
         if ($this->quote) {
-            return $this->quote->getShippingEstimate();
+            return $this->quote->getShippingCost();
         }
 
         return null;

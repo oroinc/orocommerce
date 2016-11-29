@@ -127,11 +127,13 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
         $shippingAddress = $this->createShippingAddress();
 
         $quoteShippingEstimateValue = 222.33;
+        /** @var Quote $quote */
         $quote = $this
             ->createMainEntity(self::ACCOUNT_NAME, self::ACCOUNT_USER_FIRST_NAME, self::ACCOUNT_USER_LAST_NAME)
             ->addQuoteProduct($quoteProduct1)
-            ->addQuoteProduct($quoteProduct2)
-            ->setShippingEstimate(Price::create($quoteShippingEstimateValue, self::CURRENCY));
+            ->addQuoteProduct($quoteProduct2);
+        $quote->setCurrency(self::CURRENCY)
+              ->setEstimatedShippingCostAmount($quoteShippingEstimateValue);
 
         $order = $this
             ->createMainEntity(self::ACCOUNT_NAME, self::ACCOUNT_USER_FIRST_NAME, self::ACCOUNT_USER_LAST_NAME, true)
@@ -188,10 +190,12 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
         $shippingAddress = $this->createShippingAddress();
 
         $quoteShippingEstimateValue = 222.33;
+        /** @var Quote $quote */
         $quote = $this
             ->createMainEntity(self::ACCOUNT_NAME, self::ACCOUNT_USER_FIRST_NAME, self::ACCOUNT_USER_LAST_NAME)
-            ->addQuoteProduct($quoteProduct)
-            ->setShippingEstimate(Price::create($quoteShippingEstimateValue, self::CURRENCY));
+            ->addQuoteProduct($quoteProduct);
+        $quote->setCurrency(self::CURRENCY)
+            ->setEstimatedShippingCostAmount($quoteShippingEstimateValue);
 
         $order = $this
             ->createMainEntity($accountName, self::ACCOUNT_USER_FIRST_NAME, self::ACCOUNT_USER_LAST_NAME, true)
@@ -240,8 +244,9 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
 
         $quoteShippingEstimateValue = 222.33;
         $quote = $this
-            ->createMainEntity(self::ACCOUNT_NAME, self::ACCOUNT_USER_FIRST_NAME, self::ACCOUNT_USER_LAST_NAME)
-            ->setShippingEstimate(Price::create($quoteShippingEstimateValue, self::CURRENCY));
+            ->createMainEntity(self::ACCOUNT_NAME, self::ACCOUNT_USER_FIRST_NAME, self::ACCOUNT_USER_LAST_NAME);
+        $quote->setCurrency(self::CURRENCY)
+            ->setEstimatedShippingCostAmount($quoteShippingEstimateValue);
 
         $order = $this
             ->createMainEntity(self::ACCOUNT_NAME, self::ACCOUNT_USER_FIRST_NAME, self::ACCOUNT_USER_LAST_NAME, true)
@@ -299,7 +304,8 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
             true
         );
         $quoteShippingEstimateValue = 222.33;
-        $quote->setShippingEstimate(Price::create($quoteShippingEstimateValue, self::CURRENCY));
+        $quote->setCurrency(self::CURRENCY)
+            ->setEstimatedShippingCostAmount($quoteShippingEstimateValue);
 
         $order = $this
             ->createMainEntity(self::ACCOUNT_NAME, self::ACCOUNT_USER_FIRST_NAME, self::ACCOUNT_USER_LAST_NAME, true)

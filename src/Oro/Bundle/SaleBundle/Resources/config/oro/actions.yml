@@ -188,11 +188,11 @@ action_groups:
                 route_parameters: { 'id': $.data.id }
             - '@assign_value':
                 conditions:
-                   '@empty': $.data.quote.shippingEstimate
+                   '@empty': $.data.quote.shippingCost
                 parameters: [$.disallow_shipping_method_edit, false]
             - '@assign_value':
                 conditions:
-                   '@not_empty': $.data.quote.shippingEstimate
+                   '@not_empty': $.data.quote.shippingCost
                 parameters: [$.disallow_shipping_method_edit, true]
             - '@tree':
                 conditions:
@@ -230,14 +230,14 @@ action_groups:
                     - '@assign_value':
                         parameters: [$.disallow_shipping_address_edit, false]
             - '@assign_value':
-                parameters: [$.shippingEstimate, $.data.quote.shippingEstimate]
+                parameters: [$.shippingCost, $.data.quote.shippingCost]
             - '@start_checkout':
                 source_name: 'quoteDemand'
                 source_entity: $.data
                 force: true
                 data:
                     shippingAddress: $.orderAddress
-                    shippingCost: $.shippingEstimate
+                    shippingCost: $.shippingCost
                 settings:
                     allow_manual_source_remove: false
                     auto_remove_source: true

@@ -3,39 +3,38 @@
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\PreloadedExtension;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Translation\TranslatorInterface;
-
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\CurrencyBundle\DependencyInjection\Configuration as CurrencyConfig;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Form\Type\AccountUserSelectType;
 use Oro\Bundle\CustomerBundle\Form\Type\AccountSelectType;
-use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\CustomerBundle\Form\Type\AccountUserSelectType;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectType;
+use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
-use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteProductCollectionType;
-use Oro\Bundle\SaleBundle\Form\Type\QuoteProductOfferType;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteProductOfferCollectionType;
+use Oro\Bundle\SaleBundle\Form\Type\QuoteProductOfferType;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteProductRequestCollectionType;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteProductType;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteType;
 use Oro\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider;
 use Oro\Bundle\SaleBundle\Tests\Unit\Form\Type\Stub\EntityType as StubEntityType;
 use Oro\Bundle\UserBundle\Entity\User;
+use Symfony\Component\Form\PreloadedExtension;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class QuoteTypeTest extends AbstractTest
 {
@@ -51,6 +50,9 @@ class QuoteTypeTest extends AbstractTest
      */
     protected $quoteAddressSecurityProvider;
 
+    /** @var \PHPUnit_Framework_MockObject_MockObject|ConfigManager */
+    protected $configManager;
+
     /**
      * {@inheritdoc}
      */
@@ -63,7 +65,16 @@ class QuoteTypeTest extends AbstractTest
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->formType = new QuoteType($this->quoteAddressSecurityProvider);
+        $this->configManager = $this
+            ->getMockBuilder(ConfigManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->configManager->expects($this->any())
+            ->method('get')
+            ->with('oro_currency.default_currency')
+            ->willReturn('USD');
+
+        $this->formType = new QuoteType($this->quoteAddressSecurityProvider, $this->configManager);
         $this->formType->setDataClass(Quote::class);
     }
 
@@ -177,8 +188,8 @@ class QuoteTypeTest extends AbstractTest
                 'isValid'       => false,
                 'submittedData' => [
                 ],
-                'expectedData'  => new Quote(),
-                'defaultData'   => $this->getQuote(1),
+                'expectedData'  => (new Quote())->setCurrency('USD'),
+                'defaultData'   => $this->getQuote(1)->setCurrency('USD'),
                 'options' => [
                     'data' => $this->getQuote(1)
                 ]
@@ -220,7 +231,7 @@ class QuoteTypeTest extends AbstractTest
                     false,
                     null,
                     null
-                ),
+                )->setCurrency('USD'),
                 'defaultData'   => $this->getQuote(
                     1,
                     1,
@@ -261,9 +272,12 @@ class QuoteTypeTest extends AbstractTest
                     ],
                     'assignedUsers' => [1],
                     'assignedAccountUsers' => [11],
-                    'shippingEstimate' => [
+                    'shippingMethod' => 'shippingMethod1',
+                    'shippingMethodType' => 'shippingType1',
+                    'estimatedShippingCostAmount' => 10,
+                    'overriddenShippingCostAmount' => [
                         'value' => 111.12,
-                        'currency' => 'USD'
+                        'currency' => 'USD',
                     ]
                 ],
                 'expectedData'  => $this->getQuote(
@@ -277,7 +291,11 @@ class QuoteTypeTest extends AbstractTest
                 )
                     ->addAssignedUser($this->getUser(1))
                     ->addAssignedAccountUser($this->getAccountUser(11))
-                    ->setShippingEstimate(Price::create(111.12, 'USD')),
+                    ->setShippingMethod('shippingMethod1')
+                    ->setShippingMethodType('shippingType1')
+                    ->setCurrency('USD')
+                    ->setEstimatedShippingCostAmount(10)
+                    ->setOverriddenShippingCostAmount(111.12),
                 'defaultData' => $this->getQuote(
                     1,
                     1,
@@ -288,7 +306,7 @@ class QuoteTypeTest extends AbstractTest
                     new \DateTime($date . 'T00:00:00+0000')
                 )->addAssignedUser($this->getUser(1))
                     ->addAssignedAccountUser($this->getAccountUser(11))
-                    ->setShippingEstimate(Price::create(111.12, 'USD')),
+                    ->setCurrency('USD'),
                 'options' => [
                     'data' => $this->getQuote(
                         1,
@@ -299,37 +317,10 @@ class QuoteTypeTest extends AbstractTest
                         'poNumber',
                         new \DateTime($date . 'T00:00:00+0000')
                     )->addAssignedUser($this->getUser(1))
-                        ->addAssignedAccountUser($this->getAccountUser(11))
-                        ->setShippingEstimate(Price::create(111.12, 'USD')),
+                        ->addAssignedAccountUser($this->getAccountUser(11)),
                 ]
             ],
         ];
-    }
-
-    public function testBuildFormWithPaymetTerm()
-    {
-        /** @var FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder */
-        $builder = $this->getMock(FormBuilderInterface::class);
-        $quote = new Quote();
-        $accountGroup = new AccountGroup();
-        $account = new Account();
-        $account->setGroup($accountGroup);
-        $quote->setAccount($account);
-
-        $builder->expects($this->atMost(13))->method('add')->willReturn($builder);
-
-        $this->formType->buildForm($builder, ['data' => $quote]);
-    }
-
-    public function testBuildFormWithNoPaymetTerm()
-    {
-        /** @var FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder */
-        $builder = $this->getMock(FormBuilderInterface::class);
-        $quote = new Quote();
-
-        $builder->expects($this->atMost(12))->method('add')->willReturn($builder);
-
-        $this->formType->buildForm($builder, ['data' => $quote]);
     }
 
     /**
@@ -384,7 +375,7 @@ class QuoteTypeTest extends AbstractTest
                 1 => $this->getEntity('Oro\Bundle\PricingBundle\Entity\PriceList', 1),
                 2 => $this->getEntity('Oro\Bundle\PricingBundle\Entity\PriceList', 2),
             ],
-            PriceListSelectType::NAME
+            PriceListSelectType::class
         );
 
         $priceType                  = $this->preparePriceType();

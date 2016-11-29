@@ -98,7 +98,7 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
                     ],
                 ],
             ],
-            'shippingEstimate' => 10
+            'estimatedShippingCostAmount' => 10
         ],
         self::QUOTE4 => [
             'qid'           => self::QUOTE4,
@@ -194,8 +194,8 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
                 ->setValidUntil($this->getValidUntil($item))
                 ->setExpired(array_key_exists('expired', $item) ? $item['expired'] : false);
 
-            if (!empty($item['shippingEstimate'])) {
-                $quote->setShippingEstimate(Price::create($item['shippingEstimate'], 'USD'));
+            if (!empty($item['estimatedShippingCostAmount'])) {
+                $quote->setEstimatedShippingCostAmount($item['estimatedShippingCostAmount'])->setCurrency('USD');
             }
             if (!empty($item['account'])) {
                 $quote->setAccount($this->getReference($item['account']));
