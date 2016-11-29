@@ -186,13 +186,7 @@
             ) }}
         {% endif %}
         {{ UI.renderAttribute('oro.order.form.shipping_options.label'|trans,
-            SM.renderPossibleShippingMethods(
-                entity.shippingMethod,
-                entity.shippingMethodType,
-                entity.estimatedShippingCostAmount,
-                orderData.possibleShippingMethods is defined ? orderData.possibleShippingMethods : [],
-                form
-            )
+            SM.renderPossibleShippingMethods(form)
         ) }}
 
         {%  set options = {

@@ -1,0 +1,23 @@
+<?php
+
+namespace Oro\Bundle\SaleBundle\Tests\Unit\Event;
+
+use Oro\Bundle\SaleBundle\Entity\Quote;
+use Oro\Bundle\SaleBundle\Event\QuoteEvent;
+
+class QuoteEventTest extends \PHPUnit_Framework_TestCase
+{
+    public function testGetters()
+    {
+        $quote = new Quote();
+        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $submittedData = ['test'];
+
+        $event = new QuoteEvent($form, $quote, $submittedData);
+
+        static::assertSame($form, $event->getForm());
+        static::assertSame($quote, $event->getQuote());
+        static::assertSame($submittedData, $event->getSubmittedData());
+        static::assertInstanceOf(\ArrayObject::class, $event->getData());
+    }
+}

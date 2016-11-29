@@ -2,10 +2,11 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Functional\Controller;
 
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteType;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * @dbIsolation
@@ -99,5 +100,13 @@ class AjaxQuoteControllerTest extends WebTestCase
         $this->assertInstanceOf('Symfony\Component\HttpFoundation\Response', $response);
 
         $this->assertResponseStatusCodeEquals($response, 400);
+    }
+
+    public function testEntryPoint()
+    {
+        $this->client->request('GET', $this->getUrl('oro_quote_entry_point'));
+        $response = $this->client->getResponse();
+
+        static::assertInstanceOf(JsonResponse::class, $response);
     }
 }

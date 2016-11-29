@@ -31,6 +31,23 @@
     {{ UI.dropdownSaveButton({'html': html}) }}
 {% endblock navButtons %}
 
+{% set pageComponent = {
+    module: 'oroorder/js/app/components/entry-point-component',
+    options: {
+        route: 'oro_quote_entry_point',
+        routeParams: {id: entity.id|default(0)},
+        events: {
+            before: 'entry-point:quote:load:before',
+            load: 'entry-point:quote:load',
+            after: 'entry-point:quote:load:after',
+            trigger: 'entry-point:quote:trigger',
+            init: 'entry-point:quote:init',
+            listenersOff: 'entry-point:listeners:off',
+            listenersOn: 'entry-point:listeners:on',
+        }
+    },
+} %}
+
 {% block content_data %}
     {% set id = 'quote-edit' %}
 

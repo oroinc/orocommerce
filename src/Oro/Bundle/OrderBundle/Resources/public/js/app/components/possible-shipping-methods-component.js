@@ -23,18 +23,32 @@ define(function(require) {
         },
 
         /**
+         * @property {Object}
+         */
+        options: {
+            events: {
+                before: 'entry-point:order:load:before',
+                load: 'entry-point:order:load',
+                after: 'entry-point:order:load:after',
+                trigger: 'entry-point:order:trigger'
+            }
+        },
+
+        /**
          * @constructor
          * @param {Object} options
          */
         initialize: function(options) {
-            this.$el = options._sourceElement;
+            this.options = $.extend(true, {}, this.options, options || {});
+
+            this.$el = this.options._sourceElement;
             this.loadingMaskView = new LoadingMaskView({container: this.$el});
             this.orderHasChanged = false;
             var self = this;
             this.getPossibleShippingMethodForm().hide();
             this.getToggleButton().on('click', function() {
                 self.getCalculateShippingElement().val(true);
-                mediator.trigger('entry-point:order:trigger');
+                mediator.trigger(self.options.events.trigger);
             });
             this.getPossibleShippingMethodForm().on(
                 'change',
@@ -50,9 +64,9 @@ define(function(require) {
             if ($(document).find('.selected-shipping-method').length > 0) {
                 this.savedShippingMethod = $(document).find('.selected-shipping-method').text();
             }
-            mediator.on('entry-point:order:load:before', this.showLoadingMask, this);
-            mediator.on('entry-point:order:load', this.onOrderChange, this);
-            mediator.on('entry-point:order:load:after', this.hideLoadingMask, this);
+            mediator.on(this.options.events.before, this.showLoadingMask, this);
+            mediator.on(this.options.events.load, this.onOrderChange, this);
+            mediator.on(this.options.events.after, this.hideLoadingMask, this);
 
             this.$el.closest('form').on('submit', _.bind(this.onSaveForm, this));
         },
@@ -377,9 +391,9 @@ define(function(require) {
             this.getToggleButton().off('click');
             this.getPossibleShippingMethodType().off('change');
 
-            mediator.off('entry-point:order:load:before', this.showLoadingMask, this);
-            mediator.off('entry-point:order:load', this.onOrderChange, this);
-            mediator.off('entry-point:order:load:after', this.hideLoadingMask, this);
+            mediator.off(this.options.events.before, this.showLoadingMask, this);
+            mediator.off(this.options.events.load, this.onOrderChange, this);
+            mediator.off(this.options.events.after, this.hideLoadingMask, this);
 
             PossibleShippingMethodsComponent.__super__.dispose.call(this);
         }
