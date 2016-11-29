@@ -1,10 +1,6 @@
-{% block _order_history_widget %}
-    <h1 class="section-title">
-        <span class="badge">
-            <i class="cf-basket"></i>
-        </span>
-        <span class="section-title__text">{{ block_widget(block) }}</span>
-    </h1>
+{% block _page_title_widget %}
+    {% set titleIcon = 'cf-basket' %}
+    {{ parent_block_widget(block) }}
 {% endblock %}
 
 {% block _checkouts_container_widget %}

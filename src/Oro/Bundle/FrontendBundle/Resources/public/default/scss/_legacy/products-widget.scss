@@ -371,12 +371,12 @@
   &__secondary-half {
     &_list-view {
       @media (max-width: $screen-sm) {
-        max-width: calc(26% + 140px + 15px);
+        max-width: calc(26% + 265px);
         padding-left: calc(26% + 15px);
       }
 
       @media (max-width: 470px) {
-        max-width: calc(110px + 140px + 15px);
+        max-width: 100%;
         padding-left: calc(110px + 15px);
       }
 

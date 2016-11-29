@@ -4,6 +4,7 @@ namespace Oro\Bundle\UPSBundle\Factory;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
+use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
 use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
@@ -15,9 +16,6 @@ use Oro\Bundle\UPSBundle\Model\Package;
 use Oro\Bundle\UPSBundle\Model\PriceRequest;
 use Oro\Bundle\UPSBundle\Provider\UnitsMapper;
 
-/**
- * TODO: refactor during https://magecore.atlassian.net/browse/BB-5536
- */
 class PriceRequestFactory
 {
     const MAX_PACKAGE_WEIGHT_KGS = 70;
@@ -32,19 +30,27 @@ class PriceRequestFactory
     /** @var UnitsMapper */
     protected $unitsMapper;
 
+    /** @var SymmetricCrypterInterface */
+    protected $symmetricCrypter;
+
     /**
-     * @param ManagerRegistry $registry
-     * @param MeasureUnitConversion $measureUnitConversion,
-     * @param UnitsMapper $unitsMapper
+     * PriceRequestFactory constructor.
+     *
+     * @param ManagerRegistry           $registry
+     * @param MeasureUnitConversion     $measureUnitConversion
+     * @param UnitsMapper               $unitsMapper
+     * @param SymmetricCrypterInterface $symmetricCrypter
      */
     public function __construct(
         ManagerRegistry $registry,
         MeasureUnitConversion $measureUnitConversion,
-        UnitsMapper $unitsMapper
+        UnitsMapper $unitsMapper,
+        SymmetricCrypterInterface $symmetricCrypter
     ) {
         $this->registry = $registry;
         $this->measureUnitConversion = $measureUnitConversion;
         $this->unitsMapper = $unitsMapper;
+        $this->symmetricCrypter = $symmetricCrypter;
     }
 
     /**
@@ -52,7 +58,8 @@ class PriceRequestFactory
      * @param ShippingContextInterface $context
      * @param string $requestOption
      * @param ShippingService|null $shippingService
-     * @return PriceRequest
+     * @return PriceRequest|null
+     * @throws \UnexpectedValueException
      */
     public function create(
         UPSTransport $transport,
@@ -60,9 +67,11 @@ class PriceRequestFactory
         $requestOption,
         ShippingService $shippingService = null
     ) {
+        $decryptedPassword = $this->symmetricCrypter->decryptData($transport->getApiPassword());
+
         $priceRequest = (new PriceRequest())
             ->setUsername($transport->getApiUser())
-            ->setPassword($transport->getApiPassword())
+            ->setPassword($decryptedPassword)
             ->setAccessLicenseNumber($transport->getApiKey())
             ->setRequestOption($requestOption)
             ->setShipperName($transport->getShippingAccountName())
@@ -87,9 +96,9 @@ class PriceRequestFactory
         $packages = $this->createPackages($context->getLineItems(), $unitOfWeight, $weightLimit);
         if (count($packages) > 0) {
             $priceRequest->setPackages($packages);
+            return $priceRequest;
         }
-
-        return $priceRequest;
+        return null;
     }
 
     /**
@@ -97,6 +106,7 @@ class PriceRequestFactory
      * @param string $unitOfWeight
      * @param int $weightLimit
      * @return Package[]|array
+     * @throws \UnexpectedValueException
      */
     protected function createPackages($lineItems, $unitOfWeight, $weightLimit)
     {
@@ -162,7 +172,9 @@ class PriceRequestFactory
      * @param ShippingLineItemInterface[] $lineItems
      * @param string $upsWeightUnit
      * @return array
+     * @throws \UnexpectedValueException
      *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     protected function getProductsParamsByUnit($lineItems, $upsWeightUnit)
@@ -170,21 +182,38 @@ class PriceRequestFactory
         $productsParamsByUnit = [];
         $shippingWeightUnitCode = $this->unitsMapper->getShippingUnitCode($upsWeightUnit);
 
+        $productsInfo =[];
         foreach ($lineItems as $lineItem) {
-            /** @var ProductShippingOptions $productShippingOptions */
-            $productShippingOptions = $this->registry
-                ->getManagerForClass('OroShippingBundle:ProductShippingOptions')
-                ->getRepository('OroShippingBundle:ProductShippingOptions')
-                ->findOneBy(['product' => $lineItem->getProduct()]);
+            $productsInfo[$lineItem->getProduct()->getId()] = [
+                'product' => $lineItem->getProduct(),
+                'productUnit' => $lineItem->getProductUnit(),
+                'quantity' => $lineItem->getQuantity()
+            ];
+        }
 
-            if (!$productShippingOptions) {
-                return [];
-            }
+        $allProductsShippingOptions = $this->registry
+            ->getManagerForClass('OroShippingBundle:ProductShippingOptions')
+            ->getRepository('OroShippingBundle:ProductShippingOptions')
+            ->findBy([
+                'product' => array_column($productsInfo, 'product'),
+                'productUnit' => array_column($productsInfo, 'productUnit')
+            ]);
+
+        if (!$allProductsShippingOptions ||
+            count(array_column($productsInfo, 'product')) !== count($allProductsShippingOptions)) {
+            return [];
+        }
+
+        foreach ($allProductsShippingOptions as $productShippingOptions) {
+            $productId = $productShippingOptions->getProduct()->getId();
             $productDimensions = $productShippingOptions->getDimensions();
 
             $dimensionUnit = $productDimensions->getUnit() ? $productDimensions->getUnit()->getCode() : null;
             $lineItemWeight = null;
             if ($productShippingOptions->getWeight() instanceof Weight) {
+                if (!$productShippingOptions->getWeight()->getValue()) {
+                    return [];
+                }
                 /** @var Weight|null $lineItemWeight */
                 $lineItemWeight = $this->measureUnitConversion->convert(
                     $productShippingOptions->getWeight(),
@@ -197,7 +226,7 @@ class PriceRequestFactory
                 return [];
             }
 
-            for ($i = 0; $i < $lineItem->getQuantity(); $i++) {
+            for ($i = 0; $i < $productsInfo[$productId]['quantity']; $i++) {
                 $productsParamsByUnit[strtoupper(substr($dimensionUnit, 0, 2))][] = [
                     'dimensionUnit' => $dimensionUnit,
                     'dimensionHeight' => $productDimensions->getValue()->getHeight(),

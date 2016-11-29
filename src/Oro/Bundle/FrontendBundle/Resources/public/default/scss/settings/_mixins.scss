@@ -6,6 +6,18 @@
     overflow: hidden;
 }
 
+%direct-link {
+    padding: 0 10px;
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+@mixin direct-link() {
+  @extend %direct-link;
+}
+
 @mixin badge(
     $badge-size:       26px,
     $badge-f-size:     14px,
