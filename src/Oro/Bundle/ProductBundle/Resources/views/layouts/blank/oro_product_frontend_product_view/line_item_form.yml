@@ -21,7 +21,7 @@ layout:
                 line_item_buttons:
                     blockType: container
             tree:
-                product_view_specification_container:
+                product_view_line_item_container:
                     line_item_form:
                         line_item_form_start: ~
                         line_item_form_fields: ~
