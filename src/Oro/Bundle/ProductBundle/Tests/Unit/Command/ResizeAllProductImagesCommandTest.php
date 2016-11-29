@@ -41,9 +41,26 @@ class ResizeAllProductImagesCommandTest extends \PHPUnit_Framework_TestCase
      */
     protected $eventDispatcher;
 
+    /**
+     * @var ContainerInterface
+     */
+    protected $container;
+
+    /**
+     * @var array
+     */
+    protected $options = [
+        ResizeAllProductImagesCommand::OPTION_FORCE => self::FORCE_OPTION
+    ];
+
     public function setUp()
     {
         $this->productImageRepository = $this->prophesize(EntityRepository::class);
+        $this->productImageRepository->findAll()->willReturn([
+            new ProductImage(),
+            new ProductImage(),
+            new ProductImage()
+        ]);
 
         $this->eventDispatcher = $this->prophesize(EventDispatcherInterface::class);
 
@@ -52,13 +69,13 @@ class ResizeAllProductImagesCommandTest extends \PHPUnit_Framework_TestCase
             ->getEntityRepositoryForClass(self::PRODUCT_IMAGE_CLASS)
             ->willReturn($this->productImageRepository);
 
-        $container = $this->prophesize(ContainerInterface::class);
-        $container->get('oro_entity.doctrine_helper')->willReturn($this->doctrineHelper);
-        $container->get('event_dispatcher')->willReturn($this->eventDispatcher);
-        $container->getParameter('oro_product.entity.product_image.class')->willReturn(self::PRODUCT_IMAGE_CLASS);
+        $this->container = $this->prophesize(ContainerInterface::class);
+        $this->container->get('oro_entity.doctrine_helper')->willReturn($this->doctrineHelper);
+        $this->container->get('event_dispatcher')->willReturn($this->eventDispatcher);
+        $this->container->getParameter('oro_product.entity.product_image.class')->willReturn(self::PRODUCT_IMAGE_CLASS);
 
         $this->command = new ResizeAllProductImagesCommand();
-        $this->command->setContainer($container->reveal());
+        $this->command->setContainer($this->container->reveal());
     }
 
     public function testNoProductImages()
@@ -70,14 +87,6 @@ class ResizeAllProductImagesCommandTest extends \PHPUnit_Framework_TestCase
 
     public function testResizeAllImages()
     {
-        $productImage1 = new ProductImage();
-
-        $this->productImageRepository->findAll()->willReturn([
-            $productImage1,
-            new ProductImage(),
-            new ProductImage()
-        ]);
-
         $this->eventDispatcher
             ->dispatch(ProductImageResizeEvent::NAME, Argument::type(ProductImageResizeEvent::class))
             ->shouldBeCalledTimes(3);
@@ -94,7 +103,10 @@ class ResizeAllProductImagesCommandTest extends \PHPUnit_Framework_TestCase
     protected function prepareInput()
     {
         $input = $this->prophesize(InputInterface::class);
-        $input->getOption(ResizeAllProductImagesCommand::OPTION_FORCE)->willReturn(self::FORCE_OPTION);
+
+        foreach ($this->options as $name => $value) {
+            $input->getOption($name)->willReturn($value);
+        }
         $input->bind(Argument::any())->shouldBeCalled();
         $input->isInteractive()->shouldBeCalled();
         $input->hasArgument('command')->shouldBeCalled();
@@ -107,7 +119,7 @@ class ResizeAllProductImagesCommandTest extends \PHPUnit_Framework_TestCase
      * @param string $message
      * @return object
      */
-    private function prepareOutput($message)
+    protected function prepareOutput($message)
     {
         $output = $this->prophesize(OutputInterface::class);
         $output->writeln($message)->shouldBeCalled();
