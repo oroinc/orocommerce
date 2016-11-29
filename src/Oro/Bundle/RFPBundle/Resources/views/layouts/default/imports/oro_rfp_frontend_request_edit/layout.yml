@@ -58,4 +58,4 @@ layout:
         - '@appendOption':
             id: rfp_form_lineitems_container
             optionName: vars.tierPrices
-            optionValue: '=data["oro_rfp_tier_prices"].getPrices(data["entity"])'
+            optionValue: '=data["oro_rfp_product_prices"].getPrices(data["entity"])'
