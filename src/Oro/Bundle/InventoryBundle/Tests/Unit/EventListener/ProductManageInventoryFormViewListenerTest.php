@@ -28,7 +28,7 @@ class ProductManageInventoryFormViewListenerTest extends FormViewListenerTestCas
     /**
      * @var ProductManageInventoryFormViewListener
      */
-    protected $productManageInventoryFormViewListener;
+    protected $productWarehouseFormViewListener;
 
     /** @var BeforeListRenderEvent|\PHPUnit_Framework_MockObject_MockObject * */
     protected $event;
@@ -47,12 +47,12 @@ class ProductManageInventoryFormViewListenerTest extends FormViewListenerTestCas
         $this->doctrine = $this->getMockBuilder('Doctrine\Common\Persistence\ManagerRegistry')
             ->disableOriginalConstructor()
             ->getMock();
+        $this->event = $this->getBeforeListRenderEventMock();
         $this->productWarehouseFormViewListener = new ProductManageInventoryFormViewListener(
             $this->requestStack,
             $this->doctrine,
             $this->translator
         );
-        $this->event = $this->getBeforeListRenderEventMock();
     }
 
     public function testOnProductViewIgnoredIfNoProductId()
@@ -63,14 +63,13 @@ class ProductManageInventoryFormViewListenerTest extends FormViewListenerTestCas
 
     public function testOnProductViewIgnoredIfNoProductFound()
     {
-        $this->em->expects($this->once())->method('getReference')->willReturn(null);
         $this->doctrine->expects($this->once())
             ->method('getManagerForClass')
             ->with(Product::class)
             ->willReturn($this->em);
         $this->request->expects($this->once())->method('get')->willReturn('1');
         $this->event->expects($this->never())->method('getEnvironment');
-        $this->productManageInventoryFormViewListener->onProductView($this->event);
+        $this->productWarehouseFormViewListener->onProductView($this->event);
     }
 
     public function testOnProductViewRendersAndAddsSubBlock()
@@ -89,6 +88,6 @@ class ProductManageInventoryFormViewListenerTest extends FormViewListenerTestCas
         $scrollData->expects($this->once())->method('getData')->willReturn(
             ['dataBlocks' => [1 => ['title' => 'oro.product.sections.inventory.trans']]]
         );
-        $this->productManageInventoryFormViewListener->onProductView($this->event);
+        $this->productWarehouseFormViewListener->onProductView($this->event);
     }
 }
