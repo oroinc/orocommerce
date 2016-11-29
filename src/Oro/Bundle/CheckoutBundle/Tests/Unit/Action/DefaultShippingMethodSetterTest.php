@@ -4,7 +4,7 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Action;
 
 use Oro\Bundle\CheckoutBundle\Action\DefaultShippingMethodSetter;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\Factory\ShippingContextProviderFactory;
+use Oro\Bundle\CheckoutBundle\Factory\CheckoutShippingContextFactory;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
 use Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider;
@@ -20,7 +20,7 @@ class DefaultShippingMethodSetterTest extends \PHPUnit_Framework_TestCase
     protected $setter;
 
     /**
-     * @var ShippingContextProviderFactory|\PHPUnit_Framework_MockObject_MockObject
+     * @var CheckoutShippingContextFactory|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $contextProviderFactory;
 
@@ -31,7 +31,7 @@ class DefaultShippingMethodSetterTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->contextProviderFactory = $this->getMockBuilder(ShippingContextProviderFactory::class)
+        $this->contextProviderFactory = $this->getMockBuilder(CheckoutShippingContextFactory::class)
             ->disableOriginalConstructor()
             ->getMock();
 
