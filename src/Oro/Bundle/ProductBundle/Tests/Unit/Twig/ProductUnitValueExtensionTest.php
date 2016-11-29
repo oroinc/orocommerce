@@ -30,6 +30,19 @@ class ProductUnitValueExtensionTest extends UnitValueExtensionTestCase
         $this->assertEquals(ProductUnitValueExtension::NAME, $this->getExtension()->getName());
     }
 
+    public function testGetFunctions()
+    {
+        /** @var \Twig_SimpleFunction[] $functions */
+        $functions = $this->getExtension()->getFunctions();
+
+        $this->assertCount(2, $functions);
+
+        $this->assertInternalType('array', $functions);
+        foreach ($functions as $function) {
+            $this->assertInstanceOf('Twig_SimpleFunction', $function);
+        }
+    }
+
     /**
      * @return ProductUnitValueExtension
      */

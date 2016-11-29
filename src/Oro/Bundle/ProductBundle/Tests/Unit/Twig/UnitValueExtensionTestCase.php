@@ -30,19 +30,6 @@ abstract class UnitValueExtensionTestCase extends \PHPUnit_Framework_TestCase
         }
     }
 
-    public function testGetFunctions()
-    {
-        /** @var \Twig_SimpleFunction[] $filters */
-        $functions = $this->getExtension()->getFunctions();
-
-        $this->assertCount(2, $functions);
-
-        $this->assertInternalType('array', $functions);
-        foreach ($functions as $function) {
-            $this->assertInstanceOf('Twig_SimpleFunction', $function);
-        }
-    }
-
     public function testFormat()
     {
         /** @var \Twig_SimpleFilter[] $filters */
