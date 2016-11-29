@@ -83,17 +83,27 @@
 {% endblock %}
 
 {% block _page_title_container_widget %}
-    {% set content = block_widget(block)|trim %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' page-title ' ~ (class_prefix ? ' {{ class_prefix }}-page-title')
+        '~class': ' page-title-wrapper' ~ (class_prefix ? ' {{ class_prefix }}-page-title-wrapper')
     }) %}
-    {% if content|length %}
-        <h1{{ block('block_attributes') }}>{{ content|raw }}</h1>
-    {% endif %}
+    <div{{ block('block_attributes') }}>{{ block_widget(block) }}</div>
 {% endblock %}
 
 {% block _page_title_widget %}
-    {{ block_widget(block) }}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' page-title' ~ (class_prefix ? ' {{ class_prefix }}-page-title')
+    }) %}
+    {% set content = block_widget(block)|trim %}
+    {% if content|length %}
+        <h1{{ block('block_attributes') }}>
+            {% if titleIcon is defined %}
+            <span class="badge badge_sm badge_circle badge_orange badge_has-inline-sibling">
+                <i class="{{ titleIcon }}"></i>
+            </span>
+            {% endif %}
+            <span class="page-title__text">{{ content|raw }}</span>
+        </h1>
+    {% endif %}
 {% endblock %}
 
 {% block _notification_widget %}

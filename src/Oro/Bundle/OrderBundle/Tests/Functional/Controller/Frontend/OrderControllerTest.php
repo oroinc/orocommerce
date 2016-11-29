@@ -6,15 +6,12 @@ use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserDa
 use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatter;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\OrderBundle\Form\Type\FrontendOrderType;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrdersACLData;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderUserACLData;
-use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Crawler;
-use Symfony\Component\DomCrawler\Form;
+use Oro\Bundle\FrontendTestFrameworkBundle\Test\Client;
 
 /**
  * @dbIsolation
@@ -24,6 +21,11 @@ class OrderControllerTest extends WebTestCase
     const ORDER_PO_NUMBER = 'PO-NUMBER';
     const QUICK_ADD_ORDER_PO_NUMBER = 'QUICK-ADD-PO-NUMBER';
     const ORDER_PO_NUMBER_UPDATED = 'PO-NUMBER-UP';
+
+    /**
+     * @var Client
+     */
+    protected $client;
 
     /**
      * @var DateTimeFormatter
@@ -78,11 +80,8 @@ class OrderControllerTest extends WebTestCase
             }
         }
 
-        $shippingMethodLabel = $this->getContainer()->get('oro_order.formatter.shipping_method')
-            ->formatShippingMethodWithTypeLabel('flat_rate', 'primary');
-        $shippingMethodLabel = $this->getContainer()->get('translator')->trans($shippingMethodLabel);
-        $this->assertArrayHasKey('shippingMethod', $myOrderData);
-        $this->assertEquals($shippingMethodLabel, $myOrderData['shippingMethod']);
+        $this->assertArrayHasKey('poNumber', $myOrderData);
+        $this->assertEquals('PO_NUM', $myOrderData['poNumber']);
     }
 
     /**
@@ -166,148 +165,6 @@ class OrderControllerTest extends WebTestCase
         ];
     }
 
-    public function testCreate()
-    {
-        // cover (CREATE, UPDATE) with ACL tests after fix
-        $this->markTestIncomplete('Should be fixed in scope of task BB-3686');
-        $crawler = $this->client->request('GET', $this->getUrl('oro_order_frontend_create'));
-        $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
-
-        /** @var Form $form */
-        $form = $crawler->selectButton('Save')->form();
-        $date = (new \DateTime('now'))->format('Y-m-d');
-
-        /** @var Product $product */
-        $product = $this->getReference('product.1');
-
-        $lineItems = [
-            [
-                'product' => $product->getId(),
-                'quantity' => 10,
-                'productUnit' => 'liter',
-                'shipBy' => $date,
-            ],
-        ];
-
-        $submittedData = [
-            'input_action' => 'save_and_stay',
-            'oro_order_frontend_type' => [
-                '_token' => $form['oro_order_frontend_type[_token]']->getValue(),
-                'poNumber' => self::ORDER_PO_NUMBER,
-                'shipUntil' => $date,
-                'customerNotes' => 'Customer Notes',
-                'lineItems' => $lineItems,
-            ],
-        ];
-
-        $this->client->followRedirects(true);
-
-        // Submit form
-        $result = $this->client->getResponse();
-        $crawler = $this->client->request($form->getMethod(), $form->getUri(), $submittedData);
-
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
-
-        $this->assertViewPage($crawler, [
-            self::ORDER_PO_NUMBER,
-            'Customer Notes',
-            $date,
-        ]);
-
-        /** @var CombinedProductPrice $productPrice */
-        $productPrice = $this->getReference('product_price.1');
-        $expectedLineItems = [
-            [
-                'product' => $product->getId(),
-                'quantity' => 10,
-                'productUnit' => 'liter',
-                'price' => $this->formatProductPrice($productPrice),
-                'shipBy' => $date,
-            ],
-        ];
-
-        $this->assertEquals($expectedLineItems, $this->getActualLineItems($crawler, count($lineItems)));
-    }
-
-    /**
-     * @depends testCreate
-     * @return int
-     */
-    public function testUpdate()
-    {
-        $id = $this->findInGrid(
-            'frontend-orders-grid',
-            ['frontend-orders-grid[_filter][poNumber][value]' => self::ORDER_PO_NUMBER]
-        );
-
-        $crawler = $this->client->request(
-            'GET',
-            $this->getUrl('oro_order_frontend_update', ['id' => $id])
-        );
-        $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
-
-        /** @var Form $form */
-        $form = $crawler->selectButton('Save')->form();
-
-        /** @var Product $product */
-        $product = $this->getReference('product.2');
-
-        $date = (new \DateTime('now'))->format('Y-m-d');
-
-        $lineItems = [
-            [
-                'product' => $product->getId(),
-                'quantity' => 15,
-                'productUnit' => 'liter',
-                'shipBy' => $date,
-            ],
-        ];
-
-        $submittedData = [
-            'input_action' => 'save_and_stay',
-            'oro_order_frontend_type' => [
-                '_token' => $form['oro_order_frontend_type[_token]']->getValue(),
-                'poNumber' => self::ORDER_PO_NUMBER_UPDATED,
-                'lineItems' => $lineItems,
-            ],
-        ];
-
-        $this->client->followRedirects(true);
-
-        // Submit form
-        $result = $this->client->getResponse();
-        $this->client->request($form->getMethod(), $form->getUri(), $submittedData);
-
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
-
-        // Check updated order
-        $crawler = $this->client->request('GET', $this->getUrl('oro_order_frontend_update', ['id' => $id]));
-
-        $this->assertEquals(
-            self::ORDER_PO_NUMBER_UPDATED,
-            $crawler->filter('input[name="oro_order_frontend_type[poNumber]"]')
-                ->extract('value')[0]
-        );
-
-        /** @var CombinedProductPrice $productPrice */
-        $productPrice = $this->getReference('product_price.1');
-        $expectedLineItems = [
-            [
-                'product' => $product->getId(),
-                'quantity' => 15,
-                'productUnit' => 'liter',
-                'price' => $this->formatProductPrice($productPrice),
-                'shipBy' => $date,
-            ],
-        ];
-
-        $this->assertEquals($expectedLineItems, $this->getActualLineItems($crawler, count($lineItems)));
-
-        return $id;
-    }
-
     /**
      * @dataProvider testViewDataProvider
      *
@@ -385,94 +242,5 @@ class OrderControllerTest extends WebTestCase
         foreach ($expectedViewData as $data) {
             $this->assertContains($data, $html);
         }
-    }
-
-    /**
-     * @param array $orderData
-     * @return array
-     */
-    protected function getFormData(array $orderData)
-    {
-        $result = [];
-        foreach ($orderData as $field => $value) {
-            $formFieldName = sprintf('%s[%s]', FrontendOrderType::NAME, $field);
-            $result[$formFieldName] = $value;
-        }
-
-        return $result;
-    }
-
-    /**
-     * @param string $gridName
-     * @param array $filters
-     * @return array
-     */
-    protected function findInGrid($gridName, array $filters)
-    {
-        $response = $this->client->requestFrontendGrid($gridName, $filters);
-
-        $result = $this->getJsonResponseContent($response, 200);
-        $result = reset($result['data']);
-
-        return $result['id'];
-    }
-
-    /**
-     * @param Crawler $crawler
-     * @param int $count
-     * @param null $quickAdd
-     * @return array
-     */
-    protected function getActualLineItems(Crawler $crawler, $count, $quickAdd = null)
-    {
-        $result = [];
-
-        for ($i = 0; $i < $count; $i++) {
-            $data = [
-                'product' => $crawler->filter('input[name="oro_order_frontend_type[lineItems]['.$i.'][product]"]')
-                    ->extract('value')[0],
-                'quantity' => $crawler->filter('input[name="oro_order_frontend_type[lineItems]['.$i.'][quantity]"]')
-                    ->extract('value')[0]
-            ];
-
-            if ($quickAdd) {
-                $result[] = $data;
-            } else {
-                $result[] = array_merge(
-                    $data,
-                    [
-                        'productUnit' => $crawler
-                            ->filter(
-                                'select[name="oro_order_frontend_type[lineItems]['.$i.'][productUnit]"] :selected'
-                            )
-                            ->html(),
-                        'price' => trim(
-                            $crawler->filter(
-                                'tr[data-content="oro_order_frontend_type[lineItems]['
-                                .$i.']"] .order-line-item-price-value'
-                            )
-                                ->html()
-                        ),
-                        'shipBy' => $crawler->filter(
-                            'input[name="oro_order_frontend_type[lineItems]['.$i.'][shipBy]"]'
-                        )
-                            ->extract('value')[0]
-                    ]
-                );
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * @param CombinedProductPrice $productPrice
-     * @return string
-     */
-    protected function formatProductPrice(CombinedProductPrice $productPrice)
-    {
-        $price = $productPrice->getPrice();
-
-        return $this->numberFormatter->formatCurrency($price->getValue(), $price->getCurrency());
     }
 }

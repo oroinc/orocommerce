@@ -8,46 +8,17 @@ use Symfony\Component\Translation\TranslatorInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
+use Oro\Bundle\UIBundle\Fallback\AbstractFallbackFieldsFormView;
 use Oro\Bundle\UIBundle\View\ScrollData;
 
-class ProductManageInventoryFormViewListener
+class ProductManageInventoryFormViewListener extends AbstractFallbackFieldsFormView
 {
-    /**
-     * @var RequestStack
-     */
-    protected $requestStack;
-
-    /**
-     * @var DoctrineHelper
-     */
-    protected $doctrineHelper;
-
-    /**
-     * @var TranslatorInterface
-     */
-    protected $translator;
-
-    /**
-     * @param RequestStack $requestStack
-     * @param DoctrineHelper $doctrineHelper
-     * @param TranslatorInterface $translator
-     */
-    public function __construct(
-        RequestStack $requestStack,
-        DoctrineHelper $doctrineHelper,
-        TranslatorInterface $translator
-    ) {
-        $this->requestStack = $requestStack;
-        $this->doctrineHelper = $doctrineHelper;
-        $this->translator = $translator;
-    }
-
     /**
      * @param BeforeListRenderEvent $event
      */
     public function onProductView(BeforeListRenderEvent $event)
     {
-        $product = $this->getProductFromRequest();
+        $product = $this->getEntityFromRequest(Product::class);
         if (!$product) {
             return;
         }

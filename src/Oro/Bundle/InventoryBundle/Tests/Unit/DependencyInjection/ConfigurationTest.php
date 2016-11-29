@@ -27,7 +27,11 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                 'resolved' => true,
                 'manage_inventory' => [
                     'value' => false,
-                    'scope' => 'app',
+                    'scope' => 'app'
+                ],
+                'inventory_threshold' => [
+                    'value' => false,
+                    'scope' => 'app'
                 ],
                 'minimum_quantity_to_order' => [
                     'scope' => 'app',

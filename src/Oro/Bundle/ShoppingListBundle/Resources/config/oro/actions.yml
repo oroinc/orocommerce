@@ -23,7 +23,7 @@ operations:
         applications: [commerce]
         routes:
             - oro_shopping_list_frontend_view
-        acl_resource: oro_order_frontend_create
+        acl_resource: oro_order_frontend_view
         order: 10
         button_options:
             icon: icon-briefcase

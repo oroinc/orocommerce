@@ -34,12 +34,16 @@ services:
         tags:
             - { name: oro.api.processor, action: create, group: normalize_input, priority: -45, class: '%oro_inventory.entity.inventory_level.class%' }
 
-    oro_inventory.event_listener.product_manage_inventory_form_view_listener:
-        class: 'Oro\Bundle\InventoryBundle\EventListener\ProductManageInventoryFormViewListener'
+    oro_inventory.service.fallback_fields_form_view:
+        abstract: true
         arguments:
             - "@request_stack"
-            - "@oro_entity.doctrine_helper"
+            - "@doctrine"
             - "@translator"
+
+    oro_inventory.event_listener.product_manage_inventory_form_view_listener:
+        class: 'Oro\Bundle\InventoryBundle\EventListener\ProductManageInventoryFormViewListener'
+        parent: oro_inventory.service.fallback_fields_form_view
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-view, method: onProductView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onProductEdit }
@@ -47,12 +51,38 @@ services:
 
     oro_inventory.event_listener.category_manage_inventory_form_view:
         class: 'Oro\Bundle\InventoryBundle\EventListener\CategoryManageInventoryFormViewListener'
-        arguments:
-            - "@request_stack"
-            - "@oro_entity.doctrine_helper"
-            - "@translator"
+        parent: oro_inventory.service.fallback_fields_form_view
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.category-edit, method: onCategoryEdit }
+
+    oro_inventory.event_listener.product_inventory_threshold_form_view_listener:
+        class: 'Oro\Bundle\InventoryBundle\EventListener\ProductInventoryThresholdFormViewListener'
+        parent: oro_inventory.service.fallback_fields_form_view
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-view, method: onProductView }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onProductEdit }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-create-step-two, method: onProductEdit }
+
+    oro_inventory.event_listener.category_inventory_threshold_form_view:
+        class: 'Oro\Bundle\InventoryBundle\EventListener\CategoryInventoryThresholdFormViewListener'
+        parent: oro_inventory.service.fallback_fields_form_view
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.category-edit, method: onCategoryEdit }
+
+    oro_inventory.listener.update_entity_config_relations:
+        class: 'Oro\Bundle\InventoryBundle\CacheWarmer\UpdateEntityConfigRelationsWarmer'
+        arguments:
+            - '@oro_inventory.entity_config_relations_migration'
+        tags:
+            - { name: oro_entity_extend.warmer, priority: 500 }
+
+    oro_inventory.entity_config_relations_migration:
+        class: 'Oro\Bundle\InventoryBundle\CacheWarmer\EntityConfigRelationsMigration'
+        arguments:
+            - '@doctrine'
+            - '@oro_entity_config.config_manager'
+            - '@logger'
+            - '%installed%'
 
     oro_inventory.event_listener.category_quantity_to_order_form_view_listener:
         class: 'Oro\Bundle\InventoryBundle\EventListener\CategoryQuantityToOrderFormViewListener'

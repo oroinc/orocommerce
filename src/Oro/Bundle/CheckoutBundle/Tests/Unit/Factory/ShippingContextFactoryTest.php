@@ -5,7 +5,7 @@ namespace Oro\Bundle\CheckoutBundle\Bundle\Tests\Unit\Factory;
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\Factory\ShippingContextProviderFactory;
+use Oro\Bundle\CheckoutBundle\Factory\CheckoutShippingContextFactory;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
@@ -17,9 +17,9 @@ use Oro\Bundle\ShippingBundle\Context\ShippingContext;
 use Oro\Bundle\ShippingBundle\Factory\ShippingContextFactory;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
-class ShippingContextProviderFactoryTest extends \PHPUnit_Framework_TestCase
+class ShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var ShippingContextProviderFactory|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var CheckoutShippingContextFactory|\PHPUnit_Framework_MockObject_MockObject */
     protected $factory;
 
     /** @var  ShoppingList|\PHPUnit_Framework_MockObject_MockObject */
@@ -52,7 +52,7 @@ class ShippingContextProviderFactoryTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->factory = new ShippingContextProviderFactory(
+        $this->factory = new CheckoutShippingContextFactory(
             $this->checkoutLineItemsManager,
             $this->totalProcessorProvider,
             $this->shippingContextFactory

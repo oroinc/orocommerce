@@ -176,23 +176,21 @@
     {% endif %}
 
     {% set shippingInformation %}
+
         {% if entity.shippingMethod and entity.shippingMethodType and entity.estimatedShippingCost %}
-            {% set methodLabel = get_shipping_method_label(entity.shippingMethod) ? get_shipping_method_label(entity.shippingMethod)|trans ~ ', ' : '' %}
+            {% set methodLabel = 'oro.shipping.method_type.backend.label'|transchoice(2, {
+                '%translatedMethodType%': get_shipping_method_type_label(entity.shippingMethod, entity.shippingMethodType)|trans,
+                '%translatedMethod%': get_shipping_method_label(entity.shippingMethod)|trans,
+                '%price%': entity.estimatedShippingCost|oro_format_price
+            }) %}
+
             {{ UI.renderAttribute('oro.order.shipping_method.label'|trans,
-            '<div class="control-label selected-shipping-method">' ~
-            methodLabel ~
-            get_shipping_method_type_label(entity.shippingMethod, entity.shippingMethodType)|trans ~
-            ': ' ~ entity.estimatedShippingCost|oro_format_price() ~ '</div>'
+                '<div class="control-label selected-shipping-method">' ~methodLabel ~'</div>'
             ) }}
         {% endif %}
+
         {{ UI.renderAttribute('oro.order.form.shipping_options.label'|trans,
-            SM.renderPossibleShippingMethods(
-                entity.shippingMethod,
-                entity.shippingMethodType,
-                entity.estimatedShippingCostAmount,
-                orderData.possibleShippingMethods is defined ? orderData.possibleShippingMethods : [],
-                form
-            )
+            SM.renderPossibleShippingMethods(form)
         ) }}
 
         {%  set options = {

@@ -5,6 +5,7 @@ namespace Oro\Bundle\InventoryBundle\Migrations\Schema\v1_0;
 use Doctrine\DBAL\Schema\Schema;
 
 use Oro\Bundle\CatalogBundle\Fallback\Provider\CategoryFallbackProvider;
+use Oro\Bundle\EntityBundle\EntityConfig\DatagridScope;
 use Oro\Bundle\EntityBundle\Fallback\Provider\SystemConfigFallbackProvider;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
@@ -129,6 +130,9 @@ class AddQuantityToOrderFields implements Migration, ExtendExtensionAwareInterfa
                 ],
                 'view' => [
                     'is_displayable' => false,
+                ],
+                'datagrid' => [
+                    'is_visible' => DatagridScope::IS_VISIBLE_FALSE,
                 ],
                 'fallback' => [
                     'fallbackList' => $fallbackList,
