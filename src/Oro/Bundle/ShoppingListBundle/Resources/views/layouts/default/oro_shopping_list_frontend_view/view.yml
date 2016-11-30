@@ -44,6 +44,8 @@ layout:
                         productsMatchedPrice: '=data["oro_shopping_list_products"].getMatchedPrice(data["entity"])'
                         productsAllPrices: '=data["oro_shopping_list_products"].getAllPrices(data["entity"])'
                         productsUnits: '=data["oro_shopping_list_products_units"].getProductsUnits(data["entity"])'
+                        vars:
+                          singleUnitModeService: '=data["oro_product_unit_mode"]'
                 shopping_list_line_items_empty:
                     blockType: block
                     options:
