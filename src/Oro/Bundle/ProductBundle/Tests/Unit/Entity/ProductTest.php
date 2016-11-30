@@ -407,4 +407,15 @@ class ProductTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(2, $product->getImagesByType('main'));
         $this->assertCount(1, $product->getImagesByType('additional'));
     }
+
+    public function testIsConfigurable()
+    {
+        $simpleProduct = new Product();
+
+        $configurableProduct = new Product();
+        $configurableProduct->setType(Product::TYPE_CONFIGURABLE_PRODUCT);
+
+        $this->assertFalse($simpleProduct->isConfigurable());
+        $this->assertTrue($configurableProduct->isConfigurable());
+    }
 }
