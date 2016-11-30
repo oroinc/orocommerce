@@ -1,0 +1,16 @@
+// @theme: default
+
+.product-view {
+    &__specification {
+        padding: $product-view-specification-inner-offset;
+    }
+}
+
+@include breakpoint('tablet') {
+    .product-view {
+
+        &__specification {
+            padding: $product-view-specification-tablet-inner-offset;
+        }
+    }
+}
