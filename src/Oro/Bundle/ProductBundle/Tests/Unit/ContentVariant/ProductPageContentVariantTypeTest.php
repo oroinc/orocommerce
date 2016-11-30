@@ -7,8 +7,8 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\ProductPageVariantType;
 use Oro\Bundle\ProductBundle\Tests\Unit\ContentVariant\Stub\ContentVariantStub;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Oro\Component\Routing\RouteData;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Component\WebCatalog\RouteData;
 
 class ProductPageContentVariantTypeTest extends \PHPUnit_Framework_TestCase
 {

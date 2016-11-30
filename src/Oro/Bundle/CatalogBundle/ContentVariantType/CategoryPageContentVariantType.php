@@ -5,9 +5,9 @@ namespace Oro\Bundle\CatalogBundle\ContentVariantType;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryPageVariantType;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Oro\Component\Routing\RouteData;
 use Oro\Component\WebCatalog\ContentVariantTypeInterface;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
-use Oro\Component\WebCatalog\RouteData;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 class CategoryPageContentVariantType implements ContentVariantTypeInterface

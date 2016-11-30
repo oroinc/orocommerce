@@ -5,9 +5,9 @@ namespace Oro\Bundle\CMSBundle\ContentVariantType;
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\CMSBundle\Form\Type\CmsPageVariantType;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Oro\Component\Routing\RouteData;
 use Oro\Component\WebCatalog\ContentVariantTypeInterface;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
-use Oro\Component\WebCatalog\RouteData;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 class CmsPageContentVariantType implements ContentVariantTypeInterface

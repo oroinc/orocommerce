@@ -186,7 +186,7 @@ class Slug
      * @param array $routeParameters
      * @return $this
      */
-    public function setRouteParameters($routeParameters)
+    public function setRouteParameters(array $routeParameters)
     {
         $this->routeParameters = $routeParameters;
 

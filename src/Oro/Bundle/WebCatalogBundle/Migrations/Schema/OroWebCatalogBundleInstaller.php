@@ -7,6 +7,8 @@ use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
+use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtension;
+use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtensionAwareInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -14,7 +16,8 @@ use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
  */
 class OroWebCatalogBundleInstaller implements
     Installation,
-    NoteExtensionAwareInterface
+    NoteExtensionAwareInterface,
+    SlugExtensionAwareInterface
 {
     /**
      * @var NoteExtension
@@ -22,11 +25,24 @@ class OroWebCatalogBundleInstaller implements
     protected $noteExtension;
 
     /**
+     * @var SlugExtension
+     */
+    protected $slugExtension;
+
+    /**
      * {@inheritdoc}
      */
     public function setNoteExtension(NoteExtension $noteExtension)
     {
         $this->noteExtension = $noteExtension;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setSlugExtension(SlugExtension $extension)
+    {
+        $this->slugExtension = $extension;
     }
 
     /**
@@ -55,9 +71,7 @@ class OroWebCatalogBundleInstaller implements
         /** Foreign keys generation **/
         $this->addOroWebCatalogForeignKeys($schema);
         $this->addOroContentNodeForeignKeys($schema);
-        $this->addOroContentNodeSlugPrototypeForeignKeys($schema);
         $this->addOroContentNodeTitleForeignKeys($schema);
-        $this->addOroWebCatalogVariantSlugForeignKeys($schema);
         $this->addOroContentVariantForeignKeys($schema);
         $this->addOroWebCatalogNodeScopeForeignKeys($schema);
         $this->addOroWebCatalogVariantScopeForeignKeys($schema);
@@ -129,11 +143,12 @@ class OroWebCatalogBundleInstaller implements
      */
     protected function createOroContentNodeSlugPrototypeTable(Schema $schema)
     {
-        $table = $schema->createTable('oro_web_catalog_node_slug_prot');
-        $table->addColumn('node_id', 'integer', []);
-        $table->addColumn('localized_value_id', 'integer', []);
-        $table->setPrimaryKey(['node_id', 'localized_value_id']);
-        $table->addUniqueIndex(['localized_value_id']);
+        $this->slugExtension->addLocalizedSlugPrototypes(
+            $schema,
+            'oro_web_catalog_node_slug_prot',
+            'oro_web_catalog_content_node',
+            'node_id'
+        );
     }
 
     /**
@@ -157,11 +172,12 @@ class OroWebCatalogBundleInstaller implements
      */
     protected function createOroWebCatalogVariantSlugTable(Schema $schema)
     {
-        $table = $schema->createTable('oro_web_catalog_variant_slug');
-        $table->addColumn('content_variant_id', 'integer', []);
-        $table->addColumn('slug_id', 'integer', []);
-        $table->setPrimaryKey(['content_variant_id', 'slug_id']);
-        $table->addUniqueIndex(['slug_id']);
+        $this->slugExtension->addSlugs(
+            $schema,
+            'oro_web_catalog_variant_slug',
+            'oro_web_catalog_variant',
+            'content_variant_id'
+        );
     }
 
     /**
@@ -235,28 +251,6 @@ class OroWebCatalogBundleInstaller implements
     }
 
     /**
-     * Add oro_web_catalog_node_slug_prot foreign keys.
-     *
-     * @param Schema $schema
-     */
-    protected function addOroContentNodeSlugPrototypeForeignKeys(Schema $schema)
-    {
-        $table = $schema->getTable('oro_web_catalog_node_slug_prot');
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_web_catalog_content_node'),
-            ['node_id'],
-            ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
-        );
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_fallback_localization_val'),
-            ['localized_value_id'],
-            ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
-        );
-    }
-
-    /**
      * Add oro_web_catalog_node_title foreign keys.
      *
      * @param Schema $schema
@@ -273,28 +267,6 @@ class OroWebCatalogBundleInstaller implements
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_fallback_localization_val'),
             ['localized_value_id'],
-            ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
-        );
-    }
-
-    /**
-     * Add oro_web_catalog_variant_slug foreign keys.
-     *
-     * @param Schema $schema
-     */
-    protected function addOroWebCatalogVariantSlugForeignKeys(Schema $schema)
-    {
-        $table = $schema->getTable('oro_web_catalog_variant_slug');
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_redirect_slug'),
-            ['slug_id'],
-            ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
-        );
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_web_catalog_variant'),
-            ['content_variant_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );

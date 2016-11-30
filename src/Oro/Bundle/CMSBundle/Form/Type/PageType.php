@@ -45,10 +45,10 @@ class PageType extends AbstractType
                 ]
             )
             ->add(
-                'slugs',
+                'slugPrototypes',
                 LocalizedSlugType::NAME,
                 [
-                    'label'    => 'oro.cms.page.slugs.label',
+                    'label'    => 'oro.cms.page.slug_prototypes.label',
                     'required' => true,
                     'options'  => ['constraints' => [new NotBlank(), new UrlSafe()]],
                     'source_field' => 'titles',

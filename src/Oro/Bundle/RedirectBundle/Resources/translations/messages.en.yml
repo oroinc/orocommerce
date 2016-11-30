@@ -21,3 +21,12 @@ oro:
             redirects.label: Redirects
             scopes.label: Scopes
             localization: Localization
+
+        system_configuration:
+            fields:
+                enable_direct_url.label: 'Enable Direct URLs'
+                canonical_url_type:
+                    label: 'Canonical URL Type'
+                    choice:
+                        system.label: 'System URL'
+                        direct.label: 'Direct URL'

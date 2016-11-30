@@ -1,14 +1,29 @@
 <?php
 
-namespace Oro\Bundle\CMSBundle\Migrations\Schema\v1_2;
+namespace Oro\Bundle\CMSBundle\Migrations\Schema\v1_3;
 
+use Doctrine\DBAL\Platforms\AbstractPlatform;
+use Doctrine\DBAL\Schema\Comparator;
 use Doctrine\DBAL\Schema\Schema;
+use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
-use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class ReorganizePageTitle implements Migration, OrderedMigrationInterface
+class ReorganizePageTitle implements Migration, DatabasePlatformAwareInterface
 {
+    /**
+     * @var AbstractPlatform
+     */
+    protected $platform;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setDatabasePlatform(AbstractPlatform $platform)
+    {
+        $this->platform = $platform;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -21,14 +36,8 @@ class ReorganizePageTitle implements Migration, OrderedMigrationInterface
         $this->addOroCmsPageTitleForeignKeys($schema);
 
         $queries->addQuery(new ReorganizeTitleQuery());
-    }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getOrder()
-    {
-        return 10;
+        $this->dropTitleColumn($schema, $queries);
     }
 
     /**
@@ -65,5 +74,32 @@ class ReorganizePageTitle implements Migration, OrderedMigrationInterface
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
+    }
+
+    /**
+     * @param Schema $schema
+     * @param Schema $toSchema
+     * @return array
+     */
+    protected function getSchemaDiff(Schema $schema, Schema $toSchema)
+    {
+        $comparator = new Comparator();
+
+        return $comparator->compare($schema, $toSchema)->toSql($this->platform);
+    }
+
+    /**
+     * @param Schema $schema
+     * @param QueryBag $queries
+     */
+    protected function dropTitleColumn(Schema $schema, QueryBag $queries)
+    {
+        $preSchema = clone $schema;
+        $table = $preSchema->getTable('oro_cms_page');
+        $table->dropColumn('title');
+
+        foreach ($this->getSchemaDiff($schema, $preSchema) as $query) {
+            $queries->addQuery($query);
+        }
     }
 }

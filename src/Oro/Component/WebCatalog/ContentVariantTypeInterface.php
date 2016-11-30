@@ -2,6 +2,7 @@
 
 namespace Oro\Component\WebCatalog;
 
+use Oro\Component\Routing\RouteData;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 
 interface ContentVariantTypeInterface

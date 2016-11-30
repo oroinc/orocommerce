@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\CatalogBundle\Form\Type;
 
+use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugType;
+use Oro\Bundle\ValidationBundle\Validator\Constraints\UrlSafe;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -140,6 +142,16 @@ class CategoryType extends AbstractType
                 CategoryDefaultProductOptionsType::NAME,
                 [
                     'required' => false
+                ]
+            )
+            ->add(
+                'slugPrototypes',
+                LocalizedSlugType::NAME,
+                [
+                    'label'    => 'oro.catalog.category.slug_prototypes.label',
+                    'required' => true,
+                    'options'  => ['constraints' => [new NotBlank(), new UrlSafe()]],
+                    'source_field' => 'titles',
                 ]
             );
     }

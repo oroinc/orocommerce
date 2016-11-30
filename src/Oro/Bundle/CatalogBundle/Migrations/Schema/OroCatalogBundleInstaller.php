@@ -14,6 +14,8 @@ use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtension;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
+use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtension;
+use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtensionAwareInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -22,7 +24,8 @@ class OroCatalogBundleInstaller implements
     Installation,
     NoteExtensionAwareInterface,
     AttachmentExtensionAwareInterface,
-    ExtendExtensionAwareInterface
+    ExtendExtensionAwareInterface,
+    SlugExtensionAwareInterface
 {
     const ORO_CATALOG_CATEGORY_SHORT_DESCRIPTION_TABLE_NAME = 'oro_catalog_cat_short_desc';
     const ORO_CATALOG_CATEGORY_LONG_DESCRIPTION_TABLE_NAME = 'oro_catalog_cat_long_desc';
@@ -50,11 +53,16 @@ class OroCatalogBundleInstaller implements
     protected $extendExtension;
 
     /**
+     * @var SlugExtension
+     */
+    protected $slugExtension;
+
+    /**
      * {@inheritdoc}
      */
     public function getMigrationVersion()
     {
-        return 'v1_5';
+        return 'v1_6';
     }
 
     /**
@@ -86,6 +94,14 @@ class OroCatalogBundleInstaller implements
     /**
      * {@inheritdoc}
      */
+    public function setSlugExtension(SlugExtension $extension)
+    {
+        $this->slugExtension = $extension;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function up(Schema $schema, QueryBag $queries)
     {
         /** Tables generation **/
@@ -95,6 +111,8 @@ class OroCatalogBundleInstaller implements
         $this->createOroCatalogCategoryShortDescriptionTable($schema);
         $this->createOroCatalogCategoryLongDescriptionTable($schema);
         $this->createOroCategoryDefaultProductOptionsTable($schema);
+        $this->createOroCategorySlugTable($schema);
+        $this->createOroCategorySlugPrototypeTable($schema);
 
         /** Foreign keys generation **/
         $this->addOroCatalogCategoryForeignKeys($schema);
@@ -170,6 +188,36 @@ class OroCatalogBundleInstaller implements
         $table->addColumn('product_unit_code', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('product_unit_precision', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
+    }
+
+    /**
+     * Create oro_catalog_cat_slug table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroCategorySlugTable(Schema $schema)
+    {
+        $this->slugExtension->addSlugs(
+            $schema,
+            'oro_catalog_cat_slug',
+            'oro_catalog_category',
+            'category_id'
+        );
+    }
+
+    /**
+     * Create oro_catalog_cat_slug_prototype table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroCategorySlugPrototypeTable(Schema $schema)
+    {
+        $this->slugExtension->addLocalizedSlugPrototypes(
+            $schema,
+            'oro_catalog_cat_slug_prototype',
+            'oro_catalog_category',
+            'category_id'
+        );
     }
 
     /**

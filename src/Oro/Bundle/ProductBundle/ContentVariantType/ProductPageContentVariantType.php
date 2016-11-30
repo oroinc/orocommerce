@@ -5,9 +5,9 @@ namespace Oro\Bundle\ProductBundle\ContentVariantType;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\ProductPageVariantType;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Oro\Component\Routing\RouteData;
 use Oro\Component\WebCatalog\ContentVariantTypeInterface;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
-use Oro\Component\WebCatalog\RouteData;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 class ProductPageContentVariantType implements ContentVariantTypeInterface

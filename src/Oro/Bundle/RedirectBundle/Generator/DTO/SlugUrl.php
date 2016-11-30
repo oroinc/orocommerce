@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\WebCatalogBundle\Generator\DTO;
+namespace Oro\Bundle\RedirectBundle\Generator\DTO;
 
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 

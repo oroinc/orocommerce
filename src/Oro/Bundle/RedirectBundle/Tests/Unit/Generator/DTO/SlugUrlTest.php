@@ -1,9 +1,9 @@
 <?php
 
-namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Generator\DTO;
+namespace Oro\Bundle\RedirectBundle\Tests\Unit\Generator\DTO;
 
 use Oro\Bundle\LocaleBundle\Entity\Localization;
-use Oro\Bundle\WebCatalogBundle\Generator\DTO\SlugUrl;
+use Oro\Bundle\RedirectBundle\Generator\DTO\SlugUrl;
 
 class SlugUrlTest extends \PHPUnit_Framework_TestCase
 {

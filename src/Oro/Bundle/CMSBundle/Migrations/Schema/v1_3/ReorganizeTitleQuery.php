@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\CMSBundle\Migrations\Schema\v1_2;
+namespace Oro\Bundle\CMSBundle\Migrations\Schema\v1_3;
 
 use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
 use Doctrine\DBAL\Types\Type;
@@ -8,12 +8,12 @@ use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
 use Psr\Log\LoggerInterface;
 
-class ReorganizeSlugsQuery extends ParametrizedMigrationQuery
+class ReorganizeTitleQuery extends ParametrizedMigrationQuery
 {
     /**
      * @var array
      * [
-     *      'page_id' => 'slug',
+     *      'page_id' => 'title',
      * ]
      */
     protected $relations = [];
@@ -53,15 +53,14 @@ class ReorganizeSlugsQuery extends ParametrizedMigrationQuery
     protected function prepareRelations(LoggerInterface $logger)
     {
         $query = 'SELECT
-p.id, REVERSE(SUBSTR(REVERSE(s.url), 1, POSITION(\'/\' in SUBSTR(REVERSE(s.url), 1)) - 1)) as slug
-FROM oro_cms_page p
-LEFT JOIN oro_redirect_slug s ON (p.current_slug_id = s.id);';
+p.id, p.title
+FROM oro_cms_page p;';
 
         $this->logQuery($logger, $query);
 
         $rows  = $this->connection->fetchAll($query);
         foreach ($rows as $row) {
-            $this->relations[$row['id']] = $row['slug'];
+            $this->relations[$row['id']] = $row['title'];
         }
     }
 
@@ -71,9 +70,9 @@ LEFT JOIN oro_redirect_slug s ON (p.current_slug_id = s.id);';
      */
     protected function updateRelations(LoggerInterface $logger, $dryRun = false)
     {
-        foreach ($this->relations as $pageId => $slug) {
+        foreach ($this->relations as $pageId => $title) {
             $localizationValueQuery = 'INSERT INTO oro_fallback_localization_val (string) VALUES (:values);';
-            $params = ['values' => $slug];
+            $params = ['values' => $title];
             $types = ['values' => 'string'];
 
             $this->logQuery($logger, $localizationValueQuery, $params, $types);
@@ -82,7 +81,7 @@ LEFT JOIN oro_redirect_slug s ON (p.current_slug_id = s.id);';
                 $this->connection->executeQuery($localizationValueQuery, $params, $types);
             }
 
-            $localizationValueQuery = 'INSERT INTO oro_cms_page_slug (page_id, localized_value_id)
+            $localizationValueQuery = 'INSERT INTO oro_cms_page_title (page_id, localized_value_id)
 VALUES (:pageId, :localizationValueId);';
 
             $params = ['pageId' => $pageId, 'localizationValueId' => $this->connection->lastInsertId(

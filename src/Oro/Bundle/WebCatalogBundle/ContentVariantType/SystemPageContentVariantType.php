@@ -4,9 +4,9 @@ namespace Oro\Bundle\WebCatalogBundle\ContentVariantType;
 
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebCatalogBundle\Form\Type\SystemPageVariantType;
+use Oro\Component\Routing\RouteData;
 use Oro\Component\WebCatalog\ContentVariantTypeInterface;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
-use Oro\Component\WebCatalog\RouteData;
 
 class SystemPageContentVariantType implements ContentVariantTypeInterface
 {

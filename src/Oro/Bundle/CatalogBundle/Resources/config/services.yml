@@ -187,3 +187,8 @@ services:
             - '@property_accessor'
         tags:
             - { name: oro_web_catalog.content_variant_type }
+
+    oro_catalog.provider.routing_information_provider:
+        class: Oro\Bundle\CatalogBundle\Provider\CategoryRoutingInformationProvider
+        tags:
+            - { name: oro_redirect.routing_information_provider }

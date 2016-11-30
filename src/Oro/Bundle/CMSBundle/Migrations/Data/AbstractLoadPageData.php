@@ -70,7 +70,7 @@ abstract class AbstractLoadPageData extends AbstractFixture implements Container
         foreach ($rows as $reference => $row) {
             $page = new Page();
             $page->addTitle((new LocalizedFallbackValue())->setString($row['title']));
-            $page->addSlug((new LocalizedFallbackValue())->setString($row['slug']));
+            $page->addSlugPrototype((new LocalizedFallbackValue())->setString($row['slug']));
             $page->setContent($row['content']);
             $page->setOrganization($organization);
 

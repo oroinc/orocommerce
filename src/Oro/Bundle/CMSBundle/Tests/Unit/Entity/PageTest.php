@@ -4,6 +4,7 @@ namespace Oro\Bundle\CMSBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Bundle\CMSBundle\Tests\Unit\Entity\Stub\Page;
 
@@ -22,7 +23,8 @@ class PageTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $this->assertPropertyCollections(new Page(), [
-            ['slugs', new LocalizedFallbackValue()],
+            ['slugPrototypes', new LocalizedFallbackValue()],
+            ['slugs', new Slug()],
         ]);
     }
 

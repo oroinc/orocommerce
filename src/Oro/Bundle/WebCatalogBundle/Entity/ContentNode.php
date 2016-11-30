@@ -11,6 +11,8 @@ use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\RedirectBundle\Entity\LocalizedSlugPrototypeAwareInterface;
+use Oro\Bundle\RedirectBundle\Entity\LocalizedSlugPrototypeAwareTrait;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\WebCatalogBundle\Model\ExtendContentNode;
 use Oro\Component\Tree\Entity\TreeTrait;
@@ -21,6 +23,25 @@ use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
  * @ORM\Table(name="oro_web_catalog_content_node")
  * @Gedmo\Tree(type="nested")
  * @ORM\HasLifecycleCallbacks()
+ * @ORM\AssociationOverrides({
+ *      @ORM\AssociationOverride(
+ *          name="slugPrototypes",
+ *          joinTable=@ORM\JoinTable(
+ *              name="oro_web_catalog_node_slug_prot",
+ *              joinColumns={
+ *                  @ORM\JoinColumn(name="node_id", referencedColumnName="id", onDelete="CASCADE")
+ *              },
+ *              inverseJoinColumns={
+ *                  @ORM\JoinColumn(
+ *                      name="localized_value_id",
+ *                      referencedColumnName="id",
+ *                      onDelete="CASCADE",
+ *                      unique=true
+ *                  )
+ *              }
+ *          )
+ *      )
+ * })
  * @Config(
  *      defaultValues={
  *          "dataaudit"={
@@ -34,13 +55,17 @@ use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
  *
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class ContentNode extends ExtendContentNode implements ContentNodeInterface, DatesAwareInterface
+class ContentNode extends ExtendContentNode implements
+    ContentNodeInterface,
+    DatesAwareInterface,
+    LocalizedSlugPrototypeAwareInterface
 {
     use TreeTrait;
     use DatesAwareTrait;
+    use LocalizedSlugPrototypeAwareTrait;
 
     const FIELD_PARENT_NODE = 'parentNode';
-    
+
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")
@@ -121,33 +146,6 @@ class ContentNode extends ExtendContentNode implements ContentNodeInterface, Dat
     protected $titles;
 
     /**
-     * @var Collection|LocalizedFallbackValue[]
-     *
-     * @ORM\ManyToMany(
-     *      targetEntity="Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue",
-     *      cascade={"ALL"},
-     *      orphanRemoval=true
-     * )
-     * @ORM\JoinTable(
-     *      name="oro_web_catalog_node_slug_prot",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="node_id", referencedColumnName="id", onDelete="CASCADE")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="localized_value_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
-     *      }
-     * )
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $slugPrototypes;
-
-    /**
      * @var Collection|Scope[]
      *
      * @ORM\ManyToMany(
@@ -211,7 +209,7 @@ class ContentNode extends ExtendContentNode implements ContentNodeInterface, Dat
      */
     public function __toString()
     {
-        return (string) $this->getDefaultTitle();
+        return (string)$this->getDefaultTitle();
     }
 
     /**
@@ -335,42 +333,6 @@ class ContentNode extends ExtendContentNode implements ContentNodeInterface, Dat
     }
 
     /**
-     * @return Collection|LocalizedFallbackValue[]
-     */
-    public function getSlugPrototypes()
-    {
-        return $this->slugPrototypes;
-    }
-
-    /**
-     * @param LocalizedFallbackValue $slug
-     *
-     * @return $this
-     */
-    public function addSlugPrototype(LocalizedFallbackValue $slug)
-    {
-        if (!$this->slugPrototypes->contains($slug)) {
-            $this->slugPrototypes->add($slug);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param LocalizedFallbackValue $slug
-     *
-     * @return $this
-     */
-    public function removeSlugPrototype(LocalizedFallbackValue $slug)
-    {
-        if ($this->slugPrototypes->contains($slug)) {
-            $this->slugPrototypes->removeElement($slug);
-        }
-
-        return $this;
-    }
-
-    /**
      * @return Collection|Scope[]
      */
     public function getScopes()
@@ -410,7 +372,7 @@ class ContentNode extends ExtendContentNode implements ContentNodeInterface, Dat
     public function resetScopes()
     {
         $this->scopes->clear();
-        
+
         return $this;
     }
 

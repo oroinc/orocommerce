@@ -38,3 +38,8 @@ services:
             - '@property_accessor'
         tags:
             - { name: oro_web_catalog.content_variant_type }
+
+    oro_cms.provider.routing_information_provider:
+        class: Oro\Bundle\CMSBundle\Provider\PageRoutingInformationProvider
+        tags:
+            - { name: oro_redirect.routing_information_provider }

@@ -10,9 +10,9 @@ use Oro\Bundle\WebCatalogBundle\ContentVariantType\ContentVariantTypeRegistry;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebCatalogBundle\Generator\SlugGenerator;
+use Oro\Component\Routing\RouteData;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\WebCatalog\ContentVariantTypeInterface;
-use Oro\Component\WebCatalog\RouteData;
 
 class SlugGeneratorTest extends \PHPUnit_Framework_TestCase
 {

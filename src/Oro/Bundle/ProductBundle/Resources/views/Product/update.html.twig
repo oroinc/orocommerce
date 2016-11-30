@@ -52,6 +52,7 @@
 
     {% set generalData = generalData|merge([
         form_row(form.names),
+        form_row(form.slugPrototypes),
         form_row(form.status),
         form_row(form.inventoryStatus),
         form_row(form.images),

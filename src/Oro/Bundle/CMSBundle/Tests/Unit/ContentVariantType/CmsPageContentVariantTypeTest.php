@@ -2,13 +2,13 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Unit\ContentVariantType;
 
+use Oro\Bundle\CMSBundle\ContentVariantType\CmsPageContentVariantType;
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\CMSBundle\Form\Type\CmsPageVariantType;
 use Oro\Bundle\CMSBundle\Tests\Unit\ContentVariantType\Stub\ContentVariantStub;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Oro\Component\Routing\RouteData;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\CMSBundle\ContentVariantType\CmsPageContentVariantType;
-use Oro\Component\WebCatalog\RouteData;
 
 class CmsPageContentVariantTypeTest extends \PHPUnit_Framework_TestCase
 {

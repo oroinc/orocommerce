@@ -7,6 +7,8 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
+use Oro\Bundle\RedirectBundle\Entity\SlugAwareInterface;
+use Oro\Bundle\RedirectBundle\Entity\SlugAwareTrait;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\WebCatalogBundle\Model\ExtendContentVariant;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
@@ -16,8 +18,10 @@ use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
  * @ORM\Table(name="oro_web_catalog_variant")
  * @Config
  */
-class ContentVariant extends ExtendContentVariant implements ContentVariantInterface
+class ContentVariant extends ExtendContentVariant implements ContentVariantInterface, SlugAwareInterface
 {
+    use SlugAwareTrait;
+
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")
@@ -192,48 +196,6 @@ class ContentVariant extends ExtendContentVariant implements ContentVariantInter
             $this->scopes->removeElement($scope);
         }
 
-        return $this;
-    }
-
-    /**
-     * @return Collection|Slug[]
-     */
-    public function getSlugs()
-    {
-        return $this->slugs;
-    }
-
-    /**
-     * @param Slug $slug
-     * @return $this
-     */
-    public function addSlug(Slug $slug)
-    {
-        if (!$this->slugs->contains($slug)) {
-            $this->slugs->add($slug);
-        }
-        return $this;
-    }
-
-    /**
-     * @param Slug $slug
-     * @return $this
-     */
-    public function removeSlug(Slug $slug)
-    {
-        if ($this->slugs->contains($slug)) {
-            $this->slugs->removeElement($slug);
-        }
-        return $this;
-    }
-
-    /**
-     * @return $this
-     */
-    public function resetSlugs()
-    {
-        $this->slugs->clear();
-        
         return $this;
     }
 }

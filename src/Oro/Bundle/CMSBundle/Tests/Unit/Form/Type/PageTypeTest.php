@@ -2,24 +2,21 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\CMSBundle\Entity\Page;
+use Oro\Bundle\CMSBundle\Form\Type\PageType;
+use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
+use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
+use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueCollectionTypeStub;
+use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugType;
+use Oro\Bundle\RedirectBundle\Tests\Unit\Form\Type\Stub\LocalizedSlugTypeStub;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Validator\Type\FormTypeValidatorExtension;
 use Symfony\Component\Form\Forms;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
-use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\ConstraintViolationList;
-
-use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugType;
-use Oro\Bundle\RedirectBundle\Tests\Unit\Form\Type\Stub\LocalizedSlugTypeStub;
-use Oro\Bundle\ValidationBundle\Validator\Constraints\UrlSafe;
-use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
-use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
-use Oro\Bundle\CMSBundle\Form\Type\PageType;
-use Oro\Bundle\CMSBundle\Entity\Page;
-use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
-use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
-use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueCollectionTypeStub;
 
 class PageTypeTest extends FormIntegrationTestCase
 {
@@ -106,51 +103,10 @@ class PageTypeTest extends FormIntegrationTestCase
 
     public function testBuildForm()
     {
-        $builder = $this->getMockBuilder('Symfony\Component\Form\FormBuilder')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $builder->expects($this->at(0))
-            ->method('add')
-            ->with(
-                'titles',
-                LocalizedFallbackValueCollectionType::NAME,
-                [
-                    'label'    => 'oro.cms.page.titles.label',
-                    'required' => true,
-                    'constraints' => [new NotBlank()],
-                ]
-            )
-            ->will($this->returnSelf());
-        $builder->expects($this->at(1))
-            ->method('add')
-            ->with(
-                'content',
-                OroRichTextType::NAME,
-                [
-                    'label' => 'oro.cms.page.content.label',
-                    'required' => false,
-                    'wysiwyg_options' => [
-                        'statusbar' => true,
-                        'resize' => true
-                    ]
-                ]
-            )
-            ->will($this->returnSelf());
-        $builder->expects($this->at(2))
-                ->method('add')
-                ->with(
-                    'slugs',
-                    LocalizedSlugType::NAME,
-                    [
-                        'label'    => 'oro.cms.page.slugs.label',
-                        'required' => true,
-                        'options'  => ['constraints' => [new NotBlank(), new UrlSafe()]],
-                        'source_field' => 'titles',
-                    ]
-                )
-                ->will($this->returnSelf());
-
-        $this->type->buildForm($builder, []);
+        $form = $this->factory->create($this->type);
+        $this->assertTrue($form->has('titles'));
+        $this->assertTrue($form->has('content'));
+        $this->assertTrue($form->has('slugPrototypes'));
     }
 
     public function testSetDefaultOptions()
@@ -174,6 +130,11 @@ class PageTypeTest extends FormIntegrationTestCase
         $this->assertEquals(PageType::NAME, $this->type->getName());
     }
 
+    public function testGetBlockPrefix()
+    {
+        $this->assertEquals(PageType::NAME, $this->type->getBlockPrefix());
+    }
+
     /**
      * @param array $options
      * @param mixed $defaultData
@@ -187,7 +148,7 @@ class PageTypeTest extends FormIntegrationTestCase
             $existingPage = new Page();
             $existingPage->addTitle((new LocalizedFallbackValue())->setString($defaultData['titles']));
             $existingPage->setContent($defaultData['content']);
-            $existingPage->addSlug((new LocalizedFallbackValue())->setString('slug'));
+            $existingPage->addSlugPrototype((new LocalizedFallbackValue())->setString('slug'));
 
             $defaultData = $existingPage;
         }
@@ -216,11 +177,11 @@ class PageTypeTest extends FormIntegrationTestCase
         $new_page = new Page();
         $new_page->addTitle((new LocalizedFallbackValue())->setString('First test page'));
         $new_page->setContent('Page content');
-        $new_page->addSlug((new LocalizedFallbackValue())->setString('slug'));
+        $new_page->addSlugPrototype((new LocalizedFallbackValue())->setString('slug'));
         $updated_page = new Page();
         $updated_page->addTitle((new LocalizedFallbackValue())->setString('Updated first test page'));
         $updated_page->setContent('Updated page content');
-        $updated_page->addSlug((new LocalizedFallbackValue())->setString('slug-updated'));
+        $updated_page->addSlugPrototype((new LocalizedFallbackValue())->setString('slug-updated'));
 
         return [
             'new page' => [
@@ -229,7 +190,7 @@ class PageTypeTest extends FormIntegrationTestCase
                 'submittedData' => [
                     'titles' => [['string' => 'First test page']],
                     'content' => 'Page content',
-                    'slugs'  => [['string' => 'slug']],
+                    'slugPrototypes'  => [['string' => 'slug']],
                 ],
                 'expectedData' => $new_page,
             ],
@@ -243,7 +204,7 @@ class PageTypeTest extends FormIntegrationTestCase
                 'submittedData' => [
                     'titles' => [['string' => 'Updated first test page']],
                     'content' => 'Updated page content',
-                    'slugs'  => [['string' => 'slug-updated']],
+                    'slugPrototypes'  => [['string' => 'slug-updated']],
                 ],
                 'expectedData' => $updated_page,
             ],

@@ -15,6 +15,8 @@ use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
+use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtension;
+use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtensionAwareInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -23,7 +25,8 @@ class OroProductBundleInstaller implements
     Installation,
     ExtendExtensionAwareInterface,
     NoteExtensionAwareInterface,
-    AttachmentExtensionAwareInterface
+    AttachmentExtensionAwareInterface,
+    SlugExtensionAwareInterface
 {
     const PRODUCT_TABLE_NAME = 'oro_product';
     const PRODUCT_UNIT_TABLE_NAME = 'oro_product_unit';
@@ -46,6 +49,19 @@ class OroProductBundleInstaller implements
 
     /** @var AttachmentExtension */
     protected $attachmentExtension;
+
+    /**
+     * @var SlugExtension
+     */
+    protected $slugExtension;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setSlugExtension(SlugExtension $extension)
+    {
+        $this->slugExtension = $extension;
+    }
 
     /**
      * {@inheritdoc}
@@ -76,7 +92,7 @@ class OroProductBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_6';
+        return 'v1_7';
     }
 
     /**
@@ -93,6 +109,8 @@ class OroProductBundleInstaller implements
         $this->createOroProductShortDescriptionTable($schema);
         $this->createOroProductImageTable($schema);
         $this->createOroProductImageTypeTable($schema);
+        $this->createOroProductSlugTable($schema);
+        $this->createOroProductSlugPrototypeTable($schema);
 
         $this->addOroProductForeignKeys($schema);
         $this->addOroProductUnitPrecisionForeignKeys($schema);
@@ -188,6 +206,36 @@ class OroProductBundleInstaller implements
         $table->addColumn('localized_value_id', 'integer', []);
         $table->setPrimaryKey(['description_id', 'localized_value_id']);
         $table->addUniqueIndex(['localized_value_id'], 'uniq_416a3679eb576e89');
+    }
+
+    /**
+     * Create oro_product_slug table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroProductSlugTable(Schema $schema)
+    {
+        $this->slugExtension->addSlugs(
+            $schema,
+            'oro_product_slug',
+            'oro_product',
+            'product_id'
+        );
+    }
+
+    /**
+     * Create oro_product_slug_prototype table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroProductSlugPrototypeTable(Schema $schema)
+    {
+        $this->slugExtension->addLocalizedSlugPrototypes(
+            $schema,
+            'oro_product_slug_prototype',
+            'oro_product',
+            'product_id'
+        );
     }
 
     /**

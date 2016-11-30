@@ -45,3 +45,43 @@ services:
             - { name: kernel.event_listener, event: kernel.request, method: onKernelRequestBeforeRouting, priority: 50 }
             - { name: kernel.event_listener, event: kernel.request, method: onKernelRequestAfterRouting, priority: 8 }
             - { name: kernel.event_listener, event: kernel.finish_request, method: onKernelFinishRequest }
+
+    oro_redirect.migration.extension.slug:
+        class: Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtension
+        tags:
+            - { name: oro_migration.extension, extension_name: slug }
+
+    oro_redirect.provider.routing_information_provider:
+        class: Oro\Bundle\RedirectBundle\Provider\RoutingInformationProvider
+
+    oro_redirect.event_listener.slug_prototype_change:
+        class: Oro\Bundle\RedirectBundle\EventListener\SluggableEntityListener
+        public: false
+        arguments:
+            - '@oro_redirect.direct_url_message_factory'
+            - '@oro_message_queue.client.message_producer'
+            - '@oro_config.manager'
+        tags:
+            - { name: doctrine.event_listener, event: onFlush }
+            - { name: doctrine.event_listener, event: postPersist }
+
+    oro_redirect.generator.slug_entity:
+        class: Oro\Bundle\RedirectBundle\Generator\SlugEntityGenerator
+        arguments:
+            - '@oro_redirect.provider.routing_information_provider'
+
+    oro_redirect.direct_url_message_factory:
+        class: Oro\Bundle\RedirectBundle\Model\DirectUrlMessageFactory
+        arguments:
+            - '@doctrine'
+
+    oro_redirect.async.direct_url_processor:
+        class: Oro\Bundle\RedirectBundle\Async\DirectUrlProcessor
+        arguments:
+            - '@doctrine'
+            - '@oro_redirect.generator.slug_entity'
+            - '@oro_redirect.direct_url_message_factory'
+            - '@oro_entity.database_exception_helper'
+            - '@logger'
+        tags:
+            - { name: 'oro_message_queue.client.message_processor' }

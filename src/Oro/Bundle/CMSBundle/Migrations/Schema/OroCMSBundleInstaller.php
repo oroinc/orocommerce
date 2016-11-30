@@ -12,8 +12,14 @@ use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
+use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtension;
+use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtensionAwareInterface;
 
-class OroCMSBundleInstaller implements Installation, AttachmentExtensionAwareInterface, ExtendExtensionAwareInterface
+class OroCMSBundleInstaller implements
+    Installation,
+    AttachmentExtensionAwareInterface,
+    ExtendExtensionAwareInterface,
+    SlugExtensionAwareInterface
 {
     const CMS_LOGIN_PAGE_TABLE = 'oro_cms_login_page';
     const MAX_LOGO_IMAGE_SIZE_IN_MB = 10;
@@ -30,11 +36,16 @@ class OroCMSBundleInstaller implements Installation, AttachmentExtensionAwareInt
     protected $extendExtension;
 
     /**
+     * @var SlugExtension
+     */
+    protected $slugExtension;
+
+    /**
      * {@inheritdoc}
      */
     public function getMigrationVersion()
     {
-        return 'v1_2';
+        return 'v1_3';
     }
 
     /**
@@ -56,17 +67,25 @@ class OroCMSBundleInstaller implements Installation, AttachmentExtensionAwareInt
     /**
      * {@inheritdoc}
      */
+    public function setSlugExtension(SlugExtension $extension)
+    {
+        $this->slugExtension = $extension;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function up(Schema $schema, QueryBag $queries)
     {
         /** Tables generation **/
         $this->createOroCmsPageTable($schema);
         $this->createOroCmsPageSlugTable($schema);
+        $this->createOroCmsPageSlugPrototypeTable($schema);
         $this->createOroCmsPageTitleTable($schema);
         $this->createOroCmsLoginPageTable($schema);
 
         /** Foreign keys generation **/
         $this->addOroCmsPageForeignKeys($schema);
-        $this->addOroCmsPageSlugForeignKeys($schema);
         $this->addOroCmsPageTitleForeignKeys($schema);
 
         $this->addImageAssociations($schema);
@@ -149,32 +168,26 @@ class OroCMSBundleInstaller implements Installation, AttachmentExtensionAwareInt
      */
     protected function createOroCmsPageSlugTable(Schema $schema)
     {
-        $table = $schema->createTable('oro_cms_page_slug');
-        $table->addColumn('page_id', 'integer', []);
-        $table->addColumn('localized_value_id', 'integer', []);
-        $table->setPrimaryKey(['page_id', 'localized_value_id']);
-        $table->addUniqueIndex(['localized_value_id']);
+        $this->slugExtension->addSlugs(
+            $schema,
+            'oro_cms_page_to_slug',
+            'oro_cms_page',
+            'page_id'
+        );
     }
 
     /**
-     * Add oro_cms_page_slug foreign keys.
+     * Create oro_cms_page_slug_prototype table
      *
      * @param Schema $schema
      */
-    protected function addOroCmsPageSlugForeignKeys(Schema $schema)
+    protected function createOroCmsPageSlugPrototypeTable(Schema $schema)
     {
-        $table = $schema->getTable('oro_cms_page_slug');
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_cms_page'),
-            ['page_id'],
-            ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
-        );
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_fallback_localization_val'),
-            ['localized_value_id'],
-            ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        $this->slugExtension->addLocalizedSlugPrototypes(
+            $schema,
+            'oro_cms_page_slug_prototype',
+            'oro_cms_page',
+            'page_id'
         );
     }
 
