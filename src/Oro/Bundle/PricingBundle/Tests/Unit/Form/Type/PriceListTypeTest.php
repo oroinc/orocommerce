@@ -2,25 +2,23 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Type;
 
-use Oro\Bundle\CurrencyBundle\Config\CurrencyConfigManager;
+use Oro\Bundle\CurrencyBundle\Config\CurrencyConfigInterface;
+use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
+use Oro\Bundle\FormBundle\Form\Type\CollectionType;
+use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
+use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceListSchedule;
+use Oro\Bundle\PricingBundle\Form\Type\PriceListScheduleType;
+use Oro\Bundle\PricingBundle\Form\Type\PriceListType;
+use Oro\Bundle\PricingBundle\Form\Type\PriceRuleType;
+use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
-
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
-use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
-use Oro\Bundle\FormBundle\Form\Type\CollectionType;
-use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType;
-use Oro\Bundle\PricingBundle\Entity\PriceList;
-use Oro\Bundle\PricingBundle\Form\Type\PriceListType;
-use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
-use Oro\Bundle\PricingBundle\Form\Type\PriceListScheduleType;
-use Oro\Bundle\PricingBundle\Entity\PriceListSchedule;
-use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\PricingBundle\Form\Type\PriceRuleType;
 
 class PriceListTypeTest extends FormIntegrationTestCase
 {
@@ -56,11 +54,11 @@ class PriceListTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ConfigManager $configManager */
-        $configManager = $this->getMockBuilder(CurrencyConfigManager::class)->disableOriginalConstructor()->getMock();
-        $configManager->method('getCurrencyList')->willReturn(['USD', 'EUR']);
-        $configManager->method('getDefaultCurrency')->willReturn('USD');
+        /** @var \PHPUnit_Framework_MockObject_MockObject|CurrencyConfigInterface $currencyConfig */
+        $currencyConfig = $this->getMockBuilder(CurrencyConfigInterface::class)
+            ->disableOriginalConstructor()->getMockForAbstractClass();
+        $currencyConfig->method('getCurrencyList')->willReturn(['USD', 'EUR']);
+        $currencyConfig->method('getDefaultCurrency')->willReturn('USD');
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|LocaleSettings $localeSettings */
         $localeSettings = $this->getMockBuilder(LocaleSettings::class)->disableOriginalConstructor()->getMock();
@@ -93,7 +91,7 @@ class PriceListTypeTest extends FormIntegrationTestCase
                     PriceListScheduleType::NAME => new PriceListScheduleType(new PropertyAccessor()),
                     OroDateTimeType::NAME => new OroDateTimeType(),
                     CurrencySelectionType::NAME => new CurrencySelectionType(
-                        $configManager,
+                        $currencyConfig,
                         $localeSettings,
                         $currencyNameHelper
                     ),

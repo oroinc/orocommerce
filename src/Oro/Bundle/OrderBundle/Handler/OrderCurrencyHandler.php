@@ -2,22 +2,22 @@
 
 namespace Oro\Bundle\OrderBundle\Handler;
 
-use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
+use Oro\Bundle\CurrencyBundle\Config\CurrencyConfigInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
 
 class OrderCurrencyHandler
 {
     /**
-     * @var LocaleSettings
+     * @var CurrencyConfigInterface
      */
-    protected $localeSettings;
+    protected $currencyConfig;
 
     /**
-     * @param LocaleSettings $localeSettings
+     * @param CurrencyConfigInterface $currencyConfig
      */
-    public function __construct(LocaleSettings $localeSettings)
+    public function __construct(CurrencyConfigInterface $currencyConfig)
     {
-        $this->localeSettings = $localeSettings;
+        $this->currencyConfig = $currencyConfig;
     }
 
     /**
@@ -26,8 +26,7 @@ class OrderCurrencyHandler
     public function setOrderCurrency(Order $order)
     {
         if (!$order->getCurrency()) {
-            //TODO: BB-3824 Change the getting currency from system configuration
-            $order->setCurrency($this->localeSettings->getCurrency());
+            $order->setCurrency($this->currencyConfig->getDefaultCurrency());
         }
     }
 }

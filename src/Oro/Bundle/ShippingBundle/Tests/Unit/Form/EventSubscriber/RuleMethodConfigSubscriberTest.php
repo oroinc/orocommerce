@@ -5,7 +5,7 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\Form\EventSubscriber;
 use Genemu\Bundle\FormBundle\Form\JQuery\Type\Select2Type;
 use Oro\Bundle\AddressBundle\Form\Type\CountryType;
 use Oro\Bundle\AddressBundle\Form\Type\RegionType;
-use Oro\Bundle\CurrencyBundle\Config\CurrencyConfigManager;
+use Oro\Bundle\CurrencyBundle\Config\CurrencyConfigInterface;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\CurrencyBundle\Utils\CurrencyNameHelper;
@@ -197,8 +197,9 @@ class RuleMethodConfigSubscriberTest extends FormIntegrationTestCase
             ->method('getRoundType')
             ->willReturn(RoundingServiceInterface::ROUND_HALF_UP);
 
-        $configManager = $this->getMockBuilder(CurrencyConfigManager::class)->disableOriginalConstructor()->getMock();
-        $configManager->expects($this->any())
+        $currencyConfig = $this->getMockBuilder(CurrencyConfigInterface::class)
+            ->disableOriginalConstructor()->getMockForAbstractClass();
+        $currencyConfig->expects($this->any())
             ->method('getCurrencyList')
             ->willReturn(['USD']);
 
@@ -228,7 +229,7 @@ class RuleMethodConfigSubscriberTest extends FormIntegrationTestCase
                     ShippingRuleMethodTypeConfigCollectionType::class =>
                         new ShippingRuleMethodTypeConfigCollectionType($this->ruleMethodTypeConfigCollectionSubscriber),
                     CurrencySelectionType::NAME => new CurrencySelectionType(
-                        $configManager,
+                        $currencyConfig,
                         $this->getMockBuilder(LocaleSettings::class)->disableOriginalConstructor()->getMock(),
                         $this->getMockBuilder(CurrencyNameHelper::class)->disableOriginalConstructor()->getMock()
                     ),

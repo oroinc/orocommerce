@@ -41,10 +41,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     public function thereIsEurCurrencyInTheSystemConfiguration()
     {
         $configManager = $this->getContainer()->get('oro_config.global');
-        /** @var array $currencies */
-        $currencies = (array) $configManager->get('oro_currency.allowed_currencies', []);
-        $currencies = array_unique(array_merge($currencies, ['EUR']));
-        $configManager->set('oro_currency.allowed_currencies', $currencies);
         $configManager->set('oro_pricing.enabled_currencies', ['EUR', 'USD']);
         $configManager->flush();
     }
