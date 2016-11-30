@@ -261,7 +261,7 @@ datagrids:
             sku:
                 label:         oro.product.sku.label
             productName:
-                label:         'name'
+                label:         oro.product.names.label
             visible:
                 label:         oro.product.productvariantlink.visible.label
                 frontend_type: boolean

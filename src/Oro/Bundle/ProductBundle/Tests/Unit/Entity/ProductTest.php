@@ -413,7 +413,7 @@ class ProductTest extends \PHPUnit_Framework_TestCase
         $simpleProduct = new Product();
 
         $configurableProduct = new Product();
-        $configurableProduct->setType(Product::TYPE_CONFIGURABLE_PRODUCT);
+        $configurableProduct->setType(Product::TYPE_CONFIGURABLE);
 
         $this->assertFalse($simpleProduct->isConfigurable());
         $this->assertTrue($configurableProduct->isConfigurable());
