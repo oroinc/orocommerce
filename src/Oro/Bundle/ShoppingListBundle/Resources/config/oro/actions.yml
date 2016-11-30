@@ -18,40 +18,6 @@ operations:
                     route: oro_order_create
                     route_parameters: {'storage': true}
 
-    oro_shoppinglist_frontend_createorder:
-        label: oro.frontend.shoppinglist.btn.create_order
-        applications: [commerce]
-        routes:
-            - oro_shopping_list_frontend_view
-        acl_resource: oro_order_frontend_create
-        order: 10
-        button_options:
-            icon: icon-briefcase
-        preconditions:
-            '@and':
-                - '@action_available': start_checkout
-                - '@has_elements': $lineItems
-                - '@has_price_in_shopping_line_items': $lineItems
-                - '@workflow_available_by_record_group':
-                    group_name: b2b_checkout_flow
-                    entity_class: Oro\Bundle\CheckoutBundle\Entity\Checkout
-        actions:
-            - '@assign_url':
-                attribute: $.editLink
-                route: oro_shopping_list_frontend_view
-                route_parameters: { 'id': $.data.id }
-            - '@translate':
-                attribute: $.sourceRemoveLabel
-                id: oro.frontend.shoppinglist.workflow.remove_source.label
-            - '@start_checkout':
-                source_name: 'shoppingList'
-                source_entity: $.data
-                settings:
-                    allow_manual_source_remove: true
-                    remove_source: true
-                    source_remove_label: $.sourceRemoveLabel
-                    edit_order_link: $.editLink
-
     oro_shoppinglist_frontend_products_add_to_shoppinglist_base:
         label: oro.shoppinglist.product.add_to_shopping_list.label
         applications: [commerce]
@@ -234,7 +200,7 @@ operations:
         routes:
             - oro_shopping_list_frontend_view
         acl_resource: oro_rfp_frontend_request_create
-        order: 20
+        order: 120
         button_options:
             icon: icon-briefcase
         preconditions:

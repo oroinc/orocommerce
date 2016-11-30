@@ -200,7 +200,7 @@ class StartCheckout extends AbstractAction
             ?: $this->createCheckoutSource($sourceFieldName, $sourceEntity);
 
         $checkout = $this->getCheckout($checkoutSource);
-        $workflowItem = $this->getWorkflowItem($checkout);
+        $workflowItem = $checkout->getId() ? $this->getWorkflowItem($checkout) : null;
 
         if (!$workflowItem) {
             $this->updateCheckoutData($context, $checkout);
