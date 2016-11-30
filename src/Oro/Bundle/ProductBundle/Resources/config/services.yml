@@ -213,6 +213,7 @@ services:
 
     oro_product.provider.unit_mode_provider:
         class: 'Oro\Bundle\ProductBundle\Service\SingleUnitModeService'
+        public: false
         arguments:
             - "@oro_config.manager"
         tags:
