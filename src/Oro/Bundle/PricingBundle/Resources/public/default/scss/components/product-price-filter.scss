@@ -4,12 +4,15 @@
     display: inline-block;
     vertical-align: middle;
 
-    margin-bottom: 15px;
-
-    @media (max-width: 991px) {
-        display: block;
-    }
+    margin: $product-price-filter-offset;
+    
     .product-price-unit-filter-separator {
-        margin: 0 1rem;
+        margin: $product-price-filter-separator-offset;
+    }
+}
+
+@include breakpoint('tablet-small') {
+    .product-price-filter {
+        display: block;
     }
 }
