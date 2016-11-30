@@ -1,11 +1,12 @@
 // @theme: blank
 
 .product-prices {
+    margin: $product-prices-offset;
+    
     border: $product-prices-border;
     
     &__table {
         width: $product-prices-table-width;
-        margin: $product-prices-table-offset;
 
         border-spacing: 0;
         border-collapse: collapse;
