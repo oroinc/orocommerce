@@ -60,7 +60,7 @@
 
     {% set buttonOptions = {
         'dataAttributes': dataAttributes,
-        'aCss': 'dropdown-item direct-link add-to-shopping-list-button ' ~ options.aCss,
+        'aCss': 'add-to-shopping-list-button ' ~ options.aCss,
         'dataId': shoppingListId,
         'label' : options.actionLabel|replace({
             '{{ shoppingList }}': shoppingListLabel
