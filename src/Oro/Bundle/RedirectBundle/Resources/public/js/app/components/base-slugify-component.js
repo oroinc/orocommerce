@@ -51,6 +51,10 @@ define(function (require) {
         },
 
         slugifySourceToTarget: function($source, $target) {
+            if (!$source.val().trim().length) {
+                return;
+            }
+
             $.ajax({
                 type: 'GET',
                 url: routing.generate(this.slugifyRoute, {'string': $source.val()}),
