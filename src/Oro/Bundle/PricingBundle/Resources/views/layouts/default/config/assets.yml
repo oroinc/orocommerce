@@ -1,4 +1,4 @@
 styles:
     inputs:
-        - 'bundles/oropricing/default/scss/variables/pricing-table-config.scss'
+        - 'bundles/oropricing/default/scss/variables/product-prices-config.scss'
         - 'bundles/oropricing/default/scss/styles.scss'
