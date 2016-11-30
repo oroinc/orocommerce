@@ -686,12 +686,6 @@
       input[type="text"] {
         text-align: center;
       }
-
-      .btn_has-dropdown {
-        @media (max-width: 1235px) {
-          width: 100%;
-        }
-      }
     }
 
     &_list-view {
