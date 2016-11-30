@@ -866,7 +866,7 @@ WebsiteBundle:
     - `Oro\Bundle\WebsiteBundle\Manager\WebsiteManager::onClear`
 - Changed type from `Oro\Component\Action\Model\ContextAccessor` to `Oro\Component\ConfigExpression\ContextAccessor` of first argument of `Oro\Bundle\WebsiteBundle\Model\Action\AssignCurrentWebsite` constructor
 
-WebsiteSearchBundle
+WebsiteSearchBundle:
 -------------------------
 - Website search index was added, to fill it with data command `php app/console oro:website-search:reindex --env=prod` 
 should be executed after upgrade. 
