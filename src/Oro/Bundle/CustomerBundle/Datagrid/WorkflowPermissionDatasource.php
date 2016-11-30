@@ -22,6 +22,7 @@ class WorkflowPermissionDatasource extends BaseDatasource
      * @param AclRoleHandler                $aclRoleHandler
      * @param RolePrivilegeCategoryProvider $categoryProvider
      * @param ConfigManager                 $configEntityManager
+     * @param RoleTranslationPrefixResolver $roleTranslationPrefixResolver
      */
     public function __construct(
         TranslatorInterface $translator,

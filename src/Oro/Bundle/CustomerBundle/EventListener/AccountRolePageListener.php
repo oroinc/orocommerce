@@ -55,12 +55,14 @@ class AccountRolePageListener
             return;
         }
 
-        $event->setFormData($this->addWorkflowACLDatagrid(
-            $event->getFormData(),
-            $event->getTwigEnvironment(),
-            $event->getForm()->vars['value'],
-            false
-        ));
+        $event->setFormData(
+            $this->addWorkflowAclDatagrid(
+                $event->getFormData(),
+                $event->getTwigEnvironment(),
+                $event->getForm()->vars['value'],
+                false
+            )
+        );
     }
 
     /**
@@ -79,12 +81,14 @@ class AccountRolePageListener
             return;
         }
 
-        $event->setData($this->addWorkflowACLDatagrid(
-            $event->getData(),
-            $event->getTwigEnvironment(),
-            $event->getEntity(),
-            true
-        ));
+        $event->setData(
+            $this->addWorkflowAclDatagrid(
+                $event->getData(),
+                $event->getTwigEnvironment(),
+                $event->getEntity(),
+                true
+            )
+        );
     }
 
     /**
@@ -97,7 +101,7 @@ class AccountRolePageListener
      *
      * @return array
      */
-    protected function addWorkflowACLDatagrid(
+    protected function addWorkflowAclDatagrid(
         $pageData,
         \Twig_Environment $twigEnvironment,
         AccountUserRole $entity,
