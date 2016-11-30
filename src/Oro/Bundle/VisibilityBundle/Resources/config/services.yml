@@ -544,4 +544,3 @@ services:
         class: 'Oro\Bundle\VisibilityBundle\Model\CategoryMessageFactory'
         arguments:
             - '@doctrine'
-

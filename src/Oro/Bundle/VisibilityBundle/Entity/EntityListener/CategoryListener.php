@@ -3,6 +3,7 @@
 namespace Oro\Bundle\VisibilityBundle\Entity\EntityListener;
 
 use Doctrine\ORM\Event\PreUpdateEventArgs;
+
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\VisibilityBundle\Model\CategoryMessageHandler;
 
@@ -14,7 +15,7 @@ class CategoryListener
     protected $categoryMessageHandler;
 
     /**
-     * @param \Oro\Bundle\VisibilityBundle\Model\CategoryMessageHandler $categoryMessageHandler
+     * @param CategoryMessageHandler $categoryMessageHandler
      */
     public function __construct(CategoryMessageHandler $categoryMessageHandler)
     {

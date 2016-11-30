@@ -19,7 +19,7 @@ class CategoryListener
     protected $topic = '';
 
     /**
-     * @param \Oro\Bundle\VisibilityBundle\Model\ProductMessageHandler $productMessageHandler
+     * @param ProductMessageHandler $productMessageHandler
      */
     public function __construct(ProductMessageHandler $productMessageHandler)
     {

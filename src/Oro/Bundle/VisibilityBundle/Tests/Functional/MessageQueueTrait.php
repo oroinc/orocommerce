@@ -27,7 +27,7 @@ trait MessageQueueTrait
     }
 
     /**
-     * @return \Oro\Bundle\VisibilityBundle\Model\ProductMessageHandler
+     * @return ProductMessageHandler
      */
     abstract protected function getMessageHandler();
 
@@ -52,11 +52,6 @@ trait MessageQueueTrait
             }
         );
     }
-//    protected function sendScheduledMessages()
-//    {
-//        self::getContainer()->get('oro_customer.visibility_message_handler')
-//            ->sendScheduledMessages();
-//    }
 
     /**
      * @return TraceableMessageProducer

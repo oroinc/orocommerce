@@ -7,14 +7,16 @@ use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Model\MessageFactoryInterface;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\CacheBuilderInterface;
 use Oro\Bundle\VisibilityBundle\Model\ProductMessageHandler;
+
 use Psr\Log\LoggerInterface;
+
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 class CategoryVisibilityProcessor extends AbstractVisibilityProcessor
 {
 
     /**
-     * @var \Oro\Bundle\VisibilityBundle\Model\ProductMessageHandler
+     * @var ProductMessageHandler
      */
     protected $productMessageHandler;
 
