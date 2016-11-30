@@ -61,9 +61,9 @@ define(function(require) {
             if (this.getElement('priceValue').hasClass('matched-price')) {
                 this.setPriceValue(this.findPriceValue());
                 this.getElement('priceValue').addClass('matched-price');
-            } else {
-                this.updateUI();
             }
+
+            this.updateUI();
         },
 
         setPriceValue: function(price) {

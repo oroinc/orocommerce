@@ -340,7 +340,7 @@ class FrontendOwnershipMetadataProviderTest extends \PHPUnit_Framework_TestCase
     {
         return [
             'without class' => [
-                'maxAccessLevel' => AccessLevel::SYSTEM_LEVEL,
+                'maxAccessLevel' => AccessLevel::DEEP_LEVEL,
                 'accessLevel' => AccessLevel::SYSTEM_LEVEL,
             ],
             'NONE default' => [
@@ -358,8 +358,13 @@ class FrontendOwnershipMetadataProviderTest extends \PHPUnit_Framework_TestCase
                 'accessLevel' => AccessLevel::LOCAL_LEVEL,
                 'className' => 'SomeClass',
             ],
+            'DEEP default' => [
+                'maxAccessLevel' => AccessLevel::DEEP_LEVEL,
+                'accessLevel' => AccessLevel::DEEP_LEVEL,
+                'className' => 'SomeClass',
+            ],
             'not allowed with owner' => [
-                'maxAccessLevel' => AccessLevel::LOCAL_LEVEL,
+                'maxAccessLevel' => AccessLevel::DEEP_LEVEL,
                 'accessLevel' => AccessLevel::SYSTEM_LEVEL,
                 'className' => 'SomeClass',
                 'hasOwner' => true,
