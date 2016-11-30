@@ -135,7 +135,7 @@ datagrids:
         properties:
             productName:
                 type: localized_value
-                data_name: names
+                data_name: product.names
         sorters:
             columns:
                 id:
@@ -247,7 +247,7 @@ datagrids:
             sku:
                 label:         oro.product.sku.label
             productName:
-                label:         oro.product.names.label
+                label:         'name'
             visible:
                 label:         oro.product.productvariantlink.visible.label
                 frontend_type: boolean

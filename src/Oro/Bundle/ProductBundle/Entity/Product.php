@@ -505,6 +505,14 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
     }
 
     /**
+     * @return bool
+     */
+    public function isConfigurable()
+    {
+        return $this->getType() === self::TYPE_CONFIGURABLE_PRODUCT;
+    }
+
+    /**
      * @return array
      */
     public function getVariantFields()

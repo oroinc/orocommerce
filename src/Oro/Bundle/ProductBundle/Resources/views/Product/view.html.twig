@@ -51,7 +51,7 @@
         }
     ] %}
 
-    {% if entity.getHasVariants %}
+    {% if entity.isConfigurable %}
         {% set dataBlocks = dataBlocks|merge([{
             'title' : 'oro.product.sections.productVariants'|trans,
             'subblocks': [{
