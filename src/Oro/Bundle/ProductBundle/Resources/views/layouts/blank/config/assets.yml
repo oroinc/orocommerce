@@ -1,9 +1,9 @@
 styles:
     inputs:
-        - 'bundles/oroproduct/blank/scss/styles.scss'
         - 'bundles/oroproduct/blank/scss/variables/product-view-layout-config.scss'
         - 'bundles/oroproduct/blank/scss/variables/product-view-desc-config.scss'
         - 'bundles/oroproduct/blank/scss/variables/product-view-desc-list-config.scss'
         - 'bundles/oroproduct/blank/scss/variables/product-view-desc-title-config.scss'
         - 'bundles/oroproduct/blank/scss/variables/sku-config.scss'
+        - 'bundles/oroproduct/blank/scss/styles.scss'
 

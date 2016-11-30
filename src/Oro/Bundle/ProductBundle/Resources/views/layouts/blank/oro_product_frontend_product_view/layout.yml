@@ -29,6 +29,8 @@ layout:
                     blockType: container
                 product_view_line_item_container:
                     blockType: container
+                product_view_price_container:
+                    blockType: container
                 product_view_sku:
                     blockType: text
                     options:
@@ -53,6 +55,7 @@ layout:
                                 product_view_description: ~
                                 product_view_content_container:
                                     product_view_specification_container:
+                                        product_view_price_container: ~
                                         product_view_line_item_container: ~
                                     product_view_description_container: ~
                         product_view_additional_container: ~

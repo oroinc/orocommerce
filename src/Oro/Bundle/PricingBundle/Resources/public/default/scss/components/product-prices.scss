@@ -1,0 +1,14 @@
+// @theme: default
+
+.product-prices {
+    max-width: $product-prices-max-width;
+
+    background: $product-prices-background;
+    border-radius: $product-prices-border-radius;
+}
+
+@include breakpoint('tablet-small') {
+    .product-prices {
+        max-width: $product-prices-tablet-max-width;
+    }
+}

@@ -425,43 +425,6 @@ $product-gallery-container-width: 380px !default;
   }
 }
 
-.product__qnty {
-  max-width: 205px;
-  margin: 0 0 2rem;  
-  border: 1px solid get-color('additional', 'light');
-  border-radius: 5px;
-
-  background: get-color('additional', 'base');
-
-  @media (max-width: $screen-md) {
-    max-width: 100%;
-  }
-
-  .table {
-    margin-bottom: 5px;
-
-    &.table_has-padding {
-      > thead > tr > th,
-      > tbody > tr > td {
-        padding-left: 15px;
-        padding-right: 15px;
-      }
-    }
-
-    > thead > tr > th {
-      padding: 9px 0;
-      border-bottom-width: 1px;
-
-      font-weight: 400;
-    }
-
-    > tbody > tr > td {
-      border: 0;
-      padding: 4px 0;
-    }
-  }
-}
-
 .product__buy {
   max-width: 205px;
 
