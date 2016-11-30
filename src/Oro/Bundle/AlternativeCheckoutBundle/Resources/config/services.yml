@@ -22,3 +22,11 @@ services:
             - [setExtendedType, ['checkout_form_fields']]
         tags:
             - { name: layout.block_type_extension, alias: checkout_form_fields }
+
+    oro_alternativecheckout.listener.update_entity_config_relations:
+        class: 'Oro\Bundle\AlternativeCheckoutBundle\CacheWarmer\UpdateEntityConfigWarmer'
+        arguments:
+            - '@doctrine'
+            - '@logger'
+        tags:
+            - { name: oro_entity_extend.warmer, priority: -500 }
