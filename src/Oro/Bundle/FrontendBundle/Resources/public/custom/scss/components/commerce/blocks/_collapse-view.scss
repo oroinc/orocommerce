@@ -1,0 +1,18 @@
+.sidebar__menu {
+  .collapse-view {
+    &__trigger {
+      vertical-align: baseline;
+      margin-left: 10px;
+    }
+
+    &__text {
+      vertical-align: middle;
+
+      font-weight: 700;
+    }
+  }
+
+  @include breakpoint('tablet') {
+    display: none;
+  }
+}

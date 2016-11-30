@@ -7,7 +7,7 @@
             reloadEvents: ['shopping-list:created', 'shopping-list:updated', 'frontend:shopping-list-item-quantity:update', 'frontend:item:delete'],
         },
         'data-dropdown-trigger': true,
-        '~class': " main-menu__item main-menu__item--nested shopping-lists-frontend-widget"
+        '~class': " main-menu__item main-menu__item--nested"
     }) %}
 
     <div {{ block('block_attributes') }}>
@@ -23,7 +23,7 @@
             blockId: id,
             reloadEvents: ['shopping-list:created', 'shopping-list:updated', 'frontend:item:delete'],
         },
-        '~class': " header-row__toggle hidden-on-desktop"
+        '~class': " header-row__toggle hidden-on-desktop header-row__wrapper"
     }) %}
     <div {{ block('block_attributes') }}>
         <div class="header-row__dropdown">
@@ -45,20 +45,9 @@
     {{ block_widget(block) }}
 {% endblock %}
 
-{% block _main_menu_shopping_lists_dropdown_content_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        id: 'order-widget-dropdown',
-        '~class': " order-widget order-widget--dropdown-mode shopping-list-dropdown"
-    }) %}
-
-    <div {{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </div>
-{% endblock %}
-
 {% block _main_menu_shopping_lists_dropdown_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " widget__container"
+        '~class': " shopping-list-widget__container"
     }) %}
 
     <div {{ block('block_attributes') }}>
@@ -66,22 +55,6 @@
             {% do block|merge_context({
                 shoppingList: shoppingList,
                 shoppingListProducts: shoppingListProducts,
-            }) %}
-            {{ block('container_widget') }}
-        {%- endfor %}
-    </div>
-{% endblock %}
-
-{% block _main_menu_shopping_lists_dropdown_container_sync_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': " widget__container"
-    }) %}
-
-    <div {{ block('block_attributes') }}>
-        {% for shoppingList in shoppingLists -%}
-            {% do block|merge_context({
-                shoppingList: shoppingList,
-                shoppingListProducts: shoppingListProducts
             }) %}
             {{ block('container_widget') }}
         {%- endfor %}
@@ -130,7 +103,7 @@
 {% block shopping_list_dropdown_create_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
     {{ UI.clientLink({
-        'aCss': 'order-widget__create-btn',
+        'aCss': 'shopping-list-widget__create-btn',
         'iCss': 'cf-add_circle nmmt3-md',
         'label' : 'oro.frontend.shoppinglist.view.create_new_shopping_list.label'|trans,
         'widget' : {
