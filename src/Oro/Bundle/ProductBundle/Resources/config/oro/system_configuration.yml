@@ -48,16 +48,21 @@ system_configuration:
         oro_product.single_unit_mode:
             data_type: boolean
             type: oro_config_checkbox
-            priority: 10
+            priority: 20
             options:
                 label: oro.product.system_configuration.fields.single_unit_mode.label
+                attr:
+                    'data-page-component-module': 'oroproduct/js/app/components/config-single-unit-component'
+                    'data-dependency-id': 'single_unit_mode'
 
         oro_product.single_unit_mode_show_code:
             data_type: boolean
             type: oro_config_checkbox
-            priority: 20
+            priority: 10
             options:
                 label: oro.product.system_configuration.fields.single_unit_mode_show_code.label
+                attr:
+                  'data-depends-on-field': 'single_unit_mode'
 
         oro_product.general_frontend_product_visibility:
             data_type: array

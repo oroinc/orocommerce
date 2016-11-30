@@ -33,6 +33,9 @@ class UnitModeProvider
      */
     public function isSingleUnitModeCodeVisible()
     {
+        if (!$this->isSingleUnitMode()) {
+            return true;
+        }
         return $this->configManager->get('oro_product.single_unit_mode_show_code');
     }
 }

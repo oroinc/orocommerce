@@ -28,7 +28,8 @@ class UnitModeProviderTest extends \PHPUnit_Framework_TestCase
     public function testIsSingleUnitMode()
     {
         $singleUnitMode = true;
-        $this->configManager->expects($this->once())
+
+        $this->configManager->expects(static::once())
             ->method('get')
             ->with('oro_product.single_unit_mode')
             ->willReturn($singleUnitMode);
@@ -39,11 +40,27 @@ class UnitModeProviderTest extends \PHPUnit_Framework_TestCase
     public function testIsSingleUnitModeCodeVisible()
     {
         $singleUnitModeShowCode = true;
-        $this->configManager->expects($this->once())
+
+        $this->configManager->expects(static::at(0))
+            ->method('get')
+            ->with('oro_product.single_unit_mode')
+            ->willReturn($singleUnitModeShowCode);
+
+        $this->configManager->expects(static::at(1))
             ->method('get')
             ->with('oro_product.single_unit_mode_show_code')
             ->willReturn($singleUnitModeShowCode);
 
         $this->assertEquals($singleUnitModeShowCode, $this->unitModeProvider->isSingleUnitModeCodeVisible());
+    }
+
+    public function testIsSingleUnitModeCodeVisibleMultipleUnitMode()
+    {
+        $this->configManager->expects(static::at(0))
+            ->method('get')
+            ->with('oro_product.single_unit_mode')
+            ->willReturn(false);
+
+        $this->assertEquals(true, $this->unitModeProvider->isSingleUnitModeCodeVisible());
     }
 }
