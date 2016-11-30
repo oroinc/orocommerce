@@ -54,7 +54,7 @@ define(function(require) {
             this.$field.on('keyup', function(e) {
                 var $field = $(e.target);
 
-                $field.val($field.val().trim());
+                $field.val($field.val().replace(/^\s+/g, ''));
             });
         }
     });
