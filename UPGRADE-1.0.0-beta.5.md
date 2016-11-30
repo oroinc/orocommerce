@@ -37,7 +37,6 @@ CatalogBundle:
     - `Oro\Bundle\CatalogBundle\EventListener\WebsiteSearchCategoryIndexerListener`
     - `Oro\Bundle\CatalogBundle\EventListener\ProductsChangeRelationListener`
     - `Oro\Bundle\CatalogBundle\EventListener\ORM\CategoryListener`
-    - `Oro\Bundle\CatalogBundle\EventListener\CategoryExistsListener`
     - `Oro\Bundle\CatalogBundle\EventListener\SearchCategoryFilteringEventListener`
     - `Oro\Bundle\CatalogBundle\Model\CategoryMaterializedPathModifier`
     - `Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler`
@@ -59,6 +58,17 @@ CheckoutBundle:
 - Added classes:
     - `Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\ShippingMethodEnabledMapper`
     - `Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\ShippingMethodDiffMapper`
+    - `Oro\Bundle\CheckoutBundle\EventListener\CheckoutWorkflowListener`
+- Added methods:
+    - `Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository::deleteWithoutWorkflowItem`
+    - `Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository::joinWorkflowItem`
+    - `Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository::joinWorkflowStep`
+    - `Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository::addDatagridQuery`
+    - `Oro\Bundle\CheckoutBundle\Entity\CheckoutSource::setDeleted`
+    - `Oro\Bundle\CheckoutBundle\Entity\CheckoutSource::isDeleted`
+    - `Oro\Bundle\CheckoutBundle\Entity\Checkout::setDeleted`
+    - `Oro\Bundle\CheckoutBundle\Entity\Checkout::isDeleted`
+- Added protected method `getItemCondition` to class `Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository`
 - Changed type from `Oro\Bundle\AccountBundle\Entity\AccountUser` to `Oro\Bundle\CustomerBundle\Entity\AccountUser` of first argument of method `Oro\Bundle\CheckoutBundle\Entity\Checkout:setAccountUser`
 - Changed type from `Oro\Bundle\AccountBundle\Entity\Account` to `Oro\Bundle\CustomerBundle\Entity\Account` of first argument of method `Oro\Bundle\CheckoutBundle\Entity\Checkout:setAccount`
 - Changed type from `Oro\Bundle\AccountBundle\Security\AccountUserProvider` to `Oro\Bundle\CustomerBundle\Security\AccountUserProvider` of first argument of `Oro\Bundle\CheckoutBundle\Datagrid\CheckoutGridAccountUserNameListener` constructor
@@ -284,6 +294,8 @@ InventoryBundle:
     - `Oro\Bundle\InventoryBundle\Api\Processor\NormalizeInventoryLevelRequestData`
     - `Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures\LoadInventoryLevelWithPrimaryUnit`
     - `Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures\LoadInventoryLevels`
+    - `Oro\Bundle\InventoryBundle\CacheWarmer\UpdateEntityConfigRelationsWarmer`
+    - `Oro\Bundle\InventoryBundle\CacheWarmer\EntityConfigRelationsMigration`
 
 InvoiceBundle:
 -------------------------
@@ -740,6 +752,8 @@ UPSBundle:
 - Added third argument `unitsMapper` to `Oro\Bundle\UPSBundle\Factory\PriceRequestFactory` constructor
 - Added fourth argument `localizationHelper` to `Oro\Bundle\UPSBundle\Method\UPSShippingMethod` constructor
 - Added fourth argument `localizationHelper` to `Oro\Bundle\UPSBundle\Method\UPSShippingMethodProvider` constructor
+- Added fourth argument `symmetricCrypter` to `Oro\Bundle\UPSBundle\Factory\PriceRequestFactory` constructor
+- Added fourth argument `symmetricCrypter` to `Oro\Bundle\UPSBundle\Form\Type\UPSTransportSettingsType` constructor
 - Added fifth argument `priceRequestFactory` to `Oro\Bundle\UPSBundle\Method\UPSShippingMethodType` constructor
 - Added fifth argument `cache` to `Oro\Bundle\UPSBundle\Method\UPSShippingMethod` constructor
 - Added fifth argument `shippingPriceCache` to `Oro\Bundle\UPSBundle\Method\UPSShippingMethodProvider` constructor
@@ -750,7 +764,6 @@ VisibilityBundle:
 - Added classes:
     - `Oro\Bundle\VisibilityBundle\Provider\VisibilityRootScopesProvider`
     - `Oro\Bundle\VisibilityBundle\Provider\VisibilityRootScopesProviderInterface`
-    - `Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\RepositoryHolder`
     - `Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\VisibilityRepositoryInterface`
     - `Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\AbstractProductVisibilityRepository`
     - `Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\AbstractCategoryVisibilityRepository`
@@ -833,12 +846,14 @@ WarehouseBundle:
     - `Oro\Bundle\WarehouseBundle\Tests\Functional\DataFixtures\LoadWarehousesInventoryLevelWithPrimaryUnit`
     - `Oro\Bundle\WarehouseBundle\Tests\Functional\DataFixtures\LoadWarehousesAndInventoryLevels`
     - `Oro\Bundle\WarehouseBundle\Tests\Unit\Form\Type\Stub\WarehouseSelectTypeStub`
+- Added class `Oro\Bundle\VisibilityBundle\EventListener\CategoryVisibleListener`
 
 WebsiteBundle:
 -------------------------
 - Removed classes:
     - `Oro\Bundle\WebsiteBundle\Translation\CacheWarmer\CompositeTranslationCacheWarmer`
     - `Oro\Bundle\WebsiteBundle\Translation\Strategy\CompositeFallbackStrategy`
+    - `Oro\Bundle\WebsiteBundle\EventListener\InstallCommandListener`
 - Added classes:
     - `Oro\Bundle\WebsiteBundle\Translation\Strategy\FrontendFallbackStrategy`
     - `Oro\Bundle\WebsiteBundle\Provider\ScopeCriteriaProvider`
