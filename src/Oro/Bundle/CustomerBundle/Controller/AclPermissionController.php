@@ -13,10 +13,10 @@ class AclPermissionController extends Controller
 {
     /**
      * @Route(
-     *  "/acl-access-levels/{oid}/{permission}",
-     *  name="oro_account_acl_access_levels",
-     *  requirements={"oid"="[\w]+:[\w\:\(\)]+", "permission"="[\w/]+"},
-     *  defaults={"_format"="json", "permission"=null}
+     *      "/acl-access-levels/{oid}/{permission}",
+     *      name="oro_account_acl_access_levels",
+     *      requirements={"oid"="[\w]+:[\w\:\(\)]+", "permission"="[\w/]+"},
+     *      defaults={"_format"="json", "permission"=null}
      * )
      * @Template
      *
