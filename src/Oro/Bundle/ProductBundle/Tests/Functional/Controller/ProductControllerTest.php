@@ -27,6 +27,8 @@ class ProductControllerTest extends WebTestCase
     const STATUS = 'Disabled';
     const UPDATED_STATUS = 'Enabled';
 
+    const TYPE = 'Simple';
+
     const INVENTORY_STATUS = 'In Stock';
     const UPDATED_INVENTORY_STATUS = 'Out of Stock';
 
@@ -92,12 +94,12 @@ class ProductControllerTest extends WebTestCase
 
         $this->assertEquals(
             1,
-            $crawler->filterXPath("//select/option[contains(text(),'Simple Product')]")->count()
+            $crawler->filterXPath("//select/option[contains(text(),'Simple')]")->count()
         );
 
         $this->assertEquals(
             1,
-            $crawler->filterXPath("//select/option[contains(text(),'Configurable Product')]")->count()
+            $crawler->filterXPath("//select/option[contains(text(),'Configurable')]")->count()
         );
 
         $form = $crawler->selectButton('Continue')->form();
@@ -302,6 +304,7 @@ class ProductControllerTest extends WebTestCase
         );
         $this->assertContains(self::UPDATED_INVENTORY_STATUS, $html);
         $this->assertContains(self::UPDATED_STATUS, $html);
+        $this->assertContains(self::TYPE, $html);
         $this->assertProductPrecision($id, self::SECOND_UNIT_CODE, self::SECOND_UNIT_PRECISION);
         $this->assertProductPrecision($id, self::THIRD_UNIT_CODE, self::THIRD_UNIT_PRECISION);
 
