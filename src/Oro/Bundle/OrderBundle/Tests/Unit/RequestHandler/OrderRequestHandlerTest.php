@@ -39,12 +39,12 @@ class OrderRequestHandlerTest extends \PHPUnit_Framework_TestCase
     /**
      * @var string
      */
-    protected $accountClass = 'Oro\Bundle\AccountBundle\Entity\Account';
+    protected $accountClass = 'Oro\Bundle\CustomerBundle\Entity\Account';
 
     /**
      * @var string
      */
-    protected $accountUserClass = 'Oro\Bundle\AccountBundle\Entity\AccountUser';
+    protected $accountUserClass = 'Oro\Bundle\CustomerBundle\Entity\AccountUser';
 
     protected function setUp()
     {

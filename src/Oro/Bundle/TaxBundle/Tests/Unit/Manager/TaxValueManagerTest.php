@@ -84,8 +84,14 @@ class TaxValueManagerTest extends \PHPUnit_Framework_TestCase
         $taxValue = new TaxValue();
 
         $em = $this->getMock('Doctrine\ORM\EntityManagerInterface');
+        $uow = $this->getMockBuilder('\Doctrine\ORM\UnitOfWork')->disableOriginalConstructor()->getMock();
+        $uow->expects($this->once())->method('scheduleExtraUpdate')->with(
+            $taxValue,
+            ['result' => [null, $taxValue->getResult()]]
+        );
         $em->expects($this->once())->method('persist')->with($taxValue);
         $em->expects($this->once())->method('flush')->with($taxValue);
+        $em->expects($this->once())->method('getUnitOfWork')->willReturn($uow);
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityManagerForClass')
             ->with(self::TAX_VALUE_CLASS)

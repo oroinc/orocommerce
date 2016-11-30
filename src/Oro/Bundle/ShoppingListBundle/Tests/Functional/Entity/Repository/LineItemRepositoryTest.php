@@ -4,9 +4,9 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData as OroLoadAccountUserData;
-use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
@@ -121,6 +121,39 @@ class LineItemRepositoryTest extends WebTestCase
         $this->assertTrue(in_array($shoppingList->getLabel(), $shoppingListLabelList));
     }
 
+    public function testGetLastProductsGroupedByShoppingList()
+    {
+        $shoppingLists = [
+            $this->getReference(LoadShoppingLists::SHOPPING_LIST_1),
+            $this->getReference(LoadShoppingLists::SHOPPING_LIST_5)
+        ];
+
+        $productName1 = $this->getReference(LoadProductData::PRODUCT_1)->getName()->getString();
+        $productName5 = $this->getReference(LoadProductData::PRODUCT_5)->getName()->getString();
+
+        $shoppingListId1 = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1)->getId();
+        $shoppingListId5 = $this->getReference(LoadShoppingLists::SHOPPING_LIST_5)->getId();
+
+        /** @var LineItem[] $lineItems */
+        $result = $this->getLineItemRepository()->getLastProductsGroupedByShoppingList($shoppingLists, 1);
+
+        $this->assertEquals(
+            [
+                $shoppingListId1 => [
+                    [
+                        'name' => $productName1
+                    ]
+                ],
+                $shoppingListId5 => [
+                    [
+                        'name' => $productName5
+                    ]
+                ]
+            ],
+            $result
+        );
+    }
+
     /**
      * @return LineItemRepository
      */
@@ -134,7 +167,7 @@ class LineItemRepositoryTest extends WebTestCase
      */
     protected function getAccountUserRepository()
     {
-        return $this->getContainer()->get('doctrine')->getRepository('OroAccountBundle:AccountUser');
+        return $this->getContainer()->get('doctrine')->getRepository('OroCustomerBundle:AccountUser');
     }
 
     /**

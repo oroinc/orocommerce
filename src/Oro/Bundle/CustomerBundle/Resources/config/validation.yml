@@ -1,0 +1,105 @@
+Oro\Bundle\CustomerBundle\Entity\Account:
+    properties:
+        name:
+            - NotBlank: ~
+        addresses:
+            - Oro\Bundle\FormBundle\Validator\Constraints\ContainsPrimary:
+                message: One of addresses must be set as primary.
+            - Oro\Bundle\CustomerBundle\Validator\Constraints\UniqueAddressDefaultTypes: ~
+
+Oro\Bundle\CustomerBundle\Entity\AccountAddress:
+    properties:
+        street:
+            - NotBlank: ~
+        city:
+            - NotBlank: ~
+        postalCode:
+            - NotBlank: ~
+        phone:
+            - Length:
+                max: 255
+    constraints:
+        - Callback:
+            methods: [isRegionValid]
+
+Oro\Bundle\CustomerBundle\Entity\AccountGroup:
+    properties:
+        name:
+            - NotBlank: ~
+
+Oro\Bundle\CustomerBundle\Entity\AccountUser:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: username
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: email
+    properties:
+        firstName:
+            - NotBlank: ~
+            - Length:
+                max: 255
+        lastName:
+            - NotBlank: ~
+            - Length:
+                max: 255
+        email:
+            - NotBlank: ~
+            - Email: ~
+            - Length:
+                min: 6
+                max: 255
+        plainPassword:
+            - NotBlank: { groups: [create] }
+            - Length:
+                min: 2
+        username:
+            - NotBlank: ~
+            - Length:
+                min: 3
+                max: 255
+        roles:
+            - Count:
+                min: 1
+                minMessage: "You must select at least {{ limit }} role"
+        birthday:
+            - Date: ~
+        account:
+            - NotBlank: ~
+        organization:
+            - NotBlank: ~
+        addresses:
+            - Oro\Bundle\FormBundle\Validator\Constraints\ContainsPrimary:
+                message: One of addresses must be set as primary.
+            - Oro\Bundle\CustomerBundle\Validator\Constraints\UniqueAddressDefaultTypes: ~
+
+Oro\Bundle\CustomerBundle\Entity\AccountUserAddress:
+    properties:
+        street:
+            - NotBlank: ~
+        city:
+            - NotBlank: ~
+        postalCode:
+            - NotBlank: ~
+        phone:
+            - Length:
+                max: 255
+    constraints:
+        - Callback:
+            methods: [isRegionValid]
+
+Oro\Bundle\CustomerBundle\Entity\AccountUserRole:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
+            fields: [label, account]
+            message: "Role with this name already exists"
+            ignoreNull: false
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: role
+    properties:
+        role:
+            - NotBlank: ~
+            - Length:
+                min: 3
+                max: 255
+        label:
+            - NotBlank: ~
+            - Length:
+                min: 3
+                max: 255

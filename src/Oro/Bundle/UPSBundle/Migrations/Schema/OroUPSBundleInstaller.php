@@ -5,15 +5,31 @@ namespace Oro\Bundle\UPSBundle\Migrations\Schema;
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
+use Oro\Bundle\UPSBundle\Migrations\Schema\v1_2\UpdatePasswordMigrationQuery;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class OroUPSBundleInstaller implements Installation
+class OroUPSBundleInstaller implements Installation, ContainerAwareInterface
 {
+    /**
+     * @var ContainerInterface
+     */
+    private $container;
+
+    /**
+     * @inheritDoc
+     */
+    public function setContainer(ContainerInterface $container = null)
+    {
+        $this->container = $container;
+    }
+
     /**
      * {@inheritdoc}
      */
     public function getMigrationVersion()
     {
-        return 'v1_0';
+        return 'v1_2';
     }
 
     /**
@@ -25,14 +41,18 @@ class OroUPSBundleInstaller implements Installation
         $this->updateOroIntegrationTransportTable($schema);
         $this->createOroUPSShippingServiceTable($schema);
         $this->createOroUPSTransportShipServiceTable($schema);
+        $this->createOroUPSTransportLabelTable($schema);
         $this->addOroUpsTransportShipServiceForeignKeys($schema);
+        $this->addOroUpsTransportLabelForeignKeys($schema);
         $this->addOroIntegrationTransportForeignKeys($schema);
         $this->addOroUPSShippingServiceForeignKeys($schema);
+        $queries->addQuery(
+            new UpdatePasswordMigrationQuery($this->container)
+        );
     }
 
     /**
      * @param Schema $schema
-     * @throws \Doctrine\DBAL\Schema\SchemaException
      */
     public function updateOroIntegrationTransportTable(Schema $schema)
     {
@@ -46,6 +66,11 @@ class OroUPSBundleInstaller implements Installation
         $table->addColumn('ups_pickup_type', 'string', ['notnull' => false, 'length' => 2]);
         $table->addColumn('ups_unit_of_weight', 'string', ['notnull' => false, 'length' => 3]);
         $table->addColumn('ups_country_code', 'string', ['notnull' => false, 'length' => 2]);
+        $table->addColumn(
+            'ups_invalidate_cache_at',
+            'datetime',
+            ['notnull' => false, 'comment' => '(DC2Type:datetime)']
+        );
     }
 
     /**
@@ -77,7 +102,19 @@ class OroUPSBundleInstaller implements Installation
 
     /**
      * @param Schema $schema
-     * @throws \Doctrine\DBAL\Schema\SchemaException
+     */
+    protected function createOroUPSTransportLabelTable(Schema $schema)
+    {
+        $table = $schema->createTable('oro_ups_transport_label');
+        $table->addColumn('transport_id', 'integer', []);
+        $table->addColumn('localized_value_id', 'integer', []);
+        $table->setPrimaryKey(['transport_id', 'localized_value_id']);
+        $table->addIndex(['transport_id'], 'IDX_1554DDE9909C13D', []);
+        $table->addUniqueIndex(['localized_value_id'], 'UNIQ_1554DDE37CA9B1F', []);
+    }
+
+    /**
+     * @param Schema $schema
      */
     protected function addOroIntegrationTransportForeignKeys(Schema $schema)
     {
@@ -92,7 +129,6 @@ class OroUPSBundleInstaller implements Installation
 
     /**
      * @param Schema $schema
-     * @throws \Doctrine\DBAL\Schema\SchemaException
      */
     protected function addOroUPSShippingServiceForeignKeys(Schema $schema)
     {
@@ -106,8 +142,6 @@ class OroUPSBundleInstaller implements Installation
     }
 
     /**
-     * Add oro_ups_transport_ship_service foreign keys.
-     *
      * @param Schema $schema
      */
     protected function addOroUpsTransportShipServiceForeignKeys(Schema $schema)
@@ -116,6 +150,26 @@ class OroUPSBundleInstaller implements Installation
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_ups_shipping_service'),
             ['ship_service_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_integration_transport'),
+            ['transport_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    protected function addOroUpsTransportLabelForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('oro_ups_transport_label');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_fallback_localization_val'),
+            ['localized_value_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );

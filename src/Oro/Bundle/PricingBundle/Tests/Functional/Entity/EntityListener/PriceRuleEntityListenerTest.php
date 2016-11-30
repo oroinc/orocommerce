@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
@@ -24,7 +25,7 @@ class PriceRuleEntityListenerTest extends WebTestCase
         $this->loadFixtures([
             LoadPriceRules::class
         ]);
-        $this->cleanQueueMessageTraces();
+        $this->cleanScheduledMessages();
     }
 
     public function testPreUpdate()
@@ -38,9 +39,15 @@ class PriceRuleEntityListenerTest extends WebTestCase
         $em->persist($rule);
         $em->flush();
 
-        $traces = $this->getQueueMessageTraces();
-        $this->assertCount(1, $traces);
-        $this->assertEquals($rule->getPriceList()->getId(), $this->getPriceListIdFromTrace($traces[0]));
+        $this->sendScheduledMessages();
+
+        self::assertMessageSent(
+            Topics::RESOLVE_PRICE_RULES,
+            [
+                PriceListTriggerFactory::PRICE_LIST => $rule->getPriceList()->getId(),
+                PriceListTriggerFactory::PRODUCT => null
+            ]
+        );
     }
 
     public function testPreRemove()
@@ -53,8 +60,14 @@ class PriceRuleEntityListenerTest extends WebTestCase
         $em->remove($rule);
         $em->flush();
 
-        $traces = $this->getQueueMessageTraces();
-        $this->assertCount(1, $traces);
-        $this->assertEquals($rule->getPriceList()->getId(), $this->getPriceListIdFromTrace($traces[0]));
+        $this->sendScheduledMessages();
+
+        self::assertMessageSent(
+            Topics::RESOLVE_PRICE_RULES,
+            [
+                PriceListTriggerFactory::PRICE_LIST => $rule->getPriceList()->getId(),
+                PriceListTriggerFactory::PRODUCT => null
+            ]
+        );
     }
 }

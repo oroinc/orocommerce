@@ -5,8 +5,8 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Async;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManagerInterface;
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
 use Oro\Bundle\PricingBundle\Async\CombinedPriceListProcessor;
 use Oro\Bundle\PricingBundle\Builder\AccountCombinedPriceListsBuilder;
@@ -162,7 +162,7 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
             ->method('getManagerForClass')
             ->with(CombinedPriceList::class)
             ->willReturn($em);
-        
+
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
         $message = $this->getMock(MessageInterface::class);
         $message->method('getBody')->willReturn('');
@@ -214,7 +214,7 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
         $account = $this->getMock(Account::class);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|AccountGroup $accountGroup */
-        $accountGroup = $this->getMock('Oro\Bundle\AccountBundle\Entity\AccountGroup');
+        $accountGroup = $this->getMock('Oro\Bundle\CustomerBundle\Entity\AccountGroup');
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|Website $website */
         $website = $this->getMock(Website::class);

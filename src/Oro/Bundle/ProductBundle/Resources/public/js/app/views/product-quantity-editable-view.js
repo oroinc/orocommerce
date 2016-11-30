@@ -86,7 +86,11 @@ define(function(require) {
             }
 
             this.initValidator(options);
-            this.initListeners();
+            if (this.deferredInit) {
+                this.deferredInit.done(_.bind(this.initListeners, this));
+            } else {
+                this.initListeners();
+            }
         },
 
         enableAccept: function() {

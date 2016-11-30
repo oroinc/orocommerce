@@ -7,10 +7,12 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManager;
 
+use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\MigrationBundle\Fixture\AbstractEntityReferenceFixture;
-use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Entity\RequestProduct;
@@ -42,13 +44,14 @@ class LoadRequestDemoData extends AbstractEntityReferenceFixture implements
     public function getDependencies()
     {
         return [
-            'Oro\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountUserDemoData',
+            'Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadAccountUserDemoData',
             'Oro\Bundle\RFPBundle\Migrations\Data\Demo\ORM\LoadRequestStatusDemoData',
             'Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductUnitPrecisionDemoData',
         ];
     }
 
     /**
+     * @param EntityManager $manager
      * {@inheritdoc}
      */
     public function load(ObjectManager $manager)
@@ -57,6 +60,9 @@ class LoadRequestDemoData extends AbstractEntityReferenceFixture implements
         $organization = $manager->getRepository('OroOrganizationBundle:Organization')->getFirst();
 
         $accountUsers = $this->getAccountUsers($manager);
+
+        /** @var User $user */
+        $owner = $manager->getRepository('OroUserBundle:User')->findOneBy([]);
 
         $locator  = $this->container->get('file_locator');
         $filePath = $locator->locate('@OroRFPBundle/Migrations/Data/Demo/ORM/data/requests.csv');
@@ -90,6 +96,7 @@ class LoadRequestDemoData extends AbstractEntityReferenceFixture implements
 
             $status = $statuses[rand(0, count($statuses) - 1)];
             $request->setStatus($status);
+            $request->setOwner($owner);
             $request->setOrganization($organization);
 
             $this->processRequestProducts($request, $manager);
@@ -141,7 +148,7 @@ class LoadRequestDemoData extends AbstractEntityReferenceFixture implements
      */
     protected function getAccountUsers(ObjectManager $manager)
     {
-        return array_merge([null], $manager->getRepository('OroAccountBundle:AccountUser')->findBy([], null, 10));
+        return array_merge([null], $manager->getRepository('OroCustomerBundle:AccountUser')->findBy([], null, 10));
     }
 
     /**

@@ -1,6 +1,6 @@
 {% block _header_row_shopping_widget %}
     <input type="radio" id="header-row-shopping" class="header-row-helper" name="dropdowns" hidden="hidden">
-    <div class="header-row__container">
+    <div class="header-row__container shopping-list-widget">
         {{ block_widget(block) }}
     </div>
 {% endblock %}
@@ -11,14 +11,6 @@
             {{ block_widget(block) }}
         </div>
     </label>
-{% endblock %}
-
-{% block _header_row_shopping_toggle_widget %}
-    <div class="header-row__toggle hidden-on-desktop">
-        <div class="header-row__dropdown-mobile">
-            {{ block_widget(block) }}
-        </div>
-    </div>
 {% endblock %}
 
 {% block _main_menu_messages_widget %}

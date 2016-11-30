@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\PricingBundle\Builder;
 
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\PricingBundle\Entity\PriceListAccountFallback;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToAccountRepository;
 use Oro\Bundle\WebsiteBundle\Entity\Website;

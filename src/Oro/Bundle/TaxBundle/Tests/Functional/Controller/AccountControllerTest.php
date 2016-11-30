@@ -8,8 +8,8 @@ use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\TaxBundle\Entity\AccountTaxCode;
 use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadAccountTaxCodes;
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 
 /**
  * @dbIsolation
@@ -23,19 +23,14 @@ class AccountControllerTest extends WebTestCase
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
-
         $this->loadFixtures(
-            [
-                'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
-                'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadInternalRating',
-                'Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadAccountTaxCodes'
-            ]
+            $this->getFixtureList()
         );
     }
 
     public function testCreate()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('oro_account_create'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_customer_account_create'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
@@ -52,8 +47,8 @@ class AccountControllerTest extends WebTestCase
 
         /** @var Account $taxAccount */
         $taxAccount = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroAccountBundle:Account')
-            ->getRepository('OroAccountBundle:Account')
+            ->getManagerForClass('OroCustomerBundle:Account')
+            ->getRepository('OroCustomerBundle:Account')
             ->findOneBy(['name' => self::ACCOUNT_NAME]);
         $this->assertNotEmpty($taxAccount);
 
@@ -68,7 +63,7 @@ class AccountControllerTest extends WebTestCase
     {
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('oro_account_view', ['id' => $id])
+            $this->getUrl('oro_customer_account_view', ['id' => $id])
         );
 
         $result = $this->client->getResponse();
@@ -170,7 +165,7 @@ class AccountControllerTest extends WebTestCase
 
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('oro_account_view', ['id' => $id])
+            $this->getUrl('oro_customer_account_view', ['id' => $id])
         );
 
         $result = $this->client->getResponse();
@@ -202,13 +197,7 @@ class AccountControllerTest extends WebTestCase
         AccountTaxCode $accountTaxCode
     ) {
         $form = $crawler->selectButton('Save and Close')->form(
-            [
-                'oro_account_type[name]' => $name,
-                'oro_account_type[parent]' => $parent->getId(),
-                'oro_account_type[group]' => $group->getId(),
-                'oro_account_type[internal_rating]' => $internalRating->getId(),
-                'oro_account_type[taxCode]' => $accountTaxCode->getId(),
-            ]
+            $this->getFormValues($name, $parent, $group, $internalRating, $accountTaxCode)
         );
 
         $this->client->followRedirects(true);
@@ -244,5 +233,42 @@ class AccountControllerTest extends WebTestCase
         $this->assertContains($groupName, $html);
         $this->assertContains($internalRating->getName(), $html);
         $this->assertContains($accountTaxCode->getCode(), $html);
+    }
+
+    /**
+     * @param string $name
+     * @param Account $parent
+     * @param AccountGroup $group
+     * @param AbstractEnumValue $internalRating
+     * @param AccountTaxCode $accountTaxCode
+     *
+     * @return array
+     */
+    protected function getFormValues(
+        $name,
+        Account $parent,
+        AccountGroup $group,
+        AbstractEnumValue $internalRating,
+        AccountTaxCode $accountTaxCode
+    ) {
+        return [
+            'oro_account_type[name]' => $name,
+            'oro_account_type[parent]' => $parent->getId(),
+            'oro_account_type[group]' => $group->getId(),
+            'oro_account_type[internal_rating]' => $internalRating->getId(),
+            'oro_account_type[taxCode]' => $accountTaxCode->getId(),
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    protected function getFixtureList()
+    {
+        return [
+            'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccounts',
+            'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadInternalRating',
+            'Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadAccountTaxCodes'
+        ];
     }
 }

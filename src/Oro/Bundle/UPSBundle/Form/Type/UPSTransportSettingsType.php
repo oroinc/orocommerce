@@ -7,9 +7,12 @@ use Oro\Bundle\AddressBundle\Form\Type\CountryType;
 use Oro\Bundle\EntityBundle\Exception\NotManageableEntityException;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\IntegrationBundle\Provider\TransportInterface;
+use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
+use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -18,6 +21,7 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\Exception\AccessException;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Exception\ConstraintDefinitionException;
 use Symfony\Component\Validator\Exception\InvalidOptionsException;
 use Symfony\Component\Validator\Exception\MissingOptionsException;
@@ -25,6 +29,11 @@ use Symfony\Component\Validator\Exception\MissingOptionsException;
 class UPSTransportSettingsType extends AbstractType
 {
     const BLOCK_PREFIX = 'oro_ups_transport_settings';
+
+    /**
+     * @var string
+     */
+    protected $dataClass;
 
     /**
      * @var TransportInterface
@@ -41,34 +50,47 @@ class UPSTransportSettingsType extends AbstractType
      */
     protected $doctrineHelper;
 
-    /**
-     * @var string
-     */
-    protected $dataClass;
+    /** @var SymmetricCrypterInterface */
+    protected $symmetricCrypter;
 
     /**
-     * @param TransportInterface $transport
-     * @param ShippingOriginProvider $shippingOriginProvider
-     * @param DoctrineHelper $doctrineHelper
+     * UPSTransportSettingsType constructor.
+     *
+     * @param TransportInterface        $transport
+     * @param ShippingOriginProvider    $shippingOriginProvider
+     * @param DoctrineHelper            $doctrineHelper
+     * @param SymmetricCrypterInterface $symmetricCrypter
      */
     public function __construct(
         TransportInterface $transport,
         ShippingOriginProvider $shippingOriginProvider,
-        DoctrineHelper $doctrineHelper
+        DoctrineHelper $doctrineHelper,
+        SymmetricCrypterInterface $symmetricCrypter
     ) {
         $this->transport = $transport;
         $this->shippingOriginProvider = $shippingOriginProvider;
         $this->doctrineHelper = $doctrineHelper;
+        $this->symmetricCrypter = $symmetricCrypter;
     }
 
     /**
      * {@inheritdoc}
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @throws ConstraintDefinitionException
      * @throws InvalidOptionsException
      * @throws MissingOptionsException
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $builder->add(
+            'labels',
+            LocalizedFallbackValueCollectionType::class,
+            [
+                'label' => 'oro.ups.transport.labels.label',
+                'required' => true,
+                'options' => ['constraints' => [new NotBlank()]],
+            ]
+        );
         $builder->add(
             'baseUrl',
             TextType::class,
@@ -93,6 +115,15 @@ class UPSTransportSettingsType extends AbstractType
                 'required' => true
             ]
         );
+        $builder->get('apiPassword')
+            ->addModelTransformer(new CallbackTransformer(
+                function ($password) {
+                    return $password;
+                },
+                function ($password) {
+                    return $this->symmetricCrypter->encryptData($password);
+                }
+            ));
         $builder->add(
             'apiKey',
             TextType::class,

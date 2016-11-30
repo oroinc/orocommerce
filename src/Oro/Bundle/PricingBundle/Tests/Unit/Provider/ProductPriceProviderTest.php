@@ -94,34 +94,32 @@ class ProductPriceProviderTest extends \PHPUnit_Framework_TestCase
                 ],
                 'expectedData' => [
                     '1' => [
-                        'item' => [
-                            [
-                                'price' => '100.0000',
-                                'currency' => 'USD',
-                                'qty' => 1
-                            ]
+                        [
+                            'price' => '100.0000',
+                            'currency' => 'USD',
+                            'quantity' => 1,
+                            'unit' => 'item',
                         ],
-                        'kg' => [
-                            [
-                                'price' => '20.0000',
-                                'currency' => 'USD',
-                                'qty' => 1
-                            ],
-                            [
-                                'price' => '15.0000',
-                                'currency' => 'USD',
-                                'qty' => 10
-                            ]
-                        ]
+                        [
+                            'price' => '20.0000',
+                            'currency' => 'USD',
+                            'quantity' => 1,
+                            'unit' => 'kg',
+                        ],
+                        [
+                            'price' => '15.0000',
+                            'currency' => 'USD',
+                            'quantity' => 10,
+                            'unit' => 'kg',
+                        ],
                     ],
                     '2' => [
-                        'kg' => [
-                            [
-                                'price' => '50.0000',
-                                'currency' => 'EUR',
-                                'qty' => 3
-                            ]
-                        ]
+                        [
+                            'price' => '50.0000',
+                            'currency' => 'EUR',
+                            'quantity' => 3,
+                            'unit' => 'kg',
+                        ],
                     ],
                 ]
             ],

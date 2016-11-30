@@ -1,0 +1,25 @@
+parameters:
+    oro_commerce_menu.entity.menu_update.class: 'Oro\Bundle\CommerceMenuBundle\Entity\MenuUpdate'
+
+services:
+    oro_commerce_menu.ownership_provider.global:
+        class: Oro\Bundle\NavigationBundle\Menu\Provider\GlobalOwnershipProvider
+        arguments:
+            - '@doctrine'
+            - '%oro_commerce_menu.entity.menu_update.class%'
+        tags:
+            - { name: oro_navigation.ownership_provider, area: frontend, priority: 100 }
+
+    oro_commerce_menu.ownership_provider.account:
+        class: 'Oro\Bundle\CommerceMenuBundle\Provider\AccountOwnershipProvider'
+        arguments:
+            - '@doctrine'
+            - '%oro_commerce_menu.entity.menu_update.class%'
+            - '@security.token_storage'
+        tags:
+            - { name: oro_navigation.ownership_provider, area: frontend, priority: 200 }
+
+    oro_commerce_menu.namespace_migration_provider:
+        class: 'Oro\Bundle\CommerceMenuBundle\CacheWarmer\NamespaceMigrationProvider'
+        tags:
+            - {name: oro_installer.namespace_migration_provider, priority: 15}

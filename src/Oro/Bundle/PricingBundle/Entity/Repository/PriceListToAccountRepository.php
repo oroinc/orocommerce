@@ -7,8 +7,8 @@ use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
@@ -64,7 +64,7 @@ class PriceListToAccountRepository extends EntityRepository implements PriceList
     {
         $qb = $this->getEntityManager()->createQueryBuilder()
             ->select('distinct account')
-            ->from('OroAccountBundle:Account', 'account');
+            ->from('OroCustomerBundle:Account', 'account');
 
         $qb->innerJoin(
             PriceListToAccount::class,
@@ -176,7 +176,7 @@ class PriceListToAccountRepository extends EntityRepository implements PriceList
         $collection = new ArrayCollection();
         foreach ($pairs as $pair) {
             /** @var Account $account */
-            $account = $em->getReference('OroAccountBundle:Account', $pair['account_id']);
+            $account = $em->getReference('OroCustomerBundle:Account', $pair['account_id']);
             /** @var Website $website */
             $website = $em->getReference('OroWebsiteBundle:Website', $pair['website_id']);
             $collection->add(new AccountWebsiteDTO($account, $website));

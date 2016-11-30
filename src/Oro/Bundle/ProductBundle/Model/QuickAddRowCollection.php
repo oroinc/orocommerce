@@ -122,6 +122,5 @@ class QuickAddRowCollection extends ArrayCollection
         }
 
         return $data;
-
     }
 }

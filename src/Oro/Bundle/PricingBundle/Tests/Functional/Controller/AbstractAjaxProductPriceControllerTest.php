@@ -64,11 +64,21 @@ abstract class AbstractAjaxProductPriceControllerTest extends WebTestCase
         $this->assertArrayHasKey($product->getId(), $data);
         $actualData = $data[$product->getId()];
 
-        foreach ($expected as $unit => $prices) {
-            $this->assertArrayHasKey($unit, $actualData);
-            $this->assertCount(count($prices), $actualData[$unit]);
+        $actualDataByUnits = [];
+        foreach ($actualData as $price) {
+            $actualDataByUnits[$price['unit']][] = $price;
+        }
+
+        $expectedByUnits = [];
+        foreach ($expected as $price) {
+            $expectedByUnits[$price['unit']][] = $price;
+        }
+
+        foreach ($expectedByUnits as $unit => $prices) {
+            $this->assertArrayHasKey($unit, $actualDataByUnits);
+            $this->assertCount(count($prices), $actualDataByUnits[$unit]);
             foreach ($prices as $price) {
-                $this->assertContains($price, $actualData[$unit]);
+                $this->assertContains($price, $actualDataByUnits[$unit]);
             }
         }
     }

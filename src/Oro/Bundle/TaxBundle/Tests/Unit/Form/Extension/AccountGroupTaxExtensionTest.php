@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Unit\Form\Extension;
 
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
-use Oro\Bundle\AccountBundle\Form\Type\AccountGroupType;
+use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Form\Type\AccountGroupType;
 use Oro\Bundle\TaxBundle\Entity\AccountTaxCode;
 use Oro\Bundle\TaxBundle\Form\Extension\AccountGroupTaxExtension;
 use Oro\Bundle\TaxBundle\Form\Extension\AccountTaxExtension;
@@ -69,7 +69,7 @@ class AccountGroupTaxExtensionTest extends AbstractAccountTaxExtensionTest
      */
     protected function createTaxCodeTarget($id = null)
     {
-        return $this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountGroup', ['id' => $id]);
+        return $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountGroup', ['id' => $id]);
     }
 
     /**

@@ -4,17 +4,20 @@ namespace Oro\Bundle\PayPalBundle\Tests\Unit\Method;
 
 use Symfony\Component\Routing\RouterInterface;
 
-use Oro\Bundle\PaymentBundle\Model\AddressOptionModel;
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\PaymentBundle\Model\LineItemOptionModel;
 use Oro\Bundle\PayPalBundle\Method\Config\PayflowExpressCheckoutConfigInterface;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\Response;
 use Oro\Bundle\PayPalBundle\Method\PayflowExpressCheckout;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway;
+use Oro\Bundle\PaymentBundle\Model\Surcharge;
+use Oro\Bundle\PaymentBundle\Model\AddressOptionModel;
+use Oro\Bundle\PaymentBundle\Model\LineItemOptionModel;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Oro\Bundle\PayPalBundle\Provider\ExtractOptionsProvider;
+use Oro\Bundle\PaymentBundle\Provider\ExtractOptionsProvider;
+use Oro\Bundle\PaymentBundle\Provider\SurchargeProvider;
+use Oro\Bundle\PaymentBundle\Tests\Unit\Method\EntityStub;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -28,6 +31,7 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
     const TOKEN = 'token';
     const ENTITY_CLASS = 'EntityClass';
     const ENTITY_ID = 15689;
+    const SHIPPING_COST = 1;
 
     /** @var Gateway|\PHPUnit_Framework_MockObject_MockObject */
     protected $gateway;
@@ -45,7 +49,10 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
     protected $paymentConfig;
 
     /** @var ExtractOptionsProvider|\PHPUnit_Framework_MockObject_MockObject */
-    protected $optionsProviderMock;
+    protected $optionsProvider;
+
+    /** @var SurchargeProvider|\PHPUnit_Framework_MockObject_MockObject */
+    protected $surchargeProvider;
 
     protected function setUp()
     {
@@ -54,7 +61,11 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
         $this->paymentConfig = $this->getMock(PayflowExpressCheckoutConfigInterface::class);
         $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)->disableOriginalConstructor()->getMock();
 
-        $this->optionsProviderMock = $this->getMockBuilder(ExtractOptionsProvider::class)
+        $this->optionsProvider = $this->getMockBuilder(ExtractOptionsProvider::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->surchargeProvider = $this->getMockBuilder(SurchargeProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -63,7 +74,8 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
             $this->paymentConfig,
             $this->router,
             $this->doctrineHelper,
-            $this->optionsProviderMock
+            $this->optionsProvider,
+            $this->surchargeProvider
         );
     }
 
@@ -153,6 +165,9 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
 
         $transaction = $this->createTransaction(PaymentMethodInterface::PURCHASE);
 
+        $this->surchargeProvider->expects($this->never())
+            ->method('getSurcharges');
+
         $this->gateway->expects($this->once())
             ->method('request')
             ->with('A')
@@ -180,6 +195,9 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
 
         $transaction = $this->createTransaction(PaymentMethodInterface::PURCHASE);
 
+        $this->surchargeProvider->expects($this->never())
+            ->method('getSurcharges');
+
         $this->gateway->expects($this->once())
             ->method('request')
             ->with('A')
@@ -205,7 +223,8 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
             $this->getCredentials(),
             $this->getExpressCheckoutOptions(),
             $this->getShippingAddressOptions(),
-            $this->getLineItemOptions()
+            $this->getLineItemOptions(),
+            $this->getSurchargeOptions()
         );
 
         $this->paymentConfig->expects($this->once())
@@ -213,6 +232,16 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
             ->willReturn(PaymentMethodInterface::AUTHORIZE);
 
         $transaction = $this->createTransaction(PaymentMethodInterface::PURCHASE);
+
+        $entity = $this->getEntity();
+
+        $surcharge = new Surcharge();
+        $surcharge->setShippingAmount(self::SHIPPING_COST);
+
+        $this->surchargeProvider->expects($this->once())
+            ->method('getSurcharges')
+            ->with($entity)
+            ->willReturn($surcharge);
 
         $this->router
             ->expects($this->exactly(2))
@@ -238,10 +267,10 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
             ->with('A', $requestData)
             ->willReturn(new Response(['RESPMSG' => 'Approved', 'RESULT' => '0', 'TOKEN' => self::TOKEN]));
 
-        $this->doctrineHelper->expects($this->exactly(2))
+        $this->doctrineHelper->expects($this->any())
             ->method('getEntityReference')
             ->with(self::ENTITY_CLASS, self::ENTITY_ID)
-            ->willReturn($this->getEntity());
+            ->willReturn($entity);
 
         $this->configureLineItemOptions();
         $this->configureShippingAddressOptions();
@@ -258,7 +287,7 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
         $this->doctrineHelper->expects($this->once())->method('getEntityClass')->with($entity->getShippingAddress())
             ->willReturn(AbstractAddress::class);
 
-        $this->optionsProviderMock->expects($this->once())->method('getShippingAddressOptions')
+        $this->optionsProvider->expects($this->once())->method('getShippingAddressOptions')
             ->with(AbstractAddress::class, $entity->getShippingAddress())
             ->willReturn($this->getAddressOptionModel());
     }
@@ -267,7 +296,7 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
     {
         $entity = $this->getEntity();
 
-        $this->optionsProviderMock
+        $this->optionsProvider
             ->expects($this->once())
             ->method('getLineItemPaymentOptions')
             ->with($entity)
@@ -281,7 +310,8 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
         $requestData = array_merge(
             $this->getCredentials(),
             $this->getExpressCheckoutOptions(),
-            $this->getLineItemOptions()
+            $this->getLineItemOptions(),
+            $this->getSurchargeOptions()
         );
 
         $this->paymentConfig->expects($this->once())
@@ -289,6 +319,12 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
             ->willReturn(PaymentMethodInterface::AUTHORIZE);
 
         $transaction = $this->createTransaction(PaymentMethodInterface::PURCHASE);
+
+        $surcharge = new Surcharge();
+        $surcharge->setShippingAmount(self::SHIPPING_COST);
+        $this->surchargeProvider->expects($this->once())
+            ->method('getSurcharges')
+            ->willReturn($surcharge);
 
         $this->router
             ->expects($this->exactly(2))
@@ -314,7 +350,7 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
             ->with('A', $requestData)
             ->willReturn(new Response(['RESPMSG' => 'Approved', 'RESULT' => '0', 'TOKEN' => self::TOKEN]));
 
-        $this->doctrineHelper->expects($this->exactly(2))
+        $this->doctrineHelper->expects($this->any())
             ->method('getEntityReference')
             ->with(self::ENTITY_CLASS, self::ENTITY_ID)
             ->willReturnOnConsecutiveCalls($this->getEntity(), new \stdClass());
@@ -341,6 +377,9 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
             ->willReturn($testMode);
 
         $transaction = $this->createTransaction(PaymentMethodInterface::PURCHASE);
+
+        $this->surchargeProvider->expects($this->never())
+            ->method('getSurcharges');
 
         $this->gateway->expects($this->once())
             ->method('request')
@@ -390,6 +429,13 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
 
         $transaction = $this->createTransaction(PaymentMethodInterface::PURCHASE);
 
+        $surcharge = new Surcharge();
+        $surcharge->setShippingAmount(self::SHIPPING_COST);
+        $this->surchargeProvider->expects($this->once())
+            ->method('getSurcharges')
+            ->with($entity)
+            ->willReturn($surcharge);
+
         $this->gateway->expects($this->once())
             ->method('request')
             ->with('A', $requestData)
@@ -418,11 +464,11 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
 
         $entityStub = $this->getEntity();
         $this->doctrineHelper
-            ->expects($this->exactly(2))
+            ->expects($this->any())
             ->method('getEntityReference')
-            ->willReturnOnConsecutiveCalls($entity, $entityStub);
+            ->willReturnOnConsecutiveCalls($entity, $entity, $entityStub);
 
-        $this->optionsProviderMock
+        $this->optionsProvider
             ->expects($this->exactly($calls))
             ->method('getLineItemPaymentOptions')
             ->willReturn([]);
@@ -442,7 +488,8 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
                 'requestData' => array_merge(
                     $this->getCredentials(),
                     $this->getExpressCheckoutOptions(),
-                    $this->getShippingAddressOptions()
+                    $this->getShippingAddressOptions(),
+                    $this->getSurchargeOptions()
                 ),
                 'getLineItemPaymentOptions calls' => 0
 
@@ -453,7 +500,8 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
                     $this->getCredentials(),
                     $this->getExpressCheckoutOptions(),
                     $this->getShippingAddressOptions(),
-                    ['ITEMAMT' => 0]
+                    $this->getSurchargeOptions(),
+                    ['ITEMAMT' => 0, 'TAXAMT' => 0]
                 ),
                 'getLineItemPaymentOptions calls' => 1
             ],
@@ -670,7 +718,7 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
     {
         return [
             'PAYMENTTYPE' => 'instantonly',
-            'ADDROVERRIDE' => true,
+            'ADDROVERRIDE' => 1,
             'AMT' => '10',
             'CURRENCY' => 'USD',
             'RETURNURL' => 'callbackReturnUrl',
@@ -706,7 +754,22 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
             'L_DESC1' => 'Product Description',
             'L_COST1' => 55.4,
             'L_QTY1' => 15,
-            'ITEMAMT' => 831
+            'L_TAXAMT1' => 0,
+            'ITEMAMT' => 831,
+            'TAXAMT' => 0
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    protected function getSurchargeOptions()
+    {
+        return [
+            'FREIGHTAMT' => self::SHIPPING_COST,
+            'HANDLINGAMT' => 0,
+            'DISCOUNT' => 0,
+            'INSURANCEAMT' => 0,
         ];
     }
 

@@ -8,9 +8,9 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\AccountBundle\Form\Type\AccountType;
+use Oro\Bundle\CustomerBundle\Form\Type\AccountType;
 use Oro\Bundle\PaymentBundle\Form\Extension\AccountFormExtension;
-use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentBundle\Form\Type\PaymentTermSelectType;
 use Oro\Bundle\PaymentBundle\Entity\Repository\PaymentTermRepository;
@@ -58,7 +58,7 @@ class AccountFormExtensionTest extends \PHPUnit_Framework_TestCase
 
         $this->doctrineHelper->expects($this->any())
             ->method('getEntityReference')
-            ->with('OroAccountBundle:Account', $accountId)
+            ->with('OroCustomerBundle:Account', $accountId)
             ->willReturn(new Account());
 
         $this->doctrineHelper->expects($this->any())
@@ -337,7 +337,7 @@ class AccountFormExtensionTest extends \PHPUnit_Framework_TestCase
      */
     protected function createAccountEntity($id = null)
     {
-        return $this->createEntity('Oro\Bundle\AccountBundle\Entity\Account', $id);
+        return $this->createEntity('Oro\Bundle\CustomerBundle\Entity\Account', $id);
     }
 
     /**
@@ -346,7 +346,7 @@ class AccountFormExtensionTest extends \PHPUnit_Framework_TestCase
      */
     protected function createAccountGroupEntity($id = null)
     {
-        return $this->createEntity('Oro\Bundle\AccountBundle\Entity\AccountGroup', $id);
+        return $this->createEntity('Oro\Bundle\CustomerBundle\Entity\AccountGroup', $id);
     }
 
     /**

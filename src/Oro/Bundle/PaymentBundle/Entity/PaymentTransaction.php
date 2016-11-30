@@ -10,13 +10,10 @@ use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
-
-use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
-use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
-
-use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
 
 /**
  * @ORM\Table(
@@ -30,6 +27,9 @@ use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
  *       mode="hidden",
  *       defaultValues={
  *          "ownership"={
+ *              "owner_type"="USER",
+ *              "owner_field_name"="owner",
+ *              "owner_column_name"="user_owner_id",
  *              "frontend_owner_type"="FRONTEND_USER",
  *              "frontend_owner_field_name"="frontendOwner",
  *              "frontend_owner_column_name"="frontend_owner_id",
@@ -41,9 +41,10 @@ use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
  *
  * @SuppressWarnings(PHPMD.TooManyFields)
  */
-class PaymentTransaction implements DatesAwareInterface, OrganizationAwareInterface
+class PaymentTransaction implements DatesAwareInterface
 {
     use DatesAwareTrait;
+    use UserAwareTrait;
 
     /**
      * @var int
@@ -161,18 +162,10 @@ class PaymentTransaction implements DatesAwareInterface, OrganizationAwareInterf
     /**
      * @param AccountUser
      *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\AccountBundle\Entity\AccountUser")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\AccountUser")
      * @ORM\JoinColumn(name="frontend_owner_id", referencedColumnName="id", onDelete="SET NULL")
      */
     protected $frontendOwner;
-
-    /**
-     * @var OrganizationInterface
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrganizationBundle\Entity\Organization")
-     * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL")
-     */
-    protected $organization;
 
     public function __construct()
     {
@@ -530,26 +523,6 @@ class PaymentTransaction implements DatesAwareInterface, OrganizationAwareInterf
     public function setFrontendOwner(AccountUser $frontendOwner = null)
     {
         $this->frontendOwner = $frontendOwner;
-
-        return $this;
-    }
-
-    /**
-     * Get organization
-     *
-     * @return OrganizationInterface
-     */
-    public function getOrganization()
-    {
-        return $this->organization;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setOrganization(OrganizationInterface $organization = null)
-    {
-        $this->organization = $organization;
 
         return $this;
     }

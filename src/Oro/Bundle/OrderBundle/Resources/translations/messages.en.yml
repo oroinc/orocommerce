@@ -27,7 +27,14 @@ oro:
         line_items.label: Line Items
         line_items_count.label: '# Line Items'
         shipping_cost.label: 'Shipping Cost'
-        shipping_cost_amount.label: 'Shipping Cost Ammount'
+        estimated_shipping_cost.label: 'Estimated Shipping Cost'
+        overridden_shipping_cost.label: 'Overridden Shipping Cost'
+        estimated_shipping_cost_amount.label: 'Estimated Shipping Cost Amount'
+        overridden_shipping_cost_amount.label: 'Overridden Shipping Cost Amount'
+
+        # TODO: remove after resolving https://magecore.atlassian.net/browse/BAP-3940
+        shipping_cost_amount.label: 'Shipping Cost Amount'
+
         shipping_method.label: Shipping Method
         shipping_method_type.label: Shipping Method Type
         source_document.label: Source Document
@@ -36,6 +43,7 @@ oro:
         source_entity_identifier.label: Source Entity Identifier
         order_date.label: Order Date
         shipping_method.label: Shipping Method
+        shipping_trackings.label: Shipping Tracking Numbers
         payment.label: Payment
         frontend.order_information.title: 'Order Information'
         frontend.ordered_items.title: 'Items Ordered'
@@ -46,6 +54,18 @@ oro:
         discountitem.add_label: Add Discount
         order_history.label: Order History
         top_selling_items.label: Top Selling Items
+        frontend_index_title: Order History - My Account - Home page
+
+        shipping_tracking:
+            entity_label: Shipping Tracking
+            entity_plural_label: Shipping Tracking Numbers
+            method.label: Method
+            number.label: Number
+            action:
+                cancel: Cancel
+                save: Save
+            flash:
+                save_success: shipping tracking numbers have been updated
 
         orderdiscount:
             entity_label: Order Discount
@@ -127,6 +147,7 @@ oro:
             add_seller_notes: 'Add Notes'
             remove_seller_notes: 'Remove Seller Notes'
             create_order: 'Create Order'
+            calculate_shipping: 'Calculate Shipping'
 
         menu:
             sales_tab.label: Sales
@@ -137,6 +158,7 @@ oro:
 
         widgets:
             order_information: Order Information
+            shipping_tracking: Shipping Tracking
 
         controller:
             order.saved.message: Order has been saved
@@ -171,6 +193,8 @@ oro:
                 group_label:
                     account: Customer Address Book
                     account_user: Customer User Address Book
+            shipping_options.label: Shipping Options
+            override_shipping_cost.label: Override Shipping Cost
 
         subtotals:
             shipping_cost: Shipping

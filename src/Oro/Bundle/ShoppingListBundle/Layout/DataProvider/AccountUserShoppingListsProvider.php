@@ -100,7 +100,7 @@ class AccountUserShoppingListsProvider
      */
     protected function getSortOrder()
     {
-        $sortOrder = [];
+        $sortOrder = ['list.current' => Criteria::DESC];
         $request = $this->requestStack->getCurrentRequest();
         $sort = $request ? $request->get('shopping_list_sort') : self::DATA_SORT_BY_UPDATED;
 

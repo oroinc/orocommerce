@@ -7,8 +7,8 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentBundle\Form\Handler\PaymentTermHandler;
 
@@ -69,15 +69,15 @@ class PaymentTermHandlerTest extends \PHPUnit_Framework_TestCase
     public function testProcessValidData()
     {
         /** @var Account $appendedAccount */
-        $appendedAccount = $this->getEntity('Oro\Bundle\AccountBundle\Entity\Account', 1);
+        $appendedAccount = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account', 1);
         /** @var Account $removedAccount */
-        $removedAccount = $this->getEntity('Oro\Bundle\AccountBundle\Entity\Account', 2);
+        $removedAccount = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account', 2);
         $this->entity->addAccount($removedAccount);
 
         /** @var AccountGroup $appendedAccountGroup */
-        $appendedAccountGroup = $this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountGroup', 1);
+        $appendedAccountGroup = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountGroup', 1);
         /** @var AccountGroup $removedAccountGroup */
-        $removedAccountGroup = $this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountGroup', 2);
+        $removedAccountGroup = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountGroup', 2);
         $this->entity->addAccountGroup($removedAccountGroup);
 
         $this->form->expects($this->atLeastOnce())

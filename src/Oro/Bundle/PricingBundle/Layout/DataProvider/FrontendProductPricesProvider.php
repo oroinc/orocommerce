@@ -3,7 +3,6 @@
 namespace Oro\Bundle\PricingBundle\Layout\DataProvider;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
@@ -120,7 +119,7 @@ class FrontendProductPricesProvider
         $productsPrices = [];
         foreach ($prices as $price) {
             $productsPrices[$price->getProduct()->getId()][$price->getProductUnitCode()][] = [
-                'qty' => $price->getQuantity(),
+                'quantity' => $price->getQuantity(),
                 'price' => $price->getPrice()->getValue(),
                 'currency' => $price->getPrice()->getCurrency(),
                 'unit'  => $price->getUnit()->getCode(),

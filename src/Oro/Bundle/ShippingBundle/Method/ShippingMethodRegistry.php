@@ -18,14 +18,14 @@ class ShippingMethodRegistry implements ShippingMethodProviderInterface
     }
 
     /**
-     * @param string $name
+     * @param string $identifier
      * @return null|ShippingMethodInterface
      */
-    public function getShippingMethod($name)
+    public function getShippingMethod($identifier)
     {
         foreach ($this->providers as $provider) {
-            if ($provider->hasShippingMethod($name)) {
-                return $provider->getShippingMethod($name);
+            if ($provider->hasShippingMethod($identifier)) {
+                return $provider->getShippingMethod($identifier);
             }
         }
         return null;
@@ -55,5 +55,21 @@ class ShippingMethodRegistry implements ShippingMethodProviderInterface
             }
         }
         return false;
+    }
+
+    /**
+     * @return ShippingMethodInterface[]
+     */
+    public function getTrackingAwareShippingMethods()
+    {
+        $result = [];
+        foreach ($this->providers as $provider) {
+            foreach ($provider->getShippingMethods() as $shippingMethod) {
+                if ($shippingMethod instanceof ShippingTrackingAwareInterface) {
+                    $result[$shippingMethod->getIdentifier()] = $shippingMethod;
+                }
+            }
+        }
+        return $result;
     }
 }

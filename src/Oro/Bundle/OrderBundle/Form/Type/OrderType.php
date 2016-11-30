@@ -2,26 +2,30 @@
 
 namespace Oro\Bundle\OrderBundle\Form\Type;
 
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\Range;
-
 use Oro\Bundle\AddressBundle\Entity\AddressType;
-use Oro\Bundle\FormBundle\Form\Type\OroDateType;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
-use Oro\Bundle\AccountBundle\Form\Type\AccountSelectType;
-use Oro\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
+use Oro\Bundle\CustomerBundle\Form\Type\AccountSelectType;
+use Oro\Bundle\CustomerBundle\Form\Type\AccountUserSelectType;
+use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\EventListener\Order\OrderPossibleShippingMethodsEventListener;
+use Oro\Bundle\OrderBundle\Form\Type\EventListener\SubtotalSubscriber;
 use Oro\Bundle\OrderBundle\Handler\OrderCurrencyHandler;
 use Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 use Oro\Bundle\PaymentBundle\Form\Type\PaymentTermSelectType;
 use Oro\Bundle\PaymentBundle\Provider\PaymentTermProvider;
-use Oro\Bundle\OrderBundle\Form\Type\EventListener\SubtotalSubscriber;
+use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\CallbackTransformer;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\OptionsResolver\Exception\AccessException;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Range;
 
 class OrderType extends AbstractType
 {
@@ -68,6 +72,7 @@ class OrderType extends AbstractType
 
     /**
      * {@inheritDoc}
+     * @throws \InvalidArgumentException
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -86,10 +91,14 @@ class OrderType extends AbstractType
                     'required' => false,
                 ]
             )
-            ->add('poNumber', 'text', ['required' => false, 'label' => 'oro.order.po_number.label'])
+            ->add('poNumber', TextType::class, ['required' => false, 'label' => 'oro.order.po_number.label'])
             ->add('shipUntil', OroDateType::NAME, ['required' => false, 'label' => 'oro.order.ship_until.label'])
-            ->add('customerNotes', 'textarea', ['required' => false, 'label' => 'oro.order.customer_notes.label'])
-            ->add('currency', 'hidden')
+            ->add(
+                'customerNotes',
+                TextareaType::class,
+                ['required' => false, 'label' => 'oro.order.customer_notes.label']
+            )
+            ->add('currency', HiddenType::class)
             ->add(
                 'lineItems',
                 OrderLineItemsCollectionType::NAME,
@@ -97,18 +106,6 @@ class OrderType extends AbstractType
                     'add_label' => 'oro.order.orderlineitem.add_label',
                     'cascade_validation' => true,
                     'options' => ['currency' => $order->getCurrency()]
-                ]
-            )
-            ->add(
-                'shippingCost',
-                PriceType::NAME,
-                [
-                    'currency_empty_value' => null,
-                    'error_bubbling' => false,
-                    'required' => false,
-                    'label' => 'oro.order.shipping_cost.label',
-                    'validation_groups' => ['Optional'],
-                    'currencies_list' => [$order->getCurrency()]
                 ]
             )
             ->add(
@@ -125,7 +122,7 @@ class OrderType extends AbstractType
             )
             ->add(
                 'discountsSum',
-                'hidden',
+                HiddenType::class,
                 [
                     'mapped' => false,
                     //range should be used, because this type also is implemented with JS
@@ -139,22 +136,14 @@ class OrderType extends AbstractType
                     'data' => $order->getTotalDiscounts() ? $order->getTotalDiscounts()->getValue() : 0
                 ]
             )
-
-            ->add('sourceEntityClass', 'hidden')
-            ->add('sourceEntityId', 'hidden')
-            ->add('sourceEntityIdentifier', 'hidden');
-
+            ->add('sourceEntityClass', HiddenType::class)
+            ->add('sourceEntityId', HiddenType::class)
+            ->add('sourceEntityIdentifier', HiddenType::class);
+        $this->addPaymentTerm($builder, $order);
+        $this->addShippingFields($builder, $order);
         $this->addAddresses($builder, $order);
-        $builder->addEventListener(
-            FormEvents::SUBMIT,
-            function (FormEvent $event) {
-                $this->addAddresses($event->getForm(), $event->getData());
-            }
-        );
-
         $this->addBillingAddress($builder, $order, $options);
         $this->addShippingAddress($builder, $order, $options);
-        $this->addPaymentTerm($builder, $order);
 
         $builder->addEventSubscriber($this->subtotalSubscriber);
     }
@@ -162,6 +151,7 @@ class OrderType extends AbstractType
     /**
      * @param FormBuilderInterface|FormInterface $form
      * @param Order $order
+     * @throws \InvalidArgumentException
      */
     protected function addAddresses($form, Order $order)
     {
@@ -185,6 +175,7 @@ class OrderType extends AbstractType
 
     /**
      * {@inheritdoc}
+     * @throws AccessException
      */
     public function configureOptions(OptionsResolver $resolver)
     {
@@ -327,5 +318,37 @@ class OrderType extends AbstractType
                     ]
                 );
         }
+    }
+
+    /**
+     * @param FormBuilderInterface $builder
+     * @param Order $order
+     * @return $this
+     */
+    protected function addShippingFields(FormBuilderInterface $builder, Order $order)
+    {
+        $builder
+            ->add(OrderPossibleShippingMethodsEventListener::CALCULATE_SHIPPING_KEY, HiddenType::class, [
+                'mapped' => false
+            ])
+            ->add('shippingMethod', HiddenType::class)
+            ->add('shippingMethodType', HiddenType::class)
+            ->add('estimatedShippingCostAmount', HiddenType::class)
+            ->add('overriddenShippingCostAmount', PriceType::class, [
+                'required' => false,
+                'validation_groups' => ['Optional'],
+                'hide_currency' => true,
+            ])
+            ->get('overriddenShippingCostAmount')->addModelTransformer(new CallbackTransformer(
+                function ($amount) use ($order) {
+                    return $amount ? Price::create($amount, $order->getCurrency()) : null;
+                },
+                function ($price) {
+                    return $price instanceof Price ? $price->getValue() : $price;
+                }
+            ))
+        ;
+
+        return $this;
     }
 }

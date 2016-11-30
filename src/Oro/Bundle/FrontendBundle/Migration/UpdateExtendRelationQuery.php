@@ -75,6 +75,9 @@ class UpdateExtendRelationQuery extends ParametrizedMigrationQuery
     /**
      * @param LoggerInterface $logger
      * @param bool            $dryRun
+     *
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     protected function processQueries(LoggerInterface $logger, $dryRun = false)
     {
@@ -126,6 +129,12 @@ class UpdateExtendRelationQuery extends ParametrizedMigrationQuery
                 $parameters = [$this->connection->convertToDatabaseValue($data, Type::TARRAY), $id];
 
                 $this->logQuery($logger, $query, $parameters);
+                if (!$dryRun) {
+                    $this->connection->executeUpdate($query, $parameters);
+                }
+
+                $query = 'UPDATE oro_entity_config_field SET field_name = ? WHERE entity_id = ? and field_name = ?';
+                $parameters = [$this->relationTo, $id, $this->relationFrom];
                 if (!$dryRun) {
                     $this->connection->executeUpdate($query, $parameters);
                 }

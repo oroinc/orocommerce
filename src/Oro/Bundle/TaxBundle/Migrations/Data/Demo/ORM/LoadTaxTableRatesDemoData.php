@@ -8,8 +8,8 @@ use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\TaxBundle\Migrations\TaxEntitiesFactory;
 
@@ -32,8 +32,8 @@ class LoadTaxTableRatesDemoData extends AbstractFixture implements DependentFixt
     {
         return [
             'Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductDemoData',
-            'Oro\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountDemoData',
-            'Oro\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountGroupDemoData',
+            'Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadAccountDemoData',
+            'Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadAccountGroupDemoData',
         ];
     }
 
@@ -67,7 +67,7 @@ class LoadTaxTableRatesDemoData extends AbstractFixture implements DependentFixt
             $taxCode = $this->entitiesFactory->createAccountTaxCode($code, $data['description'], $manager, $this);
             if (isset($data['accounts'])) {
                 foreach ($data['accounts'] as $accountName) {
-                    $account = $manager->getRepository('OroAccountBundle:Account')->findOneByName($accountName);
+                    $account = $manager->getRepository('OroCustomerBundle:Account')->findOneByName($accountName);
                     if (null !== $account) {
                         $taxCode->addAccount($account);
                     }
@@ -75,7 +75,7 @@ class LoadTaxTableRatesDemoData extends AbstractFixture implements DependentFixt
             }
             if (isset($data['account_groups'])) {
                 foreach ($data['account_groups'] as $groupName) {
-                    $group = $manager->getRepository('OroAccountBundle:AccountGroup')->findOneByName($groupName);
+                    $group = $manager->getRepository('OroCustomerBundle:AccountGroup')->findOneByName($groupName);
                     if (null !== $group) {
                         $taxCode->addAccountGroup($group);
                     }

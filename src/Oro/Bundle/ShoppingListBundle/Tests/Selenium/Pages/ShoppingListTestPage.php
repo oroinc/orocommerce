@@ -9,7 +9,7 @@ class ShoppingListTestPage extends AbstractPage
     /**
      * @var string
      */
-    private $firstViewDetailsLink = '//*[@id="order-widget-dropdown"]//a[1]';
+    private $firstViewDetailsLink = '//*[@class="shopping-list-widget"]//a[1]';
 
     /**
      * @var string
@@ -30,13 +30,18 @@ class ShoppingListTestPage extends AbstractPage
      * @var string
      */
     private $sidebarLabelElement =
-        "//*[@data-bound-component='oroshoppinglist/js/app/views/shoppinglist-sidebar-view']//h3[1]";
+        "//*[@class='shopping-list-navigation']//h3[1]";
 
     /**
      * @var string
      */
     private $widgetLabelElement =
-        '//*[@id="order-widget-dropdown"]//span[1]';
+        '//*[@class="shopping-list-widget"]//span[1]';
+
+    /**
+     * @var string
+     */
+    private $widgetTrigger = "//*[for='header-row-shopping']//*[@data-dropdown-trigger='1']";
 
     public function login()
     {
@@ -60,7 +65,7 @@ class ShoppingListTestPage extends AbstractPage
 
     public function selectFirstShoppingList()
     {
-        $this->getTest()->byCssSelector('.shopping-lists-frontend-widget')->click();
+        $this->getTest()->byXPath($this->widgetTrigger)->click();
         $this->getTest()
              ->byXPath($this->firstViewDetailsLink)
              ->click();
@@ -111,8 +116,8 @@ class ShoppingListTestPage extends AbstractPage
 
     public function checkWidgetShoppingListName()
     {
-        $this->getTest()->byCssSelector('.shopping-lists-frontend-widget')->click();
-        
+        $this->getTest()->byXPath($this->widgetTrigger)->click();
+
         $element = $this->getTest()
             ->byXPath($this->widgetLabelElement);
 

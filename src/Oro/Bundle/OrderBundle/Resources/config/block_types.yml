@@ -54,3 +54,11 @@ services:
             - [setName, ['success_order']]
         tags:
              - { name: layout.block_type, alias: success_order }
+
+    oro_order.layout.block_type.shipping_trackings:
+        parent: oro_layout.block_type.abstract_configurable
+        calls:
+            - [setOptionsConfig, [{trackings: {required: true}}]]
+            - [setName, ['shipping_trackings']]
+        tags:
+             - { name: layout.block_type, alias: shipping_trackings }

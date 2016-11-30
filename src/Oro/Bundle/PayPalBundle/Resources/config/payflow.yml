@@ -30,6 +30,16 @@ services:
             - { name: kernel.event_listener, event: oro_payment.callback.error.paypal_payments_pro_express_checkout, method: onError }
             - { name: kernel.event_listener, event: oro_payment.callback.return.paypal_payments_pro_express_checkout, method: onReturn }
 
+    oro_paypal.event_listener.callback.payflow_express_checkout_redirect:
+        class: 'Oro\Bundle\PayPalBundle\EventListener\Callback\PayflowExpressCheckoutRedirectListener'
+        lazy: true
+        arguments:
+            - '@session'
+        tags:
+            # Priority of this listener should always be less then priority of oro_paypal.event_listener.callback.payflow_express_checkout
+            - { name: kernel.event_listener, event: oro_payment.callback.return.payflow_express_checkout, method: onReturn, priority: -100 }
+            - { name: kernel.event_listener, event: oro_payment.callback.return.paypal_payments_pro_express_checkout, method: onReturn, priority: -100 }
+
     oro_paypal.event_listener.ip_check.payflow:
         class: 'Oro\Bundle\PayPalBundle\EventListener\Callback\PayflowIPCheckListener'
         lazy: true

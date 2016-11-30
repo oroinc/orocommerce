@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Functional\Entity\Repository;
 
+use Doctrine\ORM\EntityManager;
 use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingRuleRepository;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
 use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingRules;
@@ -17,6 +18,11 @@ class ShippingRuleRepositoryTest extends WebTestCase
      */
     protected $repository;
 
+    /**
+     * @var EntityManager
+     */
+    protected $em;
+
     protected function setUp()
     {
         $this->initClient([], static::generateBasicAuthHeader());
@@ -26,7 +32,8 @@ class ShippingRuleRepositoryTest extends WebTestCase
             LoadShippingRules::class,
         ]);
 
-        $this->repository = static::getContainer()->get('doctrine')->getRepository('OroShippingBundle:ShippingRule');
+        $this->em = static::getContainer()->get('doctrine')->getManagerForClass('OroShippingBundle:ShippingRule');
+        $this->repository = $this->em->getRepository('OroShippingBundle:ShippingRule');
     }
 
     /**
@@ -108,5 +115,19 @@ class ShippingRuleRepositoryTest extends WebTestCase
         return array_map(function ($ruleReference) {
             return $this->getReference($ruleReference);
         }, $rules);
+    }
+
+    public function testGetLastUpdateAt()
+    {
+        $updatedAt = $this->repository->getLastUpdateAt();
+
+        $shippingRule = $this->repository->findOneBy([]);
+        $shippingRule->setPriority($shippingRule->getPriority() + 1);
+
+        $this->em->persist($shippingRule);
+        $this->em->flush($shippingRule);
+
+        $newUpdatedAt = $this->repository->getLastUpdateAt();
+        $this->assertGreaterThanOrEqual($updatedAt->getTimestamp(), $newUpdatedAt->getTimestamp());
     }
 }

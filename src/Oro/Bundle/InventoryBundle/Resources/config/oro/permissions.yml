@@ -1,0 +1,12 @@
+oro_permissions:
+    CREATE:
+        exclude_entities:
+            - Oro\Bundle\InventoryBundle\Entity\InventoryLevel
+
+    DELETE:
+        exclude_entities:
+            - Oro\Bundle\InventoryBundle\Entity\InventoryLevel
+
+    ASSIGN:
+        exclude_entities:
+            - Oro\Bundle\InventoryBundle\Entity\InventoryLevel

@@ -3,12 +3,14 @@ parameters:
     oro_cms.entity.loginpage.class: Oro\Bundle\CMSBundle\Entity\LoginPage
 
 services:
-    oro_cms.page_tree_handler:
-        class: 'Oro\Bundle\CMSBundle\JsTree\PageTreeHandler'
+    oro_cms.form.autocomplete.page.search_handler:
+        public: false
+        parent: oro_form.autocomplete.search_handler
         arguments:
             - '%oro_cms.entity.page.class%'
-            - "@doctrine"
-            - "@oro_redirect.slug.manager"
+            - ["title"]
+        tags:
+            - { name: oro_form.autocomplete.search_handler, alias: oro_cms_page, acl_resource: oro_cms_page_view }
 
     oro_cms.listener.page_slug_listener:
         class: 'Oro\Bundle\CMSBundle\EventListener\PageSlugListener'

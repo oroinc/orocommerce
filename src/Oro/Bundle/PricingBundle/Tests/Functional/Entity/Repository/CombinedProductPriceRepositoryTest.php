@@ -78,7 +78,6 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
         } else {
             $this->assertEmpty($prices);
         }
-
     }
 
     /**

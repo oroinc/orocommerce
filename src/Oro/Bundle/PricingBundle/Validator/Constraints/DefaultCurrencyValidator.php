@@ -35,6 +35,5 @@ class DefaultCurrencyValidator extends ConstraintValidator
         if (!in_array($value, $currencies, true)) {
             $this->context->addViolation($constraint->message, ['%invalidCurrency%' => $value]);
         }
-
     }
 }

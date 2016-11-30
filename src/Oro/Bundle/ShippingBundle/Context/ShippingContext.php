@@ -13,6 +13,16 @@ use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptionsInterface;
 class ShippingContext implements ShippingContextInterface
 {
     /**
+     * @var object
+     */
+    private $sourceEntity;
+
+    /**
+     * @var mixed
+     */
+    private $sourceEntityIdentifier;
+
+    /**
      * @var ShippingLineItemInterface[]
      */
     private $lineItems = [];
@@ -48,11 +58,49 @@ class ShippingContext implements ShippingContextInterface
     private $subtotal;
 
     /**
+     * @return object
+     */
+    public function getSourceEntity()
+    {
+        return $this->sourceEntity;
+    }
+
+    /**
+     * @param object $sourceEntity
+     * @return $this
+     */
+    public function setSourceEntity($sourceEntity)
+    {
+        $this->sourceEntity = $sourceEntity;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSourceEntityIdentifier()
+    {
+        return $this->sourceEntityIdentifier;
+    }
+
+    /**
+     * @param mixed $sourceEntityIdentifier
+     * @return $this
+     */
+    public function setSourceEntityIdentifier($sourceEntityIdentifier)
+    {
+        $this->sourceEntityIdentifier = $sourceEntityIdentifier;
+        return $this;
+    }
+
+    /**
      * @param array $items
      * @return $this
      */
     public function setLineItems(array $items)
     {
+        $this->lineItems = [];
+
         foreach ($items as $item) {
             $this->lineItems[] = $this->createLineItem($item);
         }
@@ -68,14 +116,13 @@ class ShippingContext implements ShippingContextInterface
     {
         $shippingLineItem = new ShippingLineItem();
 
-        if ($item instanceof ProductUnitHolderInterface) {
-            $shippingLineItem->setEntityIdentifier($item->getEntityIdentifier());
-            $shippingLineItem->setProductUnit($item->getProductUnit());
+        if ($item instanceof ProductHolderInterface) {
+            $shippingLineItem->setProductHolder($item);
+            $shippingLineItem->setProduct($item->getProduct());
         }
 
-        if ($item instanceof ProductHolderInterface) {
-            $shippingLineItem->setEntityIdentifier($item->getEntityIdentifier());
-            $shippingLineItem->setProduct($item->getProduct());
+        if ($item instanceof ProductUnitHolderInterface) {
+            $shippingLineItem->setProductUnit($item->getProductUnit());
         }
 
         if ($item instanceof ProductShippingOptionsInterface) {
@@ -96,7 +143,6 @@ class ShippingContext implements ShippingContextInterface
         return $shippingLineItem;
     }
 
-
     /**
      * @return ShippingLineItemInterface[]
      */
@@ -106,10 +152,10 @@ class ShippingContext implements ShippingContextInterface
     }
 
     /**
-     * @param AddressInterface $address
+     * @param AddressInterface|null $address
      * @return $this
      */
-    public function setBillingAddress(AddressInterface $address)
+    public function setBillingAddress(AddressInterface $address = null)
     {
         $this->billingAddress = $address;
 
@@ -125,10 +171,10 @@ class ShippingContext implements ShippingContextInterface
     }
 
     /**
-     * @param AddressInterface $address
+     * @param AddressInterface|null $address
      * @return $this
      */
-    public function setShippingAddress(AddressInterface $address)
+    public function setShippingAddress(AddressInterface $address = null)
     {
         $this->shippingAddress = $address;
 
@@ -162,16 +208,15 @@ class ShippingContext implements ShippingContextInterface
         return $this->shippingOrigin;
     }
 
-
     /**
-     * @param string $paymentMethod
+     * @param string|null $paymentMethod
      * @return string
      */
     public function setPaymentMethod($paymentMethod)
     {
         $this->paymentMethod = $paymentMethod;
 
-        return $this->paymentMethod;
+        return $this;
     }
 
     /**
@@ -183,10 +228,10 @@ class ShippingContext implements ShippingContextInterface
     }
 
     /**
-     * @param string $currency
+     * @param string|null $currency
      * @return $this
      */
-    public function setCurrency($currency)
+    public function setCurrency($currency = null)
     {
         $this->currency = $currency;
 

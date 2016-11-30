@@ -1,7 +1,2 @@
-{% spaceless %}
-    {% set methodConfigs = record.getValue('methodConfigs').toArray() %}
-
-    {% for methodConfig in methodConfigs %}
-        {{ methodConfig.method }}
-    {% endfor %}
-{% endspaceless %}
+{% import 'OroShippingBundle:ShippingRule:macros.html.twig' as ShipRuleMacro %}
+{{ ShipRuleMacro.renderShippingMethodsConfigs(record.getValue('methodConfigs').toArray(), record.getValue('currency'))}}

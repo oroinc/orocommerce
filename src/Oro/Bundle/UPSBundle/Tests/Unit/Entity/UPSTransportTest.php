@@ -3,6 +3,7 @@
 namespace Oro\Bundle\UPSBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
@@ -23,10 +24,12 @@ class UPSTransportTest extends \PHPUnit_Framework_TestCase
             ['apiKey', 'some string'],
             ['shippingAccountNumber', 'some string'],
             ['shippingAccountName', 'some string'],
-            ['country', new Country('US')]
+            ['country', new Country('US')],
+            ['invalidateCacheAt', new \DateTime('2020-01-01')],
         ]);
         static::assertPropertyCollections(new UPSTransport(), [
             ['applicableShippingServices', new ShippingService()],
+            ['labels', new LocalizedFallbackValue()],
         ]);
     }
 
@@ -44,24 +47,33 @@ class UPSTransportTest extends \PHPUnit_Framework_TestCase
                 'pickupType' => '01',
                 'unitOfWeight' => 'LPS',
                 'country' => new Country('US'),
-                'applicableShippingServices' => [new ShippingService()]
+                'invalidate_cache_at' => new \DateTime('2020-01-01'),
+                'applicableShippingServices' => [new ShippingService()],
+                'labels' => [(new LocalizedFallbackValue())->setString('UPS')],
             ]
         );
 
         /** @var ParameterBag $result */
         $result = $entity->getSettingsBag();
-        static::assertEquals($result->get('base_url'), 'some url');
-        static::assertEquals($result->get('api_user'), 'some user');
-        static::assertEquals($result->get('api_password'), 'some password');
-        static::assertEquals($result->get('api_key'), 'some key');
-        static::assertEquals($result->get('shipping_account_number'), 'some number');
-        static::assertEquals($result->get('shipping_account_name'), 'some name');
-        static::assertEquals($result->get('pickup_type'), '01');
-        static::assertEquals($result->get('unit_of_weight'), 'LPS');
-        static::assertEquals($result->get('country'), new Country('US'));
+
+        static::assertEquals('some url', $result->get('base_url'));
+        static::assertEquals('some user', $result->get('api_user'));
+        static::assertEquals('some password', $result->get('api_password'));
+        static::assertEquals('some key', $result->get('api_key'));
+        static::assertEquals('some number', $result->get('shipping_account_number'));
+        static::assertEquals('some name', $result->get('shipping_account_name'));
+        static::assertEquals('01', $result->get('pickup_type'));
+        static::assertEquals('LPS', $result->get('unit_of_weight'));
+        static::assertEquals(new Country('US'), $result->get('country'));
+        static::assertEquals(new \DateTime('2020-01-01'), $result->get('invalidate_cache_at'));
+
         static::assertEquals(
             $result->get('applicable_shipping_services'),
             $entity->getApplicableShippingServices()->toArray()
+        );
+        static::assertEquals(
+            $result->get('labels'),
+            $entity->getLabels()->toArray()
         );
     }
 }

@@ -10,6 +10,9 @@ use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry;
 use Oro\Bundle\PaymentBundle\Provider\PaymentContextProvider;
 use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class PaymentMethodsProviderTest extends \PHPUnit_Framework_TestCase
 {
     const METHOD = 'Method';

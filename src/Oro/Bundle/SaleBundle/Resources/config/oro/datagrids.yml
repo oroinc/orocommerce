@@ -301,8 +301,7 @@ datagrids:
                     data_name: quote.createdAt
                 validUntil:
                     data_name: quote.validUntil
-            default:
-                id: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+            disable_default_sorting: true
         filters:
             columns:
                 qid:
@@ -313,7 +312,7 @@ datagrids:
                     data_name: quote.accountUser
                     options:
                         field_options:
-                            class:      %oro_account.entity.account_user.class%
+                            class:      %oro_customer.entity.account_user.class%
                             multiple:   false
                 poNumber:
                     type:      string

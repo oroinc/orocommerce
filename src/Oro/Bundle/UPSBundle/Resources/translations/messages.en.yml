@@ -4,6 +4,7 @@ oro:
             label: UPS
         transport:
             label: UPS API
+            labels.label: Label
             base_url.label: Base URL
             api_user.label: API User
             api_password.label: API Password
@@ -33,3 +34,11 @@ oro:
         form:
             shipping_method_config_options:
                 surcharge.label: Surcharge
+            invalidate_cache_at.label: Invalidate cache at
+            invalidate_cache.label: Invalidate cache
+            invalidate_cache.action.cancel: Cancel
+            invalidate_cache.action.invalidate_now: Invalidate Now
+            invalidate_cache.action.save: Save
+            invalidate_cache.flash.invalidate_success: Cache was successfully invalidated
+            invalidate_cache.flash.save_success: Cache setting was successfully saved
+            set_date_and_time_for_cache_invalidation: Set date and time for cache invalidation:

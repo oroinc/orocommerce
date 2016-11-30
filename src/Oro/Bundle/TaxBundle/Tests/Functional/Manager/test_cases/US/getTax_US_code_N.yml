@@ -2,7 +2,7 @@ method: getTax
 reference: simple_order
 configuration: { use_as_base_by_default: destination }
 databaseBefore:
-    'Oro\Bundle\AccountBundle\Entity\Account':
+    'Oro\Bundle\CustomerBundle\Entity\Account':
         account.TAX3:
             name: { property_value: account.TAX3 }
     'Oro\Bundle\OrderBundle\Entity\Order':

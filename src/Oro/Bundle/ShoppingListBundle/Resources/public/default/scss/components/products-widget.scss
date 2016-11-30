@@ -3,31 +3,29 @@
   &.product-item__qty_no-image-view {
     .product-item__qty__current-grid {
       float: left;
-      width: calc(50% - .5rem);
+      width: calc(50% - 5px);
 
       + .add-product-from-view-component {
         float: left;
-        width: calc(50% - .5rem);
-        margin-left: 1rem;
+        width: calc(50% - 5px);
+        margin-left: 10px;
 
         .btn-group,
         .btn_has-dropdown {
           margin-top: 0;
           min-height: inherit;
-          height: 4.3rem;
+          height: 43px;
           min-width: inherit;
 
           a {
-            line-height: 4.2rem;
+            line-height: 42px;
           }
 
           .direct-link {
-            line-height: 4.2rem;
+            @include direct-link();
+
+            line-height: 42px;
             height: 100%;
-            padding: 0 1rem;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-            overflow: hidden;
           }
         }
       }
@@ -37,27 +35,23 @@
       width: 60%;
 
       + .line_item_form_fields__form__row {
-        width: calc(40% - 1rem);
-        margin-right: 1rem;
-        max-width: 5rem;
+        width: calc(40% - 10px);
+        margin-right: 10px;
+        max-width: 50px;
       }
     }
   }
 
   .line_item_form_fields__form__row {
     float: right;
-    width: calc(50% - .5rem);
+    width: calc(50% - 5px);
 
     + .line_item_form_fields__form__row {
-      margin-right: 1rem;
+      margin-right: 10px;
     }
 
     label {
       display: none;
-    }
-
-    .line_item_form_fields__form__input {
-      margin: 0 !important;
     }
   }
 
@@ -68,8 +62,9 @@
       .btn-group,
       .btn_has-dropdown {
         width: 100%;
+
         a {
-          font-size: 1.4rem !important;
+          font-size: $base-font-size !important;
         }
       }
     }

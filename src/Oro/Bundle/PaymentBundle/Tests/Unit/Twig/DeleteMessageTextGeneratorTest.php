@@ -123,7 +123,7 @@ class DeleteMessageTextGeneratorTest extends \PHPUnit_Framework_TestCase
                 $paymentTermId,
                 $accountGroupFilterUrl,
                 DeleteMessageTextGenerator::ACCOUNT_GROUP_GRID_NAME,
-                'oro.account.accountgroup.entity_label'
+                'oro.customer.accountgroup.entity_label'
             );
         } else {
             $this->assertNull($message['accountGroupFilterUrl']);
@@ -135,7 +135,7 @@ class DeleteMessageTextGeneratorTest extends \PHPUnit_Framework_TestCase
                 $paymentTermId,
                 $accountFilterUrl,
                 DeleteMessageTextGenerator::ACCOUNT_GRID_NAME,
-                'oro.account.entity_label'
+                'oro.customer.account.entity_label'
             );
         } else {
             $this->assertNull($message['accountFilterUrl']);

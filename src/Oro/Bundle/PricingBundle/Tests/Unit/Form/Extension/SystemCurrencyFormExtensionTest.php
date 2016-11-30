@@ -7,7 +7,7 @@ use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Bundle\FrameworkBundle\Translation\Translator;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\LocaleBundle\Form\Type\CurrencyType;
+use Oro\Bundle\CurrencyBundle\Form\Type\CurrencyType;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\PricingBundle\Form\Extension\SystemCurrencyFormExtension;
 

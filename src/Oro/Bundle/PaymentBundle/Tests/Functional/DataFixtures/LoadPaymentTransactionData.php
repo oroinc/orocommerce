@@ -7,7 +7,7 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PaymentBundle\Method\PaymentTerm;
@@ -23,7 +23,7 @@ class LoadPaymentTransactionData extends AbstractFixture implements DependentFix
     /** {@inheritdoc} */
     public function getDependencies()
     {
-        return ['Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData'];
+        return ['Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData'];
     }
 
     /**

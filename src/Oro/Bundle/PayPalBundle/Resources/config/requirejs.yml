@@ -1,6 +1,6 @@
 config:
     paths:
-        'oropaypal/js/lib/jquery-credit-card-validator': 'bundles/oropaypal/js/lib/jquery.creditCardValidator.js'
+        'oropaypal/js/lib/jquery-credit-card-validator': 'bundles/bowerassets/jquery-creditcardvalidator/jquery.creditCardValidator.js'
         'oropaypal/js/app/components/credit-card-component': 'bundles/oropaypal/js/app/components/credit-card-component.js'
         'oropaypal/js/app/components/authorized-credit-card-component': 'bundles/oropaypal/js/app/components/authorized-credit-card-component.js'
         'oropaypal/js/app/components/payflow-express-checkout-component': 'bundles/oropaypal/js/app/components/payflow-express-checkout-component.js'

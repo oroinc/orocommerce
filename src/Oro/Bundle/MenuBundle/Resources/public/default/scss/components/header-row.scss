@@ -1,0 +1,112 @@
+// @theme: default
+
+.header-row {
+    display: flex;
+
+    max-width: $site-width;
+    margin: 0 auto;
+
+    justify-content: space-between;
+
+    &__container {
+        flex-basis: 210px;
+
+        &--unstack {
+            flex-grow: 4;
+        }
+    }
+
+    &__trigger {
+        border-right: 1px solid get-color('additional', 'ultra');
+
+        &.active,
+        &:hover {
+            & + .header-row__toggle,
+            .header-row__toggle {
+                display: block;
+            }
+        }
+    }
+}
+
+@include breakpoint('tablet') {
+    .shown-on-desktop {
+        display: none !important;
+    }
+}
+
+@include breakpoint('desktop') {
+    %hidden-on-desktop {
+        &.hidden-on-desktop {
+            display: none !important;
+        }
+    }
+
+    .header-row {
+        &__container {
+            @extend %hidden-on-desktop;
+        }
+
+        &__trigger {
+            @extend %hidden-on-desktop;
+
+            padding: 0;
+        }
+
+        &__toggle {
+            @extend %hidden-on-desktop;
+        }
+    }
+}
+
+@include breakpoint('tablet') {
+    .header-row {
+        &__container {
+            position: static;
+
+            flex-grow: 1;
+            flex-basis: auto;
+
+            &--unstack {
+                flex-grow: 1;
+            }
+        }
+
+        &__toggle {
+            display: block;
+
+            position: absolute;
+            z-index: 9;
+            right: 0;
+            left: 0;
+
+            visibility: hidden;
+            overflow-y: auto;
+
+            transition: opacity .2s, visibility .2s;
+
+            box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .3);
+            opacity: 0;
+        }
+
+        &__dropdown {
+            min-width: 260px;
+
+            border: 1px solid get-color(additional, 'light');
+            background: get-color('additional', 'ultra');
+
+        }
+
+        &--fixed {
+            margin: 0;
+        }
+
+        & .main-menu__sublist-container {
+            width: auto;
+        }
+
+        & .main-menu__sublist {
+            display: block;
+        }
+    }
+}

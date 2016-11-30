@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\CurrencyBundle\Config\CurrencyConfigManager;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
@@ -23,8 +24,8 @@ use Oro\Bundle\PricingBundle\Form\Type\PriceRuleType;
 
 class PriceListTypeTest extends FormIntegrationTestCase
 {
-    const ACCOUNT_CLASS = 'Oro\Bundle\AccountBundle\Entity\Account';
-    const ACCOUNT_GROUP_CLASS = 'Oro\Bundle\AccountBundle\Entity\AccountGroup';
+    const ACCOUNT_CLASS = 'Oro\Bundle\CustomerBundle\Entity\Account';
+    const ACCOUNT_GROUP_CLASS = 'Oro\Bundle\CustomerBundle\Entity\AccountGroup';
     const WEBSITE_CLASS = 'Oro\Bundle\WebsiteBundle\Entity\Website';
 
     /**
@@ -57,11 +58,20 @@ class PriceListTypeTest extends FormIntegrationTestCase
     {
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|ConfigManager $configManager */
-        $configManager = $this->getMockBuilder(ConfigManager::class)->disableOriginalConstructor()->getMock();
-        $configManager->method('get')->willReturn(['USD', 'EUR']);
+        $configManager = $this->getMockBuilder(CurrencyConfigManager::class)->disableOriginalConstructor()->getMock();
+        $configManager->method('getCurrencyList')->willReturn(['USD', 'EUR']);
+        $configManager->method('getDefaultCurrency')->willReturn('USD');
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|LocaleSettings $localeSettings */
         $localeSettings = $this->getMockBuilder(LocaleSettings::class)->disableOriginalConstructor()->getMock();
+
+        /** @var \PHPUnit_Framework_MockObject_MockObject|\Oro\Bundle\CurrencyBundle\Utils\CurrencyNameHelper */
+        $currencyNameHelper = $this
+            ->getMockBuilder('Oro\Bundle\CurrencyBundle\Utils\CurrencyNameHelper')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+
         $currencySelectType = new CurrencySelectionTypeStub();
         $entityIdentifierType = new EntityIdentifierType(
             [
@@ -82,7 +92,11 @@ class PriceListTypeTest extends FormIntegrationTestCase
                     CollectionType::NAME => new CollectionType(),
                     PriceListScheduleType::NAME => new PriceListScheduleType(new PropertyAccessor()),
                     OroDateTimeType::NAME => new OroDateTimeType(),
-                    CurrencySelectionType::NAME => new CurrencySelectionType($configManager, $localeSettings),
+                    CurrencySelectionType::NAME => new CurrencySelectionType(
+                        $configManager,
+                        $localeSettings,
+                        $currencyNameHelper
+                    ),
                     'entity' => new EntityType(['item' => (new ProductUnit())->setCode('item')]),
                     PriceRuleType::NAME => new PriceRuleType()
                 ],

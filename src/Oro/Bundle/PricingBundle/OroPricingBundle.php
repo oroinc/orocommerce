@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\PricingBundle;
 
-use Symfony\Component\HttpKernel\Bundle\Bundle;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-
-use Oro\Bundle\PricingBundle\DependencyInjection\OroPricingExtension;
+use Oro\Bundle\PricingBundle\DependencyInjection\CompilerPass\ProductExpressionServicesPass;
 use Oro\Bundle\PricingBundle\DependencyInjection\CompilerPass\SubtotalProviderPass;
+use Oro\Bundle\PricingBundle\DependencyInjection\OroPricingExtension;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class OroPricingBundle extends Bundle
 {
@@ -30,5 +30,6 @@ class OroPricingBundle extends Bundle
         parent::build($container);
 
         $container->addCompilerPass(new SubtotalProviderPass());
+        $container->addCompilerPass(new ProductExpressionServicesPass());
     }
 }

@@ -5,9 +5,10 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\Form\EventSubscriber;
 use Genemu\Bundle\FormBundle\Form\JQuery\Type\Select2Type;
 use Oro\Bundle\AddressBundle\Form\Type\CountryType;
 use Oro\Bundle\AddressBundle\Form\Type\RegionType;
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\CurrencyBundle\Config\CurrencyConfigManager;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\CurrencyBundle\Utils\CurrencyNameHelper;
 use Oro\Bundle\FormBundle\Form\Extension\AdditionalAttrExtension;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
@@ -196,9 +197,9 @@ class RuleMethodConfigSubscriberTest extends FormIntegrationTestCase
             ->method('getRoundType')
             ->willReturn(RoundingServiceInterface::ROUND_HALF_UP);
 
-        $configManager = $this->getMockBuilder(ConfigManager::class)->disableOriginalConstructor()->getMock();
+        $configManager = $this->getMockBuilder(CurrencyConfigManager::class)->disableOriginalConstructor()->getMock();
         $configManager->expects($this->any())
-            ->method('get')
+            ->method('getCurrencyList')
             ->willReturn(['USD']);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|TranslatableEntityType $registry */
@@ -228,7 +229,8 @@ class RuleMethodConfigSubscriberTest extends FormIntegrationTestCase
                         new ShippingRuleMethodTypeConfigCollectionType($this->ruleMethodTypeConfigCollectionSubscriber),
                     CurrencySelectionType::NAME => new CurrencySelectionType(
                         $configManager,
-                        $this->getMockBuilder(LocaleSettings::class)->disableOriginalConstructor()->getMock()
+                        $this->getMockBuilder(LocaleSettings::class)->disableOriginalConstructor()->getMock(),
+                        $this->getMockBuilder(CurrencyNameHelper::class)->disableOriginalConstructor()->getMock()
                     ),
                     CollectionType::NAME => new CollectionType(),
                     ShippingRuleDestinationType::NAME => new ShippingRuleDestinationType(

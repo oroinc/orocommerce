@@ -2,7 +2,6 @@ config:
     paths:
         'oropricing/js/app/components/price-list-currency-limitations-component': 'bundles/oropricing/js/app/components/price-list-currency-limitations-component.js'
         'oropricing/js/app/components/product-unit-precision-limitations-component': 'bundles/oropricing/js/app/components/product-unit-precision-limitations-component.js'
-        'oropricing/js/app/components/product-prices-component': 'bundles/oropricing/js/app/components/product-prices-component.js'
         'oropricing/js/app/components/products-prices-component': 'bundles/oropricing/js/app/components/products-prices-component.js'
         'oropricing/js/app/components/price-lists-errors-handler': 'bundles/oropricing/js/app/components/price-lists-errors-handler.js'
         'oropricing/js/app/components/totals-component': 'bundles/oropricing/js/app/components/totals-component.js'
@@ -18,6 +17,8 @@ config:
         'oropricing/js/validator/unique-product-prices': 'bundles/oropricing/js/validator/unique-product-prices.js'
 
         'oropricing/js/app/views/base-product-prices-view': 'bundles/oropricing/js/app/views/base-product-prices-view.js'
+        'oropricing/js/app/views/line-item-product-prices-view': 'bundles/oropricing/js/app/views/line-item-product-prices-view.js'
+        'oropricing/js/app/views/product-prices-editable-view': 'bundles/oropricing/js/app/views/product-prices-editable-view.js'
         'oropricing/js/app/views/price-list-schedule-view': 'bundles/oropricing/js/app/views/price-list-schedule-view.js'
         'oropricing/js/app/views/abstract-switcher': 'bundles/oropricing/js/app/views/abstract-switcher.js'
         'oropricing/js/app/views/quantity-switcher': 'bundles/oropricing/js/app/views/quantity-switcher.js'

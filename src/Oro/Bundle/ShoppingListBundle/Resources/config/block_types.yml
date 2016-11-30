@@ -25,7 +25,7 @@ services:
     oro_shopping_list.layout.type.shopping_lists_awere_container:
         parent: oro_layout.block_type.abstract_configurable_container
         calls:
-            - [setOptionsConfig, [{shoppingLists: {required: true}}]]
+            - [setOptionsConfig, [{shoppingLists: {required: true}, shoppingListProducts: {default: []}}]]
             - [setName, ['shopping_lists_awere_container']]
         tags:
              - { name: layout.block_type, alias: shopping_lists_awere_container }

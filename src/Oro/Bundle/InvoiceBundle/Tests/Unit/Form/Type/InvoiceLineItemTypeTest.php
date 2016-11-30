@@ -8,7 +8,7 @@ use Symfony\Component\Form\PreloadedExtension;
 
 use Oro\Bundle\CurrencyBundle\Tests\Unit\Form\Type\PriceTypeGenerator;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\CurrencyBundle\Rounding\PriceRoundingService;
+use Oro\Bundle\PricingBundle\Rounding\PriceRoundingService;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Bundle\InvoiceBundle\Entity\InvoiceLineItem;
 use Oro\Bundle\InvoiceBundle\Form\Type\InvoiceLineItemType;
@@ -80,7 +80,7 @@ class InvoiceLineItemTypeTest extends FormIntegrationTestCase
             ->will($this->returnValue($repository));
 
         /** @var PriceRoundingService $roundingService */
-        $roundingService = $this->getMockBuilder('Oro\Bundle\CurrencyBundle\Rounding\PriceRoundingService')
+        $roundingService = $this->getMockBuilder('Oro\Bundle\PricingBundle\Rounding\PriceRoundingService')
             ->disableOriginalConstructor()
             ->getMock();
 

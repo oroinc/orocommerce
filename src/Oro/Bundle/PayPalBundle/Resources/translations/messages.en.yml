@@ -41,7 +41,7 @@ oro:
                     label: 'Zero Amount Authorization'
                     tooltip: |
                         If enabled it provides additional convenience to your customers, so that they do not need to re-enter credit card details every time they return back to checkout.
-                        Please note that zero dollar authorizations are subject to the transaction fees.
+                        Please note that zero amount authorizations are subject to the transaction fees.
                 authorization_for_required_amount.label: 'Authorization For Required Amount'
 
         result:
@@ -51,7 +51,7 @@ oro:
         credit_card:
             card_number.label: Credit Card Number
             expiration_date.label: Expiration Date
-            cvv2.label: Credit Card Verification Number
+            cvv2.label: CVV
             save_for_later.label: Save this card for later use
 
         payflow:
@@ -62,11 +62,9 @@ oro:
         payflow_express_checkout:
             redirect_to_paypal: 'You will be redirected to PayPal website to complete your purchase after the order review step.'
 
-oro:
     payment:
         admin:
             paypal_payments_pro.label: 'PayPal Payments Pro'
             payflow_gateway.label: 'Payflow Gateway'
             payflow_express_checkout.label: 'Payflow Express Checkout'
             paypal_payments_pro_express_checkout.label: 'PayPal Payments Pro Express Checkout'
-

@@ -124,13 +124,12 @@
                 {{ form_widget(form.commentAccount) }}
             </div>
         {% endif %}
-        <a class="btn quote-lineitem-notes-add-btn" href="#">{{ 'oro.sale.btn.add_seller_notes'|trans }}</a>
-        <div class="quote-lineitem-notes quote-lineitem-notes-seller ">
+        <div class="quote-lineitem-notes-seller-active">
             {{ form_label(form.comment) }}
-            {{ form_widget(form.comment) }}
-            <a class="btn quote-lineitem-notes-remove-btn" href="#">
-                {{ 'oro.sale.btn.remove_seller_notes'|trans }}
-            </a>
+            <div data-page-component-module="oroorder/js/app/components/notes-component">
+                {{ form_widget(form.comment) }}
+                {{ form_errors(form.comment) }}
+            </div>
         </div>
     </td>
 {% endblock %}
@@ -237,7 +236,7 @@
         {{ form_errors(form.quantity) }}
     </td>
     <td class="quote-lineitem-offers-unit">
-        {{ form_widget(form.productUnit, {attr: attr|merge({class: 'quote-lineitem-offer-unit-select'})}) }}
+        {{ form_widget(form.productUnit, {attr: form.productUnit.vars.attr|merge({class: 'quote-lineitem-offer-unit-select'})}) }}
         {{ form_errors(form.productUnit) }}
     </td>
     <td class="quote-lineitem-offers-more">
@@ -253,7 +252,11 @@
         {{ form_widget(form.priceType) }}
         {{ form_errors(form.priceType) }}
     </td>
-    <td class="quote-lineitem-offers-price">
+    <td class="quote-lineitem-offers-price"
+        data-page-component-module="oroui/js/app/components/view-component"
+        data-page-component-options="{{ {
+            view: 'oropricing/js/app/views/line-item-product-prices-view'
+        }|json_encode }}">
         {{ form_widget(form.price) }}
         {{ form_errors(form.price) }}
     </td>

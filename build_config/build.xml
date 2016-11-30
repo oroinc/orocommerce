@@ -571,7 +571,7 @@
     <target name="run-phpcpd">
         <exec dir="${basedir}" executable="phpcpd" failonerror="true">
             <arg line="--min-lines 25 --log-pmd ${reportdir}/phpcpd.xml --verbose"/>
-            <arg line="--exclude=AccountBundle/Migrations/Schema"/>
+            <arg line="--exclude=CustomerBundle/Migrations/Schema"/>
             <arg line="--exclude=PaymentBundle/Migrations/Schema"/>
             <arg line="--exclude=PayPalBundle/Migrations/Schema"/>
             <arg line="--exclude=PricingBundle/Migrations/Schema"/>

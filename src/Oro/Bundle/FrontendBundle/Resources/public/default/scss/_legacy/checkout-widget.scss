@@ -28,9 +28,9 @@
 
       width: 100%;
       padding: 0 15px 10px 15px;
-      box-shadow: 0 -1px 0 0 $theme-lighter-gray-color;
+      box-shadow: 0 -1px 0 0 get-color('additional', 'light');
 
-      background: $theme-lightest-gray-color;
+      background: get-color('additional', 'base');
 
       .order-checkout-widget__table {
         width: 100%;
@@ -66,11 +66,7 @@
     padding: 15px;
     border-radius: .3rem;
 
-    background: $theme-lightest-gray-color;
-
-    @media (max-width: $screen-md) {
-      float: none;
-    }
+    background: get-color('additional', 'base');
 
     + .order-checkout-widget__container {
       margin-top: 4px;
@@ -104,8 +100,8 @@
     }
 
     &_error {
-      background: $theme-error-bg-color;
-      color: $theme-error-font-color;
+      background: get-color('ui', 'error');
+      color: get-color('ui', 'error-dark');
       text-align: left;
     }
   }

@@ -6,6 +6,12 @@ use Genemu\Bundle\FormBundle\Form\JQuery\Type\Select2Type;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\IntegrationBundle\Provider\TransportInterface;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\LocaleBundle\Form\Type\LocalizationCollectionType;
+use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
+use Oro\Bundle\LocaleBundle\Form\Type\LocalizedPropertyType;
+use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizationCollectionTypeStub;
+use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
 use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
 use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
@@ -46,6 +52,11 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
      */
     protected $formType;
 
+    /**
+     * @var SymmetricCrypterInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $symmetricCrypter;
+
     protected function setUp()
     {
         /** @var ShippingOriginProvider|\PHPUnit_Framework_MockObject_MockObject $shippingOriginProvider */
@@ -62,10 +73,15 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->symmetricCrypter = $this
+            ->getMockBuilder(SymmetricCrypterInterface::class)
+            ->getMock();
+
         $this->formType = new UPSTransportSettingsType(
             $this->transport,
             $this->shippingOriginProvider,
-            $this->doctrineHelper
+            $this->doctrineHelper,
+            $this->symmetricCrypter
         );
 
         parent::setUp();
@@ -135,12 +151,19 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
             ],
             'entity'
         );
+        $registry = $this->getMockBuilder('Doctrine\Common\Persistence\ManagerRegistry')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $localizedFallbackValue = new LocalizedFallbackValueCollectionType($registry);
         return [
             new PreloadedExtension(
                 [
                     'entity' => $entityType,
                     'genemu_jqueryselect2_translatable_entity' => new Select2Type('translatable_entity'),
                     'translatable_entity' => $translatableEntity,
+                    LocalizedPropertyType::class => new LocalizedPropertyType(),
+                    LocalizationCollectionType::class => new LocalizationCollectionTypeStub(),
+                    LocalizedFallbackValueCollectionType::class => $localizedFallbackValue,
                 ],
                 []
             ),
@@ -161,6 +184,14 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
         $isValid,
         UPSTransport $expectedData
     ) {
+        if (count($submittedData) > 0) {
+            $this->symmetricCrypter
+                ->expects($this->once())
+                ->method('encryptData')
+                ->with($submittedData['apiPassword'])
+                ->willReturn($submittedData['apiPassword']);
+        }
+
         $shippingOrigin = new ShippingOrigin(
             [
                 'country' => 'US',
@@ -226,12 +257,16 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
             'service without value' => [
                 'defaultData' => new UPSTransport(),
                 'submittedData' => [],
-                'isValid' => true,
+                'isValid' => false,
                 'expectedData' => (new UPSTransport())
+                    ->addLabel(new LocalizedFallbackValue())
             ],
             'service with value' => [
                 'defaultData' => new UPSTransport(),
                 'submittedData' => [
+                    'labels' => [
+                        'values' => [ 'default' => 'first label'],
+                    ],
                     'baseUrl' => 'http://ups.com',
                     'apiUser' => 'user',
                     'apiPassword' => 'password',
@@ -255,6 +290,7 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
                     ->setUnitOfWeight('KGS')
                     ->setCountry(new Country('US'))
                     ->addApplicableShippingService($expectedShippingService)
+                    ->addLabel((new LocalizedFallbackValue())->setString('first label'))
             ]
         ];
     }

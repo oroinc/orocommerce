@@ -20,11 +20,13 @@ class LineItemsTest extends AbstractOptionTest
                 'L_DESC%d' => 'description',
                 'L_COST%d' => 10,
                 'L_QTY%d' => 5,
+                'L_TAXAMT%d' => 0.35,
             ],            [
                 'L_NAME%d' => 'name1',
                 'L_DESC%d' => 'description1',
                 'L_COST%d' => 10,
                 'L_QTY%d' => 7,
+                'L_TAXAMT%d' => 0.75,
             ],
         ]);
 
@@ -33,11 +35,14 @@ class LineItemsTest extends AbstractOptionTest
                 'L_DESC1' => 'description',
                 'L_COST1' => 10,
                 'L_QTY1' => 5,
+                'L_TAXAMT1' => 0.35,
                 'L_NAME2' => 'name1',
                 'L_DESC2' => 'description1',
                 'L_COST2' => 10,
                 'L_QTY2' => 7,
-                'ITEMAMT' => (5 * 10) + (7 * 10)
+                'L_TAXAMT2' => 0.75,
+                'ITEMAMT' => 120, // (5 * 10) + (7 * 10)
+                'TAXAMT' => 7 // (5 * 0.35) + (7 * 0.75)
         ], $result);
     }
 
@@ -119,12 +124,14 @@ class LineItemsTest extends AbstractOptionTest
                     'L_DESC1' => 'Description',
                     'L_COST1' => 10.5,
                     'L_QTY1' => 10,
+                    'L_TAXAMT1' => 1.1,
                 ],
                 [
                     'L_NAME1' => 'ProductName',
                     'L_DESC1' => 'Description',
                     'L_COST1' => '10.50',
                     'L_QTY1' => 10,
+                    'L_TAXAMT1' => '1.10',
                 ],
             ],
         ];

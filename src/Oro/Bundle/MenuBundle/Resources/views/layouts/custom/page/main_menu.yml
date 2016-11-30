@@ -19,7 +19,7 @@ layout:
                 sidebar_main_menu_container:
                     blockType: container
             tree:
-                sidebar_left:
+                page_sidebar:
                     sidebar_quick_access_menu_container: ~
                     sidebar_product_categories_container: ~
                     sidebar_main_menu_container: ~
@@ -33,7 +33,5 @@ layout:
             id: quick_access_menu
             parentId: sidebar_quick_access_menu_container
         - '@move':
-            id: main_menu_shopping_lists_wrapper
+            id: header_row
             parentId: quick_access_container
-        - '@remove':
-            id: main_menu_container

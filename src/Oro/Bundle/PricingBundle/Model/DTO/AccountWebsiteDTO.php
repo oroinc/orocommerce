@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Model\DTO;
 
-use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class AccountWebsiteDTO

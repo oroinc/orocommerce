@@ -41,6 +41,5 @@ class FrontendControllerTest extends WebTestCase
         $this->assertContains('list-slider-component', $content);
         $this->assertContains('Featured Products', $content);
         $this->assertContains('Top Selling Items', $content);
-
     }
 }

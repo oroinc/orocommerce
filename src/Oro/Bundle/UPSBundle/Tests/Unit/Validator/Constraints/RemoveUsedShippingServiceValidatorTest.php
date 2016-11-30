@@ -14,11 +14,14 @@ use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 use Oro\Bundle\UPSBundle\Method\UPSShippingMethod;
 use Oro\Bundle\UPSBundle\Validator\Constraints\RemoveUsedShippingService;
 use Oro\Bundle\UPSBundle\Validator\Constraints\RemoveUsedShippingServiceValidator;
+use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class RemoveUsedShippingServiceValidatorTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTrait;
+    
     /**
      * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -84,7 +87,7 @@ class RemoveUsedShippingServiceValidatorTest extends \PHPUnit_Framework_TestCase
         $country = new Country('US');
         $transport = (new UPSTransport())->setCountry($country);
         $transportForm = $this->createForm($transport, 'upstransport');
-        $channel = (new Channel())->setName('UPS1');
+        $channel = $this->getEntity(Channel::class, ['id' => 1]);
         $channelForm = $this->createForm($channel, 'upstransport');
         
         $transportForm->expects(static::once())
@@ -102,16 +105,10 @@ class RemoveUsedShippingServiceValidatorTest extends \PHPUnit_Framework_TestCase
             ->getMockBuilder(UPSShippingMethod::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $upsShippingMethod->expects(static::once())
-            ->method('getLabel')
-            ->willReturn('UPS1');
-        $upsShippingMethod->expects(static::once())
-            ->method('getIdentifier')
-            ->willReturn('ups_1');
 
         $this->registry->expects(static::once())
-            ->method('getShippingMethods')
-            ->willReturn([$upsShippingMethod]);
+            ->method('getShippingMethod')
+            ->willReturn($upsShippingMethod);
 
         $repository1 = $this
             ->getMockBuilder('Doctrine\ORM\EntityRepository')

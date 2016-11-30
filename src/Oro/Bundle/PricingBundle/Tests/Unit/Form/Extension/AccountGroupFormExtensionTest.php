@@ -14,7 +14,7 @@ use Oro\Bundle\PricingBundle\EventListener\AbstractPriceListCollectionAwareListe
 use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectWithPriorityType;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\PriceListSelectTypeStub;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
-use Oro\Bundle\AccountBundle\Form\Type\AccountGroupType;
+use Oro\Bundle\CustomerBundle\Form\Type\AccountGroupType;
 use Oro\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
 use Oro\Bundle\PricingBundle\EventListener\AccountGroupListener;
 use Oro\Bundle\PricingBundle\Form\Extension\AccountGroupFormExtension;

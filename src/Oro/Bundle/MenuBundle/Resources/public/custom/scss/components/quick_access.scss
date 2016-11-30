@@ -1,14 +1,18 @@
+//Badge sizes
+$badge-sm-xs: 20px;
+$badge-sm: 26px;
+
 .sidebar__quick-access {
   margin-top: 3px;
 
-  background: $theme-slight-lightest-gray-color;
+  background: get-color('additional', 'base');
 
   &:first-child {
     margin-top: 0;
   }
 
   .quick-access__list {
-    padding: 30px 15px 10px 30px; //override default theme styles
+    padding: 25px 15px 10px 30px; //override default theme styles
 
     text-align: left; //override default theme styles
   }

@@ -3,7 +3,7 @@
 namespace Oro\Bundle\FrontendBundle\Helper;
 
 use Oro\Bundle\ActionBundle\Helper\ApplicationsHelper;
-use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 
 class ActionApplicationsHelper extends ApplicationsHelper
 {

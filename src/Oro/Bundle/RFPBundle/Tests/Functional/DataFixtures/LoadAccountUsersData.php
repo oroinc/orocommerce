@@ -8,10 +8,10 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use Oro\Bundle\UserBundle\Entity\BaseUserManager;
-use Oro\Bundle\AccountBundle\Entity\AccountUser;
-use Oro\Bundle\AccountBundle\Entity\AccountUserRole;
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Entity\Repository\AccountUserRoleRepository;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\AccountUserRole;
+use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Repository\AccountUserRoleRepository;
 
 class LoadAccountUsersData extends AbstractFixture implements DependentFixtureInterface
 {
@@ -41,7 +41,7 @@ class LoadAccountUsersData extends AbstractFixture implements DependentFixtureIn
     public function getDependencies()
     {
         return [
-            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts'
+            'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccounts'
         ];
     }
 
@@ -102,8 +102,8 @@ class LoadAccountUsersData extends AbstractFixture implements DependentFixtureIn
         /* @var $accountUserRoleRepository AccountUserRoleRepository */
         $accountUserRoleRepository =  $this->container
             ->get('doctrine')
-            ->getManagerForClass('OroAccountBundle:AccountUserRole')
-            ->getRepository('OroAccountBundle:AccountUserRole');
+            ->getManagerForClass('OroCustomerBundle:AccountUserRole')
+            ->getRepository('OroCustomerBundle:AccountUserRole');
 
         foreach ($this->users as $user) {
             if ($userManager->findUserByUsernameOrEmail($user['email'])) {

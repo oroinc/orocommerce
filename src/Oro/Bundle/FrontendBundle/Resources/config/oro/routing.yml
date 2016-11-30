@@ -4,22 +4,32 @@ oro_frontend:
     options:
         frontend: true
 
+oro_frontend_datagrid:
+    resource:     "@OroFrontendBundle/Controller/GridController.php"
+    type:         annotation
+    options:
+        frontend: true
+
 oro_installer:
     resource: "@OroInstallerBundle/Resources/config/oro/routing.yml"
+    options:
+        frontend: true
+
+oro_frontend_dictionary_search:
+    path: /dictionary/{dictionary}/search
+    defaults: { _controller: OroEntityBundle:Dictionary:search }
+    options:
+        frontend: true
+
+oro_frontend_dictionary_value:
+    path: /dictionary/{dictionary}/values
+    defaults: { _controller: OroEntityBundle:Dictionary:values }
     options:
         frontend: true
 
 oro_frontend_datagrid_index:
     path: /datagrid/{gridName}
     defaults: { _controller: OroDataGridBundle:Grid:get }
-    requirements:
-        gridName: '[\w\:-]+'
-    options:
-        frontend: true
-
-oro_frontend_datagrid_widget:
-    path: /datagrid/widget/{gridName}
-    defaults: { _controller: OroDataGridBundle:Grid:widget }
     requirements:
         gridName: '[\w\:-]+'
     options:

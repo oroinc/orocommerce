@@ -4,14 +4,17 @@ namespace Oro\Bundle\UPSBundle\Factory;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
+use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
 use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
 use Oro\Bundle\ShippingBundle\Model\Weight;
+use Oro\Bundle\ShippingBundle\Provider\MeasureUnitConversion;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 use Oro\Bundle\UPSBundle\Model\Package;
 use Oro\Bundle\UPSBundle\Model\PriceRequest;
+use Oro\Bundle\UPSBundle\Provider\UnitsMapper;
 
 class PriceRequestFactory
 {
@@ -21,13 +24,33 @@ class PriceRequestFactory
     /** @var ManagerRegistry */
     protected $registry;
 
+    /** @var MeasureUnitConversion */
+    protected $measureUnitConversion;
+
+    /** @var UnitsMapper */
+    protected $unitsMapper;
+
+    /** @var SymmetricCrypterInterface */
+    protected $symmetricCrypter;
+
     /**
-     * @param ManagerRegistry $registry
+     * PriceRequestFactory constructor.
+     *
+     * @param ManagerRegistry           $registry
+     * @param MeasureUnitConversion     $measureUnitConversion
+     * @param UnitsMapper               $unitsMapper
+     * @param SymmetricCrypterInterface $symmetricCrypter
      */
     public function __construct(
-        ManagerRegistry $registry
+        ManagerRegistry $registry,
+        MeasureUnitConversion $measureUnitConversion,
+        UnitsMapper $unitsMapper,
+        SymmetricCrypterInterface $symmetricCrypter
     ) {
         $this->registry = $registry;
+        $this->measureUnitConversion = $measureUnitConversion;
+        $this->unitsMapper = $unitsMapper;
+        $this->symmetricCrypter = $symmetricCrypter;
     }
 
     /**
@@ -35,7 +58,8 @@ class PriceRequestFactory
      * @param ShippingContextInterface $context
      * @param string $requestOption
      * @param ShippingService|null $shippingService
-     * @return PriceRequest
+     * @return PriceRequest|null
+     * @throws \UnexpectedValueException
      */
     public function create(
         UPSTransport $transport,
@@ -43,9 +67,11 @@ class PriceRequestFactory
         $requestOption,
         ShippingService $shippingService = null
     ) {
+        $decryptedPassword = $this->symmetricCrypter->decryptData($transport->getApiPassword());
+
         $priceRequest = (new PriceRequest())
             ->setUsername($transport->getApiUser())
-            ->setPassword($transport->getApiPassword())
+            ->setPassword($decryptedPassword)
             ->setAccessLicenseNumber($transport->getApiKey())
             ->setRequestOption($requestOption)
             ->setShipperName($transport->getShippingAccountName())
@@ -70,9 +96,9 @@ class PriceRequestFactory
         $packages = $this->createPackages($context->getLineItems(), $unitOfWeight, $weightLimit);
         if (count($packages) > 0) {
             $priceRequest->setPackages($packages);
+            return $priceRequest;
         }
-
-        return $priceRequest;
+        return null;
     }
 
     /**
@@ -80,6 +106,7 @@ class PriceRequestFactory
      * @param string $unitOfWeight
      * @param int $weightLimit
      * @return Package[]|array
+     * @throws \UnexpectedValueException
      */
     protected function createPackages($lineItems, $unitOfWeight, $weightLimit)
     {
@@ -89,46 +116,21 @@ class PriceRequestFactory
             return $packages;
         }
 
-        $productsParamsByUnit = $this->getProductsParamsByUnit($lineItems);
-
+        $productsParamsByUnit = $this->getProductsParamsByUnit($lineItems, $unitOfWeight);
         if (count($productsParamsByUnit) > 0) {
             /** @var array $productsParamsByWeightUnit */
             foreach ($productsParamsByUnit as $dimensionUnit => $productsParamsByWeightUnit) {
+                $weight = 0;
+                $dimensionHeight = 0;
+                $dimensionWidth = 0;
+                $dimensionLength = 0;
+
                 /** @var array $productsParams */
                 foreach ($productsParamsByWeightUnit as $productsParams) {
-                    $weight = 0;
-                    $dimensionHeight = 0;
-                    $dimensionWidth = 0;
-                    $dimensionLength = 0;
-
-                    foreach ($productsParams as $productsParam) {
-                        // TODO: refactor due BB-4537
-                        if ($productsParam['weight'] >= $weightLimit) {
-                            return [];
-                        }
-                        if (($weight + $productsParam['weight']) >= $weightLimit) {
-                            $packages[] = Package::create(
-                                (string)$dimensionUnit,
-                                (string)$dimensionHeight,
-                                (string)$dimensionWidth,
-                                (string)$dimensionLength,
-                                (string)$unitOfWeight,
-                                (string)$weight
-                            );
-
-                            $weight = 0;
-                            $dimensionHeight = 0;
-                            $dimensionWidth = 0;
-                            $dimensionLength = 0;
-                        }
-
-                        $weight += $productsParam['weight'];
-                        $dimensionHeight += $productsParam['dimensionHeight'];
-                        $dimensionWidth += $productsParam['dimensionWidth'];
-                        $dimensionLength += $productsParam['dimensionLength'];
+                    if ($productsParams['weight'] > $weightLimit) {
+                        return [];
                     }
-
-                    if ($weight > 0) {
+                    if (($weight + $productsParams['weight']) > $weightLimit) {
                         $packages[] = Package::create(
                             (string)$dimensionUnit,
                             (string)$dimensionHeight,
@@ -137,7 +139,28 @@ class PriceRequestFactory
                             (string)$unitOfWeight,
                             (string)$weight
                         );
+
+                        $weight = 0;
+                        $dimensionHeight = 0;
+                        $dimensionWidth = 0;
+                        $dimensionLength = 0;
                     }
+
+                    $weight += $productsParams['weight'];
+                    $dimensionHeight += $productsParams['dimensionHeight'];
+                    $dimensionWidth += $productsParams['dimensionWidth'];
+                    $dimensionLength += $productsParams['dimensionLength'];
+                }
+
+                if ($weight > 0) {
+                    $packages[] = Package::create(
+                        (string)$dimensionUnit,
+                        (string)$dimensionHeight,
+                        (string)$dimensionWidth,
+                        (string)$dimensionLength,
+                        (string)$unitOfWeight,
+                        (string)$weight
+                    );
                 }
             }
         }
@@ -147,40 +170,72 @@ class PriceRequestFactory
 
     /**
      * @param ShippingLineItemInterface[] $lineItems
+     * @param string $upsWeightUnit
      * @return array
+     * @throws \UnexpectedValueException
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
-    protected function getProductsParamsByUnit($lineItems)
+    protected function getProductsParamsByUnit($lineItems, $upsWeightUnit)
     {
         $productsParamsByUnit = [];
+        $shippingWeightUnitCode = $this->unitsMapper->getShippingUnitCode($upsWeightUnit);
 
+        $productsInfo =[];
         foreach ($lineItems as $lineItem) {
-            /** @var ProductShippingOptions $productShippingOptions */
-            $productShippingOptions = $this->registry
-                ->getManagerForClass('OroShippingBundle:ProductShippingOptions')
-                ->getRepository('OroShippingBundle:ProductShippingOptions')
-                ->findOneBy(['product' => $lineItem->getProduct()]);
+            $productsInfo[$lineItem->getProduct()->getId()] = [
+                'product' => $lineItem->getProduct(),
+                'productUnit' => $lineItem->getProductUnit(),
+                'quantity' => $lineItem->getQuantity()
+            ];
+        }
 
+        $allProductsShippingOptions = $this->registry
+            ->getManagerForClass('OroShippingBundle:ProductShippingOptions')
+            ->getRepository('OroShippingBundle:ProductShippingOptions')
+            ->findBy([
+                'product' => array_column($productsInfo, 'product'),
+                'productUnit' => array_column($productsInfo, 'productUnit')
+            ]);
+
+        if (!$allProductsShippingOptions ||
+            count(array_column($productsInfo, 'product')) !== count($allProductsShippingOptions)) {
+            return [];
+        }
+
+        foreach ($allProductsShippingOptions as $productShippingOptions) {
+            $productId = $productShippingOptions->getProduct()->getId();
             $productDimensions = $productShippingOptions->getDimensions();
 
             $dimensionUnit = $productDimensions->getUnit() ? $productDimensions->getUnit()->getCode() : null;
             $lineItemWeight = null;
-            $weightUnit = null;
             if ($productShippingOptions->getWeight() instanceof Weight) {
-                $lineItemWeight = $productShippingOptions->getWeight()->getValue();
-                $weightUnit = $productShippingOptions->getWeight()->getUnit()->getCode();
+                if (!$productShippingOptions->getWeight()->getValue()) {
+                    return [];
+                }
+                /** @var Weight|null $lineItemWeight */
+                $lineItemWeight = $this->measureUnitConversion->convert(
+                    $productShippingOptions->getWeight(),
+                    $shippingWeightUnitCode
+                );
+
+                $lineItemWeight = $lineItemWeight !== null ? $lineItemWeight->getValue() : null;
             }
-            if (!$lineItemWeight || !$dimensionUnit || !$weightUnit) {
+            if (!$lineItemWeight || !$dimensionUnit) {
                 return [];
             }
 
-            $productsParamsByUnit[strtoupper(substr($dimensionUnit, 0, 2))][strtoupper(substr($weightUnit, 0, 2))][] = [
-                'dimensionUnit' => $dimensionUnit,
-                'dimensionHeight' => $productDimensions->getValue()->getHeight() * $lineItem->getQuantity(),
-                'dimensionWidth' => $productDimensions->getValue()->getWidth() * $lineItem->getQuantity(),
-                'dimensionLength' => $productDimensions->getValue()->getLength() * $lineItem->getQuantity(),
-                'weightUnit' => $weightUnit,
-                'weight' => $lineItemWeight * $lineItem->getQuantity()
-            ];
+            for ($i = 0; $i < $productsInfo[$productId]['quantity']; $i++) {
+                $productsParamsByUnit[strtoupper(substr($dimensionUnit, 0, 2))][] = [
+                    'dimensionUnit' => $dimensionUnit,
+                    'dimensionHeight' => $productDimensions->getValue()->getHeight(),
+                    'dimensionWidth' => $productDimensions->getValue()->getWidth(),
+                    'dimensionLength' => $productDimensions->getValue()->getLength(),
+                    'weightUnit' => $upsWeightUnit,
+                    'weight' => $lineItemWeight
+                ];
+            }
         }
 
         return $productsParamsByUnit;

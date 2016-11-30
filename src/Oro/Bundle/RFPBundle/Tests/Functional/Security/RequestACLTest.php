@@ -12,8 +12,8 @@ use Oro\Bundle\SecurityBundle\Model\AclPrivilege;
 use Oro\Bundle\SecurityBundle\Model\AclPrivilegeIdentity;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
-use Oro\Bundle\AccountBundle\Entity\AccountUser;
-use Oro\Bundle\AccountBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadAccountUsersData;
 
@@ -47,7 +47,7 @@ class RequestACLTest extends WebTestCase
 
         /** @var AccountUser $user */
         $user = $this->getContainer()->get('oro_security.security_facade')->getLoggedUser();
-        $this->assertInstanceOf('Oro\Bundle\AccountBundle\Entity\AccountUser', $user);
+        $this->assertInstanceOf('Oro\Bundle\CustomerBundle\Entity\AccountUser', $user);
         $this->assertEquals(LoadAccountUsersData::USER_EMAIL, $user->getUsername());
 
         $crawler = $this->client->request('GET', $this->getUrl('oro_rfp_frontend_request_create'));
@@ -76,7 +76,7 @@ class RequestACLTest extends WebTestCase
         $request = $this->getContainer()->get('doctrine')->getRepository('OroRFPBundle:Request')
             ->findOneBy(['email' => LoadAccountUsersData::USER_EMAIL]);
 
-        $this->assertInstanceOf('Oro\Bundle\AccountBundle\Entity\AccountUser', $request->getAccountUser());
+        $this->assertInstanceOf('Oro\Bundle\CustomerBundle\Entity\AccountUser', $request->getAccountUser());
         $this->assertEquals($user->getId(), $request->getAccountUser()->getId());
 
         // Check owner access
@@ -137,8 +137,8 @@ class RequestACLTest extends WebTestCase
 
         $role = $this->getContainer()
             ->get('doctrine')
-            ->getManagerForClass('OroAccountBundle:AccountUserRole')
-            ->getRepository('OroAccountBundle:AccountUserRole')
+            ->getManagerForClass('OroCustomerBundle:AccountUserRole')
+            ->getRepository('OroCustomerBundle:AccountUserRole')
             ->findOneBy(['role' => LoadAccountUsersData::BUYER]);
 
         $aclPrivilege = new AclPrivilege();
@@ -176,7 +176,7 @@ class RequestACLTest extends WebTestCase
     {
         $this->initClient([], $this->generateBasicAuthHeader($email, $password));
         $this->client->useHashNavigation(true);
-        $this->client->request('GET', '/about'); // any page to apply new user, CMS is used as the fastest one
+        $this->client->request('GET', '/'); // any page to apply new user
     }
 
     /**

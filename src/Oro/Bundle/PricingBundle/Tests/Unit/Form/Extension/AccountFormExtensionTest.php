@@ -7,7 +7,7 @@ use Symfony\Component\Form\PreloadedExtension;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\PricingBundle\Form\Extension\AccountFormExtension;
-use Oro\Bundle\AccountBundle\Form\Type\AccountType;
+use Oro\Bundle\CustomerBundle\Form\Type\AccountType;
 use Oro\Bundle\PricingBundle\EventListener\AccountListener;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Extension\Stub\AccountTypeStub;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListsSettingsType;

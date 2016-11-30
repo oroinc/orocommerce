@@ -3,25 +3,11 @@
 namespace Oro\Bundle\UPSBundle\EventListener;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
-
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
-use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
+use Oro\Bundle\UPSBundle\Method\UPSShippingMethod;
 
 class UPSChannelEntityListener
 {
-    /**
-     * @var ShippingMethodRegistry
-     */
-    protected $registry;
-
-    /**
-     * @param ShippingMethodRegistry $registry
-     */
-    public function __construct(ShippingMethodRegistry $registry)
-    {
-        $this->registry = $registry;
-    }
-
     /**
      * @param Channel $channel
      * @param LifecycleEventArgs $args
@@ -30,24 +16,17 @@ class UPSChannelEntityListener
     {
         if ('ups' === $channel->getType()) {
             $entityManager = $args->getEntityManager();
-            $shippingMethods = $this->registry->getShippingMethods();
-            foreach ($shippingMethods as $shippingMethod) {
-                if ($shippingMethod->getLabel() === $channel->getName()) {
-                    $identifier = $shippingMethod->getIdentifier();
-                    $configuredMethods = $entityManager
-                        ->getRepository('OroShippingBundle:ShippingRuleMethodConfig')
-                        ->findBy(['method' => $identifier,]);
+            $shippingMethodIdentifier = UPSShippingMethod::IDENTIFIER . '_' . $channel->getId();
+            $configuredMethods = $entityManager
+                ->getRepository('OroShippingBundle:ShippingRuleMethodConfig')
+                ->findBy(['method' => $shippingMethodIdentifier,]);
 
-                    foreach ($configuredMethods as $configuredMethod) {
-                        $entityManager->getRepository('OroShippingBundle:ShippingRuleMethodConfig')
-                            ->deleteByMethod($configuredMethod->getMethod());
-                    }
-                    $entityManager->getRepository('OroShippingBundle:ShippingRule')
-                        ->disableRulesWithoutShippingMethods();
-                    
-                    break;
-                }
+            foreach ($configuredMethods as $configuredMethod) {
+                $entityManager->getRepository('OroShippingBundle:ShippingRuleMethodConfig')
+                    ->deleteByMethod($configuredMethod->getMethod());
             }
+            $entityManager->getRepository('OroShippingBundle:ShippingRule')
+                ->disableRulesWithoutShippingMethods();
         }
     }
 }

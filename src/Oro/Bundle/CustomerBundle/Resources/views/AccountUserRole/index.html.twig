@@ -1,0 +1,17 @@
+{% extends 'OroUIBundle:actions:index.html.twig' %}
+
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+
+{% set gridName = 'account-account-user-roles-grid' %}
+{% set pageTitle = 'oro.customer.accountuserrole.entity_plural_label'|trans %}
+
+{% block navButtons %}
+    {% if resource_granted('oro_account_account_user_role_create') %}
+        <div class="btn-group">
+            {{ UI.addButton({
+                'path': path('oro_customer_account_user_role_create'),
+                'entity_label': 'oro.customer.accountuserrole.entity_label'|trans
+            }) }}
+        </div>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,13 @@
+@name = account_user_welcome_email
+@entityName = Oro\Bundle\CustomerBundle\Entity\AccountUser
+@subject = Welcome: {{ entity.username }}
+@isSystem = 1
+@isEditable = 1
+
+<h1>Welcome {{ entity.username }}</h1>
+<div>
+    {% if password is not empty%}
+        <p>Your password is <b>{{ password }}</b></p>
+    {% endif %}
+    <p>Please follow this link to login: <a href="{{ website_secure_path('oro_customer_account_user_security_login', {}, entity.website) }}">Profile Login</a></p>
+</div>

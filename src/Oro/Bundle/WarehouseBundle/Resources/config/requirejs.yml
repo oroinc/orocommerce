@@ -1,8 +1,0 @@
-config:
-    paths:
-        'orowarehouse/js/app/modules/validator-constraints-module': 'bundles/orowarehouse/js/app/modules/validator-constraints-module.js'
-        'orowarehouse/js/datagrid/builder/level-quantity-builder': 'bundles/orowarehouse/js/datagrid/builder/level-quantity-builder.js'
-        'orowarehouse/js/app/views/editor/decimals-number-editor-view': 'bundles/orowarehouse/js/app/views/decimals-number-editor-view.js'
-        'orowarehouse/js/validator/decimals-number': 'bundles/orowarehouse/js/validator/decimals-number.js'
-    appmodules:
-        - orowarehouse/js/app/modules/validator-constraints-module

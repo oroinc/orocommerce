@@ -30,6 +30,7 @@ class OroShoppingListExtensionTest extends ExtensionTestCase
             'oro_shopping_list.shopping_list.manager.api',
             'oro_shopping_list.shopping_list.manager',
             'oro_shopping_list.placeholder.filter',
+            'oro_shopping_list.condition.rfp_allowed',
 
             // Listeners
             'oro_shopping_list.event_listener.shopping_list_listener',

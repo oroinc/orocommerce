@@ -4,11 +4,11 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
-use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceAttributeProductPrices;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceRuleLexemes;
@@ -32,7 +32,7 @@ class PriceAttributeProductPriceEntityListenerTest extends WebTestCase
             LoadPriceAttributeProductPrices::class,
             LoadPriceRuleLexemes::class
         ]);
-        $this->cleanQueueMessageTraces();
+        $this->cleanScheduledMessages();
     }
 
     public function testPostPersist()
@@ -55,17 +55,15 @@ class PriceAttributeProductPriceEntityListenerTest extends WebTestCase
         $em->persist($price);
         $em->flush();
 
-        $traces = $this->getQueueMessageTraces(Topics::RESOLVE_PRICE_RULES);
-        $this->assertCount(1, $traces);
+        $this->sendScheduledMessages();
 
-        $trace = $traces[0];
-        $productId = $this->getProductIdFromTrace($trace);
-        $this->assertNotEmpty($productId);
-        $this->assertEquals($product->getId(), $productId);
-
-        /** @var PriceList $expectedPriceList */
-        $expectedPriceList = $this->getReference(LoadPriceLists::PRICE_LIST_1);
-        $this->assertEquals($expectedPriceList->getId(), $this->getPriceListIdFromTrace($trace));
+        self::assertMessageSent(
+            Topics::RESOLVE_PRICE_RULES,
+            [
+                PriceListTriggerFactory::PRICE_LIST => $this->getReference(LoadPriceLists::PRICE_LIST_1)->getId(),
+                PriceListTriggerFactory::PRODUCT => $product->getId()
+            ]
+        );
     }
 
     public function testPreUpdate()
@@ -83,17 +81,15 @@ class PriceAttributeProductPriceEntityListenerTest extends WebTestCase
         $em->persist($price);
         $em->flush();
 
-        $traces = $this->getQueueMessageTraces(Topics::RESOLVE_PRICE_RULES);
-        $this->assertCount(1, $traces);
+        $this->sendScheduledMessages();
 
-        $trace = $traces[0];
-        $productId = $this->getProductIdFromTrace($trace);
-        $this->assertNotEmpty($productId);
-        $this->assertEquals($product->getId(), $productId);
-
-        /** @var PriceList $expectedPriceList */
-        $expectedPriceList = $this->getReference(LoadPriceLists::PRICE_LIST_1);
-        $this->assertEquals($expectedPriceList->getId(), $this->getPriceListIdFromTrace($trace));
+        self::assertMessageSent(
+            Topics::RESOLVE_PRICE_RULES,
+            [
+                PriceListTriggerFactory::PRICE_LIST => $this->getReference(LoadPriceLists::PRICE_LIST_1)->getId(),
+                PriceListTriggerFactory::PRODUCT => $product->getId()
+            ]
+        );
     }
 
     public function testPreRemove()
@@ -109,16 +105,14 @@ class PriceAttributeProductPriceEntityListenerTest extends WebTestCase
         $em->remove($price);
         $em->flush();
 
-        $traces = $this->getQueueMessageTraces(Topics::RESOLVE_PRICE_RULES);
-        $this->assertCount(1, $traces);
+        $this->sendScheduledMessages();
 
-        $trace = $traces[0];
-        $productId = $this->getProductIdFromTrace($trace);
-        $this->assertNotEmpty($productId);
-        $this->assertEquals($product->getId(), $productId);
-
-        /** @var PriceList $expectedPriceList */
-        $expectedPriceList = $this->getReference(LoadPriceLists::PRICE_LIST_1);
-        $this->assertEquals($expectedPriceList->getId(), $this->getPriceListIdFromTrace($trace));
+        self::assertMessageSent(
+            Topics::RESOLVE_PRICE_RULES,
+            [
+                PriceListTriggerFactory::PRICE_LIST => $this->getReference(LoadPriceLists::PRICE_LIST_1)->getId(),
+                PriceListTriggerFactory::PRODUCT => $product->getId()
+            ]
+        );
     }
 }

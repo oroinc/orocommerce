@@ -8,8 +8,8 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Oro\Component\Testing\Unit\FormViewListenerTestCase;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\OrderBundle\EventListener\FormViewListener;
-use Oro\Bundle\AccountBundle\Entity\AccountUser;
-use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\Account;
 
 class FormViewListenerTest extends FormViewListenerTestCase
 {

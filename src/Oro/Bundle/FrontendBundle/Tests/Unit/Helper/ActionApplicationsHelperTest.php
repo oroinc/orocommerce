@@ -6,7 +6,7 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 use Oro\Bundle\ActionBundle\Tests\Unit\Helper\ApplicationsHelperTest;
 use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\FrontendBundle\Helper\ActionApplicationsHelper;
 
 class ActionApplicationsHelperTest extends ApplicationsHelperTest

@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Controller;
 
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
-use Oro\Bundle\AccountBundle\Form\Type\AccountGroupType;
+use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Form\Type\AccountGroupType;
 
 /**
  * @dbIsolation
@@ -27,7 +27,7 @@ class AccountGroupControllerTest extends AbstractPriceListsByEntityTestCase
      */
     public function getUpdateUrl($id = null)
     {
-        return $this->getUrl('oro_account_group_update', ['id' => $id ?: $this->accountGroup->getId()]);
+        return $this->getUrl('oro_customer_account_group_update', ['id' => $id ?: $this->accountGroup->getId()]);
     }
 
     /**
@@ -35,7 +35,7 @@ class AccountGroupControllerTest extends AbstractPriceListsByEntityTestCase
      */
     public function getCreateUrl()
     {
-        return $this->getUrl('oro_account_group_create');
+        return $this->getUrl('oro_customer_account_group_create');
     }
 
     /**
@@ -43,7 +43,7 @@ class AccountGroupControllerTest extends AbstractPriceListsByEntityTestCase
      */
     public function getViewUrl()
     {
-        return $this->getUrl('oro_account_group_view', ['id' => $this->accountGroup->getId()]);
+        return $this->getUrl('oro_customer_account_group_view', ['id' => $this->accountGroup->getId()]);
     }
 
     /**

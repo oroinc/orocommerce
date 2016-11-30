@@ -45,7 +45,7 @@ services:
             - "@oro_entity.doctrine_helper"
             - "@request_stack"
             - '%oro_tax.entity.account_tax_code.class%'
-            - '%oro_account.entity.account.class%'
+            - '%oro_customer.entity.account.class%'
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-view, method: onView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-edit, method: onEdit }
@@ -56,7 +56,7 @@ services:
             - "@oro_entity.doctrine_helper"
             - "@request_stack"
             - '%oro_tax.entity.account_tax_code.class%'
-            - '%oro_account.entity.account_group.class%'
+            - '%oro_customer.entity.account_group.class%'
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-group-view, method: onView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-group-edit, method: onEdit }
@@ -72,6 +72,15 @@ services:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-view, method: onView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onEdit }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-create-step-two, method: onEdit }
+
+    oro_tax.event_listener.extract_line_item_payment_options:
+        lazy: true
+        class: 'Oro\Bundle\TaxBundle\EventListener\ExtractLineItemPaymentOptionsListener'
+        arguments:
+            - '@translator'
+            - '@oro_tax.manager.tax_manager'
+        tags:
+            - { name: kernel.event_listener, event: oro_payment.event.extract_line_item_options, method: onExtractLineItemPaymentOptions, priority: -200 }
 
     oro_tax.form.autocomplete.tax.search_handler:
         public: false
@@ -101,7 +110,7 @@ services:
         arguments:
             - "@oro_entity.doctrine_helper"
             - '%oro_tax.entity.account_tax_code.class%'
-            - '%oro_account.entity.account.class%'
+            - '%oro_customer.entity.account.class%'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.account-accounts-select-grid, method: onBuildBefore }
 
@@ -110,7 +119,7 @@ services:
         arguments:
             - "@oro_entity.doctrine_helper"
             - '%oro_tax.entity.account_tax_code.class%'
-            - '%oro_account.entity.account_group.class%'
+            - '%oro_customer.entity.account_group.class%'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.account-accounts-select-grid, method: onBuildBefore }
 
@@ -119,7 +128,7 @@ services:
         arguments:
             - "@oro_entity.doctrine_helper"
             - '%oro_tax.entity.account_tax_code.class%'
-            - '%oro_account.entity.account_group.class%'
+            - '%oro_customer.entity.account_group.class%'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.account-groups-select-grid, method: onBuildBefore }
 

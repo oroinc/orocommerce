@@ -1,2 +1,0 @@
-bundles:
-    - { name: Oro\Bundle\FrontendNavigationBundle\OroFrontendNavigationBundle, priority: 12 }

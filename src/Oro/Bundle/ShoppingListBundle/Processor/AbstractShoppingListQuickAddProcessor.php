@@ -61,11 +61,20 @@ abstract class AbstractShoppingListQuickAddProcessor implements ComponentProcess
         $data = $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY];
         $productSkus = ArrayUtil::arrayColumn($data, ProductDataStorage::PRODUCT_SKU_KEY);
         $productIds = $this->getProductRepository()->getProductsIdsBySku($productSkus);
-        $productSkuQuantities = array_combine(
-            $productSkus,
-            ArrayUtil::arrayColumn($data, ProductDataStorage::PRODUCT_QUANTITY_KEY)
-        );
-        $productIdsQuantities = array_combine($productIds, $productSkuQuantities);
+
+        $productSkuQuantities = [];
+        foreach ($data as $product) {
+            $productQuantity = $product['productQuantity'];
+            if (array_key_exists($product['productSku'], $productSkuQuantities)) {
+                $productQuantity += $productSkuQuantities[$product['productSku']];
+            }
+            $productSkuQuantities[$product['productSku']] = $productQuantity;
+        }
+
+        $productIdsQuantities = [];
+        foreach ($productIds as $productSku => $productId) {
+            $productIdsQuantities[$productId] = $productSkuQuantities[$productSku];
+        }
 
         try {
             $entitiesCount = $this->shoppingListLineItemHandler->createForShoppingList(

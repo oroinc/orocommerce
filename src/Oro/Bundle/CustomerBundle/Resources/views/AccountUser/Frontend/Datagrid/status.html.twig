@@ -1,0 +1,5 @@
+{% if record.getValue('status') %}
+    {{ 'oro.customer.frontend.account_user.status_active.label'|trans }}
+{% else %}
+    {{ 'oro.customer.frontend.account_user.status_inactive.label'|trans }}
+{% endif %}

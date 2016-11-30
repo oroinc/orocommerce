@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Functional\Controller\Frontend;
 
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadFrontendProductData;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -20,9 +23,9 @@ class ProductControllerTest extends WebTestCase
         );
 
         $this->loadFixtures([
-            'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
-            'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
-            'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices'
+            LoadFrontendProductData::class,
+            LoadProductUnitPrecisions::class,
+            LoadCombinedProductPrices::class,
         ]);
     }
 
@@ -51,9 +54,9 @@ class ProductControllerTest extends WebTestCase
     public function viewDataProvider()
     {
         return [
-            'unit without prices'=> ['product'=> LoadProductData::PRODUCT_2, 'contains'=> 'Request A Quote'],
-            'unit with empty price' => ['product'=> LoadProductData::PRODUCT_4, 'contains'=> '$200.50'],
-            'unit with not empty price'=> ['product'=> LoadProductData::PRODUCT_5, 'contains'=> '$0.00']
+            'unit without prices'       => ['product' => LoadProductData::PRODUCT_2, 'contains' => 'Request A Quote'],
+            'unit with empty price'     => ['product' => LoadProductData::PRODUCT_6, 'contains' => 'USD 200.50'],
+            'unit with not empty price' => ['product' => LoadProductData::PRODUCT_7, 'contains' => 'USD 0.00']
         ];
     }
 

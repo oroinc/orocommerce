@@ -4,18 +4,16 @@ namespace Oro\Bundle\SaleBundle\Tests\Unit\Model;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
-
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Entity\AccountAddress;
-use Oro\Bundle\AccountBundle\Entity\AccountUser;
-use Oro\Bundle\AccountBundle\Entity\AccountUserAddress;
+use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\AccountUserAddress;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Handler\OrderCurrencyHandler;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
@@ -26,6 +24,7 @@ use Oro\Bundle\SaleBundle\Entity\QuoteAddress;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use Oro\Bundle\SaleBundle\Model\QuoteToOrderConverter;
+use Oro\Bundle\UserBundle\Entity\User;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -160,7 +159,7 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
             ->setSubtotal($subtotalAmount)
             ->setTotal($totalAmount)
             ->setShippingAddress($shippingAddress)
-            ->setShippingCost(Price::create($quoteShippingEstimateValue, self::CURRENCY))
+            ->setEstimatedShippingCostAmount($quoteShippingEstimateValue)
             ->setSourceEntityClass('Oro\Bundle\SaleBundle\Entity\Quote')
             ->setSourceEntityId(0);
 
@@ -212,7 +211,7 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
             ->setSubtotal($subtotalAmount)
             ->setTotal($totalAmount)
             ->setShippingAddress($shippingAddress)
-            ->setShippingCost(Price::create($quoteShippingEstimateValue, self::CURRENCY))
+            ->setEstimatedShippingCostAmount($quoteShippingEstimateValue)
             ->setSourceEntityClass('Oro\Bundle\SaleBundle\Entity\Quote')
             ->setSourceEntityId(0);
 
@@ -253,7 +252,7 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
             ->setSubtotal($subtotalAmount)
             ->setTotal($totalAmount)
             ->setShippingAddress($shippingAddress)
-            ->setShippingCost(Price::create($quoteShippingEstimateValue, self::CURRENCY))
+            ->setEstimatedShippingCostAmount($quoteShippingEstimateValue)
             ->setSourceEntityClass('Oro\Bundle\SaleBundle\Entity\Quote')
             ->setSourceEntityId(0);
 
@@ -310,7 +309,7 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
             )
             ->setSubtotal($subtotalAmount)
             ->setTotal($totalAmount)
-            ->setShippingCost(Price::create($quoteShippingEstimateValue, self::CURRENCY))
+            ->setEstimatedShippingCostAmount($quoteShippingEstimateValue)
             ->setSourceEntityClass('Oro\Bundle\SaleBundle\Entity\Quote')
             ->setSourceEntityId(0);
 
@@ -521,8 +520,7 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
             ->method('persist')
             ->with($this->isInstanceOf('Oro\Bundle\OrderBundle\Entity\Order'));
         $manager->expects($this->once())
-            ->method('flush')
-            ->with($this->isInstanceOf('Oro\Bundle\OrderBundle\Entity\Order'));
+            ->method('flush');
 
         $this->registry->expects($this->once())
             ->method('getManagerForClass')

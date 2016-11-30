@@ -13,8 +13,8 @@ use Oro\Bundle\CurrencyBundle\Tests\Unit\Form\Type\PriceTypeGenerator;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
 
-use Oro\Bundle\AccountBundle\Entity\AccountUser;
-use Oro\Bundle\AccountBundle\Form\Type\AccountUserMultiSelectType;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Form\Type\AccountUserMultiSelectType;
 
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
@@ -314,10 +314,10 @@ abstract class AbstractTest extends FormIntegrationTestCase
         $organization = $this->getMockBuilder('Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface')->getMock();
         $role = $this->getMockBuilder('Symfony\Component\Security\Core\Role\RoleInterface')->getMock();
 
-        $account = $this->getMockBuilder('Oro\Bundle\AccountBundle\Entity\Account')->getMock();
+        $account = $this->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\Account')->getMock();
 
         /** @var AccountUser $accountUser */
-        $accountUser = $this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountUser', $id);
+        $accountUser = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountUser', $id);
         $accountUser->setEmail('test@test.test')
             ->setFirstName('First Name')
             ->setLastName('Last Name')
