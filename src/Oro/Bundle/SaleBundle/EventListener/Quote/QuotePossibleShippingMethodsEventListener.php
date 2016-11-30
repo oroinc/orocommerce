@@ -1,19 +1,19 @@
 <?php
 
-namespace Oro\Bundle\OrderBundle\EventListener\Order;
+namespace Oro\Bundle\SaleBundle\EventListener\Quote;
 
 use Oro\Bundle\OrderBundle\Converter\ShippingPricesConverter;
-use Oro\Bundle\OrderBundle\Event\OrderEvent;
-use Oro\Bundle\OrderBundle\Factory\OrderShippingContextFactory;
+use Oro\Bundle\SaleBundle\Event\QuoteEvent;
+use Oro\Bundle\SaleBundle\Factory\QuoteShippingContextFactory;
 use Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider;
 
-class OrderPossibleShippingMethodsEventListener
+class QuotePossibleShippingMethodsEventListener
 {
     const CALCULATE_SHIPPING_KEY = 'calculateShipping';
     const POSSIBLE_SHIPPING_METHODS_KEY = 'possibleShippingMethods';
 
     /**
-     * @var OrderShippingContextFactory
+     * @var QuoteShippingContextFactory
      */
     protected $factory;
 
@@ -28,12 +28,12 @@ class OrderPossibleShippingMethodsEventListener
     protected $priceConverter;
 
     /**
-     * @param OrderShippingContextFactory $factory
+     * @param QuoteShippingContextFactory $factory
      * @param ShippingPricesConverter $priceConverter
      * @param ShippingPriceProvider|null $priceProvider
      */
     public function __construct(
-        OrderShippingContextFactory $factory,
+        QuoteShippingContextFactory $factory,
         ShippingPricesConverter $priceConverter,
         ShippingPriceProvider $priceProvider = null
     ) {
@@ -43,9 +43,9 @@ class OrderPossibleShippingMethodsEventListener
     }
 
     /**
-     * @param OrderEvent $event
+     * @param QuoteEvent $event
      */
-    public function onOrderEvent(OrderEvent $event)
+    public function onQuoteEvent(QuoteEvent $event)
     {
         $submittedData = $event->getSubmittedData();
         if ($submittedData === null
@@ -57,10 +57,11 @@ class OrderPossibleShippingMethodsEventListener
             $data = [];
             if ($this->priceProvider) {
                 $data = $this->priceProvider
-                    ->getApplicableMethodsWithTypesData($this->factory->create($event->getOrder()));
+                    ->getApplicableMethodsWithTypesData($this->factory->create($event->getQuote()));
                 $data = $this->priceConverter->convertPricesToArray($data);
             }
             $event->getData()->offsetSet(self::POSSIBLE_SHIPPING_METHODS_KEY, $data);
         }
     }
 }
+

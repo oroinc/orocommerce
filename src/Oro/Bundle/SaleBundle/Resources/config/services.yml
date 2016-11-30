@@ -158,3 +158,12 @@ services:
         class: 'Oro\Bundle\SaleBundle\Factory\QuoteShippingContextFactory'
         calls:
             - [setShippingContextFactory, ['@?oro_shipping.factory.shipping_context_factory']]
+
+    oro_sale.event_listener.quote.possible_shipping_methods:
+        class: 'Oro\Bundle\SaleBundle\EventListener\Quote\QuotePossibleShippingMethodsEventListener'
+        arguments:
+            - '@oro_sale.factory.quote_shipping_context'
+            - '@oro_order.converter.shipping_prices'
+            - '@?oro_shipping.shipping_price.provider'
+        tags:
+            - { name: kernel.event_listener, event: oro_sale.quote, method: onQuoteEvent }

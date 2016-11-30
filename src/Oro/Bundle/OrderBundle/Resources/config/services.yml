@@ -166,6 +166,7 @@ services:
         class: 'Oro\Bundle\OrderBundle\EventListener\Order\OrderPossibleShippingMethodsEventListener'
         arguments:
             - '@oro_order.factory.shipping_context'
+            - '@oro_order.converter.shipping_prices'
             - '@?oro_shipping.shipping_price.provider'
         tags:
             - { name: kernel.event_listener, event: oro_order.order, method: onOrderEvent }
@@ -311,3 +312,6 @@ services:
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@?oro_shipping.factory.shipping_context_factory'
+
+    oro_order.converter.shipping_prices:
+        class: 'Oro\Bundle\OrderBundle\Converter\ShippingPricesConverter'

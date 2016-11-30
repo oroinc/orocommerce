@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Unit\DependencyInjection;
 
-use Oro\Bundle\TestFrameworkBundle\Test\DependencyInjection\ExtensionTestCase;
 use Oro\Bundle\SaleBundle\DependencyInjection\OroSaleExtension;
+use Oro\Bundle\TestFrameworkBundle\Test\DependencyInjection\ExtensionTestCase;
 
 class OroSaleExtensionTest extends ExtensionTestCase
 {
@@ -26,6 +26,8 @@ class OroSaleExtensionTest extends ExtensionTestCase
             'oro_sale.form.type.quote_product_offer_collection',
             // twig extensions
             'oro_sale.twig.quote',
+            // event listeners
+            'oro_sale.event_listener.quote.possible_shipping_methods'
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
 

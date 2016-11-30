@@ -1,21 +1,21 @@
 <?php
 
-namespace Oro\Bundle\OrderBundle\Tests\Unit\EventListener\Order;
+namespace Oro\Bundle\SaleBundle\Tests\Unit\EventListener\Quote;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrderBundle\Converter\ShippingPricesConverter;
-use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\OrderBundle\Event\OrderEvent;
-use Oro\Bundle\OrderBundle\EventListener\Order\OrderPossibleShippingMethodsEventListener;
-use Oro\Bundle\OrderBundle\Factory\OrderShippingContextFactory;
+use Oro\Bundle\SaleBundle\Entity\Quote;
+use Oro\Bundle\SaleBundle\Event\QuoteEvent;
+use Oro\Bundle\SaleBundle\EventListener\Quote\QuotePossibleShippingMethodsEventListener;
+use Oro\Bundle\SaleBundle\Factory\QuoteShippingContextFactory;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider;
 use Symfony\Component\Form\FormInterface;
 
-class OrderPossibleShippingMethodsEventListenerTest extends \PHPUnit_Framework_TestCase
+class QuotePossibleShippingMethodsEventListenerTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var OrderShippingContextFactory|\PHPUnit_Framework_MockObject_MockObject
+     * @var QuoteShippingContextFactory|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $factory;
 
@@ -30,13 +30,13 @@ class OrderPossibleShippingMethodsEventListenerTest extends \PHPUnit_Framework_T
     protected $priceConverter;
 
     /**
-     * @var OrderPossibleShippingMethodsEventListener
+     * @var QuotePossibleShippingMethodsEventListener
      */
     protected $listener;
 
     protected function setUp()
     {
-        $this->factory = $this->getMockBuilder(OrderShippingContextFactory::class)
+        $this->factory = $this->getMockBuilder(QuoteShippingContextFactory::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->priceProvider = $this->getMockBuilder(ShippingPriceProvider::class)
@@ -45,7 +45,7 @@ class OrderPossibleShippingMethodsEventListenerTest extends \PHPUnit_Framework_T
         $this->priceConverter = $this->getMockBuilder(ShippingPricesConverter::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->listener = new OrderPossibleShippingMethodsEventListener(
+        $this->listener = new QuotePossibleShippingMethodsEventListener(
             $this->factory,
             $this->priceConverter,
             $this->priceProvider
@@ -58,19 +58,19 @@ class OrderPossibleShippingMethodsEventListenerTest extends \PHPUnit_Framework_T
      */
     public function testOnOrderEventEmptyKey(array $submittedData)
     {
-        $order = new Order();
+        $quote = new Quote();
         $this->factory->expects(static::never())
             ->method('create');
 
         $this->priceProvider->expects(static::never())
             ->method('getApplicableMethodsWithTypesData');
 
-        $event = new OrderEvent($this->getMock(FormInterface::class), $order, $submittedData);
+        $event = new QuoteEvent($this->getMock(FormInterface::class), $quote, $submittedData);
 
-        $this->listener->onOrderEvent($event);
+        $this->listener->onQuoteEvent($event);
 
         static::assertArrayNotHasKey(
-            OrderPossibleShippingMethodsEventListener::POSSIBLE_SHIPPING_METHODS_KEY,
+            QuotePossibleShippingMethodsEventListener::POSSIBLE_SHIPPING_METHODS_KEY,
             $event->getData()
         );
     }
@@ -82,9 +82,9 @@ class OrderPossibleShippingMethodsEventListenerTest extends \PHPUnit_Framework_T
     {
         return [
             ['submittedData' => ['field' => 'value']],
-            ['submittedData' => [OrderPossibleShippingMethodsEventListener::POSSIBLE_SHIPPING_METHODS_KEY => '']],
-            ['submittedData' => [OrderPossibleShippingMethodsEventListener::POSSIBLE_SHIPPING_METHODS_KEY => 0]],
-            ['submittedData' => [OrderPossibleShippingMethodsEventListener::POSSIBLE_SHIPPING_METHODS_KEY => '0']],
+            ['submittedData' => [QuotePossibleShippingMethodsEventListener::POSSIBLE_SHIPPING_METHODS_KEY => '']],
+            ['submittedData' => [QuotePossibleShippingMethodsEventListener::POSSIBLE_SHIPPING_METHODS_KEY => 0]],
+            ['submittedData' => [QuotePossibleShippingMethodsEventListener::POSSIBLE_SHIPPING_METHODS_KEY => '0']],
         ];
     }
 
@@ -97,11 +97,11 @@ class OrderPossibleShippingMethodsEventListenerTest extends \PHPUnit_Framework_T
      */
     public function testOnOrderEvent(array $methods, $submittedData, array $expectedMethods)
     {
-        $order = new Order();
+        $quote = new Quote();
         $context = $this->getMock(ShippingContextInterface::class);
         $this->factory->expects(static::any())
             ->method('create')
-            ->with($order)
+            ->with($quote)
             ->willReturn($context);
 
         $this->priceConverter->expects(static::any())
@@ -114,13 +114,13 @@ class OrderPossibleShippingMethodsEventListenerTest extends \PHPUnit_Framework_T
             ->with($context)
             ->willReturn($methods);
 
-        $event = new OrderEvent($this->getMock(FormInterface::class), $order, $submittedData);
+        $event = new QuoteEvent($this->getMock(FormInterface::class), $quote, $submittedData);
 
-        $this->listener->onOrderEvent($event);
+        $this->listener->onQuoteEvent($event);
 
         static::assertEquals(
             new \ArrayObject([
-                OrderPossibleShippingMethodsEventListener::POSSIBLE_SHIPPING_METHODS_KEY => $expectedMethods
+                QuotePossibleShippingMethodsEventListener::POSSIBLE_SHIPPING_METHODS_KEY => $expectedMethods
             ]),
             $event->getData()
         );
@@ -169,7 +169,7 @@ class OrderPossibleShippingMethodsEventListenerTest extends \PHPUnit_Framework_T
                         ]
                     ]
                 ],
-                'submittedData' => [OrderPossibleShippingMethodsEventListener::CALCULATE_SHIPPING_KEY => 'false'],
+                'submittedData' => [QuotePossibleShippingMethodsEventListener::CALCULATE_SHIPPING_KEY => 'false'],
                 'expectedMethods' => [
                     [
                         'types' => [
@@ -183,8 +183,8 @@ class OrderPossibleShippingMethodsEventListenerTest extends \PHPUnit_Framework_T
 
     public function testOnOrderEventWithoutProvider()
     {
-        $this->listener = new OrderPossibleShippingMethodsEventListener($this->factory, $this->priceConverter, null);
-        $order = new Order();
+        $this->listener = new QuotePossibleShippingMethodsEventListener($this->factory, $this->priceConverter, null);
+        $quote = new Quote();
         $this->factory->expects(static::never())
             ->method('create');
 
@@ -192,12 +192,12 @@ class OrderPossibleShippingMethodsEventListenerTest extends \PHPUnit_Framework_T
             ->method('getApplicableMethodsWithTypesData');
 
         $methods = ['field' => 'value'];
-        $event = new OrderEvent($this->getMock(FormInterface::class), $order, $methods);
+        $event = new QuoteEvent($this->getMock(FormInterface::class), $quote, $methods);
 
-        $this->listener->onOrderEvent($event);
+        $this->listener->onQuoteEvent($event);
 
         static::assertArrayNotHasKey(
-            OrderPossibleShippingMethodsEventListener::POSSIBLE_SHIPPING_METHODS_KEY,
+            QuotePossibleShippingMethodsEventListener::POSSIBLE_SHIPPING_METHODS_KEY,
             $event->getData()
         );
     }
