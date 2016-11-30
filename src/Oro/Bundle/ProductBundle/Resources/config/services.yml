@@ -212,7 +212,8 @@ services:
             - "@oro_product.formatter.product_unit_label"
 
     oro_product.provider.unit_mode_provider:
-        class: 'Oro\Bundle\ProductBundle\Provider\UnitModeProvider'
+        class: 'Oro\Bundle\ProductBundle\Provider\SingleUnitModeService'
+        public: false
         arguments:
             - "@oro_config.manager"
 

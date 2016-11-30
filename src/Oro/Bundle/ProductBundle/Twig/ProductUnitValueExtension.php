@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Twig;
 
 use Oro\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter;
-use Oro\Bundle\ProductBundle\Provider\UnitModeProvider;
+use Oro\Bundle\ProductBundle\Service\SingleUnitModeService;
 
 class ProductUnitValueExtension extends \Twig_Extension
 {
@@ -14,17 +14,16 @@ class ProductUnitValueExtension extends \Twig_Extension
      */
     protected $formatter;
 
-
     /**
-     * @var UnitModeProvider
+     * @var SingleUnitModeService
      */
     protected $unitModeProvider;
 
     /**
      * @param ProductUnitValueFormatter $formatter
-     * @param UnitModeProvider $unitModeProvider
+     * @param SingleUnitModeService $unitModeProvider
      */
-    public function __construct(ProductUnitValueFormatter $formatter, UnitModeProvider $unitModeProvider)
+    public function __construct(ProductUnitValueFormatter $formatter, SingleUnitModeService $unitModeProvider)
     {
         $this->formatter = $formatter;
         $this->unitModeProvider = $unitModeProvider;
@@ -67,6 +66,10 @@ class ProductUnitValueExtension extends \Twig_Extension
             new \Twig_SimpleFunction(
                 'oro_is_single_unit_mode_code_visible',
                 [$this->unitModeProvider, 'isSingleUnitModeCodeVisible']
+            ),
+            new \Twig_SimpleFunction(
+                'oro_is_product_primary_unit_single_and_default',
+                [$this->unitModeProvider, 'isProductPrimaryUnitSingleAndDefault']
             )
         ];
     }

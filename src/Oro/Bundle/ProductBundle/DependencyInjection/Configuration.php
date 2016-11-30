@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\ProductBundle\DependencyInjection;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
-
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -12,6 +12,9 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 class Configuration implements ConfigurationInterface
 {
     const ROOT_NODE = 'oro_product';
+    const SINGLE_UNIT_MODE = 'single_unit_mode';
+    const SINGLE_UNIT_MODE_SHOW_CODE = 'single_unit_mode_show_code';
+    const DEFAULT_UNIT = 'default_unit';
     const PRODUCT_IMAGE_WATERMARK_FILE = 'product_image_watermark_file';
     const PRODUCT_IMAGE_WATERMARK_SIZE = 'product_image_watermark_size';
     const PRODUCT_IMAGE_WATERMARK_POSITION = 'product_image_watermark_position';
@@ -29,9 +32,9 @@ class Configuration implements ConfigurationInterface
             $rootNode,
             [
                 'unit_rounding_type' => ['value' => RoundingServiceInterface::ROUND_HALF_UP],
-                'single_unit_mode' => ['value' => false, 'type' => 'boolean'],
-                'single_unit_mode_show_code' => ['value' => false, 'type' => 'boolean'],
-                'default_unit' => ['value' => 'each'],
+                self::SINGLE_UNIT_MODE => ['value' => false, 'type' => 'boolean'],
+                self::SINGLE_UNIT_MODE_SHOW_CODE => ['value' => false, 'type' => 'boolean'],
+                self::DEFAULT_UNIT => ['value' => 'each'],
                 'default_unit_precision' => ['value' => 0],
                 'general_frontend_product_visibility' => [
                     'value' => [
@@ -46,5 +49,15 @@ class Configuration implements ConfigurationInterface
         );
 
         return $treeBuilder;
+    }
+
+
+    /**
+     * @param string $key
+     * @return string
+     */
+    public static function getConfigKeyByName($key)
+    {
+        return implode(ConfigManager::SECTION_MODEL_SEPARATOR, [OroProductExtension::ALIAS, $key]);
     }
 }
