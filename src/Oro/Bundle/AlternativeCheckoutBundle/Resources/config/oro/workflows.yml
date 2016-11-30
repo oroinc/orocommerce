@@ -394,7 +394,7 @@ workflows:
                 preactions:
                     - '@find_entity':
                         class: Oro\Bundle\ShoppingListBundle\Entity\ShoppingList
-                        identifier: $.data.init_context.entityId
+                        identifier: $init_context.entityId
                         attribute: $.result.shoppingList
                 preconditions:
                     '@and':
