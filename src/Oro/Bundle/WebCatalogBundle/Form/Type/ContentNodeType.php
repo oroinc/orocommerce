@@ -107,17 +107,19 @@ class ContentNodeType extends AbstractType
                 );
             }
 
+            $nameRequired = false;
             if ($data->getId()) {
-                $form->add(
-                    'name',
-                    TextType::class,
-                    [
-                        'label' => 'oro.webcatalog.contentnode.name.label',
-                        'required' => true,
-                        'constraints' => [new NotBlank()]
-                    ]
-                );
+                $nameRequired = true;
             }
+            
+            $form->add(
+                'name',
+                TextType::class,
+                [
+                    'label' => 'oro.webcatalog.contentnode.name.label',
+                    'required' => $nameRequired
+                ]
+            );
         }
     }
 

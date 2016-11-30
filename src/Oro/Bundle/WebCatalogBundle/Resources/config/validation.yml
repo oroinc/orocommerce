@@ -8,8 +8,7 @@ Oro\Bundle\WebCatalogBundle\Entity\WebCatalog:
 Oro\Bundle\WebCatalogBundle\Entity\ContentNode:
     properties:
         name:
-            - NotBlank:
-                message: 'oro.webcatalog.validators.name.not_blank.message'
+            - NotBlank: ~
             - Length:
                 max: 255
         contentVariants:

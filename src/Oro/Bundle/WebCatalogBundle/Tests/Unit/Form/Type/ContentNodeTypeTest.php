@@ -67,6 +67,7 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
+        /** @var ContentVariantTypeRegistry|\PHPUnit_Framework_MockObject_MockObject $variantTypeRegistry */
         $variantTypeRegistry = $this->getMockBuilder(ContentVariantTypeRegistry::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -119,6 +120,7 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
 
         $this->assertTrue($form->has('parentNode'));
         $this->assertTrue($form->has('titles'));
+        $this->assertTrue($form->has('name'));
         $this->assertTrue($form->has('slugPrototypes'));
         $this->assertTrue($form->has('scopes'));
     }

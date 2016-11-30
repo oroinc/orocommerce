@@ -51,13 +51,25 @@ class BaseFormViewListenerTestCase extends FormViewListenerTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $env->expects($this->once())
+        $env->expects($this->exactly(2))
             ->method('render')
-            ->with('OroSEOBundle:SEO:view.html.twig', [
-                'entity' => $entityObject,
-                'labelPrefix' => $this->listener->getMetaFieldLabelPrefix()
-            ])
-            ->willReturn('');
+            ->willReturnMap([
+                [
+                    'OroSEOBundle:SEO:description_view.html.twig',
+                    [
+                        'entity' => $entityObject,
+                        'labelPrefix' => $this->listener->getMetaFieldLabelPrefix()
+                    ],
+                    ''
+                ],
+                [
+                    'OroSEOBundle:SEO:keywords_view.html.twig', [
+                        'entity' => $entityObject,
+                        'labelPrefix' => $this->listener->getMetaFieldLabelPrefix()
+                    ],
+                    ''
+                ]
+            ]);
 
         return $env;
     }
@@ -72,10 +84,12 @@ class BaseFormViewListenerTestCase extends FormViewListenerTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $env->expects($this->once())
+        $env->expects($this->exactly(2))
             ->method('render')
-            ->with('OroSEOBundle:SEO:update.html.twig', ['form' => new FormView()])
-            ->willReturn('');
+            ->willReturnMap([
+                ['OroSEOBundle:SEO:description_update.html.twig', ['form' => new FormView()], ''],
+                ['OroSEOBundle:SEO:keywords_update.html.twig', ['form' => new FormView()], ''],
+            ]);
 
         return $env;
     }

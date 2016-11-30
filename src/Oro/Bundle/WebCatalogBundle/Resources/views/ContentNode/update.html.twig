@@ -63,7 +63,16 @@
 {% block content_data %}
     {% set id = 'web-catalog-tree-edit' %}
 
+    {% set nameField %}
+        {% if form.name.vars.required %}
+            {{  form_row(form.name) }}
+        {% else %}
+            <span data-validation-ignore="">{{  form_row(form.name) }}</span>
+        {% endif %}
+    {% endset %}
+
     {% set formRows = [
+        nameField,
         form_row(form.parentNode),
         form_row(form.titles)
     ] %}
@@ -88,10 +97,6 @@
 
     {% if form.slugPrototypes is defined %}
         {% set formRows = formRows|merge([form_row(form.slugPrototypes)]) %}
-    {% endif %}
-
-    {% if form.name is defined %}
-        {% set formRows = formRows|merge([form_row(form.name)]) %}
     {% endif %}
 
     {% set dataBlocks = [

@@ -77,10 +77,10 @@ class FormViewListenerTestCase extends \PHPUnit_Framework_TestCase
         $scrollData->expects($this->once())
             ->method('addBlock');
 
-        $scrollData->expects($this->once())
+        $scrollData->expects($this->any())
             ->method('addSubBlock');
 
-        $scrollData->expects($this->once())
+        $scrollData->expects($this->any())
             ->method('addSubBlockData');
 
         return $scrollData;

@@ -28,7 +28,7 @@ oro:
             titles.label: Titles
             parent_scope_used.label: Inherit Parent
             web_catalog.label: Web catalog
-            scopes.label: Use For
+            scopes.label: Restrictions
 
         contentvariant:
             entity_label: Content Variant
@@ -37,14 +37,14 @@ oro:
             type.label: Type
             system_page_route.label: System Page Route
             node.label: Content Node
-            scopes.label: Use For
+            scopes.label: Restrictions
             slugs.label: Slugs
 
             variant_type:
                 system_page.label: System Page
         sections:
             general: 'General'
-            use_for: 'Use For'
+            use_for: 'Restrictions'
         button:
             webcatalog:
                 edit_content_tree.label: 'Edit Content Tree'
