@@ -24,8 +24,8 @@
         }
     ],
     "require": {
-        "oro/platform": "1.x-dev",
-        "oro/calendar-bundle": "1.x-dev",
+        "oro/platform": "1.10.10-beta.5",
+        "oro/calendar-bundle": "1.0.0-beta.5",
         "box/spout": "2.3.*",
         "nicholas-eden/math": "0.6.*",
         "myclabs/deep-copy": "1.5.*",
