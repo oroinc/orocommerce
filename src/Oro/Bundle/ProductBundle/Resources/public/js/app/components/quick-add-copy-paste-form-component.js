@@ -10,20 +10,14 @@ define(function(require) {
 
     QuickAddCopyPasteFormComponent = BaseComponent.extend({
         /**
-         * @property {jQuery}
-         */
-        $form: null,
-        $field: null,
-
-        /**
          * {@inheritDoc}
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
-            this.$form = this.options._sourceElement;
-            this.$field = this.$form.find('textarea');
+            var $form = this.options._sourceElement;
+            var $field = $form.find('textarea');
 
-            this.$form.on('submit', function(e) {
+            $form.on('submit', function(e) {
                 e.preventDefault();
 
                 var form = $(e.target);
@@ -51,11 +45,16 @@ define(function(require) {
                 widget.loadContent(form.serialize(), form.attr('method'), form.attr('action'));
             });
 
-            this.$field.on('keyup', function(e) {
-                var $field = $(e.target);
+            var validator = $form.validate();
+            delete validator.settings.onkeyup;//validate only on change/blur/submit
 
-                $field.val($field.val().replace(/^\s+/g, ''));
+            $field.on('change blur', function() {
+                var val = $field.val();
+                val = val.replace(/(\n|\r\n|^)\s+/g, '$1')//trim white space in each line start
+                    .replace(/\s+(\n|\r\n|$)/g, '$1');//trim white space in each line end
+                $field.val(val);
             });
+
         }
     });
 
