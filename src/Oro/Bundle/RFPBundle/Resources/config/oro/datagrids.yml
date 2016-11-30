@@ -369,6 +369,7 @@ datagrids:
         action_configuration: ['@oro_rfp.datagrid.action_permission_provider', "getRequestStatusDefinitionPermissions"]
 
     frontend-requests-grid:
+        acl_resource: oro_rfp_frontend_request_view
         extended_entity_name: %oro_rfp.entity.request.class%
         options:
             entityHint:        request

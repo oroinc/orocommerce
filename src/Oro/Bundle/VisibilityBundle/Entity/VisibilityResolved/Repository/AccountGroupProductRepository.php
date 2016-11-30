@@ -203,7 +203,7 @@ class AccountGroupProductRepository extends AbstractVisibilityRepository
                 'OroVisibilityBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved',
                 'agcvr',
                 'WITH',
-                'agcvr.accountGroup = productVisibility.accountGroup AND agcvr.category = :category'
+                'agcvr.category = :category'
             )
             ->leftJoin('agcvr.scope', 'agcvr_scope')
             ->andWhere('agcvr.visibility IS NULL OR agcvr_scope.accountGroup = scope.accountGroup')

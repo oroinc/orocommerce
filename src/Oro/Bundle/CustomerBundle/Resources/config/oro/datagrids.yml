@@ -36,19 +36,19 @@ datagrids:
             type:         orm
             query:
                 select:
-                    - account.id
-                    - account.name
+                    - customer.id
+                    - customer.name
                     - account_group.name as group_name
                     - parent.name as parent_name
                     - internalRating.name as internal_rating_name
                     - internalRating.id as internal_rating_id
                 from:
-                    - { table: %oro_customer.entity.account.class%, alias: account }
+                    - { table: %oro_customer.entity.account.class%, alias: customer }
                 join:
                     left:
-                        - { join: account.group, alias: account_group }
-                        - { join: account.parent, alias: parent }
-                        - { join: account.internal_rating, alias: internalRating }
+                        - { join: customer.group, alias: account_group }
+                        - { join: customer.parent, alias: parent }
+                        - { join: customer.internal_rating, alias: internalRating }
         columns:
             name:
                 label: oro.customer.account.name.label
@@ -63,7 +63,7 @@ datagrids:
         sorters:
             columns:
                 name:
-                    data_name: account.name
+                    data_name: customer.name
                 group_name:
                     data_name: group_name
                 parent_name:
@@ -76,7 +76,7 @@ datagrids:
             columns:
                 name:
                     type:      string
-                    data_name: account.name
+                    data_name: customer.name
                 group_name:
                     type:      entity
                     data_name: account_group.id
@@ -185,14 +185,14 @@ datagrids:
             type: orm
             query:
                 select:
-                    - account.id
-                    - account.name
+                    - customer.id
+                    - customer.name
                     - parent.name as parent_name
                 from:
-                    - { table: %oro_customer.entity.account.class%, alias: account }
+                    - { table: %oro_customer.entity.account.class%, alias: customer }
                 join:
                     left:
-                        - { join: account.parent, alias: parent }
+                        - { join: customer.parent, alias: parent }
         properties:
             id: ~
             view_link:
@@ -202,14 +202,14 @@ datagrids:
         sorters:
             columns:
                 name:
-                    data_name: account.name
+                    data_name: customer.name
                 parent_name:
                     data_name: parent_name
         filters:
             columns:
                 name:
                     type:      string
-                    data_name: account.name
+                    data_name: customer.name
                 parent_name:
                     type:      string
                     data_name: parent_name
@@ -229,7 +229,7 @@ datagrids:
             query:
                 where:
                     and:
-                        - account.group = :group
+                        - customer.group = :group
             bind_parameters:
                 - group
         columns:
@@ -244,21 +244,8 @@ datagrids:
             view:
                 rowAction: true
 
-    account-group-accounts-grid-update:
+    account-group-accounts-grid-update-basic:
         extends: account-group-accounts-grid-basic
-        source:
-            query:
-                select:
-                    - >
-                        (CASE WHEN (:group IS NOT NULL) THEN
-                            CASE WHEN (:group = account.group OR account.id IN (:data_in)) AND account.id NOT IN (:data_not_in)
-                            THEN true ELSE false END
-                        ELSE
-                            CASE WHEN account.id IN (:data_in) AND account.id NOT IN (:data_not_in)
-                            THEN true ELSE false END
-                        END) as hasGroup
-            bind_parameters:
-                - group
         columns:
             hasGroup:
                 label: oro.customer.account.has_group.label
@@ -286,6 +273,27 @@ datagrids:
                 selectors:
                     included: '#groupAppendAccounts'
                     excluded: '#groupRemoveAccounts'
+
+    account-group-accounts-grid-update:
+        extends: account-group-accounts-grid-update-basic
+        source:
+            query:
+                select:
+                    - >
+                        (CASE WHEN (:group = customer.group OR customer.id IN (:data_in)) AND customer.id NOT IN (:data_not_in)
+                        THEN true ELSE false END) as hasGroup
+            bind_parameters:
+                -
+                    name: group
+
+    account-group-accounts-grid-create:
+        extends: account-group-accounts-grid-update-basic
+        source:
+            query:
+                select:
+                    - >
+                        (CASE WHEN customer.id IN (:data_in) AND customer.id NOT IN (:data_not_in)
+                        THEN true ELSE false END) as hasGroup
 
     account-account-user-grid-no-filter-base:
         entity_name: %oro_customer.entity.account_user.class%
@@ -362,10 +370,10 @@ datagrids:
         source:
             query:
                 select:
-                    - account.name as accountName
+                    - customer.name as accountName
                 join:
                     inner:
-                        - { join: accountUser.account, alias: account }
+                        - { join: accountUser.account, alias: customer }
         columns:
             accountName:
                 label: oro.customer.accountuser.account.label
@@ -427,10 +435,10 @@ datagrids:
         source:
             query:
                 select:
-                    - account.name as accountName
+                    - customer.name as accountName
                 join:
                     inner:
-                        - { join: accountUser.account, alias: account }
+                        - { join: accountUser.account, alias: customer }
         columns:
             accountName:
                 label: oro.customer.accountuser.account.label
@@ -998,11 +1006,7 @@ datagrids:
                     left:
                         - { join: address.country, alias: country}
                         - { join: address.region, alias: region}
-                where:
-                    and:
-                        - IDENTITY(address.frontendOwner) = :frontend_owner_id
-            bind_parameters:
-                - frontend_owner_id
+
         properties:
             id: ~
         columns:
@@ -1056,7 +1060,7 @@ datagrids:
                 icon:          map-marker
 
     frontend-account-account-address-grid:
-        acl_resource: oro_account_frontend_account_view
+        acl_resource: oro_account_frontend_account_address_view
         extends: frontend-account-address-grid-base
         source:
             type: orm
@@ -1086,7 +1090,7 @@ datagrids:
                 acl_resource:  oro_account_frontend_account_address_remove
 
     frontend-account-account-user-address-grid:
-        acl_resource: oro_account_frontend_account_user_view
+        acl_resource: oro_account_frontend_account_user_address_view
         extends: frontend-account-address-grid-base
         source:
             type: orm

@@ -13,14 +13,15 @@ class WebsiteSearchMappingProviderTest extends AbstractSearchMappingProviderTest
 
     protected function tearDown()
     {
-        parent::tearDown();
         unset($this->mappingConfigurationLoader);
     }
 
     public function testGetMappingConfig()
     {
-        $this->assertEquals($this->testMapping, $this->provider->getMappingConfig());
-        $this->provider->getMappingConfig();
+        $this->assertEquals($this->testMapping, $this->getProvider()->getMappingConfig());
+
+        // Check that cache was used
+        $this->getProvider()->getMappingConfig();
     }
 
     /**

@@ -25,6 +25,10 @@
     }
 }
 
+.topbar-navigation-wrap {
+    display: inline-block;
+}
+
 @include breakpoint('tablet') {
     .topbar {
         .grid__column {

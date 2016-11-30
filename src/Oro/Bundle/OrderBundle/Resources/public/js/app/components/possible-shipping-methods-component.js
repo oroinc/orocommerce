@@ -163,7 +163,7 @@ define(function(require) {
                                 }
                                 str = str + '<input type="radio" ' + checked + ' name="possibleShippingMethodType" value="' + type.identifier +
                                     '" data-shipping-method="' + method.identifier + '" data-shipping-price="' + type.price.value + '" data-choice="' + type.identifier + '" />';
-                                str = str + '<span class="radio_button_label">' + __(type.label) + ': <strong>' + type.price.currency + ' ' + type.price.value + '</strong></span>';
+                                str = str + '<span class="radio_button_label">' + __('oro.shipping.method_type.backend.method_type_and_price.label', {translatedMethodType: __(type.label), price: '<strong>' + type.price.currency + ' ' + type.price.value + '</strong>'}) + '</span>';
                                 str = str + '</label></div>';
                             }
                         });
@@ -207,10 +207,18 @@ define(function(require) {
          */
         updateSelectedShippingMethod: function(type, method, cost, matched) {
             if (type !== null && method != null) {
-                var methodLabel = (this.$data[method].isGrouped == true) ? __(this.$data[method].label) + ', ' : '';
+                var methodLabel = (this.$data[method].isGrouped == true) ? __(this.$data[method].label) : '';
                 var typeLabel = __(this.$data[method].types[type].label);
                 var currency = this.$data[method].types[type].price.currency;
-                var selectedShippingMethod = methodLabel + typeLabel + ': ' + currency + ' ' + parseFloat(cost).toFixed(2);
+                var translation = (this.$data[method].isGrouped == true) ?
+                    'oro.shipping.method_type.backend.method_with_type_and_price.label'
+                    : 'oro.shipping.method_type.backend.method_type_and_price.label';
+                var selectedShippingMethod = __(translation, {
+                        translatedMethod: methodLabel,
+                        translatedMethodType: __(typeLabel),
+                        price: currency+ ' ' + parseFloat(cost).toFixed(2)
+                    });
+
                 var $div = $("<div>", {"class": "control-group"});
                 $div.append('<label class="control-label">' + __('oro.order.shipping_method.label') + '</label>');
                 $div.append('<div class="controls"><div class="control-label selected-shipping-method">' +
@@ -219,7 +227,7 @@ define(function(require) {
                 if ($(document).find('.selected-shipping-method').length > 0) {
                     $(document).find('.previously-selected-shipping-method').closest('.control-group').remove();
                     $(document).find('.selected-shipping-method').closest('.control-group').remove();
-                    if (!matched && selectedShippingMethod != this.savedShippingMethod) {
+                    if (!matched && this.savedShippingMethod && selectedShippingMethod != this.savedShippingMethod) {
                         var $prevDiv = $("<div>", {"class": "control-group"});
                         $prevDiv.append('<label class="control-label">' + __('oro.order.previous_shipping_method.label') + '</label>');
                         $prevDiv.append('<div class="controls"><div class="control-label previously-selected-shipping-method">' +
