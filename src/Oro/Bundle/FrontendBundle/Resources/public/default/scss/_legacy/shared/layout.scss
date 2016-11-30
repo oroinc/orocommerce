@@ -92,49 +92,10 @@
 /*START CART*/
 //Cart Content
 .cart__order-title {
-  margin: 0 0 10px;
+  margin: 0 0 $offset-y-m;
 
   font-size: 22px;
   line-height: 1.3;
-
-  &_rename-mode {
-    margin: 0 0 15px !important;
-
-    font-size: 0;
-
-    @media (max-width: $screen-md) {
-      margin: 0 0 5px !important;
-    }
-
-    .input {
-      width: 45%;
-    }
-
-    .btn {
-      min-width: 80px;
-
-      &--apply-rename {
-        margin-left: 5px;
-      }
-
-      &--reject-rename {
-        display: inline-block;
-        vertical-align: middle;
-        margin-left: 1rem;
-        padding: 0;
-        border: 0;
-        box-shadow: none;
-
-        background: transparent;
-        color: get-color('ui', 'normal');
-        font-size: $base-font-size;
-
-        &:hover {
-          text-decoration: none;
-        }
-      }
-    }
-  }
 }
 
 .cart__order__controls-list,
