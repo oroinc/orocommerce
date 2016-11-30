@@ -4,37 +4,60 @@ namespace Oro\Bundle\CustomerBundle\Migrations\Schema\v1_8;
 
 use Doctrine\DBAL\Schema\Schema;
 
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\NoteBundle\Migration\UpdateNoteAssociationKindForRenamedEntitiesMigration;
 
 class MigrateNotes extends UpdateNoteAssociationKindForRenamedEntitiesMigration
 {
+    protected $entitiesNames = [
+        'Account',
+        'AccountAddress',
+        'AccountGroup',
+        'AccountUserSettings',
+        'AccountUserRole',
+        'AccountUser',
+        'AccountUserAddress',
+        'ProductVisibility',
+        'AccountProductVisibility',
+        'CategoryVisibility',
+        'AccountCategoryVisibility',
+        'AccountGroupProductVisibility',
+        'AccountGroupCategoryVisibility',
+    ];
+
     /**
      * {@inheritdoc}
      */
     protected function getRenamedEntitiesNames(Schema $schema)
     {
-        return [
-            'Oro\Bundle\CustomerBundle\Entity\Account' => 'OroB2B\Bundle\AccountBundle\Entity\Account',
-            'Oro\Bundle\CustomerBundle\Entity\AccountAddress' => 'OroB2B\Bundle\AccountBundle\Entity\AccountAddress',
-            'Oro\Bundle\CustomerBundle\Entity\AccountGroup' => 'OroB2B\Bundle\AccountBundle\Entity\AccountGroup',
-            'Oro\Bundle\CustomerBundle\Entity\AccountUserSettings' => 'OroB2B\Bundle\AccountBundle\Entity' .
-                '\AccountUserSettings',
-            'Oro\Bundle\CustomerBundle\Entity\AccountUserRole' => 'OroB2B\Bundle\AccountBundle\Entity\AccountUserRole',
-            'Oro\Bundle\CustomerBundle\Entity\AccountUser' => 'OroB2B\Bundle\AccountBundle\Entity\AccountUser',
-            'Oro\Bundle\CustomerBundle\Entity\AccountUserAddress' => 'OroB2B\Bundle\AccountBundle\Entity' .
-                '\AccountUserAddress',
-            'Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility' => 'OroB2B\Bundle\AccountBundle' .
-                '\Entity\Visibility\ProductVisibility',
-            'Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountProductVisibility' => 'OroB2B\Bundle\AccountBundle' .
-                '\Entity\Visibility\AccountProductVisibility',
-            'Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility' => 'OroB2B\Bundle\AccountBundle' .
-                '\Entity\Visibility\CategoryVisibility',
-            'Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountCategoryVisibility' => 'OroB2B\Bundle\AccountBundle' .
-                '\Entity\Visibility\AccountCategoryVisibility',
-            'Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility' => 'OroB2B\Bundle' .
-                '\AccountBundle\Entity\Visibility\AccountGroupProductVisibility',
-            'Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupCategoryVisibility' => 'OroB2B\Bundle' .
-                '\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility',
-        ];
+        $b2bNameSpace = 'OroB2B\Bundle\AccountBundle\Entity';
+        $oroAccountNameSpace = 'Oro\Bundle\AccountBundle\Entity';
+        $newNameSpace = 'Oro\Bundle\CustomerBundle\Entity';
+
+        $noteTable = $schema->getTable('oro_note');
+        $renamedEntityNamesMapping = [];
+        foreach ($this->entitiesNames as $entityName) {
+            $oldClassName = "$b2bNameSpace\\$entityName";
+            if (!$noteTable->hasColumn($this->getNoteAssociationColumnName($oldClassName))) {
+                $oldClassName = "$oroAccountNameSpace\\$entityName";
+            }
+
+            $renamedEntityNamesMapping["$newNameSpace\\$entityName"] = $oldClassName;
+        }
+
+        return $renamedEntityNamesMapping;
+    }
+
+    /**
+     * @param string $targetClass
+     *
+     * @return string
+     */
+    protected function getNoteAssociationColumnName($targetClass)
+    {
+        $noteAssociationName = ExtendHelper::buildAssociationName($targetClass);
+        $noteAssociationColumnName = $this->nameGenerator->generateRelationColumnName($noteAssociationName);
+
+        return $noteAssociationColumnName;
     }
 }

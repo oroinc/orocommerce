@@ -138,7 +138,7 @@ class OroPaymentTermBundleInstaller implements
                 $this->nameGenerator
             );
             $updateAssociationKindQuery->registerOldClassNameForClass(
-                'Oro\Bundle\PaymentTermBundle\Entity\PaymentTransaction',
+                'Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm',
                 'Oro\Bundle\PaymentBundle\Entity\PaymentTerm'
             );
 
