@@ -10,6 +10,8 @@ use Psr\Log\LoggerInterface;
 
 use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
 
+use Oro\Bundle\EntityBundle\Tools\SafeDatabaseChecker;
+use Oro\Bundle\EntityConfigBundle\Entity\EntityConfigModel;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
 
 class UpdateEntityConfigWarmer implements CacheWarmerInterface
@@ -48,16 +50,20 @@ class UpdateEntityConfigWarmer implements CacheWarmerInterface
     public function warmUp($cacheDir)
     {
         /** @var Connection $defaultConnection */
-        $defaultConnection = $this->managerRegistry->getConnection();
+        $defaultConnection = $this->managerRegistry->getConnection('config');
+
+        $tableExists = SafeDatabaseChecker::tablesExist(
+            $defaultConnection,
+            SafeDatabaseChecker::getTableName($this->managerRegistry, EntityConfigModel::class)
+        );
+        if (!$tableExists) {
+            return;
+        }
 
         $query = new ParametrizedSqlMigrationQuery(
             'DELETE FROM oro_entity_config WHERE class_name = :class_name',
-            [
-                'class_name'  => 'Oro\Bundle\AlternativeCheckoutBundle\Entity\AlternativeCheckout',
-            ],
-            [
-                'class_name'  => Type::STRING
-            ]
+            ['class_name'  => 'Oro\Bundle\AlternativeCheckoutBundle\Entity\AlternativeCheckout'],
+            ['class_name'  => Type::STRING]
         );
 
         $query->setConnection($defaultConnection);
