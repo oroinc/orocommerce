@@ -13,6 +13,7 @@ oro:
         variant_fields.label: Variant Fields
         inventory_status.label: Inventory Status
         status.label: Status
+        type.label: Type
         owner.label: Owner
         organization.label: Organization
         primary_unit_precision.label: Unit of Quantity
@@ -30,9 +31,17 @@ oro:
         anything.label: Any Text
         featured_products.label: Featured Products
 
+        type:
+            simple: Simple
+            configurable: Configurable
+
         status:
             enabled: Enabled
             disabled: Disabled
+
+        type:
+            simple: Simple Product
+            configurable: Configurable Product
 
         visibility:
             visible.label: Yes

@@ -56,21 +56,4 @@ class ShippingMethodLabelFormatter
 
         return $shippingMethodType->getLabel();
     }
-
-    /**
-     * @param $shippingMethodName
-     * @param $shippingTypeName
-     * @return string
-     */
-    public function formatShippingMethodWithType($shippingMethodName, $shippingTypeName)
-    {
-        $methodLabel = $this->formatShippingMethodLabel($shippingMethodName);
-
-        $methodTypeLabel = $this->formatShippingMethodTypeLabel(
-            $shippingMethodName,
-            $shippingTypeName
-        );
-
-        return implode(', ', array_filter([$methodLabel, $methodTypeLabel]));
-    }
 }

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -134,10 +135,12 @@ class ProductType extends AbstractType
                 'variantFields',
                 ProductCustomFieldsChoiceType::NAME,
                 ['label' => 'oro.product.variant_fields.label']
-            )->add(
+            )
+            ->add(
                 'images',
                 ProductImageCollectionType::NAME
             )
+            ->add('type', HiddenType::class)
             ->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetDataListener'])
             ->addEventListener(FormEvents::POST_SET_DATA, [$this, 'postSetDataListener'])
             ->addEventListener(FormEvents::SUBMIT, [$this, 'submitListener']);

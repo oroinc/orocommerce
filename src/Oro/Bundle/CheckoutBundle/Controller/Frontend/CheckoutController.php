@@ -163,8 +163,8 @@ class CheckoutController extends Controller
     {
         $workflowItem = $this->getWorkflowItem($checkout);
         if ($request->isMethod(Request::METHOD_POST)) {
-            $continueTransition = $this->get('oro_checkout.layout.data_provider.transition')
-                ->getContinueTransition($workflowItem);
+            $transitionProvider = $this->get('oro_checkout.layout.data_provider.transition');
+            $continueTransition = $transitionProvider->getContinueTransition($workflowItem);
             if ($continueTransition) {
                 $transitionForm = $this->getTransitionForm($continueTransition, $workflowItem);
 
@@ -173,6 +173,7 @@ class CheckoutController extends Controller
 
                     if ($transitionForm->isValid()) {
                         $this->getWorkflowManager()->transit($workflowItem, $continueTransition->getTransition());
+                        $transitionProvider->clearCache();
                     } else {
                         $this->handleFormErrors($transitionForm->getErrors());
                     }

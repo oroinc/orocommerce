@@ -53,9 +53,12 @@ oro:
                 product_inventory_options.title: Product Inventory Options
             fields:
                 manage_inventory.label: Manage Inventory
+                inventory_threshold.label: Inventory Threshold
 
         manage_inventory:
             label: Manage Inventory
             choice:
                 'true': Yes
                 'false': No
+        inventory_threshold:
+            label: Inventory Threshold
