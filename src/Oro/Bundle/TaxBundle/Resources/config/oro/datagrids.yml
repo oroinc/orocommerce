@@ -387,7 +387,7 @@ datagrids:
             query:
                 join:
                     left:
-                        - { join: %oro_tax.entity.account_tax_code.class%, alias: account_tax_code, conditionType: 'WITH', condition: 'account MEMBER OF account_tax_code.accounts' }
+                        - { join: %oro_tax.entity.account_tax_code.class%, alias: account_tax_code, conditionType: 'WITH', condition: 'customer MEMBER OF account_tax_code.accounts' }
                 where:
                     and:
                         - account_tax_code.id = :account_tax_code_id

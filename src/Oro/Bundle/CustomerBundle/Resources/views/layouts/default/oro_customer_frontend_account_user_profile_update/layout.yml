@@ -11,11 +11,6 @@ layout:
             optionValue:
                 label: 'oro.customer.accountuser.profile.edit'
 
-        - '@setOption':
-            id: page_content
-            optionName: class_prefix
-            optionValue: 'user'
-
         - '@addTree':
             items:
                 account_profile_edit_page:

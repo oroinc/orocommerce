@@ -23,7 +23,7 @@ action_groups:
                 type: Oro\Bundle\CheckoutBundle\Entity\Checkout
         actions:
             - '@call_service_method':
-                service: oro_checkout.factory.shipping_context_provider_factory
+                service: oro_checkout.factory.shipping_context_factory
                 method: create
                 method_parameters: [$.checkout]
                 attribute: $.context
