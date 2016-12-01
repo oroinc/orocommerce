@@ -20,11 +20,10 @@ class AccountRolePageListenerTest extends \PHPUnit_Framework_TestCase
         $translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
         $translator->expects($this->any())
             ->method('trans')
-            ->willReturnCallback(
-                function ($message) {
-                    return $message . '_trans';
-                }
-            );
+            ->willReturnCallback(function ($value) {
+                return 'translated: ' . $value;
+            });
+
         $this->listener = new AccountRolePageListener($translator);
     }
 
@@ -122,7 +121,10 @@ class AccountRolePageListenerTest extends \PHPUnit_Framework_TestCase
         $data = $event->getFormData();
         $this->assertCount(4, $data['dataBlocks']);
         $workflowBlock = $data['dataBlocks'][2];
-        $this->assertEquals('oro.workflow.workflowdefinition.entity_plural_label_trans', $workflowBlock['title']);
+        $this->assertEquals(
+            'translated: oro.workflow.workflowdefinition.entity_plural_label',
+            $workflowBlock['title']
+        );
         $this->assertEquals(
             [['data' => [$renderedHtml]]],
             $workflowBlock['subblocks']
@@ -202,7 +204,10 @@ class AccountRolePageListenerTest extends \PHPUnit_Framework_TestCase
         $data = $event->getData();
         $this->assertCount(4, $data['dataBlocks']);
         $workflowBlock = $data['dataBlocks'][2];
-        $this->assertEquals('oro.workflow.workflowdefinition.entity_plural_label_trans', $workflowBlock['title']);
+        $this->assertEquals(
+            'translated: oro.workflow.workflowdefinition.entity_plural_label',
+            $workflowBlock['title']
+        );
         $this->assertEquals(
             [['data' => [$renderedHtml]]],
             $workflowBlock['subblocks']
