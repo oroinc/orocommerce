@@ -31,7 +31,7 @@ class CategoryListenerTest extends WebTestCase
             ->getManagerForClass('OroCatalogBundle:Category');
 
         $this->messageProducer = $this->getContainer()->get('oro_message_queue.client.message_producer');
-        $this->getContainer()->get('oro_product.model.product_message_handler')->sendScheduledMessages();
+        $this->getContainer()->get('oro_visibility.model.product_message_handler')->sendScheduledMessages();
         $this->messageProducer->clear();
     }
 
@@ -47,7 +47,7 @@ class CategoryListenerTest extends WebTestCase
         $this->categoryManager->flush();
         $this->messageProducer->clear();
 
-        $this->getContainer()->get('oro_catalog.model.category_message_handler')->sendScheduledMessages();
+        $this->getContainer()->get('oro_visibility.model.category_message_handler')->sendScheduledMessages();
         $messages = $this->messageProducer->getSentMessages();
         $expectedMessages = [
             [
@@ -69,7 +69,7 @@ class CategoryListenerTest extends WebTestCase
         $this->categoryManager->flush();
         $this->messageProducer->clear();
 
-        $this->getContainer()->get('oro_catalog.model.category_message_handler')->sendScheduledMessages();
+        $this->getContainer()->get('oro_visibility.model.category_message_handler')->sendScheduledMessages();
         $messages = $this->messageProducer->getSentMessages();
         $expectedMessages = [
             [

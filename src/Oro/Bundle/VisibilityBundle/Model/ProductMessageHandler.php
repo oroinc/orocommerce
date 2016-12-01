@@ -1,14 +1,14 @@
 <?php
 
-namespace Oro\Bundle\CatalogBundle\Model;
+namespace Oro\Bundle\VisibilityBundle\Model;
 
-use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
-class CategoryMessageHandler
+class ProductMessageHandler
 {
     /**
-     * @var CategoryMessageFactory
+     * @var ProductMessageFactory
      */
     protected $messageFactory;
 
@@ -23,11 +23,11 @@ class CategoryMessageHandler
     protected $scheduledMessages = [];
 
     /**
-     * @param CategoryMessageFactory $messageFactory
+     * @param ProductMessageFactory $messageFactory
      * @param MessageProducerInterface $messageProducer
      */
     public function __construct(
-        CategoryMessageFactory $messageFactory,
+        ProductMessageFactory $messageFactory,
         MessageProducerInterface $messageProducer
     ) {
         $this->messageFactory = $messageFactory;
@@ -36,11 +36,11 @@ class CategoryMessageHandler
 
     /**
      * @param string $topic
-     * @param Category|null $category
+     * @param Product $product
      */
-    public function addCategoryMessageToSchedule($topic, Category $category = null)
+    public function addProductMessageToSchedule($topic, Product $product)
     {
-        $message = $this->messageFactory->createMessage($category);
+        $message = $this->messageFactory->createMessage($product);
 
         if (!$this->isScheduledMessage($topic, $message)) {
             $this->scheduleMessage($topic, $message);
@@ -87,6 +87,6 @@ class CategoryMessageHandler
      */
     protected function getMessageKey($message)
     {
-        return $message[CategoryMessageFactory::ID];
+        return $message[ProductMessageFactory::ID];
     }
 }

@@ -6,7 +6,7 @@ workflows:
         steps_display_ordered: true
 
         defaults:
-            active: true
+            active: false
         exclusive_record_groups:
             - b2b_checkout_flow
         priority: 100
@@ -643,7 +643,7 @@ workflows:
                                 state: $.result.currentCheckoutState
                                 token: $state_token
                     - '@call_service_method':
-                        service: oro_checkout.factory.shipping_context_provider_factory
+                        service: oro_checkout.factory.shipping_context_factory
                         method: create
                         method_parameters: [$checkout]
                         attribute: $.result.shippingContext

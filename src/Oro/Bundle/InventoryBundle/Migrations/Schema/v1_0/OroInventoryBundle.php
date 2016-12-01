@@ -19,18 +19,36 @@ use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\MigrationConstraintTrait;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
+use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
+use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
-class OroInventoryBundle implements Installation, ExtendExtensionAwareInterface
+class OroInventoryBundle implements Installation, ExtendExtensionAwareInterface, RenameExtensionAwareInterface
 {
     use MigrationConstraintTrait;
 
     const INVENTORY_LEVEL_TABLE_NAME = 'oro_inventory_level';
     const OLD_WAREHOUSE_INVENTORY_TABLE = 'oro_warehouse_inventory_lev';
     const ORO_B2B_WAREHOUSE_INVENTORY_TABLE = 'orob2b_warehouse_inventory_lev';
+    const WAREHOUSE_TABLE = 'oro_warehouse';
+    const WAREHOUSE_TABLE_BETA1 = 'orob2b_warehouse';
+    const NOTE_TABLE = 'oro_note';
+    const ORDER_TABLE = 'oro_order';
+    const ORDER_LINE_ITEM_TABLE = 'oro_order_line_item';
+    const NOTE_WAREHOUSE_ASSOCIATION = 'warehouse_c913b87';
+    const NOTE_WAREHOUSE_ASSOCIATION_COLUMN = 'warehouse_c913b87_id';
+    const NOTE_WAREHOUSE_ASSOCIATION_COLUMN_BETA1 = 'warehouse_6eca7547_id';
+    const ACTIVITY_LIST_WAREHOUSE_ASSOCIATION = 'warehouse_901db874';
+    const ORDER_WAREHOUSE_ASSOCIATION = 'warehouse';
+    const ORDER_WAREHOUSE_ASSOCIATION_COLUMN = 'warehouse_id';
 
     /** @var ExtendExtension */
     protected $extendExtension;
+
+    /**
+     * @var RenameExtension
+     */
+    private $renameExtension;
 
     /**
      * {@inheritdoc}
@@ -38,6 +56,14 @@ class OroInventoryBundle implements Installation, ExtendExtensionAwareInterface
     public function setExtendExtension(ExtendExtension $extendExtension)
     {
         $this->extendExtension = $extendExtension;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setRenameExtension(RenameExtension $renameExtension)
+    {
+        $this->renameExtension = $renameExtension;
     }
 
     /**
@@ -49,6 +75,8 @@ class OroInventoryBundle implements Installation, ExtendExtensionAwareInterface
         $this->addManageInventoryFieldToCategory($schema);
         $this->addInventoryThresholdFieldToProduct($schema);
         $this->addInventoryThresholdFieldToCategory($schema);
+
+        $this->updateWarehouseEntityRelations($schema);
 
         if (($schema->hasTable(self::OLD_WAREHOUSE_INVENTORY_TABLE) ||
                 $schema->hasTable(self::ORO_B2B_WAREHOUSE_INVENTORY_TABLE))
@@ -102,6 +130,74 @@ class OroInventoryBundle implements Installation, ExtendExtensionAwareInterface
         $inventoryTable->dropColumn('warehouse_id');
 
         $this->addEntityConfigUpdateQueries($queries);
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    protected function updateWarehouseEntityRelations(Schema $schema)
+    {
+        if (class_exists('Oro\Bundle\WarehouseBundle\Entity\Warehouse')) {
+            return;
+        }
+
+        $table = $this->getWarehouseTable($schema);
+        if (!$table) {
+            return;
+        }
+
+        $notes = $schema->getTable(self::NOTE_TABLE);
+        if ($notes->hasColumn(self::NOTE_WAREHOUSE_ASSOCIATION_COLUMN)) {
+            $this->dropForeignKeyAndColumn($schema, self::NOTE_TABLE, self::NOTE_WAREHOUSE_ASSOCIATION_COLUMN);
+        }
+        if ($notes->hasColumn(self::NOTE_WAREHOUSE_ASSOCIATION_COLUMN_BETA1)) {
+            $this->dropForeignKeyAndColumn($schema, self::NOTE_TABLE, self::NOTE_WAREHOUSE_ASSOCIATION_COLUMN_BETA1);
+        }
+
+        if ($schema->getTable(self::ORDER_TABLE)->hasColumn(self::NOTE_WAREHOUSE_ASSOCIATION_COLUMN_BETA1)) {
+            $this->dropForeignKeyAndColumn($schema, self::ORDER_TABLE, self::ORDER_WAREHOUSE_ASSOCIATION_COLUMN);
+        }
+        if ($schema->getTable(self::ORDER_TABLE)->hasColumn(self::ORDER_LINE_ITEM_TABLE)) {
+            $this->dropForeignKeyAndColumn(
+                $schema,
+                self::ORDER_LINE_ITEM_TABLE,
+                self::ORDER_WAREHOUSE_ASSOCIATION_COLUMN
+            );
+        }
+
+        $schema->dropTable($table);
+    }
+
+    /**
+     * @param Schema $schema
+     * @return null|string
+     */
+    protected function getWarehouseTable(Schema $schema)
+    {
+        $table = null;
+        if ($schema->hasTable(self::WAREHOUSE_TABLE)) {
+            $table = self::WAREHOUSE_TABLE;
+        }
+
+        if ($schema->hasTable(self::WAREHOUSE_TABLE_BETA1)) {
+            $table = self::WAREHOUSE_TABLE_BETA1;
+        }
+
+        return $table;
+    }
+
+    /**
+     * @param Schema $schema
+     * @param string $tableName
+     * @param string $relationColumn
+     * @throws \Doctrine\DBAL\Schema\SchemaException
+     */
+    protected function dropForeignKeyAndColumn(Schema $schema, $tableName, $relationColumn)
+    {
+        $table = $schema->getTable($tableName);
+        $foreignKey = $this->getConstraintName($table, $relationColumn);
+        $table->removeForeignKey($foreignKey);
+        $table->dropColumn($relationColumn);
     }
 
     /**

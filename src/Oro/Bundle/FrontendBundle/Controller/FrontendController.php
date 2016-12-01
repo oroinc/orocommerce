@@ -38,7 +38,7 @@ class FrontendController extends Controller
         $theme = $request->attributes->get('_theme', 'default');
 
         $context = new LayoutContext();
-        $context->set('theme', $theme);
+        $context->set('theme', empty($theme) ? 'default' : $theme);
         $context->set('data', ['status_code' => $code, 'status_text' => $text]);
 
         $this->get('oro_layout.layout_context_holder')->setContext($context);

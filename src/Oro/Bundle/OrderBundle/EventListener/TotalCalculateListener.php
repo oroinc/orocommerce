@@ -9,7 +9,6 @@ use Symfony\Component\Form\Form;
 use Oro\Bundle\ActionBundle\Provider\CurrentApplicationProviderInterface;
 use Oro\Bundle\FrontendBundle\Provider\ActionCurrentApplicationProvider;
 use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\OrderBundle\Form\Type\FrontendOrderType;
 use Oro\Bundle\OrderBundle\Form\Type\OrderType;
 use Oro\Bundle\PricingBundle\Event\TotalCalculateBeforeEvent;
 
@@ -17,7 +16,6 @@ class TotalCalculateListener
 {
     /** @var array */
     protected $forms = [
-        ActionCurrentApplicationProvider::COMMERCE_APPLICATION => FrontendOrderType::NAME,
         ActionCurrentApplicationProvider::DEFAULT_APPLICATION => OrderType::NAME
     ];
 
