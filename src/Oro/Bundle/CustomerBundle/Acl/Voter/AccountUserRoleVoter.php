@@ -11,7 +11,6 @@ use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\CustomerBundle\Entity\AccountUserRole;
 use Oro\Bundle\CustomerBundle\Entity\Repository\AccountUserRoleRepository;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Entity\Account;
 
 class AccountUserRoleVoter extends AbstractEntityVoter
 {
@@ -99,7 +98,7 @@ class AccountUserRoleVoter extends AbstractEntityVoter
             return self::ACCESS_DENIED;
         }
 
-        return self::ACCESS_ABSTAIN;
+        return self::ACCESS_GRANTED;
     }
 
     /**
@@ -111,11 +110,8 @@ class AccountUserRoleVoter extends AbstractEntityVoter
         /* @var $user AccountUser */
         $user = $this->getLoggedUser();
 
-        /** @var Account $account */
-        $account = $this->object->getAccount();
-
         if (!$user instanceof AccountUser) {
-            return self::ACCESS_ABSTAIN;
+            return self::ACCESS_DENIED;
         }
 
         $isGranted = false;
@@ -129,11 +125,7 @@ class AccountUserRoleVoter extends AbstractEntityVoter
                 break;
         }
 
-        if ($isGranted && (!$account || $account->getId() === $user->getAccount()->getId())) {
-            return self::ACCESS_GRANTED;
-        }
-
-        return self::ACCESS_ABSTAIN;
+        return $isGranted ? self::ACCESS_GRANTED : self::ACCESS_DENIED;
     }
 
     /**
@@ -157,7 +149,11 @@ class AccountUserRoleVoter extends AbstractEntityVoter
      */
     protected function isGrantedUpdateAccountUserRole()
     {
-        return $this->isGrantedAccountUserRole(BasicPermissionMap::PERMISSION_EDIT);
+        if ($this->object->isPredefined()) {
+            return true;
+        }
+
+        return $this->getSecurityFacade()->isGranted(BasicPermissionMap::PERMISSION_EDIT, $this->object);
     }
 
     /**
@@ -165,21 +161,11 @@ class AccountUserRoleVoter extends AbstractEntityVoter
      */
     protected function isGrantedViewAccountUserRole()
     {
-        return $this->isGrantedAccountUserRole(BasicPermissionMap::PERMISSION_VIEW);
-    }
-
-    /**
-     * @param $permissionMap
-     * @return bool
-     */
-    protected function isGrantedAccountUserRole($permissionMap)
-    {
-        $descriptor = sprintf('entity:%s@%s', AccountUser::SECURITY_GROUP, $this->className);
-        if (!$this->getSecurityFacade()->isGranted($permissionMap, $descriptor)) {
-            return false;
+        if ($this->object->isPredefined()) {
+            return true;
         }
 
-        return true;
+        return $this->getSecurityFacade()->isGranted(BasicPermissionMap::PERMISSION_VIEW, $this->object);
     }
 
     /**

@@ -16,7 +16,6 @@ trait MessageQueueTrait
     protected function cleanScheduledMessages()
     {
         $this->sendScheduledMessages();
-        $this->getMessageCollector()->enable();
         $this->getMessageCollector()->clear();
     }
 

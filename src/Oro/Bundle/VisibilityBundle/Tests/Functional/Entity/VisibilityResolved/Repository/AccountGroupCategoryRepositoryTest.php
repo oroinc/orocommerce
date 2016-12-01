@@ -42,7 +42,7 @@ class AccountGroupCategoryRepositoryTest extends AbstractCategoryRepositoryTest
         );
 
         $actualVisibility = $this->getRepository()
-            ->getVisibilitiesForAccountGroups($category, $accountGroups);
+            ->getVisibilitiesForAccountGroups($this->scopeManager, $category, $accountGroups);
 
         $expectedVisibilities = [];
         foreach ($visibilities as $account => $expectedVisibility) {
@@ -515,6 +515,7 @@ class AccountGroupCategoryRepositoryTest extends AbstractCategoryRepositoryTest
         $visibility = CategoryVisibilityResolved::VISIBILITY_VISIBLE;
         $this->repository->clearTable();
         $this->repository->insertParentCategoryValues(
+            $this->getInsertExecutor(),
             array_merge($parentCategoryVisibilities, $staticCategoryVisibilities),
             $visibility
         );
@@ -571,7 +572,7 @@ class AccountGroupCategoryRepositoryTest extends AbstractCategoryRepositoryTest
      */
     protected function getRepository()
     {
-        return $this->getContainer()->get('oro_visibility.account_group_category_repository_holder')->getRepository();
+        return $this->getContainer()->get('oro_visibility.account_group_category_repository');
     }
 
     /**
