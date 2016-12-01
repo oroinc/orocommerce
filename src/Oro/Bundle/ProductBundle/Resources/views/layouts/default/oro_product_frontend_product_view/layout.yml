@@ -10,9 +10,3 @@ layout:
         - '@move':
             id: product_view_description
             parentId: product_view_description_container
-        - '@add':
-            id: product_image
-            parentId: product_view_aside_container
-            blockType: product_image
-            options:
-                product: '=data["product"]'
