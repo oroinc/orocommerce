@@ -38,3 +38,14 @@
         }
     }
 }
+
+@include breakpoint('tablet') {
+    .product-view-media {
+        text-align: center;
+
+        &__main-image {
+            max-width: 100%;
+            height: auto;
+        }
+    }
+}
