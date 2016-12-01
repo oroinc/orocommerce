@@ -1,0 +1,42 @@
+// @theme: blank;
+
+.btn-group {
+    $border: 1px solid rgba(255, 255, 255, .3);
+
+    @extend %base-transition;
+
+    &.full {
+        $dropdown-toggle-width: 48px;
+
+        width: 100%;
+
+        .btn {
+            width: calc(100% - #{$dropdown-toggle-width});
+        }
+
+        .dropdown-toggle {
+            width: $dropdown-toggle-width;
+        }
+    }
+
+    .btn {
+        &:focus,
+        &:hover {
+            &:first-child {
+                border-right: $border;
+            }
+        }
+    }
+
+    > .dropdown-toggle {
+        &:not(:first-child) {
+            text-align: center;
+
+            border-left: $border;
+        }
+
+        &:after {
+            margin-left: 0;
+        }
+    }
+}

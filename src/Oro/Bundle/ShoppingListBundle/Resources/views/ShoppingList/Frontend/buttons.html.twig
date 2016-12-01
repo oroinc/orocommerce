@@ -83,7 +83,7 @@
 {% macro getButtonsHtml(options) %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
     {% import _self as buttons %}
-    <div class="btn-group"
+    <div class="btn-group full"
          {{ UI.renderPageComponentAttributes({
              module: options.componentModule|default('oroshoppinglist/js/app/views/product-add-to-shopping-list-view'),
              options: {
