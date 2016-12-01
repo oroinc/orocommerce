@@ -14,10 +14,15 @@ use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareInterfac
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
+use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class OroWebsiteBundle implements Migration, DatabasePlatformAwareInterface, RenameExtensionAwareInterface
+class OroWebsiteBundle implements
+    Migration,
+    DatabasePlatformAwareInterface,
+    RenameExtensionAwareInterface,
+    OrderedMigrationInterface
 {
     /**
      * @var AbstractPlatform
@@ -228,6 +233,17 @@ class OroWebsiteBundle implements Migration, DatabasePlatformAwareInterface, Ren
                 'new_default_url' => Type::STRING,
             ]
         );
+    }
+
+    /**
+     * Should be executed before:
+     * @see \Oro\Bundle\WebsiteBundle\Migrations\Schema\v1_4\MigrateNotes
+     *
+     * {@inheritdoc}
+     */
+    public function getOrder()
+    {
+        return 0;
     }
 
     /**

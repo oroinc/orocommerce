@@ -9,10 +9,11 @@ use Oro\Bundle\EntityExtendBundle\Extend\RelationType;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
+use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\FrontendBundle\Migration\UpdateExtendRelationQuery;
 
-class OroOrderBundle implements Migration, RenameExtensionAwareInterface
+class OroOrderBundle implements Migration, RenameExtensionAwareInterface, OrderedMigrationInterface
 {
     /**
      * @var RenameExtension
@@ -84,6 +85,17 @@ class OroOrderBundle implements Migration, RenameExtensionAwareInterface
         $table = $schema->getTable('orob2b_order');
         $table->addColumn('shipping_method', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('shipping_method_type', 'string', ['notnull' => false, 'length' => 255]);
+    }
+
+    /**
+     * Should be executed before:
+     * @see \Oro\Bundle\OrderBundle\Migrations\Schema\v1_5\MigrateNotes
+     *
+     * {@inheritdoc}
+     */
+    public function getOrder()
+    {
+        return 0;
     }
 
     /**

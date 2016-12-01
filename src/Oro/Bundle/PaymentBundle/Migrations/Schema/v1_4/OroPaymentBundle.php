@@ -10,9 +10,10 @@ use Oro\Bundle\FrontendBundle\Migration\UpdateExtendRelationTrait;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
+use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class OroPaymentBundle implements Migration, RenameExtensionAwareInterface
+class OroPaymentBundle implements Migration, RenameExtensionAwareInterface, OrderedMigrationInterface
 {
     use UpdateExtendRelationTrait;
 
@@ -58,6 +59,17 @@ class OroPaymentBundle implements Migration, RenameExtensionAwareInterface
 
         // system configuration
         $queries->addPostQuery(new RenameConfigSectionQuery('orob2b_payment', 'oro_payment'));
+    }
+
+    /**
+     * Should be executed before:
+     * @see \Oro\Bundle\PaymentBundle\Migrations\Schema\v1_4\MigrateNotes
+     *
+     * {@inheritdoc}
+     */
+    public function getOrder()
+    {
+        return 0;
     }
 
     /**

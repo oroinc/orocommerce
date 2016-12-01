@@ -9,10 +9,11 @@ use Oro\Bundle\EntityExtendBundle\Extend\RelationType;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
+use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\FrontendBundle\Migration\UpdateExtendRelationQuery;
 
-class OroSaleBundle implements Migration, RenameExtensionAwareInterface
+class OroSaleBundle implements Migration, RenameExtensionAwareInterface, OrderedMigrationInterface
 {
     /**
      * @var RenameExtension
@@ -79,6 +80,17 @@ class OroSaleBundle implements Migration, RenameExtensionAwareInterface
 
         // system configuration
         $queries->addPostQuery(new RenameConfigSectionQuery('oro_b2b_sale', 'oro_sale'));
+    }
+
+    /**
+     * Should be executed before:
+     * @see \Oro\Bundle\SaleBundle\Migrations\Schema\v1_10\MigrateNotes
+     *
+     * {@inheritdoc}
+     */
+    public function getOrder()
+    {
+        return 0;
     }
 
     /**

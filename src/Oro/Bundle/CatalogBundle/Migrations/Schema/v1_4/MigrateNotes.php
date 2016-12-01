@@ -8,7 +8,6 @@ use Oro\Bundle\NoteBundle\Migration\UpdateNoteAssociationKindForRenamedEntitiesM
 
 class MigrateNotes extends UpdateNoteAssociationKindForRenamedEntitiesMigration
 {
-
     /**
      * {@inheritdoc}
      */

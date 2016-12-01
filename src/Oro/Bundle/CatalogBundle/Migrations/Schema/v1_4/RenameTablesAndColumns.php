@@ -7,9 +7,10 @@ use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
+use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class RenameTablesAndColumns implements Migration, RenameExtensionAwareInterface
+class RenameTablesAndColumns implements Migration, RenameExtensionAwareInterface, OrderedMigrationInterface
 {
     /**
      * @var RenameExtension
@@ -38,5 +39,16 @@ class RenameTablesAndColumns implements Migration, RenameExtensionAwareInterface
     public function setRenameExtension(RenameExtension $renameExtension)
     {
         $this->renameExtension = $renameExtension;
+    }
+
+    /**
+     * Should be executed before:
+     * @see \Oro\Bundle\CatalogBundle\Migrations\Schema\v1_4\MigrateNotes
+     *
+     * {@inheritdoc}
+     */
+    public function getOrder()
+    {
+        return 0;
     }
 }

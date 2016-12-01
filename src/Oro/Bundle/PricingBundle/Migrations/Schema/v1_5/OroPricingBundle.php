@@ -12,13 +12,18 @@ use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\MigrationConstraintTrait;
+use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
-class OroPricingBundle implements Migration, DatabasePlatformAwareInterface, RenameExtensionAwareInterface
+class OroPricingBundle implements
+    Migration,
+    DatabasePlatformAwareInterface,
+    RenameExtensionAwareInterface,
+    OrderedMigrationInterface
 {
     use MigrationConstraintTrait;
 
@@ -540,6 +545,17 @@ class OroPricingBundle implements Migration, DatabasePlatformAwareInterface, Ren
             ['product_id', 'price_list_id'],
             'oro_price_list_to_product_uidx'
         );
+    }
+
+    /**
+     * Should be executed before:
+     * @see \Oro\Bundle\PricingBundle\Migrations\Schema\v1_5\MigrateNotes
+     *
+     * {@inheritdoc}
+     */
+    public function getOrder()
+    {
+        return 0;
     }
 
     /**

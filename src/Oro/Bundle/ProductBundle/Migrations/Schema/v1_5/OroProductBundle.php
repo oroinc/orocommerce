@@ -94,6 +94,9 @@ class OroProductBundle implements Migration, RenameExtensionAwareInterface, Orde
     }
 
     /**
+     * Should be executed before:
+     * @see \Oro\Bundle\ProductBundle\Migrations\Schema\v1_5\MigrateNotes
+     *
      * {@inheritdoc}
      */
     public function getOrder()
