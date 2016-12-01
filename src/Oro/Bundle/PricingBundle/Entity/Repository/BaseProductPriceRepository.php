@@ -6,7 +6,6 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
-
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
@@ -386,5 +385,25 @@ abstract class BaseProductPriceRepository extends EntityRepository
             ->setParameter('sourcePriceList', $sourcePriceList);
 
         return $qb;
+    }
+
+    /**
+     * @param array|int[]|BasePriceList[] $priceLists
+     * @return array
+     */
+    public function getProductIdsByPriceLists(array $priceLists)
+    {
+        if (empty($priceLists)) {
+            return [];
+        }
+
+        $qb = $this->createQueryBuilder('price');
+        $qb->select('DISTINCT IDENTITY(price.product) AS product')
+            ->where($qb->expr()->in('price.priceList', ':priceLists'))
+            ->setParameter('priceLists', $priceLists);
+
+        $result = $qb->getQuery()->getScalarResult();
+
+        return array_column($result, 'product');
     }
 }

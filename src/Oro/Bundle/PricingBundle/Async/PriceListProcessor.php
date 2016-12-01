@@ -10,6 +10,7 @@ use Oro\Bundle\PricingBundle\Builder\ProductPriceBuilder;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CombinedPriceListsUpdateEvent;
+use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
 use Oro\Bundle\PricingBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory;
 use Oro\Bundle\PricingBundle\Resolver\CombinedProductPriceResolver;
@@ -23,6 +24,11 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberInterface
 {
+    /**
+     * @var CombinedPriceListTriggerHandler
+     */
+    protected $triggerHandler;
+
     /**
      * @var PriceListTriggerFactory
      */
@@ -65,6 +71,7 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
      * @param EventDispatcherInterface $dispatcher
      * @param LoggerInterface $logger
      * @param DatabaseExceptionHelper $databaseExceptionHelper
+     * @param CombinedPriceListTriggerHandler $triggerHandler
      */
     public function __construct(
         PriceListTriggerFactory $triggerFactory,
@@ -72,7 +79,8 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
         CombinedProductPriceResolver $priceResolver,
         EventDispatcherInterface $dispatcher,
         LoggerInterface $logger,
-        DatabaseExceptionHelper $databaseExceptionHelper
+        DatabaseExceptionHelper $databaseExceptionHelper,
+        CombinedPriceListTriggerHandler $triggerHandler
     ) {
         $this->triggerFactory = $triggerFactory;
         $this->registry = $registry;
@@ -80,6 +88,7 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
         $this->dispatcher = $dispatcher;
         $this->logger = $logger;
         $this->databaseExceptionHelper = $databaseExceptionHelper;
+        $this->triggerHandler = $triggerHandler;
     }
 
     /**
@@ -92,6 +101,7 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
         $em->beginTransaction();
         
         try {
+            $this->triggerHandler->startCollect();
             $messageData = JSON::decode($message->getBody());
             $trigger = $this->triggerFactory->createFromArray($messageData);
             $repository = $this->getCombinedPriceListRepository();
@@ -100,6 +110,7 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
                 true
             );
             $builtCPLs = [];
+
             foreach ($iterator as $combinedPriceList) {
                 $this->priceResolver->combinePrices($combinedPriceList, $trigger->getProduct());
                 $builtCPLs[$combinedPriceList->getId()] = true;
@@ -108,8 +119,11 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
                 $this->dispatchEvent($builtCPLs);
             }
             $em->commit();
+            $this->triggerHandler->commit();
+
         } catch (InvalidArgumentException $e) {
             $em->rollback();
+            $this->triggerHandler->rollback();
             $this->logger->error(
                 sprintf(
                     'Message is invalid: %s. Original message: "%s"',
@@ -121,6 +135,7 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
             return self::REJECT;
         } catch (\Exception $e) {
             $em->rollback();
+            $this->triggerHandler->rollback();
             $this->logger->error(
                 'Unexpected exception occurred during Combined Price Lists build',
                 ['exception' => $e]
