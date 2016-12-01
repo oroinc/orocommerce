@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\SaleBundle\Controller;
 
+use Oro\Bundle\SaleBundle\Event\QuoteEvent;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -160,12 +161,18 @@ class QuoteController extends Controller
             $this->get('translator')->trans('oro.sale.controller.quote.saved.message'),
             null,
             function (Quote $quote, FormInterface $form, Request $request) {
+                $submittedData = $request->get($form->getName());
+                $event = new QuoteEvent($form, $form->getData(), $submittedData);
+                $this->get('event_dispatcher')->dispatch(QuoteEvent::NAME, $event);
+                $quoteData = $event->getData()->getArrayCopy();
+
                 return [
                     'form' => $form->createView(),
                     'tierPrices' => $this->getQuoteProductPriceProvider()->getTierPrices($quote),
                     'matchedPrices' => $this->getQuoteProductPriceProvider()->getMatchedPrices($quote),
                     'isShippingAddressGranted' => $this->getQuoteAddressSecurityProvider()
                         ->isAddressGranted($quote, AddressType::TYPE_SHIPPING),
+                    'quoteData' => $quoteData
                 ];
             }
         );

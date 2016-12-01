@@ -121,7 +121,10 @@ define(function(require) {
         },
 
         onOrderChange: function(e) {
-            this.$totals = e.totals;
+            if (e.totals) {
+                this.$totals = e.totals;
+            }
+
             if (e.possibleShippingMethods != undefined ) {
                 this.getCalculateShippingElement().val(null);
                 this.getToggleButton().parent('div').hide();
@@ -264,7 +267,7 @@ define(function(require) {
          * @param {number} cost
          */
         updateTotals: function(cost) {
-            if (cost !== null) {
+            if (this.$totals && cost !== null) {
                 var totals = _.clone(this.$totals);
                 var newTotalAmount = 0;
                 $.each(totals.subtotals, function(key, subtotal) {

@@ -67,7 +67,7 @@ class Quote extends ExtendQuote implements
     use AuditableUserAwareTrait;
     use AuditableFrontendAccountUserAwareTrait;
     use DatesAwareTrait;
-    
+
     /**
      * @var int
      *
@@ -288,6 +288,17 @@ class Quote extends ExtendQuote implements
     protected $currency;
 
     /**
+     * @ORM\OneToMany(
+     *     targetEntity="Oro\Bundle\SaleBundle\Entity\QuoteDemand",
+     *     mappedBy="quote",
+     *     cascade={"all"},
+     *     orphanRemoval=true
+     * )
+     * @ORM\OrderBy({"id" = "ASC"})
+     */
+    protected $demands;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -297,6 +308,7 @@ class Quote extends ExtendQuote implements
         $this->quoteProducts = new ArrayCollection();
         $this->assignedUsers = new ArrayCollection();
         $this->assignedAccountUsers = new ArrayCollection();
+        $this->demands = new ArrayCollection();
     }
 
     /**
@@ -806,5 +818,13 @@ class Quote extends ExtendQuote implements
     {
         return !$this->isExpired()
             && (!$this->getValidUntil() || $this->getValidUntil() >= new \DateTime('now', new \DateTimeZone('UTC')));
+    }
+
+    /**
+     * @return QuoteDemand[]|ArrayCollection
+     */
+    public function getDemands()
+    {
+        return $this->demands;
     }
 }

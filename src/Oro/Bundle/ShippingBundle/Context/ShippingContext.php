@@ -109,6 +109,18 @@ class ShippingContext implements ShippingContextInterface
     }
 
     /**
+     * @param array|ShippingLineItem[] $data
+     *
+     * @return $this
+     */
+    public function setLineItemsByData(array $data)
+    {
+        $this->lineItems = $data;
+
+        return $this;
+    }
+
+    /**
      * @param mixed $item
      * @return ShippingLineItem
      */

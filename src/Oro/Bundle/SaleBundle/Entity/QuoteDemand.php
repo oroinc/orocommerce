@@ -49,7 +49,7 @@ class QuoteDemand implements
 
     /**
      * @var Quote
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\SaleBundle\Entity\Quote")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\SaleBundle\Entity\Quote", inversedBy="demands")
      * @ORM\JoinColumn(name="quote_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $quote;
