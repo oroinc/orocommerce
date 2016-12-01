@@ -1,6 +1,12 @@
 {# Product view Layout START #}
 {% block _product_view_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
+        'data-page-component-module': 'oroui/js/app/components/view-component',
+        '~data-page-component-options': {
+            view: 'oroproduct/js/app/views/base-product-view',
+            modelAttr: product.jsonSerialize()
+        },
+        'data-layout': 'separate',
         '~class': ' product-view'
     }) %}
 
