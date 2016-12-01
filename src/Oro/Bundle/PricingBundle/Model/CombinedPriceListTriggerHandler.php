@@ -132,7 +132,6 @@ class CombinedPriceListTriggerHandler
             $this->eventDispatcher->dispatch(ReindexationRequestEvent::EVENT_NAME, $event);
         }
 
-
         $this->scheduleCpl = [];
         $this->productsSchedule = [];
     }

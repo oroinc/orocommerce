@@ -120,7 +120,6 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
             }
             $em->commit();
             $this->triggerHandler->commit();
-
         } catch (InvalidArgumentException $e) {
             $em->rollback();
             $this->triggerHandler->rollback();

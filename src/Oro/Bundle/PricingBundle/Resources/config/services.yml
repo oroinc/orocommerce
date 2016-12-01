@@ -126,6 +126,7 @@ services:
         arguments:
             - '@doctrine'
             - '@oro_config.global'
+            - '@oro_pricing.model.combined_price_list_trigger_handler'
         calls:
             - [addRelationClass, ['%oro_pricing.entity.combined_price_list_to_account.class%']]
             - [addRelationClass, ['%oro_pricing.entity.combined_price_list_to_account_group.class%']]
