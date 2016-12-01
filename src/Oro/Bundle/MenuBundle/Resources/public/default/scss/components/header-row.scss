@@ -76,7 +76,7 @@
             display: block;
 
             position: absolute;
-            z-index: 9000;
+            z-index: z('base') + 8999;
             right: 0;
             left: 0;
 

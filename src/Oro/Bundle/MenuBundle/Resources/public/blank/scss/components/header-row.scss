@@ -52,7 +52,7 @@
     .header-row {
         &__trigger {
             position: relative;
-            z-index: 9000;
+            z-index: z('base') + 8999;
 
             text-align: center;
         }
