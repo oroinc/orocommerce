@@ -1,18 +1,22 @@
 <?php
 
-namespace Oro\Bundle\FrontendBundle\Tests\Unit\Helper;
+namespace Oro\Bundle\FrontendBundle\Tests\Unit\Provider;
 
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-
-use Oro\Bundle\ActionBundle\Tests\Unit\Helper\ApplicationsHelperTest;
-use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Bundle\ActionBundle\Tests\Unit\Provider\RouteProviderTest;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\FrontendBundle\Helper\ActionApplicationsHelper;
+use Oro\Bundle\FrontendBundle\Provider\ActionRouteProvider;
+use Oro\Bundle\UserBundle\Entity\User;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
-class ActionApplicationsHelperTest extends ApplicationsHelperTest
+class ActionRouteProviderTest extends RouteProviderTest
 {
-    /** @var ActionApplicationsHelper */
-    protected $helper;
+    /** @var ActionRouteProvider */
+    protected $provider;
+
+    /** @var \PHPUnit_Framework_MockObject_MockObject|TokenStorageInterface */
+    protected $tokenStorage;
 
     /**
      * {@inheritdoc}
@@ -21,7 +25,16 @@ class ActionApplicationsHelperTest extends ApplicationsHelperTest
     {
         parent::setUp();
 
-        $this->helper = new ActionApplicationsHelper($this->tokenStorage);
+        $this->tokenStorage = $this->getMock(TokenStorageInterface::class);
+
+        $this->provider = new ActionRouteProvider(
+            $this->provider,
+            $this->tokenStorage,
+            'oro_frontend_action_widget_form',
+            'oro_frontend_action_widget_form_page',
+            'oro_frontend_action_operation_execute',
+            'oro_frontend_action_widget_buttons'
+        );
     }
 
     /**
@@ -36,7 +49,7 @@ class ActionApplicationsHelperTest extends ApplicationsHelperTest
             ->method('getToken')
             ->willReturn($token);
 
-        $this->assertEquals($expectedRoutes['widget'], $this->helper->getWidgetRoute());
+        $this->assertEquals($expectedRoutes['widget'], $this->provider->getWidgetRoute());
     }
 
     /**
@@ -51,7 +64,22 @@ class ActionApplicationsHelperTest extends ApplicationsHelperTest
             ->method('getToken')
             ->willReturn($token);
 
-        $this->assertEquals($expectedRoutes['dialog'], $this->helper->getDialogRoute());
+        $this->assertEquals($expectedRoutes['dialog'], $this->provider->getFormDialogRoute());
+    }
+
+    /**
+     * @param TokenInterface|null $token
+     * @param array $expectedRoutes
+     *
+     * @dataProvider applicationRoutesProvider
+     */
+    public function testGetPageRoute(TokenInterface $token = null, array $expectedRoutes = [])
+    {
+        $this->tokenStorage->expects($this->any())
+            ->method('getToken')
+            ->willReturn($token);
+
+        $this->assertEquals($expectedRoutes['page'], $this->provider->getFormPageRoute());
     }
 
     /**
@@ -66,7 +94,7 @@ class ActionApplicationsHelperTest extends ApplicationsHelperTest
             ->method('getToken')
             ->willReturn($token);
 
-        $this->assertEquals($expectedRoutes['execution'], $this->helper->getExecutionRoute());
+        $this->assertEquals($expectedRoutes['execution'], $this->provider->getExecutionRoute());
     }
 
     /**
@@ -80,6 +108,7 @@ class ActionApplicationsHelperTest extends ApplicationsHelperTest
                 'routes' => [
                     'widget' => 'oro_action_widget_buttons',
                     'dialog' => 'oro_action_widget_form',
+                    'page' => 'oro_action_widget_form_page',
                     'execution' => 'oro_action_operation_execute',
                 ],
             ],
@@ -88,6 +117,7 @@ class ActionApplicationsHelperTest extends ApplicationsHelperTest
                 'routes' => [
                     'widget' => 'oro_frontend_action_widget_buttons',
                     'dialog' => 'oro_frontend_action_widget_form',
+                    'page' => 'oro_frontend_action_widget_form_page',
                     'execution' => 'oro_frontend_action_operation_execute',
                 ],
             ],
@@ -96,6 +126,7 @@ class ActionApplicationsHelperTest extends ApplicationsHelperTest
                 'routes' => [
                     'widget' => 'oro_action_widget_buttons',
                     'dialog' => 'oro_action_widget_form',
+                    'page' => 'oro_action_widget_form_page',
                     'execution' => 'oro_action_operation_execute',
                 ],
             ],
@@ -104,6 +135,7 @@ class ActionApplicationsHelperTest extends ApplicationsHelperTest
                 'routes' => [
                     'widget' => 'oro_action_widget_buttons',
                     'dialog' => 'oro_action_widget_form',
+                    'page' => 'oro_action_widget_form_page',
                     'execution' => 'oro_action_operation_execute',
                 ],
             ],
@@ -196,5 +228,21 @@ class ActionApplicationsHelperTest extends ApplicationsHelperTest
                 'expectedResult' => true
             ],
         ];
+    }
+
+    /**
+     * @param UserInterface|string $user
+     * @param \PHPUnit_Framework_MockObject_Matcher_Invocation $expects
+     * @return TokenInterface
+     */
+    protected function createToken($user, \PHPUnit_Framework_MockObject_Matcher_Invocation $expects = null)
+    {
+        /** @var \PHPUnit_Framework_MockObject_MockObject|TokenInterface $token */
+        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $token->expects($expects ?: $this->once())
+            ->method('getUser')
+            ->willReturn($user);
+
+        return $token;
     }
 }
