@@ -1,7 +1,7 @@
 {# Product view Layout START #}
 {% block _product_view_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' product-view'
+    '~class': ' product-view'
     }) %}
 
     <div {{ block('block_attributes') }}>
@@ -11,7 +11,7 @@
 
 {% block _product_view_primary_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' product-view__primary'
+    '~class': ' product-view__primary'
     }) %}
 
     <div {{ block('block_attributes') }}>
@@ -21,7 +21,7 @@
 
 {% block _product_view_aside_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' product-view__aside'
+    '~class': ' product-view__aside'
     }) %}
 
     <div {{ block('block_attributes') }}>
@@ -31,7 +31,7 @@
 
 {% block _product_view_main_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' product-view__main'
+    '~class': ' product-view__main'
     }) %}
 
     <div {{ block('block_attributes') }}>
@@ -41,7 +41,7 @@
 
 {% block _product_view_content_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' product-view__content'
+    '~class': ' product-view__content'
     }) %}
 
     <div {{ block('block_attributes') }}>
@@ -51,7 +51,7 @@
 
 {% block _product_view_specification_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' product-view__specification'
+    '~class': ' product-view__specification'
     }) %}
 
     <div {{ block('block_attributes') }}>
@@ -61,7 +61,7 @@
 
 {% block _product_view_description_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' product-view__description'
+    '~class': ' product-view__description'
     }) %}
 
     <div {{ block('block_attributes') }}>
@@ -71,7 +71,7 @@
 
 {% block _product_view_additional_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' product-view__additional'
+    '~class': ' product-view__additional'
     }) %}
 
     <div {{ block('block_attributes') }}>
@@ -82,7 +82,7 @@
 
 {% block _product_view_title_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' page-title'
+    '~class': ' page-title'
     }) %}
 
     <h1 {{ block('block_attributes') }}>{{ text }}</h1>
@@ -92,4 +92,54 @@
     <p class="sku">
         {{ 'oro.product.frontend.index.item'|trans }} <span class="sku__code">{{ block_widget(block) }}</span>
     </p>
+{% endblock %}
+
+{% block _product_media_widget %}
+    {% import 'OroProductBundle::image_macros.html.twig' as Image %}
+    <!-- START Product Gallery -->
+    <div class="product-view-media">
+        <div class="product-view-media__main-image-container">
+            {% set productImage = product.imagesByType('main')|length > 0 ? product.imagesByType('main').first.image : null %}
+            {% set loaderUrl = asset('bundles/orofrontend/default/images/loader.gif') %}
+            <img src="{{ Image.url(productImage, 'product_extra_large') }}"
+                 alt="{{ product.names|localized_value }}"
+                 width="378"
+                 height="378"
+                 class="product-view-media__main-image"
+                    {% if productImage and isDesktopVersion() %}
+                        data-zoom-image="{{ Image.url(productImage, 'product_original') }}"
+                        {% set options = {
+                        widgetModule: 'oroproduct/js/vendors/elevatezoom/jquery-elevatezoom',
+                        widgetName: 'elevateZoom',
+                        scrollZoom: true,
+                        zoomWindowWidth: 630,
+                        zoomWindowHeight: 376,
+                        borderSize: 1,
+                        borderColour: '#ebebeb',
+                        lensBorderColour: '#7d7d7d',
+                        lensColour: '#000',
+                        lensOpacity: 0.22,
+                        gallery: 'product-view-media-gallery',
+                        loadingIcon: loaderUrl,
+                        galleryActiveClass: 'product-view-media__gallery__item--active'
+                        }|json_encode() %}
+                        data-page-component-module="oroui/js/app/components/jquery-widget-component"
+                        data-page-component-options="{{ options }}"
+                    {% endif %}
+            />
+        </div>
+        <div class="product-view-media__gallery" id="product-view-media-gallery">
+            {% for productImage in product.imagesByType('additional') %}
+                <a href="#"
+                   class="product-view-media__gallery__item"
+                   data-image="{{ Image.url(productImage.image, 'product_extra_large') }}"
+                   data-zoom-image="{{ Image.url(productImage.image, 'product_original') }}">
+                    <img src="{{ Image.url(productImage.image, 'product_small') }}"
+                         width="82"
+                         height="82"/>
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+    <!-- END Product Gallery -->
 {% endblock %}

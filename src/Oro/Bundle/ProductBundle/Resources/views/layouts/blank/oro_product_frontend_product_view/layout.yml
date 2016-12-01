@@ -40,12 +40,17 @@ layout:
                         escape: false
                 product_view_additional_container:
                     blockType: container
+                product_media:
+                    blockType: product_image
+                    options:
+                        product: '=data["product"]'
             tree:
                 page_content:
                     product_view_container:
                         product_view_primary_container:
                             product_view_title: ~
-                        product_view_aside_container: ~
+                        product_view_aside_container:
+                            product_media: ~
                         product_view_main_container:
                                 product_view_sku: ~
                                 product_view_description: ~

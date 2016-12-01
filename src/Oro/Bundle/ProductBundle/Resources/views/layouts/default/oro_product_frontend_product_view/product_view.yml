@@ -16,10 +16,6 @@ layout:
                     blockType: text
                     options:
                         text: '=data["locale"].getLocalizedValue(data["product"].getNames())'
-                product_image:
-                    blockType: product_image
-                    options:
-                        product: '=data["product"]'
                 product_description_container:
                     blockType: container
                 product_title_container:
@@ -62,7 +58,6 @@ layout:
                     product_view_page:
                         product_container:
                             product_title_mobile: ~
-                            product_image: ~
                             product_description_container:
                                 product_title_container: ~
                                     #product_rating: ~

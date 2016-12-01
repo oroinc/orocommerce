@@ -8,6 +8,7 @@
 
         width: $product-view-aside-width;
         margin-bottom: $product-view-aside-offset-bottom;
+        margin-right: $product-view-aside-offset-right;
     }
 
     &__primary {
@@ -49,6 +50,7 @@
     .product-view {
         &__aside {
             width: $product-view-aside-tablet-width;
+            margin-right: 0;
         }
 
         &__primary {
