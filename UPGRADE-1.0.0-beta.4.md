@@ -77,7 +77,7 @@ AccountUser
 - Removed method `setToDefaultAccountProductVisibilityWithoutCategory` from class `Oro\Bundle\AccountBundle\EventListener\CategoryListener`
 - Removed second argument `insertFromSelectQueryExecutor` from `Oro\Bundle\AccountBundle\EventListener\CategoryListener` constructor
 - Removed third argument `cacheBuilder` from `Oro\Bundle\AccountBundle\EventListener\CategoryListener` constructor
-- Changed first argument to `productMessageHandler` with type `Oro\Bundle\ProductBundle\Model\ProductMessageHandler` of `Oro\Bundle\AccountBundle\EventListener\CategoryListener` constructor
+- Changed first argument to `productMessageHandler` with type `Oro\Bundle\VisibilityBundle\Model\ProductMessageHandler` of `Oro\Bundle\AccountBundle\EventListener\CategoryListener` constructor
 - Removed method `getTreeData` from class `Oro\Bundle\AccountBundle\Owner\FrontendOwnerTreeProvider`
 
 PaymentBundle
