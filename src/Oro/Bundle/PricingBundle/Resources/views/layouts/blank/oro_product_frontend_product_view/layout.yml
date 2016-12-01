@@ -1,11 +1,10 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'OroPricingBundle:layouts:default/oro_product_frontend_product_view/layout.html.twig'
+            themes: 'layout.html.twig'
         - '@add':
             id: product_prices
-            parentId: product_specification_container
-            siblingId: product_specification
+            parentId: product_view_price_container
             blockType: product_prices
             options:
                 visible: '=data["product"].getUnitPrecisions()!=null'
