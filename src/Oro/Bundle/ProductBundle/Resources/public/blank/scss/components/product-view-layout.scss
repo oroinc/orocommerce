@@ -9,6 +9,8 @@
         width: $product-view-aside-width;
         margin-bottom: $product-view-aside-offset-bottom;
         padding: $product-view-aside-inner-offset;
+        
+        box-sizing: border-box;
     }
 
     &__primary {
@@ -50,6 +52,7 @@
     .product-view {
         &__aside {
             width: $product-view-aside-tablet-width;
+            padding: $product-view-aside-tablet-inner-offset;
         }
 
         &__primary {
