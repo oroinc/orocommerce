@@ -267,9 +267,9 @@ services:
     oro_customer.event_listener.datagrid.account_user_role:
         class: 'Oro\Bundle\CustomerBundle\EventListener\Datagrid\AccountUserRoleDatagridListener'
         arguments:
-            - "@oro_security.security_facade"
+            - "@oro_security.acl_helper"
         tags:
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-account-account-user-roles-grid, method: onBuildBefore }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.frontend-account-account-user-roles-grid, method: onBuildAfter }
 
     oro_customer.event_listener.datagrid.account_user:
         class: 'Oro\Bundle\CustomerBundle\EventListener\Datagrid\AccountUserDatagridListener'
