@@ -75,9 +75,6 @@ class UpdateExtendRelationQuery extends ParametrizedMigrationQuery
     /**
      * @param LoggerInterface $logger
      * @param bool            $dryRun
-     *
-     * @SuppressWarnings(PHPMD.NPathComplexity)
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     protected function processQueries(LoggerInterface $logger, $dryRun = false)
     {

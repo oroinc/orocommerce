@@ -92,7 +92,7 @@ services:
             - '@doctrine'
             - '@request_stack'
             - '@oro_security.security_facade'
-            - '@oro_payment.provider.payment_term'
+            - '@oro_payment_term.provider.payment_term'
 
     oro_order.handler.order_currency_handler:
         class: 'Oro\Bundle\OrderBundle\Handler\OrderCurrencyHandler'
@@ -158,7 +158,7 @@ services:
     oro_order.event_listener.order.payment_term:
         class: 'Oro\Bundle\OrderBundle\EventListener\Order\OrderPaymentTermEventListener'
         arguments:
-            - '@oro_payment.provider.payment_term'
+            - '@oro_payment_term.provider.payment_term'
         tags:
             - { name: kernel.event_listener, event: oro_order.order, method: onOrderEvent }
 
@@ -206,7 +206,6 @@ services:
         arguments:
             - '@oro_order.formatter.source_document'
             - '@oro_order.formatter.shipping_tracking'
-            - '@oro_order.formatter.shipping_method'
         tags:
             - { name: twig.extension }
 
@@ -220,11 +219,6 @@ services:
         class: 'Oro\Bundle\OrderBundle\Formatter\ShippingTrackingFormatter'
         arguments:
             - "@?oro_shipping.shipping_method.registry"
-
-    oro_order.formatter.shipping_method:
-        class: 'Oro\Bundle\OrderBundle\Formatter\ShippingMethodFormatter'
-        arguments:
-            - "@?oro_shipping.formatter.shipping_method_label"
 
     oro_order.order.listener.total_calculate_listener:
         class: 'Oro\Bundle\OrderBundle\EventListener\TotalCalculateListener'
@@ -278,13 +272,6 @@ services:
             - '@oro_payment.formatter.payment_method_label'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-orders-grid, method: onResultAfter }
-
-    oro_order.layout.provider.order_shipping_method:
-        class: 'Oro\Bundle\OrderBundle\Layout\DataProvider\OrderShippingMethodProvider'
-        arguments:
-            - '@oro_order.formatter.shipping_method'
-        tags:
-            - { name: layout.data_provider, alias: oro_order_frontend_shipping_method_provider }
 
     oro_order.provider.privilege_category_provider:
         class: 'Oro\Bundle\OrderBundle\Provider\PrivilegeCategoryProvider'

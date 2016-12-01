@@ -157,8 +157,6 @@ class LoadAccountUserData extends AbstractFixture implements DependentFixtureInt
      */
     public function getDependencies()
     {
-        return [
-            LoadAccounts::class
-        ];
+        return [LoadAccounts::class];
     }
 }

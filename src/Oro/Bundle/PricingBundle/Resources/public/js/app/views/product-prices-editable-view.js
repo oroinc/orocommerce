@@ -64,7 +64,6 @@ define(function(require) {
             }
 
             this.updateUI();
-
         },
 
         setPriceValue: function(price) {

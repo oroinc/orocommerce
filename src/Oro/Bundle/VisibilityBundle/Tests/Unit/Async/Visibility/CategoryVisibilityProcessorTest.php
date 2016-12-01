@@ -3,8 +3,9 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Async\Visibility;
 
 use Doctrine\ORM\EntityManager;
+
 use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
-use Oro\Bundle\ProductBundle\Model\ProductMessageHandler;
+use Oro\Bundle\VisibilityBundle\Model\ProductMessageHandler;
 use Oro\Bundle\VisibilityBundle\Async\Visibility\CategoryVisibilityProcessor;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CategoryVisibilityResolved;
@@ -13,8 +14,10 @@ use Oro\Bundle\VisibilityBundle\Visibility\Cache\CacheBuilderInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
+
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Bridge\Doctrine\RegistryInterface;
+
 use Psr\Log\LoggerInterface;
 
 class CategoryVisibilityProcessorTest extends \PHPUnit_Framework_TestCase
@@ -23,26 +26,32 @@ class CategoryVisibilityProcessorTest extends \PHPUnit_Framework_TestCase
      * @var RegistryInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $registry;
+
     /**
      * @var MessageFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $messageFactory;
+
     /**
      * @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $logger;
+
     /**
      * @var CacheBuilderInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $cacheBuilder;
+
     /**
      * @var ProductMessageHandler|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $productMessageHandler;
+
     /**
      * @var DatabaseExceptionHelper|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $databaseExceptionHelper;
+
     /**
      * @var CategoryVisibilityProcessor
      */

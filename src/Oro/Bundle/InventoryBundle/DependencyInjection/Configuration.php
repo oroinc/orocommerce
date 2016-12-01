@@ -10,6 +10,7 @@ use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
 class Configuration implements ConfigurationInterface
 {
     const MANAGE_INVENTORY = 'manage_inventory';
+    const INVENTORY_THRESHOLD = 'inventory_threshold';
 
     /**
      * {@inheritDoc}
@@ -22,6 +23,7 @@ class Configuration implements ConfigurationInterface
             $rootNode,
             [
                 self::MANAGE_INVENTORY => ['type' => 'boolean', 'value' => false],
+                self::INVENTORY_THRESHOLD => ['type' => 'decimal', 'value' => 0],
             ]
         );
 

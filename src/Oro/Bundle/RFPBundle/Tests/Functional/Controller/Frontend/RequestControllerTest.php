@@ -5,13 +5,15 @@ namespace Oro\Bundle\RFPBundle\Tests\Functional\Controller\Frontend;
 use Symfony\Component\DomCrawler\Field\InputFormField;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\RFPBundle\Entity\Request;
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadUserData;
 
 /**
  * @dbIsolation
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class RequestControllerTest extends WebTestCase
 {
@@ -30,11 +32,23 @@ class RequestControllerTest extends WebTestCase
         $this->client->useHashNavigation(true);
         $this->loadFixtures(
             [
-                'Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadUserData',
-                'Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData',
-                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices',
+                LoadUserData::class,
+                LoadRequestData::class,
+                LoadProductPrices::class,
             ]
         );
+    }
+
+    public function testGridAccessDeniedForAnonymousUsers()
+    {
+        $this->initClient();
+        $this->client->getCookieJar()->clear();
+
+        $this->client->request('GET', $this->getUrl('oro_rfp_frontend_request_index'));
+        static::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 401);
+
+        $response = $this->client->requestGrid(['gridName' => 'frontend-requests-grid'], [], true);
+        $this->assertSame($response->getStatusCode(), 302);
     }
 
     /**
@@ -59,7 +73,7 @@ class RequestControllerTest extends WebTestCase
 
         static::assertContains('frontend-requests-grid', $crawler->html());
 
-        $response = $this->client->requestGrid(
+        $response = $this->client->requestFrontendGrid(
             [
                 'gridName' => 'frontend-requests-grid',
             ]
@@ -77,6 +91,7 @@ class RequestControllerTest extends WebTestCase
             sort($testedColumns);
             sort($expectedColumns);
 
+            static::assertEquals($expectedData['action_configuration'], $data[0]['action_configuration']);
             static::assertEquals($expectedColumns, $testedColumns);
         }
 
@@ -134,7 +149,6 @@ class RequestControllerTest extends WebTestCase
 
         $result = $this->client->getResponse();
         static::assertHtmlResponseStatusCodeEquals($result, 200);
-
         $this->assertContains($request->getFirstName(), $result->getContent());
         $this->assertContains($request->getLastName(), $result->getContent());
         $this->assertContains($request->getEmail(), $result->getContent());
@@ -144,8 +158,15 @@ class RequestControllerTest extends WebTestCase
             $this->assertContains($request->getShipUntil()->format('M j, Y'), $result->getContent());
         }
 
-        $controls = $crawler->filter('.account-oq__order-info__control');
-        static::assertEquals($expectedData['columnsCount'], count($controls));
+        if (isset($expectedData['columnsCount'])) {
+            $controls = $crawler->filter('.account-oq__order-info__control')->count();
+            static::assertEquals($expectedData['columnsCount'], $controls);
+        }
+
+        if (isset($expectedData['hideButtonEdit'])) {
+            $buttonEdit = $crawler->filter('.oro-account-user-role__controls-list')->html();
+            static::assertNotContains('edit', $buttonEdit);
+        }
     }
 
     /**
@@ -178,6 +199,11 @@ class RequestControllerTest extends WebTestCase
                         'view_link',
                         'action_configuration',
                     ],
+                    'action_configuration' => [
+                        'view' => true,
+                        'update' => true,
+                        'delete' => false
+                    ]
                 ],
             ],
             'account1 user2 (all account requests)' => [
@@ -205,6 +231,11 @@ class RequestControllerTest extends WebTestCase
                         'view_link',
                         'action_configuration',
                     ],
+                    'action_configuration' => [
+                        'view' => true,
+                        'update' => false,
+                        'delete' => false
+                    ]
                 ],
             ],
             'account1 user3 (all account requests and submittedTo)' => [
@@ -227,6 +258,11 @@ class RequestControllerTest extends WebTestCase
                         'view_link',
                         'action_configuration',
                     ],
+                    'action_configuration' => [
+                        'view' => true,
+                        'update' => false,
+                        'delete' => false
+                    ]
                 ],
             ],
             'account2 user1 (only account user requests)' => [
@@ -249,6 +285,44 @@ class RequestControllerTest extends WebTestCase
                         'update_link',
                         'view_link',
                         'action_configuration',
+                    ],
+                    'action_configuration' => [
+                        'view' => true,
+                        'update' => true,
+                        'delete' => false
+                    ]
+                ],
+            ],
+            'parent account user1 (all requests)' => [
+                'input' => [
+                    'login' => LoadUserData::PARENT_ACCOUNT_USER1,
+                    'password' => LoadUserData::PARENT_ACCOUNT_USER1,
+                ],
+                'expected' => [
+                    'code' => 200,
+                    'data' => [
+                        LoadRequestData::REQUEST2,
+                        LoadRequestData::REQUEST3,
+                        LoadRequestData::REQUEST4,
+                        LoadRequestData::REQUEST5,
+                        LoadRequestData::REQUEST6,
+                        LoadRequestData::REQUEST7,
+                        LoadRequestData::REQUEST8,
+                        LoadRequestData::REQUEST10,
+                        LoadRequestData::REQUEST11,
+                    ]
+                ],
+            ],
+            'parent account user2 (only account user requests)' => [
+                'input' => [
+                    'login' => LoadUserData::PARENT_ACCOUNT_USER2,
+                    'password' => LoadUserData::PARENT_ACCOUNT_USER2,
+                ],
+                'expected' => [
+                    'code' => 200,
+                    'data' => [
+                        LoadRequestData::REQUEST10,
+                        LoadRequestData::REQUEST11,
                     ],
                 ],
             ],
@@ -279,7 +353,106 @@ class RequestControllerTest extends WebTestCase
                 ],
                 'expected' => [
                     'columnsCount' => 10,
+                    'hideButtonEdit' => true
                 ],
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider ACLProvider
+     *
+     * @param string $route
+     * @param string $request
+     * @param string $login
+     * @param string $password
+     * @param int $status
+     */
+    public function testACL($route, $request, $login, $password, $status)
+    {
+        if ('' !== $login) {
+            $this->initClient([], static::generateBasicAuthHeader($login, $password));
+        } else {
+            $this->initClient([]);
+            $this->client->getCookieJar()->clear();
+        }
+
+        /* @var $request Request */
+        $request = $this->getReference($request);
+
+        $this->client->request(
+            'GET',
+            $this->getUrl(
+                $route,
+                ['id' => $request->getId()]
+            )
+        );
+
+        $response = $this->client->getResponse();
+        static::assertHtmlResponseStatusCodeEquals($response, $status);
+    }
+
+    /**
+     * @return array
+     */
+    public function ACLProvider()
+    {
+        return [
+            'VIEW (nanonymous user)' => [
+                'route' => 'oro_rfp_frontend_request_view',
+                'request' => LoadRequestData::REQUEST2,
+                'login' => '',
+                'password' => '',
+                'status' => 401
+            ],
+            'UPDATE (anonymous user)' => [
+                'route' => 'oro_rfp_frontend_request_update',
+                'request' => LoadRequestData::REQUEST2,
+                'login' => '',
+                'password' => '',
+                'status' => 401
+            ],
+            'VIEW (user from another account)' => [
+                'route' => 'oro_rfp_frontend_request_view',
+                'request' => LoadRequestData::REQUEST2,
+                'login' => LoadUserData::ACCOUNT2_USER1,
+                'password' => LoadUserData::ACCOUNT2_USER1,
+                'status' => 403
+            ],
+            'UPDATE (user from another account)' => [
+                'route' => 'oro_rfp_frontend_request_update',
+                'request' => LoadRequestData::REQUEST2,
+                'login' => LoadUserData::ACCOUNT2_USER1,
+                'password' => LoadUserData::ACCOUNT2_USER1,
+                'status' => 403
+            ],
+            'VIEW (user from parent account : DEEP)' => [
+                'route' => 'oro_rfp_frontend_request_view',
+                'request' => LoadRequestData::REQUEST2,
+                'login' => LoadUserData::PARENT_ACCOUNT_USER1,
+                'password' => LoadUserData::PARENT_ACCOUNT_USER1,
+                'status' => 200
+            ],
+            'UPDATE (user from parent account : DEEP)' => [
+                'route' => 'oro_rfp_frontend_request_update',
+                'request' => LoadRequestData::REQUEST2,
+                'login' => LoadUserData::PARENT_ACCOUNT_USER1,
+                'password' => LoadUserData::PARENT_ACCOUNT_USER1,
+                'status' => 200
+            ],
+            'VIEW (user from parent account : LOCAL)' => [
+                'route' => 'oro_rfp_frontend_request_view',
+                'request' => LoadRequestData::REQUEST2,
+                'login' => LoadUserData::PARENT_ACCOUNT_USER2,
+                'password' => LoadUserData::PARENT_ACCOUNT_USER2,
+                'status' => 403
+            ],
+            'UPDATE (user from parent account : LOCAL)' => [
+                'route' => 'oro_rfp_frontend_request_update',
+                'request' => LoadRequestData::REQUEST2,
+                'login' => LoadUserData::PARENT_ACCOUNT_USER2,
+                'password' => LoadUserData::PARENT_ACCOUNT_USER2,
+                'status' => 403
             ],
         ];
     }
@@ -462,7 +635,7 @@ class RequestControllerTest extends WebTestCase
         $authParams = static::generateBasicAuthHeader(LoadUserData::ACCOUNT1_USER1, LoadUserData::ACCOUNT1_USER1);
         $this->initClient([], $authParams);
 
-        $response = $this->client->requestGrid(
+        $response = $this->client->requestFrontendGrid(
             'frontend-requests-grid',
             [
                 'frontend-requests-grid[_filter][poNumber][value]' => static::PO_NUMBER

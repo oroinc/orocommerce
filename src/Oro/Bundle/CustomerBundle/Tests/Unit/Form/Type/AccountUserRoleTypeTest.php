@@ -23,9 +23,12 @@ class AccountUserRoleTypeTest extends AbstractAccountUserRoleTypeTest
         $this->assertTrue($form->has('appendUsers'));
         $this->assertTrue($form->has('removeUsers'));
         $this->assertTrue($form->has('account'));
+        $this->assertTrue($form->has('selfManaged'));
 
         $formConfig = $form->getConfig();
         $this->assertEquals(self::DATA_CLASS, $formConfig->getOption('data_class'));
+
+        $this->assertFalse($formConfig->getOption('hide_self_managed'));
 
         $this->assertEquals($defaultData, $form->getData());
         $this->assertEquals($viewData, $form->getViewData());

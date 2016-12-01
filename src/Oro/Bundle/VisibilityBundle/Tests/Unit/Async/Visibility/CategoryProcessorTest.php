@@ -6,7 +6,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Driver\PDOException;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\CatalogBundle\Model\CategoryMessageFactory;
+use Oro\Bundle\VisibilityBundle\Model\CategoryMessageFactory;
 use Oro\Bundle\CatalogBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;

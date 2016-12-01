@@ -2,17 +2,21 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Controller\Frontend;
 
-use Symfony\Component\DomCrawler\Crawler;
-
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
-use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData as BaseLoadAccountData;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
-use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListACLData;
+use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems;
+use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
+use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListUserACLData;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Symfony\Component\DomCrawler\Crawler;
 
 /**
  * @dbIsolation
@@ -32,15 +36,16 @@ class ShoppingListControllerTest extends WebTestCase
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)
+            $this->generateBasicAuthHeader(BaseLoadAccountData::AUTH_USER, BaseLoadAccountData::AUTH_PW)
         );
 
         $this->loadFixtures(
             [
-                'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
-                'Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists',
-                'Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems',
-                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices',
+                LoadProductUnitPrecisions::class,
+                LoadShoppingLists::class,
+                LoadShoppingListLineItems::class,
+                LoadCombinedProductPrices::class,
+                LoadShoppingListACLData::class,
             ]
         );
 
@@ -49,8 +54,12 @@ class ShoppingListControllerTest extends WebTestCase
 
     public function testView()
     {
+        $user = $this->getReference(LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_BASIC);
+        $this->loginUser(LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_BASIC);
+
         /** @var ShoppingList $currentShoppingList */
-        $currentShoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_2);
+        $currentShoppingList = $this->getReference(LoadShoppingListACLData::SHOPPING_LIST_ACC_1_USER_BASIC);
+        $this->getContainer()->get('oro_shopping_list.shopping_list.manager')->setCurrent($user, $currentShoppingList);
 
         // assert current shopping list
         $crawler = $this->client->request(
@@ -114,7 +123,7 @@ class ShoppingListControllerTest extends WebTestCase
         return [
             'price defined' => [
                 'shoppingList' => LoadShoppingLists::SHOPPING_LIST_1,
-                'expectedLineItemPrice' => 'USD 13.10',
+                'expectedLineItemPrice' => '$13.10',
                 'needToTestRequestQuote' => true,
                 'expectedCreateOrderButtonVisible' => true
             ],
@@ -126,7 +135,7 @@ class ShoppingListControllerTest extends WebTestCase
             ],
             'zero price' => [
                 'shoppingList' => LoadShoppingLists::SHOPPING_LIST_4,
-                'expectedLineItemPrice' => 'USD 0.00',
+                'expectedLineItemPrice' => '$0.00',
                 'needToTestRequestQuote' => true,
                 'expectedCreateOrderButtonVisible' => true
             ],
@@ -134,7 +143,7 @@ class ShoppingListControllerTest extends WebTestCase
                 'shoppingList' => LoadShoppingLists::SHOPPING_LIST_5,
                 'expectedLineItemPrice' => [
                     'N/A',
-                    'USD 0.00',
+                    '$0.00',
                 ],
                 'needToTestRequestQuote' => true,
                 'expectedCreateOrderButtonVisible' => true
@@ -144,6 +153,9 @@ class ShoppingListControllerTest extends WebTestCase
 
     public function testQuickAdd()
     {
+        $shoppingListManager = $this->getContainer()
+            ->get('oro_shopping_list.shopping_list.manager');
+
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_frontend_quick_add'));
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
@@ -155,14 +167,106 @@ class ShoppingListControllerTest extends WebTestCase
         ]];
 
         /** @var ShoppingList $currentShoppingList */
-        $currentShoppingList = $this->getContainer()
-            ->get('oro_shopping_list.shopping_list.manager')
-            ->getForCurrentUser();
+        $currentShoppingList = $shoppingListManager->getForCurrentUser();
 
         $this->assertQuickAddFormSubmitted($crawler, $products);//add to current
         $this->assertShoppingListItemSaved($currentShoppingList, $product->getSku(), 15);
         $this->assertQuickAddFormSubmitted($crawler, $products, $currentShoppingList->getId());//add to specific
         $this->assertShoppingListItemSaved($currentShoppingList, $product->getSku(), 30);
+    }
+    /**
+     * @group frontend-ACL
+     * @dataProvider ACLProvider
+     *
+     * @param string $route
+     * @param string $resource
+     * @param string $user
+     * @param int $status
+     */
+    public function testACL($route, $resource, $user, $status)
+    {
+        $this->loginUser($user);
+
+        /* @var $resource ShoppingList */
+        $resource = $this->getReference($resource);
+
+        $em = $this->getContainer()->get('doctrine')->getManagerForClass(ShoppingList::class);
+        $em->getRepository(ShoppingList::class);
+
+        $url = $this->getUrl($route, ['id' => $resource->getId()]);
+        $this->client->request('GET', $url);
+
+        $response = $this->client->getResponse();
+        static::assertHtmlResponseStatusCodeEquals($response, $status);
+    }
+
+    /**
+     * @return array
+     */
+    public function ACLProvider()
+    {
+        return [
+            'VIEW (anonymous user)' => [
+                'route' => 'oro_shopping_list_frontend_view',
+                'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_1_USER_LOCAL,
+                'user' => '',
+                'status' => 401,
+            ],
+            'VIEW (user from another account)' => [
+                'route' => 'oro_shopping_list_frontend_view',
+                'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_1_USER_LOCAL,
+                'user' => LoadShoppingListUserACLData::USER_ACCOUNT_2_ROLE_LOCAL,
+                'status' => 403,
+            ],
+            'VIEW (user from parent account : DEEP_VIEW_ONLY)' => [
+                'route' => 'oro_shopping_list_frontend_view',
+                'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_1_1_USER_LOCAL,
+                'user' => LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_DEEP_VIEW_ONLY,
+                'status' => 200,
+            ],
+            'VIEW (user from parent account : LOCAL)' => [
+                'route' => 'oro_shopping_list_frontend_view',
+                'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_1_1_USER_LOCAL,
+                'user' => LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_DEEP,
+                'status' => 200,
+            ],
+            'VIEW (user from same account : LOCAL)' => [
+                'route' => 'oro_shopping_list_frontend_view',
+                'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_1_USER_LOCAL,
+                'user' => LoadShoppingListUserACLData::USER_ACCOUNT_1_1_ROLE_LOCAL,
+                'status' => 403,
+            ],
+            'VIEW (BASIC)' => [
+                'route' => 'oro_shopping_list_frontend_view',
+                'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_1_USER_BASIC,
+                'user' => LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_BASIC,
+                'status' => 200,
+            ],
+            'CREATE anon' => [
+                'route' => 'oro_shopping_list_frontend_create',
+                'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_1_USER_LOCAL,
+                'user' => '',
+                'status' => 401,
+            ],
+            'CREATE (user with create: LOCAL)' => [
+                'route' => 'oro_shopping_list_frontend_create',
+                'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_1_USER_LOCAL,
+                'user' => LoadShoppingListUserACLData::USER_ACCOUNT_1_1_ROLE_LOCAL,
+                'status' => 200,
+            ],
+            'CREATE (user with create: NONE)' => [
+                'route' => 'oro_shopping_list_frontend_create',
+                'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_1_USER_LOCAL,
+                'user' => LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_LOCAL_VIEW_ONLY,
+                'status' => 403,
+            ],
+            'CREATE (BASIC)' => [
+                'route' => 'oro_shopping_list_frontend_create',
+                'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_1_USER_BASIC,
+                'user' => LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_BASIC,
+                'status' => 200,
+            ],
+        ];
     }
 
     /**
@@ -214,9 +318,9 @@ class ShoppingListControllerTest extends WebTestCase
         /** @var LineItem[] $items */
         $items = $this->getContainer()->get('doctrine')->getManagerForClass('OroShoppingListBundle:LineItem')
             ->getRepository('OroShoppingListBundle:LineItem')
-            ->findBy(['shoppingList' => $shoppingList]);
+            ->findBy(['shoppingList' => $shoppingList], ['id' => 'DESC']);
 
-        $this->assertCount(1, $items);
+        $this->assertCount(3, $items);
         $item = $items[0];
 
         $this->assertEquals($sku, $item->getProductSku());

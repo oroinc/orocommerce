@@ -14,7 +14,7 @@ use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 use Oro\Bundle\TaxBundle\Transformer\TaxTransformerInterface;
 
 /**
- * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class TaxManagerTest extends \PHPUnit_Framework_TestCase
 {
