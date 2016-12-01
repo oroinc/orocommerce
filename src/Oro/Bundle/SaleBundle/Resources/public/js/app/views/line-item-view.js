@@ -274,6 +274,8 @@ define(function(require) {
 
             var $quantitySelector = this.$el.find(this.options.offersQuantitySelector);
             $quantitySelector.trigger('change');
+
+            mediator.trigger('entry-point:quote:trigger');
         },
 
         /**
