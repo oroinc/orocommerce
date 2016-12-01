@@ -36,7 +36,7 @@ class QuoteShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
         static::assertInstanceOf(ShippingContext::class, $shippingContext);
         static::assertSame($shippingAddress, $shippingContext->getShippingAddress());
         static::assertSame($quote, $shippingContext->getSourceEntity());
-        static::assertCount(1, $shippingContext->getLineItems());
+        static::assertCount(0, $shippingContext->getLineItems());
     }
 
     /**
