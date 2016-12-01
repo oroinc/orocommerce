@@ -1,9 +1,9 @@
 // @theme: blank
 
 $product-prices-border: 1px solid get-color('additional', 'light') !default;
+$product-prices-offset: 0 0 $offset-y !default;
 
 $product-prices-table-width: 100% !default;
-$product-prices-table-offset: 0 0 $offset-y !default;
 
 $product-prices-head-inner-offset: $offset-y-m !default;
 $product-prices-head-text-align: center !default;
