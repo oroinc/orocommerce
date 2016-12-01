@@ -52,6 +52,13 @@ class SystemPageVariantType extends AbstractType
                 [
                     'data' => SystemPageContentVariantType::TYPE
                 ]
+            )
+            ->add(
+                'default',
+                'checkbox',
+                [
+                    'required' => true
+                ]
             );
 
         $builder->addEventListener(

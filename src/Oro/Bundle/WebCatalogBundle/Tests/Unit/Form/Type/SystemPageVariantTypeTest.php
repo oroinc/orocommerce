@@ -118,11 +118,13 @@ class SystemPageVariantTypeTest extends FormIntegrationTestCase
                     ->setType(SystemPageContentVariantType::TYPE),
                 [
                     'systemPageRoute' => 'other_route',
-                    'type' => 'fakeType'
+                    'type' => 'fakeType',
+                    'default' => true
                 ],
                 (new ContentVariant())
                     ->setSystemPageRoute('other_route')
                     ->setType(SystemPageContentVariantType::TYPE)
+                    ->setDefault(true)
             ],
         ];
     }

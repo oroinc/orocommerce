@@ -1,7 +1,7 @@
 define(function(require) {
     'use strict';
 
-    var ContentNodeParentScopeView;
+    var ScopeToggleView;
     var $ = require('jquery');
     var _ = require('underscore');
     var BaseView = require('oroui/js/app/views/base/view');
@@ -9,9 +9,9 @@ define(function(require) {
     /**
      * @export orowebcatalog/js/app/views/scope-toggle-view
      * @extends oroui.app.views.base.View
-     * @class orowebcatalog.app.views.ContentNodeParentScopeView
+     * @class orowebcatalog.app.views.ScopeToggleView
      */
-    ContentNodeParentScopeView = BaseView.extend({
+    ScopeToggleView = BaseView.extend({
         /**
          * @property {Object}
          */
@@ -56,10 +56,15 @@ define(function(require) {
             }
         },
 
-        _toggleScopes: function(event) {
-            this.$scopeFields.toggle(!event.target.checked);
+        _toggleScopes: function() {
+            if (this.$useParentScope.is(':checked')) {
+                this.$scopeFields.hide();
+            } else {
+                this.$scopeFields.show();
+            }
+
         }
     });
 
-    return ContentNodeParentScopeView;
+    return ScopeToggleView;
 });

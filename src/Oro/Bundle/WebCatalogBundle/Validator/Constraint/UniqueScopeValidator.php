@@ -22,14 +22,16 @@ class UniqueScopeValidator extends ConstraintValidator
 
         $usedScopes = new ArrayCollection();
         foreach ($value as $index => $contentVariant) {
-            foreach ($contentVariant->getScopes() as $scopeIdx => $variantScope) {
-                if ($usedScopes->contains($variantScope)) {
-                    $path = sprintf('[%d].scopes[%d]', $index, $scopeIdx);
-                    $this->context->buildViolation($constraint->message)
-                        ->atPath($path)
-                        ->addViolation();
-                } else {
-                    $usedScopes->add($variantScope);
+            if (!$contentVariant->isDefault()) {
+                foreach ($contentVariant->getScopes() as $scopeIdx => $variantScope) {
+                    if ($usedScopes->contains($variantScope)) {
+                        $path = sprintf('[%d].scopes[%d]', $index, $scopeIdx);
+                        $this->context->buildViolation($constraint->message)
+                            ->atPath($path)
+                            ->addViolation();
+                    } else {
+                        $usedScopes->add($variantScope);
+                    }
                 }
             }
         }

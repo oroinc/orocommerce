@@ -63,6 +63,13 @@ class CmsPageVariantType extends AbstractType
                 [
                     'data' => CmsPageContentVariantType::TYPE
                 ]
+            )
+            ->add(
+                'default',
+                'checkbox',
+                [
+                    'required' => true
+                ]
             );
 
         $builder->addEventListener(

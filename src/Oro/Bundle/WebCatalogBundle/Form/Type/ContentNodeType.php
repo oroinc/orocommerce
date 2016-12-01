@@ -111,7 +111,7 @@ class ContentNodeType extends AbstractType
             if ($data->getId()) {
                 $nameRequired = true;
             }
-            
+
             $form->add(
                 'name',
                 TextType::class,
@@ -120,6 +120,11 @@ class ContentNodeType extends AbstractType
                     'required' => $nameRequired
                 ]
             );
+
+            $defaultVariant = $data->getDefaultVariant();
+            if ($defaultVariant) {
+                $defaultVariant->resetScopes();
+            }
         }
     }
 

@@ -4,8 +4,10 @@
 
         {{ form_row(form.cmsPage) }}
 
-        <h5>{{ form.scopes.vars.label|trans }}</h5>
-        {{ form_widget(form.scopes) }}
+        <div class="scope-elements">
+            <h5>{{ form.scopes.vars.label|trans }}</h5>
+            {{ form_widget(form.scopes) }}
+        </div>
 
         <div class="hide">
             {{ form_rest(form) }}

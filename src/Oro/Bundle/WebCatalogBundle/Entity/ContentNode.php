@@ -414,6 +414,20 @@ class ContentNode extends ExtendContentNode implements
     }
 
     /**
+     * @return ContentVariant|null
+     */
+    public function getDefaultVariant()
+    {
+        foreach ($this->contentVariants as $variant) {
+            if ($variant->isDefault()) {
+                return $variant;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * @return string
      */
     public function getMaterializedPath()
@@ -469,5 +483,27 @@ class ContentNode extends ExtendContentNode implements
         $this->parentScopeUsed = $parentScopeUsed;
 
         return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getScopesConsideringParent()
+    {
+        return $this->getScopesWithFallback($this);
+    }
+
+    /**
+     * @param ContentNode $contentNode
+     * @return ArrayCollection|Scope[]
+     */
+    protected function getScopesWithFallback(ContentNode $contentNode)
+    {
+        $parentNode = $contentNode->getParentNode();
+        if ($parentNode && $contentNode->isParentScopeUsed()) {
+            return $this->getScopesWithFallback($parentNode);
+        } else {
+            return $contentNode->getScopes();
+        }
     }
 }

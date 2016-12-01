@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Form\Handler;
 
+use Oro\Bundle\ScopeBundle\Entity\Scope;
+use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
+use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -13,6 +16,8 @@ use Doctrine\Common\Persistence\ObjectManager;
 
 class ContentNodeHandlerTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTrait;
+
     /**
      * @var FormInterface|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -131,5 +136,55 @@ class ContentNodeHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('flush');
 
         $this->assertTrue($this->contentNodeHandler->process($contentNode));
+    }
+
+    public function testProcessWithDefaultVariant()
+    {
+        $scope1 = $this->getEntity(Scope::class, ['id' => 1]);
+        $scope2 = $this->getEntity(Scope::class, ['id' => 2]);
+
+        $contentNode = new ContentNode();
+        $contentNode->addScope($scope1)
+            ->addScope($scope2);
+
+        $this->form->expects($this->once())
+            ->method('setData')
+            ->with($contentNode);
+
+        $contentVariant = new ContentVariant();
+        $contentVariant->addScope($scope1);
+
+        $defaultVariant = new ContentVariant();
+        $defaultVariant->setDefault(true);
+
+        $contentNode->addContentVariant($defaultVariant)
+            ->addContentVariant($contentVariant);
+
+        $this->request->expects($this->once())
+            ->method('isMethod')
+            ->with(Request::METHOD_POST)
+            ->willReturn(true);
+
+        $this->form->expects($this->once())
+            ->method('submit')
+            ->with($this->request);
+        $this->form->expects($this->once())
+            ->method('isValid')
+            ->willReturn(true);
+
+        $this->slugGenerator->expects($this->once())
+            ->method('generate')
+            ->with($contentNode);
+
+        $this->manager->expects($this->once())
+            ->method('persist')
+            ->with($contentNode);
+        $this->manager->expects($this->once())
+            ->method('flush');
+
+        $this->assertTrue($this->contentNodeHandler->process($contentNode));
+        $actualDefaultVariantScopes = $contentNode->getDefaultVariant()->getScopes();
+        $this->assertCount(1, $actualDefaultVariantScopes);
+        $this->assertContains($scope2, $actualDefaultVariantScopes);
     }
 }

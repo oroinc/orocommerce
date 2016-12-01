@@ -12,7 +12,7 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 class CategoryTitleProvider implements ContentVariantTitleProviderInterface
 {
-    const FIELD_NAME = 'catalogPageCategory';
+    const FIELD_NAME = 'categoryPageCategory';
 
     /**
      * @var PropertyAccessor

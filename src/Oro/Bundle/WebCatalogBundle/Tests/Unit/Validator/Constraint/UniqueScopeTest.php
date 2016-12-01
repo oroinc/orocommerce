@@ -77,6 +77,23 @@ class UniqueScopeTest extends \PHPUnit_Framework_TestCase
         $this->validator->validate($value, $this->constraint);
     }
 
+    public function testValidateValidWithDefault()
+    {
+        /** @var Scope $scope1 */
+        $scope1 = $this->getEntity(Scope::class, ['id' => 1]);
+        /** @var Scope $scope2 */
+        $scope2 = $this->getEntity(Scope::class, ['id' => 2]);
+        $values = [
+            (new ContentVariant())->setDefault(true)->addScope($scope1),
+            (new ContentVariant())->addScope($scope2)->addScope($scope1),
+        ];
+        $value = new ArrayCollection($values);
+        $this->context->expects($this->never())
+            ->method($this->anything());
+
+        $this->validator->validate($value, $this->constraint);
+    }
+
     public function testValidateInvalid()
     {
         /** @var Scope $scope1 */

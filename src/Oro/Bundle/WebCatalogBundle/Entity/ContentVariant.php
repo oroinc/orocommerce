@@ -55,6 +55,13 @@ class ContentVariant extends ExtendContentVariant implements ContentVariantInter
     protected $node;
 
     /**
+     * @var boolean
+     *
+     * @ORM\Column(name="is_default", type="boolean", options={"default"=false})
+     */
+    protected $default = false;
+
+    /**
      * @var Collection|Scope[]
      *
      * @ORM\ManyToMany(
@@ -174,6 +181,16 @@ class ContentVariant extends ExtendContentVariant implements ContentVariantInter
     }
 
     /**
+     * @return $this
+     */
+    public function resetScopes()
+    {
+        $this->scopes->clear();
+
+        return $this;
+    }
+
+    /**
      * @param Scope $scope
      * @return $this
      */
@@ -197,5 +214,24 @@ class ContentVariant extends ExtendContentVariant implements ContentVariantInter
         }
 
         return $this;
+    }
+
+    /**
+     * @param bool $default
+     * @return $this
+     */
+    public function setDefault($default)
+    {
+        $this->default = (bool)$default;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDefault()
+    {
+        return $this->default;
     }
 }

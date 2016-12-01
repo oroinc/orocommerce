@@ -17,7 +17,8 @@ class ContentVariantTest extends \PHPUnit_Framework_TestCase
         $this->assertPropertyAccessors(new ContentVariant(), [
             ['type', 'productPage'],
             ['systemPageRoute', 'some_route'],
-            ['node', new ContentNode()]
+            ['node', new ContentNode()],
+            ['default', true]
         ]);
 
         $this->assertPropertyCollections(new ContentVariant(), [

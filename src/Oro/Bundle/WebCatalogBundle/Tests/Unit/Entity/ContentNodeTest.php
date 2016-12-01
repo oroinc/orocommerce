@@ -65,4 +65,19 @@ class ContentNodeTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEmpty($contentNode->getScopes());
     }
+
+    public function testGetScopesConsideringParent()
+    {
+        $parentNodeScope = new Scope();
+        $parentNode = new ContentNode();
+        $parentNode->addScope($parentNodeScope);
+
+        $node = new ContentNode();
+        $node->setParentNode($parentNode);
+        $node->setParentScopeUsed(true);
+
+        $actualScopes = $node->getScopesConsideringParent();
+        $this->assertCount(1, $actualScopes);
+        $this->assertContains($parentNodeScope, $actualScopes);
+    }
 }

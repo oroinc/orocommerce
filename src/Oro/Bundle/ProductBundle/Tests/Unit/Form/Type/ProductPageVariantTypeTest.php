@@ -101,8 +101,9 @@ class ProductPageVariantTypeTest extends FormIntegrationTestCase
      * @param ContentVariantInterface $existingData
      * @param array $submittedData
      * @param int $expectedProductId
+     * @param bool $isDefault
      */
-    public function testSubmit(ContentVariantInterface $existingData, $submittedData, $expectedProductId)
+    public function testSubmit(ContentVariantInterface $existingData, $submittedData, $expectedProductId, $isDefault)
     {
         $this->assertMetadataCall();
         $form = $this->factory->create($this->type, $existingData);
@@ -117,6 +118,8 @@ class ProductPageVariantTypeTest extends FormIntegrationTestCase
 
         $this->assertEquals('product_page', $actualData->getType());
         $this->assertEquals($expectedProductId, $actualData->getProductPageProduct()->getId());
+
+        $this->assertEquals($isDefault, $actualData->isDefault());
     }
 
     /**
@@ -133,7 +136,8 @@ class ProductPageVariantTypeTest extends FormIntegrationTestCase
                 'submittedData' => [
                     'productPageProduct' => 1
                 ],
-                'expectedProductId' => 1
+                'expectedProductId' => 1,
+                'isDefault' => false
             ],
             'existing entity' => [
                 'existingData' => (new ContentVariantStub())
@@ -141,9 +145,11 @@ class ProductPageVariantTypeTest extends FormIntegrationTestCase
                     ->setType(ProductPageContentVariantType::TYPE),
                 'submittedData' => [
                     'productPageProduct' => 2,
-                    'type' => 'fakeType'
+                    'type' => 'fakeType',
+                    'default' => true
                 ],
-                'expectedProductId' => 2
+                'expectedProductId' => 2,
+                'isDefault' => true
             ],
         ];
     }

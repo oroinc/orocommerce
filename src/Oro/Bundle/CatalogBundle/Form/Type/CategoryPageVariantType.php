@@ -63,6 +63,13 @@ class CategoryPageVariantType extends AbstractType
                 [
                     'data' => CategoryPageContentVariantType::TYPE
                 ]
+            )
+            ->add(
+                'default',
+                'checkbox',
+                [
+                    'required' => true
+                ]
             );
 
         $builder->addEventListener(

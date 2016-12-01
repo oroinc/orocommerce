@@ -48,7 +48,7 @@ class PageTitleProviderTest extends \PHPUnit_Framework_TestCase
 
         $contentVariant = $this
             ->getMockBuilder(ContentVariantInterface::class)
-            ->setMethods(['getLandingPageCMSPage', 'getType'])
+            ->setMethods(['getCmsPage', 'getType'])
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
 
@@ -59,7 +59,7 @@ class PageTitleProviderTest extends \PHPUnit_Framework_TestCase
 
         $contentVariant
             ->expects($this->any())
-            ->method('getLandingPageCMSPage')
+            ->method('getCmsPage')
             ->will($this->returnValue($page));
 
         $this->localizationHelper->expects($this->once())

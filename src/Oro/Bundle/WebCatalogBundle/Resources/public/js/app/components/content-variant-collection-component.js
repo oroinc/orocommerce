@@ -47,6 +47,8 @@ define(function(require) {
 
                 this.validateContainer();
             }
+
+            mediator.trigger('webcatalog:content-variant-collection:add');
         },
 
         validateContainer: function() {

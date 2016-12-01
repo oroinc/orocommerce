@@ -48,7 +48,7 @@ class CategoryTitleProviderTest extends \PHPUnit_Framework_TestCase
 
         $contentVariant = $this
             ->getMockBuilder(ContentVariantInterface::class)
-            ->setMethods(['getCatalogPageCategory', 'getType'])
+            ->setMethods(['getCategoryPageCategory', 'getType'])
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
 
@@ -59,7 +59,7 @@ class CategoryTitleProviderTest extends \PHPUnit_Framework_TestCase
 
         $contentVariant
             ->expects($this->any())
-            ->method('getCatalogPageCategory')
+            ->method('getCategoryPageCategory')
             ->will($this->returnValue($category));
 
         $this->localizationHelper->expects($this->once())

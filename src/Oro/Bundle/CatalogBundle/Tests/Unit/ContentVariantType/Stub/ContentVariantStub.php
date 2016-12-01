@@ -25,6 +25,11 @@ class ContentVariantStub implements ContentVariantInterface
      */
     protected $scopes;
 
+    /**
+     * @var bool
+     */
+    protected $default;
+
     public function __construct()
     {
         $this->scopes = new ArrayCollection();
@@ -116,5 +121,24 @@ class ContentVariantStub implements ContentVariantInterface
     public function getNode()
     {
         return null;
+    }
+
+    /**
+     * @param bool $default
+     * @return $this
+     */
+    public function setDefault($default)
+    {
+        $this->default = (bool)$default;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDefault()
+    {
+        return $this->default;
     }
 }

@@ -100,9 +100,14 @@ class CategoryPageVariantTypeTest extends FormIntegrationTestCase
      * @param ContentVariantInterface $existingData
      * @param array $submittedData
      * @param int $expectedCategoryId
+     * @param bool $isDefault
      */
-    public function testSubmit(ContentVariantInterface $existingData, array $submittedData, $expectedCategoryId)
-    {
+    public function testSubmit(
+        ContentVariantInterface $existingData,
+        array $submittedData,
+        $expectedCategoryId,
+        $isDefault
+    ) {
         $this->assertMetadataCall();
         $form = $this->factory->create($this->type, $existingData);
 
@@ -116,6 +121,7 @@ class CategoryPageVariantTypeTest extends FormIntegrationTestCase
 
         $this->assertEquals('category_page', $actualData->getType());
         $this->assertEquals($expectedCategoryId, $actualData->getCategoryPageCategory()->getId());
+        $this->assertEquals($isDefault, $actualData->isDefault());
     }
 
     /**
@@ -132,7 +138,8 @@ class CategoryPageVariantTypeTest extends FormIntegrationTestCase
                 'submittedData'=> [
                     'categoryPageCategory' => 1
                 ],
-                'expectedCategoryId' => 1
+                'expectedCategoryId' => 1,
+                'isDefault' => false
             ],
             'existing entity' => [
                 'existingData' => (new ContentVariantStub())
@@ -140,9 +147,11 @@ class CategoryPageVariantTypeTest extends FormIntegrationTestCase
                     ->setType(CategoryPageContentVariantType::TYPE),
                 'submittedData' => [
                     'categoryPageCategory' => 2,
-                    'type' => 'fakeType'
+                    'type' => 'fakeType',
+                    'default' =>true
                 ],
-                'expectedCategoryId' => 2
+                'expectedCategoryId' => 2,
+                'isDefault' => true
             ],
         ];
     }

@@ -12,7 +12,7 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 class PageTitleProvider implements ContentVariantTitleProviderInterface
 {
-    const FIELD_NAME = 'landingPageCMSPage';
+    const FIELD_NAME = 'cmsPage';
 
     /**
      * @var PropertyAccessor

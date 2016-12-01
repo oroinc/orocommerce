@@ -110,6 +110,7 @@ class OroWebCatalogBundleInstaller implements
         $table->addColumn('system_page_route', 'string', ['length' => 255, 'notnull' => false]);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['node_id']);
+        $table->addColumn('is_default', 'boolean', ['default' => false]);
     }
 
     /**

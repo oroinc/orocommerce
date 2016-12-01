@@ -100,8 +100,9 @@ class CmsPageVariantTypeTest extends FormIntegrationTestCase
      * @param ContentVariantInterface $existingData
      * @param array $submittedData
      * @param int $expectedPageId
+     * @param bool $isDefault
      */
-    public function testSubmit($existingData, $submittedData, $expectedPageId)
+    public function testSubmit($existingData, $submittedData, $expectedPageId, $isDefault)
     {
         $this->assertMetadataCall();
         $form = $this->factory->create($this->type, $existingData);
@@ -116,6 +117,8 @@ class CmsPageVariantTypeTest extends FormIntegrationTestCase
 
         $this->assertEquals('cms_page', $actualData->getType());
         $this->assertEquals($expectedPageId, $actualData->getCmsPage()->getId());
+
+        $this->assertEquals($isDefault, $actualData->isDefault());
     }
 
     /**
@@ -132,7 +135,8 @@ class CmsPageVariantTypeTest extends FormIntegrationTestCase
                 'submittedData' => [
                     'cmsPage' => 1
                 ],
-                'expectedPageId' => 1
+                'expectedPageId' => 1,
+                'isDefault' => false
             ],
             'existing entity' => [
                 'existingData' => (new ContentVariantStub())
@@ -140,9 +144,11 @@ class CmsPageVariantTypeTest extends FormIntegrationTestCase
                     ->setType(CmsPageContentVariantType::TYPE),
                 'submittedData' => [
                     'cmsPage' => 2,
-                    'type' => 'fakeType'
+                    'type' => 'fakeType',
+                    'default' => true
                 ],
-                'expectedPageId' => 2
+                'expectedPageId' => 2,
+                'isDefault' => true
             ],
         ];
     }

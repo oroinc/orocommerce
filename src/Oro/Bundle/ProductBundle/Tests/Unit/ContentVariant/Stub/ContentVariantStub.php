@@ -6,7 +6,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
-use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 
 class ContentVariantStub implements ContentVariantInterface
@@ -25,6 +24,11 @@ class ContentVariantStub implements ContentVariantInterface
      * @var ArrayCollection|Scope[]
      */
     protected $scopes;
+
+    /**
+     * @var bool
+     */
+    protected $default;
 
     public function __construct()
     {
@@ -117,5 +121,24 @@ class ContentVariantStub implements ContentVariantInterface
     public function getNode()
     {
         return null;
+    }
+
+    /**
+     * @param bool $default
+     * @return $this
+     */
+    public function setDefault($default)
+    {
+        $this->default = (bool)$default;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDefault()
+    {
+        return $this->default;
     }
 }

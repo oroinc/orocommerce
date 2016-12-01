@@ -64,6 +64,13 @@ class ProductPageVariantType extends AbstractType
                 [
                     'data' => ProductPageContentVariantType::TYPE
                 ]
+            )
+            ->add(
+                'default',
+                'checkbox',
+                [
+                    'required' => true
+                ]
             );
 
         $builder->addEventListener(
