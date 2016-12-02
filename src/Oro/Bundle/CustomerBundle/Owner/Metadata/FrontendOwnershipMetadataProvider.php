@@ -162,7 +162,7 @@ class FrontendOwnershipMetadataProvider extends AbstractMetadataProvider
                 }
             }
         } else {
-            $maxLevel = $accessLevel;
+            $maxLevel = ($accessLevel > AccessLevel::DEEP_LEVEL) ? AccessLevel::DEEP_LEVEL : $accessLevel;
         }
 
         return $maxLevel;

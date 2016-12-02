@@ -52,6 +52,7 @@ class AccountUserRoleControllerTest extends WebTestCase
      */
     public function testDeleteCustomizedRole($login, $resource, $status)
     {
+        $this->markTestSkipped('Should be fixed after BB-4518');
         $this->loginUser($login);
         /** @var AccountUserRole $customizedRole */
         $customizedRole = $this->getReference($resource);

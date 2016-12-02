@@ -206,6 +206,8 @@ class ProductTypeTest extends FormIntegrationTestCase
     }
 
     /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     *
      * @return array
      */
     public function submitProvider()
@@ -219,6 +221,7 @@ class ProductTypeTest extends FormIntegrationTestCase
                     'inventoryStatus' => Product::INVENTORY_STATUS_IN_STOCK,
                     'visible' => 1,
                     'status' => Product::STATUS_DISABLED,
+                    'type' => Product::TYPE_SIMPLE,
                     'variantFields' => array_keys($this->exampleCustomFields)
                 ],
                 'expectedData'  => $this->createExpectedProductEntity(),
@@ -241,6 +244,7 @@ class ProductTypeTest extends FormIntegrationTestCase
                     'inventoryStatus' => Product::INVENTORY_STATUS_IN_STOCK,
                     'visible' => 1,
                     'status' => Product::STATUS_DISABLED,
+                    'type' => Product::TYPE_SIMPLE,
                     'variantFields' => array_keys($this->exampleCustomFields)
                 ],
                 'expectedData'  => $this->createExpectedProductEntity(true),
@@ -254,6 +258,7 @@ class ProductTypeTest extends FormIntegrationTestCase
                     'inventoryStatus' => Product::INVENTORY_STATUS_IN_STOCK,
                     'visible' => 1,
                     'status' => Product::STATUS_DISABLED,
+                    'type' => Product::TYPE_SIMPLE,
                     'names' => [
                         ['string' => 'first name'],
                         ['string' => 'second name'],
@@ -279,6 +284,7 @@ class ProductTypeTest extends FormIntegrationTestCase
                     'inventoryStatus' => Product::INVENTORY_STATUS_IN_STOCK,
                     'visible' => 1,
                     'status' => Product::STATUS_DISABLED,
+                    'type' => Product::TYPE_SIMPLE,
                 ],
                 'expectedData'  => $this->createExpectedProductEntity(false, false, false),
                 'rounding' => false
@@ -291,9 +297,25 @@ class ProductTypeTest extends FormIntegrationTestCase
                     'inventoryStatus' => Product::INVENTORY_STATUS_IN_STOCK,
                     'visible' => 1,
                     'status' => Product::STATUS_DISABLED,
+                    'type' => Product::TYPE_SIMPLE,
                     'images' => $this->images
                 ],
                 'expectedData'  => $this->createExpectedProductEntity(false, false, false),
+                'rounding' => false
+            ],
+            'configurable product' => [
+                'defaultData'   => $this->createDefaultProductEntity(),
+                'submittedData' => [
+                    'sku' => 'test sku',
+                    'primaryUnitPrecision' => ['unit' => 'each', 'precision' => 0],
+                    'inventoryStatus' => Product::INVENTORY_STATUS_IN_STOCK,
+                    'visible' => 1,
+                    'status' => Product::STATUS_DISABLED,
+                    'type' => Product::TYPE_CONFIGURABLE,
+                    'variantFields' => array_keys($this->exampleCustomFields)
+                ],
+                'expectedData' => $this->createExpectedProductEntity()
+                    ->setType(Product::TYPE_CONFIGURABLE),
                 'rounding' => false
             ],
         ];
