@@ -119,7 +119,6 @@ class OroProductBundleInstaller implements
         $table->addColumn('sku', 'string', ['length' => 255]);
         $table->addColumn('created_at', 'datetime', []);
         $table->addColumn('updated_at', 'datetime', []);
-        $table->addColumn('has_variants', 'boolean', ['default' => false]);
         $table->addColumn('variant_fields', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
         $table->addColumn('status', 'string', ['length' => 16]);
         $table->addColumn('primary_unit_precision_id', 'integer', ['notnull' => false]);

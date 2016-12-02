@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Form\FormInterface;
 
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
@@ -28,32 +29,26 @@ class ProductHandlerListenerTest extends \PHPUnit_Framework_TestCase
         unset($this->listener);
     }
 
-    public function testVariantLinksWithoutHasVariant()
+    public function testClearVariantLinks()
     {
         $entity = new Product();
-        $entity->setVariantFields([]);
-        $entity->setHasVariants(true);
-        $entity->addVariantLink($this->createProductVariantLink());
+        $entity->setType(Product::TYPE_CONFIGURABLE_PRODUCT);
+        $productVariantLink = $this->createProductVariantLink();
+        $entity->addVariantLink($productVariantLink);
         $event = $this->createEvent($entity);
         $this->listener->onBeforeFlush($event);
-        $this->assertFalse($entity->getHasVariants());
-        $this->assertCount(0, $entity->getVariantLinks());
-    }
+        $this->assertEquals(new ArrayCollection([$productVariantLink]), $entity->getVariantLinks());
 
-    public function testVariantLinksWithHasVariant()
-    {
-        $entity = new Product();
-        $entity->setVariantFields([self::CUSTOM_FIELD_NAME]);
-        $entity->setHasVariants(false);
+        $entity->setType(Product::TYPE_SIMPLE_PRODUCT);
         $event = $this->createEvent($entity);
         $this->listener->onBeforeFlush($event);
-        $this->assertTrue($entity->getHasVariants());
+        $this->assertEquals(new ArrayCollection([]), $entity->getVariantLinks());
     }
 
     protected function createEvent($entity)
     {
-        /** @var FormInterface $form */
-        $form = $this->getMock('\Symfony\Component\Form\FormInterface');
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        $form = $this->getMock(FormInterface::class);
         return new AfterFormProcessEvent($form, $entity);
     }
 

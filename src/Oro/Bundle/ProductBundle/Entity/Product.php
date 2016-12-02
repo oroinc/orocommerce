@@ -107,23 +107,6 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
     protected $sku;
 
     /**
-     * @var bool
-     *
-     * @ORM\Column(name="has_variants", type="boolean", nullable=false, options={"default"=false})
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          },
-     *          "importexport"={
-     *              "order"=70
-     *          }
-     *      }
-     * )
-     */
-    protected $hasVariants = false;
-
-    /**
      * @var string
      *
      * @ORM\Column(name="status", type="string", length=16, nullable=false)
@@ -481,25 +464,6 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
     public function setSku($sku)
     {
         $this->sku = $sku;
-
-        return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function getHasVariants()
-    {
-        return $this->hasVariants;
-    }
-
-    /**
-     * @param bool $hasVariants
-     * @return Product
-     */
-    public function setHasVariants($hasVariants)
-    {
-        $this->hasVariants = $hasVariants;
 
         return $this;
     }
@@ -961,7 +925,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
     {
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
 
-        if (false === $this->hasVariants) {
+        if (false === $this->isConfigurable()) {
             // Clear variantLinks in Oro\Bundle\ProductBundle\EventListener\ProductHandlerListener
             $this->variantFields = [];
         }

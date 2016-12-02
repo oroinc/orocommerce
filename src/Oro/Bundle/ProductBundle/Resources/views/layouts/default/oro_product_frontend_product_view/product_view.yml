@@ -51,7 +51,7 @@ layout:
                 product_variants:
                     blockType: block
                     options:
-                        visible: '=data["product"].hasVariants()'
+                        visible: '=data["product"].isConfigurable()'
                 order_with_matrix:
                     blockType: block
                 product_description_content:

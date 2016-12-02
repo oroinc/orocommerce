@@ -26,7 +26,7 @@ class UniqueProductVariantLinksValidatorTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->context = $this->getMock('Symfony\Component\Validator\Context\ExecutionContextInterface');
+        $this->context = $this->getMock(ExecutionContextInterface::class);
 
         $this->service = new UniqueProductVariantLinksValidator();
         $this->service->initialize($this->context);
@@ -51,7 +51,7 @@ class UniqueProductVariantLinksValidatorTest extends \PHPUnit_Framework_TestCase
     public function testDoesNothingIfProductDoesNotHaveVariants()
     {
         $product = new Product();
-        $product->setHasVariants(false);
+        $product->setType(Product::TYPE_SIMPLE_PRODUCT);
 
         $this->context->expects($this->never())->method('addViolation');
 
@@ -130,7 +130,7 @@ class UniqueProductVariantLinksValidatorTest extends \PHPUnit_Framework_TestCase
     public function testSkipIfProductIsMissingAndValidatedByNotBlank()
     {
         $product = new Product();
-        $product->setHasVariants(true);
+        $product->setType(Product::TYPE_CONFIGURABLE_PRODUCT);
         $product->setVariantFields(['field1']);
         $variantLink = new ProductVariantLink($product);
         $product->addVariantLink($variantLink);
@@ -145,12 +145,12 @@ class UniqueProductVariantLinksValidatorTest extends \PHPUnit_Framework_TestCase
     /**
      * @param array $variantFields
      * @param array $variantLinkFields
-     * @return StubProduct
+     * @return Product
      */
     private function prepareProduct(array $variantFields, array $variantLinkFields)
     {
         $product = new Product();
-        $product->setHasVariants(true);
+        $product->setType(Product::TYPE_CONFIGURABLE_PRODUCT);
         $product->setVariantFields($variantFields);
 
         foreach ($variantLinkFields as $fields) {

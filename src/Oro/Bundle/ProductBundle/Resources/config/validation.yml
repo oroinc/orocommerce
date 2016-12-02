@@ -38,8 +38,6 @@ Oro\Bundle\ProductBundle\Entity\Product:
         images:
             - Valid: ~
             - Oro\Bundle\ProductBundle\Validator\Constraints\ProductImageCollection: ~
-        hasVariants:
-            - NotNull: ~
 
 Oro\Bundle\ProductBundle\Entity\ProductUnit:
     properties:

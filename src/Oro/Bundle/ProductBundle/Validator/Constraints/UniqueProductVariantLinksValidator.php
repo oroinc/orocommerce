@@ -28,7 +28,7 @@ class UniqueProductVariantLinksValidator extends ConstraintValidator
             );
         }
 
-        if (!$value->getHasVariants()) {
+        if (!$value->isConfigurable()) {
             return;
         }
 

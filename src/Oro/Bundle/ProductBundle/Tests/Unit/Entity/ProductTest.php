@@ -94,7 +94,7 @@ class ProductTest extends \PHPUnit_Framework_TestCase
     public function testPreUpdate()
     {
         $product = new Product();
-        $product->setHasVariants(false);
+        $product->setType(Product::TYPE_SIMPLE_PRODUCT);
         $product->setVariantFields(['field']);
         $product->addVariantLink(new ProductVariantLink(new Product(), new Product()));
 

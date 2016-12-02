@@ -304,7 +304,7 @@ class ProductTypeTest extends FormIntegrationTestCase
      * @param bool|false $withNamesAndDescriptions
      * @param bool|true $hasVariants
      * @param bool|true hasImages
-     * @return StubProduct
+     * @return Product
      */
     protected function createExpectedProductEntity(
         $withProductUnitPrecision = false,
@@ -314,9 +314,10 @@ class ProductTypeTest extends FormIntegrationTestCase
     ) {
         $expectedProduct = new Product();
 
-        $expectedProduct->setHasVariants($hasVariants);
+        $expectedProduct->setType(Product::TYPE_SIMPLE_PRODUCT);
 
         if ($hasVariants) {
+            $expectedProduct->setType(Product::TYPE_CONFIGURABLE_PRODUCT);
             $expectedProduct->setVariantFields(array_keys($this->exampleCustomFields));
         }
 
@@ -387,14 +388,15 @@ class ProductTypeTest extends FormIntegrationTestCase
 
     /**
      * @param bool|true $hasVariants
-     * @return StubProduct
+     * @return Product
      */
     protected function createDefaultProductEntity($hasVariants = true)
     {
         $defaultProduct = new Product();
-        $defaultProduct->setHasVariants($hasVariants);
+        $defaultProduct->setType(Product::TYPE_SIMPLE_PRODUCT);
 
         if ($hasVariants) {
+            $defaultProduct->setType(Product::TYPE_CONFIGURABLE_PRODUCT);
             $defaultProduct->setVariantFields(array_keys($this->exampleCustomFields));
         }
 
