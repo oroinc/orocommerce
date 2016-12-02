@@ -1,5 +1,8 @@
 Oro\Bundle\ProductBundle\Entity\Product:
     fields:
         -
-            name: minimum_price_CPL_ID_CURRENCY_UNIT
+            name: minimal_price_CPL_ID_CURRENCY_UNIT
+            type: decimal
+        -
+            name: minimal_price_CPL_ID_CURRENCY
             type: decimal
