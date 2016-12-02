@@ -7,7 +7,6 @@ use Oro\Bundle\CurrencyBundle\Tests\Unit\Utils\CurrencyNameHelperStub;
 use Oro\Bundle\PayPalBundle\Form\Type\CurrencySelectionType;
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
-use Symfony\Component\Intl\Intl;
 
 class CurrencySelectionTypeTest extends FormIntegrationTestCase
 {
