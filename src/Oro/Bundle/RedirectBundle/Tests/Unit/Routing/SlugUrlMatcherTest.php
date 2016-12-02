@@ -261,7 +261,7 @@ class SlugUrlMatcherTest extends \PHPUnit_Framework_TestCase
 
         $routeName = 'test_route';
         $routeParameters = ['id' => 1];
-        $realUrl = 'real/url';
+        $realUrl = 'real/url?test=1';
         $slug = new Slug();
         $slug->setRouteName($routeName);
         $slug->setRouteParameters($routeParameters);
@@ -276,7 +276,7 @@ class SlugUrlMatcherTest extends \PHPUnit_Framework_TestCase
             ->willReturn($realUrl);
         $this->router->expects($this->once())
             ->method('match')
-            ->with('/' . $realUrl)
+            ->with('/real/url')
             ->willReturn(['_controller' => 'Some::action']);
 
         $attributes = [
@@ -472,7 +472,7 @@ class SlugUrlMatcherTest extends \PHPUnit_Framework_TestCase
 
         $routeName = 'test_route';
         $routeParameters = ['id' => 1];
-        $realUrl = 'real/url';
+        $realUrl = 'real/url?test=1';
         $slug = new Slug();
         $slug->setRouteName($routeName);
         $slug->setRouteParameters($routeParameters);
@@ -487,7 +487,7 @@ class SlugUrlMatcherTest extends \PHPUnit_Framework_TestCase
             ->willReturn($realUrl);
         $this->router->expects($this->once())
             ->method('match')
-            ->with('/' . $realUrl)
+            ->with('/real/url')
             ->willReturn(['_controller' => 'Some::action']);
 
         $attributes = [

@@ -193,7 +193,7 @@ class SlugGenerator
      */
     protected function findFallbackSlug(Localization $localization, array $parentNodeSlugUrls)
     {
-        $localeHierarchy = $this->getLocaleHierarchy($localization);
+        $localeHierarchy = $localization->getHierarchy();
 
         foreach ($localeHierarchy as $localeId) {
             if (array_key_exists($localeId, $parentNodeSlugUrls)) {
@@ -202,26 +202,6 @@ class SlugGenerator
         }
 
         return null;
-    }
-
-    /**
-     * @param Localization $localization
-     * @return array
-     */
-    protected function getLocaleHierarchy(Localization $localization)
-    {
-        $localeHierarchy = [];
-
-        $parent = $localization->getParentLocalization();
-        if ($parent) {
-            $localeHierarchy[] = $parent->getId();
-            $localeHierarchy = array_merge($localeHierarchy, $this->getLocaleHierarchy($parent));
-        } else {
-            // For default value without locale
-            $localeHierarchy = [null];
-        }
-
-        return $localeHierarchy;
     }
 
     /**

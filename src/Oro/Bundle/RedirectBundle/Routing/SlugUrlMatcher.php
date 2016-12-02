@@ -215,7 +215,7 @@ class SlugUrlMatcher implements RequestMatcherInterface, UrlMatcherInterface
         $routeParameters = $slug->getRouteParameters();
 
         $resolvedUrl = $this->getResolvedUrl($routeName, $routeParameters);
-        $routeData = $this->router->match($resolvedUrl);
+        $routeData = $this->router->match(parse_url($resolvedUrl, PHP_URL_PATH));
 
         if (array_key_exists('_controller', $routeData)) {
             $attributes['_route'] = $routeName;

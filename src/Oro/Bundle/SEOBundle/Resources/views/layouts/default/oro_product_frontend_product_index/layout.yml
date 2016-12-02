@@ -6,11 +6,18 @@ layout:
             blockType: meta
             options:
                 name: 'description'
-                content: '=data["category"].getCurrentCategory()!=null ? =data["seo"].getMetaInformation(data["category"].getCurrentCategory(), "metaDescriptions") : null'
+                content: '=data["category"].getCurrentCategory()!=null ? data["seo"].getMetaInformation(data["category"].getCurrentCategory(), "metaDescriptions") : null'
         - '@add':
             id: meta_keywords
             parentId: head
             blockType: meta
             options:
                 name: 'keywords'
-                content: '=data["category"].getCurrentCategory()!=null ? =data["seo"].getMetaInformation(data["category"].getCurrentCategory(), "metaKeywords") : null'
+                content: '=data["category"].getCurrentCategory()!=null ? data["seo"].getMetaInformation(data["category"].getCurrentCategory(), "metaKeywords") : null'
+        - '@add':
+            id: canonical
+            parentId: head
+            blockType: external_resource
+            options:
+                rel: 'canonical'
+                href: '=data["category"].getCurrentCategory()!=null ? data["canonical"].getUrl(data["category"].getCurrentCategory()) : null'

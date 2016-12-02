@@ -20,7 +20,7 @@ trait LocalizedSlugPrototypeAwareTrait
     protected $slugPrototypes;
 
     /**
-     * {@inheritdoc}
+     * @return Collection|LocalizedFallbackValue[]
      */
     public function getSlugPrototypes()
     {
@@ -28,7 +28,8 @@ trait LocalizedSlugPrototypeAwareTrait
     }
 
     /**
-     * {@inheritdoc}
+     * @param LocalizedFallbackValue $slugPrototype
+     * @return $this
      */
     public function addSlugPrototype(LocalizedFallbackValue $slugPrototype)
     {
@@ -40,7 +41,8 @@ trait LocalizedSlugPrototypeAwareTrait
     }
 
     /**
-     * {@inheritdoc}
+     * @param LocalizedFallbackValue $slugPrototype
+     * @return $this
      */
     public function removeSlugPrototype(LocalizedFallbackValue $slugPrototype)
     {
@@ -52,7 +54,8 @@ trait LocalizedSlugPrototypeAwareTrait
     }
 
     /**
-     * {@inheritdoc}
+     * @param LocalizedFallbackValue $slugPrototype
+     * @return bool
      */
     public function hasSlugPrototype(LocalizedFallbackValue $slugPrototype)
     {

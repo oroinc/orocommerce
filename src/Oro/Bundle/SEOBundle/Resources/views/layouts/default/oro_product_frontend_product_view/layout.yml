@@ -14,3 +14,10 @@ layout:
             options:
                 name: 'keywords'
                 content: '=data["seo"].getMetaInformation(data["product"], "metaKeywords")'
+        - '@add':
+            id: canonical
+            parentId: head
+            blockType: external_resource
+            options:
+                rel: 'canonical'
+                href: '=data["canonical"].getUrl(data["product"])'
