@@ -893,6 +893,15 @@
 
 .more-bar-holder {
   position: relative;
+
+  .action {
+    &:hover {
+      text-decoration: none;
+
+      background-color: get-color('additional', 'light');
+      border-radius: 4px;
+    }
+  }
 }
 
 //Table

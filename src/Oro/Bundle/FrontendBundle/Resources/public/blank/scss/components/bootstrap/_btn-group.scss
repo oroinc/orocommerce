@@ -5,24 +5,33 @@
 
     @extend %base-transition;
 
+    .btn-group {
+        width: 100%;
+    }
+
     &.full {
         $dropdown-toggle-width: 48px;
 
         width: 100%;
 
         .btn {
-            width: calc(100% - #{$dropdown-toggle-width});
-        }
+            width: 100%;
 
-        .dropdown-toggle {
-            width: $dropdown-toggle-width;
+            // If dropdown-toggle is rendered
+            &:not(:last-child) {
+                width: calc(100% - #{$dropdown-toggle-width});
+            }
+
+            &.dropdown-toggle {
+                width: $dropdown-toggle-width;
+            }
         }
     }
 
     .btn {
         &:focus,
         &:hover {
-            &:first-child {
+            &:not(:last-child) {
                 border-right: $border;
             }
         }

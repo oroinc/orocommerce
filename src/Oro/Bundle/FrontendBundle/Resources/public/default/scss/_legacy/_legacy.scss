@@ -6,6 +6,8 @@
 /*Base styles*/
 @import './shared/base';
 
+@import './_bootstrap3-artifacts';
+
 /*=== START COMPONENTS===*/
 @import './checkout-widget';
 @import './messages-widget';
