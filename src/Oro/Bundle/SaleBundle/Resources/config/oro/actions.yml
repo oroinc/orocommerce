@@ -194,6 +194,10 @@ action_groups:
                 conditions:
                    '@not_empty': $.data.quote.shippingCost
                 parameters: [$.disallow_shipping_method_edit, true]
+            - '@call_service_method':
+                service: oro_sale.quote.shipping_cost_recalculator
+                method: recalculateQuoteShippingCost
+                method_parameters: [$.data.quote]
             - '@tree':
                 conditions:
                     '@not_empty': $.data.quote.shippingAddress

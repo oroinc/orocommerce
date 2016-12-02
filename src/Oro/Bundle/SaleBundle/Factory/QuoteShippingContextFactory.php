@@ -40,7 +40,7 @@ class QuoteShippingContextFactory
         $shippingContext->setSourceEntity($quote);
         $shippingContext->setSourceEntityIdentifier($quote->getId());
 
-        if ($quote->getDemands()->count() > 0) {
+        if (!$quote->getDemands()->isEmpty()) {
             $shippingContext->setLineItemsByData(
                 $this->getShippingLineItemsForQuote($quote)
             );
@@ -69,6 +69,12 @@ class QuoteShippingContextFactory
         return $shippingLineItems;
     }
 
+    /**
+     * @param QuoteProductDemand $demand
+     * @param QuoteProductOffer  $productOffer
+     *
+     * @return ShippingLineItem
+     */
     private function createShippingLineItem(QuoteProductDemand $demand, QuoteProductOffer $productOffer)
     {
         $shippingLineItem = new ShippingLineItem();

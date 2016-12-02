@@ -167,3 +167,10 @@ services:
             - '@?oro_shipping.shipping_price.provider'
         tags:
             - { name: kernel.event_listener, event: oro_sale.quote, method: onQuoteEvent }
+
+    oro_sale.quote.shipping_cost_recalculator:
+        class: 'Oro\Bundle\SaleBundle\Model\QuoteShippingCostRecalculator'
+        arguments:
+            - '@oro_sale.factory.quote_shipping_context'
+        calls:
+            - [setShippingPriceProvider, ['@?oro_shipping.shipping_price.provider']]

@@ -158,6 +158,9 @@ class QuoteController extends Controller
             $form->handleRequest($request);
         }
 
+        $this->get('oro_sale.quote.shipping_cost_recalculator')
+            ->recalculateQuoteShippingCost($quoteDemand->getQuote());
+
         return [
             'data' => [
                 'totals' => (object)$this->getTotalProcessor()->getTotalWithSubtotalsAsArray($quoteDemand)
