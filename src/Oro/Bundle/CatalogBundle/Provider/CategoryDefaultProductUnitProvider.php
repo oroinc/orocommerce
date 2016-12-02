@@ -3,9 +3,10 @@
 namespace Oro\Bundle\CatalogBundle\Provider;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\CatalogBundle\Model\CategoryUnitPrecision;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Provider\DefaultProductUnitProviderInterface;
+use Oro\Bundle\ProductBundle\Service\SingleUnitModeService;
 
 class CategoryDefaultProductUnitProvider implements DefaultProductUnitProviderInterface
 {
@@ -13,6 +14,19 @@ class CategoryDefaultProductUnitProvider implements DefaultProductUnitProviderIn
      * @var Category
      */
     protected $category;
+
+    /**
+     * @var SingleUnitModeService
+     */
+    protected $singleUnitModeService;
+
+    /**
+     * @param SingleUnitModeService $singleUnitModeService
+     */
+    public function __construct(SingleUnitModeService $singleUnitModeService)
+    {
+        $this->singleUnitModeService = $singleUnitModeService;
+    }
 
     /**
      * @param Category $category
@@ -27,6 +41,10 @@ class CategoryDefaultProductUnitProvider implements DefaultProductUnitProviderIn
      */
     public function getDefaultProductUnitPrecision()
     {
+        if ($this->singleUnitModeService->isSingleUnitMode()) {
+            return null;
+        }
+
         $category = $this->category;
         $data = null;
         

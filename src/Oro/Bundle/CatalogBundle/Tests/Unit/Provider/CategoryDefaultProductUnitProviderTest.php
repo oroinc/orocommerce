@@ -6,8 +6,9 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\CategoryDefaultProductOptions;
 use Oro\Bundle\CatalogBundle\Model\CategoryUnitPrecision;
 use Oro\Bundle\CatalogBundle\Provider\CategoryDefaultProductUnitProvider;
-use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\Service\SingleUnitModeService;
 
 class CategoryDefaultProductUnitProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -25,6 +26,11 @@ class CategoryDefaultProductUnitProviderTest extends \PHPUnit_Framework_TestCase
      * @var array
      */
     protected $categories;
+
+    /**
+     * @var SingleUnitModeService|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $singleUnitModeService;
 
     public function setUp()
     {
@@ -47,17 +53,25 @@ class CategoryDefaultProductUnitProviderTest extends \PHPUnit_Framework_TestCase
             3 => $category3,
         ];
 
-        $this->defaultProductUnitProvider = new CategoryDefaultProductUnitProvider();
+        $this->singleUnitModeService = $this->getMockBuilder(SingleUnitModeService::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->defaultProductUnitProvider = new CategoryDefaultProductUnitProvider($this->singleUnitModeService);
     }
 
     /**
      * @dataProvider productUnitDataProvider
+     * @param boolean $singleUnitMode
      * @param int $categoryId
      * @param array $expectedData
      */
-    public function testGetDefaultProductUnit($categoryId, $expectedData)
+    public function testGetDefaultProductUnit($singleUnitMode, $categoryId, $expectedData)
     {
         $this->defaultProductUnitProvider->setCategory($this->categories[$categoryId]);
+        $this->singleUnitModeService->expects(static::once())
+            ->method('isSingleUnitMode')
+            ->willReturn($singleUnitMode);
 
         $expectedUnitPrecision = $this->createProductUnitPrecision(
             $expectedData['code'],
@@ -109,19 +123,28 @@ class CategoryDefaultProductUnitProviderTest extends \PHPUnit_Framework_TestCase
     {
         return [
             'noCategory' => [
+                'singleUnitMode' => false,
                 'categoryId' => 0,
                 'expectedData' => null
             ],
             'CategoryWithPrecision' => [
+                'singleUnitMode' => false,
                 'categoryId' => 1,
                 'expectedData' => $this->categoryPrecision
             ],
             'CategoryWithParentPrecision' => [
+                'singleUnitMode' => false,
                 'categoryId' => 2,
                 'expectedData' => $this->categoryPrecision
             ],
             'CategoryWithNoPrecision' => [
+                'singleUnitMode' => false,
                 'categoryId' => 3,
+                'expectedData' => null
+            ],
+            'CategoryWithPrecisionButSingleUnitMode' => [
+                'singleUnitMode' => true,
+                'categoryId' => 1,
                 'expectedData' => null
             ],
         ];

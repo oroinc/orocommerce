@@ -217,7 +217,6 @@ services:
         arguments:
             - "@oro_config.manager"
 
-
     oro_product.provider.default_product_unit_provider.chain:
         class: 'Oro\Bundle\ProductBundle\Provider\ChainDefaultProductUnitProvider'
         public: false
