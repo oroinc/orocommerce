@@ -3,9 +3,10 @@
 namespace Oro\Bundle\ShippingBundle\Context;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
 use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 
-interface ShippingContextInterface
+interface ShippingContextInterface extends CustomerOwnerAwareInterface
 {
     /**
      * @return ShippingLineItemInterface[]

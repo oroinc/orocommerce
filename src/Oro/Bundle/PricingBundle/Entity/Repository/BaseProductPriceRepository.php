@@ -482,4 +482,24 @@ abstract class BaseProductPriceRepository extends EntityRepository
 
         return $qb;
     }
+
+    /**
+     * @param array|int[]|BasePriceList[] $priceLists
+     * @return array
+     */
+    public function getProductIdsByPriceLists(array $priceLists)
+    {
+        if (empty($priceLists)) {
+            return [];
+        }
+
+        $qb = $this->createQueryBuilder('price');
+        $qb->select('DISTINCT IDENTITY(price.product) AS product')
+            ->where($qb->expr()->in('price.priceList', ':priceLists'))
+            ->setParameter('priceLists', $priceLists);
+
+        $result = $qb->getQuery()->getScalarResult();
+
+        return array_column($result, 'product');
+    }
 }

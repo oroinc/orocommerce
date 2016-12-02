@@ -1,5 +1,6 @@
 datagrids:
     frontend-checkouts-grid:
+        acl_resource: oro_checkout_frontend_view
         update: false
         delete: false
         source:
