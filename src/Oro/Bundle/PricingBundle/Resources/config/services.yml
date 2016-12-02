@@ -475,12 +475,6 @@ services:
         tags:
             - { name: oro_datagrid.extension }
 
-    oro_pricing.datagrid.extension.product_search_grid:
-        class: 'Oro\Bundle\PricingBundle\Datagrid\ProductSearchGridExtension'
-        public: false
-        tags:
-            - { name: oro_datagrid.extension }
-
     oro_pricing.event_listener.product_select_price_list_aware:
         class: 'Oro\Bundle\PricingBundle\EventListener\ProductSelectPriceListAwareListener'
         arguments:
