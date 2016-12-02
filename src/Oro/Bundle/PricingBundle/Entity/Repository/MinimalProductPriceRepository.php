@@ -3,13 +3,8 @@
 namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
 use Doctrine\ORM\Query;
-
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
-use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToAccount;
-use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToAccountGroup;
-use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite;
-use Oro\Bundle\PricingBundle\Entity\MinimalProductPrice;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
 class MinimalProductPriceRepository extends BaseProductPriceRepository
@@ -82,63 +77,5 @@ class MinimalProductPriceRepository extends BaseProductPriceRepository
             ->andWhere($qb->expr()->lt('low_price.value', $rooAlias.'.value'));
 
         return $qb->getQuery();
-    }
-
-    /**
-     * @param integer $websiteId
-     * @param Product[] $products
-     * @param CombinedPriceList $configCpl
-     * @return MinimalProductPrice[]
-     */
-    public function findByWebsite($websiteId, array $products, $configCpl)
-    {
-        $qb = $this->createQueryBuilder('mp');
-        $qb->select(
-            'IDENTITY(mp.product) as product',
-            'mp.value',
-            'mp.currency',
-            'IDENTITY(mp.unit) as unit',
-            'IDENTITY(mp.priceList) as cpl'
-        )
-            ->where('mp.product in (:products)')
-            ->setParameter('products', $products)
-            ->andWhere(
-                $qb->expr()->orX(
-                    $qb->expr()->orX(
-                        $qb->expr()->exists(
-                            $this->getEntityManager()
-                                ->createQueryBuilder()
-                                ->from(CombinedPriceListToWebsite::class, 'cpl_w')
-                                ->select('cpl_w.id')
-                                ->where('cpl_w.website = :websiteId')
-                                ->andWhere('cpl_w.priceList = mp.priceList')
-                                ->getDQL()
-                        ),
-                        $qb->expr()->exists(
-                            $this->getEntityManager()
-                                ->createQueryBuilder()
-                                ->from(CombinedPriceListToAccount::class, 'cpl_a')
-                                ->select('cpl_a.id')
-                                ->where('cpl_a.website = :websiteId')
-                                ->andWhere('cpl_a.priceList = mp.priceList')
-                                ->getDQL()
-                        ),
-                        $qb->expr()->exists(
-                            $this->getEntityManager()
-                                ->createQueryBuilder()
-                                ->from(CombinedPriceListToAccountGroup::class, 'cpl_ag')
-                                ->select('cpl_ag.id')
-                                ->where('cpl_ag.website = :websiteId')
-                                ->andWhere('cpl_ag.priceList = mp.priceList')
-                                ->getDQL()
-                        )
-                    ),
-                    'mp.priceList = :conf_cpl'
-                )
-            )
-            ->setParameter('websiteId', $websiteId)
-            ->setParameter('conf_cpl', $configCpl);
-
-        return $qb->getQuery()->getArrayResult();
     }
 }

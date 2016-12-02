@@ -2,10 +2,11 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\EventListener;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\PricingBundle\Entity\MinimalProductPrice;
-use Oro\Bundle\PricingBundle\Entity\Repository\MinimalProductPriceRepository;
+use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use Oro\Bundle\PricingBundle\EventListener\WebsiteSearchProductPriceIndexerListener;
+use Oro\Bundle\PricingBundle\Tests\Unit\Entity\Repository\Stub\CombinedProductPriceRepository;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
@@ -33,6 +34,11 @@ class WebsiteSearchProductPriceIndexerListenerTest extends \PHPUnit_Framework_Te
      */
     private $configManager;
 
+    /**
+     * @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $manager;
+
     public function setUp()
     {
         $this->websiteContextManager = $this->getMockBuilder(WebsiteContextManager::class)
@@ -44,6 +50,9 @@ class WebsiteSearchProductPriceIndexerListenerTest extends \PHPUnit_Framework_Te
         $this->configManager = $this->getMockBuilder(ConfigManager::class)
             ->disableOriginalConstructor()
             ->getMock();
+
+        $this->manager = $this->getMock(EntityManagerInterface::class);
+        $this->doctrine->method('getManagerForClass')->willReturn($this->manager);
 
         $this->listener = new WebsiteSearchProductPriceIndexerListener(
             $this->websiteContextManager,
@@ -71,9 +80,9 @@ class WebsiteSearchProductPriceIndexerListenerTest extends \PHPUnit_Framework_Te
         $this->websiteContextManager->expects($this->once())->method('getWebsiteId')->willReturn(1);
         $this->configManager->expects($this->once())->method('get')->willReturn(2);
 
-        $repo = $this->getMockBuilder(MinimalProductPriceRepository::class)->disableOriginalConstructor()->getMock();
-        $this->doctrine->method('getRepository')->with(MinimalProductPrice::class)->willReturn($repo);
-        $repo->method('findByWebsite')
+        $repo = $this->getMockBuilder(CombinedProductPriceRepository::class)->disableOriginalConstructor()->getMock();
+        $this->manager->method('getRepository')->with(CombinedProductPrice::class)->willReturn($repo);
+        $repo->method('findMinByWebsiteForFilter')
             ->with(1, $products, 2)
             ->willReturn(
                 [
@@ -93,11 +102,29 @@ class WebsiteSearchProductPriceIndexerListenerTest extends \PHPUnit_Framework_Te
                     ],
                 ]
             );
+        $repo->method('findMinByWebsiteForSort')
+            ->with(1, $products, 2)
+            ->willReturn(
+                [
+                    [
+                        'product' => 1,
+                        'value' => '10.0000',
+                        'currency' => 'USD',
+                        'cpl' => 1,
+                    ],
+                    [
+                        'product' => 2,
+                        'value' => '11.0000',
+                        'currency' => 'EUR',
+                        'cpl' => 1,
+                    ],
+                ]
+            );
 
-        $event->expects($this->exactly(2))->method('addPlaceholderField')->withConsecutive(
+        $event->expects($this->exactly(4))->method('addPlaceholderField')->withConsecutive(
             [
                 1,
-                'minimum_price_CPL_ID_CURRENCY_UNIT',
+                'minimal_price_CPL_ID_CURRENCY_UNIT',
                 '10.0000',
                 [
                     'CPL_ID' => 1,
@@ -107,12 +134,30 @@ class WebsiteSearchProductPriceIndexerListenerTest extends \PHPUnit_Framework_Te
             ],
             [
                 2,
-                'minimum_price_CPL_ID_CURRENCY_UNIT',
+                'minimal_price_CPL_ID_CURRENCY_UNIT',
                 '11.0000',
                 [
                     'CPL_ID' => 1,
                     'CURRENCY' => 'EUR',
                     'UNIT' => 'box'
+                ],
+            ],
+            [
+                1,
+                'minimal_price_CPL_ID_CURRENCY',
+                '10.0000',
+                [
+                    'CPL_ID' => 1,
+                    'CURRENCY' => 'USD',
+                ],
+            ],
+            [
+                2,
+                'minimal_price_CPL_ID_CURRENCY',
+                '11.0000',
+                [
+                    'CPL_ID' => 1,
+                    'CURRENCY' => 'EUR',
                 ],
             ]
         );

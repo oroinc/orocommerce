@@ -25,7 +25,7 @@ class OrderController extends AbstractOrderController
      *      id="oro_order_frontend_view",
      *      type="entity",
      *      class="OroOrderBundle:Order",
-     *      permission="ACCOUNT_VIEW",
+     *      permission="VIEW",
      *      group_name="commerce"
      * )
      *

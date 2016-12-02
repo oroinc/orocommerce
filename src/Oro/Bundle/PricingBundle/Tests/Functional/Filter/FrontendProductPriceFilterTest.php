@@ -5,9 +5,9 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\Filter;
 use Oro\Bundle\EntityBundle\ORM\Registry;
 use Oro\Bundle\FilterBundle\Datasource\Orm\OrmFilterDatasourceAdapter;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberRangeFilterType;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\PricingBundle\Filter\FrontendProductPriceFilter;
 use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
  * @dbIsolation
@@ -48,7 +48,7 @@ class FrontendProductPriceFilterTest extends WebTestCase
             $handler
         );
         $this->filter->init(
-            'minimum_price',
+            'minimal_price',
             [
                 'type' => 'frontend-product-price',
                 'data_name' => 'USD',

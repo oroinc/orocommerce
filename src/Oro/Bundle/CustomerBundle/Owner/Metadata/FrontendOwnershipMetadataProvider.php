@@ -145,12 +145,18 @@ class FrontendOwnershipMetadataProvider extends AbstractMetadataProvider
     public function getMaxAccessLevel($accessLevel, $className = null)
     {
         if ($className) {
-            if (in_array($accessLevel, [AccessLevel::NONE_LEVEL, AccessLevel::BASIC_LEVEL, AccessLevel::LOCAL_LEVEL])) {
+            if (in_array($accessLevel, [
+                    AccessLevel::NONE_LEVEL,
+                    AccessLevel::BASIC_LEVEL,
+                    AccessLevel::LOCAL_LEVEL,
+                    AccessLevel::DEEP_LEVEL
+                ])
+            ) {
                 $maxLevel = $accessLevel;
             } else {
                 $metadata = $this->getMetadata($className);
                 if ($metadata->hasOwner()) {
-                    $maxLevel = AccessLevel::LOCAL_LEVEL;
+                    $maxLevel = AccessLevel::DEEP_LEVEL;
                 } else {
                     $maxLevel = $accessLevel;
                 }

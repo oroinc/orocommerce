@@ -119,12 +119,14 @@ services:
         arguments:
             - '@doctrine'
             - '@oro_entity.orm.insert_from_select_query_executor'
+            - '@oro_pricing.model.combined_price_list_trigger_handler'
 
     oro_pricing.resolver.combined_product_schedule_resolver:
         class: 'Oro\Bundle\PricingBundle\Resolver\CombinedPriceListScheduleResolver'
         arguments:
             - '@doctrine'
             - '@oro_config.global'
+            - '@oro_pricing.model.combined_price_list_trigger_handler'
         calls:
             - [addRelationClass, ['%oro_pricing.entity.combined_price_list_to_account.class%']]
             - [addRelationClass, ['%oro_pricing.entity.combined_price_list_to_account_group.class%']]
@@ -136,6 +138,7 @@ services:
         arguments:
             - '@doctrine'
             - '@oro_config.global'
+            - '@oro_pricing.model.combined_price_list_trigger_handler'
         calls:
             - [setCombinedPriceListClass, ['%oro_pricing.entity.combined_price_list.class%']]
 
@@ -150,6 +153,7 @@ services:
             - '@oro_pricing.builder.combined_price_list_garbage_collector'
             - '@oro_pricing.resolver.combined_product_schedule_resolver'
             - '@oro_pricing.resolver.combined_product_price_resolver'
+            - '@oro_pricing.model.combined_price_list_trigger_handler'
         calls:
             - [setCombinedPriceListClassName, ['%oro_pricing.entity.combined_price_list.class%']]
 
@@ -884,6 +888,7 @@ services:
             - '@event_dispatcher'
             - '@logger'
             - '@oro_entity.database_exception_helper'
+            - '@oro_pricing.model.combined_price_list_trigger_handler'
         tags:
             - { name: 'oro_message_queue.client.message_processor' }
 
@@ -937,3 +942,9 @@ services:
         public: false
         tags:
             - { name: website_search.placeholder }
+
+    oro_pricing.model.combined_price_list_trigger_handler:
+        class: Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler
+        arguments:
+            - '@doctrine'
+            - '@event_dispatcher'

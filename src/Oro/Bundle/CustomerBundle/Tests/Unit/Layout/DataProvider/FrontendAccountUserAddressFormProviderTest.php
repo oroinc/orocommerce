@@ -11,7 +11,7 @@ use Oro\Component\Testing\Unit\EntityTrait;
 
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\CustomerBundle\Entity\AccountUserAddress;
-use Oro\Bundle\CustomerBundle\Form\Type\AccountUserTypedAddressType;
+use Oro\Bundle\CustomerBundle\Form\Type\FrontendAccountUserTypedAddressType;
 use Oro\Bundle\CustomerBundle\Layout\DataProvider\FrontendAccountUserAddressFormProvider;
 
 class FrontendAccountUserAddressFormProviderTest extends \PHPUnit_Framework_TestCase
@@ -52,7 +52,7 @@ class FrontendAccountUserAddressFormProviderTest extends \PHPUnit_Framework_Test
         $this->mockFormFactory
             ->expects($this->once())
             ->method('create')
-            ->with(AccountUserTypedAddressType::NAME, $accountUserAddress, ['action' => $action])
+            ->with(FrontendAccountUserTypedAddressType::NAME, $accountUserAddress, ['action' => $action])
             ->willReturn($form);
 
         $this->router
@@ -84,7 +84,7 @@ class FrontendAccountUserAddressFormProviderTest extends \PHPUnit_Framework_Test
         $this->mockFormFactory
             ->expects($this->once())
             ->method('create')
-            ->with(AccountUserTypedAddressType::NAME, $accountUserAddress, ['action' => $action])
+            ->with(FrontendAccountUserTypedAddressType::NAME, $accountUserAddress, ['action' => $action])
             ->willReturn($form);
 
         $this->router
@@ -121,7 +121,7 @@ class FrontendAccountUserAddressFormProviderTest extends \PHPUnit_Framework_Test
         $this->mockFormFactory
             ->expects($this->once())
             ->method('create')
-            ->with(AccountUserTypedAddressType::NAME, $accountUserAddress, ['action' => $action])
+            ->with(FrontendAccountUserTypedAddressType::NAME, $accountUserAddress, ['action' => $action])
             ->willReturn($form);
 
         $this->router
@@ -153,7 +153,7 @@ class FrontendAccountUserAddressFormProviderTest extends \PHPUnit_Framework_Test
         $this->mockFormFactory
             ->expects($this->once())
             ->method('create')
-            ->with(AccountUserTypedAddressType::NAME, $accountUserAddress, ['action' => $action])
+            ->with(FrontendAccountUserTypedAddressType::NAME, $accountUserAddress, ['action' => $action])
             ->willReturn($form);
 
         $this->router
