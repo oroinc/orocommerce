@@ -26,6 +26,7 @@ class FrontendProductPriceFilterTest extends WebTestCase
 
     public function setUp()
     {
+        $this->markTestIncomplete("BB-4182");
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
         $this->loadFixtures(
@@ -57,8 +58,6 @@ class FrontendProductPriceFilterTest extends WebTestCase
                 'label' => 'Price (USD)'
             ]
         );
-        $this->filter->setRegistry($this->registry);
-        $this->filter->setProductPriceClass('OroPricingBundle:CombinedProductPrice');
     }
 
     /**
@@ -68,6 +67,7 @@ class FrontendProductPriceFilterTest extends WebTestCase
      */
     public function testFilter(array $data, $productsCount)
     {
+        $this->markTestIncomplete("BB-4182");
         $qb = $this->registry->getRepository('OroProductBundle:Product')->createQueryBuilder('product');
         $adapter = new OrmFilterDatasourceAdapter($qb);
 

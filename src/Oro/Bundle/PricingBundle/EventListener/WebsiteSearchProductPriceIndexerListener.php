@@ -14,6 +14,8 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
 
 class WebsiteSearchProductPriceIndexerListener
 {
+    const MP_ALIAS = 'minimal_price_CPL_ID_CURRENCY_UNIT';
+
     /**
      * @var WebsiteContextManager
      */
@@ -69,7 +71,7 @@ class WebsiteSearchProductPriceIndexerListener
         foreach ($prices as $price) {
             $event->addPlaceholderField(
                 $price['product'],
-                'minimal_price_CPL_ID_CURRENCY_UNIT',
+                self::MP_ALIAS,
                 $price['value'],
                 [
                     CPLIdPlaceholder::NAME => $price['cpl'],
