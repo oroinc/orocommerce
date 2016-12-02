@@ -7,7 +7,7 @@ use Doctrine\DBAL\Platforms\MySqlPlatform;
 use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
 use Doctrine\DBAL\Schema\Schema;
 
-use Oro\Bundle\NoteBundle\Migrations\Schema\v1_3\UpdateAssociationKindQuery;
+use Oro\Bundle\NoteBundle\Migration\UpdateAssociationKindQuery;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
