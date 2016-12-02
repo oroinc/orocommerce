@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 use Oro\Bundle\SecurityBundle\Acl\Domain\ObjectIdentityFactory;
 use Oro\Bundle\UserBundle\Entity\AbstractRole;
+use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\CustomerBundle\Entity\AccountUserRole;
 use Oro\Bundle\CustomerBundle\Form\Type\FrontendAccountUserRoleType;

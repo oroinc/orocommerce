@@ -1,3 +1,4 @@
 // @theme: default
 
-$page-main-tablet-small-inner-offset: $offset-y $offset-x-m 0;
+$page-main-max-width: $site-width + $offset-x-m * 2 !default;
+$page-main-inner-offset: $offset-y $offset-x-m 0;

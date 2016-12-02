@@ -63,17 +63,6 @@ services:
         tags:
             - { name: form.type_extension, alias: oro_order_line_item }
 
-    oro_tax.form.extension.order_line_item.frontend:
-        class: 'Oro\Bundle\TaxBundle\Form\Extension\OrderLineItemTypeExtension'
-        arguments:
-            - '@oro_tax.provider.taxation_settings_provider'
-            - '@oro_tax.manager.tax_manager'
-            - '@oro_pricing.subtotal_processor.total_processor_provider'
-            - '@oro_order.form.section.provider'
-            - 'oro_order_line_item_frontend'
-        tags:
-            - { name: form.type_extension, alias: oro_order_line_item_frontend }
-
     oro_tax.form.type.tax:
         class: 'Oro\Bundle\TaxBundle\Form\Type\TaxType'
         calls:

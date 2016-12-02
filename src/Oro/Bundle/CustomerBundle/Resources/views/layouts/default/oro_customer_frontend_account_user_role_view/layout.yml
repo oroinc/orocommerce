@@ -8,15 +8,15 @@ layout:
     actions:
         - '@setBlockTheme':
             themes: 'OroCustomerBundle:layouts:default/oro_customer_frontend_account_user_role_view/layout.html.twig'
+        - '@setOption':
+            id: page_title
+            optionName: text
+            optionValue:
+                label: '=data["entity"].getLabel()'
         - '@addTree':
             items:
                 account_user_role_view_container:
                     blockType: container
-                account_user_role_title:
-                    blockType: text
-                    options:
-                        visible: '=data["entity"]!=null'
-                        text: '=data["entity"].getLabel()'
                 account_user_role_back_link:
                     blockType: link
                     options:
@@ -42,7 +42,6 @@ layout:
             tree:
                 page_content:
                     account_user_role_view_container:
-                        account_user_role_title: ~
                         account_user_role_back_link: ~
                         account_user_role_items:
                             account_user_role_top_actions: ~

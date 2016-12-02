@@ -166,42 +166,6 @@
     {% endif %}
 {% endmacro %}
 
-{% block oro_order_line_item_frontend_widget %}
-    {% set isFreeFormProduct = form.vars.value is not empty and form.vars.value.product is empty and form.vars.value.freeFormProduct is not empty %}
-
-    <td class="order-line-item-sku">
-        <div class="order-line-item-type-product">
-            {% if form.vars.value is not empty %}
-                {{ form.vars.value.productSku }}
-            {% endif %}
-        </div>
-    </td>
-    <td class="order-line-item-type">
-        <div class="order-line-item-type-product">
-            {% if isFreeFormProduct %}
-                {{ form.vars.value.freeFormProduct }}
-            {% else %}
-                {{ form_widget(form.product) }}
-                {{ form_errors(form.product) }}
-            {% endif %}
-        </div>
-    </td>
-
-    {% set priceSection %}
-        {% if form.vars.value.price is defined and form.vars.value.price is not null %}
-            {% set priceValue = form.vars.value.price.value %}
-            {% set price = form.vars.value.price %}
-        {% else %}
-            {% set priceValue = '' %}
-        {% endif %}
-        <div class="order-line-item-price-value" data-price="{{ priceValue }}">
-            {% if price is defined %}{{ price|oro_format_price }}{% endif %}
-        </div>
-    {% endset %}
-
-    {{ _self.render_form_sections(form.vars.sections, form, { price: priceSection }) }}
-{% endblock %}
-
 {% macro oro_order_discount_items_collection_item_prototype(widget) %}
     {% if 'collection' in widget.vars.block_prefixes %}
         {% set form = widget.vars.prototype %}

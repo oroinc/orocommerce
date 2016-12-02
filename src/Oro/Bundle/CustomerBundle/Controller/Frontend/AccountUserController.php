@@ -112,10 +112,7 @@ class AccountUserController extends Controller
             $this->get('translator'),
             $this->get('logger')
         );
-        if (!$accountUser->getOwner()) {
-            $user = $accountUser->getAccount()->getOwner();
-            $accountUser->setOwner($user);
-        }
+
         $result = $this->get('oro_form.model.update_handler')->handleUpdate(
             $accountUser,
             $form,
