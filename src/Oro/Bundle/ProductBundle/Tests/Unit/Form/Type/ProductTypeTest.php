@@ -383,7 +383,6 @@ class ProductTypeTest extends FormIntegrationTestCase
         $this->assertTrue($form->has('sku'));
         $this->assertTrue($form->has('primaryUnitPrecision'));
         $this->assertTrue($form->has('additionalUnitPrecisions'));
-        $this->assertFalse($form->has('hasVariants'));
     }
 
     public function testGetName()
