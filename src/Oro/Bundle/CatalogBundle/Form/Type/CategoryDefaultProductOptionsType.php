@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CatalogBundle\Form\Type;
 
+use Oro\Bundle\ProductBundle\Service\SingleUnitModeService;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -14,6 +15,19 @@ class CategoryDefaultProductOptionsType extends AbstractType
      * @var string
      */
     protected $dataClass;
+
+    /**
+     * @var SingleUnitModeService
+     */
+    protected $singleUnitModeService;
+
+    /**
+     * @param SingleUnitModeService $singleUnitModeService
+     */
+    public function __construct(SingleUnitModeService $singleUnitModeService)
+    {
+        $this->singleUnitModeService = $singleUnitModeService;
+    }
 
     /**
      * @param string $dataClass
@@ -29,15 +43,17 @@ class CategoryDefaultProductOptionsType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder
-            ->add(
-                'unitPrecision',
-                CategoryUnitPrecisionType::NAME,
-                [
-                    'label' => 'oro.catalog.category.unit.label',
-                    'required' => false
-                ]
-            );
+        if ($this->singleUnitModeService->isSingleUnitMode() === false) {
+            $builder
+                ->add(
+                    'unitPrecision',
+                    CategoryUnitPrecisionType::NAME,
+                    [
+                        'label' => 'oro.catalog.category.unit.label',
+                        'required' => false
+                    ]
+                );
+        }
     }
 
     /**
