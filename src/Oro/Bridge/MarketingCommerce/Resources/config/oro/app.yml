@@ -1,0 +1,5 @@
+security:
+    firewalls:
+        # override pattern
+        tracking_data:
+            pattern: ^%web_backend_prefix%/tracking/data/create

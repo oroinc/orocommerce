@@ -1,0 +1,3 @@
+bundles:
+    # needs to be loaded before Commerce FrontendBundle's priority: 5
+    - { name: Oro\Bridge\MarketingCommerce\OroMarketingCommerceBridgeBundle, priority: 4 }
