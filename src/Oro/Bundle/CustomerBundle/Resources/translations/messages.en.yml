@@ -112,7 +112,7 @@ oro.customer:
             return_to_login: 'Return to Login'
             password_reset.message: 'Password was created successfully.'
             request_password.label: 'Request'
-            email_not_exists: 'Email address "%email%" is not known'
+            email_not_exists: 'Email address "%email%" does not exist.'
             check_email:
                 title: 'Check Email'
                 message: 'An email has been sent to %email%. It contains a link you must click to reset your password.'

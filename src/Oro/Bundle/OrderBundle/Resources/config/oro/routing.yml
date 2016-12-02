@@ -15,13 +15,6 @@ oro_order_ajax:
     type:         annotation
     prefix:       /order
 
-oro_order_ajax_frontend:
-    resource:     "@OroOrderBundle/Controller/Frontend/AjaxOrderController.php"
-    type:         annotation
-    prefix:       /account/order
-    options:
-        frontend: true
-
 oro_order_bundle_api:
     resource:     "@OroOrderBundle/Resources/config/oro/routing_api.yml"
     prefix:       api/rest/{version}/

@@ -33,7 +33,5 @@ layout:
             id: quick_access_menu
             parentId: sidebar_quick_access_menu_container
         - '@move':
-            id: main_menu_shopping_lists_wrapper
-            parentId: quick_access_container
-        - '@remove':
             id: header_row
+            parentId: quick_access_container

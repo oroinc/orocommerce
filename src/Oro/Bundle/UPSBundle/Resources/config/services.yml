@@ -52,6 +52,7 @@ services:
             - '@doctrine'
             - '@oro_shipping.provider.measure_units.conversion'
             - '@oro_ups.shipping_units_mapper'
+            - '@oro_security.encoder.mcrypt'
 
     oro_ups.shipping_units_mapper:
         class: 'Oro\Bundle\UPSBundle\Provider\UnitsMapper'

@@ -70,7 +70,11 @@ abstract class AbstractShoppingListQuickAddProcessor implements ComponentProcess
             }
             $productSkuQuantities[$product['productSku']] = $productQuantity;
         }
-        $productIdsQuantities = array_combine($productIds, $productSkuQuantities);
+
+        $productIdsQuantities = [];
+        foreach ($productIds as $productSku => $productId) {
+            $productIdsQuantities[$productId] = $productSkuQuantities[$productSku];
+        }
 
         try {
             $entitiesCount = $this->shoppingListLineItemHandler->createForShoppingList(

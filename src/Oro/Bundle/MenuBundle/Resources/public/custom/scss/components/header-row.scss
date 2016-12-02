@@ -1,0 +1,7 @@
+.header-row {
+    border: 0;
+
+    @include breakpoint('tablet') {
+        padding: 13px 0 10px;
+    }
+}

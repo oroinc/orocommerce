@@ -3,20 +3,15 @@
 namespace Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Criteria;
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\ORM\EntityRepository;
 use Genemu\Bundle\FormBundle\Form\JQuery\Type\Select2Type;
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\CustomerBundle\Form\Type\FrontendAccountUserTypedAddressType;
-use Oro\Bundle\CustomerBundle\Form\Type\FrontendOwnerSelectType;
 use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\AccountTypedAddressWithDefaultTypeStub;
 use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\AddressTypeStub;
 use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\EntityType;
-use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
-use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
+use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\FrontendOwnerSelectTypeStub;
 use Symfony\Component\Form\PreloadedExtension;
 
 class FrontendAccountUserTypedAddressTypeTest extends AccountTypedAddressTypeTest
@@ -24,28 +19,12 @@ class FrontendAccountUserTypedAddressTypeTest extends AccountTypedAddressTypeTes
     /** @var FrontendAccountUserTypedAddressType */
     protected $formType;
 
-    /** @var  AclHelper */
-    protected $aclHelper;
-
-    /**
-     * @var ManagerRegistry
-     */
-    protected $registry;
-
-    /**
-     * @var ConfigProvider
-     */
-    protected $configProvider;
-
     /**
      * {@inheritdoc}
      */
     public function __construct($name = null, array $data = array(), $dataName = '')
     {
         parent::__construct($name, $data, $dataName);
-        $this->aclHelper = $this->createAclHelperMock();
-        $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
-        $this->configProvider = $this->getMockBuilder(ConfigProvider::class)->disableOriginalConstructor()->getMock();
     }
 
     /**
@@ -83,50 +62,6 @@ class FrontendAccountUserTypedAddressTypeTest extends AccountTypedAddressTypeTes
 
         $addressTypeStub = new AddressTypeStub();
 
-        $config = $this->getMockBuilder('Oro\Bundle\EntityConfigBundle\Config\Config')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $config->expects($this->any())
-            ->method('get')
-            ->will($this->returnValue('ACCOUNT_USER'));
-
-        $this->configProvider->expects($this->any())
-            ->method('getConfig')
-            ->will($this->returnValue($config));
-
-        $criteria = new Criteria();
-        $queryBuilder = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $accountUserRepository =
-            $this->getMockBuilder(EntityRepository::class)
-                ->disableOriginalConstructor()
-                ->getMock();
-
-        $accountUserRepository
-            ->expects($this->any())
-            ->method('createQueryBuilder')
-            ->with('account_user')
-            ->willReturn($queryBuilder);
-
-        $this->registry
-            ->expects($this->any())
-            ->method('getRepository')
-            ->with('OroCustomerBundle:AccountUser')
-            ->willReturn($accountUserRepository);
-
-        $this->aclHelper
-            ->expects($this->any())
-            ->method('applyAclToCriteria')
-            ->with(AccountUser::class, $criteria, 'VIEW', ['account' => 'account_user.account'])
-            ->willReturn($queryBuilder);
-
-        $queryBuilder
-            ->expects($this->any())
-            ->method('addCriteria')
-            ->with($criteria);
         return [
             new PreloadedExtension(
                 [
@@ -135,11 +70,7 @@ class FrontendAccountUserTypedAddressTypeTest extends AccountTypedAddressTypeTes
                         $this->billingType,
                         $this->shippingType
                     ], $this->em),
-                    FrontendOwnerSelectType::NAME => new FrontendOwnerSelectType(
-                        $this->aclHelper,
-                        $this->registry,
-                        $this->configProvider
-                    ),
+                    FrontendOwnerSelectTypeStub::NAME => new FrontendOwnerSelectTypeStub(),
                     $addressTypeStub->getName()  => $addressTypeStub,
                     'genemu_jqueryselect2_translatable_entity' => new Select2Type('translatable_entity'),
                 ],
@@ -172,6 +103,7 @@ class FrontendAccountUserTypedAddressTypeTest extends AccountTypedAddressTypeTes
         $this->assertEquals($viewData, $form->getViewData());
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
+        $expectedData->setFrontendOwner($updateOwner);
         $this->assertEquals($expectedData, $form->getData());
     }
 
@@ -227,15 +159,5 @@ class FrontendAccountUserTypedAddressTypeTest extends AccountTypedAddressTypeTes
     {
         $this->assertInternalType('string', $this->formType->getName());
         $this->assertEquals('oro_account_frontend_account_user_typed_address', $this->formType->getName());
-    }
-
-    /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function createAclHelperMock()
-    {
-        return $this->getMockBuilder('Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper')
-            ->disableOriginalConstructor()
-            ->getMock();
     }
 }
