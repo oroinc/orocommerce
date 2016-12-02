@@ -125,6 +125,7 @@ services:
     oro_pricing.form.type.product_price_unit_selector:
         parent: oro_product.form.type.product_unit_selection
         class: 'Oro\Bundle\PricingBundle\Form\Type\ProductPriceUnitSelectorType'
+        arguments: ['@oro_product.provider.unit_mode_provider', '@oro_product.provider.default_product_unit_provider.system']
         tags:
             - { name: form.type, alias: oro_pricing_product_price_unit_selector }
 

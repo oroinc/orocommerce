@@ -25,10 +25,10 @@ class SystemDefaultProductUnitProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         
-        $map = array(
-            array('oro_product.default_unit', false, false, null, 'kg'),
-            array('oro_product.default_unit_precision', false, false, null, '3')
-        );
+        $map = [
+            ['oro_product.default_unit', false, false, null, 'kg'],
+            ['oro_product.default_unit_precision', false, false, null, '3']
+        ];
 
         $configManager->expects($this->any())
             ->method('get')
@@ -65,7 +65,7 @@ class SystemDefaultProductUnitProviderTest extends \PHPUnit_Framework_TestCase
         $this->defaultProductUnitProvider = new SystemDefaultProductUnitProvider($configManager, $managerRegistry);
     }
 
-    public function testGetDefaultProductUnit()
+    public function testGetDefaultProductUnitPrecision()
     {
         $this->assertEquals(
             $this->expectedUnitPrecision,

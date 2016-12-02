@@ -31,7 +31,7 @@ class SystemDefaultProductUnitProvider implements DefaultProductUnitProviderInte
     }
     
     /**
-     * @return ProductUnitPrecision
+     * @return ProductUnitPrecision|null
      */
     public function getDefaultProductUnitPrecision()
     {

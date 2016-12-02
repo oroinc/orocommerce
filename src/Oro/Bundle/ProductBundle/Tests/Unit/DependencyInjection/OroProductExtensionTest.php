@@ -22,6 +22,7 @@ class OroProductExtensionTest extends ExtensionTestCase
             'oro_product.service.product_create_step_one_handler',
             'oro_product.provider.default_product_unit_provider.chain',
             'oro_product.provider.default_product_unit_provider.system',
+            'oro_product.provider.unit_mode_provider'
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
 
