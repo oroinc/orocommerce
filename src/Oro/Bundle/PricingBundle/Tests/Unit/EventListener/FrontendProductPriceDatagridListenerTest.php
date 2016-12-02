@@ -125,7 +125,10 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCa
                         'prices' => ['type' => 'field', 'frontend_type' => 'row_array'],
                     ],
                     'columns' => [
-                        'minimal_price' => ['label' => 'Price']
+                        'minimal_price' => ['label' => 'Price'],
+                        'minimal_price_sort' => [
+                            'label' => 'oro.pricing.price.label',
+                        ]
                     ],
                     'filters' => [
                         'columns' => [
@@ -134,7 +137,15 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCa
                                 'data_name' => 'minimal_price_CPL_ID_CURRENCY_UNIT'
                             ]
                         ]
-                    ]
+                    ],
+                    'sorters' => [
+                        'columns' => [
+                            'minimal_price_sort' => [
+                                'data_name' => 'minimal_price_CPL_ID_CURRENCY',
+                                'type' => 'decimal',
+                            ]
+                        ]
+                    ],
                 ],
             ],
         ];

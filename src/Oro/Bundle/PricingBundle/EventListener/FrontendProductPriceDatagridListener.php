@@ -16,6 +16,7 @@ class FrontendProductPriceDatagridListener
 {
     const COLUMN_PRICES = 'prices';
     const COLUMN_MINIMAL_PRICE = 'minimal_price';
+    const COLUMN_MINIMAL_PRICE_SORT = 'minimal_price_sort';
 
     /**
      * @var PriceListRequestHandler
@@ -127,6 +128,20 @@ class FrontendProductPriceDatagridListener
                     'data_name' => WebsiteSearchProductPriceIndexerListener::MP_ALIAS,
                 ],
             ]
+        );
+
+        $config->offsetAddToArrayByPath(
+            '[columns]',
+            [
+                self::COLUMN_MINIMAL_PRICE_SORT => [
+                    'label' => 'oro.pricing.price.label',
+                ],
+            ]
+        );
+
+        $config->addSorter(
+            self::COLUMN_MINIMAL_PRICE_SORT,
+            ['data_name' => 'minimal_price_CPL_ID_CURRENCY', 'type' => 'decimal']
         );
     }
 
