@@ -267,9 +267,9 @@ services:
     oro_customer.event_listener.datagrid.account_user_role:
         class: 'Oro\Bundle\CustomerBundle\EventListener\Datagrid\AccountUserRoleDatagridListener'
         arguments:
-            - "@oro_security.security_facade"
+            - "@oro_security.acl_helper"
         tags:
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-account-account-user-roles-grid, method: onBuildBefore }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.frontend-account-account-user-roles-grid, method: onBuildAfter }
 
     oro_customer.event_listener.datagrid.account_user:
         class: 'Oro\Bundle\CustomerBundle\EventListener\Datagrid\AccountUserDatagridListener'
@@ -620,13 +620,30 @@ services:
             - { name: oro_scope.provider, scopeType: account_product_visibility, priority: 30 }
             - { name: oro_scope.provider, scopeType: workflow_definition, priority: 30 }
 
-    oro_customer.account_message_factory:
-        class: 'Oro\Bundle\CustomerBundle\Model\AccountMessageFactory'
-        arguments:
-            - '@doctrine'
-
     oro_customer.entity_ownership.listener:
         class: Oro\Bundle\CustomerBundle\EventListener\RecordOwnerDataListener
         arguments: ["@oro_organization.link.security_context", "@oro_entity_config.provider.ownership"]
         tags:
              - { name: doctrine.event_listener, event: prePersist }
+
+    oro_customer.event_listener.role_page_listener:
+        class: 'Oro\Bundle\CustomerBundle\EventListener\AccountRolePageListener'
+        arguments:
+            - '@translator'
+        calls:
+            - [setRequest, ['@?request=']]
+        tags:
+            - { name: kernel.event_listener, event: entity_form.render.before, method: onUpdatePageRender }
+            - { name: kernel.event_listener, event: entity_view.render.before, method: onViewPageRender }
+
+    oro_customer.datagrid.datasource.workflow_permission_datasource:
+        class: Oro\Bundle\CustomerBundle\Datagrid\WorkflowPermissionDatasource
+        arguments:
+            - '@translator'
+            - '@oro_security.acl.permission_manager'
+            - '@oro_customer.form.handler.update_account_user_role='
+            - '@oro_user.provider.role_privilege_category_provider'
+            - '@oro_entity_config.config_manager'
+            - '@oro_customer.acl.resolver.role_translation_prefix'
+        tags:
+            - { name: oro_datagrid.datasource, type: account-user-workflow-permission-grid-provider }
