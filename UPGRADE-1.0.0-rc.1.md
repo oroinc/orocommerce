@@ -1,5 +1,8 @@
 #Upgrade to rc.1
 
+##General
+- Changed minimum required php version to 5.6
+
 ##CheckoutBundle
 - `Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface::getSourceEntity` returned value fixed `@return CheckoutSourceEntityInterface|null`
 - `Oro\Bundle\CheckoutBundle\EventListener\ResolvePaymentTermListener` added 3rd argument to constructor `PaymentTermProvider $paymentTermProvider`

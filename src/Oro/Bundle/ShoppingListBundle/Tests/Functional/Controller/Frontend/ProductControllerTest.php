@@ -3,14 +3,14 @@
 namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
-use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadFrontendProductData;
-use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadFrontendProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
  * @dbIsolation
@@ -46,7 +46,7 @@ class ProductControllerTest extends WebTestCase
         $shoppingListClass = $this->getContainer()->getParameter('oro_shopping_list.entity.shopping_list.class');
 
         /** @var ShoppingList[] $shoppingLists */
-        $shoppingLists = $this->getContainer()->get('doctrine')->getRepository($shoppingListClass)->findAll();
+        $shoppingLists = $this->getContainer()->get('oro_shopping_list.shopping_list.manager')->getShoppingLists();
 
         foreach ($shoppingLists as $shoppingList) {
             $this->assertContains('Add to ' . $shoppingList->getLabel(), $content);

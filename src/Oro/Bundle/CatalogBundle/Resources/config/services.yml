@@ -108,19 +108,6 @@ services:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid, method: onPreBuild }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.frontend-product-search-grid, method: onBuildAfter }
 
-    oro_catalog.model.category_message_factory:
-        class: 'Oro\Bundle\CatalogBundle\Model\CategoryMessageFactory'
-        arguments:
-            - '@doctrine'
-
-    oro_catalog.model.category_message_handler:
-        class: 'Oro\Bundle\CatalogBundle\Model\CategoryMessageHandler'
-        arguments:
-            - '@oro_catalog.model.category_message_factory'
-            - '@oro_message_queue.client.message_producer'
-        tags:
-            - { name: kernel.event_listener, event: kernel.terminate, method: sendScheduledMessages }
-
     oro_catalog.manager.product_index_scheduler:
         class: 'Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler'
         public: false
@@ -169,10 +156,3 @@ services:
             - '@event_dispatcher'
         tags:
             - { name: doctrine.event_listener, event: onFlush }
-
-    oro_catalog.category_exists_listener:
-        class: Oro\Bundle\CatalogBundle\EventListener\CategoryExistsListener
-        arguments:
-            - '@oro_catalog.repository.category'
-        tags:
-            - { name: kernel.event_listener, event: kernel.controller }

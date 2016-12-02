@@ -5,7 +5,8 @@ namespace Oro\Bundle\VisibilityBundle\Async\Visibility;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Driver\DriverException;
 use Doctrine\ORM\EntityManagerInterface;
-use Oro\Bundle\CatalogBundle\Model\CategoryMessageFactory;
+
+use Oro\Bundle\VisibilityBundle\Model\CategoryMessageFactory;
 use Oro\Bundle\CatalogBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
@@ -20,6 +21,7 @@ use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\MessageQueue\Util\JSON;
+
 use Psr\Log\LoggerInterface;
 
 class CategoryProcessor implements MessageProcessorInterface
@@ -139,7 +141,7 @@ class CategoryProcessor implements MessageProcessorInterface
         $repository = $this->registry->getManagerForClass(ProductVisibility::class)
             ->getRepository(ProductVisibility::class);
         foreach ($scopes as $scope) {
-            $repository->setToDefaultWithoutCategory($scope);
+            $repository->setToDefaultWithoutCategory($this->insertFromSelectQueryExecutor, $scope);
         }
     }
 

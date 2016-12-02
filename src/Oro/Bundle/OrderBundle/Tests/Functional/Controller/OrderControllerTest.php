@@ -143,11 +143,9 @@ class OrderControllerTest extends WebTestCase
         }
 
         $order = $this->getReference(LoadOrders::MY_ORDER);
-        $shippingMethodLabel = $this->getContainer()->get('oro_order.formatter.shipping_method')
-            ->formatShippingMethodWithTypeLabel($order->getShippingMethod(), $order->getShippingMethodType());
-        $shippingMethodLabel = $this->getContainer()->get('translator')->trans($shippingMethodLabel);
-        $this->assertArrayHasKey('shippingMethod', $myOrderData);
-        $this->assertEquals($shippingMethodLabel, $myOrderData['shippingMethod']);
+
+        $this->assertArrayHasKey('poNumber', $myOrderData);
+        $this->assertEquals($order->getPoNumber(), $myOrderData['poNumber']);
     }
 
     /**

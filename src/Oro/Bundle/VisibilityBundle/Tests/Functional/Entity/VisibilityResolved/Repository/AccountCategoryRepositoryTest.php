@@ -41,7 +41,7 @@ class AccountCategoryRepositoryTest extends AbstractCategoryRepositoryTest
         );
 
         $actualVisibility = $this->getRepository()
-            ->getVisibilitiesForAccounts($category, $accounts);
+            ->getVisibilitiesForAccounts($this->scopeManager, $category, $accounts);
 
         $expectedVisibilities = [];
         foreach ($visibilities as $account => $expectedVisibility) {
@@ -452,7 +452,8 @@ class AccountCategoryRepositoryTest extends AbstractCategoryRepositoryTest
         }
 
         $this->repository->clearTable();
-        $this->repository->insertCategoryValues();
+        $insertExecutor = $this->getContainer()->get('oro_entity.orm.insert_from_select_query_executor');
+        $this->repository->insertCategoryValues($insertExecutor);
 
         $resolvedVisibilities = $this->getResolvedVisibilities();
 
@@ -493,6 +494,7 @@ class AccountCategoryRepositoryTest extends AbstractCategoryRepositoryTest
         $visibility = CategoryVisibilityResolved::VISIBILITY_VISIBLE;
         $this->repository->clearTable();
         $this->repository->insertParentCategoryValues(
+            $this->getContainer()->get('oro_entity.orm.insert_from_select_query_executor'),
             array_merge($parentCategoryVisibilities, $staticCategoryVisibilities),
             $visibility
         );
@@ -549,8 +551,7 @@ class AccountCategoryRepositoryTest extends AbstractCategoryRepositoryTest
      */
     protected function getRepository()
     {
-        return $this->getContainer()->get('oro_visibility.account_category_repository_holder')
-            ->getRepository();
+        return $this->getContainer()->get('oro_visibility.account_category_repository');
     }
 
     /**

@@ -6,7 +6,6 @@ use Doctrine\ORM\EntityManager;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountCategoryVisibility;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\RepositoryHolder;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountCategoryVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountGroupCategoryVisibilityResolved;
@@ -19,11 +18,6 @@ class AccountCategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder
 {
     /** @var VisibilityChangeAccountSubtreeCacheBuilder */
     protected $visibilityChangeAccountSubtreeCacheBuilder;
-
-    /**
-     * @var RepositoryHolder
-     */
-    protected $categoryVisibilityHolder;
 
     /**
      * @param VisibilityChangeAccountSubtreeCacheBuilder $visibilityChangeAccountSubtreeCacheBuilder
@@ -135,10 +129,10 @@ class AccountCategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder
         $resolvedRepository->clearTable();
 
         // resolve static values
-        $resolvedRepository->insertStaticValues();
+        $resolvedRepository->insertStaticValues($this->insertExecutor);
 
         // resolve values with fallback to category (visibility to all)
-        $resolvedRepository->insertCategoryValues();
+        $resolvedRepository->insertCategoryValues($this->insertExecutor);
 
         // resolve parent category values
         $accountVisibilities = $this->indexVisibilities(
@@ -155,7 +149,7 @@ class AccountCategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder
             $accountVisibilityIds[$resolvedVisibility][] = $visibilityId;
         }
         foreach ($accountVisibilityIds as $visibility => $ids) {
-            $resolvedRepository->insertParentCategoryValues($ids, $visibility);
+            $resolvedRepository->insertParentCategoryValues($this->insertExecutor, $ids, $visibility);
         }
     }
 
@@ -222,7 +216,7 @@ class AccountCategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder
      */
     protected function getRepository()
     {
-        return $this->repositoryHolder->getRepository();
+        return $this->repository;
     }
 
     /**
