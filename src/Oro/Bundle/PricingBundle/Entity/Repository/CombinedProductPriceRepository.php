@@ -6,7 +6,11 @@ use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
+use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToAccount;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToAccountGroup;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite;
 use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -205,5 +209,97 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
             ->leftJoin('unitPrecisions.unit', 'unit');
 
         return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @param integer $websiteId
+     * @param Product[] $products
+     * @param CombinedPriceList $configCpl
+     * @return array
+     */
+    public function findMinByWebsiteForFilter($websiteId, array $products, $configCpl)
+    {
+        $qb = $this->getQbForMinimalPrices($websiteId, $products, $configCpl);
+        $qb->select(
+            'IDENTITY(mp.product) as product',
+            'MIN(mp.value) as value',
+            'mp.currency',
+            'IDENTITY(mp.priceList) as cpl',
+            'IDENTITY(mp.unit) as unit'
+        );
+        $qb->groupBy('mp.product, mp.priceList, mp.currency, mp.unit');
+
+        return $qb->getQuery()->getArrayResult();
+    }
+    /**
+     * @param integer $websiteId
+     * @param Product[] $products
+     * @param CombinedPriceList $configCpl
+     * @return array
+     */
+    public function findMinByWebsiteForSort($websiteId, array $products, $configCpl)
+    {
+        $qb = $this->getQbForMinimalPrices($websiteId, $products, $configCpl);
+        $qb->select(
+            'IDENTITY(mp.product) as product',
+            'MIN(mp.value) as value',
+            'mp.currency',
+            'IDENTITY(mp.priceList) as cpl'
+        );
+        $qb->groupBy('mp.product, mp.priceList, mp.currency');
+
+        return $qb->getQuery()->getArrayResult();
+    }
+
+    /**
+     * @param $websiteId
+     * @param array $products
+     * @param $configCpl
+     * @return QueryBuilder
+     */
+    protected function getQbForMinimalPrices($websiteId, array $products, $configCpl)
+    {
+        $qb = $this->createQueryBuilder('mp');
+        $qb->where('mp.product in (:products)')
+            ->setParameter('products', $products);
+        $expr = $qb->expr()->orX(
+            $qb->expr()->orX(
+                $qb->expr()->exists(
+                    $this->getEntityManager()
+                        ->createQueryBuilder()
+                        ->from(CombinedPriceListToWebsite::class, 'cpl_w')
+                        ->select('cpl_w.id')
+                        ->where('cpl_w.website = :websiteId')
+                        ->andWhere('cpl_w.priceList = mp.priceList')
+                        ->getDQL()
+                ),
+                $qb->expr()->exists(
+                    $this->getEntityManager()
+                        ->createQueryBuilder()
+                        ->from(CombinedPriceListToAccount::class, 'cpl_a')
+                        ->select('cpl_a.id')
+                        ->where('cpl_a.website = :websiteId')
+                        ->andWhere('cpl_a.priceList = mp.priceList')
+                        ->getDQL()
+                ),
+                $qb->expr()->exists(
+                    $this->getEntityManager()
+                        ->createQueryBuilder()
+                        ->from(CombinedPriceListToAccountGroup::class, 'cpl_ag')
+                        ->select('cpl_ag.id')
+                        ->where('cpl_ag.website = :websiteId')
+                        ->andWhere('cpl_ag.priceList = mp.priceList')
+                        ->getDQL()
+                )
+            )
+        );
+        if ($configCpl) {
+            $expr->add('mp.priceList = :conf_cpl');
+            $qb->setParameter('conf_cpl', $configCpl);
+        }
+        $qb->andWhere($expr)
+            ->setParameter('websiteId', $websiteId);
+
+        return $qb;
     }
 }

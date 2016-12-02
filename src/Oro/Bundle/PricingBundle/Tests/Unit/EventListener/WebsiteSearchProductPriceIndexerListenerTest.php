@@ -5,8 +5,8 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\EventListener;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
-use Oro\Bundle\PricingBundle\Entity\Repository\MinimalProductPriceRepository;
 use Oro\Bundle\PricingBundle\EventListener\WebsiteSearchProductPriceIndexerListener;
+use Oro\Bundle\PricingBundle\Tests\Unit\Entity\Repository\Stub\CombinedProductPriceRepository;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
@@ -35,7 +35,7 @@ class WebsiteSearchProductPriceIndexerListenerTest extends \PHPUnit_Framework_Te
     private $configManager;
 
     /**
-     * @var EntityManagerInterface
+     * @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private $manager;
 
@@ -80,7 +80,7 @@ class WebsiteSearchProductPriceIndexerListenerTest extends \PHPUnit_Framework_Te
         $this->websiteContextManager->expects($this->once())->method('getWebsiteId')->willReturn(1);
         $this->configManager->expects($this->once())->method('get')->willReturn(2);
 
-        $repo = $this->getMockBuilder(MinimalProductPriceRepository::class)->disableOriginalConstructor()->getMock();
+        $repo = $this->getMockBuilder(CombinedProductPriceRepository::class)->disableOriginalConstructor()->getMock();
         $this->manager->method('getRepository')->with(CombinedProductPrice::class)->willReturn($repo);
         $repo->method('findMinByWebsiteForFilter')
             ->with(1, $products, 2)
