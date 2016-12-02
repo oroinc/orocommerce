@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Manager;
 
-use Oro\Bundle\CurrencyBundle\Config\CurrencyConfigInterface;
+use Oro\Bundle\CurrencyBundle\Provider\CurrencyProviderInterface;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\CustomerBundle\Entity\AccountUserSettings;
 use Oro\Bundle\UserBundle\Entity\BaseUserManager;
@@ -21,7 +21,7 @@ class UserCurrencyManager
     protected $session;
 
     /**
-     * @var CurrencyConfigInterface
+     * @var CurrencyProviderInterface
      */
     protected $currencyConfig;
 
@@ -43,14 +43,14 @@ class UserCurrencyManager
     /**
      * @param Session $session
      * @param TokenStorageInterface $tokenStorage
-     * @param CurrencyConfigInterface $currencyConfig
+     * @param CurrencyProviderInterface $currencyConfig
      * @param WebsiteManager $websiteManager
      * @param BaseUserManager $userManager
      */
     public function __construct(
         Session $session,
         TokenStorageInterface $tokenStorage,
-        CurrencyConfigInterface $currencyConfig,
+        CurrencyProviderInterface $currencyConfig,
         WebsiteManager $websiteManager,
         BaseUserManager $userManager
     ) {

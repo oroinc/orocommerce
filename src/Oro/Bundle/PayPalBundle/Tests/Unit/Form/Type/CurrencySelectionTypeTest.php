@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\Form\Type;
 
-use Oro\Bundle\CurrencyBundle\Config\CurrencyConfigInterface;
+use Oro\Bundle\CurrencyBundle\Provider\CurrencyProviderInterface;
 use Oro\Bundle\CurrencyBundle\Tests\Unit\Utils\CurrencyNameHelperStub;
 use Oro\Bundle\PayPalBundle\Form\Type\CurrencySelectionType;
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;
@@ -17,7 +17,7 @@ class CurrencySelectionTypeTest extends FormIntegrationTestCase
     protected $formType;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|CurrencyConfigInterface
+     * @var \PHPUnit_Framework_MockObject_MockObject|CurrencyProviderInterface
      */
     protected $configManager;
 
@@ -38,7 +38,7 @@ class CurrencySelectionTypeTest extends FormIntegrationTestCase
     {
         parent::setUp();
 
-        $this->configManager = $this->getMockBuilder(CurrencyConfigInterface::class)
+        $this->configManager = $this->getMockBuilder(CurrencyProviderInterface::class)
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
 

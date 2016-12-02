@@ -2,20 +2,20 @@
 
 namespace Oro\Bundle\OrderBundle\Handler;
 
-use Oro\Bundle\CurrencyBundle\Config\CurrencyConfigInterface;
+use Oro\Bundle\CurrencyBundle\Provider\CurrencyProviderInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
 
 class OrderCurrencyHandler
 {
     /**
-     * @var CurrencyConfigInterface
+     * @var CurrencyProviderInterface
      */
     protected $currencyConfig;
 
     /**
-     * @param CurrencyConfigInterface $currencyConfig
+     * @param CurrencyProviderInterface $currencyConfig
      */
-    public function __construct(CurrencyConfigInterface $currencyConfig)
+    public function __construct(CurrencyProviderInterface $currencyConfig)
     {
         $this->currencyConfig = $currencyConfig;
     }

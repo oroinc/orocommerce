@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Type;
 
-use Oro\Bundle\CurrencyBundle\Config\CurrencyConfigInterface;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
+use Oro\Bundle\CurrencyBundle\Provider\CurrencyProviderInterface;
 use Oro\Bundle\CurrencyBundle\Utils\CurrencyNameHelper;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
@@ -20,8 +20,8 @@ class PriceRuleTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|CurrencyConfigInterface $currencyConfig */
-        $currencyConfig = $this->getMockBuilder(CurrencyConfigInterface::class)
+        /** @var \PHPUnit_Framework_MockObject_MockObject|CurrencyProviderInterface $currencyConfig */
+        $currencyConfig = $this->getMockBuilder(CurrencyProviderInterface::class)
             ->disableOriginalConstructor()->getMockForAbstractClass();
         $currencyConfig->method('getCurrencyList')->willReturn(['USD', 'EUR']);
 

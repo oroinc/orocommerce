@@ -5,8 +5,8 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\Form\EventSubscriber;
 use Genemu\Bundle\FormBundle\Form\JQuery\Type\Select2Type;
 use Oro\Bundle\AddressBundle\Form\Type\CountryType;
 use Oro\Bundle\AddressBundle\Form\Type\RegionType;
-use Oro\Bundle\CurrencyBundle\Config\CurrencyConfigInterface;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
+use Oro\Bundle\CurrencyBundle\Provider\CurrencyProviderInterface;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\CurrencyBundle\Utils\CurrencyNameHelper;
 use Oro\Bundle\FormBundle\Form\Extension\AdditionalAttrExtension;
@@ -197,7 +197,7 @@ class RuleMethodConfigSubscriberTest extends FormIntegrationTestCase
             ->method('getRoundType')
             ->willReturn(RoundingServiceInterface::ROUND_HALF_UP);
 
-        $currencyConfig = $this->getMockBuilder(CurrencyConfigInterface::class)
+        $currencyConfig = $this->getMockBuilder(CurrencyProviderInterface::class)
             ->disableOriginalConstructor()->getMockForAbstractClass();
         $currencyConfig->expects($this->any())
             ->method('getCurrencyList')

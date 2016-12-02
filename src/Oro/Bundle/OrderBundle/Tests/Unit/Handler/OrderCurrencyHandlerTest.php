@@ -2,13 +2,13 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Handler;
 
-use Oro\Bundle\CurrencyBundle\Config\CurrencyConfigInterface;
+use Oro\Bundle\CurrencyBundle\Provider\CurrencyProviderInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Handler\OrderCurrencyHandler;
 
 class OrderCurrencyHandlerTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var CurrencyConfigInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var CurrencyProviderInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $currencyConfig;
 
     /**
@@ -18,7 +18,7 @@ class OrderCurrencyHandlerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->currencyConfig = $this->getMockBuilder(CurrencyConfigInterface::class)
+        $this->currencyConfig = $this->getMockBuilder(CurrencyProviderInterface::class)
             ->setMethods(['getDefaultCurrency'])
             ->getMockForAbstractClass() ;
 

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\DependencyInjection;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
 use Oro\Bundle\CurrencyBundle\Rounding\PriceRoundingService;
 use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilder;
@@ -83,6 +84,6 @@ class Configuration implements ConfigurationInterface
      */
     public static function getConfigKeyByName($key)
     {
-        return implode('.', [OroPricingExtension::ALIAS, $key]);
+        return implode(ConfigManager::SECTION_MODEL_SEPARATOR, [OroPricingExtension::ALIAS, $key]);
     }
 }
