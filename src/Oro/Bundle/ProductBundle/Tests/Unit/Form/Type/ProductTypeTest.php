@@ -222,7 +222,6 @@ class ProductTypeTest extends FormIntegrationTestCase
                     'visible' => 1,
                     'status' => Product::STATUS_DISABLED,
                     'type' => Product::TYPE_SIMPLE,
-                    'variantFields' => array_keys($this->exampleCustomFields)
                 ],
                 'expectedData'  => $this->createExpectedProductEntity(),
                 'rounding' => false
@@ -245,7 +244,6 @@ class ProductTypeTest extends FormIntegrationTestCase
                     'visible' => 1,
                     'status' => Product::STATUS_DISABLED,
                     'type' => Product::TYPE_SIMPLE,
-                    'variantFields' => array_keys($this->exampleCustomFields)
                 ],
                 'expectedData'  => $this->createExpectedProductEntity(true),
                 'rounding' => false
@@ -271,12 +269,11 @@ class ProductTypeTest extends FormIntegrationTestCase
                         ['text' => 'first short description'],
                         ['text' => 'second short description'],
                     ],
-                    'variantFields' => array_keys($this->exampleCustomFields)
                 ],
                 'expectedData'  => $this->createExpectedProductEntity(false, true),
                 'rounding' => false
             ],
-            'simple product without hasVariants' => [
+            'simple product without variants' => [
                 'defaultData'   => $this->createDefaultProductEntity(false),
                 'submittedData' => [
                     'sku' => 'test sku',
@@ -286,7 +283,7 @@ class ProductTypeTest extends FormIntegrationTestCase
                     'status' => Product::STATUS_DISABLED,
                     'type' => Product::TYPE_SIMPLE,
                 ],
-                'expectedData'  => $this->createExpectedProductEntity(false, false, false),
+                'expectedData'  => $this->createExpectedProductEntity(false, false),
                 'rounding' => false
             ],
             'simple product with images' => [
@@ -300,7 +297,7 @@ class ProductTypeTest extends FormIntegrationTestCase
                     'type' => Product::TYPE_SIMPLE,
                     'images' => $this->images
                 ],
-                'expectedData'  => $this->createExpectedProductEntity(false, false, false),
+                'expectedData'  => $this->createExpectedProductEntity(false, false),
                 'rounding' => false
             ],
             'configurable product' => [
@@ -314,7 +311,7 @@ class ProductTypeTest extends FormIntegrationTestCase
                     'type' => Product::TYPE_CONFIGURABLE,
                     'variantFields' => array_keys($this->exampleCustomFields)
                 ],
-                'expectedData' => $this->createExpectedProductEntity()
+                'expectedData' => $this->createExpectedProductEntity(false, false, true)
                     ->setType(Product::TYPE_CONFIGURABLE),
                 'rounding' => false
             ],
@@ -331,15 +328,15 @@ class ProductTypeTest extends FormIntegrationTestCase
     protected function createExpectedProductEntity(
         $withProductUnitPrecision = false,
         $withNamesAndDescriptions = false,
-        $hasVariants = true,
+        $hasVariants = false,
         $hasImages = false
     ) {
         $expectedProduct = new Product();
 
-        $expectedProduct->setType(Product::TYPE_SIMPLE_PRODUCT);
+        $expectedProduct->setType(Product::TYPE_SIMPLE);
 
         if ($hasVariants) {
-            $expectedProduct->setType(Product::TYPE_CONFIGURABLE_PRODUCT);
+            $expectedProduct->setType(Product::TYPE_CONFIGURABLE);
             $expectedProduct->setVariantFields(array_keys($this->exampleCustomFields));
         }
 
@@ -415,10 +412,10 @@ class ProductTypeTest extends FormIntegrationTestCase
     protected function createDefaultProductEntity($hasVariants = true)
     {
         $defaultProduct = new Product();
-        $defaultProduct->setType(Product::TYPE_SIMPLE_PRODUCT);
+        $defaultProduct->setType(Product::TYPE_SIMPLE);
 
         if ($hasVariants) {
-            $defaultProduct->setType(Product::TYPE_CONFIGURABLE_PRODUCT);
+            $defaultProduct->setType(Product::TYPE_CONFIGURABLE);
             $defaultProduct->setVariantFields(array_keys($this->exampleCustomFields));
         }
 

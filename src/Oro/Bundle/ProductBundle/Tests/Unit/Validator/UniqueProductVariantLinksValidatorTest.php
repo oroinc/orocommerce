@@ -51,7 +51,7 @@ class UniqueProductVariantLinksValidatorTest extends \PHPUnit_Framework_TestCase
     public function testDoesNothingIfProductDoesNotHaveVariants()
     {
         $product = new Product();
-        $product->setType(Product::TYPE_SIMPLE_PRODUCT);
+        $product->setType(Product::TYPE_SIMPLE);
 
         $this->context->expects($this->never())->method('addViolation');
 
@@ -130,7 +130,7 @@ class UniqueProductVariantLinksValidatorTest extends \PHPUnit_Framework_TestCase
     public function testSkipIfProductIsMissingAndValidatedByNotBlank()
     {
         $product = new Product();
-        $product->setType(Product::TYPE_CONFIGURABLE_PRODUCT);
+        $product->setType(Product::TYPE_CONFIGURABLE);
         $product->setVariantFields(['field1']);
         $variantLink = new ProductVariantLink($product);
         $product->addVariantLink($variantLink);
@@ -150,7 +150,7 @@ class UniqueProductVariantLinksValidatorTest extends \PHPUnit_Framework_TestCase
     private function prepareProduct(array $variantFields, array $variantLinkFields)
     {
         $product = new Product();
-        $product->setType(Product::TYPE_CONFIGURABLE_PRODUCT);
+        $product->setType(Product::TYPE_CONFIGURABLE);
         $product->setVariantFields($variantFields);
 
         foreach ($variantLinkFields as $fields) {

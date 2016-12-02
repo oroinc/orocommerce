@@ -32,14 +32,14 @@ class ProductHandlerListenerTest extends \PHPUnit_Framework_TestCase
     public function testClearVariantLinks()
     {
         $entity = new Product();
-        $entity->setType(Product::TYPE_CONFIGURABLE_PRODUCT);
+        $entity->setType(Product::TYPE_CONFIGURABLE);
         $productVariantLink = $this->createProductVariantLink();
         $entity->addVariantLink($productVariantLink);
         $event = $this->createEvent($entity);
         $this->listener->onBeforeFlush($event);
         $this->assertEquals(new ArrayCollection([$productVariantLink]), $entity->getVariantLinks());
 
-        $entity->setType(Product::TYPE_SIMPLE_PRODUCT);
+        $entity->setType(Product::TYPE_SIMPLE);
         $event = $this->createEvent($entity);
         $this->listener->onBeforeFlush($event);
         $this->assertEquals(new ArrayCollection([]), $entity->getVariantLinks());

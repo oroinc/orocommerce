@@ -94,7 +94,7 @@ class ProductTest extends \PHPUnit_Framework_TestCase
     public function testPreUpdate()
     {
         $product = new Product();
-        $product->setType(Product::TYPE_SIMPLE_PRODUCT);
+        $product->setType(Product::TYPE_SIMPLE);
         $product->setVariantFields(['field']);
         $product->addVariantLink(new ProductVariantLink(new Product(), new Product()));
 
@@ -413,7 +413,7 @@ class ProductTest extends \PHPUnit_Framework_TestCase
         $simpleProduct = new Product();
 
         $configurableProduct = new Product();
-        $configurableProduct->setType(Product::TYPE_CONFIGURABLE_PRODUCT);
+        $configurableProduct->setType(Product::TYPE_CONFIGURABLE);
 
         $this->assertFalse($simpleProduct->isConfigurable());
         $this->assertTrue($configurableProduct->isConfigurable());

@@ -481,7 +481,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
      */
     public function isConfigurable()
     {
-        return $this->getType() === self::TYPE_CONFIGURABLE_PRODUCT;
+        return $this->getType() === self::TYPE_CONFIGURABLE;
     }
 
     /**
