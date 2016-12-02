@@ -14,7 +14,7 @@ class OroAlternativeCheckoutBundleInstaller implements Installation
      */
     public function getMigrationVersion()
     {
-        return 'v1_2';
+        return 'v1_3';
     }
 
     /**

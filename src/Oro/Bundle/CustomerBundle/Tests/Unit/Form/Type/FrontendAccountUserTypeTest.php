@@ -9,20 +9,20 @@ use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 
-use Doctrine\ORM\Query;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as AccountSelectTypeStub;
 
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as AccountSelectTypeStub;
-
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Form\Type\AccountUserRoleSelectType;
 use Oro\Bundle\CustomerBundle\Form\Type\AccountUserType;
 use Oro\Bundle\CustomerBundle\Form\Type\FrontendAccountUserRoleSelectType;
 use Oro\Bundle\CustomerBundle\Form\Type\FrontendAccountUserType;
-use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\AddressCollectionTypeStub;
 use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\EntitySelectTypeStub;
 use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\EntityType;
+use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\AddressCollectionTypeStub;
+use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\FrontendOwnerSelectTypeStub;
 
 class FrontendAccountUserTypeTest extends AccountUserTypeTest
 {
@@ -81,8 +81,9 @@ class FrontendAccountUserTypeTest extends AccountUserTypeTest
                     AccountUserType::NAME => $accountUserType,
                     FrontendAccountUserRoleSelectType::NAME => $frontendUserRoleSelectType,
                     $accountSelectType->getName() => $accountSelectType,
+                    FrontendOwnerSelectTypeStub::NAME => new FrontendOwnerSelectTypeStub(),
                     AddressCollectionTypeStub::NAME => new AddressCollectionTypeStub(),
-                    $addressEntityType->getName() => $addressEntityType
+                    $addressEntityType->getName() => $addressEntityType,
                 ],
                 []
             ),
@@ -119,7 +120,8 @@ class FrontendAccountUserTypeTest extends AccountUserTypeTest
     public function submitProvider()
     {
         $newAccountUser = new AccountUser();
-
+        $account = new Account();
+        $newAccountUser->setAccount($account);
         $existingAccountUser = new AccountUser();
 
         $class = new \ReflectionClass($existingAccountUser);
@@ -131,12 +133,12 @@ class FrontendAccountUserTypeTest extends AccountUserTypeTest
         $existingAccountUser->setLastName('Doe');
         $existingAccountUser->setEmail('johndoe@example.com');
         $existingAccountUser->setPassword('123456');
-        $existingAccountUser->setAccount($this->getAccount(1));
+        $existingAccountUser->setAccount($account);
         $existingAccountUser->addAddress($this->getAddresses()[1]);
 
         $alteredExistingAccountUser = clone $existingAccountUser;
         $alteredExistingAccountUser->setEnabled(false);
-        $alteredExistingAccountUser->setAccount($this->getAccount(2));
+        $alteredExistingAccountUser->setAccount($account);
 
         $alteredExistingAccountUserWithRole = clone $alteredExistingAccountUser;
         $alteredExistingAccountUserWithRole->setRoles([$this->getRole(2, 'test02')]);
@@ -157,7 +159,7 @@ class FrontendAccountUserTypeTest extends AccountUserTypeTest
                         'firstName' => 'John',
                         'lastName' => 'Doe',
                         'email' => 'johndoe@example.com',
-                        'account' => 2,
+                        'account' => $existingAccountUser->getAccount()->getName(),
                     ],
                     'expectedData' => $alteredExistingAccountUser,
                 ],
@@ -167,7 +169,7 @@ class FrontendAccountUserTypeTest extends AccountUserTypeTest
                         'firstName' => 'John',
                         'lastName' => 'Doe',
                         'email' => 'johndoe@example.com',
-                        'account' => 2,
+                        'account' => $existingAccountUser->getAccount()->getName(),
                         'roles' => [2],
                     ],
                     'expectedData' => $alteredExistingAccountUserWithRole,
@@ -177,7 +179,7 @@ class FrontendAccountUserTypeTest extends AccountUserTypeTest
                             'firstName' => 'John',
                             'lastName' => 'Doe',
                             'email' => 'johndoe@example.com',
-                            'account' => 2,
+                            'account' => $alteredExistingAccountUserWithRole->getAccount()->getName(),
                             'addresses' => [1, 2],
                         ],
                         'expectedData' => $alteredExistingAccountUserWithAddresses,

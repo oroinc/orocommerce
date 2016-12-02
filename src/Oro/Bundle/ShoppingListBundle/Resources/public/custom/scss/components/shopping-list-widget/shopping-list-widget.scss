@@ -1,0 +1,12 @@
+.shopping-list-widget {
+  border: 0;
+
+  @include breakpoint('desktop') {
+    padding: 13px 0 10px;
+
+    .header-row__trigger {
+      background: transparent;
+      text-align: right;
+    }
+  }
+}

@@ -4,6 +4,8 @@ namespace Oro\Bundle\CustomerBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\UserBundle\Form\Type\ChangePasswordType;
@@ -97,6 +99,20 @@ class FrontendAccountUserProfileType extends AbstractType
                     'second_options_label' => 'oro.customer.accountuser.password_confirmation.label'
                 ]
             );
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);
+    }
+
+    /**
+     * PRE_SET_DATA event handler
+     *
+     * @param FormEvent $event
+     */
+    public function preSetData(FormEvent $event)
+    {
+        $event->getForm()->add('account', FrontendOwnerSelectType::NAME, [
+            'label' => 'oro.customer.account.entity_label',
+            'targetObject' => $event->getData()
+        ]);
     }
 
     /**
