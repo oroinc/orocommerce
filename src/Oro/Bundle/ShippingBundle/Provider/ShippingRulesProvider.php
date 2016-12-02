@@ -95,6 +95,8 @@ class ShippingRulesProvider
                 'paymentMethod' => $context->getPaymentMethod(),
                 'currency' => $context->getCurrency(),
                 'subtotal' => $context->getSubtotal(),
+                'customer' => $context->getCustomer(),
+                'customerUser' => $context->getCustomerUser(),
             ]);
         } catch (\Exception $e) {
             $this->logger->error(

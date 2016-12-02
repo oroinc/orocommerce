@@ -68,23 +68,11 @@ class FrontendOwnershipMetadataProvider extends AbstractMetadataProvider
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
-    protected function getNoOwnershipMetadata()
+    protected function createNoOwnershipMetadata()
     {
-        if (!$this->noOwnershipMetadata) {
-            $this->noOwnershipMetadata = new FrontendOwnershipMetadata();
-        }
-
-        return $this->noOwnershipMetadata;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getSystemLevelClass()
-    {
-        throw new \BadMethodCallException('Method getSystemLevelClass() unsupported.');
+        return new FrontendOwnershipMetadata();
     }
 
     /**
@@ -145,18 +133,24 @@ class FrontendOwnershipMetadataProvider extends AbstractMetadataProvider
     public function getMaxAccessLevel($accessLevel, $className = null)
     {
         if ($className) {
-            if (in_array($accessLevel, [AccessLevel::NONE_LEVEL, AccessLevel::BASIC_LEVEL, AccessLevel::LOCAL_LEVEL])) {
+            if (in_array($accessLevel, [
+                    AccessLevel::NONE_LEVEL,
+                    AccessLevel::BASIC_LEVEL,
+                    AccessLevel::LOCAL_LEVEL,
+                    AccessLevel::DEEP_LEVEL
+                ])
+            ) {
                 $maxLevel = $accessLevel;
             } else {
                 $metadata = $this->getMetadata($className);
                 if ($metadata->hasOwner()) {
-                    $maxLevel = AccessLevel::LOCAL_LEVEL;
+                    $maxLevel = AccessLevel::DEEP_LEVEL;
                 } else {
                     $maxLevel = $accessLevel;
                 }
             }
         } else {
-            $maxLevel = $accessLevel;
+            $maxLevel = ($accessLevel > AccessLevel::DEEP_LEVEL) ? AccessLevel::DEEP_LEVEL : $accessLevel;
         }
 
         return $maxLevel;

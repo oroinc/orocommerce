@@ -11,11 +11,6 @@ layout:
                 label: 'oro.customer.frontend.title.account_user.profile'
 
         - '@setOption':
-            id: page_content
-            optionName: class_prefix
-            optionValue: 'user'
-
-        - '@setOption':
             id: account_user_view_information_title
             optionName: text
             optionValue: 'oro.customer.frontend.sections.account_user.my_profile'

@@ -2,41 +2,54 @@
 
 namespace Oro\Bundle\CustomerBundle\EventListener\Datagrid;
 
-use Oro\Bundle\DataGridBundle\Event\BuildBefore;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Doctrine\Common\Collections\Criteria;
+
+use Oro\Bundle\CustomerBundle\Entity\AccountUserRole;
+use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource;
+use Oro\Bundle\DataGridBundle\Event\BuildAfter;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
 class AccountUserRoleDatagridListener
 {
     /**
-     * @var SecurityFacade
+     * @var AclHelper
      */
-    protected $securityFacade;
+    protected $aclHelper;
 
     /**
-     * @param SecurityFacade $securityFacade
+     * @param AclHelper $aclHelper
      */
-    public function __construct(SecurityFacade $securityFacade)
+    public function __construct(AclHelper $aclHelper)
     {
-        $this->securityFacade = $securityFacade;
+        $this->aclHelper = $aclHelper;
     }
 
     /**
-     * @param BuildBefore $event
+     * @param BuildAfter $event
      */
-    public function onBuildBefore(BuildBefore $event)
+    public function onBuildAfter(BuildAfter $event)
     {
-        $config = $event->getConfig();
-        $user = $this->securityFacade->getLoggedUser();
+        $dataGrid = $event->getDatagrid();
 
-        if ($user instanceof AccountUser &&
-            $user->getAccount() &&
-            $this->securityFacade->isGranted('oro_account_frontend_account_user_role_view')
-        ) {
-            $andWhere = 'role.account IN (' . $user->getAccount()->getId() . ') or role.account IS NULL';
-            $config->offsetAddToArrayByPath('[source][query][where][and]', [$andWhere]);
-        } else {
-            $config->offsetAddToArrayByPath('[source][query][where][and]', ['1=0']);
+        $datasource = $dataGrid->getDatasource();
+        if ($datasource instanceof OrmDatasource) {
+            $qb = $datasource->getQueryBuilder();
+            $alias = $qb->getRootAliases()[0];
+            $criteria = new Criteria();
+            $this->aclHelper->applyAclToCriteria(
+                AccountUserRole::class,
+                $criteria,
+                'VIEW',
+                ['account' => $alias.'.account', 'organization' => $alias.'.organization']
+            );
+
+            $qb->addCriteria($criteria);
+            $qb->orWhere(
+                $alias . '.selfManaged = :isActive AND '.
+                $alias . '.public = :isActive AND '.
+                $alias . '.account is NULL'
+            );
+            $qb->setParameter('isActive', true, \PDO::PARAM_BOOL);
         }
     }
 }

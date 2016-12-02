@@ -71,7 +71,8 @@ class AccountProductRepositoryTest extends VisibilityResolvedRepositoryTestCase
         $product = $this->getReference(LoadProductData::PRODUCT_1);
         /** @var $product Product */
         $repository->deleteByProduct($product);
-        $repository->insertByProduct($this->getInsertFromSelectExecutor(), $product);
+        $category = $this->getCategory($product);
+        $repository->insertByProduct($this->getInsertFromSelectExecutor(), $product, $category);
         $visibilities = $repository->findBy(['product' => $product]);
         $this->assertSame(1, count($visibilities));
     }

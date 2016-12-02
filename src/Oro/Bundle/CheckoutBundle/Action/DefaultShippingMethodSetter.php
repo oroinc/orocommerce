@@ -3,13 +3,13 @@
 namespace Oro\Bundle\CheckoutBundle\Action;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\Factory\ShippingContextProviderFactory;
+use Oro\Bundle\CheckoutBundle\Factory\CheckoutShippingContextFactory;
 use Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider;
 
 class DefaultShippingMethodSetter
 {
     /**
-     * @var ShippingContextProviderFactory
+     * @var CheckoutShippingContextFactory
      */
     protected $contextProviderFactory;
 
@@ -19,11 +19,11 @@ class DefaultShippingMethodSetter
     protected $priceProvider;
 
     /**
-     * @param ShippingContextProviderFactory $contextProviderFactory
-     * @param ShippingPriceProvider $priceProvider
+     * @param CheckoutShippingContextFactory $contextProviderFactory
+     * @param ShippingPriceProvider          $priceProvider
      */
     public function __construct(
-        ShippingContextProviderFactory $contextProviderFactory,
+        CheckoutShippingContextFactory $contextProviderFactory,
         ShippingPriceProvider $priceProvider
     ) {
         $this->contextProviderFactory = $contextProviderFactory;

@@ -1,9 +1,14 @@
 .checkout-sidebar {
-  padding-right: 15px;
+    padding-right: 15px;
+
+    &--inner-invader {
+        float: left;
+        width: 220px;
+    }
 }
 
-@include breakpoint('tablet-small') {
-  .checkout-sidebar {
-    display: none;
-  }
+@include breakpoint('tablet') {
+    .checkout-sidebar {
+        display: none;
+    }
 }
