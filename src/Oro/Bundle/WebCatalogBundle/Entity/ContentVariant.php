@@ -6,7 +6,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Entity\SlugAwareInterface;
 use Oro\Bundle\RedirectBundle\Entity\SlugAwareTrait;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
@@ -15,6 +14,20 @@ use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 
 /**
  * @ORM\Entity(repositoryClass="Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentVariantRepository")
+ * @ORM\AssociationOverrides({
+ *     @ORM\AssociationOverride(
+ *          name="slugs",
+ *          joinTable=@ORM\JoinTable(
+ *              name="oro_web_catalog_variant_slug",
+ *              joinColumns={
+ *                  @ORM\JoinColumn(name="content_variant_id", referencedColumnName="id", onDelete="CASCADE")
+ *              },
+ *              inverseJoinColumns={
+ *                  @ORM\JoinColumn(name="slug_id", referencedColumnName="id", unique=true, onDelete="CASCADE")
+ *              }
+ *          )
+ *      )
+ * })
  * @ORM\Table(name="oro_web_catalog_variant")
  * @Config
  */
@@ -79,24 +92,8 @@ class ContentVariant extends ExtendContentVariant implements ContentVariantInter
     protected $scopes;
 
     /**
-     * @var Collection|Slug[]
-     *
-     * @ORM\ManyToMany(
-     *      targetEntity="Oro\Bundle\RedirectBundle\Entity\Slug",
-     *      cascade={"ALL"},
-     *      orphanRemoval=true
-     * )
-     * @ORM\JoinTable(name="oro_web_catalog_variant_slug",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="content_variant_id", referencedColumnName="id", onDelete="CASCADE")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="slug_id", referencedColumnName="id", unique=true, onDelete="CASCADE")
-     *      }
-     * )
+     * {@inheritdoc}
      */
-    protected $slugs;
-
     public function __construct()
     {
         parent::__construct();
