@@ -339,6 +339,7 @@ services:
             - '@oro_pricing.model.price_list_request_handler'
             - '@oro_pricing.user_currency_manager'
             - '@oro_pricing.datagrid.provider.combined_product_price'
+            - '@translator'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-product-search-grid,, method: onBuildBefore }
             - { name: kernel.event_listener, event: oro_datagrid.search_datasource.result.after.frontend-product-search-grid, method: onResultAfter }
@@ -441,12 +442,13 @@ services:
 
     oro_pricing.filter.frontend_product_price:
         class: 'Oro\Bundle\PricingBundle\Filter\FrontendProductPriceFilter'
-        parent: oro_pricing.filter.product_price
+        arguments:
+            - '@form.factory'
+            - '@oro_filter.filter_utility'
         calls:
-            - [setRegistry, ['@doctrine']]
-            - [setProductPriceClass, ['%oro_pricing.entity.combined_product_price.class%']]
+            - [setFormatter, ['@oro_product.formatter.product_unit_label']]
         tags:
-            - { name: oro_filter.extension.orm_filter.filter, type: frontend-product-price }
+            - { name: oro_search.extension.search_filter.filter, type: frontend-product-price, datasource: search }
 
     oro_pricing.event_listener.product_duplicate:
         class: 'Oro\Bundle\PricingBundle\EventListener\ProductDuplicateListener'
