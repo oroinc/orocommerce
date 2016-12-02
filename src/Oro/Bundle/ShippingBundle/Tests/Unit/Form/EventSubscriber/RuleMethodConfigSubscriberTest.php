@@ -197,9 +197,9 @@ class RuleMethodConfigSubscriberTest extends FormIntegrationTestCase
             ->method('getRoundType')
             ->willReturn(RoundingServiceInterface::ROUND_HALF_UP);
 
-        $currencyConfig = $this->getMockBuilder(CurrencyProviderInterface::class)
+        $currencyProvider = $this->getMockBuilder(CurrencyProviderInterface::class)
             ->disableOriginalConstructor()->getMockForAbstractClass();
-        $currencyConfig->expects($this->any())
+        $currencyProvider->expects($this->any())
             ->method('getCurrencyList')
             ->willReturn(['USD']);
 
@@ -229,7 +229,7 @@ class RuleMethodConfigSubscriberTest extends FormIntegrationTestCase
                     ShippingRuleMethodTypeConfigCollectionType::class =>
                         new ShippingRuleMethodTypeConfigCollectionType($this->ruleMethodTypeConfigCollectionSubscriber),
                     CurrencySelectionType::NAME => new CurrencySelectionType(
-                        $currencyConfig,
+                        $currencyProvider,
                         $this->getMockBuilder(LocaleSettings::class)->disableOriginalConstructor()->getMock(),
                         $this->getMockBuilder(CurrencyNameHelper::class)->disableOriginalConstructor()->getMock()
                     ),

@@ -10,14 +10,14 @@ class OrderCurrencyHandler
     /**
      * @var CurrencyProviderInterface
      */
-    protected $currencyConfig;
+    protected $currencyProvider;
 
     /**
-     * @param CurrencyProviderInterface $currencyConfig
+     * @param CurrencyProviderInterface $currencyProvider
      */
-    public function __construct(CurrencyProviderInterface $currencyConfig)
+    public function __construct(CurrencyProviderInterface $currencyProvider)
     {
-        $this->currencyConfig = $currencyConfig;
+        $this->currencyProvider = $currencyProvider;
     }
 
     /**
@@ -26,7 +26,7 @@ class OrderCurrencyHandler
     public function setOrderCurrency(Order $order)
     {
         if (!$order->getCurrency()) {
-            $order->setCurrency($this->currencyConfig->getDefaultCurrency());
+            $order->setCurrency($this->currencyProvider->getDefaultCurrency());
         }
     }
 }

@@ -9,7 +9,7 @@ use Oro\Bundle\OrderBundle\Handler\OrderCurrencyHandler;
 class OrderCurrencyHandlerTest extends \PHPUnit_Framework_TestCase
 {
     /** @var CurrencyProviderInterface|\PHPUnit_Framework_MockObject_MockObject */
-    protected $currencyConfig;
+    protected $currencyProvider;
 
     /**
      * @var OrderCurrencyHandler
@@ -18,17 +18,17 @@ class OrderCurrencyHandlerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->currencyConfig = $this->getMockBuilder(CurrencyProviderInterface::class)
+        $this->currencyProvider = $this->getMockBuilder(CurrencyProviderInterface::class)
             ->setMethods(['getDefaultCurrency'])
             ->getMockForAbstractClass() ;
 
-        $this->handler = new OrderCurrencyHandler($this->currencyConfig);
+        $this->handler = new OrderCurrencyHandler($this->currencyProvider);
     }
 
     public function testSetOrderCurrency()
     {
         $currency = 'USD';
-        $this->currencyConfig->expects($this->once())
+        $this->currencyProvider->expects($this->once())
             ->method('getDefaultCurrency')
             ->willReturn($currency);
 

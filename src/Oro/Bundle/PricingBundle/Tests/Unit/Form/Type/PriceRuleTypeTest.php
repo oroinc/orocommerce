@@ -20,10 +20,10 @@ class PriceRuleTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|CurrencyProviderInterface $currencyConfig */
-        $currencyConfig = $this->getMockBuilder(CurrencyProviderInterface::class)
+        /** @var \PHPUnit_Framework_MockObject_MockObject|CurrencyProviderInterface $currencyProvider */
+        $currencyProvider = $this->getMockBuilder(CurrencyProviderInterface::class)
             ->disableOriginalConstructor()->getMockForAbstractClass();
-        $currencyConfig->method('getCurrencyList')->willReturn(['USD', 'EUR']);
+        $currencyProvider->method('getCurrencyList')->willReturn(['USD', 'EUR']);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|LocaleSettings $localeSettings */
         $localeSettings = $this->getMockBuilder(LocaleSettings::class)->disableOriginalConstructor()->getMock();
@@ -32,7 +32,7 @@ class PriceRuleTypeTest extends FormIntegrationTestCase
             new PreloadedExtension(
                 [
                     CurrencySelectionType::NAME => new CurrencySelectionType(
-                        $currencyConfig,
+                        $currencyProvider,
                         $localeSettings,
                         $this->getMockBuilder(CurrencyNameHelper::class)->disableOriginalConstructor()->getMock()
                     ),

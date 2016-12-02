@@ -29,7 +29,7 @@ class UserCurrencyManagerTest extends \PHPUnit_Framework_TestCase
     /**
      * @var CurrencyProviderInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $currencyConfig;
+    protected $currencyProvider;
 
     /**
      * @var WebsiteManager|\PHPUnit_Framework_MockObject_MockObject
@@ -53,7 +53,7 @@ class UserCurrencyManagerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         $this->tokenStorage = $this
             ->getMock('Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface');
-        $this->currencyConfig = $this->getMockBuilder(CurrencyProviderInterface::class)
+        $this->currencyProvider = $this->getMockBuilder(CurrencyProviderInterface::class)
             ->setMethods(['getDefaultCurrency', 'getCurrencyList'])
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
@@ -66,7 +66,7 @@ class UserCurrencyManagerTest extends \PHPUnit_Framework_TestCase
         $this->userCurrencyManager = new UserCurrencyManager(
             $this->session,
             $this->tokenStorage,
-            $this->currencyConfig,
+            $this->currencyProvider,
             $this->websiteManager,
             $this->userManager
         );
@@ -78,10 +78,10 @@ class UserCurrencyManagerTest extends \PHPUnit_Framework_TestCase
             ->method('getCurrentWebsite')
             ->willReturn(null);
 
-        $this->currencyConfig->expects(static::any())
+        $this->currencyProvider->expects(static::any())
             ->method('getCurrencyList')
             ->willReturn(['EUR', 'USD']);
-        $this->currencyConfig->expects(static::any())
+        $this->currencyProvider->expects(static::any())
             ->method('getDefaultCurrency')
             ->willReturn('EUR');
 
@@ -110,7 +110,7 @@ class UserCurrencyManagerTest extends \PHPUnit_Framework_TestCase
             ->method('getWebsiteSettings')
             ->with($website)
             ->willReturn($userWebsiteSettings);
-        $this->currencyConfig->expects($this->once())
+        $this->currencyProvider->expects($this->once())
             ->method('getCurrencyList')
             ->willReturn(['EUR', 'USD']);
         $this->tokenStorage->expects($this->once())
@@ -146,10 +146,10 @@ class UserCurrencyManagerTest extends \PHPUnit_Framework_TestCase
             ->method('getWebsiteSettings')
             ->with($website)
             ->willReturn($userWebsiteSettings);
-        $this->currencyConfig->expects(static::any())
+        $this->currencyProvider->expects(static::any())
             ->method('getCurrencyList')
             ->willReturn(['EUR', 'USD']);
-        $this->currencyConfig->expects(static::any())
+        $this->currencyProvider->expects(static::any())
             ->method('getDefaultCurrency')
             ->willReturn('EUR');
 
@@ -165,7 +165,7 @@ class UserCurrencyManagerTest extends \PHPUnit_Framework_TestCase
 
         $this->websiteManager->expects($this->never())
             ->method('getCurrentWebsite');
-        $this->currencyConfig->expects($this->once())
+        $this->currencyProvider->expects($this->once())
             ->method('getCurrencyList')
             ->willReturn(['EUR', 'USD']);
         $this->session->expects($this->once())
@@ -184,10 +184,10 @@ class UserCurrencyManagerTest extends \PHPUnit_Framework_TestCase
 
         $this->websiteManager->expects($this->never())
             ->method('getCurrentWebsite');
-        $this->currencyConfig->expects(static::any())
+        $this->currencyProvider->expects(static::any())
             ->method('getCurrencyList')
             ->willReturn(['EUR', 'USD']);
-        $this->currencyConfig->expects(static::any())
+        $this->currencyProvider->expects(static::any())
             ->method('getDefaultCurrency')
             ->willReturn('EUR');
         $this->session->expects($this->once())
@@ -206,10 +206,10 @@ class UserCurrencyManagerTest extends \PHPUnit_Framework_TestCase
 
         $this->websiteManager->expects($this->never())
             ->method('getCurrentWebsite');
-        $this->currencyConfig->expects(static::any())
+        $this->currencyProvider->expects(static::any())
             ->method('getCurrencyList')
             ->willReturn(['EUR', 'USD']);
-        $this->currencyConfig->expects(static::any())
+        $this->currencyProvider->expects(static::any())
             ->method('getDefaultCurrency')
             ->willReturn('EUR');
         $this->session->expects($this->once())

@@ -77,12 +77,12 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
             ProductUnitSelectionType::NAME
         );
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|CurrencyProviderInterface $configManager */
-        $configManager = $this->getMockBuilder(CurrencyProviderInterface::class)
+        /** @var \PHPUnit_Framework_MockObject_MockObject|CurrencyProviderInterface $currencyProvider */
+        $currencyProvider = $this->getMockBuilder(CurrencyProviderInterface::class)
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
 
-        $configManager->expects($this->any())
+        $currencyProvider->expects($this->any())
             ->method('getCurrencyList')
             ->will($this->returnValue(['USD', 'EUR']));
 
@@ -110,7 +110,7 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
                     ProductUnitSelectionType::NAME => $productUnitSelection,
                     PriceType::NAME => $priceType,
                     CurrencySelectionType::NAME => new CurrencySelectionType(
-                        $configManager,
+                        $currencyProvider,
                         $localeSettings,
                         $currencyNameHelper
                     ),

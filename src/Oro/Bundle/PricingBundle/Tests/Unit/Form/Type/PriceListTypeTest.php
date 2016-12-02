@@ -54,11 +54,11 @@ class PriceListTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|CurrencyProviderInterface $currencyConfig */
-        $currencyConfig = $this->getMockBuilder(CurrencyProviderInterface::class)
+        /** @var \PHPUnit_Framework_MockObject_MockObject|CurrencyProviderInterface $currencyProvider */
+        $currencyProvider = $this->getMockBuilder(CurrencyProviderInterface::class)
             ->disableOriginalConstructor()->getMockForAbstractClass();
-        $currencyConfig->method('getCurrencyList')->willReturn(['USD', 'EUR']);
-        $currencyConfig->method('getDefaultCurrency')->willReturn('USD');
+        $currencyProvider->method('getCurrencyList')->willReturn(['USD', 'EUR']);
+        $currencyProvider->method('getDefaultCurrency')->willReturn('USD');
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|LocaleSettings $localeSettings */
         $localeSettings = $this->getMockBuilder(LocaleSettings::class)->disableOriginalConstructor()->getMock();
@@ -91,7 +91,7 @@ class PriceListTypeTest extends FormIntegrationTestCase
                     PriceListScheduleType::NAME => new PriceListScheduleType(new PropertyAccessor()),
                     OroDateTimeType::NAME => new OroDateTimeType(),
                     CurrencySelectionType::NAME => new CurrencySelectionType(
-                        $currencyConfig,
+                        $currencyProvider,
                         $localeSettings,
                         $currencyNameHelper
                     ),

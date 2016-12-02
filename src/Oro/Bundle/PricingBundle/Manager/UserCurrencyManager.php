@@ -23,7 +23,7 @@ class UserCurrencyManager
     /**
      * @var CurrencyProviderInterface
      */
-    protected $currencyConfig;
+    protected $currencyProvider;
 
     /**
      * @var WebsiteManager
@@ -43,20 +43,20 @@ class UserCurrencyManager
     /**
      * @param Session $session
      * @param TokenStorageInterface $tokenStorage
-     * @param CurrencyProviderInterface $currencyConfig
+     * @param CurrencyProviderInterface $currencyProvider
      * @param WebsiteManager $websiteManager
      * @param BaseUserManager $userManager
      */
     public function __construct(
         Session $session,
         TokenStorageInterface $tokenStorage,
-        CurrencyProviderInterface $currencyConfig,
+        CurrencyProviderInterface $currencyProvider,
         WebsiteManager $websiteManager,
         BaseUserManager $userManager
     ) {
         $this->session = $session;
         $this->tokenStorage = $tokenStorage;
-        $this->currencyConfig = $currencyConfig;
+        $this->currencyProvider = $currencyProvider;
         $this->websiteManager = $websiteManager;
         $this->userManager = $userManager;
     }
@@ -125,7 +125,7 @@ class UserCurrencyManager
      */
     public function getAvailableCurrencies()
     {
-        return $this->currencyConfig->getCurrencyList();
+        return $this->currencyProvider->getCurrencyList();
     }
 
     /**
@@ -133,7 +133,7 @@ class UserCurrencyManager
      */
     public function getDefaultCurrency()
     {
-        return $this->currencyConfig->getDefaultCurrency();
+        return $this->currencyProvider->getDefaultCurrency();
     }
 
     /**
