@@ -10,7 +10,7 @@ services:
     oro_catalog.form.type.category_default_product_options:
         class: 'Oro\Bundle\CatalogBundle\Form\Type\CategoryDefaultProductOptionsType'
         arguments:
-            - '@oro_product.provider.unit_mode_provider'
+            - '@oro_product.service.single_unit_mode'
         calls:
             - [setDataClass, ['%oro_catalog.entity.category_default_product_options.class%']]
         tags:
