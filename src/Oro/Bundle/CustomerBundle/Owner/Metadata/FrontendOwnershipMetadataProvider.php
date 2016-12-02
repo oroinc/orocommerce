@@ -68,23 +68,11 @@ class FrontendOwnershipMetadataProvider extends AbstractMetadataProvider
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
-    protected function getNoOwnershipMetadata()
+    protected function createNoOwnershipMetadata()
     {
-        if (!$this->noOwnershipMetadata) {
-            $this->noOwnershipMetadata = new FrontendOwnershipMetadata();
-        }
-
-        return $this->noOwnershipMetadata;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getSystemLevelClass()
-    {
-        throw new \BadMethodCallException('Method getSystemLevelClass() unsupported.');
+        return new FrontendOwnershipMetadata();
     }
 
     /**
@@ -162,7 +150,7 @@ class FrontendOwnershipMetadataProvider extends AbstractMetadataProvider
                 }
             }
         } else {
-            $maxLevel = $accessLevel;
+            $maxLevel = ($accessLevel > AccessLevel::DEEP_LEVEL) ? AccessLevel::DEEP_LEVEL : $accessLevel;
         }
 
         return $maxLevel;

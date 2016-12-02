@@ -83,7 +83,7 @@
   }
 
   &--gray {
-    color: get-color('additional', 'dark');
+    color: lighten(get-color('additional', 'dark'), 17.5%);
   }
 
   &--hidden {

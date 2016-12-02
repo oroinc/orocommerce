@@ -5,6 +5,7 @@
     font-weight: 400;
 
     &--uppercase {
+        @extend .title;
         text-transform: uppercase;
     }
 }

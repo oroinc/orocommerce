@@ -24,9 +24,7 @@ class AccountUserRoleControllerACLTest extends WebTestCase
     public function testCreatePermissionDenied()
     {
         $this->loginUser(LoadAccountUserRoleACLData::USER_ACCOUNT_1_ROLE_DEEP_VIEW_ONLY);
-        $this->client->request('GET', $this->getUrl(
-            'oro_customer_frontend_account_user_role_create'
-        ));
+        $this->client->request('GET', $this->getUrl('oro_customer_frontend_account_user_role_create'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 403);
     }
@@ -108,6 +106,95 @@ class AccountUserRoleControllerACLTest extends WebTestCase
                 'role' => LoadAccountUserRoleACLData::ROLE_WITH_ACCOUNT_1_USER_DEEP,
                 'user' => LoadAccountUserRoleACLData::USER_ACCOUNT_1_ROLE_LOCAL,
                 'expectedStatus' => 200
+            ],
+        ];
+    }
+
+    /**
+     * @group frontend-ACL
+     * @dataProvider gridACLProvider
+     *
+     * @param string $user
+     * @param string $indexResponseStatus
+     * @param string $gridResponseStatus
+     * @param array $data
+     */
+    public function testGridACL($user, $indexResponseStatus, $gridResponseStatus, array $data = [])
+    {
+        $this->loginUser($user);
+        $this->client->request('GET', $this->getUrl('oro_customer_frontend_account_user_role_index'));
+        $this->assertSame($indexResponseStatus, $this->client->getResponse()->getStatusCode());
+        $response = $this->client->requestGrid(
+            [
+                'gridName' => 'frontend-account-account-user-roles-grid',
+            ]
+        );
+        self::assertResponseStatusCodeEquals($response, $gridResponseStatus);
+        if (200 === $gridResponseStatus) {
+            $result = self::jsonToArray($response->getContent());
+            $actual = array_column($result['data'], 'id');
+            $actual = array_map('intval', $actual);
+            $expected = array_map(
+                function ($ref) {
+                    return $this->getReference($ref)->getId();
+                },
+                $data
+            );
+            sort($expected);
+            sort($actual);
+            $this->assertEquals($expected, $actual);
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function gridACLProvider()
+    {
+        return [
+            'NOT AUTHORISED' => [
+                'user' => '',
+                'indexResponseStatus' => 401,
+                'gridResponseStatus' => 403,
+                'data' => [],
+            ],
+            'DEEP: all siblings and children' => [
+                'user' => LoadAccountUserRoleACLData::USER_ACCOUNT_1_ROLE_DEEP,
+                'indexResponseStatus' => 200,
+                'gridResponseStatus' => 200,
+                'data' => [
+                    LoadAccountUserRoleACLData::ROLE_FRONTEND_ADMINISTRATOR,
+                    LoadAccountUserRoleACLData::ROLE_FRONTEND_BUYER,
+                    LoadAccountUserRoleACLData::ROLE_DEEP,
+                    LoadAccountUserRoleACLData::ROLE_DEEP_VIEW_ONLY,
+                    LoadAccountUserRoleACLData::ROLE_LOCAL,
+                    LoadAccountUserRoleACLData::ROLE_LOCAL_VIEW_ONLY,
+                    LoadAccountUserRoleACLData::ROLE_WITH_ACCOUNT_1_USER_LOCAL,
+                    LoadAccountUserRoleACLData::ROLE_WITH_ACCOUNT_1_USER_DEEP,
+                    LoadAccountUserRoleACLData::ROLE_WITH_ACCOUNT_1_2_USER_LOCAL,
+                    LoadAccountUserRoleACLData::ROLE_WITHOUT_ACCOUNT_1_USER_LOCAL,
+                    LoadAccountUserRoleACLData::ROLE_WITH_ACCOUNT_1_USER_LOCAL_CANT_DELETED,
+                    LoadAccountUserRoleACLData::ROLE_WITH_ACCOUNT_1_USER_DEEP_CANT_DELETED,
+                    LoadAccountUserRoleACLData::ROLE_WITH_ACCOUNT_1_2_USER_LOCAL_CANT_DELETED,
+                    LoadAccountUserRoleACLData::ROLE_WITHOUT_ACCOUNT_1_USER_LOCAL_CANT_DELETED
+                ],
+            ],
+            'LOCAL: all siblings' => [
+                'user' => LoadAccountUserRoleACLData::USER_ACCOUNT_1_2_ROLE_LOCAL,
+                'indexResponseStatus' => 200,
+                'gridResponseStatus' => 200,
+                'data' => [
+                    LoadAccountUserRoleACLData::ROLE_FRONTEND_ADMINISTRATOR,
+                    LoadAccountUserRoleACLData::ROLE_FRONTEND_BUYER,
+                    LoadAccountUserRoleACLData::ROLE_DEEP,
+                    LoadAccountUserRoleACLData::ROLE_DEEP_VIEW_ONLY,
+                    LoadAccountUserRoleACLData::ROLE_LOCAL,
+                    LoadAccountUserRoleACLData::ROLE_LOCAL_VIEW_ONLY,
+                    LoadAccountUserRoleACLData::ROLE_WITH_ACCOUNT_1_2_USER_LOCAL,
+                    LoadAccountUserRoleACLData::ROLE_WITHOUT_ACCOUNT_1_USER_LOCAL,
+                    LoadAccountUserRoleACLData::ROLE_WITHOUT_ACCOUNT_1_USER_LOCAL_CANT_DELETED,
+                    LoadAccountUserRoleACLData::ROLE_WITH_ACCOUNT_1_2_USER_LOCAL_CANT_DELETED
+                ],
             ],
         ];
     }

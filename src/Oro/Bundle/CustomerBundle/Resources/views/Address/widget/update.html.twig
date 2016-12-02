@@ -18,7 +18,7 @@
         </div>
         {% endif %}
 
-        <form id="{{ form.vars.name }}"
+        <form id="{{ form.vars.id }}"
               action="{{ form.vars.value and form.vars.value.id > 0
                   ? path(routes.update, { id: form.vars.value.id, entityId: entity.id })
                   : path(routes.create, { entityId: entity.id })
