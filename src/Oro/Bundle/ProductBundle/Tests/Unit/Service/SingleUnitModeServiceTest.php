@@ -7,8 +7,6 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Service\SingleUnitModeService;
-use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
-use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class SingleUnitModeServiceTest extends \PHPUnit_Framework_TestCase
@@ -114,28 +112,6 @@ class SingleUnitModeServiceTest extends \PHPUnit_Framework_TestCase
             ]));
 
         static::assertFalse($this->unitModeProvider->isProductPrimaryUnitSingleAndDefault($product));
-    }
-
-    public function testGetProductStates()
-    {
-        $unit = 'each';
-        $this->configManager->expects(static::once())
-            ->method('get')
-            ->with('oro_product.default_unit')
-            ->willReturn($unit);
-
-        $product = $this->getProductWithPrimaryUnit($unit);
-        $lineItem = (new LineItem())->setProduct($product);
-        $shoppingList = (new ShoppingList())->addLineItem($lineItem);
-
-        $productStatuses = $this->unitModeProvider->getProductStates($shoppingList);
-
-        static::assertSame([$product->getId() => true], $productStatuses);
-    }
-
-    public function testGetProductStatesOnNull()
-    {
-        static::assertSame([], $this->unitModeProvider->getProductStates());
     }
 
     /**
