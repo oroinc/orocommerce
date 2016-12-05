@@ -64,6 +64,11 @@ class ContentNodeTreeHandlerTest extends AbstractTreeHandlerTestCase
         $this->assertTreeCreated($expectedData, $entity, $includeRoot);
     }
 
+    public function testCreateTreeForEmptyRoot()
+    {
+        $this->assertEquals([], $this->handler->createTree());
+    }
+
     /**
      * @return array
      */

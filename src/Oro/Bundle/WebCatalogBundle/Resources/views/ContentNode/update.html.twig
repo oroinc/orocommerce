@@ -65,9 +65,9 @@
 
     {% set nameField %}
         {% if form.name.vars.required %}
-            {{  form_row(form.name) }}
+            {{ form_row(form.name) }}
         {% else %}
-            <span data-validation-ignore="">{{  form_row(form.name) }}</span>
+            <span data-validation-ignore="">{{ form_row(form.name) }}</span>
         {% endif %}
     {% endset %}
 
@@ -77,23 +77,28 @@
         form_row(form.titles)
     ] %}
 
-    {% set scopes %}
-    <div
-            data-page-component-module="oroui/js/app/components/view-component"
-            data-page-component-options="{{ {
-                view: 'orowebcatalog/js/app/views/scope-toggle-view',
-                selectors: {
-                    useParentScopeSelector: '#' ~ form.parentScopeUsed.vars.id,
-                    scopesSelector: '.scope-elements'
-                }
-            }|json_encode }}"
-    >
+    {% if entity.parentNode is empty %}
+        {% set scopes %}
+            {{ form_widget(form.scopes) }}
+        {% endset %}
+    {% else %}
+        {% set scopes %}
+        <div data-page-component-module="oroui/js/app/components/view-component"
+             data-page-component-options="{{ {
+                 view: 'orowebcatalog/js/app/views/scope-toggle-view',
+                 selectors: {
+                     useParentScopeSelector: '#' ~ form.parentScopeUsed.vars.id,
+                     scopesSelector: '.scope-elements'
+                 }
+             }|json_encode }}"
+        >
             {{ form_row(form.parentScopeUsed) }}
             <div class="scope-elements">
                 {{ form_widget(form.scopes) }}
             </div>
-    </div>
-    {% endset %}
+        </div>
+        {% endset %}
+    {% endif %}
 
     {% if form.slugPrototypes is defined %}
         {% set formRows = formRows|merge([form_row(form.slugPrototypes)]) %}

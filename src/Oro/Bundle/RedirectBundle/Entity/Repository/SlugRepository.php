@@ -22,13 +22,12 @@ class SlugRepository extends EntityRepository
             ->where($qb->expr()->eq('slug.urlHash', ':urlHash'))
             ->andWhere($qb->expr()->eq('slug.url', ':url'))
             ->setParameter('urlHash', md5($url))
-            ->setParameter('url', $url)
-            ->setMaxResults(1);
+            ->setParameter('url', $url);
 
         $scopeCriteria->applyToJoinWithPriority($qb, 'scopes');
 
-        $result = $qb->getQuery()->getOneOrNullResult();
-        if ($result) {
+        $results = $qb->getQuery()->getResult();
+        foreach ($results as $result) {
             /** @var Slug $slug */
             $slug = $result[0];
             $matchedScopeId = $result['matchedScopeId'];

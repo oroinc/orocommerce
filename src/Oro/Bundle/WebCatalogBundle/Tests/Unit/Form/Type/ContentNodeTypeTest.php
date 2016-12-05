@@ -85,7 +85,11 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
             new PreloadedExtension(
                 [
                     TextType::class => new TextType(),
-                    EntityIdentifierType::NAME => new StubEntityIdentifierType([]),
+                    EntityIdentifierType::NAME => new StubEntityIdentifierType(
+                        [
+                            1 => $this->getEntity(ContentNode::class, ['id' => 1])
+                        ]
+                    ),
                     LocalizedFallbackValueCollectionType::NAME => new LocalizedFallbackValueCollectionTypeStub(),
                     ScopeCollectionType::NAME => new ScopeCollectionTypeStub(),
                     ContentVariantCollectionType::NAME => $variantCollection,
@@ -109,6 +113,9 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
 
         $this->assertTrue($form->has('parentNode'));
         $this->assertTrue($form->has('titles'));
+        $this->assertTrue($form->has('scopes'));
+        $this->assertTrue($form->has('contentVariants'));
+        $this->assertFalse($form->has('parentScopeUsed'));
         $this->assertFalse($form->has('slugPrototypes'));
     }
 
@@ -120,9 +127,10 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
 
         $this->assertTrue($form->has('parentNode'));
         $this->assertTrue($form->has('titles'));
-        $this->assertTrue($form->has('name'));
-        $this->assertTrue($form->has('slugPrototypes'));
         $this->assertTrue($form->has('scopes'));
+        $this->assertTrue($form->has('contentVariants'));
+        $this->assertTrue($form->has('parentScopeUsed'));
+        $this->assertTrue($form->has('slugPrototypes'));
     }
 
     public function testBuildFormForExistingEntity()
@@ -194,19 +202,15 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
     public function submitDataProvider()
     {
         return [
-            'new entity' => [
-                (new ContentNode())
-                    ->setParentNode(new ContentNode()),
+            'new root entity' => [
+                new ContentNode(),
                 [
-                    'titles' => [['string' => 'new_content_node_title']],
-                    'slugPrototypes' => [['string' => 'new_content_node_slug']],
-                    'parentScopeUsed' => true
+                    'titles' => [['string' => 'new_content_node_title']]
                 ],
                 (new ContentNode())
                     ->setName('filled_name')
                     ->addTitle((new LocalizedFallbackValue())->setString('new_content_node_title'))
-                    ->addSlugPrototype((new LocalizedFallbackValue())->setString('new_content_node_slug'))
-                    ->setParentScopeUsed(true),
+                    ->setParentScopeUsed(false),
             ],
             'existing entity' => [
                 (new ContentNode())
@@ -228,10 +232,11 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
             ],
             'added variant' => [
                 (new ContentNode())
-                    ->setParentNode(new ContentNode())
+                    ->setParentNode($this->getEntity(ContentNode::class, ['id' => 1]))
                     ->addTitle((new LocalizedFallbackValue())->setString('content_node_title'))
                     ->addSlugPrototype((new LocalizedFallbackValue())->setString('content_node_slug')),
                 [
+                    'parentNode' => 1,
                     'titles' => [['string' => 'content_node_title'], ['string' => 'another_node_title']],
                     'slugPrototypes' => [['string' => 'content_node_slug'], ['string' => 'another_node_slug']],
                     'contentVariants' => [
@@ -245,6 +250,7 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
                 ],
                 (new ContentNode())
                     ->setName('filled_name')
+                    ->setParentNode($this->getEntity(ContentNode::class, ['id' => 1]))
                     ->setParentScopeUsed(true)
                     ->addTitle((new LocalizedFallbackValue())->setString('content_node_title'))
                     ->addTitle((new LocalizedFallbackValue())->setString('another_node_title'))

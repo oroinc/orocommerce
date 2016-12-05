@@ -59,14 +59,6 @@ class ContentNodeType extends AbstractType
                 ]
             )
             ->add(
-                'parentScopeUsed',
-                CheckboxType::class,
-                [
-                    'label' => 'oro.webcatalog.contentnode.parent_scope_used.label',
-                    'required' => false
-                ]
-            )
-            ->add(
                 'scopes',
                 ScopeCollectionType::NAME,
                 [
@@ -111,6 +103,14 @@ class ContentNodeType extends AbstractType
                         'source_field' => 'titles'
                     ]
                 );
+                $form->add(
+                    'parentScopeUsed',
+                    CheckboxType::class,
+                    [
+                        'label' => 'oro.webcatalog.contentnode.parent_scope_used.label',
+                        'required' => false
+                    ]
+                );
             }
 
             $nameRequired = false;
@@ -144,8 +144,12 @@ class ContentNodeType extends AbstractType
         if ($data instanceof ContentNode) {
             $this->nameFiller->fillName($data);
 
-            if ($data->isParentScopeUsed()) {
-                $data->resetScopes();
+            if ($data->getParentNode()) {
+                if ($data->isParentScopeUsed()) {
+                    $data->resetScopes();
+                }
+            } else {
+                $data->setParentScopeUsed(false);
             }
             if (!$data->getContentVariants()->isEmpty()) {
                 $data->getContentVariants()->map(

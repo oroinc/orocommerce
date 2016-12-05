@@ -69,15 +69,15 @@ class SlugRepositoryTest extends WebTestCase
     public function testGetSlugByUrlAndScopeCriteriaWhenSlugHasScopesThatNotMatches()
     {
         $criteria = $this->scopeManager->getCriteria(ScopeManager::BASE_SCOPE);
-        $slug = $this->repository->getSlugByUrlAndScopeCriteria(LoadSlugsData::SLUG_URL_USER, $criteria);
+        $slug = $this->repository->getSlugByUrlAndScopeCriteria(LoadSlugsData::SLUG_URL_PAGE, $criteria);
         $this->assertNull($slug);
     }
 
     public function testGetSlugByUrlAndScopeCriteriaSlugWithoutScopes()
     {
         $criteria = $this->scopeManager->getCriteria(ScopeManager::BASE_SCOPE);
-        $slug = $this->repository->getSlugByUrlAndScopeCriteria(LoadSlugsData::SLUG_URL_PAGE, $criteria);
-        $expected = $this->getReference(LoadSlugsData::SLUG_URL_PAGE);
+        $slug = $this->repository->getSlugByUrlAndScopeCriteria(LoadSlugsData::SLUG_URL_ANONYMOUS, $criteria);
+        $expected = $this->getReference(LoadSlugsData::SLUG_URL_ANONYMOUS);
         $this->assertSame($expected, $slug);
     }
 
@@ -87,8 +87,16 @@ class SlugRepositoryTest extends WebTestCase
         $account = $this->getReference(LoadAccounts::DEFAULT_ACCOUNT_NAME);
 
         $criteria = $this->scopeManager->getCriteria(ScopeManager::BASE_SCOPE, ['account' => $account]);
-        $slug = $this->repository->getSlugByUrlAndScopeCriteria(LoadSlugsData::SLUG_URL_PAGE, $criteria);
-        $expected = $this->getReference(LoadSlugsData::SLUG_URL_PAGE);
+        $slug = $this->repository->getSlugByUrlAndScopeCriteria(LoadSlugsData::SLUG_URL_ANONYMOUS, $criteria);
+        $expected = $this->getReference(LoadSlugsData::SLUG_URL_ANONYMOUS);
+        $this->assertSame($expected, $slug);
+    }
+
+    public function testGetSlugByUrlAndScopeCriteriaSlugWithoutScopesMatched()
+    {
+        $criteria = $this->scopeManager->getCriteria(ScopeManager::BASE_SCOPE);
+        $slug = $this->repository->getSlugByUrlAndScopeCriteria(LoadSlugsData::SLUG_URL_USER, $criteria);
+        $expected = $this->getReference(LoadSlugsData::SLUG_USER_SAME_URL);
         $this->assertSame($expected, $slug);
     }
 }

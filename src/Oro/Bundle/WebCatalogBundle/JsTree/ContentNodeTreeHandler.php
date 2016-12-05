@@ -61,6 +61,18 @@ class ContentNodeTreeHandler extends AbstractTreeHandler
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function createTree($root = null, $includeRoot = true)
+    {
+        if (!$root) {
+            return [];
+        }
+
+        return parent::createTree($root, $includeRoot);
+    }
+
+    /**
      * @param WebCatalog $webCatalog
      * @return ContentNode
      */
