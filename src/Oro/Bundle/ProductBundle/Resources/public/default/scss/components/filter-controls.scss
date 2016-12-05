@@ -99,6 +99,10 @@
 
 @include breakpoint('tablet') {
   .catalog__filter-controls {
+    .pagination-container {
+      display: none;
+    }
+
     &__item {
       &.sorting {
         flex-basis: auto;
@@ -115,6 +119,32 @@
 
       &.page-size {
         order: 2;
+      }
+    }
+  }
+}
+
+@include breakpoint('mobile-landscape') {
+  .catalog__filter-controls {
+    &__item {
+      &.sorting {
+        margin: 0 0 10px;
+
+        flex-basis: 50%;
+      }
+
+      &.display-options {
+        margin-bottom: 10px;
+
+        flex-basis: 50%;
+        order: 1;
+      }
+
+      &.oro-pagination {
+        margin: 0;
+
+        order: 3;
+        text-align: right;
       }
     }
   }
