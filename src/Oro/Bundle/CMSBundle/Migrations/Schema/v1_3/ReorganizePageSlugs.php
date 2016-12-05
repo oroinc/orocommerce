@@ -75,9 +75,15 @@ class ReorganizePageSlugs implements Migration, DatabasePlatformAwareInterface, 
     {
         $preSchema = clone $schema;
         $table = $preSchema->getTable('oro_cms_page');
-        $table->dropIndex('UNIQ_BCE4CB4A9B14E34B');
-        $table->removeForeignKey('FK_BCE4CB4A9B14E34B');
-        $table->dropColumn('current_slug_id');
+        if ($table->hasIndex('UNIQ_BCE4CB4A9B14E34B')) {
+            $table->dropIndex('UNIQ_BCE4CB4A9B14E34B');
+        }
+        if ($table->hasForeignKey('FK_BCE4CB4A9B14E34B')) {
+            $table->removeForeignKey('FK_BCE4CB4A9B14E34B');
+        }
+        if ($table->hasColumn('current_slug_id')) {
+            $table->dropColumn('current_slug_id');
+        }
 
         foreach ($this->getSchemaDiff($schema, $preSchema) as $query) {
             $queries->addQuery($query);
