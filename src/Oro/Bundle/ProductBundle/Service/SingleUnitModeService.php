@@ -46,8 +46,16 @@ class SingleUnitModeService
      */
     public function isProductPrimaryUnitSingleAndDefault(Product $product)
     {
-        $defaultUnit = $this->configManager->get(Configuration::getConfigKeyByName(Configuration::DEFAULT_UNIT));
+        $defaultUnit = $this->getConfigDefaultUnit();
         return $product->getPrimaryUnitPrecision()->getUnit()->getCode() === $defaultUnit
             && $product->getAdditionalUnitPrecisions()->isEmpty();
+    }
+
+    /**
+     * @return string
+     */
+    public function getConfigDefaultUnit()
+    {
+        return $this->configManager->get(Configuration::getConfigKeyByName(Configuration::DEFAULT_UNIT));
     }
 }

@@ -114,6 +114,18 @@ class SingleUnitModeServiceTest extends \PHPUnit_Framework_TestCase
         static::assertFalse($this->unitModeProvider->isProductPrimaryUnitSingleAndDefault($product));
     }
 
+    public function testGetConfigDefaultUnit()
+    {
+        $defaultUnit = 'item';
+
+        $this->configManager->expects(static::once())
+            ->method('get')
+            ->with('oro_product.default_unit')
+            ->willReturn($defaultUnit);
+
+        $this->assertEquals($defaultUnit, $this->unitModeProvider->getConfigDefaultUnit());
+    }
+
     /**
      * @param string $unitCode
      * @return Product

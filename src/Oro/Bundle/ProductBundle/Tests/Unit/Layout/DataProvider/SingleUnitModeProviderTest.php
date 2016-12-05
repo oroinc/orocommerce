@@ -17,6 +17,9 @@ class SingleUnitModeProviderTest extends \PHPUnit_Framework_TestCase
     /** @internal */
     const PRODUCT_PRIMARY_UNIT = true;
 
+    /** @internal */
+    const CONFIG_DEFAULT_UNIT = 'item';
+
     /** @var SingleUnitModeProvider */
     private $provider;
 
@@ -59,6 +62,18 @@ class SingleUnitModeProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(
             self::PRODUCT_PRIMARY_UNIT,
             $this->provider->isProductPrimaryUnitSingleAndDefault(new Product())
+        );
+    }
+
+    public function testGetConfigDefaultUnit()
+    {
+        $this->singleUnitService->expects($this->once())
+            ->method('getConfigDefaultUnit')
+            ->willReturn(self::CONFIG_DEFAULT_UNIT);
+
+        $this->assertSame(
+            self::CONFIG_DEFAULT_UNIT,
+            $this->provider->getConfigDefaultUnit()
         );
     }
 }

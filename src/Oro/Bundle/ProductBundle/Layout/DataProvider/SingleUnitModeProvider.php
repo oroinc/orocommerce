@@ -42,4 +42,12 @@ class SingleUnitModeProvider
     {
         return $this->singleUnitService->isProductPrimaryUnitSingleAndDefault($product);
     }
+
+    /**
+     * @return string
+     */
+    public function getConfigDefaultUnit()
+    {
+        return $this->singleUnitService->getConfigDefaultUnit();
+    }
 }

@@ -15,7 +15,12 @@
         {% set renderCache %}
             {% set attr = layout_attr_defaults(attr, {
                 '~class': ' product-item__qty__current-grid',
-                'data-page-component-module': 'oroproduct/js/app/components/product-unit-select-component'
+                'data-page-component-module': 'oroproduct/js/app/components/product-unit-select-component',
+                'data-page-component-options': {
+                    'singleUnitMode': singleUnitMode,
+                    'singleUnitModeCodeVisible': singleUnitModeCodeVisible,
+                    'configDefaultUnit': configDefaultUnit
+                }|json_encode
             }) %}
             <div {{ block('block_attributes') }}>
                 {{ block_widget(block) }}

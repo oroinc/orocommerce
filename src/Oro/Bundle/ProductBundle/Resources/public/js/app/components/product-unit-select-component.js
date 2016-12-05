@@ -14,7 +14,10 @@ define(function(require) {
          * @property {Object}
          */
         options: {
-            unitLabel: 'oro.product.product_unit.%s.label.full'
+            unitLabel: 'oro.product.product_unit.%s.label.full',
+            singleUnitMode: false,
+            singleUnitModeCodeVisible: false,
+            configDefaultUnit: null
         },
 
         /**
@@ -31,15 +34,32 @@ define(function(require) {
             if (!model) {
                 return;
             }
+
             var productUnits = model.get('product_units');
             var select = this.options._sourceElement.find('select');
             select.empty();
+
             for (var i = 0; i < productUnits.length; i++) {
                 var unitCode = productUnits[i];
                 var unitValue = _.__(this.options.unitLabel.replace('%s', unitCode));
                 select.append($('<option></option>').attr('value', unitCode).text(unitValue));
             }
             select.change();
+
+            if (this.isProductApplySingleUnitMode(productUnits)) {
+                select.select2("container").hide();
+                if (this.options.singleUnitModeCodeVisible) {
+                    select.parent().append('<span class="label">/ ' + productUnits[0] + '</span>');
+                }
+            }
+        },
+
+        isProductApplySingleUnitMode: function(productUnits) {
+            if (this.options.singleUnitMode && productUnits.length == 1) {
+                return productUnits[0] == this.options.configDefaultUnit;
+            }
+
+            return false;
         }
     });
 
