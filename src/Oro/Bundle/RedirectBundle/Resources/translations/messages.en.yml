@@ -20,7 +20,7 @@ oro:
             url_hash.label: URL Hash
             redirects.label: Redirects
             scopes.label: Scopes
-            localization: Localization
+            localization.label: Localization
 
         system_configuration:
             fields:
