@@ -1,16 +1,3 @@
 {% block oro_cms_page_variant_widget %}
-    <div class="row-oro">
-        <h5>{{ 'oro.cms.page.content_variant_type.label'|trans }}</h5>
-
-        {{ form_row(form.cmsPage) }}
-
-        <div class="scope-elements">
-            <h5>{{ form.scopes.vars.label|trans }}</h5>
-            {{ form_widget(form.scopes) }}
-        </div>
-
-        <div class="hide">
-            {{ form_rest(form) }}
-        </div>
-    </div>
+    {{ form_row(form.cmsPage) }}
 {% endblock %}

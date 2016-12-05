@@ -10,6 +10,7 @@ use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\RadioType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -57,7 +58,7 @@ class SystemPageVariantType extends AbstractType
             )
             ->add(
                 'default',
-                'checkbox',
+                RadioType::class,
                 [
                     'required' => true
                 ]

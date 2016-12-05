@@ -2,10 +2,12 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Twig;
 
+use Oro\Bundle\WebCatalogBundle\ContentVariantType\ContentVariantTypeRegistry;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Bundle\WebCatalogBundle\JsTree\ContentNodeTreeHandler;
 use Oro\Bundle\WebCatalogBundle\Twig\WebCatalogExtension;
+use Oro\Component\WebCatalog\ContentVariantTypeInterface;
 
 class WebCatalogExtensionTest extends \PHPUnit_Framework_TestCase
 {
@@ -13,6 +15,11 @@ class WebCatalogExtensionTest extends \PHPUnit_Framework_TestCase
      * @var ContentNodeTreeHandler|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $treeHandler;
+
+    /**
+     * @var ContentVariantTypeRegistry|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $contentVariantTypeRegistry;
 
     /**
      * @var WebCatalogExtension
@@ -24,7 +31,10 @@ class WebCatalogExtensionTest extends \PHPUnit_Framework_TestCase
         $this->treeHandler = $this->getMockBuilder(ContentNodeTreeHandler::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->extension = new WebCatalogExtension($this->treeHandler);
+        $this->contentVariantTypeRegistry = $this->getMockBuilder(ContentVariantTypeRegistry::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->extension = new WebCatalogExtension($this->treeHandler, $this->contentVariantTypeRegistry);
     }
 
     public function testGetName()
@@ -36,6 +46,10 @@ class WebCatalogExtensionTest extends \PHPUnit_Framework_TestCase
     {
         $expected = [
             new \Twig_SimpleFunction('oro_web_catalog_tree', [$this->extension, 'getNodesTree']),
+            new \Twig_SimpleFunction(
+                'oro_web_catalog_content_variant_title',
+                [$this->extension, 'getContentVariantTitle']
+            ),
         ];
         $this->assertEquals($expected, $this->extension->getFunctions());
     }
@@ -54,5 +68,23 @@ class WebCatalogExtensionTest extends \PHPUnit_Framework_TestCase
             ->with($root, true)
             ->willReturn($nodes);
         $this->assertEquals($nodes, $this->extension->getNodesTree($webCatalog));
+    }
+
+    public function testGetContentVariantTitle()
+    {
+        $typeName = 'type';
+        $title = 'Title';
+
+        $type = $this->getMock(ContentVariantTypeInterface::class);
+        $type->expects($this->once())
+            ->method('getTitle')
+            ->willReturn($title);
+
+        $this->contentVariantTypeRegistry->expects($this->once())
+            ->method('getContentVariantType')
+            ->with($typeName)
+            ->willReturn($type);
+
+        $this->assertEquals($title, $this->extension->getContentVariantTitle($typeName));
     }
 }

@@ -55,6 +55,7 @@ services:
         public: false
         arguments:
             - '@oro_web_catalog.content_node_tree_handler'
+            - '@oro_web_catalog.content_variant_type.registry'
         tags:
             - { name: twig.extension }
 

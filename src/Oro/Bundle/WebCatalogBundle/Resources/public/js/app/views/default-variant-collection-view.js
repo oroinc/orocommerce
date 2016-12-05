@@ -8,46 +8,62 @@ define(function(require) {
     var _ = require('underscore');
 
     DefaultVariantCollectionView = BaseView.extend({
-        $collection: {},
-        $defaultSelector: '[name$="[default]"]',
+        $collection: null,
+
+        options: {
+            defaultSelector: '[name$="[default]"]',
+            itemSelector: '[data-role="content-variant-item"]',
+            defaultItemClass: 'content-variant-item-default'
+        },
 
         /**
          * @inheritDoc
          */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});
-            this.$collection = $(this.options.el);
-            this.$defaultSelector = this.options.defaultSelector;
 
+            this.$el.on(
+                'click',
+                this.options.defaultSelector,
+                _.bind(
+                    function (e) {
+                        this.onDefaultChange($(e.target));
+                    },
+                    this
+                )
+            );
             mediator.on('webcatalog:content-variant-collection:add', this.handleAdd, this);
-            this.$collection.on('content:remove', _.bind(this.handleRemove, this));
+            mediator.on('webcatalog:content-variant-collection:remove', this.handleRemove, this);
 
             this.handleAdd();
         },
 
-        handleRemove: function(e) {
+        handleRemove: function($container) {
             // Check is default variant removed
-            var $target = $(e.target);
-            if ($target.data('role') === 'content-variant-item' &&
-                $target.find(this.$defaultSelector + ':checked').length === 0
-            ) {
+            if ($container.find(this.options.defaultSelector + ':checked').length === 0) {
                 this.checkDefaultVariant();
             }
         },
 
         handleAdd: function() {
-            if (this.$collection.children().length &&
-                this.$collection.find(this.$defaultSelector + ':checked').length === 0
+            if (this.$el.find(this.options.itemSelector).length &&
+                this.$el.find(this.options.defaultSelector + ':checked').length === 0
             ) {
                 this.checkDefaultVariant();
             }
         },
         
         checkDefaultVariant: function() {
-            var $default = this.$collection.find(this.$defaultSelector + ':not(:checked)').first();
+            var $default = this.$el.find(this.options.defaultSelector + ':not(:checked)').first();
             $default.prop('checked', true).trigger('change');
-        }
 
+            this.onDefaultChange($default);
+        },
+
+        onDefaultChange: function ($default) {
+            this.$el.find('.' + this.options.defaultItemClass).removeClass(this.options.defaultItemClass);
+            $default.closest(this.options.itemSelector).addClass(this.options.defaultItemClass);
+        }
     });
 
     return DefaultVariantCollectionView;

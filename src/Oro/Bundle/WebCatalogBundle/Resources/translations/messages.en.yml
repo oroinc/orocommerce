@@ -39,6 +39,7 @@ oro:
             node.label: Content Node
             scopes.label: Restrictions
             slugs.label: Slugs
+            default.label: Default Variant
 
             variant_type:
                 system_page.label: System Page

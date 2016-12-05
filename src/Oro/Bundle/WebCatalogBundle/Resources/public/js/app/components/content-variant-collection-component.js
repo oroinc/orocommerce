@@ -10,6 +10,7 @@ define(function(require) {
     ContentVariantCollectionComponent = BaseComponent.extend({
         options: {
             buttonSelector: '[data-role="variant-button"]',
+            variantRemoveSelector: '[data-action="remove"]',
             collectionContainerSelector: '[data-role="collection-container"]'
         },
 
@@ -22,6 +23,7 @@ define(function(require) {
             this.$el = this.options._sourceElement;
 
             this.$el.on('click', this.options.buttonSelector, _.bind(this.onAdd, this));
+            this.$el.on('click', this.options.variantRemoveSelector, _.bind(this.onRemove, this));
             this.prototypeName = this.$el.data('prototype-name') || '__name__';
             this.$collectionContainer = this.$el.find(this.options.collectionContainerSelector);
         },
@@ -47,7 +49,15 @@ define(function(require) {
                 this.validateContainer();
             }
 
-            mediator.trigger('webcatalog:content-variant-collection:add');
+            mediator.trigger('webcatalog:content-variant-collection:add', this.$el);
+        },
+
+        onRemove: function(e) {
+            e.preventDefault();
+            var item = $(e.target).closest('*[data-content]');
+            item.remove();
+
+            mediator.trigger('webcatalog:content-variant-collection:remove', this.$el);
         },
 
         validateContainer: function() {

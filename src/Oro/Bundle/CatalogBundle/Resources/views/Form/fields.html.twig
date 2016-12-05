@@ -27,18 +27,5 @@
 {% endblock %}
 
 {% block oro_catalog_category_page_variant_widget %}
-    <div class="row-oro">
-        <h5>{{ 'oro.catalog.category.content_variant_type.label'|trans }}</h5>
-
-        {{ form_row(form.categoryPageCategory) }}
-
-        <div class="scope-elements">
-            <h5>{{ form.scopes.vars.label|trans }}</h5>
-            {{ form_widget(form.scopes) }}
-        </div>
-
-        <div class="hide">
-            {{ form_rest(form) }}
-        </div>
-    </div>
+    {{ form_row(form.categoryPageCategory) }}
 {% endblock %}

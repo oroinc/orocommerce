@@ -199,18 +199,5 @@
 {% endblock %}
 
 {% block oro_product_page_variant_widget %}
-    <div class="row-oro">
-        <h5>{{ 'oro.product.content_variant.product_page.label'|trans }}</h5>
-
-        {{ form_row(form.productPageProduct) }}
-
-        <div class="scope-elements">
-            <h5>{{ form.scopes.vars.label|trans }}</h5>
-            {{ form_widget(form.scopes) }}
-        </div>
-
-        <div class="hide">
-            {{ form_rest(form) }}
-        </div>
-    </div>
+    {{ form_row(form.productPageProduct) }}
 {% endblock %}
