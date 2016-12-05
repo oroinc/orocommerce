@@ -43,7 +43,7 @@
     }) %}
     <h3 {{ block('block_attributes') }}>
         <a href="{{ path('oro_product_frontend_product_view', {id: product.id}) }}"
-           class="view-product">{{ product.getDefaultName }}</a>
+           class="view-product">{{ product.name }}</a>
     </h3>
 {% endblock %}
 
