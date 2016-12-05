@@ -13,7 +13,7 @@
         product: {
             id: '<%= model.id %>',
             sku: '<%= model.sku %>',
-            getDefaultName: '<%= model.name %>',
+            name: '<%= model.name %>',
             shortDescription: '<%= model.shortDescription %>',
         },
         class_prefix: '<%= themeOptions.currentRowView %>'
@@ -47,7 +47,7 @@
                widgetModule: 'orofrontend/default/js/widgets/line-clamp-widget',
            }|json_encode }}"
            class="view-product"
-        >{{ product.getDefaultName }}</a>
+        >{{ product.name }}</a>
     </h3>
 {% endblock %}
 
