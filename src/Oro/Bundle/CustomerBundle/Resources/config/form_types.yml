@@ -117,6 +117,7 @@ services:
         arguments:
             - '@oro_security.security_facade'
             - '@doctrine'
+            - '@oro_security.acl_helper'
         calls:
             - [setRoleClass, ['%oro_customer.entity.account_user_role.class%']]
         tags:

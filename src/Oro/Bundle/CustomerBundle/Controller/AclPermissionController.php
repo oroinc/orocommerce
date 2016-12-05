@@ -13,17 +13,19 @@ class AclPermissionController extends Controller
 {
     /**
      * @Route(
-     *      "/acl-access-levels/{oid}",
+     *      "/acl-access-levels/{oid}/{permission}",
      *      name="oro_account_acl_access_levels",
-     *      requirements={"oid"="\w+:[\w\(\)]+"},
-     *      defaults={"_format"="json"}
+     *      requirements={"oid"="[\w]+:[\w\:\(\)\|]+", "permission"="[\w/]+"},
+     *      defaults={"_format"="json", "permission"=null}
      * )
      * @Template
      *
      * @param string $oid
+     * @param string $permission
+     *
      * @return array
      */
-    public function aclAccessLevelsAction($oid)
+    public function aclAccessLevelsAction($oid, $permission = null)
     {
         if (strpos($oid, 'entity:') === 0) {
             $oid = 'entity:' . $this->get('oro_entity.routing_helper')->resolveEntityClass(substr($oid, 7));
@@ -34,7 +36,7 @@ class AclPermissionController extends Controller
 
         $levels = $this
             ->get('oro_security.acl.manager')
-            ->getAccessLevels($oid);
+            ->getAccessLevels($oid, $permission);
 
         $chainMetadataProvider->stopProviderEmulation();
 

@@ -74,13 +74,12 @@ services:
         arguments:
             - '@oro_inventory.entity_config_relations_migration'
         tags:
-            - { name: oro_entity_extend.warmer, priority: 500 }
+            - { name: oro_entity_extend.warmer, priority: -500 }
 
     oro_inventory.entity_config_relations_migration:
         class: 'Oro\Bundle\InventoryBundle\CacheWarmer\EntityConfigRelationsMigration'
         arguments:
             - '@doctrine'
-            - '@oro_entity_config.config_manager'
             - '@logger'
             - '%installed%'
 
