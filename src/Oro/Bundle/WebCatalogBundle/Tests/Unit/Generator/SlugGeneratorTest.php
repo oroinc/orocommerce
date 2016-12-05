@@ -282,6 +282,11 @@ class SlugGeneratorTest extends \PHPUnit_Framework_TestCase
         $contentNode->addContentVariant($contentVariant);
         $contentNode->addSlugPrototype($slugPrototype);
 
+        $contentVariantType = $this->getMock(ContentVariantTypeInterface::class);
+        $this->contentVariantTypeRegistry->expects($this->once())
+            ->method('getContentVariantType')
+            ->willReturn($contentVariantType);
+
         $this->slugGenerator->generate($contentNode);
 
         /** @var ContentVariant $actualContentVariant */

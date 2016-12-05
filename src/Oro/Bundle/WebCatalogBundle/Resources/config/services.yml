@@ -65,6 +65,7 @@ services:
             - '@oro_web_catalog.model.content_node_materialized_path_modifier'
             - '@oro_commerce_entity.extra_insert_entity_storage'
             - '@oro_web_catalog.content_node_utils.content_node_name_filler'
+            - '@oro_web_catalog.generator.slug_generator.link'
         tags:
             - { name: doctrine.orm.entity_listener, entity: '%oro_web_catalog.entity.content_node.class%', event: prePersist }
             - { name: doctrine.orm.entity_listener, entity: '%oro_web_catalog.entity.content_node.class%', event: postPersist }
@@ -146,3 +147,7 @@ services:
         class: Oro\Bundle\WebCatalogBundle\Generator\SlugGenerator
         arguments:
             - '@oro_web_catalog.content_variant_type.registry'
+
+    oro_web_catalog.generator.slug_generator.link:
+        tags:
+            - { name: oro_service_link,  service: oro_web_catalog.generator.slug_generator }

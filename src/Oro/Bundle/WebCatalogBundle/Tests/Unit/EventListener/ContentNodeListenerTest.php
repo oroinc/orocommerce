@@ -5,9 +5,11 @@ namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\EventListener;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Oro\Bundle\CommerceEntityBundle\Storage\ExtraActionEntityStorageInterface;
 use Oro\Bundle\WebCatalogBundle\ContentNodeUtils\ContentNodeNameFiller;
+use Oro\Bundle\WebCatalogBundle\Generator\SlugGenerator;
 use Oro\Bundle\WebCatalogBundle\Model\ContentNodeMaterializedPathModifier;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\EventListener\ContentNodeListener;
+use Oro\Component\DependencyInjection\ServiceLink;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class ContentNodeListenerTest extends \PHPUnit_Framework_TestCase
@@ -30,6 +32,11 @@ class ContentNodeListenerTest extends \PHPUnit_Framework_TestCase
     protected $contentNodeNameFiller;
 
     /**
+     * @var SlugGenerator|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $slugGenerator;
+
+    /**
      * @var ContentNodeListener
      */
     protected $contentNodeListener;
@@ -45,11 +52,21 @@ class ContentNodeListenerTest extends \PHPUnit_Framework_TestCase
         $this->contentNodeNameFiller = $this->getMockBuilder(ContentNodeNameFiller::class)
             ->disableOriginalConstructor()
             ->getMock();
+        $this->slugGenerator = $this->getMockBuilder(SlugGenerator::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $generatorLink = $this->getMockBuilder(ServiceLink::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $generatorLink->expects($this->any())
+            ->method('getService')
+            ->willReturn($this->slugGenerator);
 
         $this->contentNodeListener = new ContentNodeListener(
             $this->modifier,
             $this->storage,
-            $this->contentNodeNameFiller
+            $this->contentNodeNameFiller,
+            $generatorLink
         );
     }
 
@@ -107,9 +124,17 @@ class ContentNodeListenerTest extends \PHPUnit_Framework_TestCase
             ->with($contentNode)
             ->willReturn([new ContentNode()]);
 
-        $this->storage->expects($this->once())
+        $this->storage->expects($this->at(0))
+            ->method('scheduleForExtraInsert')
+            ->with($contentNode);
+
+        $this->storage->expects($this->at(1))
             ->method('scheduleForExtraInsert')
             ->with($childNode);
+
+        $this->slugGenerator->expects($this->once())
+            ->method('generate')
+            ->with($contentNode);
 
         $this->contentNodeListener->preUpdate($contentNode, $args);
     }

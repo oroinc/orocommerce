@@ -32,16 +32,7 @@ class SlugEntityGenerator
      */
     public function generate(SluggableInterface $entity)
     {
-        $filledSlugPrototypes = $this->getFilledSlugPrototypes($entity);
-        $slugUrls = new ArrayCollection();
-        foreach ($filledSlugPrototypes as $filledSlugPrototype) {
-            $slugPrototype = $filledSlugPrototype->getUrl();
-            $localization = $filledSlugPrototype->getLocalization();
-
-            $url = $this->getUrl($entity, $slugPrototype);
-            $slugUrl = new SlugUrl($url, $localization);
-            $slugUrls->set($this->getLocalizationId($localization), $slugUrl);
-        }
+        $slugUrls = $this->getSlugUrls($entity);
 
         $toRemove = [];
         foreach ($entity->getSlugs() as $slug) {
@@ -84,6 +75,26 @@ class SlugEntityGenerator
         }
 
         return $filledSlugPrototypes;
+    }
+
+    /**
+     * @param SluggableInterface $entity
+     * @return Collection|SlugUrl[]
+     */
+    protected function getSlugUrls(SluggableInterface $entity)
+    {
+        $filledSlugPrototypes = $this->getFilledSlugPrototypes($entity);
+        $slugUrls = new ArrayCollection();
+        foreach ($filledSlugPrototypes as $filledSlugPrototype) {
+            $slugPrototype = $filledSlugPrototype->getUrl();
+            $localization = $filledSlugPrototype->getLocalization();
+
+            $url = $this->getUrl($entity, $slugPrototype);
+            $slugUrl = new SlugUrl($url, $localization);
+            $slugUrls->set($this->getLocalizationId($localization), $slugUrl);
+        }
+
+        return $slugUrls;
     }
 
     /**

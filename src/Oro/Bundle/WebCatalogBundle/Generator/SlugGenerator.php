@@ -2,12 +2,15 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Generator;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Generator\DTO\SlugUrl;
 use Oro\Bundle\WebCatalogBundle\ContentVariantType\ContentVariantTypeRegistry;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
+use Oro\Component\Routing\RouteData;
 
 class SlugGenerator
 {
@@ -35,44 +38,52 @@ class SlugGenerator
             $slugUrls = $this->prepareSlugUrls($contentNode);
         } else {
             // Slug url for root content node
-            $slugUrls = [new SlugUrl(self::ROOT_URL)];
+            $slugUrls = new ArrayCollection([new SlugUrl(self::ROOT_URL)]);
         }
 
-        foreach ($slugUrls as $slugUrl) {
-            $this->bindSlugs($contentNode, $slugUrl);
+        $this->bindSlugs($contentNode, $slugUrls);
+
+        if (!$contentNode->getChildNodes()->isEmpty()) {
+            foreach ($contentNode->getChildNodes() as $childNode) {
+                $this->generate($childNode);
+            }
         }
     }
 
     /**
      * @param ContentNode $contentNode
-     * @param SlugUrl $slugUrl
+     * @param SlugUrl[]|Collection $slugUrls
      */
-    protected function bindSlugs(ContentNode $contentNode, SlugUrl $slugUrl)
+    protected function bindSlugs(ContentNode $contentNode, Collection $slugUrls)
     {
-        $contentVariants = $contentNode->getContentVariants();
-
-        foreach ($contentVariants as $contentVariant) {
+        foreach ($contentNode->getContentVariants() as $contentVariant) {
             $contentVariantType = $this->contentVariantTypeRegistry->getContentVariantType($contentVariant->getType());
             $routeData = $contentVariantType->getRouteData($contentVariant);
             $scopes = $contentVariant->getScopes();
 
-            $slug = $this->getExistingSlug($slugUrl, $contentVariant);
-            if ($slug) {
-                $slug->resetScopes();
-            } else {
-                $slug = new Slug();
-                $slug->setUrl($slugUrl->getUrl());
-                $slug->setLocalization($slugUrl->getLocalization());
-
-                $contentVariant->addSlug($slug);
+            $toRemove = [];
+            foreach ($contentVariant->getSlugs() as $slug) {
+                $localeId = (int)$this->getLocaleId($slug->getLocalization());
+                if ($slugUrls->containsKey($localeId)) {
+                    /** @var SlugUrl $slugUrl */
+                    $slugUrl = $slugUrls->get($localeId);
+                    $slug->resetScopes();
+                    $this->fillSlug($slug, $slugUrl, $routeData, $scopes);
+                } else {
+                    $toRemove[] = $slug;
+                }
+            }
+            foreach ($toRemove as $slugToRemove) {
+                $contentVariant->removeSlug($slugToRemove);
             }
 
-            foreach ($scopes as $scope) {
-                $slug->addScope($scope);
+            foreach ($slugUrls as $slugUrl) {
+                if (!$this->getExistingSlug($slugUrl, $contentVariant)) {
+                    $slug = new Slug();
+                    $this->fillSlug($slug, $slugUrl, $routeData, $scopes);
+                    $contentVariant->addSlug($slug);
+                }
             }
-
-            $slug->setRouteName($routeData->getRoute());
-            $slug->setRouteParameters($routeData->getRouteParameters());
         }
     }
 
@@ -98,14 +109,14 @@ class SlugGenerator
 
     /**
      * @param ContentNode $contentNode
-     * @return SlugUrl[]
+     * @return SlugUrl[]|Collection
      */
     protected function prepareSlugUrls(ContentNode $contentNode)
     {
         $filledSlugPrototypes = $this->getFilledSlugPrototypes($contentNode);
         $parentNodeSlugUrls = $this->getParentNodeSlugUrls($contentNode);
 
-        $slugUrls = [];
+        $slugUrls = new ArrayCollection();
         foreach ($filledSlugPrototypes as $localeId => $changedSlugPrototypeValue) {
             $slugPrototype = $changedSlugPrototypeValue->getUrl();
             $locale = $changedSlugPrototypeValue->getLocalization();
@@ -118,7 +129,7 @@ class SlugGenerator
             }
 
             if (null !== $url) {
-                $slugUrls[] = new SlugUrl($url, $locale);
+                $slugUrls->set((int)$this->getLocaleId($locale), new SlugUrl($url, $locale));
             }
         }
 
@@ -215,5 +226,22 @@ class SlugGenerator
         }
 
         return null;
+    }
+
+    /**
+     * @param Slug $slug
+     * @param SlugUrl $slugUrl
+     * @param RouteData $routeData
+     * @param Collection $scopes
+     */
+    protected function fillSlug(Slug $slug, SlugUrl $slugUrl, RouteData $routeData, Collection $scopes)
+    {
+        $slug->setLocalization($slugUrl->getLocalization());
+        $slug->setUrl($slugUrl->getUrl());
+        $slug->setRouteName($routeData->getRoute());
+        $slug->setRouteParameters($routeData->getRouteParameters());
+        foreach ($scopes as $scope) {
+            $slug->addScope($scope);
+        }
     }
 }
