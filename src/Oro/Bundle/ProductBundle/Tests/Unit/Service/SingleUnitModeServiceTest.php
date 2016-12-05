@@ -45,7 +45,7 @@ class SingleUnitModeServiceTest extends \PHPUnit_Framework_TestCase
 
     public function testIsSingleUnitModeCodeVisible()
     {
-        $singleUnitModeShowCode = true;
+        $showCode = true;
 
         $this->configManager->expects(static::at(0))
             ->method('get')
@@ -55,9 +55,9 @@ class SingleUnitModeServiceTest extends \PHPUnit_Framework_TestCase
         $this->configManager->expects(static::at(1))
             ->method('get')
             ->with('oro_product.single_unit_mode_show_code')
-            ->willReturn($singleUnitModeShowCode);
+            ->willReturn($showCode);
 
-        $this->assertEquals($singleUnitModeShowCode, $this->unitModeProvider->isSingleUnitModeCodeVisible());
+        $this->assertEquals($showCode, $this->unitModeProvider->isSingleUnitModeCodeVisible());
     }
 
     public function testIsSingleUnitModeCodeVisibleMultipleUnitMode()
@@ -79,11 +79,7 @@ class SingleUnitModeServiceTest extends \PHPUnit_Framework_TestCase
             ->with('oro_product.default_unit')
             ->willReturn($unit);
 
-        $product = (new Product)->setPrimaryUnitPrecision($this->getEntity(ProductUnitPrecision::class, [
-            'unit' => $this->getEntity(ProductUnit::class, [
-                'code' => $unit,
-            ]),
-        ]));
+        $product = $this->getProductWithPrimaryUnit($unit);
 
         static::assertTrue($this->unitModeProvider->isProductPrimaryUnitSingleAndDefault($product));
     }
@@ -95,11 +91,7 @@ class SingleUnitModeServiceTest extends \PHPUnit_Framework_TestCase
             ->with('oro_product.default_unit')
             ->willReturn('each');
 
-        $product = (new Product)->setPrimaryUnitPrecision($this->getEntity(ProductUnitPrecision::class, [
-            'unit' => $this->getEntity(ProductUnit::class, [
-                'code' => 'item',
-            ]),
-        ]));
+        $product = $this->getProductWithPrimaryUnit('item');
 
         static::assertFalse($this->unitModeProvider->isProductPrimaryUnitSingleAndDefault($product));
     }
@@ -112,12 +104,7 @@ class SingleUnitModeServiceTest extends \PHPUnit_Framework_TestCase
             ->with('oro_product.default_unit')
             ->willReturn($unit);
 
-        $product = (new Product)
-            ->setPrimaryUnitPrecision($this->getEntity(ProductUnitPrecision::class, [
-                'unit' => $this->getEntity(ProductUnit::class, [
-                    'code' => $unit,
-                ]),
-            ]))
+        $product = $this->getProductWithPrimaryUnit($unit)
             ->addAdditionalUnitPrecision($this->getEntity(ProductUnitPrecision::class, [
                 'unit' => $this->getEntity(ProductUnit::class, [
                     'code' => 'item',
@@ -125,5 +112,20 @@ class SingleUnitModeServiceTest extends \PHPUnit_Framework_TestCase
             ]));
 
         static::assertFalse($this->unitModeProvider->isProductPrimaryUnitSingleAndDefault($product));
+    }
+
+    /**
+     * @param string $unitCode
+     * @return Product
+     */
+    private function getProductWithPrimaryUnit($unitCode)
+    {
+        return (new Product)->setPrimaryUnitPrecision(
+            $this->getEntity(ProductUnitPrecision::class, [
+                'unit' => $this->getEntity(ProductUnit::class, [
+                    'code' => $unitCode,
+                ]),
+            ])
+        );
     }
 }

@@ -47,7 +47,7 @@ services:
         public: false
         arguments:
             - "@oro_product.formatter.product_unit_value"
-            - "@oro_product.provider.unit_mode_provider"
+            - "@oro_product.service.single_unit_mode"
         tags:
             - { name: twig.extension }
 
@@ -211,11 +211,18 @@ services:
             - "@doctrine"
             - "@oro_product.formatter.product_unit_label"
 
-    oro_product.provider.unit_mode_provider:
+    oro_product.service.single_unit_mode:
         class: 'Oro\Bundle\ProductBundle\Service\SingleUnitModeService'
         public: false
         arguments:
             - "@oro_config.manager"
+
+    oro_product.layout.data_provider.single_unit_mode:
+        class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\SingleUnitModeProvider'
+        arguments:
+            - "@oro_product.service.single_unit_mode"
+        tags:
+            - { name: layout.data_provider, alias: oro_product_single_unit_mode }
 
     oro_product.provider.default_product_unit_provider.chain:
         class: 'Oro\Bundle\ProductBundle\Provider\ChainDefaultProductUnitProvider'
@@ -499,4 +506,4 @@ services:
             - 'quantity'
             - 'OroProductBundle:Product:Datagrid/quantitySingleMode.html.twig'
             - {isShortUnitCode: true, isPluralUnitCode: true}
-            - '@oro_product.provider.unit_mode_provider'
+            - '@oro_product.service.single_unit_mode'

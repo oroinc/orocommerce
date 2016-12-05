@@ -49,6 +49,9 @@ layout:
                         productsMatchedPrice: '=data["oro_shopping_list_products"].getMatchedPrice(data["entity"])'
                         productsAllPrices: '=data["oro_shopping_list_products"].getAllPrices(data["entity"])'
                         productsUnits: '=data["oro_shopping_list_products_units"].getProductsUnits(data["entity"])'
+                        singleUnitMode: '=data["oro_product_single_unit_mode"].isSingleUnitMode()'
+                        singleUnitModeCodeVisible: '=data["oro_product_single_unit_mode"].isSingleUnitModeCodeVisible()'
+                        singleUnitModeProductStates: '=data["oro_shopping_list_single_unit_mode"].getProductStates(data["entity"])'
                 shopping_list_line_items_empty:
                     blockType: block
                     options:
