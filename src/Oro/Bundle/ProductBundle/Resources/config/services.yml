@@ -506,4 +506,4 @@ services:
             - 'quantity'
             - 'OroProductBundle:Product:Datagrid/quantitySingleMode.html.twig'
             - {isShortUnitCode: true, isPluralUnitCode: true}
-            - '@oro_product.provider.unit_mode_provider'
+            - '@oro_product.service.single_unit_mode'

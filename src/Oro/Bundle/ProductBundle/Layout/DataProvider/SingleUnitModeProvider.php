@@ -2,8 +2,9 @@
 
 namespace Oro\Bundle\ProductBundle\Layout\DataProvider;
 
-use Oro\Bundle\ProductBundle\Service\SingleUnitModeService;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Service\SingleUnitModeService;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class SingleUnitModeProvider
 {
@@ -42,5 +43,14 @@ class SingleUnitModeProvider
     public function isProductPrimaryUnitSingleAndDefault(Product $product)
     {
         return $this->singleUnitService->isProductPrimaryUnitSingleAndDefault($product);
+    }
+
+    /**
+     * @param ShoppingList|null $shoppingList
+     * @return array
+     */
+    public function getProductStates(ShoppingList $shoppingList = null)
+    {
+        return $this->singleUnitService->getProductStates($shoppingList);
     }
 }

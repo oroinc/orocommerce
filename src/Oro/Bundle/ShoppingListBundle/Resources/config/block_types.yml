@@ -26,6 +26,9 @@ services:
                         productsMatchedPrice: {required: true}
                         productsAllPrices: {required: true}
                         productsUnits: {required: true}
+                        singleUnitMode: {required: true}
+                        singleUnitModeCodeVisible: {required: true}
+                        singleUnitModeProductStates: {required: true}
             - [setName, ['shopping_list_line_items_list']]
         tags:
              - { name: layout.block_type, alias: shopping_list_line_items_list }
