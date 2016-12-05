@@ -49,6 +49,8 @@ class ProductType extends AbstractType
     }
 
     /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     *
      * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
