@@ -18,8 +18,14 @@ $product-view-main-offset-bottom: $offset-y !default;
 $product-view-content-offset-bottom: $offset-y !default;
 
 $product-view-specification-width: 50% !default;
+$product-view-specification-inner-offset: 0 10px 0 0 !default;
+
+$product-view-specification-tablet-inner-offset: 0 !default;
 
 $product-view-description-width: 50% !default;
+$product-view-description-inner-offset: 0 0 0 10px !default;
+
+$product-view-description-tablet-inner-offset: 0 !default;
 
 $product-view-additional-state: left !default;
 $product-view-additional-width: 100% !default;

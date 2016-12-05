@@ -36,10 +36,16 @@
 
     &__specification {
         width: $product-view-specification-width;
+        padding: $product-view-specification-inner-offset;
+
+        box-sizing: border-box;
     }
 
     &__description {
         width: $product-view-description-width;
+        padding: $product-view-description-inner-offset;
+
+        box-sizing: border-box;
     }
 
     &__additional {
@@ -72,10 +78,12 @@
         &__specification {
             width: $product-view-tablet-specification-width;
             margin: $product-view-tablet-specification-offset;
+            padding: $product-view-specification-tablet-inner-offset;
         }
 
         &__description {
             width: $product-view-description-tablet-width;
+            padding: $product-view-description-tablet-inner-offset;
         }
     }
 }

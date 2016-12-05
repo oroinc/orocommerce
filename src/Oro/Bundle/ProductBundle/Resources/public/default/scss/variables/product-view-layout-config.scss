@@ -1,8 +1,5 @@
 // @theme: default;
 
 $product-view-specification-width: 240px;
-$product-view-specification-inner-offset: 0 20px 0 0 !default;
 
-$product-view-specification-tablet-inner-offset: 0 !default;
-
-$product-view-description-width: calc(100% - 240px);
+$product-view-description-width: calc(100% - #{$product-view-specification-width});
