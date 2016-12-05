@@ -19,25 +19,26 @@ define(function(require) {
             this.$collection = $(this.options.el);
             this.$defaultSelector = this.options.defaultSelector;
 
-            if (this.$collection.children().length
-                && this.$collection.find(this.$defaultSelector + ':checked').length == 0) {
-                this.checkDefaultVariant();
-            }
-
             mediator.on('webcatalog:content-variant-collection:add', this.handleAdd, this);
-            this.$collection.on('content:remove', _.bind(this.handleRemove, this))
+            this.$collection.on('content:remove', _.bind(this.handleRemove, this));
+
+            this.handleAdd();
         },
 
         handleRemove: function(e) {
             // Check is default variant removed
-            if ($(e.target).find(this.$defaultSelector + ':checked')) {
+            var $target = $(e.target);
+            if ($target.data('role') === 'content-variant-item' &&
+                $target.find(this.$defaultSelector + ':checked').length === 0
+            ) {
                 this.checkDefaultVariant();
             }
         },
 
         handleAdd: function() {
-            if (this.$collection.children().length
-                && this.$collection.find(this.$defaultSelector + ':checked').length == 0) {
+            if (this.$collection.children().length &&
+                this.$collection.find(this.$defaultSelector + ':checked').length === 0
+            ) {
                 this.checkDefaultVariant();
             }
         },

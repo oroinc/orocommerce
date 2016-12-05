@@ -26,8 +26,7 @@ define(function(require) {
             this.$collectionContainer = this.$el.find(this.options.collectionContainerSelector);
         },
 
-        onAdd: function(e)
-        {
+        onAdd: function(e) {
             e.preventDefault();
 
             var $button = $(e.currentTarget);

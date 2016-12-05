@@ -2,6 +2,7 @@
     {% spaceless %}
     <div data-content="{{ name }}"
          data-validation-optional-group
+         data-role="content-variant-item"
          {% if form.vars.attr['data-validation-optional-group-handler'] is defined %}
              data-validation-optional-group-handler="{{ form.vars.attr['data-validation-optional-group-handler'] }}"
          {% endif %}
