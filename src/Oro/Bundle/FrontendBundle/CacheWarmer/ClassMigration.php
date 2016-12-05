@@ -46,6 +46,13 @@ class ClassMigration
             return;
         }
 
+        /** @var Connection $configConnection */
+        $configConnection = $this->managerRegistry->getConnection('config');
+        $tables = $configConnection->getSchemaManager()->listTableNames();
+        if (!in_array('oro_entity_config', $tables, true)) {
+            return;
+        }
+
         foreach ($this->config as $from => $to) {
             $this->migrateTables($from, $to);
         }
