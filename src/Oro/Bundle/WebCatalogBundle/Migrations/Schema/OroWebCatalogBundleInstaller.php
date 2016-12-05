@@ -9,6 +9,8 @@ use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
 use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtension;
 use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtensionAwareInterface;
+use Oro\Bundle\ScopeBundle\Migration\Extension\ScopeExtensionAwareInterface;
+use Oro\Bundle\ScopeBundle\Migration\Extension\ScopeExtensionAwareTrait;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -17,8 +19,11 @@ use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtensionAwareInterface;
 class OroWebCatalogBundleInstaller implements
     Installation,
     NoteExtensionAwareInterface,
-    SlugExtensionAwareInterface
+    SlugExtensionAwareInterface,
+    ScopeExtensionAwareInterface
 {
+    use ScopeExtensionAwareTrait;
+
     /**
      * @var NoteExtension
      */
@@ -75,6 +80,13 @@ class OroWebCatalogBundleInstaller implements
         $this->addOroContentVariantForeignKeys($schema);
         $this->addOroWebCatalogNodeScopeForeignKeys($schema);
         $this->addOroWebCatalogVariantScopeForeignKeys($schema);
+
+        $this->scopeExtension->addScopeAssociation(
+            $schema,
+            'webCatalog',
+            'oro_web_catalog',
+            'name'
+        );
     }
 
     /**

@@ -16,6 +16,7 @@ use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
+use Oro\Component\WebCatalog\Entity\WebCatalogInterface;
 use Symfony\Component\Form\PreloadedExtension;
 
 class CmsPageVariantTypeTest extends FormIntegrationTestCase
@@ -77,7 +78,7 @@ class CmsPageVariantTypeTest extends FormIntegrationTestCase
     public function testBuildForm()
     {
         $this->assertMetadataCall();
-        $form = $this->factory->create($this->type);
+        $form = $this->factory->create($this->type, null, ['web_catalog' => null]);
 
         $this->assertTrue($form->has('cmsPage'));
         $this->assertTrue($form->has('scopes'));
@@ -105,7 +106,7 @@ class CmsPageVariantTypeTest extends FormIntegrationTestCase
     public function testSubmit($existingData, $submittedData, $expectedPageId, $isDefault)
     {
         $this->assertMetadataCall();
-        $form = $this->factory->create($this->type, $existingData);
+        $form = $this->factory->create($this->type, $existingData, ['web_catalog' => null]);
 
         $this->assertEquals($existingData, $form->getData());
 
@@ -155,20 +156,34 @@ class CmsPageVariantTypeTest extends FormIntegrationTestCase
 
     protected function assertMetadataCall()
     {
-        /** @var ClassMetadata|\PHPUnit_Framework_MockObject_MockObject $metadata */
-        $metadata = $this->getMockBuilder(ClassMetadata::class)
+        /** @var ClassMetadata|\PHPUnit_Framework_MockObject_MockObject $catalogMetadata */
+        $catalogMetadata = $this->getMockBuilder(ClassMetadata::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $metadata->expects($this->once())
+        $catalogMetadata->expects($this->once())
+            ->method('getName')
+            ->willReturn(ContentVariantStub::class);
+
+        /** @var ClassMetadata|\PHPUnit_Framework_MockObject_MockObject $variantMetadata */
+        $variantMetadata = $this->getMockBuilder(ClassMetadata::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $variantMetadata->expects($this->once())
             ->method('getName')
             ->willReturn(ContentVariantStub::class);
         
         /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
         $em = $this->getMock(EntityManagerInterface::class);
-        $em->expects($this->once())
+        $em->expects($this->any())
             ->method('getClassMetadata')
-            ->with(ContentVariantInterface::class)
-            ->willReturn($metadata);
+            ->withConsecutive(
+                [WebCatalogInterface::class],
+                [ContentVariantInterface::class]
+            )
+            ->willReturnOnConsecutiveCalls(
+                $catalogMetadata,
+                $variantMetadata
+            );
         $this->registry->expects($this->any())
             ->method('getManager')
             ->willReturn($em);

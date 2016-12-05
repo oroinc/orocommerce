@@ -42,6 +42,8 @@ class ContentNodeType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        /** @var ContentNode $contentNode */
+        $contentNode = array_key_exists('data', $options) ? $options['data'] : null;
         $builder
             ->add(
                 'parentNode',
@@ -69,7 +71,8 @@ class ContentNodeType extends AbstractType
                 ScopeCollectionType::NAME,
                 [
                     'entry_options' => [
-                        'scope_type' => 'web_content'
+                        'scope_type' => 'web_content',
+                        'web_catalog' => $contentNode ? $contentNode->getWebCatalog() : null
                     ],
                 ]
             )
@@ -77,7 +80,10 @@ class ContentNodeType extends AbstractType
                 'contentVariants',
                 ContentVariantCollectionType::NAME,
                 [
-                    'label' => 'oro.webcatalog.contentvariant.entity_plural_label'
+                    'label' => 'oro.webcatalog.contentvariant.entity_plural_label',
+                    'entry_options' => [
+                        'web_catalog' => $contentNode ? $contentNode->getWebCatalog() : null
+                    ]
                 ]
             );
 

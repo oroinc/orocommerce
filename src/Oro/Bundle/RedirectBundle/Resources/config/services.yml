@@ -15,6 +15,7 @@ services:
         calls:
             - [addSkippedUrlPattern, ['/_profiler', 'dev']]
             - [addSkippedUrlPattern, ['/_wdt', 'dev']]
+            - [addUrlToMatchSlugFirst, ['/']]
 
     oro_redirect.slug.manager:
         class: 'Oro\Bundle\RedirectBundle\Manager\SlugManager'

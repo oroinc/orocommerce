@@ -151,3 +151,20 @@ services:
     oro_web_catalog.generator.slug_generator.link:
         tags:
             - { name: oro_service_link,  service: oro_web_catalog.generator.slug_generator }
+
+    oro_web_catalog.web_catalog_scope_criteria_provider:
+        class: Oro\Bundle\WebCatalogBundle\Provider\ScopeWebCatalogProvider
+        public: false
+        arguments:
+            - '@oro_config.manager'
+
+    oro_web_catalog.web_catalog_scope_criteria_provider.link:
+        public: false
+        tags:
+            - { name: oro_service_link, service: oro_web_catalog.web_catalog_scope_criteria_provider }
+            - { name: oro_scope.provider, scopeType: web_content, priority: 10000 }
+
+    oro_web_catalog.form.extension.web_catalog_scope:
+        class: Oro\Bundle\WebCatalogBundle\Form\Extension\WebCatalogScopeExtension
+        tags:
+            - { name: form.type_extension, extended_type: Oro\Bundle\ScopeBundle\Form\Type\ScopeType }

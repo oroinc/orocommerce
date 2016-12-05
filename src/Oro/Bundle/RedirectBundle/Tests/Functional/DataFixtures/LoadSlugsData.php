@@ -13,6 +13,7 @@ class LoadSlugsData extends AbstractFixture implements DependentFixtureInterface
 {
     const SLUG_URL_ANONYMOUS = '/slug/anonymous';
     const SLUG_URL_USER = '/slug/customer';
+    const SLUG_URL_PAGE = '/slug/page';
 
     /**
      * {@inheritdoc}
@@ -23,6 +24,7 @@ class LoadSlugsData extends AbstractFixture implements DependentFixtureInterface
         $page = $this->getReference(LoadPageData::PAGE_1);
         $this->createSlug($manager, self::SLUG_URL_ANONYMOUS, 'oro_cms_frontend_page_view', ['id' => $page->getId()]);
         $this->createSlug($manager, self::SLUG_URL_USER, 'oro_customer_frontend_account_user_index', []);
+        $this->createSlug($manager, self::SLUG_URL_PAGE, 'oro_customer_frontend_account_user_index', []);
 
         $manager->flush();
     }

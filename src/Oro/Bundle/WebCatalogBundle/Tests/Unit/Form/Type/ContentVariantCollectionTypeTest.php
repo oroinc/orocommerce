@@ -50,9 +50,12 @@ class ContentVariantCollectionTypeTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $resolver->expects($this->once())
+        $resolver->expects($this->any())
             ->method('setDefault')
-            ->with('prototype_name', '__variant_idx__');
+            ->withConsecutive(
+                ['prototype_name', '__variant_idx__'],
+                ['entry_options', []]
+            );
         $this->type->configureOptions($resolver);
     }
 
@@ -161,6 +164,6 @@ class ContentVariantCollectionTypeTest extends \PHPUnit_Framework_TestCase
                 ]
             );
 
-        $this->type->buildForm($builder, ['prototype_name' => '_p_', 'required' => true]);
+        $this->type->buildForm($builder, ['prototype_name' => '_p_', 'required' => true, 'entry_options' => []]);
     }
 }

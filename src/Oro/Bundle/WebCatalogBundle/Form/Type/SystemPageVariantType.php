@@ -6,6 +6,7 @@ use Oro\Bundle\NavigationBundle\Form\Type\RouteChoiceType;
 use Oro\Bundle\ScopeBundle\Form\Type\ScopeCollectionType;
 use Oro\Bundle\WebCatalogBundle\ContentVariantType\SystemPageContentVariantType;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
+use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -42,7 +43,8 @@ class SystemPageVariantType extends AbstractType
                     'label' => 'oro.webcatalog.contentvariant.scopes.label',
                     'required' => false,
                     'entry_options' => [
-                        'scope_type' => 'web_content'
+                        'scope_type' => 'web_content',
+                        'web_catalog' => $options['web_catalog']
                     ]
                 ]
             )
@@ -77,6 +79,9 @@ class SystemPageVariantType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
+        $resolver->setRequired('web_catalog');
+        $resolver->setAllowedTypes('web_catalog', ['null', WebCatalog::class]);
+
         $resolver->setDefaults(
             [
                 'data_class' => ContentVariant::class

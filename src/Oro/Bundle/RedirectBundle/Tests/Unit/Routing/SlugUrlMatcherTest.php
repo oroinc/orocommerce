@@ -291,6 +291,72 @@ class SlugUrlMatcherTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($attributes, $matcher->match($url));
     }
 
+    public function testMatchSlugFirst()
+    {
+        $url = '/test';
+
+        /** @var UrlMatcherInterface|\PHPUnit_Framework_MockObject_MockObject $baseMatcher */
+        $baseMatcher = $this->getMock(UrlMatcherInterface::class);
+
+        $matcher = new SlugUrlMatcher(
+            $baseMatcher,
+            $this->router,
+            $this->registry,
+            $this->frontendHelper,
+            $this->scopeManager,
+            true,
+            'test'
+        );
+
+        $this->frontendHelper->expects($this->once())
+            ->method('isFrontendUrl')
+            ->with($url)
+            ->willReturn(true);
+
+        $baseMatcher->expects($this->never())
+            ->method('match');
+
+        $scopeCriteria = $this->getMockBuilder(ScopeCriteria::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->scopeManager->expects($this->once())
+            ->method('getCriteria')
+            ->with('web_content')
+            ->willReturn($scopeCriteria);
+
+        $routeName = 'test_route';
+        $routeParameters = ['id' => 1];
+        $realUrl = 'real/url?test=1';
+        $slug = new Slug();
+        $slug->setRouteName($routeName);
+        $slug->setRouteParameters($routeParameters);
+        $slug->setUrl($url);
+        $repository = $this->getRepository();
+        $repository->expects($this->once())
+            ->method('getSlugByUrlAndScopeCriteria')
+            ->willReturn($slug);
+        $this->router->expects($this->once())
+            ->method('generate')
+            ->with($routeName, $routeParameters)
+            ->willReturn($realUrl);
+        $this->router->expects($this->once())
+            ->method('match')
+            ->with('/real/url')
+            ->willReturn(['_controller' => 'Some::action']);
+
+        $attributes = [
+            '_route' => $routeName,
+            '_route_params' => $routeParameters,
+            '_controller' => 'Some::action',
+            '_resolved_slug_url' => '/' . $realUrl,
+            '_used_slug' => $slug,
+            'id' => 1
+        ];
+
+        $matcher->addUrlToMatchSlugFirst($url);
+        $this->assertEquals($attributes, $matcher->match($url));
+    }
+
     public function testSetContext()
     {
         /** @var RequestContext|\PHPUnit_Framework_MockObject_MockObject $context */
@@ -499,6 +565,80 @@ class SlugUrlMatcherTest extends \PHPUnit_Framework_TestCase
             'id' => 1
         ];
 
+        $this->assertEquals($attributes, $matcher->matchRequest($request));
+    }
+
+    public function testMatchRequestSlugFirst()
+    {
+        $url = '/test';
+
+        /** @var Request|\PHPUnit_Framework_MockObject_MockObject $request */
+        $request = $this->getMockBuilder(Request::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $request->expects($this->any())
+            ->method('getPathInfo')
+            ->willReturn($url);
+
+        /** @var RequestMatcherInterface|\PHPUnit_Framework_MockObject_MockObject $baseMatcher */
+        $baseMatcher = $this->getMock(RequestMatcherInterface::class);
+
+        $matcher = new SlugUrlMatcher(
+            $baseMatcher,
+            $this->router,
+            $this->registry,
+            $this->frontendHelper,
+            $this->scopeManager,
+            true,
+            'test'
+        );
+
+        $this->frontendHelper->expects($this->once())
+            ->method('isFrontendUrl')
+            ->with($url)
+            ->willReturn(true);
+
+        $baseMatcher->expects($this->never())
+            ->method('matchRequest');
+
+        $scopeCriteria = $this->getMockBuilder(ScopeCriteria::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->scopeManager->expects($this->once())
+            ->method('getCriteria')
+            ->with('web_content')
+            ->willReturn($scopeCriteria);
+
+        $routeName = 'test_route';
+        $routeParameters = ['id' => 1];
+        $realUrl = 'real/url?test=1';
+        $slug = new Slug();
+        $slug->setRouteName($routeName);
+        $slug->setRouteParameters($routeParameters);
+        $slug->setUrl($url);
+        $repository = $this->getRepository();
+        $repository->expects($this->once())
+            ->method('getSlugByUrlAndScopeCriteria')
+            ->willReturn($slug);
+        $this->router->expects($this->once())
+            ->method('generate')
+            ->with($routeName, $routeParameters)
+            ->willReturn($realUrl);
+        $this->router->expects($this->once())
+            ->method('match')
+            ->with('/real/url')
+            ->willReturn(['_controller' => 'Some::action']);
+
+        $attributes = [
+            '_route' => $routeName,
+            '_route_params' => $routeParameters,
+            '_controller' => 'Some::action',
+            '_resolved_slug_url' => '/' . $realUrl,
+            '_used_slug' => $slug,
+            'id' => 1
+        ];
+
+        $matcher->addUrlToMatchSlugFirst($url);
         $this->assertEquals($attributes, $matcher->matchRequest($request));
     }
 

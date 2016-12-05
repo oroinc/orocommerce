@@ -18,6 +18,7 @@ class SlugRepository extends EntityRepository
     {
         $qb = $this->createQueryBuilder('slug');
         $qb->leftJoin('slug.scopes', 'scopes', Join::WITH)
+            ->addSelect('scopes.id as matchedScopeId')
             ->where($qb->expr()->eq('slug.urlHash', ':urlHash'))
             ->andWhere($qb->expr()->eq('slug.url', ':url'))
             ->setParameter('urlHash', md5($url))
@@ -26,6 +27,16 @@ class SlugRepository extends EntityRepository
 
         $scopeCriteria->applyToJoinWithPriority($qb, 'scopes');
 
-        return $qb->getQuery()->getOneOrNullResult();
+        $result = $qb->getQuery()->getOneOrNullResult();
+        if ($result) {
+            /** @var Slug $slug */
+            $slug = $result[0];
+            $matchedScopeId = $result['matchedScopeId'];
+            if ($matchedScopeId || $slug->getScopes()->isEmpty()) {
+                return $slug;
+            }
+        }
+
+        return null;
     }
 }

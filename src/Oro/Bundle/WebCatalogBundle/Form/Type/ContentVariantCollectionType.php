@@ -35,6 +35,7 @@ class ContentVariantCollectionType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefault('prototype_name', '__variant_idx__');
+        $resolver->setDefault('entry_options', []);
     }
 
     /**
@@ -66,7 +67,9 @@ class ContentVariantCollectionType extends AbstractType
         $this->initializeContentVariantPrototypes($builder, $options);
 
         $builder->addEventSubscriber(new MergeDoctrineCollectionListener());
-        $builder->addEventSubscriber(new ContentVariantCollectionResizeSubscriber($this->variantTypeRegistry));
+        $builder->addEventSubscriber(
+            new ContentVariantCollectionResizeSubscriber($this->variantTypeRegistry, $options['entry_options'])
+        );
     }
 
     /**
@@ -92,9 +95,7 @@ class ContentVariantCollectionType extends AbstractType
     protected function initializeContentVariantPrototypes(FormBuilderInterface $builder, array $options)
     {
         $prototypes = [];
-        $prototypeOptions = [
-            'required' => $options['required'],
-        ];
+        $prototypeOptions = array_replace(['required' => $options['required']], $options['entry_options']);
         foreach ($this->variantTypeRegistry->getAllowedContentVariantTypes() as $contentVariantType) {
             $prototypeForm = $builder
                 ->create(

@@ -61,7 +61,7 @@ class SystemPageVariantTypeTest extends FormIntegrationTestCase
 
     public function testBuildForm()
     {
-        $form = $this->factory->create($this->type);
+        $form = $this->factory->create($this->type, null, ['web_catalog' => null]);
 
         $this->assertTrue($form->has('systemPageRoute'));
         $this->assertTrue($form->has('scopes'));
@@ -87,7 +87,7 @@ class SystemPageVariantTypeTest extends FormIntegrationTestCase
      */
     public function testSubmit($existingData, $submittedData, $expectedData)
     {
-        $form = $this->factory->create($this->type, $existingData);
+        $form = $this->factory->create($this->type, $existingData, ['web_catalog' => null]);
 
         $this->assertEquals($existingData, $form->getData());
 

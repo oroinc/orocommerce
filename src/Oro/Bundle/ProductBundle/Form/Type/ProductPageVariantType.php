@@ -6,6 +6,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\ProductBundle\ContentVariantType\ProductPageContentVariantType;
 use Oro\Bundle\ScopeBundle\Form\Type\ScopeCollectionType;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
+use Oro\Component\WebCatalog\Entity\WebCatalogInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -54,7 +55,8 @@ class ProductPageVariantType extends AbstractType
                     'label' => 'oro.webcatalog.contentvariant.scopes.label',
                     'required' => false,
                     'entry_options' => [
-                        'scope_type' => 'web_content'
+                        'scope_type' => 'web_content',
+                        'web_catalog' => $options['web_catalog']
                     ]
                 ]
             )
@@ -89,11 +91,20 @@ class ProductPageVariantType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $metadata = $this->registry->getManager()->getClassMetadata(ContentVariantInterface::class);
+        $em = $this->registry->getManager();
+
+        $resolver->setRequired('web_catalog');
+        $resolver->setAllowedTypes(
+            'web_catalog',
+            [
+                'null',
+                $em->getClassMetadata(WebCatalogInterface::class)->getName()
+            ]
+        );
 
         $resolver->setDefaults(
             [
-                'data_class' => $metadata->getName()
+                'data_class' => $em->getClassMetadata(ContentVariantInterface::class)->getName()
             ]
         );
     }

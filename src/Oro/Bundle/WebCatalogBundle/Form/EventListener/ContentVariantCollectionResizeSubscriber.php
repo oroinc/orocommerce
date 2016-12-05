@@ -17,11 +17,18 @@ class ContentVariantCollectionResizeSubscriber implements EventSubscriberInterfa
     private $variantTypeRegistry;
 
     /**
-     * @param ContentVariantTypeRegistry $variantTypeRegistry
+     * @var array
      */
-    public function __construct(ContentVariantTypeRegistry $variantTypeRegistry)
+    private $options = [];
+
+    /**
+     * @param ContentVariantTypeRegistry $variantTypeRegistry
+     * @param array $options
+     */
+    public function __construct(ContentVariantTypeRegistry $variantTypeRegistry, array $options)
     {
         $this->variantTypeRegistry = $variantTypeRegistry;
+        $this->options = $options;
     }
 
     /**
@@ -63,7 +70,7 @@ class ContentVariantCollectionResizeSubscriber implements EventSubscriberInterfa
                 $form->add(
                     $name,
                     $this->variantTypeRegistry->getFormTypeByType($value->getType()),
-                    ['property_path' => '[' . $name . ']']
+                    array_replace(['property_path' => '[' . $name . ']'], $this->options)
                 );
             }
         }
@@ -94,7 +101,7 @@ class ContentVariantCollectionResizeSubscriber implements EventSubscriberInterfa
                 $form->add(
                     $name,
                     $this->variantTypeRegistry->getFormTypeByType($value['type']),
-                    ['property_path' => '[' . $name . ']']
+                    array_replace(['property_path' => '[' . $name . ']'], $this->options)
                 );
             }
         }

@@ -22,6 +22,8 @@ use Symfony\Component\Routing\RouterInterface;
  */
 class SlugUrlMatcher implements RequestMatcherInterface, UrlMatcherInterface
 {
+    const MATCH_SYSTEM = 'system';
+    const MATCH_SLUG = 'slug';
     /**
      * @var RouterInterface
      */
@@ -63,6 +65,11 @@ class SlugUrlMatcher implements RequestMatcherInterface, UrlMatcherInterface
     protected $baseMatcher;
 
     /**
+     * @var array
+     */
+    protected $matchSlugsFirst = [];
+
+    /**
      * @param RequestMatcherInterface|UrlMatcherInterface $baseMatcher
      * @param RouterInterface $router
      * @param ManagerRegistry $registry
@@ -101,25 +108,38 @@ class SlugUrlMatcher implements RequestMatcherInterface, UrlMatcherInterface
     }
 
     /**
+     * @param $url
+     */
+    public function addUrlToMatchSlugFirst($url)
+    {
+        $this->matchSlugsFirst[$url] = true;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function matchRequest(Request $request)
     {
-        $attributes = [];
-        try {
-            $attributes = $this->baseMatcher->matchRequest($request);
-        } catch (ResourceNotFoundException $e) {
-            $url = $request->getPathInfo();
-            if ($this->matches($url)) {
-                $attributes = $this->getAttributes($url);
+        $matchersOrder = $this->getMatchersOrder($request->getPathInfo());
+        $matchers = [
+            self::MATCH_SYSTEM => function () use ($request) {
+                try {
+                    return $this->baseMatcher->matchRequest($request);
+                } catch (ResourceNotFoundException $e) {
+                    return [];
+                }
+            },
+            self::MATCH_SLUG => function () use ($request) {
+                $url = $request->getPathInfo();
+                if ($this->matches($url)) {
+                    return $this->getAttributes($url);
+                }
+
+                return [];
             }
-        }
+        ];
 
-        if (!$attributes) {
-            throw new ResourceNotFoundException(sprintf('No routes found for "%s".', $request->getPathInfo()));
-        }
-
-        return $attributes;
+        return $this->resolveAttributes($matchers, $matchersOrder, $request->getPathInfo());
     }
 
     /**
@@ -127,20 +147,55 @@ class SlugUrlMatcher implements RequestMatcherInterface, UrlMatcherInterface
      */
     public function match($pathinfo)
     {
-        $attributes = [];
-        try {
-            $attributes = $this->baseMatcher->match($pathinfo);
-        } catch (ResourceNotFoundException $e) {
-            if ($this->matches($pathinfo)) {
-                $attributes = $this->getAttributes($pathinfo);
+        $matchersOrder = $this->getMatchersOrder($pathinfo);
+        $matchers = [
+            self::MATCH_SYSTEM => function () use ($pathinfo) {
+                try {
+                    return $this->baseMatcher->match($pathinfo);
+                } catch (ResourceNotFoundException $e) {
+                    return [];
+                }
+            },
+            self::MATCH_SLUG => function () use ($pathinfo) {
+                if ($this->matches($pathinfo)) {
+                    return $this->getAttributes($pathinfo);
+                }
+
+                return [];
+            }
+        ];
+
+        return $this->resolveAttributes($matchers, $matchersOrder, $pathinfo);
+    }
+
+    /**
+     * @param array $matchers
+     * @param array $matchersOrder
+     * @param string $url
+     * @return array
+     */
+    protected function resolveAttributes(array $matchers, array $matchersOrder, $url)
+    {
+        foreach ($matchersOrder as $matcher) {
+            if ($attributes = call_user_func($matchers[$matcher])) {
+                return $attributes;
             }
         }
 
-        if (!$attributes) {
-            throw new ResourceNotFoundException(sprintf('No routes found for "%s".', $pathinfo));
+        throw new ResourceNotFoundException(sprintf('No routes found for "%s".', $url));
+    }
+
+    /**
+     * @param string $url
+     * @return array
+     */
+    protected function getMatchersOrder($url)
+    {
+        if (!empty($this->matchSlugsFirst[$url])) {
+            return [self::MATCH_SLUG, self::MATCH_SYSTEM];
         }
 
-        return $attributes;
+        return [self::MATCH_SYSTEM, self::MATCH_SLUG];
     }
 
     /**
