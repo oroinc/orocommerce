@@ -118,6 +118,13 @@ services:
         tags:
             - { name: layout.data_provider, alias: oro_shopping_list_shopping_list_form }
 
+    oro_shopping_list.layout.data_provider.single_unit_mode:
+        class: 'Oro\Bundle\ShoppingListBundle\Layout\DataProvider\SingleUnitModeProvider'
+        arguments:
+            - "@oro_product.service.single_unit_mode"
+        tags:
+            - { name: layout.data_provider, alias: oro_shopping_list_single_unit_mode }
+
     oro_shopping_list.layout.data_provider.account_user_shopping_lists:
         class: 'Oro\Bundle\ShoppingListBundle\Layout\DataProvider\AccountUserShoppingListsProvider'
         arguments:

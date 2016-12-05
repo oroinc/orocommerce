@@ -5,7 +5,6 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Layout\DataProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Layout\DataProvider\SingleUnitModeProvider;
 use Oro\Bundle\ProductBundle\Service\SingleUnitModeService;
-use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class SingleUnitModeProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -60,20 +59,6 @@ class SingleUnitModeProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(
             self::PRODUCT_PRIMARY_UNIT,
             $this->provider->isProductPrimaryUnitSingleAndDefault(new Product())
-        );
-    }
-
-    public function testGetProductStates()
-    {
-        $returnData = [1 => true, 2 => false];
-
-        $this->singleUnitService->expects($this->once())
-            ->method('getProductStates')
-            ->willReturn($returnData);
-
-        $this->assertSame(
-            $returnData,
-            $this->provider->getProductStates(new ShoppingList())
         );
     }
 }
