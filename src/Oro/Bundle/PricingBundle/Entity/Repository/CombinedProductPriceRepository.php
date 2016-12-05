@@ -6,7 +6,6 @@ use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
-use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToAccount;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToAccountGroup;
