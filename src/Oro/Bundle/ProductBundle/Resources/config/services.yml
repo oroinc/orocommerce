@@ -483,19 +483,6 @@ services:
         tags:
             - { name: 'oro_message_queue.client.message_processor' }
 
-    oro_product.model.product_message_factory:
-        class: 'Oro\Bundle\ProductBundle\Model\ProductMessageFactory'
-        arguments:
-            - '@doctrine'
-
-    oro_product.model.product_message_handler:
-        class: 'Oro\Bundle\ProductBundle\Model\ProductMessageHandler'
-        arguments:
-            - '@oro_product.model.product_message_factory'
-            - '@oro_message_queue.client.message_producer'
-        tags:
-            - { name: kernel.event_listener, event: kernel.terminate, method: sendScheduledMessages }
-
     oro_product.product_visibility_restriction_listener:
         class: 'Oro\Bundle\ProductBundle\EventListener\ProductVisibilityRestrictionListener'
         arguments:
@@ -510,3 +497,13 @@ services:
            - "@request_stack"
         tags:
             - { name: kernel.event_listener, event: kernel.exception, method: onAccessException }
+
+    oro_product.event_listener.single_unit_mode_datagrid_basic:
+        class: 'Oro\Bundle\ProductBundle\EventListener\SingleUnitModeDataGridListener'
+        abstract: true
+        arguments:
+            - 'unitCode'
+            - 'quantity'
+            - 'OroProductBundle:Product:Datagrid/quantitySingleMode.html.twig'
+            - {isShortUnitCode: true, isPluralUnitCode: true}
+            - '@oro_product.provider.unit_mode_provider'

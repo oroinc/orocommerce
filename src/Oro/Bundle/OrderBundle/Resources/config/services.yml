@@ -206,7 +206,6 @@ services:
         arguments:
             - '@oro_order.formatter.source_document'
             - '@oro_order.formatter.shipping_tracking'
-            - '@oro_order.formatter.shipping_method'
         tags:
             - { name: twig.extension }
 
@@ -221,16 +220,11 @@ services:
         arguments:
             - "@?oro_shipping.shipping_method.registry"
 
-    oro_order.formatter.shipping_method:
-        class: 'Oro\Bundle\OrderBundle\Formatter\ShippingMethodFormatter'
-        arguments:
-            - "@?oro_shipping.formatter.shipping_method_label"
-
     oro_order.order.listener.total_calculate_listener:
         class: 'Oro\Bundle\OrderBundle\EventListener\TotalCalculateListener'
         arguments:
             - '@form.factory'
-            - '@oro_action.helper.applications'
+            - '@oro_action.provider.current_application'
         tags:
             - { name: kernel.event_listener, event: oro_pricing.total_calculate_before_event, method: onBeforeTotalCalculate }
 
@@ -279,13 +273,6 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-orders-grid, method: onResultAfter }
 
-    oro_order.layout.provider.order_shipping_method:
-        class: 'Oro\Bundle\OrderBundle\Layout\DataProvider\OrderShippingMethodProvider'
-        arguments:
-            - '@oro_order.formatter.shipping_method'
-        tags:
-            - { name: layout.data_provider, alias: oro_order_frontend_shipping_method_provider }
-
     oro_order.provider.privilege_category_provider:
         class: 'Oro\Bundle\OrderBundle\Provider\PrivilegeCategoryProvider'
         tags:
@@ -311,3 +298,12 @@ services:
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@?oro_shipping.factory.shipping_context_factory'
+
+    oro_order.event_listener.single_unit_mode_datagrid:
+        parent: oro_product.event_listener.single_unit_mode_datagrid_basic
+        arguments:
+            index_0: 'productUnitCode'
+            index_3: {isShortUnitCode: false, isPluralUnitCode: true}
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.order-line-items-grid, method: onBuildBefore }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.order-line-items-grid-frontend, method: onBuildBefore }

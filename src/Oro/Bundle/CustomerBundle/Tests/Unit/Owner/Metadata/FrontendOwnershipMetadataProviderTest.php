@@ -221,15 +221,6 @@ class FrontendOwnershipMetadataProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($metadata, $providerWithCleanCache->getMetadata('UndefinedClass'));
     }
 
-    /**
-     * @expectedException \BadMethodCallException
-     * @expectedExceptionMessage Method getSystemLevelClass() unsupported.
-     */
-    public function testGetSystemLevelClass()
-    {
-        $this->assertFalse($this->provider->getSystemLevelClass());
-    }
-
     public function testGetGlobalLevelClass()
     {
         $this->assertFalse($this->provider->getGlobalLevelClass());
@@ -349,7 +340,7 @@ class FrontendOwnershipMetadataProviderTest extends \PHPUnit_Framework_TestCase
     {
         return [
             'without class' => [
-                'maxAccessLevel' => AccessLevel::SYSTEM_LEVEL,
+                'maxAccessLevel' => AccessLevel::DEEP_LEVEL,
                 'accessLevel' => AccessLevel::SYSTEM_LEVEL,
             ],
             'NONE default' => [
@@ -367,8 +358,13 @@ class FrontendOwnershipMetadataProviderTest extends \PHPUnit_Framework_TestCase
                 'accessLevel' => AccessLevel::LOCAL_LEVEL,
                 'className' => 'SomeClass',
             ],
+            'DEEP default' => [
+                'maxAccessLevel' => AccessLevel::DEEP_LEVEL,
+                'accessLevel' => AccessLevel::DEEP_LEVEL,
+                'className' => 'SomeClass',
+            ],
             'not allowed with owner' => [
-                'maxAccessLevel' => AccessLevel::LOCAL_LEVEL,
+                'maxAccessLevel' => AccessLevel::DEEP_LEVEL,
                 'accessLevel' => AccessLevel::SYSTEM_LEVEL,
                 'className' => 'SomeClass',
                 'hasOwner' => true,

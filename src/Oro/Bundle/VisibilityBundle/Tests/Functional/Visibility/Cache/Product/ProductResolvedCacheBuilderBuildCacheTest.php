@@ -89,31 +89,30 @@ class ProductResolvedCacheBuilderBuildCacheTest extends WebTestCase
         $this->assertNull($repository->findOneBy(['scope' => $scope, 'product' => $firstProduct]));
 
         // category fallback
-        /** @var ProductVisibilityResolved $firstProductCustomWebsite */
-        $firstProductCustomWebsite = $repository->findOneBy([
+        /** @var ProductVisibilityResolved $productVisibility */
+        $productVisibility = $repository->findOneBy([
             'scope' => $scope,
             'product' => $this->getReference(LoadProductData::PRODUCT_8)
         ]);
-        $this->assertNotNull($firstProductCustomWebsite);
+        $this->assertNotNull($productVisibility);
         $this->assertEquals(
             BaseProductVisibilityResolved::VISIBILITY_HIDDEN,
-            $firstProductCustomWebsite->getVisibility()
+            $productVisibility->getVisibility()
         );
         $this->assertEquals(
             $this->getReference(LoadCategoryData::FOURTH_LEVEL2),
-            $firstProductCustomWebsite->getCategory()
+            $productVisibility->getCategory()
         );
 
         // static fallback
-        /** @var ProductVisibilityResolved $forthProductDefaultWebsite */
-        $forthProductDefaultWebsite = $repository
+        $productVisibility = $repository
             ->findOneBy(['scope' => $scope, 'product' => $this->getReference(LoadProductData::PRODUCT_4)]);
-        $this->assertNotNull($forthProductDefaultWebsite);
+        $this->assertNotNull($productVisibility);
         $this->assertEquals(
             BaseProductVisibilityResolved::VISIBILITY_HIDDEN,
-            $forthProductDefaultWebsite->getVisibility()
+            $productVisibility->getVisibility()
         );
-        $this->assertNull($forthProductDefaultWebsite->getCategory());
+        $this->assertNull($productVisibility->getCategory());
 
         // invalid entity for first product in default scope
         $resolvedVisibility = new ProductVisibilityResolved($scope, $firstProduct);

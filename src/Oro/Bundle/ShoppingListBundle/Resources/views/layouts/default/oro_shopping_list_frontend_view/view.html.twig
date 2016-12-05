@@ -57,9 +57,22 @@
 {% endblock %}
 
 {% block _shopping_list_top_actions_widget %}
-    {% set attr = attr|merge({ class: attr.class|default('') ~ " cart__order__controls-list pull-right" }) %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " cart__order__controls-list pull-right",
+        'data-name': "empty-items__hide"
+    }) %}
     <div{{ block('block_attributes') }}>
         {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _shopping_list_owner_widget %}
+    <div data-page-component-module="oroshoppinglist/js/app/components/shoppinglist-owner-inline-editable-view-component"
+         data-page-component-options="{{ {
+             shoppingListId: shoppingList.id,
+         }|json_encode() }}"
+    >
+        {{ form(form) }}
     </div>
 {% endblock %}
 
@@ -429,4 +442,10 @@
 <div class="shipping-list-view-total-container order-checkout-widget__container-wrapper">
     {{ block_widget(block) }}
 </div>
+{% endblock %}
+
+{% block _shopping_list_combined_button_widget %}
+    <div data-name="empty-items__hide">
+        {{ block_widget(block) }}
+    </div>
 {% endblock %}

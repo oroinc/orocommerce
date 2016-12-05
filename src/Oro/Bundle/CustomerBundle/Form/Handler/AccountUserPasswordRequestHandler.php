@@ -19,11 +19,12 @@ class AccountUserPasswordRequestHandler extends AbstractAccountUserPasswordHandl
         if ($request->isMethod('POST')) {
             $form->submit($request);
             if ($form->isValid()) {
-                $email = $form->get('email')->getData();
+                $emailForm = $form->get('email');
+                $email = $emailForm->getData();
 
                 /** @var AccountUser $user */
                 $user = $this->userManager->findUserByUsernameOrEmail($email);
-                if ($this->validateUser($form, $email, $user)) {
+                if ($this->validateUser($emailForm, $email, $user)) {
                     if (null === $user->getConfirmationToken()) {
                         $user->setConfirmationToken($user->generateToken());
                     }

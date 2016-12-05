@@ -12,6 +12,7 @@ use Oro\Bundle\UserBundle\Tests\Unit\Stub\ChangePasswordTypeStub;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Form\Type\FrontendAccountUserProfileType;
+use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\FrontendOwnerSelectTypeStub;
 
 class FrontendAccountUserProfileTypeTest extends FormIntegrationTestCase
 {
@@ -56,6 +57,7 @@ class FrontendAccountUserProfileTypeTest extends FormIntegrationTestCase
             new PreloadedExtension(
                 [
                     OroDateType::NAME => new OroDateType(),
+                    FrontendOwnerSelectTypeStub::NAME => new FrontendOwnerSelectTypeStub(),
                     ChangePasswordTypeStub::NAME => new ChangePasswordTypeStub()
                 ],
                 []
@@ -86,7 +88,8 @@ class FrontendAccountUserProfileTypeTest extends FormIntegrationTestCase
     public function submitProvider()
     {
         $entity = new AccountUser();
-
+        $account = new Account();
+        $entity->setAccount($account);
         $existingEntity = new AccountUser();
         $this->setPropertyValue($existingEntity, 'id', 42);
 
@@ -94,6 +97,7 @@ class FrontendAccountUserProfileTypeTest extends FormIntegrationTestCase
         $existingEntity->setLastName('Doe');
         $existingEntity->setEmail('johndoe@example.com');
         $existingEntity->setPassword('123456');
+        $existingEntity->setAccount($account);
 
         $updatedEntity = clone $existingEntity;
         $updatedEntity->setFirstName('John UP');
@@ -111,7 +115,8 @@ class FrontendAccountUserProfileTypeTest extends FormIntegrationTestCase
                 'submittedData' => [
                     'firstName' => $updatedEntity->getFirstName(),
                     'lastName' => $updatedEntity->getLastName(),
-                    'email' => $updatedEntity->getEmail()
+                    'email' => $updatedEntity->getEmail(),
+                    'account' => $updatedEntity->getAccount()->getName(),
                 ],
                 'expectedData' => $updatedEntity
             ]
