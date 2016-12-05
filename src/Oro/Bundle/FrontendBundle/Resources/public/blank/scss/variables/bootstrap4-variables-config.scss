@@ -54,13 +54,12 @@ $font-size-root: update-default($font-size-root, $base-font-size);
 
 $font-size-base: update-default($font-size-base, $base-font-size);
 $font-size-lg:   update-default($font-size-lg, $base-font-size--l);
-$font-size-sm:   update-default($font-size-sm, $base-font-size--m);
+$font-size-sm:   update-default($font-size-sm, $font-size-base);
 $font-size-xs:   update-default($font-size-xs, $base-font-size - 2px);
 
 $line-height-base: update-default($line-height-base, $base-line-height);
 
-// Components
-// update-default(, );
+// Component
 // Dropdowns
 //
 // Dropdown menu container and contents.
@@ -85,3 +84,22 @@ $zindex-navbar-fixed:      update-default($zindex-navbar-fixed, z('dropdown') + 
 $zindex-navbar-sticky:     update-default($zindex-navbar-sticky, z('dropdown') + 3);
 $zindex-modal-bg:          update-default($zindex-modal-bg, z('dropdown') + 4);
 $zindex-modal:             update-default($zindex-modal, z('dropdown') + 5);
+
+
+// Popovers
+
+$popover-content-padding-x:           14px !default;
+$popover-content-padding-y:           9px !default;
+
+$popover-arrow-width:                 10px !default;
+$popover-arrow-color:                 $popover-bg !default;
+
+$popover-arrow-outer-width:           ($popover-arrow-width + 1px) !default;
+$popover-arrow-outer-color:           fade-in($popover-border-color, .05) !default;
+
+// Tables
+//
+// Customizes the `.table` component with basic values, each used across all table variations.
+
+$table-cell-padding:             update-default($table-cell-padding, 8px);
+$table-sm-cell-padding:          update-default($table-sm-cell-padding, 30px);
