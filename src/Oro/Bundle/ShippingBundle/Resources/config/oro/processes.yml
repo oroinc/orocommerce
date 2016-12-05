@@ -8,7 +8,7 @@ processes:
             actions_configuration:
              - '@call_service_method':
                 service: 'oro_shipping.shipping_price.provider.cache'
-                method: 'invalidatePrices'
+                method: 'deleteAllPrices'
     triggers:
             invalidate_shipping_prices_cache:
             -

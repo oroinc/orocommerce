@@ -41,13 +41,13 @@ class ShippingPriceCache
      * @param ShippingContextInterface $context
      * @param string $methodId
      * @param string $typeId
-     * @return Price|bool
+     * @return Price|null
      */
     public function getPrice(ShippingContextInterface $context, $methodId, $typeId)
     {
         $key = $this->generateKey($context, $methodId, $typeId);
         if (!$this->cache->contains($key)) {
-            return false;
+            return null;
         }
         return $this->cache->fetch($key);
     }
@@ -88,7 +88,7 @@ class ShippingPriceCache
         return $this->cacheKeyGenerator->generateKey($context).$methodId.$typeId;
     }
     
-    public function invalidatePrices()
+    public function deleteAllPrices()
     {
         $this->cache->deleteAll();
     }
