@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\Service;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class SingleUnitModeService
 {
@@ -49,5 +50,25 @@ class SingleUnitModeService
         $defaultUnit = $this->configManager->get(Configuration::getConfigKeyByName(Configuration::DEFAULT_UNIT));
         return $product->getPrimaryUnitPrecision()->getUnit()->getCode() === $defaultUnit
             && $product->getAdditionalUnitPrecisions()->isEmpty();
+    }
+
+    /**
+     * @param ShoppingList|null $shoppingList
+     * @return array
+     */
+    public function getProductStates(ShoppingList $shoppingList = null)
+    {
+        if (!$shoppingList) {
+            return [];
+        }
+
+        $states = [];
+        foreach ($shoppingList->getLineItems() as $lineItem) {
+            $product = $lineItem->getProduct();
+
+            $states[$product->getId()] = $this->isProductPrimaryUnitSingleAndDefault($product);
+        }
+
+        return $states;
     }
 }

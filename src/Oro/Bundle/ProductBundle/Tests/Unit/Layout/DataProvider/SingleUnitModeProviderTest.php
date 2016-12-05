@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Layout\DataProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Layout\DataProvider\SingleUnitModeProvider;
 use Oro\Bundle\ProductBundle\Service\SingleUnitModeService;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class SingleUnitModeProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -17,59 +18,62 @@ class SingleUnitModeProviderTest extends \PHPUnit_Framework_TestCase
     /** @internal */
     const PRODUCT_PRIMARY_UNIT = true;
 
+    /** @var SingleUnitModeProvider */
+    private $provider;
+
+    /** @var \PHPUnit_Framework_MockObject_MockObject|SingleUnitModeService */
+    private $singleUnitService;
+
+    public function setUp()
+    {
+        $this->singleUnitService = $this->getMockBuilder('Oro\Bundle\ProductBundle\Service\SingleUnitModeService')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->provider = new SingleUnitModeProvider($this->singleUnitService);
+    }
+
     public function testIsSingleUnitMode()
     {
-        $provider = $this->getSingleUnitModeProvider();
+        $this->singleUnitService->expects($this->once())
+            ->method('isSingleUnitMode')
+            ->willReturn(self::SINGLE_UNIT_MODE);
 
-        $this->assertSame(self::SINGLE_UNIT_MODE, $provider->isSingleUnitMode());
+        $this->assertSame(self::SINGLE_UNIT_MODE, $this->provider->isSingleUnitMode());
     }
 
     public function testIsSingleUnitModeCodeVisible()
     {
-        $provider = $this->getSingleUnitModeProvider();
+        $this->singleUnitService->expects($this->once())
+            ->method('isSingleUnitModeCodeVisible')
+            ->willReturn(self::CODE_VISIBLE);
 
-        $this->assertSame(self::CODE_VISIBLE, $provider->isSingleUnitModeCodeVisible());
+        $this->assertSame(self::CODE_VISIBLE, $this->provider->isSingleUnitModeCodeVisible());
     }
 
     public function testIsProductPrimaryUnitSingleAndDefault()
     {
-        $provider = $this->getSingleUnitModeProvider();
-
-        $this->assertSame(
-            self::PRODUCT_PRIMARY_UNIT,
-            $provider->isProductPrimaryUnitSingleAndDefault(new Product())
-        );
-    }
-
-    /**
-     * @return SingleUnitModeProvider
-     */
-    private function getSingleUnitModeProvider()
-    {
-        return new SingleUnitModeProvider($this->getTestSingleUnitService());
-    }
-
-    /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|SingleUnitModeService
-     */
-    private function getTestSingleUnitService()
-    {
-        $service = $this->getMockBuilder('Oro\Bundle\ProductBundle\Service\SingleUnitModeService')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $service->expects($this->any())
-            ->method('isSingleUnitMode')
-            ->willReturn(self::SINGLE_UNIT_MODE);
-
-        $service->expects($this->any())
-            ->method('isSingleUnitModeCodeVisible')
-            ->willReturn(self::CODE_VISIBLE);
-
-        $service->expects($this->any())
+        $this->singleUnitService->expects($this->once())
             ->method('isProductPrimaryUnitSingleAndDefault')
             ->willReturn(self::PRODUCT_PRIMARY_UNIT);
 
-        return $service;
+        $this->assertSame(
+            self::PRODUCT_PRIMARY_UNIT,
+            $this->provider->isProductPrimaryUnitSingleAndDefault(new Product())
+        );
+    }
+
+    public function testGetProductStates()
+    {
+        $returnData = [1 => true, 2 => false];
+
+        $this->singleUnitService->expects($this->once())
+            ->method('getProductStates')
+            ->willReturn($returnData);
+
+        $this->assertSame(
+            $returnData,
+            $this->provider->getProductStates(new ShoppingList())
+        );
     }
 }

@@ -899,3 +899,8 @@ services:
             - '@oro_locale.formatter.number'
             - '@oro_product.formatter.product_unit_label'
             - '@oro_product.formatter.product_unit_value'
+
+    oro_pricing.event_listener.single_unit_mode_datagrid:
+        parent: oro_product.event_listener.single_unit_mode_datagrid_basic
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.price-list-product-prices-grid, method: onBuildBefore }
