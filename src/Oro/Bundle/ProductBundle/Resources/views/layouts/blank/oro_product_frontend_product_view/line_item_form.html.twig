@@ -1,6 +1,6 @@
 {% block _line_item_form_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " product__buy line_item_form_product_view"
+        '~class': " line-item-form"
     }) %}
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
@@ -23,7 +23,7 @@
                 'options': {
                     'widgetModule': 'oroproduct/js/content-processor/product-add-to-dropdown-button',
                     'widgetName': 'productAddToDropdownButtonProcessor',
-                    'truncateLength': 15,
+                    'truncateLength': 20,
                     'groupContainer': '<div id="add-to-shopping-list" class="btn btn-orange btn-block btn_has-dropdown btn_has-dropdown_lg"></div>'
                 }
             }) }}
