@@ -4,6 +4,7 @@ namespace Oro\Bundle\InventoryBundle\Tests\Functional\Controller;
 
 use Symfony\Component\DomCrawler\Crawler;
 
+use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
 use Oro\Bundle\EntityBundle\Tests\Functional\Helper\FallbackTestTrait;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -19,7 +20,7 @@ class ProductControllerTest extends WebTestCase
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
-        $this->loadFixtures([LoadProductData::class]);
+        $this->loadFixtures([LoadCategoryProductData::class]);
     }
 
     public function testAddQuantityToOrder()
