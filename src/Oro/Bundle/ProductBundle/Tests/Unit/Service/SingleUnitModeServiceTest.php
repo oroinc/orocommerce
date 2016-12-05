@@ -140,7 +140,6 @@ class SingleUnitModeServiceTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param string $unitCode
-     *
      * @return Product
      */
     private function getProductWithPrimaryUnit($unitCode)

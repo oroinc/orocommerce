@@ -37,7 +37,6 @@ class SingleUnitModeProvider
 
     /**
      * @param Product $product
-     *
      * @return bool
      */
     public function isProductPrimaryUnitSingleAndDefault(Product $product)

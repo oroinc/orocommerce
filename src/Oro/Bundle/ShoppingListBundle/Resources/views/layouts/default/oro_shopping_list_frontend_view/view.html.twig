@@ -172,7 +172,7 @@
                 {% set productAllPrices = productsAllPrices[lineItem.product.id]|default({}) is not empty ? productsAllPrices[lineItem.product.id] : null %}
                 {% set productMatchedPrice = productsMatchedPrice[lineItem.product.id][lineItem.unit.code] is not empty ? productsMatchedPrice[lineItem.product.id][lineItem.unit.code] : null %}
                 {% set currency = productMatchedPrice ? productMatchedPrice.currency : defaultCurrency %}
-                {% set singleUnitModeProductState = singleUnitModeProductStates[lineItem.product.id]|default({}) is not empty ? singleUnitModeProductStates[lineItem.product.id] : null %}
+                {% set productApplySingleUnitMode = singleUnitModeProductStates[lineItem.product.id]|default({}) is not empty ? singleUnitModeProductStates[lineItem.product.id] : null %}
                 <tbody class="line_item">
                     <tr class="line_item_view" {{ UI.renderPageComponentAttributes({
                         module: 'oroui/js/app/components/view-component',
@@ -232,7 +232,7 @@
                                     </div>
                                 </div>
                                 <div class="product__select inline va-m_md">
-                                    {% if singleUnitMode and singleUnitModeProductState %}
+                                    {% if singleUnitMode and productApplySingleUnitMode %}
                                         <input type="hidden" name="product_unit" value="{{ lineItem.unit.code }}" />
                                         {% if singleUnitModeCodeVisible %}
                                             / {{ lineItem.unit.code|oro_format_product_unit_label}}
