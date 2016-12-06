@@ -65,10 +65,10 @@
                 <div data-collapse-trigger>
                     <div class="checkout-order-summary__icon-group">
                         <span class="badge badge_sm badge_orange badge_circled-corners mmr7-md mmr7-sm">
-                          <i class="cf-basket"></i>
+                          <i class="fa-shopping-cart"></i>
                         </span>
                         <span class="collapse-view__trigger">
-                            <i class="collapse-view__trigger-icon cf-play cf--gray checkout-order-summary__icon-play"></i>
+                            <i class="collapse-view__trigger-icon fa-play cf--gray checkout-order-summary__icon-play"></i>
                         </span>
                     </div>
                     <h3 class="checkout-order-summary__title">{{ 'oro.checkout.order_summary.label'|trans }}</h3>
@@ -80,7 +80,7 @@
                 {% set editLink = workflowItem.data.get('edit_order_link') %}
                 {% if editLink %}
                     <a href="{{ editLink }}" class="checkout-order-summary__edit-link">
-                        <i class="cf-pencil"></i>
+                        <i class="fa-pencil"></i>
                         {{ 'oro.checkout.order_summary.edit_order'|trans }}
                     </a>
                 {% endif %}
@@ -177,7 +177,7 @@
             {% if hasEditList %}
                 <td class="oro-grid-table__edit">
                     <a href="{{ editLink }}">
-                        <i class="cf-pencil"></i>
+                        <i class="fa-pencil"></i>
                         {{ 'oro.checkout.order_summary.edit_order'|trans }}
                     </a>
                 </td>

@@ -6,7 +6,7 @@ define(['jquery', 'jquery-ui'], function($) {
             maxLength: 80,
             clipSymbols: ' ...',
             containerClass: 'expand-text',
-            iconClass: 'cf-play',
+            iconClass: 'fa-play',
             openClass: 'open'
         },
 

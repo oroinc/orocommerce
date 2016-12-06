@@ -57,7 +57,8 @@
       color: get-color('additional', 'dark');
     }
 
-    [class^="cf-"]:before {
+    [class^="cf-"]:before,
+    [class^="fa-"]:before {
       font-size: 18px;
       color: get-color('ui', 'normal');
     }
