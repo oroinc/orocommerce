@@ -4,7 +4,7 @@ system_configuration:
             title: oro.tax.system_configuration.groups.taxation.title
         tax_calculation:
             title: oro.tax.system_configuration.groups.tax_calculation.title
-            icon: icon-money
+            icon: fa-money
         tax_enable:
             title: oro.tax.system_configuration.groups.tax_enable.title
         tax_provider:
