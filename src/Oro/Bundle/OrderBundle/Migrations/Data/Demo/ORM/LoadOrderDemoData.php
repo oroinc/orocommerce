@@ -124,7 +124,9 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
                 ->setShipUntil(new \DateTime())
                 ->setCurrency($row['currency'])
                 ->setPoNumber($row['poNumber'])
+                ->setBaseSubtotalValue($row['subtotal'])
                 ->setSubtotal($row['subtotal'])
+                ->setBaseTotalValue($row['total'])
                 ->setTotal($row['total']);
 
             $paymentTermAccessor->setPaymentTerm($order, $this->getPaymentTerm($manager, $row['paymentTerm']));
