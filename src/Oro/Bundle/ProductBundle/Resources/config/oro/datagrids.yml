@@ -353,6 +353,8 @@ datagrids:
             createdAt:
                 label:         oro.product.time_period.label
                 frontend_type: datetime
+            dateGrouping:
+                label:         oro.product.time_period.label
             sku:
                 label:         oro.product.sku.label
             productName:
@@ -388,7 +390,11 @@ datagrids:
                     type:      date_grouping
                     data_name: product.createdAt
                     label:     oro.product.grouping.label
+                    column_name: dateGrouping
                 skip_empty_periods:
                     type:      skip_empty_periods
                     data_name: product.createdAt
                     label:     oro.product.skip_empty_periods.label
+            default:
+                grouping:
+                    value: day
