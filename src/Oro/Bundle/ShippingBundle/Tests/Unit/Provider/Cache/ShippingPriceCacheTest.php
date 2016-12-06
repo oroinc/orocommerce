@@ -54,7 +54,7 @@ class ShippingPriceCacheTest extends \PHPUnit_Framework_TestCase
         /** @var ShippingContextInterface $context */
         $context = $this->getEntity(ShippingContext::class);
 
-                $this->cacheProvider->expects(static::once())
+        $this->cacheProvider->expects(static::once())
             ->method('contains')
             ->with('_flat_rateprimary')
             ->willReturn($isContains);
