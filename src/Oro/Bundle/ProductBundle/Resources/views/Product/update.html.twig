@@ -40,16 +40,14 @@
 
 {% block content_data %}
     {% set id = 'product-edit' %}
+    {% set generalData = [
+        form_row(form.sku),
+    ] %}
 
     {% if entity.isConfigurable %}
-        {% set generalData = [
-            form_row(form.sku),
+        {% set generalData = generalData|merge([
             form_row(form.variantFields)
-        ] %}
-    {% else %}
-        {% set generalData = [
-            form_row(form.sku)
-        ] %}
+        ]) %}
     {% endif %}
 
     {% set generalData = generalData|merge([
