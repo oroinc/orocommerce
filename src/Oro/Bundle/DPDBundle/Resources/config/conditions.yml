@@ -1,0 +1,7 @@
+services:
+    oro_dpd.condition.shipped_with_dpd:
+        class: 'Oro\Bundle\DPDBundle\Condition\ShippedWithDPD'
+        arguments:
+            - '@oro_dpd.shipping_method_provider.dpd'
+        tags:
+            - { name: oro_action.condition, alias: shipped_with_dpd }

@@ -1,0 +1,60 @@
+services:
+    oro_dpd.provider.channel:
+        class: 'Oro\Bundle\DPDBundle\Provider\ChannelType'
+        tags:
+            - { name: oro_integration.channel, type: dpd }
+
+    oro_dpd.provider.transport:
+          class: 'Oro\Bundle\DPDBundle\Provider\DPDTransport'
+          arguments:
+              - '@doctrine'
+              - '@logger'
+              - '@oro_security.encoder.mcrypt'
+          calls:
+              - [setRestClientFactory, ['@oro_integration.transport.rest.client_factory']]
+          tags:
+              - { name: oro_integration.transport, type: dpd, channel_type: dpd }
+
+    oro_dpd.provider.package:
+        class: 'Oro\Bundle\DPDBundle\Provider\PackageProvider'
+        arguments:
+            - '@doctrine'
+            - '@oro_shipping.provider.measure_units.conversion'
+
+    oro_dpd.factory.dpd_request_factory:
+        class: 'Oro\Bundle\DPDBundle\Factory\DPDRequestFactory'
+        public: false
+        arguments:
+            - '@doctrine'
+            - '@oro_dpd.provider.package'
+            - '@oro_shipping.provider.measure_units.conversion'
+
+    oro_dpd.shipping_method_provider.dpd:
+        class: 'Oro\Bundle\DPDBundle\Method\DPDShippingMethodProvider'
+        public: false
+        arguments:
+            - '@doctrine'
+            - '@oro_dpd.provider.transport'
+            - '@oro_dpd.factory.dpd_request_factory'
+            - '@oro_locale.helper.localization'
+            - '@oro_dpd.provider.package'
+            - '@oro_attachment.file_manager'
+        tags:
+            - { name: oro_shipping_method_provider }
+
+    oro_dpd.handler.order_shipping_dpd:
+        class: 'Oro\Bundle\DPDBundle\Handler\OrderShippingDPDHandler'
+        arguments:
+            - '@oro_dpd.shipping_method_provider.dpd'
+
+#    oro_dpd.zip_code_rules_cache:
+#        class: 'Oro\Bundle\DPDBundle\Cache\ZipCodeRulesCache'
+#        public: false
+#        arguments:
+#            - "@oro_dpd.cache.zip_code_rules"
+#
+#    oro_dpd.cache.zip_code_rules:
+#        public: false
+#        parent: oro.cache.abstract
+#        calls:
+#            - [setNamespace, ['oro_dpd_zip_code_rules']]
