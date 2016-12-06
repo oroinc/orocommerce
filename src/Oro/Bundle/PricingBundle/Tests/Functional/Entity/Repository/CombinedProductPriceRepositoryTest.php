@@ -27,11 +27,13 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient();
-        $this->loadFixtures([
-            LoadCombinedPriceLists::class,
-            LoadProductPrices::class,
-            LoadCombinedProductPrices::class
-        ]);
+        $this->loadFixtures(
+            [
+                LoadCombinedPriceLists::class,
+                LoadProductPrices::class,
+                LoadCombinedProductPrices::class,
+            ]
+        );
         $this->insertFromSelectQueryExecutor = $this->getContainer()
             ->get('oro_entity.orm.insert_from_select_query_executor');
     }
@@ -111,7 +113,7 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
     }
 
     /**
-     * @depends testInsertPricesByPriceList
+     * @depends      testInsertPricesByPriceList
      * @dataProvider getPricesForProductsByPriceListDataProvider
      * @param string $priceList
      * @param array $products
@@ -134,7 +136,7 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
         foreach ($products as $product) {
             $searchConditions = [
                 'priceList' => $priceList,
-                'product' => $this->getReference($product)
+                'product' => $this->getReference($product),
             ];
             if ($currency) {
                 $searchConditions['currency'] = $currency;
@@ -163,15 +165,15 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
             [
                 'combinedPriceList' => '1t_2t_3t',
                 'products' => ['product.1'],
-                'currency' => 'USD'
+                'currency' => 'USD',
             ],
             [
                 'combinedPriceList' => '1t_2t_3t',
-                'products' => ['product.2']
+                'products' => ['product.2'],
             ],
             [
                 'combinedPriceList' => '1t_2t_3t',
-                'products' => ['product.1', 'product.2']
+                'products' => ['product.1', 'product.2'],
             ],
         ];
     }
@@ -296,7 +298,9 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
      */
     protected function sort(array $a, array $b)
     {
-        if ($a['cpl'] === $b['cpl']) {
+        if ($a['cpl'] === $b['cpl'] && $a['currency'] === $b['currency']) {
+            return $a['unit'] > $b['unit'] ? 1 : 0;
+        } elseif ($a['cpl'] === $b['cpl']) {
             return $a['currency'] > $b['currency'] ? 1 : 0;
         }
 

@@ -3,15 +3,12 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Controller\Frontend;
 
 use Doctrine\Common\Persistence\ObjectManager;
-use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberFilterType;
-use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberRangeFilterType;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\Client;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToWebsiteRepository;
-use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use Oro\Bundle\PricingBundle\Tests\Functional\Controller\AbstractAjaxProductPriceControllerTest;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -164,34 +161,6 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
     }
 
     /**
-     * @dataProvider filterDataProvider
-     * @param array $filter
-     * @param array $expected
-     */
-    public function testGridFilter(array $filter, array $expected)
-    {
-        $this->markTestSkipped('TODO: Implement in scope of BB-4176');
-
-        $account = $this->getReference('account.level_1.2');
-        $response = $this->client->requestFrontendGrid(
-            [
-                'gridName' => 'frontend-product-search-grid',
-                PriceListRequestHandler::ACCOUNT_ID_KEY => $account->getId(),
-            ],
-            $filter,
-            true
-        );
-        $result = $this->getJsonResponseContent($response, 200);
-
-        $this->assertArrayHasKey('data', $result);
-        $this->assertSameSize($expected, $result['data']);
-
-        foreach ($result['data'] as $product) {
-            $this->assertContains($product['sku'], $expected);
-        }
-    }
-
-    /**
      * @dataProvider setCurrentCurrencyDataProvider
      * @param string $currency
      * @param string $expectedResult
@@ -221,59 +190,6 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
             [
                 'currency' => 'USD2',
                 'expectedResult' => ['success' => false] ,
-            ],
-        ];
-    }
-
-    /**
-     * @return array
-     */
-    public function filterDataProvider()
-    {
-        return [
-            'equal 1.1 USD per bottle' => [
-                'filter' => [
-                    'frontend-product-search-grid[_filter][minimal_price][value]' => 1.1,
-                    'frontend-product-search-grid[_filter][minimal_price][type]'  => null,
-                    'frontend-product-search-grid[_filter][minimal_price][unit]'  => 'bottle'
-                ],
-                'expected' => []
-            ],
-            'equal 10 USD per liter' => [
-                'filter' => [
-                    'frontend-product-search-grid[_filter][minimal_price][value]' => 10,
-                    'frontend-product-search-grid[_filter][minimal_price][type]'  => null,
-                    'frontend-product-search-grid[_filter][minimal_price][unit]'  => 'liter'
-                ],
-                'expected' => ['product.1']
-            ],
-            'greater equal 12.2 USD per liter' => [
-                'filter' => [
-                    'frontend-product-search-grid[_filter][minimal_price][value]' => 12.2,
-                    'frontend-product-search-grid[_filter][minimal_price][type]' =>
-                        NumberFilterType::TYPE_GREATER_EQUAL,
-                    'frontend-product-search-grid[_filter][minimal_price][unit]' => 'liter'
-                ],
-                'expected' => ['product.1', 'product.2']
-            ],
-            'less 10 USD per liter' => [
-                'filter' => [
-                    'frontend-product-search-grid[_filter][minimal_price][value]' => 10,
-                    'frontend-product-search-grid[_filter][minimal_price][type]'  =>
-                        NumberFilterType::TYPE_LESS_THAN,
-                    'frontend-product-search-grid[_filter][minimal_price][unit]'  => 'liter'
-                ],
-                'expected' => ['product.3']
-            ],
-            'greater 10 USD per liter AND less 20 EUR per bottle' => [
-                'filter' => [
-                    'frontend-product-search-grid[_filter][minimal_price][value]' => 1,
-                    'frontend-product-search-grid[_filter][minimal_price][value_end]' => 10,
-                    'frontend-product-search-grid[_filter][minimal_price][type]'  =>
-                        NumberRangeFilterType::TYPE_BETWEEN,
-                    'frontend-product-search-grid[_filter][minimal_price][unit]'  => 'liter',
-                ],
-                'expected' => ['product.1', 'product.3']
             ],
         ];
     }
