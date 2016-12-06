@@ -135,15 +135,20 @@
             />
         </div>
         <div class="product-view-media__gallery" id="product-view-media-gallery">
-            {% for productImage in product.imagesByType('additional') %}
-                <a href="#"
-                   class="product-view-media__gallery__item"
-                   data-image="{{ Image.url(productImage.image, 'product_extra_large') }}"
-                   data-zoom-image="{{ Image.url(productImage.image, 'product_original') }}">
-                    <img src="{{ Image.url(productImage.image, 'product_small') }}"
-                         width="82"
-                         height="82"/>
-                </a>
+            {% set additionalImages = product.imagesByType('additional') %}
+            {% for productImage in additionalImages %}
+                {% if additionalImages|length > 1 %}
+                    <a href="#"
+                       class="product-view-media__gallery__item"
+                       data-image="{{ Image.url(productImage.image, 'product_extra_large') }}"
+                       data-zoom-image="{{ Image.url(productImage.image, 'product_original') }}">
+                {% endif %}
+                <img src="{{ Image.url(productImage.image, 'product_small') }}"
+                     width="82"
+                     height="82"/>
+                {% if additionalImages|length > 1 %}
+                    </a>
+                {% endif %}
             {% endfor %}
         </div>
     </div>
