@@ -16,7 +16,7 @@ use Oro\Bundle\ScopeBundle\Entity\Scope;
  * @Config(
  *      defaultValues={
  *          "entity"={
- *              "icon"="icon-share-sign"
+ *              "icon"="fa-share-square"
  *          },
  *          "security"={
  *              "type"="ACL",

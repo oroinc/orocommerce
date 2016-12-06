@@ -10,7 +10,7 @@ system_configuration:
             title:  oro.pricing.system_configuration.groups.display_currencies.title
         pricing:
             title: oro.pricing.system_configuration.groups.pricing.title
-            icon: 'icon-credit-card'
+            icon: 'fa-credit-card'
     fields:
         oro_pricing.default_price_lists:
             data_type: array

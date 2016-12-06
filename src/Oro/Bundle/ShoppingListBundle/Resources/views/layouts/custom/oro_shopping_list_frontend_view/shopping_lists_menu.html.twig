@@ -57,7 +57,7 @@
 
     <div{{ block('block_attributes') }}>
         <div class="shopping-list-dropdown__handle" data-toggle="dropdown">
-            <i class="shopping-list-dropdown__icon cf-add_circle"></i>
+            <i class="shopping-list-dropdown__icon fa-plus-circle"></i>
         </div>
         <div class="shopping-list-dropdown__nav dropdown-menu">
             <ul class="shopping-list-links">
@@ -67,7 +67,7 @@
                         data-id="{{ shoppingList.id }}"
                     >
                         <a class="shopping-list-links__link" href="{{ path('oro_shopping_list_frontend_view', {'id' : shoppingList.id}) }}">
-                            <i class="shopping-list-links__icon cf-check"></i>
+                            <i class="shopping-list-links__icon fa-check"></i>
                             <span class="shopping-list-links__text{% if shoppingList.id == selectedShoppingList.id %} current-title{% endif %}">{{ shoppingList.label }}</span>
                         </a>
                     </li>

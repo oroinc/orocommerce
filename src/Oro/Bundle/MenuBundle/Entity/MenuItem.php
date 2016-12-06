@@ -22,7 +22,7 @@ use Oro\Component\Tree\Entity\TreeTrait;
  *      routeName="oro_menu_item_roots",
  *      defaultValues={
  *          "entity"={
- *              "icon"="icon-th"
+ *              "icon"="fa-th"
  *          }
  *      }
  * )

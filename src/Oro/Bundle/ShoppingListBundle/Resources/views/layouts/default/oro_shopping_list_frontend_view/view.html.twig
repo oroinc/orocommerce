@@ -12,7 +12,7 @@
 
 {% block _no_shopping_lists_widget %}
     <div class="cart-list_empty">
-        <span class="badge badge_orange badge_xlg badge_circle"><i class="cf-basket"></i></span>
+        <span class="badge badge_orange badge_xlg badge_circle"><i class="fa-shopping-cart"></i></span>
         <span class="fs24 va-m_md">{{ 'oro.frontend.shoppinglist.view.not_have_available'|trans }}</span>
     </div>
 {% endblock %}
@@ -90,7 +90,7 @@
             }|json_encode() }}"
     >
         <span class="collapse-view__trigger" data-collapse-trigger>
-            <i class="collapse-view__trigger-icon cf-play cf--gray"></i>
+            <i class="collapse-view__trigger-icon fa-caret-right"></i>
         </span>
         <a href="#" class="collapse-view__trigger orange" data-collapse-trigger>{{ 'oro.frontend.shoppinglist.view.view_options.label'|trans }}</a>
 
@@ -328,7 +328,7 @@
                                         cancelButtonClass: 'btn cancel theme-btn_sm btn_gray'
                                     }
                                 }) }} >
-                                <i class="cf-trash"></i>
+                                <i class="fa-trash-o"></i>
                             </button>
                         </td>
                     </tr>
@@ -391,7 +391,7 @@
     {% set attr = attr|merge({ class: attr.class|default('') ~ " cart-list_empty"}) %}
     <div {{ block('block_attributes') }}>
           <span class="badge badge_orange badge_xlg badge_circle">
-            <i class="cf-basket"></i>
+            <i class="fa-shopping-cart"></i>
           </span>
         <span class="fs24 va-m_md">{{ 'oro.frontend.shoppinglist.view.empty'|trans }}</span>
     </div>
@@ -424,7 +424,7 @@
                 cancelButtonClass: 'btn cancel theme-btn_sm btn_gray'
             }
         }) }} >
-            <i class="fa cf-trash mmr5-md"></i> {{ 'oro.frontend.shoppinglist.btn.delete'|trans }}
+            <i class="fa-trash-o mmr5-md"></i> {{ 'oro.frontend.shoppinglist.btn.delete'|trans }}
         </button>
 {% endblock %}
 

@@ -2,7 +2,7 @@ system_configuration:
     groups:
         product_options:
             title: oro.inventory.system_configuration.groups.product_options.title
-            icon: 'icon-gears'
+            icon: 'fa-cogs'
         product_inventory_options:
             title: oro.inventory.system_configuration.groups.product_inventory_options.title
 

@@ -63,7 +63,7 @@ use Oro\Bundle\RedirectBundle\Entity\SluggableTrait;
  *      routeUpdate="oro_product_update",
  *      defaultValues={
  *          "entity"={
- *              "icon"="icon-briefcase"
+ *              "icon"="fa-briefcase"
  *          },
  *          "ownership"={
  *              "owner_type"="BUSINESS_UNIT",
