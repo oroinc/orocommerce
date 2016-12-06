@@ -3,6 +3,8 @@
 namespace Oro\Bundle\SEOBundle\Migrations\Schema\v1_2;
 
 use Doctrine\DBAL\Types\Type;
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
@@ -38,16 +40,19 @@ class DropMetaTitlesEntityConfigValuesQuery extends ParametrizedMigrationQuery
      */
     protected function doExecute(LoggerInterface $logger, $dryRun = false)
     {
-        $this->deleteFieldIndex($logger, $dryRun);
-        $this->deleteField($logger, $dryRun);
-        $this->updateEntityData($logger, $dryRun);
+        foreach ([Product::class, Page::class, Category::class] as $className) {
+            $this->deleteFieldIndex($className, $logger, $dryRun);
+            $this->deleteField($className, $logger, $dryRun);
+            $this->updateEntityData($className, $logger, $dryRun);
+        }
     }
 
     /**
+     * @param string $className
      * @param LoggerInterface $logger
      * @param bool $dryRun
      */
-    protected function deleteFieldIndex(LoggerInterface $logger, $dryRun = false)
+    protected function deleteFieldIndex($className, LoggerInterface $logger, $dryRun = false)
     {
         $query = <<<'SQL'
 DELETE FROM oro_entity_config_index_value
@@ -58,7 +63,7 @@ WHERE field_id  = (
 )
 SQL;
         $params = [
-            'class' => Product::class,
+            'class' => $className,
             'field_name' => self::FIELD_NAME
         ];
 
@@ -70,10 +75,11 @@ SQL;
     }
 
     /**
+     * @param string $className
      * @param LoggerInterface $logger
      * @param bool $dryRun
      */
-    protected function deleteField(LoggerInterface $logger, $dryRun = false)
+    protected function deleteField($className, LoggerInterface $logger, $dryRun = false)
     {
         $query = <<<'SQL'
 DELETE FROM oro_entity_config_field
@@ -81,7 +87,7 @@ WHERE entity_id = (SELECT id FROM oro_entity_config WHERE class_name = :class)
 AND field_name = :field_name
 SQL;
         $params = [
-            'class' => Product::class,
+            'class' => $className,
             'field_name' => self::FIELD_NAME
         ];
 
@@ -93,18 +99,19 @@ SQL;
     }
 
     /**
+     * @param string $className
      * @param LoggerInterface $logger
      * @param bool $dryRun
      */
-    protected function updateEntityData(LoggerInterface $logger, $dryRun = false)
+    protected function updateEntityData($className, LoggerInterface $logger, $dryRun = false)
     {
         $sql = 'SELECT e.data FROM oro_entity_config as e WHERE e.class_name = ? LIMIT 1';
-        $entityRow = $this->connection->fetchAssoc($sql, [Product::class]);
+        $entityRow = $this->connection->fetchAssoc($sql, [$className]);
         $data = $entityRow['data'];
 
         $data = $data ? $this->connection->convertToPHPValue($data, Type::TARRAY) : [];
 
-        $key = sprintf('manyToMany|%s|%s|%s', Product::class, LocalizedFallbackValue::class, self::FIELD_NAME);
+        $key = sprintf('manyToMany|%s|%s|%s', $className, LocalizedFallbackValue::class, self::FIELD_NAME);
 
         if (isset($data['extend']['relation'][$key])) {
             unset($data['extend']['relation'][$key]);
@@ -123,7 +130,7 @@ SQL;
         $query = 'UPDATE oro_entity_config SET data = :data WHERE class_name = :class';
         $params = [
             'data' => $data,
-            'class' => Product::class
+            'class' => $className
         ];
 
         $this->logQuery($logger, $query, $params);

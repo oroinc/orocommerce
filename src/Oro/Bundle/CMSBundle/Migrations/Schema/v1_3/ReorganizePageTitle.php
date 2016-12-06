@@ -5,6 +5,8 @@ namespace Oro\Bundle\CMSBundle\Migrations\Schema\v1_3;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Schema\Comparator;
 use Doctrine\DBAL\Schema\Schema;
+use Oro\Bundle\CMSBundle\Entity\Page;
+use Oro\Bundle\CMSBundle\Migrations\Schema\v1_2\DropEntityConfigFieldQuery;
 use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
@@ -101,5 +103,6 @@ class ReorganizePageTitle implements Migration, DatabasePlatformAwareInterface
         foreach ($this->getSchemaDiff($schema, $preSchema) as $query) {
             $queries->addQuery($query);
         }
+        $queries->addQuery(new DropEntityConfigFieldQuery(Page::class, 'title'));
     }
 }
