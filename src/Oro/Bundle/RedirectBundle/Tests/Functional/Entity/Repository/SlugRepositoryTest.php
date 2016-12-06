@@ -92,11 +92,22 @@ class SlugRepositoryTest extends WebTestCase
         $this->assertSame($expected, $slug);
     }
 
+    public function testGetSlugByUrlAndScopeCriteriaSlugWithScopesMatched()
+    {
+        /** @var AccountUser $account */
+        $account = $this->getReference(LoadAccounts::DEFAULT_ACCOUNT_NAME);
+
+        $criteria = $this->scopeManager->getCriteria(ScopeManager::BASE_SCOPE, ['account' => $account]);
+        $slug = $this->repository->getSlugByUrlAndScopeCriteria(LoadSlugsData::SLUG_TEST_DUPLICATE_URL, $criteria);
+        $expected = $this->getReference(LoadSlugsData::SLUG_TEST_DUPLICATE_URL);
+        $this->assertSame($expected, $slug);
+    }
+
     public function testGetSlugByUrlAndScopeCriteriaSlugWithoutScopesMatched()
     {
         $criteria = $this->scopeManager->getCriteria(ScopeManager::BASE_SCOPE);
-        $slug = $this->repository->getSlugByUrlAndScopeCriteria(LoadSlugsData::SLUG_URL_USER, $criteria);
-        $expected = $this->getReference(LoadSlugsData::SLUG_USER_SAME_URL);
+        $slug = $this->repository->getSlugByUrlAndScopeCriteria(LoadSlugsData::SLUG_TEST_DUPLICATE_URL, $criteria);
+        $expected = $this->getReference(LoadSlugsData::SLUG_TEST_DUPLICATE_REFERENCE);
         $this->assertSame($expected, $slug);
     }
 }

@@ -3,8 +3,9 @@
 namespace Oro\Bundle\SEOBundle\Tests\Functional\Controller;
 
 use Doctrine\ORM\EntityRepository;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\CMSBundle\Tests\Functional\DataFixtures\LoadPageData;
 use Oro\Bundle\SEOBundle\Tests\Functional\DataFixtures\LoadPageMetaData;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Crawler;
 
 /**
@@ -16,7 +17,7 @@ class PageControllerTest extends WebTestCase
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
-        $this->loadFixtures(['Oro\Bundle\CMSBundle\Tests\Functional\DataFixtures\LoadPageData']);
+        $this->loadFixtures([LoadPageData::class]);
     }
 
     public function testViewLandingPage()
@@ -65,8 +66,8 @@ class PageControllerTest extends WebTestCase
 
         return $qb
             ->select('page.id')
-            ->innerJoin('page.slugs', 'slug')
-            ->andWhere('slug.string = :slug')
+            ->innerJoin('page.slugPrototypes', 'slugPrototypes')
+            ->andWhere('slugPrototypes.string = :slug')
             ->setParameter('slug', 'about')
             ->getQuery()
             ->getSingleScalarResult();

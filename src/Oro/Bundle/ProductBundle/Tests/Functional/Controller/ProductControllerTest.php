@@ -297,7 +297,14 @@ class ProductControllerTest extends WebTestCase
             [self::SECOND_IMAGE_FILENAME, 0, 0, 1]
         ];
 
-        $this->assertEquals($expectedProductImageMatrix, $this->parseProductImages($crawler));
+        $this->assertEquals(
+            $expectedProductImageMatrix,
+            $this->parseProductImages($crawler),
+            'Images are not equal',
+            0.0,
+            10,
+            true
+        );
     }
 
     /**
@@ -342,7 +349,14 @@ class ProductControllerTest extends WebTestCase
             [self::SECOND_IMAGE_FILENAME, 0, 0, 1]
         ];
 
-        $this->assertEquals($expectedProductImageMatrix, $this->parseProductImages($crawler));
+        $this->assertEquals(
+            $expectedProductImageMatrix,
+            $this->parseProductImages($crawler),
+            'Images are not equal',
+            0.0,
+            10,
+            true
+        );
 
         $product = $this->getProductDataBySku(self::FIRST_DUPLICATED_SKU);
 
