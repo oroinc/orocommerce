@@ -36,16 +36,8 @@ class AccountUserRoleController extends Controller
     /**
      * @Route("/view/{id}", name="oro_customer_frontend_account_user_role_view", requirements={"id"="\d+"})
      * @Layout()
-     * @Acl(
-     *      id="oro_account_frontend_account_user_role_view",
-     *      type="entity",
-     *      class="OroCustomerBundle:AccountUserRole",
-     *      permission="VIEW",
-     *      group_name="commerce"
-     * )
      *
      * @param AccountUserRole $role
-     *
      * @return array
      */
     public function viewAction(AccountUserRole $role)
@@ -86,13 +78,6 @@ class AccountUserRoleController extends Controller
     /**
      * @Route("/update/{id}", name="oro_customer_frontend_account_user_role_update", requirements={"id"="\d+"})
      * @Layout()
-     * @Acl(
-     *      id="oro_account_frontend_account_user_role_update",
-     *      type="entity",
-     *      class="OroCustomerBundle:AccountUserRole",
-     *      permission="UPDATE",
-     *      group_name="commerce"
-     * )
      *
      * @param AccountUserRole $role
      * @param Request $request

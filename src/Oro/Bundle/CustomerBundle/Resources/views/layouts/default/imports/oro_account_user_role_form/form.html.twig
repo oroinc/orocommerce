@@ -21,6 +21,7 @@
          data-page-component-options="{{ options|json_encode }}">
     </div>
 
+    {{ form_row(form.account) }}
     {{ form_row(form.label) }}
 
     {{ form_widget(form.appendUsers, {'id': 'roleAppendUsers'}) }}

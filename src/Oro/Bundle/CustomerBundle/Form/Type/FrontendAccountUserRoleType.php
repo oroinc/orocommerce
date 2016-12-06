@@ -38,6 +38,20 @@ class FrontendAccountUserRoleType extends AbstractAccountUserRoleType
         parent::buildForm($builder, $options);
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'updateAccountUsers']);
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);
+    }
+
+    /**
+     * PRE_SET_DATA event handler
+     *
+     * @param FormEvent $event
+     */
+    public function preSetData(FormEvent $event)
+    {
+        $event->getForm()->add('account', FrontendOwnerSelectType::NAME, [
+            'label' => 'oro.customer.account.entity_label',
+            'targetObject' => $event->getData()
+        ]);
     }
 
     /**

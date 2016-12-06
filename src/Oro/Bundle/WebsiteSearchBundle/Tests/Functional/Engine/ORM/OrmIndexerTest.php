@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityBundle\ORM\OroEntityManager;
 use Oro\Bundle\EntityBundle\ORM\Registry;
+use Oro\Bundle\SearchBundle\Provider\AbstractSearchMappingProvider;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestDepartment;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestEmployee;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestProduct;
@@ -67,28 +68,21 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
         return $this->getRepository(Item::class)->findBy(['alias' => $options['alias']]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function getIndexer(
-        DoctrineHelper $doctrineHelper,
-        WebsiteSearchMappingProvider $mappingProvider,
-        EntityDependenciesResolver $entityDependenciesResolver,
-        IndexDataProvider $indexDataProvider,
-        PlaceholderInterface $placeholder
-    ) {
-        return new OrmIndexer(
-            $doctrineHelper,
-            $mappingProvider,
-            $entityDependenciesResolver,
-            $indexDataProvider,
-            $placeholder
-        );
-    }
-
     protected function setUp()
     {
         parent::setUp();
+
+        $this->mappingProviderMock = $this->getMockBuilder(WebsiteSearchMappingProvider::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->indexer = new OrmIndexer(
+            $this->doctrineHelper,
+            $this->mappingProviderMock,
+            $this->getContainer()->get('oro_website_search.engine.entity_dependencies_resolver'),
+            $this->getContainer()->get('oro_website_search.engine.index_data'),
+            $this->getContainer()->get('oro_website_search.placeholder_decorator')
+        );
 
         $this->indexer->setDriver($this->getContainer()->get('oro_website_search.engine.orm.driver'));
         $this->doctrine = $this->getContainer()->get('doctrine');

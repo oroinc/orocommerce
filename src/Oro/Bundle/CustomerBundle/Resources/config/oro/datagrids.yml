@@ -15,6 +15,14 @@ datagrids:
         options:
             access_level_route: oro_customer_frontend_acl_access_levels
 
+    account-user-workflow-permission-grid:
+        extends: workflow-permission-grid
+        source:
+            type: account-user-workflow-permission-grid-provider
+        acl_resource: oro_account_account_user_role_update
+        options:
+            access_level_route: oro_account_acl_access_levels
+
     account-accounts-select-grid:
         extended_entity_name: %oro_customer.entity.account.class%
         acl_resource: oro_customer_account_view
@@ -236,21 +244,8 @@ datagrids:
             view:
                 rowAction: true
 
-    account-group-accounts-grid-update:
+    account-group-accounts-grid-update-basic:
         extends: account-group-accounts-grid-basic
-        source:
-            query:
-                select:
-                    - >
-                        (CASE WHEN (:group IS NOT NULL) THEN
-                            CASE WHEN (:group = customer.group OR customer.id IN (:data_in)) AND customer.id NOT IN (:data_not_in)
-                            THEN true ELSE false END
-                        ELSE
-                            CASE WHEN customer.id IN (:data_in) AND customer.id NOT IN (:data_not_in)
-                            THEN true ELSE false END
-                        END) as hasGroup
-            bind_parameters:
-                - group
         columns:
             hasGroup:
                 label: oro.customer.account.has_group.label
@@ -278,6 +273,27 @@ datagrids:
                 selectors:
                     included: '#groupAppendAccounts'
                     excluded: '#groupRemoveAccounts'
+
+    account-group-accounts-grid-update:
+        extends: account-group-accounts-grid-update-basic
+        source:
+            query:
+                select:
+                    - >
+                        (CASE WHEN (:group = customer.group OR customer.id IN (:data_in)) AND customer.id NOT IN (:data_not_in)
+                        THEN true ELSE false END) as hasGroup
+            bind_parameters:
+                -
+                    name: group
+
+    account-group-accounts-grid-create:
+        extends: account-group-accounts-grid-update-basic
+        source:
+            query:
+                select:
+                    - >
+                        (CASE WHEN customer.id IN (:data_in) AND customer.id NOT IN (:data_not_in)
+                        THEN true ELSE false END) as hasGroup
 
     account-account-user-grid-no-filter-base:
         entity_name: %oro_customer.entity.account_user.class%
@@ -555,11 +571,6 @@ datagrids:
         extends: basic-account-account-user-roles-grid
         source:
             skip_acl_apply: true
-            query:
-                where:
-                    and:
-                        - role.selfManaged = true
-                        - role.public = true
         properties:
             id: ~
             view_link:

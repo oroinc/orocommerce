@@ -70,7 +70,6 @@ abstract class AbstractLoadACLData extends AbstractFixture implements
      */
     public static function getAccountUsers()
     {
-
         return [
             [
                 'email' => static::USER_ACCOUNT_1_ROLE_BASIC,

@@ -178,7 +178,6 @@ class UPSShippingMethodTest extends \PHPUnit_Framework_TestCase
         $optionsByTypes = ['01' => ['surcharge' => $typeSurcharge]];
 
         $priceRequest = $this->getMockBuilder(PriceRequest::class)->disableOriginalConstructor()->getMock();
-        $priceRequest->expects(self::once())->method('getPackages')->willReturn([new Package(), new Package()]);
 
         $this->priceRequestFactory->expects(self::once())->method('create')->willReturn($priceRequest);
 
@@ -284,7 +283,6 @@ class UPSShippingMethodTest extends \PHPUnit_Framework_TestCase
         ];
 
         $priceRequest = $this->getMockBuilder(PriceRequest::class)->disableOriginalConstructor()->getMock();
-        $priceRequest->expects(self::once())->method('getPackages')->willReturn([new Package(), new Package()]);
 
         $this->priceRequestFactory->expects(self::once())->method('create')->willReturn($priceRequest);
 
@@ -371,7 +369,6 @@ class UPSShippingMethodTest extends \PHPUnit_Framework_TestCase
         ];
 
         $priceRequest = $this->getMockBuilder(PriceRequest::class)->disableOriginalConstructor()->getMock();
-        $priceRequest->expects(self::once())->method('getPackages')->willReturn([new Package(), new Package()]);
 
         $this->priceRequestFactory->expects(self::once())->method('create')->willReturn($priceRequest);
 
