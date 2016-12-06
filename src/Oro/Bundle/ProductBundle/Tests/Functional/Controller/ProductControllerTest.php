@@ -634,7 +634,6 @@ class ProductControllerTest extends WebTestCase
      * @param string $code
      * @param int $precision
      * @param string $html
-     * @return string
      */
     private function assertContainsAdditionalUnitPrecision($code, $precision, $html)
     {
