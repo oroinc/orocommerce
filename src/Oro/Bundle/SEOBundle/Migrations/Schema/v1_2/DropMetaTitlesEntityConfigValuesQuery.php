@@ -3,17 +3,39 @@
 namespace Oro\Bundle\SEOBundle\Migrations\Schema\v1_2;
 
 use Doctrine\DBAL\Types\Type;
-use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Psr\Log\LoggerInterface;
 
 class DropMetaTitlesEntityConfigValuesQuery extends ParametrizedMigrationQuery
 {
-    const FIELD_NAME = 'metaTitles';
+    /**
+     * @var string
+     */
+    private $className;
+
+    /**
+     * @var string
+     */
+    private $fieldName;
+
+    /**
+     * @var string
+     */
+    private $reverseNamePrefix;
+
+    /**
+     * @param string $className
+     * @param string $fieldName
+     * @param string $reverseNamePrefix
+     */
+    public function __construct($className, $fieldName, $reverseNamePrefix)
+    {
+        $this->className = $className;
+        $this->fieldName = $fieldName;
+        $this->reverseNamePrefix = $reverseNamePrefix;
+    }
 
     /**
      * {@inheritdoc}
@@ -40,19 +62,25 @@ class DropMetaTitlesEntityConfigValuesQuery extends ParametrizedMigrationQuery
      */
     protected function doExecute(LoggerInterface $logger, $dryRun = false)
     {
-        foreach ([Product::class, Page::class, Category::class] as $className) {
-            $this->deleteFieldIndex($className, $logger, $dryRun);
-            $this->deleteField($className, $logger, $dryRun);
-            $this->updateEntityData($className, $logger, $dryRun);
-        }
+        $key = sprintf('manyToMany|%s|%s|%s', $this->className, LocalizedFallbackValue::class, $this->fieldName);
+
+        $this->deleteFieldIndex($this->className, $this->fieldName, $logger, $dryRun);
+        $this->deleteField($this->className, $this->fieldName, $logger, $dryRun);
+        $this->updateEntityData($this->className, $this->fieldName, $key, $logger, $dryRun);
+
+        $mappedField = $this->reverseNamePrefix . '_' . $this->fieldName;
+        $this->deleteFieldIndex(LocalizedFallbackValue::class, $mappedField, $logger, $dryRun);
+        $this->deleteField(LocalizedFallbackValue::class, $mappedField, $logger, $dryRun);
+        $this->updateEntityData(LocalizedFallbackValue::class, $mappedField, $key, $logger, $dryRun);
     }
 
     /**
      * @param string $className
+     * @param string $fieldName
      * @param LoggerInterface $logger
      * @param bool $dryRun
      */
-    protected function deleteFieldIndex($className, LoggerInterface $logger, $dryRun = false)
+    protected function deleteFieldIndex($className, $fieldName, LoggerInterface $logger, $dryRun = false)
     {
         $query = <<<'SQL'
 DELETE FROM oro_entity_config_index_value
@@ -64,22 +92,23 @@ WHERE field_id  = (
 SQL;
         $params = [
             'class' => $className,
-            'field_name' => self::FIELD_NAME
+            'field_name' => $fieldName
         ];
 
         $this->logQuery($logger, $query, $params);
 
         if (!$dryRun) {
-            $this->connection->executeQuery($query, $params);
+            $this->connection->executeQuery($query, $params, ['class' => 'string', 'field_name' => 'string']);
         };
     }
 
     /**
      * @param string $className
+     * @param string $fieldName
      * @param LoggerInterface $logger
      * @param bool $dryRun
      */
-    protected function deleteField($className, LoggerInterface $logger, $dryRun = false)
+    protected function deleteField($className, $fieldName, LoggerInterface $logger, $dryRun = false)
     {
         $query = <<<'SQL'
 DELETE FROM oro_entity_config_field
@@ -88,41 +117,46 @@ AND field_name = :field_name
 SQL;
         $params = [
             'class' => $className,
-            'field_name' => self::FIELD_NAME
+            'field_name' => $fieldName
         ];
 
         $this->logQuery($logger, $query, $params);
 
         if (!$dryRun) {
-            $this->connection->executeQuery($query, $params);
+            $this->connection->executeQuery($query, $params, ['class' => 'string', 'field_name' => 'string']);
         };
     }
 
     /**
      * @param string $className
+     * @param string $fieldName
+     * @param string $relationKey
      * @param LoggerInterface $logger
      * @param bool $dryRun
      */
-    protected function updateEntityData($className, LoggerInterface $logger, $dryRun = false)
-    {
+    protected function updateEntityData(
+        $className,
+        $fieldName,
+        $relationKey,
+        LoggerInterface $logger,
+        $dryRun = false
+    ) {
         $sql = 'SELECT e.data FROM oro_entity_config as e WHERE e.class_name = ? LIMIT 1';
         $entityRow = $this->connection->fetchAssoc($sql, [$className]);
         $data = $entityRow['data'];
 
         $data = $data ? $this->connection->convertToPHPValue($data, Type::TARRAY) : [];
 
-        $key = sprintf('manyToMany|%s|%s|%s', $className, LocalizedFallbackValue::class, self::FIELD_NAME);
-
-        if (isset($data['extend']['relation'][$key])) {
-            unset($data['extend']['relation'][$key]);
+        if (isset($data['extend']['relation'][$relationKey])) {
+            unset($data['extend']['relation'][$relationKey]);
         }
 
-        if (isset($data['extend']['schema']['relation'][self::FIELD_NAME])) {
-            unset($data['extend']['schema']['relation'][self::FIELD_NAME]);
+        if (isset($data['extend']['schema']['relation'][$fieldName])) {
+            unset($data['extend']['schema']['relation'][$fieldName]);
         }
 
-        if (isset($data['extend']['schema']['addremove'][self::FIELD_NAME])) {
-            unset($data['extend']['schema']['addremove'][self::FIELD_NAME]);
+        if (isset($data['extend']['schema']['addremove'][$fieldName])) {
+            unset($data['extend']['schema']['addremove'][$fieldName]);
         }
 
         $data = $this->connection->convertToDatabaseValue($data, Type::TARRAY);
