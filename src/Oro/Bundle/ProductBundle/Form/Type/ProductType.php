@@ -147,8 +147,8 @@ class ProductType extends AbstractType
                 LocalizedSlugType::NAME,
                 [
                     'label'    => 'oro.product.slug_prototypes.label',
-                    'required' => true,
-                    'options'  => ['constraints' => [new NotBlank(), new UrlSafe()]],
+                    'required' => false,
+                    'options'  => ['constraints' => [new UrlSafe()]],
                     'source_field' => 'names',
                 ]
             )
