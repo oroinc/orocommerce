@@ -21,7 +21,6 @@
 
     &__wrapper {
       position: absolute;
-      z-index: 200;
       right: 2px;
       padding: 0;
       width: 382px;
@@ -33,6 +32,8 @@
 
       @include breakpoint('tablet') {
         width: 100%;
+
+        overflow-y: visible;
       }
     }
   }
