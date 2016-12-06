@@ -1,0 +1,59 @@
+{% block __oro_product_grid__product_widget %}
+    {% do block|merge_context({
+        class_prefix: themeOptions.currentRowView,
+        product: datagrid_row
+    }) %}
+
+    {{ block_widget(block) }}
+{% endblock %}
+
+{% block __oro_product_grid__product_image_holder_widget %}
+    {% import 'OroProductBundle::image_macros.html.twig' as Image %}
+
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " product-item__image-holder product-item__image-holder_{{ class_prefix }}"
+    }) %}
+
+    {% set noImageUrl = Image.url(null, 'product_large') %}
+    <div {{ block('block_attributes') }}>
+        {% set image = product.image is defined ? product.image : noImageUrl %}
+        <a href="{{ product.view_link }}" class="view-product" style="background-image: url('{{ image }}')"></a>
+    </div>
+{% endblock %}
+
+{% block __oro_product_grid__product_title_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " product-item__title product-item__title_{{ class_prefix }}"
+    }) %}
+
+    <h3 {{ block('block_attributes') }}>
+        <a href="{{ product.view_link }}"
+           data-page-component-module="oroui/js/app/components/jquery-widget-component"
+           data-page-component-options="{{ {
+               widgetModule: 'orofrontend/default/js/widgets/line-clamp-widget',
+           }|json_encode }}"
+           class="view-product"
+        >
+            {{ block('container_widget') }}
+        </a>
+    </h3>
+{% endblock %}
+
+{% block __oro_product_grid__product_details_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " product__view-details-link product__view-details-link_{{ class_prefix }}"
+    }) %}
+    <div {{ block('block_attributes') }}>
+        <a href="{{ product.view_link }}" class="view-product">
+            <span class="underlined">{{ 'oro.product.frontend.index.view_details'|trans }}</span><i class="cf-right-open-mini"></i>
+        </a>
+    </div>
+{% endblock %}
+
+{% block __oro_product_grid__product_price_container_widget %}
+    {% do block|merge_context({
+        productPrices: product.prices,
+    }) %}
+
+    {{ block_widget(block) }}
+{% endblock %}

@@ -13,4 +13,4 @@ layout:
                     blockType: container
             tree:
                 product_grid_container:
-                    product_grid_row_template:
+                    product_grid_row_template: ~

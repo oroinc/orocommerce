@@ -1,51 +1,63 @@
 layout:
     imports:
         -
-            id: datagrid_toolbar
+            id: oro_datagrid_server_render
             root: product_grid_container
-        - datagrid_row_product
+            namespace: product
+
+        -
+            id: oro_product_list_item
+            root: product_datagrid_row
+            namespace: product_datagrid_row
 
     actions:
         - '@setBlockTheme':
-            themes: 'grid.html.twig'
+            themes:
+                - 'grid.html.twig'
+                - 'grid_row.html.twig'
 
-        - '@addTree':
-            items:
-                product_grid:
-                    blockType: product_datagrid
-                    options:
-                        grid_name: frontend-product-search-grid
-                        current_row_view: '=data["oro_product_frontend_datagrid_row_view"].getDataGridTheme()'
-            tree:
-                product_grid_container:
-                    product_grid: ~
+        - '@changeBlockType':
+            id: product_datagrid
+            blockType: product_datagrid
 
         - '@setOption':
-            id: __datagrid_toolbar
+            id: product_datagrid
+            optionName: grid_name
+            optionValue: frontend-product-search-grid
+
+        - '@setOption':
+            id: product_datagrid
+            optionName: current_row_view
+            optionValue: '=data["oro_product_frontend_datagrid_row_view"].getDataGridTheme()'
+
+        - '@move':
+            id: product_datagrid_row_cell_sku
+            parentId: product_datagrid_row_product_sku
+
+        - '@move':
+            id: product_datagrid_row_cell_name
+            parentId: product_datagrid_row_product_title
+
+        - '@move':
+            id: product_datagrid_row_cell_shortDescription
+            parentId: product_datagrid_row_product_short_description
+
+        - '@setOption':
+            id: product_datagrid_toolbar
             optionName: attr.class
             optionValue: 'catalog__filter-controls'
 
         - '@setOption':
-            id: __datagrid_toolbar_tools_container
-            optionName: attr.class
-            optionValue: 'catalog__filter-controls__item text-right'
-
-        - '@setOption':
-            id: __datagrid_toolbar_pagination
-            optionName: attr.class
-            optionValue: 'catalog__filter-controls__item'
-
-        - '@setOption':
-            id: __datagrid_toolbar_sorting
+            id: product_datagrid_toolbar_sorting
             optionName: visible
             optionValue: true
 
         - '@remove':
-            id: __datagrid_toolbar_actions
+            id: product_datagrid_toolbar_actions
 
         - '@add':
-            id: __datagrid_toolbar_display_options
-            parentId: __datagrid_toolbar
+            id: product_datagrid_toolbar_display_options
+            parentId: product_datagrid_toolbar
             blockType: product_datagrid_options
             options:
                 current_row_view: '=data["oro_product_frontend_datagrid_row_view"].getDataGridTheme()'
