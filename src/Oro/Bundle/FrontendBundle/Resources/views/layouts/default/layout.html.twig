@@ -73,7 +73,7 @@
             {% set additionalCss = additionalCss ~ " btn" %}
         {% endif %}
         {% if hasVariants %}
-            {% set additionalCss = " btn-group" %}
+            {% set additionalCss = " btn-group full" %}
         {% endif %}
         {% set attr = attr|merge({ class: attr.class|default('') ~ additionalCss}) %}
 
@@ -82,10 +82,10 @@
 
         {% if hasVariants %}
             <div{{ block('block_attributes') }}>
-                <a class="btn" {{ _layout.get_action_attributes(action, entityClass, entityId, primaryButtonCss) }}>
+                <a class="btn btn--info btn--size-l" {{ _layout.get_action_attributes(action, entityClass, entityId, primaryButtonCss) }}>
                     {{ action.label|trim }}
                 </a>
-                <a class="btn dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"></a>
+                <a class="btn btn--info btn--size-l dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"></a>
                 <ul class="dropdown-menu">
                     {% for action in actions|slice(1) %}
                     <li>

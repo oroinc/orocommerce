@@ -39,10 +39,18 @@
 
 {% block __oro_product_line_item_form__line_item_form_buttons_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
+
+    {% if 'list-view' in class_prefix %}
+        {% set decoreClass = 'btn--size-m btn--info' %}
+    {% else %}
+        {% set decoreClass = 'btn--info' %}
+    {% endif %}
+
     {% if block.children is not empty %}
         {% set attr = layout_attr_defaults(attr, {
             '~class': ' add-product-from-view-component '
         }) %}
+
         <div {{ block('block_attributes') }}>
             {{ UI.pinnedDropdownButton({
                 'html': block_widget(block),
@@ -55,7 +63,8 @@
                     'widgetName': 'productAddToDropdownButtonProcessor',
                     'truncateLength': 25,
                     'groupContainer': '<div id="add-to-shopping-list" class="btn-group full"></div>',
-                    'appendToBody': true
+                    'appendToBody': true,
+                    'decoreClass': decoreClass
                 }
             }) }}
         </div>

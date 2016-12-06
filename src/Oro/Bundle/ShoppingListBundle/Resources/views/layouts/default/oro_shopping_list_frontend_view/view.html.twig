@@ -435,7 +435,9 @@
 {% endblock %}
 
 {% block _shopping_list_combined_button_widget %}
-    <div data-name="empty-items__hide">
-        {{ block_widget(block) }}
+    <div data-name="empty-items__hide" class="clearfix">
+        <div class="order-checkout-widget__col">
+            {{ block_widget(block) }}
+        </div>
     </div>
 {% endblock %}
