@@ -85,10 +85,7 @@ services:
 
     oro_inventory.event_listener.category_quantity_to_order_form_view_listener:
         class: 'Oro\Bundle\InventoryBundle\EventListener\CategoryQuantityToOrderFormViewListener'
-        arguments:
-            - "@request_stack"
-            - "@oro_entity.doctrine_helper"
-            - "@translator"
+        parent: oro_inventory.service.fallback_fields_form_view
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.category-edit, method: onCategoryEdit }
 

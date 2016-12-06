@@ -3,6 +3,7 @@
 namespace Oro\Bundle\InventoryBundle\Tests\Functional\Controller\Frontend;
 
 use Doctrine\ORM\EntityManagerInterface;
+
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -12,7 +13,6 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\EntityBundle\Fallback\Provider\SystemConfigFallbackProvider;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\InventoryBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
@@ -194,9 +194,13 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         return $crawler;
     }
 
+    /**
+     * @param Crawler $crawler
+     * @param Product $product
+     */
     protected function validateStep(Crawler $crawler, Product $product)
     {
-        $this->verifyQuantityError($crawler, $product, false, false, false);
+        $this->verifyQuantityError($crawler, $product, false, false, false, null);
     }
 
     /**
@@ -209,7 +213,7 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         $this->updateSystemQuantityLimits(1, 2);
         $form = $this->getTransitionForm($crawler);
         $crawler = $this->client->submit($form);
-        $this->verifyQuantityError($crawler, $product, false, true, true);
+        $this->verifyQuantityError($crawler, $product, false, true, true, 2);
 
         return $crawler;
     }
@@ -220,13 +224,15 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
      * @param bool $minError
      * @param bool $maxError
      * @param bool $shouldBeFirstStep
+     * @param null|int $quantityLimit
      */
     protected function verifyQuantityError(
         Crawler $crawler,
         Product $product,
         $minError = true,
         $maxError = false,
-        $shouldBeFirstStep = false
+        $shouldBeFirstStep = false,
+        $quantityLimit = null
     ) {
         $continueButton = $crawler->filterXPath(self::CONTINUE_BUTTON);
         $buttonClasses = $continueButton->attr('class');
@@ -240,14 +246,14 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         $this->assertCurrentStep($crawler, $shouldBeFirstStep);
 
         $content = $this->client->getResponse()->getContent();
-        $minMessage = $this->getErrorMessage($product, true);
+        $minMessage = $this->getErrorMessage($product, $quantityLimit, true);
         if ($minError) {
             $this->assertContains($minMessage, $content);
         } else {
             $this->assertNotContains($minMessage, $content);
         }
 
-        $maxMessage = $this->getErrorMessage($product, false);
+        $maxMessage = $this->getErrorMessage($product, $quantityLimit, false);
         if ($maxError) {
             $this->assertContains($maxMessage, $content);
         } else {
@@ -257,34 +263,55 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
 
     /**
      * @param Product $product
+     * @param int $quantityLimit
      * @param bool $isMinMessage
      * @return string
      */
-    protected function getErrorMessage(Product $product, $isMinMessage = true)
+    protected function getErrorMessage(Product $product, $quantityLimit, $isMinMessage = true)
     {
         if ($isMinMessage) {
             $message = 'oro.inventory.product.error.quantity_below_min_limit';
-            $errorLimit = $this->getMinimumSystemQuantityLimit();
         } else {
             $message = 'oro.inventory.product.error.quantity_over_max_limit';
-            $errorLimit = $this->getMaximumSystemQuantityLimit();
         }
 
         return $this->translator->trans(
             $message,
-            ['%limit%' => $errorLimit, '%sku%' => $product->getSku(), '%product_name%' => $product->getName()]
+            ['%limit%' => $quantityLimit, '%sku%' => $product->getSku(), '%product_name%' => $product->getName()]
         );
     }
 
     /**
      * @param int $minLimit
      * @param int $maxLimit
+     * @return null|Crawler
      */
     protected function updateSystemQuantityLimits($minLimit, $maxLimit)
     {
-        $this->configManager->set(Configuration::getMaximumQuantityToOrderFullConfigurationName(), $maxLimit);
-        $this->configManager->set(Configuration::getMinimumQuantityToOrderFullConfigurationName(), $minLimit);
-        $this->configManager->flush();
+        $crawler = $this->client->request(
+            'GET',
+            $this->getUrl(
+                'oro_config_configuration_system',
+                ['activeGroup' => 'commerce', 'activeSubGroup' => 'limitations']
+            ),
+            [],
+            [],
+            $this->generateBasicAuthHeader()
+        );
+        $form = $crawler->selectButton('Save settings')->form();
+        $formValues = $form->getPhpValues();
+        $formValues['limitations']['oro_inventory___minimum_quantity_to_order']['use_parent_scope_value'] = false;
+        $formValues['limitations']['oro_inventory___minimum_quantity_to_order']['value'] = $minLimit;
+        $formValues['limitations']['oro_inventory___maximum_quantity_to_order']['use_parent_scope_value'] = false;
+        $formValues['limitations']['oro_inventory___maximum_quantity_to_order']['value'] = $maxLimit;
+
+        return $this->client->request(
+            $form->getMethod(),
+            $form->getUri(),
+            $formValues,
+            [],
+            $this->generateBasicAuthHeader()
+        );
     }
 
     /**
@@ -302,21 +329,5 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         $product->setMaximumQuantityToOrder($entityFallback2);
         $this->getContainer()->get('oro_entity.doctrine_helper')->getEntityManager(Product::class)->flush();
         $this->emFallback->flush();
-    }
-
-    /**
-     * @return int
-     */
-    protected function getMinimumSystemQuantityLimit()
-    {
-        return $this->configManager->get(Configuration::getMinimumQuantityToOrderFullConfigurationName());
-    }
-
-    /**
-     * @return int
-     */
-    protected function getMaximumSystemQuantityLimit()
-    {
-        return $this->configManager->get(Configuration::getMaximumQuantityToOrderFullConfigurationName());
     }
 }

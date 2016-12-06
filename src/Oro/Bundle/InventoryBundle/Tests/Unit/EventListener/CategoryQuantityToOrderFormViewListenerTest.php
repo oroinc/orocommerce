@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\EventListener;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManager;
+
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -31,15 +34,23 @@ class CategoryQuantityToOrderFormViewListenerTest extends FormViewListenerTestCa
     /** @var BeforeListRenderEvent|\PHPUnit_Framework_MockObject_MockObject * */
     protected $event;
 
+    /**
+     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $doctrine;
+
     protected function setUp()
     {
         parent::setUp();
         $this->requestStack = $this->getMock(RequestStack::class);
         $this->request = $this->getMockBuilder(Request::class)->disableOriginalConstructor()->getMock();
         $this->requestStack->expects($this->any())->method('getCurrentRequest')->willReturn($this->request);
+        $this->doctrine = $this->getMockBuilder('Doctrine\Common\Persistence\ManagerRegistry')
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->categoryFormViewListener = new CategoryQuantityToOrderFormViewListener(
             $this->requestStack,
-            $this->doctrineHelper,
+            $this->doctrine,
             $this->translator
         );
         $this->event = $this->getBeforeListRenderEventMock();
@@ -53,8 +64,12 @@ class CategoryQuantityToOrderFormViewListenerTest extends FormViewListenerTestCa
 
     public function testOnCategoryEditIgnoredIfNoCategoryFound()
     {
-        $this->doctrineHelper->expects($this->once())->method('getEntityReference');
         $this->request->expects($this->once())->method('get')->willReturn('1');
+        $em = $this->getMockBuilder(EntityManager::class)->disableOriginalConstructor()->getMock();
+        $this->doctrine->expects($this->once())
+            ->method('getManagerForClass')
+            ->willReturn($em);
+
         $this->categoryFormViewListener->onCategoryEdit($this->event);
     }
 
@@ -62,7 +77,13 @@ class CategoryQuantityToOrderFormViewListenerTest extends FormViewListenerTestCa
     {
         $this->request->expects($this->once())->method('get')->willReturn('1');
         $category = new Category();
-        $this->doctrineHelper->expects($this->once())->method('getEntityReference')->willReturn($category);
+        $em = $this->getMockBuilder(EntityManager::class)->disableOriginalConstructor()->getMock();
+        $this->doctrine->expects($this->once())
+            ->method('getManagerForClass')
+            ->willReturn($em);
+        $em->expects($this->once())
+            ->method('getReference')
+            ->willReturn($category);
         $env = $this->getMockBuilder(\Twig_Environment::class)->disableOriginalConstructor()->getMock();
         $this->event->expects($this->once())->method('getEnvironment')->willReturn($env);
         $scrollData = $this->getMock(ScrollData::class);
