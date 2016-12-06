@@ -14,7 +14,8 @@ class LoadSlugsData extends AbstractFixture implements DependentFixtureInterface
     const SLUG_URL_ANONYMOUS = '/slug/anonymous';
     const SLUG_URL_USER = '/slug/customer';
     const SLUG_URL_PAGE = '/slug/page';
-    const SLUG_USER_SAME_URL = '/slug/customer/same-url';
+    const SLUG_TEST_DUPLICATE_URL = '/slug/first';
+    const SLUG_TEST_DUPLICATE_REFERENCE = 'reference:/slug/first';
 
     /**
      * {@inheritdoc}
@@ -25,12 +26,13 @@ class LoadSlugsData extends AbstractFixture implements DependentFixtureInterface
         $page = $this->getReference(LoadPageData::PAGE_1);
         $this->createSlug($manager, self::SLUG_URL_ANONYMOUS, 'oro_cms_frontend_page_view', ['id' => $page->getId()]);
         $this->createSlug($manager, self::SLUG_URL_USER, 'oro_customer_frontend_account_user_index', []);
+        $this->createSlug($manager, self::SLUG_TEST_DUPLICATE_URL, 'oro_customer_frontend_account_user_index', []);
         $this->createSlug(
             $manager,
-            self::SLUG_URL_USER,
+            self::SLUG_TEST_DUPLICATE_URL,
             'oro_cms_frontend_page_view',
             ['id' => $page->getId()],
-            self::SLUG_USER_SAME_URL
+            self::SLUG_TEST_DUPLICATE_REFERENCE
         );
         $this->createSlug($manager, self::SLUG_URL_PAGE, 'oro_customer_frontend_account_user_index', []);
 
