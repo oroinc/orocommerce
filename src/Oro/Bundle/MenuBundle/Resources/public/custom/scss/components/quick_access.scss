@@ -36,7 +36,7 @@ $badge-sm: 26px;
         height: $badge-sm;
         margin-right: 15px;
 
-        font-size: 14px;
+        font-size: $base-font-size;
         line-height: $badge-sm;
 
         i {
