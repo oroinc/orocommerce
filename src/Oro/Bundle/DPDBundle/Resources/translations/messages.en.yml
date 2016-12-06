@@ -1,0 +1,45 @@
+oro:
+    dpd:
+        channel_type:
+          label: 'DPD'
+        transport:
+            label: 'DPD API'
+            labels.label: 'Label'
+            live_mode.label: 'Live Mode'
+            cloud_user_id.label: 'Cloud User Id'
+            cloud_user_token.label: 'Cloud User Token'
+            shipping_service:
+                label: 'Shipping Service'
+                plural_label: 'Shipping Services'
+            label_size:
+                label: 'Label Size'
+                pdf_a4.label: 'PDF A4'
+                pdf_a6.label: 'PDF A6'
+            label_start_position:
+                label: 'Label Start Position'
+                upperleft.label: 'Upper Left'
+                upperright.label: 'Upper Right'
+                lowerleft.label: 'Lower Left'
+                lowerright.label: 'Lower Right'
+        form:
+            shipping_method_config_options:
+                flat_price:
+                    label: 'Flat rate'
+                    tooltip: 'A flat price applied to the shipping if destination country is not defined on the table price'
+                table_price:
+                    label: 'Table rate'
+                    tooltip: 'Rules to define prices by destination country. Each line should be {country,price} tuples.'
+                handling_fee:
+                    label: 'Handling fee'
+                    tooltip: 'A fee applied to the shipping costs'
+        actions:
+            set_order:
+                flash.success: 'Order set succesfully. Check attachments to get shipping labels.'
+                widgets.set_order.label: 'Set Order'
+                frontend_options:
+                    title: 'Set Order'
+                    confirmation:
+                        title: 'Set Order'
+                        ok_text: 'Yes, Send'
+                        message: 'Send order shipping information to DPD?'
+

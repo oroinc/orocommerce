@@ -1,0 +1,4 @@
+oro_dpd:
+    resource:     "@OroDPDBundle/Controller/DPDController.php"
+    type:         annotation
+    prefix:       /dpd
