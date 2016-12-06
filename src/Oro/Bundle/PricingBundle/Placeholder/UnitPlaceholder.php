@@ -18,7 +18,6 @@ class UnitPlaceholder extends AbstractPlaceholder
 
     /**
      * {@inheritdoc}
-     * todo: fix in BB-4178
      */
     public function getDefaultValue()
     {
