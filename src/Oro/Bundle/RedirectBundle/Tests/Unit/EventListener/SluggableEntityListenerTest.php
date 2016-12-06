@@ -56,6 +56,11 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
         $args = $this->getMockBuilder(LifecycleEventArgs::class)
             ->disableOriginalConstructor()
             ->getMock();
+        /** @var SluggableInterface $entity */
+        $entity = $this->getMock(SluggableInterface::class);
+        $args->expects($this->once())
+            ->method('getEntity')
+            ->willReturn($entity);
 
         $this->configManager->expects($this->once())
             ->method('get')
@@ -75,7 +80,7 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->configManager->expects($this->once())
+        $this->configManager->expects($this->any())
             ->method('get')
             ->with('oro_redirect.enable_direct_url')
             ->willReturn(true);
@@ -133,6 +138,41 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
             ->with('oro_redirect.enable_direct_url')
             ->willReturn(false);
 
+        /** @var UnitOfWork|\PHPUnit_Framework_MockObject_MockObject $uow */
+        $uow = $this->getMockBuilder(UnitOfWork::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
+        $em = $this->getMock(EntityManagerInterface::class);
+        $em->expects($this->any())
+            ->method('getUnitOfWork')
+            ->willReturn($uow);
+        $event->expects($this->any())
+            ->method('getEntityManager')
+            ->willReturn($em);
+
+        $prototype = new LocalizedFallbackValue();
+
+        /** @var SluggableInterface|\PHPUnit_Framework_MockObject_MockObject $entity */
+        $entity = $this->getMock(SluggableInterface::class);
+        $entity->expects($this->once())
+            ->method('hasSlugPrototype')
+            ->with($prototype)
+            ->willReturn(true);
+
+        $uow->expects($this->any())
+            ->method('getScheduledEntityUpdates')
+            ->willReturn([
+                $entity
+            ]);
+        $uow->expects($this->any())
+            ->method('getScheduledEntityInsertions')
+            ->willReturn([$prototype]);
+        $uow->expects($this->any())
+            ->method('getScheduledEntityDeletions')
+            ->willReturn([]);
+
         $this->messageProducer->expects($this->never())
             ->method($this->anything());
 
@@ -146,7 +186,7 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->configManager->expects($this->once())
+        $this->configManager->expects($this->any())
             ->method('get')
             ->with('oro_redirect.enable_direct_url')
             ->willReturn(true);
@@ -192,7 +232,7 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->configManager->expects($this->once())
+        $this->configManager->expects($this->any())
             ->method('get')
             ->with('oro_redirect.enable_direct_url')
             ->willReturn(true);

@@ -51,10 +51,6 @@ class SluggableEntityListener
      */
     public function postPersist(LifecycleEventArgs $args)
     {
-        if (!$this->configManager->get('oro_redirect.enable_direct_url')) {
-            return;
-        }
-
         $entity = $args->getEntity();
         if ($entity instanceof SluggableInterface) {
             $this->scheduleEntitySlugCalculation($entity);
@@ -66,10 +62,6 @@ class SluggableEntityListener
      */
     public function onFlush(OnFlushEventArgs $event)
     {
-        if (!$this->configManager->get('oro_redirect.enable_direct_url')) {
-            return;
-        }
-
         $unitOfWork = $event->getEntityManager()->getUnitOfWork();
         foreach ($this->getChangedSluggableEntities($unitOfWork) as $changedSluggableEntity) {
             $this->scheduleEntitySlugCalculation($changedSluggableEntity);
@@ -134,7 +126,9 @@ class SluggableEntityListener
      */
     protected function scheduleEntitySlugCalculation(SluggableInterface $entity)
     {
-        $message = $this->messageFactory->createMessage($entity);
-        $this->messageProducer->send(Topics::GENERATE_DIRECT_URL_FOR_ENTITY, $message);
+        if ($this->configManager->get('oro_redirect.enable_direct_url')) {
+            $message = $this->messageFactory->createMessage($entity);
+            $this->messageProducer->send(Topics::GENERATE_DIRECT_URL_FOR_ENTITY, $message);
+        }
     }
 }
