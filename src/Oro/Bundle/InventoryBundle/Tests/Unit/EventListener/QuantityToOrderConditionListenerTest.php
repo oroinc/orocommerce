@@ -7,9 +7,10 @@ use Symfony\Component\Translation\TranslatorInterface;
 use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
+use Oro\Bundle\CheckoutBundle\Event\CheckoutValidateEvent;
+use Oro\Bundle\InventoryBundle\EventListener\QuantityToOrderConditionListener;
 use Oro\Bundle\InventoryBundle\Tests\Unit\EventListener\Stub\CheckoutSourceStub;
 use Oro\Bundle\InventoryBundle\Validator\QuantityToOrderValidatorService;
-use Oro\Bundle\CheckoutBundle\Event\CheckoutValidateEvent;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Event\QuickAddRowCollectionValidateEvent;
 use Oro\Bundle\ProductBundle\Model\QuickAddRow;
@@ -18,7 +19,6 @@ use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Component\Action\Event\ExtendableConditionEvent;
-use Oro\Bundle\InventoryBundle\EventListener\QuantityToOrderConditionListener;
 
 class QuantityToOrderConditionListenerTest extends \PHPUnit_Framework_TestCase
 {

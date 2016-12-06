@@ -45,6 +45,10 @@ class ProductControllerTest extends WebTestCase
         $this->assertNotEquals($originalMaxValue, $this->getMaxValue($crawler));
     }
 
+    /**
+     * @param Crawler $crawler
+     * @return string
+     */
     protected function getMinValue(Crawler $crawler)
     {
         return $crawler->filterXPath(
@@ -52,6 +56,10 @@ class ProductControllerTest extends WebTestCase
         )->html();
     }
 
+    /**
+     * @param Crawler $crawler
+     * @return string
+     */
     protected function getMaxValue(Crawler $crawler)
     {
         return $crawler->filterXPath(

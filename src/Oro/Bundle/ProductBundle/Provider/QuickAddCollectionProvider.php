@@ -45,6 +45,9 @@ class QuickAddCollectionProvider
         return $this->copyPasteCollection[$cacheKey];
     }
 
+    /**
+     * @return mixed
+     */
     public function processImport()
     {
         $cacheKey = $this->getCacheKey('quick_add.import', $this->request->get(QuickAddImportFromFileType::NAME));

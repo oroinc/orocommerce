@@ -3,6 +3,7 @@
 namespace Oro\Bundle\InventoryBundle\Tests\Functional\Controller\Frontend;
 
 use Doctrine\ORM\EntityManagerInterface;
+
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
@@ -130,15 +131,24 @@ class ShoppingListControllerTest extends WebTestCase
      */
     protected function setProductLimits(Product $product, $minLimit, $maxLimit)
     {
-        $entityFallback = new EntityFieldFallbackValue();
-        $entityFallback->setScalarValue($minLimit);
-        $entityFallback2 = new EntityFieldFallbackValue();
-        $entityFallback2->setScalarValue($maxLimit);
-        $this->emFallback->persist($entityFallback);
-        $this->emFallback->persist($entityFallback2);
+        $entityFallback = $this->createFallbackEntity($minLimit);
+        $entityFallback2 = $this->createFallbackEntity($maxLimit);
         $product->setMinimumQuantityToOrder($entityFallback);
         $product->setMaximumQuantityToOrder($entityFallback2);
         $this->emProduct->flush();
         $this->emFallback->flush();
+    }
+
+    /**
+     * @param mixed $scalarValue
+     * @return EntityFieldFallbackValue
+     */
+    protected function createFallbackEntity($scalarValue)
+    {
+        $entityFallback = new EntityFieldFallbackValue();
+        $entityFallback->setScalarValue($scalarValue);
+        $this->emFallback->persist($entityFallback);
+
+        return $entityFallback;
     }
 }

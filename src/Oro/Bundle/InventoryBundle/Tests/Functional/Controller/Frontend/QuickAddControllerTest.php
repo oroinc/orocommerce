@@ -3,6 +3,7 @@
 namespace Oro\Bundle\InventoryBundle\Tests\Functional\Controller\Frontend;
 
 use Doctrine\ORM\EntityManagerInterface;
+
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Translation\TranslatorInterface;
 

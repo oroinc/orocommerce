@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\EventListener;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManager;
+
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -31,15 +34,23 @@ class ProductQuantityToOrderFormViewListenerTest extends FormViewListenerTestCas
     /** @var BeforeListRenderEvent|\PHPUnit_Framework_MockObject_MockObject * */
     protected $event;
 
+    /**
+     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $doctrine;
+
     protected function setUp()
     {
         parent::setUp();
         $this->requestStack = $this->getMock(RequestStack::class);
         $this->request = $this->getMockBuilder(Request::class)->disableOriginalConstructor()->getMock();
         $this->requestStack->expects($this->any())->method('getCurrentRequest')->willReturn($this->request);
+        $this->doctrine = $this->getMockBuilder('Doctrine\Common\Persistence\ManagerRegistry')
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->productQuantityToOrderFormViewListener = new ProductQuantityToOrderFormViewListener(
             $this->requestStack,
-            $this->doctrineHelper,
+            $this->doctrine,
             $this->translator
         );
         $this->event = $this->getBeforeListRenderEventMock();
@@ -55,6 +66,10 @@ class ProductQuantityToOrderFormViewListenerTest extends FormViewListenerTestCas
     {
         $this->request->expects($this->once())->method('get')->willReturn('1');
         $this->event->expects($this->never())->method('getEnvironment');
+        $em = $this->getMockBuilder(EntityManager::class)->disableOriginalConstructor()->getMock();
+        $this->doctrine->expects($this->once())
+            ->method('getManagerForClass')
+            ->willReturn($em);
         $this->productQuantityToOrderFormViewListener->onProductView($this->event);
     }
 
@@ -62,7 +77,13 @@ class ProductQuantityToOrderFormViewListenerTest extends FormViewListenerTestCas
     {
         $this->request->expects($this->once())->method('get')->willReturn('1');
         $product = new Product();
-        $this->doctrineHelper->expects($this->once())->method('getEntityReference')->willReturn($product);
+        $em = $this->getMockBuilder(EntityManager::class)->disableOriginalConstructor()->getMock();
+        $this->doctrine->expects($this->once())
+            ->method('getManagerForClass')
+            ->willReturn($em);
+        $em->expects($this->once())
+            ->method('getReference')
+            ->willReturn($product);
         $env = $this->getMockBuilder(\Twig_Environment::class)->disableOriginalConstructor()->getMock();
         $this->event->expects($this->once())->method('getEnvironment')->willReturn($env);
         $scrollData = $this->getMock(ScrollData::class);
