@@ -2,12 +2,14 @@ define(function(require) {
     'use strict';
 
     var LineItemView;
+    var BaseView = require('oroui/js/app/views/base/view');
+    var ElementsHelper = require('orofrontend/js/app/elements-helper');
+    var BaseModel = require('oroui/js/app/models/base/model');
     var $ = require('jquery');
     var _ = require('underscore');
     var __ = require('orotranslation/js/translator');
     var mediator = require('oroui/js/mediator');
     var layout = require('oroui/js/layout');
-    var LineItemProductView = require('oroproduct/js/app/views/line-item-product-view');
     var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
     var routing = require('routing');
     var messenger = require('oroui/js/messenger');
@@ -17,16 +19,15 @@ define(function(require) {
      * @extends oroui.app.views.base.View
      * @class ororfp.app.views.LineItemView
      */
-    LineItemView = LineItemProductView.extend({
+    LineItemView = BaseView.extend(_.extend({}, ElementsHelper, {
         /**
          * @property {Object}
          */
         options: {
             ftid: '',
             selectors: {
-                productSelector: '[data-role="lineitem-product"]',
-                quantitySelector: '[data-role="lineitem-quantity"]',
-                unitSelector: '[data-role="lineitem-unit"]',
+                quantitySelector: '[data-name="field__quantity"]',
+                unitSelector: '[data-name="field__product-unit"]',
                 priceSelector: '[data-role="lineitem-price"]',
                 currencySelector: '[data-role="lineitem-currency"]'
             },
@@ -43,11 +44,6 @@ define(function(require) {
          * @property {Object}
          */
         $el: null,
-
-        /**
-         * @property {Object}
-         */
-        $productSelect: null,
 
         /**
          * @property {Object}
@@ -69,6 +65,23 @@ define(function(require) {
          */
         loadingMask: null,
 
+        elements: {
+            productId: '[data-name="field__product"]'
+        },
+
+        modelElements: {
+            productId: 'productId'
+        },
+
+        modelAttr: {
+            productId: 0,
+            productUnits: []
+        },
+
+        modelEvents: {
+            'productId': ['change', 'onProductChanged']
+        },
+
         /**
          * @inheritDoc
          */
@@ -79,24 +92,35 @@ define(function(require) {
                     .replace(/[^a-zA-Z0-9]+/g, '_').replace(/_+$/, '');
             }
 
-            LineItemView.__super__.initialize.apply(this, arguments);
-
             this.delegate('click', '.removeLineItem', this.removeRow);
 
-            this.$productSelect = this.$el.find(this.options.selectors.productSelector);
             this.$itemsContainer = this.$el.find(this.options.itemsContainer);
             this.$addItemButton = this.$el.find(this.options.addItemButton);
             this.loadingMask = new LoadingMaskView({container: this.$el});
 
-            this.$el
-                .on('change', this.options.selectors.productSelector, _.bind(this.onProductChanged, this))
-                .on('content:changed', _.bind(this.onContentChanged, this))
-            ;
-            this.initLayout().done(_.bind(this.checkAddButton, this));
+            this.$el.on('content:changed', _.bind(this.onContentChanged, this));
+
+            this.initModel(options);
+            this.initializeElements(options);
+            this.model.set('productUnits', this.options.units[this.model.get('productId')] || []);
+            this.initLayout({
+                lineItemModel: this.model
+            }).done(_.bind(this.checkAddButton, this));
+        },
+
+        initModel: function(options) {
+            this.modelAttr = $.extend(true, {}, this.modelAttr, options.modelAttr || {});
+            this.model = new BaseModel();
+
+            _.each(this.modelAttr, function(value, attribute) {
+                if (!this.model.has(attribute)) {
+                    this.model.set(attribute, value);
+                }
+            }, this);
         },
 
         checkAddButton: function() {
-            this.$addItemButton.toggle(Boolean(this.$productSelect.val()));
+            this.$addItemButton.toggle(Boolean(this.model.get('productId')));
         },
 
         initSelects: function() {
@@ -110,12 +134,10 @@ define(function(require) {
 
         /**
          * Handle change
-         *
-         * @param {jQuery.Event} e
          */
-        onProductChanged: function(e) {
+        onProductChanged: function() {
             this.checkAddButton();
-            if (this.$productSelect.val() && !this.$itemsContainer.children().length) {
+            if (this.model.get('productId') && !this.$itemsContainer.children().length) {
                 this.$addItemButton.click();
             }
             if (this.$itemsContainer.children().length) {
@@ -136,7 +158,7 @@ define(function(require) {
          * @param {Boolean} force
          */
         updateContent: function(force) {
-            var productId = this.$productSelect.val();
+            var productId = this.model.get('productId');
             var productUnits = this.units[productId];
 
             if (!productId || productUnits) {
@@ -175,13 +197,14 @@ define(function(require) {
         /**
          * Update available ProductUnit select
          *
-         * @param {Object} data
+         * @param {Object} units
          * @param {Boolean} force
          */
-        updateProductUnits: function(data, force) {
+        updateProductUnits: function(units, force) {
             var self = this;
 
-            var units = data || {};
+            units = units || {};
+            this.model.set('productUnits', units);
 
             var widgets = self.$el.find(self.options.itemWidget);
             $.each(widgets, function(index, widget) {
@@ -227,7 +250,7 @@ define(function(require) {
             }
             LineItemView.__super__.dispose.call(this);
         }
-    });
+    }));
 
     return LineItemView;
 });

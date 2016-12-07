@@ -29,7 +29,9 @@ define(function(require) {
             mediator.on('pricing:collect:line-items', this.collectLineItems, this);
             mediator.on('pricing:refresh:products-tier-prices', this.setTierPrices, this);
 
-            mediator.trigger('pricing:get:products-tier-prices', _.bind(this.setTierPrices, this));
+            mediator.trigger('pricing:get:products-tier-prices', _.bind(function (tierPrices) {
+                this.setTierPrices(tierPrices, true);
+            }, this));
         },
 
         updateTierPrices: function() {
@@ -52,7 +54,7 @@ define(function(require) {
         /**
          * @param {Object} tierPrices
          */
-        setTierPrices: function(tierPrices) {
+        setTierPrices: function(tierPrices, silent) {
             this.tierPrices = tierPrices;
             var prices = {};
 
@@ -68,7 +70,9 @@ define(function(require) {
                 });
             }
 
-            this.model.set('prices', prices);
+            this.model.set('prices', prices, {
+                silent: silent || false
+            });
         },
 
         /**

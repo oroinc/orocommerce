@@ -33,8 +33,8 @@ define(function(require) {
 
         modelEvents: {
             'prices setPrices': ['change', 'setPrices'],
-            'quantity setPrice': ['change', 'onQuantityChange'],
-            'unit setPrice': ['change', 'onUnitChange'],
+            'quantity setFoundPrice': ['change', 'onQuantityChange'],
+            'unit setFoundPrice': ['change', 'onUnitChange'],
             'price updateUI': ['change', 'updateUI']
         },
 
@@ -128,21 +128,21 @@ define(function(require) {
                 this.prices[unit] = unitPrices;
             }, this);
 
-            this.setPrice();
+            this.setFoundPrice();
         },
 
         onQuantityChange: function(options) {
             if (options.manually) {
                 this.changeQuantity = false;
             }
-            this.setPrice();
+            this.setFoundPrice();
         },
 
         onUnitChange: function(options) {
-            this.setPrice(options.manually || false);
+            this.setFoundPrice(options.manually || false);
         },
 
-        setPrice: function(changeQuantity) {
+        setFoundPrice: function(changeQuantity) {
             this.setPriceValue(this.findPrice(changeQuantity));
         },
 
@@ -191,9 +191,9 @@ define(function(require) {
                 this.getElement('price').addClass('hidden');
                 this.getElement('priceNotFound').removeClass('hidden');
             } else {
-                this.getElement('unit').html(price.formatted_unit);
+                this.getElement('unit').text(price.formatted_unit);
 
-                this.getElement('priceValue').html(price.formatted_price);
+                this.getElement('priceValue').text(price.formatted_price);
 
                 this.getElement('priceNotFound').addClass('hidden');
                 this.getElement('price').removeClass('hidden');

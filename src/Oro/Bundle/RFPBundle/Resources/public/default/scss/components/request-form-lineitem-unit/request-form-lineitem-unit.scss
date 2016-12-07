@@ -23,27 +23,8 @@
         }
     }
 
-    &--text-node {
-        @extend .request-form-lineitem-unit;
-        
-        min-width: 100px;
-        text-align: right;
-
-        &:not(:first-child) {
-            padding-left: 15px;
-        }
-    }
-
     &--remove {
         @extend .request-form-lineitem-unit;
         text-align: right;
-    }
-}
-
-@include breakpoint('tablet') {
-    .request-form-lineitem-unit {
-        &--text-node {
-            display: none;
-        }
     }
 }

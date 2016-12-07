@@ -73,8 +73,15 @@
     <tr data-content="{{ name }}"
         data-validation-optional-group
         data-role="lineitem" {{ block('widget_container_attributes') }}
-
         class="request-form-lineitem"
+        data-page-component-module="oroui/js/app/components/view-component"
+        data-page-component-options="{{ {
+            view: 'ororfp/js/app/views/line-item-offer-view',
+            elements: {
+                unit: '[data-name="field__product-unit"]'
+            }
+        }|json_encode }}"
+        data-layout="separate"
     >
         {{ form_widget(form) }}
         <td class="request-form-lineitem-unit--remove">
@@ -516,16 +523,13 @@
 {% endmacro %}
 
 {% block oro_rfp_request_product_item_widget %}
-    {% set attr_quantity = layout_attr_defaults(attr, {
-        'data-role': 'lineitem-quantity'
-    }) %}
+    {% use "OroPricingBundle:layouts/default:layout.html.twig" %}
     <td class="request-form-lineitem-unit request-form-lineitem-unit--size-s">
-        {{ form_widget(form.quantity, {attr: attr_quantity}) }}
+        {{ form_widget(form.quantity) }}
         {{ form_errors(form.quantity) }}
     </td>
-    {% set attr_unit = layout_attr_defaults(attr, {
-        '~class': 'select select--size-m select--full',
-        'data-role': 'lineitem-unit'
+    {% set attr_unit = layout_attr_defaults(form.productUnit.vars.attr, {
+        '~class': 'select select--size-m select--full'
     }) %}
     <td class="request-form-lineitem-unit request-form-lineitem-unit--size-m">
         {{ form_widget(form.productUnit, {attr: attr_unit}) }}
@@ -535,29 +539,28 @@
         data-page-component-module="oroui/js/app/components/view-component"
         data-page-component-options="{{ {
             view: 'oropricing/js/app/views/line-item-product-prices-view',
-            templates: {
-                pricesHint: '#frontend-product-prices-tier-button-template'
-            },
             elements: {
-                priceValue: '[data-name="field__currency"]'
-            }
+                pricesHint: '[data-name="prices-hint"]',
+                pricesHintContent: '[data-name="prices-hint-content"]'
+            },
+            matchedPriceEnabled: false
         }|json_encode }}"
         data-layout="separate"
     >
-        {% set input_price = layout_attr_defaults(attr, {
+        {% set label = 'List prices' %}
+        {{ block('product_price_hint_content_js_widget') }}
+        {{ block('product_price_hint_js_widget') }}
+        {% set input_price = layout_attr_defaults(form.price.value.vars.attr, {
             '~class': 'request-form-lineitem-unit__input'
         }) %}
 
-        {{ form_widget(form.price.value, {attr: input_price}) }}
+        Target price: {{ form_widget(form.price.value, {attr: input_price}) }}
         {{ form_widget(form.price.currency) }}
         {{ form_errors(form.price) }}
     </td>
     {% set attr_price = layout_attr_defaults(attr, {
         'data-role': 'lineitem-price'
     }) %}
-    <td class="request-form-lineitem-unit--text-node">
-        <label>Target price:</label>
-    </td>
     {% set attr_currency = layout_attr_defaults(attr, {
         'data-role': 'lineitem-currency'
     }) %}
