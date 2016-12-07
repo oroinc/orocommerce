@@ -114,7 +114,8 @@ class ProductFormProvider extends AbstractFormProvider
     {
         return [
             'products' => null,
-            'validation_required' => null
+            'validation_required' => null,
+            'validation_groups' => null
         ];
     }
 }

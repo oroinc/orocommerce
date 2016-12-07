@@ -3,6 +3,8 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Model\Builder;
 
 use Doctrine\ORM\QueryBuilder;
+
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -29,6 +31,11 @@ class QuickAddRowCollectionBuilderTest extends \PHPUnit_Framework_TestCase
      * @var \PHPUnit_Framework_MockObject_MockObject|ProductManager
      */
     private $productManager;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|EventDispatcherInterface
+     */
+    private $eventDispatcher;
 
     /**
      * @var array
@@ -73,13 +80,18 @@ class QuickAddRowCollectionBuilderTest extends \PHPUnit_Framework_TestCase
             ->getMockBuilder(ProductRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
+        $this->eventDispatcher = $this->getMock(EventDispatcherInterface::class);
 
         $this->productManager = $this
             ->getMockBuilder(ProductManager::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->builder = new QuickAddRowCollectionBuilder($this->productRepository, $this->productManager);
+        $this->builder = new QuickAddRowCollectionBuilder(
+            $this->productRepository,
+            $this->productManager,
+            $this->eventDispatcher
+        );
     }
 
     public function testBuildFromRequest()

@@ -32,7 +32,15 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                 'inventory_threshold' => [
                     'value' => false,
                     'scope' => 'app'
-                ]
+                ],
+                'minimum_quantity_to_order' => [
+                    'scope' => 'app',
+                    'value' => null,
+                ],
+                'maximum_quantity_to_order' => [
+                    'scope' => 'app',
+                    'value' => Configuration::DEFAULT_MAXIMUM_QUANTITY_TO_ORDER,
+                ],
             ],
         ];
 
