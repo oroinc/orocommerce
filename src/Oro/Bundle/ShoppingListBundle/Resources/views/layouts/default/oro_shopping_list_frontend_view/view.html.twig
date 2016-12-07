@@ -11,7 +11,7 @@
             data-page-component-options="{{ {
                 view: 'oroui/js/app/views/layout-subtree-view',
                 blockId : block.vars.id,
-                reloadEvents: ['product:quantity-unit:update']
+                reloadEvents: ['product:quantity-unit:update', 'workflow:transitions_failure']
             }|json_encode }}"
             data-layout="separate">
         {{ block_widget(block) }}
