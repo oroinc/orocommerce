@@ -46,7 +46,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  *      routeUpdate="oro_customer_account_user_update",
  *      defaultValues={
  *          "entity"={
- *              "icon"="icon-briefcase"
+ *              "icon"="fa-briefcase"
  *          },
  *          "ownership"={
  *              "owner_type"="USER",

@@ -30,7 +30,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
  *      routeUpdate="oro_rfp_request_status_update",
  *      defaultValues={
  *          "entity"={
- *              "icon"="icon-file-text"
+ *              "icon"="fa-file-text"
  *          },
  *          "security"={
  *              "type"="ACL",

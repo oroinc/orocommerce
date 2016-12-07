@@ -10,3 +10,4 @@ oro:
         product_prices:
             price_is_overridden: Price is overridden
             reset_price: Reset price
+        price.label: Price

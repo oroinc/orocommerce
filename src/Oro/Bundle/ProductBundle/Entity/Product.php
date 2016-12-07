@@ -31,7 +31,7 @@ use Oro\Bundle\ProductBundle\Model\ExtendProduct;
  *      routeUpdate="oro_product_update",
  *      defaultValues={
  *          "entity"={
- *              "icon"="icon-briefcase"
+ *              "icon"="fa-briefcase"
  *          },
  *          "ownership"={
  *              "owner_type"="BUSINESS_UNIT",
