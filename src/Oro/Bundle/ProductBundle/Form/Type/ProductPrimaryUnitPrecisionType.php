@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\ProductBundle\Form\Type;
 
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 
 class ProductPrimaryUnitPrecisionType extends AbstractType
 {
@@ -44,9 +43,23 @@ class ProductPrimaryUnitPrecisionType extends AbstractType
             $form = $event->getForm();
 
             if ($unitPrecision instanceof ProductUnitPrecision && $unitPrecision->getUnit()) {
-                $form->add('unit', ProductUnitSelectionType::NAME, ['attr' => ['class' => 'unit']]);
+                $form->add(
+                    'unit',
+                    ProductUnitSelectionType::NAME,
+                    [
+                        'attr' => ['class' => 'unit'],
+                        'product' => $unitPrecision ? $unitPrecision->getProduct() : null
+                    ]
+                );
             } else {
-                $form->add('unit', ProductUnitSelectionType::NAME, ['compact' => $options['compact']]);
+                $form->add(
+                    'unit',
+                    ProductUnitSelectionType::NAME,
+                    [
+                        'compact' => $options['compact'],
+                        'product' => $unitPrecision ? $unitPrecision->getProduct() : null
+                    ]
+                );
             }
         });
     }

@@ -8,6 +8,8 @@ use Oro\Bundle\ProductBundle\Form\Extension\IntegerExtension;
 use Oro\Bundle\ProductBundle\Form\Type\ProductPrimaryUnitPrecisionType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Provider\SystemDefaultProductUnitProvider;
+use Oro\Bundle\ProductBundle\Service\SingleUnitModeService;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\FormConfigInterface;
@@ -36,6 +38,16 @@ class ProductPrimaryUnitPrecisionTypeTest extends FormIntegrationTestCase
     protected $translator;
 
     /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|SingleUnitModeService
+     */
+    protected $singleUnitModeService;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|SystemDefaultProductUnitProvider
+     */
+    protected $defaultProductUnitProvider;
+
+    /**
      * @var ProductUnitLabelFormatter
      */
     protected $productUnitLabelFormatter;
@@ -45,7 +57,13 @@ class ProductPrimaryUnitPrecisionTypeTest extends FormIntegrationTestCase
      */
     protected function setUp()
     {
-        $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+        $this->singleUnitModeService = $this->getMockBuilder(SingleUnitModeService::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->defaultProductUnitProvider = $this->getMockBuilder(SystemDefaultProductUnitProvider::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->translator = $this->getMock(TranslatorInterface::class);
         $this->translator
             ->expects(static::any())
             ->method('trans')
@@ -71,7 +89,9 @@ class ProductPrimaryUnitPrecisionTypeTest extends FormIntegrationTestCase
                 [
                     ProductUnitSelectionType::NAME => new ProductUnitSelectionType(
                         $this->productUnitLabelFormatter,
-                        $this->translator
+                        $this->translator,
+                        $this->singleUnitModeService,
+                        $this->defaultProductUnitProvider
                     ),
                     'entity' => $entityType
                 ],
