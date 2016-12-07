@@ -153,7 +153,7 @@ class QuickAddControllerTest extends WebTestCase
         );
         $this->assertEquals(Response::HTTP_FOUND, $this->client->getResponse()->getStatusCode());
         $this->assertContains(
-            $this->getUrl('oro_product_frontend_quick_add'),
+            $this->getUrl('oro_rfp_frontend_request_create'),
             $this->client->getResponse()->headers->get('location')
         );
     }
