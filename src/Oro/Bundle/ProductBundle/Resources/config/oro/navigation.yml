@@ -5,7 +5,7 @@ navigation:
                 label:           'oro.product.menu.products_tab.label'
                 uri:             '#'
                 extras:
-                    icon:        icon-briefcase
+                    icon:        fa-briefcase
                     position:    300
 
             product_list:

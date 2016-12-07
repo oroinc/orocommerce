@@ -9,7 +9,7 @@ operations:
         acl_resource: oro_product_create
         order: 10
         button_options:
-            icon: icon-copy
+            icon: fa-files-o
         actions:
             - '@run_action_group':
                 results:

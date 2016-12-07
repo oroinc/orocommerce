@@ -47,8 +47,8 @@
                             <h2 class="hero-promo-item__title">{{ item.label }}</h2>
                         {% endif %}
                         {% if item.link|default('') and item.link_label|default('') %}
-                            <a href="{{ app.request.getUriForPath(item.link) }}" class="btn-info btn-info--size-l">
-                                {{ item.link_label }} <i class="cf-right-open-mini"></i>
+                            <a href="{{ app.request.getUriForPath(item.link) }}" class="btn-info btn-info--size-l hero-promo-item__view-btn">
+                                {{ item.link_label }} <i class="fa-angle-right"></i>
                             </a>
                         {% endif %}
                     </div>

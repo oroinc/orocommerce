@@ -27,7 +27,7 @@ use Oro\Bundle\WebsiteBundle\Model\ExtendWebsite;
  *      routeUpdate="oro_multiwebsite_update",
  *      defaultValues={
  *          "entity"={
- *              "icon"="icon-briefcase"
+ *              "icon"="fa-briefcase"
  *          },
  *          "ownership"={
  *              "owner_type"="BUSINESS_UNIT",

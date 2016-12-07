@@ -2,31 +2,23 @@
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' primary-menu-container'
     }) %}
-    {% if isMobileVersion() %}
-        <div class="collapse-view"
-             data-page-component-module="oroui/js/app/components/jquery-widget-component"
-             data-page-component-options="{{ {
-                 widgetModule: 'oroui/js/widget/collapse-widget',
-                 storageKey: id
-             }|json_encode() }}"
-        >
-            <div {{ block('block_attributes') }}>
-                <h3 class="primary-menu-title" data-collapse-trigger>
-                    {{ 'oro.customer.frontend.menu.account_user_profile.label'|trans }}
-                    <i class="icon-plus"></i>
-                    <i class="icon-minus"></i>
-                </h3>
-                <div class="collapse-view__container" data-collapse-container>
-                    {{ block_widget(block) }}
-                </div>
+    <div class="collapse-view"
+         data-page-component-module="oroui/js/app/components/jquery-widget-component"
+         data-page-component-options="{{ {
+             widgetModule: 'oroui/js/widget/collapse-widget',
+             storageKey: id,
+             breakpoint: 1100
+         }|json_encode() }}"
+    >
+        <div {{ block('block_attributes') }}>
+            <h3 class="primary-menu-title" data-collapse-trigger>
+                {{ 'oro.customer.frontend.menu.account_user_profile.label'|trans }}
+                <i class="fa-plus"></i>
+                <i class="fa-minus"></i>
+            </h3>
+            <div data-collapse-container>
+                {{ block_widget(block) }}
             </div>
         </div>
-    {% else %}
-        <div {{ block('block_attributes') }}>
-            <h3 class="primary-menu-title">
-                {{ 'oro.customer.frontend.menu.account_user_profile.label'|trans }}
-            </h3>
-            {{ block_widget(block) }}
-        </div>
-    {% endif %}
+    </div>
 {% endblock %}

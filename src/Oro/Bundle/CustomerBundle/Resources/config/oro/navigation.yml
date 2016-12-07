@@ -31,31 +31,31 @@ navigation:
             frontend_favorite:
                 label: 'oro.navigation.menu.favorite.label'
                 extras:
-                    icon: 'icon-star-empty'
+                    icon: 'fa-star-o'
                 uri: '#'
             frontend_pinbar:
                 label: 'oro.navigation.menu.pinbar.label'
                 extras:
-                    icon: 'icon-folder-close'
+                    icon: 'fa-folder'
                     maxItems: 10
                 uri: '#'
             frontend_history:
                 label: 'oro.navigation.menu.history.label'
                 extras:
-                    icon: 'icon-time'
+                    icon: 'fa-clock-o'
                     active_if_first_is_empty: true
                 uri: '#'
             frontend_mostviewed:
                 label: 'oro.navigation.menu.mostviewed.label'
                 extras:
-                    icon: 'icon-flag'
+                    icon: 'fa-flag'
                 uri: '#'
 
             customers_tab:
                 label:           'oro.customer.menu.customers_tab.label'
                 uri:             '#'
                 extras:
-                    icon:        icon-user
+                    icon:        fa-user
                     position:    200
 
             # This is temporary solution to remove navigation key duplication

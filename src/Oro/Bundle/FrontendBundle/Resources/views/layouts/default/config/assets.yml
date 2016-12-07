@@ -1,6 +1,5 @@
 styles:
     inputs:
-        - 'bundles/orofrontend/default/vendors/fontawesome/css/font-awesome.min.css'
         - 'bundles/orofrontend/default/vendors/slick/slick.css'
         - 'bundles/orofrontend/default/scss/settings/global-settings.scss'
         - 'bundles/orofrontend/default/scss/variables/base-config.scss'

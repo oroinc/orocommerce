@@ -19,9 +19,9 @@
         {% if not entity.status %}
             {# status not defined #}
         {% elseif entity.status == constant('STATUS_ENABLED', entity) %}
-            <div class="badge badge-enabled status-enabled"><i class="icon-status-enabled icon-circle"></i>{{ 'oro.product.status.enabled'|trans }}</div>
+            <div class="badge badge-enabled status-enabled"><i class="icon-status-enabled fa-circle"></i>{{ 'oro.product.status.enabled'|trans }}</div>
         {% elseif entity.status == constant('STATUS_DISABLED', entity) %}
-            <div class="badge badge-disabled status-disabled"><i class="icon-status-disabled icon-circle"></i>{{ 'oro.product.status.disabled'|trans }}</div>
+            <div class="badge badge-disabled status-disabled"><i class="icon-status-disabled fa-circle"></i>{{ 'oro.product.status.disabled'|trans }}</div>
         {% endif %}
     </div>
 {% endblock breadcrumbs %}

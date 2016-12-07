@@ -12,10 +12,15 @@
 
 ##FrontendBundle
 - `oro_frontend.listener.datagrid.fields` and `oro_frontend.listener.enum_filter_frontend_listener` priority fixed to make them executed first
+- Deleted `Oro\Bundle\FrontendBundle\Helper\ActionApplicationsHelper`.
+Please use `Oro\Bundle\FrontendBundle\Provider\ActionCurrentApplicationProvider` and `Oro\Bundle\FrontendBundle\ActionProvider\RouteProvider` instead.
 
 ##OrderBundle
 - `Oro\Bundle\SaleBundle\Entity\Quote` `paymentTerm` removed with getter `getPaymentTerm` and setter `setPaymentTerm`, use `oro_payment_term.provider.payment_term_association` to assign PaymentTerm to entity
 - `Oro\Bundle\SaleBundle\Form\Type\QuoteType` `SecurityFacade $securityFacade` and `PaymentTermProvider $paymentTermProvider` removed, use `\Oro\Bundle\PaymentTermBundle\Form\Extension\PaymentTermAclExtension` instead
+- Changes in `Oro\Bundle\OrderBundle\EventListener\TotalCalculateListener`:
+    - second constructor argument changed to `Oro\Bundle\ActionBundle\Helper\ApplicationsHelperInterface` instead of `Oro\Bundle\ActionBundle\Helper\ApplicationsHelper`
+    - used `Oro\Bundle\ActionBundle\Helper\ApplicationsHelper::DEFAULT_APPLICATION` instead of `Oro\Bundle\FrontendBundle\Helper\ActionApplicationsHelper::DEFAULT_APPLICATION`
 
 ##SaleBundle
 - `Oro\Bundle\OrderBundle\Entity\Order` `paymentTerm` removed with getter `getPaymentTerm` and setter `setPaymentTerm`, use `oro_payment_term.provider.payment_term_association` to assign PaymentTerm to entity
