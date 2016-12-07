@@ -187,3 +187,11 @@ services:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-view, method: onAccountView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-user-view, method: onAccountUserView }
             - { name: oro_featuretogle.feature, feature: 'rfp' }
+
+    oro_rfp.layout.decider.rfp_action_decider:
+        class: 'Oro\Bundle\RFPBundle\Layout\Decider\RFPActionDecider'
+        arguments:
+            - '@event_dispatcher'
+            - '@request_stack'
+        tags:
+            - { name: layout.data_provider, alias: oro_rfp_action_decider }

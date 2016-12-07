@@ -24,7 +24,7 @@ use Oro\Bundle\InvoiceBundle\Model\ExtendInvoiceLineItem;
  * @Config(
  *      defaultValues={
  *          "entity"={
- *              "icon"="icon-list-alt"
+ *              "icon"="fa-list-alt"
  *          },
  *          "security"={
  *              "type"="ACL",

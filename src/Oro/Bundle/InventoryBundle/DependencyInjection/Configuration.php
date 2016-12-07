@@ -11,6 +11,25 @@ class Configuration implements ConfigurationInterface
 {
     const MANAGE_INVENTORY = 'manage_inventory';
     const INVENTORY_THRESHOLD = 'inventory_threshold';
+    const MINIMUM_QUANTITY_TO_ORDER = 'minimum_quantity_to_order';
+    const MAXIMUM_QUANTITY_TO_ORDER = 'maximum_quantity_to_order';
+    const DEFAULT_MAXIMUM_QUANTITY_TO_ORDER = 100000;
+
+    /**
+     * @return string
+     */
+    public static function getMaximumQuantityToOrderFullConfigurationName()
+    {
+        return OroInventoryExtension::ALIAS . '.' . self::MAXIMUM_QUANTITY_TO_ORDER;
+    }
+
+    /**
+     * @return string
+     */
+    public static function getMinimumQuantityToOrderFullConfigurationName()
+    {
+        return OroInventoryExtension::ALIAS . '.' . self::MINIMUM_QUANTITY_TO_ORDER;
+    }
 
     /**
      * {@inheritDoc}
@@ -24,6 +43,11 @@ class Configuration implements ConfigurationInterface
             [
                 self::MANAGE_INVENTORY => ['type' => 'boolean', 'value' => false],
                 self::INVENTORY_THRESHOLD => ['type' => 'decimal', 'value' => 0],
+                self::MINIMUM_QUANTITY_TO_ORDER => ['type' => 'decimal', 'value' => null],
+                self::MAXIMUM_QUANTITY_TO_ORDER => [
+                    'type' => 'decimal',
+                    'value' => self::DEFAULT_MAXIMUM_QUANTITY_TO_ORDER,
+                ],
             ]
         );
 
