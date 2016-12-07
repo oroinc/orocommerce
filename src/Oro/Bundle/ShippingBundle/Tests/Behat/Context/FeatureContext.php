@@ -36,16 +36,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
-     * @Given there is EUR currency in the system configuration
-     */
-    public function thereIsEurCurrencyInTheSystemConfiguration()
-    {
-        $configManager = $this->getContainer()->get('oro_config.global');
-        $configManager->set('oro_pricing.enabled_currencies', ['EUR', 'USD']);
-        $configManager->flush();
-    }
-
-    /**
      * @When /^Buyer is on Checkout step on (?P<shoppingListName>[\w\s]+)$/
      */
     public function buyerIsOnShippingMethodCheckoutStep($shoppingListName)
