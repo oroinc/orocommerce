@@ -68,6 +68,17 @@
         }] ) %}
     {% endif %}
 
+    {% set dataBlocks = dataBlocks|merge([{
+        'title': 'oro.product.sections.inventory'|trans,
+        'priority': 5,
+        'subblocks': [{
+            'title': '',
+            'data': [
+                UI.renderHtmlProperty('oro.product.inventory_status.label'|trans, entity.inventoryStatus)
+            ]
+        }]
+    }] ) %}
+
     {% set id = 'product-view' %}
     {% set data = {'dataBlocks': dataBlocks} %}
 

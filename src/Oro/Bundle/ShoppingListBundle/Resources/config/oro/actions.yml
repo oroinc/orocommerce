@@ -27,6 +27,9 @@ operations:
         order: 10
         button_options:
             icon: fa-briefcase
+        conditions:
+            '@extendable':
+                events: [extendable_operation.create_order]
         preconditions:
             '@and':
                 - '@action_available': start_checkout

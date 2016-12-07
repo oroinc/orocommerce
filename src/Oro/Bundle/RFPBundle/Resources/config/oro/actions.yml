@@ -132,11 +132,17 @@ operations:
             page_component_options:
                 component_name: '[name$="[component]"]'
                 component_additional: '[name$="[additional]"]'
+                submitWithErrors: $.submitWithErrors
         preactions:
             - '@call_service_method':
                 service: oro_rfp.processor.quick_add
                 method: isAllowed
                 attribute: $.isAllowed
+            - '@call_service_method':
+                service: oro_rfp.layout.decider.rfp_action_decider
+                method: shouldFormSubmitWithErrors
+                attribute: $.submitWithErrors
+                method_parameters: [$.data.collection]
         preconditions:
             '@equal': [true, $.isAllowed]
 

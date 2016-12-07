@@ -7,6 +7,8 @@ use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\PricingBundle\Entity\BasePriceListRelation;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToAccount;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -131,7 +133,8 @@ class CombinedPriceListRepositoryTest extends WebTestCase
         $priceLists = $combinedPriceListRepository->findBy(['name' => 'test_cpl']);
         $this->assertNotEmpty($priceLists);
 
-        $combinedPriceListRepository->deleteUnusedPriceLists($priceLists, null);
+        $priceListsForDelete = $combinedPriceListRepository->getUnusedPriceListsIds($priceLists, null);
+        $combinedPriceListRepository->deletePriceLists($priceListsForDelete);
         $priceLists = $combinedPriceListRepository->findBy(['name' => 'test_cpl']);
         $this->assertNotEmpty($priceLists);
 
@@ -149,7 +152,8 @@ class CombinedPriceListRepositoryTest extends WebTestCase
 
         $combinedPriceListRepository = $this->getRepository();
 
-        $combinedPriceListRepository->deleteUnusedPriceLists([], false);
+        $priceListsForDelete = $combinedPriceListRepository->getUnusedPriceListsIds([], false);
+        $combinedPriceListRepository->deletePriceLists($priceListsForDelete);
 
         $priceLists = $combinedPriceListRepository->findBy(['name' => 'test_cpl']);
         $this->assertNotEmpty($priceLists);
@@ -161,7 +165,8 @@ class CombinedPriceListRepositoryTest extends WebTestCase
     public function testDeleteUnusedDisabledPriceLists()
     {
         $combinedPriceListRepository = $this->getRepository();
-        $combinedPriceListRepository->deleteUnusedPriceLists();
+        $priceLists = $combinedPriceListRepository->getUnusedPriceListsIds();
+        $combinedPriceListRepository->deletePriceLists($priceLists);
         $priceLists = $combinedPriceListRepository->findBy(['name' => 'test_cpl']);
         $this->assertEmpty($priceLists);
     }
@@ -371,6 +376,21 @@ class CombinedPriceListRepositoryTest extends WebTestCase
                 'result' => 2
             ]
         ];
+    }
+
+    public function testHasOtherRelations()
+    {
+        $priceList = $this->getReference('1f');
+        $relation3 = $this->getManager()->getRepository(CombinedPriceListToWebsite::class)
+            ->findOneBy(['priceList' => $priceList]);
+        $this->assertFalse($this->getRepository()->hasOtherRelations($relation3));
+        $cplToAccount = new CombinedPriceListToAccount();
+        $cplToAccount->setWebsite($relation3->getWebsite());
+        $cplToAccount->setPriceList($priceList);
+        $cplToAccount->setAccount($this->getReference('account.level_1.2'));
+        $this->getManager()->persist($cplToAccount);
+        $this->getManager()->flush();
+        $this->assertTrue($this->getRepository()->hasOtherRelations($relation3));
     }
 
     /**

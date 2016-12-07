@@ -2,116 +2,97 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Filter;
 
-use Oro\Bundle\EntityBundle\ORM\Registry;
-use Oro\Bundle\FilterBundle\Datasource\Orm\OrmFilterDatasourceAdapter;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
+use Oro\Bundle\DataGridBundle\Extension\Sorter\AbstractSorterExtension;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberRangeFilterType;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\PricingBundle\Filter\FrontendProductPriceFilter;
-use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
+use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @dbIsolation
  */
-class FrontendProductPriceFilterTest extends WebTestCase
+class FrontendProductPriceFilterTest extends FrontendWebTestCase
 {
-    /**
-     * @var Registry
-     */
-    protected $registry;
-
-    /**
-     * @var FrontendProductPriceFilter
-     */
-    protected $filter;
-
     public function setUp()
     {
-        $this->initClient([], $this->generateBasicAuthHeader());
-        $this->client->useHashNavigation(true);
+        $this->initClient();
+        $this->getContainer()->get('request_stack')->push(Request::create(''));
         $this->loadFixtures(
             [
-                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists',
-                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices',
+                LoadCombinedProductPrices::class,
+                LoadAccountUserData::class,
             ]
         );
-        $this->registry = $this->getContainer()->get('doctrine');
-        $cpl = $this->getReference('1f');
-        /** @var PriceListRequestHandler|\PHPUnit_Framework_MockObject_MockObject $handler */
-        $handler = $this->getMockBuilder('Oro\Bundle\PricingBundle\Model\PriceListRequestHandler')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $handler->expects($this->once())->method('getPriceListByAccount')->willReturn($cpl);
-        $this->filter = new FrontendProductPriceFilter(
-            $this->getContainer()->get('form.factory'),
-            $this->getContainer()->get('oro_filter.filter_utility'),
-            $this->getContainer()->get('oro_product.formatter.product_unit_label'),
-            $handler
-        );
-        $this->filter->init(
-            'minimum_price',
-            [
-                'type' => 'frontend-product-price',
-                'data_name' => 'USD',
-                'enabled' => true,
-                'translatable' => true,
-                'label' => 'Price (USD)'
-            ]
-        );
-        $this->filter->setRegistry($this->registry);
-        $this->filter->setProductPriceClass('OroPricingBundle:CombinedProductPrice');
     }
 
     /**
-     * @dataProvider filterDataProvider
-     * @param array $data
-     * @param int $productsCount
+     * @dataProvider testProductGridProvider
+     *
+     * @param array $expected
+     * @param array $filter
      */
-    public function testFilter(array $data, $productsCount)
+    public function testProductGrid(array $expected, array $filter)
     {
-        $qb = $this->registry->getRepository('OroProductBundle:Product')->createQueryBuilder('product');
-        $adapter = new OrmFilterDatasourceAdapter($qb);
-
-        $this->filter->apply($adapter, $data);
-
-        $products = $adapter->getQueryBuilder()->getQuery()->getResult();
-        $this->assertCount($productsCount, $products);
+        $this->markTestIncomplete("BB-6164");
+        $response = $this->client->requestGrid(
+            [
+                'gridName' => 'frontend-product-search-grid',
+            ],
+            $filter,
+            true,
+            'oro_frontend_datagrid_index'
+        );
+        $result = $this->getJsonResponseContent($response, 200);
+        $this->assertSame($expected, array_column($result['data'], 'sku'));
     }
 
     /**
      * @return array
      */
-    public function filterDataProvider()
+    public function testProductGridProvider()
     {
+        $sort = 'frontend-product-search-grid[_sort_by]';
+        $filter = 'frontend-product-search-grid[_filter]';
+
         return [
-            [
-                'data' => [
-                    'data_name' => 'p',
-                    'type' => NumberRangeFilterType::TYPE_BETWEEN,
-                    'value' => 1,
-                    'value_end' => 10,
-                    'unit' => 'liter',
+            'sort by price' => [
+                'expected' => [
+                    'product.7',
+                    'product.3',
+                    'product.1',
+                    'product.2',
+                    'product.6',
+                    'product.8',
                 ],
-                'count' => 2,
+                'filter' => [
+                    $sort.'[minimal_price_sort]' => AbstractSorterExtension::DIRECTION_ASC,
+                ]
             ],
-            [
-                'data' => [
-                    'data_name' => 'p',
-                    'type' => NumberRangeFilterType::TYPE_BETWEEN,
-                    'value' => 1,
-                    'value_end' => 13,
-                    'unit' => 'liter',
+            'filter by price sort by sku' => [
+                'expected' => [
+                    'product.3',
+                    'product.1',
                 ],
-                'count' => 3,
+                'filter' => [
+                    $filter.'[minimal_price][value]' => 12,
+                    $filter.'[minimal_price][type]' => NumberRangeFilterType::TYPE_LESS_THAN,
+                    $filter.'[minimal_price][unit]' => 'liter',
+                    $sort.'[sku]' => AbstractSorterExtension::DIRECTION_DESC
+                ]
             ],
-            [
-                'data' => [
-                    'data_name' => 'p',
-                    'type' => NumberRangeFilterType::TYPE_BETWEEN,
-                    'value' => 10,
-                    'value_end' => 12,
-                    'unit' => 'liter',
+            'filter and sort by price' => [
+                'expected' => [
+                    'product.2',
+                    'product.1',
                 ],
-                'count' => 1,
+                'filter' => [
+                    $filter.'[minimal_price][value]' => 8,
+                    $filter.'[minimal_price][value_end]' => 15,
+                    $filter.'[minimal_price][type]' => NumberRangeFilterType::TYPE_BETWEEN,
+                    $filter.'[minimal_price][unit]' => 'liter',
+                    $sort.'[minimal_price_sort]' => AbstractSorterExtension::DIRECTION_DESC,
+                ],
             ],
         ];
     }

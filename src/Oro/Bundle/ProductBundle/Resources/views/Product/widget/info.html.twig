@@ -7,7 +7,6 @@
         <div class="responsive-block">
             {{ UI.renderProperty('oro.product.sku.label'|trans, product.sku) }}
             {{ UI.renderProperty('oro.product.names.label'|trans, product.defaultName) }}
-            {{ UI.renderHtmlProperty('oro.product.inventory_status.label'|trans, product.inventoryStatus) }}
 
             {% if product.images.count %}
                 {{ UI.renderHtmlProperty(
