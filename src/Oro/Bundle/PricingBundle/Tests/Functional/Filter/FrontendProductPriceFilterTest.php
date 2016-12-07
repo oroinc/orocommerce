@@ -34,6 +34,7 @@ class FrontendProductPriceFilterTest extends FrontendWebTestCase
      */
     public function testProductGrid(array $expected, array $filter)
     {
+        $this->markTestIncomplete("BB-6164");
         $response = $this->client->requestGrid(
             [
                 'gridName' => 'frontend-product-search-grid',
