@@ -19,12 +19,13 @@
 }
 
 @mixin badge(
-    $badge-size:       26px,
-    $badge-f-size:     14px,
-    $badge-bg:         get-color('primary', 'base'),
-    $badge-radius:     50%,
-    $badge-color:      get-color('additional', 'ultra'),
-    $badge-icon-align: baseline
+    $badge-size:        26px,
+    $badge-f-size:      14px,
+    $badge-bg:          get-color('primary', 'base'),
+    $badge-radius:      50%,
+    $badge-color:       get-color('additional', 'ultra'),
+    $badge-icon-align:  baseline,
+    $badge-icon-offset: 0
 ) {
     display: inline-block;
     vertical-align: middle;
@@ -41,6 +42,8 @@
 
     [class^="cf-"],
     [class^="fa-"] {
+        margin: $badge-icon-offset;
+
         vertical-align: $badge-icon-align;
     }
 }
