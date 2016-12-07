@@ -115,7 +115,7 @@ workflows:
                 is_unavailable_hidden: true
                 transition_definition: start_from_shoppinglist_definition
                 frontend_options:
-                    icon: icon-briefcase
+                    icon: fa-briefcase
                 init_routes:
                     - oro_shopping_list_frontend_view
 
@@ -125,7 +125,7 @@ workflows:
                 is_unavailable_hidden: true
                 transition_definition: start_from_quickorderform_definition
                 frontend_options:
-                    icon: icon-briefcase
+                    icon: fa-briefcase
                     data:
                         component_name: oro_shopping_list_to_checkout_quick_add_processor
                         page-component-module: oroproduct/js/app/components/quick-add-form-button-component
@@ -362,6 +362,8 @@ workflows:
                     '@and':
                         - '@has_elements': $.result.shoppingList.lineItems
                         - '@has_price_in_shopping_line_items': $.result.shoppingList.lineItems
+                        - '@extendable':
+                            events: [extendable_condition.start_checkout]
                 actions:
                     - '@run_action_group':
                         action_group: start_shoppinglist_checkout
