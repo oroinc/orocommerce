@@ -297,7 +297,12 @@ class ProductControllerTest extends WebTestCase
             [self::SECOND_IMAGE_FILENAME, 0, 0, 1]
         ];
 
-        $this->assertEquals($expectedProductImageMatrix, $this->parseProductImages($crawler));
+        $parsedProductImageMatrix = $this->parseProductImages($crawler);
+
+        sort($parsedProductImageMatrix);
+        sort($expectedProductImageMatrix);
+
+        $this->assertEquals($expectedProductImageMatrix, $parsedProductImageMatrix);
     }
 
     /**
