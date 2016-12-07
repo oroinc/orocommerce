@@ -6,7 +6,7 @@ Feature: Applying shipping rules
 
   Scenario: "SHIPPING 2A" > SHIPPING RULE #1 BASED ON COUNTRY ONLY. PRIORITY - CRITICAL
     Given I login as AmandaRCole@example.org buyer
-    And there is EUR currency in the system configuration
+    And There is EUR currency in the system configuration
     When Buyer is on Checkout step on Shopping List 1
     Then Shipping Type "Flat Rate: €3.00" is shown for Buyer selection
     And the order total is recalculated to "€13.00"
@@ -18,15 +18,19 @@ Feature: Applying shipping rules
     Then There is no shipping method available for this order
 
   Scenario: "SHIPPING 2C" > DIFFERENT CURRENCIES FOR SHIPPING RULE #1 AND ORDER. PRIORITY - MAJOR
-    Given Admin User edited "Shipping Rule 1" with next data:
+    Given Currency is set to USD
+    And Admin User edited "Shipping Rule 1" with next data:
       | Enabled  | true    |
       | Currency | USD     |
       | Country  | Germany |
+    # specific for community edition
+    And Currency is set to EUR
     When Buyer is again on Shipping Method Checkout step on "Shopping List 1"
     Then There is no shipping method available for this order
 
   Scenario: "SHIPPING 2D" > DIFFERENT COUNTRIES FOR SHIPPING RULE #1 AND ORDER. PRIORITY - MAJOR
-    Given Admin User edited "Shipping Rule 1" with next data:
+    Given Currency is set to EUR
+    And Admin User edited "Shipping Rule 1" with next data:
       | Enabled  | true    |
       | Currency | EUR     |
       | Country  | Ukraine |
