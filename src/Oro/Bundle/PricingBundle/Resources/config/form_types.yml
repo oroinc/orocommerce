@@ -128,18 +128,6 @@ services:
         tags:
             - { name: form.type, alias: oro_pricing_product_price_unit_selector }
 
-    oro_pricing.form.type.default_currency_selection:
-       class: Oro\Bundle\PricingBundle\Form\Type\DefaultCurrencySelectionType
-       public: true
-       arguments:
-           - '@oro_currency.config.currency'
-           - '@oro_locale.settings'
-           - "@translator"
-           - "@request_stack"
-           - "@oro_currency.helper.currency_name"
-       tags:
-           - { name: form.type, alias: oro_pricing_default_currency_selection }
-
     oro_pricing.form.type.product_attribute_price_collection:
        class: Oro\Bundle\PricingBundle\Form\Type\ProductAttributePriceCollectionType
        public: true
