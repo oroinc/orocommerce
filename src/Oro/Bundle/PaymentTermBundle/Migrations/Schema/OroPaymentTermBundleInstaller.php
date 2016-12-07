@@ -7,13 +7,13 @@ use Doctrine\DBAL\Platforms\MySqlPlatform;
 use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
 use Doctrine\DBAL\Schema\Schema;
 
+use Oro\Bundle\EntityConfigBundle\Migration\RemoveEntityConfigEntityValueQuery;
 use Oro\Bundle\EntityExtendBundle\Extend\RelationType;
 use Oro\Bundle\FrontendBundle\Migration\UpdateExtendRelationTrait;
 use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
-use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
@@ -185,47 +185,16 @@ SET payment_term_7c4f1e8e_id = ptag.payment_term_id
 FROM oro_payment_term_to_acc_grp ptag
 WHERE ptag.account_group_id = ag.id;
 QUERY;
+        } else {
+            throw new \RuntimeException('Unsupported platform ');
         }
 
-        $configIndexValueSql = <<<QUERY
-DELETE FROM oro_entity_config_index_value
-WHERE field_id  = (
-    SELECT id FROM oro_entity_config_field
-    WHERE entity_id = (SELECT id FROM oro_entity_config WHERE class_name = :class)
-    AND field_name = :field_name
-)
-QUERY;
-
-        $configFieldSql = <<<QUERY
-DELETE FROM oro_entity_config_field
-WHERE entity_id = (SELECT id FROM oro_entity_config WHERE class_name = :class)
-AND field_name = :field_name
-QUERY;
-
         $queries->addPostQuery(
-            new ParametrizedSqlMigrationQuery(
-                $configIndexValueSql,
-                ['class' => 'Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm', 'field_name' => 'accounts']
-            )
+            new RemoveEntityConfigEntityValueQuery('Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm', 'accounts')
         );
 
         $queries->addPostQuery(
-            new ParametrizedSqlMigrationQuery(
-                $configIndexValueSql,
-                ['class' => 'Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm', 'field_name' => 'accountGroups']
-            )
-        );
-        $queries->addPostQuery(
-            new ParametrizedSqlMigrationQuery(
-                $configFieldSql,
-                ['class' => 'Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm', 'field_name' => 'accounts']
-            )
-        );
-        $queries->addPostQuery(
-            new ParametrizedSqlMigrationQuery(
-                $configFieldSql,
-                ['class' => 'Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm', 'field_name' => 'accountGroups']
-            )
+            new RemoveEntityConfigEntityValueQuery('Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm', 'accountGroups')
         );
 
         $queries->addPostQuery($queryAccount);

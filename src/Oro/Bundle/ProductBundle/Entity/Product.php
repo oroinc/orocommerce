@@ -489,7 +489,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
      */
     public function getVariantFields()
     {
-        return $this->variantFields !== null ? $this->variantFields : [];
+        return (array)$this->variantFields;
     }
 
     /**
@@ -933,7 +933,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
     {
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
 
-        if (false === $this->isConfigurable()) {
+        if (!$this->isConfigurable()) {
             // Clear variantLinks in Oro\Bundle\ProductBundle\EventListener\ProductHandlerListener
             $this->variantFields = [];
         }

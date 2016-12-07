@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Form\FormInterface;
 
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
@@ -12,8 +11,6 @@ use Oro\Bundle\ProductBundle\EventListener\ProductHandlerListener;
 
 class ProductHandlerListenerTest extends \PHPUnit_Framework_TestCase
 {
-    const CUSTOM_FIELD_NAME = 'Custom';
-
     /**
      * @var ProductHandlerListener
      */
@@ -33,18 +30,26 @@ class ProductHandlerListenerTest extends \PHPUnit_Framework_TestCase
     {
         $entity = new Product();
         $entity->setType(Product::TYPE_CONFIGURABLE);
+
         $productVariantLink = $this->createProductVariantLink();
         $entity->addVariantLink($productVariantLink);
+
         $event = $this->createEvent($entity);
         $this->listener->onBeforeFlush($event);
-        $this->assertEquals(new ArrayCollection([$productVariantLink]), $entity->getVariantLinks());
+
+        $this->assertCount(1, $entity->getVariantLinks());
+        $this->assertContains($productVariantLink, $entity->getVariantLinks());
 
         $entity->setType(Product::TYPE_SIMPLE);
         $event = $this->createEvent($entity);
         $this->listener->onBeforeFlush($event);
-        $this->assertEquals(new ArrayCollection([]), $entity->getVariantLinks());
+        $this->assertEmpty($entity->getVariantLinks());
     }
 
+    /**
+     * @param object $entity
+     * @return AfterFormProcessEvent
+     */
     protected function createEvent($entity)
     {
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
@@ -52,7 +57,12 @@ class ProductHandlerListenerTest extends \PHPUnit_Framework_TestCase
         return new AfterFormProcessEvent($form, $entity);
     }
 
-    protected function createProductVariantLink($parentProduct = null, $product = null)
+    /**
+     * @param Product|null $parentProduct
+     * @param Product|null $product
+     * @return ProductVariantLink
+     */
+    protected function createProductVariantLink(Product $parentProduct = null, Product $product = null)
     {
         return new ProductVariantLink($parentProduct, $product);
     }
