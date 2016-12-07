@@ -187,10 +187,6 @@ workflows:
                         - '@generate_checkout_state_snapshot':
                             entity: $checkout
                             attribute: $.result.initCheckoutState
-                        - '@call_service_method':
-                            service: oro_checkout.action.default_shipping_method_setter
-                            method: setDefaultShippingMethod
-                            method_parameters: [$checkout]
                     attribute_fields:
                         shipping_method:
                             options:
@@ -259,7 +255,7 @@ workflows:
 
             back_to_shipping_method:
                 step_to: enter_shipping_method
-                transition_definition: unblock_and_recalculate_definition
+                transition_definition: clear_payment_method_and_recalculate_state_definition
                 is_unavailable_hidden: true
                 frontend_options:
                     is_checkout_back: true
@@ -493,10 +489,6 @@ workflows:
                                 - '@equal': [$checkout.shipToBillingAddress, false]
                                 - '@not_empty': $checkout.shippingAddress
                 actions:
-                    - '@call_service_method':
-                        service: oro_checkout.action.default_shipping_method_setter
-                        method: setDefaultShippingMethod
-                        method_parameters: [$checkout]
                     - '@tree':
                         conditions:
                             '@and':
@@ -531,6 +523,10 @@ workflows:
 
             continue_to_payment_definition:
                 preactions:
+                    - '@call_service_method':
+                        service: oro_checkout.action.default_shipping_method_setter
+                        method: setDefaultShippingMethod
+                        method_parameters: [$checkout]
                     - '@generate_checkout_state_snapshot':
                         entity: $checkout
                         attribute: $.result.currentCheckoutState
