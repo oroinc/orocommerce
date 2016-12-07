@@ -131,6 +131,7 @@ oro:
             general: General
             additional: Additional
             productVariants: Product Variants
+            inventory: Inventory
 
         widgets:
             product_information: Product Information

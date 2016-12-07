@@ -18,7 +18,12 @@ class ProductManageInventoryFormViewListener extends AbstractFallbackFieldsFormV
             return;
         }
 
-        $this->addBlockToEntityView($event, 'OroInventoryBundle:Product:manageInventory.html.twig', $product);
+        $this->addBlockToEntityView(
+            $event,
+            'OroInventoryBundle:Product:manageInventory.html.twig',
+            $product,
+            'oro.product.sections.inventory'
+        );
     }
 
     /**
@@ -26,6 +31,10 @@ class ProductManageInventoryFormViewListener extends AbstractFallbackFieldsFormV
      */
     public function onProductEdit(BeforeListRenderEvent $event)
     {
-        $this->addBlockToEntityEdit($event, 'OroInventoryBundle:Product:manageInventoryFormWidget.html.twig');
+        $this->addBlockToEntityEdit(
+            $event,
+            'OroInventoryBundle:Product:manageInventoryFormWidget.html.twig',
+            'oro.product.sections.inventory'
+        );
     }
 }

@@ -357,6 +357,7 @@ services:
         arguments:
             - "@oro_product.repository.product"
             - "@oro_product.product.manager"
+            - '@event_dispatcher'
 
     oro_product.datagrid_theme_helper:
         class: 'Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper'
@@ -506,3 +507,11 @@ services:
         class: Oro\Bundle\ProductBundle\Provider\ProductRoutingInformationProvider
         tags:
             - { name: oro_redirect.routing_information_provider }
+
+    oro_product.layout.data_provider.quick_add_collection:
+        class: 'Oro\Bundle\ProductBundle\Provider\QuickAddCollectionProvider'
+        arguments:
+            - '@oro_product.form_handler.quick_add'
+            - '@request_stack'
+        tags:
+            - { name: layout.data_provider, alias: oro_product_quick_add_collection }
