@@ -3,7 +3,6 @@
 namespace Oro\Bundle\RedirectBundle\Routing;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
@@ -35,34 +34,19 @@ class SlugUrlMatcher implements RequestMatcherInterface, UrlMatcherInterface
     protected $registry;
 
     /**
-     * @var FrontendHelper
-     */
-    protected $frontendHelper;
-
-    /**
      * @var ScopeManager
      */
     protected $scopeManager;
 
     /**
-     * @var bool
-     */
-    protected $installed;
-
-    /**
-     * @var bool
-     */
-    protected $environment;
-
-    /**
-     * @var array
-     */
-    protected $skippedUrlPatterns = [];
-
-    /**
      * @var RequestMatcherInterface|UrlMatcherInterface
      */
     protected $baseMatcher;
+
+    /**
+     * @var MatchedUrlDecisionMaker
+     */
+    protected $matchedUrlDecisionMaker;
 
     /**
      * @var array
@@ -73,38 +57,21 @@ class SlugUrlMatcher implements RequestMatcherInterface, UrlMatcherInterface
      * @param RequestMatcherInterface|UrlMatcherInterface $baseMatcher
      * @param RouterInterface $router
      * @param ManagerRegistry $registry
-     * @param FrontendHelper $frontendHelper
      * @param ScopeManager $scopeManager
-     * @param boolean $installed
-     * @param string $environment
+     * @param MatchedUrlDecisionMaker $matchedUrlDecisionMaker
      */
     public function __construct(
         $baseMatcher,
         RouterInterface $router,
         ManagerRegistry $registry,
-        FrontendHelper $frontendHelper,
         ScopeManager $scopeManager,
-        $installed,
-        $environment
+        MatchedUrlDecisionMaker $matchedUrlDecisionMaker
     ) {
         $this->baseMatcher = $baseMatcher;
         $this->router = $router;
         $this->registry = $registry;
-        $this->installed = $installed;
         $this->scopeManager = $scopeManager;
-        $this->frontendHelper = $frontendHelper;
-        $this->environment = $environment;
-    }
-
-    /**
-     * Skipped url pattern should start with slash.
-     *
-     * @param string $skippedUrlPattern
-     * @param string $env
-     */
-    public function addSkippedUrlPattern($skippedUrlPattern, $env = 'prod')
-    {
-        $this->skippedUrlPatterns[$env][] = $skippedUrlPattern;
+        $this->matchedUrlDecisionMaker = $matchedUrlDecisionMaker;
     }
 
     /**
@@ -131,7 +98,7 @@ class SlugUrlMatcher implements RequestMatcherInterface, UrlMatcherInterface
             },
             self::MATCH_SLUG => function () use ($request) {
                 $url = $request->getPathInfo();
-                if ($this->matches($url)) {
+                if ($this->matchedUrlDecisionMaker->matches($url)) {
                     return $this->getAttributes($url);
                 }
 
@@ -157,7 +124,7 @@ class SlugUrlMatcher implements RequestMatcherInterface, UrlMatcherInterface
                 }
             },
             self::MATCH_SLUG => function () use ($pathinfo) {
-                if ($this->matches($pathinfo)) {
+                if ($this->matchedUrlDecisionMaker->matches($pathinfo)) {
                     return $this->getAttributes($pathinfo);
                 }
 
@@ -212,44 +179,6 @@ class SlugUrlMatcher implements RequestMatcherInterface, UrlMatcherInterface
     public function getContext()
     {
         return $this->baseMatcher->getContext();
-    }
-
-    /**
-     * @param string $url
-     * @return bool
-     */
-    protected function matches($url)
-    {
-        if (!$this->installed) {
-            return false;
-        }
-
-        if (!$this->frontendHelper->isFrontendUrl($url)) {
-            return false;
-        }
-
-        if ($this->isSkippedUrl($url)) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * @param string $url
-     * @return bool
-     */
-    protected function isSkippedUrl($url)
-    {
-        if (array_key_exists($this->environment, $this->skippedUrlPatterns)) {
-            foreach ($this->skippedUrlPatterns[$this->environment] as $pattern) {
-                if (strpos($url, $pattern) === 0) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
     }
 
     /**

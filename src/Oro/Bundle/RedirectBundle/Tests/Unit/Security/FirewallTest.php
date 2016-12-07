@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\RedirectBundle\Tests\Unit\Security;
 
+use Oro\Bundle\RedirectBundle\Routing\MatchedUrlDecisionMaker;
 use Oro\Bundle\RedirectBundle\Security\Firewall;
 use Oro\Bundle\RedirectBundle\Security\FirewallFactory;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -29,6 +30,11 @@ class FirewallTest extends \PHPUnit_Framework_TestCase
     protected $baseFirewall;
 
     /**
+     * @var MatchedUrlDecisionMaker|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $matchedUrlDecisionMaker;
+
+    /**
      * @var Firewall
      */
     protected $firewall;
@@ -44,6 +50,9 @@ class FirewallTest extends \PHPUnit_Framework_TestCase
         $this->baseFirewall = $this->getMockBuilder(FrameworkFirewall::class)
             ->disableOriginalConstructor()
             ->getMock();
+        $this->matchedUrlDecisionMaker = $this->getMockBuilder(MatchedUrlDecisionMaker::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
         /** @var FirewallFactory|\PHPUnit_Framework_MockObject_MockObject $firewallFactory */
         $firewallFactory = $this->getMockBuilder(FirewallFactory::class)
@@ -57,7 +66,13 @@ class FirewallTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->firewall = new Firewall($map, $dispatcher, $firewallFactory, $this->context);
+        $this->firewall = new Firewall(
+            $map,
+            $dispatcher,
+            $firewallFactory,
+            $this->matchedUrlDecisionMaker,
+            $this->context
+        );
     }
 
     public function testOnKernelRequestBeforeRouting()
@@ -66,11 +81,21 @@ class FirewallTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $url = '/test';
+        $request->expects($this->any())
+            ->method('getPathInfo')
+            ->willReturn($url);
+
+        $this->matchedUrlDecisionMaker->expects($this->any())
+            ->method('matches')
+            ->with($url)
+            ->willReturn(true);
+
         /** @var GetResponseEvent|\PHPUnit_Framework_MockObject_MockObject $event */
         $event = $this->getMockBuilder(GetResponseEvent::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $event->expects($this->once())
+        $event->expects($this->any())
             ->method('getRequest')
             ->willReturn($request);
         $event->expects($this->once())
@@ -88,6 +113,36 @@ class FirewallTest extends \PHPUnit_Framework_TestCase
         $this->firewall->onKernelRequestBeforeRouting($event);
     }
 
+    public function testOnKernelRequestBeforeRoutingNotMatchedUrl()
+    {
+        $request = $this->getMockBuilder(Request::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $url = '/test';
+        $request->expects($this->any())
+            ->method('getPathInfo')
+            ->willReturn($url);
+
+        $this->matchedUrlDecisionMaker->expects($this->any())
+            ->method('matches')
+            ->with($url)
+            ->willReturn(false);
+
+        /** @var GetResponseEvent|\PHPUnit_Framework_MockObject_MockObject $event */
+        $event = $this->getMockBuilder(GetResponseEvent::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $event->expects($this->any())
+            ->method('getRequest')
+            ->willReturn($request);
+
+        $this->baseFirewall->expects($this->never())
+            ->method($this->anything());
+
+        $this->firewall->onKernelRequestBeforeRouting($event);
+    }
+
     /**
      * @dataProvider afterRoutingNotProcessedDataProvider
      * @param bool $isMasterRequest
@@ -96,14 +151,20 @@ class FirewallTest extends \PHPUnit_Framework_TestCase
      */
     public function testOnKernelRequestAfterRoutingSkip($isMasterRequest, $hasResponse, array $attributes)
     {
-        $request = Request::create('/test');
+        $url = '/test';
+        $request = Request::create($url);
+
+        $this->matchedUrlDecisionMaker->expects($this->any())
+            ->method('matches')
+            ->with($url)
+            ->willReturn(true);
         $request->attributes->add($attributes);
 
         /** @var GetResponseEvent|\PHPUnit_Framework_MockObject_MockObject $event */
         $event = $this->getMockBuilder(GetResponseEvent::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $event->expects($this->once())
+        $event->expects($this->any())
             ->method('getRequest')
             ->willReturn($request);
         $event->expects($this->any())
@@ -171,6 +232,11 @@ class FirewallTest extends \PHPUnit_Framework_TestCase
         $request->setLocale($locale);
         $request->setDefaultLocale($defaultLocale);
 
+        $this->matchedUrlDecisionMaker->expects($this->any())
+            ->method('matches')
+            ->with($requestedUrl)
+            ->willReturn(true);
+
         /** @var KernelInterface|\PHPUnit_Framework_MockObject_MockObject $kernel */
         $kernel = $this->getMock(KernelInterface::class);
         $requestType = KernelInterface::MASTER_REQUEST;
@@ -221,6 +287,31 @@ class FirewallTest extends \PHPUnit_Framework_TestCase
         $this->firewall->onKernelRequestAfterRouting($event);
     }
 
+    public function testOnKernelRequestAfterRoutingNotMatchedUrl()
+    {
+        $requestedUrl = '/test';
+        $request = Request::create($requestedUrl);
+
+        $this->matchedUrlDecisionMaker->expects($this->any())
+            ->method('matches')
+            ->with($requestedUrl)
+            ->willReturn(false);
+
+        /** @var GetResponseEvent|\PHPUnit_Framework_MockObject_MockObject $event */
+        $event = $this->getMockBuilder(GetResponseEvent::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $event->expects($this->atLeastOnce())
+            ->method('getRequest')
+            ->willReturn($request);
+
+        $this->baseFirewall->expects($this->once())
+            ->method('onKernelRequest')
+            ->with($event);
+
+        $this->firewall->onKernelRequestAfterRouting($event);
+    }
+
     public function testOnKernelRequestAfterRoutingWithResponse()
     {
         $slugResolvedUrl = '/resolved/slug';
@@ -248,6 +339,11 @@ class FirewallTest extends \PHPUnit_Framework_TestCase
         $request->setSession($session);
         $request->setLocale($locale);
         $request->setDefaultLocale($defaultLocale);
+
+        $this->matchedUrlDecisionMaker->expects($this->any())
+            ->method('matches')
+            ->with($requestedUrl)
+            ->willReturn(true);
 
         /** @var KernelInterface|\PHPUnit_Framework_MockObject_MockObject $kernel */
         $kernel = $this->getMock(KernelInterface::class);
@@ -336,6 +432,11 @@ class FirewallTest extends \PHPUnit_Framework_TestCase
         $request = Request::create('/slug');
         $request->attributes->set('_resolved_slug_url', '/test');
         $request->setSession($session);
+
+        $this->matchedUrlDecisionMaker->expects($this->any())
+            ->method('matches')
+            ->with('/slug')
+            ->willReturn(true);
 
         $getResponseEvent = new GetResponseEvent($kernel, $request, $requestType);
         $this->firewall->onKernelRequestAfterRouting($getResponseEvent);
