@@ -240,6 +240,8 @@ services:
 
     oro_product.validator.unique_variant_links:
         class: 'Oro\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinksValidator'
+        arguments:
+            - "@property_accessor"
         tags:
             - { name: validator.constraint_validator, alias: oro_product_unique_variant_links }
 

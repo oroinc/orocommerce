@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Validator;
 
+use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
@@ -26,11 +28,16 @@ class UniqueProductVariantLinksValidatorTest extends \PHPUnit_Framework_TestCase
      */
     protected $context;
 
+    /**
+     * @var PropertyAccessor
+     */
+    protected $propertyAccessor;
+
     protected function setUp()
     {
         $this->context = $this->getMock(ExecutionContextInterface::class);
-
-        $this->service = new UniqueProductVariantLinksValidator();
+        $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
+        $this->service = new UniqueProductVariantLinksValidator($this->propertyAccessor);
         $this->service->initialize($this->context);
     }
 
@@ -124,7 +131,7 @@ class UniqueProductVariantLinksValidatorTest extends \PHPUnit_Framework_TestCase
                 ],
                 [
                     self::VARIANT_FIELD_KEY_SIZE => new StubEnumValue('m', 'M'),
-                    self::VARIANT_FIELD_KEY_COLOR => new StubEnumValue('Blue', 'Blue'),
+                    self::VARIANT_FIELD_KEY_COLOR => new StubEnumValue('blue', 'Blue'),
                 ],
             ]
         );
