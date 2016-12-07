@@ -7,7 +7,7 @@ operations:
         acl_resource: oro_order_create
         order: 10
         button_options:
-            icon: icon-briefcase
+            icon: fa-briefcase
         actions:
             - '@call_service_method':
                 service: oro_shopping_list.service.product_data_storage
@@ -60,7 +60,7 @@ operations:
         datagrid_options:
             mass_action_provider: oro_shopping_list_add_products
         button_options:
-            icon: icon-shopping-cart
+            icon: fa-shopping-cart
             page_component_module: oroshoppinglist/js/app/components/add-product-component
         frontend_options:
             template: OroShoppingListBundle:Action:lineItem.html.twig
@@ -117,7 +117,7 @@ operations:
             - oro_shopping_list_view
         acl_resource: [CREATE, entity:Oro\Bundle\ShoppingListBundle\Entity\LineItem]
         button_options:
-            icon: icon-plus
+            icon: fa-plus
             page_component_module: oroproduct/js/app/components/product-unit-component
         frontend_options:
             options:
@@ -153,7 +153,7 @@ operations:
         datagrids:
             - shopping-list-line-items-grid
         button_options:
-            icon: icon-edit
+            icon: fa-pencil-square-o
         frontend_options:
             options:
                 modal: true
@@ -178,7 +178,7 @@ operations:
         acl_resource: oro_rfp_frontend_request_create
         order: 220
         button_options:
-            icon: icon-briefcase
+            icon: fa-briefcase
         preconditions:
             '@and':
                 - '@route_exists': oro_rfp_frontend_request_create

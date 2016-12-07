@@ -31,7 +31,7 @@
                 </table>
             </div>
             {% if allow_add %}
-                <a class="btn add-list-item" data-container=".oro-item-collection tbody" href="javascript: void(0);"><i class="icon-plus"></i>{{ form.vars.add_label|default('oro.form.collection.add')|trans }}</a>
+                <a class="btn add-list-item" data-container=".oro-item-collection tbody" href="javascript: void(0);"><i class="fa-plus"></i>{{ form.vars.add_label|default('oro.form.collection.add')|trans }}</a>
             {% endif %}
         </div>
     {% endspaceless %}
@@ -49,7 +49,7 @@
         class="tax-zip-code-list tax-zip-code-list-item">
         {{ form_widget(form) }}
         <td class="tax-zip-code-list-remove">
-            <button type="button" class="removeRow btn icons-holder"><i class="icon-remove"></i></button>
+            <button type="button" class="removeRow btn icons-holder"><i class="fa-close"></i></button>
         </td>
     </tr>
 {% endmacro %}
@@ -114,7 +114,7 @@
             </div>
             {% if allow_add %}
                 <a class="btn add-list-item" href="javascript: void(0);" {{ disabled ? 'disabled=disabled' : '' }}>
-                    <i class="icon-plus"></i>{{ form.vars.add_label|default('oro.form.collection.add')|trans }}
+                    <i class="fa-plus"></i>{{ form.vars.add_label|default('oro.form.collection.add')|trans }}
                 </a>
             {% endif %}
         </div>

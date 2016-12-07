@@ -75,17 +75,20 @@ workflows:
                 order: 10
                 allowed_transitions:
                     - continue_to_shipping_address
+                    - __start__
             enter_shipping_address:
                 order: 20
                 allowed_transitions:
                     - continue_to_shipping_method
                     - back_to_billing_address
+                    - __start__
             enter_shipping_method:
                 order: 30
                 allowed_transitions:
                     - continue_to_payment
                     - back_to_billing_address
                     - back_to_shipping_address
+                    - __start__
             enter_payment:
                 order: 40
                 allowed_transitions:
@@ -93,6 +96,7 @@ workflows:
                     - back_to_billing_address
                     - back_to_shipping_address
                     - back_to_shipping_method
+                    - __start__
             order_review:
                 order: 50
                 allowed_transitions:
@@ -102,6 +106,7 @@ workflows:
                     - back_to_shipping_address
                     - back_to_shipping_method
                     - back_to_payment
+                    - __start__
             request_approval:
                 order: 60
                 allowed_transitions:
@@ -112,6 +117,7 @@ workflows:
                     - back_to_shipping_method
                     - back_to_payment
                     - back_to_order_review
+                    - __start__
             approve_request:
                 order: 70
                 is_final: true
@@ -125,6 +131,7 @@ workflows:
                     - back_to_payment
                     - back_to_order_review
                     - back_to_request_approval
+                    - __start__
         transitions:
             start_from_shoppinglist:
                 is_start: true
@@ -520,10 +527,13 @@ workflows:
                                 state: $.result.currentCheckoutState
                                 token: $state_token
                 preconditions:
-                    '@order_line_item_has_count':
-                        message: oro.checkout.workflow.condition.order_line_item_has_count.message
-                        parameters:
-                            entity: $checkout
+                    '@and':
+                        - '@extendable':
+                            events: [extendable_condition.checkout]
+                        - '@order_line_item_has_count':
+                            message: oro.checkout.workflow.condition.order_line_item_has_count.message
+                            parameters:
+                                entity: $checkout
                 conditions:
                     '@and':
                         - '@not_empty': $checkout.billingAddress

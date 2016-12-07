@@ -129,10 +129,9 @@ define(function(require) {
         },
 
         initializeListeners: function() {
-            var self = this;
             _.each(this.options.events, function(event) {
-                mediator.on(event, self.updateTotals, self);
-            });
+                mediator.on(event, this.updateTotals, this);
+            }, this);
         },
 
         showLoadingMask: function() {
@@ -214,7 +213,7 @@ define(function(require) {
                 type: typeRequest,
                 data: data,
                 success: function (response) {
-                    if (formData === self.formData) {
+                    if (formData === self.formData && !self.disposed) {
                         //data doesn't change after ajax call
                         var totals = response || {};
                         callback(totals);
@@ -290,10 +289,8 @@ define(function(require) {
 
             delete this.items;
 
-            var self = this;
-            _.each(this.options.events, function(event) {
-                mediator.off(event, self.updateTotals, self);
-            });
+            mediator.off(null, null, this);
+
             TotalsComponent.__super__.dispose.call(this);
         }
     });

@@ -57,7 +57,7 @@ class ProductControllerTest extends WebTestCase
     const IMAGES_VIEW_BODY_SELECTOR = 'div.image-collection table tbody tr';
     const IMAGES_VIEW_HEAD_SELECTOR = 'div.image-collection table thead tr th';
     const IMAGE_TYPE_CHECKED_TAG = 'i';
-    const IMAGE_TYPE_CHECKED_CLASS = 'icon-check';
+    const IMAGE_TYPE_CHECKED_CLASS = 'fa-check-square-o';
     const IMAGE_FILENAME_ATTR = 'title';
 
     /**

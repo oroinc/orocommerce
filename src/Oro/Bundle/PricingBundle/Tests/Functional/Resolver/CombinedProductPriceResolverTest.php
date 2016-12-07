@@ -3,17 +3,18 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Resolver;
 
 use Doctrine\ORM\EntityManager;
-
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
 use Oro\Bundle\PricingBundle\Resolver\CombinedProductPriceResolver;
+use Oro\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener\MessageQueueTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncIndexer;
 
 /**
  * @dbIsolation
@@ -24,6 +25,8 @@ class CombinedProductPriceResolverTest extends WebTestCase
      * @var CombinedProductPriceResolver
      */
     protected $resolver;
+
+    use MessageQueueTrait;
 
     /**
      * {@inheritdoc}
@@ -50,6 +53,8 @@ class CombinedProductPriceResolverTest extends WebTestCase
      */
     public function testCombinePrices($combinedPriceList, array $expectedPrices, array $expectedMinPrices)
     {
+        $collector = self::getMessageCollector();
+        $collector->clear();
         /** @var CombinedPriceList $combinedPriceList */
         $combinedPriceList = $this->getReference($combinedPriceList);
         $this->resolver->combinePrices($combinedPriceList);
@@ -58,6 +63,23 @@ class CombinedProductPriceResolverTest extends WebTestCase
         $this->assertEquals($expectedPrices, $actualPrices);
         $actualMinimalPrices = $this->getMinimalPrices($combinedPriceList);
         $this->assertEquals($expectedMinPrices, $actualMinimalPrices);
+
+        $messages = $collector->getTopicSentMessages(AsyncIndexer::TOPIC_REINDEX);
+        $this->assertCount(1, $messages);
+
+        $this->assertEquals([Product::class], $messages[0]['message']['class']);
+        $products = [];
+
+        $productKeys = array_keys($expectedPrices);
+        foreach ($productKeys as $productKey) {
+            $product = $this->getReference($productKey);
+            $products[] = $product->getId();
+        }
+
+        $products = array_unique($products);
+        sort($messages[0]['message']['context']['entityIds']);
+        sort($products);
+        $this->assertEquals($products, $messages[0]['message']['context']['entityIds']);
     }
 
     /**
