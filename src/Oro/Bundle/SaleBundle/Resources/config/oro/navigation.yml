@@ -5,7 +5,7 @@ navigation:
                 label: 'oro.menu.sales_tab.label'
                 uri:   '#'
                 extras:
-                    icon:     icon-usd
+                    icon:     fa-usd
                     position: 100
 
             sale_quote_list:

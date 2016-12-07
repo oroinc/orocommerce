@@ -68,7 +68,7 @@ use Oro\Bundle\NavigationBundle\Entity\MenuUpdateTrait;
  * @Config(
  *      defaultValues={
  *          "entity"={
- *              "icon"="icon-th"
+ *              "icon"="fa-th"
  *          }
  *      }
  * )

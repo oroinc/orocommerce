@@ -6,7 +6,7 @@ system_configuration:
             title: oro.visibility.system_configuration.groups.visibility.product.title
         visibility_title:
             title: oro.visibility.system_configuration.groups.visibility.title
-            icon: 'icon-eye-open'
+            icon: 'fa-eye'
     fields:
         oro_visibility.category_visibility:
             data_type: string

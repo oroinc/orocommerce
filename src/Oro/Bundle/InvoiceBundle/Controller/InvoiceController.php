@@ -91,8 +91,7 @@ class InvoiceController extends Controller
     {
         $invoice = new Invoice();
         $invoice->setWebsite($this->get('oro_website.manager')->getDefaultWebsite());
-        //TODO: BB-3824 Change the getting currency from system configuration
-        $invoice->setCurrency($this->get('oro_locale.settings')->getCurrency());
+        $invoice->setCurrency($this->get('oro_currency.config.currency')->getDefaultCurrency());
 
         return $this->update($invoice);
     }

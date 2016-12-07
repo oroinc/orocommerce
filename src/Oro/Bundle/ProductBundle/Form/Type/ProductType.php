@@ -226,11 +226,13 @@ class ProductType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults([
-            'data_class'           => $this->dataClass,
-            'intention'            => 'product',
-            'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"'
-        ]);
+        $resolver->setDefaults(
+            [
+                'data_class' => $this->dataClass,
+                'intention' => 'product',
+                'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"'
+            ]
+        );
     }
 
     /**

@@ -57,7 +57,7 @@ class ProductControllerTest extends WebTestCase
     const IMAGES_VIEW_BODY_SELECTOR = 'div.image-collection table tbody tr';
     const IMAGES_VIEW_HEAD_SELECTOR = 'div.image-collection table thead tr th';
     const IMAGE_TYPE_CHECKED_TAG = 'i';
-    const IMAGE_TYPE_CHECKED_CLASS = 'icon-check';
+    const IMAGE_TYPE_CHECKED_CLASS = 'fa-check-square-o';
     const IMAGE_FILENAME_ATTR = 'title';
 
     /**
@@ -157,7 +157,12 @@ class ProductControllerTest extends WebTestCase
             [self::FIRST_IMAGE_FILENAME, 1, 1, 1],
         ];
 
-        $this->assertEquals($expectedProductImageMatrix, $this->parseProductImages($crawler));
+        $parsedProductImageMatrix = $this->parseProductImages($crawler);
+
+        sort($parsedProductImageMatrix);
+        sort($expectedProductImageMatrix);
+
+        $this->assertEquals($expectedProductImageMatrix, $parsedProductImageMatrix);
     }
 
     /**
@@ -297,7 +302,12 @@ class ProductControllerTest extends WebTestCase
             [self::SECOND_IMAGE_FILENAME, 0, 0, 1]
         ];
 
-        $this->assertEquals($expectedProductImageMatrix, $this->parseProductImages($crawler));
+        $parsedProductImageMatrix = $this->parseProductImages($crawler);
+
+        sort($parsedProductImageMatrix);
+        sort($expectedProductImageMatrix);
+
+        $this->assertEquals($expectedProductImageMatrix, $parsedProductImageMatrix);
     }
 
     /**
@@ -342,7 +352,12 @@ class ProductControllerTest extends WebTestCase
             [self::SECOND_IMAGE_FILENAME, 0, 0, 1]
         ];
 
-        $this->assertEquals($expectedProductImageMatrix, $this->parseProductImages($crawler));
+        $parsedProductImageMatrix = $this->parseProductImages($crawler);
+
+        sort($parsedProductImageMatrix);
+        sort($expectedProductImageMatrix);
+
+        $this->assertEquals($expectedProductImageMatrix, $parsedProductImageMatrix);
 
         $product = $this->getProductDataBySku(self::FIRST_DUPLICATED_SKU);
 
