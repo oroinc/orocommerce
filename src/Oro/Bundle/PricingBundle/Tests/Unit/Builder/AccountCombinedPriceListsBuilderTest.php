@@ -6,6 +6,7 @@ use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\PricingBundle\Builder\AccountCombinedPriceListsBuilder;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToAccount;
 use Oro\Bundle\PricingBundle\Entity\PriceListAccountFallback;
 use Oro\Bundle\PricingBundle\Entity\PriceListToAccount;
 use Oro\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
@@ -39,7 +40,8 @@ class AccountCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
             $this->combinedPriceListProvider,
             $this->garbageCollector,
             $this->cplScheduleResolver,
-            $this->priceResolver
+            $this->priceResolver,
+            $this->triggerHandler
         );
         $this->builder->setPriceListToEntityClassName($this->priceListToEntityClass);
         $this->builder->setCombinedPriceListClassName($this->combinedPriceListClass);
@@ -189,8 +191,13 @@ class AccountCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
             ->with($priceListCollection)
             ->will($this->returnValue($combinedPriceList));
 
+        $relation = new CombinedPriceListToAccount();
+        $relation->setPriceList($combinedPriceList);
+        $relation->setWebsite($website);
+        $relation->setAccount($account);
         $this->combinedPriceListRepository->expects($this->exactly($callExpects))
             ->method('updateCombinedPriceListConnection')
-            ->with($combinedPriceList, $combinedPriceList, $website, $account);
+            ->with($combinedPriceList, $combinedPriceList, $website, $account)
+            ->willReturn($relation);
     }
 }

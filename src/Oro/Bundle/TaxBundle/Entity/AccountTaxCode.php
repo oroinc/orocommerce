@@ -21,7 +21,7 @@ use Oro\Bundle\TaxBundle\Model\TaxCodeInterface;
  *      routeUpdate="oro_tax_account_tax_code_update",
  *      defaultValues={
  *          "entity"={
- *              "icon"="icon-list-alt"
+ *              "icon"="fa-list-alt"
  *          },
  *          "dataaudit"={
  *              "auditable"=true

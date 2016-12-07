@@ -29,7 +29,7 @@
 
         {% if allow_delete %}
             <td class="invoice-line-item-remove">
-                <button type="button" class="removeLineItem btn icons-holder"><i class="icon-remove"></i></button>
+                <button type="button" class="removeLineItem btn icons-holder"><i class="fa-close"></i></button>
             </td>
         {% elseif widget.parent.vars.allow_delete %}
             <td></td>
@@ -75,7 +75,7 @@
             </div>
 
             {% if allow_add %}
-                <a class="btn add-list-item" data-container=".oro-item-collection tbody" href="javascript: void(0);"><i class="icon-plus"></i>{{ form.vars.add_label|default('oro.form.collection.add')|trans }}</a>
+                <a class="btn add-list-item" data-container=".oro-item-collection tbody" href="javascript: void(0);"><i class="fa-plus"></i>{{ form.vars.add_label|default('oro.form.collection.add')|trans }}</a>
             {% endif %}
         </div>
     {% endspaceless %}

@@ -24,7 +24,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
  *      routeUpdate="oro_customer_account_group_update",
  *      defaultValues={
  *          "entity"={
- *              "icon"="icon-group"
+ *              "icon"="fa-users"
  *          },
  *          "form"={
  *              "form_type"="oro_customer_account_group_select",
