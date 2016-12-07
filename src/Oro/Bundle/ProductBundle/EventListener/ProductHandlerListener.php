@@ -14,10 +14,12 @@ class ProductHandlerListener
     {
         $data = $event->getData();
 
-        if ($data instanceof Product) {
-            if (!$data->isConfigurable()) {
-                $data->getVariantLinks()->clear();
-            }
+        if (!$data instanceof Product) {
+            return;
+        }
+
+        if (!$data->isConfigurable()) {
+            $data->getVariantLinks()->clear();
         }
     }
 }
