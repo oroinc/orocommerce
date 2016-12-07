@@ -19,33 +19,14 @@
     {{ parent_block_widget(block) }}
 {% endblock %}
 
-{#{% block __oro_product_grid__datagrid_toolbar_sorting_widget %}#}
-    {#{% set attr = attr|merge({#}
-        {#class: attr.class|default('') ~ " catalog__filter-controls__item sorting form-horizontal action-selectbox_custom_in-pager",#}
-    {#'data-grid-sorting': ''#}
-    {#}) %}#}
+{% block __oro_product_grid__datagrid_toolbar_sorting_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " catalog__filter-controls__item sorting form-horizontal action-selectbox_custom_in-pager",
+        'data-grid-sorting': ''
+    }) %}
 
-    {#<div{{ block('block_attributes') }}></div>#}
-{#{% endblock %}#}
-
-{#{% block __oro_product_grid__datagrid_toolbar_mass_actions_widget %}#}
-    {#{% set attr = attr|merge({#}
-        {#class: attr.class|default('') ~ " mass-actions-panel btn-group icons-holder"#}
-    {#}) %}#}
-    {#<div class="catalog__filter-controls__item">#}
-        {#<div{{ block('block_attributes') }}>{{ block(block_type_widget_id) }}</div>#}
-    {#</div>#}
-{#{% endblock %}#}
-
-{#{% block __oro_product_grid__datagrid_toolbar_extra_actions_widget %}#}
-    {#{% set attr = attr|merge({#}
-        {#class: attr.class|default('') ~ " extra-actions-panel",#}
-        {#'data-grid-extra-actions-panel': ''#}
-    {#}) %}#}
-    {#<div class="catalog__filter-controls__item">#}
-        {#<div{{ block('block_attributes') }}>{{ block(block_type_widget_id) }}</div>#}
-    {#</div>#}
-{#{% endblock %}#}
+    <div{{ block('block_attributes') }}></div>
+{% endblock %}
 
 {% block __oro_product_grid__datagrid_toolbar_pagination_widget %}
     {% set attr = layout_attr_defaults(attr, {

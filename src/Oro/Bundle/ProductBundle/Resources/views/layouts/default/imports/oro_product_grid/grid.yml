@@ -31,15 +31,15 @@ layout:
             optionValue: '=data["oro_product_frontend_datagrid_row_view"].getDataGridTheme()'
 
         - '@move':
-            id: product_datagrid_row_cell_sku
+            id: product_datagrid_cell_sku
             parentId: product_datagrid_row_product_sku
 
         - '@move':
-            id: product_datagrid_row_cell_name
+            id: product_datagrid_cell_name
             parentId: product_datagrid_row_product_title
 
         - '@move':
-            id: product_datagrid_row_cell_shortDescription
+            id: product_datagrid_cell_shortDescription
             parentId: product_datagrid_row_product_short_description
 
         - '@setOption':
