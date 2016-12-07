@@ -22,7 +22,7 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  * @Config(
  *      defaultValues={
  *          "entity"={
- *              "icon"="icon-list-alt",
+ *              "icon"="fa-list-alt",
  *              "totals_mapping"={
  *                  "type"="entity_fields",
  *                  "fields"={

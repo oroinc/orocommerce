@@ -4,12 +4,12 @@ system_configuration:
             title: oro_frontend.system_configuration.groups.design.title
         theme:
             title: oro_frontend.system_configuration.groups.theme.title
-            icon: 'icon-picture'
+            icon: 'fa-picture-o'
         theme_settings:
             title: oro_frontend.system_configuration.groups.theme_settings.title
         commerce:
             title: oro_frontend.system_configuration.groups.commerce.title
-            icon:  icon-shopping-cart
+            icon:  fa-shopping-cart
 
     fields:
         oro_frontend.frontend_theme:

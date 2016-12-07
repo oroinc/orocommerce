@@ -103,33 +103,33 @@ datagrids:
                 type:          navigate
                 link:          view_link
                 acl_resource:  oro_shipping_rule_view
-                icon:          eye-open
+                icon:          eye
                 label:         oro.grid.action.view
                 rowAction:     true
             update:
                 type:         navigate
                 link:         update_link
                 acl_resource: oro_shipping_rule_update
-                icon:         edit
+                icon:         pencil-square-o
                 label:        oro.grid.action.update
                 rowAction:    true
             enable:
                 type:         ajax
                 acl_resource: oro_shipping_rule_update
                 label:        oro.shipping.datagrid.action.enable
-                icon:         ok
+                icon:         check
                 link:         enable_link
             disable:
                 type:         ajax
                 acl_resource: oro_shipping_rule_update
                 label:        oro.shipping.datagrid.action.disable
-                icon:         remove
+                icon:         close
                 link:         disable_link
             delete:
                 type:         delete
                 link:         delete_link
                 acl_resource: oro_shipping_rule_delete
-                icon:         trash
+                icon:         trash-o
                 label:        oro.grid.action.delete
                 defaultMessages:
                     confirm_content: oro.shipping.delete_shipping_rule_window.content
@@ -141,13 +141,13 @@ datagrids:
                 type:         shippingruleenable
                 acl_resource: oro_shipping_rule_update
                 label:        oro.shipping.datagrid.action.enable
-                icon:         ok
+                icon:         check
                 entity_name:  %oro_shipping.entity.shipping_rule.class%
                 data_identifier: shipping_rule.id
             disable:
                 type:         shippingruledisable
                 acl_resource: oro_shipping_rule_update
                 label:        oro.shipping.datagrid.action.disable
-                icon:         remove
+                icon:         close
                 entity_name:  %oro_shipping.entity.shipping_rule.class%
                 data_identifier: shipping_rule.id

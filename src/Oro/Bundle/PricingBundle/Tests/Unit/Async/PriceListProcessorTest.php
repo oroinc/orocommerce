@@ -12,6 +12,7 @@ use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CombinedPriceListsUpdateEvent;
+use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
 use Oro\Bundle\PricingBundle\Model\DTO\PriceListTrigger;
 use Oro\Bundle\PricingBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory;
@@ -32,6 +33,11 @@ class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
      * @var PriceListTriggerFactory|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $triggerFactory;
+
+    /**
+     * @var CombinedPriceListTriggerHandler|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $triggerHandler;
 
     /**
      * @var CombinedProductPriceResolver|\PHPUnit_Framework_MockObject_MockObject
@@ -91,13 +97,18 @@ class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->triggerHandler = $this->getMockBuilder(CombinedPriceListTriggerHandler::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->priceRuleProcessor = new PriceListProcessor(
             $this->triggerFactory,
             $this->registry,
             $this->priceResolver,
             $this->eventDispatcher,
             $this->logger,
-            $this->databaseExceptionHelper
+            $this->databaseExceptionHelper,
+            $this->triggerHandler
         );
     }
 

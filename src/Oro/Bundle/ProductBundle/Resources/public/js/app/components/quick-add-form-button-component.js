@@ -10,7 +10,9 @@ define(function(require) {
         /**
          * @property {Object}
          */
-        options: {},
+        options: {
+            submitWithErrors: false
+        },
 
         /**
          * @property {jQuery}
@@ -31,6 +33,10 @@ define(function(require) {
             this.$button = this.options._sourceElement;
             this.$form = this.$button.closest('form');
 
+            if (this.formHasErrors() && !this.options.submitWithErrors) {
+                this.$button.addClass('btn-inactive');
+            }
+
             this.$button.on('click', _.bind(this.submit, this));
         },
 
@@ -41,6 +47,10 @@ define(function(require) {
             e.preventDefault();
             e.stopPropagation();
 
+            if (this.formHasErrors() && !this.options.submitWithErrors) {
+                return;
+            }
+
             _.each(this.options, _.bind(function(selector, data) {
                 if (data === '_sourceElement') {
                     return;
@@ -50,6 +60,10 @@ define(function(require) {
             }, this));
 
             this.$form.submit();
+        },
+
+        formHasErrors: function() {
+            return this.$form.closest('.validation-info').find('.import-errors').length;
         }
     });
 

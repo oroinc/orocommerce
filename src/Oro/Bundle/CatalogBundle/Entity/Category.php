@@ -23,7 +23,7 @@ use Oro\Component\Tree\Entity\TreeTrait;
  *      routeName="oro_catalog_category_index",
  *      defaultValues={
  *          "entity"={
- *              "icon"="icon-folder-close"
+ *              "icon"="fa-folder"
  *          },
  *          "security"={
  *              "type"="ACL",

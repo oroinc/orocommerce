@@ -48,7 +48,7 @@
                         {% endif %}
                         {% if item.link|default('') and item.link_label|default('') %}
                             <a href="{{ app.request.getUriForPath(item.link) }}" class="btn theme-btn btn-dark hero-promo-item__view-btn">
-                                {{ item.link_label }} <i class="cf-right-open-mini"></i>
+                                {{ item.link_label }} <i class="fa-angle-right"></i>
                             </a>
                         {% endif %}
                     </div>
