@@ -2,18 +2,16 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\PreloadedExtension;
-
-use Oro\Bundle\CurrencyBundle\Utils\CurrencyNameHelper;
-use Oro\Bundle\CurrencyBundle\Config\CurrencyConfigManager;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
+use Oro\Bundle\CurrencyBundle\Provider\CurrencyProviderInterface;
+use Oro\Bundle\CurrencyBundle\Utils\CurrencyNameHelper;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Form\Type\PriceRuleType;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Symfony\Component\Form\PreloadedExtension;
 
 class PriceRuleTypeTest extends FormIntegrationTestCase
 {
@@ -22,9 +20,10 @@ class PriceRuleTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|CurrencyConfigManager $configManager */
-        $configManager = $this->getMockBuilder(CurrencyConfigManager::class)->disableOriginalConstructor()->getMock();
-        $configManager->method('getCurrencyList')->willReturn(['USD', 'EUR']);
+        /** @var \PHPUnit_Framework_MockObject_MockObject|CurrencyProviderInterface $currencyProvider */
+        $currencyProvider = $this->getMockBuilder(CurrencyProviderInterface::class)
+            ->disableOriginalConstructor()->getMockForAbstractClass();
+        $currencyProvider->method('getCurrencyList')->willReturn(['USD', 'EUR']);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|LocaleSettings $localeSettings */
         $localeSettings = $this->getMockBuilder(LocaleSettings::class)->disableOriginalConstructor()->getMock();
@@ -33,7 +32,7 @@ class PriceRuleTypeTest extends FormIntegrationTestCase
             new PreloadedExtension(
                 [
                     CurrencySelectionType::NAME => new CurrencySelectionType(
-                        $configManager,
+                        $currencyProvider,
                         $localeSettings,
                         $this->getMockBuilder(CurrencyNameHelper::class)->disableOriginalConstructor()->getMock()
                     ),

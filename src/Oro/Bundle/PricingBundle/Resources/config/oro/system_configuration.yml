@@ -6,8 +6,6 @@ system_configuration:
             title: oro.pricing.system_configuration.groups.price_rounding.title
         price_lists_update:
             title: oro.pricing.system_configuration.groups.price_lists_update.title
-        display_currencies:
-            title:  oro.pricing.system_configuration.groups.display_currencies.title
         pricing:
             title: oro.pricing.system_configuration.groups.pricing.title
             icon: 'fa-credit-card'
@@ -59,26 +57,6 @@ system_configuration:
                     - 'Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero': ~
                     - Type:
                         type: float
-        oro_pricing.enabled_currencies:
-            data_type: array
-            type: oro_currency_selection
-            priority: 200
-            options:
-                label: oro.pricing.system_configuration.fields.enabled_currencies.label
-                required: true
-                multiple: true
-                constraints:
-                    - NotBlank: ~
-        oro_pricing.default_currency:
-            data_type: string
-            type: oro_pricing_default_currency_selection
-            priority: 100
-            options:
-                label: oro.pricing.system_configuration.fields.default_currency.label
-                required: true
-                multiple: false
-                constraints:
-                    - NotBlank: ~
 
     tree:
         system_configuration:
@@ -102,8 +80,3 @@ system_configuration:
                                         priority: 50
                                         children:
                                             - oro_pricing.offset_of_processing_cpl_prices
-                                    display_currencies:
-                                        priority: 20
-                                        children:
-                                            - oro_pricing.enabled_currencies
-                                            - oro_pricing.default_currency
