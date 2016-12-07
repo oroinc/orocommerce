@@ -83,10 +83,15 @@ class UniqueProductVariantLinksValidator extends ConstraintValidator
         $fields = [];
         foreach ($variantFields as $fieldName) {
             if ($propertyAccessor->isReadable($product, $fieldName)) {
-                $fields[$fieldName] = $propertyAccessor->getValue($product, $fieldName);
+                $fieldValue = $propertyAccessor->getValue($product, $fieldName);
+                $fields[$fieldName] = $fieldValue;
+
+                if (is_object($fieldValue) && method_exists($fieldValue, '__toString')) {
+                    $fields[$fieldName] = (string) $fieldValue;
+                }
             }
         }
 
-        return md5(json_encode($fields));
+        return md5(serialize($fields));
     }
 }
