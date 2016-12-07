@@ -2,9 +2,8 @@
 
 namespace Oro\Bundle\CheckoutBundle\Controller\Frontend;
 
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface;
-use Oro\Bundle\CheckoutBundle\Event\CheckoutEntityEvent;
-use Oro\Bundle\CheckoutBundle\Event\CheckoutEvents;
 use Oro\Bundle\CheckoutBundle\Model\TransitionData;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
@@ -45,13 +44,12 @@ class CheckoutController extends Controller
      * )
      *
      * @param Request $request
-     * @param int $id
+     * @param Checkout $checkout
      * @return array|Response
      * @throws \Exception
      */
-    public function checkoutAction(Request $request, $id)
+    public function checkoutAction(Request $request, Checkout $checkout)
     {
-        $checkout = $this->getCheckout($id);
         $isGranted = false;
         if ($checkout) {
             $isGranted = $this->get('oro_security.security_facade')->isGranted('EDIT', $checkout);
@@ -210,20 +208,6 @@ class CheckoutController extends Controller
     {
         return $this->get('oro_checkout.layout.data_provider.transition_form')
             ->getTransitionForm($workflowItem, $transitionData);
-    }
-
-    /**
-     * @param int $id
-     * @return CheckoutInterface|null
-     */
-    protected function getCheckout($id)
-    {
-        $event = new CheckoutEntityEvent();
-        $event->setCheckoutId($id);
-
-        $this->get('event_dispatcher')->dispatch(CheckoutEvents::GET_CHECKOUT_ENTITY, $event);
-
-        return $event->getCheckoutEntity();
     }
 
     /**

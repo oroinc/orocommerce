@@ -49,8 +49,10 @@ oro:
                 internal_state_token:
                     label: 'Internal checkout state token'
             transition:
-                start_checkout:
+                start_from_shoppinglist:
                     label: Create Order
+                start_from_quickorderform:
+                    label: 'Create Order'
                 continue_to_shipping_address:
                     label: Continue
                     attribute:

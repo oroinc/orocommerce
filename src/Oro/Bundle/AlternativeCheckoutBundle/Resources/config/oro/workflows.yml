@@ -126,15 +126,33 @@ workflows:
                     - back_to_order_review
                     - back_to_request_approval
         transitions:
-            start_checkout:
+            start_from_shoppinglist:
                 is_start: true
                 step_to: enter_billing_address
                 is_unavailable_hidden: true
-                transition_definition: start_checkout_definition
+                transition_definition: start_from_shoppinglist_definition
                 frontend_options:
                     icon: icon-briefcase
                 init_routes:
                     - oro_shopping_list_frontend_view
+
+            start_from_quickorderform:
+                is_start: true
+                step_to: enter_billing_address
+                is_unavailable_hidden: true
+                transition_definition: start_from_quickorderform_definition
+                frontend_options:
+                    icon: icon-briefcase
+                    data:
+                        component_name: oro_shopping_list_to_checkout_quick_add_processor
+                        page-component-module: oroproduct/js/app/components/quick-add-form-button-component
+                        page-component-options:
+                            component_name: '[name$="[component]"]'
+                init_routes:
+                    - oro_product_frontend_quick_add
+                    - oro_product_frontend_quick_add_copy_paste
+                    - oro_product_frontend_quick_add_import
+
             continue_to_shipping_address:
                 step_to: enter_shipping_address
                 transition_definition: continue_to_shipping_address_definition
@@ -388,10 +406,21 @@ workflows:
                                 data: $internal_state_token
 
         transition_definitions:
-            start_checkout_definition:
+            start_from_quickorderform_definition:
+                preactions:
+                    - '@call_service_method':
+                        attribute: $.result.isAllowed
+                        service: oro_shopping_list.processor.quick_add_to_checkout
+                        method: isAllowed
+                preconditions:
+                    '@and':
+                        - '@payment_method_enabled': 'payment_term'
+                        - '@equal': [true, $.result.isAllowed]
+
+            start_from_shoppinglist_definition:
                 preactions:
                     - '@find_entity':
-                        class: Oro\Bundle\ShoppingListBundle\Entity\ShoppingList
+                        class: $init_context.entityClass
                         identifier: $init_context.entityId
                         attribute: $.result.shoppingList
                 preconditions:
@@ -399,6 +428,17 @@ workflows:
                         - '@payment_method_enabled': 'payment_term'
                         - '@has_elements': $.result.shoppingList.lineItems
                         - '@has_price_in_shopping_line_items': $.result.shoppingList.lineItems
+                actions:
+                    - '@run_action_group':
+                        action_group: start_shoppinglist_checkout
+                        parameters_mapping:
+                            shoppingList: $.result.shoppingList
+                        results:
+                            result.redirectUrl: $.redirectUrl
+                                
+            __start___definition:
+                preconditions:
+                    '@payment_method_enabled': 'payment_term'
                 actions:
                     - '@generate_checkout_state_snapshot':
                         entity: $checkout
@@ -408,21 +448,6 @@ workflows:
                         state: $.result.startCheckoutState
                         attribute: $state_token
                     - '@assign_value': [$internal_state_token, $state_token]
-                    - '@assign_url':
-                        attribute: $.result.editLink
-                        route: oro_shopping_list_frontend_view
-                        route_parameters: { 'id': $.result.shoppingList.id }
-                    - '@translate':
-                        id: 'oro.frontend.shoppinglist.workflow.remove_source.label'
-                        attribute: $.result.sourceRemoveLabel
-                    - '@start_checkout':
-                        source_name: 'shoppingList'
-                        source_entity: $.result.shoppingList
-                        settings:
-                            allow_manual_source_remove: true
-                            remove_source: true
-                            source_remove_label: $.result.sourceRemoveLabel
-                            edit_order_link: $.result.editLink
             do_nothing: ~
             go_back_definition:
                 actions:

@@ -32,3 +32,162 @@ action_groups:
                 method: getPrice
                 method_parameters: [$.context, $.checkout.shippingMethod, $.checkout.shippingMethodType]
                 attribute: $.checkout.shippingCost
+
+    start_shoppinglist_checkout:
+        parameters:
+            shoppingList:
+                type: Oro\Bundle\ShoppingListBundle\Entity\ShoppingList
+        actions:
+            - '@assign_url':
+                attribute: $.editLink
+                route: oro_shopping_list_frontend_view
+                route_parameters: {id: $.shoppingList.id}
+            - '@translate':
+                id: 'oro.frontend.shoppinglist.workflow.remove_source.label'
+                attribute: $.sourceRemoveLabel
+            - '@run_action_group':
+                action_group: start_checkout
+                parameters_mapping:
+                    sourceCriteria:
+                        shoppingList: $.shoppingList
+                    settings:
+                        allow_manual_source_remove: true
+                        remove_source: true
+                        edit_order_link: $.editLink
+                        source_remove_label: $.sourceRemoveLabel
+                results:
+                    redirectUrl: $.redirectUrl
+
+    start_checkout:
+        parameters:
+            sourceCriteria:
+                type: array
+            force:
+                type: bool
+                default: false
+            data:
+                type: array
+                default: []
+            settings:
+                type: array
+                default: []
+        actions:
+            - '@run_action_group':
+                action_group: find_checkout
+                parameters_mapping:
+                    sourceCriteria: $.sourceCriteria
+                    checkoutData: $.data
+                    updateData: $.force
+                results: 
+                    checkout: $.checkout
+                    force: $.updateData
+                    
+            - '@tree':
+                conditions:
+                    '@equal': [true, $.force]
+                actions:
+                    - '@run_action_group':
+                        action_group: update_workflow_item
+                        parameters_mapping:
+                            entity: $.checkout
+                            data: $.settings
+                            
+            - '@redirect':
+                route: oro_checkout_frontend_checkout
+                route_parameters:
+                    id: $.checkout.id
+                
+    find_checkout:
+        parameters:
+            sourceCriteria:
+                type: array
+            checkoutData:
+                type: array
+                default: []
+            updateData:
+                type: bool
+                default: false
+        actions:
+            # find or create checkout and checkout source
+            - '@assign_value': [$.sourceCriteria.deleted, false]
+            - '@find_entity':
+                attribute: $.source
+                class: 'Oro\Bundle\CheckoutBundle\Entity\CheckoutSource'
+                where: $.sourceCriteria
+            - '@create_entity':
+                conditions:
+                    '@empty': $.source
+                parameters:
+                    attribute: $.source
+                    class: 'Oro\Bundle\CheckoutBundle\Entity\CheckoutSource'
+                    data: $.sourceCriteria
+            - '@find_entity':
+                conditions:
+                    '@not_empty': $.source.id
+                parameters:
+                    attribute: $.checkout
+                    class: 'Oro\Bundle\CheckoutBundle\Entity\Checkout'
+                    where:
+                        source: $.source
+                        deleted: false
+            - '@tree':
+                conditions:
+                    '@empty': $.checkout.id
+                actions:
+                    - '@create_entity':
+                        attribute: $.checkout
+                        class: 'Oro\Bundle\CheckoutBundle\Entity\Checkout'
+                        data:
+                            source: $.source
+                    - '@create_datetime': {attribute: $.checkout.createdAt}
+                    - '@create_datetime': {attribute: $.checkout.updatedAt}
+                    - '@assign_value': [$.checkout.source, $.source]
+                    - '@assign_value': [$.updateData, true]
+
+            # actualize user currency
+            - '@call_service_method':
+                attribute: $.checkout.currency
+                service: oro_pricing.user_currency_manager
+                method: getUserCurrency
+
+            # update checkout data
+            - '@tree':
+                conditions:
+                    '@equal': [true, $.updateData]
+                actions:
+                    - '@get_active_user': $.currentUser
+                    - '@assign_value': [$.checkout.account, $.currentUser.account]
+                    - '@assign_value': [$.checkout.organization, $.currentUser.account.organization]
+                    - '@call_service_method':
+                        attribute: $.checkout.website
+                        service: oro_website.manager
+                        method: getCurrentWebsite
+                    # update custom data
+                    - '@copy_values': [$.checkout, $.checkoutData]
+
+            - '@flush_entity': $.checkout
+                    
+    update_workflow_item:
+        parameters:
+            entity: 
+                type: object
+            data:
+                type: array
+        actions:
+            - '@call_service_method':
+                attribute: $.workflowItems
+                service: oro_workflow.manager
+                method: getWorkflowItemsByEntity
+                method_parameters: [$.entity]
+
+            - '@assign_value':
+                - $.workflowItem
+                - $.workflowItems[0]
+            
+            - '@copy_values': [$.workflowItem.data, $.data]
+
+            - '@call_method':
+                object: $.workflowItem
+                method: setUpdated
+                
+            - '@flush_entity': $.workflowItem
