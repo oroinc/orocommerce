@@ -28,7 +28,7 @@ use Oro\Bundle\ShippingBundle\Model\ExtendShippingRule;
  *      routeUpdate="oro_shipping_rule_update",
  *      defaultValues={
  *          "entity"={
- *              "icon"="icon-briefcase"
+ *              "icon"="fa-briefcase"
  *          },
  *          "dataaudit"={
  *              "auditable"=true

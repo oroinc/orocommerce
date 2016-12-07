@@ -16,14 +16,14 @@
     {{ parent() }}
     <div class="pull-left">
         {% if entity.enabled %}
-            <div class="badge badge-enabled status-enabled"><i class="icon-status-enabled icon-circle"></i>{{ 'oro.customer.accountuser.profile.enabled.label'|trans }}</div>
+            <div class="badge badge-enabled status-enabled"><i class="fa-circle"></i>{{ 'oro.customer.accountuser.profile.enabled.label'|trans }}</div>
         {% else %}
-            <div class="badge badge-disabled status-disabled"><i class="icon-status-disabled icon-circle"></i>{{ 'oro.customer.accountuser.profile.disabled.label'|trans }}</div>
+            <div class="badge badge-disabled status-disabled"><i class="fa-circle"></i>{{ 'oro.customer.accountuser.profile.disabled.label'|trans }}</div>
         {% endif %}
         {% if entity.confirmed %}
-            <div class="badge badge-enabled status-enabled"><i class="icon-status-enabled icon-circle"></i>{{ 'oro.customer.accountuser.profile.confirmed.label'|trans }}</div>
+            <div class="badge badge-enabled status-enabled"><i class="fa-circle"></i>{{ 'oro.customer.accountuser.profile.confirmed.label'|trans }}</div>
         {% else %}
-            <div class="badge badge-disabled status-disabled"><i class="icon-status-disabled icon-circle"></i>{{ 'oro.customer.accountuser.profile.unconfirmed.label'|trans }}</div>
+            <div class="badge badge-disabled status-disabled"><i class="fa-circle"></i>{{ 'oro.customer.accountuser.profile.unconfirmed.label'|trans }}</div>
         {% endif %}
     </div>
 {% endblock breadcrumbs %}
