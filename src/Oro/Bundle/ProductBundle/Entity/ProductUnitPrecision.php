@@ -271,6 +271,6 @@ class ProductUnitPrecision implements ProductUnitHolderInterface
             return $this->getUnit()->getCode() . ' ' . $this->getPrecision();
         }
 
-        return null;
+        return '';
     }
 }
