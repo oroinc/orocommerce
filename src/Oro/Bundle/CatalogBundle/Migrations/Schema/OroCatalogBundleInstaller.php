@@ -3,13 +3,19 @@
 namespace Oro\Bundle\CatalogBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
-
+use Oro\Bundle\EntityConfigBundle\Entity\ConfigModel;
+use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
+use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManager;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtension;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
+use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtension;
+use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtensionAwareInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -17,7 +23,9 @@ use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInte
 class OroCatalogBundleInstaller implements
     Installation,
     NoteExtensionAwareInterface,
-    AttachmentExtensionAwareInterface
+    AttachmentExtensionAwareInterface,
+    ExtendExtensionAwareInterface,
+    SlugExtensionAwareInterface
 {
     const ORO_CATALOG_CATEGORY_SHORT_DESCRIPTION_TABLE_NAME = 'oro_catalog_cat_short_desc';
     const ORO_CATALOG_CATEGORY_LONG_DESCRIPTION_TABLE_NAME = 'oro_catalog_cat_long_desc';
@@ -29,8 +37,33 @@ class OroCatalogBundleInstaller implements
     const THUMBNAIL_WIDTH_SIZE_IN_PX = 100;
     const THUMBNAIL_HEIGHT_SIZE_IN_PX = 100;
 
-    /** @var NoteExtension */
+    /**
+     * @var NoteExtension
+     */
     protected $noteExtension;
+
+    /**
+     * @var AttachmentExtension
+     */
+    protected $attachmentExtension;
+
+    /**
+     * @var ExtendExtension
+     */
+    protected $extendExtension;
+
+    /**
+     * @var SlugExtension
+     */
+    protected $slugExtension;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getMigrationVersion()
+    {
+        return 'v1_6';
+    }
 
     /**
      * Sets the NoteExtension
@@ -41,9 +74,6 @@ class OroCatalogBundleInstaller implements
     {
         $this->noteExtension = $noteExtension;
     }
-
-    /** @var AttachmentExtension */
-    protected $attachmentExtension;
 
     /**
      * {@inheritdoc}
@@ -56,9 +86,17 @@ class OroCatalogBundleInstaller implements
     /**
      * {@inheritdoc}
      */
-    public function getMigrationVersion()
+    public function setExtendExtension(ExtendExtension $extendExtension)
     {
-        return 'v1_5';
+        $this->extendExtension = $extendExtension;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setSlugExtension(SlugExtension $extension)
+    {
+        $this->slugExtension = $extension;
     }
 
     /**
@@ -73,6 +111,8 @@ class OroCatalogBundleInstaller implements
         $this->createOroCatalogCategoryShortDescriptionTable($schema);
         $this->createOroCatalogCategoryLongDescriptionTable($schema);
         $this->createOroCategoryDefaultProductOptionsTable($schema);
+        $this->createOroCategorySlugTable($schema);
+        $this->createOroCategorySlugPrototypeTable($schema);
 
         /** Foreign keys generation **/
         $this->addOroCatalogCategoryForeignKeys($schema);
@@ -83,6 +123,8 @@ class OroCatalogBundleInstaller implements
         $this->addOroCategoryDefaultProductOptionsForeignKeys($schema);
         $this->addCategoryImageAssociation($schema, 'largeImage');
         $this->addCategoryImageAssociation($schema, 'smallImage');
+
+        $this->addContentVariantTypes($schema);
     }
 
     /**
@@ -146,6 +188,36 @@ class OroCatalogBundleInstaller implements
         $table->addColumn('product_unit_code', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('product_unit_precision', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
+    }
+
+    /**
+     * Create oro_catalog_cat_slug table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroCategorySlugTable(Schema $schema)
+    {
+        $this->slugExtension->addSlugs(
+            $schema,
+            'oro_catalog_cat_slug',
+            'oro_catalog_category',
+            'category_id'
+        );
+    }
+
+    /**
+     * Create oro_catalog_cat_slug_prototype table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroCategorySlugPrototypeTable(Schema $schema)
+    {
+        $this->slugExtension->addLocalizedSlugPrototypes(
+            $schema,
+            'oro_catalog_cat_slug_prototype',
+            'oro_catalog_category',
+            'category_id'
+        );
     }
 
     /**
@@ -315,5 +387,42 @@ class OroCatalogBundleInstaller implements
             self::THUMBNAIL_WIDTH_SIZE_IN_PX,
             self::THUMBNAIL_HEIGHT_SIZE_IN_PX
         );
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    public function addContentVariantTypes(Schema $schema)
+    {
+        if ($schema->hasTable('oro_web_catalog_variant')) {
+            $table = $schema->getTable('oro_web_catalog_variant');
+
+            $this->extendExtension->addManyToOneRelation(
+                $schema,
+                $table,
+                'category_page_category',
+                'oro_catalog_category',
+                'id',
+                [
+                    ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_READONLY,
+                    'entity' => ['label' => 'oro.catalog.category.entity_label'],
+                    'extend' => [
+                        'is_extend' => true,
+                        'owner' => ExtendScope::OWNER_CUSTOM,
+                        'cascade' => ['persist'],
+                        'on_delete' => 'CASCADE',
+                    ],
+                    'datagrid' => [
+                        'is_visible' => false
+                    ],
+                    'form' => [
+                        'is_enabled' => false
+                    ],
+                    'view' => ['is_displayable' => false],
+                    'merge' => ['display' => false],
+                    'dataaudit' => ['auditable' => true]
+                ]
+            );
+        }
     }
 }

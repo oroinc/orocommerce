@@ -2,9 +2,6 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\PreloadedExtension;
-use Symfony\Component\Form\Test\FormIntegrationTestCase;
-
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\AttachmentBundle\Form\Type\ImageType;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
@@ -20,9 +17,9 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Form\Extension\IntegerExtension;
 use Oro\Bundle\ProductBundle\Form\Type\ProductCustomFieldsChoiceType;
-use Oro\Bundle\ProductBundle\Form\Type\ProductPrimaryUnitPrecisionType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductImageCollectionType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductImageType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductPrimaryUnitPrecisionType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductStatusType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionCollectionType;
@@ -37,8 +34,12 @@ use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\EnumSelectTypeStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ImageTypeStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductCustomFieldsChoiceTypeStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
+use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugType;
+use Oro\Bundle\RedirectBundle\Tests\Unit\Form\Type\Stub\LocalizedSlugTypeStub;
 use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType as StubEntityIdentifierType;
+use Symfony\Component\Form\PreloadedExtension;
+use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 class ProductTypeTest extends FormIntegrationTestCase
 {
@@ -161,7 +162,8 @@ class ProductTypeTest extends FormIntegrationTestCase
                     ProductVariantLinksType::NAME => new ProductVariantLinksType(),
                     ProductStatusType::NAME => new ProductStatusType(new ProductStatusProvider()),
                     ProductImageCollectionType::NAME => new ProductImageCollectionType($imageTypeProvider),
-                    ProductImageType::NAME => new ProductImageType()
+                    ProductImageType::NAME => new ProductImageType(),
+                    LocalizedSlugType::NAME => new LocalizedSlugTypeStub()
                 ],
                 [
                     'form' => [
@@ -219,9 +221,11 @@ class ProductTypeTest extends FormIntegrationTestCase
                     'inventoryStatus' => Product::INVENTORY_STATUS_IN_STOCK,
                     'visible' => 1,
                     'status' => Product::STATUS_DISABLED,
-                    'variantFields' => array_keys($this->exampleCustomFields)
+                    'variantFields' => array_keys($this->exampleCustomFields),
+                    'slugPrototypes' => [['string' => 'slug']]
                 ],
-                'expectedData'  => $this->createExpectedProductEntity(),
+                'expectedData'  => $this->createExpectedProductEntity()
+                    ->addSlugPrototype((new LocalizedFallbackValue())->setString('slug')),
                 'rounding' => false
             ],
             'product with additionalUnitPrecisions' => [
@@ -304,7 +308,7 @@ class ProductTypeTest extends FormIntegrationTestCase
      * @param bool|false $withNamesAndDescriptions
      * @param bool|true $hasVariants
      * @param bool|true hasImages
-     * @return StubProduct
+     * @return Product
      */
     protected function createExpectedProductEntity(
         $withProductUnitPrecision = false,
