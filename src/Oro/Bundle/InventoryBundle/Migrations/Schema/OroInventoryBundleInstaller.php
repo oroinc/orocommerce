@@ -77,13 +77,20 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
     {
         $this->addManageInventoryFieldToProduct($schema);
         $this->addManageInventoryFieldToCategory($schema);
+
         $this->addInventoryThresholdFieldToProduct($schema);
         $this->addInventoryThresholdFieldToCategory($schema);
 
-        $this->updateWarehouseEntityRelations($schema);
-
         $this->addQuantityToOrderFieldsToProduct($schema);
         $this->addQuantityToOrderFieldsToCategory($schema);
+
+        $this->addDecrementQuantityFieldToProduct($schema);
+        $this->addDecrementQuantityFieldToCategory($schema);
+
+        $this->addBackOrderFieldToProduct($schema);
+        $this->addBackOrderFieldToCategory($schema);
+
+        $this->updateWarehouseEntityRelations($schema);
 
         if (($schema->hasTable(self::OLD_WAREHOUSE_INVENTORY_TABLE) ||
                 $schema->hasTable(self::ORO_B2B_WAREHOUSE_INVENTORY_TABLE))
@@ -474,6 +481,94 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
                 SystemConfigFallbackProvider::FALLBACK_ID => [
                     'configName' => 'oro_inventory.maximum_quantity_to_order',
                 ],
+            ]
+        );
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    protected function addDecrementQuantityFieldToProduct(Schema $schema)
+    {
+        if ($schema->getTable('oro_product')->hasColumn('decrementQuantity_id')) {
+            return;
+        }
+
+        $this->addFallbackRelation(
+            $schema,
+            $this->extendExtension,
+            'oro_product',
+            'decrementQuantity',
+            'oro.inventory.decrement_inventory.label',
+            [
+                CategoryFallbackProvider::FALLBACK_ID => ['fieldName' => 'decrementQuantity'],
+                SystemConfigFallbackProvider::FALLBACK_ID => ['configName' => 'oro_inventory.decrement_inventory'],
+            ]
+        );
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    public function addDecrementQuantityFieldToCategory(Schema $schema)
+    {
+        if ($schema->getTable('oro_catalog_category')->hasColumn('decrementQuantity_id')) {
+            return;
+        }
+
+        $this->addFallbackRelation(
+            $schema,
+            $this->extendExtension,
+            'oro_catalog_category',
+            'decrementQuantity',
+            'oro.inventory.decrement_inventory.label',
+            [
+                ParentCategoryFallbackProvider::FALLBACK_ID => ['fieldName' => 'decrementQuantity'],
+                SystemConfigFallbackProvider::FALLBACK_ID => ['configName' => 'oro_inventory.decrement_inventory'],
+            ]
+        );
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    protected function addBackOrderFieldToProduct(Schema $schema)
+    {
+        if ($schema->getTable('oro_product')->hasColumn('backOrder_id')) {
+            return;
+        }
+
+        $this->addFallbackRelation(
+            $schema,
+            $this->extendExtension,
+            'oro_product',
+            'backOrder',
+            'oro.inventory.backorders.label',
+            [
+                CategoryFallbackProvider::FALLBACK_ID => ['fieldName' => 'backOrder'],
+                SystemConfigFallbackProvider::FALLBACK_ID => ['configName' => 'oro_inventory.backorders'],
+            ]
+        );
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    public function addBackOrderFieldToCategory(Schema $schema)
+    {
+        if ($schema->getTable('oro_catalog_category')->hasColumn('backOrder_id')) {
+            return;
+        }
+
+        $this->addFallbackRelation(
+            $schema,
+            $this->extendExtension,
+            'oro_catalog_category',
+            'backOrder',
+            'oro.inventory.backorders.label',
+            [
+                ParentCategoryFallbackProvider::FALLBACK_ID => ['fieldName' => 'backOrder'],
+                SystemConfigFallbackProvider::FALLBACK_ID => ['configName' => 'oro_inventory.backorders'],
             ]
         );
     }
