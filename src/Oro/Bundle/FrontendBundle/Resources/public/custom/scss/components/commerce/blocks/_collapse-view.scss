@@ -1,3 +1,5 @@
+// @theme: custom;
+
 .sidebar__menu {
   .collapse-view {
     &__trigger {
@@ -11,8 +13,10 @@
       font-weight: 700;
     }
   }
+}
 
-  @include breakpoint('tablet') {
-    display: none;
-  }
+@include breakpoint('tablet') {
+    .main-menu-outer {
+        display: none;
+    }
 }

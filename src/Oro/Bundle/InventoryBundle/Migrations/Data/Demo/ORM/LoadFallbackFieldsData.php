@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\InventoryBundle\Migrations\Data\Demo\ORM;
 
+use Symfony\Component\PropertyAccess\PropertyAccess;
+
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
@@ -14,8 +16,17 @@ use Oro\Bundle\EntityBundle\Fallback\Provider\SystemConfigFallbackProvider;
 use Oro\Bundle\MigrationBundle\Fixture\AbstractEntityReferenceFixture;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
-class LoadQuantityToOrderData extends AbstractEntityReferenceFixture implements DependentFixtureInterface
+class LoadFallbackFieldsData extends AbstractEntityReferenceFixture implements DependentFixtureInterface
 {
+    const FALLBACK_FIELDS = [
+        'minimumQuantityToOrder',
+        'maximumQuantityToOrder',
+        'manageInventory',
+        'inventoryThreshold',
+        'decrementQuantity',
+        'backOrder',
+    ];
+
     /**
      * {@inheritdoc}
      */
@@ -35,12 +46,7 @@ class LoadQuantityToOrderData extends AbstractEntityReferenceFixture implements 
         /** @var Category[] $categories */
         $categories = $categoryRepository->findAll();
         foreach ($categories as $category) {
-            $category->setMinimumQuantityToOrder(
-                $this->createFallbackEntity($manager, SystemConfigFallbackProvider::FALLBACK_ID)
-            );
-            $category->setMaximumQuantityToOrder(
-                $this->createFallbackEntity($manager, SystemConfigFallbackProvider::FALLBACK_ID)
-            );
+            $this->addFallbacksToEntity($manager, SystemConfigFallbackProvider::FALLBACK_ID, $category);
         }
 
         /** @var Product[] $products */
@@ -48,23 +54,31 @@ class LoadQuantityToOrderData extends AbstractEntityReferenceFixture implements 
         foreach ($products as $product) {
             $category = $categoryRepository->findOneByProduct($product);
             if ($category) {
-                $product->setMinimumQuantityToOrder(
-                    $this->createFallbackEntity($manager, CategoryFallbackProvider::FALLBACK_ID)
-                );
-                $product->setMaximumQuantityToOrder(
-                    $this->createFallbackEntity($manager, CategoryFallbackProvider::FALLBACK_ID)
-                );
+                $this->addFallbacksToEntity($manager, CategoryFallbackProvider::FALLBACK_ID, $product);
             } else {
-                $product->setMinimumQuantityToOrder(
-                    $this->createFallbackEntity($manager, SystemConfigFallbackProvider::FALLBACK_ID)
-                );
-                $product->setMaximumQuantityToOrder(
-                    $this->createFallbackEntity($manager, SystemConfigFallbackProvider::FALLBACK_ID)
-                );
+                $this->addFallbacksToEntity($manager, SystemConfigFallbackProvider::FALLBACK_ID, $product);
             }
         }
 
         $manager->flush();
+    }
+
+    /**
+     * @param ObjectManager $manager
+     * @param $fallbackId
+     * @param $entity
+     * @return mixed
+     */
+    protected function addFallbacksToEntity(ObjectManager $manager, $fallbackId, $entity)
+    {
+        $accessor = PropertyAccess::createPropertyAccessor();
+
+        foreach (self::FALLBACK_FIELDS as $fallbackField) {
+            $fallbackEntity = $this->createFallbackEntity($manager, $fallbackId);
+            $accessor->setValue($entity, $fallbackField, $fallbackEntity);
+        }
+
+        return $entity;
     }
 
     /**
