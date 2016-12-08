@@ -3,22 +3,22 @@
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Entity\Listener;
 
 use Doctrine\ORM\Event\PreUpdateEventArgs;
+use Oro\Bundle\SaleBundle\Entity\Listener\QuoteProductListener;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Oro\Bundle\SaleBundle\Entity\Listener;
 
 class QuoteProductListenerTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var  RequestStack $listener*/
+    /** @var  \PHPUnit_Framework_MockObject_MockObject|RequestStack $listener*/
     private $requestStack;
 
-    /** @var  Request $listener*/
+    /** @var  \PHPUnit_Framework_MockObject_MockObject|Request $listener*/
     private $request;
 
-    /** @var  PreUpdateEventArgs  $event*/
+    /** @var  \PHPUnit_Framework_MockObject_MockObject|PreUpdateEventArgs $event*/
     private $event;
 
-    /** @var  QuoteProductListener  $listener*/
+    /** @var  QuoteProductListener $listener*/
     private $listener;
 
     protected function setUp()
@@ -33,7 +33,7 @@ class QuoteProductListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->listener = new \Oro\Bundle\SaleBundle\Entity\Listener\QuoteProductListener($this->requestStack);
+        $this->listener = new QuoteProductListener($this->requestStack);
     }
 
     /**

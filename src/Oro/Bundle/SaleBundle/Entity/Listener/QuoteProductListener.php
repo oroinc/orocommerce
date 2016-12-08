@@ -3,13 +3,20 @@
 namespace Oro\Bundle\SaleBundle\Entity\Listener;
 
 use Doctrine\ORM\Event\PreUpdateEventArgs;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class QuoteProductListener
 {
+    /**
+     * @var RequestStack
+     */
     private $requestStack;
 
+    /**
+     * QuoteProductListener constructor.
+     * @param RequestStack $requestStack
+     */
     public function __construct(RequestStack $requestStack)
     {
         $this->requestStack = $requestStack;
@@ -28,7 +35,7 @@ class QuoteProductListener
         }
         $route = $request->get('_route');
 
-        if (($route == 'oro_sale_quote_update') && $event->hasChangedField($fieldToKeep)) {
+        if (($route === 'oro_sale_quote_update') && $event->hasChangedField($fieldToKeep)) {
             $event->setNewValue($fieldToKeep, $event->getOldValue($fieldToKeep));
         }
     }
