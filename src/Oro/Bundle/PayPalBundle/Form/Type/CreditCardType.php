@@ -42,6 +42,7 @@ class CreditCardType extends AbstractType
                         'data-card-number' => true,
                         'autocomplete' => 'off',
                         'data-gateway' => true,
+                        'placeholder' => false,
                     ],
                     'constraints' => [
                         new Integer(),
