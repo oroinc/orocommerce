@@ -7,13 +7,13 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
-use Oro\Component\Testing\Unit\FormViewListenerTestCase;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\InventoryBundle\EventListener\CategoryInventoryBackorderFormViewListener;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
-use Oro\Bundle\InventoryBundle\EventListener\CategoryInventoryThresholdFormViewListener;
+use Oro\Component\Testing\Unit\FormViewListenerTestCase;
 
-class CategoryInventoryThresholdFormViewListenerTest extends FormViewListenerTestCase
+class CategoryInventoryBackorderFormViewListenerTest extends FormViewListenerTestCase
 {
     /**
      * @var RequestStack|\PHPUnit_Framework_MockObject_MockObject
@@ -26,11 +26,13 @@ class CategoryInventoryThresholdFormViewListenerTest extends FormViewListenerTes
     protected $request;
 
     /**
-     * @var CategoryInventoryThresholdFormViewListener
+     * @var CategoryInventoryBackorderFormViewListener
      */
     protected $categoryFormViewListener;
 
-    /** @var BeforeListRenderEvent|\PHPUnit_Framework_MockObject_MockObject * */
+    /**
+     * @var BeforeListRenderEvent|\PHPUnit_Framework_MockObject_MockObject
+     */
     protected $event;
 
     /**
@@ -41,21 +43,19 @@ class CategoryInventoryThresholdFormViewListenerTest extends FormViewListenerTes
     protected function setUp()
     {
         parent::setUp();
-        $this->requestStack = $this->getMock(RequestStack::class);
+        $this->requestStack = new RequestStack();
 
         $this->request = $this->getMockBuilder(Request::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->requestStack->expects($this->any())
-            ->method('getCurrentRequest')
-            ->willReturn($this->request);
+        $this->requestStack->push($this->request);
 
         $this->doctrine = $this->getMockBuilder('Doctrine\Common\Persistence\ManagerRegistry')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->categoryFormViewListener = new CategoryInventoryThresholdFormViewListener(
+        $this->categoryFormViewListener = new CategoryInventoryBackorderFormViewListener(
             $this->requestStack,
             $this->doctrine,
             $this->translator
@@ -68,6 +68,7 @@ class CategoryInventoryThresholdFormViewListenerTest extends FormViewListenerTes
     {
         $this->doctrine->expects($this->never())
             ->method('getManagerForClass');
+
         $this->categoryFormViewListener->onCategoryEdit($this->event);
     }
 
@@ -90,15 +91,11 @@ class CategoryInventoryThresholdFormViewListenerTest extends FormViewListenerTes
 
     public function testCategoryEditRendersAndAddsSubBlock()
     {
-        $this->request->expects($this->once())
-            ->method('get')
-            ->willReturn('1');
-
-        $category = new Category();
+        $this->request->expects($this->once())->method('get')->willReturn('1');
 
         $this->em->expects($this->once())
             ->method('getReference')
-            ->willReturn($category);
+            ->willReturn(new Category());
 
         $this->doctrine->expects($this->once())
             ->method('getManagerForClass')
