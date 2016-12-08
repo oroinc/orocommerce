@@ -48,6 +48,11 @@ class CustomFieldProvider
 
             /** @var FieldConfigId $configId */
             $configId = $extendConfig->getId();
+
+            if (!$this->isFieldTypeAllowed($configId->getFieldType())) {
+                continue;
+            }
+
             $entityConfig = $this->entityConfigProvider
                 ->getConfigById($configId);
 
@@ -60,5 +65,14 @@ class CustomFieldProvider
         }
 
         return $customFields;
+    }
+
+    /**
+     * @param string $fieldType
+     * @return bool
+     */
+    protected function isFieldTypeAllowed($fieldType)
+    {
+        return true;
     }
 }

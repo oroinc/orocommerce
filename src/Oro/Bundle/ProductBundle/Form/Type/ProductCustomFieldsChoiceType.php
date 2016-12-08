@@ -65,7 +65,7 @@ class ProductCustomFieldsChoiceType extends AbstractType
      */
     public function getBlockPrefix()
     {
-        return self::NAME;
+        return static::NAME;
     }
 
     /**
