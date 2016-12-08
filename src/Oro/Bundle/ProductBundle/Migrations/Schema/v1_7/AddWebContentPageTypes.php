@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\CatalogBundle\Migrations\Schema\v1_5;
+namespace Oro\Bundle\ProductBundle\Migrations\Schema\v1_7;
 
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\EntityConfigBundle\Entity\ConfigModel;
@@ -11,7 +11,7 @@ use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterf
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class AddContentVariantTypes implements Migration, ExtendExtensionAwareInterface
+class AddWebContentPageTypes implements Migration, ExtendExtensionAwareInterface
 {
     /**
      * @var ExtendExtension
@@ -37,12 +37,12 @@ class AddContentVariantTypes implements Migration, ExtendExtensionAwareInterface
             $this->extendExtension->addManyToOneRelation(
                 $schema,
                 $table,
-                'category_page_category',
-                'oro_catalog_category',
+                'product_page_product',
+                'oro_product',
                 'id',
                 [
                     ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_READONLY,
-                    'entity' => ['label' => 'oro.catalog.category.entity_label'],
+                    'entity' => ['label' => 'oro.product.entity_label'],
                     'extend' => [
                         'is_extend' => true,
                         'owner' => ExtendScope::OWNER_CUSTOM,
@@ -58,6 +58,30 @@ class AddContentVariantTypes implements Migration, ExtendExtensionAwareInterface
                     'view' => ['is_displayable' => false],
                     'merge' => ['display' => false],
                     'dataaudit' => ['auditable' => true]
+                ]
+            );
+
+            $table->addColumn(
+                'product_collection_page_rule',
+                'text',
+                [
+                    'oro_options' => [
+                        'extend' => [
+                            'is_extend' => true,
+                            'owner' => ExtendScope::OWNER_CUSTOM,
+                            'cascade' => ['persist'],
+                            'on_delete' => 'CASCADE',
+                        ],
+                        'datagrid' => [
+                            'is_visible' => false
+                        ],
+                        'form' => [
+                            'is_enabled' => false
+                        ],
+                        'view' => ['is_displayable' => false],
+                        'merge' => ['display' => false],
+                        'dataaudit' => ['auditable' => true]
+                    ]
                 ]
             );
         }
