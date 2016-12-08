@@ -23,7 +23,8 @@ class OroCatalogBundle extends Bundle
                         'Oro\Bundle\CatalogBundle\Entity\Category' => [
                             'title' => 'titles',
                             'shortDescription' => 'shortDescriptions',
-                            'longDescription' => 'longDescriptions'
+                            'longDescription' => 'longDescriptions',
+                            'slugPrototype' => 'slugPrototypes',
                         ]
                     ]
                 )

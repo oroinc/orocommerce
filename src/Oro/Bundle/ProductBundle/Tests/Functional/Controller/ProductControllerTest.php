@@ -157,7 +157,12 @@ class ProductControllerTest extends WebTestCase
             [self::FIRST_IMAGE_FILENAME, 1, 1, 1],
         ];
 
-        $this->assertEquals($expectedProductImageMatrix, $this->parseProductImages($crawler));
+        $parsedProductImageMatrix = $this->parseProductImages($crawler);
+
+        sort($parsedProductImageMatrix);
+        sort($expectedProductImageMatrix);
+
+        $this->assertEquals($expectedProductImageMatrix, $parsedProductImageMatrix);
     }
 
     /**
@@ -297,7 +302,12 @@ class ProductControllerTest extends WebTestCase
             [self::SECOND_IMAGE_FILENAME, 0, 0, 1]
         ];
 
-        $this->assertEquals($expectedProductImageMatrix, $this->parseProductImages($crawler));
+        $parsedProductImageMatrix = $this->parseProductImages($crawler);
+
+        sort($parsedProductImageMatrix);
+        sort($expectedProductImageMatrix);
+
+        $this->assertEquals($expectedProductImageMatrix, $parsedProductImageMatrix);
     }
 
     /**
@@ -342,7 +352,12 @@ class ProductControllerTest extends WebTestCase
             [self::SECOND_IMAGE_FILENAME, 0, 0, 1]
         ];
 
-        $this->assertEquals($expectedProductImageMatrix, $this->parseProductImages($crawler));
+        $parsedProductImageMatrix = $this->parseProductImages($crawler);
+
+        sort($parsedProductImageMatrix);
+        sort($expectedProductImageMatrix);
+
+        $this->assertEquals($expectedProductImageMatrix, $parsedProductImageMatrix);
 
         $product = $this->getProductDataBySku(self::FIRST_DUPLICATED_SKU);
 
@@ -634,7 +649,6 @@ class ProductControllerTest extends WebTestCase
      * @param string $code
      * @param int $precision
      * @param string $html
-     * @return string
      */
     private function assertContainsAdditionalUnitPrecision($code, $precision, $html)
     {

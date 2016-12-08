@@ -2,22 +2,31 @@
 
 namespace Oro\Bundle\PricingBundle\Migrations\Schema\v1_3;
 
-use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\DBAL\Types\Type;
 
+use Oro\Bundle\CronBundle\Engine\CommandRunnerInterface;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  */
-class OroPricingBundle implements Migration, OrderedMigrationInterface, RenameExtensionAwareInterface
+class OroPricingBundle implements
+    Migration,
+    OrderedMigrationInterface,
+    RenameExtensionAwareInterface,
+    ContainerAwareInterface
 {
+    use ContainerAwareTrait;
+
     /**
      * @var RenameExtension
      */
@@ -61,7 +70,7 @@ class OroPricingBundle implements Migration, OrderedMigrationInterface, RenameEx
         $queries->addPostQuery(new UpdateCPLRelationsQuery('orob2b_cmb_plist_to_acc_gr'));
         $queries->addPostQuery(new UpdateCPLRelationsQuery('orob2b_cmb_price_list_to_ws'));
         $queries->addPostQuery(new UpdateCPLNameQuery());
-        $queries->addPostQuery(new AddJobQuery('oro:price-lists:recalculate', ['--all']));
+        $this->getCommandRunner()->run('oro:price-lists:recalculate', ['--all']);
         $queries->addPostQuery(new FillMinimalPrices());
     }
 
@@ -415,6 +424,14 @@ class OroPricingBundle implements Migration, OrderedMigrationInterface, RenameEx
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
+    }
+
+    /**
+     * @return CommandRunnerInterface
+     */
+    protected function getCommandRunner()
+    {
+        return $this->container->get('oro_cron.async.command_runner');
     }
 
     /**

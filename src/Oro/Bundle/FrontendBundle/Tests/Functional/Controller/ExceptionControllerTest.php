@@ -13,41 +13,30 @@ class ExceptionControllerTest extends WebTestCase
 {
     use ResponseExtension;
 
-    public function setUp()
+    public function testShowActionNotFoundFrontend()
     {
         $this->initClient(
             [],
             $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW),
             true
         );
-    }
 
-    /**
-     * @dataProvider showActionNotFoundDataProvider
-     *
-     * @param string $url
-     */
-    public function testShowActionNotFound($url)
-    {
         $this->client->followRedirects();
-        $this->client->request('GET', $url);
+        $this->client->request('GET', '/page-does-not-exist');
 
         $this->assertLastResponseStatus(404);
         $this->assertLastResponseContentTypeHtml();
     }
 
-    /**
-     * @return array
-     */
-    public function showActionNotFoundDataProvider()
+    public function testShowActionNotFoundBackend()
     {
-        return [
-            'frontend' => [
-                'url' => '/page-does-not-exist',
-            ],
-            'admin' => [
-                'url' => '/admin/page-does-not-exist',
-            ],
-        ];
+        $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
+
+        $this->client->followRedirects();
+        $this->client->request('GET', '/admin/page-does-not-exist');
+
+        $this->assertLastResponseStatus(404);
+        $this->assertLastResponseContentTypeHtml();
     }
 }

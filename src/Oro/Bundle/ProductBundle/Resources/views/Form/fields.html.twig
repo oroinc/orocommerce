@@ -197,3 +197,7 @@
         <td>{{ form_widget(form[imageType], { attr: {'data-image-type': imageType} }) }}</td>
     {% endfor %}
 {% endblock %}
+
+{% block oro_product_page_variant_widget %}
+    {{ form_row(form.productPageProduct) }}
+{% endblock %}
