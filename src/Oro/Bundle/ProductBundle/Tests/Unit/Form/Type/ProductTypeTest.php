@@ -19,7 +19,7 @@ use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueColl
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Form\Extension\IntegerExtension;
-use Oro\Bundle\ProductBundle\Form\Type\ProductCustomFieldsChoiceType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductCustomVariantFieldsChoiceType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductPrimaryUnitPrecisionType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductImageCollectionType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductImageType;
@@ -35,7 +35,7 @@ use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProductImage;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\EnumSelectTypeStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ImageTypeStub;
-use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductCustomFieldsChoiceTypeStub;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductCustomVariantFieldsChoiceTypeStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType as StubEntityIdentifierType;
@@ -154,7 +154,7 @@ class ProductTypeTest extends FormIntegrationTestCase
                         ProductUnitSelectionType::NAME
                     ),
                     LocalizedFallbackValueCollectionType::NAME => new LocalizedFallbackValueCollectionTypeStub(),
-                    ProductCustomFieldsChoiceType::NAME => new ProductCustomFieldsChoiceTypeStub(
+                    ProductCustomVariantFieldsChoiceType::NAME => new ProductCustomVariantFieldsChoiceTypeStub(
                         $this->exampleCustomFields
                     ),
                     EntityIdentifierType::NAME => new StubEntityIdentifierType([]),
