@@ -20,7 +20,14 @@ class InventoryLevelStrategyHelper extends AbstractInventoryLevelStrategyHelper
         $this->errors = $errors;
 
         $product = $this->getProcessedEntity($newEntities, 'product');
+        if (!$product) {
+            $product = new Product();
+        }
+
         $productUnitPrecision = $this->getProcessedEntity($newEntities, 'productUnitPrecision');
+        if (!$productUnitPrecision) {
+            $productUnitPrecision = new ProductUnitPrecision();
+        }
 
         /** @var InventoryLevel $existingEntity */
         $existingEntity = $this->getExistingInventoryLevel(
