@@ -1,5 +1,7 @@
 parameters:
     oro_commerce_menu.entity.menu_update.class: 'Oro\Bundle\CommerceMenuBundle\Entity\MenuUpdate'
+    
+    oro_commerce_menu.menu_update.scope_type: 'menu_frontend_visibility'
 
 services:
     oro_commerce_menu.repository.menu_update:
@@ -15,14 +17,22 @@ services:
     oro_commerce_menu.scope_criteria_provider.organization:
         parent: oro_organization.scope_criteria_provider.organization
         tags:
-            - {name: oro_scope.provider, scopeType: menu_frontend_visibility, priority: 10}
+            - {name: oro_scope.provider, scopeType: '%oro_commerce_menu.menu_update.scope_type%', priority: 10}
 
     oro_commerce_menu.scope_criteria_provider.account:
         parent: oro_customer.account_scope_criteria_provider
         tags:
-            - {name: oro_scope.provider, scopeType: menu_frontend_visibility, priority: 30}
+            - {name: oro_scope.provider, scopeType: '%oro_commerce_menu.menu_update.scope_type%', priority: 30}
 
     oro_commerce_menu.scope_criteria_provider.account_group:
         parent: oro_customer.account_group_scope_criteria_provider
         tags:
-            - {name: oro_scope.provider, scopeType: menu_frontend_visibility, priority: 20}
+            - {name: oro_scope.provider, scopeType: '%oro_commerce_menu.menu_update.scope_type%', priority: 20}
+
+    oro_commerce_menu.menu_update.builder.menu_frontend_visibility:
+        parent: oro_navigation.menu_update.builder.abstract 
+        calls:
+          - [setClassName, ['%oro_commerce_menu.entity.menu_update.class%']]
+          - [setScopeType, ['%oro_commerce_menu.menu_update.scope_type%']]
+        tags:
+            - { name: oro_menu.builder, priority: 200 }
