@@ -37,7 +37,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  *      routeCommerceView="oro_order_frontend_view",
  *      defaultValues={
  *          "entity"={
- *              "icon"="icon-briefcase"
+ *              "icon"="fa-briefcase"
  *          },
  *          "ownership"={
  *              "owner_type"="USER",

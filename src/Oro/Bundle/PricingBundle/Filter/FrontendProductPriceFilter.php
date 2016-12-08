@@ -2,84 +2,62 @@
 
 namespace Oro\Bundle\PricingBundle\Filter;
 
-use Doctrine\ORM\QueryBuilder;
+use Oro\Bundle\FilterBundle\Filter\FilterUtility;
+use Oro\Bundle\PricingBundle\Form\Type\Filter\ProductPriceFilterType;
+use Oro\Bundle\PricingBundle\Placeholder\UnitPlaceholder;
+use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter;
+use Oro\Bundle\SearchBundle\Datagrid\Filter\SearchNumberRangeFilter;
 
-use Oro\Bundle\EntityBundle\ORM\Registry;
-use Oro\Bundle\FilterBundle\Datasource\FilterDatasourceAdapterInterface;
-use Oro\Bundle\FilterBundle\Datasource\Orm\OrmFilterDatasourceAdapter;
-use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
-
-class FrontendProductPriceFilter extends ProductPriceFilter
+class FrontendProductPriceFilter extends SearchNumberRangeFilter
 {
     /**
-     * @var Registry
+     * @var UnitLabelFormatter
      */
-    protected $registry;
-    
+    protected $formatter;
+
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
-    protected function getPriceList()
+    protected function getFieldName(array $data)
     {
-        return $this->priceListRequestHandler->getPriceListByAccount();
+        $unit = $data['unit'];
+        return "decimal.".str_replace(UnitPlaceholder::NAME, $unit, $this->get(FilterUtility::DATA_NAME_KEY));
+    }
+
+    /**
+     * @param UnitLabelFormatter $formatter
+     */
+    public function setFormatter($formatter)
+    {
+        $this->formatter = $formatter;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function apply(FilterDatasourceAdapterInterface $ds, $data)
+    public function getMetadata()
     {
-        /** @var array $data */
-        $data = $this->parseData($data);
-        $priceList = $this->getPriceList();
-        if (!$data || !$priceList || !($ds instanceof OrmFilterDatasourceAdapter)) {
-            return false;
+        $metadata = parent::getMetadata();
+        $metadata['unitChoices'] = [];
+
+        $unitChoices = $this->getForm()->createView()['unit']->vars['choices'];
+        foreach ($unitChoices as $choice) {
+            $metadata['unitChoices'][] = [
+                'data' => $choice->data,
+                'value' => $choice->value,
+                'label' => $choice->label,
+                'shortLabel' => $this->formatter->format($choice->value, true),
+            ];
         }
 
-        /** @var QueryBuilder $qb */
-        $productPriceAlias = $ds->generateParameterName('product_price_' . $this->get('data_name'));
-        $priceCondition = $this->buildRangeComparisonExpr(
-            $ds,
-            $data['type'],
-            $productPriceAlias . '.value',
-            $data['value'],
-            $data['value_end']
-        );
-
-        $currencyParamName = $ds->generateParameterName('currency');
-        $unitParamName = $ds->generateParameterName('unit');
-
-        /** @var QueryBuilder $qb */
-        $qb = $ds->getQueryBuilder();
-        $rootAliasCollection = $qb->getRootAliases();
-        $rootAlias = reset($rootAliasCollection);
-        
-        $additionalCondition = $ds->expr()->andX(
-            $priceCondition,
-            $ds->expr()->eq($productPriceAlias . '.priceList', $priceList->getId()),
-            $ds->expr()->eq($productPriceAlias . '.product', $rootAlias),
-            $ds->expr()->eq($productPriceAlias . '.currency', ':' . $currencyParamName),
-            $ds->expr()->eq($productPriceAlias . '.unit', ':' . $unitParamName)
-        );
-
-        /** @var ProductPriceRepository $repository */
-        $repository = $this->registry->getRepository($this->productPriceClass);
-        $qbPrices = $repository->createQueryBuilder($productPriceAlias);
-        $qbPrices->andWhere($additionalCondition);
-        $qb->andWhere($qb->expr()->exists($qbPrices->getQuery()->getDQL()));
-
-        $currency = $this->get('data_name');
-        $qb->setParameter($currencyParamName, $currency)
-            ->setParameter($unitParamName, $data['unit']);
-
-        return true;
+        return $metadata;
     }
 
     /**
-     * @param Registry $registry
+     * {@inheritdoc}
      */
-    public function setRegistry(Registry $registry)
+    protected function getFormType()
     {
-        $this->registry = $registry;
+        return ProductPriceFilterType::NAME;
     }
 }

@@ -92,4 +92,12 @@ abstract class AbstractLoadProductPriceDemoData extends AbstractFixture implemen
 
         return $this->productUnis[$code];
     }
+
+    /**
+     * @return string
+     */
+    protected function getDefaultCurrency()
+    {
+        return $this->container->get('oro_currency.config.currency')->getDefaultCurrency();
+    }
 }

@@ -2,10 +2,10 @@ system_configuration:
     groups:
         sales:
             title: oro.rfp.system_configuration.groups.sales.title
-            icon: icon-file
+            icon: fa-file
         rfq:
             title: oro.rfp.system_configuration.groups.rfq.title
-            icon: icon-file
+            icon: fa-file
             page_reload: true
         rfp_requeststatus_settings:
             priority: 200

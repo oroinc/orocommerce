@@ -84,7 +84,17 @@ class ProductInventoryThresholdFormViewListenerTest extends FormViewListenerTest
             ->willReturn($this->em);
         $env = $this->getMockBuilder(\Twig_Environment::class)->disableOriginalConstructor()->getMock();
         $this->event->expects($this->once())->method('getEnvironment')->willReturn($env);
-        $this->event->expects($this->once())->method('getScrollData')->willReturn($this->getMock(ScrollData::class));
+        $scrollData = $this->getMock(ScrollData::class);
+        $scrollData->expects($this->once())
+            ->method('addSubBlockData');
+        $this->event->expects($this->once())->method('getScrollData')->willReturn($scrollData);
+        $scrollData->expects($this->once())
+            ->method('getData')
+            ->wilLReturn(
+                [
+                    ScrollData::DATA_BLOCKS => [1 => [ScrollData::TITLE => 'oro.product.sections.inventory.trans']],
+                ]
+            );
 
         $this->productWarehouseFormViewListener->onProductView($this->event);
     }

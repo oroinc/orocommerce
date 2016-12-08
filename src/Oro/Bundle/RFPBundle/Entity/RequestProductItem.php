@@ -16,7 +16,7 @@ use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
  * @Config(
  *      defaultValues={
  *          "entity"={
- *              "icon"="icon-list-alt"
+ *              "icon"="fa-list-alt"
  *          },
  *          "security"={
  *              "type"="ACL",
