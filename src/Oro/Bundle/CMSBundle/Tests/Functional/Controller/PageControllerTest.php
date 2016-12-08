@@ -128,6 +128,8 @@ class PageControllerTest extends WebTestCase
     {
         $this->assertSlugs(self::DEFAULT_PAGE_SLUG_URL, array(self::UPDATED_DEFAULT_PAGE_SLUG_URL), $id);
 
+        $page = $this->entityManager->find('OroCMSBundle:Page', $id);
+
         $this->client->request(
             'GET',
             $this->getUrl(
@@ -162,14 +164,13 @@ class PageControllerTest extends WebTestCase
     /**
      * @param string $title
      * @param string $slug
-     * @param int $parentId
      * @return int
      */
-    protected function assertCreate($title, $slug, $parentId = null)
+    protected function assertCreate($title, $slug)
     {
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('oro_cms_page_create', ['id' => $parentId])
+            $this->getUrl('oro_cms_page_create')
         );
 
         /** @var Form $form */
