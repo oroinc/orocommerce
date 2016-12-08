@@ -43,7 +43,8 @@ class OroProductBundle extends Bundle
                 Product::class => [
                     'name' => 'names',
                     'description' => 'descriptions',
-                    'shortDescription' => 'shortDescriptions'
+                    'shortDescription' => 'shortDescriptions',
+                    'slugPrototype' => 'slugPrototypes'
                 ],
             ]));
     }

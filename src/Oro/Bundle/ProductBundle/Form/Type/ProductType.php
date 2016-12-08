@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\ProductBundle\Form\Type;
 
+use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugType;
+use Oro\Bundle\ValidationBundle\Validator\Constraints\UrlSafe;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -47,6 +49,8 @@ class ProductType extends AbstractType
     }
 
     /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     *
      * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -137,6 +141,16 @@ class ProductType extends AbstractType
             )->add(
                 'images',
                 ProductImageCollectionType::NAME
+            )
+            ->add(
+                'slugPrototypes',
+                LocalizedSlugType::NAME,
+                [
+                    'label'    => 'oro.product.slug_prototypes.label',
+                    'required' => false,
+                    'options'  => ['constraints' => [new UrlSafe()]],
+                    'source_field' => 'names',
+                ]
             )
             ->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetDataListener'])
             ->addEventListener(FormEvents::POST_SET_DATA, [$this, 'postSetDataListener'])

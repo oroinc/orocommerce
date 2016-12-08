@@ -2,36 +2,38 @@
 
 namespace Oro\Bundle\CatalogBundle\Form\Type;
 
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\FormBundle\Form\Type\EntityTreeSelectType;
+use Oro\Component\Tree\Handler\AbstractTreeHandler;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-
-use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class CategoryTreeType extends AbstractType
 {
     const NAME = 'oro_catalog_category_tree';
 
     /**
-     * @var string
+     * @var AbstractTreeHandler
      */
-    protected $entityClass;
+    private $treeHandler;
 
     /**
-     * @param string $entityClass
+     * @param AbstractTreeHandler $treeHandler
      */
-    public function setEntityClass($entityClass)
+    public function __construct(AbstractTreeHandler $treeHandler)
     {
-        $this->entityClass = $entityClass;
+        $this->treeHandler = $treeHandler;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'class'    => $this->entityClass,
-            'multiple' => false,
+            'class' => Category::class,
+            'tree_key' => 'commerce-category',
+            'tree_data' => [$this->treeHandler, 'createTree']
         ]);
     }
 
@@ -56,6 +58,6 @@ class CategoryTreeType extends AbstractType
      */
     public function getParent()
     {
-        return EntityIdentifierType::NAME;
+        return EntityTreeSelectType::class;
     }
 }
