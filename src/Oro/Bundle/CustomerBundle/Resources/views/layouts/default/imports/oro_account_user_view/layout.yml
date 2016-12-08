@@ -44,7 +44,7 @@ layout:
                         route_parameters:
                             entityId: '=data["entity"].getId()'
                         text: 'oro.customer.address.add'
-                        icon: plus
+                        icon: plus-circle
                 __account_user_address_book_content:
                     blockType: address_book
                     options:

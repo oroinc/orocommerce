@@ -29,7 +29,8 @@ class OroCatalogBundleTest extends \PHPUnit_Framework_TestCase
                 Category::class => [
                     'title' => 'titles',
                     'shortDescription' => 'shortDescriptions',
-                    'longDescription' => 'longDescriptions'
+                    'longDescription' => 'longDescriptions',
+                    'slugPrototype' => 'slugPrototypes'
                 ]
             ],
             'classes',
