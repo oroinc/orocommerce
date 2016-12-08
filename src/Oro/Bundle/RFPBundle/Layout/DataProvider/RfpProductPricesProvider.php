@@ -34,6 +34,7 @@ class RfpProductPricesProvider
         $products = $rfpRequest->getRequestProducts()->map(function (RequestProduct $rfpProduct) {
             return $rfpProduct->getProduct();
         })->toArray();
+
         return $this->productPricesProvider->getByProducts($products);
     }
 }
