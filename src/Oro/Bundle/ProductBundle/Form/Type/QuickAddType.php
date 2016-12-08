@@ -4,8 +4,12 @@ namespace Oro\Bundle\ProductBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
+
+use Oro\Bundle\ProductBundle\Model\ProductRow;
 
 class QuickAddType extends AbstractType
 {
@@ -27,7 +31,7 @@ class QuickAddType extends AbstractType
                 [
                     'required' => false,
                     'options' => [
-                        'validation_required' => $options['validation_required']
+                        'validation_required' => $options['validation_required'],
                     ],
                     'error_bubbling' => true,
                     'constraints' => [new NotBlank(['message' => 'oro.product.at_least_one_item'])],
@@ -43,6 +47,8 @@ class QuickAddType extends AbstractType
                 self::ADDITIONAL_FIELD_NAME,
                 'hidden'
             );
+
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'onPreSubmit']);
     }
 
     /**
@@ -74,5 +80,38 @@ class QuickAddType extends AbstractType
     public function getBlockPrefix()
     {
         return self::NAME;
+    }
+
+    /**
+     * Remove duplicated products and combine their quantities
+     *
+     * @param FormEvent $event
+     */
+    public function onPreSubmit(FormEvent $event)
+    {
+        $data = $event->getData();
+        if (!array_key_exists('products', $data)) {
+            return;
+        }
+        $productBySkus = [];
+        /** @var ProductRow $productRow */
+        foreach ($data['products'] as $productRow) {
+            if (empty($productRow['productSku']) || !isset($productRow['productQuantity'])) {
+                // keep empty row so same amount of rows are rendered as default setup
+                $productBySkus[] = $productRow;
+                continue;
+            }
+
+            if (!isset($productBySkus[$productRow['productSku']])) {
+                $productBySkus[$productRow['productSku']] = $productRow;
+                continue;
+            }
+
+            $productBySkus[$productRow['productSku']]['productQuantity'] += $productRow['productQuantity'];
+            // add an empty row instead of removed duplicate product
+            $productBySkus[] = ['productSku' => '', 'productQuantity' => ''];
+        }
+        $data['products'] = array_values($productBySkus);
+        $event->setData($data);
     }
 }

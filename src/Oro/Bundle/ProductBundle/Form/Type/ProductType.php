@@ -11,6 +11,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
+use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugType;
+use Oro\Bundle\ValidationBundle\Validator\Constraints\UrlSafe;
 use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
@@ -48,6 +50,8 @@ class ProductType extends AbstractType
     }
 
     /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     *
      * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -141,6 +145,16 @@ class ProductType extends AbstractType
                 ProductImageCollectionType::NAME
             )
             ->add('type', HiddenType::class)
+            ->add(
+                'slugPrototypes',
+                LocalizedSlugType::NAME,
+                [
+                    'label'    => 'oro.product.slug_prototypes.label',
+                    'required' => false,
+                    'options'  => ['constraints' => [new UrlSafe()]],
+                    'source_field' => 'names',
+                ]
+            )
             ->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetDataListener'])
             ->addEventListener(FormEvents::POST_SET_DATA, [$this, 'postSetDataListener'])
             ->addEventListener(FormEvents::SUBMIT, [$this, 'submitListener']);
@@ -229,11 +243,13 @@ class ProductType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults([
-            'data_class'           => $this->dataClass,
-            'intention'            => 'product',
-            'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"'
-        ]);
+        $resolver->setDefaults(
+            [
+                'data_class' => $this->dataClass,
+                'intention' => 'product',
+                'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"'
+            ]
+        );
     }
 
     /**

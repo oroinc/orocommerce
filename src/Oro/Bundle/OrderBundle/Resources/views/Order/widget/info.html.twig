@@ -8,7 +8,7 @@
     order.sourceEntityIdentifier
   ) %}
 
-  <i class="icon {{ oro_entity_config_value(order.sourceEntityClass, 'icon') }}"></i>
+  <i class="{{ oro_entity_config_value(order.sourceEntityClass, 'icon') }}"></i>
   {% if sourceEntity is not null and resource_granted('VIEW', sourceEntity) %}
       <a href="{{ oro_entity_view_link(order.sourceEntityClass, order.sourceEntityId) }}">
           {{ sourceDocumenttitle }}

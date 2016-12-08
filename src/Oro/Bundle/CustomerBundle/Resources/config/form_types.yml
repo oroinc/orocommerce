@@ -117,6 +117,7 @@ services:
         arguments:
             - '@oro_security.security_facade'
             - '@doctrine'
+            - '@oro_security.acl_helper'
         calls:
             - [setRoleClass, ['%oro_customer.entity.account_user_role.class%']]
         tags:
@@ -237,3 +238,13 @@ services:
             - '@security.token_storage'
         tags:
             - { name: form.type_extension, alias: "oro_address" }
+
+    oro_customer.form.extension.account_scope:
+        class: 'Oro\Bundle\CustomerBundle\Form\Extension\AccountScopeExtension'
+        tags:
+            - { name: form.type_extension, extended_type: Oro\Bundle\ScopeBundle\Form\Type\ScopeType }
+
+    oro_customer.form.extension.account_group_scope:
+        class: 'Oro\Bundle\CustomerBundle\Form\Extension\AccountGroupScopeExtension'
+        tags:
+            - { name: form.type_extension, extended_type: Oro\Bundle\ScopeBundle\Form\Type\ScopeType }

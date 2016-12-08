@@ -9,7 +9,6 @@ use Psr\Log\LoggerInterface;
 
 use Oro\Bundle\ActivityListBundle\Entity\ActivityList;
 use Oro\Bundle\EntityBundle\ORM\DatabasePlatformInterface;
-use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityConfigBundle\Migration\RemoveManyToManyRelationQuery;
 use Oro\Bundle\EntityConfigBundle\Migration\RemoveManyToOneRelationQuery;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
@@ -20,16 +19,15 @@ use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 class EntityConfigRelationsMigration
 {
     const NOTE_WAREHOUSE_ASSOCIATION = 'warehouse_c913b87';
-    const NOTE_WAREHOUSE_ASSOCIATION_COLUMN = 'warehouse_c913b87_id';
+    const NOTE_WAREHOUSE_ASSOCIATION_BETA1 = 'warehouse_6eca7547';
+
     const ACTIVITY_LIST_WAREHOUSE_ASSOCIATION = 'warehouse_901db874';
+    const ACTIVITY_LIST_WAREHOUSE_ASSOCIATION_BETA1 = 'warehouse_2de8bcd1';
+
     const ORDER_WAREHOUSE_ASSOCIATION = 'warehouse';
-    const ORDER_WAREHOUSE_ASSOCIATION_COLUMN = 'warehouse_id';
 
     /** @var ManagerRegistry */
     private $managerRegistry;
-
-    /** @var ConfigManager */
-    private $configManager;
 
     /** @var LoggerInterface */
     private $logger;
@@ -39,18 +37,15 @@ class EntityConfigRelationsMigration
 
     /**
      * @param ManagerRegistry $managerRegistry
-     * @param ConfigManager $configManager
      * @param LoggerInterface $logger
      * @param bool $applicationInstalled
      */
     public function __construct(
         ManagerRegistry $managerRegistry,
-        ConfigManager $configManager,
         LoggerInterface $logger,
         $applicationInstalled
     ) {
         $this->managerRegistry = $managerRegistry;
-        $this->configManager = $configManager;
         $this->logger = $logger;
         $this->applicationInstalled = (bool)$applicationInstalled;
     }
@@ -67,38 +62,58 @@ class EntityConfigRelationsMigration
             return;
         }
 
-        /** @var Connection $defaultConnection */
-        $defaultConnection = $this->managerRegistry->getConnection();
-
-        if (!$this->isUpdateRequired($defaultConnection, Note::class, self::NOTE_WAREHOUSE_ASSOCIATION) &&
-            !$this->isUpdateRequired(
-                $defaultConnection,
-                ActivityList::class,
-                self::ACTIVITY_LIST_WAREHOUSE_ASSOCIATION
-            )
-        ) {
+        /** @var Connection $configConnection */
+        $configConnection = $this->managerRegistry->getConnection('config');
+        $tables = $configConnection->getSchemaManager()->listTableNames();
+        if (!in_array('oro_entity_config', $tables, true)) {
             return;
         }
 
-        $warehouseClass = $this->prepareFrom($defaultConnection, 'WarehouseBundle\\Entity\\Warehouse');
-        $defaultConnection->executeQuery("DELETE FROM oro_entity_config WHERE class_name like '%$warehouseClass%'");
+        $wasUpdated = false;
+        foreach ([self::NOTE_WAREHOUSE_ASSOCIATION, self::NOTE_WAREHOUSE_ASSOCIATION_BETA1] as $association) {
+            if ($this->isUpdateRequired($configConnection, Note::class, $association)) {
+                continue;
+            }
 
-        $this->executeUpdateRelationsQuery(
-            new RemoveManyToOneRelationQuery(Note::class, self::NOTE_WAREHOUSE_ASSOCIATION),
-            $defaultConnection
-        );
+            $this->executeUpdateRelationsQuery(
+                new RemoveManyToOneRelationQuery(Note::class, $association),
+                $configConnection
+            );
 
-        $this->executeUpdateRelationsQuery(
-            new RemoveManyToManyRelationQuery(ActivityList::class, self::ACTIVITY_LIST_WAREHOUSE_ASSOCIATION),
-            $defaultConnection
-        );
+            $wasUpdated = true;
+        }
+
+        $associations = [
+            self::ACTIVITY_LIST_WAREHOUSE_ASSOCIATION,
+            self::ACTIVITY_LIST_WAREHOUSE_ASSOCIATION_BETA1,
+        ];
+        foreach ($associations as $association) {
+            if ($this->isUpdateRequired($configConnection, ActivityList::class, $association)) {
+                continue;
+            }
+
+            $this->executeUpdateRelationsQuery(
+                new RemoveManyToManyRelationQuery(ActivityList::class, $association),
+                $configConnection
+            );
+
+            $wasUpdated = true;
+        }
+
+        if (!$wasUpdated) {
+            return;
+        }
+
+        $warehouseClass = $this->prepareFrom($configConnection, 'WarehouseBundle\\Entity\\Warehouse');
+        $configConnection->executeQuery("DELETE FROM oro_entity_config WHERE class_name like '%$warehouseClass%'");
+
         $this->executeUpdateRelationsQuery(
             new RemoveManyToOneRelationQuery(Order::class, self::ORDER_WAREHOUSE_ASSOCIATION),
-            $defaultConnection
+            $configConnection
         );
         $this->executeUpdateRelationsQuery(
             new RemoveManyToOneRelationQuery(OrderLineItem::class, self::ORDER_WAREHOUSE_ASSOCIATION),
-            $defaultConnection
+            $configConnection
         );
     }
 
@@ -120,6 +135,8 @@ class EntityConfigRelationsMigration
      */
     protected function isUpdateRequired(Connection $defaultConnection, $class, $association)
     {
+        $class = $this->prepareFrom($defaultConnection, $class);
+
         try {
             $sql = 'SELECT field.id FROM oro_entity_config_field as field
                 INNER JOIN oro_entity_config as entity ON field.entity_id = entity.id

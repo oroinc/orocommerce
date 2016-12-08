@@ -13,7 +13,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
  * @Config(
  *       defaultValues={
  *          "entity"={
- *              "icon"="icon-discount"
+ *              "icon"="fa-discount"
  *          }
  *      }
  * )

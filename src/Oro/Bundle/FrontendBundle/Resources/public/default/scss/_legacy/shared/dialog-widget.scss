@@ -43,10 +43,12 @@
     }
 
     .ui-icon-closethick {
+      $ui-icon-closethick-icon: '\e5cd';
+
       text-indent: 0;
 
       &:before {
-        content: "\e5cd";
+        content: "#{$ui-icon-closethick-icon}";
         display: inline-block;
         vertical-align: middle;
         width: 1em;
