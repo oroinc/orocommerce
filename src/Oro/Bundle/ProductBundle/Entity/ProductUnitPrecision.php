@@ -272,6 +272,5 @@ class ProductUnitPrecision implements ProductUnitHolderInterface
         }
 
         return null;
-
     }
 }
