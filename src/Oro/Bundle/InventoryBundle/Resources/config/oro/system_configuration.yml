@@ -2,9 +2,14 @@ system_configuration:
     groups:
         product_options:
             title: oro.inventory.system_configuration.groups.product_options.title
-            icon: 'icon-gears'
+            icon: 'fa-cogs'
         product_inventory_options:
             title: oro.inventory.system_configuration.groups.product_inventory_options.title
+        limitations:
+            title: oro.inventory.system_configuration.groups.limitations.title
+            icon: 'icon-minus'
+        product_quantity_limitations:
+            title: oro.inventory.system_configuration.groups.product_quantity_limitations.title
 
     fields:
         oro_inventory.manage_inventory:
@@ -26,6 +31,25 @@ system_configuration:
                 constraints:
                     - NotBlank: ~
                     - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
+        oro_inventory.minimum_quantity_to_order:
+            data_type: decimal
+            type: number
+            priority: 10
+            options:
+                label: oro.inventory.system_configuration.fields.minimum_quantity_to_order.label
+                scale: 2
+                constraints:
+                    - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
+        oro_inventory.maximum_quantity_to_order:
+            data_type: decimal
+            type: number
+            priority: 5
+            options:
+                label: oro.inventory.system_configuration.fields.maximum_quantity_to_order.label
+                scale: 2
+                constraints:
+                    - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
+
 
     tree:
         system_configuration:
@@ -40,3 +64,10 @@ system_configuration:
                                         children:
                                             - oro_inventory.manage_inventory
                                             - oro_inventory.inventory_threshold
+                            limitations:
+                                priority: 80
+                                children:
+                                    product_quantity_limitations:
+                                        children:
+                                            - oro_inventory.minimum_quantity_to_order
+                                            - oro_inventory.maximum_quantity_to_order

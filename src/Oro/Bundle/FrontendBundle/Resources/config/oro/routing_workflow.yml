@@ -1,0 +1,22 @@
+oro_frontend_workflow:
+    resource:     "@OroFrontendBundle/Controller/WorkflowController.php"
+    type:         annotation
+    options:
+        frontend: true
+
+oro_frontend_workflow_widget:
+    resource:     "@OroFrontendBundle/Controller/WorkflowWidgetController.php"
+    type:         annotation
+    options:
+        frontend: true
+
+oro_frontend_workflow_api:
+    resource:     "@OroFrontendBundle/Controller/Api/Rest/WorkflowController.php"
+    type:         rest
+    requirements:
+        version:  latest|v1
+        _format:  json
+    defaults:
+        version:  latest
+    options:
+        frontend: true

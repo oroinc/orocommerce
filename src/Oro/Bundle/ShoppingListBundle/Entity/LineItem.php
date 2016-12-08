@@ -42,7 +42,7 @@ use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
  *              "auditable"=true
  *          },
  *          "entity"={
- *              "icon"="icon-shopping-cart"
+ *              "icon"="fa-shopping-cart"
  *          }
  *      }
  * )

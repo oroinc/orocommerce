@@ -3,13 +3,18 @@
 namespace Oro\Bundle\PricingBundle\Builder;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\PricingBundle\DependencyInjection\Configuration;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
+use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
 
 class CombinedPriceListGarbageCollector
 {
+    /**
+     * @var CombinedPriceListTriggerHandler
+     */
+    protected $triggerHandler;
+
     /**
      * @var ManagerRegistry
      */
@@ -33,11 +38,16 @@ class CombinedPriceListGarbageCollector
     /**
      * @param ManagerRegistry $registry
      * @param ConfigManager $configManager
+     * @param CombinedPriceListTriggerHandler $triggerHandler
      */
-    public function __construct(ManagerRegistry $registry, ConfigManager $configManager)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        ConfigManager $configManager,
+        CombinedPriceListTriggerHandler $triggerHandler
+    ) {
         $this->registry = $registry;
         $this->configManager = $configManager;
+        $this->triggerHandler = $triggerHandler;
     }
 
     public function cleanCombinedPriceLists()
@@ -51,7 +61,11 @@ class CombinedPriceListGarbageCollector
         if ($configCombinedPriceList) {
             $exceptPriceLists[] = $configCombinedPriceList;
         }
-        $this->getCombinedPriceListsRepository()->deleteUnusedPriceLists($exceptPriceLists);
+        $priceListsForDelete = $this->getCombinedPriceListsRepository()->getUnusedPriceListsIds($exceptPriceLists);
+        $this->triggerHandler->startCollect();
+        $this->triggerHandler->massProcess($priceListsForDelete);
+        $this->getCombinedPriceListsRepository()->deletePriceLists($priceListsForDelete);
+        $this->triggerHandler->commit();
     }
 
     /**

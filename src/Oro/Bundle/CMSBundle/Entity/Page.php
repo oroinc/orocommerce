@@ -23,7 +23,7 @@ use Oro\Bundle\RedirectBundle\Entity\Slug;
  *      routeUpdate="oro_cms_page_update",
  *      defaultValues={
  *          "entity"={
- *              "icon"="icon-book"
+ *              "icon"="fa-book"
  *          },
  *          "dataaudit"={
  *              "auditable"=true
