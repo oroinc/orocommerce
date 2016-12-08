@@ -7,11 +7,9 @@ use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Fallback\Provider\CategoryFallbackProvider;
 use Oro\Bundle\CatalogBundle\Fallback\Provider\ParentCategoryFallbackProvider;
-use Oro\Bundle\EntityBundle\EntityConfig\DatagridScope;
 use Oro\Bundle\EntityBundle\Fallback\Provider\SystemConfigFallbackProvider;
 use Oro\Bundle\EntityConfigBundle\Migration\UpdateEntityConfigEntityValueQuery;
 use Oro\Bundle\EntityConfigBundle\Migration\UpdateEntityConfigFieldValueQuery;
-use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
@@ -29,6 +27,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareInterface, RenameExtensionAwareInterface
 {
     use MigrationConstraintTrait;
+    use AddFallbackRelationTrait;
 
     const INVENTORY_LEVEL_TABLE_NAME = 'oro_inventory_level';
     const OLD_WAREHOUSE_INVENTORY_TABLE = 'oro_warehouse_inventory_lev';
@@ -328,6 +327,7 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
 
         $this->addFallbackRelation(
             $schema,
+            $this->extendExtension,
             'oro_product',
             'manageInventory',
             'oro.inventory.manage_inventory.label',
@@ -349,6 +349,7 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
 
         $this->addFallbackRelation(
             $schema,
+            $this->extendExtension,
             'oro_catalog_category',
             'manageInventory',
             'oro.inventory.manage_inventory.label',
@@ -370,6 +371,7 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
 
         $this->addFallbackRelation(
             $schema,
+            $this->extendExtension,
             'oro_product',
             'inventoryThreshold',
             'oro.inventory.inventory_threshold.label',
@@ -393,6 +395,7 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
 
         $this->addFallbackRelation(
             $schema,
+            $this->extendExtension,
             'oro_catalog_category',
             'inventoryThreshold',
             'oro.inventory.inventory_threshold.label',
@@ -412,6 +415,7 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
     {
         $this->addFallbackRelation(
             $schema,
+            $this->extendExtension,
             'oro_product',
             AddQuantityToOrderFields::FIELD_MINIMUM_QUANTITY_TO_ORDER,
             'oro.inventory.fields.product.minimum_quantity_to_order.label',
@@ -427,6 +431,7 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
 
         $this->addFallbackRelation(
             $schema,
+            $this->extendExtension,
             'oro_product',
             AddQuantityToOrderFields::FIELD_MAXIMUM_QUANTITY_TO_ORDER,
             'oro.inventory.fields.product.maximum_quantity_to_order.label',
@@ -448,6 +453,7 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
     {
         $this->addFallbackRelation(
             $schema,
+            $this->extendExtension,
             'oro_catalog_category',
             AddQuantityToOrderFields::FIELD_MINIMUM_QUANTITY_TO_ORDER,
             'oro.inventory.fields.category.minimum_quantity_to_order.label',
@@ -459,6 +465,7 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
         );
         $this->addFallbackRelation(
             $schema,
+            $this->extendExtension,
             'oro_catalog_category',
             AddQuantityToOrderFields::FIELD_MAXIMUM_QUANTITY_TO_ORDER,
             'oro.inventory.fields.category.maximum_quantity_to_order.label',
@@ -471,51 +478,10 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
     }
 
     /**
-     * @param Schema $schema
-     * @param string $tableName
-     * @param string $fieldName
-     * @param string $label
-     * @param array $fallbackList
-     */
-    protected function addFallbackRelation(Schema $schema, $tableName, $fieldName, $label, $fallbackList)
-    {
-        $table = $schema->getTable($tableName);
-        $fallbackTable = $schema->getTable('oro_entity_fallback_value');
-        $this->extendExtension->addManyToOneRelation(
-            $schema,
-            $table,
-            $fieldName,
-            $fallbackTable,
-            'id',
-            [
-                'entity' => [
-                    'label' => $label,
-                ],
-                'extend' => [
-                    'owner' => ExtendScope::OWNER_CUSTOM,
-                    'cascade' => ['all'],
-                ],
-                'form' => [
-                    'is_enabled' => false,
-                ],
-                'view' => [
-                    'is_displayable' => false,
-                ],
-                'datagrid' => [
-                    'is_visible' => DatagridScope::IS_VISIBLE_FALSE,
-                ],
-                'fallback' => [
-                    'fallbackList' => $fallbackList,
-                ],
-            ]
-        );
-    }
-
-    /**
      * @inheritDoc
      */
     public function getMigrationVersion()
     {
-        return 'v1_0';
+        return 'v1_1';
     }
 }
