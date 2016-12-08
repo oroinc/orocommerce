@@ -1,0 +1,20 @@
+// @theme: blank;
+
+.popover {
+
+    &.top {
+        @extend .popover.popover-top;
+    }
+
+    &.bottom {
+        @extend .popover.popover-bottom;
+    }
+
+    &.right {
+        @extend .popover.popover-right;
+    }
+
+    &.left {
+        @extend &.popover-left;
+    }
+}
