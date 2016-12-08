@@ -29,6 +29,15 @@ oro:
         images.label: Images
         anything.label: Any Text
         featured_products.label: Featured Products
+        slugs:
+            label:              'Slugs'
+            singular_label:     'Slug'
+        slug_prototypes:
+            label:              'Slug Prototypes'
+            singular_label:     'Slug Prototype'
+
+        content_variant:
+            product_page.label: Product Page
 
         status:
             enabled: Enabled
@@ -316,3 +325,7 @@ oro:
         value:
             full: '{0} none|{1} %count% bottle|]1,Inf] %count% bottles'
             short: '{0} none|{1} %count% bottle|]1,Inf] %count% bottles'
+
+    webcatalog:
+        contentvariant:
+            product_collection_page_rule.label: Product Collection Assignment Rule
