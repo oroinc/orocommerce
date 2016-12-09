@@ -179,9 +179,3 @@ services:
             - "@event_dispatcher"
             - "@oro_entity.doctrine_helper"
             - "@oro_entity.fallback.resolver.entity_fallback_resolver"
-
-    oro_inventory.inventory.increment_service:
-        class: Oro\Bundle\InventoryBundle\Inventory\IncrementService
-        arguments:
-            - '@oro_entity.doctrine_helper',
-            - '@event_dispatcher'
