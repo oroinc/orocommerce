@@ -6,11 +6,11 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 
 use Oro\Bundle\EntityBundle\Fallback\EntityFallbackResolver;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\InventoryBundle\Event\InventoryPreDecrementEvent;
 use Oro\Bundle\InventoryBundle\Event\InventoryPreIncrementEvent;
 use Oro\Bundle\InventoryBundle\Event\InventoryPostDecrementEvent;
 use Oro\Bundle\InventoryBundle\Event\InventoryPostIncrementEvent;
-use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\InventoryBundle\Exception\InvalidInventoryLevelQuantityException;
 use Oro\Bundle\InventoryBundle\Exception\InsufficientInventoryQuantityException;
 
