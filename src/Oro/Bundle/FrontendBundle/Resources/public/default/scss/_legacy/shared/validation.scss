@@ -22,8 +22,9 @@
   background: get-color('ui', 'error');
   color: get-color('ui', 'error-dark');
 
+  @include fa-icon('\f071');
+
   &:before {
-    content: "\e900";
 
     display: inline-block;
 
@@ -32,7 +33,6 @@
     margin-right: 6px;
 
     font-style: normal;
-    font-family: $base-font-icon;
   }
 }
 
