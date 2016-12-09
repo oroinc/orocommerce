@@ -367,6 +367,21 @@
       cursor: pointer;
     }
 
+    .filter-criteria-selector {
+      .caret {
+        position: absolute;
+        top: 50%;
+        right: 10px;
+
+        height: 0;
+        margin: -3px 0 0 -5px;
+
+        border-top: 6px solid get-color('additional', 'dark');
+        border-left: 5px solid transparent;
+        border-right: 5px solid transparent;
+      }
+    }
+
     .filter-criteria {
       min-width: 340px !important;
       margin-top: 0;
@@ -376,6 +391,11 @@
       &[style*=hidden] {
         right: 0;
         left: auto;
+      }
+
+      .btn-group,
+      .btn {
+        transition: none;
       }
 
       > div {
