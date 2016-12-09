@@ -37,7 +37,7 @@ layout:
                         route_name: oro_customer_frontend_account_user_profile
                         text: oro.customer.action.account_user_role.cancel_label
                         attr:
-                            'class': btn-primary
+                            'class': 'btn btn-primary '
                 account_profile_edit_form_actions_create:
                     blockType: button
                     options:
@@ -45,7 +45,7 @@ layout:
                         text: oro.customer.action.account_user_role.save_label
                         style: auto
                         attr:
-                            'class': role-submit
+                            'class': 'role-submit '
             tree:
                 page_content:
                     account_profile_edit_page:

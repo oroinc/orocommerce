@@ -25,14 +25,14 @@ layout:
                         text: oro.customer.frontend.address.buttons.save
                         style: auto
                         attr:
-                            'class': role-submit
+                            'class': 'role-submit '
                 __form_actions_cancel:
                     blockType: link
                     options:
                         path: '=data["backToUrl"]'
                         text: oro.customer.frontend.address.buttons.cancel
                         attr:
-                            'class': btn-primary
+                            'class': 'btn btn-primary '
                 __form_required_label:
                     blockType: block
             tree:

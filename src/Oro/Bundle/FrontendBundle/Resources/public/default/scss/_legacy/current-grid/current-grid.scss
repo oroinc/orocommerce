@@ -485,6 +485,7 @@
             height: auto;
             padding: 0 26px;
             vertical-align: middle;
+            border-radius: $btn-border-radius;
 
             background: get-color('additional', 'darker');
             color: get-color('additional', 'ultra');
@@ -510,7 +511,7 @@
             vertical-align: middle;
             height: auto;
             padding: 0 26px;
-            border-radius: 4px !important;
+            border-radius: $btn-border-radius !important;
 
             background: get-color('additional', 'darker');
             color: get-color('additional', 'ultra');
