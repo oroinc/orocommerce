@@ -7,13 +7,13 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
-use Oro\Bundle\InventoryBundle\EventListener\ProductManageInventoryFormViewListener;
+use Oro\Bundle\InventoryBundle\EventListener\ProductDecrementQuantityFormViewListener;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Component\Testing\Unit\FormViewListenerTestCase;
 
-class ProductManageInventoryFormViewListenerTest extends FormViewListenerTestCase
+class ProductDecrementQuantityFormViewListenerTest extends FormViewListenerTestCase
 {
     /**
      * @var RequestStack|\PHPUnit_Framework_MockObject_MockObject
@@ -26,9 +26,9 @@ class ProductManageInventoryFormViewListenerTest extends FormViewListenerTestCas
     protected $request;
 
     /**
-     * @var ProductManageInventoryFormViewListener
+     * @var ProductDecrementQuantityFormViewListener
      */
-    protected $productWarehouseFormViewListener;
+    protected $productDecrementQuantityFormViewListener;
 
     /** @var BeforeListRenderEvent|\PHPUnit_Framework_MockObject_MockObject * */
     protected $event;
@@ -41,50 +41,44 @@ class ProductManageInventoryFormViewListenerTest extends FormViewListenerTestCas
     protected function setUp()
     {
         parent::setUp();
-        $this->requestStack = $this->getMock(RequestStack::class);
-
+        $this->requestStack = new RequestStack();
         $this->request = $this->getMockBuilder(Request::class)
             ->disableOriginalConstructor()
             ->getMock();
-
-        $this->requestStack->expects($this->any())
-            ->method('getCurrentRequest')
-            ->willReturn($this->request);
-
+        $this->requestStack->push($this->request);
         $this->doctrine = $this->getMockBuilder('Doctrine\Common\Persistence\ManagerRegistry')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->event = $this->getBeforeListRenderEventMock();
-        $this->productWarehouseFormViewListener = new ProductManageInventoryFormViewListener(
+        $this->productDecrementQuantityFormViewListener = new ProductDecrementQuantityFormViewListener(
             $this->requestStack,
             $this->doctrine,
             $this->translator
         );
+        $this->event = $this->getBeforeListRenderEventMock();
     }
 
     public function testOnProductViewIgnoredIfNoProductId()
     {
         $this->doctrine->expects($this->never())
             ->method('getManagerForClass');
-
-        $this->productWarehouseFormViewListener->onProductView($this->event);
+        $this->productDecrementQuantityFormViewListener->onProductView($this->event);
     }
 
     public function testOnProductViewIgnoredIfNoProductFound()
     {
+        $this->em->expects($this->once())
+            ->method('getReference')
+            ->willReturn(null);
         $this->doctrine->expects($this->once())
             ->method('getManagerForClass')
             ->with(Product::class)
             ->willReturn($this->em);
-
         $this->request->expects($this->once())
             ->method('get')
             ->willReturn('1');
-
         $this->event->expects($this->never())
             ->method('getEnvironment');
-
-        $this->productWarehouseFormViewListener->onProductView($this->event);
+        $this->productDecrementQuantityFormViewListener->onProductView($this->event);
     }
 
     public function testOnProductViewRendersAndAddsSubBlock()
@@ -92,24 +86,33 @@ class ProductManageInventoryFormViewListenerTest extends FormViewListenerTestCas
         $this->request->expects($this->once())
             ->method('get')
             ->willReturn('1');
-
         $product = new Product();
-
         $this->em->expects($this->once())
             ->method('getReference')
             ->willReturn($product);
-
         $this->doctrine->expects($this->once())
             ->method('getManagerForClass')
             ->with(Product::class)
             ->willReturn($this->em);
-        $env = $this->getMockBuilder(\Twig_Environment::class)->disableOriginalConstructor()->getMock();
-        $this->event->expects($this->once())->method('getEnvironment')->willReturn($env);
+        $env = $this->getMockBuilder(\Twig_Environment::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->event->expects($this->once())
+            ->method('getEnvironment')
+            ->willReturn($env);
         $scrollData = $this->getMock(ScrollData::class);
-        $this->event->expects($this->once())->method('getScrollData')->willReturn($scrollData);
-        $scrollData->expects($this->once())->method('getData')->willReturn(
-            ['dataBlocks' => [1 => ['title' => 'oro.product.sections.inventory.trans']]]
-        );
-        $this->productWarehouseFormViewListener->onProductView($this->event);
+        $scrollData->expects($this->once())
+            ->method('addSubBlockData');
+        $this->event->expects($this->once())
+            ->method('getScrollData')
+            ->willReturn($scrollData);
+        $scrollData->expects($this->once())
+            ->method('getData')
+            ->wilLReturn(
+                [
+                    ScrollData::DATA_BLOCKS => [1 => [ScrollData::TITLE => 'oro.product.sections.inventory.trans']],
+                ]
+            );
+        $this->productDecrementQuantityFormViewListener->onProductView($this->event);
     }
 }
