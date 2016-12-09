@@ -4,7 +4,6 @@ namespace Oro\Bundle\ProductBundle\EventListener;
 
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
-use Oro\Bundle\FilterBundle\Filter\SkipEmptyPeriodsFilter;
 use Oro\Bundle\ProductBundle\Event\EmptyPeriodsConfigurationEvent;
 
 //TODO: Make listener more generic, column names should be resolved through/from filters
@@ -33,20 +32,32 @@ class EmptyPeriodsListener
             return;
         }
         $records = $event->getRecords();
-        $query = $event->getQuery();
+        $datagridFilters = $event->getDatagrid()->getParameters()->get('_filter');
+        $datagridSorters = $event->getDatagrid()->getParameters()->get('_sort_by');
 
-        //TODO: Resolve from $query
+        //TODO get default constant matching the $groupBy below
         $startDate = new \DateTime('-10 years');
         $endDate = new \DateTime('-10 days');
+
+        if (array_key_exists('createdAt', $datagridFilters)) {
+            $timeFilter = $datagridFilters['createdAt'];
+            $startDate = new \DateTime($timeFilter['value']['start']);
+            $endDate = new \DateTime($timeFilter['value']['end']);
+        }
+
+        //TODO is pagination possible ?
         $maxResults = 25;
         $firstResult = 1;
-        $groupBy = 'year';
+
+        //TODO get columns from event parameter list
+        $groupBy = $datagridFilters['grouping']['value'];
+        $order = array_key_exists('createdAt', $datagridFilters) ? $datagridSorters['createdAt'] : 'DESC';
         $format = 'Y';
         $groupColumn = 'dateGrouping';
-        $order = 'DESC';
+
         foreach ($this->getRequiredDates($startDate, $endDate, $groupBy, $firstResult, $maxResults) as $date) {
             /** \DateTime $date */
-            if (! $this->isDayPresent($date, $records, $groupColumn, $format)) {
+            if (!$this->isDayPresent($date, $records, $groupColumn, $format)) {
                 $records[] = new ResultRecord(['dateGrouping' => $date->format($format)]);
             }
         }
