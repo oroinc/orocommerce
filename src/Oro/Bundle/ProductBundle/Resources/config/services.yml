@@ -496,3 +496,10 @@ services:
            - "@request_stack"
         tags:
             - { name: kernel.event_listener, event: kernel.exception, method: onAccessException }
+
+    oro_product.best_selling_products.empty_periods_listener:
+        class: 'Oro\Bundle\ProductBundle\EventListener\BestSellingProductsEmptyPeriodsListener'
+        arguments:
+           - "@oro_filter.skip_empty_periods_filter"
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after, method: onResultAfter }
