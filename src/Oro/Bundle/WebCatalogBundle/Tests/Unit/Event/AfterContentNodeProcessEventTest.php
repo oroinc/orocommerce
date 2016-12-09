@@ -2,8 +2,9 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Event;
 
-use Oro\Bundle\WebCatalogBundle\Event\AfterContentNodeProcessEvent;
 use Symfony\Component\Form\Test\FormInterface;
+
+use Oro\Bundle\WebCatalogBundle\Event\AfterContentNodeProcessEvent;
 
 class AfterContentNodeProcessEventTest extends \PHPUnit_Framework_TestCase
 {

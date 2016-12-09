@@ -2,19 +2,21 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Form\Handler;
 
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+
+use Doctrine\Common\Persistence\ObjectManager;
+
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebCatalogBundle\Event\AfterContentNodeProcessEvent;
 use Oro\Bundle\WebCatalogBundle\Event\BeforeContentNodeProcessEvent;
 use Oro\Bundle\WebCatalogBundle\Event\Events;
-use Oro\Component\Testing\Unit\EntityTrait;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Oro\Bundle\WebCatalogBundle\Generator\SlugGenerator;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Form\Handler\ContentNodeHandler;
-use Doctrine\Common\Persistence\ObjectManager;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class ContentNodeHandlerTest extends \PHPUnit_Framework_TestCase
 {

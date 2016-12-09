@@ -2,17 +2,19 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Form\Handler;
 
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\Request;
+
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Persistence\ObjectManager;
+
 use Oro\Bundle\WebCatalogBundle\Event\AfterContentNodeProcessEvent;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Event\BeforeContentNodeProcessEvent;
 use Oro\Bundle\WebCatalogBundle\Event\Events;
 use Oro\Bundle\WebCatalogBundle\Generator\SlugGenerator;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\Request;
 
 class ContentNodeHandler
 {
