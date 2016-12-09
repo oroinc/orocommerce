@@ -5,7 +5,7 @@ namespace Oro\Bundle\InventoryBundle\Event;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Symfony\Component\EventDispatcher\Event;
 
-class DecrementEvent extends Event
+class InventoryQuantityChangeEvent extends Event
 {
     protected $inventoryLevel;
 

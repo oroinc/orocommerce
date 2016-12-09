@@ -3,9 +3,9 @@
 namespace Oro\Bundle\InventoryBundle\Event;
 
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
-use Oro\Bundle\InventoryBundle\Event\DecrementEvent;
+use Oro\Bundle\InventoryBundle\Event\InventoryQuantityChangeEvent;
 
-class InventoryPreDecrementEvent extends DecrementEvent
+class InventoryPreDecrementEvent extends InventoryQuantityChangeEvent
 {
     const NAME = 'oro_inventory.pre.decrement';
 
