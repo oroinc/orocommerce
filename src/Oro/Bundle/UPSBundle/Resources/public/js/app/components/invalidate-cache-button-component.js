@@ -77,6 +77,7 @@ define(function(require) {
             }
             $(this.removeInvalidationButton).off('click');
             $(this.options.invalidateType).off('change');
+            $(this.invalidateAt).off('change');
 
             UPSInvalidateCacheComponent.__super__.dispose.call(this);
         }
