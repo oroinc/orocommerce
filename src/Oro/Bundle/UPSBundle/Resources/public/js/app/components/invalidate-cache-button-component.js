@@ -13,37 +13,58 @@ define(function(require) {
          * @property {Object}
          */
         options: {
-            submitButton: '.invalidate-cache-form #invalidate_cache_submit_button',
-            invalidateNow: '.invalidate-cache-form>[name="oro_action_operation[invalidateNow]"]'
+            form: '.invalidate-cache-form',
+            removeInvalidationButton: '#remove_sheduled_cache_invalidation_button',
+            invalidateNow: '[name="oro_action_operation[invalidateNow]"]',
+            invalidateAt: '[name="oro_action_operation[invalidateCacheAt]"]',
+            invalidateType: '[name="oro_action_operation[invalidateType]"]'
         },
-
-        /**
-         * @property {jQuery.Element}
-         */
-        submitButton: null,
-
 
         /**
          * @inheritDoc
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
+            this.$elem = options._sourceElement;
 
-            this.submitButton = $(this.options.submitButton);
-            this.submitButton.on('click', _.bind(this.onSubmitClick, this));
+            this.invalidateType = $(this.$elem).find(this.options.invalidateType);
+            this.invalidateNow = $(this.$elem).find(this.options.invalidateNow);
+            this.invalidateAt = $(this.$elem).find(this.options.invalidateAt);
+            this.removeInvalidationButton = $(this.options.removeInvalidationButton);
+            this.form = $(this.$elem).find(this.options.form);
+
+
+            $(this.removeInvalidationButton).on('click', _.bind(this.onRemoveInvalidationClick, this));
+            $(this.invalidateType).on('change', _.bind(this.onSelectChange, this));
+            $(this.invalidateType).trigger('change');
         },
 
-        onSubmitClick: function() {
-            $(this.options.invalidateNow).val(1);
-            return true;
+        onRemoveInvalidationClick: function() {
+            $(this.invalidateAt).val('');
+            $(this.invalidateNow).val('');
+            $(this.form).submit();
+        },
+
+        onSelectChange: function() {
+            var value = $(this.invalidateType).val();
+            if (value === 'immediate') {
+                $(this.invalidateNow).val(1);
+                $(this.$elem).find('tr>td:gt(1)').hide();
+                $(this.removeInvalidationButton).hide();
+
+            } else if (value === 'sheduled'){
+                $(this.invalidateNow).val('');
+                $(this.$elem).find('tr>td:gt(1)').show();
+                $(this.removeInvalidationButton).show();
+            }
         },
 
         dispose: function() {
             if (this.disposed) {
                 return;
             }
-
-            this.submitButton.off('change');
+            $(this.removeInvalidationButton).off('click');
+            $(this.options.invalidateType).off('change');
 
             UPSInvalidateCacheComponent.__super__.dispose.call(this);
         }
