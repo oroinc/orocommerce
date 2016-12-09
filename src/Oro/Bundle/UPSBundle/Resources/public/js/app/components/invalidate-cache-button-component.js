@@ -37,6 +37,18 @@ define(function(require) {
             $(this.removeInvalidationButton).on('click', _.bind(this.onRemoveInvalidationClick, this));
             $(this.invalidateType).on('change', _.bind(this.onSelectChange, this));
             $(this.invalidateType).trigger('change');
+
+            $(this.invalidateAt).on('change', _.bind(this.toggleRemoveInvalidationVisibility, this));
+            $(this.invalidateAt).trigger('change');
+        },
+
+        toggleRemoveInvalidationVisibility: function() {
+            var value = $(this.invalidateAt).val();
+            if (value === '') {
+                $(this.removeInvalidationButton).hide();
+            } else {
+                $(this.removeInvalidationButton).show();
+            }
         },
 
         onRemoveInvalidationClick: function() {

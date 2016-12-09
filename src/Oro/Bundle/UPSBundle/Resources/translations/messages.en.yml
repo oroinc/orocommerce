@@ -42,7 +42,7 @@ oro:
             invalidate_cache.action.remove: Remove Sheduled Invalidation
             invalidate_cache.action.submit: Submit
             invalidate_cache.flash.invalidate_success: Cache was successfully invalidated
-            invalidate_cache.flash.save_success: Cache setting was successfully saved
+            invalidate_cache.flash.save_success: Cache settings have been saved
             invalidate_cache.at.label: at
             invalidate_cache.type:
                 immediate: Now

@@ -2,7 +2,7 @@
 {% block form %}
     {% set buttonOptions = operation.definition.buttonOptions %}
     {% set pageComponentOptions = {} %}
-     <div class="widget-content" data-page-component-module="oroups/js/app/components/invalidate-cache-button-component">
+     <div class="widget-content invalidate-cache-content" data-page-component-module="oroups/js/app/components/invalidate-cache-button-component">
         <form id="{{ form.vars.id }}" name="{{ form.vars.name }}" action="{{ app.request.uri }}" {{ form_enctype(form) }}
               method="{{ form.vars.method }}" data-collect="true" class="form-dialog invalidate-cache-form"
 
@@ -21,7 +21,7 @@
             <div class="hidden">
                 {{ form_rest(form) }}
             </div>
-            <div class="widget-actions">
+            <div class="widget-actions invalidate-cache-buttons">
                 <button type="reset" class="btn">{{ 'oro.ups.form.invalidate_cache.action.cancel'|trans }}</button>
                 <button type="button" class="btn btn-danger" id="remove_sheduled_cache_invalidation_button">{{ 'oro.ups.form.invalidate_cache.action.remove'|trans }}</button>
                 <button type="submit" class="btn btn-success">{{ 'oro.ups.form.invalidate_cache.action.submit'|trans }}</button>
