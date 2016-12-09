@@ -105,7 +105,8 @@ class ContentNodeController extends Controller
             $form,
             $request,
             $this->get('oro_web_catalog.generator.slug_generator'),
-            $this->getDoctrine()->getManagerForClass(ContentNode::class)
+            $this->getDoctrine()->getManagerForClass(ContentNode::class),
+            $this->get('event_dispatcher')
         );
 
         $saveRedirectHandler = function (ContentNode $node) {

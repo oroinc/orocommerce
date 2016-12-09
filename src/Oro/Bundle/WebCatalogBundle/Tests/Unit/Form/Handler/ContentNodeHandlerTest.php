@@ -4,14 +4,16 @@ namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Form\Handler;
 
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
+use Oro\Bundle\WebCatalogBundle\Event\AfterContentNodeProcessEvent;
+use Oro\Bundle\WebCatalogBundle\Event\BeforeContentNodeProcessEvent;
+use Oro\Bundle\WebCatalogBundle\Event\Events;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
-
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Oro\Bundle\WebCatalogBundle\Generator\SlugGenerator;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Form\Handler\ContentNodeHandler;
-
 use Doctrine\Common\Persistence\ObjectManager;
 
 class ContentNodeHandlerTest extends \PHPUnit_Framework_TestCase
@@ -39,6 +41,11 @@ class ContentNodeHandlerTest extends \PHPUnit_Framework_TestCase
     protected $manager;
 
     /**
+     * @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $eventDispatcher;
+
+    /**
      * @var ContentNodeHandler
      */
     protected $contentNodeHandler;
@@ -53,12 +60,14 @@ class ContentNodeHandlerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->manager = $this->getMock(ObjectManager::class);
+        $this->eventDispatcher = $this->getMock(EventDispatcherInterface::class);
 
         $this->contentNodeHandler = new ContentNodeHandler(
             $this->form,
             $this->request,
             $this->slugGenerator,
-            $this->manager
+            $this->manager,
+            $this->eventDispatcher
         );
     }
 
@@ -135,6 +144,9 @@ class ContentNodeHandlerTest extends \PHPUnit_Framework_TestCase
         $this->manager->expects($this->once())
             ->method('flush');
 
+        $this->assertBeforeProcessEventsTriggered($this->form, $contentNode);
+        $this->assertAfterProcessEventsTriggered($this->form, $contentNode);
+
         $this->assertTrue($this->contentNodeHandler->process($contentNode));
     }
 
@@ -182,9 +194,104 @@ class ContentNodeHandlerTest extends \PHPUnit_Framework_TestCase
         $this->manager->expects($this->once())
             ->method('flush');
 
+        $this->assertBeforeProcessEventsTriggered($this->form, $contentNode);
+        $this->assertAfterProcessEventsTriggered($this->form, $contentNode);
         $this->assertTrue($this->contentNodeHandler->process($contentNode));
         $actualDefaultVariantScopes = $contentNode->getDefaultVariant()->getScopes();
         $this->assertCount(1, $actualDefaultVariantScopes);
         $this->assertContains($scope2, $actualDefaultVariantScopes);
+    }
+
+    public function testEventInterruptsBeforeDataSet()
+    {
+        $scope1 = $this->getEntity(Scope::class, ['id' => 1]);
+        $scope2 = $this->getEntity(Scope::class, ['id' => 2]);
+
+        $contentNode = new ContentNode();
+        $contentNode->addScope($scope1)
+            ->addScope($scope2);
+
+        $this->request->expects($this->never())
+            ->method('isMethod')
+            ->will($this->returnValue('POST'));
+
+        $this->form->expects($this->never())
+            ->method('submit')
+            ->with($this->request);
+
+        $this->eventDispatcher->expects($this->once())
+            ->method('dispatch')
+            ->with(Events::BEFORE_FORM_DATA_SET)
+            ->willReturnCallback(
+                function ($name, BeforeContentNodeProcessEvent $event) {
+                    $event->interruptFormProcess();
+                }
+            );
+
+        $result = $this->contentNodeHandler->process($contentNode);
+        $this->assertFalse($result);
+    }
+
+    public function testEventInterruptsBeforeSubmit()
+    {
+        $scope1 = $this->getEntity(Scope::class, ['id' => 1]);
+        $scope2 = $this->getEntity(Scope::class, ['id' => 2]);
+
+        $contentNode = new ContentNode();
+        $contentNode->addScope($scope1)
+            ->addScope($scope2);
+
+        $this->form->expects($this->once())
+            ->method('setData');
+
+        $this->request->expects($this->once())
+            ->method('isMethod')
+            ->will($this->returnValue('POST'));
+
+        $this->form->expects($this->never())
+            ->method('submit')
+            ->with($this->request);
+
+        $this->eventDispatcher->expects($this->at(1))
+            ->method('dispatch')
+            ->with(Events::BEFORE_FORM_SUBMIT)
+            ->willReturnCallback(
+                function ($name, BeforeContentNodeProcessEvent $event) {
+                    $event->interruptFormProcess();
+                }
+            );
+
+        $result = $this->contentNodeHandler->process($contentNode);
+        $this->assertFalse($result);
+    }
+
+    /**
+     * @param FormInterface $form
+     * @param object $entity
+     */
+    protected function assertBeforeProcessEventsTriggered(FormInterface $form, $entity)
+    {
+        $this->eventDispatcher->expects($this->at(0))
+            ->method('dispatch')
+            ->with(Events::BEFORE_FORM_DATA_SET, new BeforeContentNodeProcessEvent($form, $entity));
+
+        $this->eventDispatcher->expects($this->at(1))
+            ->method('dispatch')
+            ->with(Events::BEFORE_FORM_SUBMIT, new BeforeContentNodeProcessEvent($form, $entity));
+    }
+
+    /**
+     * @param FormInterface $form
+     * @param object $entity
+     */
+    protected function assertAfterProcessEventsTriggered(FormInterface $form, $entity)
+    {
+        $this->eventDispatcher->expects($this->at(2))
+            ->method('dispatch')
+            ->with(Events::BEFORE_FLUSH, new AfterContentNodeProcessEvent($form, $entity));
+
+        $this->eventDispatcher->expects($this->at(3))
+            ->method('dispatch')
+            ->with(Events::AFTER_FLUSH, new AfterContentNodeProcessEvent($form, $entity));
     }
 }
