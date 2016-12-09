@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\SEOBundle\Migrations\Schema\v1_2;
+namespace Oro\Bundle\SEOBundle\Migrations\Schema\v1_3;
 
 use Doctrine\DBAL\Connection;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendDbIdentifierNameGenerator;

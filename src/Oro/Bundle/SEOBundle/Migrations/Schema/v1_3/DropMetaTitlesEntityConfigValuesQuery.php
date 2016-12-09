@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\SEOBundle\Migrations\Schema\v1_2;
+namespace Oro\Bundle\SEOBundle\Migrations\Schema\v1_3;
 
 use Doctrine\DBAL\Types\Type;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
