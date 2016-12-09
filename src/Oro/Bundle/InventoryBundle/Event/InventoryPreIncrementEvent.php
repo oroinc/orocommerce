@@ -4,7 +4,7 @@ namespace Oro\Bundle\InventoryBundle\Event;
 
 use Oro\Bundle\InventoryBundle\Event\InventoryQuantityChangeEvent;
 
-class InventoryPostDecrementEvent extends InventoryQuantityChangeEvent
+class InventoryPreIncrementEvent extends InventoryQuantityChangeEvent
 {
-    const NAME = 'oro_inventory.post.decrement';
+    const NAME = 'oro.inventory.pre.increment';
 }

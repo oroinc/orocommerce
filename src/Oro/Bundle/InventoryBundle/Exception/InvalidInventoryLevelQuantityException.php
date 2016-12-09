@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\InventoryBundle\Exception;
 
-class InsufficientInventoryQuantityException extends \Exception
+class InvalidInventoryLevelQuantityException extends \Exception
 {
     /**
      * {@inheritdoc}
@@ -10,7 +10,7 @@ class InsufficientInventoryQuantityException extends \Exception
     public function __construct($message = "", $code = 0, \Exception $previous = null)
     {
         if (empty($message)) {
-            $message = 'Insufficient quantity remaining in inventory!';
+            $message = 'Invalid quantity value provided!';
         }
         parent::__construct($message, $code, $previous);
     }

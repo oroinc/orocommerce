@@ -56,7 +56,7 @@ class InventoryQuantityManager
         $inventoryLevel->setQuantity($newQuantity);
 
         //catch this event to check if we need to change the inventory status
-        $afterDecrementEvent = new InventoryPostDecrementEvent($inventoryLevel);
+        $afterDecrementEvent = new InventoryPostDecrementEvent($inventoryLevel, $quantityToDecrement);
         $this->eventDispatcher->dispatch(InventoryPostDecrementEvent::NAME, $afterDecrementEvent);
 
         $em = $this->doctrineHelper->getEntityManager($inventoryLevel);
