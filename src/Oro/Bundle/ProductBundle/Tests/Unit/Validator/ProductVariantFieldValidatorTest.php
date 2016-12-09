@@ -6,7 +6,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 use Doctrine\Common\Util\ClassUtils;
 
-use Oro\Bundle\ProductBundle\Provider\CustomFieldProvider;
+use Oro\Bundle\ProductBundle\Provider\CustomVariantFieldsProvider;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductVariantField;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductVariantFieldValidator;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
@@ -16,8 +16,8 @@ class ProductVariantFieldValidatorTest extends \PHPUnit_Framework_TestCase
     /** @var ProductVariantFieldValidator */
     protected $service;
 
-    /** @var  CustomFieldProvider|\PHPUnit_Framework_MockObject_MockObject */
-    protected $customFieldProvider;
+    /** @var CustomVariantFieldsProvider|\PHPUnit_Framework_MockObject_MockObject */
+    protected $customVariantFieldsProvider;
 
     /** @var ExecutionContextInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $context;
@@ -63,11 +63,11 @@ class ProductVariantFieldValidatorTest extends \PHPUnit_Framework_TestCase
     {
         $this->context = $this->getMock('Symfony\Component\Validator\Context\ExecutionContextInterface');
 
-        $this->customFieldProvider = $this->getMockBuilder('Oro\Bundle\ProductBundle\Provider\CustomFieldProvider')
+        $this->customVariantFieldsProvider = $this->getMockBuilder(CustomVariantFieldsProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->service = new ProductVariantFieldValidator($this->customFieldProvider);
+        $this->service = new ProductVariantFieldValidator($this->customVariantFieldsProvider);
         $this->service->initialize($this->context);
     }
 
@@ -78,7 +78,7 @@ class ProductVariantFieldValidatorTest extends \PHPUnit_Framework_TestCase
     {
         unset(
             $this->context,
-            $this->customFieldProvider,
+            $this->customVariantFieldsProvider,
             $this->service
         );
     }
@@ -88,7 +88,7 @@ class ProductVariantFieldValidatorTest extends \PHPUnit_Framework_TestCase
         $product = new Product();
         $productClass = ClassUtils::getClass($product);
 
-        $this->customFieldProvider->expects($this->once())
+        $this->customVariantFieldsProvider->expects($this->once())
             ->method('getEntityCustomFields')
             ->with($productClass)
             ->willReturn([]);
@@ -103,7 +103,7 @@ class ProductVariantFieldValidatorTest extends \PHPUnit_Framework_TestCase
         $product = $this->prepareProductWithVariantFields($this->variantFields);
         $productClass = ClassUtils::getClass($product);
 
-        $this->customFieldProvider->expects($this->once())
+        $this->customVariantFieldsProvider->expects($this->once())
             ->method('getEntityCustomFields')
             ->with($productClass)
             ->willReturn([]);
@@ -118,7 +118,7 @@ class ProductVariantFieldValidatorTest extends \PHPUnit_Framework_TestCase
         $product = $this->prepareProductWithVariantFields($this->variantFields);
         $productClass = ClassUtils::getClass($product);
 
-        $this->customFieldProvider->expects($this->once())
+        $this->customVariantFieldsProvider->expects($this->once())
             ->method('getEntityCustomFields')
             ->with($productClass)
             ->willReturn($this->correctCustomVariantFields);
@@ -134,7 +134,7 @@ class ProductVariantFieldValidatorTest extends \PHPUnit_Framework_TestCase
 
         $productClass = ClassUtils::getClass($product);
 
-        $this->customFieldProvider->expects($this->once())
+        $this->customVariantFieldsProvider->expects($this->once())
             ->method('getEntityCustomFields')
             ->with($productClass)
             ->willReturn($this->incorrectCustomVariantFields);

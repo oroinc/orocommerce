@@ -10,7 +10,7 @@ use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Component\PropertyAccess\PropertyAccessor;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Provider\CustomFieldProvider;
+use Oro\Bundle\ProductBundle\Provider\CustomVariantFieldsProvider;
 
 class ProductVariantCustomFieldsDatagridListener
 {
@@ -20,9 +20,9 @@ class ProductVariantCustomFieldsDatagridListener
     private $doctrineHelper;
 
     /**
-     * @var CustomFieldProvider
+     * @var CustomVariantFieldsProvider
      */
-    private $customFieldProvider;
+    private $customVariantFieldsProvider;
 
     /**
      * @var string
@@ -31,16 +31,16 @@ class ProductVariantCustomFieldsDatagridListener
 
     /**
      * @param DoctrineHelper $doctrineHelper
-     * @param CustomFieldProvider $customFieldProvider
+     * @param CustomVariantFieldsProvider $customVariantFieldsProvider
      * @param string $productClass
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
-        CustomFieldProvider $customFieldProvider,
+        CustomVariantFieldsProvider $customVariantFieldsProvider,
         $productClass
     ) {
         $this->doctrineHelper = $doctrineHelper;
-        $this->customFieldProvider = $customFieldProvider;
+        $this->customVariantFieldsProvider = $customVariantFieldsProvider;
         $this->productClass = $productClass;
     }
 
@@ -106,11 +106,11 @@ class ProductVariantCustomFieldsDatagridListener
     private function getActualVariantFields(Product $product)
     {
         $customFields = [];
-        $allCustomFields = $this->customFieldProvider->getEntityCustomFields($this->productClass);
+        $entityCustomVariantFields = $this->customVariantFieldsProvider->getEntityCustomFields($this->productClass);
 
         foreach ($product->getVariantFields() as $fieldName) {
-            if (array_key_exists($fieldName, $allCustomFields)) {
-                $fieldData = $allCustomFields[$fieldName];
+            if (array_key_exists($fieldName, $entityCustomVariantFields)) {
+                $fieldData = $entityCustomVariantFields[$fieldName];
                 $customFields[] = [
                     'name' => $fieldData['name'],
                     'label' => $fieldData['label']

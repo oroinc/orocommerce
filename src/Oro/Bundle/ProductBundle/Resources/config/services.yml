@@ -194,17 +194,12 @@ services:
         tags:
             - { name: oro_menu.builder, alias: frontend_menu }
 
-    oro_product.provider.custom_field_provider:
-        class: 'Oro\Bundle\ProductBundle\Provider\CustomFieldProvider'
+    oro_product.provider.custom_variant_fields_provider:
+        class: 'Oro\Bundle\ProductBundle\Provider\CustomVariantFieldsProvider'
         public: false
         arguments:
             - "@oro_entity_config.provider.extend"
             - "@oro_entity_config.provider.entity"
-
-    oro_product.provider.custom_variant_field_provider:
-        class: 'Oro\Bundle\ProductBundle\Provider\CustomVariantFieldProvider'
-        parent: oro_product.provider.custom_field_provider
-        public: false
 
     oro_product.provider.product_status_provider:
         class: 'Oro\Bundle\ProductBundle\Provider\ProductStatusProvider'
@@ -244,7 +239,7 @@ services:
         class: 'Oro\Bundle\ProductBundle\EventListener\ProductVariantCustomFieldsDatagridListener'
         arguments:
             - "@oro_entity.doctrine_helper"
-            - "@oro_product.provider.custom_field_provider"
+            - "@oro_product.provider.custom_variant_fields_provider"
             - '%oro_product.entity.product.class%'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.oro_product-product_variants-product_view, method: onBuildBefore }
@@ -262,7 +257,7 @@ services:
     oro_product.validator.product_variant_field:
         class: 'Oro\Bundle\ProductBundle\Validator\Constraints\ProductVariantFieldValidator'
         arguments:
-            - "@oro_product.provider.custom_field_provider"
+            - "@oro_product.provider.custom_variant_fields_provider"
         tags:
             - { name: validator.constraint_validator, alias: oro_product_variant_field }
 
