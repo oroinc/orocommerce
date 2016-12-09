@@ -8,11 +8,12 @@ use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendDbIdentifierNameGenerator;
 use Oro\Bundle\MigrationBundle\Migration\Extension\NameGeneratorAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Oro\Bundle\NoteBundle\Migration\UpdateAssociationKindQuery;
+use Oro\Bundle\NoteBundle\Migration\UpdateNoteAssociationKindQuery;
 use Oro\Bundle\MigrationBundle\Tools\DbIdentifierNameGenerator;
 
 abstract class UpdateNoteAssociationKindMigration implements
@@ -32,7 +33,7 @@ abstract class UpdateNoteAssociationKindMigration implements
     protected $extendExtension;
 
     /**
-     * @var DbIdentifierNameGenerator
+     * @var ExtendDbIdentifierNameGenerator
      */
     protected $nameGenerator;
 
@@ -41,14 +42,14 @@ abstract class UpdateNoteAssociationKindMigration implements
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        $updateAssociationKindQuery = new UpdateAssociationKindQuery(
+        $updateNoteAssociationKindQuery = new UpdateNoteAssociationKindQuery(
             $schema,
             $this->activityExtension,
             $this->extendExtension,
             $this->nameGenerator
         );
-        $updateAssociationKindQuery->registerOldClassNames($this->getRenamedClasses($schema));
-        $queries->addPostQuery($updateAssociationKindQuery);
+        $updateNoteAssociationKindQuery->registerOldClassNames($this->getRenamedClasses($schema));
+        $queries->addPostQuery($updateNoteAssociationKindQuery);
     }
 
     /**
