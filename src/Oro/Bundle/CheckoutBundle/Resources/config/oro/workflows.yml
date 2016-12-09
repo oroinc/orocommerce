@@ -219,10 +219,6 @@ workflows:
                         - '@generate_checkout_state_snapshot':
                             entity: $checkout
                             attribute: $.result.initCheckoutState
-                        - '@call_service_method':
-                            service: oro_checkout.action.default_shipping_method_setter
-                            method: setDefaultShippingMethod
-                            method_parameters: [$checkout]
                     attribute_fields:
                         shipping_method:
                             options:
@@ -590,6 +586,10 @@ workflows:
 
             continue_to_payment_definition:
                 preactions:
+                    - '@call_service_method':
+                        service: oro_checkout.action.default_shipping_method_setter
+                        method: setDefaultShippingMethod
+                        method_parameters: [$checkout]
                     - '@generate_checkout_state_snapshot':
                         entity: $checkout
                         attribute: $.result.currentCheckoutState
