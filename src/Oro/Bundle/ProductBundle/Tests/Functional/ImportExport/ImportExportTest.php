@@ -415,6 +415,63 @@ class ImportExportTest extends WebTestCase
         $this->getContainer()->get('security.token_storage')->setToken(null);
     }
 
+    public function testSkippedTypeForExistingProduct()
+    {
+        $token = new OrganizationToken(
+            $this->getContainer()->get('doctrine')->getRepository('OroOrganizationBundle:Organization')->findOneBy([])
+        );
+        $token->setUser(
+            $this->getContainer()->get('doctrine')->getRepository('OroUserBundle:User')->findOneBy([])
+        );
+        $this->getContainer()->get('security.token_storage')->setToken($token);
+
+        $this->cleanUpReader();
+
+        $dataPath = __DIR__ . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR;
+
+        $productClass = $this->getContainer()->getParameter('oro_product.entity.product.class');
+        $configuration = [
+            'import' => [
+                'processorAlias' => 'oro_product_product.add_or_replace',
+                'entityName' => $productClass,
+                'filePath' => $dataPath . 'import.csv',
+            ],
+        ];
+
+        $this->getContainer()->get('oro_importexport.job_executor')->executeJob(
+            ProcessorRegistry::TYPE_IMPORT,
+            JobExecutor::JOB_IMPORT_FROM_CSV,
+            $configuration
+        );
+
+        $this->cleanUpReader();
+
+        $configuration = [
+            'import' => [
+                'processorAlias' => 'oro_product_product.add_or_replace',
+                'entityName' => $productClass,
+                'filePath' => $dataPath . 'import_with_type.csv',
+            ],
+        ];
+
+        $this->getContainer()->get('oro_importexport.job_executor')->executeJob(
+            ProcessorRegistry::TYPE_IMPORT,
+            JobExecutor::JOB_IMPORT_FROM_CSV,
+            $configuration
+        );
+
+        $em = $this->getContainer()->get('doctrine')->getManagerForClass($productClass);
+
+        /** @var Product $product */
+        $product = $em->getRepository($productClass)->findOneBy(['sku' => 'SKU099']);
+
+        $this->assertNotEmpty($product);
+        $this->assertNotEquals(Product::TYPE_CONFIGURABLE, $product->getType());
+        $this->assertEquals(Product::STATUS_DISABLED, $product->getStatus());
+
+        $this->getContainer()->get('security.token_storage')->setToken(null);
+    }
+
     /**
      * @dataProvider strategyDataProvider
      * @param string $strategy

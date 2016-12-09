@@ -26,9 +26,22 @@
 {% block content_data %}
     {% set id = 'product-create-step-one' %}
 
+    {% set generalData = [
+        form_row(form.type)
+    ] %}
+
     {% set data = {
         'formErrors': form_errors(form),
-        'dataBlocks': []
+        'dataBlocks': [
+            {
+                'title': 'oro.product.sections.general'|trans,
+                'class': 'active',
+                'subblocks': [{
+                    'title': '',
+                    'data': generalData
+                }]
+            }
+        ]
     }%}
 
     {{ parent() }}
