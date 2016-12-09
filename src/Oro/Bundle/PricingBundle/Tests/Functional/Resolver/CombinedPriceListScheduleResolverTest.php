@@ -4,24 +4,35 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\Resolver;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
-
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\PricingBundle\DependencyInjection\Configuration;
 use Oro\Bundle\PricingBundle\Entity\BaseCombinedPriceListRelation;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule;
+use Oro\Bundle\PricingBundle\Entity\MinimalProductPrice;
+use Oro\Bundle\PricingBundle\Entity\Repository\MinimalProductPriceRepository;
 use Oro\Bundle\PricingBundle\Resolver\CombinedPriceListScheduleResolver;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
+use Oro\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener\MessageQueueTrait;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncIndexer;
 
 /**
  * @dbIsolation
  */
 class CombinedPriceListScheduleResolverTest extends WebTestCase
 {
+    use MessageQueueTrait;
+
     /**
      * @var CombinedPriceListScheduleResolver
      */
     protected $resolver;
+
+    /**
+     * @var MinimalProductPriceRepository
+     */
+    protected $priceRepository;
 
     /**
      * @var EntityManagerInterface
@@ -55,10 +66,15 @@ class CombinedPriceListScheduleResolverTest extends WebTestCase
             [
                 'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists',
                 'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceListsActivationRules',
+                LoadCombinedProductPrices::class
             ]
         );
         $this->resolver = $this->getContainer()->get('oro_pricing.resolver.combined_product_schedule_resolver');
         $this->configManager = $this->getContainer()->get('oro_config.global');
+        $this->priceRepository = $this->getContainer()->get('doctrine')
+            ->getManagerForClass(MinimalProductPrice::class)
+            ->getRepository(MinimalProductPrice::class);
+
         $this->saveDefaultConfigValue();
     }
 
@@ -77,13 +93,25 @@ class CombinedPriceListScheduleResolverTest extends WebTestCase
     public function testCPLSwitching(array $cplRelationsExpected, array $cplConfig, \DateTime $now)
     {
         $this->setConfigCPL($cplConfig);
-        $this->resolver->updateRelations($now);
         $fullCPLName = $cplRelationsExpected['full'];
         $currentCPLName = $cplRelationsExpected['actual'];
         /** @var CombinedPriceList $fullCPL */
         $fullCPL = $this->getReference($fullCPLName);
         /** @var CombinedPriceList $currentCPL */
         $currentCPL = $this->getReference($currentCPLName);
+
+        $collector = self::getMessageCollector();
+        $collector->clear();
+        $this->resolver->updateRelations($now);
+        //if price list is empty there is no need to send messages
+        $products = $this->priceRepository->getProductIdsByPriceLists([$currentCPL]);
+        $messages = $collector->getTopicSentMessages(AsyncIndexer::TOPIC_REINDEX);
+        if ($products) {
+            $this->assertNotEmpty($messages);
+        } else {
+            $this->assertEmpty($messages);
+        }
+
         $relations = $this->getInvalidRelations(
             'OroPricingBundle:CombinedPriceListToAccount',
             $fullCPL,

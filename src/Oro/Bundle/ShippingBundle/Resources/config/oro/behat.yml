@@ -37,3 +37,7 @@ elements:
     options:
       mapping:
         State: 'oro_workflow_transition[shipping_address][region]'
+
+  Notification Alert:
+    selector: '.notification--alert .notification__text'
+    class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element

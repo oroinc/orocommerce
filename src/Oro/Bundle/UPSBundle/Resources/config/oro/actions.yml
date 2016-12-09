@@ -7,7 +7,7 @@ operations:
             - oro_integration_update
         acl_resource: [UPDATE, entity:Oro\Bundle\IntegrationBundle\Entity\Channel]
         button_options:
-            icon: icon-time
+            icon: fa-clock-o
             page_component_module:
                 'oroups/js/app/components/invalidate-cache-button-component'
         frontend_options:

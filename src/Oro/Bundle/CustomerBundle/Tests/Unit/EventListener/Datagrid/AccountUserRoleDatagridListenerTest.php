@@ -2,160 +2,84 @@
 
 namespace Oro\Bundle\CustomerBundle\Tests\Unit\EventListener\Datagrid;
 
-use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
+use Doctrine\Common\Collections\Criteria;
+use Doctrine\ORM\QueryBuilder;
+
+use Oro\Bundle\CustomerBundle\Entity\AccountUserRole;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
-use Oro\Bundle\DataGridBundle\Event\BuildBefore;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\DataGridBundle\Event\BuildAfter;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\CustomerBundle\EventListener\Datagrid\AccountUserRoleDatagridListener;
 
 class DatagridListenerFrontendTest extends \PHPUnit_Framework_TestCase
 {
-    const USER_ID = 1;
-    const ACCOUNT_ID = 1;
-
     /**
      * @var AccountUserRoleDatagridListener
      */
     protected $listener;
 
     /**
-     * @var SecurityFacade|\PHPUnit_Framework_MockObject_MockObject
+     * @var QueryBuilder|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $securityFacade;
+    protected $queryBuilder;
 
     /**
-     * @var array
+     * @var AclHelper|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $expectedDataForWorse = [
-        'source' => [
-            'query' => [
-                'where' => [
-                    'and' => [
-                        '1=0'
-                    ]
-                ]
-            ]
-        ]
-    ];
+    protected $aclHelper;
 
     protected function setUp()
     {
-        $this->securityFacade = $this->getMockBuilder('\Oro\Bundle\SecurityBundle\SecurityFacade')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->listener = new AccountUserRoleDatagridListener($this->securityFacade);
+        $this->queryBuilder = $this->getMockBuilder(QueryBuilder::class)->disableOriginalConstructor()->getMock();
+        $this->aclHelper = $this->createAclHelperMock();
+        $this->listener = new AccountUserRoleDatagridListener($this->aclHelper);
     }
 
     protected function tearDown()
     {
-        unset($this->listener, $this->securityFacade);
+        unset($this->listener, $this->aclHelper);
     }
 
-    /**
-     * @param bool     $isGranted
-     * @param null|int $user
-     * @param bool     $hasAccount
-     * @param array    $expected
-     * @dataProvider   onBuildBeforeProvider
-     */
-    public function testOnBuildBefore($isGranted = false, $user = null, $hasAccount = true, array $expected = [])
+    public function testOnBuildAfter()
     {
+        $datasource = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource')
+            ->disableOriginalConstructor()
+            ->getMock();
         /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
         $datagrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
-        $config = DatagridConfiguration::create([]);
+        $datagrid->expects($this->once())
+            ->method('getDatasource')
+            ->will($this->returnValue($datasource));
 
-        if ($user) {
-            $this->securityFacade->expects($this->once())
-                ->method('isGranted')
-                ->with('oro_account_frontend_account_user_role_view')
-                ->willReturn($isGranted);
-        }
+        $qb = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $datasource->expects($this->once())
+            ->method('getQueryBuilder')
+            ->will($this->returnValue($qb));
 
-        if ($hasAccount) {
-            $this->mockUser($user);
-        }
+        $criteria = new Criteria();
+        $this->aclHelper->expects($this->once())
+            ->method('applyAclToCriteria')
+            ->with(
+                AccountUserRole::class,
+                $criteria,
+                'VIEW',
+                ['account' => '.account', 'organization' => '.organization']
+            )
+            ->willReturn($this->queryBuilder);
 
-        $event = new BuildBefore($datagrid, $config);
-        $this->listener->onBuildBefore($event);
-
-        $this->assertEquals($expected, $config->toArray());
+        $event = new BuildAfter($datagrid);
+        $this->listener->onBuildAfter($event);
     }
 
     /**
-     * @return array
+     * @return \PHPUnit_Framework_MockObject_MockObject
      */
-    public function onBuildBeforeProvider()
+    protected function createAclHelperMock()
     {
-        return [
-            'when user have permissions' => [
-                'isGranted' => true,
-                'user' => static::USER_ID,
-                'hasAccount' => true,
-                'expected' => [
-                    'source' => [
-                        'query' => [
-                            'where' => [
-                                'and' => [
-                                    'role.account IN (' . static::USER_ID . ') or role.account IS NULL'
-                                ],
-                            ]
-                        ]
-                    ]
-                ]
-            ],
-            'when user have not permissions' => [
-                'isGranted' => false,
-                'user' => static::USER_ID,
-                'hasAccount' => true,
-                'expected' => $this->expectedDataForWorse
-            ],
-            'when user not logged' => [
-                'isGranted' => false,
-                'user' => false,
-                'hasAccount' => true,
-                'expected' => $this->expectedDataForWorse
-            ],
-            'when user not logged and have no token' => [
-                'isGranted' => true,
-                'user' => false,
-                'hasAccount' => false,
-                'expected' => $this->expectedDataForWorse
-            ]
-        ];
-    }
-
-    /**
-     * @param string $className
-     * @param int $id
-     * @return object
-     */
-    protected function getEntity($className, $id)
-    {
-        $entity = new $className;
-        $reflectionClass = new \ReflectionClass($className);
-        $method = $reflectionClass->getProperty('id');
-        $method->setAccessible(true);
-        $method->setValue($entity, $id);
-        return $entity;
-    }
-
-    /**
-     * @param int $userId
-     */
-    protected function mockUser($userId)
-    {
-        /** @var AccountUser $user */
-        $user = $this->getEntity('\Oro\Bundle\CustomerBundle\Entity\AccountUser', $userId);
-
-        /** @var Account $account */
-        $account = $this->getEntity('\Oro\Bundle\CustomerBundle\Entity\Account', static::ACCOUNT_ID);
-        $user->setAccount($account);
-
-        $this->securityFacade->expects($this->any())
-            ->method('getLoggedUser')
-            ->willReturn($userId ? $user : null);
+        return $this->getMockBuilder('Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper')
+            ->disableOriginalConstructor()
+            ->getMock();
     }
 }

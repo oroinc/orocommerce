@@ -2,33 +2,36 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\Form\Type;
 
-use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
+use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryTreeType;
+use Oro\Bundle\FormBundle\Form\Type\EntityTreeSelectType;
+use Oro\Component\Tree\Handler\AbstractTreeHandler;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class CategoryTreeTypeTest extends \PHPUnit_Framework_TestCase
 {
-    const ENTITY_CLASS = 'Oro\Bundle\CatalogBundle\Entity\Category';
+    /**
+     * @var AbstractTreeHandler
+     */
+    protected $treeHandler;
 
     /**
      * @var CategoryTreeType
      */
     protected $type;
 
-    protected function setUp()
-    {
-        $this->type = new CategoryTreeType();
-        $this->type->setEntityClass(self::ENTITY_CLASS);
-    }
-
     public function testSetDefaultOptions()
     {
-        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolverInterface');
+        $resolver = $this->getMockBuilder(OptionsResolver::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with(
                 [
-                    'class'    => self::ENTITY_CLASS,
-                    'multiple' => false,
+                    'class' => Category::class,
+                    'tree_key' => 'commerce-category',
+                    'tree_data' => [$this->treeHandler, 'createTree']
                 ]
             );
 
@@ -42,6 +45,14 @@ class CategoryTreeTypeTest extends \PHPUnit_Framework_TestCase
 
     public function testGetParent()
     {
-        $this->assertEquals(EntityIdentifierType::NAME, $this->type->getParent());
+        $this->assertEquals(EntityTreeSelectType::class, $this->type->getParent());
+    }
+
+    protected function setUp()
+    {
+        $this->treeHandler = $this->getMockBuilder(AbstractTreeHandler::class)
+            ->disableOriginalConstructor()
+            ->getMockForAbstractClass();
+        $this->type = new CategoryTreeType($this->treeHandler);
     }
 }

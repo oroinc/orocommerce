@@ -5,7 +5,7 @@ navigation:
                 label:           'oro.tax.menu.taxes_tab.label'
                 uri:             '#'
                 extras:
-                    icon:        icon-filter
+                    icon:        fa-filter
                     position:    400
 
             product_tax_code_list:
@@ -69,7 +69,7 @@ navigation:
         oro_tax_account_tax_code_view:   '%%taxCode%% - oro.ui.view'
         oro_tax_account_tax_code_update: '%%taxCode%% - oro.ui.edit'
         oro_tax_account_tax_code_create: 'oro.ui.create_entity'
-        
+
         oro_tax_index: ~
         oro_tax_view:   '%%taxCode%% - oro.ui.view'
         oro_tax_update: '%%taxCode%% - oro.ui.edit'
