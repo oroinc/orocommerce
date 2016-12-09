@@ -70,7 +70,7 @@ class InventoryQuantityManager
         $preDecrementEvent = new InventoryPreDecrementEvent($inventoryLevel, $quantityToDecrement);
         $this->eventDispatcher->dispatch(InventoryPreDecrementEvent::NAME, $preDecrementEvent);
 
-        if ($preDecrementEvent->isPropagationStopped()) {
+        if ($preDecrementEvent->isQuantityChanged()) {
             return;
         }
 
