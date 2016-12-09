@@ -2,15 +2,28 @@
 
 namespace Oro\Bundle\ProductBundle\Validator\Constraints;
 
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
-use Oro\Component\PropertyAccess\PropertyAccessor;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
 class UniqueProductVariantLinksValidator extends ConstraintValidator
 {
     const ALIAS = 'oro_product_unique_variant_links';
+
+    /**
+     * @var PropertyAccessor
+     */
+    private $propertyAccessor;
+
+    /**
+     * @param PropertyAccessor $propertyAccessor
+     */
+    public function __construct(PropertyAccessor $propertyAccessor)
+    {
+        $this->propertyAccessor = $propertyAccessor;
+    }
 
     /**
      * @param Product $value
@@ -78,12 +91,15 @@ class UniqueProductVariantLinksValidator extends ConstraintValidator
      */
     private function getVariantFieldsHash(array $variantFields, Product $product)
     {
-        $propertyAccessor = new PropertyAccessor();
-
         $fields = [];
         foreach ($variantFields as $fieldName) {
-            if ($propertyAccessor->isReadable($product, $fieldName)) {
-                $fields[$fieldName] = $propertyAccessor->getValue($product, $fieldName);
+            if ($this->propertyAccessor->isReadable($product, $fieldName)) {
+                $fieldValue = $this->propertyAccessor->getValue($product, $fieldName);
+                $fields[$fieldName] = $fieldValue;
+
+                if (is_object($fieldValue) && method_exists($fieldValue, '__toString')) {
+                    $fields[$fieldName] = (string) $fieldValue;
+                }
             }
         }
 

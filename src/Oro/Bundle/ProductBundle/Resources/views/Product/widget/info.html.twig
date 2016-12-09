@@ -9,7 +9,6 @@
             {{ UI.renderProperty('oro.product.names.label'|trans, product.defaultName) }}
             {% set type = 'oro.product.type.' ~ product.type %}
             {{ UI.renderProperty('oro.product.type.label'|trans, type|trans) }}
-            {{ UI.renderHtmlProperty('oro.product.inventory_status.label'|trans, product.inventoryStatus) }}
 
             {% if product.images.count %}
                 {{ UI.renderHtmlProperty(

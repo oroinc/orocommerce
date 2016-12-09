@@ -163,6 +163,7 @@ class AccountTypedAddressTypeTest extends FormIntegrationTestCase
                     'primary' => true,
                 ],
                 'expectedData' => $accountAddressWithAllDefaultTypes,
+                'updateOwner' => [],
             ],
         ];
     }

@@ -123,7 +123,7 @@ datagrids:
                 type:          navigate
                 label:         oro.grid.action.view
                 link:          view_link
-                icon:          eye-open
+                icon:          eye
                 acl_resource:  oro_product_view
                 rowAction:     true
 
@@ -340,5 +340,5 @@ datagrids:
                 type:          navigate
                 label:         oro.grid.action.view
                 link:          view_link
-                icon:          eye-open
+                icon:          eye
                 rowAction:     true

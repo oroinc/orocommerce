@@ -5,7 +5,7 @@ navigation:
                 label:           'oro.cms.menu.marketing_tab.label'
                 uri:             '#'
                 extras:
-                    icon:        icon-book
+                    icon:        fa-book
                     position:    400
 
             page_list:

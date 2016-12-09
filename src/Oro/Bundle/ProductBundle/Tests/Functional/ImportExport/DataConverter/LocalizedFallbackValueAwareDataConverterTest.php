@@ -95,14 +95,10 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
      */
     public function testConvertToExportFormat(array $data, array $expected)
     {
-        // TODO: Should be fixed and reenabled in BB-5836
-        $this->markTestIncomplete('Should be fixed and reenabled in BB-5836');
-
         $productClass = $this->getContainer()->getParameter('oro_product.entity.product.class');
 
         $this->converter->setEntityName($productClass);
 
-        $x = $this->converter->convertToExportFormat($data);
         $this->assertEquals($expected, $this->converter->convertToExportFormat($data));
     }
 
@@ -119,6 +115,7 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
                 [
                     'sku' => '',
                     'status' => '',
+                    'type' => '',
                     'inventory_status.id' => '',
                     'names.default.fallback' => 'system',
                     'names.default.value' => 'default value',
@@ -175,16 +172,16 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
                     'metaKeywords.Spanish.value' => '',
                     'metaKeywords.English (Canada).fallback' => '',
                     'metaKeywords.English (Canada).value' => '',
-                    'metaTitles.default.fallback' => '',
-                    'metaTitles.default.value' => '',
-                    'metaTitles.English.fallback' => '',
-                    'metaTitles.English.value' => '',
-                    'metaTitles.English (United States).fallback' => '',
-                    'metaTitles.English (United States).value' => '',
-                    'metaTitles.Spanish.fallback' => '',
-                    'metaTitles.Spanish.value' => '',
-                    'metaTitles.English (Canada).fallback' => '',
-                    'metaTitles.English (Canada).value' => '',
+                    'slugPrototypes.default.fallback' => '',
+                    'slugPrototypes.default.value' => '',
+                    'slugPrototypes.English.fallback' => '',
+                    'slugPrototypes.English.value' => '',
+                    'slugPrototypes.English (United States).fallback' => '',
+                    'slugPrototypes.English (United States).value' => '',
+                    'slugPrototypes.Spanish.fallback' => '',
+                    'slugPrototypes.Spanish.value' => '',
+                    'slugPrototypes.English (Canada).fallback' => '',
+                    'slugPrototypes.English (Canada).value' => '',
                 ],
             ],
             'en localization' => [
@@ -192,6 +189,7 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
                 [
                     'sku' => '',
                     'status' => '',
+                    'type' => '',
                     'inventory_status.id' => '',
                     'names.default.fallback' => '',
                     'names.default.value' => '',
@@ -248,16 +246,16 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
                     'metaKeywords.Spanish.value' => '',
                     'metaKeywords.English (Canada).fallback' => '',
                     'metaKeywords.English (Canada).value' => '',
-                    'metaTitles.default.fallback' => '',
-                    'metaTitles.default.value' => '',
-                    'metaTitles.English.fallback' => '',
-                    'metaTitles.English.value' => '',
-                    'metaTitles.English (United States).fallback' => '',
-                    'metaTitles.English (United States).value' => '',
-                    'metaTitles.Spanish.fallback' => '',
-                    'metaTitles.Spanish.value' => '',
-                    'metaTitles.English (Canada).fallback' => '',
-                    'metaTitles.English (Canada).value' => '',
+                    'slugPrototypes.default.fallback' => '',
+                    'slugPrototypes.default.value' => '',
+                    'slugPrototypes.English.fallback' => '',
+                    'slugPrototypes.English.value' => '',
+                    'slugPrototypes.English (United States).fallback' => '',
+                    'slugPrototypes.English (United States).value' => '',
+                    'slugPrototypes.Spanish.fallback' => '',
+                    'slugPrototypes.Spanish.value' => '',
+                    'slugPrototypes.English (Canada).fallback' => '',
+                    'slugPrototypes.English (Canada).value' => '',
                 ],
             ],
             'custom localization' => [
@@ -270,6 +268,7 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
                 [
                     'sku' => '',
                     'status' => '',
+                    'type' => '',
                     'inventory_status.id' => '',
                     'names.default.fallback' => '',
                     'names.default.value' => '',
@@ -326,16 +325,16 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
                     'metaKeywords.Spanish.value' => '',
                     'metaKeywords.English (Canada).fallback' => '',
                     'metaKeywords.English (Canada).value' => '',
-                    'metaTitles.default.fallback' => '',
-                    'metaTitles.default.value' => '',
-                    'metaTitles.English.fallback' => '',
-                    'metaTitles.English.value' => '',
-                    'metaTitles.English (United States).fallback' => '',
-                    'metaTitles.English (United States).value' => '',
-                    'metaTitles.Spanish.fallback' => '',
-                    'metaTitles.Spanish.value' => '',
-                    'metaTitles.English (Canada).fallback' => '',
-                    'metaTitles.English (Canada).value' => '',
+                    'slugPrototypes.default.fallback' => '',
+                    'slugPrototypes.default.value' => '',
+                    'slugPrototypes.English.fallback' => '',
+                    'slugPrototypes.English.value' => '',
+                    'slugPrototypes.English (United States).fallback' => '',
+                    'slugPrototypes.English (United States).value' => '',
+                    'slugPrototypes.Spanish.fallback' => '',
+                    'slugPrototypes.Spanish.value' => '',
+                    'slugPrototypes.English (Canada).fallback' => '',
+                    'slugPrototypes.English (Canada).value' => '',
                 ],
             ],
         ];

@@ -165,3 +165,10 @@ services:
             - "@oro_product.provider.product_units_provider"
         tags:
             - { name: form.type, alias: oro_product_units }
+
+    oro_product.form.type.product_page_content_variant:
+        class: Oro\Bundle\ProductBundle\Form\Type\ProductPageVariantType
+        arguments:
+            - '@doctrine'
+        tags:
+            - { name: form.type, alias: oro_product_page_variant }

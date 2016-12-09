@@ -32,7 +32,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  *      routeUpdate="oro_sale_quote_update",
  *      defaultValues={
  *          "entity"={
- *              "icon"="icon-list-alt"
+ *              "icon"="fa-list-alt"
  *          },
  *          "ownership"={
  *              "owner_type"="USER",
@@ -68,7 +68,7 @@ class Quote extends ExtendQuote implements
     use AuditableUserAwareTrait;
     use AuditableFrontendAccountUserAwareTrait;
     use DatesAwareTrait;
-    
+
     /**
      * @var int
      *
