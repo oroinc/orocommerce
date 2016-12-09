@@ -95,14 +95,10 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
      */
     public function testConvertToExportFormat(array $data, array $expected)
     {
-        // TODO: Should be fixed and reenabled in BB-5836
-        $this->markTestIncomplete('Should be fixed and reenabled in BB-5836');
-
         $productClass = $this->getContainer()->getParameter('oro_product.entity.product.class');
 
         $this->converter->setEntityName($productClass);
 
-        $x = $this->converter->convertToExportFormat($data);
         $this->assertEquals($expected, $this->converter->convertToExportFormat($data));
     }
 
@@ -119,6 +115,7 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
                 [
                     'sku' => '',
                     'status' => '',
+                    'type' => '',
                     'inventory_status.id' => '',
                     'names.default.fallback' => 'system',
                     'names.default.value' => 'default value',
@@ -193,6 +190,7 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
                 [
                     'sku' => '',
                     'status' => '',
+                    'type' => '',
                     'inventory_status.id' => '',
                     'names.default.fallback' => '',
                     'names.default.value' => '',
@@ -272,6 +270,7 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
                 [
                     'sku' => '',
                     'status' => '',
+                    'type' => '',
                     'inventory_status.id' => '',
                     'names.default.fallback' => '',
                     'names.default.value' => '',
