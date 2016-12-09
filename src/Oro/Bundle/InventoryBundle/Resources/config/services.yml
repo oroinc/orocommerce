@@ -172,3 +172,9 @@ services:
         tags:
             - { name: kernel.event_listener, event: rfp.form_submit_check.oro_product_frontend_quick_add_copy_paste, method: onCopyPasteRFPFormSubmitCheck }
             - { name: kernel.event_listener, event: rfp.form_submit_check.oro_product_frontend_quick_add_import, method: onQuickAddImportRFPFormSubmitCheck }
+
+    oro_inventory.inventory.increment_service:
+        class: Oro\Bundle\InventoryBundle\Inventory\IncrementService
+        arguments:
+            - '@oro_entity.doctrine_helper',
+            - '@event_dispatcher'
