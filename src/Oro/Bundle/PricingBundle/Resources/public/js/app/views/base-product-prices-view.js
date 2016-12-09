@@ -43,6 +43,7 @@ define(function(require) {
         changeQuantity: false,
 
         initialize: function(options) {
+            alert(options);
             BaseProductPricesView.__super__.initialize.apply(this, arguments);
 
             $.extend(this, _.pick(options, ['changeQuantity']));

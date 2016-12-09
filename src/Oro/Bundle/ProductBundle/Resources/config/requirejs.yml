@@ -22,6 +22,8 @@ config:
         'oroproduct/js/app/components/product-image-type-radio-control-component': 'bundles/oroproduct/js/app/components/product-image-type-radio-control-component.js'
         'oroproduct/js/app/components/breadcrumbs-navigation-block': 'bundles/oroproduct/js/app/components/breadcrumbs-navigation-block.js'
         'oroproduct/js/app/datagrid/frontend-product-filters-events-dispatcher-builder': 'bundles/oroproduct/js/app/datagrid/frontend-product-filters-events-dispatcher-builder.js'
+        'oroproduct/js/app/datagrid/backend-grid': 'bundles/oroproduct/js/app/datagrid/backend-grid.js'
+
 
     shim:
         'tinymce/plugins/fullscreen/plugin.min':
