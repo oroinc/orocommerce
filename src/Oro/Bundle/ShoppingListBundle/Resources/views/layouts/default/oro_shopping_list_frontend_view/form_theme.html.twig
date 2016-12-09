@@ -2,7 +2,8 @@
 
 {% block genemu_jqueryselect2_widget %}
     {% set component_options = {
-        containerCssClass: 'oro-select2 oro-select2--size-m'
+        containerCssClass: 'oro-select2 oro-select2--size-m',
+        dropdownCssClass: 'oro-select2__dropdown'
     } %}
 
     {{ form_widget(form, { 'attr': {
