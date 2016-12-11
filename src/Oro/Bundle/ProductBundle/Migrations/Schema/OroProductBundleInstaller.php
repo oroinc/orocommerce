@@ -145,6 +145,7 @@ class OroProductBundleInstaller implements
         $table->addColumn('variant_fields', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
         $table->addColumn('status', 'string', ['length' => 16]);
         $table->addColumn('primary_unit_precision_id', 'integer', ['notnull' => false]);
+        $table->addColumn('type', 'string', ['length' => 32]);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['sku']);
         $table->addIndex(['created_at'], 'idx_oro_product_created_at', []);
