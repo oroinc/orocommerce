@@ -9,14 +9,10 @@ use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 
 class AfterContentNodeProcessEvent extends Event
 {
-    /**
-     * @var ContentNode
-     */
+    /** @var ContentNode */
     protected $contentNode;
 
-    /**
-     * @var FormInterface
-     */
+    /** @var FormInterface */
     protected $form;
 
     /**

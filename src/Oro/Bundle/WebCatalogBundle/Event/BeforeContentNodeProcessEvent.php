@@ -9,19 +9,13 @@ use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 
 class BeforeContentNodeProcessEvent extends Event
 {
-    /**
-     * @var ContentNode
-     */
+    /** @var ContentNode */
     protected $contentNode;
 
-    /**
-     * @var FormInterface
-     */
+    /** @var FormInterface */
     protected $form;
 
-    /**
-     * @var bool
-     */
+    /** @var bool */
     protected $formProcessInterrupted = false;
 
     /**
@@ -35,19 +29,19 @@ class BeforeContentNodeProcessEvent extends Event
     }
 
     /**
-     * @return ContentNode
-     */
-    public function getContentNode()
-    {
-        return $this->contentNode;
-    }
-
-    /**
      * @return bool
      */
     public function isFormProcessInterrupted()
     {
         return $this->formProcessInterrupted;
+    }
+
+    /**
+     * @return ContentNode
+     */
+    public function getContentNode()
+    {
+        return $this->contentNode;
     }
 
     /**
