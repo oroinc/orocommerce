@@ -2,8 +2,11 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
+use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
+use Oro\Bundle\ProductBundle\Provider\ProductTypeProvider;
+use Oro\Bundle\ProductBundle\Form\Type\ProductTypeType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductStepOneType;
 
 class ProductStepOneTypeTest extends FormIntegrationTestCase
@@ -36,5 +39,22 @@ class ProductStepOneTypeTest extends FormIntegrationTestCase
             'This form should not contain extra fields: "{{ extra_fields }}"',
             $form->getConfig()->getOptions()['extra_fields_message']
         );
+    }
+
+    /**
+     * @return array
+     */
+    protected function getExtensions()
+    {
+        $productTypeProvider = new ProductTypeProvider();
+
+        return [
+            new PreloadedExtension(
+                [
+                    ProductTypeType::NAME => new ProductTypeType($productTypeProvider),
+                ],
+                []
+            )
+        ];
     }
 }

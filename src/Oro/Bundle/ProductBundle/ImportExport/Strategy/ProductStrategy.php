@@ -30,6 +30,11 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy
     protected $variantLinkClass;
 
     /**
+     * @var string
+     */
+    protected $productClass;
+
+    /**
      * @param SecurityFacade $securityFacade
      */
     public function setSecurityFacade($securityFacade)
@@ -43,6 +48,14 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy
     public function setVariantLinkClass($variantLinkClass)
     {
         $this->variantLinkClass = $variantLinkClass;
+    }
+
+    /**
+     * @param string $productClass
+     */
+    public function setProductClass($productClass)
+    {
+        $this->productClass = $productClass;
     }
 
     /**
@@ -264,5 +277,17 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy
         return 0 !== count($notEmptyValues)
             ? array_merge($notEmptyValues, $nullRequiredValues)
             : null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function importExistingEntity($entity, $existingEntity, $itemData = null, array $excludedFields = [])
+    {
+        if (is_a($entity, $this->productClass)) {
+            $excludedFields[] = 'type';
+        }
+
+        parent::importExistingEntity($entity, $existingEntity, $itemData, $excludedFields);
     }
 }

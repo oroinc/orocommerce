@@ -5,7 +5,7 @@ namespace Oro\Bundle\InventoryBundle\Validator;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\EntityBundle\Fallback\EntityFallbackResolver;
-use Oro\Bundle\InventoryBundle\Migrations\Schema\v1_0\AddQuantityToOrderFields;
+use Oro\Bundle\InventoryBundle\Migrations\Schema\v1_1\AddQuantityToOrderFields;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 

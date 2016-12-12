@@ -108,6 +108,9 @@ class Product extends ExtendProduct implements
     const INVENTORY_STATUS_OUT_OF_STOCK = 'out_of_stock';
     const INVENTORY_STATUS_DISCONTINUED = 'discontinued';
 
+    const TYPE_SIMPLE = 'simple';
+    const TYPE_CONFIGURABLE = 'configurable';
+
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")
@@ -158,7 +161,7 @@ class Product extends ExtendProduct implements
     protected $hasVariants = false;
 
     /**
-     * @var bool
+     * @var string
      *
      * @ORM\Column(name="status", type="string", length=16, nullable=false)
      * @ConfigField(
@@ -437,6 +440,23 @@ class Product extends ExtendProduct implements
     protected $images;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="type", type="string", length=32, nullable=false)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          },
+     *          "importexport"={
+     *              "order"=20
+     *          }
+     *      }
+     *  )
+     */
+    protected $type = self::TYPE_SIMPLE;
+
+    /**
      * {@inheritdoc}
      */
     public function __construct()
@@ -459,6 +479,14 @@ class Product extends ExtendProduct implements
     public static function getStatuses()
     {
         return [self::STATUS_ENABLED, self::STATUS_DISABLED];
+    }
+
+    /**
+     * @return array
+     */
+    public static function getTypes()
+    {
+        return [self::TYPE_SIMPLE, self::TYPE_CONFIGURABLE];
     }
 
     /**
@@ -928,6 +956,26 @@ class Product extends ExtendProduct implements
         if ($this->shortDescriptions->contains($shortDescription)) {
             $this->shortDescriptions->removeElement($shortDescription);
         }
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * @param string $type
+     *
+     * @return $this
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
 
         return $this;
     }
