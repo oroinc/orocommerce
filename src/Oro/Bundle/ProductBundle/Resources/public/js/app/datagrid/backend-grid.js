@@ -28,11 +28,7 @@ define(function(require) {
          * @inheritDoc
          */
         render: function() {
-            this.$el.html(this.template({
-                tableTagName: this.themeOptions.tagName || 'table'
-            }));
             this.$grid = this.$(this.selectors.grid);
-
 
             this.renderNoDataBlock();
             this.renderLoadingMask();
