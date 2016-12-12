@@ -17,6 +17,7 @@ use Oro\Bundle\WebCatalogBundle\Generator\SlugGenerator;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Form\Handler\ContentNodeHandler;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class ContentNodeHandlerTest extends \PHPUnit_Framework_TestCase
 {
@@ -47,6 +48,9 @@ class ContentNodeHandlerTest extends \PHPUnit_Framework_TestCase
      */
     protected $eventDispatcher;
 
+    /** @var RequestStack */
+    protected $requestStack;
+
     /**
      * @var ContentNodeHandler
      */
@@ -65,12 +69,13 @@ class ContentNodeHandlerTest extends \PHPUnit_Framework_TestCase
         $this->eventDispatcher = $this->getMock(EventDispatcherInterface::class);
 
         $this->contentNodeHandler = new ContentNodeHandler(
-            $this->form,
-            $this->request,
+            $this->requestStack,
             $this->slugGenerator,
             $this->manager,
             $this->eventDispatcher
         );
+
+        $this->contentNodeHandler->setForm($this->form);
     }
 
     public function testProcessNotPost()
@@ -249,6 +254,9 @@ class ContentNodeHandlerTest extends \PHPUnit_Framework_TestCase
         $this->request->expects($this->once())
             ->method('isMethod')
             ->will($this->returnValue('POST'));
+
+        $requestStack = new RequestStack();
+        $requestStack->push($this->request);
 
         $this->form->expects($this->never())
             ->method('submit')

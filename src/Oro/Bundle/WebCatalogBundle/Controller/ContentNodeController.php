@@ -20,6 +20,9 @@ use Oro\Bundle\WebCatalogBundle\JsTree\ContentNodeTreeHandler;
 
 class ContentNodeController extends Controller
 {
+    /** @var ContentNodeHandler */
+    protected $contentNodeHandler;
+
     /**
      * @Route("/root/{id}", name="oro_content_node_update_root", requirements={"id"="\d+"})
      *
@@ -30,8 +33,10 @@ class ContentNodeController extends Controller
      * @param Request $request
      * @return array
      */
-    public function createRootAction(WebCatalog $webCatalog, Request $request)
+    public function createRootAction(WebCatalog $webCatalog, ContentNodeHandler $contentNodeHandler, Request $request)
     {
+        $this->contentNodeHandler = $contentNodeHandler;
+
         $rootNode = $this->getTreeHandler()->getTreeRootByWebCatalog($webCatalog);
         if (!$rootNode) {
             $rootNode = new ContentNode();
@@ -103,13 +108,7 @@ class ContentNodeController extends Controller
     {
         $form = $this->createForm(ContentNodeType::NAME, $node);
 
-        $handler = new ContentNodeHandler(
-            $form,
-            $request,
-            $this->get('oro_web_catalog.generator.slug_generator'),
-            $this->getDoctrine()->getManagerForClass(ContentNode::class),
-            $this->get('event_dispatcher')
-        );
+        $this->contentNodeHandler->setForm($form);
 
         $saveRedirectHandler = function (ContentNode $node) {
             if ($node->getParentNode()) {
@@ -131,7 +130,7 @@ class ContentNodeController extends Controller
             $saveRedirectHandler,
             $saveRedirectHandler,
             $this->get('translator')->trans('oro.webcatalog.controller.contentnode.saved.message'),
-            $handler
+            $this->contentNodeHandler
         );
     }
 

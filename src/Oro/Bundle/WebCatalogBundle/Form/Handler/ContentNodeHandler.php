@@ -15,6 +15,7 @@ use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Event\BeforeContentNodeProcessEvent;
 use Oro\Bundle\WebCatalogBundle\Event\Events;
 use Oro\Bundle\WebCatalogBundle\Generator\SlugGenerator;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class ContentNodeHandler
 {
@@ -51,14 +52,12 @@ class ContentNodeHandler
      * @param EventDispatcherInterface $eventDispatcher
      */
     public function __construct(
-        FormInterface $form,
-        Request $request,
+        RequestStack $requestStack,
         SlugGenerator $slugGenerator,
         ObjectManager $manager,
         EventDispatcherInterface $eventDispatcher
     ) {
-        $this->form = $form;
-        $this->request = $request;
+        $this->request = $requestStack->getCurrentRequest();
         $this->slugGenerator = $slugGenerator;
         $this->manager = $manager;
         $this->eventDispatcher = $eventDispatcher;
@@ -146,5 +145,21 @@ class ContentNodeHandler
         }
 
         return $scopes;
+    }
+
+    /**
+     * @return FormInterface
+     */
+    public function getForm()
+    {
+        return $this->form;
+    }
+
+    /**
+     * @param FormInterface $form
+     */
+    public function setForm($form)
+    {
+        $this->form = $form;
     }
 }
