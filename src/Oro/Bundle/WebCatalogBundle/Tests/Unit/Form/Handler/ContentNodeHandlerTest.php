@@ -280,9 +280,9 @@ class ContentNodeHandlerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param FormInterface $form
-     * @param object $entity
+     * @param ContentNode $entity
      */
-    protected function assertBeforeProcessEventsTriggered(FormInterface $form, $entity)
+    protected function assertBeforeProcessEventsTriggered(FormInterface $form, ContentNode $entity)
     {
         $this->eventDispatcher->expects($this->at(0))
             ->method('dispatch')
@@ -297,7 +297,7 @@ class ContentNodeHandlerTest extends \PHPUnit_Framework_TestCase
      * @param FormInterface $form
      * @param ContentNode $entity
      */
-    protected function assertAfterProcessEventsTriggered(FormInterface $form, $entity)
+    protected function assertAfterProcessEventsTriggered(FormInterface $form, ContentNode $entity)
     {
         $this->eventDispatcher->expects($this->at(2))
             ->method('dispatch')
