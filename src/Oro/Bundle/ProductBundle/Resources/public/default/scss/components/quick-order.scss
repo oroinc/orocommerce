@@ -269,6 +269,12 @@
       }
     }
   }
+
+  .btn-group {
+    .btn:not(.dropdown-toggle) {
+      margin-left: $offset-x-m;
+    }
+  }
 }
 
 .quick-order-import-validation {
