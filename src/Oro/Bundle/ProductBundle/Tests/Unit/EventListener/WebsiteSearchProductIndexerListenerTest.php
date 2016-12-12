@@ -91,6 +91,7 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
                 'id' => 777,
                 'sku' => 'sku123',
                 'status' => Product::STATUS_ENABLED,
+                'type' => Product::TYPE_CONFIGURABLE,
                 'inventoryStatus' => $inventoryStatus,
             ]
         );
@@ -162,6 +163,7 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
             'sku' => 'sku123',
             'sku_uppercase' => 'SKU123',
             'status' => Product::STATUS_ENABLED,
+            'type' => Product::TYPE_CONFIGURABLE,
             'inventory_status' => Product::INVENTORY_STATUS_IN_STOCK,
             'name_LOCALIZATION_ID' => [
                 new PlaceholderValue(

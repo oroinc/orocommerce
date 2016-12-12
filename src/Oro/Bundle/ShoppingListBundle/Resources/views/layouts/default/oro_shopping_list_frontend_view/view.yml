@@ -2,6 +2,8 @@ layout:
     actions:
         - '@setBlockTheme':
             themes: 'view.html.twig'
+        - '@setFormTheme':
+            themes: 'form_theme.html.twig'
         - '@setOption':
             id: title
             optionName: params
