@@ -43,6 +43,14 @@ class BeforeContentNodeProcessEvent extends Event
     }
 
     /**
+     * @return bool
+     */
+    public function isFormProcessInterrupted()
+    {
+        return $this->formProcessInterrupted;
+    }
+
+    /**
      * @return FormInterface
      */
     public function getForm()
@@ -57,13 +65,5 @@ class BeforeContentNodeProcessEvent extends Event
     {
         $this->formProcessInterrupted = true;
         return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isFormProcessInterrupted()
-    {
-        return $this->formProcessInterrupted;
     }
 }
