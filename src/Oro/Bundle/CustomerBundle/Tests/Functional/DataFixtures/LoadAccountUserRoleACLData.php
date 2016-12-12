@@ -13,7 +13,11 @@ class LoadAccountUserRoleACLData extends AbstractLoadACLData
     const ROLE_WITH_ACCOUNT_1_USER_DEEP = 'Role with account user deep';
     const ROLE_WITH_ACCOUNT_1_2_USER_LOCAL = 'Role with account 1.2 user local';
     const ROLE_WITH_ACCOUNT_2_USER_LOCAL = 'Role with account 2 user local';
-
+    const ROLE_WITHOUT_ACCOUNT_1_USER_LOCAL_CANT_DELETED = 'Role without account user local for user';
+    const ROLE_WITH_ACCOUNT_1_USER_LOCAL_CANT_DELETED = 'Role with account user local for user';
+    const ROLE_WITH_ACCOUNT_1_USER_DEEP_CANT_DELETED = 'Role with account user deep for user';
+    const ROLE_WITH_ACCOUNT_1_2_USER_LOCAL_CANT_DELETED = 'Role with account 1.2 user local for user';
+    const ROLE_WITH_ACCOUNT_2_USER_LOCAL_CANT_DELETED = 'Role with account 2 user local for user';
     /**
      * @var array
      */
@@ -57,7 +61,7 @@ class LoadAccountUserRoleACLData extends AbstractLoadACLData
             /** @var AccountUser $accountUser */
             $accountUser = $this->getReference($role['accountUser']);
             if ($name !== self::ROLE_WITHOUT_ACCOUNT_1_USER_LOCAL) {
-                $entity->setAccount($accountUser->getAccount());
+                $entity->setAccount($accountUser->getCustomer());
             }
             $entity->setOrganization($accountUser->getOrganization());
             $entityForDelete = clone $entity;
@@ -66,7 +70,7 @@ class LoadAccountUserRoleACLData extends AbstractLoadACLData
             //role with users can't be deleted
             $entity->setLabel($entity->getLabel() . ' for user');
             $accountUser->addRole($entity);
-
+            $this->setReference($entity->getLabel(), $entity);
             $this->setReference($entityForDelete->getLabel(), $entityForDelete);
             $manager->persist($entityForDelete);
             $manager->persist($entity);

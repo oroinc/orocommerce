@@ -27,7 +27,7 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  * @Config(
  *      defaultValues={
  *          "entity"={
- *              "icon"="icon-shopping-cart"
+ *              "icon"="fa-shopping-cart"
  *          },
  *          "ownership"={
  *              "owner_type"="USER",

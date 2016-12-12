@@ -53,7 +53,7 @@ class StartCheckoutTest extends WebTestCase
         $this->user = $this->registry
             ->getRepository('OroCustomerBundle:AccountUser')
             ->findOneBy(['username' => LoadAccountUserData::AUTH_USER]);
-        $token = new UsernamePasswordToken($this->user, false, 'key');
+        $token = new UsernamePasswordToken($this->user, false, 'key', $this->user->getRoles());
         $this->client->getContainer()->get('security.token_storage')->setToken($token);
 
         $this->action = $this->client->getContainer()->get('oro_checkout.model.action.start_checkout');

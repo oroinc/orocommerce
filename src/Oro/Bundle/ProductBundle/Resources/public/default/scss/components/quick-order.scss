@@ -39,7 +39,7 @@
   color: get-color('additional', 'base');
 }
 
-.quick-order-page-title {
+.quick-order-page-title-wrapper {
   position: relative;
 
   margin: 0 0 15px;
@@ -191,6 +191,10 @@
   i, span {
     vertical-align: middle;
   }
+
+  .fa {
+    margin-right: 5px;
+  }
 }
 
 .quick-order__tabs__btn-group {
@@ -313,6 +317,10 @@
           @include ellipsis();
         }
       }
+
+      &.btn-inactive .btn-group {
+        background-color: get-color('additional', 'middle');
+      }
     }
 
     @include clearfix();
@@ -341,6 +349,10 @@
   .widget-content {
     .action-button {
       background-color: get-color('additional', 'darker');
+
+      &.btn-inactive {
+        background-color: get-color('additional', 'middle');
+      }
     }
   }
 }

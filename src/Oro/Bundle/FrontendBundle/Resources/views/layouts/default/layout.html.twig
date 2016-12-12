@@ -85,7 +85,7 @@
 
             {% if hasVariants %}
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                <i class="cf-arrow_drop_down"></i>
+                <i class="fa-caret-down"></i>
             </a>
 
             <ul class="dropdown-menu">
@@ -122,7 +122,7 @@
 {% endblock %}
 
 {% block icon_block -%}
-    <i class="cf-{{ icon }}{% if icon_class is defined %} {{ icon_class }}{% endif %}"></i>
+    <i class="fa-{{ icon }}{% if icon_class is defined %} {{ icon_class }}{% endif %}"></i>
 {%- endblock %}
 
 {% block back_link_widget %}

@@ -58,7 +58,7 @@
             <ul class="notification__list">
                 {%- for error in errors -%}
                     <li class="notification__item">
-                        <i class="cf-attention"></i>
+                        <i class="fa-exclamation-triangle"></i>
                         <span class="notification__text">{{ error.message|trans }}</span>
                     </li>
                 {%- endfor -%}
@@ -97,13 +97,16 @@
 
 {%- block radio_widget -%}
     {% set class_prefix = form.vars.class_prefix|default(class_prefix|default('radio')) %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' custom-radio__control'
+    }) %}
 
     {%- if label is empty -%}
         {% set label = id|humanize %}
     {%- endif -%}
     <label class="custom-radio {% if form.vars.checked %}checked{% endif %}" data-radio tabindex="0">
         {{- parent() -}}
-        <span class="{{ class_prefix }}__text">{{ label|block_text(translation_domain) }}</span>
+        <span class="custom-radio__text">{{ label|block_text(translation_domain) }}</span>
     </label>
     {{- form_errors(form, {'class_prefix': class_prefix}) -}}
 {%- endblock radio_widget -%}

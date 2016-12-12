@@ -5,14 +5,22 @@
 {% endblock %}
 
 {% block _shopping_list_view_container_content_widget %}
-    <div {{ block('block_attributes') }}>
+    <div {{ block('block_attributes') }}
+            id="shopping_list_view_container_content"
+            data-page-component-module="oroui/js/app/components/view-component"
+            data-page-component-options="{{ {
+                view: 'oroui/js/app/views/layout-subtree-view',
+                blockId : block.vars.id,
+                reloadEvents: ['product:quantity-unit:update']
+            }|json_encode }}"
+            data-layout="separate">
         {{ block_widget(block) }}
     </div>
 {% endblock %}
 
 {% block _no_shopping_lists_widget %}
     <div class="cart-list_empty">
-        <span class="badge badge_orange badge_xlg badge_circle"><i class="cf-basket"></i></span>
+        <span class="badge badge_orange badge_xlg badge_circle"><i class="fa-shopping-cart"></i></span>
         <span class="fs24 va-m_md">{{ 'oro.frontend.shoppinglist.view.not_have_available'|trans }}</span>
     </div>
 {% endblock %}
@@ -57,19 +65,27 @@
 {% endblock %}
 
 {% block _shopping_list_top_actions_widget %}
-    {% set attr = attr|merge({ class: attr.class|default('') ~ " cart__order__controls-list pull-right" }) %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " cart__order__controls-list pull-right",
+        'data-name': "empty-items__hide"
+    }) %}
     <div{{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
 {% endblock %}
 
 {% block _shopping_list_owner_widget %}
-    <div data-page-component-module="oroshoppinglist/js/app/components/shoppinglist-owner-inline-editable-view-component"
-         data-page-component-options="{{ {
-             shoppingListId: shoppingList.id,
-         }|json_encode() }}"
-    >
-        {{ form(form) }}
+    {% set options = {
+        shoppingListId: shoppingList.id
+    } %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' shopping-list-owner',
+        'data-page-component-module': "oroshoppinglist/js/app/components/shoppinglist-owner-inline-editable-view-component",
+        'data-page-component-options': options|json_encode()
+    }) %}
+    <div{{ block('block_attributes') }}>
+        {{ form_label(form, 'oro.frontend.shoppinglist.view.owner.label') }}
+        {{ form_widget(form) }}
     </div>
 {% endblock %}
 
@@ -87,7 +103,7 @@
             }|json_encode() }}"
     >
         <span class="collapse-view__trigger" data-collapse-trigger>
-            <i class="collapse-view__trigger-icon cf-play cf--gray"></i>
+            <i class="collapse-view__trigger-icon fa-caret-right"></i>
         </span>
         <a href="#" class="collapse-view__trigger orange" data-collapse-trigger>{{ 'oro.frontend.shoppinglist.view.view_options.label'|trans }}</a>
 
@@ -325,10 +341,26 @@
                                         cancelButtonClass: 'btn cancel theme-btn_sm btn_gray'
                                     }
                                 }) }} >
-                                <i class="cf-trash"></i>
+                                <i class="fa-trash-o"></i>
                             </button>
                         </td>
                     </tr>
+                    {% set errorPath = 'product.' ~ lineItem.productSku %}
+                    {% if lineItemErrors is iterable and lineItemErrors[errorPath] is defined and lineItemErrors[errorPath] is iterable %}
+                        {% for error in lineItemErrors[errorPath] %}
+                            <tr class="borderless t_paddingless">
+                                <td id="product-error-{{ lineItem.productSku }}" colspan="6"></td>
+                            </tr>
+                            <script>
+                                require(['oroui/js/messenger'], function(messenger) {
+                                    messenger.notificationFlashMessage('error', '{{ error.message }}', {
+                                        style: 'validation',
+                                        container: $('#product-error-{{ lineItem.productSku }}')
+                                    })
+                                });
+                            </script>
+                        {% endfor %}
+                    {% endif %}
                     <tr class="borderless t_paddingless">
                         {% set notes = lineItem.notes %}
                         <td colspan="6">
@@ -388,7 +420,7 @@
     {% set attr = attr|merge({ class: attr.class|default('') ~ " cart-list_empty"}) %}
     <div {{ block('block_attributes') }}>
           <span class="badge badge_orange badge_xlg badge_circle">
-            <i class="cf-basket"></i>
+            <i class="fa-shopping-cart"></i>
           </span>
         <span class="fs24 va-m_md">{{ 'oro.frontend.shoppinglist.view.empty'|trans }}</span>
     </div>
@@ -421,7 +453,7 @@
                 cancelButtonClass: 'btn cancel theme-btn_sm btn_gray'
             }
         }) }} >
-            <i class="fa cf-trash mmr5-md"></i> {{ 'oro.frontend.shoppinglist.btn.delete'|trans }}
+            <i class="fa-trash-o mmr5-md"></i> {{ 'oro.frontend.shoppinglist.btn.delete'|trans }}
         </button>
 {% endblock %}
 
@@ -429,4 +461,10 @@
 <div class="shipping-list-view-total-container order-checkout-widget__container-wrapper">
     {{ block_widget(block) }}
 </div>
+{% endblock %}
+
+{% block _shopping_list_combined_button_widget %}
+    <div data-name="empty-items__hide">
+        {{ block_widget(block) }}
+    </div>
 {% endblock %}

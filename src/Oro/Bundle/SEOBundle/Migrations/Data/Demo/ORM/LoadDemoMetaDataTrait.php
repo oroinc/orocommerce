@@ -14,9 +14,8 @@ trait LoadDemoMetaDataTrait
     public function addMetaFieldsData(ObjectManager $manager, array $entities)
     {
         foreach ($entities as $entity) {
-            $entity->addMetaTitles($this->getSeoMetaFieldData($manager, 'defaultMetaTitle', true));
-            $entity->addMetaDescriptions($this->getSeoMetaFieldData($manager, 'defaultMetaDescription', false));
-            $entity->addMetaKeywords($this->getSeoMetaFieldData($manager, 'defaultMetaKeywords', false));
+            $entity->addMetaDescriptions($this->getSeoMetaFieldData($manager, 'defaultMetaDescription'));
+            $entity->addMetaKeywords($this->getSeoMetaFieldData($manager, 'defaultMetaKeywords'));
 
             $manager->persist($entity);
         }
@@ -27,17 +26,13 @@ trait LoadDemoMetaDataTrait
      *
      * @param ObjectManager $manager
      * @param $seoFieldValue
-     * @param bool $isString
      * @return LocalizedFallbackValue
      */
-    protected function getSeoMetaFieldData(ObjectManager $manager, $seoFieldValue, $isString)
+    protected function getSeoMetaFieldData(ObjectManager $manager, $seoFieldValue)
     {
         $seoField = new LocalizedFallbackValue();
-        if ($isString) {
-            $seoField->setString($seoFieldValue);
-        } else {
-            $seoField->setText($seoFieldValue);
-        }
+        $seoField->setText($seoFieldValue);
+
         $manager->persist($seoField);
 
         return $seoField;

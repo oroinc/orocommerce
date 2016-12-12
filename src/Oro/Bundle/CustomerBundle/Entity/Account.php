@@ -24,10 +24,11 @@ use Oro\Bundle\CustomerBundle\Model\ExtendAccount;
  * @Config(
  *      routeName="oro_customer_account_index",
  *      routeView="oro_customer_account_view",
+ *      routeCreate="oro_customer_account_create",
  *      routeUpdate="oro_customer_account_update",
  *      defaultValues={
  *          "entity"={
- *              "icon"="icon-user"
+ *              "icon"="fa-user"
  *          },
  *          "ownership"={
  *              "owner_type"="USER",
@@ -43,6 +44,9 @@ use Oro\Bundle\CustomerBundle\Model\ExtendAccount;
  *          "security"={
  *              "type"="ACL",
  *              "group_name"="commerce"
+ *          },
+ *          "grid"={
+ *              "default"="account-accounts-select-grid"
  *          },
  *          "dataaudit"={
  *              "auditable"=true
