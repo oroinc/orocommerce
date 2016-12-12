@@ -12,7 +12,7 @@ operations:
             template: OroUPSBundle:Action:invalidateCache.html.twig
             title: oro.ups.form.invalidate_cache.title
             options:
-                width: 550
+                width: 505
                 modal: false
                 stateEnabled: false
                 incrementalPosition: false
