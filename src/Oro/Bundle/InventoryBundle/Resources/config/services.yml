@@ -173,9 +173,16 @@ services:
             - { name: kernel.event_listener, event: rfp.form_submit_check.oro_product_frontend_quick_add_copy_paste, method: onCopyPasteRFPFormSubmitCheck }
             - { name: kernel.event_listener, event: rfp.form_submit_check.oro_product_frontend_quick_add_import, method: onQuickAddImportRFPFormSubmitCheck }
 
-    oro_inventory.manager.inventory_decrement:
+    oro_inventory.manager.inventory_quantity_manager:
         class: 'Oro\Bundle\InventoryBundle\Inventory\InventoryQuantityManager'
         arguments:
             - "@event_dispatcher"
-            - "@oro_entity.doctrine_helper"
             - "@oro_entity.fallback.resolver.entity_fallback_resolver"
+
+    oro_inventory.event_listener.create_order_listener:
+        class: Oro\Bundle\InventoryBundle\EventListener\CreateOrderEventListener
+        arguments:
+            - '@oro_inventory.manager.inventory_quantity_manager'
+            - '@oro_entity.doctrine_helper'
+        tags:
+            - { name: kernel.event_listener, event: extendable_action.finish_checkout, method: onCreateOrder, priority: 10 }

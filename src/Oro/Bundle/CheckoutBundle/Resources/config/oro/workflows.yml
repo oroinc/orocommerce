@@ -873,6 +873,8 @@ workflows:
                                     failureUrl: $.result.failureUrl
                                     failedShippingAddressUrl: $.result.failedShippingAddressUrl
                             - '@assign_value': [$payment_in_progress, true]
+                    - '@extendable':
+                        events: [extendable_action.finish_checkout]
                     - '@redirect':
                         conditions:
                             '@and':
