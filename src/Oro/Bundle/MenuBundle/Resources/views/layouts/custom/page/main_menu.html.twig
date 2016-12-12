@@ -2,7 +2,20 @@
     {% set attr = layout_attr_defaults(attr, {
         '~class': " sidebar__menu main-menu"
     }) %}
-    <div {{ block('block_attributes') }}>
+
+    {% set dom_relocation_options =  {
+        responsive: [
+            {
+                breakpoint: 1099,
+                moveTo: '[data-main-menu-extra-container]'
+            }
+        ]
+    }|json_encode %}
+
+    <div {{ block('block_attributes') }}
+        data-dom-relocation
+        data-dom-relocation-options="{{ dom_relocation_options }}"
+    >
         <ul class="main-menu__list">
             {{ block_widget(block) }}
         </ul>
@@ -13,7 +26,20 @@
     {% set attr = layout_attr_defaults(attr, {
         '~class': " sidebar__menu sidebar__menu--collapsible main-menu"
     }) %}
-    <div {{ block('block_attributes') }}>
+
+    {% set dom_relocation_options =  {
+        responsive: [
+            {
+                breakpoint: 1099,
+                moveTo: '[data-main-menu-extra-container]'
+            }
+        ]
+    }|json_encode %}
+
+    <div {{ block('block_attributes') }}
+        data-dom-relocation
+        data-dom-relocation-options="{{ dom_relocation_options }}"
+    >
         <div class="collapse-view expanded"
             data-page-component-module="oroui/js/app/components/jquery-widget-component"
             data-page-component-options="{{ {
@@ -36,4 +62,3 @@
         </div>
     </div>
 {% endblock %}
-

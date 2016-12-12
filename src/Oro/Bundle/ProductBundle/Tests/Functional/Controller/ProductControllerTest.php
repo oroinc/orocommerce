@@ -27,6 +27,8 @@ class ProductControllerTest extends WebTestCase
     const STATUS = 'Disabled';
     const UPDATED_STATUS = 'Enabled';
 
+    const TYPE = 'Simple';
+
     const INVENTORY_STATUS = 'In Stock';
     const UPDATED_INVENTORY_STATUS = 'Out of Stock';
 
@@ -89,10 +91,22 @@ class ProductControllerTest extends WebTestCase
             1,
             $crawler->filterXPath("//li/a[contains(text(),'".self::CATEGORY_MENU_NAME."')]")->count()
         );
+
+        $this->assertEquals(
+            1,
+            $crawler->filterXPath("//select/option[contains(text(),'Simple')]")->count()
+        );
+
+        $this->assertEquals(
+            1,
+            $crawler->filterXPath("//select/option[contains(text(),'Configurable')]")->count()
+        );
+
         $form = $crawler->selectButton('Continue')->form();
         $formValues = $form->getPhpValues();
         $formValues['input_action'] = 'oro_product_create';
         $formValues['oro_product_step_one']['category'] = self::CATEGORY_ID;
+        $formValues['oro_product_step_one']['type'] = Product::TYPE_SIMPLE;
 
         $this->client->followRedirects(true);
         $crawler = $this->client->request(
@@ -120,6 +134,7 @@ class ProductControllerTest extends WebTestCase
         $formValues['oro_product']['names']['values']['default'] = self::DEFAULT_NAME;
         $formValues['oro_product']['descriptions']['values']['default'] = self::DEFAULT_DESCRIPTION;
         $formValues['oro_product']['shortDescriptions']['values']['default'] = self::DEFAULT_SHORT_DESCRIPTION;
+        $formValues['oro_product']['type'] = Product::TYPE_SIMPLE;
         $formValues['oro_product']['additionalUnitPrecisions'][] = [
             'unit' => self::FIRST_UNIT_CODE,
             'precision' => self::FIRST_UNIT_PRECISION,
@@ -194,6 +209,7 @@ class ProductControllerTest extends WebTestCase
                 'owner' => $this->getBusinessUnitId(),
                 'inventoryStatus' => Product::INVENTORY_STATUS_OUT_OF_STOCK,
                 'status' => Product::STATUS_ENABLED,
+                'type' => Product::TYPE_SIMPLE,
                 'primaryUnitPrecision' => [
                     'unit' => self::FIRST_UNIT_CODE, 'precision' => self::FIRST_UNIT_PRECISION,
                 ],
@@ -293,6 +309,7 @@ class ProductControllerTest extends WebTestCase
         );
         $this->assertContains(self::UPDATED_INVENTORY_STATUS, $html);
         $this->assertContains(self::UPDATED_STATUS, $html);
+        $this->assertContains(self::TYPE, $html);
         $this->assertProductPrecision($id, self::SECOND_UNIT_CODE, self::SECOND_UNIT_PRECISION);
         $this->assertProductPrecision($id, self::THIRD_UNIT_CODE, self::THIRD_UNIT_PRECISION);
 
@@ -389,6 +406,7 @@ class ProductControllerTest extends WebTestCase
                 'owner' => $this->getBusinessUnitId(),
                 'inventoryStatus' => Product::INVENTORY_STATUS_OUT_OF_STOCK,
                 'status' => Product::STATUS_ENABLED,
+                'type' => Product::TYPE_SIMPLE,
                 'primaryUnitPrecision' => $form->getPhpValues()['oro_product']['primaryUnitPrecision'],
                 'additionalUnitPrecisions' => $form->getPhpValues()['oro_product']['additionalUnitPrecisions'],
                 'names' => [
@@ -649,7 +667,6 @@ class ProductControllerTest extends WebTestCase
      * @param string $code
      * @param int $precision
      * @param string $html
-     * @return string
      */
     private function assertContainsAdditionalUnitPrecision($code, $precision, $html)
     {
@@ -775,6 +792,8 @@ class ProductControllerTest extends WebTestCase
                 $result[] = $data;
             }
         );
+
+        sort($result);
 
         return $result;
     }
