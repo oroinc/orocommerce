@@ -1,5 +1,4 @@
 {% block __oro_checkout_content__checkout_content_widget %}
-    <h1 class="page-title page-title--decreased">{{ 'oro.checkout.entity_label'|trans }}</h1>
     <div {{ block('block_attributes') }}
             data-layout="separate"
             data-role="checkout-content"
@@ -59,29 +58,30 @@
              data-page-component-options="{{ {
                  widgetModule: 'oroui/js/widget/collapse-widget',
                  storageKey: id,
-                 animationSpeed: 0
+                 animationSpeed: 0,
+                 forcedState: (false == isLineItemListValid) ? true : null
              }|json_encode() }}"
         >
             <div class="checkout-order-summary__header">
                 <div data-collapse-trigger>
-                    <div class="checkout-order-summary__header__icon-group">
+                    <div class="checkout-order-summary__icon-group">
                         <span class="badge badge_sm badge_orange badge_circled-corners mmr7-md mmr7-sm">
-                          <i class="cf-basket"></i>
+                          <i class="fa-shopping-cart"></i>
                         </span>
                         <span class="collapse-view__trigger">
-                            <i class="collapse-view__trigger-icon cf-play cf--gray"></i>
+                            <i class="collapse-view__trigger-icon fa-play cf--gray checkout-order-summary__icon-play"></i>
                         </span>
                     </div>
-                    <h3 class="checkout-order-summary__header__title">{{ 'oro.checkout.order_summary.label'|trans }}</h3>
-                    <div class="checkout-order-summary__header__desc">
+                    <h3 class="checkout-order-summary__title">{{ 'oro.checkout.order_summary.label'|trans }}</h3>
+                    <div class="checkout-order-summary__desc">
                         <span class="mr1-md mr1-sm"><strong>{{ lineItemsWithTotals|length }}</strong> {{ 'oro.checkout.order_summary.items'|trans }}</span>
                         <span>{{ 'oro.checkout.order_summary.subtotal'|trans }}: <strong>{{ total.amount|oro_format_currency({'currency': total.currency}) }}</strong></span>
                     </div>
                 </div>
                 {% set editLink = workflowItem.data.get('edit_order_link') %}
                 {% if editLink %}
-                    <a href="{{ editLink }}" class="checkout-order-summary__header__edit-link">
-                        <i class="cf-pencil"></i>
+                    <a href="{{ editLink }}" class="checkout-order-summary__edit-link">
+                        <i class="fa-pencil"></i>
                         {{ 'oro.checkout.order_summary.edit_order'|trans }}
                     </a>
                 {% endif %}
@@ -95,7 +95,7 @@
 
 {% block __oro_checkout_content__checkout_order_summary_table_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " checkout-order-summary__tab__content"
+        '~class': " checkout-order-summary__content"
     }) %}
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
@@ -103,22 +103,28 @@
 {% endblock %}
 
 {% block __oro_checkout_content__checkout_order_summary_line_items_widget %}
-    <table class="oro-grid-table table-scrollable"
-           data-page-component-module="oroui/js/app/components/view-component"
-           data-page-component-options="{{ {view: 'orofrontend/js/app/views/scrollable-table'}|json_encode }}">
-        <thead class="hidden-xs">
+    {% set attr = layout_attr_defaults(attr, {
+        'data-page-component-module': 'oroui/js/app/components/view-component',
+        '~data-page-component-options': {
+            view: 'orofrontend/js/app/views/scrollable-table'
+        },
+        '~class': " checkout-order-summary__grid"
+    }) %}
+
+    <table {{ block('block_attributes') }}>
+        <thead class="checkout-order-summary__grid-head">
         <tr data-scrollable-content-head>
             <th>{{ 'oro.checkout.order_summary.item'|trans }}</th>
             <th class="text-center">{{ 'oro.checkout.order_summary.quantity'|trans }}</th>
             <th class="text-right" data-scrollable-item-has-offset>{{ 'oro.checkout.order_summary.price'|trans }}</th>
         </tr>
         </thead>
-
         <tbody>
         <tr>
-            <td colspan="3">
+            <td class="checkout-order-summary__grid-col" colspan="3">
                 <div data-scrollable-content class="scrollable-content">
-                    <table data-scrollable-inner-content class="scrollable-content__table">
+                    <table data-scrollable-inner-content class="checkout-order-summary__table">
+                        <tbody class="checkout-order-summary__table-inner">
                         {% for lineItem in lineItemsWithTotals %}
                             {% set lineItemInfo = lineItemsWithTotals.getInfo() %}
                             {% set productSku = lineItem.productSku %}
@@ -126,8 +132,8 @@
                                 {% set productSku = lineItem.product.sku %}
                             {% endif %}
                             <tr data-scrollable-content-body>
-                                <td class="va-t_md">
-                                    <h3 class="product-item__title product-item__title_in-cart mb1-md">
+                                <td class="checkout-order-summary__table-col checkout-order-summary__product">
+                                    <h3 class="product-item__title product-item__title_in-cart">
                                         {% if lineItem.product is not null %}
                                             <a href="{{ path('oro_product_frontend_product_view', {'id':lineItem.product.id}) }}" tabindex="-1">{{ lineItem.product.defaultName }}</a>
                                         {% else %}
@@ -138,20 +144,20 @@
                                                 class="red">{{ productSku }}</span></div>
                                 </td>
                                 {% set quantity = lineItem.quantity %}
-                                <td class="text-center va-t_md">{{ quantity ? quantity|oro_format_short_product_unit_value(lineItem.productUnit) : 'N/A'|trans }}</td>
-                                <td class="va-t_md text-right">
-                                    <div class="checkout-order-summary__price-table">
-                                        <table class="table">
+                                <td class="checkout-order-summary__table-col checkout-order-summary__qty">{{ quantity ? quantity|oro_format_short_product_unit_value(lineItem.productUnit) : 'N/A'|trans }}</td>
+                                <td class="checkout-order-summary__table-col checkout-order-summary__price">
+                                    <div class="checkout-order-summary__price-inner">
+                                        <table class="checkout-order-summary__price-table">
                                             <tbody>
                                             <tr>
-                                                <td>{{ 'oro.checkout.order_summary.price_per_item'|trans }}:</td>
-                                                <td data-scrollable-item-has-offset>{{ lineItem.price is not null ? lineItem.price|oro_format_price : 'N/A'|trans }}</td>
+                                                <td class="checkout-order-summary__price-line">{{ 'oro.checkout.order_summary.price_per_item'|trans }}:</td>
+                                                <td class="checkout-order-summary__price-line" data-scrollable-item-has-offset>{{ lineItem.price is not null ? lineItem.price|oro_format_price : 'N/A'|trans }}</td>
                                             </tr>
                                             <tr>
-                                                <td>
+                                                <td class="checkout-order-summary__price-line">
                                                     <span>{{ 'oro.checkout.order_summary.total_price'|trans }}</span>
                                                 </td>
-                                                <td data-scrollable-item-has-offset>
+                                                <td class="checkout-order-summary__price-line" data-scrollable-item-has-offset>
                                                     <span class="fs16 blue">{{ lineItemInfo.total|oro_format_price }}</span>
                                                 </td>
                                             </tr>
@@ -160,8 +166,24 @@
                                     </div>
                                 </td>
                             </tr>
+                            {% set errorPath = 'product.' ~ lineItem.productSku %}
+                            {% if lineItemErrors is iterable and lineItemErrors[errorPath] is defined and lineItemErrors[errorPath] is iterable %}
+                                {% for error in lineItemErrors[errorPath] %}
+                                    <script>
+                                        require(['oroui/js/messenger'], function(messenger) {
+                                            messenger.notificationFlashMessage('error', '{{ error.message }}', {
+                                                style: 'validation',
+                                                container: $('#product-error-{{ lineItem.productSku }}')
+                                            })
+                                        });
+                                    </script>
+                                    <tr>
+                                        <td id="product-error-{{ lineItem.productSku }}" colspan="3"></td>
+                                    </tr>
+                                {% endfor %}
+                            {% endif %}
                         {% endfor %}
-
+                        </tbody>
                     </table>
                 </div>
             </td>
@@ -170,9 +192,9 @@
             {% set editLink = workflowItem.data.get('edit_order_link') %}
             {% set hasEditList = editLink and workflowStep.name == 'order_review' %}
             {% if hasEditList %}
-                <td class="va-t_md hidden-xs">
+                <td class="oro-grid-table__edit">
                     <a href="{{ editLink }}">
-                        <i class="cf-pencil"></i>
+                        <i class="fa-pencil"></i>
                         {{ 'oro.checkout.order_summary.edit_order'|trans }}
                     </a>
                 </td>

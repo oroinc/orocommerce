@@ -29,7 +29,7 @@
     }
 }
 
-@include breakpoint('tablet-small') {
+@include breakpoint('tablet') {
     .primary-menu {
         &__item {
             padding: $primary-menu-item-inner-offset-tablet-small;
@@ -47,8 +47,8 @@
             }
         }
 
-        .icon-minus,
-        .icon-plus {
+        .fa-minus,
+        .fa-plus {
             right: 13px;
             top: 15px;
         }

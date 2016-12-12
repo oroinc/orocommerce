@@ -5,6 +5,7 @@ namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+use Oro\Bundle\SearchBundle\Provider\AbstractSearchMappingProvider;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityBundle\ORM\EntityAliasResolver;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestEmployee;
@@ -18,7 +19,6 @@ use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Event\RestrictIndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderInterface;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
-use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
 use Oro\Bundle\WebsiteSearchBundle\Resolver\EntityDependenciesResolver;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadEmployeesToIndex;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadItemData;
@@ -46,7 +46,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
     protected $doctrineHelper;
 
     /**
-     * @var WebsiteSearchMappingProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var AbstractSearchMappingProvider|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $mappingProviderMock;
 
@@ -88,22 +88,6 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
     ];
 
     /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param WebsiteSearchMappingProvider $mappingProvider
-     * @param EntityDependenciesResolver $entityDependenciesResolver
-     * @param IndexDataProvider $indexDataProvider
-     * @param PlaceholderInterface $placeholder
-     * @return AbstractIndexer
-     */
-    abstract protected function getIndexer(
-        DoctrineHelper $doctrineHelper,
-        WebsiteSearchMappingProvider $mappingProvider,
-        EntityDependenciesResolver $entityDependenciesResolver,
-        IndexDataProvider $indexDataProvider,
-        PlaceholderInterface $placeholder
-    );
-
-    /**
      * @param array $options
      * @return Item[]
      */
@@ -133,19 +117,8 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
         $this->dispatcher = $this->getContainer()->get('event_dispatcher');
 
         $this->doctrineHelper = $this->getContainer()->get('oro_entity.doctrine_helper');
-        $this->mappingProviderMock = $this->getMockBuilder(WebsiteSearchMappingProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
 
         $this->entityAliasResolver = $this->getContainer()->get('oro_entity.entity_alias_resolver');
-
-        $this->indexer = $this->getIndexer(
-            $this->doctrineHelper,
-            $this->mappingProviderMock,
-            $this->getContainer()->get('oro_website_search.engine.entity_dependencies_resolver'),
-            $this->getContainer()->get('oro_website_search.engine.index_data'),
-            $this->getContainer()->get('oro_website_search.placeholder_decorator')
-        );
 
         $this->clearRestrictListeners($this->getRestrictEntityEventName());
     }

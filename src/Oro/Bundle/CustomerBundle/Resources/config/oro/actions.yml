@@ -8,7 +8,7 @@ operations:
             - account-account-user-grid
         order: 30
         button_options:
-            icon: icon-remove
+            icon: fa-close
         acl_resource: [EDIT, $.data]
         preconditions:
             '@equal': [$enabled, true]
@@ -31,7 +31,7 @@ operations:
             - account-account-user-grid
         order: 30
         button_options:
-            icon: icon-ok
+            icon: fa-check
         acl_resource: [EDIT, $.data]
         preconditions:
             '@equal': [$enabled, false]
@@ -52,7 +52,7 @@ operations:
             - oro_customer_frontend_account_user_view
         order: 10
         button_options:
-            icon: icon-remove
+            icon: fa-close
         acl_resource: [EDIT, $.data]
         preactions:
             - '@get_active_user': $.currentUser
@@ -91,7 +91,7 @@ operations:
             - oro_customer_frontend_account_user_view
         order: 10
         button_options:
-            icon: icon-ok
+            icon: fa-check
         acl_resource: [EDIT, $.data]
         preactions:
             - '@get_active_user': $.currentUser
@@ -131,7 +131,7 @@ operations:
         order: 20
         button_options:
             class: back no-hash icons-holder-text
-            icon: icon-ok
+            icon: fa-check
         acl_resource: [EDIT, $.data]
         preconditions:
             '@equal': [$confirmed, false]
@@ -152,7 +152,7 @@ operations:
         order: 30
         button_options:
             class: back no-hash icons-holder-text
-            icon: icon-envelope-alt
+            icon: fa-envelope-o
         acl_resource: [EDIT, $.data]
         preconditions:
             '@equal': [$confirmed, false]
@@ -198,7 +198,7 @@ operations:
         acl_resource: [DELETE, $.data]
         order: 20
         button_options:
-            icon: icon-trash
+            icon: fa-trash-o
         preactions:
             - '@get_active_user': $.currentUser
         preconditions:
@@ -228,7 +228,7 @@ operations:
         acl_resource: [EDIT, $.data]
         order: 5
         button_options:
-            icon: icon-pencil
+            icon: fa-pencil
         actions:
             - '@redirect':
                 parameters:
@@ -244,7 +244,7 @@ operations:
         acl_resource: [EDIT, $.data]
         order: 5
         button_options:
-            icon: icon-pencil
+            icon: fa-pencil
         actions:
             - '@redirect':
                 parameters:
@@ -258,7 +258,7 @@ operations:
         acl_resource: [EDIT, entity:commerce@Oro\Bundle\CustomerBundle\Entity\AccountUserRole]
         order: 10
         button_options:
-            icon: icon-pencil
+            icon: fa-pencil
         actions:
             - '@redirect':
                 parameters:
@@ -275,7 +275,7 @@ operations:
         acl_resource: [DELETE, $.data]
         order: 20
         button_options:
-            icon: icon-trash
+            icon: fa-trash-o
         preactions:
             - '@call_method':
                 object: $.data
@@ -315,7 +315,9 @@ operations:
             - account-accounts-select-grid
             - account-group-accounts-grid-basic
             - account-group-accounts-grid-view
+            - account-group-accounts-grid-create
             - account-group-accounts-grid-update
+            - account-group-accounts-grid-update-basic
             - account-groups-select-grid
             - account-user-by-account-grid
 

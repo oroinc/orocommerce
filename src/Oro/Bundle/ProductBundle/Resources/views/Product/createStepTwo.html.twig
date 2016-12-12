@@ -69,7 +69,6 @@
     {% set generalData = generalData|merge([
         form_row(form.names),
         form_row(form.status),
-        form_row(form.inventoryStatus),
         form_row(form.images),
         form_row(form.primaryUnitPrecision),
         form_row(form.additionalUnitPrecisions)
@@ -116,6 +115,15 @@
             }]
         }] ) %}
     {% endif %}
+
+    {% set dataBlocks = dataBlocks|merge([{
+        'title': 'oro.product.sections.inventory'|trans,
+        'priority': 5,
+        'subblocks': [{
+            'title': '',
+            'data': [form_row(form.inventoryStatus)]
+        }]
+    }]) %}
 
     {% set data = {
         'formErrors': form_errors(form),

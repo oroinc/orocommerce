@@ -16,7 +16,7 @@ oro.customer:
         has_group.label: 'Has group'
         users.label: 'Users'
         addresses.label: 'Addresses'
-        form.choose: 'Choose an customer...'
+        form.choose: 'Choose a customer...'
         form.choose_parent: 'Choose parent customer...'
         address_book.label: 'Address Book'
         owner.label: 'Owner'
@@ -53,7 +53,7 @@ oro.customer:
         name.label: 'Name'
         id.label: 'Id'
         accounts.label: 'Customers'
-        form.choose: 'Choose an customer group...'
+        form.choose: 'Choose a customer group...'
 
     accountuser:
         entity_label:                'Customer User'
@@ -89,7 +89,7 @@ oro.customer:
         organization.label:          'Organization'
         organizations.label:         'Organizations'
         has_role.label:              'Has Role'
-        form.choose:                 'Choose an customer user...'
+        form.choose:                 'Choose a customer user...'
         addresses.label:             'Addresses'
         address_book.label:          'Address Book'
         owner.label:                 'Owner'
@@ -112,7 +112,7 @@ oro.customer:
             return_to_login: 'Return to Login'
             password_reset.message: 'Password was created successfully.'
             request_password.label: 'Request'
-            email_not_exists: 'Email address "%email%" is not known'
+            email_not_exists: 'Email address "%email%" does not exist.'
             check_email:
                 title: 'Check Email'
                 message: 'An email has been sent to %email%. It contains a link you must click to reset your password.'

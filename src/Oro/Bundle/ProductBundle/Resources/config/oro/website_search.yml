@@ -20,10 +20,10 @@ Oro\Bundle\ProductBundle\Entity\Product:
             name: short_description_LOCALIZATION_ID
             type: text
         -
-            name: minimum_price
-            type: decimal
-        -
             name: status
+            type: text
+        -
+            name: type
             type: text
         -
             name: inventory_status

@@ -4,7 +4,7 @@ system_configuration:
             title: oro.website.system_configuration.groups.webistes.title
         routing:
             title: oro.website.system_configuration.groups.routing.title
-            icon: 'icon-sitemap'
+            icon: 'fa-sitemap'
         websites_routing_general:
             title: oro.website.system_configuration.groups.general.title
     fields:

@@ -68,10 +68,14 @@ class FrontendAccountUserType extends AbstractType
         if (!$user instanceof AccountUser) {
             return;
         }
-
         /** @var AccountUser $data */
         $data = $event->getData();
-        $data->setAccount($user->getAccount());
+
+        $event->getForm()->add('account', FrontendOwnerSelectType::NAME, [
+            'label' => 'oro.customer.account.entity_label',
+            'targetObject' => $data
+        ]);
+
         $data->setOrganization($user->getOrganization());
     }
 

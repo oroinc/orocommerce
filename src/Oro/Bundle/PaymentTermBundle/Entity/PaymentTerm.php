@@ -17,7 +17,7 @@ use Oro\Bundle\PaymentTermBundle\Model\ExtendPaymentTerm;
  *      routeUpdate="oro_payment_term_update",
  *      defaultValues={
  *          "entity"={
- *              "icon"="icon-usd"
+ *              "icon"="fa-usd"
  *          },
  *          "dataaudit"={
  *              "auditable"=true
