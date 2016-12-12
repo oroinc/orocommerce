@@ -1,0 +1,11 @@
+.sales-block {
+    display: inline-block;
+
+    margin-bottom:  $offset-x-m;
+
+    vertical-align: top;
+
+    &:not(:first-child) {
+        margin-left: $offset-x-m;
+    }
+}

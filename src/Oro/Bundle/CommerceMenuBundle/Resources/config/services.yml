@@ -2,6 +2,36 @@ parameters:
     oro_commerce_menu.entity.menu_update.class: 'Oro\Bundle\CommerceMenuBundle\Entity\MenuUpdate'
 
 services:
+    oro_commerce_menu.menu.condition.condition_extension:
+        class: 'Oro\Bundle\CommerceMenuBundle\Menu\Condition\ConditionExtension'
+        public: false
+        tags:
+            - { name: oro_navigation.menu_extension, priority: 80 }
+
+    oro_commerce_menu.menu.condition.config_value_expression_language_provider:
+        class: 'Oro\Bundle\CommerceMenuBundle\Menu\Condition\ConfigValueExpressionLanguageProvider'
+        public: false
+        arguments:
+            - '@oro_config.manager'
+        tags:
+            - { name: oro_commerce_menu.condition.expression_language_provider, alias: config_value }
+
+    oro_commerce_menu.menu.condition.logged_in_expression_language_provider:
+        class: 'Oro\Bundle\CommerceMenuBundle\Menu\Condition\LoggedInExpressionLanguageProvider'
+        public: false
+        arguments:
+            - '@oro_security.security_facade.link'
+        tags:
+            - { name: oro_commerce_menu.condition.expression_language_provider, alias: is_logged_in }
+
+    oro_commerce_menu.twig.menu_extension:
+        class: 'Oro\Bundle\CommerceMenuBundle\Twig\MenuExtension'
+        public: false
+        arguments:
+            - '@knp_menu.matcher'
+        tags:
+            - { name: twig.extension }
+
     oro_commerce_menu.ownership_provider.global:
         class: Oro\Bundle\NavigationBundle\Menu\Provider\GlobalOwnershipProvider
         arguments:
@@ -23,3 +53,10 @@ services:
         class: 'Oro\Bundle\CommerceMenuBundle\CacheWarmer\NamespaceMigrationProvider'
         tags:
             - {name: oro_installer.namespace_migration_provider, priority: 15}
+
+    oro_commerce_menu.data_provider.menu:
+        class: 'Oro\Bundle\CommerceMenuBundle\Layout\DataProvider\MenuProvider'
+        arguments:
+          - '@oro_menu.builder_chain'
+        tags:
+            - { name: layout.data_provider, alias: menu }

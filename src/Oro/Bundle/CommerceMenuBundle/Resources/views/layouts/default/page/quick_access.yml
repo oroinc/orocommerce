@@ -1,0 +1,10 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'quick_access.html.twig'
+        - '@move':
+            id: quick_access_container
+            parentId: middle_bar
+            siblingId: middle_bar_center
+
+    conditions: 'context["is_logged_in"]'

@@ -1,0 +1,11 @@
+.main-menu-outer {
+    display: flex;
+
+    position: relative;
+}
+
+@include breakpoint('tablet') {
+    .main-menu-outer {
+        display: block;
+    }
+}
