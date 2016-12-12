@@ -6,7 +6,7 @@ use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 
-class CustomVariantFieldsProvider
+class CustomFieldProvider
 {
     /**
      * @var ConfigProvider
@@ -73,17 +73,6 @@ class CustomVariantFieldsProvider
      */
     protected function isFieldTypeAllowed($fieldType)
     {
-        return in_array($fieldType, $this->getAllowedFieldTypes(), true);
-    }
-
-    /**
-     * @return array
-     */
-    protected function getAllowedFieldTypes()
-    {
-        return [
-            'enum',
-            'boolean',
-        ];
+        return true;
     }
 }
