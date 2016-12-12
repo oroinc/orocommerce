@@ -61,8 +61,8 @@ class ImportExportTest extends AbstractImportExportTestCase
     public function testImportExport($strategy)
     {
         // @todo - must be fixed in BAP-12713
-//        $this->validateImportFile($strategy);
-//        $this->doImport($strategy);
+        $this->validateImportFile($strategy);
+        $this->doImport($strategy);
     }
 
     /**
@@ -180,16 +180,16 @@ class ImportExportTest extends AbstractImportExportTestCase
         );
 
         // @todo - must be fixed in BAP-12713
-//        $expectedRows = count(
-//            $this->client->getContainer()->get('oro_entity.doctrine_helper')
-//                ->getEntityRepository(Product::class)
-//                ->findAll()
-//        );
-//        $this->assertFileContentConsistency(
-//            $fileContent,
-//            count($this->inventoryStatusOnlyHeader),
-//            $expectedRows
-//        );
+        $expectedRows = count(
+            $this->client->getContainer()->get('oro_entity.doctrine_helper')
+                ->getEntityRepository(Product::class)
+                ->findAll()
+        );
+        $this->assertFileContentConsistency(
+            $fileContent,
+            count($this->inventoryStatusOnlyHeader),
+            $expectedRows
+        );
     }
 
     public function testExportDetailedInventoryLevel()
@@ -200,40 +200,40 @@ class ImportExportTest extends AbstractImportExportTestCase
         );
 
         // @todo - must be fixed in BAP-12713
-//        $expectedRows = count(
-//            $this->client->getContainer()->get('oro_entity.doctrine_helper')
-//                ->getEntityRepository(InventoryLevel::class)
-//                ->findAll()
-//        );
+        $expectedRows = count(
+            $this->client->getContainer()->get('oro_entity.doctrine_helper')
+                ->getEntityRepository(InventoryLevel::class)
+                ->findAll()
+        );
 
-//        $this->assertFileContentConsistency(
-//            $fileContent,
-//            count($this->inventoryLevelHeader),
-//            $expectedRows
-//        );
+        $this->assertFileContentConsistency(
+            $fileContent,
+            count($this->inventoryLevelHeader),
+            $expectedRows
+        );
 
         // check correct unit format
-//        $exportUnits = [];
-//        for ($i = 1; $i < count($fileContent); $i++) {
-//            $exportUnits[] = end($fileContent[$i]);
-//        }
+        $exportUnits = [];
+        for ($i = 1; $i < count($fileContent); $i++) {
+            $exportUnits[] = end($fileContent[$i]);
+        }
 
-//        $inventoryLevels = $this->client->getContainer()->get('oro_api.doctrine_helper')
-//            ->getEntityRepository(InventoryLevel::class)
-//            ->findAll();
-//        $formatter = $this->client->getContainer()->get('oro_product.formatter.product_unit_label');
-//        $actualUnits = [];
-//        foreach ($inventoryLevels as $inventoryLevel) {
-//            /** @var InventoryLevel $inventoryLevel */
-//            $precisionUnit = $inventoryLevel->getProductUnitPrecision()->getUnit();
-//            $actualUnits[] = $formatter->format(
-//                $precisionUnit ? $precisionUnit->getCode() : null,
-//                true,
-//                $inventoryLevel->getQuantity() > 1
-//            );
-//        }
+        $inventoryLevels = $this->client->getContainer()->get('oro_api.doctrine_helper')
+            ->getEntityRepository(InventoryLevel::class)
+            ->findAll();
+        $formatter = $this->client->getContainer()->get('oro_product.formatter.product_unit_label');
+        $actualUnits = [];
+        foreach ($inventoryLevels as $inventoryLevel) {
+            /** @var InventoryLevel $inventoryLevel */
+            $precisionUnit = $inventoryLevel->getProductUnitPrecision()->getUnit();
+            $actualUnits[] = $formatter->format(
+                $precisionUnit ? $precisionUnit->getCode() : null,
+                true,
+                $inventoryLevel->getQuantity() > 1
+            );
+        }
 
-//        $this->assertEmpty(array_diff($exportUnits, $actualUnits));
+        $this->assertEmpty(array_diff($exportUnits, $actualUnits));
     }
 
     /**
@@ -258,10 +258,10 @@ class ImportExportTest extends AbstractImportExportTestCase
         $this->assertTrue($response['success']);
 
         // @todo - must be fixed in BAP-12713
-//        $fileContent = $this->downloadFile($response['url']);
-//        $this->assertEquals($fileContent[0], $expectedHeader);
+        $fileContent = $this->downloadFile($response['url']);
+        $this->assertEquals($fileContent[0], $expectedHeader);
 
-//        return $fileContent;
+        return $fileContent;
     }
 
     /**

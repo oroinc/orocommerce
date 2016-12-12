@@ -81,10 +81,10 @@ class ImportExportTest extends WebTestCase
         $this->file = $this->getExportFile();
 
         // @todo - must be fixed in BAP-12713
-//        $this->validateImportFile($strategy);
-//        $crawler = $this->client->getCrawler();
-//        $this->assertEquals(0, $crawler->filter('.import-errors')->count());
-//        $this->doImport($strategy, $expectedAdd, $expectedUpdate);
+        $this->validateImportFile($strategy);
+        $crawler = $this->client->getCrawler();
+        $this->assertEquals(0, $crawler->filter('.import-errors')->count());
+        $this->doImport($strategy, $expectedAdd, $expectedUpdate);
     }
 
     public function testExportWithRelations()
@@ -108,12 +108,12 @@ class ImportExportTest extends WebTestCase
     public function testDuplicateRowsImport($strategy)
     {
         // @todo - must be fixed in BAP-12713
-//        $this->assertErrors(
-//            $strategy,
-//            '@OroPricingBundle/Tests/Functional/ImportExport/data/duplicate_rows.csv',
-//            'Error in row #2. Product has duplication of product prices. '
-//            .'Set of fields "PriceList", "Quantity" , "Unit" and "Currency" should be unique.'
-//        );
+        $this->assertErrors(
+            $strategy,
+            '@OroPricingBundle/Tests/Functional/ImportExport/data/duplicate_rows.csv',
+            'Error in row #2. Product has duplication of product prices. '
+            .'Set of fields "PriceList", "Quantity" , "Unit" and "Currency" should be unique.'
+        );
     }
 
     /**
@@ -123,11 +123,11 @@ class ImportExportTest extends WebTestCase
     public function testInvalidCurrencyPriceListImport($strategy)
     {
         // @todo - must be fixed in BAP-12713
-//        $this->assertErrors(
-//            $strategy,
-//            '@OroPricingBundle/Tests/Functional/ImportExport/data/invalid_currency.csv',
-//            'Error in row #1. price.currency: Currency "ARS" is not valid for current price list'
-//        );
+        $this->assertErrors(
+            $strategy,
+            '@OroPricingBundle/Tests/Functional/ImportExport/data/invalid_currency.csv',
+            'Error in row #1. price.currency: Currency "ARS" is not valid for current price list'
+        );
     }
 
     /**
@@ -137,11 +137,11 @@ class ImportExportTest extends WebTestCase
     public function testInvalidProductUnit($strategy)
     {
         // @todo - must be fixed in BAP-12713
-//        $this->assertErrors(
-//            $strategy,
-//            '@OroPricingBundle/Tests/Functional/ImportExport/data/invalid_product_unit.csv',
-//            'Error in row #1. Unit Code: Unit "box" is not allowed for product "product.1".'
-//        );
+        $this->assertErrors(
+            $strategy,
+            '@OroPricingBundle/Tests/Functional/ImportExport/data/invalid_product_unit.csv',
+            'Error in row #1. Unit Code: Unit "box" is not allowed for product "product.1".'
+        );
     }
 
     /**
@@ -151,11 +151,11 @@ class ImportExportTest extends WebTestCase
     public function testUnavailableProductUnit($strategy)
     {
         // @todo - must be fixed in BAP-12713
-//        $this->assertErrors(
-//            $strategy,
-//            '@OroPricingBundle/Tests/Functional/ImportExport/data/unavailable_product_unit.csv',
-//            'Error in row #1. Unit Code: Product unit does not exist.'
-//        );
+        $this->assertErrors(
+            $strategy,
+            '@OroPricingBundle/Tests/Functional/ImportExport/data/unavailable_product_unit.csv',
+            'Error in row #1. Unit Code: Product unit does not exist.'
+        );
     }
 
     /**
@@ -165,11 +165,11 @@ class ImportExportTest extends WebTestCase
     public function testUnavailableProduct($strategy)
     {
         // @todo - must be fixed in BAP-12713
-//        $this->assertErrors(
-//            $strategy,
-//            '@OroPricingBundle/Tests/Functional/ImportExport/data/unavailable_product.csv',
-//            'Error in row #1. Product SKU: Product does not exist.'
-//        );
+        $this->assertErrors(
+            $strategy,
+            '@OroPricingBundle/Tests/Functional/ImportExport/data/unavailable_product.csv',
+            'Error in row #1. Product SKU: Product does not exist.'
+        );
     }
 
     /**
@@ -179,11 +179,11 @@ class ImportExportTest extends WebTestCase
     public function testNegativePriceValue($strategy)
     {
         // @todo - must be fixed in BAP-12713
-//        $this->assertErrors(
-//            $strategy,
-//            '@OroPricingBundle/Tests/Functional/ImportExport/data/negative_price_value.csv',
-//            'Error in row #1. price.value: This value should be 0 or more.'
-//        );
+        $this->assertErrors(
+            $strategy,
+            '@OroPricingBundle/Tests/Functional/ImportExport/data/negative_price_value.csv',
+            'Error in row #1. price.value: This value should be 0 or more.'
+        );
     }
 
     /**
@@ -326,21 +326,21 @@ class ImportExportTest extends WebTestCase
 
         $this->assertTrue($data['success']);
 
-        // @todo - tests must be implemented after BAP-12589
-//        $this->assertEquals($expectedReadCount, $data['readsCount']);
-//        $this->assertEquals($expectedErrorsCount, $data['errorsCount']);
+        // @todo - tests must be implemented after BAP-12713
+        $this->assertEquals($expectedReadCount, $data['readsCount']);
+        $this->assertEquals($expectedErrorsCount, $data['errorsCount']);
 
-//        $this->client->request(
-//            'GET',
-//            $data['url'],
-//            [],
-//            [],
-//            $this->generateNoHashNavigationHeader()
-//        );
+        $this->client->request(
+            'GET',
+            $data['url'],
+            [],
+            [],
+            $this->generateNoHashNavigationHeader()
+        );
 
-//        $result = $this->client->getResponse();
-//        $this->assertResponseStatusCodeEquals($result, 200);
-//        $this->assertResponseContentTypeEquals($result, 'text/csv');
+        $result = $this->client->getResponse();
+        $this->assertResponseStatusCodeEquals($result, 200);
+        $this->assertResponseContentTypeEquals($result, 'text/csv');
     }
 
     /**

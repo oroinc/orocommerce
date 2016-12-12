@@ -153,21 +153,21 @@ class ImportExportTest extends WebTestCase
 
         $this->assertTrue($data['success']);
 
-        // @todo - tests must be implemented after BAP-12589
-//        $this->assertEquals(1, $data['readsCount']);
-//        $this->assertEquals(0, $data['errorsCount']);
+        // @todo - tests must be implemented after BAP-12713
+        $this->assertEquals(1, $data['readsCount']);
+        $this->assertEquals(0, $data['errorsCount']);
 
-//        $this->client->request(
-//            'GET',
-//            $data['url'],
-//            [],
-//            [],
-//            $this->generateNoHashNavigationHeader()
-//        );
+        $this->client->request(
+            'GET',
+            $data['url'],
+            [],
+            [],
+            $this->generateNoHashNavigationHeader()
+        );
 
-//        $result = $this->client->getResponse();
-//        $this->assertResponseStatusCodeEquals($result, 200);
-//        $this->assertResponseContentTypeEquals($result, 'text/csv');
+        $result = $this->client->getResponse();
+        $this->assertResponseStatusCodeEquals($result, 200);
+        $this->assertResponseContentTypeEquals($result, 'text/csv');
     }
 
     /**
