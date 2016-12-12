@@ -1,0 +1,16 @@
+<div class="clearfix customer-info well-small customer-simple">
+    <div class="customer-content pull-left">
+        <div class="clearfix">
+            <ul class="inline">
+                <li>
+                    {{- form.category.vars.label|trans -}}:&nbsp;
+                    {%- if form.category.vars.data is not null -%}
+                        {{- form.category.vars.data.defaultTitle|title -}}
+                    {%- else -%}
+                        {{- 'N/A'|trans -}}
+                    {%- endif -%}
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

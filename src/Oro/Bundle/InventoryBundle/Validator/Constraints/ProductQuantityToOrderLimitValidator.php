@@ -6,7 +6,7 @@ use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\InventoryBundle\Migrations\Schema\v1_0\AddQuantityToOrderFields;
+use Oro\Bundle\InventoryBundle\Migrations\Schema\v1_1\AddQuantityToOrderFields;
 use Oro\Bundle\InventoryBundle\Validator\QuantityToOrderValidatorService;
 
 class ProductQuantityToOrderLimitValidator extends ConstraintValidator
