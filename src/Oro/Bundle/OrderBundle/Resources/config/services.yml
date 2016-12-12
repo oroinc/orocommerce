@@ -97,6 +97,7 @@ services:
         arguments:
             - '@oro_pricing.subtotal_processor.total_processor_provider'
             - '@oro_pricing.subtotal_processor.provider.subtotal_line_item'
+            - '@oro_currency.converter.rate'
 
     oro_order.handler.order_shipping_tracking:
         class: 'Oro\Bundle\OrderBundle\Handler\OrderShippingTrackingHandler'
