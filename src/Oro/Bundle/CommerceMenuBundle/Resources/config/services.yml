@@ -14,11 +14,6 @@ services:
         tags:
             - {name: oro_installer.namespace_migration_provider, priority: 15}
 
-    oro_commerce_menu.scope_criteria_provider.organization:
-        parent: oro_organization.scope_criteria_provider.organization
-        tags:
-            - {name: oro_scope.provider, scopeType: '%oro_commerce_menu.menu_update.scope_type%', priority: 10}
-
     oro_commerce_menu.scope_criteria_provider.account:
         parent: oro_customer.account_scope_criteria_provider
         tags:

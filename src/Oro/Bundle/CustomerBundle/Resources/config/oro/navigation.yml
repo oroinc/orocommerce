@@ -178,14 +178,14 @@ navigation:
                             account_user_roles: ~
             frontend_menu:
                 type: application_menu
-                area: frontend
+                scope_type: menu_frontend_visibility
                 children:
                     frontend_account_users: ~
                     frontend_account_user_roles: ~
 
             frontend_dots_menu:
                 type: dots_menu
-                area: frontend
+                scope_type: menu_frontend_visibility
                 read_only: true
                 children:
                     frontend_history: ~
@@ -193,7 +193,7 @@ navigation:
                     frontend_mostviewed: ~
 
             account_usermenu:
-                area: frontend
+                scope_type: menu_frontend_visibility
                 children:
                     oro_account_frontend_account_user_profile: ~
 
