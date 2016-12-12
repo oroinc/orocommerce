@@ -1,18 +1,8 @@
 navigation:
     menu_config:
-        templates:
-            commerce_top_nav:
-                template: 'OroCommerceMenuBundle:Menu:commerce_top_nav.html.twig'
-            commerce_quick_access:
-                template: 'OroCommerceMenuBundle:Menu:commerce_quick_access.html.twig'
-            commerce_main_menu:
-                template: 'OroCommerceMenuBundle:Menu:commerce_main_menu.html.twig'
-            commerce_footer_links:
-                template: 'OroCommerceMenuBundle:Menu:commerce_footer_links.html.twig'
         items:
             telephone:
                 label: 'oro.commercemenu.frontend.navigation.items.telephone.label'
-                uri: '#'
             live_chat:
                 label: 'oro.commercemenu.frontend.navigation.items.live_chat.label'
                 uri: '/contact-us'
@@ -40,7 +30,6 @@ navigation:
                 uri: '/about'
             information:
                 label: 'oro.commercemenu.frontend.navigation.items.information.label'
-                uri: '#'
             customer_service:
                 label: 'oro.commercemenu.frontend.navigation.items.customer_service.label'
                 uri: '/customer-service'
@@ -61,7 +50,6 @@ navigation:
                 uri: '/orders-and-returns'
             why_buy_from_us:
                 label: 'oro.commercemenu.frontend.navigation.items.why_buy_from_us.label'
-                uri: '#'
             shipping_and_returns:
                 label: 'oro.commercemenu.frontend.navigation.items.shipping_and_returns.label'
                 uri: '/shipping-and-returns'
@@ -72,8 +60,7 @@ navigation:
                 label: 'oro.commercemenu.frontend.navigation.items.international_shipping.label'
                 uri: '/international-shipping'
             my_account:
-                label: 'oro.commercemenu.frontend.navigation.items.international_shipping.label'
-                uri: '#'
+                label: 'oro.commercemenu.frontend.navigation.items.my_account.label'
                 extras:
                     conditions: 'is_logged_in()'
             sign_out:
