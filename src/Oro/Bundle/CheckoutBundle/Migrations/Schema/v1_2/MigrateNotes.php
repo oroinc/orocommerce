@@ -14,7 +14,6 @@ class MigrateNotes extends UpdateNoteAssociationKindForRenamedEntitiesMigration
     protected function getRenamedEntitiesNames(Schema $schema)
     {
         return [
-            'Oro\Bundle\CheckoutBundle\Entity\Checkout'       => 'OroB2B\Bundle\CheckoutBundle\Entity\Checkout',
             'Oro\Bundle\CheckoutBundle\Entity\CheckoutSource' => 'OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource',
         ];
     }

@@ -21,7 +21,10 @@ class ShippingRuleNotes implements Migration, ActivityExtensionAwareInterface
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        $this->activityExtension->addActivityAssociation($schema, 'oro_note', 'oro_shipping_rule');
+        $associationTableName = $this->activityExtension->getAssociationTableName('oro_note', 'oro_shipping_rule');
+        if (!$schema->hasTable($associationTableName)) {
+            $this->activityExtension->addActivityAssociation($schema, 'oro_note', 'oro_shipping_rule');
+        }
     }
 
     /**
