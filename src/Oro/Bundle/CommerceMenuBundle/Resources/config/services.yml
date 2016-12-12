@@ -4,10 +4,14 @@ parameters:
     oro_commerce_menu.menu_update.scope_type: 'menu_frontend_visibility'
 
 services:
-    oro_commerce_menu.repository.menu_update:
-        parent: oro_entity.abstract_repository
+    oro_commerce_menu.manager.menu_update:
+        class: Oro\Bundle\NavigationBundle\Manager\MenuUpdateManager
         arguments:
-            - '%oro_commerce_menu.entity.menu_update.class%'
+            - "@doctrine"
+            - "@oro_menu.builder_chain"
+            - "@oro_navigation.menu_helper.menu_update"
+        calls:
+            - [ setEntityClass, [ '%oro_commerce_menu.entity.menu_update.class%' ]]
 
     oro_commerce_menu.namespace_migration_provider:
         class: 'Oro\Bundle\CommerceMenuBundle\CacheWarmer\NamespaceMigrationProvider'
