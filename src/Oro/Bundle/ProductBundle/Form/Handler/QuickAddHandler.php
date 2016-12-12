@@ -82,15 +82,9 @@ class QuickAddHandler
         }
 
         $processor = $this->getProcessor($this->getComponentName($request));
+        $options = $this->configureFormOptions($request, $processor);
 
-        $options = [];
-        $collection = $this->quickAddRowCollectionBuilder->buildFromRequest($request);
-        $options['products'] = $collection->getProducts();
-        if ($processor) {
-            $options['validation_required'] = $processor->isValidationRequired();
-        }
-
-        $form = $this->productFormProvider->getQuickAddForm([], $options)->getForm();
+        $form = $this->productFormProvider->getQuickAddForm([], $options);
         $form->submit($request);
 
         if (!$processor || !$processor->isAllowed()) {
@@ -141,14 +135,14 @@ class QuickAddHandler
      */
     public function processImport(Request $request)
     {
-        $form = $this->productFormProvider->getQuickAddImportForm()->getForm()->handleRequest($request);
+        $form = $this->productFormProvider->getQuickAddImportForm()->handleRequest($request);
         $collection = null;
 
         if ($form->isValid()) {
             $file = $form->get(QuickAddImportFromFileType::FILE_FIELD_NAME)->getData();
             try {
                 $collection = $this->quickAddRowCollectionBuilder->buildFromFile($file);
-                $this->productFormProvider->getQuickAddForm($collection->getFormData())->getForm();
+                $this->productFormProvider->getQuickAddForm($collection->getFormData());
             } catch (UnsupportedTypeException $e) {
                 $form->get(QuickAddImportFromFileType::FILE_FIELD_NAME)->addError(new FormError(
                     $this->translator->trans(
@@ -169,13 +163,13 @@ class QuickAddHandler
      */
     public function processCopyPaste(Request $request)
     {
-        $form = $this->productFormProvider->getQuickAddCopyPasteForm()->getForm()->handleRequest($request);
+        $form = $this->productFormProvider->getQuickAddCopyPasteForm()->handleRequest($request);
         $collection = null;
 
         if ($form->isValid()) {
             $copyPasteText = $form->get(QuickAddCopyPasteType::COPY_PASTE_FIELD_NAME)->getData();
             $collection = $this->quickAddRowCollectionBuilder->buildFromCopyPasteText($copyPasteText);
-            $this->productFormProvider->getQuickAddForm($collection->getFormData())->getForm();
+            $this->productFormProvider->getQuickAddForm($collection->getFormData());
         }
 
         return $collection;
@@ -204,5 +198,33 @@ class QuickAddHandler
     protected function getProcessor($name)
     {
         return $this->componentRegistry->getProcessorByName($name);
+    }
+
+    /**
+     * @param Request $request
+     * @param ComponentProcessorInterface|null $processor
+     * @return array
+     */
+    protected function configureFormOptions(Request $request, ComponentProcessorInterface $processor = null)
+    {
+        $options = [];
+        $collection = $this->quickAddRowCollectionBuilder->buildFromRequest($request);
+        $options['products'] = $collection->getProducts();
+
+        if ($processor) {
+            $options['validation_required'] = $processor->isValidationRequired();
+        }
+
+        $formParams = $request->get(QuickAddType::NAME);
+        if ($formParams
+            && isset($formParams['component'])
+            && $formParams['component'] == 'oro_rfp_quick_add_processor'
+        ) {
+            $options['validation_groups'] = ['Default'];
+        } else {
+            $options['validation_groups'] = ['Default', 'not_request_for_quote'];
+        }
+
+        return $options;
     }
 }

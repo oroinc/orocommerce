@@ -103,8 +103,7 @@ class AccountUserController extends Controller
     protected function update(AccountUser $accountUser, Request $request)
     {
         $form = $this->get('oro_customer.provider.frontend_account_user_form')
-            ->getAccountUserForm($accountUser)
-            ->getForm();
+            ->getAccountUserForm($accountUser);
         $handler = new AccountUserHandler(
             $form,
             $request,
@@ -113,10 +112,7 @@ class AccountUserController extends Controller
             $this->get('translator'),
             $this->get('logger')
         );
-        if (!$accountUser->getOwner()) {
-            $user = $accountUser->getAccount()->getOwner();
-            $accountUser->setOwner($user);
-        }
+
         $result = $this->get('oro_form.model.update_handler')->handleUpdate(
             $accountUser,
             $form,

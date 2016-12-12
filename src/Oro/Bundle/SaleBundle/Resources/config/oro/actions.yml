@@ -9,7 +9,7 @@ operations:
             - quotes-grid
         order: 40
         button_options:
-            icon: icon-time
+            icon: fa-clock-o
         frontend_options:
             confirmation:
                 message: oro.sale.quote.actions.quote_expire_confirm
@@ -38,7 +38,7 @@ operations:
         acl_resource: oro_email_email_create
 
         button_options:
-            icon: icon-envelope
+            icon: fa-envelope
             group: oro.sale.quote.notify_customer.label
 
         frontend_options:
@@ -88,9 +88,9 @@ operations:
         routes:
             - oro_sale_quote_frontend_view
         order: 20
-        acl_resource: [CREATE, entity:commerce@Oro\Bundle\OrderBundle\Entity\Order]
+        acl_resource: [CREATE, entity:commerce@Oro\Bundle\CheckoutBundle\Entity\Checkout]
         button_options:
-            icon: icon-edit
+            icon: fa-pencil-square-o
             class:  quota-accept-btn
         actions:
             - '@find_entity':

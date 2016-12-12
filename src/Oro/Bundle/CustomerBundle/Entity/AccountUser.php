@@ -6,7 +6,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Mapping as ORM;
-
 use Oro\Bundle\EmailBundle\Model\EmailHolderInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
@@ -16,7 +15,7 @@ use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity()
  * @ORM\Table(name="oro_account_user")
  * @ORM\HasLifecycleCallbacks()
  * @ORM\AssociationOverrides({
@@ -47,7 +46,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  *      routeUpdate="oro_customer_account_user_update",
  *      defaultValues={
  *          "entity"={
- *              "icon"="icon-briefcase"
+ *              "icon"="fa-briefcase"
  *          },
  *          "ownership"={
  *              "owner_type"="USER",
@@ -337,6 +336,9 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
      */
     protected $website;
 
+    /**
+     * {@inheritdoc}
+     */
     public function __construct()
     {
         $this->addresses = new ArrayCollection();
@@ -388,6 +390,7 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
     }
 
     /**
+     * @deprecated Use getCustomer()
      * @return Account|null
      */
     public function getAccount()
@@ -396,12 +399,32 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
     }
 
     /**
+     * @deprecated Use setCustomer()
      * @param Account $account
      * @return AccountUser
      */
     public function setAccount(Account $account = null)
     {
         $this->account = $account;
+
+        return $this;
+    }
+
+    /**
+     * @return Account|null
+     */
+    public function getCustomer()
+    {
+        return $this->account;
+    }
+
+    /**
+     * @param Account|null $customer
+     * @return $this
+     */
+    public function setCustomer(Account $customer = null)
+    {
+        $this->account = $customer;
 
         return $this;
     }

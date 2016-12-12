@@ -6,7 +6,7 @@ use Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
 
 class FrontendDatagridRowViewProvider
 {
-    const FRONTEND_DATAGRID_NAME = 'frontend-products-grid';
+    const FRONTEND_DATAGRID_NAME = 'frontend-product-search-grid';
 
     /**
      * @var DataGridThemeHelper

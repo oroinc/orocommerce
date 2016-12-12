@@ -2,10 +2,14 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Model\Builder;
 
+use Doctrine\ORM\QueryBuilder;
+
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use Oro\Bundle\ProductBundle\Form\Type\QuickAddType;
 use Oro\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder;
 use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
@@ -24,9 +28,19 @@ class QuickAddRowCollectionBuilderTest extends \PHPUnit_Framework_TestCase
     private $productRepository;
 
     /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|ProductManager
+     */
+    private $productManager;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|EventDispatcherInterface
+     */
+    private $eventDispatcher;
+
+    /**
      * @var array
      */
-    protected $expectedElements = [
+    private $expectedElements = [
         'HSSUC' => 1,
         'HSTUC' => 2.55,
         'HCCM' => 3,
@@ -63,11 +77,21 @@ class QuickAddRowCollectionBuilderTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->productRepository = $this
-            ->getMockBuilder('Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository')
+            ->getMockBuilder(ProductRepository::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->eventDispatcher = $this->getMock(EventDispatcherInterface::class);
+
+        $this->productManager = $this
+            ->getMockBuilder(ProductManager::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->builder = new QuickAddRowCollectionBuilder($this->productRepository);
+        $this->builder = new QuickAddRowCollectionBuilder(
+            $this->productRepository,
+            $this->productManager,
+            $this->eventDispatcher
+        );
     }
 
     public function testBuildFromRequest()
@@ -86,6 +110,7 @@ class QuickAddRowCollectionBuilderTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $this->prepareProductRepository();
+        $this->prepareProductManager();
         $this->assertValidCollection($this->builder->buildFromRequest($request));
     }
 
@@ -99,7 +124,7 @@ class QuickAddRowCollectionBuilderTest extends \PHPUnit_Framework_TestCase
         if (extension_loaded('xdebug')) {
             $this->markTestSkipped('Skipped due to xdebug enabled (nesting level can be reached)');
         }
-
+        $this->prepareProductManager();
         $this->prepareProductRepository();
         $this->assertValidCollection($this->builder->buildFromFile($file));
     }
@@ -119,6 +144,7 @@ class QuickAddRowCollectionBuilderTest extends \PHPUnit_Framework_TestCase
     public function testBuildFromCopyPasteText($text)
     {
         $this->prepareProductRepository();
+        $this->prepareProductManager();
         $this->assertValidCollection($this->builder->buildFromCopyPasteText($text));
     }
 
@@ -127,7 +153,7 @@ class QuickAddRowCollectionBuilderTest extends \PHPUnit_Framework_TestCase
         $commaSeparated = ['HSSUC, 1', 'HSTUC, 2.55', 'HCCM, 3,', 'SKU1,10.0112', 'SKU2,asd', 'SKU3,'];
         $tabsSeparated = ["HSSUC\t1", "HSTUC\t2.55", "HCCM\t3\t", "SKU1\t10.0112", "SKU2\tasd", "SKU3\t"];
         $spaceSeparated = ['HSSUC 1', 'HSTUC 2.55', 'HCCM 3,', 'SKU1 10.0112', 'SKU2 asd', 'SKU3'];
-        
+
         return [
             'comma separated' => [implode(PHP_EOL, $commaSeparated)],
             'tabs separated' => [implode(PHP_EOL, $tabsSeparated)],
@@ -181,14 +207,24 @@ class QuickAddRowCollectionBuilderTest extends \PHPUnit_Framework_TestCase
 
     private function prepareProductRepository()
     {
-        $this->productRepository->expects($this->once())
-            ->method('getProductWithNamesBySku')
-            ->with(array_keys($this->expectedElements))
-            ->willReturn(
-                [
-                    'HSSUC' => $this->prepareProduct('HSSUC'),
-                    'HSTUC' => $this->prepareProduct('HSTUC'),
-                ]
-            );
+        $qb = $this->getMockBuilder(QueryBuilder::class)->disableOriginalConstructor()->getMock();
+        $this->productRepository->method('getProductWithNamesQueryBuilder')->willReturn($qb);
+    }
+
+    private function prepareProductManager()
+    {
+        $query = $this->getMockBuilder('\Doctrine\ORM\AbstractQuery')
+            ->setMethods(array('setParameter', 'getResult', 'execute'))
+            ->disableOriginalConstructor()
+            ->getMockForAbstractClass();
+        $query->method('execute')->willReturn(
+            [
+                'HSSUC' => $this->prepareProduct('HSSUC'),
+                'HSTUC' => $this->prepareProduct('HSTUC'),
+            ]
+        );
+        $qb = $this->getMockBuilder(QueryBuilder::class)->disableOriginalConstructor()->getMock();
+        $qb->method('getQuery')->willReturn($query);
+        $this->productManager->method('restrictQueryBuilder')->withAnyParameters()->willReturn($qb);
     }
 }

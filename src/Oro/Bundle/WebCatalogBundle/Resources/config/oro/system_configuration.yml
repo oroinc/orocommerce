@@ -1,0 +1,22 @@
+system_configuration:
+    fields:
+        oro_web_catalog.web_catalog:
+            ui_only: true
+            data_type: integer
+            type: oro_web_catalog_select
+            priority: 110
+            options:
+                label: oro.webcatalog.system_configuration.fields.web_catalog.label
+                tooltip: oro.webcatalog.system_configuration.fields.web_catalog.tooltip
+                required: true
+    tree:
+        system_configuration:
+            platform:
+                children:
+                    websites:
+                        children:
+                            routing:
+                                children:
+                                    websites_routing_general:
+                                        children:
+                                            - oro_web_catalog.web_catalog

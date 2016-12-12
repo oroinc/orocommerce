@@ -1,6 +1,4 @@
 layout:
-    imports:
-        - oro_account_menu
     actions:
         - '@setBlockTheme':
             themes: 'OroSaleBundle:layouts:default/oro_sale_quote_frontend_view/layout.html.twig'
@@ -36,6 +34,8 @@ layout:
                     blockType: quote_view_information
                     options:
                         quote: '=data["entity"]'
+                        vars:
+                            paymentTerm: '=data["oro_payment_term_provider"].getObjectPaymentTerm(data["quote"])'
                 quote_view_line_items:
                     blockType: quote_products_container
                     options:
@@ -62,7 +62,7 @@ layout:
                         label: 'oro.sale.quote.shipping_address.label'
                         additional_block_prefixes: ['quote_body_column_element']
             tree:
-                content:
+                page_content:
                     quote_view_page:
                         quote_view_controls_list: ~
                         quote_view_information:

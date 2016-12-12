@@ -29,7 +29,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  *      routeUpdate="oro_customer_account_user_role_update",
  *      defaultValues={
  *          "entity"={
- *              "icon"="icon-briefcase"
+ *              "icon"="fa-briefcase"
  *          },
  *          "security"={
  *              "type"="ACL",
@@ -333,7 +333,7 @@ class AccountUserRole extends AbstractRole implements OrganizationAwareInterface
     }
 
     /**
-     * @return string
+     * @return boolean
      */
     public function isSelfManaged()
     {
@@ -341,11 +341,14 @@ class AccountUserRole extends AbstractRole implements OrganizationAwareInterface
     }
 
     /**
-     * @param string $selfManaged
+     * @param boolean $selfManaged
+     * @return $this
      */
     public function setSelfManaged($selfManaged)
     {
         $this->selfManaged = $selfManaged;
+
+        return $this;
     }
 
     /**

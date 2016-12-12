@@ -25,7 +25,7 @@ operations:
             attribute_default_values:
                 request_status: $status
         button_options:
-            icon: icon-edit
+            icon: fa-pencil-square-o
         frontend_options:
             template: OroRFPBundle:Action:changeStatusForm.html.twig
             title: oro.rfp.widget.change_status_title
@@ -61,7 +61,7 @@ operations:
                 cancellation_reason:
                     form_type: oro_rich_text
         button_options:
-            icon: icon-ban-circle
+            icon: fa-ban
         frontend_options:
             template: OroRFPBundle:Action:cancelForm.html.twig
             title: oro.rfp.widget.cancel_title
@@ -99,7 +99,7 @@ operations:
         acl_resource: oro_sale_quote_create
         order: 20
         button_options:
-            icon: icon-file-text
+            icon: fa-file-text
             class: icons-holder-text no-hash btn
         preconditions:
             '@equal': [$status.draft, false]
@@ -123,18 +123,25 @@ operations:
         acl_resource: [CREATE, entity:commerce@Oro\Bundle\RFPBundle\Entity\Request]
         order: 10
         button_options:
-            icon: icon-file-text
+            icon: fa-file-text
+            template: OroActionBundle:Operation:ajax-button.html.twig
             data:
                 component_name: oro_rfp_quick_add_processor
             page_component_module: oroproduct/js/app/components/quick-add-form-button-component
             page_component_options:
                 component_name: '[name$="[component]"]'
                 component_additional: '[name$="[additional]"]'
+                submitWithErrors: $.submitWithErrors
         preactions:
             - '@call_service_method':
                 service: oro_rfp.processor.quick_add
                 method: isAllowed
                 attribute: $.isAllowed
+            - '@call_service_method':
+                service: oro_rfp.layout.decider.rfp_action_decider
+                method: shouldFormSubmitWithErrors
+                attribute: $.submitWithErrors
+                method_parameters: [$.data.collection]
         preconditions:
             '@equal': [true, $.isAllowed]
 
@@ -164,7 +171,7 @@ operations:
 #            - rfp-requests-grid
 #        order: 70
 #        button_options:
-#            icon: icon-edit
+#            icon: fa-pencil-square-o
 #        acl_resource: oro_rfp_request_update
 #        frontend_options:
 #            template: OroRFPBundle:Action:rfpEditForm.html.twig
@@ -188,7 +195,7 @@ operations:
             - rfp-requests-grid
         order: 80
         button_options:
-            icon: icon-share
+            icon: fa-share-square-o
         acl_resource: oro_rfp_request_update
         frontend_options:
             template: OroRFPBundle:Action:rfpResubmitForm.html.twig
@@ -238,7 +245,7 @@ operations:
             - rfp-requests-grid
         order: 100
         button_options:
-            icon: icon-trash
+            icon: fa-trash-o
         frontend_options:
             confirmation: oro.rfp.request.actions.delete_frp_confirm
         preactions:
@@ -277,7 +284,7 @@ operations:
         acl_resource: [ACCOUNT_EDIT, entity:commerce@Oro\Bundle\RFPBundle\Entity\Request]
         order: 10
         button_options:
-            icon: icon-pencil
+            icon: fa-pencil
         actions:
             - '@redirect':
                 parameters:

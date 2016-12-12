@@ -10,6 +10,7 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
 use Oro\Bundle\CatalogBundle\Model\CategoryUnitPrecision;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 
 /**
@@ -102,7 +103,7 @@ class ProductControllerTest extends WebTestCase
         $this->assertEquals($arr['defaultCategoryId'], $categoryId);
         $this->assertCount(8, $arr['data']);
     }
-
+    
     /**
      * @dataProvider defaultUnitPrecisionDataProvider
      *
@@ -142,6 +143,7 @@ class ProductControllerTest extends WebTestCase
         $formValues['input_action'] = 'oro_product_create';
         if ($categoryReference) {
             $formValues['oro_product_step_one']['category'] = $categoryReference->getId();
+            $formValues['oro_product_step_one']['type'] = Product::TYPE_SIMPLE;
         }
 
         $this->client->followRedirects(true);

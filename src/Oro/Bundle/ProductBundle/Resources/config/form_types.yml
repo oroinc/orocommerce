@@ -114,6 +114,13 @@ services:
         tags:
             - { name: form.type, alias: oro_product_status }
 
+    oro_product.form.type.product_type:
+        class: 'Oro\Bundle\ProductBundle\Form\Type\ProductTypeType'
+        arguments:
+            - '@oro_product.provider.product_type_provider'
+        tags:
+            - { name: form.type, alias: oro_product_type }
+
     oro_product.form.type.product_inventory_status_select:
         class: 'Oro\Bundle\ProductBundle\Form\Type\ProductInventoryStatusSelectType'
         arguments:
@@ -150,3 +157,10 @@ services:
             - "@oro_product.provider.product_units_provider"
         tags:
             - { name: form.type, alias: oro_product_units }
+
+    oro_product.form.type.product_page_content_variant:
+        class: Oro\Bundle\ProductBundle\Form\Type\ProductPageVariantType
+        arguments:
+            - '@doctrine'
+        tags:
+            - { name: form.type, alias: oro_product_page_variant }

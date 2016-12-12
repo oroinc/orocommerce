@@ -5,6 +5,8 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\Provider;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
@@ -258,7 +260,9 @@ class ShippingRulesProviderTest extends \PHPUnit_Framework_TestCase
                         'postalCode' => '90401',
                     ]),
                     'subtotal' => Price::create(1039.0, 'USD'),
-                    'paymentMethod' => 'integration_payment_method'
+                    'paymentMethod' => 'integration_payment_method',
+                    'customer' => (new Account())->setName('Customer Name'),
+                    'customerUser' => (new AccountUser())->setFirstName('First Name'),
                 ]),
                 'shippingRule' => $this->getEntity(ShippingRule::class, [
                     'conditions' => <<<'EXPRESSION'
@@ -275,6 +279,10 @@ and
 subtotal.value > 1000
 and
 paymentMethod = "integration_payment_method"
+and
+customer.name = "Customer Name"
+and 
+customerUser.firstName = "First Name"
 EXPRESSION
                     ,
                     'destinations' => [

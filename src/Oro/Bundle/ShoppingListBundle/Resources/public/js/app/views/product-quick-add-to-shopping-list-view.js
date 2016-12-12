@@ -9,6 +9,13 @@ define(function(require) {
         initialize: function(options) {
             ProductQuickAddToShoppingListView.__super__.initialize.apply(this, arguments);
             this.options.quickAddComponentPrefix = options.quickAddComponentPrefix;
+
+            if (this.formHasErrors()) {
+                this.$el.addClass('btn-inactive');
+            }
+
+            this.$el.find('.add-to-shopping-list-button').on('click', _.bind(this.submit, this));
+            this.$el.on('click', _.bind(this.submit, this));
         },
 
         _addProductToShoppingList: function(url, urlOptions, formData) {
@@ -17,6 +24,22 @@ define(function(require) {
                 'oro_shopping_list_quick_add_processor',
                 urlOptions.shoppingListId
             );
+        },
+
+        /**
+         * @param {$.Event} e
+         */
+        submit: function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            if (this.formHasErrors()) {
+                e.stopImmediatePropagation();
+            }
+        },
+
+        formHasErrors: function() {
+            return this.$el.closest('.validation-info').find('.import-errors').length;
         }
     });
 

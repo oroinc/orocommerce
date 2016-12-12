@@ -2,7 +2,6 @@
 
 namespace Oro\src\Oro\Bundle\PaymentBundle\Tests\Unit\Twig;
 
-use Oro\Bundle\PaymentBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Formatter\PaymentMethodLabelFormatter;
 use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
@@ -70,9 +69,9 @@ class PaymentMethodExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testGetPaymentMethods()
     {
-        $entity = new PaymentTerm();
+        $entity = new \stdClass();
         $label = 'label';
-        $paymentMethodConstant = 'payment_term';
+        $paymentMethodConstant = 'payment_method';
         $paymentTransaction = new PaymentTransaction();
         $paymentTransaction->setPaymentMethod($paymentMethodConstant);
         $this->paymentTransactionProvider

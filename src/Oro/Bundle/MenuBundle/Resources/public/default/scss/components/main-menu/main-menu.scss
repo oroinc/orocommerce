@@ -1,40 +1,12 @@
-.main-menu-outer {
-    position: relative;
-}
-
 .main-menu {
-    display: flex;
     flex-grow: 1;
 
-    margin: 0;
-    padding: 0;
-
-    list-style: none;
-
-    vertical-align: middle;
-
-    border-bottom: 0;
-
-    &__item {
-        flex-grow: 1;
-    }
-
     &__link {
-        display: block;
-
-        padding: 14px 0;
-
-        line-height: 1.5;
-        text-align: center;
         text-transform: uppercase;
-
-        color: get-color('additional', 'dark');
 
         &:hover,
         &:focus {
             text-decoration: none;
-
-            color: get-color('additional', 'dark');
         }
     }
 }
@@ -51,10 +23,6 @@
 
 @include breakpoint('tablet') {
     .main-menu {
-        display: block;
-
-        max-height: none;
-        padding: 7px 15px 0 15px;
 
         font-weight: bold;
 
@@ -96,8 +64,6 @@
             font-weight: bold;
 
             padding: 8px 0 7px 8px;
-
-            text-align: left;
         }
 
         &__item.expanded {

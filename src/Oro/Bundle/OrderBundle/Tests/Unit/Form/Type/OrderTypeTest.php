@@ -2,67 +2,53 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Form\Type;
 
-use Symfony\Bridge\Doctrine\ManagerRegistry;
-use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Test\TypeTestCase;
-use Symfony\Component\Form\PreloadedExtension;
-use Symfony\Component\PropertyAccess\PropertyAccess;
-use Symfony\Component\Validator\Validation;
-use Symfony\Component\Validator\ConstraintViolationList;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
-
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\CurrencyBundle\Tests\Unit\Form\Type\PriceTypeGenerator;
-use Oro\Bundle\FormBundle\Form\Type\CollectionType;
-use Oro\Bundle\FormBundle\Form\Type\OroDateType;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\CustomerBundle\Form\Type\AccountSelectType;
 use Oro\Bundle\CustomerBundle\Form\Type\AccountUserSelectType;
+use Oro\Bundle\FormBundle\Form\Type\CollectionType;
+use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Form\Type\EventListener\SubtotalSubscriber;
+use Oro\Bundle\OrderBundle\Form\Type\OrderDiscountItemsCollectionType;
+use Oro\Bundle\OrderBundle\Form\Type\OrderDiscountItemType;
 use Oro\Bundle\OrderBundle\Form\Type\OrderLineItemsCollectionType;
 use Oro\Bundle\OrderBundle\Form\Type\OrderLineItemType;
 use Oro\Bundle\OrderBundle\Form\Type\OrderType;
-use Oro\Bundle\OrderBundle\Form\Type\OrderDiscountItemsCollectionType;
-use Oro\Bundle\OrderBundle\Form\Type\OrderDiscountItemType;
 use Oro\Bundle\OrderBundle\Handler\OrderCurrencyHandler;
 use Oro\Bundle\OrderBundle\Pricing\PriceMatcher;
-use Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 use Oro\Bundle\OrderBundle\Provider\DiscountSubtotalProvider;
+use Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 use Oro\Bundle\OrderBundle\Total\TotalHelper;
-use Oro\Bundle\PaymentBundle\Entity\PaymentTerm;
-use Oro\Bundle\PaymentBundle\Form\Type\PaymentTermSelectType;
-use Oro\Bundle\PaymentBundle\Provider\PaymentTermProvider;
+use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectType;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
-use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectType;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 use Oro\Bundle\SaleBundle\Tests\Unit\Form\Type\Stub\EntityType as StubEntityType;
-use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Symfony\Bridge\Doctrine\ManagerRegistry;
+use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
+use Symfony\Component\Form\PreloadedExtension;
+use Symfony\Component\Form\Test\TypeTestCase;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\Validator\ConstraintViolationList;
+use Symfony\Component\Validator\Validation;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class OrderTypeTest extends TypeTestCase
 {
     use QuantityTypeTrait;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|SecurityFacade */
-    private $securityFacade;
-
     /** @var \PHPUnit_Framework_MockObject_MockObject|OrderAddressSecurityProvider */
     private $orderAddressSecurityProvider;
-
-    /** @var \PHPUnit_Framework_MockObject_MockObject|PaymentTermProvider */
-    private $paymentTermProvider;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject|OrderCurrencyHandler */
     private $orderCurrencyHandler;
@@ -87,12 +73,8 @@ class OrderTypeTest extends TypeTestCase
 
     protected function setUp()
     {
-        $this->securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
-            ->disableOriginalConstructor()->getMock();
         $this->orderAddressSecurityProvider = $this
             ->getMockBuilder('Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider')
-            ->disableOriginalConstructor()->getMock();
-        $this->paymentTermProvider = $this->getMockBuilder('Oro\Bundle\PaymentBundle\Provider\PaymentTermProvider')
             ->disableOriginalConstructor()->getMock();
         $this->orderCurrencyHandler = $this->getMockBuilder('Oro\Bundle\OrderBundle\Handler\OrderCurrencyHandler')
             ->disableOriginalConstructor()->getMock();
@@ -124,9 +106,7 @@ class OrderTypeTest extends TypeTestCase
 
         // create a type instance with the mocked dependencies
         $this->type = new OrderType(
-            $this->securityFacade,
             $this->orderAddressSecurityProvider,
-            $this->paymentTermProvider,
             $this->orderCurrencyHandler,
             new SubtotalSubscriber($totalHelper, $this->priceMatcher)
         );
@@ -223,13 +203,20 @@ class OrderTypeTest extends TypeTestCase
                             'comment' => ''
                         ],
                     ],
+                    'currency' => 'USD',
+                    'shippingMethod' => 'shippingMethod1',
+                    'shippingMethodType' => 'shippingType1',
+                    'estimatedShippingCostAmount' => 10,
+                    'overriddenShippingCostAmount' => [
+                        'value' => 5,
+                        'currency' => 'USD',
+                    ]
                 ],
                 'expectedOrder' => $this->getOrder(
                     [
                         'sourceEntityClass' => 'Class',
                         'sourceEntityId' => '1',
                         'sourceEntityIdentifier' => '1',
-                        'totalDiscounts' => Price::create(99, 'USD'),
                         'accountUser' => 1,
                         'account' => 2,
                         'poNumber' => '11',
@@ -251,6 +238,11 @@ class OrderTypeTest extends TypeTestCase
                                 'comment' => null
                             ],
                         ],
+                        'currency' => 'USD',
+                        'shippingMethod' => 'shippingMethod1',
+                        'shippingMethodType' => 'shippingType1',
+                        'estimatedShippingCostAmount' => '10',
+                        'overriddenShippingCostAmount' => 5
                     ]
                 )
             ]
@@ -349,75 +341,6 @@ class OrderTypeTest extends TypeTestCase
             ),
             new ValidatorExtension(Validation::createValidator())
         ];
-    }
-
-    public function testBuildFormWithPaymetTerm()
-    {
-        /** @var FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder */
-        $builder = $this->getMock(FormBuilderInterface::class);
-        $order = new Order();
-        $accountPaymentTerm = $this->getMock(PaymentTerm::class);
-        $accountGroupPaymentTerm = $this->getMock(PaymentTerm::class);
-        $accountGroup = new AccountGroup();
-        $account = new Account();
-        $account->setGroup($accountGroup);
-        $order->setAccount($account);
-        $options = [
-            'label' => 'oro.order.payment_term.label',
-            'required' => false,
-            'attr' => [
-                'data-account-payment-term' => 10,
-                'data-account-group-payment-term' => 100,
-            ],
-        ];
-
-        $this
-            ->securityFacade
-            ->expects($this->once())
-            ->method('isGranted')
-            ->with('oro_order_payment_term_account_can_override')
-            ->willReturn(true);
-        $accountPaymentTerm->expects($this->once())->method('getId')->willReturn(10);
-        $accountGroupPaymentTerm->expects($this->once())->method('getId')->willReturn(100);
-        $this
-            ->paymentTermProvider
-            ->expects($this->once())
-            ->method('getAccountPaymentTerm')
-            ->with($account)
-            ->willReturn($accountPaymentTerm);
-        $this
-            ->paymentTermProvider
-            ->expects($this->once())
-            ->method('getAccountGroupPaymentTerm')
-            ->with($accountGroup)
-            ->willReturn($accountGroupPaymentTerm);
-        $builder->expects($this->atMost(14))->method('add')->willReturn($builder);
-        $builder
-            ->expects($this->at(14))
-            ->method('add')
-            ->with('paymentTerm', PaymentTermSelectType::NAME, $options)
-            ->willReturn($builder);
-
-        $this->type->buildForm($builder, ['data' => $order]);
-    }
-
-    public function testBuildFormWithNoPaymetTerm()
-    {
-        /** @var FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder */
-        $builder = $this->getMock(FormBuilderInterface::class);
-        $order = new Order();
-
-        $this
-            ->securityFacade
-            ->expects($this->once())
-            ->method('isGranted')
-            ->with('oro_order_payment_term_account_can_override')
-            ->willReturn(false);
-        $this->paymentTermProvider->expects($this->never())->method('getAccountPaymentTerm');
-        $this->paymentTermProvider->expects($this->never())->method('getAccountGroupPaymentTerm');
-        $builder->expects($this->atMost(13))->method('add')->willReturn($builder);
-
-        $this->type->buildForm($builder, ['data' => $order]);
     }
 
     /**

@@ -52,8 +52,8 @@
 
     {% set generalData = generalData|merge([
         form_row(form.names),
+        form_row(form.slugPrototypes),
         form_row(form.status),
-        form_row(form.inventoryStatus),
         form_row(form.images),
         form_row(form.primaryUnitPrecision),
         form_row(form.additionalUnitPrecisions)
@@ -77,7 +77,7 @@
             'data': [
                 form_row(form.shortDescriptions),
             ],
-            'spanClass': 'responsive-cell-right'
+            'spanClass': 'responsive-cell'
         }]
     } %}
 
@@ -99,6 +99,15 @@
             }]
         }] ) %}
     {% endif %}
+
+    {% set dataBlocks = dataBlocks|merge([{
+        'title': 'oro.product.sections.inventory'|trans,
+        'priority': 5,
+        'subblocks': [{
+            'title': '',
+            'data': [form_row(form.inventoryStatus)]
+        }]
+    }]) %}
 
     {# Should be returned in scope of BB-2696 #}
     {#

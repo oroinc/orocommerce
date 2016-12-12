@@ -16,7 +16,7 @@ oro.customer:
         has_group.label: 'Has group'
         users.label: 'Users'
         addresses.label: 'Addresses'
-        form.choose: 'Choose an customer...'
+        form.choose: 'Choose a customer...'
         form.choose_parent: 'Choose parent customer...'
         address_book.label: 'Address Book'
         owner.label: 'Owner'
@@ -53,7 +53,7 @@ oro.customer:
         name.label: 'Name'
         id.label: 'Id'
         accounts.label: 'Customers'
-        form.choose: 'Choose an customer group...'
+        form.choose: 'Choose a customer group...'
 
     accountuser:
         entity_label:                'Customer User'
@@ -89,7 +89,7 @@ oro.customer:
         organization.label:          'Organization'
         organizations.label:         'Organizations'
         has_role.label:              'Has Role'
-        form.choose:                 'Choose an customer user...'
+        form.choose:                 'Choose a customer user...'
         addresses.label:             'Addresses'
         address_book.label:          'Address Book'
         owner.label:                 'Owner'
@@ -99,7 +99,7 @@ oro.customer:
         profile:
             company_name: 'Company Name'
             registration.title: 'Registration'
-            register: 'Register'
+            register: 'Registration'
             register.description: 'Please register if you do not have an account. A sales representative will contact you shortly.'
             create_an_account: 'Create An Account'
             forgot_password: 'Forgot Your Password?'
@@ -112,7 +112,7 @@ oro.customer:
             return_to_login: 'Return to Login'
             password_reset.message: 'Password was created successfully.'
             request_password.label: 'Request'
-            email_not_exists: 'Email address "%email%" is not known'
+            email_not_exists: 'Email address "%email%" does not exist.'
             check_email:
                 title: 'Check Email'
                 message: 'An email has been sent to %email%. It contains a link you must click to reset your password.'
@@ -130,6 +130,15 @@ oro.customer:
                     profile_information.label: 'Profile information'
                     password.label: 'Password'
                     roles.label: 'Roles'
+
+        placeholder:
+            company_name: 'Company Inc.'
+            first_name: 'John'
+            last_name: 'Smith'
+            email: 'name@domain.com'
+            password: 'Enter your password'
+            password_confirmation: 'Reenter your password'
+
 
     accountuserrole:
         entity_label:                    'Customer User Role'
@@ -336,7 +345,7 @@ oro.customer:
         access-level:
             BASIC: 'Customer User'
             LOCAL: 'Customer'
-            DEEP: 'Not supported'
+            DEEP: 'Сorporate'
             GLOBAL: 'Not supported'
             SYSTEM: 'Full'
             NONE: 'None'
@@ -379,8 +388,8 @@ oro.customer:
         security:
             access-level:
                 BASIC: 'Individual'
-                LOCAL: 'All'
-                DEEP: 'Not supported'
+                LOCAL: 'Сorporate'
+                DEEP: 'All'
                 GLOBAL: 'Not supported'
                 SYSTEM: 'System'
                 NONE: 'None'

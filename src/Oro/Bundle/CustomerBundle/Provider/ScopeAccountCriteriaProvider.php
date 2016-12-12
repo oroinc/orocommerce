@@ -10,12 +10,12 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 class ScopeAccountCriteriaProvider extends AbstractScopeCriteriaProvider
 {
     const ACCOUNT = 'account';
-
+    
     /**
      * @var TokenStorageInterface
      */
     protected $tokenStorage;
-
+    
     /**
      * @param TokenStorageInterface $tokenStorage
      */
@@ -23,7 +23,7 @@ class ScopeAccountCriteriaProvider extends AbstractScopeCriteriaProvider
     {
         $this->tokenStorage = $tokenStorage;
     }
-
+    
     /**
      * @return array
      */
@@ -37,10 +37,10 @@ class ScopeAccountCriteriaProvider extends AbstractScopeCriteriaProvider
         if (null !== $loggedUser && $loggedUser instanceof AccountUser) {
             return [self::ACCOUNT => $loggedUser->getAccount()];
         }
-
+    
         return [];
     }
-
+    
     /**
      * @return string
      */
@@ -48,11 +48,11 @@ class ScopeAccountCriteriaProvider extends AbstractScopeCriteriaProvider
     {
         return static::ACCOUNT;
     }
-
+    
     /**
-     * @return string
+     * {@inheritdoc}
      */
-    protected function getCriteriaValueType()
+    public function getCriteriaValueType()
     {
         return Account::class;
     }

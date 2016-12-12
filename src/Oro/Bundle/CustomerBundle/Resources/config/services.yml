@@ -30,6 +30,7 @@ services:
         public: false
         arguments:
             - "@oro_entity.doctrine_helper"
+            - "@security.authentication.trust_resolver"
         calls:
             - [setContainer, ["@service_container"]]
         tags:
@@ -266,9 +267,9 @@ services:
     oro_customer.event_listener.datagrid.account_user_role:
         class: 'Oro\Bundle\CustomerBundle\EventListener\Datagrid\AccountUserRoleDatagridListener'
         arguments:
-            - "@oro_security.security_facade"
+            - "@oro_security.acl_helper"
         tags:
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-account-account-user-roles-grid, method: onBuildBefore }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.frontend-account-account-user-roles-grid, method: onBuildAfter }
 
     oro_customer.event_listener.datagrid.account_user:
         class: 'Oro\Bundle\CustomerBundle\EventListener\Datagrid\AccountUserDatagridListener'
@@ -329,8 +330,10 @@ services:
             - "@security.context"
             - "@doctrine.orm.entity_manager"
             - "@oro_navigation.item.factory"
+            - "@router"
         tags:
             - { name: oro_menu.builder, alias: frontend_pinbar }
+            - { name: oro_featuretogle.feature, feature: email }
 
     oro_customer.favorites_menu.builder:
         class: 'Oro\Bundle\NavigationBundle\Menu\NavigationItemBuilder'
@@ -339,8 +342,10 @@ services:
             - "@security.context"
             - "@doctrine.orm.entity_manager"
             - "@oro_navigation.item.factory"
+            - "@router"
         tags:
             - { name: oro_menu.builder, alias: frontend_favorite }
+            - { name: oro_featuretogle.feature, feature: email }
 
     oro_customer.history_menu.builder:
         class: 'Oro\Bundle\NavigationBundle\Menu\NavigationHistoryBuilder'
@@ -349,11 +354,13 @@ services:
             - "@security.context"
             - "@doctrine.orm.entity_manager"
             - "@oro_navigation.item.factory"
+            - "@router"
         calls:
             - [ setMatcher, [ "@knp_menu.matcher" ]]
             - [ setOptions, [ "@oro_config.user" ]]
         tags:
             - { name: oro_menu.builder, alias: frontend_history }
+            - { name: oro_featuretogle.feature, feature: email }
 
     oro_customer.mostviewed_menu.builder:
         class: 'Oro\Bundle\NavigationBundle\Menu\NavigationMostviewedBuilder'
@@ -362,10 +369,12 @@ services:
             - "@security.context"
             - "@doctrine.orm.entity_manager"
             - "@oro_navigation.item.factory"
+            - "@router"
         calls:
             - [ setOptions, [ "@oro_config.user" ]]
         tags:
             - { name: oro_menu.builder, alias: frontend_mostviewed }
+            - { name: oro_featuretogle.feature, feature: email }
 
     oro_customer.item.pinbar.post_persist_listener:
         class: 'Oro\Bundle\NavigationBundle\Entity\Listener\PinbarPostPersist'
@@ -457,6 +466,7 @@ services:
             - "@oro_config.manager"
             - "@oro_website.manager"
             - "@oro_user.manager"
+            - '@router'
         tags:
             - { name: layout.data_provider, alias: oro_account_frontend_account_user_register }
 
@@ -488,6 +498,7 @@ services:
         arguments:
             - '@form.factory'
             - '@oro_customer.form.handler.update_account_user_role_frontend='
+            - '@router'
         tags:
             - { name: layout.data_provider, alias: oro_account_frontend_account_user_role_form }
 
@@ -495,6 +506,7 @@ services:
         class: Oro\Bundle\CustomerBundle\Layout\DataProvider\FrontendAccountUserAddressFormProvider
         arguments:
             - '@form.factory'
+            - '@router'
         tags:
             - { name: layout.data_provider, alias: oro_account_frontend_account_user_address_form }
 
@@ -502,6 +514,7 @@ services:
         class: Oro\Bundle\CustomerBundle\Layout\DataProvider\FrontendAccountAddressFormProvider
         arguments:
             - '@form.factory'
+            - '@router'
         tags:
             - { name: layout.data_provider, alias: oro_account_frontend_account_address_form }
 
@@ -509,6 +522,7 @@ services:
         class: 'Oro\Bundle\CustomerBundle\Layout\DataProvider\FrontendAccountUserFormProvider'
         arguments:
               - '@form.factory'
+              - '@router'
         tags:
             - { name: layout.data_provider, alias: oro_account_frontend_account_user_form }
 
@@ -596,6 +610,8 @@ services:
             - { name: oro_service_link, service: oro_customer.account_group_scope_criteria_provider }
             - { name: oro_scope.provider, scopeType: account_group_category_visibility, priority: 30 }
             - { name: oro_scope.provider, scopeType: account_group_product_visibility, priority: 30 }
+            - { name: oro_scope.provider, scopeType: web_content, priority: 100 }
+            - { name: oro_scope.provider, scopeType: workflow_definition, priority: 20 }
 
     oro_customer.account_scope_criteria_provider.link:
         public: false
@@ -603,9 +619,33 @@ services:
             - { name: oro_service_link, service: oro_customer.account_scope_criteria_provider }
             - { name: oro_scope.provider, scopeType: account_category_visibility, priority: 30 }
             - { name: oro_scope.provider, scopeType: account_product_visibility, priority: 30 }
+            - { name: oro_scope.provider, scopeType: web_content, priority: 1000 }
+            - { name: oro_scope.provider, scopeType: workflow_definition, priority: 30 }
 
     oro_customer.entity_ownership.listener:
         class: Oro\Bundle\CustomerBundle\EventListener\RecordOwnerDataListener
         arguments: ["@oro_organization.link.security_context", "@oro_entity_config.provider.ownership"]
         tags:
              - { name: doctrine.event_listener, event: prePersist }
+
+    oro_customer.event_listener.role_page_listener:
+        class: 'Oro\Bundle\CustomerBundle\EventListener\AccountRolePageListener'
+        arguments:
+            - '@translator'
+        calls:
+            - [setRequest, ['@?request=']]
+        tags:
+            - { name: kernel.event_listener, event: entity_form.render.before, method: onUpdatePageRender }
+            - { name: kernel.event_listener, event: entity_view.render.before, method: onViewPageRender }
+
+    oro_customer.datagrid.datasource.workflow_permission_datasource:
+        class: Oro\Bundle\CustomerBundle\Datagrid\WorkflowPermissionDatasource
+        arguments:
+            - '@translator'
+            - '@oro_security.acl.permission_manager'
+            - '@oro_customer.form.handler.update_account_user_role='
+            - '@oro_user.provider.role_privilege_category_provider'
+            - '@oro_entity_config.config_manager'
+            - '@oro_customer.acl.resolver.role_translation_prefix'
+        tags:
+            - { name: oro_datagrid.datasource, type: account-user-workflow-permission-grid-provider }

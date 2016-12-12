@@ -29,6 +29,25 @@ services:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.page-view, method: onPageView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.page-edit, method: onPageEdit }
 
+    oro_seo.event_listener.content_node_form_view:
+        class: 'Oro\Bundle\SEOBundle\EventListener\ContentNodeFormViewListener'
+        arguments:
+            - '@request_stack'
+            - '@translator'
+            - '@oro_entity.doctrine_helper'
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.web-catalog-tree-view, method: onContentNodeView }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.web-catalog-tree-edit, method: onContentNodeEdit }
+
+    oro_seo.layout.data_provider.seo_data:
+        class: Oro\Bundle\SEOBundle\Layout\DataProvider\SeoDataProvider
+        arguments:
+            - '@oro_locale.helper.localization'
+            - '@request_stack'
+            - '@property_accessor'
+        tags:
+            - { name: layout.data_provider, alias: seo }
+
     #Forms
     oro_seo.form.extension.page_type:
         class: 'Oro\Bundle\SEOBundle\Form\Extension\PageFormExtension'
@@ -44,3 +63,16 @@ services:
         class: 'Oro\Bundle\SEOBundle\Form\Extension\CategoryFormExtension'
         tags:
             - { name: form.type_extension, alias: oro_catalog_category }
+
+    oro_seo.event_listener.website_search_index:
+        class: 'Oro\Bundle\SEOBundle\EventListener\ProductSearchIndexListener'
+        arguments:
+            - '@oro_website.provider.website_localization'
+            - '@oro_website_search.manager.website_context_manager'
+        tags:
+            - { name: kernel.event_listener, event: oro_website_search.event.index_entity.product, method: onWebsiteSearchIndex }
+
+    oro_seo.form.extension.content_node_type:
+        class: 'Oro\Bundle\SEOBundle\Form\Extension\ContentNodeFormExtension'
+        tags:
+            - { name: form.type_extension, alias: oro_web_catalog_content_node }

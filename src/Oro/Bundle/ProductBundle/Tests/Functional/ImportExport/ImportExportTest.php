@@ -4,9 +4,12 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\ImportExport;
 
 use Akeneo\Bundle\BatchBundle\Job\DoctrineJobRepository as BatchJobRepository;
 
+use Doctrine\ORM\EntityManager;
+
 use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\Yaml\Yaml;
 
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ImportExportBundle\Job\JobExecutor;
 use Oro\Bundle\ImportExportBundle\Processor\ProcessorRegistry;
 use Oro\Bundle\SecurityBundle\Authentication\Token\OrganizationToken;
@@ -14,7 +17,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
 /**
- * @dbIsolation
+ * @dbIsolationPerTest
  * @SuppressWarnings(PHPMD.TooManyMethods)
  *
  * @covers \Oro\Bundle\ProductBundle\ImportExport\TemplateFixture\ProductFixture
@@ -69,11 +72,13 @@ class ImportExportTest extends WebTestCase
     public function testImportExport($strategy)
     {
         // @todo - must be fixed in BAP-12713
-//        $this->validateImportFile($strategy);
-//        $this->doImport($strategy);
+        $importTemplateFile = $this->getImportTemplate();
+        $this->validateImportFile($strategy, $importTemplateFile);
+        $data = $this->doImport($strategy);
+        $this->assertImportResponse($data, 1, 0);
 
         $this->doExport();
-//        $this->validateExportResult();
+        $this->validateExportResultWithImportTemplate($importTemplateFile);
     }
 
     /**
@@ -88,15 +93,16 @@ class ImportExportTest extends WebTestCase
 
     /**
      * @param string $strategy
+     * @param string $file
      */
-    protected function validateImportFile($strategy)
+    protected function validateImportFile($strategy, $file)
     {
         $crawler = $this->client->request(
             'GET',
             $this->getUrl(
                 'oro_importexport_import_form',
                 [
-                    'entity' => 'Oro\Bundle\ProductBundle\Entity\Product',
+                    'entity' => Product::class,
                     '_widgetContainer' => 'dialog',
                 ]
             )
@@ -104,8 +110,7 @@ class ImportExportTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $this->file = $this->getImportTemplate();
-        $this->assertTrue(file_exists($this->file));
+        $this->assertFileExists($file);
 
         /** @var Form $form */
         $form = $crawler->selectButton('Submit')->form();
@@ -116,7 +121,7 @@ class ImportExportTest extends WebTestCase
             $form->getFormNode()->getAttribute('action') . '&_widgetContainer=dialog'
         );
 
-        $form['oro_importexport_import[file]']->upload($this->file);
+        $form['oro_importexport_import[file]']->upload($file);
         $form['oro_importexport_import[processorAlias]'] = $strategy;
 
         $this->client->followRedirects(true);
@@ -166,7 +171,42 @@ class ImportExportTest extends WebTestCase
     }
 
     /**
+     * @param string $importTemplateFile
+     */
+    protected function validateExportResultWithImportTemplate($importTemplateFile)
+    {
+        $importTemplate = $this->getFileContents($importTemplateFile);
+        $exportedData = $this->getFileContents($this->getExportFile());
+
+        $commonFields = array_intersect($importTemplate[0], $exportedData[0]);
+
+        $importTemplateValues = $this->extractFieldValues($commonFields, $importTemplate);
+        $exportedDataValues = $this->extractFieldValues($commonFields, $exportedData);
+
+        $this->assertEquals($importTemplateValues, $exportedDataValues);
+    }
+
+    /**
+     * @param array $fields
+     * @param array $data
+     * @return array
+     */
+    protected function extractFieldValues(array $fields, array $data)
+    {
+        $values = [];
+        foreach ($fields as $field) {
+            $key = array_search($field, $data[0], true);
+            if (false !== $key) {
+                $values[$field] = $data[1][$key];
+            }
+        }
+
+        return $values;
+    }
+
+    /**
      * @param string $strategy
+     * @return array
      */
     protected function doImport($strategy)
     {
@@ -182,17 +222,7 @@ class ImportExportTest extends WebTestCase
             )
         );
 
-        $data = $this->getJsonResponseContent($this->client->getResponse(), 200);
-
-        $this->assertEquals(
-            [
-                'success'    => true,
-                'message'    => 'File was successfully imported.',
-                'errorsUrl'  => null,
-                'importInfo' => '1 products were added, 0 products were updated',
-            ],
-            $data
-        );
+        return $this->getJsonResponseContent($this->client->getResponse(), 200);
     }
 
     /**
@@ -232,7 +262,14 @@ class ImportExportTest extends WebTestCase
                 ProcessorRegistry::TYPE_EXPORT
             );
 
+        $this->assertResponseStatusCodeEquals($result, 200);
+        $this->assertResponseContentTypeEquals($result, 'application/json');
+
         $result = json_decode($result->getContent(), true);
+
+        $this->assertTrue($result['success']);
+        $this->assertEquals(0, $result['errorsCount']);
+
         $chains = explode('/', $result['url']);
 
         return $this
@@ -255,41 +292,16 @@ class ImportExportTest extends WebTestCase
         return array_map('str_getcsv', $content);
     }
 
-    protected function validateExportResult()
-    {
-        $importTemplate = $this->getFileContents($this->file);
-        $exportedData = $this->getFileContents($this->getExportFile());
-
-        $commonFields = array_intersect($importTemplate[0], $exportedData[0]);
-
-        $importTemplateValues = $this->extractFieldValues($commonFields, $importTemplate);
-        $exportedDataValues = $this->extractFieldValues($commonFields, $exportedData);
-
-        $this->assertEquals($importTemplateValues, $exportedDataValues);
-    }
-
     /**
-     * @param array $fields
-     * @param array $data
-     * @return array
+     * @param string $exportFile
+     * @param int $expectedItemsCount
      */
-    protected function extractFieldValues(array $fields, array $data)
+    protected function validateExportResult($exportFile, $expectedItemsCount)
     {
-        // ID is changed
-        // birthdays have different timestamps
-        $skippedFields = ['Id', 'Birthday'];
+        $exportedData = $this->getFileContents($exportFile);
+        unset($exportedData[0]);
 
-        $values = [];
-        foreach ($fields as $field) {
-            if (!in_array($field, $skippedFields, true)) {
-                $key = array_search($field, $data[0], true);
-                if (false !== $key) {
-                    $values[$field] = $data[1][$key];
-                }
-            }
-        }
-
-        return $values;
+        $this->assertCount($expectedItemsCount, $exportedData);
     }
 
     /**
@@ -300,6 +312,7 @@ class ImportExportTest extends WebTestCase
      */
     public function testValidation($fileName, array $contextErrors = [])
     {
+        $this->setSecurityToken();
         $this->cleanUpReader();
 
         $filePath = __DIR__ . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . $fileName;
@@ -330,6 +343,7 @@ class ImportExportTest extends WebTestCase
             }
         );
         $this->assertEquals($contextErrors, array_values($errors), implode(PHP_EOL, $errors));
+        $this->getContainer()->get('security.token_storage')->setToken(null);
     }
 
     protected function cleanUpReader()
@@ -355,14 +369,7 @@ class ImportExportTest extends WebTestCase
 
     public function testImportRelations()
     {
-        $token = new OrganizationToken(
-            $this->getContainer()->get('doctrine')->getRepository('OroOrganizationBundle:Organization')->findOneBy([])
-        );
-        $token->setUser(
-            $this->getContainer()->get('doctrine')->getRepository('OroUserBundle:User')->findOneBy([])
-        );
-        $this->getContainer()->get('security.token_storage')->setToken($token);
-
+        $this->setSecurityToken();
         $this->cleanUpReader();
 
         $filePath = __DIR__ . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'import.csv';
@@ -409,5 +416,133 @@ class ImportExportTest extends WebTestCase
         $this->assertEquals('En Name', $product->getNames()->last()->getString());
 
         $this->getContainer()->get('security.token_storage')->setToken(null);
+    }
+
+    public function testSkippedTypeForExistingProduct()
+    {
+        $token = new OrganizationToken(
+            $this->getContainer()->get('doctrine')->getRepository('OroOrganizationBundle:Organization')->findOneBy([])
+        );
+        $token->setUser(
+            $this->getContainer()->get('doctrine')->getRepository('OroUserBundle:User')->findOneBy([])
+        );
+        $this->getContainer()->get('security.token_storage')->setToken($token);
+
+        $this->cleanUpReader();
+
+        $dataPath = __DIR__ . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR;
+
+        $productClass = $this->getContainer()->getParameter('oro_product.entity.product.class');
+        $configuration = [
+            'import' => [
+                'processorAlias' => 'oro_product_product.add_or_replace',
+                'entityName' => $productClass,
+                'filePath' => $dataPath . 'import.csv',
+            ],
+        ];
+
+        $this->getContainer()->get('oro_importexport.job_executor')->executeJob(
+            ProcessorRegistry::TYPE_IMPORT,
+            JobExecutor::JOB_IMPORT_FROM_CSV,
+            $configuration
+        );
+
+        $this->cleanUpReader();
+
+        $configuration = [
+            'import' => [
+                'processorAlias' => 'oro_product_product.add_or_replace',
+                'entityName' => $productClass,
+                'filePath' => $dataPath . 'import_with_type.csv',
+            ],
+        ];
+
+        $this->getContainer()->get('oro_importexport.job_executor')->executeJob(
+            ProcessorRegistry::TYPE_IMPORT,
+            JobExecutor::JOB_IMPORT_FROM_CSV,
+            $configuration
+        );
+
+        $em = $this->getContainer()->get('doctrine')->getManagerForClass($productClass);
+
+        /** @var Product $product */
+        $product = $em->getRepository($productClass)->findOneBy(['sku' => 'SKU099']);
+
+        $this->assertNotEmpty($product);
+        $this->assertNotEquals(Product::TYPE_CONFIGURABLE, $product->getType());
+        $this->assertEquals(Product::STATUS_DISABLED, $product->getStatus());
+
+        $this->getContainer()->get('security.token_storage')->setToken(null);
+    }
+
+    /**
+     * @dataProvider strategyDataProvider
+     * @param string $strategy
+     */
+    public function testAddNewProducts($strategy)
+    {
+        $this->loadFixtures([LoadProductData::class]);
+        $productClass = $this->getContainer()->getParameter('oro_product.entity.product.class');
+
+        $file = $this->getExportFile();
+        $this->validateExportResult($file, 8);
+
+        $doctrine = $this->getContainer()->get('doctrine');
+
+        /** @var EntityManager $productManager */
+        $productManager = $doctrine->getManagerForClass($productClass);
+        $productManager->createQuery('DELETE FROM OroProductBundle:Product')->execute();
+
+        $this->validateImportFile($strategy, $file);
+        $data = $this->doImport($strategy);
+        $this->assertImportResponse($data, 8, 0);
+
+        $products = $productManager->getRepository($productClass)->findAll();
+        $this->assertCount(8, $products);
+    }
+
+    /**
+     * @dataProvider strategyDataProvider
+     * @param string $strategy
+     */
+    public function testUpdateProducts($strategy)
+    {
+        $this->loadFixtures([LoadProductData::class]);
+
+        $file = $this->getExportFile();
+        $this->validateExportResult($file, 8);
+
+        $this->validateImportFile($strategy, $file);
+        $data = $this->doImport($strategy);
+        $this->assertImportResponse($data, 0, 8);
+    }
+
+    /**
+     * @param array $data
+     * @param int $added
+     * @param int $updated
+     */
+    protected function assertImportResponse(array $data, $added, $updated)
+    {
+        $this->assertEquals(
+            [
+                'success'    => true,
+                'message'    => 'File was successfully imported.',
+                'errorsUrl'  => null,
+                'importInfo' => $added . ' products were added, ' . $updated . ' products were updated',
+            ],
+            $data
+        );
+    }
+
+    protected function setSecurityToken()
+    {
+        $token = new OrganizationToken(
+            $this->getContainer()->get('doctrine')->getRepository('OroOrganizationBundle:Organization')->findOneBy([])
+        );
+        $token->setUser(
+            $this->getContainer()->get('doctrine')->getRepository('OroUserBundle:User')->findOneBy([])
+        );
+        $this->getContainer()->get('security.token_storage')->setToken($token);
     }
 }

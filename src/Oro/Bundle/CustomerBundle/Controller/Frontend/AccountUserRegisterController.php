@@ -18,7 +18,7 @@ class AccountUserRegisterController extends Controller
     /**
      * Create account user form
      *
-     * @Route("/register", name="oro_customer_frontend_account_user_register")
+     * @Route("/registration", name="oro_customer_frontend_account_user_register")
      * @Layout()
      * @param Request $request
      * @return array|RedirectResponse
@@ -51,8 +51,7 @@ class AccountUserRegisterController extends Controller
     protected function handleForm(Request $request)
     {
         $form = $this->get('oro_customer.provider.frontend_account_user_registration_form')
-            ->getRegisterForm()
-            ->getForm();
+            ->getRegisterForm();
         $userManager = $this->get('oro_account_user.manager');
         $handler = new FrontendAccountUserHandler($form, $request, $userManager);
 

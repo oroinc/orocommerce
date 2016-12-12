@@ -2,6 +2,8 @@ layout:
     actions:
         - '@setBlockTheme':
             themes: 'view.html.twig'
+        - '@setFormTheme':
+            themes: 'form_theme.html.twig'
         - '@setOption':
             id: title
             optionName: params
@@ -19,6 +21,12 @@ layout:
                     blockType: shopping_list_awere_block
                     options:
                         visible: '=data["entity"]!=null'
+                        shoppingList: '=data["entity"]'
+                shopping_list_owner:
+                    blockType: shopping_list_owner_select_block
+                    options:
+                        visible: '=data["entity"]!=null'
+                        form: '=data["oro_account_frontend_account_user_form"].getAccountUserSelectFormView(data["entity"].getAccountUser(), data["entity"])'
                         shoppingList: '=data["entity"]'
                 shopping_list_top_actions:
                     blockType: action_line_buttons
@@ -41,6 +49,7 @@ layout:
                     options:
                         visible: '=data["entity"]!=null && data["entity"].getLineItems()!=null'
                         shoppingList: '=data["entity"]'
+                        lineItemErrors: '=data["oro_line_item_errors"].getLineItemErrors(data["entity"].getLineItems())'
                         productsMatchedPrice: '=data["oro_shopping_list_products"].getMatchedPrice(data["entity"])'
                         productsAllPrices: '=data["oro_shopping_list_products"].getAllPrices(data["entity"])'
                         productsUnits: '=data["oro_shopping_list_products_units"].getProductsUnits(data["entity"])'
@@ -80,13 +89,14 @@ layout:
                 shopping_list_view_container_content:
                     blockType: container
             tree:
-                content:
+                page_content:
                     shopping_list_view_container:
                         shopping_list_view_container_content:
                             no_shopping_lists: ~
                             shopping_list_title: ~
                             shopping_list_top_actions: ~
                             shopping_list_line_items:
+                                shopping_list_owner: ~
                                 shopping_list_options: ~
                                 shopping_list_line_items_list: ~
                                 shopping_list_line_items_empty: ~

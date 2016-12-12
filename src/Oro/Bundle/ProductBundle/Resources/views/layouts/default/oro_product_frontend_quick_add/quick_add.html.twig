@@ -19,6 +19,7 @@
 {% endblock %}
 
 {% block _quick_add_form_start_widget %}
+    {% do set_class_prefix_to_form(form, class_prefix) %}
     {% set pageComponentOptions = {
         'componentSelector': '#' ~ form.component.vars.id,
         'additionalSelector': '#' ~ form.additional.vars.id
@@ -57,7 +58,7 @@
     {{ UI.clientLink({
         'dataUrl': path('oro_product_frontend_quick_add_import'),
         'aCss': 'no-hash import-link download-csv-link',
-        'iCss': 'cf-download',
+        'iCss': 'fa-download',
         'label' : 'oro.product.frontend.quick_add.import_from_file.title'|trans,
         'widget' : {
             'type' : 'quick-add-import',

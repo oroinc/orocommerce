@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CheckoutBundle\WorkflowState\Mapper;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\Factory\ShippingContextProviderFactory;
+use Oro\Bundle\CheckoutBundle\Factory\CheckoutShippingContextFactory;
 use Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider;
 
 class ShippingMethodEnabledMapper implements CheckoutStateDiffMapperInterface
@@ -16,20 +16,20 @@ class ShippingMethodEnabledMapper implements CheckoutStateDiffMapperInterface
     protected $shippingPriceProvider;
 
     /**
-     * @var ShippingContextProviderFactory
+     * @var CheckoutShippingContextFactory
      */
-    protected $shippingContextProviderFactory;
+    protected $shippingContextFactory;
 
     /**
-     * @param ShippingPriceProvider $shippingPriceProvider
-     * @param ShippingContextProviderFactory $shippingContextProviderFactory
+     * @param ShippingPriceProvider          $shippingPriceProvider
+     * @param CheckoutShippingContextFactory $shippingContextFactory
      */
     public function __construct(
         ShippingPriceProvider $shippingPriceProvider,
-        ShippingContextProviderFactory $shippingContextProviderFactory
+        CheckoutShippingContextFactory $shippingContextFactory
     ) {
         $this->shippingPriceProvider = $shippingPriceProvider;
-        $this->shippingContextProviderFactory = $shippingContextProviderFactory;
+        $this->shippingContextFactory = $shippingContextFactory;
     }
 
     /**
@@ -74,7 +74,7 @@ class ShippingMethodEnabledMapper implements CheckoutStateDiffMapperInterface
         $shippingMethod = $entity->getShippingMethod();
         if ($shippingMethod) {
             return null !== $this->shippingPriceProvider->getPrice(
-                $this->shippingContextProviderFactory->create($entity),
+                $this->shippingContextFactory->create($entity),
                 $shippingMethod,
                 $entity->getShippingMethodType()
             );

@@ -104,4 +104,11 @@ class WebsiteRepositoryTest extends WebTestCase
             $this->getContainer()->getParameter('oro_website.entity.website.class')
         );
     }
+
+    public function testCheckWebsiteExists()
+    {
+        $website = $this->getReference(LoadWebsiteData::WEBSITE1);
+        $result = $this->getRepository()->checkWebsiteExists($website->getId());
+        $this->assertNotEmpty($result);
+    }
 }

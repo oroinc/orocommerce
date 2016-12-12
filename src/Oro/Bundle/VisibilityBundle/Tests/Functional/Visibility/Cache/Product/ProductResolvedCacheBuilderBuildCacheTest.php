@@ -3,6 +3,7 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Visibility\Cache\Product;
 
 use Doctrine\ORM\EntityManager;
+use Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
@@ -41,16 +42,22 @@ class ProductResolvedCacheBuilderBuildCacheTest extends WebTestCase
         ]);
 
         $container = $this->client->getContainer();
+        $indexScheduler = new ProductIndexScheduler(
+            $container->get('oro_entity.doctrine_helper'),
+            $container->get('event_dispatcher')
+        );
         $this->scopeManager = $container->get('oro_scope.scope_manager');
         $this->cacheBuilder = new ProductResolvedCacheBuilder(
             $container->get('doctrine'),
-            $container->get('oro_scope.scope_manager')
+            $container->get('oro_scope.scope_manager'),
+            $indexScheduler,
+            $container->get('oro_entity.orm.insert_from_select_query_executor')
         );
         $this->cacheBuilder->setCacheClass(
             $container->getParameter('oro_visibility.entity.product_visibility_resolved.class')
         );
-        $this->cacheBuilder->setRepositoryHolder(
-            $container->get('oro_visibility.product_repository_holder')
+        $this->cacheBuilder->setRepository(
+            $container->get('oro_visibility.product_repository')
         );
         $this->getContainer()->get('oro_visibility.visibility.cache.cache_builder')->buildCache();
     }
@@ -82,31 +89,30 @@ class ProductResolvedCacheBuilderBuildCacheTest extends WebTestCase
         $this->assertNull($repository->findOneBy(['scope' => $scope, 'product' => $firstProduct]));
 
         // category fallback
-        /** @var ProductVisibilityResolved $firstProductCustomWebsite */
-        $firstProductCustomWebsite = $repository->findOneBy([
+        /** @var ProductVisibilityResolved $productVisibility */
+        $productVisibility = $repository->findOneBy([
             'scope' => $scope,
             'product' => $this->getReference(LoadProductData::PRODUCT_8)
         ]);
-        $this->assertNotNull($firstProductCustomWebsite);
+        $this->assertNotNull($productVisibility);
         $this->assertEquals(
             BaseProductVisibilityResolved::VISIBILITY_HIDDEN,
-            $firstProductCustomWebsite->getVisibility()
+            $productVisibility->getVisibility()
         );
         $this->assertEquals(
             $this->getReference(LoadCategoryData::FOURTH_LEVEL2),
-            $firstProductCustomWebsite->getCategory()
+            $productVisibility->getCategory()
         );
 
         // static fallback
-        /** @var ProductVisibilityResolved $forthProductDefaultWebsite */
-        $forthProductDefaultWebsite = $repository
+        $productVisibility = $repository
             ->findOneBy(['scope' => $scope, 'product' => $this->getReference(LoadProductData::PRODUCT_4)]);
-        $this->assertNotNull($forthProductDefaultWebsite);
+        $this->assertNotNull($productVisibility);
         $this->assertEquals(
             BaseProductVisibilityResolved::VISIBILITY_HIDDEN,
-            $forthProductDefaultWebsite->getVisibility()
+            $productVisibility->getVisibility()
         );
-        $this->assertNull($forthProductDefaultWebsite->getCategory());
+        $this->assertNull($productVisibility->getCategory());
 
         // invalid entity for first product in default scope
         $resolvedVisibility = new ProductVisibilityResolved($scope, $firstProduct);
