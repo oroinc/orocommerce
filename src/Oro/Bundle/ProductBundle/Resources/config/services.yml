@@ -94,11 +94,6 @@ services:
             - [setTranslator, ['@translator']]
             - [setRouter, ['@router']]
 
-    oro_product.service.product_create_step_one_handler:
-        class: 'Oro\Bundle\ProductBundle\Form\Handler\ProductCreateStepOneHandler'
-        public: true
-        scope: request
-
     oro_product.storage.product_data_bag:
         class: '%session.attribute_bag.class%'
         public: false
