@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\CheckoutBundle\Migrations\Schema\v1_2;
+namespace Oro\Bundle\RedirectBundle\Migrations\Schema\v1_1;
 
 use Doctrine\DBAL\Schema\Schema;
 
@@ -14,8 +14,7 @@ class MigrateNotes extends UpdateNoteAssociationKindForRenamedEntitiesMigration
     protected function getRenamedEntitiesNames(Schema $schema)
     {
         return [
-            'Oro\Bundle\CheckoutBundle\Entity\Checkout'       => 'OroB2B\Bundle\CheckoutBundle\Entity\Checkout',
-            'Oro\Bundle\CheckoutBundle\Entity\CheckoutSource' => 'OroB2B\Bundle\CheckoutBundle\Entity\CheckoutSource',
+            'Oro\Bundle\RedirectBundle\Entity\Slug' => 'OroB2B\Bundle\RedirectBundle\Entity\Slug'
         ];
     }
 }

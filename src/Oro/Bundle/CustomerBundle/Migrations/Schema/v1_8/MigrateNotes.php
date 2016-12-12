@@ -13,10 +13,16 @@ class MigrateNotes extends UpdateNoteAssociationKindForRenamedEntitiesMigration
         'Account',
         'AccountAddress',
         'AccountGroup',
-        'AccountUser',
-        'AccountUserRole',
         'AccountUserSettings',
+        'AccountUserRole',
+        'AccountUser',
         'AccountUserAddress',
+        'ProductVisibility',
+        'AccountProductVisibility',
+        'CategoryVisibility',
+        'AccountCategoryVisibility',
+        'AccountGroupProductVisibility',
+        'AccountGroupCategoryVisibility',
     ];
 
     /**

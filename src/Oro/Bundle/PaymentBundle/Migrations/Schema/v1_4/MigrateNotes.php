@@ -14,6 +14,8 @@ class MigrateNotes extends UpdateNoteAssociationKindForRenamedEntitiesMigration
     protected function getRenamedEntitiesNames(Schema $schema)
     {
         return [
+            'Oro\Bundle\PaymentBundle\Entity\PaymentTransaction' => 'OroB2B\Bundle\PaymentBundle' .
+                '\Entity\PaymentTransaction',
             'Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm' => 'OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm'
         ];
     }
