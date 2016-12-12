@@ -67,3 +67,4 @@ class BeforeContentNodeProcessEvent extends Event
         return $this;
     }
 }
+
