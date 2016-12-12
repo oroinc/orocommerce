@@ -50,7 +50,7 @@
                     <button class="btn btn-lg entity-select-btn"><i class="icon-reorder"></i></button>
 
                     {% if form.vars.create_enabled %}
-                        <button class="btn btn-lg entity-create-btn"><i class="icon-plus"></i></button>
+                        <button class="btn btn-lg entity-create-btn"><i class="fa-plus"></i></button>
                     {% endif %}
                 </div>
             {% endif %}
@@ -353,7 +353,7 @@
                 </tbody>
             </table>
         </div>
-        <a class="btn add-list-item" data-container=".oro-item-collection tbody" href="javascript: void(0);"><i class="icon-plus"></i>{{ 'oro.rfp.frontend.request.lineitem.add'|trans }}</a>
+        <a class="btn add-list-item" data-container=".oro-item-collection tbody" href="javascript: void(0);"><i class="fa-plus"></i>{{ 'oro.rfp.frontend.request.lineitem.add'|trans }}</a>
     </div>
 {% endblock %}
 
@@ -374,7 +374,7 @@
         {{ form_widget(form) }}
         {{ form_errors(form) }}
         <td class="request-form-lineitem-unit--remove">
-            <button type="button" class="removeLineItem btn icons-holder"><i class="icon-remove"></i></button>
+            <button type="button" class="removeLineItem btn icons-holder"><i class="fa-close"></i></button>
         </td>
     </tr>
 {% endmacro %}
@@ -438,7 +438,7 @@
                 </tbody>
             </table>
         </div>
-        <a class="btn add-list-item rfp-lineitem-requested-item-add" data-container=".oro-item-collection tbody" href="javascript: void(0);"><i class="icon-plus"></i>{{ 'oro.rfp.frontend.request.lineitem.requested.add'|trans }}</a>
+        <a class="btn add-list-item rfp-lineitem-requested-item-add" data-container=".oro-item-collection tbody" href="javascript: void(0);"><i class="fa-plus"></i>{{ 'oro.rfp.frontend.request.lineitem.requested.add'|trans }}</a>
     </div>
 {% endblock %}
 
@@ -501,7 +501,7 @@
                 </tbody>
             </table>
         </div>
-        <a class="btn add-list-item rfp-lineitem-requested-item-add" data-container=".oro-item-collection tbody" href="javascript: void(0);"><i class="icon-plus"></i>{{ 'oro.rfp.frontend.request.lineitem.requested.add'|trans }}</a>
+        <a class="btn add-list-item rfp-lineitem-requested-item-add" data-container=".oro-item-collection tbody" href="javascript: void(0);"><i class="fa-plus"></i>{{ 'oro.rfp.frontend.request.lineitem.requested.add'|trans }}</a>
     </div>
 {% endblock %}
 
@@ -517,7 +517,7 @@
         class="rfp-lineitem-requested rfp-lineitem-requested-item">
         {{ form_widget(form) }}
         <td class="rfp-lineitem-requested-remove">
-            <button type="button" class="removeRow btn icons-holder"><i class="icon-remove"></i></button>
+            <button type="button" class="removeRow btn icons-holder"><i class="fa-close"></i></button>
         </td>
     </tr>
 {% endmacro %}

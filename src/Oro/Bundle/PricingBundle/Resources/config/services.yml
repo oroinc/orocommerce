@@ -69,7 +69,7 @@ services:
         arguments:
             - '@session'
             - '@security.token_storage'
-            - '@oro_config.manager'
+            - '@oro_currency.config.currency'
             - '@oro_website.manager'
             - '@oro_account_user.manager'
 
@@ -119,12 +119,14 @@ services:
         arguments:
             - '@doctrine'
             - '@oro_entity.orm.insert_from_select_query_executor'
+            - '@oro_pricing.model.combined_price_list_trigger_handler'
 
     oro_pricing.resolver.combined_product_schedule_resolver:
         class: 'Oro\Bundle\PricingBundle\Resolver\CombinedPriceListScheduleResolver'
         arguments:
             - '@doctrine'
             - '@oro_config.global'
+            - '@oro_pricing.model.combined_price_list_trigger_handler'
         calls:
             - [addRelationClass, ['%oro_pricing.entity.combined_price_list_to_account.class%']]
             - [addRelationClass, ['%oro_pricing.entity.combined_price_list_to_account_group.class%']]
@@ -136,6 +138,7 @@ services:
         arguments:
             - '@doctrine'
             - '@oro_config.global'
+            - '@oro_pricing.model.combined_price_list_trigger_handler'
         calls:
             - [setCombinedPriceListClass, ['%oro_pricing.entity.combined_price_list.class%']]
 
@@ -150,6 +153,7 @@ services:
             - '@oro_pricing.builder.combined_price_list_garbage_collector'
             - '@oro_pricing.resolver.combined_product_schedule_resolver'
             - '@oro_pricing.resolver.combined_product_price_resolver'
+            - '@oro_pricing.model.combined_price_list_trigger_handler'
         calls:
             - [setCombinedPriceListClassName, ['%oro_pricing.entity.combined_price_list.class%']]
 
@@ -335,6 +339,7 @@ services:
             - '@oro_pricing.model.price_list_request_handler'
             - '@oro_pricing.user_currency_manager'
             - '@oro_pricing.datagrid.provider.combined_product_price'
+            - '@translator'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-product-search-grid,, method: onBuildBefore }
             - { name: kernel.event_listener, event: oro_datagrid.search_datasource.result.after.frontend-product-search-grid, method: onResultAfter }
@@ -355,14 +360,6 @@ services:
             - '@doctrine'
         tags:
             - { name: validator.constraint_validator, alias: oro_pricing_price_list_product_prices_currency_validator }
-
-    oro_pricing.validator.default_currency:
-        class: 'Oro\Bundle\PricingBundle\Validator\Constraints\DefaultCurrencyValidator'
-        public: true
-        arguments:
-            - "@oro_config.manager"
-        tags:
-            - { name: validator.constraint_validator, alias: oro_pricing_default_currency_validator }
 
     oro_pricing.validator.dates_chain:
         class: 'Oro\Bundle\PricingBundle\Validator\Constraints\DatesChainValidator'
@@ -437,12 +434,13 @@ services:
 
     oro_pricing.filter.frontend_product_price:
         class: 'Oro\Bundle\PricingBundle\Filter\FrontendProductPriceFilter'
-        parent: oro_pricing.filter.product_price
+        arguments:
+            - '@form.factory'
+            - '@oro_filter.filter_utility'
         calls:
-            - [setRegistry, ['@doctrine']]
-            - [setProductPriceClass, ['%oro_pricing.entity.combined_product_price.class%']]
+            - [setFormatter, ['@oro_product.formatter.product_unit_label']]
         tags:
-            - { name: oro_filter.extension.orm_filter.filter, type: frontend-product-price }
+            - { name: oro_search.extension.search_filter.filter, type: frontend-product-price, datasource: search }
 
     oro_pricing.event_listener.product_duplicate:
         class: 'Oro\Bundle\PricingBundle\EventListener\ProductDuplicateListener'
@@ -878,6 +876,7 @@ services:
             - '@event_dispatcher'
             - '@logger'
             - '@oro_entity.database_exception_helper'
+            - '@oro_pricing.model.combined_price_list_trigger_handler'
         tags:
             - { name: 'oro_message_queue.client.message_processor' }
 
@@ -900,8 +899,40 @@ services:
             - '@oro_product.formatter.product_unit_label'
             - '@oro_product.formatter.product_unit_value'
 
-    oro_pricing.repository.product_price:
-        class: 'Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository'
-        parent: oro_entity.abstract_repository
+    oro_pricing.event_listener.website_search_index:
+        class: 'Oro\Bundle\PricingBundle\EventListener\WebsiteSearchProductPriceIndexerListener'
         arguments:
-            - 'Oro\Bundle\PricingBundle\Entity\ProductPrice'
+            - '@oro_website_search.manager.website_context_manager'
+            - '@doctrine'
+            - '@oro_config.manager'
+        tags:
+            - { name: kernel.event_listener, event: oro_website_search.event.index_entity.product, method: onWebsiteSearchIndex }
+
+    oro_pricing.cpl.placeholder:
+        class: 'Oro\Bundle\PricingBundle\Placeholder\CPLIdPlaceholder'
+        public: false
+        arguments:
+            - '@oro_pricing.model.price_list_tree_handler'
+            - '@security.token_storage'
+        tags:
+            - { name: website_search.placeholder }
+
+    oro_pricing.currency.placeholder:
+        class: 'Oro\Bundle\PricingBundle\Placeholder\CurrencyPlaceholder'
+        public: false
+        arguments:
+            - '@oro_pricing.user_currency_manager'
+        tags:
+            - { name: website_search.placeholder }
+
+    oro_pricing.unit.placeholder:
+        class: 'Oro\Bundle\PricingBundle\Placeholder\UnitPlaceholder'
+        public: false
+        tags:
+            - { name: website_search.placeholder }
+
+    oro_pricing.model.combined_price_list_trigger_handler:
+        class: Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler
+        arguments:
+            - '@doctrine'
+            - '@event_dispatcher'

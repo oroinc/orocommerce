@@ -124,7 +124,7 @@ $product-gallery-container-width: 380px !default;
       outline: 0;
     }
 
-    .cf-list {
+    .fa-list-ul {
       margin: 0;
 
       font-size: 16px;
@@ -617,7 +617,7 @@ $product-gallery-container-width: 380px !default;
 
   .btn {
     min-width: 30px;
-    min-height: 27px;
+    padding: 4px;
 
     background: get-color('additional', 'ultra');
     color: get-color('additional', 'middle');

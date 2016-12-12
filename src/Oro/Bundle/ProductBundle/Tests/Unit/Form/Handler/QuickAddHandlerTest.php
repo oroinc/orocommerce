@@ -136,7 +136,7 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->productFormProvider->expects($this->once())
             ->method('getQuickAddForm')
-            ->with([], ['products' => []])
+            ->with([], ['products' => [], 'validation_groups' => ['Default', 'not_request_for_quote']])
             ->willReturn($form);
 
         $collection = new QuickAddRowCollection();
@@ -161,7 +161,10 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->productFormProvider->expects($this->once())
             ->method('getQuickAddForm')
-            ->with([], ['validation_required' => false, 'products' => []])
+            ->with([], [
+                'validation_required' => false,
+                'products' => [],
+                'validation_groups' => ['Default', 'not_request_for_quote']])
             ->willReturn($form);
 
         $collection = new QuickAddRowCollection();
@@ -204,7 +207,14 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->productFormProvider->expects($this->once())
             ->method('getQuickAddForm')
-            ->with([], ['validation_required' => true, 'products' => ['SKU1' => $product]])
+            ->with(
+                [],
+                [
+                    'validation_required' => true,
+                    'products' => ['SKU1' => $product],
+                    'validation_groups' => ['Default', 'not_request_for_quote'],
+                ]
+            )
             ->willReturn($form);
 
         $collection = $this->getMock('Oro\Bundle\ProductBundle\Model\QuickAddRowCollection');
@@ -256,7 +266,14 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->productFormProvider->expects($this->at(0))
             ->method('getQuickAddForm')
-            ->with([], ['validation_required' => true, 'products' => []])
+            ->with(
+                [],
+                [
+                    'validation_required' => true,
+                    'products' => [],
+                    'validation_groups' => ['Default', 'not_request_for_quote'],
+                ]
+            )
             ->willReturn($mainForm);
 
         $collection = new QuickAddRowCollection();
@@ -319,7 +336,14 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->productFormProvider->expects($this->once())
             ->method('getQuickAddForm')
-            ->with([], ['validation_required' => true, 'products' => []])
+            ->with(
+                [],
+                [
+                    'validation_required' => true,
+                    'products' => [],
+                    'validation_groups' => ['Default', 'not_request_for_quote'],
+                ]
+            )
             ->willReturn($form);
 
         $collection = new QuickAddRowCollection();

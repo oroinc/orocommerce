@@ -29,10 +29,6 @@
     {{- form_errors(form) -}}
 {% endblock %}
 
-{%- block _oro_account_frontend_account_user_account_row -%}
-    <input type="hidden" name="{{ form.vars.full_name  }}" value="{{ value}}">
-{% endblock %}
-
 {%- block choice_widget_expanded -%}
     <div {{ block('widget_container_attributes') }} class="input-widget-select">
         {%- for child in form %}
@@ -81,7 +77,7 @@
             <ul class="notification__list">
                 {%- for error in errors -%}
                     <li class="notification__item">
-                        <i class="cf-attention"></i>
+                        <i class="fa-exclamation-triangle"></i>
                         <span class="notification__text">{{ error.message|trans }}</span>
                     </li>
                 {%- endfor -%}

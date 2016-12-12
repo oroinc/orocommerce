@@ -1,6 +1,3 @@
-parameters:
-    oro_action.helper.applications.class: Oro\Bundle\FrontendBundle\Helper\ActionApplicationsHelper
-
 services:
     oro_frontend.listener.frontend_route_collection:
         class: 'Oro\Bundle\FrontendBundle\EventListener\FrontendRouteCollectionListener'
@@ -150,3 +147,21 @@ services:
         class: 'Oro\Bundle\FrontendBundle\CacheWarmer\NamespaceMigrationFixProductProvider'
         tags:
             - {name: oro_installer.namespace_migration_provider, priority: 25}
+
+    oro_frontend.provider.current_application:
+        class: 'Oro\Bundle\FrontendBundle\Provider\ActionCurrentApplicationProvider'
+        decorates: oro_action.provider.current_application
+        arguments:
+            - '@oro_frontend.provider.current_application.inner'
+            - '@security.token_storage'
+
+    oro_frontend.provider.route:
+        class: 'Oro\Bundle\FrontendBundle\Provider\ActionRouteProvider'
+        decorates: oro_action.provider.route
+        arguments:
+            - '@oro_frontend.provider.route.inner'
+            - '@security.token_storage'
+            - 'oro_frontend_action_widget_form'
+            - 'oro_frontend_action_widget_form'
+            - 'oro_frontend_action_operation_execute'
+            - 'oro_frontend_action_widget_buttons'
