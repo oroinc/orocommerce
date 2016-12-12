@@ -10,19 +10,6 @@ services:
         calls:
             - [setDataClass, ['%oro_order.entity.order.class%']]
 
-    oro_order.form.type.frontend.order:
-        class: 'Oro\Bundle\OrderBundle\Form\Type\FrontendOrderType'
-        arguments:
-            - '@oro_order.order.provider.order_address_security'
-            - '@oro_pricing.provider.combined_product_price'
-            - '@oro_order.handler.order_currency_handler'
-            - '@oro_order.form.type.event_listener.subtotals_subscriber'
-            - '@oro_pricing.model.price_list_request_handler'
-        tags:
-            - { name: form.type, alias: oro_order_frontend_type }
-        calls:
-            - [setDataClass, ['%oro_order.entity.order.class%']]
-
     oro_order.form.type.order_address:
         class: 'Oro\Bundle\OrderBundle\Form\Type\OrderAddressType'
         arguments:
@@ -55,27 +42,6 @@ services:
         class: 'Oro\Bundle\OrderBundle\Form\Type\OrderLineItemsCollectionType'
         tags:
             - { name: form.type, alias: "oro_order_line_items_collection" }
-
-    oro_order.form.type.frontend.order_line_item:
-        class: 'Oro\Bundle\OrderBundle\Form\Type\FrontendOrderLineItemType'
-        arguments:
-            - '@doctrine'
-            - '@oro_pricing.model.price_list_request_handler'
-            - '%oro_pricing.entity.combined_product_price.class%'
-        calls:
-            - [setDataClass, ['%oro_order.entity.order_line_item.class%']]
-            - [setSectionProvider, ['@oro_order.form.section.provider']]
-        tags:
-            - { name: form.type, alias: oro_order_line_item_frontend }
-
-    oro_order.form.type.extension.frontend_order_data_storage:
-        class: 'Oro\Bundle\OrderBundle\Form\Extension\OrderDataStorageExtension'
-        parent: oro_product.form.type.extension.product_data_storage.abstract
-        calls:
-            - [setDataClass, ['%oro_order.entity.order.class%']]
-            - [setExtendedType, ['oro_order_frontend_type']]
-        tags:
-            - { name: form.type_extension, alias: oro_order_frontend_type }
 
     oro_order.form.type.extension.order_data_storage:
         class: 'Oro\Bundle\OrderBundle\Form\Extension\OrderDataStorageExtension'

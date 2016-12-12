@@ -167,3 +167,15 @@
         {{ 'oro.ui.empty'|trans }}
     {% endif %}
 {% endblock %}
+
+{% block _order_shipping_method_widget %}
+
+    {% set text =
+        'oro.frontend.order.method_type.view.label'|trans({
+            '%translatedMethodType%': get_shipping_method_type_label(shippingMethod, shippingMethodType)|trans,
+            '%translatedMethod%': get_shipping_method_label(shippingMethod)|trans
+        })|raw
+    %}
+
+    {{ parent_block_widget(block) }}
+{% endblock %}

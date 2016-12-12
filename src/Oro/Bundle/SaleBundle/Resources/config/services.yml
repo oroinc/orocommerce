@@ -153,3 +153,9 @@ services:
         class: 'Oro\Bundle\SaleBundle\Provider\PrivilegeCategoryProvider'
         tags:
             - { name: oro_user.privilege_category}
+
+    oro_sale.event_listener.quote_product:
+        class: 'Oro\Bundle\SaleBundle\Entity\Listener\QuoteProductListener'
+        arguments: ["@request_stack"]
+        tags:
+             - { name: doctrine.event_listener, event: preUpdate }

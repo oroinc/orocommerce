@@ -44,26 +44,6 @@
 
       background: get-color('additional', 'base');
       font-size: $base-font-size;
-
-      + .main-menu__item--nested {
-        border-left: 1px solid get-color('additional', 'ultra');
-      }
-
-      .order-widget--dropdown-mode {
-        top: 48px;
-        right: 0;
-
-        display: none;
-        margin-right:10px;
-
-        font-size: $base-font-size - 1;
-
-        .order-widget__item{
-          &:first-child {
-            border-top: 0;
-          }
-        }
-      }
     }
 
     @include breakpoint('desktop') {
@@ -79,10 +59,6 @@
         &:hover {
           .main-menu__sublist-container {
             display: block !important;
-          }
-
-          .order-widget--dropdown-mode {
-            display: block;
           }
 
           .messages-widget__dropdown-mode {

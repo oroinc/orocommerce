@@ -8,11 +8,12 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\ORM\QueryBuilder;
+use Doctrine\Common\Collections\Criteria;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\CustomerBundle\Entity\Repository\AccountUserRoleRepository;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
 class FrontendAccountUserRoleSelectType extends AbstractType
 {
@@ -28,13 +29,20 @@ class FrontendAccountUserRoleSelectType extends AbstractType
     protected $roleClass;
 
     /**
+     * @var AclHelper
+     */
+    protected $aclHelper;
+
+    /**
      * @param SecurityFacade $securityFacade
      * @param Registry $registry
+     * @param AclHelper $aclHelper
      */
-    public function __construct(SecurityFacade $securityFacade, Registry $registry)
+    public function __construct(SecurityFacade $securityFacade, Registry $registry, AclHelper $aclHelper)
     {
         $this->securityFacade = $securityFacade;
         $this->registry = $registry;
+        $this->aclHelper = $aclHelper;
     }
 
     /**
@@ -83,11 +91,19 @@ class FrontendAccountUserRoleSelectType extends AbstractType
             /** @var $repo AccountUserRoleRepository */
             $repo = $this->registry->getManagerForClass($this->roleClass)
                 ->getRepository($this->roleClass);
-            /** @var $qb QueryBuilder */
-            $qb = $repo->getAvailableSelfManagedRolesByAccountUserQueryBuilder(
-                $loggedUser->getOrganization(),
-                $loggedUser->getAccount()
+            $criteria = new Criteria();
+            $qb = $repo->createQueryBuilder('account');
+            $this->aclHelper->applyAclToCriteria(
+                $this->roleClass,
+                $criteria,
+                'ASSIGN',
+                ['account' => 'account.account', 'organization' => 'account.organization']
             );
+            $qb->addCriteria($criteria);
+            $qb->orWhere(
+                'account.selfManaged = :isActive AND account.public = :isActive AND account.account is NULL'
+            );
+            $qb->setParameter('isActive', true, \PDO::PARAM_BOOL);
 
             return new ORMQueryBuilderLoader($qb);
         });

@@ -1,0 +1,30 @@
+// @theme: custom;
+
+@include breakpoint('tablet') {
+  .middlebar {
+    padding: 10px 0 0;
+    min-height: initial;
+
+    &__right {
+      width: 100%;
+      margin-left: auto;
+      margin: 5px 0 -10px;
+      display: block;
+    }
+
+    &__left {
+      width: 100%;
+      margin-left: auto;
+
+      .logo {
+        margin: 0 auto;
+      }
+    }
+
+    > .container-fluid {
+      padding: 0;
+      display: flex;
+      flex-direction: column-reverse;
+    }
+  }
+}

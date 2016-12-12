@@ -7,7 +7,7 @@ operations:
         acl_resource: ['CREATE', 'entity:Oro\Bundle\PricingBundle\Entity\ProductPrice']
 
         button_options:
-            icon: icon-plus
+            icon: fa-plus
 
         frontend_options:
             template: OroPricingBundle:Action:addProductPrice.html.twig
@@ -67,16 +67,18 @@ operations:
     oro_pricing_price_list_set_active:
         label: oro.pricing.pricelist.status.enable
         routes: [oro_pricing_price_list_view]
+        applications: [default]
+        acl_resource: ['UPDATE', 'entity:Oro\Bundle\PricingBundle\Entity\PriceList']
         datagrids:
             - pricing-price-list-grid
         order: 10
         button_options:
-            icon: icon-ok
+            icon: fa-check
         preconditions:
             '@equal': [$active, false]
         actions:
-            - '@assign_value': [$.entity.active, true]
-            - '@flush_entity': $.entity
+            - '@assign_value': [$.data.active, true]
+            - '@flush_entity': $.data
             - '@refresh_grid':
                 conditions:
                     '@not_empty': $.gridName
@@ -87,21 +89,23 @@ operations:
             - '@call_service_method':
                 service: oro_pricing.price_list_relation_trigger_handler
                 method: handlePriceListStatusChange
-                method_parameters: [$.entity]
+                method_parameters: [$.data]
 
     oro_pricing_price_list_disable:
         label: oro.pricing.pricelist.status.disable
+        applications: [default]
         routes: [oro_pricing_price_list_view]
+        acl_resource: ['UPDATE', 'entity:Oro\Bundle\PricingBundle\Entity\PriceList']
         datagrids:
             - pricing-price-list-grid
         order: 10
         button_options:
-            icon: icon-remove
+            icon: fa-close
         preconditions:
             '@equal': [$active, true]
         actions:
-            - '@assign_value': [$.entity.active, false]
-            - '@flush_entity': $.entity
+            - '@assign_value': [$.data.active, false]
+            - '@flush_entity': $.data
             - '@refresh_grid':
                 conditions:
                     '@not_empty': $.gridName
@@ -112,14 +116,14 @@ operations:
             - '@call_service_method':
                 service: oro_pricing.price_list_relation_trigger_handler
                 method: handlePriceListStatusChange
-                method_parameters: [$.entity]
+                method_parameters: [$.data]
 
     oro_pricing_price_list_duplicate:
         label: oro.pricing.pricelist.duplicate.label
         routes: [oro_pricing_price_list_view]
         order: 10
         button_options:
-            icon: icon-copy
+            icon: fa-files-o
         actions:
             - '@format_string':
                 attribute: $.newName
@@ -177,7 +181,7 @@ operations:
         routes: [oro_pricing_price_list_view]
         order: 10
         button_options:
-            icon: icon-money
+            icon: fa-money
         actions:
             - '@call_service_method':
                 service: 'oro_pricing.builder.price_list_product_assignment_builder'

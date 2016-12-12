@@ -29,15 +29,16 @@ class TransitionDataProviderTest extends \PHPUnit_Framework_TestCase
         $this->workflowManager = $this->getMockBuilder('Oro\Bundle\WorkflowBundle\Model\WorkflowManager')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->workflowManager->expects($this->any())
-            ->method('isTransitionAvailable')
-            ->willReturn(true);
 
         $this->provider = new TransitionProvider($this->workflowManager);
     }
 
     public function testGetBackTransitions()
     {
+        $this->workflowManager->expects($this->any())
+            ->method('isTransitionAvailable')
+            ->willReturn(true);
+
         $workflowItem = new WorkflowItem();
         $step = new WorkflowStep();
         $workflowItem->setCurrentStep($step);
@@ -86,6 +87,10 @@ class TransitionDataProviderTest extends \PHPUnit_Framework_TestCase
             $continueTransition
         ];
 
+        $this->workflowManager->expects($this->any())
+            ->method('isTransitionAvailable')
+            ->willReturn(true);
+
         $this->workflowManager->expects($this->once())
             ->method('getTransitionsByWorkflowItem')
             ->with($workflowItem)
@@ -95,8 +100,67 @@ class TransitionDataProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $this->provider->getContinueTransition($workflowItem));
     }
 
+    public function testGetContinueTransitionWithCache()
+    {
+        $workflowItem = new WorkflowItem();
+        $step = new WorkflowStep();
+        $workflowItem->setCurrentStep($step);
+
+        $transitionWithoutForm = new Transition();
+        $transitionWithoutForm->setName('transition1');
+
+        $continueTransition1 = new Transition();
+        $continueTransition1->setName('transition3');
+        $continueTransition1->setFrontendOptions(['is_checkout_continue' => true]);
+        $continueTransition1->setFormType('transition_type');
+        $continueTransition1->setUnavailableHidden(true);
+
+        $continueTransition2 = new Transition();
+        $continueTransition2->setName('transition4');
+        $continueTransition2->setFrontendOptions(['is_checkout_continue' => true]);
+        $continueTransition2->setFormType('transition_type');
+        $continueTransition1->setUnavailableHidden(true);
+
+        $transitions = [
+            $transitionWithoutForm,
+            $continueTransition1,
+            $continueTransition2,
+        ];
+
+        $this->workflowManager->expects($this->exactly(2))
+            ->method('getTransitionsByWorkflowItem')
+            ->with($workflowItem)
+            ->willReturn($transitions);
+
+        $errors = new ArrayCollection();
+        $this->workflowManager->expects($this->exactly(3))
+            ->method('isTransitionAvailable')
+            ->withConsecutive(
+                [$workflowItem, $continueTransition1, $errors],
+                [$workflowItem, $continueTransition1, $errors],
+                [$workflowItem, $continueTransition2, $errors]
+            )
+            ->willReturnOnConsecutiveCalls(
+                true,
+                false,
+                true
+            );
+
+        $expected1 = new TransitionData($continueTransition1, true, new ArrayCollection());
+        $expected2 = new TransitionData($continueTransition2, true, new ArrayCollection());
+
+        $this->assertEquals($expected1, $this->provider->getContinueTransition($workflowItem));
+        $this->provider->clearCache();
+
+        $this->assertEquals($expected2, $this->provider->getContinueTransition($workflowItem));
+    }
+
     public function testGetBackTransition()
     {
+        $this->workflowManager->expects($this->any())
+            ->method('isTransitionAvailable')
+            ->willReturn(true);
+
         $workflowItem = new WorkflowItem();
         $step = new WorkflowStep();
         $workflowItem->setCurrentStep($step);

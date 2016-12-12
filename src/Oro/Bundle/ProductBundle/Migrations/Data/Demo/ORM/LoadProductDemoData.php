@@ -103,7 +103,8 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
                 ->setStatus(Product::STATUS_ENABLED)
                 ->addName($name)
                 ->addDescription($description)
-                ->addShortDescription($shortDescription);
+                ->addShortDescription($shortDescription)
+                ->setType($row['type']);
 
             $productUnit = $this->getProductUnit($manager, $row['unit']);
 

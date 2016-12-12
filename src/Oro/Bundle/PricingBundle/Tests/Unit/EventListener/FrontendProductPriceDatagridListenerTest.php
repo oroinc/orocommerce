@@ -2,18 +2,19 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\EventListener;
 
-use Oro\Bundle\PricingBundle\Datagrid\Provider\CombinedProductPriceProviderInterface;
-use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
-use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultAfter;
-use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Bundle\PricingBundle\Datagrid\Provider\CombinedProductPriceProviderInterface;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\EventListener\FrontendProductPriceDatagridListener;
-use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
+use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultAfter;
+use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
+use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class FrontendProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -54,10 +55,17 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCa
             ->disableOriginalConstructor()
             ->getMock();
 
+        $translator = $this->getMock(TranslatorInterface::class);
+        $translator->method('trans')
+            ->willReturnMap([
+                ['oro.pricing.productprice.price.label', [], null, null, 'Price'],
+            ]);
+
         $this->listener = new FrontendProductPriceDatagridListener(
             $this->priceListRequestHandler,
             $this->currencyManager,
-            $this->combinedProductPriceProvider
+            $this->combinedProductPriceProvider,
+            $translator
         );
     }
 
@@ -115,6 +123,28 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCa
                 'expectedConfig'  => [
                     'properties' => [
                         'prices' => ['type' => 'field', 'frontend_type' => 'row_array'],
+                    ],
+                    'columns' => [
+                        'minimal_price' => ['label' => 'Price'],
+                        'minimal_price_sort' => [
+                            'label' => 'oro.pricing.price.label',
+                        ]
+                    ],
+                    'filters' => [
+                        'columns' => [
+                            'minimal_price' => [
+                                'type' => 'frontend-product-price',
+                                'data_name' => 'minimal_price_CPL_ID_CURRENCY_UNIT'
+                            ]
+                        ]
+                    ],
+                    'sorters' => [
+                        'columns' => [
+                            'minimal_price_sort' => [
+                                'data_name' => 'minimal_price_CPL_ID_CURRENCY',
+                                'type' => 'decimal',
+                            ]
+                        ]
                     ],
                 ],
             ],

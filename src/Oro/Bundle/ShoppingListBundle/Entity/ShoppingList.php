@@ -36,7 +36,7 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  *      routeView="oro_shopping_list_view",
  *      defaultValues={
  *          "entity"={
- *              "icon"="icon-shopping-cart",
+ *              "icon"="fa-shopping-cart",
  *              "totals_mapping"={
  *                  "type"="join_collection",
  *                  "join_field"="totals",
