@@ -5,7 +5,6 @@ namespace Oro\Bundle\ProductBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
@@ -14,6 +13,8 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\ProductBundle\Model\ExtendProduct;
+use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
+use Oro\Bundle\RedirectBundle\Entity\SluggableTrait;
 
 /**
  * @ORM\Table(
@@ -25,6 +26,37 @@ use Oro\Bundle\ProductBundle\Model\ExtendProduct;
  *      }
  * )
  * @ORM\Entity(repositoryClass="Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository")
+ * @ORM\AssociationOverrides({
+ *      @ORM\AssociationOverride(
+ *          name="slugPrototypes",
+ *          joinTable=@ORM\JoinTable(
+ *              name="oro_product_slug_prototype",
+ *              joinColumns={
+ *                  @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="CASCADE")
+ *              },
+ *              inverseJoinColumns={
+ *                  @ORM\JoinColumn(
+ *                      name="localized_value_id",
+ *                      referencedColumnName="id",
+ *                      onDelete="CASCADE",
+ *                      unique=true
+ *                  )
+ *              }
+ *          )
+ *      ),
+ *     @ORM\AssociationOverride(
+ *          name="slugs",
+ *          joinTable=@ORM\JoinTable(
+ *              name="oro_product_slug",
+ *              joinColumns={
+ *                  @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="CASCADE")
+ *              },
+ *              inverseJoinColumns={
+ *                  @ORM\JoinColumn(name="slug_id", referencedColumnName="id", unique=true, onDelete="CASCADE")
+ *              }
+ *          )
+ *      )
+ * })
  * @Config(
  *      routeName="oro_product_index",
  *      routeView="oro_product_view",
@@ -62,14 +94,22 @@ use Oro\Bundle\ProductBundle\Model\ExtendProduct;
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  * @SuppressWarnings(PHPMD.TooManyFields)
  */
-class Product extends ExtendProduct implements OrganizationAwareInterface, \JsonSerializable
+class Product extends ExtendProduct implements
+    OrganizationAwareInterface,
+    \JsonSerializable,
+    SluggableInterface
 {
+    use SluggableTrait;
+
     const STATUS_DISABLED = 'disabled';
     const STATUS_ENABLED = 'enabled';
 
     const INVENTORY_STATUS_IN_STOCK = 'in_stock';
     const INVENTORY_STATUS_OUT_OF_STOCK = 'out_of_stock';
     const INVENTORY_STATUS_DISCONTINUED = 'discontinued';
+
+    const TYPE_SIMPLE = 'simple';
+    const TYPE_CONFIGURABLE = 'configurable';
 
     /**
      * @ORM\Id
@@ -121,7 +161,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
     protected $hasVariants = false;
 
     /**
-     * @var bool
+     * @var string
      *
      * @ORM\Column(name="status", type="string", length=16, nullable=false)
      * @ConfigField(
@@ -400,6 +440,23 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
     protected $images;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="type", type="string", length=32, nullable=false)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          },
+     *          "importexport"={
+     *              "order"=20
+     *          }
+     *      }
+     *  )
+     */
+    protected $type = self::TYPE_SIMPLE;
+
+    /**
      * {@inheritdoc}
      */
     public function __construct()
@@ -412,6 +469,8 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
         $this->shortDescriptions = new ArrayCollection();
         $this->variantLinks = new ArrayCollection();
         $this->images = new ArrayCollection();
+        $this->slugPrototypes = new ArrayCollection();
+        $this->slugs = new ArrayCollection();
     }
 
     /**
@@ -420,6 +479,14 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
     public static function getStatuses()
     {
         return [self::STATUS_ENABLED, self::STATUS_DISABLED];
+    }
+
+    /**
+     * @return array
+     */
+    public static function getTypes()
+    {
+        return [self::TYPE_SIMPLE, self::TYPE_CONFIGURABLE];
     }
 
     /**
@@ -889,6 +956,26 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
         if ($this->shortDescriptions->contains($shortDescription)) {
             $this->shortDescriptions->removeElement($shortDescription);
         }
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * @param string $type
+     *
+     * @return $this
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
 
         return $this;
     }

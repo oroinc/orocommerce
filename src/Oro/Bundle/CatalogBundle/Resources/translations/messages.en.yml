@@ -22,7 +22,14 @@ oro:
             unit_precision.label:        'Unit Precision'
             unit.label:                  'Unit of Quantity'
             precision.label:             'Precision'
+            content_variant_type.label:  'Category Page'
             materialized_path.label:     'Materialized path'
+            slugs:
+                label:              'Slugs'
+                singular_label:     'Slug'
+            slug_prototypes:
+                label:              'Slug Prototypes'
+                singular_label:     'Slug Prototype'
 
         sections:
             general: 'General'

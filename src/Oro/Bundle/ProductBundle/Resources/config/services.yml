@@ -94,11 +94,6 @@ services:
             - [setTranslator, ['@translator']]
             - [setRouter, ['@router']]
 
-    oro_product.service.product_create_step_one_handler:
-        class: 'Oro\Bundle\ProductBundle\Form\Handler\ProductCreateStepOneHandler'
-        public: true
-        scope: request
-
     oro_product.storage.product_data_bag:
         class: '%session.attribute_bag.class%'
         public: false
@@ -204,6 +199,9 @@ services:
     oro_product.provider.product_status_provider:
         class: 'Oro\Bundle\ProductBundle\Provider\ProductStatusProvider'
 
+    oro_product.provider.product_type_provider:
+        class: 'Oro\Bundle\ProductBundle\Provider\ProductTypeProvider'
+
     oro_product.provider.product_units_provider:
         class: 'Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider'
         arguments:
@@ -222,6 +220,15 @@ services:
             - "@doctrine"
         tags:
             - {name: oro_product.default_product_unit_provider, priority: 0}
+
+    oro_product.provider.product_title_provider:
+        class: 'Oro\Bundle\ProductBundle\Provider\ProductTitleProvider'
+        public: false
+        arguments:
+            - '@property_accessor'
+            - '@oro_locale.helper.localization.link'
+        tags:
+            - { name: oro_web_catalog.content_variant_title_provider }
 
     oro_product.event_listener.product_variant_custom_fields_datagrid:
         class: 'Oro\Bundle\ProductBundle\EventListener\ProductVariantCustomFieldsDatagridListener'
@@ -484,6 +491,20 @@ services:
            - "@request_stack"
         tags:
             - { name: kernel.event_listener, event: kernel.exception, method: onAccessException }
+
+    oro_product.content_variant_type.product_page:
+        class: Oro\Bundle\ProductBundle\ContentVariantType\ProductPageContentVariantType
+        public: false
+        arguments:
+            - '@oro_security.security_facade'
+            - '@property_accessor'
+        tags:
+            - { name: oro_web_catalog.content_variant_type }
+
+    oro_product.provider.routing_information_provider:
+        class: Oro\Bundle\ProductBundle\Provider\ProductRoutingInformationProvider
+        tags:
+            - { name: oro_redirect.routing_information_provider }
 
     oro_product.layout.data_provider.quick_add_collection:
         class: 'Oro\Bundle\ProductBundle\Provider\QuickAddCollectionProvider'
