@@ -68,3 +68,4 @@ class BeforeContentNodeProcessEvent extends Event
     }
 }
 
+
