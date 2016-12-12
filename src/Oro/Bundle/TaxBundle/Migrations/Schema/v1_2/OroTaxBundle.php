@@ -10,10 +10,9 @@ use Oro\Bundle\FrontendBundle\Migration\UpdateSerializedClassNames;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
-use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class OroTaxBundle implements Migration, RenameExtensionAwareInterface, OrderedMigrationInterface
+class OroTaxBundle implements Migration, RenameExtensionAwareInterface
 {
     /**
      * @var RenameExtension
@@ -64,16 +63,5 @@ class OroTaxBundle implements Migration, RenameExtensionAwareInterface, OrderedM
     public function setRenameExtension(RenameExtension $renameExtension)
     {
         $this->renameExtension = $renameExtension;
-    }
-
-    /**
-     * Should be executed before:
-     * @see \Oro\Bundle\TaxBundle\Migrations\Schema\v1_2\MigrateNotes
-     *
-     * {@inheritdoc}
-     */
-    public function getOrder()
-    {
-        return 0;
     }
 }
