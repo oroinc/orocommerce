@@ -45,3 +45,4 @@ class AfterContentNodeProcessEvent extends Event
         return $this->form;
     }
 }
+
