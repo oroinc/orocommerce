@@ -85,7 +85,7 @@ services:
         class: Oro\Bundle\WebCatalogBundle\EventListener\WebCatalogConfigChangeListener
         arguments: ['@event_dispatcher']
         tags:
-            - { name: kernel.event_listener, event: oro_config.update_after, method: onConfigurationUpdate } 
+            - { name: kernel.event_listener, event: oro_config.update_after, method: onConfigurationUpdate }
 
     oro_web_catalog.event_listener.request_listener:
         class: Oro\Bundle\WebCatalogBundle\EventListener\RequestListener
@@ -174,3 +174,8 @@ services:
             - '@oro_locale.helper.localization'
         tags:
             - { name: kernel.event_listener, event: oro_website_search.event.index_entity, method: onWebsiteSearchIndex }
+
+    oro_web_catalog.layout.data_provider.menu_data:
+            class: Oro\Bundle\WebCatalogBundle\DataProvider\MenuDataProvider
+            tags:
+                - { name: layout.data_provider, alias: web_catalog_menu }
