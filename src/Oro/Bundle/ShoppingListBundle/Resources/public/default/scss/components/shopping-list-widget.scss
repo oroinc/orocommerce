@@ -21,6 +21,7 @@
 
     &__wrapper {
       position: absolute;
+      z-index: z('dropdown') + 1;
       right: 2px;
       padding: 0;
       width: 382px;
