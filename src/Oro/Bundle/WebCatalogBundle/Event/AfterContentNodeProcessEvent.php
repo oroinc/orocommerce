@@ -5,12 +5,14 @@ namespace Oro\Bundle\WebCatalogBundle\Event;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\Form\FormInterface;
 
+use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
+
 class AfterContentNodeProcessEvent extends Event
 {
     /**
-     * @var mixed
+     * @var ContentNode
      */
-    protected $data;
+    protected $contentNode;
 
     /**
      * @var FormInterface
@@ -19,20 +21,20 @@ class AfterContentNodeProcessEvent extends Event
 
     /**
      * @param FormInterface $form
-     * @param mixed         $data
+     * @param ContentNode $contentNode
      */
-    public function __construct(FormInterface $form, $data)
+    public function __construct(FormInterface $form, ContentNode $contentNode)
     {
         $this->form = $form;
-        $this->data = $data;
+        $this->contentNode = $contentNode;
     }
 
     /**
-     * @return mixed
+     * @return ContentNode
      */
-    public function getData()
+    public function getContentNode()
     {
-        return $this->data;
+        return $this->contentNode;
     }
 
     /**

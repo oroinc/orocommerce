@@ -25,9 +25,9 @@ class ContentNodeHandler
     protected $form;
 
     /**
-     * @var Request
+     * @var RequestStack
      */
-    protected $request;
+    protected $requestStack;
 
     /**
      * @var SlugGenerator
@@ -45,8 +45,7 @@ class ContentNodeHandler
     protected $eventDispatcher;
 
     /**
-     * @param FormInterface $form
-     * @param Request $request
+     * @param RequestStack $requestStack
      * @param SlugGenerator $slugGenerator
      * @param ObjectManager $manager
      * @param EventDispatcherInterface $eventDispatcher
@@ -57,7 +56,7 @@ class ContentNodeHandler
         ObjectManager $manager,
         EventDispatcherInterface $eventDispatcher
     ) {
-        $this->request = $requestStack->getCurrentRequest();
+        $this->requestStack = $requestStack;
         $this->slugGenerator = $slugGenerator;
         $this->manager = $manager;
         $this->eventDispatcher = $eventDispatcher;
@@ -71,6 +70,7 @@ class ContentNodeHandler
     public function process(ContentNode $contentNode)
     {
         $event = new BeforeContentNodeProcessEvent($this->form, $contentNode);
+        $request = $this->requestStack->getCurrentRequest();
         $this->eventDispatcher->dispatch(Events::BEFORE_FORM_DATA_SET, $event);
 
         if ($event->isFormProcessInterrupted()) {
@@ -79,7 +79,7 @@ class ContentNodeHandler
 
         $this->form->setData($contentNode);
 
-        if ($this->request->isMethod(Request::METHOD_POST)) {
+        if ($request->isMethod(Request::METHOD_POST)) {
             $event = new BeforeContentNodeProcessEvent($this->form, $contentNode);
             $this->eventDispatcher->dispatch(Events::BEFORE_FORM_SUBMIT, $event);
 
@@ -87,9 +87,9 @@ class ContentNodeHandler
                 return false;
             }
 
-            $this->form->submit($this->request);
+            $this->form->submit($request);
             if ($this->form->isValid()) {
-                $this->onSuccess($this->form, $contentNode);
+                $this->onSuccess($contentNode);
                 
                 return true;
             }
@@ -100,16 +100,15 @@ class ContentNodeHandler
 
     /**
      * @param ContentNode $contentNode
-     * @param FormInterface $form
      */
-    protected function onSuccess(FormInterface $form, ContentNode $contentNode)
+    protected function onSuccess(ContentNode $contentNode)
     {
         $this->createDefaultVariantScopes($contentNode);
         $this->slugGenerator->generate($contentNode);
         $this->manager->persist($contentNode);
-        $this->eventDispatcher->dispatch(Events::BEFORE_FLUSH, new AfterContentNodeProcessEvent($form, $contentNode));
+        $this->eventDispatcher->dispatch(Events::BEFORE_FLUSH, new AfterContentNodeProcessEvent($this->form, $contentNode));
         $this->manager->flush();
-        $this->eventDispatcher->dispatch(Events::AFTER_FLUSH, new AfterContentNodeProcessEvent($form, $contentNode));
+        $this->eventDispatcher->dispatch(Events::AFTER_FLUSH, new AfterContentNodeProcessEvent($this->form, $contentNode));
     }
 
     /**

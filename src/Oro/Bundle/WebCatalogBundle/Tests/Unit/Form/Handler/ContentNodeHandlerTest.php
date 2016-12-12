@@ -23,42 +23,31 @@ class ContentNodeHandlerTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var FormInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
+    /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $form;
 
-    /**
-     * @var Request|\PHPUnit_Framework_MockObject_MockObject
-     */
+    /** @var Request|\PHPUnit_Framework_MockObject_MockObject */
     protected $request;
 
-    /**
-     * @var SlugGenerator|\PHPUnit_Framework_MockObject_MockObject
-     */
+    /** @var SlugGenerator|\PHPUnit_Framework_MockObject_MockObject */
     protected $slugGenerator;
 
-    /**
-     * @var ObjectManager|\PHPUnit_Framework_MockObject_MockObject
-     */
+    /** @var ObjectManager|\PHPUnit_Framework_MockObject_MockObject */
     protected $manager;
 
-    /**
-     * @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
+    /** @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $eventDispatcher;
 
     /** @var RequestStack */
     protected $requestStack;
 
-    /**
-     * @var ContentNodeHandler
-     */
+    /** @var ContentNodeHandler */
     protected $contentNodeHandler;
 
     protected function setUp()
     {
         $this->form = $this->getMock(FormInterface::class);
+        $this->requestStack = new RequestStack();
         $this->request = $this->getMockBuilder(Request::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -91,8 +80,12 @@ class ContentNodeHandlerTest extends \PHPUnit_Framework_TestCase
             ->with(Request::METHOD_POST)
             ->willReturn(false);
 
+        $this->requestStack->push($this->request);
+
         $this->form->expects($this->never())
             ->method('submit');
+
+        $this->requestStack->push($this->request);
 
         $this->assertFalse($this->contentNodeHandler->process($contentNode));
     }
@@ -117,6 +110,8 @@ class ContentNodeHandlerTest extends \PHPUnit_Framework_TestCase
         $this->form->expects($this->once())
             ->method('isValid')
             ->willReturn(false);
+
+        $this->requestStack->push($this->request);
 
         $this->assertFalse($this->contentNodeHandler->process($contentNode));
     }
@@ -150,6 +145,8 @@ class ContentNodeHandlerTest extends \PHPUnit_Framework_TestCase
             ->with($contentNode);
         $this->manager->expects($this->once())
             ->method('flush');
+
+        $this->requestStack->push($this->request);
 
         $this->assertBeforeProcessEventsTriggered($this->form, $contentNode);
         $this->assertAfterProcessEventsTriggered($this->form, $contentNode);
@@ -201,6 +198,8 @@ class ContentNodeHandlerTest extends \PHPUnit_Framework_TestCase
         $this->manager->expects($this->once())
             ->method('flush');
 
+        $this->requestStack->push($this->request);
+
         $this->assertBeforeProcessEventsTriggered($this->form, $contentNode);
         $this->assertAfterProcessEventsTriggered($this->form, $contentNode);
         $this->assertTrue($this->contentNodeHandler->process($contentNode));
@@ -234,6 +233,8 @@ class ContentNodeHandlerTest extends \PHPUnit_Framework_TestCase
                     $event->interruptFormProcess();
                 }
             );
+
+        $this->requestStack->push($this->request);
 
         $result = $this->contentNodeHandler->process($contentNode);
         $this->assertFalse($result);
@@ -271,13 +272,15 @@ class ContentNodeHandlerTest extends \PHPUnit_Framework_TestCase
                 }
             );
 
+        $this->requestStack->push($this->request);
+
         $result = $this->contentNodeHandler->process($contentNode);
         $this->assertFalse($result);
     }
 
     /**
      * @param FormInterface $form
-     * @param object $entity
+     * @param ContentNode $entity
      */
     protected function assertBeforeProcessEventsTriggered(FormInterface $form, $entity)
     {
@@ -292,7 +295,7 @@ class ContentNodeHandlerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param FormInterface $form
-     * @param object $entity
+     * @param ContentNode $entity
      */
     protected function assertAfterProcessEventsTriggered(FormInterface $form, $entity)
     {
