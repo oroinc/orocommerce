@@ -214,7 +214,11 @@
   position: absolute;
   top: 5px;
   right: 5px;
-  z-index: 1;
+
+  z-index: z('base');
+
+  background-color: transparent;
+  border-color: transparent;
 }
 
 [data-ship-date-popup-trigger] {

@@ -32,7 +32,7 @@ layout:
                         path: '=data["backToUrl"]'
                         text: oro.customer.frontend.address.buttons.cancel
                         attr:
-                            'class': 'btn btn-primary '
+                            'class': 'btn '
                 __form_required_label:
                     blockType: block
             tree:
