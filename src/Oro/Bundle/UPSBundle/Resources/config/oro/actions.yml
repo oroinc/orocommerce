@@ -42,7 +42,7 @@ operations:
                     options:
                         placeholder: false
                         choices:
-                            sheduled: oro.ups.form.invalidate_cache.type.sheduled
+                            scheduled: oro.ups.form.invalidate_cache.type.scheduled
                             immediate: oro.ups.form.invalidate_cache.type.immediate
                 invalidateCacheAt:
                     form_type: Oro\Bundle\FormBundle\Form\Type\OroDateTimeType

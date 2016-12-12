@@ -14,7 +14,7 @@ define(function(require) {
          */
         options: {
             form: '.invalidate-cache-form',
-            removeInvalidationButton: '#remove_sheduled_cache_invalidation_button',
+            removeInvalidationButton: '#remove_scheduled_cache_invalidation_button',
             invalidateNow: '[name="oro_action_operation[invalidateNow]"]',
             invalidateAt: '[name="oro_action_operation[invalidateCacheAt]"]',
             invalidateType: '[name="oro_action_operation[invalidateType]"]'
@@ -64,10 +64,10 @@ define(function(require) {
                 $(this.$elem).find('tr>td:gt(1)').hide();
                 $(this.removeInvalidationButton).hide();
 
-            } else if (value === 'sheduled'){
+            } else if (value === 'scheduled'){
                 $(this.invalidateNow).val('');
                 $(this.$elem).find('tr>td:gt(1)').show();
-                $(this.removeInvalidationButton).show();
+                this.toggleRemoveInvalidationVisibility();
             }
         },
 
