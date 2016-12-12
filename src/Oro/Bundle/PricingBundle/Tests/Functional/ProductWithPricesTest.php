@@ -49,6 +49,9 @@ class ProductWithPricesTest extends WebTestCase
         $this->loadFixtures(['Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists']);
     }
 
+    /**
+     * @return int
+     */
     public function testCreate()
     {
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_create'));
@@ -56,6 +59,7 @@ class ProductWithPricesTest extends WebTestCase
         $formValues = $form->getPhpValues();
         $formValues['input_action'] = 'oro_product_create';
         $formValues['oro_product_step_one']['category'] = self::CATEGORY_ID;
+        $formValues['oro_product_step_one']['type'] = Product::TYPE_SIMPLE;
 
         $this->client->followRedirects(true);
         $crawler = $this->client->request('POST', $this->getUrl('oro_product_create'), $formValues);
@@ -97,7 +101,8 @@ class ProductWithPricesTest extends WebTestCase
                     'unit'      => self::FIRST_UNIT_CODE
                 ]
             ],
-            'status' => Product::STATUS_ENABLED
+            'status' => Product::STATUS_ENABLED,
+            'type' => Product::TYPE_SIMPLE,
         ];
 
         $formData['names']['values']['default'] = self::DEFAULT_NAME;

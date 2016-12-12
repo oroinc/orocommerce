@@ -42,42 +42,68 @@ class ProductInventoryThresholdFormViewListenerTest extends FormViewListenerTest
     {
         parent::setUp();
         $this->requestStack = $this->getMock(RequestStack::class);
-        $this->request = $this->getMockBuilder(Request::class)->disableOriginalConstructor()->getMock();
-        $this->requestStack->expects($this->any())->method('getCurrentRequest')->willReturn($this->request);
+
+        $this->request = $this->getMockBuilder(Request::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->requestStack->expects($this->any())
+            ->method('getCurrentRequest')
+            ->willReturn($this->request);
+
         $this->doctrine = $this->getMockBuilder('Doctrine\Common\Persistence\ManagerRegistry')
             ->disableOriginalConstructor()
             ->getMock();
+
         $this->productWarehouseFormViewListener = new ProductInventoryThresholdFormViewListener(
             $this->requestStack,
             $this->doctrine,
             $this->translator
         );
+
         $this->event = $this->getBeforeListRenderEventMock();
     }
 
     public function testOnProductViewIgnoredIfNoProductId()
     {
-        $this->doctrine->expects($this->never())->method('getManagerForClass');
+        $this->doctrine->expects($this->never())
+            ->method('getManagerForClass');
         $this->productWarehouseFormViewListener->onProductView($this->event);
     }
 
     public function testOnProductViewIgnoredIfNoProductFound()
     {
-        $this->em->expects($this->once())->method('getReference')->willReturn(null);
+        $this->em->expects($this->once())
+            ->method('getReference')
+            ->willReturn(null);
+
         $this->doctrine->expects($this->once())
             ->method('getManagerForClass')
             ->with(Product::class)
             ->willReturn($this->em);
-        $this->request->expects($this->once())->method('get')->willReturn('1');
-        $this->event->expects($this->never())->method('getEnvironment');
+
+        $this->request->expects($this->once())
+            ->method('get')
+            ->willReturn('1');
+
+        $this->event->expects($this->never())
+            ->method('getEnvironment');
+
         $this->productWarehouseFormViewListener->onProductView($this->event);
     }
 
     public function testOnProductViewRendersAndAddsSubBlock()
     {
-        $this->request->expects($this->once())->method('get')->willReturn('1');
+        $this->request->expects($this->once())
+            ->method('get')
+            ->willReturn('1');
+
         $product = new Product();
-        $this->em->expects($this->once())->method('getReference')->willReturn($product);
+
+        $this->em->expects($this->once())
+            ->method('getReference')
+            ->willReturn($product);
+
         $this->doctrine->expects($this->once())
             ->method('getManagerForClass')
             ->with(Product::class)
