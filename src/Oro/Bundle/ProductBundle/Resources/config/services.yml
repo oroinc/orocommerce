@@ -384,6 +384,9 @@ services:
 
     oro_product.event_listener.product_handler:
         class: 'Oro\Bundle\ProductBundle\EventListener\ProductHandlerListener'
+        arguments:
+            - '@property_accessor'
+            - '@logger'
         tags:
             - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush, method: onBeforeFlush }
 
