@@ -7,13 +7,13 @@ use Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 use Oro\Bundle\TaxBundle\Entity\Repository\AbstractTaxCodeRepository;
-use Oro\Bundle\TaxBundle\EventListener\Config\DigitalProductEventListener;
+use Oro\Bundle\TaxBundle\EventListener\Config\ProductTaxCodeEventListener;
 
-class DigitalProductEventListenerTest extends \PHPUnit_Framework_TestCase
+class ProductTaxCodeEventListenerTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
 
-    /** @var DigitalProductEventListener */
+    /** @var ProductTaxCodeEventListener */
     protected $listener;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject|DoctrineHelper */
@@ -30,7 +30,7 @@ class DigitalProductEventListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->listener = new DigitalProductEventListener(
+        $this->listener = new ProductTaxCodeEventListener(
             $this->doctrineHelper,
             'Oro\Bundle\TaxBundle\Entity\ProductTaxCode',
             'digital_products_eu'
