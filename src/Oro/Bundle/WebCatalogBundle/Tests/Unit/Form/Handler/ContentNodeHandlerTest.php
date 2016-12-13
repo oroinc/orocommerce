@@ -5,6 +5,7 @@ namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Form\Handler;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 use Doctrine\Common\Persistence\ObjectManager;
 
@@ -17,7 +18,6 @@ use Oro\Bundle\WebCatalogBundle\Generator\SlugGenerator;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Form\Handler\ContentNodeHandler;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 class ContentNodeHandlerTest extends \PHPUnit_Framework_TestCase
 {

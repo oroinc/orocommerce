@@ -5,6 +5,7 @@ namespace Oro\Bundle\WebCatalogBundle\Form\Handler;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -15,7 +16,6 @@ use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Event\BeforeContentNodeProcessEvent;
 use Oro\Bundle\WebCatalogBundle\Event\Events;
 use Oro\Bundle\WebCatalogBundle\Generator\SlugGenerator;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 class ContentNodeHandler
 {
@@ -96,9 +96,18 @@ class ContentNodeHandler
         $this->createDefaultVariantScopes($contentNode);
         $this->slugGenerator->generate($contentNode);
         $this->manager->persist($contentNode);
-        $this->eventDispatcher->dispatch(Events::BEFORE_FLUSH, new AfterContentNodeProcessEvent($this->form, $contentNode));
+
+        $this->eventDispatcher->dispatch(
+            Events::BEFORE_FLUSH,
+            new AfterContentNodeProcessEvent($this->form, $contentNode)
+        );
+
         $this->manager->flush();
-        $this->eventDispatcher->dispatch(Events::AFTER_FLUSH, new AfterContentNodeProcessEvent($this->form, $contentNode));
+
+        $this->eventDispatcher->dispatch(
+            Events::AFTER_FLUSH,
+            new AfterContentNodeProcessEvent($this->form, $contentNode)
+        );
     }
 
     /**
