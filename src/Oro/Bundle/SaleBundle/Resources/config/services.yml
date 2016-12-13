@@ -159,3 +159,11 @@ services:
         arguments: ["@request_stack"]
         tags:
              - { name: doctrine.event_listener, event: preUpdate }
+
+    oro_sale.provider.quote_currency_checker:
+       class: Oro\Bundle\SaleBundle\Provider\CurrencyCheckerProvider
+       public: false
+       arguments:
+           - '@doctrine'
+       tags:
+           - { name: oro_multi_currency.currency_checker_provider }

@@ -299,3 +299,11 @@ services:
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@?oro_shipping.factory.shipping_context_factory'
+
+    oro_order.provider.order_currency_checker:
+        class: Oro\Bundle\OrderBundle\Provider\CurrencyCheckerProvider
+        public: false
+        arguments:
+            - '@doctrine'
+        tags:
+            - { name: oro_multi_currency.currency_checker_provider }

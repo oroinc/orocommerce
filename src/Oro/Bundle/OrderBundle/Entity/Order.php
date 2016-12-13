@@ -27,7 +27,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * @ORM\Table(name="oro_order",indexes={@ORM\Index(name="oro_order_created_at_index", columns={"created_at"})})
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Oro\Bundle\OrderBundle\Entity\Repository\OrderRepository")
  * @Config(
  *      routeName="oro_order_index",
  *      routeView="oro_order_view",
