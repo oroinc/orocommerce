@@ -5,14 +5,14 @@ namespace Oro\Bundle\ProductBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use Oro\Bundle\ProductBundle\Provider\CustomVariantFieldsProvider;
+use Oro\Bundle\ProductBundle\Provider\CustomFieldProvider;
 
 class ProductCustomVariantFieldsChoiceType extends AbstractType
 {
     const NAME = 'oro_product_custom_variant_fields_choice';
 
     /**
-     * @var CustomVariantFieldsProvider
+     * @var CustomFieldProvider
      */
     private $customFieldProvider;
 
@@ -22,10 +22,10 @@ class ProductCustomVariantFieldsChoiceType extends AbstractType
     private $productClass;
 
     /**
-     * @param CustomVariantFieldsProvider $customFieldProvider
+     * @param CustomFieldProvider $customFieldProvider
      * @param $productClass
      */
-    public function __construct(CustomVariantFieldsProvider $customFieldProvider, $productClass)
+    public function __construct(CustomFieldProvider $customFieldProvider, $productClass)
     {
         $this->customFieldProvider = $customFieldProvider;
         $this->productClass = $productClass;
@@ -37,7 +37,7 @@ class ProductCustomVariantFieldsChoiceType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'choices'              => $this->getProductCustomFields(),
+            'choices'              => $this->getCustomVariantFields(),
             'multiple'             => true,
             'expanded'             => true,
             'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"'
@@ -71,12 +71,12 @@ class ProductCustomVariantFieldsChoiceType extends AbstractType
     /**
      * @return array
      */
-    protected function getProductCustomFields()
+    protected function getCustomVariantFields()
     {
         $result = [];
-        $customFields = $this->customFieldProvider->getEntityCustomFields($this->productClass);
+        $customVariantFields = $this->customFieldProvider->getEntityCustomVariantFields($this->productClass);
 
-        foreach ($customFields as $field) {
+        foreach ($customVariantFields as $field) {
             $result[$field['name']] = $field['label'];
         }
 

@@ -8,19 +8,19 @@ use Symfony\Component\Validator\ConstraintValidator;
 use Doctrine\Common\Util\ClassUtils;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Provider\CustomVariantFieldsProvider;
+use Oro\Bundle\ProductBundle\Provider\CustomFieldProvider;
 
 class ProductVariantFieldValidator extends ConstraintValidator
 {
     const ALIAS = 'oro_product_variant_field';
 
-    /** @var CustomVariantFieldsProvider */
+    /** @var CustomFieldProvider */
     protected $customFieldProvider;
 
     /**
-     * @param CustomVariantFieldsProvider $customFieldProvider
+     * @param CustomFieldProvider $customFieldProvider
      */
-    public function __construct(CustomVariantFieldsProvider $customFieldProvider)
+    public function __construct(CustomFieldProvider $customFieldProvider)
     {
         $this->customFieldProvider = $customFieldProvider;
     }

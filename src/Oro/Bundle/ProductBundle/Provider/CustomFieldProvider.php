@@ -6,7 +6,7 @@ use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 
-class CustomVariantFieldsProvider
+class CustomFieldProvider
 {
     /**
      * @var ConfigProvider
@@ -49,10 +49,6 @@ class CustomVariantFieldsProvider
             /** @var FieldConfigId $configId */
             $configId = $extendConfig->getId();
 
-            if (!$this->isFieldTypeAllowed($configId->getFieldType())) {
-                continue;
-            }
-
             $entityConfig = $this->entityConfigProvider
                 ->getConfigById($configId);
 
@@ -68,22 +64,15 @@ class CustomVariantFieldsProvider
     }
 
     /**
-     * @param string $fieldType
-     * @return bool
-     */
-    protected function isFieldTypeAllowed($fieldType)
-    {
-        return in_array($fieldType, $this->getAllowedFieldTypes(), true);
-    }
-
-    /**
+     * @param string $entityName
      * @return array
      */
-    protected function getAllowedFieldTypes()
+    public function getEntityCustomVariantFields($entityName)
     {
-        return [
-            'enum',
-            'boolean',
-        ];
+        $customFields = $this->getEntityCustomFields($entityName);
+
+        return array_filter($customFields, function ($field) {
+            return in_array($field['type'], ['boolean', 'enum'], true);
+        });
     }
 }
