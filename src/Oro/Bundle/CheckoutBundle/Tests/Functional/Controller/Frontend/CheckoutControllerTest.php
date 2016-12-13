@@ -210,6 +210,7 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         $crawler = $this->makePaymentToOrderReviewTransition();
 
         $this->assertContains(self::PAYMENT_METHOD_SIGN, $crawler->html());
+        $this->assertContains('There was a change to the contents of your order.', $crawler->html());
 
         return $crawler;
     }
