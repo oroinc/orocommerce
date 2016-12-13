@@ -14,17 +14,9 @@
     &__icon {
         position: relative;
 
-        width: 33px;
-        height: 33px;
-
-        font-size: 18px;
-        line-height: 1.8;
-
         text-align: center;
 
-        color: get-color('additional', 'ultra');
-        border-radius: 50%;
-        background-color: get-color('additional', 'dark');
+        @include badge(33px, 18px, get-color('additional', 'dark'), 50%, get-color('additional', 'ultra'));
 
         &--transparent {
             background-color: transparent;

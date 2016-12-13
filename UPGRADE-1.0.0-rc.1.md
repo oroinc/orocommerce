@@ -6,6 +6,10 @@
 ##CheckoutBundle
 - `Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface::getSourceEntity` returned value fixed `@return CheckoutSourceEntityInterface|null`
 - `Oro\Bundle\CheckoutBundle\EventListener\ResolvePaymentTermListener` added 3rd argument to constructor `PaymentTermProvider $paymentTermProvider`
+- Removed classes:
+    - `Oro\Bundle\CheckoutBundle\Event\CheckoutEvents`
+    - `Oro\Bundle\CheckoutBundle\EventListener\CheckoutEntityListener`
+    - `Oro\Bundle\CheckoutBundle\Model\Action\StartCheckout` and action `@start_checkout`
 
 ##CustomerBundle
 - `Oro\Bundle\CustomerBundle\Entity\AccountGroup` made extendable
@@ -14,6 +18,9 @@
 - `oro_frontend.listener.datagrid.fields` and `oro_frontend.listener.enum_filter_frontend_listener` priority fixed to make them executed first
 - Deleted `Oro\Bundle\FrontendBundle\Helper\ActionApplicationsHelper`.
 Please use `Oro\Bundle\FrontendBundle\Provider\ActionCurrentApplicationProvider` and `Oro\Bundle\FrontendBundle\ActionProvider\RouteProvider` instead.
+- Added API controller `Oro\Bundle\FrontendBundle\Controller\Api\Rest\WorkflowController`
+- Added controller `Oro\Bundle\FrontendBundle\Controller\WorkflowController`
+- Added controller `Oro\Bundle\FrontendBundle\Controller\WorkflowWidgetController`
 
 ##OrderBundle
 - `Oro\Bundle\SaleBundle\Entity\Quote` `paymentTerm` removed with getter `getPaymentTerm` and setter `setPaymentTerm`, use `oro_payment_term.provider.payment_term_association` to assign PaymentTerm to entity
