@@ -69,8 +69,6 @@ datagrids:
                 callable:      ['@oro_currency.converter.currency_to_string', 'convert']
                 multicurrency_config:
                     base_currency_label: oro.order.total.base.label
-                    original_field: total
-                    value_field: totalValue
                     currency_field: currency
             paymentMethods:
                 label: oro.order.payment_method.label
@@ -100,8 +98,6 @@ datagrids:
                 callable:      ['@oro_currency.converter.currency_to_string', 'convert']
                 multicurrency_config:
                     base_currency_label: oro.order.subtotal.base.label
-                    original_field: subtotal
-                    value_field: subtotalValue
                     currency_field: currency
                 renderable: false
             shippingMethod:
@@ -140,9 +136,9 @@ datagrids:
                 currency:
                     data_name: order1.currency
                 subtotal:
-                    data_name: order1.subtotal
+                    data_name: subtotal
                 total:
-                    data_name: order1.total
+                    data_name: total
             default:
                 createdAt: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
         filters:
@@ -182,11 +178,11 @@ datagrids:
                             choices: "@oro_pricing.provider.currency->getAvailableCurrencies"
                 subtotal:
                     type:      currency
-                    data_name: order1.subtotal
+                    data_name: subtotal
                     enabled:   false
                 total:
                     type:      currency
-                    data_name: order1.total
+                    data_name: total
         properties:
             id: ~
             view_link:
@@ -230,8 +226,6 @@ datagrids:
                 callable:      ['@oro_currency.converter.currency_to_string', 'convert']
                 multicurrency_config:
                     base_currency_label: oro.order.subtotal.base.label
-                    original_field: subtotal
-                    value_field: subtotalValue
                     currency_field: currency
                 renderable: false
             total:
@@ -241,8 +235,6 @@ datagrids:
                 callable:      ['@oro_currency.converter.currency_to_string', 'convert']
                 multicurrency_config:
                     base_currency_label: oro.order.total.base.label
-                    original_field: total
-                    value_field: totalValue
                     currency_field: currency
             accountName:
                 label:         oro.order.account.label
@@ -299,9 +291,9 @@ datagrids:
                 currency:
                     data_name: order1.currency
                 subtotal:
-                    data_name: order1.subtotal
+                    data_name: subtotal
                 total:
-                    data_name: order1.total
+                    data_name: total
                 accountName:
                     data_name: accountName
                 accountUserName:
@@ -339,11 +331,11 @@ datagrids:
                             choices: "@oro_pricing.provider.currency->getAvailableCurrencies"
                 subtotal:
                     type:      currency
-                    data_name: order1.subtotal
+                    data_name: subtotal
                     enabled:   false
                 total:
                     type:      currency
-                    data_name: order1.total
+                    data_name: total
                 accountName:
                     type:      string
                     data_name: accountName
@@ -397,6 +389,7 @@ datagrids:
                     - order1.identifier
                     - order1.subtotalValue as subtotal
                     - order1.totalValue as total
+                    - order1.currency
                     - order1.poNumber
                     - order1.shipUntil
                     - COUNT(lineItems.id) as lineItemsCount
@@ -416,9 +409,7 @@ datagrids:
                 type:          callback
                 callable:      ['@oro_currency.converter.currency_to_string', 'convert']
                 multicurrency_config:
-                    base_currency_label: oro.order.subtotal.label
-                    original_field: subtotal
-                    value_field: subtotalValue
+                    base_currency_label: oro.order.subtotal.base.label
                     currency_field: currency
                 renderable: false
             total:
@@ -428,8 +419,6 @@ datagrids:
                 callable:      ['@oro_currency.converter.currency_to_string', 'convert']
                 multicurrency_config:
                     base_currency_label: oro.order.total.base.label
-                    original_field: total
-                    value_field: totalValue
                     currency_field: currency
             lineItemsCount:
                 label:         oro.order.line_items_count.label
@@ -451,9 +440,9 @@ datagrids:
                 identifier:
                     data_name: order1.identifier
                 subtotal:
-                    data_name: order1.subtotal
+                    data_name: subtotal
                 total:
-                    data_name: order1.total
+                    data_name: total
                 lineItemsCount:
                     data_name: lineItemsCount
                 poNumber:
