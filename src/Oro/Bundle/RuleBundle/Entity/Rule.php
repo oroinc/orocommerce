@@ -3,6 +3,7 @@
 namespace Oro\Bundle\RuleBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
@@ -33,7 +34,7 @@ use Oro\Bundle\RuleBundle\Model\ExtendRule;
  *      }
  * )
  */
-class Rule extends ExtendRule
+class Rule extends ExtendRule implements DatesAwareInterface
 {
     use DatesAwareTrait;
 
@@ -139,10 +140,11 @@ class Rule extends ExtendRule
      */
     private $expression;
 
-    public function __construct()
+    /**
+     * @ORM\PrePersist
+     */
+    public function prePersist()
     {
-        parent::__construct();
-
         $now = new \DateTime('now', new \DateTimeZone('UTC'));
         $this->setCreatedAt($now);
         $this->setUpdatedAt($now);
