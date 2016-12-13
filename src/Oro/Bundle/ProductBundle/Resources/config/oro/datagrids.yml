@@ -214,10 +214,10 @@ datagrids:
                 where:
                     and:
                         - product.id <> :parentProduct
-                        - product.type <> :configurableType
+                        - product.type <> :productType
             bind_parameters:
                 -
-                    name: configurableType
+                    name: productType
                     default: configurable
         columns:
             isVariant:

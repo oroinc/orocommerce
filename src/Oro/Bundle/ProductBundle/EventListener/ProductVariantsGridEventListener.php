@@ -51,11 +51,15 @@ class ProductVariantsGridEventListener
 
         $parentProductId = $parameters->get('parentProduct');
 
-        $parentProduct = $this->getRepository()->findOneById($parentProductId);
+        $parentProduct = $this->getRepository()->find($parentProductId);
+        if (!$parentProduct) {
+            return;
+        }
+
         $variantFields = $parentProduct->getVariantFields();
 
         foreach ($variantFields as $variantFieldName) {
-            $event->getDatagrid()->getConfig()->offsetAddToArrayByPath(
+            $event->getConfig()->offsetAddToArrayByPath(
                 '[source][query][where][and]',
                 [sprintf('product.%s is not null', $variantFieldName)]
             );
