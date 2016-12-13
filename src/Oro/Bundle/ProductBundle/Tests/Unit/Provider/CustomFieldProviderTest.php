@@ -117,6 +117,96 @@ class CustomFieldProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @param array $fields
+     * @param array $expectedResult
+     * @dataProvider getEntityCustomVariantFields
+     */
+    public function testGetEntityCustomVariantFields($fields, $expectedResult)
+    {
+        $extendsConfigs = [];
+        foreach ($fields as $fieldName => $fieldData) {
+            $extendsConfigs[$fieldName] = $this->createConfigByScope('extend', $fieldName, $fieldData);
+        }
+
+        $entityConfigs = [];
+        foreach ($fields as $fieldName => $fieldData) {
+            $entityConfigs[$fieldName] =  $this->createConfigByScope('entity', $fieldName, $fieldData);
+        }
+
+        $this->extendConfigProvider
+            ->expects($this->once())
+            ->method('getConfigs')
+            ->with($this->className)
+            ->willReturn($extendsConfigs);
+
+        $this->entityConfigProvider
+            ->expects($this->any())
+            ->method('getConfigById')
+            ->willReturnCallback(
+                function (FieldConfigId $configId) use ($entityConfigs) {
+                    return $entityConfigs[$configId->getFieldName()];
+                }
+            );
+
+        $this->assertEquals($expectedResult, $this->provider->getEntityCustomVariantFields($this->className));
+    }
+
+    /**
+     * @return array
+     */
+    public function getEntityCustomVariantFields()
+    {
+        return [
+            'variant_fields_only' => [
+                'fields' => [
+                    'size_string' => [
+                        'owner' => 'Custom',
+                        'label' => 'Size Label',
+                        'type' => 'string',
+                        'state' => 'Active',
+                    ],
+                    'color_string' => [
+                        'owner' => 'Custom',
+                        'label' => 'Color Label',
+                        'type' => 'string',
+                        'state' => 'Requires update',
+                    ],
+                    'size_select' => [
+                        'owner' => 'Custom',
+                        'label' => 'Size Label',
+                        'type' => 'enum',
+                        'state' => 'Active',
+                    ],
+                    'color_select' => [
+                        'owner' => 'Custom',
+                        'label' => 'Color Label',
+                        'type' => 'enum',
+                        'state' => 'Requires update',
+                    ],
+                    'slim_fit' => [
+                        'owner' => 'Custom',
+                        'label' => 'Slim Fit Label',
+                        'type' => 'boolean',
+                        'state' => 'Active',
+                    ],
+                    'category' => [
+                        'owner' => 'Custom',
+                        'label' => 'Category Label',
+                        'type' => 'manyToOne',
+                        'state' => 'Active',
+                    ],
+                ],
+
+                'expectedResult' => [
+                    'size_select' => ['name' => 'size_select', 'label' => 'Size Label', 'type' => 'enum'],
+                    'color_select' => ['name' => 'color_select', 'label' => 'Color Label', 'type' => 'enum'],
+                    'slim_fit' => ['name' => 'slim_fit', 'label' => 'Slim Fit Label', 'type' => 'boolean'],
+                ],
+            ],
+        ];
+    }
+
+    /**
      * @param string $className
      * @return \PHPUnit_Framework_MockObject_MockObject
      */

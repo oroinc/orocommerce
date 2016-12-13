@@ -4,13 +4,13 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
-use Oro\Bundle\ProductBundle\Form\Type\ProductCustomFieldsChoiceType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductCustomVariantFieldsChoiceType;
 use Oro\Bundle\ProductBundle\Provider\CustomFieldProvider;
 
-class ProductCustomFieldsChoiceTypeTest extends FormIntegrationTestCase
+class ProductCustomEntityVariantFieldsChoiceTypeTest extends FormIntegrationTestCase
 {
     /**
-     * @var ProductCustomFieldsChoiceType
+     * @var ProductCustomVariantFieldsChoiceType
      */
     protected $formType;
 
@@ -27,7 +27,7 @@ class ProductCustomFieldsChoiceTypeTest extends FormIntegrationTestCase
     /**
      * @var array
      */
-    protected $exampleCustomFields = [
+    protected $exampleCustomVariantFields = [
         'size' => [
             'name' => 'size',
             'label' => 'Size Label'
@@ -49,7 +49,10 @@ class ProductCustomFieldsChoiceTypeTest extends FormIntegrationTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->formType = new ProductCustomFieldsChoiceType($this->customFieldProvider, $this->productClass);
+        $this->formType = new ProductCustomVariantFieldsChoiceType(
+            $this->customFieldProvider,
+            $this->productClass
+        );
     }
 
     /**
@@ -60,8 +63,8 @@ class ProductCustomFieldsChoiceTypeTest extends FormIntegrationTestCase
     public function testSubmit($expectedData)
     {
         $this->customFieldProvider->expects($this->once())
-            ->method('getEntityCustomFields')
-            ->willReturn($this->exampleCustomFields);
+            ->method('getEntityCustomVariantFields')
+            ->willReturn($this->exampleCustomVariantFields);
 
         $form = $this->factory->create($this->formType);
 
@@ -82,13 +85,13 @@ class ProductCustomFieldsChoiceTypeTest extends FormIntegrationTestCase
             ],
             'size' => [
                 'expectedData' => [
-                    $this->exampleCustomFields['size']['name']
+                    $this->exampleCustomVariantFields['size']['name']
                 ]
             ],
             'size&color' => [
                 'expectedData' => [
-                    $this->exampleCustomFields['size']['name'],
-                    $this->exampleCustomFields['color']['name']
+                    $this->exampleCustomVariantFields['size']['name'],
+                    $this->exampleCustomVariantFields['color']['name']
                 ]
             ]
         ];
@@ -101,6 +104,6 @@ class ProductCustomFieldsChoiceTypeTest extends FormIntegrationTestCase
 
     public function testGetName()
     {
-        $this->assertEquals(ProductCustomFieldsChoiceType::NAME, $this->formType->getName());
+        $this->assertEquals(ProductCustomVariantFieldsChoiceType::NAME, $this->formType->getName());
     }
 }

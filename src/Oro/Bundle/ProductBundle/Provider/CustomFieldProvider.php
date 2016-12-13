@@ -49,10 +49,6 @@ class CustomFieldProvider
             /** @var FieldConfigId $configId */
             $configId = $extendConfig->getId();
 
-            if (!$this->isFieldTypeAllowed($configId->getFieldType())) {
-                continue;
-            }
-
             $entityConfig = $this->entityConfigProvider
                 ->getConfigById($configId);
 
@@ -68,11 +64,15 @@ class CustomFieldProvider
     }
 
     /**
-     * @param string $fieldType
-     * @return bool
+     * @param string $entityName
+     * @return array
      */
-    protected function isFieldTypeAllowed($fieldType)
+    public function getEntityCustomVariantFields($entityName)
     {
-        return true;
+        $customFields = $this->getEntityCustomFields($entityName);
+
+        return array_filter($customFields, function ($field) {
+            return in_array($field['type'], ['boolean', 'enum'], true);
+        });
     }
 }

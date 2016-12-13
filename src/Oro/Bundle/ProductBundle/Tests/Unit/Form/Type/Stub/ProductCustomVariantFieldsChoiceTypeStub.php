@@ -22,7 +22,7 @@ class ProductCustomVariantFieldsChoiceTypeStub extends ProductCustomVariantField
     /**
      * @return array
      */
-    protected function getProductCustomFields()
+    protected function getCustomVariantFields()
     {
         return $this->exampleCustomFields;
     }
