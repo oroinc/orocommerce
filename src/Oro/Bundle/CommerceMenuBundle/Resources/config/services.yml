@@ -54,6 +54,14 @@ services:
         tags:
             - {name: oro_installer.namespace_migration_provider, priority: 15}
 
+    oro_commerce_menu.listener.update_entity_config_relations:
+        class: 'Oro\Bundle\CommerceMenuBundle\CacheWarmer\UpdateEntityConfigWarmer'
+        arguments:
+            - '@doctrine'
+            - '@logger'
+        tags:
+            - { name: oro_entity_extend.warmer, priority: -500 }
+
     oro_commerce_menu.data_provider.menu:
         class: 'Oro\Bundle\CommerceMenuBundle\Layout\DataProvider\MenuProvider'
         arguments:
