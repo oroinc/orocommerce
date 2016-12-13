@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ShippingBundle\Form\EventSubscriber;
 
-use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodConfig;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
 use Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleMethodTypeConfigCollectionType;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -49,7 +49,7 @@ class RuleMethodConfigSubscriber implements EventSubscriberInterface
      */
     public function preSet(FormEvent $event)
     {
-        /** @var ShippingRuleMethodConfig $data */
+        /** @var ShippingMethodConfig $data */
         $data = $event->getData();
         if (!$data) {
             return;
@@ -64,7 +64,7 @@ class RuleMethodConfigSubscriber implements EventSubscriberInterface
     {
         $submittedData = $event->getData();
         $form = $event->getForm();
-        /** @var ShippingRuleMethodConfig $data */
+        /** @var ShippingMethodConfig $data */
         $data = $form->getData();
 
         if (!$data) {

@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Entity;
 
-use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodConfig;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
@@ -17,7 +17,7 @@ class ShippingRuleMethodTypeConfigTest extends \PHPUnit_Framework_TestCase
             ['type', 'custom'],
             ['options', ['custom' => 'test']],
             ['enabled', true],
-            ['methodConfig', new ShippingRuleMethodConfig()],
+            ['methodConfig', new ShippingMethodConfig()],
         ];
 
         $entity = new ShippingRuleMethodTypeConfig();

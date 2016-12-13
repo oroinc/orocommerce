@@ -6,10 +6,10 @@ use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRuleDestination;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
 
-class ShippingRuleDestinationTest extends \PHPUnit_Framework_TestCase
+class ShippingMethodsConfigsRuleDestinationTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTestCaseTrait;
     use EntityTrait;
@@ -25,7 +25,7 @@ class ShippingRuleDestinationTest extends \PHPUnit_Framework_TestCase
     protected $country;
 
     /**
-     * @var ShippingRuleDestination
+     * @var ShippingMethodsConfigsRuleDestination
      */
     protected $shippingRuleDestination;
 
@@ -34,7 +34,7 @@ class ShippingRuleDestinationTest extends \PHPUnit_Framework_TestCase
         $this->country = $this->createMockCountry();
         $this->region = $this->createMockRegion();
         $this->shippingRuleDestination = $this->getEntity(
-            'Oro\Bundle\ShippingBundle\Entity\ShippingRuleDestination',
+            'Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination',
             [
                 'region' => $this->region,
                 'country' => $this->country,
@@ -54,7 +54,7 @@ class ShippingRuleDestinationTest extends \PHPUnit_Framework_TestCase
             ['rule', new ShippingRule()],
         ];
 
-        $this->assertPropertyAccessors(new ShippingRuleDestination(), $properties);
+        $this->assertPropertyAccessors(new ShippingMethodsConfigsRuleDestination(), $properties);
     }
 
     public function testGetRegionName()
@@ -100,7 +100,10 @@ class ShippingRuleDestinationTest extends \PHPUnit_Framework_TestCase
      */
     public function testToString(array $data, $expectedString)
     {
-        $entity = (string)$this->getEntity('Oro\Bundle\ShippingBundle\Entity\ShippingRuleDestination', $data);
+        $entity = (string)$this->getEntity(
+            'Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination',
+            $data
+        );
         $this->assertEquals($expectedString, $entity);
     }
 

@@ -31,7 +31,7 @@ class UPSTransportEntityListenerTest extends WebTestCase
         $toBeDeletedService = $applShipServices->first();
 
         $configuredMethods = $em
-            ->getRepository('OroShippingBundle:ShippingRuleMethodConfig')
+            ->getRepository('OroShippingBundle:ShippingMethodConfig')
             ->findBy([
                 'method' => UPSShippingMethod::IDENTIFIER . '_' . $ups_channel->getId()]);
         $typesBefore = $em

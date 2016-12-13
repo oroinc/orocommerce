@@ -27,7 +27,7 @@ class UPSChannelEntityListenerTest extends WebTestCase
 
 
         $configuredMethodsBefore = $em
-            ->getRepository('OroShippingBundle:ShippingRuleMethodConfig')
+            ->getRepository('OroShippingBundle:ShippingMethodConfig')
             ->findBy([
                 'method' => UPSShippingMethod::IDENTIFIER . '_' . $ups_channel1->getId()]);
         static::assertNotEmpty($configuredMethodsBefore);
@@ -36,7 +36,7 @@ class UPSChannelEntityListenerTest extends WebTestCase
         $em->flush();
 
         $configuredMethodsAfter = $em
-            ->getRepository('OroShippingBundle:ShippingRuleMethodConfig')
+            ->getRepository('OroShippingBundle:ShippingMethodConfig')
             ->findBy([
                 'method' => UPSShippingMethod::IDENTIFIER . '_' . $ups_channel1->getId()]);
         static::assertEmpty($configuredMethodsAfter);

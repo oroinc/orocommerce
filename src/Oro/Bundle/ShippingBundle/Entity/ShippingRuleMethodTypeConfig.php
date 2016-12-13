@@ -64,10 +64,10 @@ class ShippingRuleMethodTypeConfig extends ExtendShippingRuleMethodTypeConfig
     protected $enabled = false;
 
     /**
-     * @var ShippingRuleMethodConfig
+     * @var ShippingMethodConfig
      *
      * @ORM\ManyToOne(
-     *     targetEntity="Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodConfig",
+     *     targetEntity="Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig",
      *     inversedBy="typeConfigs"
      * )
      * @ORM\JoinColumn(name="method_config_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
@@ -126,7 +126,7 @@ class ShippingRuleMethodTypeConfig extends ExtendShippingRuleMethodTypeConfig
     }
 
     /**
-     * @return ShippingRuleMethodConfig
+     * @return ShippingMethodConfig
      */
     public function getMethodConfig()
     {
@@ -134,10 +134,10 @@ class ShippingRuleMethodTypeConfig extends ExtendShippingRuleMethodTypeConfig
     }
 
     /**
-     * @param ShippingRuleMethodConfig $methodConfig
+     * @param ShippingMethodConfig $methodConfig
      * @return $this
      */
-    public function setMethodConfig(ShippingRuleMethodConfig $methodConfig)
+    public function setMethodConfig(ShippingMethodConfig $methodConfig)
     {
         $this->methodConfig = $methodConfig;
         return $this;

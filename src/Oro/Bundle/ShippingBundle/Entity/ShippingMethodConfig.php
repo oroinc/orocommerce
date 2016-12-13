@@ -8,14 +8,14 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
-use Oro\Bundle\ShippingBundle\Model\ExtendShippingRuleMethodConfig;
+use Oro\Bundle\ShippingBundle\Model\ExtendShippingMethodConfig;
 
 /**
  * @ORM\Table(name="oro_shipping_rule_mthd_config")
  * @ORM\Entity(repositoryClass="Oro\Bundle\ShippingBundle\Entity\Repository\ShippingRuleMethodConfigRepository")
  * @Config
  */
-class ShippingRuleMethodConfig extends ExtendShippingRuleMethodConfig
+class ShippingMethodConfig extends ExtendShippingMethodConfig
 {
     /**
      * @ORM\Id
@@ -53,7 +53,7 @@ class ShippingRuleMethodConfig extends ExtendShippingRuleMethodConfig
     protected $options = [];
 
     /**
-     * @var Collection|ShippingRuleMethodConfig[]
+     * @var Collection|ShippingMethodConfig[]
      *
      * @ORM\OneToMany(
      *     targetEntity="Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig",

@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\ShippingBundle\Entity;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
@@ -17,7 +17,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
  *     mode="hidden",
  * )
  */
-class ShippingRuleDestination
+class ShippingMethodsConfigsRuleDestination
 {
     /**
      * @var integer
@@ -49,6 +49,19 @@ class ShippingRuleDestination
      * )
      */
     protected $postalCode;
+
+    /**
+     * @var Collection|ShippingMethodsConfigsRuleDestinationPostalCode[]
+     *
+     * @ORM\OneToMany(
+     *     targetEntity="ShippingMethodsConfigsRuleDestinationPostalCode",
+     *     mappedBy="destination",
+     *     cascade={"ALL"},
+     *     fetch="EAGER",
+     *     orphanRemoval=true
+     * )
+     */
+    protected $postalCodes;
 
     /**
      * @var Region

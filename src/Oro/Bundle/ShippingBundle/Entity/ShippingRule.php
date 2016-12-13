@@ -131,10 +131,10 @@ class ShippingRule extends ExtendShippingRule
     protected $conditions;
 
     /**
-     * @var Collection|ShippingRuleDestination[]
+     * @var Collection|ShippingMethodsConfigsRuleDestination[]
      *
      * @ORM\OneToMany(
-     *     targetEntity="Oro\Bundle\ShippingBundle\Entity\ShippingRuleDestination",
+     *     targetEntity="Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination",
      *     mappedBy="rule",
      *     cascade={"ALL"},
      *     fetch="EAGER",
@@ -144,10 +144,10 @@ class ShippingRule extends ExtendShippingRule
     protected $destinations;
 
     /**
-     * @var Collection|ShippingRuleMethodConfig[]
+     * @var Collection|ShippingMethodConfig[]
      *
      * @ORM\OneToMany(
-     *     targetEntity="Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodConfig",
+     *     targetEntity="Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig",
      *     mappedBy="rule",
      *     cascade={"ALL"},
      *     fetch="EAGER",
@@ -342,19 +342,19 @@ class ShippingRule extends ExtendShippingRule
     }
 
     /**
-     * @param ShippingRuleMethodConfig $lineItem
+     * @param ShippingMethodConfig $lineItem
      * @return bool
      */
-    public function hasMethodConfig(ShippingRuleMethodConfig $lineItem)
+    public function hasMethodConfig(ShippingMethodConfig $lineItem)
     {
         return $this->methodConfigs->contains($lineItem);
     }
 
     /**
-     * @param ShippingRuleMethodConfig $configuration
+     * @param ShippingMethodConfig $configuration
      * @return $this
      */
-    public function addMethodConfig(ShippingRuleMethodConfig $configuration)
+    public function addMethodConfig(ShippingMethodConfig $configuration)
     {
         if (!$this->hasMethodConfig($configuration)) {
             $this->methodConfigs[] = $configuration;
@@ -365,10 +365,10 @@ class ShippingRule extends ExtendShippingRule
     }
 
     /**
-     * @param ShippingRuleMethodConfig $configuration
+     * @param ShippingMethodConfig $configuration
      * @return $this
      */
-    public function removeMethodConfig(ShippingRuleMethodConfig $configuration)
+    public function removeMethodConfig(ShippingMethodConfig $configuration)
     {
         if ($this->hasMethodConfig($configuration)) {
             $this->methodConfigs->removeElement($configuration);
@@ -378,7 +378,7 @@ class ShippingRule extends ExtendShippingRule
     }
 
     /**
-     * @return Collection|ShippingRuleMethodConfig[]
+     * @return Collection|ShippingMethodConfig[]
      */
     public function getMethodConfigs()
     {
@@ -420,7 +420,7 @@ class ShippingRule extends ExtendShippingRule
     }
 
     /**
-     * @return Collection|ShippingRuleDestination[]
+     * @return Collection|ShippingMethodsConfigsRuleDestination[]
      */
     public function getDestinations()
     {
@@ -428,11 +428,11 @@ class ShippingRule extends ExtendShippingRule
     }
 
     /**
-     * @param ShippingRuleDestination $destination
+     * @param ShippingMethodsConfigsRuleDestination $destination
      *
      * @return $this
      */
-    public function addDestination(ShippingRuleDestination $destination)
+    public function addDestination(ShippingMethodsConfigsRuleDestination $destination)
     {
         if (!$this->destinations->contains($destination)) {
             $this->destinations->add($destination);
@@ -443,11 +443,11 @@ class ShippingRule extends ExtendShippingRule
     }
 
     /**
-     * @param ShippingRuleDestination $destination
+     * @param ShippingMethodsConfigsRuleDestination $destination
      *
      * @return $this
      */
-    public function removeDestination(ShippingRuleDestination $destination)
+    public function removeDestination(ShippingMethodsConfigsRuleDestination $destination)
     {
         if ($this->destinations->contains($destination)) {
             $this->destinations->removeElement($destination);

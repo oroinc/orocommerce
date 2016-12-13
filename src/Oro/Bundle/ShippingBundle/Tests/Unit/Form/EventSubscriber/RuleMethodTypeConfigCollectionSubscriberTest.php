@@ -13,7 +13,7 @@ use Oro\Bundle\FormBundle\Form\Extension\AdditionalAttrExtension;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodConfig;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig;
 use Oro\Bundle\ShippingBundle\Form\Type\FlatRateShippingMethodTypeOptionsType;
 use Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleDestinationType;
@@ -86,7 +86,7 @@ class RuleMethodTypeConfigCollectionSubscriberTest extends FormIntegrationTestCa
         $this->methodRegistry->addProvider($flatRate);
         $form = $this->factory->create(ShippingRuleType::class);
         $shippingRule = new ShippingRule();
-        $methodConfig = new ShippingRuleMethodConfig();
+        $methodConfig = new ShippingMethodConfig();
         $methodConfig->setMethod(FlatRateShippingMethod::IDENTIFIER);
         $shippingRule->addMethodConfig($methodConfig);
         $form->setData($shippingRule);
@@ -114,7 +114,7 @@ class RuleMethodTypeConfigCollectionSubscriberTest extends FormIntegrationTestCa
         $this->methodRegistry->addProvider($flatRate);
         $form = $this->factory->create(ShippingRuleType::class);
         $shippingRule = new ShippingRule();
-        $methodConfig = new ShippingRuleMethodConfig();
+        $methodConfig = new ShippingMethodConfig();
         $methodConfig->setMethod(FlatRateShippingMethod::IDENTIFIER);
         $typeConfig = new ShippingRuleMethodTypeConfig();
         $typeConfig->setType(FlatRateShippingMethodType::IDENTIFIER);
@@ -156,7 +156,7 @@ class RuleMethodTypeConfigCollectionSubscriberTest extends FormIntegrationTestCa
         ]);
 
         $this->assertCount(1, $shippingRule->getMethodConfigs());
-        /** @var ShippingRuleMethodConfig $methodConfig */
+        /** @var ShippingMethodConfig $methodConfig */
         $methodConfig = $shippingRule->getMethodConfigs()->first();
         $this->assertCount(1, $methodConfig->getTypeConfigs());
         $typeConfig = $methodConfig->getTypeConfigs()->first();

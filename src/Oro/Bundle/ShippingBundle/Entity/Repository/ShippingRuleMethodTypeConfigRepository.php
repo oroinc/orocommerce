@@ -3,15 +3,15 @@
 namespace Oro\Bundle\ShippingBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodConfig;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
 
 class ShippingRuleMethodTypeConfigRepository extends EntityRepository
 {
     /**
-     * @param ShippingRuleMethodConfig $methodConfig
+     * @param ShippingMethodConfig $methodConfig
      * @param string $type
      */
-    public function deleteByMethodAndType(ShippingRuleMethodConfig $methodConfig, $type)
+    public function deleteByMethodAndType(ShippingMethodConfig $methodConfig, $type)
     {
         $qb = $this->createQueryBuilder('methodTypeConfig');
 
