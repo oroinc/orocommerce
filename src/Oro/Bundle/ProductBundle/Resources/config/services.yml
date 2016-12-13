@@ -504,6 +504,13 @@ services:
         tags:
             - { name: kernel.event_listener, event: kernel.exception, method: onAccessException }
 
+    oro_product.event_listener.product_variants_datagrid_listener:
+        class: 'Oro\Bundle\ProductBundle\EventListener\ProductVariantsGridEventListener'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.oro_product-product_variants-product_edit, method: onBuildBefore }
+
     oro_product.content_variant_type.product_page:
         class: Oro\Bundle\ProductBundle\ContentVariantType\ProductPageContentVariantType
         public: false

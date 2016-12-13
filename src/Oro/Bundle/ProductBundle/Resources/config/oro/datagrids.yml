@@ -214,6 +214,11 @@ datagrids:
                 where:
                     and:
                         - product.id <> :parentProduct
+                        - product.type <> :configurableType
+            bind_parameters:
+                -
+                    name: configurableType
+                    default: configurable
         columns:
             isVariant:
                 label: oro.product.is_variant.label

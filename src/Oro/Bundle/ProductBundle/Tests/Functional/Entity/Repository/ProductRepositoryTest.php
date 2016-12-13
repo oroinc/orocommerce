@@ -43,6 +43,16 @@ class ProductRepositoryTest extends WebTestCase
         $this->assertEquals($product->getSku(), $expectedProduct->getSku());
     }
 
+    public function testFindOneById()
+    {
+        $lastProduct = $this->getProduct(ProductFixture::PRODUCT_8);
+        $this->assertNull($this->getRepository()->findOneById($lastProduct->getId() * 10));
+
+        $expectedProduct = $this->getRepository()->findOneById($lastProduct->getId());
+
+        $this->assertEquals($lastProduct->getId(), $expectedProduct->getId());
+    }
+
     /**
      * @dataProvider getSearchQueryBuilderDataProvider
      * @param string $search
