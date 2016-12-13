@@ -1,0 +1,18 @@
+// Base styles
+$main-menu-link-inner-offset: 14px 0 !default;
+$main-menu-link-line-height: 1.5 !default;
+$main-menu-link-color: get-color('ui', 'normal') !default;
+$main-menu-link-color-hover: get-color('ui', 'focus') !default;
+$main-menu-sublist-title-offset: $offset-x-s !default;
+$main-menu-sublist-item-inner-offset: $offset-x !default;
+$main-menu-subcategory-item-inner-offset: $offset-y-s $offset-x-s !default;
+
+// Descktop styles
+$main-menu-sublist-d-border: 1px solid get-color('additional', 'light') !default;
+$main-menu-sublist-d-inneroffset: 20px 25px !default;
+$main-menu-sublist-container-d-z-index: z('base') + 10 !default;
+$main-menu-sublist-container-d-bg-color:  get-color('additional', 'ultra') !default;
+
+// Tablet styles
+$main-menu-t-inner-offset: 10px 15px !default;
+$main-menu-link-t-inner-offset: 5px 0 !default;

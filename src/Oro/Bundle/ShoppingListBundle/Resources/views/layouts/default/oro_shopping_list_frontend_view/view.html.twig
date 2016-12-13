@@ -1,23 +1,26 @@
 {% block _shopping_list_view_container_widget %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
-
-    <div{{ block('block_attributes') }} {{ UI.renderPageComponentAttributes({
-        module: 'oroshoppinglist/js/app/components/shoppinglist-view-component'
-    }) }}>
-        {{ block_widget(block) }}
-    </div>
-{% endblock %}
-
-{% block _shopping_list_view_container_content_widget %}
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
 {% endblock %}
 
+{% block _shopping_list_view_container_content_widget %}
+    <div {{ block('block_attributes') }}
+            id="shopping_list_view_container_content"
+            data-page-component-module="oroui/js/app/components/view-component"
+            data-page-component-options="{{ {
+                view: 'oroui/js/app/views/layout-subtree-view',
+                blockId : block.vars.id,
+                reloadEvents: ['product:quantity-unit:update']
+            }|json_encode }}"
+            data-layout="separate">
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
 
 {% block _no_shopping_lists_widget %}
     <div class="cart-list_empty">
-        <span class="badge badge_orange badge_xlg badge_circle"><i class="cf-basket"></i></span>
+        <span class="cart-list_empty__icon"><i class="fa-shopping-cart"></i></span>
         <span class="fs24 va-m_md">{{ 'oro.frontend.shoppinglist.view.not_have_available'|trans }}</span>
     </div>
 {% endblock %}
@@ -62,9 +65,27 @@
 {% endblock %}
 
 {% block _shopping_list_top_actions_widget %}
-    {% set attr = attr|merge({ class: attr.class|default('') ~ " cart__order__controls-list pull-right" }) %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " cart__order__controls-list pull-right",
+        'data-name': "empty-items__hide"
+    }) %}
     <div{{ block('block_attributes') }}>
         {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _shopping_list_owner_widget %}
+    {% set options = {
+        shoppingListId: shoppingList.id
+    } %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' shopping-list-owner',
+        'data-page-component-module': "oroshoppinglist/js/app/components/shoppinglist-owner-inline-editable-view-component",
+        'data-page-component-options': options|json_encode()
+    }) %}
+    <div{{ block('block_attributes') }}>
+        {{ form_label(form, 'oro.frontend.shoppinglist.view.owner.label') }}
+        {{ form_widget(form) }}
     </div>
 {% endblock %}
 
@@ -82,7 +103,7 @@
             }|json_encode() }}"
     >
         <span class="collapse-view__trigger" data-collapse-trigger>
-            <i class="collapse-view__trigger-icon cf-play cf--gray"></i>
+            <i class="collapse-view__trigger-icon fa-caret-right"></i>
         </span>
         <a href="#" class="collapse-view__trigger orange" data-collapse-trigger>{{ 'oro.frontend.shoppinglist.view.view_options.label'|trans }}</a>
 
@@ -123,10 +144,10 @@
                     <span class="custom-checkbox__icon"></span>
                     <span class="custom-checkbox__text">{{ 'oro.frontend.shoppinglist.view.add_note.label'|trans }}</span>
                 </label>
-                <div class="form-input" data-role="editor">
+                <div data-role="editor">
                 <textarea placeholder="{{ 'oro.frontend.shoppinglist.view.add_note.placeholder'|trans }}"
                           rows="3" cols="30" name="shopping_list_notes" disabled="disabled"
-                          class="input input_sm input_block">{{ notes }}</textarea>
+                          class="textarea textarea--full">{{ notes }}</textarea>
                 </div>
             </div>
         </div>
@@ -218,11 +239,11 @@
                                     <div class="product__qty-input__count-option">
                                         <input type="number" value="{{ lineItem.quantity }}" name="product_qty" data-name="field__quantity"
                                             placeholder="{{ 'oro.frontend.shoppinglist.view.qty.label'|trans }}"
-                                            class="input input_md input_block text-center" disabled="disabled" required />
+                                            class="input  input--full text-center" disabled="disabled" required />
                                     </div>
                                 </div>
                                 <div class="product__select inline va-m_md">
-                                    <select class="input input_block input_sm" name="product_unit" data-name="field__unit" required>
+                                    <select class="select select--full" name="product_unit" data-name="field__unit" required>
                                         {% if productsUnits[lineItem.product.id] is defined %}
                                             {% for unit in productsUnits[lineItem.product.id] %}
                                             <option value="{{ unit }}" {% if unit == lineItem.unit.code %}selected="selected"{% endif %}>{{ unit|oro_format_product_unit_label}}</option>
@@ -316,14 +337,30 @@
                                         removeClass: 'line_item',
                                         confirmMessage: 'oro.frontend.shoppinglist.messages.line_item_delete_confirm'|trans,
                                         sucsessMessage: 'oro.frontend.shoppinglist.messages.line_item_deleted'|trans,
-                                        okButtonClass: 'btn ok theme-btn_sm btn-orange',
+                                        okButtonClass: 'btn ok btn--info',
                                         cancelButtonClass: 'btn cancel theme-btn_sm btn_gray'
                                     }
                                 }) }} >
-                                <i class="cf-trash"></i>
+                                <i class="fa-trash-o"></i>
                             </button>
                         </td>
                     </tr>
+                    {% set errorPath = 'product.' ~ lineItem.productSku %}
+                    {% if lineItemErrors is iterable and lineItemErrors[errorPath] is defined and lineItemErrors[errorPath] is iterable %}
+                        {% for error in lineItemErrors[errorPath] %}
+                            <tr class="borderless t_paddingless">
+                                <td id="product-error-{{ lineItem.productSku }}" colspan="6"></td>
+                            </tr>
+                            <script>
+                                require(['oroui/js/messenger'], function(messenger) {
+                                    messenger.notificationFlashMessage('error', '{{ error.message }}', {
+                                        style: 'validation',
+                                        container: $('#product-error-{{ lineItem.productSku }}')
+                                    })
+                                });
+                            </script>
+                        {% endfor %}
+                    {% endif %}
                     <tr class="borderless t_paddingless">
                         {% set notes = lineItem.notes %}
                         <td colspan="6">
@@ -365,8 +402,8 @@
                                         <span class="custom-checkbox__text">{{ 'oro.frontend.shoppinglist.view.add_item_note.label'|trans }}</span>
                                     </label>
                                 </div>
-                            <div class="form-input form-input_textarea" data-role="editor">
-                                <textarea class="input input_sm input_block" name="copy_paste_order" cols="30" rows="3" disabled="disabled"
+                            <div data-role="editor">
+                                <textarea class="textarea textarea--full" name="copy_paste_order" cols="30" rows="3" disabled="disabled"
                                     placeholder="{{ 'oro.frontend.shoppinglist.view.add_item_note.placeholder'|trans }}">{{ lineItem.notes }}</textarea>
                             </div>
                         </div>
@@ -382,9 +419,9 @@
 {% block _shopping_list_line_items_empty_widget %}
     {% set attr = attr|merge({ class: attr.class|default('') ~ " cart-list_empty"}) %}
     <div {{ block('block_attributes') }}>
-          <span class="badge badge_orange badge_xlg badge_circle">
-            <i class="cf-basket"></i>
-          </span>
+        <span class="cart-list_empty__icon">
+            <i class="fa-shopping-cart"></i>
+        </span>
         <span class="fs24 va-m_md">{{ 'oro.frontend.shoppinglist.view.empty'|trans }}</span>
     </div>
 {% endblock %}
@@ -405,18 +442,18 @@
 
 {% block _shopping_list_delete_button_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
-        <button class="btn btn_default theme-btn_sm btn-dark fs15 mr1-md" {{ UI.renderPageComponentAttributes({
+        <button class="btn btn--action" {{ UI.renderPageComponentAttributes({
             module: 'orofrontend/js/app/components/delete-item-component',
             options: {
                 url: path('oro_api_delete_shoppinglist', {'id': shoppingList.id}),
                 redirect: path('oro_shopping_list_frontend_view'),
                 confirmMessage: 'oro.frontend.shoppinglist.messages.delete_confirm'|trans,
                 sucsessMessage: 'oro.frontend.shoppinglist.messages.deleted'|trans,
-                okButtonClass: 'btn ok theme-btn_sm btn-orange',
+                okButtonClass: 'btn ok btn--info',
                 cancelButtonClass: 'btn cancel theme-btn_sm btn_gray'
             }
         }) }} >
-            <i class="fa cf-trash mmr5-md"></i> {{ 'oro.frontend.shoppinglist.btn.delete'|trans }}
+            <i class="fa-trash-o mmr5-md"></i> {{ 'oro.frontend.shoppinglist.btn.delete'|trans }}
         </button>
 {% endblock %}
 
@@ -424,4 +461,12 @@
 <div class="shipping-list-view-total-container order-checkout-widget__container-wrapper">
     {{ block_widget(block) }}
 </div>
+{% endblock %}
+
+{% block _shopping_list_combined_button_widget %}
+    <div data-name="empty-items__hide" class="clearfix">
+        <div class="order-checkout-widget__col">
+            {{ block_widget(block) }}
+        </div>
+    </div>
 {% endblock %}

@@ -2,18 +2,15 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Controller\Frontend;
 
-use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
-use Oro\Bundle\SecurityBundle\Annotation\Acl;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
-use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
+use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Form\Handler\ShoppingListHandler;
 use Oro\Bundle\ShoppingListBundle\Form\Type\ShoppingListType;
@@ -22,30 +19,23 @@ class ShoppingListController extends Controller
 {
     /**
      * @Route("/{id}", name="oro_shopping_list_frontend_view", defaults={"id" = null}, requirements={"id"="\d+"})
-     * @Layout(vars={"title"})
+     * @Layout
      * @Acl(
      *      id="oro_shopping_list_frontend_view",
      *      type="entity",
      *      class="OroShoppingListBundle:ShoppingList",
-     *      permission="ACCOUNT_VIEW",
+     *      permission="VIEW",
      *      group_name="commerce"
      * )
      *
-     * @param int|null $id
-     *
+     * @param ShoppingList $shoppingList
      * @return array
+     *
      */
-    public function viewAction($id = null)
+    public function viewAction(ShoppingList $shoppingList = null)
     {
-        /** @var ShoppingListRepository $repo */
-        $repo = $this->getDoctrine()->getRepository('OroShoppingListBundle:ShoppingList');
-        $shoppingList = $repo->findOneByIdWithRelations($id);
-
         if (!$shoppingList) {
-            $user = $this->getUser();
-            if ($user instanceof AccountUser) {
-                $shoppingList = $repo->findAvailableForAccountUser($user, true);
-            }
+            $shoppingList = $this->get('oro_shopping_list.shopping_list.manager')->getCurrent();
         }
         if ($shoppingList) {
             $title = $shoppingList->getLabel();
@@ -56,8 +46,8 @@ class ShoppingListController extends Controller
         }
 
         return [
-            'title' => $title,
             'data' => [
+                'title' => $title,
                 'entity' => $shoppingList,
                 'totals' => [
                     'identifier' => 'totals',

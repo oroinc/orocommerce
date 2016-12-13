@@ -2,34 +2,19 @@
 
 namespace Oro\Bundle\CMSBundle\Form\Type;
 
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Symfony\Component\Validator\Constraints\NotBlank;
-
-use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
-use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 use Oro\Bundle\CMSBundle\Entity\Page;
-use Oro\Bundle\RedirectBundle\Entity\Slug;
+use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
+use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugType;
+use Oro\Bundle\ValidationBundle\Validator\Constraints\UrlSafe;
+use Symfony\Component\Form\AbstractType;
+use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class PageType extends AbstractType
 {
     const NAME = 'oro_cms_page';
-
-    /**
-     * @var string
-     */
-    protected $dataClass;
-
-    /**
-     * @param string $dataClass
-     */
-    public function setDataClass($dataClass)
-    {
-        $this->dataClass = $dataClass;
-    }
 
     /**
      * @param FormBuilderInterface $builder
@@ -39,18 +24,10 @@ class PageType extends AbstractType
     {
         $builder
             ->add(
-                'parentPage',
-                EntityIdentifierType::NAME,
+                'titles',
+                LocalizedFallbackValueCollectionType::NAME,
                 [
-                    'class' => $this->dataClass,
-                    'multiple' => false
-                ]
-            )
-            ->add(
-                'title',
-                'text',
-                [
-                    'label' => 'oro.cms.page.title.label',
+                    'label'    => 'oro.cms.page.titles.label',
                     'required' => true,
                     'constraints' => [new NotBlank()],
                 ]
@@ -66,71 +43,26 @@ class PageType extends AbstractType
                         'resize' => true,
                     ]
                 ]
+            )
+            ->add(
+                'slugPrototypes',
+                LocalizedSlugType::NAME,
+                [
+                    'label'    => 'oro.cms.page.slug_prototypes.label',
+                    'required' => false,
+                    'options'  => ['constraints' => [new UrlSafe()]],
+                    'source_field' => 'titles',
+                ]
             );
-
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
-            /** @var Page $page */
-            $page = $event->getData();
-            $form = $event->getForm();
-
-            $parentSlug = $page && $page->getParentPage() ? $page->getParentPage()->getCurrentSlug()->getUrl() : '';
-
-            if ($page && $page->getId()) {
-                $form->add(
-                    'slug',
-                    SlugType::NAME,
-                    [
-                        'label' => 'oro.redirect.slug.entity_label',
-                        'required' => false,
-                        'mapped' => false,
-                        'type' => 'update',
-                        'current_slug' => $page->getCurrentSlug()->getUrl(),
-                        'parent_slug' => $parentSlug
-                    ]
-                );
-            } else {
-                $form->add(
-                    'slug',
-                    SlugType::NAME,
-                    [
-                        'label' => 'oro.redirect.slug.entity_label',
-                        'required' => false,
-                        'mapped' => false,
-                        'type' => 'create',
-                        'parent_slug' => $parentSlug
-                    ]
-                );
-            }
-        });
-
-        $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
-            $slugData = $event->getForm()->get('slug')->getData();
-            /** @var Page $page */
-            $page = $event->getData();
-
-            if ($slugData['mode'] === 'new') {
-                if (isset($slugData['redirect']) && $slugData['redirect']) {
-                    // Leave the old slug for page. And add a new slug as current for page
-                    $slug = new Slug();
-                    $slug->setUrl($slugData['slug']);
-                    $page->setCurrentSlug($slug);
-                } else {
-                    // Change current slug url
-                    $page->setCurrentSlugUrl($slugData['slug']);
-                }
-            }
-        });
     }
 
     /**
-     * @param OptionsResolverInterface $resolver
+     * {@inheritDoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => $this->dataClass,
-            'intention' => 'page',
-            'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"'
+            'data_class' => Page::class
         ]);
     }
 

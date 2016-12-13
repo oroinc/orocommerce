@@ -2,22 +2,21 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
-
+use Doctrine\ORM\Mapping as ORM;
+use Oro\Bundle\CustomerBundle\Entity\AccountOwnerAwareInterface;
+use Oro\Bundle\CustomerBundle\Entity\Ownership\FrontendAccountUserAwareTrait;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
-use Oro\Bundle\CustomerBundle\Entity\AccountOwnerAwareInterface;
-use Oro\Bundle\CustomerBundle\Entity\Ownership\FrontendAccountUserAwareTrait;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\ShoppingListBundle\Model\ExtendShoppingList;
+use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
-use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
 
 /**
  * @ORM\Table(
@@ -37,7 +36,7 @@ use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
  *      routeView="oro_shopping_list_view",
  *      defaultValues={
  *          "entity"={
- *              "icon"="icon-shopping-cart",
+ *              "icon"="fa-shopping-cart",
  *              "totals_mapping"={
  *                  "type"="join_collection",
  *                  "join_field"="totals",
@@ -147,8 +146,6 @@ class ShoppingList extends ExtendShoppingList implements
 
     /**
      * @var bool
-     *
-     * @ORM\Column(name="is_current", type="boolean", options={"default"=false})
      */
     protected $current = false;
 

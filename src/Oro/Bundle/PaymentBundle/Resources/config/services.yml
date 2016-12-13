@@ -1,40 +1,7 @@
 parameters:
-    oro_payment.entity.payment_term.class: Oro\Bundle\PaymentBundle\Entity\PaymentTerm
     oro_payment.entity.payment_transaction.class: Oro\Bundle\PaymentBundle\Entity\PaymentTransaction
 
 services:
-    oro_payment.payment_term.manager.api:
-        class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
-        parent: oro_soap.manager.entity_manager.abstract
-        arguments:
-            - '%oro_payment.entity.payment_term.class%'
-            - "@doctrine.orm.entity_manager"
-
-    oro_payment.form.autocomplete.payment_term.search_handler:
-        public: false
-        parent: oro_form.autocomplete.search_handler
-        arguments:
-            - '%oro_payment.entity.payment_term.class%'
-            - ["label"]
-        tags:
-            - { name: oro_form.autocomplete.search_handler, alias: oro_payment_term, acl_resource: oro_payment_term_view }
-
-    oro_payment.payment_term.delete_message_generator:
-        class: 'Oro\Bundle\PaymentBundle\Twig\DeleteMessageTextGenerator'
-        public: false
-        arguments:
-            - "@router"
-            - "@twig"
-            - "@doctrine"
-
-    oro_payment.twig.delete_message_text_extension:
-        class: 'Oro\Bundle\PaymentBundle\Twig\DeleteMessageTextExtension'
-        public: false
-        arguments:
-            - "@oro_payment.payment_term.delete_message_generator"
-        tags:
-            - { name: twig.extension }
-
     oro_payment.formatter.payment_method_label:
         class: 'Oro\Bundle\PaymentBundle\Formatter\PaymentMethodLabelFormatter'
         arguments:
@@ -50,28 +17,6 @@ services:
         tags:
             - { name: twig.extension }
 
-    oro_payment.event_listener.form_view:
-        class: 'Oro\Bundle\PaymentBundle\EventListener\FormViewListener'
-        arguments:
-            - "@request_stack"
-            - "@translator"
-            - "@oro_entity.doctrine_helper"
-            - '%oro_payment.entity.payment_term.class%'
-        tags:
-            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-view, method: onAccountView }
-            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-edit, method: onEntityEdit }
-            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-group-view, method: onAccountGroupView }
-            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-group-edit, method: onEntityEdit }
-
-    oro_payment.event_listener.datagrid:
-        class: 'Oro\Bundle\PaymentBundle\EventListener\DatagridListener'
-        calls:
-            - [setPaymentTermClass, ['%oro_payment.entity.payment_term.class%']]
-        tags:
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.account-accounts-grid, method: onBuildBeforeAccounts }
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.account-groups-grid, method: onBuildBeforeAccountGroups }
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.quotes-grid, method: onBuildBeforeQuotes }
-
     oro_payment.extension.action.type.payment_delete:
         class: 'Oro\Bundle\PaymentBundle\Extension\Action\Actions\PaymentDeleteAction'
         scope: prototype
@@ -83,15 +28,6 @@ services:
         public: false
         arguments:
             - '@event_dispatcher'
-
-    oro_payment.provider.payment_term:
-        class: 'Oro\Bundle\PaymentBundle\Provider\PaymentTermProvider'
-        public: false
-        arguments:
-            - '@doctrine'
-            - '@security.token_storage'
-            - '@event_dispatcher'
-            - '%oro_payment.entity.payment_term.class%'
 
     oro_payment.provider.methods_provider:
         class: 'Oro\Bundle\PaymentBundle\Layout\DataProvider\PaymentMethodsProvider'
@@ -134,7 +70,7 @@ services:
     oro_payment.action.payment_method_action.abstract:
         abstract: true
         arguments:
-            - '@oro_action.context_accessor'
+            - '@oro_action.expression.context_accessor'
             - '@oro_payment.payment_method.registry'
             - '@oro_payment.provider.payment_transaction'
             - '@router'
@@ -145,21 +81,18 @@ services:
         class: 'Oro\Bundle\PaymentBundle\Action\CaptureAction'
         parent: oro_payment.action.payment_method_action.abstract
         tags:
-            - { name: oro_workflow.action, alias: payment_capture }
             - { name: oro_action.action, alias: payment_capture }
 
     oro_payment.action.purchase:
         class: 'Oro\Bundle\PaymentBundle\Action\PurchaseAction'
         parent: oro_payment.action.payment_method_action.abstract
         tags:
-            - { name: oro_workflow.action, alias: payment_purchase }
             - { name: oro_action.action, alias: payment_purchase }
 
     oro_payment.action.validate:
         class: 'Oro\Bundle\PaymentBundle\Action\ValidateAction'
         parent: oro_payment.action.payment_method_action.abstract
         tags:
-            - { name: oro_workflow.action, alias: payment_validate }
             - { name: oro_action.action, alias: payment_validate }
 
     oro_payment.event_listener.callback.redirect:
@@ -176,7 +109,6 @@ services:
         arguments:
             - '@oro_payment.payment_method.registry'
         tags:
-            - { name: oro_workflow.condition, alias: 'payment_method_enabled' }
             - { name: oro_action.condition, alias: 'payment_method_enabled' }
 
     oro_payment.condition.payment_method_applicable:
@@ -185,7 +117,6 @@ services:
             - '@oro_payment.payment_method.registry'
             - '@oro_payment.provider.payment_context'
         tags:
-            - { name: oro_workflow.condition, alias: 'payment_method_applicable' }
             - { name: oro_action.condition, alias: 'payment_method_applicable' }
 
     oro_payment.condition.has_applicable_payment_methods:
@@ -194,7 +125,6 @@ services:
             - '@oro_payment.payment_method.registry'
             - '@oro_payment.provider.payment_context'
         tags:
-            - { name: oro_workflow.condition, alias: 'has_applicable_payment_methods' }
             - { name: oro_action.condition, alias: 'has_applicable_payment_methods' }
 
     oro_payment.provider.address_extractor:
@@ -215,7 +145,6 @@ services:
         arguments:
             - '@oro_payment.payment_method.registry'
         tags:
-            - { name: oro_workflow.condition, alias: 'payment_method_supports' }
             - { name: oro_action.condition, alias: 'payment_method_supports' }
 
     oro_payment.listener.payment_transaction_listener:
@@ -251,5 +180,21 @@ services:
             - '@oro_payment.payment_method.registry'
             - '@event_dispatcher'
         tags:
-            - { name: oro_workflow.condition, alias: 'require_payment_redirect' }
             - { name: oro_action.condition, alias: 'require_payment_redirect' }
+
+    oro_payment.payment_method.registry:
+        class: 'Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry'
+        public: false
+
+    oro_payment.payment_method.view.registry:
+        class: 'Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry'
+        public: false
+        arguments:
+            - '@oro_payment.payment_method.registry'
+
+    oro_payment.provider.extract_options:
+        class: 'Oro\Bundle\PaymentBundle\Provider\ExtractOptionsProvider'
+        public: false
+        arguments:
+            - '@event_dispatcher'
+            - '@oro_entity.entity_alias_resolver'

@@ -6,12 +6,17 @@ use Doctrine\DBAL\Schema\Schema;
 
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtension;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
+use Oro\Bundle\EntityConfigBundle\Entity\ConfigModel;
+use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
+use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManager;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
+use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtension;
+use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtensionAwareInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -20,7 +25,8 @@ class OroProductBundleInstaller implements
     Installation,
     ExtendExtensionAwareInterface,
     NoteExtensionAwareInterface,
-    AttachmentExtensionAwareInterface
+    AttachmentExtensionAwareInterface,
+    SlugExtensionAwareInterface
 {
     const PRODUCT_TABLE_NAME = 'oro_product';
     const PRODUCT_UNIT_TABLE_NAME = 'oro_product_unit';
@@ -43,6 +49,19 @@ class OroProductBundleInstaller implements
 
     /** @var AttachmentExtension */
     protected $attachmentExtension;
+
+    /**
+     * @var SlugExtension
+     */
+    protected $slugExtension;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setSlugExtension(SlugExtension $extension)
+    {
+        $this->slugExtension = $extension;
+    }
 
     /**
      * {@inheritdoc}
@@ -73,7 +92,7 @@ class OroProductBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_5';
+        return 'v1_7';
     }
 
     /**
@@ -90,6 +109,8 @@ class OroProductBundleInstaller implements
         $this->createOroProductShortDescriptionTable($schema);
         $this->createOroProductImageTable($schema);
         $this->createOroProductImageTypeTable($schema);
+        $this->createOroProductSlugTable($schema);
+        $this->createOroProductSlugPrototypeTable($schema);
 
         $this->addOroProductForeignKeys($schema);
         $this->addOroProductUnitPrecisionForeignKeys($schema);
@@ -103,6 +124,7 @@ class OroProductBundleInstaller implements
         $this->updateProductTable($schema);
         $this->addNoteAssociations($schema);
         $this->addAttachmentAssociations($schema);
+        $this->addProductContentVariants($schema);
     }
 
     /**
@@ -123,6 +145,7 @@ class OroProductBundleInstaller implements
         $table->addColumn('variant_fields', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
         $table->addColumn('status', 'string', ['length' => 16]);
         $table->addColumn('primary_unit_precision_id', 'integer', ['notnull' => false]);
+        $table->addColumn('type', 'string', ['length' => 32]);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['sku']);
         $table->addIndex(['created_at'], 'idx_oro_product_created_at', []);
@@ -184,6 +207,36 @@ class OroProductBundleInstaller implements
         $table->addColumn('localized_value_id', 'integer', []);
         $table->setPrimaryKey(['description_id', 'localized_value_id']);
         $table->addUniqueIndex(['localized_value_id'], 'uniq_416a3679eb576e89');
+    }
+
+    /**
+     * Create oro_product_slug table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroProductSlugTable(Schema $schema)
+    {
+        $this->slugExtension->addSlugs(
+            $schema,
+            'oro_product_slug',
+            'oro_product',
+            'product_id'
+        );
+    }
+
+    /**
+     * Create oro_product_slug_prototype table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroProductSlugPrototypeTable(Schema $schema)
+    {
+        $this->slugExtension->addLocalizedSlugPrototypes(
+            $schema,
+            'oro_product_slug_prototype',
+            'oro_product',
+            'product_id'
+        );
     }
 
     /**
@@ -439,7 +492,68 @@ class OroProductBundleInstaller implements
             $schema->getTable(self::PRODUCT_IMAGE_TABLE_NAME),
             ['product_image_id'],
             ['id'],
-            ['onDelete' => null, 'onUpdate' => null]
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    public function addProductContentVariants(Schema $schema)
+    {
+        if ($schema->hasTable('oro_web_catalog_variant')) {
+            $table = $schema->getTable('oro_web_catalog_variant');
+
+            $this->extendExtension->addManyToOneRelation(
+                $schema,
+                $table,
+                'product_page_product',
+                'oro_product',
+                'id',
+                [
+                    ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_READONLY,
+                    'entity' => ['label' => 'oro.product.entity_label'],
+                    'extend' => [
+                        'is_extend' => true,
+                        'owner' => ExtendScope::OWNER_CUSTOM,
+                        'cascade' => ['persist'],
+                        'on_delete' => 'CASCADE',
+                    ],
+                    'datagrid' => [
+                        'is_visible' => false
+                    ],
+                    'form' => [
+                        'is_enabled' => false
+                    ],
+                    'view' => ['is_displayable' => false],
+                    'merge' => ['display' => false],
+                    'dataaudit' => ['auditable' => true]
+                ]
+            );
+
+            $table->addColumn(
+                'product_collection_page_rule',
+                'text',
+                [
+                    'oro_options' => [
+                        'extend' => [
+                            'is_extend' => true,
+                            'owner' => ExtendScope::OWNER_CUSTOM,
+                            'cascade' => ['persist'],
+                            'on_delete' => 'CASCADE',
+                        ],
+                        'datagrid' => [
+                            'is_visible' => false
+                        ],
+                        'form' => [
+                            'is_enabled' => false
+                        ],
+                        'view' => ['is_displayable' => false],
+                        'merge' => ['display' => false],
+                        'dataaudit' => ['auditable' => true]
+                    ]
+                ]
+            );
+        }
     }
 }

@@ -31,7 +31,7 @@ use Oro\Bundle\RFPBundle\Model\ExtendRequest;
  *      routeUpdate="oro_rfp_request_update",
  *      defaultValues={
  *          "entity"={
- *              "icon"="icon-file-text"
+ *              "icon"="fa-file-text"
  *          },
  *          "security"={
  *              "type"="ACL",

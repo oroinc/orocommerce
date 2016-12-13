@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\WorkflowState\Mapper;
 
-use Oro\Bundle\CheckoutBundle\Factory\ShippingContextProviderFactory;
+use Oro\Bundle\CheckoutBundle\Factory\CheckoutShippingContextFactory;
 use Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\ShippingMethodEnabledMapper;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
@@ -16,10 +16,9 @@ class ShippingMethodEnabledMapperTest extends AbstractCheckoutDiffMapperTest
     protected $shippingPriceProvider;
 
     /**
-     * @var ShippingContextProviderFactory|\PHPUnit_Framework_MockObject_MockObject
+     * @var CheckoutShippingContextFactory|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $shippingContextProviderFactory;
-
+    protected $shippingContextFactory;
 
     protected function setUp()
     {
@@ -27,7 +26,7 @@ class ShippingMethodEnabledMapperTest extends AbstractCheckoutDiffMapperTest
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->shippingContextProviderFactory = $this->getMockBuilder(ShippingContextProviderFactory::class)
+        $this->shippingContextFactory = $this->getMockBuilder(CheckoutShippingContextFactory::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -38,7 +37,7 @@ class ShippingMethodEnabledMapperTest extends AbstractCheckoutDiffMapperTest
     {
         parent::tearDown();
 
-        unset($this->shippingPriceProvider, $this->shippingContextProviderFactory);
+        unset($this->shippingPriceProvider, $this->shippingContextFactory);
     }
 
     public function testGetName()
@@ -70,11 +69,11 @@ class ShippingMethodEnabledMapperTest extends AbstractCheckoutDiffMapperTest
         $this->checkout->setShippingMethod($methodName)->setShippingMethodType($typeName);
 
         $shippingContext = new ShippingContext();
-        $this->shippingContextProviderFactory->expects(static::any())
+        $this->shippingContextFactory->expects(static::any())
             ->method('create')
             ->willReturn($shippingContext);
         $this->shippingPriceProvider->expects(static::any())
-            ->method('getApplicableMethodsWithTypesData')
+            ->method('getPrice')
             ->willReturn($methodPrice);
 
         $this->checkout->setShippingMethod($methodName)->setShippingMethodType($typeName);
@@ -89,55 +88,13 @@ class ShippingMethodEnabledMapperTest extends AbstractCheckoutDiffMapperTest
     {
         return [
             'wrong_method'                    => [
-                'methodPrice' => [
-                    'wrong_method' => [
-                        'types' => [
-                            'flat_rate' => [
-                                'identifier' => 'per_order',
-                            ]
-                        ]
-                    ]
-                ],
+                'methodPrice' => null,
                 'method'      => 'flat_rate',
                 'type'        => 'per_order',
-                'expected'    => false,
-            ],
-            'not_types'                       => [
-                'methodPrice' => [
-                    'flat_rate' => [
-                        'identifier' => 'flat_rate'
-                    ]
-                ],
-                'method'      => 'flat_rule',
-                'type'        => 'per_order',
-                'expected'    => false,
-            ],
-            'correct_method_not_correct_type' => [
-                'methodPrice' => [
-                    'flat_rate' => [
-                        'identifier' => 'flat_rate',
-                        'types'      => [
-                            'flat_rate' => [
-                                'identifier' => 'per_order',
-                            ]
-                        ]
-                    ]
-                ],
-                'method'      => 'flat_rate',
-                'type'        => null,
                 'expected'    => false,
             ],
             'correct_method_correct_type'     => [
-                'methodPrice' => [
-                    'flat_rate' => [
-                        'identifier' => 'flat_rate',
-                        'types'      => [
-                            'flat_rate' => [
-                                'identifier' => 'per_order',
-                            ]
-                        ]
-                    ]
-                ],
+                'methodPrice' => Price::create(10, 'USD'),
                 'method'      => 'flat_rate',
                 'type'        => 'per_order',
                 'expected'    => true,
@@ -151,6 +108,6 @@ class ShippingMethodEnabledMapperTest extends AbstractCheckoutDiffMapperTest
      */
     protected function getMapper()
     {
-        return new ShippingMethodEnabledMapper($this->shippingPriceProvider, $this->shippingContextProviderFactory);
+        return new ShippingMethodEnabledMapper($this->shippingPriceProvider, $this->shippingContextFactory);
     }
 }

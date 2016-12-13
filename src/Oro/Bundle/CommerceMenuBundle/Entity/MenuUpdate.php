@@ -68,7 +68,7 @@ use Oro\Bundle\NavigationBundle\Entity\MenuUpdateTrait;
  * @Config(
  *      defaultValues={
  *          "entity"={
- *              "icon"="icon-th"
+ *              "icon"="fa-th"
  *          }
  *      }
  * )
@@ -106,7 +106,7 @@ class MenuUpdate extends ExtendMenuUpdate implements
             'image' => $this->getImage(),
             'condition' => $this->getCondition(),
             'divider' => $this->isDivider(),
-            'translateDisabled' => $this->getId() ? true : false
+            'translate_disabled' => $this->getId() ? true : false
         ];
 
         if ($this->getPriority() !== null) {

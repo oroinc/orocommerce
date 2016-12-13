@@ -42,6 +42,9 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
      */
     protected $operationName;
 
+    /**
+     * @return string
+     */
     public function getProcessorName()
     {
         return QuickAddCheckoutProcessor::NAME;
@@ -167,7 +170,7 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
                     ->method('createForShoppingList')
                     ->with(
                         $this->isInstanceOf('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList'),
-                        $productIds,
+                        array_values($productIds),
                         $productQuantities
                     )
                     ->willReturn($entitiesCount);
@@ -223,7 +226,7 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
                     ]
                 ],
                 'request' => new Request(),
-                'productIds' =>[1, 2],
+                'productIds' =>['sku1' => 1, 'sku2' => 2],
                 'productQuantities' => [1 => 2, 2 => 3],
             ],
             'process failed' => [
@@ -234,7 +237,7 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
                     ]
                 ],
                 'request' => new Request(),
-                'productIds' =>[1, 2],
+                'productIds' =>['sku1' => 1, 'sku2' => 2],
                 'productQuantities' => [1 => 2, 2 => 3],
                 'redirectUrl' => '/account/shoppingList/123',
                 'failed' => true
@@ -247,7 +250,7 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
                     ]
                 ],
                 'request' => new Request(),
-                'productIds' =>[1, 2],
+                'productIds' =>['sku1' => 1, 'sku2' => 2],
                 'productQuantities' => [1 => 2, 2 => 3],
                 'failed' => false,
                 'issetRedirectUrl' => false

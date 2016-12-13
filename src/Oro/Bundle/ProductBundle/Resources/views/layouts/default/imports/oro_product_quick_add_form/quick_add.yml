@@ -7,15 +7,15 @@ layout:
                 __quick_add_form_start:
                     blockType: form_start
                     options:
-                        form: '=data["oro_product_form"].getQuickAddForm()'
+                        form: '=data["oro_product_form"].getQuickAddFormView()'
                 __quick_add_form_fields:
                     blockType: form_fields
                     options:
-                        form: '=data["oro_product_form"].getQuickAddForm()'
+                        form: '=data["oro_product_form"].getQuickAddFormView()'
                 __quick_add_form_end:
                     blockType: form_end
                     options:
-                        form: '=data["oro_product_form"].getQuickAddForm()'
+                        form: '=data["oro_product_form"].getQuickAddFormView()'
                 __quick_add_form_buttons:
                     blockType: container
             tree:

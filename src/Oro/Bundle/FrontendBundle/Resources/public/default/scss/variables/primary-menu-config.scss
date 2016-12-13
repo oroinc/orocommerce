@@ -1,0 +1,8 @@
+// @theme: default
+
+$primary-menu-link-color: get-color('additional', 'dark');
+$primary-menu-link-color-current: get-color('additional', 'dark');
+
+$primary-menu-item-inner-offset: 5px 0 0 18px;
+$primary-menu-item-inner-offset-tablet-small: 13px 0 !default;
+$primary-menu-link-font-weight-current: bold !default;

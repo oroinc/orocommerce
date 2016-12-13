@@ -7,6 +7,7 @@ use Oro\Bundle\LocaleBundle\Formatter\NameFormatter;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderDiscount;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\UserBundle\Entity\User;
@@ -31,7 +32,7 @@ class OrderControllerTest extends WebTestCase
     /**
      * @var string
      */
-    public static $shippingCostAmount = '999.9900';
+    public static $overriddenShippingCostAmount = '999.9900';
 
     /**
      * @var string
@@ -133,10 +134,18 @@ class OrderControllerTest extends WebTestCase
 
         $result = static::getJsonResponseContent($response, 200);
 
-        $first = reset($result['data']);
+        $myOrderData = [];
+        foreach ($result['data'] as $row) {
+            if ($row['identifier'] === LoadOrders::MY_ORDER) {
+                $myOrderData = $row;
+                break;
+            }
+        }
 
-        $this->assertArrayHasKey('shippingMethod', $first);
-        $this->assertEquals('N/A', $first['shippingMethod']);
+        $order = $this->getReference(LoadOrders::MY_ORDER);
+
+        $this->assertArrayHasKey('poNumber', $myOrderData);
+        $this->assertEquals($order->getPoNumber(), $myOrderData['poNumber']);
     }
 
     /**
@@ -397,8 +406,10 @@ class OrderControllerTest extends WebTestCase
 
         /* @var $form Form */
         $form = $crawler->selectButton('Save')->form();
-        $form['oro_order_type[shippingCost][value]'] = self::$shippingCostAmount;
-        $form['oro_order_type[shippingCost][currency]'] = self::$shippingCostCurrency;
+        $form['oro_order_type[overriddenShippingCostAmount]'] = [
+            'value' => self::$overriddenShippingCostAmount,
+            'currency' => 'USD',
+        ];
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
@@ -407,7 +418,7 @@ class OrderControllerTest extends WebTestCase
         self::assertEquals('Shipping Information', $titleBlock);
 
         $value  = $crawler->filter('.responsive-section')->eq(2)->filter('.controls .control-label')->html();
-        self::assertEquals('USD 999.99', $value);
+        self::assertEquals('$999.99', $value);
 
         $result = $this->client->getResponse();
         static::assertHtmlResponseStatusCodeEquals($result, 200);
@@ -423,8 +434,7 @@ class OrderControllerTest extends WebTestCase
 
         /* @var $form Form */
         $form = $crawler->selectButton('Save')->form();
-        $form['oro_order_type[shippingCost][value]'] = '';
-        $form['oro_order_type[shippingCost][currency]'] = self::$shippingCostCurrency;
+        $form['oro_order_type[overriddenShippingCostAmount][value]'] = '';
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
@@ -449,9 +459,8 @@ class OrderControllerTest extends WebTestCase
 
         /* @var $form Form */
         $form = $crawler->selectButton('Save')->form();
-        $form['oro_order_type[shippingCost][value]'] = '0';
-        $form['oro_order_type[shippingCost][currency]'] = self::$shippingCostCurrency;
-
+        $form['oro_order_type[overriddenShippingCostAmount][value]'] = 0;
+      
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
 
@@ -459,7 +468,7 @@ class OrderControllerTest extends WebTestCase
         self::assertEquals('Shipping Information', $titleBlock);
 
         $value  = $crawler->filter('.responsive-section')->eq(2)->filter('.controls .control-label')->html();
-        self::assertEquals('USD 0.00', $value);
+        self::assertEquals('$0.00', $value);
 
         $result = $this->client->getResponse();
         static::assertHtmlResponseStatusCodeEquals($result, 200);

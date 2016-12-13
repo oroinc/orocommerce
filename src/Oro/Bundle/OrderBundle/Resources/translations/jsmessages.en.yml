@@ -1,6 +1,14 @@
 oro:
     order:
+        shipping_method.label: Shipping Method
+        previous_shipping_method.label: Previously selected Shipping Method
+        possible_shipping_methods.no_method: No shipping methods are available
+        possible_shipping_methods.confirmation.title: Shipping cost may have changed
+        possible_shipping_methods.confirmation.content: The order content has been modified and as a result of that the shipping cost may have changed. Please review the shipping method selection before saving the order, or the shipping cost will not be updated otherwise.
+
         notes_widget:
             edit: Edit Notes
             add: Add Notes
             remove: Remove Notes
+
+        continue_editing: Continue Editing

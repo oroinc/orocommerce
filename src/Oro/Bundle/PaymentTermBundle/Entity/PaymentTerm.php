@@ -1,0 +1,99 @@
+<?php
+
+namespace Oro\Bundle\PaymentTermBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\PaymentTermBundle\Model\ExtendPaymentTerm;
+
+/**
+ * @ORM\Table(name="oro_payment_term")
+ * @ORM\Entity()
+ * @Config(
+ *      routeName="oro_payment_term_index",
+ *      routeView="oro_payment_term_view",
+ *      routeUpdate="oro_payment_term_update",
+ *      defaultValues={
+ *          "entity"={
+ *              "icon"="fa-usd"
+ *          },
+ *          "dataaudit"={
+ *              "auditable"=true
+ *          },
+ *          "security"={
+ *              "type"="ACL",
+ *              "group_name"=""
+ *          },
+ *          "form"={
+ *              "form_type"="oro_payment_term_select",
+ *              "grid_name"="payment-terms-select-grid",
+ *          }
+ *      }
+ * )
+ */
+class PaymentTerm extends ExtendPaymentTerm
+{
+    /**
+     * @var integer
+     * @ORM\Id
+     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    protected $id;
+
+    /**
+     * @var string
+     * @ORM\Column(name="label", type="string")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $label;
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return (string)$this->label;
+    }
+
+    /**
+     * Get id
+     *
+     * @return integer
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Get label
+     *
+     * @return string
+     */
+    public function getLabel()
+    {
+        return $this->label;
+    }
+
+    /**
+     * Set label
+     *
+     * @param string $label
+     * @return $this
+     */
+    public function setLabel($label)
+    {
+        $this->label = $label;
+
+        return $this;
+    }
+}

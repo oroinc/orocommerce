@@ -8,9 +8,13 @@ use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
+use Oro\Bundle\ScopeBundle\Migration\Extension\ScopeExtensionAwareInterface;
+use Oro\Bundle\ScopeBundle\Migration\Extension\ScopeExtensionAwareTrait;
 
-class OroWebsiteBundleInstaller implements Installation, NoteExtensionAwareInterface
+class OroWebsiteBundleInstaller implements Installation, NoteExtensionAwareInterface, ScopeExtensionAwareInterface
 {
+    use ScopeExtensionAwareTrait;
+
     const WEBSITE_TABLE_NAME = 'oro_website';
 
     /** @var NoteExtension */
@@ -29,7 +33,7 @@ class OroWebsiteBundleInstaller implements Installation, NoteExtensionAwareInter
      */
     public function getMigrationVersion()
     {
-        return 'v1_4';
+        return 'v1_6';
     }
 
     /**
@@ -45,6 +49,8 @@ class OroWebsiteBundleInstaller implements Installation, NoteExtensionAwareInter
         $this->addOroRelatedWebsiteForeignKeys($schema);
         $this->addOroWebsiteForeignKeys($schema);
         $this->addNoteAssociations($schema);
+
+        $this->addRelationsToScope($schema);
     }
 
     /**
@@ -133,5 +139,18 @@ class OroWebsiteBundleInstaller implements Installation, NoteExtensionAwareInter
     protected function addNoteAssociations(Schema $schema)
     {
         $this->noteExtension->addNoteAssociation($schema, self::WEBSITE_TABLE_NAME);
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    private function addRelationsToScope(Schema $schema)
+    {
+        $this->scopeExtension->addScopeAssociation(
+            $schema,
+            'website',
+            OroWebsiteBundleInstaller::WEBSITE_TABLE_NAME,
+            'name'
+        );
     }
 }

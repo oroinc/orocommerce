@@ -3,42 +3,51 @@
         '~class': " middlebar__right"
     }) %}
     <div {{ block('block_attributes') }}>
-        <ul class="shopping-list pull-right">
-            {{ block_widget(block) }}
-        </ul>
+        {{ block_widget(block) }}
     </div>
 {% endblock %}
 
 {% block _quick_access_menu_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " quick-access"
+        '~class': ' quick-access',
+        'data-dom-relocation': '',
+        'data-dom-relocation-options': {
+            responsive: [
+                {
+                    breakpoint: 1099,
+                    moveTo: '[data-main-menu-extra-container]'
+                }
+            ]
+        }
     }) %}
     <div {{ block('block_attributes') }}>
         <ul class="quick-access__list">
             <li class="quick-access__item">
                 <a class="quick-access__link"  href="{{ path('oro_order_frontend_index') }}">
-                    <span class="badge badge_circled-corners badge_yellow quick-access__badge">
-                        <i class="cf-assignment"></i>
+                    <span class="quick-access__icon quick-access__icon--light">
+                        <i class="fa-clipboard"></i>
                     </span>
                     <span class="quick-access__text">Orders</span>
                 </a>
             </li>
             <li class="quick-access__item">
                 <a class="quick-access__link" href="{{ path('oro_sale_quote_frontend_index') }}">
-                    <span class="badge badge_circled-corners badge_orange-light quick-access__badge">
-                        <i class="cf-local_offer"></i>
+                    <span class="quick-access__icon">
+                        <i class="fa-tags"></i>
                     </span>
                     <span class="quick-access__text">Quotes</span>
                 </a>
             </li>
-            <li class="quick-access__item">
-                <a class="quick-access__link" href="{{ path('oro_product_frontend_quick_add') }}">
-                    <span class="badge badge_circled-corners badge_orange quick-access__badge">
-                        <i class="cf-flash"></i>
+            {% if feature_resource_enabled("oro_product_frontend_quick_add", "routes") %}
+                <li class="quick-access__item">
+                    <a class="quick-access__link" href="{{ path('oro_product_frontend_quick_add') }}">
+                    <span class="quick-access__icon quick-access__icon--dark">
+                        <i class="fa-bolt"></i>
                     </span>
-                    <span class="quick-access__text">Quick Order Form</span>
-                </a>
-            </li>
+                        <span class="quick-access__text">Quick Order Form</span>
+                    </a>
+                </li>
+            {% endif %}
         </ul>
     </div>
 {% endblock %}

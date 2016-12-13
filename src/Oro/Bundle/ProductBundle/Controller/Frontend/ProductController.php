@@ -34,7 +34,7 @@ class ProductController extends Controller
      * View list of products
      *
      * @Route("/view/{id}", name="oro_product_frontend_product_view", requirements={"id"="\d+"})
-     * @Layout()
+     * @Layout(vars={"product_type"})
      * @Acl(
      *      id="oro_product_frontend_view",
      *      type="entity",
@@ -53,6 +53,7 @@ class ProductController extends Controller
             'data' => [
                 'product' => $product,
             ],
+            'product_type' => $product->getType(),
         ];
     }
 

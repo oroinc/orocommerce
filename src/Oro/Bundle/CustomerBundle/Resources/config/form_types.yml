@@ -21,6 +21,15 @@ services:
         tags:
             - { name: form.type, alias: oro_customer_account_select }
 
+    oro_customer_account.form.type.frontend.owner_select:
+        class: 'Oro\Bundle\CustomerBundle\Form\Type\FrontendOwnerSelectType'
+        arguments:
+             - '@oro_security.acl_helper'
+             - '@doctrine'
+             - '@oro_entity_config.provider.ownership'
+        tags:
+            - { name: form.type, alias: oro_customer_frontend_owner_select }
+
     oro_customer.form.type.account_group_select:
         class: 'Oro\Bundle\CustomerBundle\Form\Type\AccountGroupSelectType'
         tags:
@@ -35,6 +44,14 @@ services:
         class: 'Oro\Bundle\CustomerBundle\Form\Type\AccountUserSelectType'
         tags:
             - { name: form.type, alias: oro_account_account_user_select }
+
+    oro_customer.form.type.frontend.account_user_select:
+        class: 'Oro\Bundle\CustomerBundle\Form\Type\FrontendAccountUserSelectType'
+        arguments:
+             - '@oro_security.acl_helper'
+             - '@doctrine'
+        tags:
+            - { name: form.type, alias: oro_account_frontend_account_user_select }
 
     oro_customer.form.type.account_user_multiselect_type:
         class: 'Oro\Bundle\CustomerBundle\Form\Type\AccountUserMultiSelectType'
@@ -100,6 +117,7 @@ services:
         arguments:
             - '@oro_security.security_facade'
             - '@doctrine'
+            - '@oro_security.acl_helper'
         calls:
             - [setRoleClass, ['%oro_customer.entity.account_user_role.class%']]
         tags:
@@ -154,6 +172,14 @@ services:
         tags:
              - { name: form.type, alias: oro_account_typed_address}
 
+    oro_customer.form.type.frontend.typed_address:
+        class: 'Oro\Bundle\CustomerBundle\Form\Type\FrontendAccountTypedAddressType'
+        calls:
+             - [setDataClass, ['%oro_customer.entity.account_address.class%']]
+             - [setAddressTypeDataClass, ['%oro_address.address.type.entity.class%']]
+        tags:
+             - { name: form.type, alias: oro_account_frontend_typed_address}
+
     oro_customer.form.type.account_user_typed_address:
         class: 'Oro\Bundle\CustomerBundle\Form\Type\AccountUserTypedAddressType'
         calls:
@@ -161,6 +187,14 @@ services:
              - [setAddressTypeDataClass, ['%oro_address.address.type.entity.class%']]
         tags:
              - { name: form.type, alias: oro_account_account_user_typed_address}
+
+    oro_customer.form.type.frontend.account_user_typed_address:
+        class: 'Oro\Bundle\CustomerBundle\Form\Type\FrontendAccountUserTypedAddressType'
+        calls:
+             - [setDataClass, ['%oro_customer.entity.account_user_address.class%']]
+             - [setAddressTypeDataClass, ['%oro_address.address.type.entity.class%']]
+        tags:
+             - { name: form.type, alias: oro_account_frontend_account_user_typed_address}
 
     oro_customer.form.type.typed_address_with_default:
         class: 'Oro\Bundle\CustomerBundle\Form\Type\AccountTypedAddressWithDefaultType'
@@ -184,39 +218,6 @@ services:
         tags:
             - { name: form.type_extension, alias: oro_acl_access_level_selector }
 
-    oro_customer.form.event_listener.category.post_set_data:
-        class: 'Oro\Bundle\CustomerBundle\Form\EventListener\VisibilityPostSetDataListener'
-        parent: oro_customer.form.event_listener.abstract_visibility
-
-    oro_customer.form.event_listener.abstract_visibility:
-        class: 'Oro\Bundle\CustomerBundle\Form\EventListener\AbstractVisibilityListener'
-        abstract: true
-        arguments:
-            - '@doctrine'
-
-    oro_customer.form.event_listener.abstract_visibility_post_submit:
-        class: 'Oro\Bundle\CustomerBundle\Form\EventListener\AbstractPostSubmitVisibilityListener'
-        parent: oro_customer.form.event_listener.abstract_visibility
-
-    oro_customer.form.extension.category_type:
-        class: 'Oro\Bundle\CustomerBundle\Form\Extension\CategoryFormExtension'
-        tags:
-            - { name: form.type_extension, alias: oro_catalog_category }
-        calls:
-            - [setVisibilityToAllClass, ['%oro_customer.entity.category_visibility.class%']]
-            - [setVisibilityToAccountGroupClass,['%oro_customer.entity.account_group_category_visibility.class%']]
-            - [setVisibilityToAccountClass,['%oro_customer.entity.account_category_visibility.class%']]
-
-    oro_customer.form.type.catalog_visibility:
-        class: 'Oro\Bundle\CustomerBundle\Form\Type\CatalogVisibilityType'
-        tags:
-            - { name: form.type, alias: oro_account_catalog_default_visibility }
-
-    oro_customer.form.type.product_visibility:
-        class: 'Oro\Bundle\CustomerBundle\Form\Type\ProductVisibilityType'
-        tags:
-            - { name: form.type, alias: oro_account_product_default_visibility }
-
     oro_customer.form.extension.select_or_create_inline:
         class: 'Oro\Bundle\CustomerBundle\Form\Extension\OroEntitySelectOrCreateInlineExtension'
         arguments:
@@ -238,13 +239,12 @@ services:
         tags:
             - { name: form.type_extension, alias: "oro_address" }
 
-    oro_customer.form.type.entity_visibility_type:
-        class: 'Oro\Bundle\CustomerBundle\Form\Type\EntityVisibilityType'
-        arguments:
-            - '@oro_customer.form.event_listener.category.post_set_data'
-            - '@oro_customer.provider.visibility_choices'
+    oro_customer.form.extension.account_scope:
+        class: 'Oro\Bundle\CustomerBundle\Form\Extension\AccountScopeExtension'
         tags:
-            - { name: form.type, alias: oro_account_entity_visibility_type }
-        calls:
-            - [setAccountClass,['%oro_customer.entity.account.class%']]
-            - [setAccountGroupClass,['%oro_customer.entity.account_group.class%']]
+            - { name: form.type_extension, extended_type: Oro\Bundle\ScopeBundle\Form\Type\ScopeType }
+
+    oro_customer.form.extension.account_group_scope:
+        class: 'Oro\Bundle\CustomerBundle\Form\Extension\AccountGroupScopeExtension'
+        tags:
+            - { name: form.type_extension, extended_type: Oro\Bundle\ScopeBundle\Form\Type\ScopeType }

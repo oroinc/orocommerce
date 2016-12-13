@@ -24,9 +24,15 @@ define(function(require) {
             this.options = _.extend({}, this.options, options || {});
 
             DomRelocationView.__super__.initialize.apply(this, arguments);
+        },
 
+        /**
+         * @inheritDoc
+         */
+        setElement: function(element) {
             this.$window = $(window);
             this.elements = null;
+            return DomRelocationView.__super__.setElement.call(this, element);
         },
 
         /**
@@ -60,6 +66,7 @@ define(function(require) {
          */
         render: function() {
             this.collectElements();
+            this.onResize();
             return this;
         },
 
@@ -109,7 +116,7 @@ define(function(require) {
             var breakpoints = [];
 
             for (var i = 0; i <= responsiveOptions.length - 1 ; i++) {
-                if (windowSize < responsiveOptions[i].breakpoint) {
+                if (windowSize <= responsiveOptions[i].breakpoint) {
                     breakpoints.push(responsiveOptions[i]);
                 }
             }

@@ -2,7 +2,9 @@
     {% set attr = layout_attr_defaults(attr, {
         'data-page-component-module': 'oroui/js/app/components/view-component',
         'data-page-component-options': {
-            view: 'oroshoppinglist/js/app/views/shoppinglist-sidebar-view'
+            view: 'oroui/js/app/views/layout-subtree-view',
+            blockId: id,
+            reloadEvents: ['shopping-list:created', 'shopping-list:updated', 'frontend:item:delete']
         },
         'data-dropdown-trigger': true,
         '~class': ' shopping-list-navigation'
@@ -32,8 +34,8 @@
         >
             <div class="shopping-list__name">
                 <span class="shopping-list__title text-uppercase">
-                    <span class='badge badge_sm badge_orange badge_circled-corners shopping-list__item-indicator'>
-                        <i class="cf-basket"></i>
+                    <span class='shopping-list__item-indicator'>
+                        <i class="fa-shopping-cart"></i>
                     </span>
                     <span {% if shoppingList.id == selectedShoppingList.id %}class="current-title"{% endif %}>
                         {{ shoppingList.label }}

@@ -21,6 +21,7 @@
          data-page-component-options="{{ options|json_encode }}">
     </div>
 
+    {{ form_row(form.account) }}
     {{ form_row(form.label) }}
 
     {{ form_widget(form.appendUsers, {'id': 'roleAppendUsers'}) }}
@@ -31,15 +32,15 @@
 {% block _oro_account_frontend_account_user_role_action_row %}{% endblock %}
 
 {% block _oro_account_frontend_account_user_role_label_row %}
-    <div class="row mb3-md mb3-sm">
-        <div class="col-md-12">
-            <div class="row">
-                <div class="col-md-12">
-                    {{ form_label(form, 'oro.customer.frontend.sections.account_user_role.label') }}
-                </div>
-                <div class="col-md-4">
-                    {{ form_widget(form) }}
-                </div>
+    <div class="grid">
+        <div class="grid__row">
+            <div class="grid__column--5">
+                {{ form_label(form, 'oro.customer.frontend.sections.account_user_role.label') }}
+            </div>
+        </div>
+        <div class="grid__row">
+            <div class="grid__column--5">
+                {{ form_widget(form) }}
             </div>
         </div>
     </div>

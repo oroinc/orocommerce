@@ -112,22 +112,37 @@ Oro\Bundle\CustomerBundle\Entity\AccountUserAddress:
         systemOrganization: '@organization'
         primary: true
 
+Oro\Bundle\PricingBundle\Entity\PriceList:
+    pricelist_shipping:
+        name: 'pricelist_shipping'
+        default: true
+        currencies: ['USD', 'EUR']
+        active: true
+
 Oro\Bundle\PricingBundle\Entity\PriceListToAccount:
     priceListToAccount1:
         account: '@account1'
-        pricelist: '@pricelist1'
+        pricelist: '@pricelist_shipping'
         website: '@website1'
         priority: 200
 
 Oro\Bundle\PricingBundle\Entity\ProductPrice:
     productPrice1:
-        pricelist: '@pricelist1'
+        pricelist: '@pricelist_shipping'
         product: '@product1'
         productSku: 'AA1'
         quantity: 5
         unit: '@item'
         value: 2
         currency: 'EUR'
+    productPrice2:
+        pricelist: '@pricelist_shipping'
+        product: '@product1'
+        productSku: 'AA1'
+        quantity: 5
+        unit: '@item'
+        value: 5
+        currency: 'USD'
 
 Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
    combinedProductPrice1:
@@ -138,6 +153,14 @@ Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
         unit: '@item'
         value: 2
         currency: 'EUR'
+   combinedProductPrice2:
+        pricelist: '@combinedPriceList'
+        product: '@product1'
+        productSku: 'AA1'
+        quantity: 5
+        unit: '@item'
+        value: 2
+        currency: 'USD'
 
 Oro\Bundle\PricingBundle\Entity\CombinedPriceListToAccount:
     combinedPriceListToAccount1:

@@ -188,7 +188,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
         $crawler = $this->client->followRedirect();
         $this->assertEquals(
             'Sign In',
-            trim($crawler->filter('form.login-form h1')->html())
+            trim($crawler->filter('.login-form h2')->html())
         );
         $this->assertContains('Please check your email to complete registration', $crawler->html());
 
@@ -245,7 +245,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('This value is already used.', $crawler->filter('.notification_error')->html());
+        $this->assertContains('This value is already used.', $crawler->filter('.notification__text')->html());
     }
 
     /**
@@ -258,7 +258,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertEquals(
             'Sign In',
-            trim($crawler->filter('form.login-form h1')->html())
+            trim($crawler->filter('.login-form h2')->html())
         );
 
         $forgotPasswordLink = $crawler->filter('a:contains("Forgot Your Password?")')->link();
@@ -306,7 +306,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertEquals(
             'Sign In',
-            trim($crawler->filter('form.login-form h1')->html())
+            trim($crawler->filter('.login-form h2')->html())
         );
         $this->assertContains('Password was created successfully.', $crawler->html());
     }
@@ -370,7 +370,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
         $crawler = $this->client->submit($form, $submittedData);
         $this->assertEquals('Forgot Your Password?', $crawler->filter('h2')->html());
         $this->assertContains(
-            'Email address "'. $unknownEmail .'" is not known',
+            'Email address "'. $unknownEmail .'" does not exist.',
             $crawler->html()
         );
     }

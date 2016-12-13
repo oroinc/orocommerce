@@ -1,0 +1,36 @@
+Oro\Bundle\ProductBundle\Entity\Product:
+    alias: oro_product_WEBSITE_ID
+    fields:
+        -
+            name: product_id
+            type: integer
+        -
+            name: name_LOCALIZATION_ID
+            type: text
+        -
+            name: sku
+            type: text
+        -
+            name: sku_uppercase
+            type: text
+        -
+            name: description_LOCALIZATION_ID
+            type: text
+        -
+            name: short_description_LOCALIZATION_ID
+            type: text
+        -
+            name: status
+            type: text
+        -
+            name: type
+            type: text
+        -
+            name: inventory_status
+            type: text
+        -
+            name: all_text
+            type: text
+        -
+            name: all_text_LOCALIZATION_ID
+            type: text

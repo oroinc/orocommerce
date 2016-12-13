@@ -3,19 +3,14 @@ parameters:
     oro_cms.entity.loginpage.class: Oro\Bundle\CMSBundle\Entity\LoginPage
 
 services:
-    oro_cms.page_tree_handler:
-        class: 'Oro\Bundle\CMSBundle\JsTree\PageTreeHandler'
+    oro_cms.form.autocomplete.page.search_handler:
+        public: false
+        parent: oro_form.autocomplete.search_handler
         arguments:
             - '%oro_cms.entity.page.class%'
-            - "@doctrine"
-            - "@oro_redirect.slug.manager"
-
-    oro_cms.listener.page_slug_listener:
-        class: 'Oro\Bundle\CMSBundle\EventListener\PageSlugListener'
+            - [ "defaultTitle.string"]
         tags:
-            - { name: doctrine.event_listener, event: postPersist }
-            - { name: doctrine.event_listener, event: postUpdate }
-            - { name: doctrine.event_listener, event: preRemove }
+            - { name: oro_form.autocomplete.search_handler, alias: oro_cms_page, acl_resource: oro_cms_page_view }
 
     oro_cms.provider.login_page_data_provider:
         class: 'Oro\Bundle\CMSBundle\Layout\DataProvider\LoginPageProvider'
@@ -25,3 +20,26 @@ services:
             - [setLoginPageClass, ['%oro_cms.entity.loginpage.class%']]
         tags:
             - { name: layout.data_provider, alias: oro_cms_login_page }
+
+    oro_cms.provider.landing_page_title_provider:
+        class: 'Oro\Bundle\CMSBundle\Provider\PageTitleProvider'
+        public: false
+        arguments:
+            - '@property_accessor'
+            - '@oro_locale.helper.localization.link'
+        tags:
+            - { name: oro_web_catalog.content_variant_title_provider }
+
+    oro_cms.content_variant_type.cms_page:
+        class: Oro\Bundle\CMSBundle\ContentVariantType\CmsPageContentVariantType
+        public: false
+        arguments:
+            - '@oro_security.security_facade'
+            - '@property_accessor'
+        tags:
+            - { name: oro_web_catalog.content_variant_type }
+
+    oro_cms.provider.routing_information_provider:
+        class: Oro\Bundle\CMSBundle\Provider\PageRoutingInformationProvider
+        tags:
+            - { name: oro_redirect.routing_information_provider }

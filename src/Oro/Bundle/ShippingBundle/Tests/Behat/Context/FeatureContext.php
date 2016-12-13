@@ -36,20 +36,8 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
-     * @Given there is EUR currency in the system configuration
-     */
-    public function thereIsEurCurrencyInTheSystemConfiguration()
-    {
-        $configManager = $this->getContainer()->get('oro_config.global');
-        /** @var array $currencies */
-        $currencies = (array) $configManager->get('oro_currency.allowed_currencies', []);
-        $currencies = array_unique(array_merge($currencies, ['EUR']));
-        $configManager->set('oro_currency.allowed_currencies', $currencies);
-        $configManager->set('oro_pricing.enabled_currencies', ['EUR', 'USD']);
-        $configManager->flush();
-    }
-
-    /**
+     * Walk through menus and navigations to get Checkout step page of given shopping list name
+     *
      * @When /^Buyer is on Checkout step on (?P<shoppingListName>[\w\s]+)$/
      */
     public function buyerIsOnShippingMethodCheckoutStep($shoppingListName)
@@ -69,6 +57,8 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
+     * Assert that given shippingType is shown
+     *
      * @Then Shipping Type :shippingType is shown for Buyer selection
      */
     public function shippingTypeFlatRateIsShownForBuyerSelection($shippingType)
@@ -86,7 +76,11 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     public function theOrderTotalIsRecalculatedTo($total)
     {
         $this->waitForAjax();
-        self::assertEquals($total, $this->createElement('CheckoutTotalSum')->getText());
+        $totalElement = $this->createElement('CheckoutTotalSum');
+        if (!$totalElement->isVisible()) {
+            $this->createElement('CheckoutTotalTrigger')->click();
+        }
+        self::assertEquals($total, $totalElement->getText());
     }
 
     /**
@@ -94,10 +88,24 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      */
     public function noShippingMethodsAvailable()
     {
-        $this->assertSession()->elementContains('css', '.notification_alert', 'No shipping methods are available');
+        $notificationAllert = $this->createElement('Notification Alert');
+
+        self::assertTrue(
+            $notificationAllert->isValid(),
+            'Notification Alert is not found, or found more then one'
+        );
+        self::assertEquals(
+            'No shipping methods are available, please contact us to complete the order submission.',
+            $notificationAllert->getText()
+        );
     }
 
     /**
+     * Example: Given Admin User edited "Shipping Rule 1" with next data:
+     *            | Enabled  | true    |
+     *            | Currency | USD     |
+     *            | Country  | Germany |
+     *
      * @Given Admin User edited :shippingRule with next data:
      */
     public function adminUserEditedWithNextData($shippingRule, TableNode $table)
@@ -132,6 +140,14 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
+     * Example: Given Admin User created "Shipping Rule 5" with next data:
+     *            | Enabled       | true      |
+     *            | Currency      | EUR       |
+     *            | Sort Order    | -1        |
+     *            | Type          | Per Order |
+     *            | Price         | 5         |
+     *            | HandlingFee   | 1.5       |
+     *
      * @Given Admin User created :shoppingRuleName with next data:
      */
     public function adminUserCreatedWithNextData($shoppingRuleName, TableNode $table)
@@ -176,7 +192,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
-     * @When Buyer is again on Shipping Method Checkout step on :arg1
+     * @When Buyer is again on Shipping Method Checkout step on :shoppingListName
      */
     public function buyerIsAgainOnShippingMethodCheckoutStepOn($shoppingListName)
     {
@@ -202,6 +218,13 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
+     * Example: Given Buyer created order with next shipping address:
+     *            | Country         | Ukraine              |
+     *            | City            | Kyiv                 |
+     *            | State           | Kyïvs'ka mis'ka rada |
+     *            | Zip/Postal Code | 01000                |
+     *            | Street          | Hreschatik           |
+     *
      * @When Buyer created order with next shipping address:
      */
     public function buyerCreatedOrderWithNextShippingAddress(TableNode $table)

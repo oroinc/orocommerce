@@ -82,7 +82,7 @@ datagrids:
                 type:          navigate
                 label:         oro.grid.action.view
                 link:          view_link
-                icon:          eye-open
+                icon:          eye
                 acl_resource:  oro_sale_quote_view
                 rowAction:     true
 
@@ -301,8 +301,7 @@ datagrids:
                     data_name: quote.createdAt
                 validUntil:
                     data_name: quote.validUntil
-            default:
-                id: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+            disable_default_sorting: true
         filters:
             columns:
                 qid:
@@ -332,5 +331,5 @@ datagrids:
                 type:          navigate
                 label:         oro.grid.action.view
                 link:          view_link
-                icon:          eye-open
+                icon:          eye
                 rowAction:     true

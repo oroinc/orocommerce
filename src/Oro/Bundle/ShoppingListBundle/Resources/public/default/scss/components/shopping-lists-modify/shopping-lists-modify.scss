@@ -1,3 +1,5 @@
+// @theme: default
+
 .shopping-lists-modify {
     margin: 0 -16px 0 -10px;
     padding: 0;
@@ -38,12 +40,24 @@
         margin-left: 4px;
     }
 
+    &__edit {
+        display: inline-block;
+        vertical-align: middle;
+    }
+
     &__button {
         display: inline-block;
         padding: 0;
 
         border: 0;
         background: transparent;
+        color: get-color('additiolal', 'ultra');
+
+        @include badge($badge-size: 26px, $badge-f-size: 14px, $badge-radius: 3px);
+
+        &.reset {
+            background-color: get-color('additional', 'dark');
+        }
 
         &[disabled] {
             opacity: .5;

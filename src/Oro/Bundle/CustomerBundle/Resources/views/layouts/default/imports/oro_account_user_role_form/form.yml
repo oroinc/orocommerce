@@ -11,15 +11,15 @@ layout:
                 __account_user_role_form_errors:
                     blockType: form_errors
                     options:
-                        form: '=data["oro_account_frontend_account_user_role_form"].getRoleForm(data["entity"]).getView()'
+                        form: '=data["oro_account_frontend_account_user_role_form"].getRoleFormView(data["entity"])'
                 __account_user_role_form_start:
                     blockType: form_start
                     options:
-                        form: '=data["oro_account_frontend_account_user_role_form"].getRoleForm(data["entity"])'
+                        form: '=data["oro_account_frontend_account_user_role_form"].getRoleFormView(data["entity"])'
                 __account_user_role_form_fields:
                     blockType: form_fields
                     options:
-                        form: '=data["oro_account_frontend_account_user_role_form"].getRoleForm(data["entity"])'
+                        form: '=data["oro_account_frontend_account_user_role_form"].getRoleFormView(data["entity"])'
                 __account_user_role_form_users:
                     blockType: account_user_role_users_datagrid
                     options:
@@ -27,11 +27,11 @@ layout:
                         grid_parameters:
                             role: '=data["entity"].getId()'
                             account: '=data["entity"].getAccount()'
-                        form: '=data["oro_account_frontend_account_user_role_form"].getRoleForm(data["entity"])'
+                        form: '=data["oro_account_frontend_account_user_role_form"].getRoleFormView(data["entity"])'
                 __account_user_role_form_end:
                     blockType: form_end
                     options:
-                        form: '=data["oro_account_frontend_account_user_role_form"].getRoleForm(data["entity"])'
+                        form: '=data["oro_account_frontend_account_user_role_form"].getRoleFormView(data["entity"])'
                 __account_user_role_form_actions_top:
                     blockType: container
                 __account_user_role_form_actions_update_top:
@@ -41,14 +41,14 @@ layout:
                         text: oro.customer.action.account_user_role.save_label
                         style: auto
                         attr:
-                            'class': role-submit
+                            'class': 'role-submit '
                 __account_user_role_form_actions_cancel_top:
                     blockType: link
                     options:
                         route_name: oro_customer_frontend_account_user_role_index
                         text: oro.customer.action.account_user_role.cancel_label
                         attr:
-                            'class': btn theme-btn btn-gray
+                            'class': 'btn '
                 __account_user_role_form_actions_bottom:
                     blockType: container
                 __account_user_role_form_actions_update_bottom:
@@ -58,14 +58,14 @@ layout:
                         text: oro.customer.action.account_user_role.save_label
                         style: auto
                         attr:
-                            'class': role-submit
+                            'class': 'role-submit '
                 __account_user_role_form_actions_cancel_bottom:
                     blockType: link
                     options:
                         route_name: oro_customer_frontend_account_user_role_index
                         text: oro.customer.action.account_user_role.cancel_label
                         attr:
-                            'class': btn theme-btn btn-gray
+                            'class': 'btn btn-primary '
             tree:
                 __root:
                     __account_user_role_container:

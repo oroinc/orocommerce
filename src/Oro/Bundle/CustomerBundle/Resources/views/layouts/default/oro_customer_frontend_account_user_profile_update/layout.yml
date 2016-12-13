@@ -1,28 +1,15 @@
 layout:
-    imports:
-        - oro_account_menu
     actions:
         - '@setBlockTheme':
             themes: 'OroCustomerBundle:layouts:default/oro_customer_frontend_account_user_profile_update/layout.html.twig'
         - '@setFormTheme':
             themes: 'OroCustomerBundle:layouts:default/oro_customer_frontend_account_user_profile_update/form_theme.html.twig'
 
-        - '@appendOption':
-            id: title
-            optionName: value
-            optionValue:
-                - 'oro.customer.accountuser.profile.edit'
-
         - '@setOption':
             id: page_title
             optionName: text
             optionValue:
                 label: 'oro.customer.accountuser.profile.edit'
-
-        - '@setOption':
-            id: content
-            optionName: class_prefix
-            optionValue: 'user'
 
         - '@addTree':
             items:
@@ -33,15 +20,15 @@ layout:
                 account_profile_edit_form_start:
                     blockType: form_start
                     options:
-                        form: '=data["oro_account_frontend_account_user_form"].getProfileForm(data["entity"])'
+                        form: '=data["oro_account_frontend_account_user_form"].getProfileFormView(data["entity"])'
                 account_profile_edit_form_fields:
                     blockType: form_fields
                     options:
-                        form: '=data["oro_account_frontend_account_user_form"].getProfileForm(data["entity"])'
+                        form: '=data["oro_account_frontend_account_user_form"].getProfileFormView(data["entity"])'
                 account_profile_edit_form_end:
                     blockType: form_end
                     options:
-                        form: '=data["oro_account_frontend_account_user_form"].getProfileForm(data["entity"])'
+                        form: '=data["oro_account_frontend_account_user_form"].getProfileFormView(data["entity"])'
                 account_profile_edit_form_actions:
                     blockType: container
                 account_profile_edit_form_actions_cancel:
@@ -50,7 +37,7 @@ layout:
                         route_name: oro_customer_frontend_account_user_profile
                         text: oro.customer.action.account_user_role.cancel_label
                         attr:
-                            'class': btn theme-btn btn-gray
+                            'class': 'btn '
                 account_profile_edit_form_actions_create:
                     blockType: button
                     options:
@@ -58,9 +45,9 @@ layout:
                         text: oro.customer.action.account_user_role.save_label
                         style: auto
                         attr:
-                            'class': role-submit
+                            'class': 'role-submit '
             tree:
-                content:
+                page_content:
                     account_profile_edit_page:
                         account_profile_edit_form_start: ~
                         account_profile_edit_form_fields: ~

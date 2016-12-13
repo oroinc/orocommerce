@@ -8,6 +8,8 @@ services:
         arguments:
             - "@doctrine"
             - "@oro_frontend.request.frontend_helper"
+        tags:
+            - { name: doctrine.event_listener, event: onClear }
 
     oro_website.twig.website_extension:
         class: 'Oro\Bundle\WebsiteBundle\Twig\OroWebsiteExtension'
@@ -33,29 +35,19 @@ services:
         class: 'Oro\Bundle\WebsiteBundle\Model\Action\AssignCurrentWebsite'
         public: false
         arguments:
-            - '@oro_action.context_accessor'
+            - '@oro_action.expression.context_accessor'
             - '@oro_website.manager'
         tags:
             - { name: oro_action.action, alias: assign_current_website }
-            - { name: oro_workflow.action, alias: assign_current_website }
 
-    oro_website.translation.strategy.composite_fallback_strategy:
-        class: 'Oro\Bundle\WebsiteBundle\Translation\Strategy\CompositeFallbackStrategy'
+    oro_website.translation.strategy.frontend_fallback_strategy:
+        class: 'Oro\Bundle\WebsiteBundle\Translation\Strategy\FrontendFallbackStrategy'
         public: false
         arguments:
             - '@oro_frontend.request.frontend_helper'
             - '@oro_locale.translation.strategy.localization_fallback_strategy'
-            - '@oro_translation.strategy.default'
-
-    oro_website.translation.cache_warmer.composite:
-        class: 'Oro\Bundle\WebsiteBundle\Translation\CacheWarmer\CompositeTranslationCacheWarmer'
-        public: false
-        decorates: 'translation.warmer'
-        decoration_inner_name: 'translation.warmer.default'
-        arguments:
-            - '@translation.warmer.default'
-            - '@oro_translation.strategy.provider'
-            - '@oro_locale.translation.strategy.localization_fallback_strategy'
+        tags:
+            - { name: oro_translation.extension.translation_strategy, priority: -100 }
 
     oro_website.event_listener.routing:
         class: 'Oro\Bundle\WebsiteBundle\EventListener\RoutingListener'
@@ -63,13 +55,6 @@ services:
             - '@oro_website.manager'
         tags:
             - { name: kernel.event_listener, event: kernel.request, method: onRequest, priority: -50 }
-
-    oro_website.event_listener.install_command:
-        class: 'Oro\Bundle\WebsiteBundle\EventListener\InstallCommandListener'
-        arguments:
-            - '@oro_config.global'
-        tags:
-            - { name: kernel.event_listener, event: console.terminate, method: onTerminate }
 
     oro_website.resolver.website_url_resolver:
         class: 'Oro\Bundle\WebsiteBundle\Resolver\WebsiteUrlResolver'
@@ -84,3 +69,16 @@ services:
             - '@oro_website.resolver.website_url_resolver'
         tags:
             - { name: twig.extension }
+
+    oro_website.entity_listener.website:
+        class: 'Oro\Bundle\WebsiteBundle\Entity\EntityListener\WebsiteEntityListener'
+        public: false
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: '%oro_website.entity.website.class%', event: prePersist }
+
+    oro_website.provider.website_localization:
+        class: 'Oro\Bundle\WebsiteBundle\Provider\WebsiteLocalizationProvider'
+        arguments:
+            - '@oro_config.manager'
+            - '@oro_locale.manager.localization'
+            - '@oro_entity.doctrine_helper'

@@ -15,9 +15,8 @@ define(function(require) {
         options: {
             buttonTemplate: '',
             removeButtonTemplate: '',
-            defaultClass: '',
-            editClass: '',
             buttonsSelector: '.add-to-shopping-list-button',
+            quantityField: '[data-name="field__quantity"]',
             messages: {
                 success: 'oro.form.inlineEditing.successMessage'
             },
@@ -68,6 +67,8 @@ define(function(require) {
                 this.model.on('change:unit', this._onModelChanged, this);
                 this.model.on('editLineItem', this._editLineItem, this);
             }
+
+            this.$el.closest('form').find(this.options.quantityField).on('keydown', _.bind(this._onQuantityEnter, this));
         },
 
         initModel: function(options) {
@@ -262,6 +263,21 @@ define(function(require) {
             }
         },
 
+        _onQuantityEnter: function(e) {
+            var ENTER_KEY_CODE = 13;
+
+            if (e.keyCode === ENTER_KEY_CODE && this.dropdownWidget.main.data('intention') == 'update') {
+                if (!this.dropdownWidget.validateForm()) {
+                    return;
+                }
+
+                this.model.set({
+                    quantity: parseInt($(e.target).val(), 10)
+                });
+                this._saveLineItem();
+            }
+        },
+
         transformCreateNewButton: function() {
             var $button = this.findNewButton();
             if ($button.length) {
@@ -274,8 +290,6 @@ define(function(require) {
 
         updateMainButton: function() {
             if (this.dropdownWidget.main && this.dropdownWidget.main.data('shoppinglist')) {
-                this.toggleButtonsClass();
-
                 this.setButtonLabel(this.dropdownWidget.main);
                 this.setButtonLabel(this.dropdownWidget.main.data('clone'));
 
@@ -283,18 +297,6 @@ define(function(require) {
             }
 
             this.initButtons();
-        },
-
-        toggleButtonsClass: function() {
-            if (!this.model) {
-                return;
-            }
-
-            if (_.isEmpty(this.editShoppingList)) {
-                this.dropdownWidget.group.removeClass(this.options.editClass).addClass(this.options.defaultClass);
-            } else {
-                this.dropdownWidget.group.removeClass(this.options.defaultClass).addClass(this.options.editClass);
-            }
         },
 
         setButtonLabel: function($button) {

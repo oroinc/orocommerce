@@ -29,10 +29,10 @@
     font-size: 21px;
     font-weight: 700;
     line-height: 1;
-    text-shadow: 0 1px 0 $base-white-color;
+    text-shadow: 0 1px 0 get-color('additional', 'ultra');
 
     background: 0 0;
-    color: $base-dark-color;
+    color: get-color('additional', 'darker');
 
     opacity: .2;
     cursor: pointer;

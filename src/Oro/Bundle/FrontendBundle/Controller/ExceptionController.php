@@ -20,10 +20,20 @@ class ExceptionController extends BaseExceptionController
             $code = $this->getStatusCode($exception);
             $text = $this->getStatusText($code);
             $url = $container->get('router')->generate('oro_frontend_exception', ['code' => $code, 'text' => $text]);
-            return $container->get('kernel')->handle(Request::create($url));
-        } else {
-            return parent::showAction($request, $exception, $logger);
+
+            $subRequest = Request::create(
+                $url,
+                'GET',
+                [],
+                $request->cookies->all(),
+                $request->files->all(),
+                $request->server->all()
+            );
+
+            return $container->get('kernel')->handle($subRequest);
         }
+
+        return parent::showAction($request, $exception, $logger);
     }
 
     /**

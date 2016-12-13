@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CheckoutBundle\WorkflowState\Mapper;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\Factory\ShippingContextProviderFactory;
+use Oro\Bundle\CheckoutBundle\Factory\CheckoutShippingContextFactory;
 use Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider;
 
 class ShippingMethodDiffMapper implements CheckoutStateDiffMapperInterface
@@ -16,20 +16,20 @@ class ShippingMethodDiffMapper implements CheckoutStateDiffMapperInterface
     protected $shippingPriceProvider;
 
     /**
-     * @var ShippingContextProviderFactory
+     * @var CheckoutShippingContextFactory
      */
-    protected $shippingContextProviderFactory;
+    protected $shippingContextFactory;
 
     /**
-     * @param ShippingPriceProvider $shippingPriceProvider
-     * @param ShippingContextProviderFactory $shippingContextProviderFactory
+     * @param ShippingPriceProvider          $shippingPriceProvider
+     * @param CheckoutShippingContextFactory $shippingContextFactory
      */
     public function __construct(
         ShippingPriceProvider $shippingPriceProvider,
-        ShippingContextProviderFactory $shippingContextProviderFactory
+        CheckoutShippingContextFactory $shippingContextFactory
     ) {
         $this->shippingPriceProvider = $shippingPriceProvider;
-        $this->shippingContextProviderFactory = $shippingContextProviderFactory;
+        $this->shippingContextFactory = $shippingContextFactory;
     }
 
     /**
@@ -56,18 +56,18 @@ class ShippingMethodDiffMapper implements CheckoutStateDiffMapperInterface
     {
         $shippingMethod = $checkout->getShippingMethod();
         if ($shippingMethod) {
-            $shippingContext = $this->shippingContextProviderFactory->create($checkout);
-            $allMethodsData = $this->shippingPriceProvider->getApplicableMethodsWithTypesData($shippingContext);
-
-            if (array_key_exists($checkout->getShippingMethod(), $allMethodsData)) {
-                $method = $allMethodsData[$checkout->getShippingMethod()];
-                foreach ($method['types'] as $type) {
-                    if (array_key_exists('identifier', $type)
-                        && $type['identifier'] === $checkout->getShippingMethodType()
-                    ) {
-                        return md5(serialize($method));
-                    }
-                }
+            $shippingMethodType = $checkout->getShippingMethodType();
+            $price = $this->shippingPriceProvider->getPrice(
+                $this->shippingContextFactory->create($checkout),
+                $shippingMethod,
+                $shippingMethodType
+            );
+            if ($price) {
+                return md5(serialize([
+                    'method' => $shippingMethod,
+                    'type' => $shippingMethodType,
+                    'price' => $price,
+                ]));
             }
         }
 

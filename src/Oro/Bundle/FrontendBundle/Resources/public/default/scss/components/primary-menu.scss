@@ -1,0 +1,56 @@
+// @theme: default
+
+.primary-menu {
+    &__item {
+        position: relative;
+
+        &--current {
+            font-weight: $primary-menu-link-font-weight-current;
+
+            &:before {
+                top: 10px;
+                left: 0;
+
+                width: 7px;
+                height: 7px;
+
+                border-radius: 50%;
+                background: get-color('primary', 'base');
+
+                @include after();
+            }
+        }
+    }
+
+    &__badge {
+        i {
+            vertical-align: middle;
+        }
+    }
+}
+
+@include breakpoint('tablet') {
+    .primary-menu {
+        &__item {
+            padding: $primary-menu-item-inner-offset-tablet-small;
+
+            border-top: 1px solid get-color('additional', 'light');
+
+            &--current {
+                &:before {
+                    content: none;
+                }
+
+                .primary-menu__link {
+                    color: inherit;
+                }
+            }
+        }
+
+        .fa-minus,
+        .fa-plus {
+            right: 13px;
+            top: 15px;
+        }
+    }
+}

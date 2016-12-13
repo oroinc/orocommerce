@@ -13,7 +13,7 @@ use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 use Oro\Component\Action\Action\AbstractAction;
 use Oro\Component\Action\Exception\InvalidParameterException;
-use Oro\Component\Action\Model\ContextAccessor;
+use Oro\Component\ConfigExpression\ContextAccessor;
 
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface;
@@ -196,7 +196,7 @@ class StartCheckout extends AbstractAction
         $sourceEntity = $this->contextAccessor->getValue($context, $this->options[self::SOURCE_ENTITY_KEY]);
 
         $sourceRepository = $em->getRepository('OroCheckoutBundle:CheckoutSource');
-        $checkoutSource = $sourceRepository->findOneBy([$sourceFieldName => $sourceEntity])
+        $checkoutSource = $sourceRepository->findOneBy([$sourceFieldName => $sourceEntity, 'deleted' => false])
             ?: $this->createCheckoutSource($sourceFieldName, $sourceEntity);
 
         $checkout = $this->getCheckout($checkoutSource);

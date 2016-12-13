@@ -1,8 +1,8 @@
 {% block _quote_view_controls_list_widget %}
     <ul class="oro-order__controls-list">
-        <li><a href="#"><i class="cf-reply"></i>Share</a></li>
-        <li><a href="#"><i class="cf-print"></i>Print</a></li>
-        <li><a href="#"><i class="cf-insert_drive_file"></i>Save PDF</a></li>
+        <li><a href="#"><i class="fa-reply"></i>Share</a></li>
+        <li><a href="#"><i class="fa-print"></i>Print</a></li>
+        <li><a href="#"><i class="fa-file"></i>Save PDF</a></li>
     </ul>
 {% endblock %}
 
@@ -58,10 +58,10 @@
                                 <td>{{ quote.shippingEstimate|oro_format_price }}</td>
                             </tr>
                             {% endif %}
-                            {% if quote.paymentTerm is not empty %}
+                            {% if paymentTerm is defined and paymentTerm is not empty %}
                                 <tr class="account-oq__order-info__control">
-                                    <td class="account-oq__order-info__title">{{ 'oro.frontend.sale.quote.payment_term.label'|trans }}</td>
-                                    <td>{{ quote.paymentTerm.label|escape }}</td>
+                                    <td class="account-oq__order-info__title">{{ 'oro.paymentterm.entity_label'|trans }}</td>
+                                    <td>{{ paymentTerm.label|escape }}</td>
                                 </tr>
                             {% endif %}
                             {{ block_widget(block) }}
@@ -168,7 +168,7 @@
 
                 <div class="order-checkout-widget order-checkout-widget_block text-right">
                     <div class="order-builder-clear-btn">
-                        <a href="{{ path('oro_sale_quote_frontend_index') }}"><i class="cf-left-open-mini"></i><span>{{ 'oro.frontend.sale.quote.sections.back.label'|trans }}</span></a>
+                        <a href="{{ path('oro_sale_quote_frontend_index') }}"><i class="fa-angle-left"></i><span>{{ 'oro.frontend.sale.quote.sections.back.label'|trans }}</span></a>
                     </div>
                 </div>
             </div>
@@ -263,7 +263,7 @@
                     {% endfor %}
                     </tbody>
                 </table>
-                <a href="{{ path('oro_sale_quote_frontend_index') }}"><i class="cf-left-open-mini"></i><span>{{ 'oro.frontend.sale.quote.sections.back.label'|trans }}</span></a>
+                <a href="{{ path('oro_sale_quote_frontend_index') }}"><i class="fa-angle-left"></i><span>{{ 'oro.frontend.sale.quote.sections.back.label'|trans }}</span></a>
             </div>
         </div>
     </div>

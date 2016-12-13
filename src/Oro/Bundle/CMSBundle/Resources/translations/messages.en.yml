@@ -3,24 +3,19 @@ oro.cms:
         entity_label:           'Landing Page'
         entity_plural_label:    'Landing Pages'
         id.label:               'ID'
-        title.label:            'Title'
+        titles:
+            label:              'Titles'
+            singular_label:     'Title'
         content.label:          'Content'
         organization.label:     'Organization'
-        current_slug.label:     'Current slug'
-        related_slugs.label:    'Related slugs'
-        left.label:             'Tree left index'
-        level.label:            'Tree level'
-        right.label:            'Tree right index'
-        root.label:             'Tree root'
-        child_pages.label:      'Child pages'
-        parent_page.label:      'Parent page'
-        slugs.label:            'Slugs'
-    child_page:
-        entity_label:           'Child page'
-    slug:
-        update_to:             'Update to'
-        redirect:              'Redirect visitors from %old_slug%'
-        leave_as_is:           'Leave as is %old_slug%'
+        slugs:
+            label:              'Slugs'
+            singular_label:     'Slug'
+        slug_prototypes:
+            label:              'Slug Prototypes'
+            singular_label:     'Slug Prototype'
+        form.choose:            'Choose a Landing Page...'
+        content_variant_type.label: 'Landing Page'
 
     controller:
         page.saved.message: 'Page has been saved'
@@ -34,9 +29,6 @@ oro.cms:
     sections:
         general: 'General'
         content: 'Content'
-
-    template:
-        select_existing_or_create_new: 'Please select a page on the left or create new one.'
 
     loginpage:
         entity_plural_label: 'Customer Login Pages'

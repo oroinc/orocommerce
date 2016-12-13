@@ -2,16 +2,13 @@ layout:
     imports:
         -
             id: oro_account_user_view
-            root: content
-        - oro_account_menu
+            root: page_content
     actions:
-        - '@appendOption':
+        - '@setOption':
             id: title
-            optionName: value
+            optionName: params
             optionValue:
-                - 'oro.customer.menu.account_user.label'
-                - 'oro.customer.frontend.account_user.entity_plural_label'
-                - '=data["entity"].getFullName()'
+                '%user%': '=data["entity"].getFullName()'
 
         - '@setOption':
             id: page_title
@@ -20,11 +17,6 @@ layout:
                 label: 'oro.customer.frontend.title.account_user.view'
                 parameters:
                     '%identifier%': '=data["entity"].getFullName()'
-
-        - '@setOption':
-            id: content
-            optionName: class_prefix
-            optionValue: 'user'
 
         - '@add':
             id: account_user_list_link

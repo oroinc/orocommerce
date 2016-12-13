@@ -38,26 +38,30 @@
 
 {% block _middle_bar_search_widget %}
     {% set attr = attr|merge({
-    class: attr.class|default('') ~ " search-widget search-widget_centered search-widget_has-options bordered radiused not-implemented"
+        class: attr.class|default('') ~ " search-widget-wrap"
     }) %}
+
+    {% set dom_relocation_options =  {
+        responsive: [
+            {
+                breakpoint: 1099,
+                moveTo: "[data-header-row-search-container]"
+            }
+        ]
+    }|json_encode %}
     <div {{ block('block_attributes') }}>
-        <div class="search-widget__options">
-            <button class="search-widget__options__btn" type="submit" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                <span class="options__btn__text">All</span>
-                <i class="icon-down-open-mini"></i>
+        <form  id="oro_website_search_search"
+               action="{{ url('oro_website_search_results') }}"
+               method="GET"
+               novalidate="novalidate"
+               class="search-widget"
+               data-dom-relocation
+               data-dom-relocation-options="{{ dom_relocation_options }}"
+        >
+            <input class="search-widget__input input input--full" type="text" placeholder="{{ 'oro.website_search.search_field_placeholder'|trans({}, translation_domain) }}" value="" name="search"/>
+            <button name="oro_website_search_search_button" class="search-widget__submit" type="submit">
+                <i class="fa-search fa--base-line"></i>
             </button>
-            <ul class="dropdown-menu">
-                <li><a href="#">Search All Items</a></li>
-                <li><a href="#">Search department 1</a></li>
-                <li><a href="#">Search department 2</a></li>
-                <li><a href="#">Search department 3</a></li>
-            </ul>
-        </div>
-        <div class="search-widget__container">
-            <input class="search-widget__input" type="text" placeholder="Search for a product" value="" />
-            <button class="search-widget__submit" type="submit">
-                <i class="icon-search"></i>
-            </button>
-        </div>
+        </form>
     </div>
 {% endblock %}

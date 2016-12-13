@@ -1,40 +1,56 @@
 .checkout-navigation {
-  @include list-normalize();
+    @include list-normalize();
 
-  margin: 30px 0 0 16px;
-  border-left: 2px solid $theme-lighter-gray-color;
+    margin: 0 0 0 15px;
+    border-left: 2px solid get-color('additional', 'light');
 
-  &__step {
-    position: relative;
+    &__step {
+        position: relative;
 
-    padding: 0 0 30px 24px;
+        padding: 0 0 30px 24px;
 
-    &:last-child {
-      padding-bottom: 0;
+        &:last-child {
+            padding-bottom: 0;
+        }
+
+        &--past {
+            padding: 0 0 20px 24px;
+        }
     }
 
-    .badge {
-      position: absolute;
-      top: 0;
-      left: -16px;
+    &__title {
+        color: get-color('additional', 'dark');
+        font-size: 16px;
+        line-height: 1.875;
 
-      font-weight: 700;
+        white-space: nowrap;
     }
 
-    &--past {
-      padding: 0 0 20px 24px;
+    &__content {
+        font-style: italic;
     }
-  }
 
-  &__title {
-    color: $base-font-color-lighter;
-    font-size: 16px;
-    line-height: 1.875;
+    &__icon {
+        $icon-size: 30px;
 
-    white-space: nowrap;
-  }
+        position: absolute;
+        top: 0;
+        left: -$icon-size / 2;
 
-  &__content {
-    font-style: italic;
-  }
+        font-weight: 700;
+
+        @include badge($icon-size, 16px, get-color('additional', 'middle'));
+
+        &--current {
+            background-color: get-color('primary', 'base');
+        }
+
+        &--complete {
+            $icon-complete: #7ea6a4 !default;
+
+            color: get-color('additional', 'ultra');
+            background-color: $icon-complete;
+        }
+
+    }
 }

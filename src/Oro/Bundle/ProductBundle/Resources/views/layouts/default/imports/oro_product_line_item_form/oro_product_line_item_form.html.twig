@@ -6,6 +6,11 @@
 {% endblock %}
 
 {% block __oro_product_line_item_form__line_item_form_fields_widget %}
+    {% set class_prefix = 'line_item_form_fields' %}
+    {% do block|merge_context({
+        class_prefix: class_prefix
+    }) %}
+    {% do set_class_prefix_to_form(form, class_prefix) %}
     {% if renderCache is not defined %}
         {% set renderCache %}
             {% set attr = layout_attr_defaults(attr, {
@@ -34,10 +39,18 @@
 
 {% block __oro_product_line_item_form__line_item_form_buttons_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
+
+    {% if 'list-view' in class_prefix %}
+        {% set decoreClass = 'btn--size-m btn--info' %}
+    {% else %}
+        {% set decoreClass = 'btn--info' %}
+    {% endif %}
+
     {% if block.children is not empty %}
         {% set attr = layout_attr_defaults(attr, {
             '~class': ' add-product-from-view-component '
         }) %}
+
         <div {{ block('block_attributes') }}>
             {{ UI.pinnedDropdownButton({
                 'html': block_widget(block),
@@ -49,8 +62,9 @@
                     'widgetModule': 'oroproduct/js/content-processor/product-add-to-dropdown-button',
                     'widgetName': 'productAddToDropdownButtonProcessor',
                     'truncateLength': 25,
-                    'groupContainer': '<div id="add-to-shopping-list" class="btn btn-block btn-dark btn_has-dropdown btn_has-dropdown_lg width-auto"></div>',
-                    'appendToBody': true
+                    'groupContainer': '<div id="add-to-shopping-list" class="btn-group full"></div>',
+                    'appendToBody': true,
+                    'decoreClass': decoreClass
                 }
             }) }}
         </div>

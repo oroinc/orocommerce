@@ -23,12 +23,6 @@ class PageControllerTest extends WebTestCase
     const UPDATED_DEFAULT_PAGE_TITLE        = 'Updated Page Title';
     const UPDATED_DEFAULT_PAGE_SLUG_TEXT    = 'updated-page-title';
     const UPDATED_DEFAULT_PAGE_SLUG_URL     = '/updated-page-title';
-    const DEFAULT_SUBPAGE_TITLE             = 'Subpage Title';
-    const DEFAULT_SUBPAGE_SLUG_TEXT         = 'subpage-title';
-    const DEFAULT_SUBPAGE_SLUG_URL          = '/page-title/subpage-title';
-    const UPDATED_DEFAULT_SUBPAGE_TITLE     = 'Updated Subpage Title';
-    const UPDATED_DEFAULT_SUBPAGE_SLUG_TEXT = 'updated-subpage-title';
-    const UPDATED_DEFAULT_SUBPAGE_SLUG_URL  = '/page-title/updated-subpage-title';
 
     const SLUG_MODE_NEW      = 'new';
     const SLUG_MODE_OLD      = 'old';
@@ -64,16 +58,6 @@ class PageControllerTest extends WebTestCase
     public function testCreatePage()
     {
         return $this->assertCreate(self::DEFAULT_PAGE_TITLE, self::DEFAULT_PAGE_SLUG_TEXT);
-    }
-
-    /**
-     * @depends testCreatePage
-     * @param int $id
-     * @return int
-     */
-    public function testCreateSubPage($id)
-    {
-        return $this->assertCreate(self::DEFAULT_SUBPAGE_TITLE, self::DEFAULT_SUBPAGE_SLUG_TEXT, $id);
     }
 
     /**
@@ -137,26 +121,6 @@ class PageControllerTest extends WebTestCase
     }
 
     /**
-     * @depends testCreateSubPage
-     * @param int $id
-     * @return int
-     */
-    public function testEditSubPage($id)
-    {
-        $this->assertSlugs(self::DEFAULT_SUBPAGE_SLUG_URL, array(), $id);
-
-        return $this->assertEdit(
-            self::DEFAULT_SUBPAGE_TITLE,
-            self::DEFAULT_SUBPAGE_SLUG_URL,
-            self::UPDATED_DEFAULT_SUBPAGE_TITLE,
-            self::UPDATED_DEFAULT_SUBPAGE_SLUG_TEXT,
-            self::UPDATED_DEFAULT_SUBPAGE_SLUG_URL,
-            self::SLUG_MODE_NEW,
-            $id
-        );
-    }
-
-    /**
      * @depends testEditPageWithNewSlugAndRedirect
      * @param int $id
      */
@@ -165,7 +129,6 @@ class PageControllerTest extends WebTestCase
         $this->assertSlugs(self::DEFAULT_PAGE_SLUG_URL, array(self::UPDATED_DEFAULT_PAGE_SLUG_URL), $id);
 
         $page = $this->entityManager->find('OroCMSBundle:Page', $id);
-        $children = $page->getChildPages();
 
         $this->client->request(
             'GET',
@@ -196,24 +159,18 @@ class PageControllerTest extends WebTestCase
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 404);
-
-        // Check all child page are deleted
-        foreach ($children as $childPage) {
-            $this->assertNull($this->entityManager->find('OroCMSBundle:Page', $childPage->getId()));
-        }
     }
 
     /**
      * @param string $title
      * @param string $slug
-     * @param int $parentId
      * @return int
      */
-    protected function assertCreate($title, $slug, $parentId = null)
+    protected function assertCreate($title, $slug)
     {
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('oro_cms_page_create', ['id' => $parentId])
+            $this->getUrl('oro_cms_page_create')
         );
 
         /** @var Form $form */

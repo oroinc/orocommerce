@@ -15,27 +15,40 @@ datagrids:
         options:
             access_level_route: oro_customer_frontend_acl_access_levels
 
+    account-user-workflow-permission-grid:
+        extends: workflow-permission-grid
+        source:
+            type: account-user-workflow-permission-grid-provider
+        acl_resource: oro_account_account_user_role_update
+        options:
+            access_level_route: oro_account_acl_access_levels
+
     account-accounts-select-grid:
+        extended_entity_name: %oro_customer.entity.account.class%
         acl_resource: oro_customer_account_view
         options:
             entityHint:        account
+        inline_editing:
+            enable: true
+            behaviour: enable_selected
+            entity_name: %oro_customer.entity.account.class%
         source:
             type:         orm
             query:
                 select:
-                    - account.id
-                    - account.name
+                    - customer.id
+                    - customer.name
                     - account_group.name as group_name
                     - parent.name as parent_name
                     - internalRating.name as internal_rating_name
                     - internalRating.id as internal_rating_id
                 from:
-                    - { table: %oro_customer.entity.account.class%, alias: account }
+                    - { table: %oro_customer.entity.account.class%, alias: customer }
                 join:
                     left:
-                        - { join: account.group, alias: account_group }
-                        - { join: account.parent, alias: parent }
-                        - { join: account.internal_rating, alias: internalRating }
+                        - { join: customer.group, alias: account_group }
+                        - { join: customer.parent, alias: parent }
+                        - { join: customer.internal_rating, alias: internalRating }
         columns:
             name:
                 label: oro.customer.account.name.label
@@ -50,7 +63,7 @@ datagrids:
         sorters:
             columns:
                 name:
-                    data_name: account.name
+                    data_name: customer.name
                 group_name:
                     data_name: group_name
                 parent_name:
@@ -63,7 +76,7 @@ datagrids:
             columns:
                 name:
                     type:      string
-                    data_name: account.name
+                    data_name: customer.name
                 group_name:
                     type:      entity
                     data_name: account_group.id
@@ -94,11 +107,12 @@ datagrids:
                 type:         navigate
                 label:        oro.grid.action.view
                 link:         view_link
-                icon:         eye-open
+                icon:         eye
                 acl_resource: oro_customer_account_view
                 rowAction:    true
 
     account-groups-select-grid:
+        extended_entity_name: %oro_customer.entity.account_group.class%
         acl_resource: oro_customer_account_group_view
         options:
             entityHint:        account group
@@ -149,20 +163,20 @@ datagrids:
                 type:         navigate
                 label:        oro.grid.action.view
                 link:         view_link
-                icon:         eye-open
+                icon:         eye
                 acl_resource: oro_customer_account_group_view
                 rowAction:    true
             update:
                 type:          navigate
                 label:         oro.grid.action.update
                 link:          update_link
-                icon:          edit
+                icon:          pencil-square-o
                 acl_resource:  oro_customer_account_group_update
             delete:
                 type:          delete
                 label:         oro.grid.action.delete
                 link:          delete_link
-                icon:          trash
+                icon:          trash-o
                 acl_resource:  oro_customer_account_group_delete
 
     account-group-accounts-grid-basic:
@@ -171,14 +185,14 @@ datagrids:
             type: orm
             query:
                 select:
-                    - account.id
-                    - account.name
+                    - customer.id
+                    - customer.name
                     - parent.name as parent_name
                 from:
-                    - { table: %oro_customer.entity.account.class%, alias: account }
+                    - { table: %oro_customer.entity.account.class%, alias: customer }
                 join:
                     left:
-                        - { join: account.parent, alias: parent }
+                        - { join: customer.parent, alias: parent }
         properties:
             id: ~
             view_link:
@@ -188,14 +202,14 @@ datagrids:
         sorters:
             columns:
                 name:
-                    data_name: account.name
+                    data_name: customer.name
                 parent_name:
                     data_name: parent_name
         filters:
             columns:
                 name:
                     type:      string
-                    data_name: account.name
+                    data_name: customer.name
                 parent_name:
                     type:      string
                     data_name: parent_name
@@ -204,7 +218,7 @@ datagrids:
                 type:         navigate
                 label:        oro.grid.action.view
                 link:         view_link
-                icon:         eye-open
+                icon:         eye
                 acl_resource: oro_customer_account_view
         options:
             entityHint: account
@@ -215,7 +229,7 @@ datagrids:
             query:
                 where:
                     and:
-                        - account.group = :group
+                        - customer.group = :group
             bind_parameters:
                 - group
         columns:
@@ -230,21 +244,8 @@ datagrids:
             view:
                 rowAction: true
 
-    account-group-accounts-grid-update:
+    account-group-accounts-grid-update-basic:
         extends: account-group-accounts-grid-basic
-        source:
-            query:
-                select:
-                    - >
-                        (CASE WHEN (:group IS NOT NULL) THEN
-                            CASE WHEN (:group = account.group OR account.id IN (:data_in)) AND account.id NOT IN (:data_not_in)
-                            THEN true ELSE false END
-                        ELSE
-                            CASE WHEN account.id IN (:data_in) AND account.id NOT IN (:data_not_in)
-                            THEN true ELSE false END
-                        END) as hasGroup
-            bind_parameters:
-                - group
         columns:
             hasGroup:
                 label: oro.customer.account.has_group.label
@@ -272,6 +273,27 @@ datagrids:
                 selectors:
                     included: '#groupAppendAccounts'
                     excluded: '#groupRemoveAccounts'
+
+    account-group-accounts-grid-update:
+        extends: account-group-accounts-grid-update-basic
+        source:
+            query:
+                select:
+                    - >
+                        (CASE WHEN (:group = customer.group OR customer.id IN (:data_in)) AND customer.id NOT IN (:data_not_in)
+                        THEN true ELSE false END) as hasGroup
+            bind_parameters:
+                -
+                    name: group
+
+    account-group-accounts-grid-create:
+        extends: account-group-accounts-grid-update-basic
+        source:
+            query:
+                select:
+                    - >
+                        (CASE WHEN customer.id IN (:data_in) AND customer.id NOT IN (:data_not_in)
+                        THEN true ELSE false END) as hasGroup
 
     account-account-user-grid-no-filter-base:
         entity_name: %oro_customer.entity.account_user.class%
@@ -348,10 +370,10 @@ datagrids:
         source:
             query:
                 select:
-                    - account.name as accountName
+                    - customer.name as accountName
                 join:
                     inner:
-                        - { join: accountUser.account, alias: account }
+                        - { join: accountUser.account, alias: customer }
         columns:
             accountName:
                 label: oro.customer.accountuser.account.label
@@ -385,7 +407,7 @@ datagrids:
                 type:          navigate
                 label:         oro.grid.action.view
                 link:          view_link
-                icon:          eye-open
+                icon:          eye
                 acl_resource:  oro_account_account_user_view
                 rowAction:     true
         action_configuration: ['@oro_customer.datagrid.action_permission_provider', "getUserPermissions"]
@@ -404,7 +426,7 @@ datagrids:
                 type:          navigate
                 label:         oro.grid.action.view
                 link:          view_link
-                icon:          eye-open
+                icon:          eye
                 acl_resource:  oro_account_account_user_view
                 rowAction:     true
 
@@ -413,10 +435,10 @@ datagrids:
         source:
             query:
                 select:
-                    - account.name as accountName
+                    - customer.name as accountName
                 join:
                     inner:
-                        - { join: accountUser.account, alias: account }
+                        - { join: accountUser.account, alias: customer }
         columns:
             accountName:
                 label: oro.customer.accountuser.account.label
@@ -503,7 +525,7 @@ datagrids:
                 type:          navigate
                 label:         oro.grid.action.view
                 link:          view_link
-                icon:          eye-open
+                icon:          eye
                 rowAction:     true
 
     account-account-user-roles-grid:
@@ -549,11 +571,6 @@ datagrids:
         extends: basic-account-account-user-roles-grid
         source:
             skip_acl_apply: true
-            query:
-                where:
-                    and:
-                        - role.selfManaged = true
-                        - role.public = true
         properties:
             id: ~
             view_link:
@@ -577,19 +594,19 @@ datagrids:
                 type:          navigate
                 label:         oro.grid.action.view
                 link:          view_link
-                icon:          eye-open
+                icon:          eye
                 rowAction:     true
             update:
                 type:          navigate
                 label:         oro.grid.action.update
                 link:          update_link
-                icon:          edit
+                icon:          pencil-square-o
                 acl_resource:  oro_account_frontend_account_user_role_update
             delete:
                 type:          delete
                 label:         oro.grid.action.delete
                 link:          delete_link
-                icon:          trash
+                icon:          trash-o
                 acl_resource:  oro_account_frontend_account_user_role_delete
         action_configuration: ['@oro_customer.datagrid.action_permission_provider', "getAccountUserRolePermission"]
 
@@ -736,7 +753,7 @@ datagrids:
                 type:         navigate
                 label:        oro.grid.action.view
                 link:         view_link
-                icon:         eye-open
+                icon:         eye
                 acl_resource: oro_account_frontend_account_user_view
                 rowAction:    true
 
@@ -872,208 +889,6 @@ datagrids:
                     included: '#roleAppendUsers'
                     excluded: '#roleRemoveUsers'
 
-    account-category-visibility-grid:
-        source:
-            type:              orm
-            query:
-                select:
-                    - account.id
-                    - account.name
-                    - visibilityAlias
-                from:
-                    - { table: %oro_customer.entity.account.class%, alias: account }
-                join:
-                    left:
-                        - { join: %oro_customer.entity.account_category_visibility.class%, alias: visibilityAlias, conditionType: WITH, condition: 'visibilityAlias.account = account AND visibilityAlias.category = :target_entity_id' }
-            bind_parameters:
-                - target_entity_id
-        columns:
-            name:
-                label: oro.customer.account.name.label
-            visibility:
-                label: oro.customer.visibility.accountcategoryvisibility.entity_label
-                frontend_type: select
-                editable: true
-        sorters:
-            columns:
-                name:
-                    data_name: account.name
-                visibility:
-                    data_name: visibilityAlias.visibility
-            default:
-                name: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
-        filters:
-            columns:
-                name:
-                    type:      string
-                    data_name: account.name
-                visibility:
-                    type: choice
-                    data_name: visibilityAlias.visibility
-                    options:
-                        field_options:
-                            multiple: true
-        options:
-            cellSelection:
-                dataField: id
-                columnName:
-                    - visibility
-                selector: '#account-category-visibility-changeset'
-        properties:
-            id: ~
-
-    account-group-category-visibility-grid:
-        source:
-            type:              orm
-            query:
-                select:
-                    - accountGroup.id
-                    - accountGroup.name
-                from:
-                    - { table: %oro_customer.entity.account_group.class%, alias: accountGroup }
-                join:
-                    left:
-                        - { join: %oro_customer.entity.account_group_category_visibility.class%, alias: visibilityAlias, conditionType: WITH, condition: 'visibilityAlias.accountGroup = accountGroup AND visibilityAlias.category = :target_entity_id' }
-            bind_parameters:
-                - target_entity_id
-        columns:
-            name:
-                label: oro.customer.account.name.label
-            visibility:
-                label: oro.customer.visibility.accountgroupcategoryvisibility.entity_label
-                frontend_type: select
-                editable: true
-        sorters:
-            columns:
-                name:
-                    data_name: accountGroup.name
-                visibility:
-                    data_name: visibilityAlias.visibility
-            default:
-                name: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
-        filters:
-            columns:
-                name:
-                    type:      string
-                    data_name: accountGroup.name
-                visibility:
-                    type: choice
-                    data_name: visibilityAlias.visibility
-                    options:
-                        field_options:
-                            multiple: true
-        options:
-            cellSelection:
-                dataField: id
-                columnName:
-                    - visibility
-                selector: '#accountgroup-category-visibility-changeset'
-        properties:
-            id: ~
-
-    account-product-visibility-grid:
-        scope: website
-        source:
-            type:              orm
-            query:
-                select:
-                    - account.id
-                    - account.name
-                    - visibilityAlias
-                from:
-                    - { table: %oro_customer.entity.account.class%, alias: account }
-                join:
-                    left:
-                        - { join: %oro_customer.entity.account_product_visibility.class%, alias: visibilityAlias, conditionType: WITH, condition: 'visibilityAlias.account = account AND visibilityAlias.product = :target_entity_id  AND visibilityAlias.website = :website_id' }
-            bind_parameters:
-                - target_entity_id
-                - website_id
-        columns:
-            name:
-                label: oro.customer.account.name.label
-            visibility:
-                label: oro.customer.visibility.accountproductvisibility.entity_label
-                frontend_type: select
-                editable: true
-        sorters:
-            columns:
-                name:
-                    data_name: account.name
-                visibility:
-                    data_name: visibilityAlias.visibility
-            default:
-                name: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
-        filters:
-            columns:
-                name:
-                    type:      string
-                    data_name: account.name
-                visibility:
-                    type: choice
-                    data_name: visibilityAlias.visibility
-                    options:
-                        field_options:
-                            multiple: true
-        options:
-            cellSelection:
-                dataField: id
-                columnName:
-                    - visibility
-                selector: '#account-product-visibility-changeset'
-        properties:
-            id: ~
-
-    account-group-product-visibility-grid:
-        scope: website
-        source:
-            type:              orm
-            query:
-                select:
-                    - accountGroup.id
-                    - accountGroup.name
-                from:
-                    - { table: %oro_customer.entity.account_group.class%, alias: accountGroup }
-                join:
-                    left:
-                        - { join: %oro_customer.entity.account_group_product_visibility.class%, alias: visibilityAlias, conditionType: WITH, condition: 'visibilityAlias.accountGroup = accountGroup AND visibilityAlias.product = :target_entity_id AND visibilityAlias.website = :website_id' }
-            bind_parameters:
-                - target_entity_id
-                - website_id
-        columns:
-            name:
-                label: oro.customer.account.name.label
-            visibility:
-                label: oro.customer.visibility.accountgroupproductvisibility.entity_label
-                frontend_type: select
-                editable: true
-        sorters:
-            columns:
-                name:
-                    data_name: accountGroup.name
-                visibility:
-                    data_name: visibilityAlias.visibility
-            default:
-                name: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
-        filters:
-            columns:
-                name:
-                    type:      string
-                    data_name: accountGroup.name
-                visibility:
-                    type: choice
-                    data_name: visibilityAlias.visibility
-                    options:
-                        field_options:
-                            multiple: true
-        options:
-            cellSelection:
-                dataField: id
-                columnName:
-                    - visibility
-                selector: '#accountgroup-product-visibility-changeset'
-        properties:
-            id: ~
-
     frontend-account-account-user-grid:
         acl_resource: oro_account_frontend_account_user_view
         extends: account-account-user-grid-base
@@ -1096,20 +911,20 @@ datagrids:
                 type:          navigate
                 label:         oro.grid.action.view
                 link:          view_link
-                icon:          eye-open
+                icon:          eye
                 acl_resource:  oro_account_frontend_account_user_view
                 rowAction:     true
             update:
                 type:          navigate
                 label:         oro.grid.action.update
                 link:          update_link
-                icon:          edit
+                icon:          pencil-square-o
                 acl_resource:  oro_account_frontend_account_user_update
             delete:
                 type:          delete
                 label:         oro.grid.action.delete
                 link:          delete_link
-                icon:          trash
+                icon:          trash-o
                 acl_resource:  oro_account_frontend_account_user_delete
         action_configuration: ['@oro_customer.datagrid.action_permission_provider', "getUserPermissions"]
 
@@ -1186,11 +1001,7 @@ datagrids:
                     left:
                         - { join: address.country, alias: country}
                         - { join: address.region, alias: region}
-                where:
-                    and:
-                        - IDENTITY(address.frontendOwner) = :frontend_owner_id
-            bind_parameters:
-                - frontend_owner_id
+
         properties:
             id: ~
         columns:
@@ -1244,7 +1055,7 @@ datagrids:
                 icon:          map-marker
 
     frontend-account-account-address-grid:
-        acl_resource: oro_account_frontend_account_view
+        acl_resource: oro_account_frontend_account_address_view
         extends: frontend-account-address-grid-base
         source:
             type: orm
@@ -1270,11 +1081,11 @@ datagrids:
             delete:
                 type:          delete
                 link:          delete_link
-                icon:          trash
+                icon:          trash-o
                 acl_resource:  oro_account_frontend_account_address_remove
 
     frontend-account-account-user-address-grid:
-        acl_resource: oro_account_frontend_account_user_view
+        acl_resource: oro_account_frontend_account_user_address_view
         extends: frontend-account-address-grid-base
         source:
             type: orm
@@ -1300,5 +1111,5 @@ datagrids:
             delete:
                 type:          delete
                 link:          delete_link
-                icon:          trash
+                icon:          trash-o
                 acl_resource:  oro_account_frontend_account_user_address_remove

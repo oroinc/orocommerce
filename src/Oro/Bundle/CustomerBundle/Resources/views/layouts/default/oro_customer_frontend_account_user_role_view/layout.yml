@@ -1,6 +1,5 @@
 layout:
     imports:
-        - oro_account_menu
         -
             id: oro_account_user_role_permission_grid
             root: account_user_role_items
@@ -9,22 +8,15 @@ layout:
     actions:
         - '@setBlockTheme':
             themes: 'OroCustomerBundle:layouts:default/oro_customer_frontend_account_user_role_view/layout.html.twig'
-        - '@appendOption':
-            id: title
-            optionName: value
+        - '@setOption':
+            id: page_title
+            optionName: text
             optionValue:
-                - 'oro.customer.menu.account_user.label'
-                - 'oro.customer.frontend.account_user.role.entity_plural_label'
-                - '=data["entity"].getLabel()'
+                label: '=data["entity"].getLabel()'
         - '@addTree':
             items:
                 account_user_role_view_container:
                     blockType: container
-                account_user_role_title:
-                    blockType: text
-                    options:
-                        visible: '=data["entity"]!=null'
-                        text: '=data["entity"].getLabel()'
                 account_user_role_back_link:
                     blockType: link
                     options:
@@ -48,9 +40,8 @@ layout:
                         grid_parameters:
                             role: '=data["entity"].getId()'
             tree:
-                content:
+                page_content:
                     account_user_role_view_container:
-                        account_user_role_title: ~
                         account_user_role_back_link: ~
                         account_user_role_items:
                             account_user_role_top_actions: ~

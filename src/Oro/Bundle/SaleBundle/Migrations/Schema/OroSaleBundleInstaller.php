@@ -8,15 +8,16 @@ use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtension;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
-use Oro\Bundle\EntityConfigBundle\Entity\ConfigModel;
+use Oro\Bundle\EntityBundle\EntityConfig\DatagridScope;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
-use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManager;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
+use Oro\Bundle\PaymentTermBundle\Migration\Extension\PaymentTermExtensionAwareInterface;
+use Oro\Bundle\PaymentTermBundle\Migration\Extension\PaymentTermExtensionAwareTrait;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -26,8 +27,11 @@ class OroSaleBundleInstaller implements
     NoteExtensionAwareInterface,
     AttachmentExtensionAwareInterface,
     ActivityExtensionAwareInterface,
-    ExtendExtensionAwareInterface
+    ExtendExtensionAwareInterface,
+    PaymentTermExtensionAwareInterface
 {
+    use PaymentTermExtensionAwareTrait;
+
     /**
      * @var ExtendExtension
      */
@@ -85,7 +89,7 @@ class OroSaleBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_10';
+        return 'v1_11';
     }
 
     /**
@@ -121,6 +125,12 @@ class OroSaleBundleInstaller implements
         $this->addActivityAssociations($schema, $this->activityExtension);
 
         $this->addQuoteCheckoutSource($schema);
+
+        $this->paymentTermExtension->addPaymentTermAssociation(
+            $schema,
+            'oro_sale_quote',
+            ['datagrid' => ['is_visible' => DatagridScope::IS_VISIBLE_HIDDEN]]
+        );
     }
 
     /**
@@ -164,7 +174,6 @@ class OroSaleBundleInstaller implements
         $table->addColumn('account_id', 'integer', ['notnull' => false]);
         $table->addColumn('shipping_address_id', 'integer', ['notnull' => false]);
         $table->addColumn('user_owner_id', 'integer', ['notnull' => false]);
-        $table->addColumn('payment_term_id', 'integer', ['notnull' => false]);
         $table->addColumn('qid', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('po_number', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('ship_until', 'date', ['notnull' => false]);
@@ -381,12 +390,6 @@ class OroSaleBundleInstaller implements
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_payment_term'),
-            ['payment_term_id'],
-            ['id'],
-            ['onDelete' => 'SET NULL', 'onUpdate' => null]
-        );
     }
 
     /**
@@ -513,7 +516,6 @@ class OroSaleBundleInstaller implements
      */
     protected function addActivityAssociations(Schema $schema, ActivityExtension $activityExtension)
     {
-        $activityExtension->addActivityAssociation($schema, 'oro_calendar_event', 'oro_sale_quote');
         $activityExtension->addActivityAssociation($schema, 'oro_email', 'oro_sale_quote', true);
     }
 
@@ -564,14 +566,13 @@ class OroSaleBundleInstaller implements
                 'oro_quote_demand',
                 'id',
                 [
-                    ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_READONLY,
                     'entity' => ['label' => 'oro.sale.quote.entity_label'],
                     'extend' => [
                         'is_extend' => true,
                         'owner' => ExtendScope::OWNER_CUSTOM
                     ],
                     'datagrid' => [
-                        'is_visible' => false
+                        'is_visible' => DatagridScope::IS_VISIBLE_FALSE,
                     ],
                     'form' => [
                         'is_enabled' => false

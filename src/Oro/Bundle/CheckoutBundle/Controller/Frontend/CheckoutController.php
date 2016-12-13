@@ -6,21 +6,22 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\FormErrorIterator;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
+use Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface;
+use Oro\Bundle\CheckoutBundle\Event\CheckoutEntityEvent;
+use Oro\Bundle\CheckoutBundle\Event\CheckoutEvents;
+use Oro\Bundle\CheckoutBundle\Event\CheckoutValidateEvent;
+use Oro\Bundle\CheckoutBundle\Model\TransitionData;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
-use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowStep;
-use Oro\Bundle\CheckoutBundle\Model\TransitionData;
-use Oro\Bundle\CheckoutBundle\Event\CheckoutEntityEvent;
-use Oro\Bundle\CheckoutBundle\Event\CheckoutEvents;
-use Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface;
+use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 
 class CheckoutController extends Controller
 {
@@ -42,7 +43,7 @@ class CheckoutController extends Controller
      *      id="oro_checkout_frontend_checkout",
      *      type="entity",
      *      class="OroCheckoutBundle:Checkout",
-     *      permission="ACCOUNT_EDIT",
+     *      permission="EDIT",
      *      group_name="commerce"
      * )
      *
@@ -54,8 +55,12 @@ class CheckoutController extends Controller
     public function checkoutAction(Request $request, $id)
     {
         $checkout = $this->getCheckout($id);
+        $isGranted = false;
+        if ($checkout) {
+            $isGranted = $this->get('oro_security.security_facade')->isGranted('EDIT', $checkout);
+        }
 
-        if (!$checkout) {
+        if (!$checkout || !$isGranted) {
             throw new NotFoundHttpException(sprintf('Checkout not found'));
         }
 
@@ -160,16 +165,22 @@ class CheckoutController extends Controller
     protected function handleTransition(CheckoutInterface $checkout, Request $request)
     {
         $workflowItem = $this->getWorkflowItem($checkout);
+
         if ($request->isMethod(Request::METHOD_POST)) {
-            $continueTransition = $this->get('oro_checkout.layout.data_provider.transition')
-                ->getContinueTransition($workflowItem);
+            if ($this->isCheckoutRestartRequired($workflowItem)) {
+                return $this->restartCheckout($workflowItem, $checkout);
+            }
+            $transitionProvider = $this->get('oro_checkout.layout.data_provider.transition');
+            $continueTransition = $transitionProvider->getContinueTransition($workflowItem);
             if ($continueTransition) {
                 $transitionForm = $this->getTransitionForm($continueTransition, $workflowItem);
 
                 if ($transitionForm) {
                     $transitionForm->submit($request);
+
                     if ($transitionForm->isValid()) {
                         $this->getWorkflowManager()->transit($workflowItem, $continueTransition->getTransition());
+                        $transitionProvider->clearCache();
                     } else {
                         $this->handleFormErrors($transitionForm->getErrors());
                     }
@@ -243,5 +254,36 @@ class CheckoutController extends Controller
     protected function handleFormErrors(FormErrorIterator $errors)
     {
         $this->get('oro_checkout.workflow_state.handler.checkout_error')->addFlashWorkflowStateWarning($errors);
+    }
+
+    /**
+     * @param WorkflowItem $workflowItem
+     * @return bool
+     */
+    protected function isCheckoutRestartRequired(WorkflowItem $workflowItem)
+    {
+        $event = new CheckoutValidateEvent($workflowItem);
+        $dispatcher = $this->get('event_dispatcher');
+        if (false == $dispatcher->hasListeners(CheckoutValidateEvent::NAME)) {
+            return false;
+        }
+
+        $dispatcher->dispatch(CheckoutValidateEvent::NAME, $event);
+
+        return $event->isCheckoutRestartRequired();
+    }
+
+    /**
+     * @param WorkflowItem $workflowItem
+     * @param CheckoutInterface $checkout
+     * @return WorkflowItem
+     */
+    protected function restartCheckout(WorkflowItem $workflowItem, CheckoutInterface $checkout)
+    {
+        $workflow = $this->getWorkflowManager()->getWorkflow($workflowItem->getWorkflowName());
+        $start = $workflow->getTransitionManager()->getStartTransitions()->first();
+        $this->getWorkflowManager()->transit($workflowItem, $start);
+
+        return $this->getWorkflowItem($checkout);
     }
 }

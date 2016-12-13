@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CMSBundle\Migrations\Data;
 
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Symfony\Component\Yaml\Yaml;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -11,7 +12,6 @@ use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\CMSBundle\Entity\Page;
-use Oro\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 
 abstract class AbstractLoadPageData extends AbstractFixture implements ContainerAwareInterface
 {
@@ -69,16 +69,10 @@ abstract class AbstractLoadPageData extends AbstractFixture implements Container
         $pages = [];
         foreach ($rows as $reference => $row) {
             $page = new Page();
-            $page->setTitle($row['title']);
+            $page->addTitle((new LocalizedFallbackValue())->setString($row['title']));
+            $page->addSlugPrototype((new LocalizedFallbackValue())->setString($row['slug']));
             $page->setContent($row['content']);
             $page->setOrganization($organization);
-            $page->setCurrentSlugUrl($row['slug']);
-
-            if (array_key_exists('parent', $row) && array_key_exists($row['parent'], $this->pages)) {
-                /** @var Page $parent */
-                $parent = $this->pages[$row['parent']];
-                $parent->addChildPage($page);
-            }
 
             $pages[$reference] = $page;
         }

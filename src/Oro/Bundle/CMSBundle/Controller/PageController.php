@@ -11,7 +11,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\CMSBundle\Entity\Page;
-use Oro\Bundle\CMSBundle\Form\Handler\PageHandler;
 use Oro\Bundle\CMSBundle\Form\Type\PageType;
 
 class PageController extends Controller
@@ -61,12 +60,12 @@ class PageController extends Controller
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('oro_cms.entity.page.class')
+            'entity_class' => Page::class
         ];
     }
 
     /**
-     * @Route("/create/{id}", name="oro_cms_page_create", requirements={"id"="\d+"}, defaults={"id"=null})
+     * @Route("/create", name="oro_cms_page_create")
      * @Template("OroCMSBundle:Page:update.html.twig")
      * @Acl(
      *      id="oro_cms_page_create",
@@ -75,20 +74,11 @@ class PageController extends Controller
      *      permission="CREATE"
      * )
      *
-     * @param int|null $id
      * @return array|RedirectResponse
      */
-    public function createAction($id)
+    public function createAction()
     {
         $page = new Page();
-        if ($id) {
-            $parentPage = $this->getDoctrine()->getRepository('OroCMSBundle:Page')->find($id);
-            if (!$parentPage) {
-                throw new \LogicException(sprintf('Page with identifier %s does not exist', $id));
-            }
-            $page->setParentPage($parentPage);
-        }
-
         return $this->update($page);
     }
 
@@ -115,17 +105,9 @@ class PageController extends Controller
      */
     protected function update(Page $page)
     {
-        $form = $this->createForm(PageType::NAME);
-        $handler = new PageHandler(
-            $form,
-            $this->getRequest(),
-            $this->getDoctrine()->getManagerForClass('OroCMSBundle:Page'),
-            $this->get('oro_redirect.slug.manager')
-        );
-
         return $this->get('oro_form.model.update_handler')->handleUpdate(
             $page,
-            $form,
+            $this->createForm(PageType::NAME, $page),
             function (Page $page) {
                 return [
                     'route' => 'oro_cms_page_update',
@@ -138,8 +120,7 @@ class PageController extends Controller
                     'parameters' => ['id' => $page->getId()]
                 ];
             },
-            $this->get('translator')->trans('oro.cms.controller.page.saved.message'),
-            $handler
+            $this->get('translator')->trans('oro.cms.controller.page.saved.message')
         );
     }
 }

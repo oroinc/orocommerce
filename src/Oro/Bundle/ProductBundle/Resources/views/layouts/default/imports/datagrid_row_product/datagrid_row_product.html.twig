@@ -13,7 +13,7 @@
         product: {
             id: '<%= model.id %>',
             sku: '<%= model.sku %>',
-            getDefaultName: '<%= model.name %>',
+            name: '<%= model.name %>',
             shortDescription: '<%= model.shortDescription %>',
         },
         class_prefix: '<%= themeOptions.currentRowView %>'
@@ -42,7 +42,12 @@
     }) %}
     <h3 {{ block('block_attributes') }}>
         <a href="<%= model.view_link %>"
-           class="view-product">{{ product.getDefaultName }}</a>
+           data-page-component-module="oroui/js/app/components/jquery-widget-component"
+           data-page-component-options="{{ {
+               widgetModule: 'orofrontend/default/js/widgets/line-clamp-widget',
+           }|json_encode }}"
+           class="view-product"
+        >{{ product.name }}</a>
     </h3>
 {% endblock %}
 
@@ -52,7 +57,7 @@
     }) %}
     <div {{ block('block_attributes') }}>
         <a href="<%= model.view_link %>" class="view-product">
-            <span class="underlined">{{ 'oro.product.frontend.index.view_details'|trans }}</span><i class="cf-right-open-mini"></i>
+            <span class="underlined">{{ 'oro.product.frontend.index.view_details'|trans }}</span><i class="fa-angle-right"></i>
         </a>
     </div>
 {% endblock %}

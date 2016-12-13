@@ -1,7 +1,4 @@
-@import 'orofrontend/default/scss/shared/_vars';
-@import 'orofrontend/default/scss/shared/_mixins';
-@import 'orofrontend/default/scss/components/commerce/partials/mixins';
-@import 'orofrontend/default/scss/components/commerce/partials/variables';
+// @theme: default
 
 @import 'components/products-widget';
 @import 'components/shopping-list-widget';
@@ -16,5 +13,6 @@
 @import 'components/sidebar';
 @import 'components/shopping-list-view';
 @import 'components/shopping-list-navigation';
+@import 'components/shopping-list-owner';
 
 @import './components/shopping-list-dropdown/shopping-list-dropdown';

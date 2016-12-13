@@ -1,5 +1,15 @@
-<input type="<%= inputType %>" value="<%= value %>" name="value"
-       class="input input_xs va-m_md" placeholder="<%= placeholder %>" autocomplete="off" />
+<div class="inline-view-editor__input-wrap">
+    <input type="<%= inputType %>"
+           value="<%= value %>"
+           name="value"
+           class="input input--size-x-s input--full"
+           placeholder="<%= placeholder %>"
+           autocomplete="off"
+    />
+</div>
 
-<button type="submit" class="btn btn_x-md btn-dark btn--apply-rename"><%= _.__('oro_frontend.form.inlineEditing.action.save') %></button>
-<button class="btn--reject-rename" data-action="cancel"><%= _.__('oro_frontend.form.inlineEditing.action.cancel') %></button>
+<div class="inline-view-editor__btn-wrap">
+    <button type="submit" class="btn btn--size-s"><%= _.__('oro_frontend.form.inlineEditing.action.save') %></button>
+    <button class="btn btn--link btn--size-s" data-action="cancel"><%= _.__('oro_frontend.form.inlineEditing.action.cancel') %></button>
+</div>
+

@@ -4,6 +4,9 @@ namespace Oro\Bundle\CustomerBundle\Entity\Ownership;
 
 use Oro\Bundle\CustomerBundle\Entity\Account;
 
+/**
+ * @deprecated Use FrontendCustomerAwareTrait
+ */
 trait FrontendAccountAwareTrait
 {
     /**

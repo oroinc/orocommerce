@@ -15,10 +15,10 @@ class OpenOrdersController extends Controller
      * @Route("/", name="oro_checkout_frontend_open_orders")
      * @Layout()
      * @Acl(
-     *      id="oro_order_frontend_view",
+     *      id="oro_checkout_frontend_view",
      *      type="entity",
      *      class="OroCheckoutBundle:Checkout",
-     *      permission="ACCOUNT_VIEW",
+     *      permission="VIEW",
      *      group_name="commerce"
      * )
      *

@@ -1,6 +1,5 @@
 layout:
     imports:
-        - oro_account_menu
         -
             id: oro_line_items_grid
             root: order_container
@@ -9,16 +8,11 @@ layout:
     actions:
         - '@setBlockTheme':
             themes: 'OroOrderBundle:layouts:default/oro_order_frontend_view/layout.html.twig'
-        - '@appendOption':
+        - '@setOption':
             id: title
-            optionName: value
+            optionName: params
             optionValue:
-                - 'oro.customer.menu.account_user.label'
-                - 'oro.frontend.order.entity_plural_label'
-                -
-                    label: 'oro.order.navigation.view'
-                    parameters:
-                        '%identifier%': '=data["order"].getIdentifier()'
+                '%identifier%': '=data["order"].getIdentifier()'
         - '@setOption':
             id: page_title
             optionName: text
@@ -27,7 +21,7 @@ layout:
                 parameters:
                     '%identifier%': '=data["order"].getIdentifier()'
         - '@setOption':
-            id: content
+            id: page_content
             optionName: class_prefix
             optionValue: 'account'
         - '@addTree':
@@ -113,7 +107,10 @@ layout:
                 order_shipping_method:
                     blockType: text
                     options:
-                        text: '=data["oro_order_frontend_shipping_method_provider"].getData(data["order"])'
+                        text: ~
+                        vars:
+                            shippingMethod: '=data["order"].getShippingMethod()'
+                            shippingMethodType: '=data["order"].getShippingMethodType()'
                         label: 'oro.order.shipping_method.label'
                         additional_block_prefixes: ['order_body_column_element']
                 order_payment_method:
@@ -125,9 +122,9 @@ layout:
                 order_payment_term:
                     blockType: text
                     options:
-                        visible: '=data["order"].getPaymentTerm()!=null'
-                        text: '=data["order"].getPaymentTerm().getLabel()'
-                        label: 'oro.order.payment_term.label'
+                        visible: '=data["oro_payment_term_provider"].getObjectPaymentTerm(data["order"])!=null'
+                        text: '=data["oro_payment_term_provider"].getObjectPaymentTerm(data["order"]).getLabel()'
+                        label: 'oro.paymentterm.entity_label'
                         additional_block_prefixes: ['order_body_column_element']
                 order_payment_status:
                     blockType: text
@@ -156,7 +153,7 @@ layout:
                         total: '=data["totals"].total'
                         subtotals: '=data["totals"].subtotals'
             tree:
-                content:
+                page_content:
                     order_view_page:
                         order_container:
                             order_body:

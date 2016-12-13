@@ -15,13 +15,11 @@
         shoppingLists: shoppingLists,
         remove: removeOptions,
         componentOptions: {
-            defaultClass: 'btn-dark',
-            editClass: 'btn-dark',
             modelAttr: {
                 shopping_lists: productShoppingLists
             }
         },
-        singleButtonACss: 'btn-block btn-dark btn_lg'
+        singleButtonACss: 'btn--info btn--size-m'
     } %}
     {{ buttons.getButtonsHtml(options) }}
 {% endblock %}

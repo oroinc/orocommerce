@@ -29,6 +29,10 @@
         margin: 5px 0 0;
         padding: 0 0 0 18px;
 
+        &:last-child {
+            display: none;
+        }
+
         &--current {
             &:before {
                 top: 5px;
@@ -52,7 +56,7 @@
     &__link {
         display: block;
 
-        color: $base-font-color;
+        color: get-color('additional', 'dark')
     }
 
     &__badge {
@@ -64,8 +68,8 @@
 
 @include breakpoint('desktop') {
     .account-menu {
-        .icon-minus,
-        .icon-plus {
+        .fa-minus,
+        .fa-plus {
             opacity: 0;
         }
     }
@@ -73,8 +77,8 @@
 
 @include breakpoint('tablet') {
     .account-menu {
-        .icon-minus,
-        .icon-plus {
+        .fa-minus,
+        .fa-plus {
             position: absolute;
             right: 0;
             top: 4px;
@@ -82,17 +86,17 @@
             font-size: 12px;
         }
 
-        .icon-minus {
+        .fa-minus {
             opacity: 0;
         }
 
         .expanded {
-            .icon-plus {
+            .fa-plus {
                 opacity: 0;
 
             }
 
-            .icon-minus {
+            .fa-minus {
                 opacity: 1;
             }
         }
@@ -125,6 +129,10 @@
 
             border-top: 1px solid get-color('additional', 'light');
 
+            &:last-child {
+                display: block;
+            }
+
             &--current {
                 &:before {
                     content: none;
@@ -140,8 +148,8 @@
             color: get-color('additional', 'dark');
         }
 
-        .icon-minus,
-        .icon-plus {
+        .fa-minus,
+        .fa-plus {
             right: 13px;
             top: 15px;
         }

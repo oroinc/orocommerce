@@ -2,12 +2,11 @@ layout:
     actions:
         - '@setBlockTheme':
             themes: 'OroProductBundle:layouts:default/oro_product_frontend_product_view/layout.html.twig'
-        - '@appendOption':
+        - '@setOption':
             id: title
-            optionName: value
+            optionName: params
             optionValue:
-                - 'oro.product.entity_plural_label'
-                - '=data["locale"].getLocalizedValue(data["product"].getNames())'
+                '%name%': '=data["locale"].getLocalizedValue(data["product"].getNames())'
         - '@setOption':
             id: page_title
             optionName: text
@@ -69,7 +68,7 @@ layout:
                 product_tabs:
                     blockType: block
             tree:
-                content:
+                page_content:
                     product_view_page:
                         product_container:
                             product_title_mobile: ~

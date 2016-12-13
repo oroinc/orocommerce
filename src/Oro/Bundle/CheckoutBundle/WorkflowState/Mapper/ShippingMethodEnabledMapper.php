@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CheckoutBundle\WorkflowState\Mapper;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\Factory\ShippingContextProviderFactory;
+use Oro\Bundle\CheckoutBundle\Factory\CheckoutShippingContextFactory;
 use Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider;
 
 class ShippingMethodEnabledMapper implements CheckoutStateDiffMapperInterface
@@ -16,20 +16,20 @@ class ShippingMethodEnabledMapper implements CheckoutStateDiffMapperInterface
     protected $shippingPriceProvider;
 
     /**
-     * @var ShippingContextProviderFactory
+     * @var CheckoutShippingContextFactory
      */
-    protected $shippingContextProviderFactory;
+    protected $shippingContextFactory;
 
     /**
-     * @param ShippingPriceProvider $shippingPriceProvider
-     * @param ShippingContextProviderFactory $shippingContextProviderFactory
+     * @param ShippingPriceProvider          $shippingPriceProvider
+     * @param CheckoutShippingContextFactory $shippingContextFactory
      */
     public function __construct(
         ShippingPriceProvider $shippingPriceProvider,
-        ShippingContextProviderFactory $shippingContextProviderFactory
+        CheckoutShippingContextFactory $shippingContextFactory
     ) {
         $this->shippingPriceProvider = $shippingPriceProvider;
-        $this->shippingContextProviderFactory = $shippingContextProviderFactory;
+        $this->shippingContextFactory = $shippingContextFactory;
     }
 
     /**
@@ -73,19 +73,11 @@ class ShippingMethodEnabledMapper implements CheckoutStateDiffMapperInterface
 
         $shippingMethod = $entity->getShippingMethod();
         if ($shippingMethod) {
-            $shippingContext = $this->shippingContextProviderFactory->create($entity);
-            $allMethodsData = $this->shippingPriceProvider->getApplicableMethodsWithTypesData($shippingContext);
-
-            if (array_key_exists($entity->getShippingMethod(), $allMethodsData)) {
-                $method = $allMethodsData[$entity->getShippingMethod()];
-                foreach ($method['types'] as $type) {
-                    if (array_key_exists('identifier', $type)
-                        && $type['identifier'] === $entity->getShippingMethodType()
-                    ) {
-                        return true;
-                    }
-                }
-            }
+            return null !== $this->shippingPriceProvider->getPrice(
+                $this->shippingContextFactory->create($entity),
+                $shippingMethod,
+                $entity->getShippingMethodType()
+            );
         }
 
         return false;
