@@ -1,0 +1,7 @@
+// @theme: custom
+
+.notification-flash-container {
+    &--fixed {
+        margin: $notification-flash-container-fixed-offset;
+    }
+}
