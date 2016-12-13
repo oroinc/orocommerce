@@ -126,6 +126,7 @@ workflows:
                 transition_definition: start_from_quickorderform_definition
                 frontend_options:
                     icon: fa-briefcase
+                    class: 'btn--action'
                     data:
                         component_name: oro_shopping_list_to_checkout_quick_add_processor
                         page-component-module: oroproduct/js/app/components/quick-add-form-button-component
