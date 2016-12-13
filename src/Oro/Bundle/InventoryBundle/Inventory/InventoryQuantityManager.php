@@ -47,7 +47,7 @@ class InventoryQuantityManager implements InventoryQuantityManagerInterface
 
         $initialQuantity = $inventoryLevel->getQuantity();
         $inventoryThreshold = $this->entityFallbackResolver->getFallbackValue($product, 'inventoryThreshold');
-        if (!$this->entityFallbackResolver->getFallbackValue($product, 'backOrder')
+        if (false === $this->entityFallbackResolver->getFallbackValue($product, 'backOrder')
             && ($initialQuantity - $inventoryThreshold) < $quantityToDecrement
         ) {
             throw new InsufficientInventoryQuantityException();

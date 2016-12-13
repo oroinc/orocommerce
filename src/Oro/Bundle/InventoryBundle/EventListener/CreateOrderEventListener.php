@@ -5,6 +5,7 @@ namespace Oro\Bundle\InventoryBundle\EventListener;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\InventoryBundle\Inventory\InventoryQuantityManager;
+use Oro\Bundle\InventoryBundle\Inventory\InventoryStatusHandler;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
@@ -24,13 +25,23 @@ class CreateOrderEventListener
     protected $doctrineHelper;
 
     /**
+     * @var InventoryStatusHandler
+     */
+    protected $statusHandler;
+
+    /**
      * @param InventoryQuantityManager $quantityManager
+     * @param InventoryStatusHandler $statusHandler
      * @param DoctrineHelper $doctrineHelper
      */
-    public function __construct(InventoryQuantityManager $quantityManager, DoctrineHelper $doctrineHelper)
-    {
+    public function __construct(
+        InventoryQuantityManager $quantityManager,
+        InventoryStatusHandler $statusHandler,
+        DoctrineHelper $doctrineHelper
+    ) {
         $this->quantityManager = $quantityManager;
         $this->doctrineHelper = $doctrineHelper;
+        $this->statusHandler = $statusHandler;
     }
 
     /**
@@ -52,6 +63,7 @@ class CreateOrderEventListener
                 $lineItem->getProductUnit()
             );
             $this->quantityManager->decrementInventory($inventoryLevel, $lineItem->getQuantity());
+            $this->statusHandler->changeInventoryStatusWhenDecrement($inventoryLevel);
         }
     }
 

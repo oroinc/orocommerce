@@ -183,6 +183,13 @@ services:
         class: Oro\Bundle\InventoryBundle\EventListener\CreateOrderEventListener
         arguments:
             - '@oro_inventory.manager.inventory_quantity_manager'
+            - '@oro_inventory.handler.inventory_decrement_status_handler'
             - '@oro_entity.doctrine_helper'
         tags:
             - { name: kernel.event_listener, event: extendable_action.finish_checkout, method: onCreateOrder, priority: 10 }
+
+    oro_inventory.handler.inventory_decrement_status_handler:
+        class: 'Oro\Bundle\InventoryBundle\Inventory\InventoryStatusHandler'
+        arguments:
+            - '@oro_entity.fallback.resolver.entity_fallback_resolver'
+            - '@oro_entity.doctrine_helper'
