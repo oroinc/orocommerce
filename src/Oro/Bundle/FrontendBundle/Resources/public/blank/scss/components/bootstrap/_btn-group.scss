@@ -1,8 +1,6 @@
 // @theme: blank;
 
 .btn-group {
-    $border: 1px solid rgba(255, 255, 255, .3);
-
     @extend %base-transition;
 
     .btn-group {
@@ -10,7 +8,7 @@
     }
 
     &.full {
-        $dropdown-toggle-width: 48px;
+        $btn-group-dropdown-toggle-width: 48px;
 
         width: 100%;
 
@@ -19,20 +17,20 @@
 
             // If dropdown-toggle is rendered
             &:not(:last-child) {
-                width: calc(100% - #{$dropdown-toggle-width});
+                width: calc(100% - #{$btn-group-dropdown-toggle-width});
             }
 
             &.dropdown-toggle {
-                width: $dropdown-toggle-width;
+                width: $btn-group-dropdown-toggle-width;
             }
         }
     }
 
     .btn {
-        &:focus,
-        &:hover {
-            &:not(:last-child) {
-                border-right: $border;
+        &:not(:last-child):not(.dropdown-toggle) {
+            &:focus,
+            &:hover {
+                border-right: $btn-group-border;
             }
         }
     }
@@ -41,7 +39,7 @@
         &:not(:first-child) {
             text-align: center;
 
-            border-left: $border;
+            border-left: $btn-group-border;
         }
 
         &:after {
