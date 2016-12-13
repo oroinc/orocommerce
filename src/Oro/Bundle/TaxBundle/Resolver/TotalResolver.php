@@ -71,6 +71,8 @@ class TotalResolver implements ResolverInterface
             $data = $adjustedAmounts;
         }
 
+        $data = $this->mergeShippingData($taxable, $data);
+
         $result = $taxable->getResult();
         $result->offsetSet(Result::TOTAL, $data);
         $result->offsetSet(Result::TAXES, array_values($taxResults));
@@ -143,11 +145,29 @@ class TotalResolver implements ResolverInterface
         $currentData = new ResultElement($target->getArrayCopy());
 
         foreach ($source as $key => $value) {
-            $currentValue = BigDecimal::of($currentData->offsetGet($key));
-            $currentValue = $currentValue->plus($value);
-            $currentData->offsetSet($key, (string)$currentValue);
+            if ($currentData->offsetExists($key)) {
+                $currentValue = BigDecimal::of($currentData->offsetGet($key));
+                $currentValue = $currentValue->plus($value);
+                $currentData->offsetSet($key, (string)$currentValue);
+            }
         }
 
         return $currentData;
+    }
+
+    /**
+     * @param Taxable $taxable
+     * @param ResultElement $target
+     * @return ResultElement
+     */
+    protected function mergeShippingData(Taxable $taxable, ResultElement $target)
+    {
+        if (!$taxable->getResult()->offsetExists(Result::SHIPPING)) {
+            return $target;
+        }
+
+        $resultElement = $taxable->getResult()->offsetGet(Result::SHIPPING);
+
+        return $this->mergeData($target, $resultElement);
     }
 }

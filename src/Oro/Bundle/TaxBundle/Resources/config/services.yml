@@ -151,7 +151,7 @@ services:
             - { name: kernel.event_listener, event: oro_config.settings_before_save, method: beforeSave }
 
     oro_tax.event_listener.config.digital_products_eu:
-        class: 'Oro\Bundle\TaxBundle\EventListener\Config\DigitalProductEventListener'
+        class: 'Oro\Bundle\TaxBundle\EventListener\Config\ProductTaxCodeEventListener'
         arguments:
             - "@oro_entity.doctrine_helper"
             - '%oro_tax.entity.product_tax_code.class%'
@@ -161,11 +161,21 @@ services:
             - { name: kernel.event_listener, event: oro_config.settings_before_save, method: beforeSave }
 
     oro_tax.event_listener.config.digital_products_us:
-        class: 'Oro\Bundle\TaxBundle\EventListener\Config\DigitalProductEventListener'
+        class: 'Oro\Bundle\TaxBundle\EventListener\Config\ProductTaxCodeEventListener'
         arguments:
             - "@oro_entity.doctrine_helper"
             - '%oro_tax.entity.product_tax_code.class%'
             - 'digital_products_us'
+        tags:
+            - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: formPreSet }
+            - { name: kernel.event_listener, event: oro_config.settings_before_save, method: beforeSave }
+
+    oro_tax.event_listener.config.shipping_tax_code:
+        class: 'Oro\Bundle\TaxBundle\EventListener\Config\ProductTaxCodeEventListener'
+        arguments:
+            - "@oro_entity.doctrine_helper"
+            - '%oro_tax.entity.product_tax_code.class%'
+            - 'shipping_tax_code'
         tags:
             - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: formPreSet }
             - { name: kernel.event_listener, event: oro_config.settings_before_save, method: beforeSave }
@@ -283,6 +293,13 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_tax.mapper.context, method: onContextEvent }
 
+    oro_tax.order_tax.context_handler.order_handler:
+        class: 'Oro\Bundle\TaxBundle\OrderTax\ContextHandler\OrderHandler'
+        arguments:
+            - "@oro_entity.doctrine_helper"
+        tags:
+            - { name: kernel.event_listener, event: oro_tax.mapper.context, method: onContextEvent }
+
     oro_tax.provider.taxation_settings_provider:
         class: 'Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider'
         public: false
@@ -357,13 +374,18 @@ services:
             - "@oro_tax.provider.taxation_settings_provider"
             - "@oro_tax.resolver.rounding"
         tags:
-            - { name: oro_tax.resolver, event: oro_tax.resolve_after }
+            - { name: oro_tax.resolver, event: oro_tax.resolve_after, priority: -128 }
 
     oro_tax.resolver.shipping:
         class: 'Oro\Bundle\TaxBundle\Resolver\ShippingResolver'
         public: false
+        arguments:
+            - "@oro_tax.calculator.included_tax"
+            - "@oro_tax.calculator.tax"
+            - "@oro_tax.matcher.zip_code_matcher"
+            - "@oro_tax.provider.taxation_settings_provider"
         tags:
-            - { name: oro_tax.resolver, event: oro_tax.resolve_after }
+            - { name: oro_tax.resolver, event: oro_tax.resolve_after, priority: -64 }
 
     oro_tax.resolver.rounding:
         class: 'Oro\Bundle\TaxBundle\Resolver\RoundingResolver'
@@ -385,7 +407,7 @@ services:
             - "@oro_tax.resolver.row_total"
             - "@oro_tax.matcher.zip_code_matcher"
         tags:
-            - { name: oro_tax.resolver, event: oro_tax.resolve, priority: -255 }
+            - { name: oro_tax.resolver, event: oro_tax.resolve, priority: -32 }
 
     oro_tax.resolver.customer_address:
         class: 'Oro\Bundle\TaxBundle\Resolver\CustomerAddressResolver'
@@ -393,7 +415,7 @@ services:
         arguments:
             - "@oro_tax.resolver.customer_address.item"
         tags:
-            - { name: oro_tax.resolver, event: oro_tax.resolve, priority: -255 }
+            - { name: oro_tax.resolver, event: oro_tax.resolve, priority: -32 }
 
     oro_tax.resolver.eu_item_digital:
         class: 'Oro\Bundle\TaxBundle\Resolver\SellerResolver\VatResolver\EUVatResolver\DigitalItemResolver'

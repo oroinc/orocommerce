@@ -50,17 +50,17 @@
         vertical-align: middle;
     }
 
-    &__badge {
-        width: 20px;
-        height: 20px;
-
+    &__icon {
         margin-right: 5px;
 
-        font-size: 12px;
-        line-height: 20px;
+        @include badge(20px, 11px, get-color('primary', 'light'), 3px);
 
-        i {
-            font-size: 11px;
+        &--light {
+            background-color: get-color('secondary', 'main');
+        }
+
+        &--dark {
+            background-color: get-color('primary', 'dark');
         }
     }
 }
@@ -90,7 +90,7 @@
             font-weight: bold;
         }
 
-        &__badge {
+        &__icon {
             width: 26px;
             height: 26px;
 

@@ -1,3 +1,7 @@
+// @theme: default;
+
+@import './reset';
+
 .body {
     &.loading {
         height: 100%;
@@ -13,6 +17,16 @@
         &.sales-mode {
             overflow-x: hidden;
         }
+    }
+}
+
+a {
+    text-decoration: none;
+
+    @include link();
+
+    &:hover {
+        text-decoration: underline;
     }
 }
 
