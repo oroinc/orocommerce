@@ -24,7 +24,7 @@
         <ul class="quick-access__list">
             <li class="quick-access__item">
                 <a class="quick-access__link"  href="{{ path('oro_order_frontend_index') }}">
-                    <span class="badge badge_circled-corners badge_yellow quick-access__badge">
+                    <span class="quick-access__icon quick-access__icon--light">
                         <i class="fa-clipboard"></i>
                     </span>
                     <span class="quick-access__text">Orders</span>
@@ -32,7 +32,7 @@
             </li>
             <li class="quick-access__item">
                 <a class="quick-access__link" href="{{ path('oro_sale_quote_frontend_index') }}">
-                    <span class="badge badge_circled-corners badge_orange-light quick-access__badge">
+                    <span class="quick-access__icon">
                         <i class="fa-tags"></i>
                     </span>
                     <span class="quick-access__text">Quotes</span>
@@ -41,7 +41,7 @@
             {% if feature_resource_enabled("oro_product_frontend_quick_add", "routes") %}
                 <li class="quick-access__item">
                     <a class="quick-access__link" href="{{ path('oro_product_frontend_quick_add') }}">
-                    <span class="badge badge_circled-corners badge_orange quick-access__badge">
+                    <span class="quick-access__icon quick-access__icon--dark">
                         <i class="fa-bolt"></i>
                     </span>
                         <span class="quick-access__text">Quick Order Form</span>

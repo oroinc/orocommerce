@@ -1,0 +1,51 @@
+// @theme: blank;
+
+.btn-group {
+    $border: 1px solid rgba(255, 255, 255, .3);
+
+    @extend %base-transition;
+
+    .btn-group {
+        width: 100%;
+    }
+
+    &.full {
+        $dropdown-toggle-width: 48px;
+
+        width: 100%;
+
+        .btn {
+            width: 100%;
+
+            // If dropdown-toggle is rendered
+            &:not(:last-child) {
+                width: calc(100% - #{$dropdown-toggle-width});
+            }
+
+            &.dropdown-toggle {
+                width: $dropdown-toggle-width;
+            }
+        }
+    }
+
+    .btn {
+        &:focus,
+        &:hover {
+            &:not(:last-child) {
+                border-right: $border;
+            }
+        }
+    }
+
+    > .dropdown-toggle {
+        &:not(:first-child) {
+            text-align: center;
+
+            border-left: $border;
+        }
+
+        &:after {
+            margin-left: 0;
+        }
+    }
+}

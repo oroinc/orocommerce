@@ -448,11 +448,11 @@ class UPSTransport extends Transport
     /**
      * Set invalidateCacheAt
      *
-     * @param \DateTime $invalidateCacheAt
+     * @param \DateTime|null $invalidateCacheAt
      *
      * @return $this
      */
-    public function setInvalidateCacheAt(\DateTime $invalidateCacheAt)
+    public function setInvalidateCacheAt(\DateTime $invalidateCacheAt = null)
     {
         $this->invalidateCacheAt = $invalidateCacheAt;
 

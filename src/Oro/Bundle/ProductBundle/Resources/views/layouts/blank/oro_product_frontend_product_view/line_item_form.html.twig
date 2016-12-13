@@ -13,6 +13,7 @@
         {% set attr = layout_attr_defaults(attr, {
             '~class': " form__col"
         }) %}
+
         <div {{ block('block_attributes') }}>
             {{ UI.pinnedDropdownButton({
                 'html': block_widget(block),
@@ -23,8 +24,9 @@
                 'options': {
                     'widgetModule': 'oroproduct/js/content-processor/product-add-to-dropdown-button',
                     'widgetName': 'productAddToDropdownButtonProcessor',
-                    'truncateLength': 20,
-                    'groupContainer': '<div id="add-to-shopping-list" class="btn btn-orange btn-block btn_has-dropdown btn_has-dropdown_lg"></div>'
+                    'truncateLength': 15,
+                    'groupContainer': '<div id="add-to-shopping-list" class="btn-group full"></div>',
+                    'decoreClass': 'btn--info'
                 }
             }) }}
         </div>
