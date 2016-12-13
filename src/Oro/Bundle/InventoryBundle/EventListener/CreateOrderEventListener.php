@@ -4,8 +4,8 @@ namespace Oro\Bundle\InventoryBundle\EventListener;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
-use Oro\Bundle\InventoryBundle\Inventory\InventoryQuantityManager;
 use Oro\Bundle\InventoryBundle\Inventory\InventoryStatusHandler;
+use Oro\Bundle\InventoryBundle\Inventory\InventoryQuantityManagerInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
@@ -15,7 +15,7 @@ use Oro\Component\Action\Event\ExtendableActionEvent;
 class CreateOrderEventListener
 {
     /**
-     * @var InventoryQuantityManager
+     * @var InventoryQuantityManagerInterface
      */
     protected $quantityManager;
 
@@ -30,12 +30,12 @@ class CreateOrderEventListener
     protected $statusHandler;
 
     /**
-     * @param InventoryQuantityManager $quantityManager
+     * @param InventoryQuantityManagerInterface $quantityManager
      * @param InventoryStatusHandler $statusHandler
      * @param DoctrineHelper $doctrineHelper
      */
     public function __construct(
-        InventoryQuantityManager $quantityManager,
+        InventoryQuantityManagerInterface $quantityManager,
         InventoryStatusHandler $statusHandler,
         DoctrineHelper $doctrineHelper
     ) {
