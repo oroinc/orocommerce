@@ -56,6 +56,9 @@ class ProductCategoriesContextConfigurator implements ContextConfiguratorInterfa
     public function configureContext(ContextInterface $context)
     {
         $request = $this->requestStack->getCurrentRequest();
+        if (!$request) {
+            return;
+        }
 
         $allowedRoutes = [self::PRODUCT_LIST_ROUTE, self::PRODUCT_VIEW_ROUTE];
         if (!in_array($request->attributes->get('_route'), $allowedRoutes)) {

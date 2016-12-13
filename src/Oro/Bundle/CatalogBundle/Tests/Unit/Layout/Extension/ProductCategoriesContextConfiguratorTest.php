@@ -48,10 +48,6 @@ class ProductCategoriesContextConfiguratorTest extends \PHPUnit_Framework_TestCa
         $this->currentRequest = $this->getMock(Request::class);
         $this->currentRequest->attributes = $this->getMock(ParameterBag::class);
 
-        $this->requestStack->expects($this->once())
-            ->method('getCurrentRequest')
-            ->willReturn($this->currentRequest);
-
         $this->configurator = new ProductCategoriesContextConfigurator(
             $this->requestStack,
             $this->registry,
@@ -61,6 +57,10 @@ class ProductCategoriesContextConfiguratorTest extends \PHPUnit_Framework_TestCa
 
     public function testConfigureForProductList()
     {
+        $this->requestStack->expects($this->once())
+            ->method('getCurrentRequest')
+            ->willReturn($this->currentRequest);
+
         $this->currentRequest->attributes->expects($this->any())
             ->method('get')
             ->with('_route')
@@ -87,13 +87,20 @@ class ProductCategoriesContextConfiguratorTest extends \PHPUnit_Framework_TestCa
 
     public function testConfigureForProductView()
     {
+        $this->requestStack->expects($this->once())
+            ->method('getCurrentRequest')
+            ->willReturn($this->currentRequest);
+
         $this->currentRequest->attributes->expects($this->any())
             ->method('get')
             ->will($this->returnCallback(function ($param) {
                 switch ($param) {
-                    case '_route': return ProductCategoriesContextConfigurator::PRODUCT_VIEW_ROUTE;
-                    case '_route_params': return ['id' => 1];
-                    default: return null;
+                    case '_route':
+                        return ProductCategoriesContextConfigurator::PRODUCT_VIEW_ROUTE;
+                    case '_route_params':
+                        return ['id' => 1];
+                    default:
+                        return null;
                 }
             }));
 
@@ -139,8 +146,27 @@ class ProductCategoriesContextConfiguratorTest extends \PHPUnit_Framework_TestCa
         $this->configurator->configureContext($context);
     }
 
+    public function testConfigureWhenCurrentRequestIsNotSet()
+    {
+        $requestStack = $this->getMock(RequestStack::class);
+        $registry = $this->getMock(ManagerRegistry::class, [], [], '', false);
+        $categoryProvider = $this->getMock(CategoryProvider::class, [], [], '', false);
+
+        $context = $this->getMock(ContextInterface::class);
+        $context->expects($this->never())
+            ->method('getResolver')
+            ->willReturn($this->getMock(OptionsResolver::class));
+
+        $configurator = new ProductCategoriesContextConfigurator($requestStack, $registry, $categoryProvider);
+        $configurator->configureContext($context);
+    }
+
     public function testConfigureWhenCurrentCategoryIsNotSet()
     {
+        $this->requestStack->expects($this->once())
+            ->method('getCurrentRequest')
+            ->willReturn($this->currentRequest);
+
         $this->currentRequest->attributes->expects($this->any())
             ->method('get')
             ->with('_route')
@@ -160,6 +186,10 @@ class ProductCategoriesContextConfiguratorTest extends \PHPUnit_Framework_TestCa
 
     public function testConfigureForNotAllowedRoute()
     {
+        $this->requestStack->expects($this->once())
+            ->method('getCurrentRequest')
+            ->willReturn($this->currentRequest);
+
         $this->currentRequest->attributes->expects($this->any())
             ->method('get')
             ->with('_route')
