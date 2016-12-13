@@ -2,15 +2,15 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Controller;
 
-use Symfony\Component\DomCrawler\Crawler;
-use Symfony\Component\DomCrawler\Form;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
-
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Model\FallbackType;
+
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\DomCrawler\Form;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -121,7 +121,7 @@ class ProductControllerTest extends WebTestCase
             0,
             $crawler->filterXPath("//li/a[contains(text(),'".self::CATEGORY_MENU_NAME."')]")->count()
         );
-        $this->assertContains("Category:".self::CATEGORY_NAME, $crawler->html());
+        $this->assertContains("Category: ".self::CATEGORY_NAME, $crawler->html());
 
         $form = $crawler->selectButton('Save and Close')->form();
         $this->assertDefaultProductUnit($form);
