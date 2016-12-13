@@ -44,7 +44,7 @@ class ProductControllerTest extends WebTestCase
         );
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $priceTable = $crawler->filter('.product__qnty');
+        $priceTable = $crawler->filter('.product-prices__table');
         $this->assertContains($contains, $priceTable->html());
     }
 
