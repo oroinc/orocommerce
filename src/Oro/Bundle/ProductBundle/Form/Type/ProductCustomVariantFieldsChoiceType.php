@@ -74,7 +74,12 @@ class ProductCustomVariantFieldsChoiceType extends AbstractType
     protected function getCustomVariantFields()
     {
         $result = [];
-        $customVariantFields = $this->customFieldProvider->getEntityCustomVariantFields($this->productClass);
+        $customFields = $this->customFieldProvider->getEntityCustomFields($this->productClass);
+
+        // Show only boolean and enum as allowed
+        $customVariantFields = array_filter($customFields, function ($field) {
+            return in_array($field['type'], ['boolean', 'enum'], true);
+        });
 
         foreach ($customVariantFields as $field) {
             $result[$field['name']] = $field['label'];

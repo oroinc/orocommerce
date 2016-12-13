@@ -7,7 +7,7 @@ use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Oro\Bundle\ProductBundle\Form\Type\ProductCustomVariantFieldsChoiceType;
 use Oro\Bundle\ProductBundle\Provider\CustomFieldProvider;
 
-class ProductCustomEntityVariantFieldsChoiceTypeTest extends FormIntegrationTestCase
+class ProductCustomVariantFieldsChoiceTypeTest extends FormIntegrationTestCase
 {
     /**
      * @var ProductCustomVariantFieldsChoiceType
@@ -30,12 +30,25 @@ class ProductCustomEntityVariantFieldsChoiceTypeTest extends FormIntegrationTest
     protected $exampleCustomVariantFields = [
         'size' => [
             'name' => 'size',
+            'type' => 'enum',
             'label' => 'Size Label'
         ],
         'color' => [
             'name' => 'color',
+            'type' => 'enum',
             'label' => 'Color Label'
-        ]
+        ],
+        'boolValue' => [
+            'name' => 'boolValue',
+            'type' => 'boolean',
+            'label' => 'Some Bool Label'
+        ],
+        'textValue' => [
+            'name' => 'textValue',
+            'type' => 'text',
+            'label' => 'Some Text Label'
+        ],
+
     ];
 
     /**
@@ -45,7 +58,7 @@ class ProductCustomEntityVariantFieldsChoiceTypeTest extends FormIntegrationTest
     {
         parent::setUp();
 
-        $this->customFieldProvider = $this->getMockBuilder('Oro\Bundle\ProductBundle\Provider\CustomFieldProvider')
+        $this->customFieldProvider = $this->getMockBuilder(CustomFieldProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -58,18 +71,19 @@ class ProductCustomEntityVariantFieldsChoiceTypeTest extends FormIntegrationTest
     /**
      * @dataProvider submitProvider
      *
+     * @param array $submittedData
      * @param string $expectedData
      */
-    public function testSubmit($expectedData)
+    public function testSubmit(array $submittedData, $expectedData)
     {
         $this->customFieldProvider->expects($this->once())
-            ->method('getEntityCustomVariantFields')
+            ->method('getEntityCustomFields')
             ->willReturn($this->exampleCustomVariantFields);
 
         $form = $this->factory->create($this->formType);
 
         $this->assertNull($form->getData());
-        $form->submit($expectedData);
+        $form->submit($submittedData);
         $this->assertTrue($form->isValid());
         $this->assertEquals($expectedData, $form->getData());
     }
@@ -81,19 +95,41 @@ class ProductCustomEntityVariantFieldsChoiceTypeTest extends FormIntegrationTest
     {
         return [
             'empty' => [
+                'submittedData' => [],
                 'expectedData' => []
             ],
-            'size' => [
+            'size (enum)' => [
+                'submittedData' => [
+                    $this->exampleCustomVariantFields['size']['name']
+                ],
                 'expectedData' => [
                     $this->exampleCustomVariantFields['size']['name']
                 ]
             ],
-            'size&color' => [
+            'size&color (enum)' => [
+                'submittedData' => [
+                    $this->exampleCustomVariantFields['size']['name'],
+                    $this->exampleCustomVariantFields['color']['name']
+                ],
                 'expectedData' => [
                     $this->exampleCustomVariantFields['size']['name'],
                     $this->exampleCustomVariantFields['color']['name']
                 ]
-            ]
+            ],
+            'boolValue (bool)' => [
+                'submittedData' => [
+                    $this->exampleCustomVariantFields['boolValue']['name'],
+                ],
+                'expectedData' => [
+                    $this->exampleCustomVariantFields['boolValue']['name'],
+                ]
+            ],
+            'text value is not allowed' => [
+                'submittedData' => [
+                    $this->exampleCustomVariantFields['textValue']['name'],
+                ],
+                'expectedData' => null
+            ],
         ];
     }
 
