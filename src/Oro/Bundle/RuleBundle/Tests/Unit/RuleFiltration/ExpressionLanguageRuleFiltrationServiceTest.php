@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\RuleBundle\Tests\Unit\RuleFiltration;
 
-use Oro\Bundle\PaymentBundle\Entity\RuleOwnerInterface;
 use Oro\Bundle\RuleBundle\Entity\Rule;
+use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
 use Oro\Bundle\RuleBundle\RuleFiltration\ExpressionLanguageRuleFiltrationService;
 
 class ExpressionLanguageRuleFiltrationServiceTest extends \PHPUnit_Framework_TestCase
@@ -51,11 +51,11 @@ class ExpressionLanguageRuleFiltrationServiceTest extends \PHPUnit_Framework_Tes
         $exceptionOwner = $this->createExceptionOwner();
 
         return [
-            [
+            'testOnlyApplicablePassAndFinishOnApplicableStop' => [
                 [$notApplicable, $notApplicableStop, $applicable, $applicableStop, $applicable],
                 [$applicable, $applicableStop]
             ],
-            [
+            'testWithWrongLanguageExpression' => [
                 [$applicable, $exceptionOwner, $notApplicableStop, $applicableStop, $applicable],
                 [$applicable, $applicableStop]
             ],
@@ -97,7 +97,7 @@ class ExpressionLanguageRuleFiltrationServiceTest extends \PHPUnit_Framework_Tes
     }
 
     /**
-     * @return RuleOwnerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit_Framework_MockObject_MockObject|RuleOwnerInterface
      */
     private function createExceptionOwner()
     {

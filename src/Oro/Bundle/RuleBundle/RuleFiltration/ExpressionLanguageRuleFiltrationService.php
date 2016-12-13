@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\RuleBundle\RuleFiltration;
 
-use Oro\Bundle\PaymentBundle\Entity\RuleOwnerInterface;
+use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
 use Oro\Component\ExpressionLanguage\ExpressionLanguage;
 
-class ExpressionLanguageRuleFiltrationService
+class ExpressionLanguageRuleFiltrationService implements RuleFiltrationServiceInterface
 {
     /** @var ExpressionLanguage */
     private $expressionLanguage;

@@ -1,8 +1,6 @@
 <?php
 
-namespace Oro\Bundle\PaymentBundle\Entity;
-
-use Oro\Bundle\RuleBundle\Entity\Rule;
+namespace Oro\Bundle\RuleBundle\Entity;
 
 interface RuleOwnerInterface
 {
