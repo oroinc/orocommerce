@@ -57,6 +57,7 @@ action_groups:
                         source_remove_label: $.sourceRemoveLabel
                 results:
                     redirectUrl: $.redirectUrl
+                    checkout: $.checkout
 
     start_checkout:
         parameters:
@@ -121,6 +122,7 @@ action_groups:
                     attribute: $.source
                     class: 'Oro\Bundle\CheckoutBundle\Entity\CheckoutSource'
                     data: $.sourceCriteria
+            - '@get_active_user': $.currentUser
             - '@find_entity':
                 conditions:
                     '@not_empty': $.source.id
@@ -129,6 +131,7 @@ action_groups:
                     class: 'Oro\Bundle\CheckoutBundle\Entity\Checkout'
                     where:
                         source: $.source
+                        accountUser: $.currentUser
                         deleted: false
             - '@tree':
                 conditions:
@@ -139,9 +142,9 @@ action_groups:
                         class: 'Oro\Bundle\CheckoutBundle\Entity\Checkout'
                         data:
                             source: $.source
+                            accountUser: $.currentUser
                     - '@create_datetime': {attribute: $.checkout.createdAt}
                     - '@create_datetime': {attribute: $.checkout.updatedAt}
-                    - '@assign_value': [$.checkout.source, $.source]
                     - '@assign_value': [$.updateData, true]
 
             # actualize user currency
@@ -155,7 +158,6 @@ action_groups:
                 conditions:
                     '@equal': [true, $.updateData]
                 actions:
-                    - '@get_active_user': $.currentUser
                     - '@assign_value': [$.checkout.account, $.currentUser.account]
                     - '@assign_value': [$.checkout.organization, $.currentUser.account.organization]
                     - '@call_service_method':

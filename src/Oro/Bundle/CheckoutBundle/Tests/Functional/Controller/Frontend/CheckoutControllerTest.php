@@ -4,7 +4,9 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend;
 
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+use Oro\Bundle\CheckoutBundle\Event\CheckoutValidateEvent;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -25,6 +27,30 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         $selectedAddressId = $this->getSelectedAddressId($crawler, self::BILLING_ADDRESS);
         $this->assertContains(self::BILLING_ADDRESS_SIGN, $crawler->html());
         $this->assertEquals($selectedAddressId, $this->getReference(self::DEFAULT_BILLING_ADDRESS)->getId());
+    }
+
+    /**
+     * @depends testStartCheckout
+     */
+    public function testRestartCheckout()
+    {
+        $crawler = $this->client->request('GET', self::$checkoutUrl);
+        $form = $this->getTransitionForm($crawler);
+        $values = $this->explodeArrayPaths($form->getValues());
+        $data = $this->setFormData($values, self::BILLING_ADDRESS);
+
+        $this->client->reboot(false);
+
+        /* @var $dispatcher EventDispatcherInterface */
+        $dispatcher = $this->getContainer()->get('event_dispatcher');
+        $dispatcher->addListener(CheckoutValidateEvent::NAME, function (CheckoutValidateEvent $event) {
+            $event->setIsCheckoutRestartRequired(true);
+        });
+
+        $crawler = $this->client->request('POST', $form->getUri(), $data);
+        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+        $this->assertNotContains(self::SHIPPING_ADDRESS_SIGN, $crawler->html());
+        $this->assertContains(self::BILLING_ADDRESS_SIGN, $crawler->html());
     }
 
     /**
@@ -163,7 +189,7 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
             [],
             ['HTTP_X-Requested-With' => 'XMLHttpRequest']
         );
-        
+
         $this->assertContains(self::PAYMENT_METHOD_SIGN, $crawler->html());
     }
 

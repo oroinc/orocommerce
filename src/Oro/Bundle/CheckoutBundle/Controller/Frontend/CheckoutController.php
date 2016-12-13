@@ -10,18 +10,16 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface;
-use Oro\Bundle\CheckoutBundle\Event\CheckoutEntityEvent;
-use Oro\Bundle\CheckoutBundle\Event\CheckoutEvents;
 use Oro\Bundle\CheckoutBundle\Event\CheckoutValidateEvent;
 use Oro\Bundle\CheckoutBundle\Model\TransitionData;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowStep;
+use Oro\Bundle\WorkflowBundle\Model\Transition;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 
 class CheckoutController extends Controller
@@ -55,15 +53,6 @@ class CheckoutController extends Controller
      */
     public function checkoutAction(Request $request, Checkout $checkout)
     {
-        $isGranted = false;
-        if ($checkout) {
-            $isGranted = $this->get('oro_security.security_facade')->isGranted('EDIT', $checkout);
-        }
-
-        if (!$checkout || !$isGranted) {
-            throw new NotFoundHttpException(sprintf('Checkout not found'));
-        }
-
         $workflowItem = $this->handleTransition($checkout, $request);
         $currentStep = $this->validateStep($workflowItem);
         $this->validateOrderLineItems($workflowItem, $checkout, $request);
@@ -267,8 +256,13 @@ class CheckoutController extends Controller
     protected function restartCheckout(WorkflowItem $workflowItem, CheckoutInterface $checkout)
     {
         $workflow = $this->getWorkflowManager()->getWorkflow($workflowItem->getWorkflowName());
-        $start = $workflow->getTransitionManager()->getStartTransitions()->first();
-        $this->getWorkflowManager()->transit($workflowItem, $start);
+        $transitions = $workflow->getTransitionManager()->getStartTransitions()->filter(
+            function (Transition $transition) use ($workflow, $workflowItem) {
+                return $workflow->isTransitionAvailable($workflowItem, $transition);
+            }
+        );
+
+        $this->getWorkflowManager()->transit($workflowItem, $transitions->first());
 
         return $this->getWorkflowItem($checkout);
     }
