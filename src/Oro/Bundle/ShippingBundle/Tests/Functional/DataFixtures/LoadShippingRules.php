@@ -9,7 +9,7 @@ use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
 use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethod;
 use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethodType;
 use Symfony\Component\Yaml\Yaml;
@@ -70,7 +70,7 @@ class LoadShippingRules extends AbstractFixture
                         ->setMethod(FlatRateShippingMethod::IDENTIFIER);
 
                     foreach ($methodConfigData['typeConfigs'] as $typeConfigData) {
-                        $typeConfig = new ShippingRuleMethodTypeConfig();
+                        $typeConfig = new ShippingMethodTypeConfig();
                         $typeConfig->setType(FlatRateShippingMethodType::IDENTIFIER)
                             ->setOptions([
                                 FlatRateShippingMethodType::PRICE_OPTION => $typeConfigData['options']['price'],

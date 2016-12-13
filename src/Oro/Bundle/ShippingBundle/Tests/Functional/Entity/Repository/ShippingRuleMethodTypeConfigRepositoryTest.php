@@ -25,7 +25,7 @@ class ShippingRuleMethodTypeConfigRepositoryTest extends WebTestCase
         ]);
 
         $this->repository = static::getContainer()->get('doctrine')
-            ->getRepository('OroShippingBundle:ShippingRuleMethodTypeConfig');
+            ->getRepository('OroShippingBundle:ShippingMethodTypeConfig');
     }
 
     public function testDeleteByMethodAndType()

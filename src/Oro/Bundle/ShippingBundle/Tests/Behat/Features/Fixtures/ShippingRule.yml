@@ -22,7 +22,7 @@ Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig:
       rule: '@shipping_rule1'
       typeConfigs: ['@method_type_configuration']
 
-Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig:
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig:
    method_type_configuration:
       enabled: true
       type: 'primary'

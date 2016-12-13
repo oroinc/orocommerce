@@ -63,7 +63,7 @@ Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig:
             - Valid: ~
             - Oro\Bundle\ShippingBundle\Validator\Constraints\EnabledTypeConfigsValidationGroup: ~
 
-Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig:
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig:
     properties:
         type:
             - NotBlank: ~

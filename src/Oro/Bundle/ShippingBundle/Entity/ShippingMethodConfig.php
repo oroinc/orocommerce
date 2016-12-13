@@ -56,7 +56,7 @@ class ShippingMethodConfig extends ExtendShippingMethodConfig
      * @var Collection|ShippingMethodConfig[]
      *
      * @ORM\OneToMany(
-     *     targetEntity="Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig",
+     *     targetEntity="Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig",
      *     mappedBy="methodConfig",
      *     cascade={"ALL"},
      *     fetch="EAGER",
@@ -160,19 +160,19 @@ class ShippingMethodConfig extends ExtendShippingMethodConfig
     }
 
     /**
-     * @param ShippingRuleMethodTypeConfig $lineItem
+     * @param ShippingMethodTypeConfig $lineItem
      * @return bool
      */
-    public function hasTypeConfig(ShippingRuleMethodTypeConfig $lineItem)
+    public function hasTypeConfig(ShippingMethodTypeConfig $lineItem)
     {
         return $this->typeConfigs->contains($lineItem);
     }
 
     /**
-     * @param ShippingRuleMethodTypeConfig $typeConfig
+     * @param ShippingMethodTypeConfig $typeConfig
      * @return $this
      */
-    public function addTypeConfig(ShippingRuleMethodTypeConfig $typeConfig)
+    public function addTypeConfig(ShippingMethodTypeConfig $typeConfig)
     {
         if (!$this->hasTypeConfig($typeConfig)) {
             $this->typeConfigs[] = $typeConfig;
@@ -183,10 +183,10 @@ class ShippingMethodConfig extends ExtendShippingMethodConfig
     }
 
     /**
-     * @param ShippingRuleMethodTypeConfig $typeConfig
+     * @param ShippingMethodTypeConfig $typeConfig
      * @return $this
      */
-    public function removeTypeConfig(ShippingRuleMethodTypeConfig $typeConfig)
+    public function removeTypeConfig(ShippingMethodTypeConfig $typeConfig)
     {
         if ($this->hasTypeConfig($typeConfig)) {
             $this->typeConfigs->removeElement($typeConfig);
@@ -196,7 +196,7 @@ class ShippingMethodConfig extends ExtendShippingMethodConfig
     }
 
     /**
-     * @return Collection|ShippingRuleMethodTypeConfig[]
+     * @return Collection|ShippingMethodTypeConfig[]
      */
     public function getTypeConfigs()
     {

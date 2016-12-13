@@ -4,7 +4,7 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\Validator\Constraints;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
-use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
@@ -54,8 +54,8 @@ class EnabledTypeConfigsValidationGroupValidatorTest extends \PHPUnit_Framework_
 
 
         $data = new ArrayCollection([
-            (new ShippingRuleMethodTypeConfig())->setEnabled(false),
-            (new ShippingRuleMethodTypeConfig())->setEnabled(true),
+            (new ShippingMethodTypeConfig())->setEnabled(false),
+            (new ShippingMethodTypeConfig())->setEnabled(true),
         ]);
 
         $this->validator->validate($data, $this->constraint);
@@ -88,8 +88,8 @@ class EnabledTypeConfigsValidationGroupValidatorTest extends \PHPUnit_Framework_
             ->method('addViolation');
 
         $data = new ArrayCollection([
-            (new ShippingRuleMethodTypeConfig())->setEnabled(false),
-            (new ShippingRuleMethodTypeConfig())->setEnabled(false),
+            (new ShippingMethodTypeConfig())->setEnabled(false),
+            (new ShippingMethodTypeConfig())->setEnabled(false),
         ]);
 
         $this->validator->validate($data, $this->constraint);
@@ -108,7 +108,7 @@ class EnabledTypeConfigsValidationGroupValidatorTest extends \PHPUnit_Framework_
     {
         $this->setExpectedException(
             '\Symfony\Component\Validator\Exception\UnexpectedTypeException',
-            'Expected argument of type "Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig",'
+            'Expected argument of type "Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig",'
             . ' "stdClass" given'
         );
         $data = new ArrayCollection([new \stdClass()]);

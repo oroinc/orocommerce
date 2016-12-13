@@ -14,7 +14,7 @@ use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
 use Oro\Bundle\ShippingBundle\Form\Type\FlatRateShippingMethodTypeOptionsType;
 use Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleDestinationType;
 use Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleMethodConfigCollectionType;
@@ -136,7 +136,7 @@ class ShippingRuleTypeTest extends FormIntegrationTestCase
                     ->setMethod(FlatRateShippingMethod::IDENTIFIER)
                     ->setOptions([])
                     ->addTypeConfig(
-                        (new ShippingRuleMethodTypeConfig())
+                        (new ShippingMethodTypeConfig())
                             ->setEnabled(true)
                             ->setType(FlatRateShippingMethodType::IDENTIFIER)
                             ->setOptions([

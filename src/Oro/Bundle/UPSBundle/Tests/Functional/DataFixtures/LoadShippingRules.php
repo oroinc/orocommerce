@@ -10,7 +10,7 @@ use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
 use Oro\Bundle\UPSBundle\Method\UPSShippingMethod;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -95,7 +95,7 @@ class LoadShippingRules extends AbstractFixture implements DependentFixtureInter
                         ->setMethod($shippingMethod->getIdentifier());
 
                     foreach ($shippingMethod->getTypes() as $shippingMethodType) {
-                        $typeConfig = new ShippingRuleMethodTypeConfig();
+                        $typeConfig = new ShippingMethodTypeConfig();
                         $typeConfig->setType($shippingMethodType->getIdentifier());
                         $typeConfig->setEnabled(false);
                         $methodConfig->addTypeConfig($typeConfig);

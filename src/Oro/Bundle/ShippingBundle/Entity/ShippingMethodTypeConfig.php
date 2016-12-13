@@ -5,14 +5,14 @@ namespace Oro\Bundle\ShippingBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
-use Oro\Bundle\ShippingBundle\Model\ExtendShippingRuleMethodTypeConfig;
+use Oro\Bundle\ShippingBundle\Model\ExtendShippingMethodTypeConfig;
 
 /**
  * @ORM\Table(name="oro_shipping_rule_mthd_tp_cnfg")
  * @ORM\Entity(repositoryClass="Oro\Bundle\ShippingBundle\Entity\Repository\ShippingRuleMethodTypeConfigRepository")
  * @Config
  */
-class ShippingRuleMethodTypeConfig extends ExtendShippingRuleMethodTypeConfig
+class ShippingMethodTypeConfig extends ExtendShippingMethodTypeConfig
 {
     /**
      * @ORM\Id

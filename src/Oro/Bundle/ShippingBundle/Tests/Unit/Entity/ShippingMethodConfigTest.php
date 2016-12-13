@@ -4,7 +4,7 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 class ShippingMethodConfigTest extends \PHPUnit_Framework_TestCase
@@ -23,6 +23,6 @@ class ShippingMethodConfigTest extends \PHPUnit_Framework_TestCase
         $entity = new ShippingMethodConfig();
 
         $this->assertPropertyAccessors($entity, $properties);
-        $this->assertPropertyCollection($entity, 'typeConfigs', new ShippingRuleMethodTypeConfig());
+        $this->assertPropertyCollection($entity, 'typeConfigs', new ShippingMethodTypeConfig());
     }
 }

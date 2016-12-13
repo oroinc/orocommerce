@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ShippingBundle\Form\Type;
 
-use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -37,7 +37,7 @@ class ShippingRuleMethodTypeConfigType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => ShippingRuleMethodTypeConfig::class,
+            'data_class' => ShippingMethodTypeConfig::class,
             'options_type' => HiddenType::class,
             'is_grouped' => false,
             'validation_groups' => function (FormInterface $form) {

@@ -6,7 +6,7 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
 use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethod;
 use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethodType;
 
@@ -17,7 +17,7 @@ class LoadShippingRuleDemoData extends AbstractFixture
      */
     public function load(ObjectManager $manager)
     {
-        $typeConfig = new ShippingRuleMethodTypeConfig();
+        $typeConfig = new ShippingMethodTypeConfig();
         $typeConfig->setEnabled(true);
         $typeConfig->setType(FlatRateShippingMethodType::IDENTIFIER)
             ->setOptions([
