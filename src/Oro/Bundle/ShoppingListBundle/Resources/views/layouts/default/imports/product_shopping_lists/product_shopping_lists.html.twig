@@ -178,7 +178,7 @@
                                                                 },
                                                                 confirmMessage: 'oro.frontend.shoppinglist.messages.line_item_delete_confirm'|trans,
                                                                 sucsessMessage: 'oro.frontend.shoppinglist.messages.line_item_deleted'|trans,
-                                                                okButtonClass: 'btn ok theme-btn_sm btn-orange',
+                                                                okButtonClass: 'btn btn--info btn--size-s',
                                                                 cancelButtonClass: 'btn cancel theme-btn_sm btn_gray'
                                                             }
                                                         })) }}>
@@ -213,7 +213,7 @@
                                     </li>
                                     <li class="shopping-lists-modify__badges">
                                         <span class="shopping-lists-modify__edit">
-                                            <button class="shopping-lists-modify__button badge badge_sm badge_orange badge_circled-corners"
+                                            <button class="shopping-lists-modify__button"
                                                     type="button"
                                                     title="{{ 'Accept'|trans }}"
                                                     disabled
@@ -222,7 +222,7 @@
                                             </button>
                                         </span>
                                         <span class="shopping-lists-modify__edit">
-                                            <button class="shopping-lists-modify__button badge badge_sm badge_l-dark badge_circled-corners"
+                                            <button class="shopping-lists-modify__button reset"
                                                     type="button"
                                                     title="{{ 'Decline'|trans }}"
                                                     data-role="decline">
@@ -273,7 +273,7 @@
                             </li>
                             <li class="shopping-lists-modify__badges">
                                 <span class="shopping-lists-modify__edit">
-                                    <button class="shopping-lists-modify__button badge badge_sm badge_orange badge_circled-corners"
+                                    <button class="shopping-lists-modify__button"
                                             type="button"
                                             title="{{ 'Accept'|trans }}"
                                             data-role="add-form-accept">
@@ -281,7 +281,7 @@
                                     </button>
                                 </span>
                                 <span class="shopping-lists-modify__edit">
-                                    <button class="shopping-lists-modify__button badge badge_sm badge_l-dark badge_circled-corners"
+                                    <button class="shopping-lists-modify__button reset"
                                             type="reset"
                                             title="{{ 'Decline'|trans }}"
                                             data-role="add-form-reset">
@@ -296,7 +296,7 @@
             </form>
         </div>
         <div class="widget-actions">
-            <button class="btn theme-btn btn-orange" type="reset">{{ 'Close'|trans }}</button>
+            <button class="btn theme-btn" type="reset">{{ 'Close'|trans }}</button>
         </div>
     </div>
 {% endblock %}
