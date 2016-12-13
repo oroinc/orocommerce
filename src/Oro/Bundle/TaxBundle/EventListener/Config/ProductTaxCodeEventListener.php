@@ -9,7 +9,7 @@ use Oro\Bundle\TaxBundle\DependencyInjection\OroTaxExtension;
 use Oro\Bundle\TaxBundle\Entity\AbstractTaxCode;
 use Oro\Bundle\TaxBundle\Entity\Repository\AbstractTaxCodeRepository;
 
-class DigitalProductEventListener
+class ProductTaxCodeEventListener
 {
     /**
      * @var DoctrineHelper

@@ -15,7 +15,7 @@ class CustomerAddressItemResolver extends AbstractItemResolver
             return;
         }
 
-        if (!$taxable->getPrice()) {
+        if (!$taxable->getPrice()->isPositive()) {
             return;
         }
 

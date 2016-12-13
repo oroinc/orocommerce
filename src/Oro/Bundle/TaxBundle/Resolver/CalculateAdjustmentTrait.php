@@ -8,7 +8,7 @@ use Brick\Math\RoundingMode;
 use Oro\Bundle\TaxBundle\Model\ResultElement;
 use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 
-abstract class AbstractUnitRowResolver
+trait CalculateAdjustmentTrait
 {
     /**
      * @param ResultElement $resultElement

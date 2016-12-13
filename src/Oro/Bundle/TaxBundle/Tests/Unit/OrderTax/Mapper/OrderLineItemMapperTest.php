@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Unit\OrderTax\Mapper;
 
+use Brick\Math\BigDecimal;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\TaxBundle\Model\Taxable;
@@ -77,7 +78,12 @@ class OrderLineItemMapperTest extends \PHPUnit_Framework_TestCase
 
         $taxable = $this->mapper->map($lineItem);
 
-        $this->assertTaxable($taxable, self::ITEM_ID, self::ITEM_QUANTITY, self::ITEM_PRICE_VALUE);
+        $this->assertTaxable(
+            $taxable,
+            self::ITEM_ID,
+            BigDecimal::of(self::ITEM_QUANTITY),
+            BigDecimal::of(self::ITEM_PRICE_VALUE)
+        );
     }
 
     public function testMapWithoutPrice()
@@ -86,7 +92,7 @@ class OrderLineItemMapperTest extends \PHPUnit_Framework_TestCase
 
         $taxable = $this->mapper->map($lineItem);
 
-        $this->assertTaxable($taxable, self::ITEM_ID, self::ITEM_QUANTITY, null);
+        $this->assertTaxable($taxable, self::ITEM_ID, BigDecimal::of(self::ITEM_QUANTITY), BigDecimal::one());
     }
 
     /**
@@ -95,7 +101,7 @@ class OrderLineItemMapperTest extends \PHPUnit_Framework_TestCase
      * @param float $priceValue
      * @return OrderLineItem
      */
-    protected function createLineItem($id, $quantity, $priceValue = null)
+    protected function createLineItem($id, $quantity, $priceValue = 1)
     {
         /** @var OrderLineItem $lineItem */
         $lineItem = $this->getEntity('Oro\Bundle\OrderBundle\Entity\OrderLineItem', ['id' => $id]);
@@ -112,16 +118,16 @@ class OrderLineItemMapperTest extends \PHPUnit_Framework_TestCase
     /**
      * @param Taxable $taxable
      * @param int $id
-     * @param int $quantity
-     * @param float $priceValue
+     * @param BigDecimal $quantity
+     * @param BigDecimal $priceValue
      */
-    protected function assertTaxable($taxable, $id, $quantity, $priceValue)
+    protected function assertTaxable($taxable, $id, BigDecimal $quantity, BigDecimal $priceValue)
     {
         $this->assertInstanceOf('Oro\Bundle\TaxBundle\Model\Taxable', $taxable);
         $this->assertEquals($id, $taxable->getIdentifier());
         $this->assertEquals($quantity, $taxable->getQuantity());
         $this->assertEquals($priceValue, $taxable->getPrice());
-        $this->assertEquals(0, $taxable->getAmount());
+        $this->assertEquals('0', $taxable->getAmount());
         $this->assertEquals(self::CONTEXT_VALUE, $taxable->getContextValue(self::CONTEXT_KEY));
         $this->assertEmpty($taxable->getItems());
     }
