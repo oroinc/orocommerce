@@ -2,22 +2,17 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Extension;
 
-use Symfony\Component\Form\PreloadedExtension;
-use Symfony\Component\Form\Test\FormIntegrationTestCase;
-use Symfony\Bundle\FrameworkBundle\Translation\Translator;
-
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencyType;
+use Oro\Bundle\CurrencyBundle\Provider\CurrencyProviderInterface;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\PricingBundle\Form\Extension\SystemCurrencyFormExtension;
 
+use Symfony\Bundle\FrameworkBundle\Translation\Translator;
+use Symfony\Component\Form\PreloadedExtension;
+use Symfony\Component\Form\Test\FormIntegrationTestCase;
+
 class SystemCurrencyFormExtensionTest extends FormIntegrationTestCase
 {
-    /**
-     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $configManager;
-
     /**
      * @var LocaleSettings
      */
@@ -28,20 +23,26 @@ class SystemCurrencyFormExtensionTest extends FormIntegrationTestCase
      */
     protected $translator;
 
+
+    /**
+     * @var CurrencyProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $currencyProvider;
+
     /**
      * {@inheritdoc}
      */
     public function setUp()
     {
-        $this->translator = $this->getMockBuilder('Oro\Bundle\TranslationBundle\Translation\Translator')
+        $this->translator = $this->getMockBuilder(Translator::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->localeSettings = $this->getMockBuilder('Oro\Bundle\LocaleBundle\Model\LocaleSettings')
+        $this->localeSettings = $this->getMockBuilder(LocaleSettings::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
+        $this->currencyProvider = $this->getMockBuilder(CurrencyProviderInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -60,9 +61,9 @@ class SystemCurrencyFormExtensionTest extends FormIntegrationTestCase
                 ],
                 [
                     'form' => [new SystemCurrencyFormExtension(
-                        $this->configManager,
                         $this->localeSettings,
-                        $this->translator
+                        $this->translator,
+                        $this->currencyProvider
                     )],
                 ]
             ),
@@ -81,9 +82,8 @@ class SystemCurrencyFormExtensionTest extends FormIntegrationTestCase
         $form = $this->factory->create('oro_currency', null, $options);
 
         if ($options['restrict']) {
-            $this->configManager->expects($this->once())
-                ->method('get')
-                ->with('oro_pricing.enabled_currencies')
+            $this->currencyProvider->expects($this->once())
+                ->method('getCurrencyList')
                 ->willReturn($enabledCurrencies);
         }
 

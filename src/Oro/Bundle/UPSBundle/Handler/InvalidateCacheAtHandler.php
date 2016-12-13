@@ -43,13 +43,10 @@ class InvalidateCacheAtHandler
         if ($form->get('invalidateNow')->getData()) {
             $this->shippingPriceCache->deleteAll();
         } else {
-            $datetime = $form->get('invalidateCacheAt')->getData();
-            if ($datetime) {
-                /** @var  UPSTransport $transport */
-                $transport = $channel->getTransport();
-                $transport->setInvalidateCacheAt($datetime);
-                $this->manager->flush();
-            }
+            /** @var  UPSTransport $transport */
+            $transport = $channel->getTransport();
+            $transport->setInvalidateCacheAt($form->get('invalidateCacheAt')->getData());
+            $this->manager->flush();
         }
     }
 }

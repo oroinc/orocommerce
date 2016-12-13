@@ -1,0 +1,4 @@
+assets:
+    css:
+        'oroups':
+            - 'bundles/oroups/css/style.less'

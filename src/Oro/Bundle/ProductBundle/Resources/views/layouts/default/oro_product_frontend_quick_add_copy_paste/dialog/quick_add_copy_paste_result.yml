@@ -19,7 +19,7 @@ layout:
                 type: button
                 action: reset
                 text: Cancel
-                style: gray
+                style: ''
         - '@setOption':
             id: quick_add_form_start
             optionName: form_route_name
