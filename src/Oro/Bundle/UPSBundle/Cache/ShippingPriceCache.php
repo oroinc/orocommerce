@@ -14,6 +14,8 @@ class ShippingPriceCache
      */
     const LIFETIME = 86400;
 
+    const NAME_SPACE = 'oro_ups_shipping_price';
+
     /**
      * @var CacheProvider
      */
@@ -70,7 +72,7 @@ class ShippingPriceCache
         if ($invalidateCacheAt) {
             $interval = $invalidateCacheAt->getTimestamp() - time();
         }
-        if ($interval <= 0 || $interval > static::LIFETIME) {
+        if ($interval <= 0) {
             $interval = static::LIFETIME;
         }
         $this->cache->save($this->generateStringKey($key), $price, $interval);
@@ -78,10 +80,11 @@ class ShippingPriceCache
     }
 
     /**
-     * {@inheritdoc}
+     * @param integer $id
      */
-    public function deleteAll()
+    public function deleteAll($id)
     {
+        $this->setNamespace($id);
         $this->cache->deleteAll();
     }
 
@@ -108,6 +111,7 @@ class ShippingPriceCache
      */
     protected function generateStringKey(ShippingPriceCacheKey $key)
     {
+        $this->setNamespace($key->getTransport()->getId());
         $invalidateAt = '';
         if ($key->getTransport() && $key->getTransport()->getInvalidateCacheAt()) {
             $invalidateAt = $key->getTransport()->getInvalidateCacheAt()->getTimestamp();
@@ -116,5 +120,13 @@ class ShippingPriceCache
             $key->generateKey(),
             $invalidateAt
         ]);
+    }
+
+    /**
+     * @param integer $id
+     */
+    protected function setNamespace($id)
+    {
+        $this->cache->setNamespace(self::NAME_SPACE . '_' . $id);
     }
 }

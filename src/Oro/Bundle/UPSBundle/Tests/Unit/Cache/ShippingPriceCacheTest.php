@@ -143,7 +143,7 @@ class ShippingPriceCacheTest extends \PHPUnit_Framework_TestCase
             ],
             'later than lifetime' => [
                 'invalidateCacheAt' => '+24hour+10second',
-                'expectedLifetime' => ShippingPriceCache::LIFETIME,
+                'expectedLifetime' => 86410,
             ],
         ];
     }

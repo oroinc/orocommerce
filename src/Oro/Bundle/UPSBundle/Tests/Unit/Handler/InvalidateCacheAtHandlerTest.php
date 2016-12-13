@@ -5,14 +5,19 @@ namespace Oro\Bundle\UPSBundle\Tests\Unit\Handler;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Persistence\ObjectManager;
+use Oro\Bundle\CronBundle\Entity\Manager\DeferredScheduler;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
-use Oro\Bundle\UPSBundle\Cache\ShippingPriceCache;
+use Oro\Bundle\ShippingBundle\Provider\Cache\ShippingPriceCache;
+use Oro\Bundle\UPSBundle\Cache\ShippingPriceCache as UPSShippingPriceCache;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 use Oro\Bundle\UPSBundle\Handler\InvalidateCacheAtHandler;
+use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Form\FormInterface;
 
 class InvalidateCacheAtHandlerTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTrait;
+
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|ObjectManager
      */
@@ -24,7 +29,12 @@ class InvalidateCacheAtHandlerTest extends \PHPUnit_Framework_TestCase
     protected $shippingPriceCache;
 
     /**
-     * @var CacheProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit_Framework_MockObject_MockObject|UPSShippingPriceCache
+     */
+    protected $upsPriceCache;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|CacheProvider
      */
     protected $cacheProvider;
 
@@ -39,12 +49,7 @@ class InvalidateCacheAtHandlerTest extends \PHPUnit_Framework_TestCase
     protected $handler;
 
     /**
-     * @var UPSTransport
-     */
-    protected $transport;
-
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject| Channel
+     * @var \PHPUnit_Framework_MockObject_MockObject|Channel
      */
     protected $channel;
 
@@ -52,6 +57,11 @@ class InvalidateCacheAtHandlerTest extends \PHPUnit_Framework_TestCase
      * @var \DateTime
      */
     protected $datetime;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|DeferredScheduler
+     */
+    protected $deferredScheduler;
 
     protected function setUp()
     {
@@ -62,27 +72,73 @@ class InvalidateCacheAtHandlerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->managerRegistry->expects($this->once())
+        $this->managerRegistry->expects(static::once())
             ->method('getManagerForClass')
             ->willReturn($this->manager);
 
-        $this->shippingPriceCache = $this->getMockBuilder(ShippingPriceCache::class)
+        $this->upsPriceCache = $this->getMockBuilder(UPSShippingPriceCache::class)
             ->disableOriginalConstructor()
             ->setMethods(['deleteAll'])->getMockForAbstractClass();
+        
+        $this->shippingPriceCache = $this->getMockBuilder(ShippingPriceCache::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['deleteAllPrices'])->getMockForAbstractClass();
+
+        $this->deferredScheduler = $this->getMockBuilder(DeferredScheduler::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->handler = new InvalidateCacheAtHandler(
             $this->managerRegistry,
-            $this->shippingPriceCache
+            $this->upsPriceCache,
+            $this->shippingPriceCache,
+            $this->deferredScheduler
         );
     }
 
-    public function testProcessInvalidateNotNow()
-    {
+    /**
+     * @param \DateTime|null $oldDateTime
+     * @param \DateTime $newDateTime
+     * @param string|null $removeCronString
+     * @param string $addCronString
+     * @param int $removeQuantity
+     * @dataProvider invalidateAtDataProvider
+     */
+    public function testProcessInvalidateNotNow(
+        \DateTime $oldDateTime = null,
+        \DateTime $newDateTime,
+        $removeCronString,
+        $addCronString,
+        $removeQuantity
+    ) {
+        /** @var \PHPUnit_Framework_MockObject_MockObject|FormInterface $form */
         $form = $this->getMock(FormInterface::class);
-        $transport = new UPSTransport();
+        $transport = $this->getEntity(
+            UPSTransport::class,
+            [
+                'id' => 1,
+                'invalidateCacheAt' => $oldDateTime
+            ]
+        );
+
+        $this->deferredScheduler->expects(static::exactly($removeQuantity))
+            ->method('removeSchedule')
+            ->with(
+                InvalidateCacheAtHandler::COMMAND,
+                [sprintf('--id=%d', $transport->getId())],
+                $removeCronString
+            );
+
+        $this->deferredScheduler->expects(static::once())
+            ->method('addSchedule')
+            ->with(
+                InvalidateCacheAtHandler::COMMAND,
+                [sprintf('--id=%d', $transport->getId())],
+                $addCronString
+            );
 
         $this->channel = $this->getMock(Channel::class);
-        $this->channel->expects($this->once())
+        $this->channel->expects(static::once())
             ->method('getTransport')
             ->willReturn($transport);
 
@@ -91,7 +147,7 @@ class InvalidateCacheAtHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('getData')
             ->willReturn(null);
 
-        $datetime = new \DateTime('2015-08-21 15:00:00 UTC');
+        $datetime = $newDateTime;
         $form->expects(static::at(0))
             ->method('get')
             ->with('invalidateNow')
@@ -113,14 +169,38 @@ class InvalidateCacheAtHandlerTest extends \PHPUnit_Framework_TestCase
         $this->shippingPriceCache->expects(static::never())->method('deleteAll');
         $this->handler->process($this->channel, $form);
     }
+    
+    public function invalidateAtDataProvider()
+    {
+        return[
+            'withoutOldValue' => [
+                'oldDateTime' => null,
+                'newDateTime' => new \DateTime('2017-08-21 15:00:00 UTC'),
+                'removeCronString' => null,
+                'addCronString' => '0 15 21 8 *',
+                'removeQuantity' => 0
+            ],
+            'withOldValue' => [
+                'oldDateTime' => new \DateTime('2015-05-15 15:00:00 UTC'),
+                'newDateTime' => new \DateTime('2017-08-21 15:00:00 UTC'),
+                'removeCronString' => '0 15 15 5 *',
+                'addCronString' => '0 15 21 8 *',
+                'removeQuantity' => 1
+            ]
+        ];
+    }
 
     public function testProcessInvalidateNow()
     {
+        /** @var \PHPUnit_Framework_MockObject_MockObject|FormInterface $form */
         $form = $this->getMock(FormInterface::class);
 
+        $transport = $this->getEntity(UPSTransport::class, ['id' => 1]);
+
         $this->channel = $this->getMock(Channel::class);
-        $this->channel->expects($this->never())
-            ->method('getTransport');
+        $this->channel->expects(static::once())
+            ->method('getTransport')
+            ->willReturn($transport);
 
         $invalidateNow = $this->getMock(FormInterface::class);
         $invalidateNow->expects(static::once())
@@ -132,7 +212,8 @@ class InvalidateCacheAtHandlerTest extends \PHPUnit_Framework_TestCase
             ->with('invalidateNow')
             ->willReturn($invalidateNow);
 
-        $this->shippingPriceCache->expects(static::once())->method('deleteAll');
+        $this->upsPriceCache->expects(static::once())->method('deleteAll')->with(1);
+        $this->shippingPriceCache->expects(static::once())->method('deleteAllPrices');
         $this->handler->process($this->channel, $form);
     }
 }
