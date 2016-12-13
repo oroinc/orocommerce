@@ -99,9 +99,9 @@ services:
         class: 'Oro\Bundle\PricingBundle\Form\Extension\SystemCurrencyFormExtension'
         public: true
         arguments:
-            - "@oro_config.manager"
             - '@oro_locale.settings'
             - "@translator"
+            - "@oro_currency.config.currency"
         tags:
             - { name: form.type_extension, alias: oro_currency }
 
