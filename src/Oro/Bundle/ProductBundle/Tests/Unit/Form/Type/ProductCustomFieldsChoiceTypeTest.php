@@ -4,18 +4,18 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
-use Oro\Bundle\ProductBundle\Form\Type\ProductCustomFieldsChoiceType;
-use Oro\Bundle\ProductBundle\Provider\CustomFieldProvider;
+use Oro\Bundle\ProductBundle\Form\Type\ProductCustomVariantFieldsChoiceType;
+use Oro\Bundle\ProductBundle\Provider\CustomVariantFieldsProvider;
 
 class ProductCustomFieldsChoiceTypeTest extends FormIntegrationTestCase
 {
     /**
-     * @var ProductCustomFieldsChoiceType
+     * @var ProductCustomVariantFieldsChoiceType
      */
     protected $formType;
 
     /**
-     * @var CustomFieldProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var CustomVariantFieldsProvider|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $customFieldProvider;
 
@@ -45,11 +45,11 @@ class ProductCustomFieldsChoiceTypeTest extends FormIntegrationTestCase
     {
         parent::setUp();
 
-        $this->customFieldProvider = $this->getMockBuilder('Oro\Bundle\ProductBundle\Provider\CustomFieldProvider')
+        $this->customFieldProvider = $this->getMockBuilder(CustomVariantFieldsProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->formType = new ProductCustomFieldsChoiceType($this->customFieldProvider, $this->productClass);
+        $this->formType = new ProductCustomVariantFieldsChoiceType($this->customFieldProvider, $this->productClass);
     }
 
     /**
@@ -101,6 +101,6 @@ class ProductCustomFieldsChoiceTypeTest extends FormIntegrationTestCase
 
     public function testGetName()
     {
-        $this->assertEquals(ProductCustomFieldsChoiceType::NAME, $this->formType->getName());
+        $this->assertEquals(ProductCustomVariantFieldsChoiceType::NAME, $this->formType->getName());
     }
 }

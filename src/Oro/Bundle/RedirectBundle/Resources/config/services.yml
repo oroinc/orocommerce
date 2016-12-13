@@ -2,19 +2,26 @@ parameters:
     oro_redirect.entity.slug.class: Oro\Bundle\RedirectBundle\Entity\Slug
 
 services:
-    oro_redirect.kernel.listener.process_redirects:
-        class: 'Oro\Bundle\RedirectBundle\EventListener\ForwardListener'
+    oro_redirect.routing.matched_url_decision_maker:
+        class: Oro\Bundle\RedirectBundle\Routing\MatchedUrlDecisionMaker
         arguments:
-            - "@router"
-            - "@doctrine"
-            - "@oro_frontend.request.frontend_helper"
+            - '@oro_frontend.request.frontend_helper'
             - '%installed%'
-            - '%kernel.environment%'
         calls:
-            - [addSkippedUrlPattern, ['/_profiler', 'dev']]
-            - [addSkippedUrlPattern, ['/_wdt', 'dev']]
-        tags:
-            - {name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: 64}
+            - [addSkippedUrlPattern, ['/_profiler']]
+            - [addSkippedUrlPattern, ['/_wdt']]
+            - [addSkippedUrlPattern, ['/api/']]
+
+    oro_redirect.routing.slug_url_mathcer:
+        class: Oro\Bundle\RedirectBundle\Routing\SlugUrlMatcher
+        arguments:
+            - '@router'
+            - '@router'
+            - '@doctrine'
+            - '@oro_scope.scope_manager'
+            - '@oro_redirect.routing.matched_url_decision_maker'
+        calls:
+            - [addUrlToMatchSlugFirst, ['/']]
 
     oro_redirect.slug.manager:
         class: 'Oro\Bundle\RedirectBundle\Manager\SlugManager'
@@ -30,3 +37,70 @@ services:
         arguments:
             - '%oro_catalog.entity.category.class%'
             - "@doctrine.orm.entity_manager"
+
+    oro_redirect.security.firewall_factory:
+        class: Oro\Bundle\RedirectBundle\Security\FirewallFactory
+
+    security.firewall:
+        class: Oro\Bundle\RedirectBundle\Security\Firewall
+        arguments:
+            - "@security.firewall.map"
+            - "@event_dispatcher"
+            - "@oro_redirect.security.firewall_factory"
+            - "@oro_redirect.routing.matched_url_decision_maker"
+            - "@router.request_context"
+        tags:
+            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequestBeforeRouting, priority: 50 }
+            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequestAfterRouting, priority: 8 }
+            - { name: kernel.event_listener, event: kernel.finish_request, method: onKernelFinishRequest }
+
+    oro_redirect.migration.extension.slug:
+        class: Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtension
+        tags:
+            - { name: oro_migration.extension, extension_name: slug }
+
+    oro_redirect.provider.routing_information_provider:
+        class: Oro\Bundle\RedirectBundle\Provider\RoutingInformationProvider
+
+    oro_redirect.event_listener.slug_prototype_change:
+        class: Oro\Bundle\RedirectBundle\EventListener\SluggableEntityListener
+        public: false
+        arguments:
+            - '@oro_redirect.direct_url_message_factory'
+            - '@oro_message_queue.client.message_producer'
+            - '@oro_config.manager'
+        tags:
+            - { name: doctrine.event_listener, event: onFlush }
+            - { name: doctrine.event_listener, event: postPersist }
+
+    oro_redirect.generator.slug_entity:
+        class: Oro\Bundle\RedirectBundle\Generator\SlugEntityGenerator
+        arguments:
+            - '@oro_redirect.provider.routing_information_provider'
+
+    oro_redirect.direct_url_message_factory:
+        class: Oro\Bundle\RedirectBundle\Model\DirectUrlMessageFactory
+        arguments:
+            - '@doctrine'
+
+    oro_redirect.async.direct_url_processor:
+        class: Oro\Bundle\RedirectBundle\Async\DirectUrlProcessor
+        arguments:
+            - '@doctrine'
+            - '@oro_redirect.generator.slug_entity'
+            - '@oro_redirect.direct_url_message_factory'
+            - '@oro_entity.database_exception_helper'
+            - '@logger'
+        tags:
+            - { name: 'oro_message_queue.client.message_processor' }
+
+    oro_redirect.layout.data_provider.canonical_data:
+        class: Oro\Bundle\RedirectBundle\DataProvider\CanonicalDataProvider
+        arguments:
+            - '@router'
+            - '@oro_config.manager'
+            - '@request_stack'
+            - '@oro_redirect.provider.routing_information_provider'
+            - '@oro_locale.helper.localization'
+        tags:
+            - { name: layout.data_provider, alias: canonical }

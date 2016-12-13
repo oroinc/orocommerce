@@ -11,7 +11,7 @@ use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\EventListener\ProductVariantCustomFieldsDatagridListener;
-use Oro\Bundle\ProductBundle\Provider\CustomFieldProvider;
+use Oro\Bundle\ProductBundle\Provider\CustomVariantFieldsProvider;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 
 class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit_Framework_TestCase
@@ -31,8 +31,8 @@ class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit_Framework_
     /** @var \PHPUnit_Framework_MockObject_MockObject|DoctrineHelper */
     protected $doctrineHelper;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|CustomFieldProvider */
-    protected $customFieldProvider;
+    /** @var \PHPUnit_Framework_MockObject_MockObject|CustomVariantFieldsProvider */
+    protected $customVariantFieldsProvider;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject|ProductRepository */
     protected $productRepository;
@@ -61,10 +61,11 @@ class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit_Framework_
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->customFieldProvider = $this->getMockBuilder('Oro\Bundle\ProductBundle\Provider\CustomFieldProvider')
+        $this->customVariantFieldsProvider = $this
+            ->getMockBuilder(CustomVariantFieldsProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->customFieldProvider->expects($this->once())
+        $this->customVariantFieldsProvider->expects($this->once())
             ->method('getEntityCustomFields')
             ->with($this->productClass)
             ->willReturn($this->productEntityCustomFields);
@@ -80,14 +81,14 @@ class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit_Framework_
 
         $this->listener = new ProductVariantCustomFieldsDatagridListener(
             $this->doctrineHelper,
-            $this->customFieldProvider,
+            $this->customVariantFieldsProvider,
             $this->productClass
         );
     }
 
     protected function tearDown()
     {
-        unset($this->listener, $this->doctrineHelper, $this->customFieldProvider);
+        unset($this->listener, $this->doctrineHelper, $this->customVariantFieldsProvider);
     }
 
     public function testAddsCustomFieldLabelsBeforeBuild()

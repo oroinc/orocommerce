@@ -7,7 +7,7 @@ use Symfony\Component\DomCrawler\Form;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadFrontendProductVisibilityData;
+use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadFrontendProductVisibilityData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadFrontendProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
@@ -197,8 +197,8 @@ abstract class QuickAddControllerTest extends WebTestCase
             self::VALIDATION_ERROR_ROWS => 3,
             self::VALIDATION_ERRORS     => [
                 sprintf(self::VALIDATION_ERROR_NOT_FOUND, 'SKU1'),
-                sprintf(self::VALIDATION_ERROR_MALFORMED, 5),
-                sprintf(self::VALIDATION_ERROR_MALFORMED, 6)
+                sprintf(self::VALIDATION_ERROR_MALFORMED, 6),
+                sprintf(self::VALIDATION_ERROR_MALFORMED, 7)
             ]
         ];
 

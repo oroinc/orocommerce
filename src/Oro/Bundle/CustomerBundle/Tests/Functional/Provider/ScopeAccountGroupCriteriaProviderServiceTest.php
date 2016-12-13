@@ -14,7 +14,8 @@ class ScopeAccountGroupCriteriaProviderServiceTest extends AbstractScopeProvider
             [
                 'account_group_category_visibility',
                 'account_group_product_visibility',
-                'workflow_definition'
+                'workflow_definition',
+                'web_content'
             ]
         );
     }

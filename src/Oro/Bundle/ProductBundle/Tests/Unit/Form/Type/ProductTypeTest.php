@@ -2,9 +2,6 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\PreloadedExtension;
-use Symfony\Component\Form\Test\FormIntegrationTestCase;
-
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\AttachmentBundle\Form\Type\ImageType;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
@@ -37,8 +34,12 @@ use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\EnumSelectTypeStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ImageTypeStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductCustomVariantFieldsChoiceTypeStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
+use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugType;
+use Oro\Bundle\RedirectBundle\Tests\Unit\Form\Type\Stub\LocalizedSlugTypeStub;
 use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType as StubEntityIdentifierType;
+use Symfony\Component\Form\PreloadedExtension;
+use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 class ProductTypeTest extends FormIntegrationTestCase
 {
@@ -161,7 +162,8 @@ class ProductTypeTest extends FormIntegrationTestCase
                     ProductVariantLinksType::NAME => new ProductVariantLinksType(),
                     ProductStatusType::NAME => new ProductStatusType(new ProductStatusProvider()),
                     ProductImageCollectionType::NAME => new ProductImageCollectionType($imageTypeProvider),
-                    ProductImageType::NAME => new ProductImageType()
+                    ProductImageType::NAME => new ProductImageType(),
+                    LocalizedSlugType::NAME => new LocalizedSlugTypeStub()
                 ],
                 [
                     'form' => [
@@ -222,8 +224,10 @@ class ProductTypeTest extends FormIntegrationTestCase
                     'visible' => 1,
                     'status' => Product::STATUS_DISABLED,
                     'type' => Product::TYPE_SIMPLE,
+                    'slugPrototypes' => [['string' => 'slug']]
                 ],
-                'expectedData'  => $this->createExpectedProductEntity(),
+                'expectedData'  => $this->createExpectedProductEntity()
+                    ->addSlugPrototype((new LocalizedFallbackValue())->setString('slug')),
                 'rounding' => false
             ],
             'product with additionalUnitPrecisions' => [

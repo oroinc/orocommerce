@@ -95,20 +95,12 @@ services:
             - { name: form.type_extension, alias: integer }
 
     oro_product.form.type.custom_entity_fields_choice:
-        class: 'Oro\Bundle\ProductBundle\Form\Type\ProductCustomFieldsChoiceType'
-        arguments:
-            - '@oro_product.provider.custom_field_provider'
-            - '%oro_product.entity.product.class%'
-        tags:
-            - { name: form.type, alias: oro_product_custom_entity_fields_choice }
-
-    oro_product.form.type.custom_variant_fields_choice:
         class: 'Oro\Bundle\ProductBundle\Form\Type\ProductCustomVariantFieldsChoiceType'
         arguments:
-            - '@oro_product.provider.custom_variant_field_provider'
+            - '@oro_product.provider.custom_variant_fields_provider'
             - '%oro_product.entity.product.class%'
         tags:
-            - { name: form.type, alias: oro_product_custom_variant_entity_fields_choice }
+            - { name: form.type, alias: oro_product_custom_variant_fields_choice }
 
     oro_product.form.type.product_variant_links:
         class: 'Oro\Bundle\ProductBundle\Form\Type\ProductVariantLinksType'
@@ -165,3 +157,10 @@ services:
             - "@oro_product.provider.product_units_provider"
         tags:
             - { name: form.type, alias: oro_product_units }
+
+    oro_product.form.type.product_page_content_variant:
+        class: Oro\Bundle\ProductBundle\Form\Type\ProductPageVariantType
+        arguments:
+            - '@doctrine'
+        tags:
+            - { name: form.type, alias: oro_product_page_variant }

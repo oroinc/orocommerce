@@ -72,11 +72,10 @@ class ProductSearchIndexListener
      */
     private function getMetaStringsFromProduct(Product $product, Localization $localization)
     {
-        $metaTitle       = $product->getMetaTitle($localization);
         $metaDescription = $product->getMetaDescription($localization);
         $metaKeyword     = $product->getMetaKeyword($localization);
 
-        $string = $metaTitle . ' ' . $metaDescription . ' ' . $metaKeyword;
+        $string = $metaDescription . ' ' . $metaKeyword;
 
         return $this->cleanUpString($string);
     }

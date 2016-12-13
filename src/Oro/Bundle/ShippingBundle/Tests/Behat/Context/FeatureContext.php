@@ -36,20 +36,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
-     * @Given there is EUR currency in the system configuration
-     */
-    public function thereIsEurCurrencyInTheSystemConfiguration()
-    {
-        $configManager = $this->getContainer()->get('oro_config.global');
-        /** @var array $currencies */
-        $currencies = (array) $configManager->get('oro_currency.allowed_currencies', []);
-        $currencies = array_unique(array_merge($currencies, ['EUR']));
-        $configManager->set('oro_currency.allowed_currencies', $currencies);
-        $configManager->set('oro_pricing.enabled_currencies', ['EUR', 'USD']);
-        $configManager->flush();
-    }
-
-    /**
      * @When /^Buyer is on Checkout step on (?P<shoppingListName>[\w\s]+)$/
      */
     public function buyerIsOnShippingMethodCheckoutStep($shoppingListName)
@@ -98,7 +84,16 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      */
     public function noShippingMethodsAvailable()
     {
-        $this->assertSession()->elementContains('css', '.notification_alert', 'No shipping methods are available');
+        $notificationAllert = $this->createElement('Notification Alert');
+
+        self::assertTrue(
+            $notificationAllert->isValid(),
+            'Notification Alert is not found, or found more then one'
+        );
+        self::assertEquals(
+            'No shipping methods are available, please contact us to complete the order submission.',
+            $notificationAllert->getText()
+        );
     }
 
     /**

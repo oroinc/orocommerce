@@ -1,0 +1,15 @@
+Oro\Bundle\WebCatalogBundle\Entity\WebCatalog:
+    properties:
+        name:
+            - NotBlank: ~
+            - Length:
+                max: 255
+
+Oro\Bundle\WebCatalogBundle\Entity\ContentNode:
+    properties:
+        name:
+            - NotBlank: ~
+            - Length:
+                max: 255
+        contentVariants:
+            - Oro\Bundle\WebCatalogBundle\Validator\Constraint\UniqueScope: ~

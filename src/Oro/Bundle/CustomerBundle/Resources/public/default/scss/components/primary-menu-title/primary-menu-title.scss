@@ -10,7 +10,7 @@
     text-transform: $primary-menu-title-text-transform;
 }
 
-@include breakpoint('tablet-small') {
+@include breakpoint('tablet') {
     .primary-menu-title {
         margin: $primary-menu-title-offset-tablet-small;
         padding: $primary-menu-title-inner-offset-tablet-small;

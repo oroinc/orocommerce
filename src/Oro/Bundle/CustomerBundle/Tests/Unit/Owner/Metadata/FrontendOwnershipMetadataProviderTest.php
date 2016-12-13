@@ -221,15 +221,6 @@ class FrontendOwnershipMetadataProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($metadata, $providerWithCleanCache->getMetadata('UndefinedClass'));
     }
 
-    /**
-     * @expectedException \BadMethodCallException
-     * @expectedExceptionMessage Method getSystemLevelClass() unsupported.
-     */
-    public function testGetSystemLevelClass()
-    {
-        $this->assertFalse($this->provider->getSystemLevelClass());
-    }
-
     public function testGetGlobalLevelClass()
     {
         $this->assertFalse($this->provider->getGlobalLevelClass());

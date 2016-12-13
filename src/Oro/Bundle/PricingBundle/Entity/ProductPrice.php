@@ -21,7 +21,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
  * @Config(
  *      defaultValues={
  *          "entity"={
- *              "icon"="icon-usd"
+ *              "icon"="fa-usd"
  *          },
  *          "security"={
  *              "type"="ACL",
@@ -71,7 +71,7 @@ class ProductPrice extends BaseProductPrice
     public function setPriceRule($priceRule)
     {
         $this->priceRule = $priceRule;
-        
+
         return $this;
     }
 }
