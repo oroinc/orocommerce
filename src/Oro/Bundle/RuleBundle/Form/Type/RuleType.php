@@ -22,20 +22,20 @@ class RuleType extends AbstractType
     {
         $builder
             ->add('name', TextareaType::class, [
-                'label' => 'oro.rule.rule.name.label'
+                'label' => 'oro.rule.name.label'
             ])
             ->add('enabled', CheckboxType::class, [
-                'label' => 'oro.rule.rule.enabled.label'
+                'label' => 'oro.rule.enabled.label'
             ])
             ->add('sortOrder', NumberType::class, [
-                'label' => 'oro.rule.rule.sort_order.label'
+                'label' => 'oro.rule.sort_order.label'
             ])
             ->add('stopProcessing', CheckboxType::class, [
                 'required' => false,
-                'label' => 'oro.rule.rule.stop_processing.label',
+                'label' => 'oro.rule.stop_processing.label',
             ])
             ->add('expression', TextareaType::class, [
-                'label' => 'oro.rule.rule.expression.label'
+                'label' => 'oro.rule.expression.label'
             ])
         ;
     }
