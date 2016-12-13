@@ -10,12 +10,12 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use Oro\Bundle\WebCatalogBundle\Event\AfterContentNodeProcessEvent;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
-use Oro\Bundle\WebCatalogBundle\Event\BeforeContentNodeProcessEvent;
-use Oro\Bundle\WebCatalogBundle\Event\Events;
+use Oro\Bundle\FormBundle\Event\FormHandler\Events;
 use Oro\Bundle\WebCatalogBundle\Generator\SlugGenerator;
+use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
+use Oro\Bundle\FormBundle\Event\FormHandler\FormProcessEvent;
 
 class ContentNodeHandler
 {
@@ -59,7 +59,7 @@ class ContentNodeHandler
      */
     public function process(ContentNode $contentNode)
     {
-        $event = new BeforeContentNodeProcessEvent($this->form, $contentNode);
+        $event = new FormProcessEvent($this->form, $contentNode);
         $request = $this->requestStack->getCurrentRequest();
         $this->eventDispatcher->dispatch(Events::BEFORE_FORM_DATA_SET, $event);
 
@@ -70,7 +70,7 @@ class ContentNodeHandler
         $this->form->setData($contentNode);
 
         if ($request->isMethod(Request::METHOD_POST)) {
-            $event = new BeforeContentNodeProcessEvent($this->form, $contentNode);
+            $event = new FormProcessEvent($this->form, $contentNode);
             $this->eventDispatcher->dispatch(Events::BEFORE_FORM_SUBMIT, $event);
 
             if ($event->isFormProcessInterrupted()) {
@@ -99,14 +99,14 @@ class ContentNodeHandler
 
         $this->eventDispatcher->dispatch(
             Events::BEFORE_FLUSH,
-            new AfterContentNodeProcessEvent($this->form, $contentNode)
+            new AfterFormProcessEvent($this->form, $contentNode)
         );
 
         $this->manager->flush();
 
         $this->eventDispatcher->dispatch(
             Events::AFTER_FLUSH,
-            new AfterContentNodeProcessEvent($this->form, $contentNode)
+            new AfterFormProcessEvent($this->form, $contentNode)
         );
     }
 

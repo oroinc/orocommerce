@@ -11,13 +11,13 @@ use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
-use Oro\Bundle\WebCatalogBundle\Event\AfterContentNodeProcessEvent;
-use Oro\Bundle\WebCatalogBundle\Event\BeforeContentNodeProcessEvent;
-use Oro\Bundle\WebCatalogBundle\Event\Events;
+use Oro\Bundle\FormBundle\Event\FormHandler\Events;
 use Oro\Bundle\WebCatalogBundle\Generator\SlugGenerator;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Form\Handler\ContentNodeHandler;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
+use Oro\Bundle\FormBundle\Event\FormHandler\FormProcessEvent;
 
 class ContentNodeHandlerTest extends \PHPUnit_Framework_TestCase
 {
@@ -229,7 +229,7 @@ class ContentNodeHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('dispatch')
             ->with(Events::BEFORE_FORM_DATA_SET)
             ->willReturnCallback(
-                function ($name, BeforeContentNodeProcessEvent $event) {
+                function ($name, FormProcessEvent $event) {
                     $event->interruptFormProcess();
                 }
             );
@@ -267,7 +267,7 @@ class ContentNodeHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('dispatch')
             ->with(Events::BEFORE_FORM_SUBMIT)
             ->willReturnCallback(
-                function ($name, BeforeContentNodeProcessEvent $event) {
+                function ($name, FormProcessEvent $event) {
                     $event->interruptFormProcess();
                 }
             );
@@ -286,11 +286,11 @@ class ContentNodeHandlerTest extends \PHPUnit_Framework_TestCase
     {
         $this->eventDispatcher->expects($this->at(0))
             ->method('dispatch')
-            ->with(Events::BEFORE_FORM_DATA_SET, new BeforeContentNodeProcessEvent($form, $entity));
+            ->with(Events::BEFORE_FORM_DATA_SET, new FormProcessEvent($form, $entity));
 
         $this->eventDispatcher->expects($this->at(1))
             ->method('dispatch')
-            ->with(Events::BEFORE_FORM_SUBMIT, new BeforeContentNodeProcessEvent($form, $entity));
+            ->with(Events::BEFORE_FORM_SUBMIT, new FormProcessEvent($form, $entity));
     }
 
     /**
@@ -301,10 +301,10 @@ class ContentNodeHandlerTest extends \PHPUnit_Framework_TestCase
     {
         $this->eventDispatcher->expects($this->at(2))
             ->method('dispatch')
-            ->with(Events::BEFORE_FLUSH, new AfterContentNodeProcessEvent($form, $entity));
+            ->with(Events::BEFORE_FLUSH, new AfterFormProcessEvent($form, $entity));
 
         $this->eventDispatcher->expects($this->at(3))
             ->method('dispatch')
-            ->with(Events::AFTER_FLUSH, new AfterContentNodeProcessEvent($form, $entity));
+            ->with(Events::AFTER_FLUSH, new AfterFormProcessEvent($form, $entity));
     }
 }
