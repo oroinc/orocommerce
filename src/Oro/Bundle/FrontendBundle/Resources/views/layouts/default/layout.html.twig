@@ -105,6 +105,57 @@
     {% endif %}
 {% endblock %}
 
+{#Buttons#}
+
+{% block line_buttons_widget %}
+    {% import 'OroActionBundle:layouts/base:layout.html.twig' as _layout %}
+    <ul{{ block('block_attributes') }}>
+        {% for button in buttons %}
+            <li>
+                {% include button.template with button.templateData|merge({onlyLink: true, noIconText: true}) %}
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
+
+{% block combined_buttons_widget %}
+    {% set buttonsCount = buttons|length %}
+    {% if buttonsCount > 0 %}
+        {% import 'OroActionBundle:layouts/base:layout.html.twig' as _layout %}
+        {% set hasVariants = buttonsCount > 1 %}
+
+        {% set button = buttons|first %}
+
+        {% if hasVariants %}
+            {% set additionalCss = "btn" %}
+            {% if block.parent.vars.class_prefix == 'datagrid_toolbar_button_container' %}
+                {% set additionalCss = additionalCss ~ " btn--info oq-group-btn " %}
+            {% endif %}
+            {% if hasVariants %}
+                {% set additionalCss = " btn-group full " %}
+            {% endif %}
+            {% set attr = attr|merge({ class: attr.class|default('') ~ additionalCss}) %}
+
+            <div{{ block('block_attributes') }}>
+
+                {% include button.template with button.templateData|merge({onlyLink: true, aClass: ' btn btn--info btn--size-l direct-link ', noIcon: true, noIconText: true}) %}
+
+                <a href="#" class="btn btn--info btn--size-l dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"></a>
+
+                <ul class="dropdown-menu">
+                    {% for button in buttons|slice(1) %}
+                        <li>
+                            {% include button.template with button.templateData|merge({onlyLink: true, aClass: ' dropdown-item ', noIcon: true, noIconText: true}) %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% else %}
+            {% include button.template with button.templateData|merge({onlyLink: true, aClass: ' btn btn--info btn--size-l btn--full direct-link ', noIcon: true, noIconText: true}) %}
+        {% endif %}
+    {% endif %}
+{% endblock %}
+
 {% block button_widget %}
     {% if style|default('') == 'auto' %}
         {% if action == 'submit' %}
