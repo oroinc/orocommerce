@@ -66,11 +66,13 @@
 {% endblock %}
 
 {% block __oro_checkout_sidebar__enter_shipping_method_information_widget %}
-    {{ 'oro.checkout.method_type.sidebar.label'|trans({
-        '%translatedMethodType%': get_shipping_method_type_label(checkout.shippingMethod, checkout.shippingMethodType)|trans,
-        '%translatedMethod%': get_shipping_method_label(checkout.shippingMethod)|trans,
-        '%price%': checkout.shippingCost|oro_format_price,
-    })|raw }}
+    {% if checkout.shippingCost %}
+        {{ 'oro.checkout.method_type.sidebar.label'|trans({
+            '%translatedMethodType%': get_shipping_method_type_label(checkout.shippingMethod, checkout.shippingMethodType)|trans,
+            '%translatedMethod%': get_shipping_method_label(checkout.shippingMethod)|trans,
+            '%price%': checkout.shippingCost|oro_format_price,
+        })|raw }}
+    {% endif %}
 {% endblock %}
 
 {% block __oro_checkout_sidebar__enter_payment_information_widget %}

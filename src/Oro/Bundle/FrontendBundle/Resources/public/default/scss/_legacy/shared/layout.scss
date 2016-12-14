@@ -225,12 +225,6 @@
   cursor: pointer;
 }
 
-.pinned-dropdown {
-  .icons-holder:not(:first-child) {
-    display: none !important;
-  }
-}
-
 .input-append {
   .select2-container.input {
     display: inline-block;

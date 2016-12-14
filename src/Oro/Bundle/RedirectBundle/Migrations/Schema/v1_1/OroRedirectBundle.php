@@ -8,9 +8,10 @@ use Oro\Bundle\FrontendBundle\Migration\UpdatePrefixQuery;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
+use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class OroRedirectBundle implements Migration, RenameExtensionAwareInterface
+class OroRedirectBundle implements Migration, RenameExtensionAwareInterface, OrderedMigrationInterface
 {
     /**
      * @var RenameExtension
@@ -25,6 +26,17 @@ class OroRedirectBundle implements Migration, RenameExtensionAwareInterface
         $this->renameExtension->renameTable($schema, $queries, 'orob2b_redirect_slug', 'oro_redirect_slug');
 
         $queries->addQuery(new UpdatePrefixQuery('oro_redirect_slug', 'route_name'));
+    }
+
+    /**
+     * Should be executed before:
+     * @see \Oro\Bundle\RedirectBundle\Migrations\Schema\v1_1\MigrateNotes
+     *
+     * {@inheritdoc}
+     */
+    public function getOrder()
+    {
+        return 0;
     }
 
     /**
