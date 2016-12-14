@@ -58,6 +58,16 @@ class ProductVariantsGridEventListener
 
         $variantFields = $parentProduct->getVariantFields();
 
+        // Don't show any product variants if there are no variant fields specified in the configurable product
+        if (!$variantFields) {
+            $event->getConfig()->offsetAddToArrayByPath(
+                '[source][query][where][and]',
+                ['1 = 0']
+            );
+
+            return;
+        }
+
         foreach ($variantFields as $variantFieldName) {
             $event->getConfig()->offsetAddToArrayByPath(
                 '[source][query][where][and]',

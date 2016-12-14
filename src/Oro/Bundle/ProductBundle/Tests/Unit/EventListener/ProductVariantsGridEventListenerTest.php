@@ -92,8 +92,9 @@ class ProductVariantsGridEventListenerTest extends \PHPUnit_Framework_TestCase
             ->with(self::PRODUCT_ID)
             ->willReturn($this->parentProduct);
 
-        $this->config->expects($this->never())
-            ->method('offsetAddToArrayByPath');
+        $this->config->expects($this->once())
+            ->method('offsetAddToArrayByPath')
+            ->with('[source][query][where][and]', ['1 = 0']);
 
         $this->listener->onBuildBefore($this->prepareBuildBeforeEvent($this->config));
     }
