@@ -19,7 +19,7 @@ layout:
                 type: button
                 action: button
                 text: Back
-                style: gray
+                style: ''
                 attr:
                     'data-url': '=data["backToUrl"]'
         - '@setOption':

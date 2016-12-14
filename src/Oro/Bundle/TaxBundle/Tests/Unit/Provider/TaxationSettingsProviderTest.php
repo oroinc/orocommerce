@@ -11,6 +11,7 @@ use Oro\Bundle\TaxBundle\Factory\TaxBaseExclusionFactory;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class TaxationSettingsProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -457,5 +458,29 @@ class TaxationSettingsProviderTest extends \PHPUnit_Framework_TestCase
             ->willReturn(true);
 
         $this->assertTrue($this->provider->isEnabled());
+    }
+
+    public function testGetShippingTaxCodes()
+    {
+        $value = ['AAAA', 'BBBB'];
+
+        $this->configManager
+            ->expects($this->once())
+            ->method('get')
+            ->with('oro_tax.shipping_tax_code')
+            ->willReturn($value);
+
+        $this->assertEquals($value, $this->provider->getShippingTaxCodes());
+    }
+
+    public function testIsShippingRatesIncludeTax()
+    {
+        $this->configManager
+            ->expects($this->once())
+            ->method('get')
+            ->with('oro_tax.shipping_rates_include_tax')
+            ->willReturn(true);
+
+        $this->assertTrue($this->provider->isShippingRatesIncludeTax());
     }
 }
