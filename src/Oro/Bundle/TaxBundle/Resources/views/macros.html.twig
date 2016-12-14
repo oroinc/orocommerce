@@ -65,12 +65,14 @@
     <% var translations = {
         unit: '{{ 'oro.tax.result.unit'|trans }}',
         row: '{{ 'oro.tax.result.row'|trans }}',
-        total: '{{ 'oro.tax.result.total'|trans }}'}
+        total: '{{ 'oro.tax.result.total'|trans }}',
+        shipping: '{{ 'oro.tax.result.shipping'|trans }}'}
     %>
     <% var unit = unit; %>
     <% var row = row; %>
     <% var total = total; %>
-    <% var object = {unit: unit, row: row, total: total}; %>
+    <% var shipping = shipping; %>
+    <% var object = {unit: unit, row: row, shipping: shipping, total: total}; %>
     <% var data = _.pick(object, _.identity); %>
     <% if (data) { %>
     <table class="grid table table-condensed table-bordered tax-result-grid">
