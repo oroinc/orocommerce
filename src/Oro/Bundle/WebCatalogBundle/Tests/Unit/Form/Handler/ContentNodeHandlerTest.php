@@ -134,8 +134,8 @@ class ContentNodeHandlerTest extends \PHPUnit_Framework_TestCase
         $this->manager->expects($this->once())
             ->method('flush');
 
-        $this->assertBeforeProcessEventsTriggered($this->form, $contentNode);
-        $this->assertAfterProcessEventsTriggered($this->form, $contentNode);
+        $this->assertBeforeProcessEventsTriggered($contentNode);
+        $this->assertAfterProcessEventsTriggered($contentNode);
 
         $this->assertTrue($this->contentNodeHandler->process($contentNode));
     }
@@ -184,8 +184,8 @@ class ContentNodeHandlerTest extends \PHPUnit_Framework_TestCase
         $this->manager->expects($this->once())
             ->method('flush');
 
-        $this->assertBeforeProcessEventsTriggered($this->form, $contentNode);
-        $this->assertAfterProcessEventsTriggered($this->form, $contentNode);
+        $this->assertBeforeProcessEventsTriggered($contentNode);
+        $this->assertAfterProcessEventsTriggered($contentNode);
         $this->assertTrue($this->contentNodeHandler->process($contentNode));
         $actualDefaultVariantScopes = $contentNode->getDefaultVariant()->getScopes();
         $this->assertCount(1, $actualDefaultVariantScopes);
@@ -259,29 +259,29 @@ class ContentNodeHandlerTest extends \PHPUnit_Framework_TestCase
      * @param FormInterface $form
      * @param ContentNode $entity
      */
-    protected function assertBeforeProcessEventsTriggered(FormInterface $form, ContentNode $entity)
+    protected function assertBeforeProcessEventsTriggered(ContentNode $entity)
     {
         $this->eventDispatcher->expects($this->at(0))
             ->method('dispatch')
-            ->with(Events::BEFORE_FORM_DATA_SET, new FormProcessEvent($form, $entity));
+            ->with(Events::BEFORE_FORM_DATA_SET, new FormProcessEvent($this->form, $entity));
 
         $this->eventDispatcher->expects($this->at(1))
             ->method('dispatch')
-            ->with(Events::BEFORE_FORM_SUBMIT, new FormProcessEvent($form, $entity));
+            ->with(Events::BEFORE_FORM_SUBMIT, new FormProcessEvent($this->form, $entity));
     }
 
     /**
      * @param FormInterface $form
      * @param ContentNode $entity
      */
-    protected function assertAfterProcessEventsTriggered(FormInterface $form, ContentNode $entity)
+    protected function assertAfterProcessEventsTriggered(ContentNode $entity)
     {
         $this->eventDispatcher->expects($this->at(2))
             ->method('dispatch')
-            ->with(Events::BEFORE_FLUSH, new AfterFormProcessEvent($form, $entity));
+            ->with(Events::BEFORE_FLUSH, new AfterFormProcessEvent($this->form, $entity));
 
         $this->eventDispatcher->expects($this->at(3))
             ->method('dispatch')
-            ->with(Events::AFTER_FLUSH, new AfterFormProcessEvent($form, $entity));
+            ->with(Events::AFTER_FLUSH, new AfterFormProcessEvent($this->form, $entity));
     }
 }
