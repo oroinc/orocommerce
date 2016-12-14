@@ -5,7 +5,7 @@ namespace Oro\Bundle\ShippingBundle\Form\Type;
 use Oro\Bundle\AddressBundle\Form\EventListener\AddressCountryAndRegionSubscriber;
 use Oro\Bundle\AddressBundle\Form\Type\CountryType;
 use Oro\Bundle\AddressBundle\Form\Type\RegionType;
-use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfigsRuleDestination;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -53,7 +53,7 @@ class ShippingRuleDestinationType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => ShippingMethodsConfigsRuleDestination::class,
+            'data_class' => ShippingMethodConfigsRuleDestination::class,
             'region_route' => 'oro_api_country_get_regions',
         ]);
     }

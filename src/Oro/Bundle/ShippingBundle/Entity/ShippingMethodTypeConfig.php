@@ -8,7 +8,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\ShippingBundle\Model\ExtendShippingMethodTypeConfig;
 
 /**
- * @ORM\Table(name="oro_shipping_rule_mthd_tp_cnfg")
+ * @ORM\Table(name="oro_ship_method_type_config")
  * @ORM\Entity(repositoryClass="Oro\Bundle\ShippingBundle\Entity\Repository\ShippingRuleMethodTypeConfigRepository")
  * @Config
  */

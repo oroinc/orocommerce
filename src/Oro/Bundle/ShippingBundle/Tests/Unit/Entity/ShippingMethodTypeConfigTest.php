@@ -22,6 +22,6 @@ class ShippingMethodTypeConfigTest extends \PHPUnit_Framework_TestCase
 
         $entity = new ShippingMethodTypeConfig();
 
-        $this->assertPropertyAccessors($entity, $properties);
+        static::assertPropertyAccessors($entity, $properties);
     }
 }

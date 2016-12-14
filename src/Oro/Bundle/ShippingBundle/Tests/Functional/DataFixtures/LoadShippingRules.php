@@ -6,7 +6,7 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
-use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfigsRuleDestination;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
@@ -40,7 +40,7 @@ class LoadShippingRules extends AbstractFixture
                     ->getRepository('OroAddressBundle:Country')
                     ->findOneBy(['iso2Code' => $destination['country']]);
 
-                $shippingRuleDestination = new ShippingMethodsConfigsRuleDestination();
+                $shippingRuleDestination = new ShippingMethodConfigsRuleDestination();
                 $shippingRuleDestination
                     ->setRule($entity)
                     ->setCountry($country);

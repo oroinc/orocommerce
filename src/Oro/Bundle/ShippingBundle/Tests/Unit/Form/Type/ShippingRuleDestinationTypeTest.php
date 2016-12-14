@@ -9,7 +9,7 @@ use Oro\Bundle\AddressBundle\Form\EventListener\AddressCountryAndRegionSubscribe
 use Oro\Bundle\AddressBundle\Form\Type\CountryType;
 use Oro\Bundle\AddressBundle\Form\Type\RegionType;
 use Oro\Bundle\FormBundle\Form\Extension\AdditionalAttrExtension;
-use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfigsRuleDestination;
 use Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleDestinationType;
 use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
@@ -78,7 +78,7 @@ class ShippingRuleDestinationTypeTest extends FormIntegrationTestCase
 
         $this->assertTrue($form->isValid());
         $this->assertEquals(
-            (new ShippingMethodsConfigsRuleDestination())->setCountry(new Country('US')),
+            (new ShippingMethodConfigsRuleDestination())->setCountry(new Country('US')),
             $form->getData()
         );
     }
@@ -91,7 +91,7 @@ class ShippingRuleDestinationTypeTest extends FormIntegrationTestCase
         return [
             [null],
             [
-                (new ShippingMethodsConfigsRuleDestination())->setCountry(new Country('AF'))
+                (new ShippingMethodConfigsRuleDestination())->setCountry(new Country('AF'))
             ],
         ];
     }

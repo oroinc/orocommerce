@@ -47,7 +47,7 @@ Oro\Bundle\ShippingBundle\Entity\ShippingRule:
             - Currency: ~
             - NotBlank: ~
 
-Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination:
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfigsRuleDestination:
     properties:
         country:
             - NotBlank: ~

@@ -6,9 +6,9 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity
- * @ORM\Table("oro_ship_methods_post_code")
+ * @ORM\Table("oro_ship_method_postal_code")
  */
-class ShippingMethodsConfigsRuleDestinationPostalCode
+class ShippingMethodConfigsRuleDestinationPostalCode
 {
     /**
      * @var integer
@@ -27,9 +27,9 @@ class ShippingMethodsConfigsRuleDestinationPostalCode
     private $name;
 
     /**
-     * @var ShippingMethodsConfigsRuleDestination
+     * @var ShippingMethodConfigsRuleDestination
      *
-     * @ORM\ManyToOne(targetEntity="ShippingMethodsConfigsRuleDestination")
+     * @ORM\ManyToOne(targetEntity="ShippingMethodConfigsRuleDestination")
      * @ORM\JoinColumn(name="destination_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     private $destination;
@@ -52,7 +52,7 @@ class ShippingMethodsConfigsRuleDestinationPostalCode
 
     /**
      * @param string $name
-     * @return ShippingMethodsConfigsRuleDestinationPostalCode
+     * @return ShippingMethodConfigsRuleDestinationPostalCode
      */
     public function setName($name)
     {
@@ -62,7 +62,7 @@ class ShippingMethodsConfigsRuleDestinationPostalCode
     }
 
     /**
-     * @return ShippingMethodsConfigsRuleDestination
+     * @return ShippingMethodConfigsRuleDestination
      */
     public function getDestination()
     {
@@ -70,13 +70,21 @@ class ShippingMethodsConfigsRuleDestinationPostalCode
     }
 
     /**
-     * @param ShippingMethodsConfigsRuleDestination $destination
-     * @return ShippingMethodsConfigsRuleDestinationPostalCode
+     * @param ShippingMethodConfigsRuleDestination $destination
+     * @return ShippingMethodConfigsRuleDestinationPostalCode
      */
     public function setDestination($destination)
     {
         $this->destination = $destination;
 
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->getName();
     }
 }

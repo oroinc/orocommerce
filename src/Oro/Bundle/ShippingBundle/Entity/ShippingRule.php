@@ -131,10 +131,10 @@ class ShippingRule extends ExtendShippingRule
     protected $conditions;
 
     /**
-     * @var Collection|ShippingMethodsConfigsRuleDestination[]
+     * @var Collection|ShippingMethodConfigsRuleDestination[]
      *
      * @ORM\OneToMany(
-     *     targetEntity="Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination",
+     *     targetEntity="Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfigsRuleDestination",
      *     mappedBy="rule",
      *     cascade={"ALL"},
      *     fetch="EAGER",
@@ -420,7 +420,7 @@ class ShippingRule extends ExtendShippingRule
     }
 
     /**
-     * @return Collection|ShippingMethodsConfigsRuleDestination[]
+     * @return Collection|ShippingMethodConfigsRuleDestination[]
      */
     public function getDestinations()
     {
@@ -428,11 +428,11 @@ class ShippingRule extends ExtendShippingRule
     }
 
     /**
-     * @param ShippingMethodsConfigsRuleDestination $destination
+     * @param ShippingMethodConfigsRuleDestination $destination
      *
      * @return $this
      */
-    public function addDestination(ShippingMethodsConfigsRuleDestination $destination)
+    public function addDestination(ShippingMethodConfigsRuleDestination $destination)
     {
         if (!$this->destinations->contains($destination)) {
             $this->destinations->add($destination);
@@ -443,11 +443,11 @@ class ShippingRule extends ExtendShippingRule
     }
 
     /**
-     * @param ShippingMethodsConfigsRuleDestination $destination
+     * @param ShippingMethodConfigsRuleDestination $destination
      *
      * @return $this
      */
-    public function removeDestination(ShippingMethodsConfigsRuleDestination $destination)
+    public function removeDestination(ShippingMethodConfigsRuleDestination $destination)
     {
         if ($this->destinations->contains($destination)) {
             $this->destinations->removeElement($destination);

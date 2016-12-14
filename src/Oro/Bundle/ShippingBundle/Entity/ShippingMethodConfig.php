@@ -11,7 +11,7 @@ use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
 use Oro\Bundle\ShippingBundle\Model\ExtendShippingMethodConfig;
 
 /**
- * @ORM\Table(name="oro_shipping_rule_mthd_config")
+ * @ORM\Table(name="oro_ship_method_config")
  * @ORM\Entity(repositoryClass="Oro\Bundle\ShippingBundle\Entity\Repository\ShippingRuleMethodConfigRepository")
  * @Config
  */
@@ -66,9 +66,12 @@ class ShippingMethodConfig extends ExtendShippingMethodConfig
     protected $typeConfigs;
 
     /**
-     * @var ShippingRule
+     * @var ShippingMethodConfigsRule
      *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ShippingBundle\Entity\ShippingRule", inversedBy="methodConfigs")
+     * @ORM\ManyToOne(
+     *     targetEntity="Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfigsRule",
+     *     inversedBy="methodConfigs"
+     * )
      * @ORM\JoinColumn(name="rule_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
      * @ConfigField(
      *      defaultValues={
@@ -78,11 +81,9 @@ class ShippingMethodConfig extends ExtendShippingMethodConfig
      *      }
      * )
      */
-    protected $rule;
+    protected $methodConfigsRule;
 
-    /**
-     * Construct
-     */
+
     public function __construct()
     {
         parent::__construct();
@@ -106,20 +107,20 @@ class ShippingMethodConfig extends ExtendShippingMethodConfig
     }
 
     /**
-     * @return ShippingRule
+     * @return ShippingMethodConfigsRule
      */
-    public function getRule()
+    public function getMethodConfigsRule()
     {
-        return $this->rule;
+        return $this->methodConfigsRule;
     }
 
     /**
-     * @param ShippingRule|ShippingMethodsConfigsRule $rule
+     * @param ShippingMethodConfigsRule $rule
      * @return $this
      */
-    public function setRule($rule)
+    public function setMethodConfigsRule(ShippingMethodConfigsRule $rule)
     {
-        $this->rule = $rule;
+        $this->methodConfigsRule = $rule;
         return $this;
     }
 

@@ -5,7 +5,6 @@ namespace Oro\Bundle\ShippingBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
@@ -15,13 +14,8 @@ use Oro\Bundle\ShippingBundle\Model\ExtendShippingMethodsConfigsRule;
 /**
  * @ORM\Entity
  * @ORM\Table(
- *     name="oro_ship_methods_conf_rule",
- *     indexes={
- *         @ORM\Index(name="idx_oro_shipping_methods_configs_rule_created_at", columns={"created_at"}),
- *         @ORM\Index(name="idx_oro_shipping_methods_configs_rule_updated_at", columns={"updated_at"})
- *     }
+ *     name="oro_ship_method_configs_rule"
  * )
- * @ORM\HasLifecycleCallbacks
  * @Config(
  *      defaultValues={
  *          "dataaudit"={
@@ -34,10 +28,8 @@ use Oro\Bundle\ShippingBundle\Model\ExtendShippingMethodsConfigsRule;
  *      }
  * )
  */
-class ShippingMethodsConfigsRule extends ExtendShippingMethodsConfigsRule implements RuleOwnerInterface
+class ShippingMethodConfigsRule extends ExtendShippingMethodsConfigsRule implements RuleOwnerInterface
 {
-    use DatesAwareTrait;
-
     /**
      * @var int
      *
@@ -86,10 +78,10 @@ class ShippingMethodsConfigsRule extends ExtendShippingMethodsConfigsRule implem
     private $methodConfigs;
 
     /**
-     * @var Collection|ShippingMethodsConfigsRuleDestination[]
+     * @var Collection|ShippingMethodConfigsRuleDestination[]
      *
      * @ORM\OneToMany(
-     *     targetEntity="Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination",
+     *     targetEntity="Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfigsRuleDestination",
      *     mappedBy="rule",
      *     cascade={"ALL"},
      *     fetch="EAGER",
@@ -108,7 +100,7 @@ class ShippingMethodsConfigsRule extends ExtendShippingMethodsConfigsRule implem
      *              "auditable"=true
      *          },
      *          "importexport"={
-     *              "order"=50
+     *              "order"=20
      *          }
      *      }
      *  )
@@ -124,23 +116,6 @@ class ShippingMethodsConfigsRule extends ExtendShippingMethodsConfigsRule implem
 
         $this->destinations = new ArrayCollection();
         $this->methodConfigs = new ArrayCollection();
-    }
-
-    /**
-     * @ORM\PrePersist
-     */
-    public function prePersist()
-    {
-        $this->createdAt = new \DateTime('now', new \DateTimeZone('UTC'));
-        $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
-    }
-
-    /**
-     * @ORM\PreUpdate
-     */
-    public function preUpdate()
-    {
-        $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
     }
 
     /**
@@ -187,7 +162,7 @@ class ShippingMethodsConfigsRule extends ExtendShippingMethodsConfigsRule implem
     {
         if (!$this->hasMethodConfig($configuration)) {
             $this->methodConfigs[] = $configuration;
-            $configuration->setRule($this);
+            $configuration->setMethodConfigsRule($this);
         }
 
         return $this;
@@ -234,7 +209,7 @@ class ShippingMethodsConfigsRule extends ExtendShippingMethodsConfigsRule implem
     }
 
     /**
-     * @return Collection|ShippingMethodsConfigsRuleDestination[]
+     * @return Collection|ShippingMethodConfigsRuleDestination[]
      */
     public function getDestinations()
     {
@@ -242,11 +217,11 @@ class ShippingMethodsConfigsRule extends ExtendShippingMethodsConfigsRule implem
     }
 
     /**
-     * @param ShippingMethodsConfigsRuleDestination $destination
+     * @param ShippingMethodConfigsRuleDestination $destination
      *
      * @return $this
      */
-    public function addDestination(ShippingMethodsConfigsRuleDestination $destination)
+    public function addDestination(ShippingMethodConfigsRuleDestination $destination)
     {
         if (!$this->destinations->contains($destination)) {
             $this->destinations->add($destination);
@@ -257,11 +232,11 @@ class ShippingMethodsConfigsRule extends ExtendShippingMethodsConfigsRule implem
     }
 
     /**
-     * @param ShippingMethodsConfigsRuleDestination $destination
+     * @param ShippingMethodConfigsRuleDestination $destination
      *
      * @return $this
      */
-    public function removeDestination(ShippingMethodsConfigsRuleDestination $destination)
+    public function removeDestination(ShippingMethodConfigsRuleDestination $destination)
     {
         if ($this->destinations->contains($destination)) {
             $this->destinations->removeElement($destination);

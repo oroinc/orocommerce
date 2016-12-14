@@ -7,7 +7,7 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
 use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingRuleRepository;
-use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfigsRuleDestination;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
 use Oro\Bundle\ShippingBundle\ExpressionLanguage\LineItemDecoratorFactory;
 use Oro\Component\ExpressionLanguage\ExpressionLanguage;
@@ -108,7 +108,7 @@ class ShippingRulesProvider
     }
 
     /**
-     * @param ShippingMethodsConfigsRuleDestination[]|\Traversable $destinations
+     * @param ShippingMethodConfigsRuleDestination[]|\Traversable $destinations
      * @param ShippingContextInterface $context
      * @return mixed
      */

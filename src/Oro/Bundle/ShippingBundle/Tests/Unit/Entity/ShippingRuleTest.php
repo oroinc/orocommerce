@@ -4,7 +4,7 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\Entity;
 
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfigsRuleDestination;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
 
@@ -31,7 +31,7 @@ class ShippingRuleTest extends \PHPUnit_Framework_TestCase
         $rule = new ShippingRule();
         $this->assertPropertyAccessors($rule, $properties);
         $this->assertPropertyCollection($rule, 'methodConfigs', new ShippingMethodConfig());
-        $this->assertPropertyCollection($rule, 'destinations', new ShippingMethodsConfigsRuleDestination());
+        $this->assertPropertyCollection($rule, 'destinations', new ShippingMethodConfigsRuleDestination());
     }
 
     public function testAddMethodConfig()
@@ -47,7 +47,7 @@ class ShippingRuleTest extends \PHPUnit_Framework_TestCase
 
     public function testAddDestination()
     {
-        $destination = new ShippingMethodsConfigsRuleDestination();
+        $destination = new ShippingMethodConfigsRuleDestination();
         $shippingRule = new ShippingRule();
         $this->assertEmpty($shippingRule->getDestinations());
         $shippingRule->addDestination($destination);
