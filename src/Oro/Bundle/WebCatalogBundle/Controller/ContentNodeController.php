@@ -104,7 +104,7 @@ class ContentNodeController extends Controller
         $form = $this->createForm(ContentNodeType::NAME, $node);
 
         /** @var ContentNodeHandler $contentNodeHandler */
-        $contentNodeHandler = $this->get('oro_web_catalog.handler.content_node.handler');
+        $contentNodeHandler = $this->get('oro_web_catalog.handler.content_node');
         $contentNodeHandler->setForm($form);
 
         $saveRedirectHandler = function (ContentNode $node) {
