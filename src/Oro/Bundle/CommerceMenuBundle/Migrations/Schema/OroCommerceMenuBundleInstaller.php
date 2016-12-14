@@ -80,7 +80,7 @@ class OroCommerceMenuBundleInstaller implements
         $table->addColumn('scope_id', 'integer', ['notnull' => true]);
         $table->addColumn('condition', 'string', ['length' => 512, 'notnull' => false]);
         $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['key', 'scope_id'], 'oro_commerce_menu_upd_uidx');
+        $table->addUniqueIndex(['key', 'scope_id', 'menu'], 'oro_commerce_menu_upd_uidx');
     }
 
     /**
@@ -183,8 +183,7 @@ class OroCommerceMenuBundleInstaller implements
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_scope'),
             ['scope_id'],
-            ['id'],
-            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+            ['id']
         );
     }
 }

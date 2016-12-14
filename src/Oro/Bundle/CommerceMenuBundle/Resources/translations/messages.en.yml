@@ -20,3 +20,4 @@ oro:
             divider.label: Is Divider
             descriptions.label: Description
             icon.label: Icon
+            scope.label: Scope
