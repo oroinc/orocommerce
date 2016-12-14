@@ -34,6 +34,7 @@
 
 {% block content_data %}
     {% set id = 'price-list-edit' %}
+    {% set entities = oro_product_expression_autocomplete_data() %}
 
     {% set dataBlocks = [
         {
@@ -59,18 +60,16 @@
                         'data-page-component-module': 'orofrontend/default/js/app/components/rule-editor-component',
                         'data-page-component-options': {
                             allowedOperations: ['math', 'bool', 'compare', 'inclusion'],
+                            entities: entities,
                             data: {
-                                product: {id: 'any', name: 'any', category: 'any', status: ['ENABLED', 'DISABLED']},
-                                category: {id: 'any', name: 'any', parent: 'any'},
-                                account: {id: 'any', name: 'any', role: 'any'},
-                                pricelist: {id: 'any', name: 'any', parent: 'any'},
-                                products: {type: 'array', entity: 'product'},
+                                product: {},
+                                pricelist: {},
                             },
                             dataSource: {
                                 pricelist: form_widget(priceListSelect)
                             }
                         }|json_encode
-                    }}),
+                    }})
                 ]
             }]
         },

@@ -38,6 +38,16 @@ define(function(require) {
             this.options.view = this.options.view || this.view;
             this.options.component = this;
 
+            this.isEntities = this.options.entities && !_.isUndefined(this.options.entities.fields_data) && !_.isUndefined(this.options.entities.root_entities);
+
+            if (this.isEntities){
+                _.each(this.options.entities.root_entities, function(item, key) {
+                    this.options.entities.root_entities[item] = this.options.entities.fields_data[key];
+                    delete this.options.entities.root_entities[key];
+                }, this);
+            }
+
+
             _.each(this.options.allowedOperations, function(name) {
                 this.allowed[name] = true;
             }, this);
@@ -233,11 +243,10 @@ define(function(require) {
          * @private
          */
         _getUpdatedData: function(query, item, position) {
-            var cutBefore = _.isNull(position.start) ? position.spaces[position.index] : position.start;
-            var cutAfter = _.isNull(position.end) ? position.spaces[position.index] : position.end;
-
-            var stringBefore = this._getStringPart(query, 0, cutBefore);
-            var stringAfter = this._getStringPart(query, cutAfter);
+            var cutBefore = _.isNull(position.start) ? position.spaces[position.index] : position.start,
+                cutAfter = _.isNull(position.end) ? position.spaces[position.index] : position.end,
+                stringBefore = this._getStringPart(query, 0, cutBefore),
+                stringAfter = this._getStringPart(query, cutAfter);
 
             var doSpaceOffset = _.isString(this._getValueByPath(this.options.data, item));
 
@@ -310,9 +319,8 @@ define(function(require) {
                 return undefined;
             }
 
-            return this._getValueByPath(this.options.dataSource, this._getTermPartUnderCaret(term, position).current);
+            return this.options.dataSource[this._getTermPartUnderCaret(term, position).current];
         },
-
 
         /**
          * Returns part of term (like parent.child) under cursor
@@ -366,10 +374,11 @@ define(function(require) {
          * @returns {{list: array, position: ({start: number, end: number, index: number, spaces: array})}}
          */
         getSuggestData: function(value, caretPosition) {
-            var termsData = this.options.data;
+            var rootData = this.options.entities ? this.options.entities.root_entities : this.options.data,
+                rootTerms = _.keys(rootData);
 
             if (_.isEmpty(value.trim()) || caretPosition === 0) {
-                return {list: _.keys(termsData), position: {start: caretPosition, end: caretPosition}};
+                return {list: rootTerms, position: {start: caretPosition, end: caretPosition}};
             }
 
             var normalized = this._getNormalized(value, caretPosition),
@@ -383,10 +392,10 @@ define(function(require) {
                 lastCharIsSpace = charUnderCaret === ' ',
                 lastCharIsDot = charUnderCaret === '.';
 
-            var dataSource = this.getDataSource(term, inWordPosition),
-                hasDataSource = !_.isEmpty(dataSource);
+            var dataSource = this.getDataSource(term, inWordPosition);
 
-            if (hasDataSource && !lastCharIsDot && !lastCharIsSpace) {
+            if (!_.isEmpty(dataSource) && !lastCharIsDot && !lastCharIsSpace) {
+
                 this.showHelper(dataSource, this.view.$el);
 
                 return {
@@ -395,15 +404,16 @@ define(function(require) {
                 };
             }
 
-            var pathValue = this._getValueByPath(termsData, term),
+            var pathValue = this._getValueByPath(rootData, term),
                 termParts = !lastCharIsSpace ? /^(.*)\.(.*)\W?/g.exec(termPart) : null;
 
             if (!pathValue) {
-                pathValue = this._getValueByPath(termsData, termParts ? termParts[1] : '');
+                pathValue = this._getValueByPath(rootData, termParts ? termParts[1] : '');
             }
 
             var cases = [],
-                word = this._contains(this.cases.data, term) || this._contains(this.cases.bool, processedWord.current) ? processedWord.current : processedWord.previous,
+                word = this._contains(rootTerms, term) || this._contains(this.cases.bool, processedWord.current) ? processedWord.current : processedWord.previous,
+
                 wordIs = this._getWordData(word),
                 searchPart = termParts ? (_.isUndefined(termParts[2]) ? termParts[1] : termParts[2]) : (wordIs && wordIs.hasTerm ? '' : termPart),
                 isFullWord = wordIs && (wordIs.isInclusion || wordIs.isCompare);
@@ -418,7 +428,8 @@ define(function(require) {
                         cases = _.union(cases, this.options.operations.math);
                     }
                 } else if (wordIs.isBool) {
-                    cases = _.keys(termsData);
+                    cases = _.keys(rootData);
+
                 } else if (wordIs.hasTerm && !wordIs.hasValue && wordIs.notOps) {
                     if (this.allowed.compare) {
                         cases = _.union(cases, this.options.operations.compare);
@@ -430,7 +441,7 @@ define(function(require) {
                         cases = _.union(cases, this.options.operations.math);
                     }
                 } else if (wordIs.notOps) {
-                    cases = _.keys(pathValue && pathValue !== 'any' ? pathValue : termsData);
+                    cases = _.keys(pathValue && pathValue !== 'any' ? pathValue : rootData);
                 }
             } else {
                 cases = _.keys(pathValue);
@@ -1058,18 +1069,26 @@ define(function(require) {
          * @private
          */
         _getValueByPath: function(obj, path) {
-            var result;
+            var result = obj,
+                pathWay = this._replaceWraps(path, '[]', 'wipe').split('.');
 
             if (_.isEmpty(path)) {
-                return obj;
+                return this.isEntities ? null : obj;
             }
 
-            _.each(this._replaceWraps(path, '[]', 'wipe').split('.'), function(node) {
-                result = (result || obj)[node];
-            });
+            _.each(pathWay, function(node) {
+                var source = result || obj;
+
+                if (source[node]) {
+                    if (source[node].type && source[node].type === 'relation') {
+                        result = this.options.entities.fields_data[source[node].relation_alias];
+                    } else if (!source[node].type) {
+                        result = source[node];
+                    }
+                }
+            }, this);
 
             return result;
-
         },
 
         /**
