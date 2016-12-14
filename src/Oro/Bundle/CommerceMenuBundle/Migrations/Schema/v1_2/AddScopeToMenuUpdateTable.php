@@ -36,9 +36,6 @@ class AddScopeToMenuUpdateTable implements Migration, OrderedMigrationInterface
     protected function updateOroCommerceMenuUpdateTable(Schema $schema)
     {
         $table = $schema->getTable('oro_commerce_menu_upd');
-        if ($table->hasIndex('oro_commerce_menu_upd_uidx')) {
-            $table->dropIndex('oro_commerce_menu_upd_uidx');
-        }
         $table->addColumn('scope_id', 'integer', ['notnull' => true]);
         $table->addUniqueIndex(['key', 'scope_id', 'menu'], 'oro_commerce_menu_upd_uidx');
     }
