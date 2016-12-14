@@ -200,21 +200,29 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
     {
         $crawler = $this->client->request('GET', self::$checkoutUrl);
         $this->assertContains(self::PAYMENT_METHOD_SIGN, $crawler->html());
+
+        return $this->submitPaymentTransitionForm($crawler);
+    }
+
+    /**
+     * @param Crawler $crawler
+     * @return Crawler
+     */
+    protected function submitPaymentTransitionForm(Crawler $crawler)
+    {
         $form = $this->getTransitionForm($crawler);
         $values = $this->explodeArrayPaths($form->getValues());
         $values[self::ORO_WORKFLOW_TRANSITION]['payment_method'] = 'payment_term';
         $values['_widgetContainer'] = 'ajax';
         $values['_wid'] = 'ajax_checkout';
 
-        $crawler = $this->client->request(
+        return $this->client->request(
             'POST',
             $form->getUri(),
             $values,
             [],
             ['HTTP_X-Requested-With' => 'XMLHttpRequest']
         );
-
-        return $crawler;
     }
 
     /**
@@ -233,7 +241,7 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
 
         $this->enableShippingRules($modifiedRules);
 
-        $crawler = $this->makePaymentToOrderReviewTransition();
+        $crawler = $this->submitPaymentTransitionForm($crawler);
 
         $this->assertContains(self::PAYMENT_METHOD_SIGN, $crawler->html());
         $this->assertContains('There was a change to the contents of your order.', $crawler->html());
