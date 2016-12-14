@@ -166,11 +166,11 @@ services:
             - 'oro_frontend_action_operation_execute'
             - 'oro_frontend_action_widget_buttons'
 
-    oro_frontend.provider.workflow_route:
+    oro_frontend.provider.start_transition_route:
         class: 'Oro\Bundle\FrontendBundle\Provider\RouteProvider'
-        decorates: oro_action.provider.route
+        decorates: oro_workflow.provider.start_transition_route
         arguments:
-            - '@oro_frontend.provider.workflow_route.inner'
+            - '@oro_frontend.provider.start_transition_route.inner'
             - '@security.token_storage'
             - 'oro_frontend_workflow_widget_start_transition_form'
             - 'oro_frontend_workflow_start_transition_form'
