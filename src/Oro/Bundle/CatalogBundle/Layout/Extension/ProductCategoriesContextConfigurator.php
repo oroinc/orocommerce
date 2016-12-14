@@ -10,12 +10,14 @@ use Oro\Component\Layout\ContextConfiguratorInterface;
 use Oro\Component\Layout\ContextInterface;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoryProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
 class ProductCategoriesContextConfigurator implements ContextConfiguratorInterface
 {
-    const OPTION_NAME = 'category_ids';
+    const CATEGORY_IDS_OPTION_NAME = 'category_ids';
+    const CATEGORY_ID_OPTION_NAME = 'category_id';
     const PRODUCT_LIST_ROUTE = 'oro_product_frontend_product_index';
     const PRODUCT_VIEW_ROUTE = 'oro_product_frontend_product_view';
 
@@ -65,6 +67,7 @@ class ProductCategoriesContextConfigurator implements ContextConfiguratorInterfa
             return;
         }
 
+        /** @var Category $currentCategory */
         $currentCategory = null;
 
         if ($request->attributes->get('_route') == self::PRODUCT_LIST_ROUTE) {
@@ -77,10 +80,12 @@ class ProductCategoriesContextConfigurator implements ContextConfiguratorInterfa
                 ->getRepository(Product::class)
                 ->find((int)$routeParams['id']);
 
-            $currentCategory = $this->registry
+            /** @var CategoryRepository $categoryRepository */
+            $categoryRepository = $this->registry
                 ->getManagerForClass(Category::class)
-                ->getRepository(Category::class)
-                ->findOneByProduct($product);
+                ->getRepository(Category::class);
+
+            $currentCategory = $categoryRepository->findOneByProduct($product);
         }
 
         $categoryIds = [];
@@ -89,8 +94,11 @@ class ProductCategoriesContextConfigurator implements ContextConfiguratorInterfa
             $categoryIds = array_merge([$currentCategory->getId()], $this->getParentCategoryIds($currentCategory));
         }
 
-        $context->getResolver()->setDefined(self::OPTION_NAME);
-        $context->set(self::OPTION_NAME, $categoryIds);
+        $context->getResolver()->setDefined(self::CATEGORY_IDS_OPTION_NAME);
+        $context->getResolver()->setDefined(self::CATEGORY_ID_OPTION_NAME);
+
+        $context->set(self::CATEGORY_IDS_OPTION_NAME, $categoryIds);
+        $context->set(self::CATEGORY_ID_OPTION_NAME, $currentCategory !== null ? $currentCategory->getId() : null);
     }
 
     /**

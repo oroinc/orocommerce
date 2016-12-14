@@ -74,13 +74,17 @@ class ProductCategoriesContextConfiguratorTest extends \PHPUnit_Framework_TestCa
             ->willReturn($category);
 
         $context = $this->getMock(ContextInterface::class);
-        $context->expects($this->once())
+        $context->expects($this->exactly(2))
             ->method('getResolver')
             ->willReturn($this->getMock(OptionsResolver::class));
 
-        $context->expects($this->once())
+        $context->expects($this->at(2))
             ->method('set')
-            ->with(ProductCategoriesContextConfigurator::OPTION_NAME, [2, 1]);
+            ->with(ProductCategoriesContextConfigurator::CATEGORY_IDS_OPTION_NAME, [2, 1]);
+
+        $context->expects($this->at(3))
+            ->method('set')
+            ->with(ProductCategoriesContextConfigurator::CATEGORY_ID_OPTION_NAME, 2);
 
         $this->configurator->configureContext($context);
     }
@@ -135,13 +139,17 @@ class ProductCategoriesContextConfiguratorTest extends \PHPUnit_Framework_TestCa
             ->willReturn($em);
 
         $context = $this->getMock(ContextInterface::class);
-        $context->expects($this->once())
+        $context->expects($this->exactly(2))
             ->method('getResolver')
             ->willReturn($this->getMock(OptionsResolver::class));
 
-        $context->expects($this->once())
+        $context->expects($this->at(2))
             ->method('set')
-            ->with(ProductCategoriesContextConfigurator::OPTION_NAME, [2, 1]);
+            ->with(ProductCategoriesContextConfigurator::CATEGORY_IDS_OPTION_NAME, [2, 1]);
+
+        $context->expects($this->at(3))
+            ->method('set')
+            ->with(ProductCategoriesContextConfigurator::CATEGORY_ID_OPTION_NAME, 2);
 
         $this->configurator->configureContext($context);
     }
@@ -173,13 +181,17 @@ class ProductCategoriesContextConfiguratorTest extends \PHPUnit_Framework_TestCa
             ->willReturn(ProductCategoriesContextConfigurator::PRODUCT_LIST_ROUTE);
 
         $context = $this->getMock(ContextInterface::class);
-        $context->expects($this->once())
+        $context->expects($this->exactly(2))
             ->method('getResolver')
             ->willReturn($this->getMock(OptionsResolver::class));
 
-        $context->expects($this->once())
+        $context->expects($this->at(2))
             ->method('set')
-            ->with(ProductCategoriesContextConfigurator::OPTION_NAME, []);
+            ->with(ProductCategoriesContextConfigurator::CATEGORY_IDS_OPTION_NAME, []);
+
+        $context->expects($this->at(3))
+            ->method('set')
+            ->with(ProductCategoriesContextConfigurator::CATEGORY_ID_OPTION_NAME, null);
 
         $this->configurator->configureContext($context);
     }
