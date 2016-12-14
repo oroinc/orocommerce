@@ -5,7 +5,6 @@ namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Form\Handler;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 use Doctrine\Common\Persistence\ObjectManager;
 
@@ -38,16 +37,12 @@ class ContentNodeHandlerTest extends \PHPUnit_Framework_TestCase
     /** @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $eventDispatcher;
 
-    /** @var RequestStack */
-    protected $requestStack;
-
     /** @var ContentNodeHandler */
     protected $contentNodeHandler;
 
     protected function setUp()
     {
         $this->form = $this->getMock(FormInterface::class);
-        $this->requestStack = new RequestStack();
         $this->request = $this->getMockBuilder(Request::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -58,13 +53,12 @@ class ContentNodeHandlerTest extends \PHPUnit_Framework_TestCase
         $this->eventDispatcher = $this->getMock(EventDispatcherInterface::class);
 
         $this->contentNodeHandler = new ContentNodeHandler(
-            $this->requestStack,
+            $this->request,
             $this->slugGenerator,
             $this->manager,
-            $this->eventDispatcher
+            $this->eventDispatcher,
+            $this->form
         );
-
-        $this->contentNodeHandler->setForm($this->form);
     }
 
     public function testProcessNotPost()
@@ -80,12 +74,8 @@ class ContentNodeHandlerTest extends \PHPUnit_Framework_TestCase
             ->with(Request::METHOD_POST)
             ->willReturn(false);
 
-        $this->requestStack->push($this->request);
-
         $this->form->expects($this->never())
             ->method('submit');
-
-        $this->requestStack->push($this->request);
 
         $this->assertFalse($this->contentNodeHandler->process($contentNode));
     }
@@ -110,8 +100,6 @@ class ContentNodeHandlerTest extends \PHPUnit_Framework_TestCase
         $this->form->expects($this->once())
             ->method('isValid')
             ->willReturn(false);
-
-        $this->requestStack->push($this->request);
 
         $this->assertFalse($this->contentNodeHandler->process($contentNode));
     }
@@ -145,8 +133,6 @@ class ContentNodeHandlerTest extends \PHPUnit_Framework_TestCase
             ->with($contentNode);
         $this->manager->expects($this->once())
             ->method('flush');
-
-        $this->requestStack->push($this->request);
 
         $this->assertBeforeProcessEventsTriggered($this->form, $contentNode);
         $this->assertAfterProcessEventsTriggered($this->form, $contentNode);
@@ -198,8 +184,6 @@ class ContentNodeHandlerTest extends \PHPUnit_Framework_TestCase
         $this->manager->expects($this->once())
             ->method('flush');
 
-        $this->requestStack->push($this->request);
-
         $this->assertBeforeProcessEventsTriggered($this->form, $contentNode);
         $this->assertAfterProcessEventsTriggered($this->form, $contentNode);
         $this->assertTrue($this->contentNodeHandler->process($contentNode));
@@ -234,8 +218,6 @@ class ContentNodeHandlerTest extends \PHPUnit_Framework_TestCase
                 }
             );
 
-        $this->requestStack->push($this->request);
-
         $result = $this->contentNodeHandler->process($contentNode);
         $this->assertFalse($result);
     }
@@ -268,8 +250,6 @@ class ContentNodeHandlerTest extends \PHPUnit_Framework_TestCase
                     $event->interruptFormProcess();
                 }
             );
-
-        $this->requestStack->push($this->request);
 
         $result = $this->contentNodeHandler->process($contentNode);
         $this->assertFalse($result);

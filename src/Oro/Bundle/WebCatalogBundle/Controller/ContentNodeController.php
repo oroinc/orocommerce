@@ -103,9 +103,13 @@ class ContentNodeController extends Controller
     {
         $form = $this->createForm(ContentNodeType::NAME, $node);
 
-        /** @var ContentNodeHandler $contentNodeHandler */
-        $contentNodeHandler = $this->get('oro_web_catalog.handler.content_node');
-        $contentNodeHandler->setForm($form);
+        $handler = new ContentNodeHandler(
+            $request,
+            $this->get('oro_web_catalog.generator.slug_generator'),
+            $this->getDoctrine()->getManagerForClass(ContentNode::class),
+            $this->get('event_dispatcher'),
+            $form
+        );
 
         $saveRedirectHandler = function (ContentNode $node) {
             if ($node->getParentNode()) {
@@ -127,7 +131,7 @@ class ContentNodeController extends Controller
             $saveRedirectHandler,
             $saveRedirectHandler,
             $this->get('translator')->trans('oro.webcatalog.controller.contentnode.saved.message'),
-            $contentNodeHandler
+            $handler
         );
     }
 

@@ -5,7 +5,6 @@ namespace Oro\Bundle\WebCatalogBundle\Form\Handler;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -22,8 +21,8 @@ class ContentNodeHandler
     /** @var FormInterface */
     protected $form;
 
-    /** @var RequestStack */
-    protected $requestStack;
+    /** @var Request */
+    protected $request;
 
     /** @var SlugGenerator */
     protected $slugGenerator;
@@ -41,15 +40,17 @@ class ContentNodeHandler
      * @param EventDispatcherInterface $eventDispatcher
      */
     public function __construct(
-        RequestStack $requestStack,
+        Request $request,
         SlugGenerator $slugGenerator,
         ObjectManager $manager,
-        EventDispatcherInterface $eventDispatcher
+        EventDispatcherInterface $eventDispatcher,
+        FormInterface $form
     ) {
-        $this->requestStack = $requestStack;
+        $this->request = $request;
         $this->slugGenerator = $slugGenerator;
         $this->manager = $manager;
         $this->eventDispatcher = $eventDispatcher;
+        $this->form = $form;
     }
 
     /**
@@ -60,7 +61,6 @@ class ContentNodeHandler
     public function process(ContentNode $contentNode)
     {
         $event = new FormProcessEvent($this->form, $contentNode);
-        $request = $this->requestStack->getCurrentRequest();
         $this->eventDispatcher->dispatch(Events::BEFORE_FORM_DATA_SET, $event);
 
         if ($event->isFormProcessInterrupted()) {
@@ -69,7 +69,7 @@ class ContentNodeHandler
 
         $this->form->setData($contentNode);
 
-        if (!$request->isMethod(Request::METHOD_POST)) {
+        if (!$this->request->isMethod(Request::METHOD_POST)) {
             return false;
         }
 
@@ -79,7 +79,7 @@ class ContentNodeHandler
         if ($event->isFormProcessInterrupted()) {
             return false;
         }
-        $this->form->submit($request);
+        $this->form->submit($this->request);
 
         if (!$this->form->isValid()) {
             return false;
@@ -144,21 +144,5 @@ class ContentNodeHandler
         }
 
         return $scopes;
-    }
-
-    /**
-     * @return FormInterface
-     */
-    public function getForm()
-    {
-        return $this->form;
-    }
-
-    /**
-     * @param FormInterface $form
-     */
-    public function setForm($form)
-    {
-        $this->form = $form;
     }
 }
