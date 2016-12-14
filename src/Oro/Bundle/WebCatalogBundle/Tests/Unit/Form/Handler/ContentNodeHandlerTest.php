@@ -256,6 +256,9 @@ class ContentNodeHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('isMethod')
             ->will($this->returnValue('POST'));
 
+        $requestStack = new RequestStack();
+        $requestStack->push($this->request);
+
         $this->form->expects($this->never())
             ->method('submit')
             ->with($this->request);

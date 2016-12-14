@@ -51,7 +51,7 @@ class ContentNodeHandler
         $this->manager = $manager;
         $this->eventDispatcher = $eventDispatcher;
     }
-
+    
     /**
      * @param ContentNode $contentNode
      *
@@ -69,24 +69,23 @@ class ContentNodeHandler
 
         $this->form->setData($contentNode);
 
-        if (!$request->isMethod(Request::METHOD_POST)) {
-            return false;
+        if ($request->isMethod(Request::METHOD_POST)) {
+            $event = new FormProcessEvent($this->form, $contentNode);
+            $this->eventDispatcher->dispatch(Events::BEFORE_FORM_SUBMIT, $event);
+
+            if ($event->isFormProcessInterrupted()) {
+                return false;
+            }
+
+            $this->form->submit($request);
+            if ($this->form->isValid()) {
+                $this->onSuccess($contentNode);
+                
+                return true;
+            }
         }
 
-        $event = new FormProcessEvent($this->form, $contentNode);
-        $this->eventDispatcher->dispatch(Events::BEFORE_FORM_SUBMIT, $event);
-
-        if ($event->isFormProcessInterrupted()) {
-            return false;
-        }
-        $this->form->submit($request);
-
-        if (!$this->form->isValid()) {
-            return false;
-        }
-
-        $this->onSuccess($contentNode);
-        return true;
+        return false;
     }
 
     /**
