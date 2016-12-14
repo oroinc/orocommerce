@@ -1,0 +1,9 @@
+{% set qtySold = record.getValue('qtySold') %}
+{% set unitCode = record.getValue('unitCode') %}
+<table>
+    <tr>
+        <td class="renderable">
+            {{ qtySold }} <strong>{{ unitCode|oro_format_product_unit_label(false, qtySold > 1)|capitalize }}</strong>
+        </td>
+    </tr>
+</table>

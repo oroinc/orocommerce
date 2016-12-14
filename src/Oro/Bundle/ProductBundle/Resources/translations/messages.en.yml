@@ -6,6 +6,7 @@ oro:
         id.label: Id
         sku.label: SKU
         grouping.label: "Grouping"
+        qty_sold.label: "Qty Sold"
         skip_empty_periods.label: "Skip Empty Periods"
         item_number.label: "Item #"
         sku.placeholder: "Enter Item Number"

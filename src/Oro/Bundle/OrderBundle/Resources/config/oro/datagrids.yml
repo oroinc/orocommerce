@@ -633,3 +633,77 @@ datagrids:
                 type: twig
                 template: OroOrderBundle:Order:Datagrid/shippingTrackingLink.html.twig
                 frontend_type: html
+
+    best-selling-products:
+        extended_entity_name: %oro_order.entity.order_line_item.class%
+        options:
+            entityHint: order_line_item
+            export: true
+        source:
+            type:         orm
+            query:
+                select:
+                    - order1.createdAt as createdAt
+                    - order_item.productUnitCode as unitCode
+                    - SUM (order_item.quantity) as qtySold
+                    - product.sku
+                    - product.id
+                from:
+                    - { table: %oro_order.entity.order_line_item.class%, alias: order_item }
+                join:
+                    left:
+                        - { join: order_item.order, alias: order1 }
+                        - { join: order_item.product, alias: product }
+                groupBy: product.id, unitCode
+        columns:
+            dateGrouping:
+                label:         oro.product.time_period.label
+            sku:
+                label:         oro.product.sku.label
+            productName:
+                label:         oro.product.entity_label
+            qtySold:
+                label:         oro.product.qty_sold.label
+                type: twig
+                template: OroOrderBundle:Order:Datagrid/productQtySold.html.twig
+                frontend_type: html
+        properties:
+            productName:
+                type: localized_value
+                data_name: product.names
+        sorters:
+            columns:
+                sku:
+                    data_name: product.sku
+                productName:
+                    data_name: productName
+                dateGrouping:
+                    data_name: order1.createdAt
+                qtySold:
+                    data_name: qtySold
+            default:
+                dateGrouping: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
+        filters:
+            columns:
+                createdAt:
+                    label: oro.product.time_period.label
+                    type:      datetime
+                    data_name: order1.createdAt
+                sku:
+                    type:      string
+                    data_name: product.sku
+                productName:
+                    type:      string
+                    data_name: productName
+                grouping:
+                    type:      date_grouping
+                    data_name: order1.createdAt
+                    label:     oro.product.grouping.label
+                    column_name: dateGrouping
+                skip_empty_periods:
+                    type:      skip_empty_periods
+                    data_name: order1.createdAt
+                    label:     oro.product.skip_empty_periods.label
+            default:
+                grouping:
+                    value: day
