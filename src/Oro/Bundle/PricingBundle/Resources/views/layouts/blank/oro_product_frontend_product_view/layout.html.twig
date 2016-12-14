@@ -8,34 +8,34 @@
                 prices: productPrices
             }
         },
-        '~class': ' product__qnty'
+        '~class': ' product-prices'
     }) %}
 
     <div {{ block('block_attributes') }}>
-        <table class="table">
-            <thead>
-            <tr>
-                <th style="width: 40%" class="text-center text-uppercase">qty</th>
-                <th style="width: 60%" class="text-center">Unit Price</th>
+        <table class="product-prices__table">
+            <thead class="product-prices__thead">
+            <tr class="product-prices__tr">
+                <th style="width: 40%" class="product-prices__th text-uppercase">qty</th>
+                <th style="width: 60%" class="product-prices__th">Unit Price</th>
             </tr>
             </thead>
-            <tbody>
+            <tbody class="product-prices__tbody">
             {% set shownUnit = '' %}
             {% for price in productPrices %}
                 {% if shownUnit != price.formatted_unit %}
                     {% set shownUnit = price.formatted_unit %}
-                    <tr>
-                        <td colspan="2" class="text-center">
+                    <tr class="product-prices__tr">
+                        <td colspan="2" class="product-prices__td">
                             {% if loop.index > 1 %}<br/>{% endif %}
                             <strong>{{ shownUnit|capitalize }}</strong>
                         </td>
                     </tr>
                 {% endif %}
-                <tr>
-                    <td class="text-center">
+                <tr class="product-prices__tr">
+                    <td class="product-prices__td">
                         {{ price.quantity }}
                     </td>
-                    <td class="text-center">
+                    <td class="product-prices__td">
                         {{ price.formatted_price }}
                     </td>
                 </tr>

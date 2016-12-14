@@ -1,12 +1,11 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'OroProductBundle:layouts:default/oro_product_frontend_product_view/line_item_form.html.twig'
+            themes: 'line_item_form.html.twig'
         - '@addTree':
             items:
                 line_item_form:
                     blockType: container
-                    siblingId: product_specification
                 line_item_form_start:
                     blockType: form_start
                     options:
@@ -22,7 +21,7 @@ layout:
                 line_item_buttons:
                     blockType: container
             tree:
-                product_specification_container:
+                product_view_line_item_container:
                     line_item_form:
                         line_item_form_start: ~
                         line_item_form_fields: ~

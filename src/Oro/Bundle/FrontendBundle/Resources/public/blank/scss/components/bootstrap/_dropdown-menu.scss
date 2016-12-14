@@ -2,4 +2,6 @@
 
 .dropdown-item {
     padding: 8px $dropdown-item-padding-x;
+
+    box-sizing: border-box;
 }
