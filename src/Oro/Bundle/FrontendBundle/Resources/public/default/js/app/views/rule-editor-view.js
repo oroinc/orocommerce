@@ -29,33 +29,32 @@ define(function(require) {
             var component = this.component;
             var $el = this.$el;
             var el = $el[0];
+            var clickHandler = function() {
+                var _arguments = arguments;
+
+                setTimeout(_.bind(function() {
+                    this.keyup.apply(this, _arguments);
+                }, this), 10);
+            };
 
             $el.typeahead({
                 minLength: 0,
                 items: 10,
                 source: function(value) {
-                    var sourceData = component.getAutocompleteSource(value || '', el.selectionStart);
+                    var sourceData = component.getSuggestData(value || '', el.selectionStart);
 
                     clickHandler = clickHandler.bind(this);
 
                     _position = sourceData.position;
 
-                    return sourceData.array;
+                    return sourceData.list;
                 },
                 matcher: function() {
                     // we already match
                     return true;
                 },
                 updater: function(item) {
-                    // place selected value into correct position
-                    var update  = component.getUpdateValue(this.query, item, _position);
-
-                    setTimeout(function() {
-                        el.selectionStart = el.selectionEnd = update.position;
-                        $el.trigger('keyup');
-                    }, 10);
-
-                    return update.value;
+                    return component.setUpdatedValue(this.query, item, _position);
                 },
                 focus: function() {
                     this.focused = true;
@@ -63,11 +62,7 @@ define(function(require) {
                     clickHandler.apply(this, arguments);
                 },
                 highlighter: function(item) {
-                    var query = (component.getWordUnderCaret(this.query) || this.query).replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, '\\$&');
-
-                    return item.replace(new RegExp('(' + query + ')', 'ig'), function($1, match) {
-                        return '<strong>' + match + '</strong>'
-                    });
+                    return item;
                 },
                 lookup: function() {
                     this.query = $el.val() || '';
@@ -78,19 +73,11 @@ define(function(require) {
                 }
             });
 
-            // adds 'click' handling to typeahead
+            // adds handling of 'click' inside focused input
             $el.on('click', function() {
                 clickHandler.apply($el, arguments);
             });
 
-            function clickHandler() {
-                var _this = this;
-                var _arguments = arguments;
-
-                setTimeout(function() {
-                    _this.keyup.apply(_this, _arguments);
-                }, 10);
-            }
         }
     });
 

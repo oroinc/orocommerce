@@ -13,6 +13,7 @@ use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListType;
+use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectType;
 
 class PriceListController extends Controller
 {
@@ -116,8 +117,8 @@ class PriceListController extends Controller
     protected function update(PriceList $priceList)
     {
         $form = $this->createForm(PriceListType::NAME, $priceList);
-
-        return $this->get('oro_form.model.update_handler')->handleUpdate(
+        $formPricelist = $this->createForm(PriceListSelectType::NAME);
+        $test = $this->get('oro_form.model.update_handler')->handleUpdate(
             $priceList,
             $form,
             function (PriceList $priceList) {
@@ -134,6 +135,8 @@ class PriceListController extends Controller
             },
             $this->get('translator')->trans('oro.pricing.controller.price_list.saved.message')
         );
+        $test['priceListSelect'] = $formPricelist->createView();
+        return $test;
     }
 
     /**

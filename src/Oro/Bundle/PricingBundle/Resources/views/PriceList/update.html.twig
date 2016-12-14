@@ -56,6 +56,7 @@
                 'title': '',
                 'data': [
                     form_row(form.productAssignmentRule, {'attr': {
+                        'data-page-component-module': 'orofrontend/default/js/app/components/rule-editor-component',
                         'data-page-component-options': {
                             allowedOperations: ['math', 'bool', 'compare', 'inclusion'],
                             data: {
@@ -63,11 +64,13 @@
                                 category: {id: 'any', name: 'any', parent: 'any'},
                                 account: {id: 'any', name: 'any', role: 'any'},
                                 pricelist: {id: 'any', name: 'any', parent: 'any'},
-                                products: {type: 'array', entity: 'product'}
+                                products: {type: 'array', entity: 'product'},
+                            },
+                            dataSource: {
+                                pricelist: form_widget(priceListSelect)
                             }
-                        }|json_encode,
-                        'data-page-component-module': 'orofrontend/default/js/app/components/rule-editor-component'
-                    }})
+                        }|json_encode
+                    }}),
                 ]
             }]
         },
