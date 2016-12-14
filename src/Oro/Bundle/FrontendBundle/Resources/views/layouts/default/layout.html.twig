@@ -78,7 +78,7 @@
         {% set attr = attr|merge({ class: attr.class|default('') ~ additionalCss}) %}
 
         {% set action = actions|first %}
-        {% set primaryButtonCss = 'direct-link ' ~ action.buttonOptions.class|default('') ~ " "  ~ params.buttonOptions.aCss|default('') %}
+        {% set primaryButtonCss = ' btn btn--action btn--size-s direct-link ' ~ action.buttonOptions.class|default('') ~ " "  ~ params.buttonOptions.aCss|default('') %}
 
         {% if hasVariants %}
             <div{{ block('block_attributes') }}>
