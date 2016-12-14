@@ -9,7 +9,7 @@ class TestOutput extends Output
     /**
      * @var array
      */
-    public $messages = array();
+    public $messages = [];
 
     /**
      * {@inheritdoc}

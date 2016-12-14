@@ -80,11 +80,11 @@ class ShippingPriceCache
     }
 
     /**
-     * @param integer $id
+     * @param integer $transportId
      */
-    public function deleteAll($id)
+    public function deleteAll($transportId)
     {
-        $this->setNamespace($id);
+        $this->setNamespace($transportId);
         $this->cache->deleteAll();
     }
 

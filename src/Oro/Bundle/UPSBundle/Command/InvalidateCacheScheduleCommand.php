@@ -43,8 +43,8 @@ class InvalidateCacheScheduleCommand extends ContainerAwareCommand
         $container = $this->getContainer();
         $transport = $this->getRepository(UPSTransport::class)->find($transportId);
         if ($transport && $transport->getInvalidateCacheAt()) {
-            $savedYear = getdate(strtotime($transport->getInvalidateCacheAt()->format('Y-m-d H:i:s')))['year'];
-            if ((int) $savedYear === (int) date('Y')) {
+            $savedYear = $transport->getInvalidateCacheAt()->format('Y');
+            if ($savedYear === gmdate('Y')) {
                 $container->get('oro_ups.shipping_price_cache')->deleteAll($transportId);
                 $container->get('oro_shipping.shipping_price.provider.cache')->deleteAllPrices();
                 $output->writeln('<info>Shipping Cache was successfully cleared</info>');

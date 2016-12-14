@@ -97,19 +97,19 @@ class InvalidateCacheAtHandlerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param \DateTime|null $oldDateTime
      * @param \DateTime $newDateTime
-     * @param string|null $removeCronString
      * @param string $addCronString
      * @param int $removeQuantity
+     * @param \DateTime|null $oldDateTime
+     * @param string|null $removeCronString
      * @dataProvider invalidateAtDataProvider
      */
     public function testProcessInvalidateNotNow(
-        \DateTime $oldDateTime = null,
         \DateTime $newDateTime,
-        $removeCronString,
         $addCronString,
-        $removeQuantity
+        $removeQuantity,
+        \DateTime $oldDateTime = null,
+        $removeCronString = null
     ) {
         /** @var \PHPUnit_Framework_MockObject_MockObject|FormInterface $form */
         $form = $this->getMock(FormInterface::class);
@@ -169,23 +169,26 @@ class InvalidateCacheAtHandlerTest extends \PHPUnit_Framework_TestCase
         $this->shippingPriceCache->expects(static::never())->method('deleteAll');
         $this->handler->process($this->channel, $form);
     }
-    
+
+    /**
+     * @return array
+     */
     public function invalidateAtDataProvider()
     {
         return[
             'withoutOldValue' => [
-                'oldDateTime' => null,
                 'newDateTime' => new \DateTime('2017-08-21 15:00:00 UTC'),
-                'removeCronString' => null,
                 'addCronString' => '0 15 21 8 *',
-                'removeQuantity' => 0
+                'removeQuantity' => 0,
+                'oldDateTime' => null,
+                'removeCronString' => null
             ],
             'withOldValue' => [
-                'oldDateTime' => new \DateTime('2015-05-15 15:00:00 UTC'),
                 'newDateTime' => new \DateTime('2017-08-21 15:00:00 UTC'),
-                'removeCronString' => '0 15 15 5 *',
                 'addCronString' => '0 15 21 8 *',
-                'removeQuantity' => 1
+                'removeQuantity' => 1,
+                'oldDateTime' => new \DateTime('2015-05-15 15:00:00 UTC'),
+                'removeCronString' => '0 15 15 5 *',
             ]
         ];
     }
