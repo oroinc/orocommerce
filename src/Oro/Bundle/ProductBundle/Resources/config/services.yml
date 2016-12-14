@@ -352,7 +352,6 @@ services:
             - '%oro_product.entity.product.class%'
 
     oro_product.repository.product_image:
-        class: 'Doctrine\ORM\EntityRepository'
         parent: oro_entity.abstract_repository
         arguments:
             - '%oro_product.entity.product_image.class%'
