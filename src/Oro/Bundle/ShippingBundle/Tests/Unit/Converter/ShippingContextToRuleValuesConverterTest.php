@@ -86,7 +86,8 @@ class ShippingContextToRuleValuesConverterTest extends \PHPUnit_Framework_TestCa
     public function testConvert()
     {
         $contextData = $this->getShippingContextData();
-        $context = $this->getShippingContext($contextData);
+        /** @var ShippingContextInterface $context */
+        $context = $this->getEntity(ShippingContext::class, $contextData);
         $expected = $contextData;
         $expected['lineItems'] = array_map(function (ShippingLineItem $lineItem) use ($expected) {
             $lineItem->setProductHolder($lineItem);
@@ -96,14 +97,6 @@ class ShippingContextToRuleValuesConverterTest extends \PHPUnit_Framework_TestCa
         $this->assertEquals($expected, $this->shippingContextToRuleValuesConverter->convert($context));
     }
 
-    /**
-     * @param array $contextData
-     * @return ShippingContextInterface
-     */
-    protected function getShippingContext($contextData)
-    {
-        return $this->getEntity(ShippingContext::class, $contextData);
-    }
     /**
      * @return array
      */
