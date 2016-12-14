@@ -25,22 +25,22 @@ class ShippingContextToRuleValuesConverterTest extends \PHPUnit_Framework_TestCa
     use EntityTrait;
 
     /**
-     * @var EntityFieldProvider
+     * @var EntityFieldProvider|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $fieldProvider;
 
     /**
-     * @var SelectQueryConverter
+     * @var SelectQueryConverter|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $converter;
 
     /**
-     * @var ManagerRegistry
+     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $doctrine;
 
     /**
-     * @var FieldHelper
+     * @var FieldHelper|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $fieldHelper;
 
@@ -83,13 +83,11 @@ class ShippingContextToRuleValuesConverterTest extends \PHPUnit_Framework_TestCa
         );
     }
 
-    /**
-     * @dataProvider contextProvider
-     * @param ShippingContextInterface $context
-     * @param array $expected
-     */
-    public function testConvert(ShippingContextInterface $context, $expected)
+    public function testConvert()
     {
+        $contextData = $this->getShippingContextData();
+        $context = $this->getShippingContext($contextData);
+        $expected = $contextData;
         $expected['lineItems'] = array_map(function (ShippingLineItem $lineItem) use ($expected) {
             $lineItem->setProductHolder($lineItem);
             return $this->factory->createOrderLineItemDecorator($expected['lineItems'], $lineItem);
@@ -99,11 +97,19 @@ class ShippingContextToRuleValuesConverterTest extends \PHPUnit_Framework_TestCa
     }
 
     /**
+     * @param array $contextData
+     * @return ShippingContextInterface
+     */
+    protected function getShippingContext($contextData)
+    {
+        return $this->getEntity(ShippingContext::class, $contextData);
+    }
+    /**
      * @return array
      */
-    public function contextProvider()
+    protected function getShippingContextData()
     {
-        $contextData = [
+        return [
             'lineItems' => [$this->getEntity(
                 ShippingLineItem::class,
                 ['product' => $this->getEntity(Product::class, ['id' => 1])]
@@ -130,11 +136,6 @@ class ShippingContextToRuleValuesConverterTest extends \PHPUnit_Framework_TestCa
             'customer' => (new Account())->setName('Customer Name'),
             'customerUser' => (new AccountUser())->setFirstName('First Name'),
         ];
-
-        return [[
-            'context' => $this->getEntity(ShippingContext::class, $contextData),
-            'expected' => $contextData
-        ]];
     }
 
     /**
