@@ -283,3 +283,8 @@ services:
     oro_shipping.shipping_context.cache_key_generator:
         class: 'Oro\Bundle\ShippingBundle\Context\ShippingContextCacheKeyGenerator'
         public: false
+
+    oro_shipping.converter.shipping_context_to_rule_values:
+        class: 'Oro\Bundle\ShippingBundle\Converter\ShippingContextToRuleValuesConverter'
+        arguments:
+            - '@oro_shipping.expression_language.line_item_decorator_factory'
