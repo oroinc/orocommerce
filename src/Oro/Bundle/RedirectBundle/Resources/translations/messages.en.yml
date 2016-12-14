@@ -9,6 +9,8 @@ oro:
         type.label: Redirect Type
         slug.label: Slug
         website.label: Website
+        confirm_slug_change:
+            checkbox_label: Create 301 Redirect from old to new URLs
 
         slug:
             entity_label:           'Slug'

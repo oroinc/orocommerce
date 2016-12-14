@@ -100,7 +100,9 @@ class ContentNodeType extends AbstractType
                         'label' => 'oro.webcatalog.contentnode.slug_prototypes.label',
                         'required' => true,
                         'options' => ['constraints' => [new NotBlank(), new UrlSafe()]],
-                        'source_field' => 'titles'
+                        'slug_suggestion_enabled' => true,
+                        'source_field' => 'titles',
+                        'create_redirect_enabled' => true
                     ]
                 );
                 $form->add(
