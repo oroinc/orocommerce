@@ -1,0 +1,70 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'main_menu.html.twig'
+        - '@addTree':
+            items:
+                web_catalog_menu_list:
+                    blockType: container
+                    prepend: true
+                web_catalog_menu:
+                    blockType: category_list
+                    siblingId: ~
+                    prepend: true
+                    options:
+                        categories: '=data["web_catalog_menu"].getItems()'
+                        max_size: 6
+                web_catalog_menu_first_level_item_simple:
+                    blockType: menu_item
+                    options:
+                        visible_items:
+                            simple: ~
+                            simple2: ~
+                            link: ~
+                web_catalog_menu_first_level_item_head:
+                    blockType: menu_item
+                    options:
+                        visible_items:
+                            with_head: ~
+                web_catalog_menu_first_level_item_mega:
+                    blockType: menu_item
+                    options:
+                        visible_items:
+                            mega: ~
+                web_catalog_menu_second_level_item_simple:
+                    blockType: menu_item
+                    options:
+                        visible_items:
+                            root/bestsellers/for_women: ~
+                            root/bestsellers/for_men2: ~
+                            root/bestsellers/for_women2: ~
+                web_catalog_menu_second_level_item_head:
+                    blockType: menu_item
+                    options:
+                        visible_items:
+                            root/sales/winter_sale: ~
+                            root/sales/summer_sale: ~
+                            root/sales/ny_sale: ~
+                web_catalog_menu_second_level_item_mega:
+                    blockType: menu_item
+                    options:
+                        visible_items:
+                            root/sales/winter_sale1: { title: 'By Category' }
+                            root/sales/winter_sale2: ~
+                            root/sales/apple: { title: 'By Brand' }
+                            root/sales/google: ~
+                            root/sales/shirts: { title: 'By Item' }
+                            root/sales/jackets: ~
+                web_catalog_menu_third_level_item_mega:
+                    blockType: menu_item
+            tree:
+                main_menu_container:
+                    web_catalog_menu_list:
+                        web_catalog_menu:
+                            web_catalog_menu_first_level_item_simple:
+                                web_catalog_menu_second_level_item_simple:
+                            web_catalog_menu_first_level_item_head:
+                                web_catalog_menu_second_level_item_head:
+                            web_catalog_menu_first_level_item_mega:
+                                web_catalog_menu_second_level_item_mega:
+                                    web_catalog_menu_third_level_item_mega:
