@@ -21,3 +21,31 @@ oro:
             descriptions.label: Description
             icon.label: Icon
             scope.label: Scope
+        frontend:
+            navigation:
+                items:
+                    telephone.label: '1-800-555-5555'
+                    live_chat.label: 'Live Chat'
+                    free_shipping.label: '<span>Fast & Free Shipping</span> for orders over $45'
+                    orders.label: 'Orders'
+                    quotes.label: 'Quotes'
+                    quick_order_form.label: 'Quick Order Form'
+                    contact_us.label: 'Contact Us'
+                    about.label: 'About'
+                    information.label: 'Information'
+                    customer_service.label: 'Customer Service'
+                    privacy_policy.label: 'Privacy Policy'
+                    site_map.label: 'Site Map'
+                    search_terms.label: 'Search Terms'
+                    advanced_search.label: 'Advanced Search'
+                    orders_and_returns.label: 'Orders and Returns'
+                    why_buy_from_us.label: 'Why Buy From Us'
+                    shipping_and_returns.label: 'Shipping & Returns'
+                    secure_shopping.label: 'Secure Shopping'
+                    international_shipping.label: 'International Shipping'
+                    my_account.label: 'My Account'
+                    sign_out.label: 'Sign Out'
+                    view_cart.label: 'View Cart'
+                    my_wishlist.label: 'My Wishlist'
+                    track_my_order.label: 'Track My Order'
+                    help.label: 'Help'

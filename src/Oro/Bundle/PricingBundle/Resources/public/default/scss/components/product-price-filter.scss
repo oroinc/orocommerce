@@ -1,0 +1,18 @@
+// @theme: default
+
+.product-price-filter {
+    display: inline-block;
+    vertical-align: middle;
+
+    margin: $product-price-filter-offset;
+    
+    .product-price-unit-filter-separator {
+        margin: $product-price-filter-separator-offset;
+    }
+}
+
+@include breakpoint('tablet-small') {
+    .product-price-filter {
+        display: block;
+    }
+}

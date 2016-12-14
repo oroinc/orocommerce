@@ -58,6 +58,14 @@ services:
         tags:
             - { name: twig.extension }
 
+    oro_product.twig.product_extension:
+        class: Oro\Bundle\ProductBundle\Twig\ProductExtension
+        public: false
+        arguments:
+            - "@oro_product.autocomplete_fields_provider"
+        tags:
+            - { name: twig.extension }
+
     oro_product.form.autocomplete.product.search_handler:
         public: false
         parent: oro_form.autocomplete.search_handler
@@ -93,11 +101,6 @@ services:
             - [setActionGroupRegistry, ['@oro_action.action_group_registry']]
             - [setTranslator, ['@translator']]
             - [setRouter, ['@router']]
-
-    oro_product.service.product_create_step_one_handler:
-        class: 'Oro\Bundle\ProductBundle\Form\Handler\ProductCreateStepOneHandler'
-        public: true
-        scope: request
 
     oro_product.storage.product_data_bag:
         class: '%session.attribute_bag.class%'
@@ -349,7 +352,6 @@ services:
             - '%oro_product.entity.product.class%'
 
     oro_product.repository.product_image:
-        class: 'Doctrine\ORM\EntityRepository'
         parent: oro_entity.abstract_repository
         arguments:
             - '%oro_product.entity.product_image.class%'

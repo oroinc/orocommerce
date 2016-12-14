@@ -45,7 +45,7 @@
     }
   }
 
-  .form-horizontal .control-group label.control-label {
+  .form-horizontal .control-group .form-control-label {
     float: left;
     width: 160px;
     padding-top: 1.8rem;
@@ -59,7 +59,7 @@
     margin-left: 170px;
   }
 
-  .form-horizontal .control-group .controls .control-label{
+  .form-horizontal .control-group .controls .form-control-label{
     padding-top: 1.8rem;
     width: 100%;
     word-wrap: break-word;
@@ -68,7 +68,7 @@
     text-align: left;
   }
 
-  .form-horizontal .control-label{
+  .form-horizontal .form-control-label{
     font-size: 13px;
     text-align: left;
     line-height: 1.2em;
