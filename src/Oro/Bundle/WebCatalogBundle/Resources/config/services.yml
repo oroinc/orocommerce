@@ -2,8 +2,7 @@ parameters:
     oro_web_catalog.entity.web_catalog.class: Oro\Bundle\WebCatalogBundle\Entity\WebCatalog
     oro_web_catalog.entity.content_node.class: Oro\Bundle\WebCatalogBundle\Entity\ContentNode
     oro_web_catalog.entity.content_variant.class: Oro\Bundle\WebCatalogBundle\Entity\ContentVariant
-    oro_web_catalog.handler.content_node.handler.class: Oro\Bundle\WebCatalogBundle\Form\Handler\ContentNodeHandler
-    oro_web_catalog.handler.content_node.entity.class: Oro\Bundle\WebCatalogBundle\Entity\ContentNode
+    oro_web_catalog.entity.content_node.class: Oro\Bundle\WebCatalogBundle\Entity\ContentNode
 
 services:
     oro_web_catalog.repository.web_catalog:
@@ -26,7 +25,7 @@ services:
     oro_web_catalog.entity.content_node.manager:
         class:     Doctrine\ORM\EntityManager
         factory:   ['@doctrine', getManagerForClass]
-        arguments: ['%oro_web_catalog.handler.content_node.entity.class%']
+        arguments: ['%oro_web_catalog.entity.content_node.class%']
 
     oro_web_catalog.acl.voter.web_catalog:
         class: Oro\Bundle\WebCatalogBundle\Acl\Voter\WebCatalogVoter
@@ -189,8 +188,8 @@ services:
         tags:
             - { name: form.type_extension, extended_type: Oro\Bundle\ScopeBundle\Form\Type\ScopeType }
 
-    oro_web_catalog.handler.content_node.handler:
-        class: '%oro_web_catalog.handler.content_node.handler.class%'
+    oro_web_catalog.handler.content_node:
+        class: Oro\Bundle\WebCatalogBundle\Form\Handler\ContentNodeHandler
         arguments:
             - '@request_stack'
             - '@oro_web_catalog.generator.slug_generator'
