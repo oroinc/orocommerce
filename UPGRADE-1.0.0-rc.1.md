@@ -5,11 +5,16 @@
 
 ##CheckoutBundle
 - `Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface::getSourceEntity` returned value fixed `@return CheckoutSourceEntityInterface|null`
-- `Oro\Bundle\CheckoutBundle\EventListener\ResolvePaymentTermListener` added 3rd argument to constructor `PaymentTermProvider $paymentTermProvider`
+- `Oro\Bundle\CheckoutBundle\EventListener\ResolvePaymentTermListener`:
+  * changed 2nd argument of constructor from `Symfony\Component\EventDispatcher\EventDispatcherInterface $eventDispatcher` to `Doctrine\Common\Persistence\ManagerRegistry $registry`
+  * added 3rd argument to constructor `PaymentTermProvider $paymentTermProvider`
 - Removed classes:
     - `Oro\Bundle\CheckoutBundle\Event\CheckoutEvents`
     - `Oro\Bundle\CheckoutBundle\EventListener\CheckoutEntityListener`
     - `Oro\Bundle\CheckoutBundle\Model\Action\StartCheckout` and action `@start_checkout`
+- Removed operations:
+  * `oro_shoppinglist_frontend_createorder`
+  * `oro_shoppinglist_frontend_products_quick_add_to_checkout`
 
 ##CustomerBundle
 - `Oro\Bundle\CustomerBundle\Entity\AccountGroup` made extendable
@@ -33,6 +38,11 @@ Please use `Oro\Bundle\FrontendBundle\Provider\ActionCurrentApplicationProvider`
 - `Oro\Bundle\OrderBundle\Entity\Order` `paymentTerm` removed with getter `getPaymentTerm` and setter `setPaymentTerm`, use `oro_payment_term.provider.payment_term_association` to assign PaymentTerm to entity
 - `Oro\Bundle\OrderBundle\Form\Type\FrontendOrderType` `SecurityFacade $securityFacade` and `PaymentTermProvider $paymentTermProvider` removed, use `\Oro\Bundle\PaymentTermBundle\Form\Extension\PaymentTermAclExtension` instead
 - `Oro\Bundle\OrderBundle\Form\Type\OrderType` `SecurityFacade $securityFacade` and `PaymentTermProvider $paymentTermProvider` removed, use `\Oro\Bundle\PaymentTermBundle\Form\Extension\PaymentTermAclExtension` instead
+
+##ShoppingListBundle
+- `Oro\Bundle\ShoppingListBundle\Processor\QuickAddCheckoutProcessor`:
+  * removed public methods `setOperationManager(OperationManager $operationManager)` and `setOperationName($operationName)`
+  * added public methods `setActionGroupRegistry(ActionGroupRegistry $actionGroupRegistry)` and `setActionGroupName($groupName)` instead
 
 ##PaymentBundle
 - All code related to `PaymentTerm` moved to `PaymentTermBundle`. Significant changes listed below
