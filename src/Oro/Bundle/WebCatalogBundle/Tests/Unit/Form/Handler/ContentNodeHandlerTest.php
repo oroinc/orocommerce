@@ -256,7 +256,6 @@ class ContentNodeHandlerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param FormInterface $form
      * @param ContentNode $entity
      */
     protected function assertBeforeProcessEventsTriggered(ContentNode $entity)
@@ -271,7 +270,6 @@ class ContentNodeHandlerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param FormInterface $form
      * @param ContentNode $entity
      */
     protected function assertAfterProcessEventsTriggered(ContentNode $entity)
