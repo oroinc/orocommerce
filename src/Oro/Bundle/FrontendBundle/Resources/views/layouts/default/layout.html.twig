@@ -43,68 +43,6 @@
     {{ oro_form_js_validation(form, js_validation_options|default({})) }}
 {% endblock %}
 
-{#Action Buttons#}
-
-{% block action_line_buttons_widget %}
-    {% import 'OroActionBundle:layouts/base:layout.html.twig' as _layout %}
-    <ul{{ block('block_attributes') }}>
-        {% for action in actions %}
-            <li>
-                <a {{ _layout.get_action_attributes(action, entityClass, entityId) }}>
-                    {% if action.icon is not empty %}
-                        <i class="{{ action.icon }} {{ action.buttonOptions.iCss|default('') }}"></i>
-                    {% endif %}
-                    {{ action.label|trim }}
-                </a>
-            </li>
-        {% endfor %}
-    </ul>
-{% endblock %}
-
-{% block action_combined_buttons_widget %}
-    {% set actionsCount = actions|length %}
-    {% if actionsCount > 0 %}
-        {% import 'OroActionBundle:layouts/base:layout.html.twig' as _layout %}
-        {% set hasVariants = actionsCount > 1 %}
-        {% set additionalCss = "btn" %}
-        {% if block.parent.vars.class_prefix == 'datagrid_toolbar_button_container' %}
-            {% set additionalCss = additionalCss ~ " btn-info oq-group-btn" %}
-        {% else %}
-            {% set additionalCss = additionalCss ~ " btn" %}
-        {% endif %}
-        {% if hasVariants %}
-            {% set additionalCss = " btn-group full" %}
-        {% endif %}
-        {% set attr = attr|merge({ class: attr.class|default('') ~ additionalCss}) %}
-
-        {% set action = actions|first %}
-        {% set primaryButtonCss = 'direct-link ' ~ action.buttonOptions.class|default('') ~ " "  ~ params.buttonOptions.aCss|default('') %}
-
-        {% if hasVariants %}
-            <div{{ block('block_attributes') }}>
-                <a class="btn btn--info btn--size-l" {{ _layout.get_action_attributes(action, entityClass, entityId, primaryButtonCss) }}>
-                    {{ action.label|trim }}
-                </a>
-                <a class="btn btn--info btn--size-l dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"></a>
-                <ul class="dropdown-menu">
-                    {% for action in actions|slice(1) %}
-                    <li>
-                        <a class="dropdown-item" {{ _layout.get_action_attributes(action, entityClass, entityId, '') }}>
-                            {{ action.label|trim }}
-                        </a>
-                    </li>
-                    {% endfor %}
-                </ul>
-            </div>
-        {% else %}
-            <a {{ _layout.get_action_attributes(action, entityClass, entityId, primaryButtonCss) }}>
-                {{ action.label|trim }}
-            </a>
-        {% endif %}
-
-    {% endif %}
-{% endblock %}
-
 {#Buttons#}
 
 {% block line_buttons_widget %}
