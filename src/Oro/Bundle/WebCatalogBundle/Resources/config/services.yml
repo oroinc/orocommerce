@@ -187,11 +187,3 @@ services:
         class: Oro\Bundle\WebCatalogBundle\Form\Extension\WebCatalogScopeExtension
         tags:
             - { name: form.type_extension, extended_type: Oro\Bundle\ScopeBundle\Form\Type\ScopeType }
-
-    oro_web_catalog.handler.content_node:
-        class: Oro\Bundle\WebCatalogBundle\Form\Handler\ContentNodeHandler
-        arguments:
-            - '@request_stack'
-            - '@oro_web_catalog.generator.slug_generator'
-            - '@oro_web_catalog.entity.content_node.manager'
-            - '@event_dispatcher'
