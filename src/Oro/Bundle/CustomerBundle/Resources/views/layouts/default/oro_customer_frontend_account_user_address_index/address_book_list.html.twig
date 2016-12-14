@@ -9,7 +9,7 @@
     {% set attr = layout_attr_defaults(attr, {'~class': ' grid__column grid__column-half'}) %}
     <div {{ block('block_attributes') }}>
         <h2 class="user-page-title">
-            <span class="badge badge_sm badge_circle badge_orange badge_has-inline-sibling">
+            <span class="badge">
                 <i class="fa-map-marker"></i>
             </span>
             {{ block_widget(block) }}
@@ -18,7 +18,7 @@
 {% endblock %}
 
 {% block _account_address_book_addresses_list_create_button_widget %}
-    {% set attr = layout_attr_defaults(attr, {'~class': ' btn btn_xsm btn-dark pull-right'}) %}
+    {% set attr = layout_attr_defaults(attr, {'~class': ' btn-info pull-right'}) %}
     {{ block_widget(block, {attr: attr}) }}
 {% endblock %}
 

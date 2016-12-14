@@ -10,16 +10,19 @@ use Doctrine\DBAL\Schema\SchemaException;
 use Doctrine\DBAL\Types\Type;
 
 use Oro\Bundle\ConfigBundle\Migration\RenameConfigSectionQuery;
-use Oro\Bundle\EntityExtendBundle\Extend\RelationType;
-use Oro\Bundle\FrontendBundle\Migration\UpdateExtendRelationQuery;
 use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
+use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class OroWebsiteBundle implements Migration, DatabasePlatformAwareInterface, RenameExtensionAwareInterface
+class OroWebsiteBundle implements
+    Migration,
+    DatabasePlatformAwareInterface,
+    RenameExtensionAwareInterface,
+    OrderedMigrationInterface
 {
     /**
      * @var AbstractPlatform
@@ -62,28 +65,6 @@ class OroWebsiteBundle implements Migration, DatabasePlatformAwareInterface, Ren
     private function renameTables(Schema $schema, QueryBag $queries)
     {
         $extension = $this->renameExtension;
-
-        // notes
-        $notes = $schema->getTable('oro_note');
-
-        $notes->removeForeignKey('FK_BA066CE1271A24E0');
-        $extension->renameColumn($schema, $queries, $notes, 'website_63ea35fe_id', 'website_eb2ef553_id');
-        $extension->addForeignKeyConstraint(
-            $schema,
-            $queries,
-            'oro_note',
-            'orob2b_website',
-            ['website_eb2ef553_id'],
-            ['id'],
-            ['onDelete' => 'SET NULL']
-        );
-        $queries->addQuery(new UpdateExtendRelationQuery(
-            'Oro\Bundle\NoteBundle\Entity\Note',
-            'Oro\Bundle\WebsiteBundle\Entity\Website',
-            'website_63ea35fe',
-            'website_eb2ef553',
-            RelationType::MANY_TO_ONE
-        ));
 
         // rename tables
         $extension->renameTable($schema, $queries, 'orob2b_related_website', 'oro_related_website');
@@ -252,6 +233,17 @@ class OroWebsiteBundle implements Migration, DatabasePlatformAwareInterface, Ren
                 'new_default_url' => Type::STRING,
             ]
         );
+    }
+
+    /**
+     * Should be executed before:
+     * @see \Oro\Bundle\WebsiteBundle\Migrations\Schema\v1_4\MigrateNotes
+     *
+     * {@inheritdoc}
+     */
+    public function getOrder()
+    {
+        return 0;
     }
 
     /**

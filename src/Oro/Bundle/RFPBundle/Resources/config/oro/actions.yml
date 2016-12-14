@@ -124,6 +124,7 @@ operations:
         order: 10
         button_options:
             icon: fa-file-text
+            class: 'btn--action'
             template: OroActionBundle:Operation:ajax-button.html.twig
             data:
                 component_name: oro_rfp_quick_add_processor
@@ -318,13 +319,17 @@ action_groups:
                 arguments:
                     status: $.request_status.label
                     note: $.request_note
-            - '@create_entity':
+            - '@create_object':
                 class: Oro\Bundle\NoteBundle\Entity\Note
                 attribute: $.note
                 data:
-                    target: $.data
                     message: $.message
-                flush: true
+            - '@call_method':
+                object: $.note
+                method: addActivityTarget
+                method_parameters:
+                    - $.data
+            - '@flush_entity': $.note
 
     oro_rfp_cancel:
         parameters:

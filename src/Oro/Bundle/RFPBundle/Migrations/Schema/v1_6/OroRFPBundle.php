@@ -9,10 +9,11 @@ use Oro\Bundle\EntityExtendBundle\Extend\RelationType;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
+use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\FrontendBundle\Migration\UpdateExtendRelationQuery;
 
-class OroRFPBundle implements Migration, RenameExtensionAwareInterface
+class OroRFPBundle implements Migration, RenameExtensionAwareInterface, OrderedMigrationInterface
 {
     /**
      * @var RenameExtension
@@ -34,28 +35,6 @@ class OroRFPBundle implements Migration, RenameExtensionAwareInterface
             'request_9fd4910b',
             'request_d1d045e1',
             RelationType::MANY_TO_MANY
-        ));
-
-        // notes
-        $notes = $schema->getTable('oro_note');
-
-        $notes->removeForeignKey('FK_BA066CE1EF5A4BE2');
-        $extension->renameColumn($schema, $queries, $notes, 'request_86063709_id', 'request_d6948721_id');
-        $extension->addForeignKeyConstraint(
-            $schema,
-            $queries,
-            'oro_note',
-            'orob2b_rfp_request',
-            ['request_d6948721_id'],
-            ['id'],
-            ['onDelete' => 'SET NULL']
-        );
-        $queries->addQuery(new UpdateExtendRelationQuery(
-            'Oro\Bundle\NoteBundle\Entity\Note',
-            'Oro\Bundle\RFPBundle\Entity\Request',
-            'request_86063709',
-            'request_d6948721',
-            RelationType::MANY_TO_ONE
         ));
 
         // rename tables
@@ -80,6 +59,17 @@ class OroRFPBundle implements Migration, RenameExtensionAwareInterface
 
         // system configuration
         $queries->addPostQuery(new RenameConfigSectionQuery('oro_b2b_rfp', 'oro_rfp'));
+    }
+
+    /**
+     * Should be executed before:
+     * @see \Oro\Bundle\RFPBundle\Migrations\Schema\v1_6\MigrateNotes
+     *
+     * {@inheritdoc}
+     */
+    public function getOrder()
+    {
+        return 0;
     }
 
     /**

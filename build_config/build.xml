@@ -586,7 +586,6 @@
             <arg line="--exclude=CMSBundle/Migrations/Schema"/>
             <arg line="--exclude=WarehouseBundle/Migrations/Schema"/>
             <arg line="--exclude=TaxBundle/Migrations/Schema"/>
-            <arg line="--exclude=MenuBundle/Migrations/Schema"/>
             <arg line="--exclude=CheckoutBundle/Migrations/Schema"/>
             <arg line="--exclude=AlternativeCheckoutBundle/Migrations/Schema"/>
             <arg line="--exclude=ShippingBundle/Migrations/Schema"/>
