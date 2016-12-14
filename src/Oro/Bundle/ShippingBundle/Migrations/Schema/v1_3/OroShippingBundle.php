@@ -22,7 +22,7 @@ class OroShippingBundle implements Migration
      */
     private function createOroShippingMethodsConfigsRuleTable(Schema $schema)
     {
-        $table = $schema->createTable('oro_shipping_methods_configs_rule');
+        $table = $schema->createTable('oro_ship_methods_conf_rule');
 
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('rule_id', 'integer', ['notnull' => false]);
@@ -47,7 +47,7 @@ class OroShippingBundle implements Migration
      */
     private function createOroShippingMethodsConfigsRuleDestinationPostalCodeTable(Schema $schema)
     {
-        $table = $schema->createTable('oro_shipping_methods_configs_rule_destination_postal_code');
+        $table = $schema->createTable('oro_ship_methods_post_code');
 
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('name', 'string', ['notnull' => true, 'length' => 255]);

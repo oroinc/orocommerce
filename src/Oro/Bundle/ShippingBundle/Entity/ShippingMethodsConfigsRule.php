@@ -8,14 +8,14 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
-use Oro\Bundle\PaymentBundle\Entity\RuleOwnerInterface;
+use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
 use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Bundle\ShippingBundle\Model\ExtendShippingMethodsConfigsRule;
 
 /**
  * @ORM\Entity
  * @ORM\Table(
- *     name="oro_shipping_methods_configs_rule",
+ *     name="oro_ship_methods_conf_rule",
  *     indexes={
  *         @ORM\Index(name="idx_oro_shipping_methods_configs_rule_created_at", columns={"created_at"}),
  *         @ORM\Index(name="idx_oro_shipping_methods_configs_rule_updated_at", columns={"updated_at"})

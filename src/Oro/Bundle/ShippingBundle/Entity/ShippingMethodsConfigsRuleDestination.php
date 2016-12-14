@@ -294,7 +294,7 @@ class ShippingMethodsConfigsRuleDestination
     /**
      * Set rule
      *
-     * @param ShippingRule $rule
+     * @param ShippingRule|ShippingMethodsConfigsRule $rule
      * @return $this
      */
     public function setRule($rule)

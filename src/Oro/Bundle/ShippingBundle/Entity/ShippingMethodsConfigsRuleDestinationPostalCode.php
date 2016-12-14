@@ -6,7 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity
- * @ORM\Table("oro_shipping_methods_configs_rule_destination_postal_code")
+ * @ORM\Table("oro_ship_methods_post_code")
  */
 class ShippingMethodsConfigsRuleDestinationPostalCode
 {

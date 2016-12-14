@@ -114,10 +114,10 @@ class ShippingMethodConfig extends ExtendShippingMethodConfig
     }
 
     /**
-     * @param ShippingRule $rule
+     * @param ShippingRule|ShippingMethodsConfigsRule $rule
      * @return $this
      */
-    public function setRule(ShippingRule $rule)
+    public function setRule($rule)
     {
         $this->rule = $rule;
         return $this;
