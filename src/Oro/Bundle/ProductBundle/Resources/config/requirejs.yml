@@ -14,6 +14,7 @@ config:
         'oroproduct/js/app/components/quick-add-import-validation-component': 'bundles/oroproduct/js/app/components/quick-add-import-validation-component.js'
         'oroproduct/js/app/components/redirect-component': 'bundles/oroproduct/js/app/components/redirect-component.js'
         'oroproduct/js/app/views/product-quantity-editable-view': 'bundles/oroproduct/js/app/views/product-quantity-editable-view.js'
+        'oroproduct/js/app/components/catalog-switch-view': 'bundles/oroproduct/js/app/components/catalog-switch-view.js'
         'oroproduct/js/app/datagrid/frontend-product-display-options-builder': 'bundles/oroproduct/js/app/datagrid/frontend-product-display-options-builder.js'
         'oroproduct/js/app/views/base-product-view': 'bundles/oroproduct/js/app/views/base-product-view.js'
         'oroproduct/js/app/views/line-item-product-view': 'bundles/oroproduct/js/app/views/line-item-product-view.js'
