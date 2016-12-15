@@ -2,17 +2,18 @@
 
 namespace Oro\Bundle\FrontendBundle\Tests\Unit\Provider;
 
-use Oro\Bundle\ActionBundle\Tests\Unit\Provider\RouteProviderTest;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\FrontendBundle\Provider\ActionRouteProvider;
-use Oro\Bundle\UserBundle\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-class ActionRouteProviderTest extends RouteProviderTest
+use Oro\Bundle\ActionBundle\Tests\Unit\Provider\RouteProviderTest as BaseRouteProviderTest;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\FrontendBundle\Provider\RouteProvider;
+use Oro\Bundle\UserBundle\Entity\User;
+
+class RouteProviderTest extends BaseRouteProviderTest
 {
-    /** @var ActionRouteProvider */
+    /** @var RouteProvider */
     protected $provider;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject|TokenStorageInterface */
@@ -27,7 +28,7 @@ class ActionRouteProviderTest extends RouteProviderTest
 
         $this->tokenStorage = $this->getMock(TokenStorageInterface::class);
 
-        $this->provider = new ActionRouteProvider(
+        $this->provider = new RouteProvider(
             $this->provider,
             $this->tokenStorage,
             'oro_frontend_action_widget_form',

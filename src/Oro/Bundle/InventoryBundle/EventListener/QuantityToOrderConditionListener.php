@@ -61,14 +61,17 @@ class QuantityToOrderConditionListener
     /**
      * @param ExtendableConditionEvent $event
      */
-    public function onCreateOrderCheck(ExtendableConditionEvent $event)
+    public function onStartCheckoutConditionCheck(ExtendableConditionEvent $event)
     {
+        /** @var WorkflowItem $context */
         $context = $event->getContext();
-        if (!$context instanceof ActionData || !$context->getEntity() instanceof ShoppingList) {
+        if ($this->isNotCorrectConditionContextForStart($context)) {
             return;
         }
 
-        if (false == $this->validatorService->isLineItemListValid($context->getEntity()->getLineItems())) {
+        $shoppingList = $context->getResult()->get('shoppingList');
+
+        if (false == $this->validatorService->isLineItemListValid($shoppingList->getLineItems())) {
             $event->addError(self::QUANTITY_CHECK_ERROR, $context);
         }
     }
@@ -123,13 +126,27 @@ class QuantityToOrderConditionListener
     protected function isNotCorrectConditionContext($context)
     {
         return (!$context instanceof WorkflowItem
-            || !in_array($context->getWorkflowName(), self::$allowedWorkflows)
+            || !in_array($context->getWorkflowName(), self::$allowedWorkflows, true)
             || !$context->getEntity() instanceof Checkout
             || !$context->getEntity()->getSource() instanceof CheckoutSource
             // make sure checkout only done from shopping list
             || !$context->getEntity()->getSource()->getEntity() instanceof ShoppingList
             || !$context->getEntity()->getSource()->getShoppingList() instanceof ShoppingList
             || $context->getEntity()->getSource()->getQuoteDemand() instanceof QuoteDemand
+        );
+    }
+
+    /**
+     * @param mixed $context
+     * @return bool
+     */
+    protected function isNotCorrectConditionContextForStart($context)
+    {
+        return (!$context instanceof WorkflowItem
+            || !in_array($context->getWorkflowName(), self::$allowedWorkflows, true)
+            || !is_a($context->getDefinition()->getRelatedEntity(), Checkout::class, true)
+            // make sure checkout only done from shopping list
+            || !$context->getResult()->get('shoppingList') instanceof ShoppingList
         );
     }
 }
