@@ -12,8 +12,10 @@ use Oro\Bundle\TaxBundle\Model\ResultElement;
 use Oro\Bundle\TaxBundle\Model\TaxResultElement;
 use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 
-class RowTotalResolver extends AbstractUnitRowResolver
+class RowTotalResolver
 {
+    use CalculateAdjustmentTrait;
+
     /**
      * @var TaxationSettingsProvider
      */

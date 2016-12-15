@@ -3,19 +3,22 @@
 namespace Oro\Bundle\ShippingBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
+
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
-use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  */
-class OroShippingBundleInstaller implements Installation, NoteExtensionAwareInterface
+class OroShippingBundleInstaller implements Installation, ActivityExtensionAwareInterface
 {
-    /** @var NoteExtension */
-    protected $noteExtension;
+    /**
+     * @var ActivityExtension
+     */
+    protected $activityExtension;
 
     /**
      * {@inheritdoc}
@@ -45,14 +48,6 @@ class OroShippingBundleInstaller implements Installation, NoteExtensionAwareInte
         $this->addOroShippingRuleMthdConfigForeignKeys($schema);
         $this->addOroShippingRuleMthdTpCnfgForeignKeys($schema);
         $this->addOroShippingRuleDestinationForeignKeys($schema);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setNoteExtension(NoteExtension $noteExtension)
-    {
-        $this->noteExtension = $noteExtension;
     }
 
     /**
@@ -140,7 +135,7 @@ class OroShippingBundleInstaller implements Installation, NoteExtensionAwareInte
         $table->addIndex(['created_at'], 'idx_oro_shipping_rule_created_at', []);
         $table->addIndex(['updated_at'], 'idx_oro_shipping_rule_updated_at', []);
 
-        $this->noteExtension->addNoteAssociation($schema, 'oro_shipping_rule');
+        $this->activityExtension->addActivityAssociation($schema, 'oro_note', 'oro_shipping_rule');
     }
 
     /**
@@ -289,5 +284,13 @@ class OroShippingBundleInstaller implements Installation, NoteExtensionAwareInte
             ['combined_code'],
             ['onUpdate' => null, 'onDelete' => null]
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setActivityExtension(ActivityExtension $activityExtension)
+    {
+        $this->activityExtension = $activityExtension;
     }
 }

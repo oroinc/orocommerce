@@ -42,6 +42,7 @@ oro.pricing:
         contain_schedule.label: Contain Schedules
         owner.label: 'Owner'
         organization.label: 'Organization'
+        assigned_products.label: 'Assigned Products'
         form:
             pricelist_required: Please select a price list first...
         status:

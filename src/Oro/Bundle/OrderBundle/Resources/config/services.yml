@@ -8,13 +8,6 @@ parameters:
     oro_payment.entity.payment_status.class: Oro\Bundle\PaymentBundle\Entity\PaymentStatus
 
 services:
-    oro_order.order.manager.api:
-        class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
-        parent: oro_soap.manager.entity_manager.abstract
-        arguments:
-            - '%oro_order.entity.order.class%'
-            - '@doctrine.orm.entity_manager'
-
     oro_order.order.entity.id_generator:
         class: 'Oro\Bundle\OrderBundle\Doctrine\ORM\Id\SimpleEntityAwareGenerator'
         public: false

@@ -12,9 +12,6 @@ use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
-use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
-use Oro\Bundle\CustomerBundle\Entity\Account;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -23,7 +20,6 @@ use Oro\Bundle\CustomerBundle\Entity\Account;
 class OroAccountBundle implements
     Migration,
     AttachmentExtensionAwareInterface,
-    NoteExtensionAwareInterface,
     ActivityExtensionAwareInterface,
     ExtendExtensionAwareInterface
 {
@@ -48,9 +44,6 @@ class OroAccountBundle implements
     /** @var ExtendExtension */
     protected $extendExtension;
 
-    /** @var NoteExtension */
-    protected $noteExtension;
-
     /** @var AttachmentExtension */
     protected $attachmentExtension;
 
@@ -65,16 +58,6 @@ class OroAccountBundle implements
     public function setAttachmentExtension(AttachmentExtension $attachmentExtension)
     {
         $this->attachmentExtension = $attachmentExtension;
-    }
-
-    /**
-     * Sets the NoteExtension
-     *
-     * @param NoteExtension $noteExtension
-     */
-    public function setNoteExtension(NoteExtension $noteExtension)
-    {
-        $this->noteExtension = $noteExtension;
     }
 
     /**
@@ -199,7 +182,7 @@ class OroAccountBundle implements
             ]
         );
 
-        $this->noteExtension->addNoteAssociation($schema, static::ORO_B2B_ACCOUNT_USER_TABLE_NAME);
+        $this->activityExtension->addActivityAssociation($schema, 'oro_note', static::ORO_B2B_ACCOUNT_USER_TABLE_NAME);
 
         $this->activityExtension->addActivityAssociation(
             $schema,
@@ -245,12 +228,12 @@ class OroAccountBundle implements
             ]
         );
 
-        $this->noteExtension->addNoteAssociation($schema, static::ORO_B2B_ACCOUNT_TABLE_NAME);
+        $this->activityExtension->addActivityAssociation($schema, 'oro_note', static::ORO_B2B_ACCOUNT_TABLE_NAME);
         $this->extendExtension->addEnumField(
             $schema,
             static::ORO_B2B_ACCOUNT_TABLE_NAME,
             'internal_rating',
-            Account::INTERNAL_RATING_CODE
+            'acc_internal_rating'
         );
     }
 
@@ -285,7 +268,7 @@ class OroAccountBundle implements
 
         $table->addIndex(['name'], 'orob2b_account_group_name_idx', []);
 
-        $this->noteExtension->addNoteAssociation($schema, static::ORO_B2B_ACCOUNT_GROUP_TABLE_NAME);
+        $this->activityExtension->addActivityAssociation($schema, 'oro_note', static::ORO_B2B_ACCOUNT_GROUP_TABLE_NAME);
     }
 
     /**
@@ -389,7 +372,11 @@ class OroAccountBundle implements
         $table->addUniqueIndex(['role']);
         $table->addUniqueIndex(['account_id', 'label'], 'orob2b_account_user_role_account_id_label_idx');
 
-        $this->noteExtension->addNoteAssociation($schema, static::ORO_B2B_ACCOUNT_USER_ROLE_TABLE_NAME);
+        $this->activityExtension->addActivityAssociation(
+            $schema,
+            'oro_note',
+            static::ORO_B2B_ACCOUNT_USER_ROLE_TABLE_NAME
+        );
     }
 
     /**

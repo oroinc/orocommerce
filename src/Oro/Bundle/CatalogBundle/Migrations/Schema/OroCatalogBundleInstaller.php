@@ -3,6 +3,9 @@
 namespace Oro\Bundle\CatalogBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
+
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Entity\ConfigModel;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManager;
@@ -10,8 +13,6 @@ use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
-use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtension;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
 use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtension;
@@ -22,7 +23,7 @@ use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtensionAwareInterface;
  */
 class OroCatalogBundleInstaller implements
     Installation,
-    NoteExtensionAwareInterface,
+    ActivityExtensionAwareInterface,
     AttachmentExtensionAwareInterface,
     ExtendExtensionAwareInterface,
     SlugExtensionAwareInterface
@@ -37,10 +38,8 @@ class OroCatalogBundleInstaller implements
     const THUMBNAIL_WIDTH_SIZE_IN_PX = 100;
     const THUMBNAIL_HEIGHT_SIZE_IN_PX = 100;
 
-    /**
-     * @var NoteExtension
-     */
-    protected $noteExtension;
+    /** @var ActivityExtension */
+    protected $activityExtension;
 
     /**
      * @var AttachmentExtension
@@ -66,13 +65,11 @@ class OroCatalogBundleInstaller implements
     }
 
     /**
-     * Sets the NoteExtension
-     *
-     * @param NoteExtension $noteExtension
+     * {@inheritdoc}
      */
-    public function setNoteExtension(NoteExtension $noteExtension)
+    public function setActivityExtension(ActivityExtension $activityExtension)
     {
-        $this->noteExtension = $noteExtension;
+        $this->activityExtension = $activityExtension;
     }
 
     /**
@@ -147,7 +144,8 @@ class OroCatalogBundleInstaller implements
         $table->addColumn('materialized_path', 'string', ['length' => 255, 'notnull' => false]);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['default_product_options_id']);
-        $this->noteExtension->addNoteAssociation($schema, 'oro_catalog_category');
+
+        $this->activityExtension->addActivityAssociation($schema, 'oro_note', 'oro_catalog_category');
     }
 
     /**
