@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ShoppingListBundle\Tests\Functional;
+namespace Oro\Bundle\OrderBundle\Tests\Functional\Operation;
 
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\FrontendActionTestCase;
