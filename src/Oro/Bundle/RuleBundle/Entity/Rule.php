@@ -2,11 +2,13 @@
 
 namespace Oro\Bundle\RuleBundle\Entity;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
 use Oro\Bundle\RuleBundle\Model\ExtendRule;
 
 /**
@@ -139,6 +141,19 @@ class Rule extends ExtendRule implements DatesAwareInterface
      *  )
      */
     private $expression;
+
+    /**
+     * @var Collection|PaymentMethodsConfigsRule[]
+     *
+     * @ORM\OneToMany(
+     *     targetEntity="Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule",
+     *     mappedBy="rule",
+     *     cascade={"ALL"},
+     *     fetch="EAGER",
+     *     orphanRemoval=true
+     * )
+     */
+    protected $methodsConfigsRule;
 
     /**
      * @ORM\PrePersist

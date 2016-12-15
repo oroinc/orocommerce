@@ -43,3 +43,37 @@ oro:
             pending: Pending payment
             declined: Payment declined
             partially: Paid partially
+
+        paymentmethodconfig:
+            entity_label: Payment Method Config
+            entity_plural_label: Payment Method Configs
+            id.label: Id
+            methods_configs_rule.label: Payment Methods Configs Rule
+            type.label: Type
+            options.label: Options
+
+        paymentmethodsconfigsrule:
+            entity_label: Payment Methods Configs Rule
+            entity_plural_label: Payment Methods Configs Rules
+            id.label: Id
+            method_configs.label: Payment Methods Configs
+            rule.label: Rule
+            destinations.label: Destinations
+            currency.label: Currency
+
+        paymentmethodsconfigsruledestination:
+            entity_label: Payment Methods Configs Rule Destination
+            entity_plural_label: Payment Methods Configs Rule Destinations
+            id.label: Id
+            methods_configs_rule.label: Payment Methods Configs Rule
+            postal_codes.label: Postal Codes
+            region.label: Region
+            region_text.label: Region Text
+            country.label: Country
+
+        paymentmethodsconfigsruledestinationpostalcode:
+            entity_label: Payment Methods Configs Rule Destination Postal Code
+            entity_plural_label: Payment Methods Configs Rule Destination Postal Codes
+            id.label: Id
+            name.label: Name
+            destination.label: Destination
