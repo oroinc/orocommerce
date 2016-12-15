@@ -4,18 +4,6 @@ parameters:
     oro_web_catalog.entity.content_variant.class: Oro\Bundle\WebCatalogBundle\Entity\ContentVariant
 
 services:
-    oro_web_catalog.repository.web_catalog:
-        class: 'Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository'
-        parent: oro_entity.abstract_repository
-        arguments:
-            - Oro\Bundle\WebCatalogBundle\Entity\WebCatalog
-  
-    oro_web_catalog.provider.web_catalog:
-        class: Oro\Bundle\WebCatalogBundle\Provider\WebCatalogProvider
-        arguments:
-            - '@oro_config.manager'
-            - '@oro_web_catalog.repository.web_catalog'
-        
     oro_web_catalog.provider.web_catalog_usage_provider:
         class: Oro\Bundle\WebCatalogBundle\Provider\WebCatalogUsageProvider
         arguments:
