@@ -96,10 +96,10 @@ services:
         parent: oro_shopping_list.processor.abstract_quick_add
         calls:
             - [setShoppingListManager, ['@oro_shopping_list.shopping_list.manager']]
-            - [setOperationManager, ['@oro_action.operation_manager']]
+            - [setActionGroupRegistry, ['@oro_action.action_group_registry']]
             - [setTranslator, ['@translator']]
             - [setDateFormatter, ['@oro_locale.formatter.date_time']]
-            - [setOperationName, ['oro_shoppinglist_frontend_createorder']]
+            - [setActionGroupName, ['start_shoppinglist_checkout']]
         tags:
             - { name: oro_product.quick_add_processor }
 
