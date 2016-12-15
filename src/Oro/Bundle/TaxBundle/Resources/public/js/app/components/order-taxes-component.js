@@ -50,6 +50,7 @@ define(function(require) {
          */
         prepareItem: function(item) {
             item.data.total = TaxFormatter.formatItem(item.data.total);
+            item.data.shipping = TaxFormatter.formatItem(item.data.shipping);
             item.data.taxes = _.map(item.data.taxes, TaxFormatter.formatTax);
 
             item.data.in = $(this.options.selectors.collapseSelector).hasClass('in');

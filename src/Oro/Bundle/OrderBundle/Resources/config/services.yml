@@ -97,7 +97,7 @@ services:
     oro_order.handler.order_currency_handler:
         class: 'Oro\Bundle\OrderBundle\Handler\OrderCurrencyHandler'
         arguments:
-            - '@oro_locale.settings'
+            - '@oro_currency.config.currency'
 
     oro_order.handler.order_totals_handler:
         class: 'Oro\Bundle\OrderBundle\Handler\OrderTotalsHandler'
@@ -224,7 +224,7 @@ services:
         class: 'Oro\Bundle\OrderBundle\EventListener\TotalCalculateListener'
         arguments:
             - '@form.factory'
-            - '@oro_action.helper.applications'
+            - '@oro_action.provider.current_application'
         tags:
             - { name: kernel.event_listener, event: oro_pricing.total_calculate_before_event, method: onBeforeTotalCalculate }
 

@@ -6,7 +6,7 @@ workflows:
         steps_display_ordered: true
 
         defaults:
-            active: true
+            active: false
         exclusive_record_groups:
             - b2b_checkout_flow
         priority: 100
@@ -75,17 +75,20 @@ workflows:
                 order: 10
                 allowed_transitions:
                     - continue_to_shipping_address
+                    - __start__
             enter_shipping_address:
                 order: 20
                 allowed_transitions:
                     - continue_to_shipping_method
                     - back_to_billing_address
+                    - __start__
             enter_shipping_method:
                 order: 30
                 allowed_transitions:
                     - continue_to_payment
                     - back_to_billing_address
                     - back_to_shipping_address
+                    - __start__
             enter_payment:
                 order: 40
                 allowed_transitions:
@@ -93,6 +96,7 @@ workflows:
                     - back_to_billing_address
                     - back_to_shipping_address
                     - back_to_shipping_method
+                    - __start__
             order_review:
                 order: 50
                 allowed_transitions:
@@ -102,6 +106,7 @@ workflows:
                     - back_to_shipping_address
                     - back_to_shipping_method
                     - back_to_payment
+                    - __start__
             request_approval:
                 order: 60
                 allowed_transitions:
@@ -112,6 +117,7 @@ workflows:
                     - back_to_shipping_method
                     - back_to_payment
                     - back_to_order_review
+                    - __start__
             approve_request:
                 order: 70
                 is_final: true
@@ -125,7 +131,36 @@ workflows:
                     - back_to_payment
                     - back_to_order_review
                     - back_to_request_approval
+                    - __start__
         transitions:
+            start_from_shoppinglist:
+                is_start: true
+                step_to: enter_billing_address
+                is_unavailable_hidden: true
+                transition_definition: start_from_shoppinglist_definition
+                frontend_options:
+                    icon: fa-briefcase
+                init_routes:
+                    - oro_shopping_list_frontend_view
+
+            start_from_quickorderform:
+                is_start: true
+                step_to: enter_billing_address
+                is_unavailable_hidden: true
+                transition_definition: start_from_quickorderform_definition
+                frontend_options:
+                    icon: fa-briefcase
+                    class: 'btn--action'
+                    data:
+                        component_name: oro_shopping_list_to_checkout_quick_add_processor
+                        page-component-module: oroproduct/js/app/components/quick-add-form-button-component
+                        page-component-options:
+                            component_name: '[name$="[component]"]'
+                init_routes:
+                    - oro_product_frontend_quick_add
+                    - oro_product_frontend_quick_add_copy_paste
+                    - oro_product_frontend_quick_add_import
+
             continue_to_shipping_address:
                 step_to: enter_shipping_address
                 transition_definition: continue_to_shipping_address_definition
@@ -379,6 +414,43 @@ workflows:
                                 data: $internal_state_token
 
         transition_definitions:
+            start_from_quickorderform_definition:
+                preactions:
+                    - '@call_service_method':
+                        attribute: $.result.isAllowed
+                        service: oro_shopping_list.processor.quick_add_to_checkout
+                        method: isAllowed
+                preconditions:
+                    '@and':
+                        - '@not_empty': $init_context
+                        - '@payment_method_enabled': 'payment_term'
+                        - '@equal': [true, $.result.isAllowed]
+
+            start_from_shoppinglist_definition:
+                preactions:
+                    - '@find_entity':
+                        conditions:
+                            '@not_empty': $init_context
+                        parameters:
+                            class: $init_context.entityClass
+                            identifier: $init_context.entityId
+                            attribute: $.result.shoppingList
+                preconditions:
+                    '@and':
+                        - '@payment_method_enabled': 'payment_term'
+                        - '@has_elements': $.result.shoppingList.lineItems
+                        - '@has_price_in_shopping_line_items': $.result.shoppingList.lineItems
+                        - '@extendable':
+                            events: [extendable_condition.start_checkout]
+                actions:
+                    - '@run_action_group':
+                        action_group: start_shoppinglist_checkout
+                        parameters_mapping:
+                            shoppingList: $.result.shoppingList
+                        results:
+                            data.checkout: $.checkout
+                            result.redirectUrl: $.redirectUrl
+                                
             __start___definition:
                 preconditions:
                     '@payment_method_enabled': 'payment_term'
@@ -463,10 +535,13 @@ workflows:
                                 state: $.result.currentCheckoutState
                                 token: $state_token
                 preconditions:
-                    '@order_line_item_has_count':
-                        message: oro.checkout.workflow.condition.order_line_item_has_count.message
-                        parameters:
-                            entity: $checkout
+                    '@and':
+                        - '@extendable':
+                            events: [extendable_condition.checkout]
+                        - '@order_line_item_has_count':
+                            message: oro.checkout.workflow.condition.order_line_item_has_count.message
+                            parameters:
+                                entity: $checkout
                 conditions:
                     '@and':
                         - '@not_empty': $checkout.billingAddress

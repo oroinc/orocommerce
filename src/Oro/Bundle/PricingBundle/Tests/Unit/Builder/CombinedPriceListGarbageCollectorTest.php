@@ -3,9 +3,9 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Builder;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
-
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\PricingBundle\Builder\CombinedPriceListGarbageCollector;
+use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
 
 class CombinedPriceListGarbageCollectorTest extends \PHPUnit_Framework_TestCase
 {
@@ -29,6 +29,11 @@ class CombinedPriceListGarbageCollectorTest extends \PHPUnit_Framework_TestCase
      */
     protected $registry;
 
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|CombinedPriceListTriggerHandler
+     */
+    protected $triggerHandler;
+
     protected function setUp()
     {
         $this->combinedPriceListClass = 'Oro\Bundle\PricingBundle\Entity\CombinedPriceList';
@@ -40,7 +45,15 @@ class CombinedPriceListGarbageCollectorTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->garbageCollector = new CombinedPriceListGarbageCollector($this->registry, $this->configManager);
+        $this->triggerHandler = $this->getMockBuilder(CombinedPriceListTriggerHandler::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->garbageCollector = new CombinedPriceListGarbageCollector(
+            $this->registry,
+            $this->configManager,
+            $this->triggerHandler
+        );
         $this->garbageCollector->setCombinedPriceListClass($this->combinedPriceListClass);
     }
 
@@ -51,15 +64,23 @@ class CombinedPriceListGarbageCollectorTest extends \PHPUnit_Framework_TestCase
      */
     public function testCleanCombinedPriceLists($configCombinedPriceListId, $expectedParams)
     {
-
         $this->configManager->expects($this->once())
             ->method('get')
             ->willReturn($configCombinedPriceListId);
 
         $repository = $this->assertRepositoryCall();
+        $invalidCPLs = [1];
         $repository->expects($this->once())
-            ->method('deleteUnusedPriceLists')
-            ->with($expectedParams);
+            ->method('getUnusedPriceListsIds')
+            ->with($expectedParams)
+            ->willReturn($invalidCPLs);
+        $repository->expects($this->once())
+            ->method('deletePriceLists')
+            ->with($invalidCPLs);
+
+        $this->triggerHandler->expects($this->once())->method('startCollect');
+        $this->triggerHandler->expects($this->once())->method('massProcess')->with($invalidCPLs);
+        $this->triggerHandler->expects($this->once())->method('commit');
 
         $this->garbageCollector->cleanCombinedPriceLists();
     }

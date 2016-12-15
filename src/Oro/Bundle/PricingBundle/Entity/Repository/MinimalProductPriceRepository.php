@@ -3,7 +3,6 @@
 namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
 use Doctrine\ORM\Query;
-
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -72,10 +71,10 @@ class MinimalProductPriceRepository extends BaseProductPriceRepository
         $qb = $this->_em->createQueryBuilder();
         $qb->select('low_price.id')
             ->from('OroPricingBundle:CombinedProductPrice', 'low_price')
-            ->where($qb->expr()->eq('low_price.priceList', $rooAlias . '.priceList'))
-            ->andWhere($qb->expr()->eq('low_price.product', $rooAlias . '.product'))
-            ->andWhere($qb->expr()->eq('low_price.currency', $rooAlias . '.currency'))
-            ->andWhere($qb->expr()->lt('low_price.value', $rooAlias . '.value'));
+            ->where($qb->expr()->eq('low_price.priceList', $rooAlias.'.priceList'))
+            ->andWhere($qb->expr()->eq('low_price.product', $rooAlias.'.product'))
+            ->andWhere($qb->expr()->eq('low_price.currency', $rooAlias.'.currency'))
+            ->andWhere($qb->expr()->lt('low_price.value', $rooAlias.'.value'));
 
         return $qb->getQuery();
     }

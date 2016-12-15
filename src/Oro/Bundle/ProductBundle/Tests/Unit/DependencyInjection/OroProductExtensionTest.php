@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\DependencyInjection;
 
-use Oro\Bundle\TestFrameworkBundle\Test\DependencyInjection\ExtensionTestCase;
 use Oro\Bundle\ProductBundle\DependencyInjection\OroProductExtension;
+use Oro\Bundle\TestFrameworkBundle\Test\DependencyInjection\ExtensionTestCase;
 
 class OroProductExtensionTest extends ExtensionTestCase
 {
@@ -19,7 +19,6 @@ class OroProductExtensionTest extends ExtensionTestCase
         $expectedDefinitions = [
             'oro_product.form.type.product',
             'oro_product.form.type.product_step_one',
-            'oro_product.service.product_create_step_one_handler',
             'oro_product.provider.default_product_unit_provider.chain',
             'oro_product.provider.default_product_unit_provider.system',
         ];

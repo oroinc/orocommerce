@@ -42,7 +42,7 @@
 
             {{ UI.button({
                 'aCss':  'no-hash',
-                'iCss':  'icon-ok',
+                'iCss':  'fa-check',
                 'id':    idButton,
                 'label': 'oro.rfp.btn.restore'|trans,
                 'path':  path('oro_api_rfp_restore_request_status', {'id': entity.id}),
@@ -62,7 +62,7 @@
 
             {{ UI.button({
                 'aCss':  'no-hash',
-                'iCss':  'icon-remove',
+                'iCss':  'fa-close',
                 'id':    idButton,
                 'label': 'oro.rfp.btn.delete'|trans,
                 'path':  path('oro_api_rfp_delete_request_status', {'id': entity.id}),

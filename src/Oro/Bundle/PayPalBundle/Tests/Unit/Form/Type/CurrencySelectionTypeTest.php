@@ -6,8 +6,9 @@ use Symfony\Component\Form\ChoiceList\View\ChoiceView;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Intl\Intl;
 
-use Oro\Bundle\PayPalBundle\Form\Type\CurrencySelectionType;
+use Oro\Bundle\CurrencyBundle\Provider\CurrencyProviderInterface;
 use Oro\Bundle\CurrencyBundle\Tests\Unit\Utils\CurrencyNameHelperStub;
+use Oro\Bundle\PayPalBundle\Form\Type\CurrencySelectionType;
 
 class CurrencySelectionTypeTest extends FormIntegrationTestCase
 {
@@ -17,9 +18,9 @@ class CurrencySelectionTypeTest extends FormIntegrationTestCase
     protected $formType;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|\Oro\Bundle\ConfigBundle\Config\ConfigManager
+     * @var \PHPUnit_Framework_MockObject_MockObject|CurrencyProviderInterface
      */
-    protected $configManager;
+    protected $currencyProvider;
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|\Oro\Bundle\LocaleBundle\Model\LocaleSettings
@@ -38,9 +39,9 @@ class CurrencySelectionTypeTest extends FormIntegrationTestCase
     {
         parent::setUp();
 
-        $this->configManager = $this->getMockBuilder('Oro\Bundle\CurrencyBundle\Config\CurrencyConfigManager')
+        $this->currencyProvider = $this->getMockBuilder(CurrencyProviderInterface::class)
             ->disableOriginalConstructor()
-            ->getMock();
+            ->getMockForAbstractClass();
 
         $this->localeSettings = $this
             ->getMockBuilder('Oro\Bundle\LocaleBundle\Model\LocaleSettings')
@@ -55,7 +56,7 @@ class CurrencySelectionTypeTest extends FormIntegrationTestCase
         $this->currencyNameHelper = new CurrencyNameHelperStub();
 
         $this->formType = new CurrencySelectionType(
-            $this->configManager,
+            $this->currencyProvider,
             $this->localeSettings,
             $this->currencyNameHelper
         );
@@ -65,7 +66,6 @@ class CurrencySelectionTypeTest extends FormIntegrationTestCase
      * @dataProvider submitDataProvider
      *
      * @param array $allowedCurrencies
-     * @param string $localeCurrency
      * @param array $inputOptions
      * @param array $expectedOptions
      * @param string $submittedData
@@ -77,7 +77,7 @@ class CurrencySelectionTypeTest extends FormIntegrationTestCase
         $submittedData
     ) {
         $hasCustomCurrencies = isset($inputOptions['currencies_list']) || !empty($inputOptions['full_currency_list']);
-        $this->configManager->expects($hasCustomCurrencies ? $this->never() : $this->once())
+        $this->currencyProvider->expects($hasCustomCurrencies ? $this->never() : $this->once())
             ->method('getCurrencyList')
             ->willReturn($allowedCurrencies);
 

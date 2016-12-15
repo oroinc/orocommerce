@@ -40,14 +40,6 @@ trait SEOFrontendTrait
     /**
      * @return string
      */
-    protected function getMetaTitleName()
-    {
-        return 'title';
-    }
-
-    /**
-     * @return string
-     */
     protected function getMetaDescriptionName()
     {
         return 'description';

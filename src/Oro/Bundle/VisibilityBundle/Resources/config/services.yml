@@ -13,7 +13,7 @@ parameters:
     oro_visibility.entity.product_visibility_resolved.class: Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\ProductVisibilityResolved
 
 services:
-    oro_product_visibility.acl.voter.account:
+    oro_visibility.acl.voter.account:
         class: 'Oro\Bundle\VisibilityBundle\Acl\Voter\ProductVisibilityVoter'
         public: false
         arguments:
@@ -308,7 +308,7 @@ services:
             - '@logger'
             - '@oro_visibility.visibility.cache.product.category.cache_builder'
             - '@oro_entity.database_exception_helper'
-            - '@oro_product.model.product_message_handler'
+            - '@oro_visibility.model.product_message_handler'
         calls:
             - [setResolvedVisibilityClassName, ['%oro_visibility.entity.category_visibility_resolved.class%']]
         tags:
@@ -318,7 +318,7 @@ services:
         class: Oro\Bundle\VisibilityBundle\Async\Visibility\ProductProcessor
         arguments:
             - '@doctrine'
-            - '@oro_product.model.product_message_factory'
+            - '@oro_visibility.model.product_message_factory'
             - '@logger'
             - '@oro_visibility.visibility.cache.product.cache_builder'
             - '@oro_entity.database_exception_helper'
@@ -333,7 +333,7 @@ services:
             - '@doctrine'
             - '@oro_entity.orm.insert_from_select_query_executor'
             - '@logger'
-            - '@oro_catalog.model.category_message_factory'
+            - '@oro_visibility.model.category_message_factory'
             - '@oro_visibility.visibility.cache.product.category.cache_builder'
             - '@oro_scope.scope_manager'
             - '@oro_entity.database_exception_helper'
@@ -354,7 +354,7 @@ services:
         class: 'Oro\Bundle\VisibilityBundle\Entity\EntityListener\CategoryListener'
         public: false
         arguments:
-            - "@oro_catalog.model.category_message_handler"
+            - "@oro_visibility.model.category_message_handler"
         tags:
             - { name: doctrine.orm.entity_listener, entity: '%oro_catalog.entity.category.class%', event: preUpdate }
             - { name: doctrine.orm.entity_listener, entity: '%oro_catalog.entity.category.class%', event: preRemove }
@@ -367,7 +367,7 @@ services:
     oro_visibility.event_listener.category_listener:
         class: 'Oro\Bundle\VisibilityBundle\EventListener\CategoryListener'
         arguments:
-            - '@oro_product.model.product_message_handler'
+            - '@oro_visibility.model.product_message_handler'
         calls:
             - [setTopic, ['oro_visibility.visibility.change_product_category']]
         tags:
@@ -420,7 +420,7 @@ services:
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@logger'
-            - '@oro_customer.account_message_factory'
+            - '@oro_visibility.account_message_factory'
             - '@oro_website_search.driver.account_partial_update_driver'
         tags:
             - { name: 'oro_message_queue.client.message_processor', topicName: 'oro_visibility.visibility.change_account' }
@@ -429,7 +429,7 @@ services:
         class: 'Oro\Bundle\VisibilityBundle\Entity\EntityListener\AccountListener'
         public: false
         arguments:
-            - '@oro_customer.account_message_factory'
+            - '@oro_visibility.account_message_factory'
             - '@oro_message_queue.client.message_producer'
             - '@oro_website_search.driver.account_partial_update_driver'
         calls:
@@ -513,3 +513,34 @@ services:
             - '@security.token_storage'
         tags:
             - { name: kernel.event_listener, event: kernel.controller }
+
+    oro_visibility.account_message_factory:
+        class: 'Oro\Bundle\VisibilityBundle\Model\AccountMessageFactory'
+        arguments:
+            - '@doctrine'
+
+    oro_visibility.model.product_message_handler:
+        class: 'Oro\Bundle\VisibilityBundle\Model\ProductMessageHandler'
+        arguments:
+            - '@oro_visibility.model.product_message_factory'
+            - '@oro_message_queue.client.message_producer'
+        tags:
+            - { name: kernel.event_listener, event: kernel.terminate, method: sendScheduledMessages }
+
+    oro_visibility.model.product_message_factory:
+        class: 'Oro\Bundle\VisibilityBundle\Model\ProductMessageFactory'
+        arguments:
+            - '@doctrine'
+
+    oro_visibility.model.category_message_handler:
+        class: 'Oro\Bundle\VisibilityBundle\Model\CategoryMessageHandler'
+        arguments:
+            - '@oro_visibility.model.category_message_factory'
+            - '@oro_message_queue.client.message_producer'
+        tags:
+            - { name: kernel.event_listener, event: kernel.terminate, method: sendScheduledMessages }
+
+    oro_visibility.model.category_message_factory:
+        class: 'Oro\Bundle\VisibilityBundle\Model\CategoryMessageFactory'
+        arguments:
+            - '@doctrine'
