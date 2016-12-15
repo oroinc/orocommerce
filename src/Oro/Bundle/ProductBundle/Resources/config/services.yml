@@ -58,6 +58,14 @@ services:
         tags:
             - { name: twig.extension }
 
+    oro_product.twig.product_extension:
+        class: Oro\Bundle\ProductBundle\Twig\ProductExtension
+        public: false
+        arguments:
+            - "@oro_product.autocomplete_fields_provider"
+        tags:
+            - { name: twig.extension }
+
     oro_product.form.autocomplete.product.search_handler:
         public: false
         parent: oro_form.autocomplete.search_handler
@@ -344,7 +352,6 @@ services:
             - '%oro_product.entity.product.class%'
 
     oro_product.repository.product_image:
-        class: 'Doctrine\ORM\EntityRepository'
         parent: oro_entity.abstract_repository
         arguments:
             - '%oro_product.entity.product_image.class%'
