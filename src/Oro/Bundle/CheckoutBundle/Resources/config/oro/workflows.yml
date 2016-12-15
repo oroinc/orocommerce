@@ -347,14 +347,19 @@ workflows:
                         service: oro_shopping_list.processor.quick_add_to_checkout
                         method: isAllowed
                 preconditions:
-                    '@equal': [true, $.result.isAllowed]
+                    '@and':
+                        - '@not_empty': $init_context
+                        - '@equal': [true, $.result.isAllowed]
 
             start_from_shoppinglist_definition:
                 preactions:
                     - '@find_entity':
-                        class: $init_context.entityClass
-                        identifier: $init_context.entityId
-                        attribute: $.result.shoppingList
+                        conditions:
+                            '@not_empty': $init_context
+                        parameters:
+                            class: $init_context.entityClass
+                            identifier: $init_context.entityId
+                            attribute: $.result.shoppingList
                 preconditions:
                     '@and':
                         - '@has_elements': $.result.shoppingList.lineItems
@@ -367,6 +372,7 @@ workflows:
                         parameters_mapping:
                             shoppingList: $.result.shoppingList
                         results:
+                            data.checkout: $.checkout
                             result.redirectUrl: $.redirectUrl
 
             __start___definition:
