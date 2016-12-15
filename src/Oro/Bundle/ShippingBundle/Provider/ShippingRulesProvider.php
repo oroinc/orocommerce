@@ -83,7 +83,7 @@ class ShippingRulesProvider
         }, function ($arguments, $field) {
             return count($field);
         });
-        $lineItems = $context->getLineItems();
+        $lineItems = $context->getLineItems()->toArray();
         try {
             return $language->evaluate($condition, [
                 'lineItems' => array_map(function (ShippingLineItemInterface $lineItem) use ($lineItems) {

@@ -8,7 +8,7 @@ use Oro\Bundle\ShippingBundle\Method\PricesAwareShippingMethodInterface;
 class PriceAwareShippingMethodStub extends ShippingMethodStub implements PricesAwareShippingMethodInterface
 {
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function calculatePrices(ShippingContextInterface $context, array $methodOptions, array $optionsByTypes)
     {

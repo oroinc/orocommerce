@@ -11,6 +11,7 @@ use Oro\Bundle\LocaleBundle\Tests\Unit\Formatter\Stubs\AddressStub;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
+use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\DoctrineShippingLineItemCollection;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
 use Oro\Bundle\ShippingBundle\Entity\LengthUnit;
@@ -172,19 +173,15 @@ class PriceRequestFactoryTest extends \PHPUnit_Framework_TestCase
             );
         }
 
-        /** @var ShippingContext $context */
-        $context = $this->getEntity(
-            ShippingContext::class,
-            [
-                'lineItems' => $lineItems,
-                'billingAddress' => new AddressStub(),
-                'shippingAddress' => new AddressStub(),
-                'shippingOrigin' => new AddressStub(),
-                'paymentMethod' => '',
-                'currency' => 'USD',
-                'subtotal' => new Price(),
-            ]
-        );
+        $context = new ShippingContext([
+            ShippingContext::FIELD_LINE_ITEMS => new DoctrineShippingLineItemCollection($lineItems),
+            ShippingContext::FIELD_BILLING_ADDRESS => new AddressStub(),
+            ShippingContext::FIELD_SHIPPING_ORIGIN => new AddressStub(),
+            ShippingContext::FIELD_SHIPPING_ADDRESS => new AddressStub(),
+            ShippingContext::FIELD_PAYMENT_METHOD => '',
+            ShippingContext::FIELD_CURRENCY => 'USD',
+            ShippingContext::FIELD_SUBTOTAL => new Price()
+        ]);
 
         $repository = $this->getMockBuilder(ObjectRepository::class)->disableOriginalConstructor()->getMock();
         $repository->expects(self::any())->method('findBy')->willReturn($allProductsShippingOptions);

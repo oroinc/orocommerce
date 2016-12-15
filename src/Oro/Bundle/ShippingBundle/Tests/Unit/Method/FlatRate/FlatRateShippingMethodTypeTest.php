@@ -3,10 +3,11 @@
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Method\FlatRate;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\DoctrineShippingLineItemCollection;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
+use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
 use Oro\Bundle\ShippingBundle\Form\Type\FlatRateShippingMethodTypeOptionsType;
 use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethodType;
-use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class FlatRateShippingMethodTypeTest extends \PHPUnit_Framework_TestCase
@@ -55,12 +56,15 @@ class FlatRateShippingMethodTypeTest extends \PHPUnit_Framework_TestCase
      */
     public function testCalculatePrice($currency, array $options, $expectedPrice)
     {
-        $context = new ShippingContext();
-        $context->setLineItems([
-            $this->getEntity(LineItem::class, ['quantity' => 2]),
-            $this->getEntity(LineItem::class, ['quantity' => 3]),
-        ])
-            ->setCurrency($currency);
+        $shippingLineItems = [
+            $this->getEntity(ShippingLineItem::class, ['quantity' => 3]),
+            $this->getEntity(ShippingLineItem::class, ['quantity' => 2])
+        ];
+
+        $context = new ShippingContext([
+            ShippingContext::FIELD_LINE_ITEMS => new DoctrineShippingLineItemCollection($shippingLineItems),
+            ShippingContext::FIELD_CURRENCY => $currency
+        ]);
 
         $price = $this->flatRateType->calculatePrice($context, [], $options);
 

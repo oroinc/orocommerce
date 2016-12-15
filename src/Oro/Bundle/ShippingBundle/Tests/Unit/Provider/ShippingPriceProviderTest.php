@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\DoctrineShippingLineItemCollection;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
@@ -99,10 +100,13 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetApplicableMethodsWithTypesData(array $shippingRules, array $expectedData)
     {
-        $context = $this->getEntity(ShippingContext::class, [
-            'currency' => 'USD',
-            'lineItems' => [$this->getEntity(ShippingLineItem::class)]
+        $shippingLineItems = [$this->getEntity(ShippingLineItem::class)];
+
+        $context = new ShippingContext([
+            ShippingContext::FIELD_LINE_ITEMS => new DoctrineShippingLineItemCollection($shippingLineItems),
+            ShippingContext::FIELD_CURRENCY => 'USD'
         ]);
+
         $this->shippingRulesProvider->expects($this->once())
             ->method('getApplicableShippingRules')
             ->with($context)
@@ -297,10 +301,13 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetApplicableMethodsWithTypesDataCache()
     {
-        $context = $this->getEntity(ShippingContext::class, [
-            'currency' => 'USD',
-            'lineItems' => [$this->getEntity(ShippingLineItem::class)]
+        $shippingLineItems = [$this->getEntity(ShippingLineItem::class)];
+
+        $context = new ShippingContext([
+            ShippingContext::FIELD_LINE_ITEMS => new DoctrineShippingLineItemCollection($shippingLineItems),
+            ShippingContext::FIELD_CURRENCY => 'USD'
         ]);
+
         $this->shippingRulesProvider->expects(static::exactly(2))
             ->method('getApplicableShippingRules')
             ->with($context)
@@ -378,10 +385,13 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetPrice($methodId, $typeId, array $shippingRules, Price $expectedPrice = null)
     {
-        $context = $this->getEntity(ShippingContext::class, [
-            'currency' => 'USD',
-            'lineItems' => [$this->getEntity(ShippingLineItem::class)]
+        $shippingLineItems = [$this->getEntity(ShippingLineItem::class)];
+
+        $context = new ShippingContext([
+            ShippingContext::FIELD_LINE_ITEMS => new DoctrineShippingLineItemCollection($shippingLineItems),
+            ShippingContext::FIELD_CURRENCY => 'USD'
         ]);
+
         $this->shippingRulesProvider->expects($this->once())
             ->method('getApplicableShippingRules')
             ->with($context)
@@ -501,10 +511,14 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
     {
         $methodId = 'flat_rate';
         $typeId = 'primary';
-        $context = $this->getEntity(ShippingContext::class, [
-            'currency' => 'USD',
-            'lineItems' => [$this->getEntity(ShippingLineItem::class)]
+
+        $shippingLineItems = [$this->getEntity(ShippingLineItem::class)];
+
+        $context = new ShippingContext([
+            ShippingContext::FIELD_LINE_ITEMS => new DoctrineShippingLineItemCollection($shippingLineItems),
+            ShippingContext::FIELD_CURRENCY => 'USD'
         ]);
+
         $this->shippingRulesProvider->expects(static::exactly(2))
             ->method('getApplicableShippingRules')
             ->with($context)
@@ -556,10 +570,13 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetPriceNoMethodAndType()
     {
-        $context = $this->getEntity(ShippingContext::class, [
-            'currency' => 'USD',
-            'lineItems' => [$this->getEntity(ShippingLineItem::class)]
+        $shippingLineItems = [$this->getEntity(ShippingLineItem::class)];
+
+        $context = new ShippingContext([
+            ShippingContext::FIELD_LINE_ITEMS => new DoctrineShippingLineItemCollection($shippingLineItems),
+            ShippingContext::FIELD_CURRENCY => 'USD'
         ]);
+
         $this->assertNull($this->shippingPriceProvider->getPrice($context, 'unknown_method', 'primary'));
         $this->assertNull($this->shippingPriceProvider->getPrice($context, 'flat_rate', 'unknown_method'));
     }

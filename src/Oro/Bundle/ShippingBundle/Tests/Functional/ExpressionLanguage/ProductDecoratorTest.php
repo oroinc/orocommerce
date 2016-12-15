@@ -5,11 +5,11 @@ namespace Oro\Bundle\ShippingBundle\Tests\Functional\ExpressionLanguage;
 use Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures\LoadInventoryLevels;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits;
+use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\DoctrineShippingLineItemCollection;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
 use Oro\Component\ExpressionLanguage\ExpressionLanguage;
 
 /**
@@ -38,9 +38,13 @@ class ProductDecoratorTest extends WebTestCase
     {
         $factory = $this->getContainer()->get('oro_shipping.expression_language.line_item_decorator_factory');
 
-        $context = new ShippingContext();
-        $context->setLineItems($this->prepareLineItems($lineItems));
-        $lineItems = $context->getLineItems();
+        $context = new ShippingContext([
+            ShippingContext::FIELD_LINE_ITEMS => new DoctrineShippingLineItemCollection(
+                $this->prepareLineItems($lineItems)
+            ),
+            ShippingContext::FIELD_CURRENCY => 'USD'
+        ]);
+        $lineItems = $context->getLineItems()->toArray();
 
         $values = [
             'lineItems' => array_map(function (ShippingLineItemInterface $lineItem) use ($factory, $lineItems) {

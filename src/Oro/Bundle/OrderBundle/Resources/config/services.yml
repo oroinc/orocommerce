@@ -297,4 +297,10 @@ services:
         class: 'Oro\Bundle\OrderBundle\Factory\OrderShippingContextFactory'
         arguments:
             - '@oro_entity.doctrine_helper'
-            - '@?oro_shipping.factory.shipping_context_factory'
+            - '@oro_order.shipping_line_item.converter_basic'
+            - '@?oro_shipping.context.builder_factory_basic'
+
+    oro_order.shipping_line_item.converter_basic:
+        class: 'Oro\Bundle\OrderBundle\Converter\BasicOrderShippingLineItemConverter'
+        arguments:
+            - '@?oro_shipping.context.doctrine_line_item_collection_factory'
