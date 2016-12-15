@@ -11,6 +11,8 @@ class Configuration implements ConfigurationInterface
 {
     const MANAGE_INVENTORY = 'manage_inventory';
     const INVENTORY_THRESHOLD = 'inventory_threshold';
+    const BACKORDERS = 'backorders';
+    const DECREMENT_INVENTORY = 'decrement_inventory';
     const MINIMUM_QUANTITY_TO_ORDER = 'minimum_quantity_to_order';
     const MAXIMUM_QUANTITY_TO_ORDER = 'maximum_quantity_to_order';
     const DEFAULT_MAXIMUM_QUANTITY_TO_ORDER = 100000;
@@ -43,6 +45,8 @@ class Configuration implements ConfigurationInterface
             [
                 self::MANAGE_INVENTORY => ['type' => 'boolean', 'value' => false],
                 self::INVENTORY_THRESHOLD => ['type' => 'decimal', 'value' => 0],
+                self::BACKORDERS => ['type' => 'boolean', 'value' => false],
+                self::DECREMENT_INVENTORY => ['type' => 'boolean', 'value' => false],
                 self::MINIMUM_QUANTITY_TO_ORDER => ['type' => 'decimal', 'value' => null],
                 self::MAXIMUM_QUANTITY_TO_ORDER => [
                     'type' => 'decimal',

@@ -2,20 +2,20 @@
 
 namespace Oro\Bundle\ProductBundle\Controller;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Event\ProductGridWidgetRenderEvent;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Request;
+use Oro\Bundle\ProductBundle\Form\Handler\ProductCreateStepOneHandler;
+use Oro\Bundle\ProductBundle\Form\Type\ProductStepOneType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductType;
 
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Event\ProductGridWidgetRenderEvent;
-use Oro\Bundle\ProductBundle\Form\Type\ProductType;
-use Oro\Bundle\ProductBundle\Form\Type\ProductStepOneType;
-use Oro\Bundle\ProductBundle\Form\Handler\ProductCreateStepOneHandler;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 class ProductController extends Controller
 {
@@ -190,7 +190,7 @@ class ProductController extends Controller
      */
     protected function createStepTwo($request, Product $product)
     {
-        if ($request->get('input_action') == 'oro_product_create') {
+        if ($request->get('input_action') === 'oro_product_create') {
             $form = $this->createForm(ProductStepOneType::NAME);
             $form->handleRequest($request);
             $formData = $form->all();

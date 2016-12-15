@@ -27,7 +27,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * @ORM\Table(name="oro_order",indexes={@ORM\Index(name="oro_order_created_at_index", columns={"created_at"})})
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Oro\Bundle\OrderBundle\Entity\Repository\OrderRepository")
  * @Config(
  *      routeName="oro_order_index",
  *      routeView="oro_order_view",
@@ -469,6 +469,35 @@ class Order extends ExtendOrder implements
     }
 
     /**
+     * @ORM\PreFlush
+     *
+     * @return void
+     */
+    public function updateMultiCurrencyFields()
+    {
+        $this->fixCurrencyInMultiCurrencyFields();
+        $this->updateSubtotal();
+        $this->updateTotal();
+    }
+
+    /**
+     * @ORM\PostLoad
+     */
+    public function loadMultiCurrencyFields()
+    {
+        $this->subtotal = MultiCurrency::create(
+            $this->subtotalValue,
+            $this->currency,
+            $this->baseSubtotalValue
+        );
+        $this->total = MultiCurrency::create(
+            $this->totalValue,
+            $this->currency,
+            $this->baseTotalValue
+        );
+    }
+
+    /**
      * @ORM\PrePersist
      * @ORM\PreUpdate
      *
@@ -677,6 +706,8 @@ class Order extends ExtendOrder implements
     public function setCurrency($currency)
     {
         $this->currency = $currency;
+        $this->subtotal->setCurrency($currency);
+        $this->total->setCurrency($currency);
 
         if ($this->subtotal instanceof MultiCurrency) {
             $this->subtotal->setCurrency($currency);
@@ -715,10 +746,7 @@ class Order extends ExtendOrder implements
     public function setBaseSubtotalValue($baseValue)
     {
         $this->baseSubtotalValue = $baseValue;
-
-        if ($this->subtotal instanceof MultiCurrency) {
-            $this->subtotal->setBaseCurrencyValue($baseValue);
-        }
+        $this->subtotal->setBaseCurrencyValue($baseValue);
 
         return $this;
     }
@@ -733,10 +761,7 @@ class Order extends ExtendOrder implements
     public function setSubtotal($value)
     {
         $this->subtotalValue = $value;
-
-        if ($this->subtotal instanceof MultiCurrency) {
-            $this->subtotal->setValue($value);
-        }
+        $this->subtotal->setValue($value);
 
         return $this;
     }
@@ -757,6 +782,7 @@ class Order extends ExtendOrder implements
     public function setSubtotalObject(MultiCurrency $subtotal)
     {
         $this->subtotal = $subtotal;
+
         return $this;
     }
 
@@ -784,10 +810,7 @@ class Order extends ExtendOrder implements
     public function setBaseTotalValue($baseValue)
     {
         $this->baseTotalValue = $baseValue;
-
-        if ($this->total instanceof MultiCurrency) {
-            $this->total->setBaseCurrencyValue($baseValue);
-        }
+        $this->total->setBaseCurrencyValue($baseValue);
 
         return $this;
     }
@@ -802,10 +825,7 @@ class Order extends ExtendOrder implements
     public function setTotal($value)
     {
         $this->totalValue = $value;
-
-        if ($this->total instanceof MultiCurrency) {
-            $this->total->setValue($value);
-        }
+        $this->total->setValue($value);
 
         return $this;
     }
@@ -836,6 +856,7 @@ class Order extends ExtendOrder implements
     public function setTotalObject(MultiCurrency $total)
     {
         $this->total = $total;
+
         return $this;
     }
 
@@ -1275,12 +1296,26 @@ class Order extends ExtendOrder implements
         return $this;
     }
 
+    protected function fixCurrencyInMultiCurrencyFields()
+    {
+        $multiCurrencyFields = [$this->total, $this->subtotal];
+        /**
+         * @var MultiCurrency $multiCurrencyField
+         */
+        foreach ($multiCurrencyFields as $multiCurrencyField) {
+            if ($multiCurrencyField->getCurrency() !== $this->currency) {
+                $multiCurrencyField->setCurrency($this->currency);
+            }
+        }
+    }
+
     /**
      * @param string $subtotalCurrency
      */
     protected function setSubtotalCurrency($subtotalCurrency)
     {
         $this->subtotalCurrency = $subtotalCurrency;
+        $this->subtotal->setCurrency($subtotalCurrency);
     }
 
     /**
@@ -1289,5 +1324,30 @@ class Order extends ExtendOrder implements
     protected function setTotalCurrency($totalCurrency)
     {
         $this->totalCurrency = $totalCurrency;
+        $this->total->setCurrency($totalCurrency);
+    }
+
+    protected function updateSubtotal()
+    {
+        $this->subtotalValue = $this->subtotal->getValue();
+        if (null !== $this->subtotalValue) {
+            $this->setSubtotalCurrency($this->subtotal->getCurrency());
+            $this->setBaseSubtotalValue($this->subtotal->getBaseCurrencyValue());
+            return;
+        }
+
+        $this->setBaseSubtotalValue(null);
+    }
+
+    protected function updateTotal()
+    {
+        $this->totalValue = $this->total->getValue();
+        if (null !== $this->totalValue) {
+            $this->setTotalCurrency($this->total->getCurrency());
+            $this->setBaseTotalValue($this->total->getBaseCurrencyValue());
+            return;
+        }
+
+        $this->setBaseTotalValue(null);
     }
 }

@@ -22,9 +22,12 @@ class OrderLineItemMapper extends AbstractOrderMapper
             ->setOrigin($this->addressProvider->getOriginAddress())
             ->setDestination($this->getDestinationAddress($order))
             ->setTaxationAddress($this->getTaxationAddress($order))
-            ->setContext($this->getContext($lineItem))
-            ->setPrice($lineItem->getPrice() ? $lineItem->getPrice()->getValue() : null)
-            ->setCurrency($lineItem->getPrice() ? $lineItem->getPrice()->getCurrency() : null);
+            ->setContext($this->getContext($lineItem));
+
+        if ($lineItem->getPrice()) {
+            $taxable->setPrice($lineItem->getPrice()->getValue());
+            $taxable->setCurrency($lineItem->getPrice()->getCurrency());
+        }
 
         return $taxable;
     }

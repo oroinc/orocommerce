@@ -195,3 +195,11 @@ services:
             - '@request_stack'
         tags:
             - { name: layout.data_provider, alias: oro_rfp_action_decider }
+
+    oro_rfp.provider.quote_currency_checker:
+       class: Oro\Bundle\RFPBundle\Provider\CurrencyCheckerProvider
+       public: false
+       arguments:
+           - '@doctrine'
+       tags:
+           - { name: oro_multi_currency.currency_checker_provider }

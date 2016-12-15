@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\CatalogBundle\Tests\Unit\Provider;
+namespace Oro\Bundle\CommerceMenuBundle\Tests\Unit\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 

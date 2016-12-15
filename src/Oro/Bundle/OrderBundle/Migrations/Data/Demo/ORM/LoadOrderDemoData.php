@@ -20,6 +20,7 @@ use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\CurrencyBundle\Entity\MultiCurrency;
 
 class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
@@ -89,6 +90,8 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
 
         $accountUser = $this->getAccountUser($manager);
 
+        $rateConverter = $this->container->get('oro_currency.converter.rate');
+
         while (($data = fgetcsv($handler, 1000, ',')) !== false) {
             $row = array_combine($headers, array_values($data));
 
@@ -112,6 +115,14 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
                 'postalCode' => $row['shippingAddressPostalCode']
             ];
 
+            $total = MultiCurrency::create($row['total'], $row['currency']);
+            $baseTotal = $rateConverter->getBaseCurrencyAmount($total);
+            $total->setBaseCurrencyValue($baseTotal);
+
+            $subtotal = MultiCurrency::create($row['subtotal'], $row['currency']);
+            $baseSubtotal = $rateConverter->getBaseCurrencyAmount($subtotal);
+            $subtotal->setBaseCurrencyValue($baseSubtotal);
+
             $order
                 ->setOwner($user)
                 ->setAccount($accountUser->getAccount())
@@ -124,10 +135,8 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
                 ->setShipUntil(new \DateTime())
                 ->setCurrency($row['currency'])
                 ->setPoNumber($row['poNumber'])
-                ->setBaseSubtotalValue($row['subtotal'])
-                ->setSubtotal($row['subtotal'])
-                ->setBaseTotalValue($row['total'])
-                ->setTotal($row['total']);
+                ->setTotalObject($total)
+                ->setSubtotalObject($subtotal);
 
             $paymentTermAccessor->setPaymentTerm($order, $this->getPaymentTerm($manager, $row['paymentTerm']));
 

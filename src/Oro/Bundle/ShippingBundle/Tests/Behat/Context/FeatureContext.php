@@ -36,6 +36,8 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
+     * Walk through menus and navigations to get Checkout step page of given shopping list name
+     *
      * @When /^Buyer is on Checkout step on (?P<shoppingListName>[\w\s]+)$/
      */
     public function buyerIsOnShippingMethodCheckoutStep($shoppingListName)
@@ -55,6 +57,8 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
+     * Assert that given shippingType is shown
+     *
      * @Then Shipping Type :shippingType is shown for Buyer selection
      */
     public function shippingTypeFlatRateIsShownForBuyerSelection($shippingType)
@@ -97,6 +101,11 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
+     * Example: Given Admin User edited "Shipping Rule 1" with next data:
+     *            | Enabled  | true    |
+     *            | Currency | USD     |
+     *            | Country  | Germany |
+     *
      * @Given Admin User edited :shippingRule with next data:
      */
     public function adminUserEditedWithNextData($shippingRule, TableNode $table)
@@ -131,6 +140,14 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
+     * Example: Given Admin User created "Shipping Rule 5" with next data:
+     *            | Enabled       | true      |
+     *            | Currency      | EUR       |
+     *            | Sort Order    | -1        |
+     *            | Type          | Per Order |
+     *            | Price         | 5         |
+     *            | HandlingFee   | 1.5       |
+     *
      * @Given Admin User created :shoppingRuleName with next data:
      */
     public function adminUserCreatedWithNextData($shoppingRuleName, TableNode $table)
@@ -175,7 +192,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
-     * @When Buyer is again on Shipping Method Checkout step on :arg1
+     * @When Buyer is again on Shipping Method Checkout step on :shoppingListName
      */
     public function buyerIsAgainOnShippingMethodCheckoutStepOn($shoppingListName)
     {
@@ -201,6 +218,13 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
+     * Example: Given Buyer created order with next shipping address:
+     *            | Country         | Ukraine              |
+     *            | City            | Kyiv                 |
+     *            | State           | Kyïvs'ka mis'ka rada |
+     *            | Zip/Postal Code | 01000                |
+     *            | Street          | Hreschatik           |
+     *
      * @When Buyer created order with next shipping address:
      */
     public function buyerCreatedOrderWithNextShippingAddress(TableNode $table)

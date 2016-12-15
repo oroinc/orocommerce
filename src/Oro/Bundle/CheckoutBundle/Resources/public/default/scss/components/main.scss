@@ -62,26 +62,12 @@
       text-decoration: none;
     }
 
-    .badge {
+    &-icon {
       position: absolute;
       left: 0;
       top: 0;
-    }
 
-    @media (max-width: 991px) {
-      font-size: 16px;
-      line-height: 1.625;
-
-      .badge {
-        &.badge_md {
-          width: 26px;
-          height: 26px;
-
-          font-size: 13px;
-          line-height: 2;
-
-        }
-      }
+      @include badge(33px, 18px);
     }
   }
 }

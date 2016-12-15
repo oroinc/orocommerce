@@ -7,6 +7,7 @@ use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\ProductBundle\Form\Type\ProductStepOneType;
+use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
 
 /**
  * @dbIsolation
@@ -27,7 +28,7 @@ class ProductStepOneTypeTest extends WebTestCase
     {
         $this->initClient();
         $this->client->useHashNavigation(true);
-        $this->loadFixtures(['Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData']);
+        $this->loadFixtures([LoadCategoryProductData::class]);
 
         $this->formFactory = $this->getContainer()->get('form.factory');
         $this->tokenManager = $this->getContainer()->get('security.csrf.token_manager');
@@ -48,6 +49,7 @@ class ProductStepOneTypeTest extends WebTestCase
         $this->assertEquals($isValid, $form->isValid());
         if ($isValid) {
             $this->assertEquals($submitData['category'], $form->get('category')->getViewData());
+            $this->assertEquals($submitData['type'], $form->get('type')->getViewData());
         }
     }
 
@@ -57,18 +59,26 @@ class ProductStepOneTypeTest extends WebTestCase
     public function submitDataProvider()
     {
         return [
-            'empty data' => [
-                'submitData' => ['category' => null],
+            'empty category' => [
+                'submitData' => ['category' => null, 'type' => 'simple'],
                 'isValid' => true,
             ],
-            'invalid data' => [
-                'submitData' => ['category' => 999],
+            'invalid category' => [
+                'submitData' => ['category' => 999, 'type' => 'simple'],
                 'isValid' => false
             ],
             'valid data' => [
-                'submitData' => ['category' => 1],
+                'submitData' => ['category' => 1, 'type' => 'simple'],
                 'isValid' => true
             ],
+            'wrong type' => [
+                'submitData' => ['category' => 1, 'type' => 'wrong_type'],
+                'isValid' => false
+            ],
+            'type configurable' => [
+                'submitData' => ['category' => 1, 'type' => 'configurable'],
+                'isValid' => true
+            ]
         ];
     }
 }
