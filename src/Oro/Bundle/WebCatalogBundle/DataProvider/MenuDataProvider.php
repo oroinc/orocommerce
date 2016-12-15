@@ -4,7 +4,7 @@ namespace Oro\Bundle\WebCatalogBundle\DataProvider;
 
 class MenuDataProvider
 {
-    const IDENTIFIER = 'id';
+    const IDENTIFIER = 'identifier';
     const LABEL = 'label';
     const URL = 'url';
     const CHILDREN = 'children';
