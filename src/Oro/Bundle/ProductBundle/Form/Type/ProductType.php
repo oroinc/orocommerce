@@ -142,7 +142,8 @@ class ProductType extends AbstractType
             )
             ->add(
                 'images',
-                ProductImageCollectionType::NAME
+                ProductImageCollectionType::NAME,
+                ['required' => false]
             )
             ->add('type', HiddenType::class)
             ->add(

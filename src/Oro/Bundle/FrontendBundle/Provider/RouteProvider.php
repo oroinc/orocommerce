@@ -7,7 +7,7 @@ use Oro\Bundle\ActionBundle\Provider\RouteProviderTrait;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-class ActionRouteProvider implements RouteProviderInterface
+class RouteProvider implements RouteProviderInterface
 {
     use RouteProviderTrait;
 
