@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\RedirectBundle\Tests\Unit\Form\Type;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ManagerRegistry;
@@ -10,6 +10,7 @@ use Doctrine\ORM\PersistentCollection;
 use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormConfigInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
@@ -56,7 +57,15 @@ class LocalizedSlugTypeTest extends FormIntegrationTestCase
 
     public function testOnPreSetDataForUpdate()
     {
+        $formConfig = $this->getMock(FormConfigInterface::class);
+        $formConfig->expects($this->any())
+            ->method('getOption')
+            ->with('create_redirect_enabled')
+            ->will($this->returnValue(true));
         $form = $this->getMock(FormInterface::class);
+        $form->expects($this->any())
+             ->method('getConfig')
+             ->will($this->returnValue($formConfig));
         $form->expects($this->once())
              ->method('add')
              ->with(
@@ -84,14 +93,27 @@ class LocalizedSlugTypeTest extends FormIntegrationTestCase
 
     public function testOnPreSetDataForCreate()
     {
+        $formConfig = $this->getMock(FormConfigInterface::class);
+        $formConfig->expects($this->any())
+                   ->method('getOption')
+                   ->with('create_redirect_enabled')
+                   ->will($this->returnValue(true));
+        $form = $this->getMock(FormInterface::class);
+        $form->expects($this->any())
+             ->method('getConfig')
+             ->will($this->returnValue($formConfig));
+        $form->expects($this->never())
+              ->method('add');
+
         $event = $this->getMockBuilder(FormEvent::class)
                       ->disableOriginalConstructor()
                       ->getMock();
         $event->expects($this->any())
               ->method('getData')
               ->will($this->returnValue(new ArrayCollection()));
-        $event->expects($this->never())
-              ->method('getForm');
+        $event->expects($this->any())
+              ->method('getForm')
+              ->will($this->returnValue($form));
 
         $this->formType->preSetData($event);
     }

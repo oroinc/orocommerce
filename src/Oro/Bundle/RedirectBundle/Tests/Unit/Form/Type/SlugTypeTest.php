@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\RedirectBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\RedirectBundle\Form\Type\SlugType;
 use Symfony\Component\Form\FormInterface;
