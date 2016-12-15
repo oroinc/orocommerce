@@ -4,22 +4,44 @@ namespace Oro\Bundle\RuleBundle\Tests\Unit\RuleFiltration;
 
 use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
-use Oro\Bundle\RuleBundle\RuleFiltration\ExpressionLanguageRuleFiltrationService;
+use Oro\Bundle\RuleBundle\RuleFiltration\ExpressionLanguageRuleFiltrationServiceDecorator;
+use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
+use Psr\Log\LoggerInterface;
 
 class ExpressionLanguageRuleFiltrationServiceTest extends \PHPUnit_Framework_TestCase
 {
-    /** @internal */
+    /**
+     * @internal
+     */
     const EXPRESSION_VARIABLE = 'test';
 
-    /** @internal */
+    /**
+     * @internal
+     */
     const EXPRESSION_VALUE = 1;
 
-    /** @var ExpressionLanguageRuleFiltrationService */
+    /**
+     * @var RuleFiltrationServiceInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
     private $service;
+
+    /**
+     * @var ExpressionLanguageRuleFiltrationServiceDecorator
+     */
+    private $serviceDecorator;
+
+    /**
+     * @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $logger;
 
     protected function setUp()
     {
-        $this->service = new ExpressionLanguageRuleFiltrationService();
+        $this->service = $this->getMockBuilder(RuleFiltrationServiceInterface::class)
+            ->setMethods(['getFilteredRuleOwners'])->getMockForAbstractClass();
+        $this->logger = $this->getMockBuilder(LoggerInterface::class)
+            ->setMethods(['error'])->getMockForAbstractClass();
+        $this->serviceDecorator = new ExpressionLanguageRuleFiltrationServiceDecorator($this->service, $this->logger);
     }
 
     /**
@@ -28,13 +50,18 @@ class ExpressionLanguageRuleFiltrationServiceTest extends \PHPUnit_Framework_Tes
      * @param RuleOwnerInterface[]|array $ruleOwners
      * @param RuleOwnerInterface[]|array $expectedRuleOwners
      */
-    public function testGetFilteredRuleOwners($ruleOwners, $expectedRuleOwners)
+    public function testGetFilteredRuleOwners(array $ruleOwners, array $expectedRuleOwners)
     {
-        $values = [self::EXPRESSION_VARIABLE => self::EXPRESSION_VALUE];
+        $context = [self::EXPRESSION_VARIABLE => self::EXPRESSION_VALUE];
 
-        $actualRuleOwners = $this->service->getFilteredRuleOwners($ruleOwners, $values);
+        $this->service->expects(static::once())
+            ->method('getFilteredRuleOwners')
+            ->with($expectedRuleOwners, $context)
+            ->willReturn($expectedRuleOwners);
 
-        static::assertSame($expectedRuleOwners, $actualRuleOwners);
+        $actualRuleOwners = $this->serviceDecorator->getFilteredRuleOwners($ruleOwners, $context);
+
+        static::assertEquals($expectedRuleOwners, $actualRuleOwners);
     }
 
     /**
@@ -42,56 +69,72 @@ class ExpressionLanguageRuleFiltrationServiceTest extends \PHPUnit_Framework_Tes
      */
     public function ruleOwnersDataProvider()
     {
-        $notApplicable = $this->createNotApplicableOwner('1', false);
-        $notApplicableStop = $this->createNotApplicableOwner('2', true);
-
-        $applicable = $this->createApplicableOwner('3', false);
-        $applicableStop = $this->createApplicableOwner('4', true);
-
+        $applicable = $this->createApplicableOwner('1');
+        $notApplicable = $this->createNotApplicableOwner('2');
         $exceptionOwner = $this->createExceptionOwner();
 
         return [
-            'testOnlyApplicablePassAndFinishOnApplicableStop' => [
-                [$notApplicable, $notApplicableStop, $applicable, $applicableStop, $applicable],
-                [$applicable, $applicableStop]
+            'testOnlyApplicablePass' => [
+                [$applicable, $notApplicable, $applicable],
+                [$applicable, $applicable]
             ],
             'testWithWrongLanguageExpression' => [
-                [$applicable, $exceptionOwner, $notApplicableStop, $applicableStop, $applicable],
-                [$applicable, $applicableStop]
+                [$applicable, $exceptionOwner, $applicable],
+                [$applicable, $applicable]
             ],
         ];
     }
 
+    public function testLogError()
+    {
+        $context = [self::EXPRESSION_VARIABLE => self::EXPRESSION_VALUE];
+
+        $rule = new Rule();
+        $rule->setExpression('t = %');
+
+        $exceptionOwner = $this->createRuleOwner($rule);
+
+        $this->logger->expects(static::once())
+            ->method('error')
+            ->with('Rule condition evaluation error: Unexpected token "operator" of value "%" around position 5.', [
+                'expression' => $exceptionOwner->getRule()->getExpression(),
+                'values' => $context,
+            ]);
+
+        $this->service->expects(static::once())
+            ->method('getFilteredRuleOwners')
+            ->with([], $context)
+            ->willReturn([]);
+
+        $this->assertEmpty($this->serviceDecorator->getFilteredRuleOwners([$exceptionOwner], $context));
+    }
+
     /**
      * @param string $name
-     * @param bool   $stopProcessing
      *
      * @return RuleOwnerInterface
      */
-    private function createNotApplicableOwner($name, $stopProcessing)
+    private function createNotApplicableOwner($name)
     {
         $rule = new Rule();
 
         $rule->setName($name)
-            ->setExpression(self::EXPRESSION_VARIABLE . ' > ' . self::EXPRESSION_VALUE)
-            ->setStopProcessing($stopProcessing);
+            ->setExpression(self::EXPRESSION_VARIABLE . ' > ' . self::EXPRESSION_VALUE);
 
         return $this->createRuleOwner($rule);
     }
 
     /**
      * @param string $name
-     * @param bool   $stopProcessing
      *
      * @return RuleOwnerInterface
      */
-    private function createApplicableOwner($name, $stopProcessing)
+    private function createApplicableOwner($name)
     {
         $rule = new Rule();
 
         $rule->setName($name)
-            ->setExpression(self::EXPRESSION_VARIABLE . ' = ' . self::EXPRESSION_VALUE)
-            ->setStopProcessing($stopProcessing);
+            ->setExpression(self::EXPRESSION_VARIABLE . ' = ' . self::EXPRESSION_VALUE);
 
         return $this->createRuleOwner($rule);
     }

@@ -8,9 +8,8 @@ interface RuleFiltrationServiceInterface
 {
     /**
      * @param RuleOwnerInterface[]|array $ruleOwners
-     * @param array                      $values
-     *
+     * @param array $context
      * @return RuleOwnerInterface[]|array
      */
-    public function getFilteredRuleOwners($ruleOwners, $values);
+    public function getFilteredRuleOwners(array $ruleOwners, array $context);
 }
