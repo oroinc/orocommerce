@@ -65,7 +65,7 @@ datagrids:
                 type:          navigate
                 label:         oro.grid.action.view
                 link:          view_link
-                icon:          eye-open
+                icon:          eye
                 acl_resource:  oro_rfp_request_view
                 rowAction:     true
 
@@ -344,27 +344,27 @@ datagrids:
                 type:          navigate
                 label:         oro.grid.action.view
                 link:          view_link
-                icon:          eye-open
+                icon:          eye
                 acl_resource:  oro_rfp_request_status_view
                 rowAction:     true
             update:
                 type:          navigate
                 label:         oro.grid.action.update
                 link:          update_link
-                icon:          edit
+                icon:          pencil-square-o
                 acl_resource:  oro_rfp_request_status_update
                 rowAction:     true
             restore:
                 type:          ajax
                 acl_resource:  oro_rfp_request_status_delete
                 label:         oro.rfp.datagrid.action_restore
-                icon:          ok
+                icon:          check
                 link:          restore_link
             delete:
                 type:          delete
                 acl_resource:  oro_rfp_request_status_delete
                 label:         oro.grid.action.delete
-                icon:          trash
+                icon:          trash-o
                 link:          delete_link
         action_configuration: ['@oro_rfp.datagrid.action_permission_provider', "getRequestStatusDefinitionPermissions"]
 
@@ -448,7 +448,7 @@ datagrids:
                 type:           navigate
                 label:          oro.grid.action.view
                 link:           view_link
-                icon:           eye-open
+                icon:           eye
                 rowAction:      true
                 acl_permission: ACCOUNT_VIEW
                 acl_class:      %oro_rfp.entity.request.class%
@@ -456,7 +456,7 @@ datagrids:
                 type:           navigate
                 label:          oro.grid.action.update
                 link:           update_link
-                icon:           edit
+                icon:           pencil-square-o
                 rowAction:      true
                 acl_permission: ACCOUNT_EDIT
                 acl_class:      %oro_rfp.entity.request.class%

@@ -28,7 +28,7 @@ use Oro\Bundle\CustomerBundle\Model\ExtendAccount;
  *      routeUpdate="oro_customer_account_update",
  *      defaultValues={
  *          "entity"={
- *              "icon"="icon-user"
+ *              "icon"="fa-user"
  *          },
  *          "ownership"={
  *              "owner_type"="USER",

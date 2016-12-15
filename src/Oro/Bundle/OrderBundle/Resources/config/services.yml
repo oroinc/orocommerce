@@ -97,7 +97,7 @@ services:
     oro_order.handler.order_currency_handler:
         class: 'Oro\Bundle\OrderBundle\Handler\OrderCurrencyHandler'
         arguments:
-            - '@oro_locale.settings'
+            - '@oro_currency.config.currency'
 
     oro_order.handler.order_totals_handler:
         class: 'Oro\Bundle\OrderBundle\Handler\OrderTotalsHandler'

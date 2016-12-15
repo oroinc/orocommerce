@@ -19,6 +19,7 @@ define(function(require) {
          * Doing something after loading child components
          */
         handleLayoutInit: function(items) {
+            this.lineItems = [];
             _.each(items, function(item) {
                 if (item.view instanceof LineItemView) {
                     this.lineItems.push(item.view);

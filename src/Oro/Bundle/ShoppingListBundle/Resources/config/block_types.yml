@@ -22,6 +22,7 @@ services:
                 - setOptionsConfig
                 -
                     -
+                        lineItemErrors: {required: true}
                         shoppingList: {required: true}
                         productsMatchedPrice: {required: true}
                         productsAllPrices: {required: true}

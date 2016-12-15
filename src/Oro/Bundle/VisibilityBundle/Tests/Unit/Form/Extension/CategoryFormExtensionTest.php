@@ -25,6 +25,8 @@ use Oro\Bundle\ProductBundle\Form\Extension\IntegerExtension;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Oro\Bundle\ProductBundle\Service\SingleUnitModeService;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
+use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugType;
+use Oro\Bundle\RedirectBundle\Tests\Unit\Form\Type\Stub\LocalizedSlugTypeStub;
 use Oro\Bundle\VisibilityBundle\Form\EventListener\VisibilityPostSetDataListener;
 use Oro\Bundle\VisibilityBundle\Form\Extension\CategoryFormExtension;
 use Oro\Bundle\VisibilityBundle\Form\Type\EntityVisibilityType;
@@ -102,7 +104,8 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
                     DataChangesetType::NAME => new DataChangesetTypeStub(),
                     EntityChangesetType::NAME => new EntityChangesetTypeStub(),
                     OroRichTextType::NAME => new OroRichTextTypeStub(),
-                    ImageType::NAME => new ImageTypeStub()
+                    ImageType::NAME => new ImageTypeStub(),
+                    LocalizedSlugType::NAME => new LocalizedSlugTypeStub()
                 ],
                 [
                     CategoryType::NAME => [$this->categoryFormExtension],

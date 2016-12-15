@@ -6,24 +6,24 @@ system_configuration:
             title: oro.product.system_configuration.groups.product_inventory.title
         allowed_statuses:
             title: oro.product.system_configuration.groups.allowed_statuses.title
-            icon: 'icon-list'
+            icon: 'fa-list'
         product_unit:
             title: oro.product.system_configuration.groups.product_unit.title
-            icon: 'icon-briefcase'
+            icon: 'fa-briefcase'
         product_unit_rounding:
             title: oro.product.system_configuration.groups.product_unit_rounding.title
         product_single_unit_mode:
             title: oro.product.system_configuration.groups.product_single_unit_mode.title
         default_product_unit:
             title: oro.product.system_configuration.groups.default_product_unit.title
-            icon: 'icon-briefcase'
+            icon: 'fa-briefcase'
         frontend_inventory_statuses_visibility:
             title: oro.product.system_configuration.groups.frontend_inventory_statuses_visibility.title
         backend_inventory_statuses_visibility:
             title: oro.product.system_configuration.groups.backend_inventory_statuses_visibility.title
         product_images:
             title: oro.product.system_configuration.groups.product_images.title
-            icon: 'icon-picture'
+            icon: 'fa-picture-o'
         product_image_watermark:
             title: oro.product.system_configuration.groups.product_image_watermark.title
 

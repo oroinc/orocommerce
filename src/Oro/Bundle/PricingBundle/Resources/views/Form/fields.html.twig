@@ -78,7 +78,7 @@
                     </tbody>
                 </table>
             </div>
-            <a class="btn add-list-item" data-container=".oro-item-collection tbody" href="javascript: void(0);"><i class="icon-plus"></i>{{ 'oro.pricing.add_price_list'|trans }}</a>
+            <a class="btn add-list-item" data-container=".oro-item-collection tbody" href="javascript: void(0);"><i class="fa-plus"></i>{{ 'oro.pricing.add_price_list'|trans }}</a>
         </div>
     </div>
 {% endblock %}
@@ -95,7 +95,7 @@
         class="pricing-price-list pricing-price-list-item">
         {{ form_widget(form) }}
         <td class="pricing-price-list-remove">
-            <button type="button" class="removeRow btn icons-holder"><i class="icon-remove"></i></button>
+            <button type="button" class="removeRow btn icons-holder"><i class="fa-close"></i></button>
         </td>
     </tr>
 {% endmacro %}
@@ -123,7 +123,7 @@
         <td>{{ form_widget(form.activeAt) }}</td>
         <td>{{ form_widget(form.deactivateAt) }}</td>
         <td>
-            <button type="button" class="removeRow btn icons-holder"><i class="icon-remove"></i></button>
+            <button type="button" class="removeRow btn icons-holder"><i class="fa-close"></i></button>
         </td>
     </tr>
     <tr {% if not hasErrors %}style="display: none"{% endif %} class="pl-schedule__error-row" data-role="schedule-row-error">
@@ -170,7 +170,7 @@
                     </tbody>
                 </table>
             </div>
-            <a class="btn add-list-item" data-container=".oro-item-collection tbody" href="javascript: void(0);"><i class="icon-plus"></i>{{ oro.pricing.pricelist_schedule.add|default('oro.form.collection.add')|trans }}</a>
+            <a class="btn add-list-item" data-container=".oro-item-collection tbody" href="javascript: void(0);"><i class="fa-plus"></i>{{ oro.pricing.pricelist_schedule.add|default('oro.form.collection.add')|trans }}</a>
         </div>
         {% if handle_primary and (prototype is not defined or prototype.primary is defined) %}
             {{ _self.oro_collection_validate_primary_js(_context) }}
@@ -321,7 +321,7 @@
                     </div>
                 </div>
 
-                <button type="button" class="removeRow btn icons-holder"><i class="icon-remove"></i></button>
+                <button type="button" class="removeRow btn icons-holder"><i class="fa-close"></i></button>
             </div>
             <div class="price_rule__row clearfix price-rule-item-product-unit-type-field error-block">
                 {{ form_errors(form.productUnit) }}
@@ -365,7 +365,7 @@
             </div>
             <div class="price_rules__add_btn">
                 <a class="btn add-list-item" href="javascript: void(0);">
-                    <i class="icon-plus"></i>{{ oro.pricing.pricelist_schedule.add|default('oro.form.collection.add')|trans }}
+                    <i class="fa-plus"></i>{{ oro.pricing.pricelist_schedule.add|default('oro.form.collection.add')|trans }}
                 </a>
             </div>
         </div>

@@ -45,6 +45,10 @@ oro:
                 order:
                     label: 'Instance of Order entity'
             transition:
+                start_from_shoppinglist:
+                    label: 'Create Order'
+                start_from_quickorderform:
+                    label: 'Create Order'
                 continue_to_shipping_address:
                     label: Continue
                     attribute:

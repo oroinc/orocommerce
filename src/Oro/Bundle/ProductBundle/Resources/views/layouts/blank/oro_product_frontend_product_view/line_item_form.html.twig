@@ -1,0 +1,61 @@
+{% block _line_item_form_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " line-item-form"
+    }) %}
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _line_item_form_fields_widget %}
+    {{ form_row(form.unit) }}
+
+    {% if singleUnitModeCodeVisible and productPrimaryUnitSingleAndDefault %}
+        <div class="form__col">
+            {{ form_label(form.quantity) }}
+            {{ form_widget(form.quantity, {'attr' : {'class': 'input--short'}}) }}
+
+            <span class="label">
+                / {{ product.primaryUnitPrecision.unit.code|oro_format_product_unit_label }}
+            </span>
+            {{ form_errors(form.quantity) }}
+        </div>
+    {% else %}
+        {{ form_row(form.quantity) }}
+    {% endif %}
+{% endblock %}
+
+{% block _line_item_buttons_widget %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% if block.children is not empty %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': " form__col"
+        }) %}
+
+        <div {{ block('block_attributes') }}>
+            {{ UI.pinnedDropdownButton({
+                'html': block_widget(block),
+                'mobileEnabled': true,
+                'dataAttributes': {
+                    'layout': 'separate'
+                },
+                'options': {
+                    'widgetModule': 'oroproduct/js/content-processor/product-add-to-dropdown-button',
+                    'widgetName': 'productAddToDropdownButtonProcessor',
+                    'truncateLength': 15,
+                    'groupContainer': '<div id="add-to-shopping-list" class="btn-group full"></div>',
+                    'decoreClass': 'btn--info'
+                }
+            }) }}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block _line_item_form_shopping_lists_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " form__col"
+    }) %}
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}

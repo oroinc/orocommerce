@@ -39,7 +39,8 @@ class QuickAddController extends Controller
      */
     public function importAction(Request $request)
     {
-        $collection = $this->get('oro_product.form_handler.quick_add')->processImport($request);
+        $collection = $this->get('oro_product.layout.data_provider.quick_add_collection')->processImport();
+
         return [
             'import_step' => $collection === null ? 'form' : 'result',
             'data' => [
@@ -53,12 +54,11 @@ class QuickAddController extends Controller
      * @Route("/copy-paste/", name="oro_product_frontend_quick_add_copy_paste")
      * @Layout(vars={"import_step"})
      *
-     * @param Request $request
      * @return array
      */
-    public function copyPasteAction(Request $request)
+    public function copyPasteAction()
     {
-        $collection = $this->get('oro_product.form_handler.quick_add')->processCopyPaste($request);
+        $collection = $this->get('oro_product.layout.data_provider.quick_add_collection')->processCopyPaste();
         return [
             'import_step' => $collection === null ? 'form' : 'result',
             'data' => [
