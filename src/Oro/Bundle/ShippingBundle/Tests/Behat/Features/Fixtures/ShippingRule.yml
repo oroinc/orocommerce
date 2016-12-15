@@ -8,7 +8,7 @@ Oro\Bundle\ShippingBundle\Entity\ShippingRule:
        stopProcessing: false
        methodConfigs: ['@method_configuration']
 
-Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfigsRuleDestination:
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination:
    germany_destination:
       postalCode: '10115'
       country: '@germany'

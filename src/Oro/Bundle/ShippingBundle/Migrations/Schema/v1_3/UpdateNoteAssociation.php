@@ -22,7 +22,7 @@ class UpdateNoteAssociation extends UpdateNoteAssociationKindForRenamedEntitiesM
     {
         return [
             'Oro\Bundle\ShippingBundle\Entity\ShippingRule' =>
-            'Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfigsRule',
+            'Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule',
         ];
     }
 }

@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Entity;
 
-use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfigsRuleDestination;
-use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfigsRuleDestinationPostalCode;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestinationPostalCode;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Component\Testing\Unit\EntityTrait;
 
@@ -17,10 +17,10 @@ class ShippingMethodConfigsRuleDestinationPostalCodeTest extends \PHPUnit_Framew
         $properties = [
             ['id', '123'],
             ['name', 'wewfe'],
-            ['destination', new ShippingMethodConfigsRuleDestination()],
+            ['destination', new ShippingMethodsConfigsRuleDestination()],
         ];
 
-        $rule = new ShippingMethodConfigsRuleDestinationPostalCode();
+        $rule = new ShippingMethodsConfigsRuleDestinationPostalCode();
         static::assertPropertyAccessors($rule, $properties);
     }
 }

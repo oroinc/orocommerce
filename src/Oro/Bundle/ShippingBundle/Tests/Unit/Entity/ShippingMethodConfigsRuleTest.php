@@ -3,10 +3,10 @@
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\RuleBundle\Entity\Rule;
-use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfigsRule;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfigsRuleDestination;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
 
 class ShippingMethodConfigsRuleTest extends \PHPUnit_Framework_TestCase
@@ -22,9 +22,9 @@ class ShippingMethodConfigsRuleTest extends \PHPUnit_Framework_TestCase
             ['currency', 'USD'],
         ];
 
-        $rule = new ShippingMethodConfigsRule();
+        $rule = new ShippingMethodsConfigsRule();
         static::assertPropertyAccessors($rule, $properties);
         static::assertPropertyCollection($rule, 'methodConfigs', new ShippingMethodConfig());
-        static::assertPropertyCollection($rule, 'destinations', new ShippingMethodConfigsRuleDestination());
+        static::assertPropertyCollection($rule, 'destinations', new ShippingMethodsConfigsRuleDestination());
     }
 }

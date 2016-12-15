@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity
  * @ORM\Table("oro_ship_method_postal_code")
  */
-class ShippingMethodConfigsRuleDestinationPostalCode
+class ShippingMethodsConfigsRuleDestinationPostalCode
 {
     /**
      * @var integer
@@ -27,9 +27,9 @@ class ShippingMethodConfigsRuleDestinationPostalCode
     private $name;
 
     /**
-     * @var ShippingMethodConfigsRuleDestination
+     * @var ShippingMethodsConfigsRuleDestination
      *
-     * @ORM\ManyToOne(targetEntity="ShippingMethodConfigsRuleDestination")
+     * @ORM\ManyToOne(targetEntity="ShippingMethodsConfigsRuleDestination")
      * @ORM\JoinColumn(name="destination_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     private $destination;
@@ -52,7 +52,7 @@ class ShippingMethodConfigsRuleDestinationPostalCode
 
     /**
      * @param string $name
-     * @return ShippingMethodConfigsRuleDestinationPostalCode
+     * @return ShippingMethodsConfigsRuleDestinationPostalCode
      */
     public function setName($name)
     {
@@ -62,7 +62,7 @@ class ShippingMethodConfigsRuleDestinationPostalCode
     }
 
     /**
-     * @return ShippingMethodConfigsRuleDestination
+     * @return ShippingMethodsConfigsRuleDestination
      */
     public function getDestination()
     {
@@ -70,8 +70,8 @@ class ShippingMethodConfigsRuleDestinationPostalCode
     }
 
     /**
-     * @param ShippingMethodConfigsRuleDestination $destination
-     * @return ShippingMethodConfigsRuleDestinationPostalCode
+     * @param ShippingMethodsConfigsRuleDestination $destination
+     * @return ShippingMethodsConfigsRuleDestinationPostalCode
      */
     public function setDestination($destination)
     {

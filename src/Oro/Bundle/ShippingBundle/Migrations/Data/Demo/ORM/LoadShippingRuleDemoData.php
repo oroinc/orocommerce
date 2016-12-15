@@ -6,7 +6,7 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
-use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfigsRule;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
 use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethod;
 use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethodType;
@@ -34,7 +34,7 @@ class LoadShippingRuleDemoData extends AbstractFixture
         $rule->setName('Default')
             ->setSortOrder(1);
 
-        $shippingRule = new ShippingMethodConfigsRule();
+        $shippingRule = new ShippingMethodsConfigsRule();
         $shippingRule->setRule($rule);
         $shippingRule->setCurrency('USD')
             ->addMethodConfig($methodConfig);

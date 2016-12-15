@@ -28,7 +28,7 @@ use Oro\Bundle\ShippingBundle\Model\ExtendShippingMethodsConfigsRule;
  *      }
  * )
  */
-class ShippingMethodConfigsRule extends ExtendShippingMethodsConfigsRule implements RuleOwnerInterface
+class ShippingMethodsConfigsRule extends ExtendShippingMethodsConfigsRule implements RuleOwnerInterface
 {
     /**
      * @var int
@@ -78,10 +78,10 @@ class ShippingMethodConfigsRule extends ExtendShippingMethodsConfigsRule impleme
     private $methodConfigs;
 
     /**
-     * @var Collection|ShippingMethodConfigsRuleDestination[]
+     * @var Collection|ShippingMethodsConfigsRuleDestination[]
      *
      * @ORM\OneToMany(
-     *     targetEntity="Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfigsRuleDestination",
+     *     targetEntity="Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination",
      *     mappedBy="rule",
      *     cascade={"ALL"},
      *     fetch="EAGER",
@@ -209,7 +209,7 @@ class ShippingMethodConfigsRule extends ExtendShippingMethodsConfigsRule impleme
     }
 
     /**
-     * @return Collection|ShippingMethodConfigsRuleDestination[]
+     * @return Collection|ShippingMethodsConfigsRuleDestination[]
      */
     public function getDestinations()
     {
@@ -217,11 +217,11 @@ class ShippingMethodConfigsRule extends ExtendShippingMethodsConfigsRule impleme
     }
 
     /**
-     * @param ShippingMethodConfigsRuleDestination $destination
+     * @param ShippingMethodsConfigsRuleDestination $destination
      *
      * @return $this
      */
-    public function addDestination(ShippingMethodConfigsRuleDestination $destination)
+    public function addDestination(ShippingMethodsConfigsRuleDestination $destination)
     {
         if (!$this->destinations->contains($destination)) {
             $this->destinations->add($destination);
@@ -232,11 +232,11 @@ class ShippingMethodConfigsRule extends ExtendShippingMethodsConfigsRule impleme
     }
 
     /**
-     * @param ShippingMethodConfigsRuleDestination $destination
+     * @param ShippingMethodsConfigsRuleDestination $destination
      *
      * @return $this
      */
-    public function removeDestination(ShippingMethodConfigsRuleDestination $destination)
+    public function removeDestination(ShippingMethodsConfigsRuleDestination $destination)
     {
         if ($this->destinations->contains($destination)) {
             $this->destinations->removeElement($destination);

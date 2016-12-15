@@ -18,7 +18,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
  *     mode="hidden",
  * )
  */
-class ShippingMethodConfigsRuleDestination
+class ShippingMethodsConfigsRuleDestination
 {
     /**
      * @var integer
@@ -37,10 +37,10 @@ class ShippingMethodConfigsRuleDestination
     protected $id;
 
     /**
-     * @var Collection|ShippingMethodConfigsRuleDestinationPostalCode[]
+     * @var Collection|ShippingMethodsConfigsRuleDestinationPostalCode[]
      *
      * @ORM\OneToMany(
-     *     targetEntity="ShippingMethodConfigsRuleDestinationPostalCode",
+     *     targetEntity="ShippingMethodsConfigsRuleDestinationPostalCode",
      *     mappedBy="destination",
      *     cascade={"ALL"},
      *     fetch="EAGER",
@@ -98,10 +98,10 @@ class ShippingMethodConfigsRuleDestination
     protected $country;
 
     /**
-     * @var ShippingMethodConfigsRule
+     * @var ShippingMethodsConfigsRule
      *
      * @ORM\ManyToOne(
-     *     targetEntity="Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfigsRule",
+     *     targetEntity="Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule",
      *     inversedBy="destinations"
      * )
      * @ORM\JoinColumn(name="rule_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
@@ -251,10 +251,10 @@ class ShippingMethodConfigsRuleDestination
     }
 
     /**
-     * @param ShippingMethodConfigsRule $methodConfigsRule
+     * @param ShippingMethodsConfigsRule $methodConfigsRule
      * @return $this
      */
-    public function setMethodConfigsRule(ShippingMethodConfigsRule $methodConfigsRule)
+    public function setMethodConfigsRule(ShippingMethodsConfigsRule $methodConfigsRule)
     {
         $this->methodConfigsRule = $methodConfigsRule;
 
@@ -262,7 +262,7 @@ class ShippingMethodConfigsRuleDestination
     }
 
     /**
-     * @return ShippingMethodConfigsRule
+     * @return ShippingMethodsConfigsRule
      */
     public function getMethodConfigsRule()
     {
@@ -270,7 +270,7 @@ class ShippingMethodConfigsRuleDestination
     }
 
     /**
-     * @return Collection|ShippingMethodConfigsRuleDestinationPostalCode[]
+     * @return Collection|ShippingMethodsConfigsRuleDestinationPostalCode[]
      */
     public function getPostalCodes()
     {
@@ -278,19 +278,19 @@ class ShippingMethodConfigsRuleDestination
     }
 
     /**
-     * @param ShippingMethodConfigsRuleDestinationPostalCode $postalCode
+     * @param ShippingMethodsConfigsRuleDestinationPostalCode $postalCode
      * @return bool
      */
-    public function hasPostalCode(ShippingMethodConfigsRuleDestinationPostalCode $postalCode)
+    public function hasPostalCode(ShippingMethodsConfigsRuleDestinationPostalCode $postalCode)
     {
         return $this->postalCodes->contains($postalCode);
     }
 
     /**
-     * @param ShippingMethodConfigsRuleDestinationPostalCode $postalCode
+     * @param ShippingMethodsConfigsRuleDestinationPostalCode $postalCode
      * @return $this
      */
-    public function addPostalCode(ShippingMethodConfigsRuleDestinationPostalCode $postalCode)
+    public function addPostalCode(ShippingMethodsConfigsRuleDestinationPostalCode $postalCode)
     {
         if (!$this->hasPostalCode($postalCode)) {
             $this->postalCodes->add($postalCode);
@@ -300,10 +300,10 @@ class ShippingMethodConfigsRuleDestination
     }
 
     /**
-     * @param ShippingMethodConfigsRuleDestinationPostalCode $postalCode
+     * @param ShippingMethodsConfigsRuleDestinationPostalCode $postalCode
      * @return $this
      */
-    public function removePostalCode(ShippingMethodConfigsRuleDestinationPostalCode $postalCode)
+    public function removePostalCode(ShippingMethodsConfigsRuleDestinationPostalCode $postalCode)
     {
         $this->postalCodes->removeElement($postalCode);
 

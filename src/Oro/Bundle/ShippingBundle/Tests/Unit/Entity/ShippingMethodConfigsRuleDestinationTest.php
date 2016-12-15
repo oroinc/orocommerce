@@ -5,9 +5,9 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
-use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfigsRule;
-use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfigsRuleDestination;
-use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfigsRuleDestinationPostalCode;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestinationPostalCode;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Component\Testing\Unit\EntityTrait;
 
@@ -27,7 +27,7 @@ class ShippingMethodConfigsRuleDestinationTest extends \PHPUnit_Framework_TestCa
     protected $country;
 
     /**
-     * @var ShippingMethodConfigsRuleDestination
+     * @var ShippingMethodsConfigsRuleDestination
      */
     protected $shippingRuleDestination;
 
@@ -37,7 +37,7 @@ class ShippingMethodConfigsRuleDestinationTest extends \PHPUnit_Framework_TestCa
         $this->region = $this->createMockRegion();
 
         $this->shippingRuleDestination = $this->getEntity(
-            'Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfigsRuleDestination',
+            'Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination',
             [
                 'region' => $this->region,
                 'country' => $this->country,
@@ -53,10 +53,10 @@ class ShippingMethodConfigsRuleDestinationTest extends \PHPUnit_Framework_TestCa
             ['region', new Region('code')],
             ['regionText', 'text'],
             ['country', new Country('UA')],
-            ['methodConfigsRule', new ShippingMethodConfigsRule()],
+            ['methodConfigsRule', new ShippingMethodsConfigsRule()],
         ];
 
-        $destination = new ShippingMethodConfigsRuleDestination();
+        $destination = new ShippingMethodsConfigsRuleDestination();
         static::assertPropertyAccessors($destination, $properties);
         static::assertPropertyCollection(
             $destination,
@@ -109,7 +109,7 @@ class ShippingMethodConfigsRuleDestinationTest extends \PHPUnit_Framework_TestCa
     public function testToString(array $data, $expectedString)
     {
         $entity = (string) $this->getEntity(
-            'Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfigsRuleDestination',
+            'Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination',
             $data
         );
         $this->assertEquals($expectedString, $entity);
@@ -208,10 +208,10 @@ class ShippingMethodConfigsRuleDestinationTest extends \PHPUnit_Framework_TestCa
 
     /**
      * @param string $name
-     * @return ShippingMethodConfigsRuleDestinationPostalCode
+     * @return ShippingMethodsConfigsRuleDestinationPostalCode
      */
     protected function createPostalCode($name)
     {
-        return (new ShippingMethodConfigsRuleDestinationPostalCode())->setName($name);
+        return (new ShippingMethodsConfigsRuleDestinationPostalCode())->setName($name);
     }
 }
