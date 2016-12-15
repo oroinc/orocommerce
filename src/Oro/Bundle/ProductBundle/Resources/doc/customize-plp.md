@@ -78,7 +78,7 @@ layout:
 
 and template:
 
-```html.twig
+```twig
 {# src/Acme/Bundle/ProductBundle/Resources/views/layouts/default/oro_product_frontend_product_index/static_block.html.twig #}
 
 {% block _product_search_navigation_widget %}
@@ -151,7 +151,7 @@ and template:
 
 ### Static Block and Products
 
-In the second case let's create a second level category (with **id = 9**) that contains static block and product. Page is look like this:
+In the second case let's create a second level category (with **id = 9**) that contains static block and products. Page is look like this:
 ![Static Block and Products example](./images/static_block_and_products.png "Static Block and Products example")
 
 So we need to create layout update:
@@ -191,7 +191,7 @@ layout:
 
 and extend static block template with our block:
 
-```html.twig
+```twig
 {# src/Acme/Bundle/ProductBundle/Resources/views/layouts/default/oro_product_frontend_product_index/static_block.html.twig #}
 
 ...
@@ -223,7 +223,7 @@ and extend static block template with our block:
 
 ### Products only
 
-In the third case create a third level category (all **ids** that **not equal 8 or 9**) that contains static block and product. Page look like this:
+In the third case create a third level category (all **ids** that **not equal 8 or 9**) that contains products only. Page look like this:
 ![Products only example](./images/products_only.png "Products only example")
 
 Create layout update:
@@ -257,7 +257,7 @@ layout:
 
 and template:
 
-```html.twig
+```twig
 {# src/Acme/Bundle/ProductBundle/Resources/views/layouts/default/oro_product_frontend_product_index/products.html.twig #}
 
 {% block _product_grid_container_widget %}

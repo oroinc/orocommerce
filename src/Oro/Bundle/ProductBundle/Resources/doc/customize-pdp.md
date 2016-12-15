@@ -88,7 +88,7 @@ layout:
 
 and template:
 
-```html.twig
+```twig
 {# src/Acme/Bundle/ProductBundle/Resources/views/layouts/default/imports/oro_product_view/layout.html.twig #}
 
 {% block _product_container_widget %}
@@ -245,7 +245,7 @@ layout:
 
 template:
 
-```html.twig
+```twig
 {# src/Acme/Bundle/ProductBundle/Resources/views/layouts/default/oro_product_frontend_product_view/configurable_product.html.twig #}
 
 {% block _product_variants_widget %}
