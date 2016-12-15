@@ -37,7 +37,7 @@ class OrderController extends AbstractOrderController
     {
         return [
             'entity' => $order,
-            'totals' => $this->getTotalProcessor()->getTotalWithSubtotalsAsArray($order),
+            'totals' => $this->getTotalProcessor()->getTotalWithSubtotalsWithBaseCurrencyValues($order),
         ];
     }
 

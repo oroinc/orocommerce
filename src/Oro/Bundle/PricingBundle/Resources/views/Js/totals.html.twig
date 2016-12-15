@@ -3,7 +3,7 @@
         <div class="control-group">
             <label class="control-label"><%= item.label %></label>
             <div class="controls">
-                <label class="control-label"><%= item.formattedAmount %></label>
+                <label class="control-label"><%= item.formattedAmount %><% if (item.formattedBaseAmount) { %> (<%= item.formattedBaseAmount %>)<% } %></label>
             </div>
         </div>
     {% endblock %}

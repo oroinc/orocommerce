@@ -6,6 +6,9 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
+use Oro\Bundle\CurrencyBundle\Converter\RateConverterInterface;
+use Oro\Bundle\CurrencyBundle\Entity\MultiCurrency;
+use Oro\Bundle\CurrencyBundle\Provider\DefaultCurrencyProviderInterface;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
@@ -14,6 +17,7 @@ use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\CacheAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalCacheAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 
 class TotalProcessorProvider extends AbstractSubtotalProvider
 {
@@ -33,22 +37,34 @@ class TotalProcessorProvider extends AbstractSubtotalProvider
     /** @var bool */
     protected $recalculationEnabled = false;
 
+    /** @var RateConverterInterface  */
+    protected $rateConverter;
+
+    /** @var DefaultCurrencyProviderInterface  */
+    protected $defaultCurrencyProvider;
+
     /**
      * @param SubtotalProviderRegistry $subtotalProviderRegistry
      * @param TranslatorInterface $translator
      * @param RoundingServiceInterface $rounding
      * @param UserCurrencyManager $currencyManager
+     * @param RateConverterInterface $rateConverter
+     * @param DefaultCurrencyProviderInterface $defaultCurrencyProvider
      */
     public function __construct(
         SubtotalProviderRegistry $subtotalProviderRegistry,
         TranslatorInterface $translator,
         RoundingServiceInterface $rounding,
-        UserCurrencyManager $currencyManager
+        UserCurrencyManager $currencyManager,
+        RateConverterInterface $rateConverter,
+        DefaultCurrencyProviderInterface $defaultCurrencyProvider
     ) {
         parent::__construct($currencyManager);
         $this->subtotalProviderRegistry = $subtotalProviderRegistry;
         $this->translator = $translator;
         $this->rounding = $rounding;
+        $this->rateConverter = $rateConverter;
+        $this->defaultCurrencyProvider = $defaultCurrencyProvider;
     }
 
     /**
@@ -81,6 +97,66 @@ class TotalProcessorProvider extends AbstractSubtotalProvider
     }
 
     /**
+     * Calculate and return total with subtotals
+     * and with values in base currency converted to Array
+     * Used by Orders
+     *
+     * @param $entity
+     *
+     * @return array
+     */
+    public function getTotalWithSubtotalsWithBaseCurrencyValues($entity)
+    {
+        $defaultCurrency = $this->defaultCurrencyProvider->getDefaultCurrency();
+        $total = $this->getTotal($entity);
+        if ($total->getCurrency() !== $defaultCurrency) {
+            $this->addSubtotalBaseCurrencyConversion($total, $defaultCurrency);
+        }
+        $subtotals = $this->getSubtotals($entity);
+        foreach ($subtotals as $item) {
+            if ($item->getType() == LineItemSubtotalProvider::TYPE
+                && $item->getCurrency() !== $defaultCurrency
+            ) {
+                $this->addSubtotalBaseCurrencyConversion($item, $defaultCurrency);
+            }
+        }
+
+        return [
+            self::TYPE => $total->toArray(),
+            self::SUBTOTALS => $subtotals
+                ->map(
+                    function (Subtotal $subtotal) {
+                        return $subtotal->toArray();
+                    }
+                )
+                ->toArray(),
+        ];
+    }
+
+    /**
+     * Set value in base currency to data
+     * @param Subtotal $total
+     * @param $defaultCurrency
+     */
+    protected function addSubtotalBaseCurrencyConversion(Subtotal $total, $defaultCurrency)
+    {
+        $baseSubtotal = MultiCurrency::create(
+            $total->getAmount(),
+            $total->getCurrency()
+        );
+        $baseSubtotalValue = $this->rateConverter->getBaseCurrencyAmount($baseSubtotal);
+        $data = $total->getData() ? $total->getData() : [];
+        $totalData = array_merge(
+            $data,
+            [
+                'baseAmount' => $baseSubtotalValue,
+                'baseCurrency' => $defaultCurrency
+            ]
+        );
+        $total->setData($totalData);
+    }
+
+    /**
      * Calculate and return total based on all subtotals
      *
      * @param $entity
@@ -94,16 +170,12 @@ class TotalProcessorProvider extends AbstractSubtotalProvider
         $total->setType(self::TYPE);
         $translation = sprintf('oro.pricing.subtotals.%s.label', $total->getType());
         $total->setLabel($this->translator->trans($translation));
-        $baseCurrency = $this->getBaseCurrency($entity);
-        $total->setCurrency($baseCurrency);
+        $total->setCurrency($this->getBaseCurrency($entity));
 
         $totalAmount = 0.0;
         foreach ($this->getSubtotals($entity) as $subtotal) {
             $rowTotal = $subtotal->getAmount();
 
-            if ($baseCurrency !== $subtotal->getCurrency()) {
-                $rowTotal *= $this->getExchangeRate($subtotal->getCurrency(), $baseCurrency);
-            }
             $totalAmount = $this->calculateTotal($subtotal->getOperation(), $rowTotal, $totalAmount);
         }
         $total->setAmount($this->rounding->round($totalAmount));

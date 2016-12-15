@@ -3,10 +3,13 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor;
 
 use Doctrine\Common\Collections\ArrayCollection;
+
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\CurrencyBundle\Entity\CurrencyAwareInterface;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\CurrencyBundle\Converter\RateConverterInterface;
+use Oro\Bundle\CurrencyBundle\Provider\DefaultCurrencyProviderInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
@@ -38,6 +41,12 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
      */
     protected $translator;
 
+    /** @var  \PHPUnit_Framework_MockObject_MockObject|RateConverterInterface */
+    protected $rateProvider;
+
+    /** @var  \PHPUnit_Framework_MockObject_MockObject|DefaultCurrencyProviderInterface */
+    protected $currencyProvider;
+
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|RoundingServiceInterface
      */
@@ -50,6 +59,9 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
             $this->getMock('Oro\Bundle\PricingBundle\SubtotalProcessor\SubtotalProviderRegistry');
 
         $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+
+        $this->currencyProvider = $this->getMock('Oro\Bundle\CurrencyBundle\Provider\DefaultCurrencyProviderInterface');
+        $this->rateProvider = $this->getMock('Oro\Bundle\CurrencyBundle\Converter\RateConverterInterface');
 
         $this->roundingService = $this->getMock('Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface');
         $this->roundingService->expects($this->any())
@@ -66,7 +78,9 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
             $this->subtotalProviderRegistry,
             $this->translator,
             $this->roundingService,
-            $this->currencyManager
+            $this->currencyManager,
+            $this->rateProvider,
+            $this->currencyProvider
         );
     }
 
@@ -452,6 +466,57 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
         $entity = $this->prepareSubtotals(new EntityStub(), 2);
 
         $totals = $this->provider->enableRecalculation()->getTotalWithSubtotalsAsArray($entity);
+        $this->assertInternalType('array', $totals);
+        $this->assertArrayHasKey(TotalProcessorProvider::TYPE, $totals);
+        $this->assertEquals(
+            [
+                'type' => 'total',
+                'label' => 'Total',
+                'amount' => 182.0,
+                'currency' => 'USD',
+                'visible' => null,
+                'data' => null,
+            ],
+            $totals[TotalProcessorProvider::TYPE]
+        );
+        $this->assertArrayHasKey(TotalProcessorProvider::SUBTOTALS, $totals);
+        $this->assertEquals(
+            [
+                [
+                    'type' => 'subtotal',
+                    'label' => 'Total',
+                    'amount' => 142.0,
+                    'currency' => 'USD',
+                    'visible' => null,
+                    'data' => null,
+                ],
+                [
+                    'type' => 'subtotal',
+                    'label' => 'Total',
+                    'amount' => 40.0,
+                    'currency' => 'USD',
+                    'visible' => null,
+                    'data' => null,
+                ],
+            ],
+            $totals[TotalProcessorProvider::SUBTOTALS]
+        );
+    }
+
+    public function testGetTotalWithSubtotalsWithBaseCurrencyValues()
+    {
+        $this->translator->expects($this->once())
+            ->method('trans')
+            ->with(sprintf('oro.pricing.subtotals.%s.label', TotalProcessorProvider::TYPE))
+            ->willReturn(ucfirst(TotalProcessorProvider::TYPE));
+
+        $entity = $this->prepareSubtotals(new EntityStub(), 2);
+
+        $this->currencyProvider
+            ->expects($this->once())
+            ->method('getDefaultCurrency')
+            ->willReturn('USD');
+        $totals = $this->provider->enableRecalculation()->getTotalWithSubtotalsWithBaseCurrencyValues($entity);
         $this->assertInternalType('array', $totals);
         $this->assertArrayHasKey(TotalProcessorProvider::TYPE, $totals);
         $this->assertEquals(
