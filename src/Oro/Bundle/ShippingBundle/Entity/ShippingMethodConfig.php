@@ -66,10 +66,10 @@ class ShippingMethodConfig extends ExtendShippingMethodConfig
     protected $typeConfigs;
 
     /**
-     * @var ShippingMethodConfigsRule
+     * @var ShippingMethodsConfigsRule
      *
      * @ORM\ManyToOne(
-     *     targetEntity="Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfigsRule",
+     *     targetEntity="Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule",
      *     inversedBy="methodConfigs"
      * )
      * @ORM\JoinColumn(name="rule_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
@@ -107,7 +107,7 @@ class ShippingMethodConfig extends ExtendShippingMethodConfig
     }
 
     /**
-     * @return ShippingMethodConfigsRule
+     * @return ShippingMethodsConfigsRule
      */
     public function getMethodConfigsRule()
     {
@@ -115,10 +115,10 @@ class ShippingMethodConfig extends ExtendShippingMethodConfig
     }
 
     /**
-     * @param ShippingMethodConfigsRule $rule
+     * @param ShippingMethodsConfigsRule $rule
      * @return $this
      */
-    public function setMethodConfigsRule(ShippingMethodConfigsRule $rule)
+    public function setMethodConfigsRule(ShippingMethodsConfigsRule $rule)
     {
         $this->methodConfigsRule = $rule;
         return $this;
