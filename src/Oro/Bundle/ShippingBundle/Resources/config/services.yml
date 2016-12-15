@@ -228,10 +228,8 @@ services:
 
     oro_shipping.shipping_price.provider.cache:
         class: 'Oro\Bundle\ShippingBundle\Provider\Cache\ShippingPriceCache'
-        public: false
         arguments:
             - '@oro_shipping.price.cache'
-            - '@doctrine'
             - '@oro_shipping.shipping_context.cache_key_generator'
 
     oro_shipping.price.cache:

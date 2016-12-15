@@ -25,8 +25,8 @@ services:
 
     oro_catalog.form.type.category_tree:
         class: 'Oro\Bundle\CatalogBundle\Form\Type\CategoryTreeType'
-        calls:
-            - [setEntityClass, ['%oro_catalog.entity.category.class%']]
+        arguments:
+            - '@oro_catalog.category_tree_handler'
         tags:
             - { name: form.type, alias: oro_catalog_category_tree }
 
@@ -44,3 +44,10 @@ services:
         public: true
         tags:
             - { name: form.type_extension, alias: oro_product_step_one }
+
+    oro_catalog.form.type.category_page_content_variant:
+        class: Oro\Bundle\CatalogBundle\Form\Type\CategoryPageVariantType
+        arguments:
+            - '@doctrine'
+        tags:
+            - { name: form.type, alias: oro_catalog_category_page_variant }

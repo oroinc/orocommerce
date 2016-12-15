@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ProductStepOneType extends AbstractType
@@ -18,6 +19,14 @@ class ProductStepOneType extends AbstractType
             'intention'            => 'product',
             'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"'
         ]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $builder->add('type', ProductTypeType::NAME, ['label' => 'oro.product.type.label']);
     }
 
     /**

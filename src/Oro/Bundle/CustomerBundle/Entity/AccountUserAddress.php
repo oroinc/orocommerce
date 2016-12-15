@@ -15,7 +15,7 @@ use Oro\Bundle\CustomerBundle\Model\ExtendAccountUserAddress;
  * @Config(
  *       defaultValues={
  *          "entity"={
- *              "icon"="icon-map-marker"
+ *              "icon"="fa-map-marker"
  *          },
  *          "note"={
  *              "immutable"=true

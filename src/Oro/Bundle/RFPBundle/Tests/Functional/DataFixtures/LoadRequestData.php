@@ -300,16 +300,6 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
      */
     protected function getCurrencies()
     {
-        $currencies = $this->container->get('oro_config.manager')->get('oro_currency.allowed_currencies');
-
-        if (!$currencies) {
-            $currencies = (array)$this->container->get('oro_locale.settings')->getCurrency();
-        }
-
-        if (!$currencies) {
-            throw new \LogicException('There are no currencies in system');
-        }
-
-        return $currencies;
+        return $this->container->get('oro_currency.config.currency')->getCurrencyList();
     }
 }

@@ -19,6 +19,15 @@ services:
             - '@oro_catalog.repository.category'
             - '@event_dispatcher'
 
+    oro_catalog.provider.category_title_provider:
+        class: 'Oro\Bundle\CatalogBundle\Provider\CategoryTitleProvider'
+        public: false
+        arguments:
+            - '@property_accessor'
+            - '@oro_locale.helper.localization.link'
+        tags:
+            - { name: oro_web_catalog.content_variant_title_provider }
+
     oro_catalog.repository.category:
         class: 'Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository'
         parent: oro_entity.abstract_repository
@@ -158,3 +167,17 @@ services:
             - '@event_dispatcher'
         tags:
             - { name: doctrine.event_listener, event: onFlush }
+
+    oro_catalog.content_variant_type.category_page:
+        class: Oro\Bundle\CatalogBundle\ContentVariantType\CategoryPageContentVariantType
+        public: false
+        arguments:
+            - '@oro_security.security_facade'
+            - '@property_accessor'
+        tags:
+            - { name: oro_web_catalog.content_variant_type }
+
+    oro_catalog.provider.routing_information_provider:
+        class: Oro\Bundle\CatalogBundle\Provider\CategoryRoutingInformationProvider
+        tags:
+            - { name: oro_redirect.routing_information_provider }

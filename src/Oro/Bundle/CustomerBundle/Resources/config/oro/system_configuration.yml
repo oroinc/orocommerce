@@ -4,10 +4,10 @@ system_configuration:
             title: oro.customer.system_configuration.groups.account.title
         account_users:
             title: oro.customer.system_configuration.groups.account_users.title
-            icon: 'icon-user'
+            icon: 'fa-user'
         account_users_registration:
             title: oro.customer.system_configuration.groups.account_users_registration.title
-            icon: 'icon-user-plus'
+            icon: 'fa-user-plus'
     fields:
         oro_customer.default_account_owner:
             ui_only: true

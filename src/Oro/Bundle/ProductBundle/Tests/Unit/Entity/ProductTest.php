@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Entity;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
@@ -34,7 +35,8 @@ class ProductTest extends \PHPUnit_Framework_TestCase
             ['primaryUnitPrecision',  null],
             ['createdAt', $now, false],
             ['updatedAt', $now, false],
-            ['status', Product::STATUS_ENABLED, Product::STATUS_DISABLED]
+            ['status', Product::STATUS_ENABLED, Product::STATUS_DISABLED],
+            ['type', Product::TYPE_CONFIGURABLE, Product::TYPE_SIMPLE]
         ];
 
         $this->assertPropertyAccessors(new Product(), $properties);
@@ -47,6 +49,8 @@ class ProductTest extends \PHPUnit_Framework_TestCase
             ['descriptions', new LocalizedFallbackValue()],
             ['shortDescriptions', new LocalizedFallbackValue()],
             ['images', new ProductImage()],
+            ['slugPrototypes', new LocalizedFallbackValue()],
+            ['slugs', new Slug()],
         ];
 
         $this->assertPropertyCollections(new Product(), $collections);
