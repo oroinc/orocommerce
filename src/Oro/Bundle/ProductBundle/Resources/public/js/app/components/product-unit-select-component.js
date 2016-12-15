@@ -49,7 +49,7 @@ define(function(require) {
             if (this.isProductApplySingleUnitMode(productUnits)) {
                 select.select2("container").hide();
                 if (this.options.singleUnitModeCodeVisible) {
-                    select.parent().append('<span class="label">/ ' + productUnits[0] + '</span>');
+                    select.parent().append('<span class="unit-label">/ ' + productUnits[0] + '</span>');
                 }
             }
         },
