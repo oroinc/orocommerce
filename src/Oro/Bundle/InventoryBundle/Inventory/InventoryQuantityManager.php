@@ -2,34 +2,23 @@
 
 namespace Oro\Bundle\InventoryBundle\Inventory;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
 use Oro\Bundle\EntityBundle\Fallback\EntityFallbackResolver;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
-use Oro\Bundle\InventoryBundle\Exception\InvalidInventoryLevelQuantityException;
 use Oro\Bundle\InventoryBundle\Exception\InsufficientInventoryQuantityException;
 
 class InventoryQuantityManager implements InventoryQuantityManagerInterface
 {
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $eventDispatcher;
-
     /**
      * @var EntityFallbackResolver
      */
     protected $entityFallbackResolver;
 
     /**
-     * @param EventDispatcherInterface $eventDispatcher
      * @param EntityFallbackResolver $entityFallbackResolver
      */
     public function __construct(
-        EventDispatcherInterface $eventDispatcher,
         EntityFallbackResolver $entityFallbackResolver
     ) {
-        $this->eventDispatcher = $eventDispatcher;
         $this->entityFallbackResolver = $entityFallbackResolver;
     }
 
@@ -60,14 +49,10 @@ class InventoryQuantityManager implements InventoryQuantityManagerInterface
     /**
      * @param InventoryLevel $inventoryLevel
      * @param float $quantityToIncrement
-     * @throws InvalidInventoryLevelQuantityException
+     * @throws \LogicException
      */
     public function incrementInventory(InventoryLevel $inventoryLevel, $quantityToIncrement)
     {
-        if (!is_numeric($quantityToIncrement) || $quantityToIncrement < 0) {
-            throw new InvalidInventoryLevelQuantityException();
-        }
-
-        $inventoryLevel->setQuantity($inventoryLevel->getQuantity() + $quantityToIncrement);
+        throw new \LogicException('Not implemented yet');
     }
 }

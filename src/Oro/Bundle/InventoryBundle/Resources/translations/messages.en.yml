@@ -85,6 +85,8 @@ oro:
         inventory_threshold:
             label: Inventory Threshold
         decrement_inventory:
+            product:
+                not_allowed: 'There is not enough quantity for this product'
             label: Decrement Inventory
             choice:
                 'true': Yes

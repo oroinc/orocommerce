@@ -771,6 +771,9 @@ workflows:
                                 entity: $checkout
                 conditions:
                     '@and':
+                        - '@extendable':
+                            message: 'oro.checkout.workflow.b2b_flow_checkout.transition.place_order.condition.extendable.message'
+                            events: ['extendable_condition.before_order_create']
                         - '@or':
                             - '@empty': $.result.savedCheckoutState
                             - '@check_checkout_states':

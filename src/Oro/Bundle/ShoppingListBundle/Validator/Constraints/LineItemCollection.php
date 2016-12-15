@@ -7,6 +7,11 @@ use Symfony\Component\Validator\Constraint;
 class LineItemCollection extends Constraint
 {
     /**
+     * @var mixed Context
+     */
+    protected $additionalContext;
+
+    /**
      * {@inheritDoc}
      */
     public function getTargets()
@@ -20,5 +25,24 @@ class LineItemCollection extends Constraint
     public function validatedBy()
     {
         return 'oro_shopping_list_line_item_collection_validator';
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAdditionalContext()
+    {
+        return $this->additionalContext;
+    }
+
+    /**
+     * @param mixed $additionalContext
+     * @return $this
+     */
+    public function setAdditionalContext($additionalContext)
+    {
+        $this->additionalContext = $additionalContext;
+
+        return $this;
     }
 }
