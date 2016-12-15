@@ -511,6 +511,7 @@ services:
         class: 'Oro\Bundle\ProductBundle\EventListener\ProductVariantsGridEventListener'
         arguments:
             - '@oro_entity.doctrine_helper'
+            - '%oro_product.entity.product.class%'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.oro_product-product_variants-product_edit, method: onBuildBefore }
 

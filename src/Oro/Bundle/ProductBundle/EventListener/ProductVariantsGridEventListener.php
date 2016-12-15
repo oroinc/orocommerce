@@ -9,19 +9,23 @@ use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 
 class ProductVariantsGridEventListener
 {
-    /**
-     * @var DoctrineHelper
-     */
+    /** @var DoctrineHelper */
     protected $doctrineHelper;
 
-    /**
-     * @var ProductRepository
-     */
+    /** @var ProductRepository */
     protected $repository;
 
-    public function __construct(DoctrineHelper $doctrineHelper)
+    /** @var string */
+    protected $productClass;
+
+    /**
+     * @param DoctrineHelper $doctrineHelper
+     * @param string $productClass
+     */
+    public function __construct(DoctrineHelper $doctrineHelper, $productClass)
     {
         $this->doctrineHelper = $doctrineHelper;
+        $this->productClass = $productClass;
     }
 
     /**
@@ -30,7 +34,7 @@ class ProductVariantsGridEventListener
     protected function getRepository()
     {
         if (!$this->repository) {
-            $this->repository = $this->doctrineHelper->getEntityRepository(Product::class);
+            $this->repository = $this->doctrineHelper->getEntityRepository($this->productClass);
         }
 
         return $this->repository;
@@ -51,28 +55,37 @@ class ProductVariantsGridEventListener
 
         $parentProductId = $parameters->get('parentProduct');
 
+        /** @var Product $parentProduct */
         $parentProduct = $this->getRepository()->find($parentProductId);
         if (!$parentProduct) {
             return;
         }
 
+        $wherePath = '[source][query][where][and]';
+        $config = $event->getConfig();
         $variantFields = $parentProduct->getVariantFields();
 
         // Don't show any product variants if there are no variant fields specified in the configurable product
         if (!$variantFields) {
-            $event->getConfig()->offsetAddToArrayByPath(
-                '[source][query][where][and]',
-                ['1 = 0']
-            );
+            $config->offsetAddToArrayByPath($wherePath, ['1 = 0']);
 
             return;
         }
 
-        foreach ($variantFields as $variantFieldName) {
-            $event->getConfig()->offsetAddToArrayByPath(
-                '[source][query][where][and]',
-                [sprintf('product.%s is not null', $variantFieldName)]
-            );
+        $from = $config->offsetGetByPath('[source][query][from]', []);
+        $from = reset($from);
+
+        if (false === $from) {
+            return;
         }
+
+        $rootEntityAlias = $from['alias'];
+
+        $variantWherePart = [];
+        foreach ($variantFields as $variantFieldName) {
+            $variantWherePart[] = sprintf('%s.%s is not null', $rootEntityAlias, $variantFieldName);
+        }
+
+        $config->offsetAddToArrayByPath($wherePath, $variantWherePart);
     }
 }

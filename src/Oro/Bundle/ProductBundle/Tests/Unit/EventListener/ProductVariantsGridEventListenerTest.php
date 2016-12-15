@@ -10,18 +10,28 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\EventListener\ProductVariantsGridEventListener;
+use Oro\Component\Testing\Unit\PropertyAccess\PropertyAccessTrait;
+use Symfony\Component\PropertyAccess\PropertyPathInterface;
 
 class ProductVariantsGridEventListenerTest extends \PHPUnit_Framework_TestCase
 {
+    use PropertyAccessTrait;
+
     const PRODUCT_ID = 1;
 
     const FIELD_COLOR = 'color';
     const FIELD_SIZE = 'size';
 
+    const PRODUCT_CLASS = 'stdClass';
+    const PRODUCT_DATAGRID_ALIAS = 'product';
+
+    /** @var array */
+    protected $fromPart;
+
     /** @var Product */
     private $parentProduct;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridConfiguration */
+    /** @var DatagridConfiguration */
     private $config;
 
     /** @var ProductVariantsGridEventListener */
@@ -33,8 +43,9 @@ class ProductVariantsGridEventListenerTest extends \PHPUnit_Framework_TestCase
     /** @var ParameterBag */
     private $parameterBag;
 
-    public function setUp()
+    protected function setUp()
     {
+        /** @var \PHPUnit_Framework_MockObject_MockObject|DoctrineHelper $doctrineHelper */
         $doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -46,17 +57,23 @@ class ProductVariantsGridEventListenerTest extends \PHPUnit_Framework_TestCase
 
         $doctrineHelper->expects($this->any())
             ->method('getEntityRepository')
+            ->with(self::PRODUCT_CLASS)
             ->willReturn($this->productRepository);
 
         $this->parentProduct = new Product();
 
-        $this->listener = new ProductVariantsGridEventListener($doctrineHelper);
+        $this->fromPart = [];
+        $this->setValueByPath($this->fromPart, '[source][query][from]', [
+            [
+                'table' => self::PRODUCT_CLASS,
+                'alias' => self::PRODUCT_DATAGRID_ALIAS,
+            ],
+        ]);
 
-        $this->config = $this->getMockBuilder(DatagridConfiguration::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $this->config = DatagridConfiguration::create($this->fromPart);
         $this->parameterBag = new ParameterBag();
+
+        $this->listener = new ProductVariantsGridEventListener($doctrineHelper, self::PRODUCT_CLASS);
     }
 
     public function testOnBuildBefore()
@@ -73,14 +90,15 @@ class ProductVariantsGridEventListenerTest extends \PHPUnit_Framework_TestCase
             self::FIELD_SIZE,
         ]);
 
-        $this->config->expects($this->exactly(2))
-            ->method('offsetAddToArrayByPath')
-            ->withConsecutive(
-                ['[source][query][where][and]', ['product.color is not null']],
-                ['[source][query][where][and]', ['product.size is not null']]
-            );
-
         $this->listener->onBuildBefore($this->prepareBuildBeforeEvent($this->config));
+
+        $expectedConfigValue = $this->fromPart;
+        $this->setValueByPath($expectedConfigValue, '[source][query][where][and]', [
+            'product.color is not null',
+            'product.size is not null'
+        ]);
+
+        $this->assertEquals($expectedConfigValue, $this->config->toArray());
     }
 
     public function testOnBuildBeforeNoVariantFields()
@@ -92,19 +110,19 @@ class ProductVariantsGridEventListenerTest extends \PHPUnit_Framework_TestCase
             ->with(self::PRODUCT_ID)
             ->willReturn($this->parentProduct);
 
-        $this->config->expects($this->once())
-            ->method('offsetAddToArrayByPath')
-            ->with('[source][query][where][and]', ['1 = 0']);
-
         $this->listener->onBuildBefore($this->prepareBuildBeforeEvent($this->config));
+
+        $expectedConfigValue = $this->fromPart;
+        $this->setValueByPath($expectedConfigValue, '[source][query][where][and]', ['1 = 0']);
+        $this->assertEquals($expectedConfigValue, $this->config->toArray());
     }
 
     public function testOnBuildBeforeNoParentProduct()
     {
-        $this->config->expects($this->never())
-            ->method('offsetAddToArrayByPath');
-
         $this->listener->onBuildBefore($this->prepareBuildBeforeEvent($this->config));
+
+        $expectedConfigValue = $this->fromPart;
+        $this->assertEquals($expectedConfigValue, $this->config->toArray());
     }
 
     public function testOnBuildBeforeNotExistingParentProduct()
@@ -116,10 +134,10 @@ class ProductVariantsGridEventListenerTest extends \PHPUnit_Framework_TestCase
             ->with(self::PRODUCT_ID)
             ->willReturn(null);
 
-        $this->config->expects($this->never())
-            ->method('offsetAddToArrayByPath');
-
         $this->listener->onBuildBefore($this->prepareBuildBeforeEvent($this->config));
+
+        $expectedConfigValue = $this->fromPart;
+        $this->assertEquals($expectedConfigValue, $this->config->toArray());
     }
 
     /**
@@ -142,5 +160,15 @@ class ProductVariantsGridEventListenerTest extends \PHPUnit_Framework_TestCase
             ->willReturn($this->parameterBag);
 
         return $datagrid;
+    }
+
+    /**
+     * @param array|object $target
+     * @param string|PropertyPathInterface $path
+     * @param mixed $value
+     */
+    private function setValueByPath(&$target, $path, $value)
+    {
+        $this->getPropertyAccessor()->setValue($target, $path, $value);
     }
 }
