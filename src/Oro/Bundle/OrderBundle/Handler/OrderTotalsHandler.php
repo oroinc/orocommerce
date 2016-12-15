@@ -32,9 +32,6 @@ class OrderTotalsHandler
         $subtotal = $this->lineItemSubtotalProvider->getSubtotal($order);
         $total = $this->totalProvider->enableRecalculation()->getTotal($order);
 
-        /**
-         * @todo rewrite draft solution solution in task BB-6045
-         */
         $subtotalObject = MultiCurrency::create($subtotal->getAmount(), $subtotal->getCurrency());
         $baseSubtotal = $this->rateConverter->getBaseCurrencyAmount($subtotalObject);
         $subtotalObject->setBaseCurrencyValue($baseSubtotal);
@@ -45,6 +42,5 @@ class OrderTotalsHandler
 
         $order->setSubtotalObject($subtotalObject);
         $order->setTotalObject($totalObject);
-        $order->updateMultiCurrencyFields();
     }
 }
