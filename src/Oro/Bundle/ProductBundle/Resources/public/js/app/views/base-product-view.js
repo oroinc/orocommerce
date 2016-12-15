@@ -44,7 +44,8 @@ define(function(require) {
                 this.model = options.productModel;
             }
             if (!this.model) {
-                this.model = _.isObject(this.collection) ? this.collection.get(this.rowId) : new BaseModel();
+                this.model = (_.isObject(this.collection) && this.collection.get(this.rowId)) ?
+                                this.collection.get(this.rowId) : new BaseModel();
             }
 
             _.each(this.modelAttr, function(value, attribute) {

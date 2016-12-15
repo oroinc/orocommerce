@@ -5,8 +5,17 @@ define(function(require) {
     var _ = require('underscore');
     var mediator = require('oroui/js/mediator');
     var Grid = require('orodatagrid/js/datagrid/grid');
+    var BackendToolbar = require('oroproduct/js/app/datagrid/backend-toolbar');
 
     BackendGrid = Grid.extend({
+        /** @property */
+        toolbar: BackendToolbar,
+
+        /** @property */
+        themeOptions: {
+            optionPrefix: 'backendgrid'
+        },
+
         /**
          * @inheritDoc
          */
@@ -14,15 +23,23 @@ define(function(require) {
             this.header = null;
             this.footer = null;
             this.body = null;
+
+            mediator.on('grid-content-loaded', function(params) {
+                this.themeOptions.serverRendered = true;
+                this.trigger('content:update');
+                this.$el.find('.grid-body').html(params.content.html());
+
+                this.collection.reset(params.collection);
+                this.backgridRefresh();
+             }, this);
+
             BackendGrid.__super__.initialize.apply(this, arguments);
         },
 
         /**
          * @inheritDoc
          */
-        backgridInitialize: function() {
-
-        },
+        backgridInitialize: function() {},
 
         /**
          * @inheritDoc
@@ -30,6 +47,7 @@ define(function(require) {
         render: function() {
             this.$grid = this.$(this.selectors.grid);
 
+            this.renderToolbar();
             this.renderNoDataBlock();
             this.renderLoadingMask();
 
@@ -61,7 +79,7 @@ define(function(require) {
 
             this.switchAppearanceClass(_.result(this.metadata.state, 'appearanceType'));
             return this;
-        },
+        }
     });
 
     return BackendGrid;
