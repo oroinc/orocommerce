@@ -49,7 +49,7 @@ class ShippingMethodConfigsRule extends ExtendShippingMethodsConfigsRule impleme
     /**
      * @var Rule
      *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\RuleBundle\Entity\Rule")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\RuleBundle\Entity\Rule", cascade={"persist", "remove"})
      * @ORM\JoinColumn(name="rule_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
      * @ConfigField(
      *      defaultValues={
