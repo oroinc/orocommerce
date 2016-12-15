@@ -183,6 +183,6 @@ services:
     oro_web_catalog.layout.context_configurator.web_catalog:
         class: Oro\Bundle\WebCatalogBundle\Layout\Extension\WebCatalogContextConfigurator
         arguments:
-            - '@oro_web_catalog.web_catalog_scope_criteria_provider'
+            - '@oro_config.manager'
         tags:
             - { name: layout.context_configurator }

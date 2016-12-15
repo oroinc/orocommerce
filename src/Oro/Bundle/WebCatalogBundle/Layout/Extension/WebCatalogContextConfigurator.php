@@ -4,23 +4,24 @@ namespace Oro\Bundle\WebCatalogBundle\Layout\Extension;
 
 use Oro\Component\Layout\ContextInterface;
 use Oro\Component\Layout\ContextConfiguratorInterface;
-use Oro\Bundle\WebCatalogBundle\Provider\ScopeWebCatalogProvider;
+
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
 class WebCatalogContextConfigurator implements ContextConfiguratorInterface
 {
-    const CONTEXT_VARIABLE = 'web_catalog';
+    const CONTEXT_VARIABLE = 'web_catalog_id';
 
     /**
-     * @var ScopeWebCatalogProvider
+     * @var ConfigManager
      */
-    protected $scopeWebCatalogProvider;
+    protected $configManager;
 
     /**
-     * @param ScopeWebCatalogProvider $scopeWebCatalogProvider
+     * @param ConfigManager $configManager
      */
-    public function __construct(ScopeWebCatalogProvider $scopeWebCatalogProvider)
+    public function __construct(ConfigManager $configManager)
     {
-        $this->scopeWebCatalogProvider = $scopeWebCatalogProvider;
+        $this->configManager = $configManager;
     }
 
     /**
@@ -34,7 +35,7 @@ class WebCatalogContextConfigurator implements ContextConfiguratorInterface
 
         $context->set(
             WebCatalogContextConfigurator::CONTEXT_VARIABLE,
-            $this->scopeWebCatalogProvider->getCriteriaForCurrentScope()[ScopeWebCatalogProvider::WEB_CATALOG]
+            $this->configManager->get('oro_web_catalog.web_catalog')
         );
     }
 }

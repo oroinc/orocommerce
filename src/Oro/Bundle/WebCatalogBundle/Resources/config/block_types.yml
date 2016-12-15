@@ -7,8 +7,7 @@ services:
                 - setOptionsConfig
                 -
                     -
-                        visible_items: {default: null}
-                        not_visible_items: {default: null}
-                        title: {default: null}
+                        use_for: {default: null}
+                        not_use_for: {default: null}
         tags:
             - { name: layout.block_type, alias: menu_item }

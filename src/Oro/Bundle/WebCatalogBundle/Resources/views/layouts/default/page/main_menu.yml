@@ -17,43 +17,42 @@ layout:
                 web_catalog_menu_first_level_item_simple:
                     blockType: menu_item
                     options:
-                        visible_items:
+                        use_for:
                             simple: ~
                             simple2: ~
                             link: ~
                 web_catalog_menu_first_level_item_head:
                     blockType: menu_item
                     options:
-                        visible_items:
+                        use_for:
                             with_head: ~
                 web_catalog_menu_first_level_item_mega:
                     blockType: menu_item
                     options:
-                        visible_items:
+                        use_for:
                             mega: ~
                 web_catalog_menu_second_level_item_simple:
                     blockType: menu_item
                     options:
-                        visible_items:
+                        use_for:
                             root/bestsellers/for_women: ~
                             root/bestsellers/for_men2: ~
                             root/bestsellers/for_women2: ~
                 web_catalog_menu_second_level_item_head:
                     blockType: menu_item
                     options:
-                        visible_items:
+                        use_for:
                             root/sales/winter_sale: ~
                             root/sales/summer_sale: ~
                             root/sales/ny_sale: ~
                 web_catalog_menu_second_level_item_mega:
                     blockType: menu_item
                     options:
-                        visible_items:
+                        use_for:
                             root/sales/winter_sale1: { title: 'By Category' }
-                            root/sales/winter_sale2: ~
                             root/sales/apple: { title: 'By Brand' }
-                            root/sales/google: ~
                             root/sales/shirts: { title: 'By Item' }
+                        not_use_for:
                             root/sales/jackets: ~
                 web_catalog_menu_third_level_item_mega:
                     blockType: menu_item
@@ -68,4 +67,4 @@ layout:
                             web_catalog_menu_first_level_item_mega:
                                 web_catalog_menu_second_level_item_mega:
                                     web_catalog_menu_third_level_item_mega:
-    conditions: 'context["web_catalog"]'
+    conditions: 'context["web_catalog_id"]'

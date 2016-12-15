@@ -22,7 +22,8 @@
 {% endblock %}
 
 {% block _web_catalog_menu_first_level_item_simple_widget %}
-    {% if (visible_items is not empty and category.id in visible_items|keys) %}
+    {% if (use_for is not empty and category.id in use_for|keys) or
+        (not_use_for is not empty and category.id not in not_use_for|keys) %}
         {% set hasSublist = category.children is not empty %}
         <a href="{{ app.request.uriForPath(category.url) }}"
            class="main-menu__link">
@@ -43,7 +44,8 @@
 {% endblock %}
 
 {% block _web_catalog_menu_first_level_item_head_widget %}
-    {% if (visible_items is not empty and category.id in visible_items|keys) %}
+    {% if (use_for is not empty and category.id in use_for|keys) or
+        (not_use_for is not empty and category.id not in not_use_for|keys) %}
         {% set hasSublist = category.children is not empty %}
         <a href="{{ app.request.uriForPath(category.url) }}"
            class="main-menu__link">
@@ -67,7 +69,8 @@
 {% endblock %}
 
 {% block _web_catalog_menu_first_level_item_mega_widget %}
-    {% if (visible_items is not empty and category.id in visible_items|keys) %}
+    {% if (use_for is not empty and category.id in use_for|keys) or
+        (not_use_for is not empty and category.id not in not_use_for|keys) %}
         {% set hasSublist = category.children is not empty %}
         <a href="{{ app.request.uriForPath(category.url) }}" class="main-menu__link">
             <span>{{ category.label }}</span>
@@ -90,7 +93,8 @@
 
 {% block _web_catalog_menu_second_level_item_simple_widget %}
     {% for category in categories %}
-        {% if (visible_items is not empty and category.id in visible_items|keys) %}
+        {% if (use_for is not empty and category.id in use_for|keys) or
+            (not_use_for is not empty and category.id not in not_use_for|keys) %}
             {% set hasSublist = category.children is not empty %}
             {% set class = attr.class|default('') ~ " main-menu__subcategory" %}
             {% set class = hasSublist ? class ~ " main-menu__sublist--has-sibling" : class %}
@@ -111,7 +115,8 @@
 
 {% block _web_catalog_menu_second_level_item_head_widget %}
     {% for category in categories %}
-        {% if (visible_items is not empty and category.id in visible_items|keys) %}
+        {% if (use_for is not empty and category.id in use_for|keys) or
+            (not_use_for is not empty and category.id not in not_use_for|keys) %}
             {% set hasSublist = category.children is not empty %}
             {% set class = attr.class|default('') ~ " main-menu__subcategory" %}
             {% set class = hasSublist ? class ~ " main-menu__sublist--has-sibling" : class %}
@@ -132,11 +137,13 @@
 
 {% block _web_catalog_menu_second_level_item_mega_widget %}
     {% for category in categories %}
-        {% if visible_items[category.id] is not empty and visible_items[category.id].title is not empty %}
-            <div class="main-menu__sublist-title">{{ visible_items[category.id].title }}</div>
-        {% endif %}
+        {% if (use_for is not empty and category.id in use_for|keys) or
+            (not_use_for is not empty and category.id not in not_use_for|keys) %}
 
-        {% if (visible_items is not empty and category.id in visible_items|keys) %}
+            {% if use_for[category.id].title is defined %}
+                <div class="main-menu__sublist-title">{{ use_for[category.id].title }}</div>
+            {% endif %}
+
             {% set hasSublist = category.children is not empty %}
             {% set class = attr.class|default('') ~ " main-menu__subcategory" %}
             {% set class = hasSublist ? class ~ " main-menu__sublist--has-sibling" : class %}

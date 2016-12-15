@@ -4,26 +4,26 @@ namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Layout\Extension;
 
 use Oro\Component\Layout\LayoutContext;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\WebCatalogBundle\Layout\Extension\WebCatalogContextConfigurator;
-use Oro\Bundle\WebCatalogBundle\Provider\ScopeWebCatalogProvider;
 
-class WebCatalogConfiguratorTest extends \PHPUnit_Framework_TestCase
+class WebCatalogContextConfiguratorTest extends \PHPUnit_Framework_TestCase
 {
     /** @var WebCatalogContextConfigurator */
     protected $contextConfigurator;
 
     /**
-     * @var ScopeWebCatalogProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $scopeWebCatalogProvider;
+    protected $configManager;
 
     protected function setUp()
     {
-        $this->scopeWebCatalogProvider = $this->getMockBuilder(ScopeWebCatalogProvider::class)
+        $this->configManager = $this->getMockBuilder(ConfigManager::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->contextConfigurator = new WebCatalogContextConfigurator($this->scopeWebCatalogProvider);
+        $this->contextConfigurator = new WebCatalogContextConfigurator($this->configManager);
     }
 
     public function testConfigureContextWithDefaultAction()
@@ -40,10 +40,11 @@ class WebCatalogConfiguratorTest extends \PHPUnit_Framework_TestCase
     {
         $webCatalogId = '1';
 
-        $this->scopeWebCatalogProvider
+        $this->configManager
             ->expects($this->once())
-            ->method('getCriteriaForCurrentScope')
-            ->willReturn([ ScopeWebCatalogProvider::WEB_CATALOG => $webCatalogId]);
+            ->method('get')
+            ->with('oro_web_catalog.web_catalog')
+            ->willReturn($webCatalogId);
 
         $context = new LayoutContext();
 
