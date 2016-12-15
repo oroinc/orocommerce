@@ -243,6 +243,7 @@ services:
             - '@oro_pricing.subtotal_processor.total_processor_provider'
             - '@oro_pricing.subtotal_processor.provider.subtotal_line_item'
             - '@oro_order.provider.discount_subtotal'
+            - '@oro_currency.converter.rate'
 
     oro_order.layout.provider.order_payment_status:
         class: 'Oro\Bundle\OrderBundle\Layout\DataProvider\OrderPaymentStatusProvider'
