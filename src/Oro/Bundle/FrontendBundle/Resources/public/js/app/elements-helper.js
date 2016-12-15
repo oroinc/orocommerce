@@ -6,6 +6,7 @@ define(function(require) {
      */
     var $ = require('jquery');
     var _ = require('underscore');
+    require('jquery.validate');
 
     return {
         elementsInitialized: false,
