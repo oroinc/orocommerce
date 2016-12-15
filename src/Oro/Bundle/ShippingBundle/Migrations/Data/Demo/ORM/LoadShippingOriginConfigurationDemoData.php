@@ -21,7 +21,6 @@ class LoadShippingOriginConfigurationDemoData extends AbstractFixture implements
             'country' => 'US',
             'region' => 'US-CA',
             'region_text' => null,
-            'postalCode' => '90401',
             'city' => 'Santa Monica',
             'street' => '1685 Main St.',
             'street2' => null

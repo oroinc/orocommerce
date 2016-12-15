@@ -17,7 +17,7 @@ class ModifyOldTables implements Migration, OrderedMigrationInterface
      */
     public function getOrder()
     {
-        return 4;
+        return 3;
     }
 
     /**

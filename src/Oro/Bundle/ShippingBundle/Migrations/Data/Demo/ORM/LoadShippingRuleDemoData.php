@@ -4,8 +4,9 @@ namespace Oro\Bundle\ShippingBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
+use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfigsRule;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
 use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethod;
 use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethodType;
@@ -29,10 +30,13 @@ class LoadShippingRuleDemoData extends AbstractFixture
         $methodConfig->setMethod(FlatRateShippingMethod::IDENTIFIER)
             ->addTypeConfig($typeConfig);
 
-        $shippingRule = new ShippingRule();
-        $shippingRule->setName('Default')
-            ->setCurrency('USD')
-            ->setPriority(1)
+        $rule = new Rule();
+        $rule->setName('Default')
+            ->setSortOrder(1);
+
+        $shippingRule = new ShippingMethodConfigsRule();
+        $shippingRule->setRule($rule);
+        $shippingRule->setCurrency('USD')
             ->addMethodConfig($methodConfig);
 
         $manager->persist($shippingRule);

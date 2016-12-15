@@ -24,6 +24,8 @@ class CreateNewTables implements Migration, OrderedMigrationInterface
     {
         $this->createOroShipMethodConfigsRuleTable($schema);
         $this->createOroShipMethodPostalCodeTable($schema);
+
+        $queries->addPostQuery(new FillNewTables());
     }
 
     /**
