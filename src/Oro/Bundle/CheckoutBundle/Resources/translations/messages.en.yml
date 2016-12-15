@@ -125,7 +125,9 @@ oro:
                     back_to_shipping_method.label: Edit Shipping Method
                     back_to_payment.label: Edit Payment
                     transitions.back_to_payment.label: Edit Payment
-                    place_order.label: Submit Order
+                    place_order:
+                        label: Submit Order
+                        condition.extendable.message: There was an error while processing the order
                     back.label: Back
 
                 form:
