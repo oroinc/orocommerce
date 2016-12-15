@@ -30,6 +30,8 @@ services:
         arguments:
             - "@oro_product.formatter.product_unit_label"
             - "@translator"
+            - "@oro_product.service.single_unit_mode"
+            - "@oro_product.provider.default_product_unit_provider.system"
         calls:
             - [setEntityClass, ['%oro_product.entity.product_unit.class%']]
         tags:

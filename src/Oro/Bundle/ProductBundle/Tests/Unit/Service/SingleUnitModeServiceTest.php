@@ -140,4 +140,20 @@ class SingleUnitModeServiceTest extends \PHPUnit_Framework_TestCase
             ])
         );
     }
+
+    public function testIsProductPrimaryUniteDefault()
+    {
+        $this->configManager->expects(static::once())
+            ->method('get')
+            ->with('oro_product.default_unit')
+            ->willReturn('each');
+
+        $product = (new Product)->setPrimaryUnitPrecision($this->getEntity(ProductUnitPrecision::class, [
+            'unit' => $this->getEntity(ProductUnit::class, [
+                'code' => 'each',
+            ]),
+        ]));
+
+        static::assertTrue($this->unitModeProvider->isProductPrimaryUnitDefault($product));
+    }
 }
