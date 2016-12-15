@@ -179,3 +179,10 @@ services:
             class: Oro\Bundle\WebCatalogBundle\DataProvider\MenuDataProvider
             tags:
                 - { name: layout.data_provider, alias: web_catalog_menu }
+
+    oro_web_catalog.layout.context_configurator.web_catalog:
+        class: Oro\Bundle\WebCatalogBundle\Layout\Extension\WebCatalogContextConfigurator
+        arguments:
+            - '@oro_web_catalog.web_catalog_scope_criteria_provider'
+        tags:
+            - { name: layout.context_configurator }

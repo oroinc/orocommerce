@@ -68,3 +68,4 @@ layout:
                             web_catalog_menu_first_level_item_mega:
                                 web_catalog_menu_second_level_item_mega:
                                     web_catalog_menu_third_level_item_mega:
+    conditions: 'context["web_catalog"]'
