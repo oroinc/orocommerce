@@ -36,10 +36,13 @@ class WebCatalogContextConfiguratorTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($context[WebCatalogContextConfigurator::CONTEXT_VARIABLE]);
     }
 
-    public function testConfigureContext()
+    /**
+     * @dataProvider allowedTypesDataProvider
+     *
+     * @param $webCatalogId
+     */
+    public function testConfigureContext($webCatalogId)
     {
-        $webCatalogId = '1';
-
         $this->configManager
             ->expects($this->once())
             ->method('get')
@@ -52,5 +55,51 @@ class WebCatalogContextConfiguratorTest extends \PHPUnit_Framework_TestCase
         $context->resolve();
 
         $this->assertEquals($webCatalogId, $context[WebCatalogContextConfigurator::CONTEXT_VARIABLE]);
+    }
+
+    /**
+     * @return array
+     */
+    public function allowedTypesDataProvider()
+    {
+        return [
+            'null' => [null],
+            'string' => ['1'],
+        ];
+    }
+
+    /**
+     * @dataProvider notAllowedTypesDataProvider
+     * @expectedException \Oro\Component\Layout\Exception\LogicException
+     *
+     * @param $webCatalogId
+     */
+    public function testConfigureContextTypeNotAllowed($webCatalogId)
+    {
+        $this->configManager
+            ->expects($this->once())
+            ->method('get')
+            ->with('oro_web_catalog.web_catalog')
+            ->willReturn($webCatalogId);
+
+        $context = new LayoutContext();
+
+        $this->contextConfigurator->configureContext($context);
+        $context->resolve();
+
+        $this->assertEquals($webCatalogId, $context[WebCatalogContextConfigurator::CONTEXT_VARIABLE]);
+    }
+
+    /**
+     * @return array
+     */
+    public function notAllowedTypesDataProvider()
+    {
+        return [
+            'integer' => [1],
+            'array' => [[1]],
+            'boolean' => [false],
+            'object' => [new \stdClass()],
+        ];
     }
 }
