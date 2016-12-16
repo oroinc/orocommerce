@@ -34,10 +34,11 @@ class ContentNodeHandler
     protected $eventDispatcher;
 
     /**
-     * @param RequestStack $requestStack
+     * @param Request $request
      * @param SlugGenerator $slugGenerator
      * @param ObjectManager $manager
      * @param EventDispatcherInterface $eventDispatcher
+     * @param FormInterface $form
      */
     public function __construct(
         Request $request,
