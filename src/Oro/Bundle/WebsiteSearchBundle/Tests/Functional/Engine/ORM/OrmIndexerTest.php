@@ -90,9 +90,9 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
 
     protected function tearDown()
     {
-        $this->clearIndexTextTable();
-
         parent::tearDown();
+
+        $this->clearIndexTextTable();
     }
 
     /**
