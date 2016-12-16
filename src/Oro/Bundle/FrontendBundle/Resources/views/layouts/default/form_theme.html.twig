@@ -46,7 +46,7 @@
 {% block widget_attributes %}
     {% if errors|length > 0 %}
         {% set attr = attr|merge({
-            class: attr.class|default('') ~ ' input_error'
+            class: attr.class|default('') ~ ' error'
         }) %}
     {% endif %}
     {{ parent() }}

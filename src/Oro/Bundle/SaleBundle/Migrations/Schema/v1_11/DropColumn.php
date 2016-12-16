@@ -4,7 +4,7 @@ namespace Oro\Bundle\SaleBundle\Migrations\Schema\v1_11;
 
 use Doctrine\DBAL\Schema\Schema;
 
-use Oro\Bundle\EntityConfigBundle\Migration\RemoveEntityConfigEntityValueQuery;
+use Oro\Bundle\EntityConfigBundle\Migration\RemoveFieldQuery;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
@@ -25,7 +25,7 @@ class DropColumn implements Migration, OrderedMigrationInterface
         $table->dropColumn('payment_term_id');
 
         $queries->addPostQuery(
-            new RemoveEntityConfigEntityValueQuery('Oro\Bundle\SaleBundle\Entity\Quote', 'paymentTerm')
+            new RemoveFieldQuery('Oro\Bundle\SaleBundle\Entity\Quote', 'paymentTerm')
         );
     }
 

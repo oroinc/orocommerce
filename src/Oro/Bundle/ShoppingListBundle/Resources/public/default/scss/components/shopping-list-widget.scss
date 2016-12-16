@@ -1,3 +1,5 @@
+// @theme: default
+
 .shopping-list-widget {
   &:hover > .header-row__toggle {
     display: block !important;
@@ -109,6 +111,12 @@
 
     background: transparent;
   }
+
+  &__icon {
+    margin-right: 3px;
+
+    @include badge(33px);
+  }
 }
 
 .order-builder-clear-btn {
@@ -150,7 +158,7 @@
 // *** All code below has not implemented yet!!!
 .main-menu__item {
   .cart-widget__list-trigger {
-    text-indent: .4rem;
+    text-indent: 4px;
   }
 }
 

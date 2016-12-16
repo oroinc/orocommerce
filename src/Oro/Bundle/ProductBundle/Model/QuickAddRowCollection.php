@@ -134,7 +134,7 @@ class QuickAddRowCollection extends ArrayCollection
                 $row->setValid(true);
             }
         }
-        if ($this->eventDispatcher instanceof  EventDispatcherInterface) {
+        if ($this->eventDispatcher instanceof EventDispatcherInterface) {
             $event = new QuickAddRowCollectionValidateEvent($this);
             $this->eventDispatcher->dispatch($event::NAME, $event);
         }

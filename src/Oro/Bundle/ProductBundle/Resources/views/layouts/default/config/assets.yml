@@ -1,3 +1,7 @@
 styles:
     inputs:
+        - 'bundles/oroproduct/default/scss/variables/sku-config.scss'
+        - 'bundles/oroproduct/default/scss/variables/product-config.scss'
+        - 'bundles/oroproduct/default/scss/variables/buttons-inline-group-config.scss'
+        - 'bundles/oroproduct/default/scss/variables/product-view-layout-config.scss'
         - 'bundles/oroproduct/default/scss/styles.scss'
