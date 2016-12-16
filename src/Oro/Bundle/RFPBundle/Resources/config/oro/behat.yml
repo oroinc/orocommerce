@@ -1,0 +1,12 @@
+elements:
+  RequestForQuote:
+    class: Oro\Bundle\RFPBundle\Tests\Behat\Element\RequestForQuote
+    selector: '.page-content'
+    
+  RequestForQuoteTitle:
+    class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+    selector: 'span.page-title__text'
+    
+  RequestForQuoteFlashMessage:
+    class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+    selector: '#flash-messages div.notification-flash__text'
