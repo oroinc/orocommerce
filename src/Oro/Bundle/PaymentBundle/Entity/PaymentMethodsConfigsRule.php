@@ -135,6 +135,8 @@ class PaymentMethodsConfigsRule extends ExtendPaymentMethodsConfigsRule implemen
 
     public function __construct()
     {
+        parent::__construct();
+
         $this->methodConfigs = new ArrayCollection();
         $this->destinations = new ArrayCollection();
     }

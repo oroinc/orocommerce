@@ -118,6 +118,8 @@ class PaymentMethodsConfigsRuleDestination extends ExtendPaymentMethodsConfigsRu
 
     public function __construct()
     {
+        parent::__construct();
+
         $this->postalCodes = new ArrayCollection();
     }
 
@@ -154,6 +156,25 @@ class PaymentMethodsConfigsRuleDestination extends ExtendPaymentMethodsConfigsRu
     }
 
     /**
+     * @return null|array
+     */
+    public function getPostalCodesNames()
+    {
+        if ($this->postalCodes !== null && $this->postalCodes->count() > 0) {
+            $postalCodes = array_map(
+                function (PaymentMethodsConfigsRuleDestinationPostalCode $postalCode) {
+                    return $postalCode->getName();
+                },
+                $this->postalCodes->getValues()
+            );
+
+            return implode(', ', $postalCodes);
+        }
+
+        return null;
+    }
+
+    /**
      * @param PaymentMethodsConfigsRuleDestinationPostalCode $postalCode
      * @return $this
      */
@@ -170,7 +191,7 @@ class PaymentMethodsConfigsRuleDestination extends ExtendPaymentMethodsConfigsRu
      * @param PaymentMethodsConfigsRuleDestinationPostalCode $postalCode
      * @return $this
      */
-    public function removeDestination(PaymentMethodsConfigsRuleDestinationPostalCode $postalCode)
+    public function removePostalCode(PaymentMethodsConfigsRuleDestinationPostalCode $postalCode)
     {
         if ($this->postalCodes->contains($postalCode)) {
             $this->postalCodes->removeElement($postalCode);
@@ -294,7 +315,10 @@ class PaymentMethodsConfigsRuleDestination extends ExtendPaymentMethodsConfigsRu
     {
         $countryPostalStr = implode(
             ' ',
-            array_filter([$this->getCountry(), implode(', ', $this->getPostalCodes() ? : [])])
+            array_filter([
+                $this->getCountry(),
+                $this->getPostalCodesNames()
+            ])
         );
 
         return implode(', ', array_filter([$this->getRegionName(), $countryPostalStr]));

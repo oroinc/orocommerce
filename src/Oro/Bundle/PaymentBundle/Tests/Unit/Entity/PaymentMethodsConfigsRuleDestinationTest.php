@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRuleDestinationPostalCode;
 use Oro\Bundle\AddressBundle\Entity\Region;
@@ -57,7 +58,7 @@ class PaymentMethodsConfigsRuleDestinationTest extends \PHPUnit_Framework_TestCa
         $entity = new PaymentMethodsConfigsRuleDestination();
 
         $this->assertPropertyAccessors($entity, $properties);
-        //$this->assertPropertyCollection($entity, 'postalCodes', new PaymentMethodsConfigsRuleDestinationPostalCode());
+        $this->assertPropertyCollection($entity, 'postalCodes', new PaymentMethodsConfigsRuleDestinationPostalCode());
     }
 
     public function testGetRegionName()
@@ -120,7 +121,7 @@ class PaymentMethodsConfigsRuleDestinationTest extends \PHPUnit_Framework_TestCa
                 'data' => [
                     'country' => $this->createMockCountry(),
                     'region' => $this->createMockRegion(),
-                    'postalCodes' => ['12345'],
+                    'postalCodes' => $this->createMockPostalCodes(['12345']),
                 ],
                 'expectedString' => 'RegionName, CountryName 12345'
             ],
@@ -128,7 +129,7 @@ class PaymentMethodsConfigsRuleDestinationTest extends \PHPUnit_Framework_TestCa
                 'data' => [
                     'country' => $this->createMockCountry(),
                     'region' => null,
-                    'postalCodes' => ['12345', '54321'],
+                    'postalCodes' => $this->createMockPostalCodes(['12345', '54321']),
                 ],
                 'expectedString' => 'CountryName 12345, 54321'
             ],
@@ -136,7 +137,6 @@ class PaymentMethodsConfigsRuleDestinationTest extends \PHPUnit_Framework_TestCa
                 'data' => [
                     'country' => $this->createMockCountry('SecondCountryName'),
                     'region' => $this->createMockRegion('SecondRegionName'),
-                    'postalCodes' => null,
                 ],
                 'expectedString' => 'SecondRegionName, SecondCountryName'
             ],
@@ -144,7 +144,6 @@ class PaymentMethodsConfigsRuleDestinationTest extends \PHPUnit_Framework_TestCa
                 'data' => [
                     'country' => $this->createMockCountry(),
                     'region' => null,
-                    'postalCodes' => null,
                 ],
                 'expectedString' => 'CountryName'
             ]
@@ -159,7 +158,7 @@ class PaymentMethodsConfigsRuleDestinationTest extends \PHPUnit_Framework_TestCa
      */
     protected function createMockCountry($name = 'CountryName', $iso2 = 'CountryIso2', $iso3 = 'CountryIso3')
     {
-        $result = $this->getMockBuilder('Oro\Bundle\AddressBundle\Entity\Country')
+        $result = $this->getMockBuilder(Country::class)
             ->disableOriginalConstructor()
             ->getMock();
         $result->expects($this->any())
@@ -185,7 +184,7 @@ class PaymentMethodsConfigsRuleDestinationTest extends \PHPUnit_Framework_TestCa
      */
     protected function createMockRegion($name = 'RegionName', $code = 'RegionCode')
     {
-        $result = $this->getMock('Oro\Bundle\AddressBundle\Entity\Region', [], ['combinedCode']);
+        $result = $this->getMock(Region::class, [], ['combinedCode']);
         $result->expects($this->any())
             ->method('__toString')
             ->will($this->returnValue($name));
@@ -197,5 +196,20 @@ class PaymentMethodsConfigsRuleDestinationTest extends \PHPUnit_Framework_TestCa
             ->will($this->returnValue($code));
 
         return $result;
+    }
+
+    /**
+     * @param array $names
+     * @return ArrayCollection|\PHPUnit_Framework_MockObject_MockObject[]
+     */
+    protected function createMockPostalCodes($names)
+    {
+        $results = new ArrayCollection();
+        foreach ($names as $name) {
+            $result = $this->getEntity(PaymentMethodsConfigsRuleDestinationPostalCode::class, ['name' => $name]);
+            $results->add($result);
+        }
+
+        return $results;
     }
 }
