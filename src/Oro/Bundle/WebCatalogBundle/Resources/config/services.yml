@@ -34,7 +34,7 @@ services:
         class: 'Oro\Bundle\WebCatalogBundle\ContentVariantProvider\ContentVariantProviderRegistry'
         public: false
 
-    oro_web_catalog.page_provider.provider:
+    oro_web_catalog.content_variant_provider:
         class: 'Oro\Bundle\WebCatalogBundle\ContentVariantProvider\ContentVariantProvider'
         arguments:
             - '@oro_web_catalog.content_variant_provider.registry'
@@ -156,3 +156,15 @@ services:
         class: Oro\Bundle\WebCatalogBundle\Form\Extension\WebCatalogScopeExtension
         tags:
             - { name: form.type_extension, extended_type: Oro\Bundle\ScopeBundle\Form\Type\ScopeType }
+
+    oro_web_catalog.event_listener.website_search_index:
+        class: 'Oro\Bundle\WebCatalogBundle\EventListener\WebCatalogEntityIndexerListener'
+        arguments:
+            - '@doctrine'
+            - '@oro_config.manager'
+            - '@oro_website.provider.website_localization'
+            - '@oro_website_search.manager.website_context_manager'
+            - '@oro_web_catalog.content_variant_provider'
+            - '@oro_locale.helper.localization'
+        tags:
+            - { name: kernel.event_listener, event: oro_website_search.event.index_entity, method: onWebsiteSearchIndex }

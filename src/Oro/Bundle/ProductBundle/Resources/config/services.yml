@@ -511,3 +511,8 @@ services:
             - '@request_stack'
         tags:
             - { name: layout.data_provider, alias: oro_product_quick_add_collection }
+
+    oro_product.provider.product_content_variant_provider:
+        class: Oro\Bundle\ProductBundle\Provider\ProductContentVariantProvider
+        tags:
+            - { name: oro_web_catalog.content_variant_provider }

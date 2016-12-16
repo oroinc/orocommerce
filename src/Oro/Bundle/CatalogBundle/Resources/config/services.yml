@@ -170,3 +170,8 @@ services:
         class: Oro\Bundle\CatalogBundle\Provider\CategoryRoutingInformationProvider
         tags:
             - { name: oro_redirect.routing_information_provider }
+
+    oro_catalog.provider.products_content_variant_provider:
+        class: Oro\Bundle\CatalogBundle\Provider\ProductsContentVariantProvider
+        tags:
+            - { name: oro_web_catalog.content_variant_provider }
