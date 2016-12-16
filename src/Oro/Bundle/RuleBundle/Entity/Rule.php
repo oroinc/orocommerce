@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\RuleBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
@@ -155,6 +156,13 @@ class Rule extends ExtendRule implements DatesAwareInterface
      */
     protected $methodsConfigsRule;
 
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->methodsConfigsRule = new ArrayCollection();
+    }
+
     /**
      * @ORM\PrePersist
      */
@@ -273,6 +281,49 @@ class Rule extends ExtendRule implements DatesAwareInterface
     public function setExpression($expression)
     {
         $this->expression = $expression;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|PaymentMethodsConfigsRule[]
+     */
+    public function getMethodsConfigsRule()
+    {
+        return $this->methodsConfigsRule;
+    }
+
+    /**
+     * @param PaymentMethodsConfigsRule $methodsConfigsRule
+     * @return bool
+     */
+    public function hasMethodsConfigsRule(PaymentMethodsConfigsRule $methodsConfigsRule)
+    {
+        return $this->methodsConfigsRule->contains($methodsConfigsRule);
+    }
+
+    /**
+     * @param PaymentMethodsConfigsRule $methodsConfigsRule
+     * @return $this
+     */
+    public function addMethodsConfigsRule(PaymentMethodsConfigsRule $methodsConfigsRule)
+    {
+        if (!$this->hasMethodsConfigsRule($methodsConfigsRule)) {
+            $this->methodsConfigsRule[] = $methodsConfigsRule;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param PaymentMethodsConfigsRule $methodsConfigsRule
+     * @return $this
+     */
+    public function removeMethodsConfigsRule(PaymentMethodsConfigsRule $methodsConfigsRule)
+    {
+        if ($this->hasMethodsConfigsRule($methodsConfigsRule)) {
+            $this->methodsConfigsRule->removeElement($methodsConfigsRule);
+        }
 
         return $this;
     }
