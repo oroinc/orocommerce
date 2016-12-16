@@ -50,7 +50,7 @@ action_groups:
                 parameters_mapping:
                     sourceCriteria:
                         shoppingList: $.shoppingList
-                    settings:
+                    settings: # also update restart_checkout workflow when modifying this section
                         allow_manual_source_remove: true
                         remove_source: true
                         edit_order_link: $.editLink
@@ -79,10 +79,10 @@ action_groups:
                     sourceCriteria: $.sourceCriteria
                     checkoutData: $.data
                     updateData: $.force
-                results: 
+                results:
                     checkout: $.checkout
                     force: $.updateData
-                    
+
             - '@tree':
                 conditions:
                     '@equal': [true, $.force]
@@ -92,12 +92,12 @@ action_groups:
                         parameters_mapping:
                             entity: $.checkout
                             data: $.settings
-                            
+
             - '@redirect':
                 route: oro_checkout_frontend_checkout
                 route_parameters:
                     id: $.checkout.id
-                
+
     find_checkout:
         parameters:
             sourceCriteria:
@@ -168,10 +168,29 @@ action_groups:
                     - '@copy_values': [$.checkout, $.checkoutData]
 
             - '@flush_entity': $.checkout
-                    
+
+    restart_checkout:
+        actions:
+            - '@assign_url':
+                attribute: $.editLink
+                route: oro_shopping_list_frontend_view
+                route_parameters: {id: $.shoppingList.id}
+            - '@translate':
+                id: 'oro.frontend.shoppinglist.workflow.remove_source.label'
+                attribute: $.sourceRemoveLabel
+            - '@run_action_group':
+                action_group: update_workflow_item
+                parameters_mapping:
+                    entity: $.checkout
+                    data:
+                        allow_manual_source_remove: true
+                        remove_source: true
+                        edit_order_link: $.editLink
+                        source_remove_label: $.sourceRemoveLabel
+
     update_workflow_item:
         parameters:
-            entity: 
+            entity:
                 type: object
             data:
                 type: array
@@ -185,11 +204,11 @@ action_groups:
             - '@assign_value':
                 - $.workflowItem
                 - $.workflowItems[0]
-            
+
             - '@copy_values': [$.workflowItem.data, $.data]
 
             - '@call_method':
                 object: $.workflowItem
                 method: setUpdated
-                
+
             - '@flush_entity': $.workflowItem

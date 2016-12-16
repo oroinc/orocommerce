@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface;
 use Oro\Bundle\CheckoutBundle\Event\CheckoutValidateEvent;
@@ -19,7 +20,6 @@ use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowStep;
-use Oro\Bundle\WorkflowBundle\Model\Transition;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 
 class CheckoutController extends Controller
@@ -255,14 +255,11 @@ class CheckoutController extends Controller
      */
     protected function restartCheckout(WorkflowItem $workflowItem, CheckoutInterface $checkout)
     {
-        $workflow = $this->getWorkflowManager()->getWorkflow($workflowItem->getWorkflowName());
-        $transitions = $workflow->getTransitionManager()->getStartTransitions()->filter(
-            function (Transition $transition) use ($workflow, $workflowItem) {
-                return $workflow->isTransitionAvailable($workflowItem, $transition);
-            }
-        );
+        $shoppingList = $workflowItem->getEntity()->getSource()->getShoppingList();
+        $this->getWorkflowManager()->resetWorkflowItem($workflowItem);
 
-        $this->getWorkflowManager()->transit($workflowItem, $transitions->first());
+        $actionData = new ActionData(['checkout' => $checkout, 'shoppingList' => $shoppingList,]);
+        $this->get('oro_action.action_group_registry')->findByName('restart_checkout')->execute($actionData);
 
         return $this->getWorkflowItem($checkout);
     }
