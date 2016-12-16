@@ -7,7 +7,7 @@ use Doctrine\DBAL\Platforms\MySqlPlatform;
 use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
 use Doctrine\DBAL\Schema\Schema;
 
-use Oro\Bundle\EntityConfigBundle\Migration\RemoveEntityConfigEntityValueQuery;
+use Oro\Bundle\EntityConfigBundle\Migration\RemoveFieldQuery;
 use Oro\Bundle\NoteBundle\Migration\UpdateNoteAssociationKindQuery;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
@@ -181,11 +181,11 @@ QUERY;
         }
 
         $queries->addPostQuery(
-            new RemoveEntityConfigEntityValueQuery('Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm', 'accounts')
+            new RemoveFieldQuery('Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm', 'accounts')
         );
 
         $queries->addPostQuery(
-            new RemoveEntityConfigEntityValueQuery('Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm', 'accountGroups')
+            new RemoveFieldQuery('Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm', 'accountGroups')
         );
 
         $queries->addPostQuery($queryAccount);

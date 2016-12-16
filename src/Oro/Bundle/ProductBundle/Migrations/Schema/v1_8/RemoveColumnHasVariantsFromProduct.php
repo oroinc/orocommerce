@@ -4,11 +4,9 @@ namespace Oro\Bundle\ProductBundle\Migrations\Schema\v1_8;
 
 use Doctrine\DBAL\Schema\Schema;
 
-use Oro\Bundle\EntityConfigBundle\Migration\RemoveEntityConfigEntityValueQuery;
+use Oro\Bundle\EntityConfigBundle\Migration\RemoveFieldQuery;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
-use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Oro\Bundle\ProductBundle\Entity\Product;
 
 class RemoveColumnHasVariantsFromProduct implements Migration
 {
@@ -23,7 +21,7 @@ class RemoveColumnHasVariantsFromProduct implements Migration
         $table->dropColumn('has_variants');
 
         $queries->addPostQuery(
-            new RemoveEntityConfigEntityValueQuery('Oro\Bundle\ProductBundle\Entity\Product', 'hasVariants')
+            new RemoveFieldQuery('Oro\Bundle\ProductBundle\Entity\Product', 'hasVariants')
         );
     }
 }
