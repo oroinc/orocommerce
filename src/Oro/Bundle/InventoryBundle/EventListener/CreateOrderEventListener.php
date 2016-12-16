@@ -104,10 +104,12 @@ class CreateOrderEventListener
 
             if (!$this->orderValidator->hasEnoughQuantity($inventoryLevel, $lineItem->getQuantity())) {
                 $event->addError('');
-
+                $event->stopPropagation();
                 return;
             }
         }
+
+        $event->stopPropagation();
     }
 
     /**

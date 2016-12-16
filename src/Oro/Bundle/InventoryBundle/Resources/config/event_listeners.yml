@@ -114,4 +114,4 @@ services:
             - '@translator'
             - '@request_stack'
         tags:
-            - { name: kernel.event_listener, event: line_item.validate, method: onLineItemValidate }
+            - { name: kernel.event_listener, event: line_item.validate, method: onLineItemValidate, priority: 10 }
