@@ -101,7 +101,7 @@ class DecoratedProductLineItemFactoryTest extends \PHPUnit_Framework_TestCase
         $expectedLineItem = new ShippingLineItem(
             [
                 ShippingLineItem::FIELD_PRICE => $copiedLineItem->getPrice(),
-                ShippingLineItem::FIELD_PRODUCT_UNIT => $copiedLineItem,
+                ShippingLineItem::FIELD_PRODUCT_UNIT => $copiedLineItem->getProductUnit(),
                 ShippingLineItem::FIELD_PRODUCT_UNIT_CODE => $copiedLineItem->getProductUnitCode(),
                 ShippingLineItem::FIELD_QUANTITY => $copiedLineItem->getQuantity(),
                 ShippingLineItem::FIELD_PRODUCT_HOLDER => $copiedLineItem->getProductHolder(),

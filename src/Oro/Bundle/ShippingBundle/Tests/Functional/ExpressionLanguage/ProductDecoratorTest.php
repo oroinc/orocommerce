@@ -58,6 +58,7 @@ class ProductDecoratorTest extends WebTestCase
         }, function ($arguments, $field) {
             return count($field);
         });
+
         $this->assertEquals($expectedResult, $expressionLanguage->evaluate($expression, $values));
     }
 
