@@ -12,7 +12,7 @@ use Oro\Bundle\ShippingBundle\Model\ExtendShippingMethodConfig;
 
 /**
  * @ORM\Table(name="oro_ship_method_config")
- * @ORM\Entity(repositoryClass="Oro\Bundle\ShippingBundle\Entity\Repository\ShippingRuleMethodConfigRepository")
+ * @ORM\Entity(repositoryClass="Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodConfigRepository")
  * @Config
  */
 class ShippingMethodConfig extends ExtendShippingMethodConfig
@@ -39,7 +39,7 @@ class ShippingMethodConfig extends ExtendShippingMethodConfig
     protected $method;
 
     /**
-     * @var string
+     * @var array
      *
      * @ORM\Column(name="options", type="array")
      * @ConfigField(
@@ -143,7 +143,7 @@ class ShippingMethodConfig extends ExtendShippingMethodConfig
     }
 
     /**
-     * @return string
+     * @return array
      */
     public function getOptions()
     {
@@ -151,7 +151,7 @@ class ShippingMethodConfig extends ExtendShippingMethodConfig
     }
 
     /**
-     * @param string $options
+     * @param array $options
      * @return $this
      */
     public function setOptions($options)

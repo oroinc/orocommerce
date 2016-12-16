@@ -50,30 +50,24 @@ oro:
             entity_label: Freight Class
             entity_plural_label: Freight Classes
             code.label: Code
-        shippingrule:
+        shippingmethodsconfigsrule:
             entity_label: Shipping Rule
             entity_plural_label: Shipping Rules
             id.label: Id
-            name.label: Name
-            enabled.label: Enabled
-            enabled_yes.label: Yes
-            enabled_no.label: No
-            priority.label: Sort Order
-            conditions.label: Conditions
+            rule.label: Rule
             destinations.label: Destinations
             address.label: Address
             method_configs.label: Configurations
             currency.label: Currency
-            stop_processing.label: Stop Further Rule Processing
-        shippingrulemethodconfig:
+        shippingmethodconfig:
             entity_label: Shipping Rule Method Config
             entity_plural_label: Shipping Rule Methods Configs
             id.label: Id
             method.label: Method
             options.label: Options
-            rule.label: Rule
+            methodConfigsRule.label: Shipping Rule
             type_configs.label: Types
-        shippingrulemethodtypeconfig:
+        shippingmethodtypeconfig:
             entity_label: Shipping Rule Method Type Config
             entity_plural_label: Shipping Rule Method Types Configs
             id.label: Id

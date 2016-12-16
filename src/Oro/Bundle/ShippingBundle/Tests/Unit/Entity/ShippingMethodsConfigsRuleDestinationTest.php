@@ -11,7 +11,7 @@ use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestinationPostal
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class ShippingMethodConfigsRuleDestinationTest extends \PHPUnit_Framework_TestCase
+class ShippingMethodsConfigsRuleDestinationTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTestCaseTrait;
     use EntityTrait;

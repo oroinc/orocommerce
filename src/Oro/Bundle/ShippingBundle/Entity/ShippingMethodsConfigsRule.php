@@ -225,7 +225,7 @@ class ShippingMethodsConfigsRule extends ExtendShippingMethodsConfigsRule implem
     {
         if (!$this->destinations->contains($destination)) {
             $this->destinations->add($destination);
-            $destination->setRule($this);
+            $destination->setMethodConfigsRule($this);
         }
 
         return $this;
