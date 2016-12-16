@@ -8,13 +8,6 @@ parameters:
     oro_payment.entity.payment_status.class: Oro\Bundle\PaymentBundle\Entity\PaymentStatus
 
 services:
-    oro_order.order.manager.api:
-        class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
-        parent: oro_soap.manager.entity_manager.abstract
-        arguments:
-            - '%oro_order.entity.order.class%'
-            - '@doctrine.orm.entity_manager'
-
     oro_order.order.entity.id_generator:
         class: 'Oro\Bundle\OrderBundle\Doctrine\ORM\Id\SimpleEntityAwareGenerator'
         public: false
@@ -97,7 +90,7 @@ services:
     oro_order.handler.order_currency_handler:
         class: 'Oro\Bundle\OrderBundle\Handler\OrderCurrencyHandler'
         arguments:
-            - '@oro_locale.settings'
+            - '@oro_currency.config.currency'
 
     oro_order.handler.order_totals_handler:
         class: 'Oro\Bundle\OrderBundle\Handler\OrderTotalsHandler'

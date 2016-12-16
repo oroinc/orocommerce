@@ -12,7 +12,8 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\ActionBundle\Model\ActionData;
-use Oro\Bundle\ActionBundle\Model\OperationManager;
+use Oro\Bundle\ActionBundle\Model\ActionGroup;
+use Oro\Bundle\ActionBundle\Model\ActionGroupRegistry;
 use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatter;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
@@ -21,30 +22,23 @@ class QuickAddCheckoutProcessor extends AbstractShoppingListQuickAddProcessor
 {
     const NAME = 'oro_shopping_list_to_checkout_quick_add_processor';
 
-    /**
-     * @var ShoppingListManager
-     */
+    /** @var ShoppingListManager */
     protected $shoppingListManager;
 
-    /**
-     * @var OperationManager
-     */
-    protected $operationManager;
+    /** @var ActionGroupRegistry */
+    protected $actionGroupRegistry;
 
-    /**
-     * @var TranslatorInterface
-     */
+    /** @var TranslatorInterface */
     protected $translator;
 
-    /**
-     * @var DateTimeFormatter
-     */
+    /** @var DateTimeFormatter */
     protected $dateFormatter;
 
-    /**
-     * @var string
-     */
-    protected $operationName;
+    /** @var string */
+    protected $actionGroupName;
+
+    /** @var ActionGroup|null */
+    protected $actionGroup = false;
 
     /**
      * @param ShoppingListManager $shoppingListManager
@@ -58,12 +52,12 @@ class QuickAddCheckoutProcessor extends AbstractShoppingListQuickAddProcessor
     }
 
     /**
-     * @param OperationManager $operationManager
+     * @param ActionGroupRegistry $actionGroupRegistry
      * @return QuickAddCheckoutProcessor
      */
-    public function setOperationManager(OperationManager $operationManager)
+    public function setActionGroupRegistry(ActionGroupRegistry $actionGroupRegistry)
     {
-        $this->operationManager = $operationManager;
+        $this->actionGroupRegistry = $actionGroupRegistry;
 
         return $this;
     }
@@ -91,14 +85,22 @@ class QuickAddCheckoutProcessor extends AbstractShoppingListQuickAddProcessor
     }
 
     /**
-     * @param string $operationName
+     * @param string $groupName
      * @return QuickAddCheckoutProcessor
      */
-    public function setOperationName($operationName)
+    public function setActionGroupName($groupName)
     {
-        $this->operationName = $operationName;
+        $this->actionGroupName = $groupName;
 
         return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isAllowed()
+    {
+        return parent::isAllowed() && null !== $this->getActionGroup();
     }
 
     /**
@@ -124,9 +126,9 @@ class QuickAddCheckoutProcessor extends AbstractShoppingListQuickAddProcessor
         /** @var Session $session */
         $session = $request->getSession();
         if ($entitiesCount = $this->fillShoppingList($shoppingList, $data)) {
-            $actionData = new ActionData(['data' => $shoppingList]);
+            $actionData = new ActionData(['shoppingList' => $shoppingList]);
             $errors = new ArrayCollection([]);
-            $actionData = $this->operationManager->execute($this->operationName, $actionData, $errors);
+            $actionData = $this->getActionGroup()->execute($actionData, $errors);
 
             if ($redirectUrl = $actionData->getRedirectUrl()) {
                 $em->commit();
@@ -170,5 +172,17 @@ class QuickAddCheckoutProcessor extends AbstractShoppingListQuickAddProcessor
             'oro.frontend.shoppinglist.quick_order.default_label',
             ['%date%' => $formatterDate]
         );
+    }
+
+    /**
+     * @return ActionGroup
+     */
+    protected function getActionGroup()
+    {
+        if (false === $this->actionGroup) {
+            $this->actionGroup = $this->actionGroupRegistry->findByName($this->actionGroupName);
+        }
+
+        return $this->actionGroup;
     }
 }

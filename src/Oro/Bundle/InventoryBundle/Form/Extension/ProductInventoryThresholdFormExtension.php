@@ -39,6 +39,7 @@ class ProductInventoryThresholdFormExtension extends AbstractTypeExtension
             EntityFieldFallbackValueType::NAME,
             [
                 'label' => 'oro.inventory.inventory_threshold.label',
+                'required' => false,
                 'value_options' => [
                     'constraints' => [new Decimal()]
                 ]

@@ -30,11 +30,10 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  *      routeView="oro_order_view",
  *      routeCreate="oro_order_create",
  *      routeUpdate="oro_order_update",
- *      routeCommerceName="oro_order_frontend_index",
  *      routeCommerceView="oro_order_frontend_view",
  *      defaultValues={
  *          "entity"={
- *              "icon"="icon-briefcase"
+ *              "icon"="fa-briefcase"
  *          },
  *          "ownership"={
  *              "owner_type"="USER",

@@ -7,7 +7,7 @@ operations:
         acl_resource: ['CREATE', 'entity:Oro\Bundle\PricingBundle\Entity\ProductPrice']
 
         button_options:
-            icon: icon-plus
+            icon: fa-plus
 
         frontend_options:
             template: OroPricingBundle:Action:addProductPrice.html.twig
@@ -73,7 +73,7 @@ operations:
             - pricing-price-list-grid
         order: 10
         button_options:
-            icon: icon-ok
+            icon: fa-check
         preconditions:
             '@equal': [$active, false]
         actions:
@@ -100,7 +100,7 @@ operations:
             - pricing-price-list-grid
         order: 10
         button_options:
-            icon: icon-remove
+            icon: fa-close
         preconditions:
             '@equal': [$active, true]
         actions:
@@ -123,13 +123,13 @@ operations:
         routes: [oro_pricing_price_list_view]
         order: 10
         button_options:
-            icon: icon-copy
+            icon: fa-files-o
         actions:
             - '@format_string':
                 attribute: $.newName
                 string: 'Copy of %%priceListName%%'
                 arguments:
-                    priceListName: $.entity.name
+                    priceListName: $.data.name
             - '@duplicate':
                 attribute: $.newPriceList
                 settings:
@@ -147,16 +147,16 @@ operations:
             - '@call_service_method':
                 service: oro_pricing.duplicator.schedule
                 method: duplicateSchedule
-                method_parameters: [$.entity,$.newPriceList]
+                method_parameters: [$.data,$.newPriceList]
             - '@flush_entity': $.newPriceList
             - '@call_service_method':
                 service: oro_pricing.duplicator.price_list_to_product_duplicator
                 method: duplicate
-                method_parameters: [$.entity, $.newPriceList]
+                method_parameters: [$.data, $.newPriceList]
             - '@call_service_method':
                 service: oro_pricing.duplicator.product_price_duplicator
                 method: duplicate
-                method_parameters: [$.entity, $.newPriceList]
+                method_parameters: [$.data, $.newPriceList]
             - '@flash_message':
                 message: oro.pricing.pricelist.duplicate.message
                 type: 'success'
@@ -181,7 +181,7 @@ operations:
         routes: [oro_pricing_price_list_view]
         order: 10
         button_options:
-            icon: icon-money
+            icon: fa-money
         actions:
             - '@call_service_method':
                 service: 'oro_pricing.builder.price_list_product_assignment_builder'

@@ -121,6 +121,7 @@ oro:
                 last_updated.label: 'Last Updated'
                 show_more.label: 'Show More'
             view:
+                owner.label: Customer
                 view_options.label: View Options for this Shopping List
                 add_note.label: Add a Note to This Shopping List
                 add_note.placeholder: Enter your note

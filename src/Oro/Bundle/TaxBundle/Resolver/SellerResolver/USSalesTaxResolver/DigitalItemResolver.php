@@ -19,7 +19,7 @@ class DigitalItemResolver implements ResolverInterface
             return;
         }
 
-        if (!$taxable->getPrice()) {
+        if (!$taxable->getPrice()->isPositive()) {
             return;
         }
 

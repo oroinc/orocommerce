@@ -10,10 +10,15 @@ use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareInterfac
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
+use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\MigrationBundle\Migration\SqlSchemaUpdateMigrationQuery;
 
-class OroShoppingListBundle implements Migration, RenameExtensionAwareInterface, DatabasePlatformAwareInterface
+class OroShoppingListBundle implements
+    Migration,
+    RenameExtensionAwareInterface,
+    DatabasePlatformAwareInterface,
+    OrderedMigrationInterface
 {
     /**
      * @var RenameExtension
@@ -60,6 +65,17 @@ class OroShoppingListBundle implements Migration, RenameExtensionAwareInterface,
         );
 
         $queries->addPostQuery(new RenameConfigSectionQuery('oro_b2b_shopping_list', 'oro_shopping_list'));
+    }
+
+    /**
+     * Should be executed before:
+     * @see \Oro\Bundle\ShoppingListBundle\Migrations\Schema\v1_3\MigrateNotes
+     *
+     * {@inheritdoc}
+     */
+    public function getOrder()
+    {
+        return 0;
     }
 
     /**

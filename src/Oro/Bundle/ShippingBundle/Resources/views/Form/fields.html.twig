@@ -135,7 +135,7 @@
                     {% endif %}
                 </tbody>
             </table>
-            <a class="btn add-list-item" data-container=".product-shipping-options-collection tbody" href="javascript: void(0);"><i class="icon-plus"></i>{{ 'oro.shipping.product_shipping_options.add_label'|trans }}</a>
+            <a class="btn add-list-item" data-container=".product-shipping-options-collection tbody" href="javascript: void(0);"><i class="fa-plus"></i>{{ 'oro.shipping.product_shipping_options.add_label'|trans }}</a>
         </div>
     </div>
 {% endblock %}
@@ -153,7 +153,7 @@
         data-page-component-module="oroshipping/js/app/components/product-shipping-freight-classes-component">
         {{ form_widget(form) }}
         <td class="product-shipping-options-remove">
-            <button type="button" class="removeRow btn icons-holder remove-list-item" data-related="{{ name }}"><i class="icon-remove"></i></button>
+            <button type="button" class="removeRow btn icons-holder remove-list-item" data-related="{{ name }}"><i class="fa-close"></i></button>
         </td>
     </tr>
 {% endmacro %}

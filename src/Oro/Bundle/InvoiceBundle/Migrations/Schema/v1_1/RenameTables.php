@@ -7,9 +7,10 @@ use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
+use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class RenameTables implements Migration, RenameExtensionAwareInterface
+class RenameTables implements Migration, RenameExtensionAwareInterface, OrderedMigrationInterface
 {
     /**
      * @var RenameExtension
@@ -28,6 +29,17 @@ class RenameTables implements Migration, RenameExtensionAwareInterface
 
         $schema->getTable('orob2b_invoice')->dropIndex('orob2b_invoice_created_at_index');
         $extension->addIndex($schema, $queries, 'oro_invoice', ['created_at'], 'oro_invoice_created_at_index');
+    }
+
+    /**
+     * Should be executed before:
+     * @see \Oro\Bundle\InvoiceBundle\Migrations\Schema\v1_1\MigrateNotes
+     *
+     * {@inheritdoc}
+     */
+    public function getOrder()
+    {
+        return 0;
     }
 
     /**

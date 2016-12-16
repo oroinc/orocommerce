@@ -41,6 +41,7 @@ class PriceListType extends AbstractType
                 [
                     'multiple' => true,
                     'required' => true,
+                    'full_currency_name' => true,
                     'label' => 'oro.pricing.pricelist.currencies.label',
                     'additional_currencies' => $priceList ? $priceList->getCurrencies() : [],
                 ]
