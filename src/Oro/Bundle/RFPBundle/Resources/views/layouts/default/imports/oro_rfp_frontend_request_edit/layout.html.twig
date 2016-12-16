@@ -80,16 +80,11 @@
     </div>
 {% endblock %}
 
-{% block __oro_rfp_frontend_request_edit__rfp_form_actions_create_widget %}
-    <div class="request-form-actions__item">
-        {{ block_widget(block) }}
-    </div>
-{% endblock %}
-
 {% block __oro_rfp_frontend_request_edit__rfp_form_actions_back_widget %}
-    <div class="request-form-actions__item request-form-actions__back">
-        {{ block_widget(block) }}
-    </div>
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " btn"
+    }) %}
+    {{ block_widget(block, {attr: attr}) }}
 {% endblock %}
 
 {% block __oro_rfp_frontend_request_edit__rfp_form_lineitems_container_widget %}
@@ -97,11 +92,60 @@
          data-page-component-options="{{ {
              view: 'ororfp/js/app/views/line-items-view',
              tierPrices: tierPrices|default({}),
-             tierPricesRoute: 'oro_pricing_frontend_price_by_account',
-             currency: "USD"
+             tierPricesRoute: 'oro_pricing_frontend_price_by_account'
          }|json_encode }}"
          data-layout="separate"
     >
         {{ block_widget(block) }}
     </div>
+{% endblock %}
+
+{% block __oro_rfp_frontend_request_edit__rfp_form_lineitems_view_js_widget %}
+    <script type="text/template" id="rfp-form-line-item-view-template">
+        <div class="request-form-product__inner">
+            <div class="request-form-product__item request-form-product__item--link">
+                <span class="request-form-link"><%= product['defaultName.string'] %></span>
+            </div>
+            <div class="request-form-product__item request-form-product__item--quantity">
+                <% _.each(lines, function(line){ %>
+                <span class="request-form-quantity">
+                    <span class="request-form-quantity__label">{{ 'oro.rfp.frontend.request.lineitem.qty'|trans|e('html')|raw }}:</span>
+                    <span class="request-form-quantity__total"><%= line.quantity %></span>
+                    <span class="request-form-quantity__units"><%= line.unit %></span>
+                </span><br/>
+                <% }) %>
+            </div>
+            <div class="request-form-product__item request-form-product__item--amount">
+                <% _.each(lines, function(line){ %>
+                <dl class="request-form-amount">
+                    <dt class="request-form-amount__piece">
+                        <span class="request-form-amount__label">{{ 'oro.rfp.requestproductitem.price.label'|trans|e('html')|raw }}</span>
+                        <span class="request-form-amount__total"><%= formatter.formatCurrency(line.price) %></span>
+                    </dt>
+                </dl>
+                <% }) %>
+            </div>
+            <div class="request-form-product__item request-form-product__item--target">
+                <% _.each(lines, function(line){ %>
+                <dl class="request-form-amount">
+                    <dt class="request-form-amount__piece">
+                        <span class="request-form-amount__label">{{ 'oro.pricing.frontend.pricelist.index.listed_price'|trans|e('html')|raw }}</span>
+                        <span class="request-form-amount__total">
+                        <% if (line.found_price) { %>
+                            <%= formatter.formatCurrency(line.found_price.price) %>
+                        <% } else { %>
+                            <%= _.__("N/A") %>
+                        <% } %>
+                        </span>
+                    </dt>
+                </dl>
+                <% }) %>
+            </div>
+            <% if (!_.isEmpty(_.trim(comment)) ){ %>
+            <div class="request-form-product__item request-form-product__item--comment">
+                <p class="request-form-note">Note: <%= comment %></p>
+            </div>
+            <% } %>
+        </div>
+    </script>
 {% endblock %}

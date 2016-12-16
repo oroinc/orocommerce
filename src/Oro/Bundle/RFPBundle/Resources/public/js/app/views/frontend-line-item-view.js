@@ -13,7 +13,7 @@ define(function(require) {
             lineItem: '[data-role="line-item"]',
             editView: '[data-role="line-item-edit"]',
             viewView: '[data-role="line-item-view"]',
-            template: ['viewView', '[data-role="template"]'],
+            template: ['$html', '#rfp-form-line-item-view-template'],
             edit: '[data-role="edit"]',
             update: '[data-role="update"]',
             decline: '[data-role="decline"]',
@@ -30,6 +30,8 @@ define(function(require) {
             update: ['click', 'update'],
             decline: ['click', 'decline']
         },
+
+        formState: null,
 
         initialize: function(options) {
             FrontendLineItemView.__super__.initialize.apply(this, arguments);
@@ -74,13 +76,13 @@ define(function(require) {
 
         edit: function(e) {
             e.preventDefault();
-            this.saveModelAttributes();
+            this.saveFormState();
             this.editMode();
         },
 
         decline: function(e) {
             e.preventDefault();
-            this.revertModelAttributes();
+            this.revertChanges();
             this.viewMode();
         },
 
@@ -135,14 +137,21 @@ define(function(require) {
             return isValid;
         },
 
-        saveModelAttributes: function() {
-            //this.modelAttributesBackup = _.clone(this.model.attributes);
+        saveFormState: function() {
+            this.formState = {};
+            this.$el.find(':input[data-name]').each(_.bind(function(i, el) {
+                this.formState[el.name] = el.value;
+            }, this));
         },
 
-        revertModelAttributes: function() {
-            //if (this.model.changedAttributes(this.modelAttributesBackup)) {
-           //     this.model.set(this.modelAttributesBackup);
-          //  }
+        revertChanges: function() {
+            this.$el.find(':input[data-name]').each(_.bind(function(i, el) {
+                var value = this.formState[el.name];
+                if (value !== undefined && el.value !== value) {
+                    el.value = value;
+                    $(el).change();
+                }
+            }, this));
         }
     }));
 

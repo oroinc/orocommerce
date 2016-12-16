@@ -102,9 +102,7 @@
 
         <div class="request-form-product hidden" data-role="line-item-view">
             <div class="request-form-product__inner">
-                <div data-role="content">
-                    {% include 'OroRFPBundle:Js:line_item_templates.js.twig' %}
-                </div>
+                <div data-role="content"></div>
                 <div class="request-form-product__item request-form-product__item--actions">
                     <ul class="actions-row">
                         <li class="actions-row__item actions-row__item--edit">
@@ -114,7 +112,7 @@
                         </li>
                         <li class="actions-row__item actions-row__item--separate">|</li>
                         <li class="actions-row__item actions-row__item--remove">
-                            <button class="actions-row__button" title="Delete">
+                            <button class="actions-row__button removeRow" title="Delete">
                                 <i class="actions-row__icon fa-trash"></i>
                             </button>
                         </li>
@@ -152,10 +150,10 @@
             <div class="request-form-editline__action">
                 <div class="request-form-group">
                     <div class="request-form-group__item">
-                        <button type="button" class="btn btn-gray" data-role="decline">{{ 'oro.rfp.frontend.request.lineitem.cancel'|trans }}</button>
+                        <button type="button" class="btn" data-role="decline">{{ 'Cancel'|trans }}</button>
                     </div>
                     <div class="request-form-group__item">
-                        <button type="button" class="btn btn-orange" data-role="update">{{ 'oro.rfp.frontend.request.lineitem.update'|trans }}</button>
+                        <button type="button" class="btn btn--info" data-role="update">{{ 'Update'|trans }}</button>
                     </div>
                 </div>
             </div>
@@ -375,7 +373,7 @@
     </tr>
 {% endmacro %}
 
-{% block oro_rfp_request_product_item_widget %}
+{% block _oro_rfp_frontend_request_requestProducts_entry_requestProductItems_entry_widget %}
     {% use "OroPricingBundle:layouts/default:layout.html.twig" %}
     <div class="request-form-lineitem-unit request-form-lineitem-unit--size-s">
         {{ form_widget(form.quantity) }}
@@ -401,14 +399,18 @@
         data-layout="separate"
     >
         {% set label = 'List prices' %}
-        {{ block('product_price_hint_content_js_widget') }}
-        {{ block('product_price_hint_js_widget') }}
+        <script type="text/template" data-name="prices-hint-content">
+            {{ block('product_price_hint_content_js_widget') }}
+        </script>
+        <script type="text/template" data-name="prices-hint">
+            {{ block('product_price_hint_js_widget') }}
+        </script>
         {% set input_price = layout_attr_defaults(form.price.value.vars.attr, {
             '~class': 'request-form-lineitem-unit__input'
         }) %}
 
         {{ 'oro.rfp.requestproductitem.price.label'|trans }}: {{ form_widget(form.price.value, {attr: input_price}) }}
-        {{ form_widget(form.price.currency) }}
+        <div class="hidden">{{ form_widget(form.price.currency) }}</div>
         {{ form_errors(form.price) }}
     </div>
     {% set attr_price = layout_attr_defaults(attr, {
@@ -421,6 +423,25 @@
         {{ form_widget(form.price.currency, {attr: attr_currency}) }}
         {{ form_errors(form.price.currency) }}
     </div>
+{% endblock %}
+
+{% block oro_rfp_request_product_item_widget %}
+    <td class="rfp-lineitem-requested-quantity">
+        {{ form_widget(form.quantity) }}
+        {{ form_errors(form.quantity) }}
+    </td>
+    <td class="rfp-lineitem-requested-unit">
+        {{ form_widget(form.productUnit, {attr: attr|merge({class: 'rfp-requestproductitem-productunit-select'})}) }}
+        {{ form_errors(form.productUnit) }}
+    </td>
+    <td class="rfp-lineitem-requested-price">
+        {{ form_widget(form.price.value) }}
+        {{ form_errors(form.price.value) }}
+    </td>
+    <td class="rfp-lineitem-requested-currency">
+        {{ form_widget(form.price.currency) }}
+        {{ form_errors(form.price.currency) }}
+    </td>
 {% endblock %}
 
 {% block _oro_order_type_lineItems_entry_offers_widget %}

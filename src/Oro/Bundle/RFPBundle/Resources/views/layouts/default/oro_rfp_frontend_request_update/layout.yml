@@ -4,25 +4,16 @@ layout:
             id: oro_rfp_frontend_request_edit
             root: page_content
     actions:
-        - '@setBlockTheme':
-            themes: 'layout.html.twig'
-
         - '@setOption':
-            id: title
-            optionName: params
-            optionValue:
-                '%id%': '=data["entity"].getId()'
-
-        - '@setOption':
-            id: oro_rfp_request_form_title
+            id: page_title
             optionName: text
             optionValue:
                 label: 'oro.frontend.rfp.request.edit_title.label'
                 parameters:
                     '%id%': '=data["entity"].getId()'
 
-        - '@add':
-            id: oro_rfp_request_form_title
-            parentId: content
-            prepend: true
-            blockType: text
+        - '@setOption':
+            id: title
+            optionName: params
+            optionValue:
+                '%id%': '=data["entity"].getId()'

@@ -35,15 +35,12 @@ layout:
                     options:
                         path: '=data["backToUrl"]'
                         text: oro.frontend.rfp.request.create_form.back.label
-                        icon: left-open-mini
                 __rfp_form_actions_create:
                     blockType: button
                     options:
                         action: submit
                         text: oro.frontend.rfp.request.create_form.send.label
                         style: auto
-                        attr:
-                            class: 'btn--size-l '
             tree:
                 __root:
                     __rfp_form_start: ~
@@ -52,10 +49,15 @@ layout:
                     __rfp_form_lineitems_container:
                         __rfp_form_lineitems: ~
                     __rfp_form_actions:
-                        __rfp_form_actions_back: ~
                         __rfp_form_actions_create: ~
+                        __rfp_form_actions_back: ~
                     __rfp_form_end: ~
         - '@appendOption':
             id: rfp_form_lineitems_container
             optionName: vars.tierPrices
             optionValue: '=data["oro_rfp_product_prices"].getPrices(data["entity"])'
+
+        - '@add':
+            id: __rfp_form_lineitems_view_js
+            parentId: head
+            blockType: block
