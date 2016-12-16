@@ -36,31 +36,55 @@ class ProductSearchIndexListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getLocalizationsByWebsiteId')
             ->willReturn($localizations);
 
-        $event->expects($this->exactly(4))
+        $event->expects($this->exactly(8))
             ->method('addPlaceholderField')
             ->withConsecutive(
                 [
                     1,
                     'all_text_LOCALIZATION_ID',
-                    'Polish meta description Polish meta keywords',
+                    'Polish meta description',
                     [LocalizationIdPlaceholder::NAME => 1],
                 ],
                 [
                     1,
                     'all_text_LOCALIZATION_ID',
-                    'English meta description English meta keywords',
+                    'Polish meta keywords',
+                    [LocalizationIdPlaceholder::NAME => 1],
+                ],
+                [
+                    1,
+                    'all_text_LOCALIZATION_ID',
+                    'English meta description',
+                    [LocalizationIdPlaceholder::NAME => 2],
+                ],
+                [
+                    1,
+                    'all_text_LOCALIZATION_ID',
+                    'English meta keywords',
                     [LocalizationIdPlaceholder::NAME => 2],
                 ],
                 [
                     2,
                     'all_text_LOCALIZATION_ID',
-                    'Polish meta description Polish meta keywords',
+                    'Polish meta description',
                     [LocalizationIdPlaceholder::NAME => 1],
                 ],
                 [
                     2,
                     'all_text_LOCALIZATION_ID',
-                    'English meta description English meta keywords',
+                    'Polish meta keywords',
+                    [LocalizationIdPlaceholder::NAME => 1],
+                ],
+                [
+                    2,
+                    'all_text_LOCALIZATION_ID',
+                    'English meta description',
+                    [LocalizationIdPlaceholder::NAME => 2],
+                ],
+                [
+                    2,
+                    'all_text_LOCALIZATION_ID',
+                    'English meta keywords',
                     [LocalizationIdPlaceholder::NAME => 2],
                 ]
             );

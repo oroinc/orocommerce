@@ -4,6 +4,8 @@ namespace Oro\Bundle\ProductBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
 
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtension;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Entity\ConfigModel;
@@ -13,8 +15,6 @@ use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
-use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
 use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtension;
 use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtensionAwareInterface;
 
@@ -24,7 +24,7 @@ use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtensionAwareInterface;
 class OroProductBundleInstaller implements
     Installation,
     ExtendExtensionAwareInterface,
-    NoteExtensionAwareInterface,
+    ActivityExtensionAwareInterface,
     AttachmentExtensionAwareInterface,
     SlugExtensionAwareInterface
 {
@@ -44,11 +44,11 @@ class OroProductBundleInstaller implements
     /** @var ExtendExtension */
     protected $extendExtension;
 
-    /** @var NoteExtension */
-    protected $noteExtension;
-
     /** @var AttachmentExtension */
     protected $attachmentExtension;
+
+    /** @var  ActivityExtension */
+    protected $activityExtension;
 
     /**
      * @var SlugExtension
@@ -82,9 +82,9 @@ class OroProductBundleInstaller implements
     /**
      * {@inheritdoc}
      */
-    public function setNoteExtension(NoteExtension $noteExtension)
+    public function setActivityExtension(ActivityExtension $activityExtension)
     {
-        $this->noteExtension = $noteExtension;
+        $this->activityExtension = $activityExtension;
     }
 
     /**
@@ -352,7 +352,7 @@ class OroProductBundleInstaller implements
      */
     protected function addNoteAssociations(Schema $schema)
     {
-        $this->noteExtension->addNoteAssociation($schema, self::PRODUCT_TABLE_NAME);
+        $this->activityExtension->addActivityAssociation($schema, 'oro_note', self::PRODUCT_TABLE_NAME);
     }
 
     /**

@@ -78,27 +78,6 @@ class WebsiteSearchCategoryIndexerListener
                 $event->addField($product->getId(), 'category_id', $category->getId());
                 $event->addField($product->getId(), 'category_path', $category->getMaterializedPath());
 
-                $placeholders = [LocalizationIdPlaceholder::NAME => Localization::DEFAULT_LOCALIZATION];
-                $event->addPlaceholderField(
-                    $product->getId(),
-                    IndexDataProvider::ALL_TEXT_L10N_FIELD,
-                    (string)$category->getDefaultTitle(),
-                    $placeholders
-                );
-                $event->addPlaceholderField(
-                    $product->getId(),
-                    IndexDataProvider::ALL_TEXT_L10N_FIELD,
-                    (string)$category->getDefaultLongDescription(),
-                    $placeholders
-                );
-
-                $event->addPlaceholderField(
-                    $product->getId(),
-                    IndexDataProvider::ALL_TEXT_L10N_FIELD,
-                    (string)$category->getDefaultShortDescription(),
-                    $placeholders
-                );
-
                 // Localized fields
                 foreach ($localizations as $localization) {
                     $placeholders = [LocalizationIdPlaceholder::NAME => $localization->getId()];
@@ -107,21 +86,24 @@ class WebsiteSearchCategoryIndexerListener
                         $product->getId(),
                         IndexDataProvider::ALL_TEXT_L10N_FIELD,
                         (string)$category->getTitle($localization),
-                        $placeholders
+                        $placeholders,
+                        true
                     );
 
                     $event->addPlaceholderField(
                         $product->getId(),
                         IndexDataProvider::ALL_TEXT_L10N_FIELD,
                         (string)$category->getLongDescription($localization),
-                        $placeholders
+                        $placeholders,
+                        true
                     );
 
                     $event->addPlaceholderField(
                         $product->getId(),
                         IndexDataProvider::ALL_TEXT_L10N_FIELD,
                         (string)$category->getShortDescription($localization),
-                        $placeholders
+                        $placeholders,
+                        true
                     );
                 }
             }
