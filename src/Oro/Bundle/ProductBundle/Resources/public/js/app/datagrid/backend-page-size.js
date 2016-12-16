@@ -2,6 +2,8 @@ define(function(require) {
     'use strict';
 
     var BackendPageSize;
+    var $ = require('jquery');
+    var _ = require('underscore');
     var PageSize = require('orodatagrid/js/datagrid/page-size');
 
     BackendPageSize = PageSize.extend({
@@ -11,6 +13,9 @@ define(function(require) {
             el: '[data-grid-pagesize]'
         },
 
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             options = options || {};
 
@@ -33,9 +38,11 @@ define(function(require) {
             BackendPageSize.__super__.initialize.call(this, options);
         },
 
+        /**
+         * @inheritDoc
+         */
         render: function() {
-
-
+            var $select = this.$el.find('[data-grid-pagesize-selector]');
             var currentSizeLabel = _.filter(
                 this.items,
                 _.bind(
@@ -47,19 +54,13 @@ define(function(require) {
                 )
             );
 
-            if (currentSizeLabel.length > 0) {
-                currentSizeLabel = _.isUndefined(currentSizeLabel[0].label) ?
-                    currentSizeLabel[0] : currentSizeLabel[0].label;
-            } else {
-                currentSizeLabel = this.items[0];
-            }
+            $select
+                .find('option')
+                .removeAttr('selected', false)
+                .filter('[value=' + currentSizeLabel[0] +']')
+                .attr('selected', true);
 
-            //this.$el.append($(this.template({
-            //    disabled: !this.enabled || !this.collection.state.totalRecords,
-            //    collectionState: this.collection.state,
-            //    items: this.items,
-            //    currentSizeLabel: currentSizeLabel
-            //})));
+            $select.trigger('change');
 
             if (this.hidden) {
                 this.$el.hide();

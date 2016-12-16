@@ -61,7 +61,7 @@ define(function(require) {
             $pagination.attr('class', this.$(this.selector.pagination).attr('class'));
 
             this.$(this.selector.pagination).replaceWith($pagination);
-           // this.$(this.selector.pagesize).append(this.subviews.pageSize.render().$el);
+            this.$(this.selector.pagesize).append(this.subviews.pageSize.render().$el);
             this.$(this.selector.actionsPanel).append(this.subviews.actionsPanel.render().$el);
 
             this.$(this.selector.itemsCounter).replaceWith(this.subviews.itemsCounter.render().$el);

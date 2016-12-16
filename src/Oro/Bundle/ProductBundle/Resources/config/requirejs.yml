@@ -26,6 +26,7 @@ config:
         'oroproduct/js/app/datagrid/backend-toolbar': 'bundles/oroproduct/js/app/datagrid/backend-toolbar'
         'oroproduct/js/app/datagrid/backend-pagination': 'bundles/oroproduct/js/app/datagrid/backend-pagination'
         'oroproduct/js/app/datagrid/backend-page-size': 'bundles/oroproduct/js/app/datagrid/backend-page-size'
+        'oroproduct/js/app/datagrid/backend-pageable-collection': 'bundles/oroproduct/js/app/datagrid/backend-pageable-collection'
         'oroproduct/js/app/datagrid/sorting/backend-dropdown': 'bundles/oroproduct/js/app/datagrid/sorting/backend-dropdown'
 
 

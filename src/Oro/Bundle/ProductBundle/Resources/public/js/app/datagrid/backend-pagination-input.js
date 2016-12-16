@@ -12,10 +12,33 @@ define(function(require) {
             el: '[data-grid-pagination]'
         },
 
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             BackendPaginationInput.__super__.initialize.apply(this, arguments);
         },
 
+        makeHandles: function(handles) {
+            handles = BackendPaginationInput.__super__.makeHandles.apply(this, arguments);
+
+            _.each(handles, function(index) {
+                var $arrow = this.$el.find('[data-grid-pagination-direction=' + index.direction +']');
+
+                if ($arrow.length) {
+                    if (index.className || !this.enabled) {
+                        $arrow.addClass('disabled');
+                    } else {
+                        $arrow.removeClass('disabled');
+                    }
+                }
+            }, this);
+
+            return handles;
+        },
+        /**
+         * @inheritDoc
+         */
         render: function() {
             var state = this.collection.state;
 
@@ -24,11 +47,20 @@ define(function(require) {
                 return this;
             }
 
+            this.makeHandles();
+
+            this.$el.find('[data-grid-pagination-pages]').text(state.totalPages || 1);
+            this.$el.find('[data-grid-pagination-records]').text(state.totalRecords);
+            this.$('input')
+                .val(state.firstPage === 0 ? state.currentPage + 1 : state.currentPage)
+                .attr('disabled', !this.enabled || !state.totalRecords)
+                .numeric({decimal: false, negative: false});
+
             if (this.hidden) {
                 this.$el.hide();
             }
 
-            this.$('input').numeric({decimal: false, negative: false});
+
 
             return this;
         }

@@ -1,7 +1,7 @@
 define(function(require) {
     'use strict';
-    var BackendGrid;
 
+    var BackendGrid;
     var _ = require('underscore');
     var mediator = require('oroui/js/mediator');
     var Grid = require('orodatagrid/js/datagrid/grid');
@@ -25,15 +25,28 @@ define(function(require) {
             this.body = null;
 
             mediator.on('grid-content-loaded', function(params) {
-                this.themeOptions.serverRendered = true;
-                this.trigger('content:update');
-                this.$el.find('.grid-body').html(params.content.html());
-
-                this.collection.reset(params.collection);
-                this.backgridRefresh();
+                this.updateGridContent(params);
              }, this);
 
             BackendGrid.__super__.initialize.apply(this, arguments);
+        },
+
+        /**
+         * Update grid content after load new content
+         *
+         * @param {object} params
+         */
+        updateGridContent: function(params) {
+            this.hideLoading();
+
+            this.themeOptions.serverRendered = true;
+
+            this.$el.find('.grid-body').html(params.gridContent.html());
+
+            this.collection.reset(params.data);
+            mediator.trigger('grid_load:complete', this.collection, this.$el);
+            this.initLayout();
+            this.trigger('content:update');
         },
 
         /**
@@ -76,9 +89,24 @@ define(function(require) {
             }, this));
 
             this.rendered = true;
+            var self = this;
 
             this.switchAppearanceClass(_.result(this.metadata.state, 'appearanceType'));
+
+            this.collection.on('gridContentUpdate', function() {
+                self.showLoading();
+            });
             return this;
+        },
+
+        /**
+         * @param {string} column
+         * @param {null|"ascending"|"descending"} direction
+         */
+        sort: function(column, direction) {
+            this.showLoading();
+
+            BackendGrid.__super__.sort.apply(this, arguments);
         }
     });
 
