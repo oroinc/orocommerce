@@ -2,43 +2,40 @@
 
 namespace Oro\Bundle\ShippingBundle\Entity\Repository;
 
-use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 
-class ShippingRuleRepository extends EntityRepository
+class ShippingMethodsConfigsRuleRepository extends EntityRepository
 {
     /**
      * @param string $currency
      * @param string $countryIso2Code
-     * @return ShippingRule[]
+     * @return ShippingMethodsConfigsRule[]
      */
-    public function getEnabledOrderedRulesByCurrencyAndCountry($currency, $countryIso2Code)
+    public function getByCurrencyAndCountry($currency, $countryIso2Code)
     {
-        return $this->createQueryBuilder('rule')
+        return $this->createQueryBuilder('methodsConfigsRule')
             ->addSelect('methodConfigs', 'typeConfigs')
             ->leftJoin(
-                'rule.destinations',
+                'methodsConfigsRule.destinations',
                 'destinations',
                 'WITH',
-                'destinations.rule = rule and destinations.country = :country'
+                'destinations.methodsConfigsRule = methodsConfigsRule and destinations.country = :country'
             )
-            ->leftJoin('rule.destinations', 'nullDestinations')
-            ->leftJoin('rule.methodConfigs', 'methodConfigs')
+            ->leftJoin('methodsConfigsRule.destinations', 'nullDestinations')
+            ->leftJoin('methodsConfigsRule.methodConfigs', 'methodConfigs')
             ->leftJoin('methodConfigs.typeConfigs', 'typeConfigs')
-            ->where('rule.currency = :currency')
-            ->andWhere('rule.enabled = true')
+            ->where('methodsConfigsRule.currency = :currency')
             ->andWhere('nullDestinations.id is null or destinations.id is not null')
             ->setParameter('country', $countryIso2Code)
             ->setParameter('currency', $currency)
-            ->orderBy('rule.priority')
-            ->addOrderBy('rule.id')
             ->getQuery()->execute();
     }
 
     /**
      * @param bool $onlyEnabled
      * @return mixed
+     * TODO: refactor in BB-6393
      */
     public function getRulesWithoutShippingMethods($onlyEnabled = false)
     {
@@ -53,6 +50,9 @@ class ShippingRuleRepository extends EntityRepository
                   ->getQuery()->execute();
     }
 
+    /**
+     * TODO: refactor in BB-6393
+     */
     public function disableRulesWithoutShippingMethods()
     {
         $rules = $this->getRulesWithoutShippingMethods(true);
@@ -66,24 +66,5 @@ class ShippingRuleRepository extends EntityRepository
                 ->setParameter('rules', $enabledRulesIds)
                 ->getQuery()->execute();
         }
-    }
-
-    /**
-     * @return \DateTime|null
-     */
-    public function getLastUpdateAt()
-    {
-        $updatedAt = $this->createQueryBuilder('s')
-            ->select('s.updatedAt')
-            ->orderBy('s.updatedAt', Criteria::DESC)
-            ->setMaxResults(1)
-            ->getQuery()
-            ->execute();
-
-        if (count($updatedAt) === 1) {
-            $updatedAt = reset($updatedAt);
-            return $updatedAt['updatedAt'];
-        }
-        return null;
     }
 }

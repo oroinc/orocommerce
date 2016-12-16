@@ -4,7 +4,7 @@ namespace Oro\Bundle\ShippingBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingRuleMethodConfigRepository;
 use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethod;
-use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingRules;
+use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingMethodsConfigsRules;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
@@ -21,7 +21,7 @@ class ShippingRuleMethodConfigRepositoryTest extends WebTestCase
     {
         $this->initClient([], static::generateBasicAuthHeader());
         $this->loadFixtures([
-            LoadShippingRules::class
+            LoadShippingMethodsConfigsRules::class
         ]);
 
         $this->repository = static::getContainer()->get('doctrine')

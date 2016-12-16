@@ -2,18 +2,16 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures;
 
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-
-use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\AbstractFixture;
-
+use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\SecurityBundle\Acl\Persistence\AclManager;
-use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadAdminUserData;
 use Oro\Bundle\UserBundle\Entity\Role;
 use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\UserBundle\Entity\UserManager;
 use Oro\Bundle\UserBundle\Entity\UserApi;
+use Oro\Bundle\UserBundle\Entity\UserManager;
+use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadAdminUserData;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class LoadUserData extends AbstractFixture implements ContainerAwareInterface
 {

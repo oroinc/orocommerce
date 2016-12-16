@@ -111,6 +111,13 @@ services:
         tags:
             - { name: twig.extension }
 
+    oro_shipping.repository.shipping_methods_configs_rule:
+        class: 'Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodsConfigsRuleRepository'
+        parent: oro_entity.abstract_repository
+        public: false
+        arguments:
+            - 'Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule'
+
     oro_shipping.repository.product_shipping_options:
         parent: oro_entity.abstract_repository
         arguments:
@@ -220,6 +227,14 @@ services:
             - '@oro_entity.doctrine_helper'
             - '@oro_shipping.expression_language.line_item_decorator_factory'
             - '@logger'
+
+    oro_shipping.methods_configs_rules.provider:
+        class: 'Oro\Bundle\ShippingBundle\Provider\ShippingMethodsConfigsRulesProvider'
+        public: false
+        arguments:
+            - '@oro_rule.rule_filtration.service'
+            - '@oro_shipping.converter.shipping_context_to_rule_values'
+            - '@oro_shipping.repository.shipping_methods_configs_rule'
 
     oro_shipping.shipping_price.provider.cache:
         class: 'Oro\Bundle\ShippingBundle\Provider\Cache\ShippingPriceCache'

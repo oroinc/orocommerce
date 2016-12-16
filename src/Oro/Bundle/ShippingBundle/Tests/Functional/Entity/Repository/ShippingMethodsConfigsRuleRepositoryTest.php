@@ -3,18 +3,18 @@
 namespace Oro\Bundle\ShippingBundle\Tests\Functional\Entity\Repository;
 
 use Doctrine\ORM\EntityManager;
-use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingRuleRepository;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
-use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingRules;
+use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodsConfigsRuleRepository;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
+use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingMethodsConfigsRules;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
  * @dbIsolation
  */
-class ShippingRuleRepositoryTest extends WebTestCase
+class ShippingMethodsConfigsRuleRepositoryTest extends WebTestCase
 {
     /**
-     * @var ShippingRuleRepository
+     * @var ShippingMethodsConfigsRuleRepository
      */
     protected $repository;
 
@@ -29,36 +29,40 @@ class ShippingRuleRepositoryTest extends WebTestCase
         $this->client->useHashNavigation(true);
 
         $this->loadFixtures([
-            LoadShippingRules::class,
+            LoadShippingMethodsConfigsRules::class,
         ]);
 
-        $this->em = static::getContainer()->get('doctrine')->getManagerForClass('OroShippingBundle:ShippingRule');
-        $this->repository = $this->em->getRepository('OroShippingBundle:ShippingRule');
+        $this->em = static::getContainer()->get('doctrine')
+            ->getManagerForClass('OroShippingBundle:ShippingMethodsConfigsRule');
+        $this->repository = $this->em->getRepository('OroShippingBundle:ShippingMethodsConfigsRule');
     }
 
     /**
-     * @dataProvider getOrderedRulesByCurrencyDataProvider
+     * @dataProvider getByCurrencyAndCountryDataProvider
      *
      * @param string $currency
      * @param string $country
      * @param array $expectedRules
      */
-    public function testGetOrderedRulesByCurrency($currency, $country, array $expectedRules)
+    public function testGetByCurrencyAndCountry($currency, $country, array $expectedRules)
     {
-        /** @var ShippingRule[]|array $expectedShippingRule */
+        /** @var ShippingMethodsConfigsRule[]|array $expectedShippingRule */
         $expectedShippingRules = $this->getEntitiesByReferences($expectedRules);
-        /** @var ShippingRule $expectedShippingRule */
+        /** @var ShippingMethodsConfigsRule $expectedShippingRule */
         $expectedShippingRule = $expectedShippingRules[0];
-        $shippingRules = $this->repository->getEnabledOrderedRulesByCurrencyAndCountry(
+        $shippingRules = $this->repository->getByCurrencyAndCountry(
             $currency,
             $country
         );
 
-        static::assertNotFalse(strpos(serialize($shippingRules), $expectedShippingRule->getName()));
+        static::assertNotFalse(strpos(serialize($shippingRules), $expectedShippingRule->getRule()->getName()));
         static::assertNotFalse(strpos(serialize($shippingRules), $expectedShippingRule->getCurrency()));
-        static::assertNotFalse(strpos(serialize($shippingRules), $expectedShippingRule->getConditions()));
+        static::assertNotFalse(strpos(serialize($shippingRules), $expectedShippingRule->getRule()->getExpression()));
     }
 
+    /**
+     * TODO: refactor in BB-6393
+     */
     public function testGetRulesWithoutShippingMethods()
     {
         $rulesWithoutShippingMethods = $this->repository->getRulesWithoutShippingMethods();
@@ -68,6 +72,9 @@ class ShippingRuleRepositoryTest extends WebTestCase
         static::assertCount(1, $enabledRulesWithoutShippingMethods);
     }
 
+    /**
+     * TODO: refactor in BB-6393
+     */
     public function testDisableRulesWithoutShippingMethods()
     {
         $this->repository->disableRulesWithoutShippingMethods();
@@ -82,7 +89,7 @@ class ShippingRuleRepositoryTest extends WebTestCase
     /**
      * @return array
      */
-    public function getOrderedRulesByCurrencyDataProvider()
+    public function getByCurrencyAndCountryDataProvider()
     {
         return [
             [
@@ -115,19 +122,5 @@ class ShippingRuleRepositoryTest extends WebTestCase
         return array_map(function ($ruleReference) {
             return $this->getReference($ruleReference);
         }, $rules);
-    }
-
-    public function testGetLastUpdateAt()
-    {
-        $updatedAt = $this->repository->getLastUpdateAt();
-
-        $shippingRule = $this->repository->findOneBy([]);
-        $shippingRule->setPriority($shippingRule->getPriority() + 1);
-
-        $this->em->persist($shippingRule);
-        $this->em->flush($shippingRule);
-
-        $newUpdatedAt = $this->repository->getLastUpdateAt();
-        $this->assertGreaterThanOrEqual($updatedAt->getTimestamp(), $newUpdatedAt->getTimestamp());
     }
 }
