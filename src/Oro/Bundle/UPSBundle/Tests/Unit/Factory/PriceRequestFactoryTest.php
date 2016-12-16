@@ -139,16 +139,17 @@ class PriceRequestFactoryTest extends \PHPUnit_Framework_TestCase
             /** @var Product $product */
             $product = $this->getEntity(Product::class, ['id' => $i]);
 
-            /** @var ShippingLineItem $lineItem */
-            $lineItems[] = $this->getEntity(ShippingLineItem::class, [
-                'product' => $product,
-                'quantity' => 1,
-                'productUnit' => $this->getEntity(
+            $lineItems[] = new ShippingLineItem([
+                ShippingLineItem::FIELD_PRODUCT => $product,
+                ShippingLineItem::FIELD_QUANTITY => 1,
+                ShippingLineItem::FIELD_PRODUCT_UNIT => $this->getEntity(
                     ProductUnit::class,
                     ['code' => 'test1']
                 ),
-                'dimensions' => Dimensions::create(7, 7, 7, (new LengthUnit())->setCode('inch')),
-                'weight' => Weight::create($productWeight, $this->getEntity(
+                ShippingLineItem::FIELD_PRODUCT_UNIT_CODE => 'test1',
+                ShippingLineItem::FIELD_ENTITY_IDENTIFIER => 1,
+                ShippingLineItem::FIELD_DIMENSIONS => Dimensions::create(7, 7, 7, (new LengthUnit())->setCode('inch')),
+                ShippingLineItem::FIELD_WEIGHT => Weight::create($productWeight, $this->getEntity(
                     WeightUnit::class,
                     ['code' => 'lbs']
                 ))

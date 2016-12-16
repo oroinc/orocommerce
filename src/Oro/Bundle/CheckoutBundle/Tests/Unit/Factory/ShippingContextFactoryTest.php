@@ -104,7 +104,7 @@ class ShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
             new OrderLineItem()
         ]);
         $convertedLineItems = new DoctrineShippingLineItemCollection([
-            new ShippingLineItem()
+            new ShippingLineItem([])
         ]);
 
         $subtotal = (new Subtotal())

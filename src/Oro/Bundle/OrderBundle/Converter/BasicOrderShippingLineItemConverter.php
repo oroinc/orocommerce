@@ -4,8 +4,8 @@ namespace Oro\Bundle\OrderBundle\Converter;
 
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\ShippingBundle\Context\LineItem\Builder\Factory\ShippingLineItemBuilderFactoryInterface;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Factory\ShippingLineItemCollectionFactoryInterface;
-use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
 
 class BasicOrderShippingLineItemConverter implements OrderShippingLineItemConverterInterface
 {
@@ -15,11 +15,20 @@ class BasicOrderShippingLineItemConverter implements OrderShippingLineItemConver
     private $shippingLineItemCollectionFactory = null;
 
     /**
-     * @param ShippingLineItemCollectionFactoryInterface|null $shippingLineItemCollectionFactory
+     * @var ShippingLineItemBuilderFactoryInterface|null
      */
-    public function __construct(ShippingLineItemCollectionFactoryInterface $shippingLineItemCollectionFactory = null)
-    {
+    private $shippingLineItemBuilderFactory = null;
+
+    /**
+     * @param null|ShippingLineItemCollectionFactoryInterface $shippingLineItemCollectionFactory
+     * @param null|ShippingLineItemBuilderFactoryInterface $shippingLineItemBuilderFactory
+     */
+    public function __construct(
+        ShippingLineItemCollectionFactoryInterface $shippingLineItemCollectionFactory = null,
+        ShippingLineItemBuilderFactoryInterface $shippingLineItemBuilderFactory = null
+    ) {
         $this->shippingLineItemCollectionFactory = $shippingLineItemCollectionFactory;
+        $this->shippingLineItemBuilderFactory = $shippingLineItemBuilderFactory;
     }
 
     /**
@@ -28,22 +37,25 @@ class BasicOrderShippingLineItemConverter implements OrderShippingLineItemConver
      */
     public function convertLineItems(Collection $orderLineItems)
     {
-        if (null === $this->shippingLineItemCollectionFactory) {
+        if (null === $this->shippingLineItemCollectionFactory || null === $this->shippingLineItemCollectionFactory) {
             return null;
         }
 
         $shippingLineItems = [];
-
         foreach ($orderLineItems as $orderLineItem) {
-            $shippingLineItem = new ShippingLineItem();
+            $builder = $this->shippingLineItemBuilderFactory->createBuilder(
+                $orderLineItem->getPrice(),
+                $orderLineItem->getProductUnit(),
+                $orderLineItem->getProductUnit()->getCode(),
+                $orderLineItem->getQuantity(),
+                $orderLineItem
+            );
 
-            $shippingLineItem->setProduct($orderLineItem->getProduct());
-            $shippingLineItem->setProductHolder($orderLineItem->getProductHolder());
-            $shippingLineItem->setProductUnit($orderLineItem->getProductUnit());
-            $shippingLineItem->setQuantity($orderLineItem->getQuantity());
-            $shippingLineItem->setPrice($orderLineItem->getPrice());
+            if (null !== $orderLineItem->getProduct()) {
+                $builder->setProduct($orderLineItem->getProduct());
+            }
 
-            $shippingLineItems[] = $shippingLineItem;
+            $shippingLineItems[] = $builder->getResult();
         }
 
         return $this->shippingLineItemCollectionFactory->createShippingLineItemCollection($shippingLineItems);

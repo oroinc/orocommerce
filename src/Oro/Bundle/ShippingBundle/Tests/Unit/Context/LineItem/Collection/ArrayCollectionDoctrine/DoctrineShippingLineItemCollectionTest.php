@@ -10,10 +10,10 @@ class DoctrineShippingLineItemCollectionTest extends \PHPUnit_Framework_TestCase
     public function testCollection()
     {
         $shippingLineItems = [
-            new ShippingLineItem(),
-            new ShippingLineItem(),
-            new ShippingLineItem(),
-            new ShippingLineItem(),
+            new ShippingLineItem([]),
+            new ShippingLineItem([]),
+            new ShippingLineItem([]),
+            new ShippingLineItem([]),
         ];
 
         $collection = new DoctrineShippingLineItemCollection($shippingLineItems);

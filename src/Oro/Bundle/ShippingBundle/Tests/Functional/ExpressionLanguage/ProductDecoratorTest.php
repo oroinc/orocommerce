@@ -36,7 +36,7 @@ class ProductDecoratorTest extends WebTestCase
      */
     public function testEvaluate(array $lineItems, $expression, $expectedResult)
     {
-        $factory = $this->getContainer()->get('oro_shipping.expression_language.line_item_decorator_factory');
+        $factory = $this->getContainer()->get('oro_shipping.expression_language.decorated_product_line_item_factory');
 
         $context = new ShippingContext([
             ShippingContext::FIELD_LINE_ITEMS => new DoctrineShippingLineItemCollection(
@@ -48,7 +48,7 @@ class ProductDecoratorTest extends WebTestCase
 
         $values = [
             'lineItems' => array_map(function (ShippingLineItemInterface $lineItem) use ($factory, $lineItems) {
-                return $factory->createOrderLineItemDecorator($lineItems, $lineItem);
+                return $factory->createLineItemWithDecoratedProductByLineItem($lineItems, $lineItem);
             }, $lineItems),
         ];
 
@@ -123,10 +123,12 @@ EXPR;
     protected function prepareLineItems(array $data)
     {
         return array_map(function ($item) {
-            return (new ShippingLineItem())
-                ->setProduct($this->getReference($item['product']))
-                ->setQuantity($item['quantity'])
-                ->setProductUnit($this->getReference($item['unit']));
+            return new ShippingLineItem([
+                ShippingLineItem::FIELD_PRODUCT => $this->getReference($item['product']),
+                ShippingLineItem::FIELD_QUANTITY => $item['quantity'],
+                ShippingLineItem::FIELD_PRODUCT_UNIT => $this->getReference($item['unit']),
+                ShippingLineItem::FIELD_PRODUCT_UNIT_CODE => $this->getReference($item['unit'])->getCode(),
+            ]);
         }, $data);
     }
 }

@@ -100,7 +100,7 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetApplicableMethodsWithTypesData(array $shippingRules, array $expectedData)
     {
-        $shippingLineItems = [$this->getEntity(ShippingLineItem::class)];
+        $shippingLineItems = [new ShippingLineItem([])];
 
         $context = new ShippingContext([
             ShippingContext::FIELD_LINE_ITEMS => new DoctrineShippingLineItemCollection($shippingLineItems),
@@ -301,7 +301,7 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetApplicableMethodsWithTypesDataCache()
     {
-        $shippingLineItems = [$this->getEntity(ShippingLineItem::class)];
+        $shippingLineItems = [new ShippingLineItem([])];
 
         $context = new ShippingContext([
             ShippingContext::FIELD_LINE_ITEMS => new DoctrineShippingLineItemCollection($shippingLineItems),
@@ -385,7 +385,7 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetPrice($methodId, $typeId, array $shippingRules, Price $expectedPrice = null)
     {
-        $shippingLineItems = [$this->getEntity(ShippingLineItem::class)];
+        $shippingLineItems = [new ShippingLineItem([])];
 
         $context = new ShippingContext([
             ShippingContext::FIELD_LINE_ITEMS => new DoctrineShippingLineItemCollection($shippingLineItems),
@@ -512,7 +512,7 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
         $methodId = 'flat_rate';
         $typeId = 'primary';
 
-        $shippingLineItems = [$this->getEntity(ShippingLineItem::class)];
+        $shippingLineItems = [new ShippingLineItem([])];
 
         $context = new ShippingContext([
             ShippingContext::FIELD_LINE_ITEMS => new DoctrineShippingLineItemCollection($shippingLineItems),
@@ -570,7 +570,7 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetPriceNoMethodAndType()
     {
-        $shippingLineItems = [$this->getEntity(ShippingLineItem::class)];
+        $shippingLineItems = [new ShippingLineItem([])];
 
         $context = new ShippingContext([
             ShippingContext::FIELD_LINE_ITEMS => new DoctrineShippingLineItemCollection($shippingLineItems),

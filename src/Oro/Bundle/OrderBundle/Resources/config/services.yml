@@ -304,3 +304,4 @@ services:
         class: 'Oro\Bundle\OrderBundle\Converter\BasicOrderShippingLineItemConverter'
         arguments:
             - '@?oro_shipping.context.doctrine_line_item_collection_factory'
+            - '@?oro_shipping.line_item.factory_basic'

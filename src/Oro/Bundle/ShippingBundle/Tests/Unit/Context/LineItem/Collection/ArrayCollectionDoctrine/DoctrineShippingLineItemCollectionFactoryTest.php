@@ -11,10 +11,10 @@ class DoctrineShippingLineItemCollectionFactoryTest extends \PHPUnit_Framework_T
     public function testFactory()
     {
         $shippingLineItems = [
-            new ShippingLineItem(),
-            new ShippingLineItem(),
-            new ShippingLineItem(),
-            new ShippingLineItem(),
+            new ShippingLineItem([]),
+            new ShippingLineItem([]),
+            new ShippingLineItem([]),
+            new ShippingLineItem([]),
         ];
 
         $collectionFactory = new DoctrineShippingLineItemCollectionFactory();

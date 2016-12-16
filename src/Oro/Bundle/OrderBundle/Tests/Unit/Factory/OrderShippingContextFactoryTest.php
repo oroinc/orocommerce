@@ -117,12 +117,15 @@ class OrderShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
         $orderLineItemsCollection = new ArrayCollection($ordersLineItems);
 
         $shippingLineItems = [
-            (new ShippingLineItem())
-                ->setQuantity(10)
-                ->setPrice(Price::create($amount, $currency)),
+            new ShippingLineItem(
+                [
+                    ShippingLineItem::FIELD_QUANTITY => 10,
+                    ShippingLineItem::FIELD_PRICE => Price::create($amount, $currency),
+                ]
+            ),
             (new OrderLineItem())
                 ->setQuantity(20)
-                ->setPrice(Price::create($amount, $currency))
+                ->setPrice(Price::create($amount, $currency)),
         ];
 
         $shippingLineItemCollection = new DoctrineShippingLineItemCollection($shippingLineItems);

@@ -106,7 +106,10 @@ class BasicShippingContextBuilderTest extends \PHPUnit_Framework_TestCase
         $paymentMethod = 'paymentMethod';
         $currency = 'usd';
         $entityId = '12';
-        $lineItems = [(new ShippingLineItem())->setQuantity(2), (new ShippingLineItem())->setQuantity(5)];
+        $lineItems = [
+            new ShippingLineItem([ShippingLineItem::FIELD_QUANTITY => 2]),
+            new ShippingLineItem([ShippingLineItem::FIELD_QUANTITY => 5]),
+        ];
 
         $this->lineItemsCollectionMock
             ->expects($this->once())
@@ -194,7 +197,10 @@ class BasicShippingContextBuilderTest extends \PHPUnit_Framework_TestCase
         $paymentMethod = 'paymentMethod';
         $currency = 'usd';
         $entityId = '12';
-        $lineItems = [(new ShippingLineItem())->setQuantity(2), (new ShippingLineItem())->setQuantity(5)];
+        $lineItems = [
+            new ShippingLineItem([ShippingLineItem::FIELD_QUANTITY => 2]),
+            new ShippingLineItem([ShippingLineItem::FIELD_QUANTITY => 5]),
+        ];
         $street = 'someStreet';
 
         $this->lineItemsCollectionMock

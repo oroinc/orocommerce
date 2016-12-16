@@ -1,16 +1,17 @@
 <?php
 
-namespace Oro\Bundle\ShippingBundle\Tests\Unit\Context;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\Context\LineItem\Builder\Basic;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
+use Oro\Bundle\ShippingBundle\Context\LineItem\Builder\Basic\BasicShippingLineItemBuilder;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
 use Oro\Bundle\ShippingBundle\Model\Dimensions;
 use Oro\Bundle\ShippingBundle\Model\Weight;
 
-class ShippingLineItemTest extends \PHPUnit_Framework_TestCase
+class BasicShippingLineItemBuilderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Price|\PHPUnit_Framework_MockObject_MockObject
@@ -67,14 +68,35 @@ class ShippingLineItemTest extends \PHPUnit_Framework_TestCase
             ->getMock();
     }
 
-    public function testGetters()
+    public function testFullBuild()
     {
         $unitCode = 'someCode';
         $quantity = 15;
         $productSku = 'someSku';
         $entityIdentifier = 'someId';
 
-        $shippingLineItemParams = [
+        $this->productHolderMock
+            ->expects($this->once())
+            ->method('getEntityIdentifier')
+            ->willReturn($entityIdentifier);
+
+        $builder = new BasicShippingLineItemBuilder(
+            $this->priceMock,
+            $this->productUnitMock,
+            $unitCode,
+            $quantity,
+            $this->productHolderMock
+        );
+
+        $builder
+            ->setProduct($this->productMock)
+            ->setProductSku($productSku)
+            ->setDimensions($this->dimensionsMock)
+            ->setWeight($this->weightMock);
+
+        $shippingLineItem = $builder->getResult();
+
+        $expectedShippingLineItem = new ShippingLineItem([
             ShippingLineItem::FIELD_PRICE => $this->priceMock,
             ShippingLineItem::FIELD_PRODUCT_UNIT => $this->productUnitMock,
             ShippingLineItem::FIELD_PRODUCT_UNIT_CODE => $unitCode,
@@ -84,41 +106,42 @@ class ShippingLineItemTest extends \PHPUnit_Framework_TestCase
             ShippingLineItem::FIELD_PRODUCT_SKU => $productSku,
             ShippingLineItem::FIELD_DIMENSIONS => $this->dimensionsMock,
             ShippingLineItem::FIELD_WEIGHT => $this->weightMock,
-            ShippingLineItem::FIELD_ENTITY_IDENTIFIER => $entityIdentifier,
-        ];
+            ShippingLineItem::FIELD_ENTITY_IDENTIFIER => $entityIdentifier
+        ]);
 
-        $shippingLineItem = new ShippingLineItem($shippingLineItemParams);
+        $this->assertEquals($expectedShippingLineItem, $shippingLineItem);
+    }
 
-        $this->assertEquals($shippingLineItemParams[ShippingLineItem::FIELD_PRICE], $shippingLineItem->getPrice());
-        $this->assertEquals(
-            $shippingLineItemParams[ShippingLineItem::FIELD_PRODUCT_UNIT],
-            $shippingLineItem->getProductUnit()
+    public function testOptionalBuild()
+    {
+        $unitCode = 'someCode';
+        $quantity = 15;
+        $entityIdentifier = 'someId';
+
+        $this->productHolderMock
+            ->expects($this->once())
+            ->method('getEntityIdentifier')
+            ->willReturn($entityIdentifier);
+
+        $builder = new BasicShippingLineItemBuilder(
+            $this->priceMock,
+            $this->productUnitMock,
+            $unitCode,
+            $quantity,
+            $this->productHolderMock
         );
-        $this->assertEquals(
-            $shippingLineItemParams[ShippingLineItem::FIELD_PRODUCT_UNIT_CODE],
-            $shippingLineItem->getProductUnitCode()
-        );
-        $this->assertEquals(
-            $shippingLineItemParams[ShippingLineItem::FIELD_QUANTITY],
-            $shippingLineItem->getQuantity()
-        );
-        $this->assertEquals(
-            $shippingLineItemParams[ShippingLineItem::FIELD_PRODUCT_HOLDER],
-            $shippingLineItem->getProductHolder()
-        );
-        $this->assertEquals($shippingLineItemParams[ShippingLineItem::FIELD_PRODUCT], $shippingLineItem->getProduct());
-        $this->assertEquals(
-            $shippingLineItemParams[ShippingLineItem::FIELD_PRODUCT_SKU],
-            $shippingLineItem->getProductSku()
-        );
-        $this->assertEquals(
-            $shippingLineItemParams[ShippingLineItem::FIELD_DIMENSIONS],
-            $shippingLineItem->getDimensions()
-        );
-        $this->assertEquals($shippingLineItemParams[ShippingLineItem::FIELD_WEIGHT], $shippingLineItem->getWeight());
-        $this->assertEquals(
-            $shippingLineItemParams[ShippingLineItem::FIELD_ENTITY_IDENTIFIER],
-            $shippingLineItem->getEntityIdentifier()
-        );
+
+        $shippingLineItem = $builder->getResult();
+
+        $expectedShippingLineItem = new ShippingLineItem([
+            ShippingLineItem::FIELD_PRICE => $this->priceMock,
+            ShippingLineItem::FIELD_PRODUCT_UNIT => $this->productUnitMock,
+            ShippingLineItem::FIELD_PRODUCT_UNIT_CODE => $unitCode,
+            ShippingLineItem::FIELD_QUANTITY => $quantity,
+            ShippingLineItem::FIELD_PRODUCT_HOLDER => $this->productHolderMock,
+            ShippingLineItem::FIELD_ENTITY_IDENTIFIER => $entityIdentifier
+        ]);
+
+        $this->assertEquals($expectedShippingLineItem, $shippingLineItem);
     }
 }

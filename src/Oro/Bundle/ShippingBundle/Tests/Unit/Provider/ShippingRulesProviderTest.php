@@ -14,7 +14,7 @@ use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingRuleRepository;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRuleDestination;
-use Oro\Bundle\ShippingBundle\ExpressionLanguage\LineItemDecoratorFactory;
+use Oro\Bundle\ShippingBundle\ExpressionLanguage\DecoratedProductLineItemFactory;
 use Oro\Bundle\ShippingBundle\Provider\ShippingRulesProvider;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingAddressStub;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -30,7 +30,7 @@ class ShippingRulesProviderTest extends \PHPUnit_Framework_TestCase
     protected $repository;
 
     /**
-     * @var LineItemDecoratorFactory|\PHPUnit_Framework_MockObject_MockObject
+     * @var DecoratedProductLineItemFactory|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $factory;
 
@@ -66,7 +66,7 @@ class ShippingRulesProviderTest extends \PHPUnit_Framework_TestCase
             ->with('OroShippingBundle:ShippingRule')
             ->willReturn($entityManager);
 
-        $this->factory = $this->getMockBuilder(LineItemDecoratorFactory::class)
+        $this->factory = $this->getMockBuilder(DecoratedProductLineItemFactory::class)
             ->disableOriginalConstructor()->getMock();
 
         $this->logger = $this->getMockForAbstractClass(LoggerInterface::class);

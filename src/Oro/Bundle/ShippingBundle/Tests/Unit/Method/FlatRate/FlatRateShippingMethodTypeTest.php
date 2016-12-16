@@ -57,8 +57,8 @@ class FlatRateShippingMethodTypeTest extends \PHPUnit_Framework_TestCase
     public function testCalculatePrice($currency, array $options, $expectedPrice)
     {
         $shippingLineItems = [
-            $this->getEntity(ShippingLineItem::class, ['quantity' => 3]),
-            $this->getEntity(ShippingLineItem::class, ['quantity' => 2])
+            new ShippingLineItem([ShippingLineItem::FIELD_QUANTITY => 3]),
+            new ShippingLineItem([ShippingLineItem::FIELD_QUANTITY => 2])
         ];
 
         $context = new ShippingContext([
