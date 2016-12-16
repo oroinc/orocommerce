@@ -590,12 +590,14 @@ datagrids:
                 label:         oro.grid.action.view
                 link:          view_link
                 icon:          eye
+                order:         10
                 rowAction:     true
             update:
                 type:          navigate
                 label:         oro.grid.action.update
                 link:          update_link
                 icon:          pencil-square-o
+                order:         20
                 acl_resource:  oro_account_frontend_account_user_role_update
         action_configuration: ['@oro_customer.datagrid.action_permission_provider', "getAccountUserRolePermission"]
 

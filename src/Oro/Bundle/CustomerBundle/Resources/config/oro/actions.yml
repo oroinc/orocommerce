@@ -275,7 +275,7 @@ operations:
         datagrids:
             - frontend-account-account-user-roles-grid
         acl_resource: [FRONTEND_ACCOUNT_ROLE_DELETE, $.data]
-        order: 20
+        order: 30
         button_options:
             icon: fa-trash-o
         actions:
