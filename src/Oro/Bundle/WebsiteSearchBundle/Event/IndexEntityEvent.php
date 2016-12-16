@@ -55,14 +55,18 @@ class IndexEntityEvent extends Event
      * @param int $entityId
      * @param string $fieldName
      * @param string|int|float|\DateTime $value
+     * @param bool $addToAllText
      * @return $this
      * @throws \InvalidArgumentException if value is array
      */
-    public function addField($entityId, $fieldName, $value)
+    public function addField($entityId, $fieldName, $value, $addToAllText = false)
     {
         $this->validate($value);
 
-        $this->entitiesData[$entityId][$fieldName] = $value;
+        $this->entitiesData[$entityId][$fieldName] = [
+            'value' => $value,
+            'all_text' => $addToAllText
+        ];
 
         return $this;
     }
@@ -72,14 +76,18 @@ class IndexEntityEvent extends Event
      * @param string $fieldName
      * @param string|int|float|\DateTime $value
      * @param array $placeholders
+     * @param bool $addToAllText
      * @return $this
      * @throws \InvalidArgumentException if value is array
      */
-    public function addPlaceholderField($entityId, $fieldName, $value, $placeholders)
+    public function addPlaceholderField($entityId, $fieldName, $value, $placeholders, $addToAllText = false)
     {
         $this->validate($value);
 
-        $this->entitiesData[$entityId][$fieldName][] = new PlaceholderValue($value, $placeholders);
+        $this->entitiesData[$entityId][$fieldName][] = [
+            'value' => new PlaceholderValue($value, $placeholders),
+            'all_text' => $addToAllText
+        ];
 
         return $this;
     }
