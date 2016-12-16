@@ -3,7 +3,7 @@ operations:
         label: oro.customer.action.account_user.disable
         applications: [default]
         routes:
-            - oro_account_account_user_view
+            - oro_customer_account_user_view
         datagrids:
             - account-account-user-grid
         order: 30
@@ -26,7 +26,7 @@ operations:
         label: oro.customer.action.account_user.enable
         applications: [default]
         routes:
-            - oro_account_account_user_view
+            - oro_customer_account_user_view
         datagrids:
             - account-account-user-grid
         order: 30
