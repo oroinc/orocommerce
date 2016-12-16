@@ -4,11 +4,11 @@ namespace Oro\Bundle\ProductBundle\EventListener;
 
 use Doctrine\ORM\EntityRepository;
 
-use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
-use Oro\Bundle\DataGridBundle\Event\BuildBefore;
-use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
+use Oro\Bundle\DataGridBundle\Event\BuildAfter;
+use Oro\Bundle\DataGridBundle\Extension\Formatter\Configuration as FormatterConfiguration;
+use Oro\Bundle\DataGridBundle\Extension\Sorter\Configuration as SorterConfiguration;
+use Oro\Bundle\FilterBundle\Grid\Extension\Configuration as FilterConfiguration;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Component\PropertyAccess\PropertyAccessor;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Provider\CustomFieldProvider;
 
@@ -45,49 +45,28 @@ class ProductVariantCustomFieldsDatagridListener
     }
 
     /**
-     * @param BuildBefore $event
+     * @param BuildAfter $event
      */
-    public function onBuildBefore(BuildBefore $event)
+    public function onBuildAfter(BuildAfter $event)
     {
-        $config = $event->getConfig();
-
+        $datagridConfig = $event->getDatagrid()->getConfig();
         $productRepository = $this->getProductRepository();
+
         /** @var Product $parentProduct */
         $parentProduct = $productRepository->find($event->getDatagrid()->getParameters()->get('parentProduct'));
 
-        foreach ($this->getActualVariantFields($parentProduct) as $customField) {
-            $columnName = $customField['name'];
-            $column = ['label' => $customField['label']];
+        $allCustomFields = $this->customFieldProvider->getEntityCustomFields($this->productClass);
+        $variantFields = $parentProduct->getVariantFields();
 
-            $config->offsetSetByPath(sprintf('[columns][%s]', $columnName), $column);
-        }
-    }
-
-    /**
-     * @param OrmResultAfter $event
-     */
-    public function onResultAfter(OrmResultAfter $event)
-    {
-        $propertyAccessor = new PropertyAccessor();
-
-        /** @var ResultRecord[] $records */
-        $records = $event->getRecords();
-
-        $productRepository = $this->getProductRepository();
-        /** @var Product $parentProduct */
-        $parentProduct = $productRepository->find($event->getDatagrid()->getParameters()->get('parentProduct'));
-        $customFields = $this->getActualVariantFields($parentProduct);
-
-        foreach ($records as $record) {
-            $productId = $record->getValue('id');
-            $product = $productRepository->find($productId);
-
-            $data = [];
-            foreach ($customFields as $customField) {
-                $fieldName = $customField['name'];
-                $data[$fieldName] = $propertyAccessor->getValue($product, $fieldName);
+        foreach ($allCustomFields as $customField) {
+            $customFieldName = $customField['name'];
+            if (in_array($customFieldName, $variantFields, true)) {
+                continue;
             }
-            $record->addData($data);
+
+            foreach ($this->getPathsToClear($customFieldName) as $path) {
+                $datagridConfig->offsetUnsetByPath($path);
+            }
         }
     }
 
@@ -100,24 +79,15 @@ class ProductVariantCustomFieldsDatagridListener
     }
 
     /**
-     * @param Product $product
+     * @param string $field
      * @return array
      */
-    private function getActualVariantFields(Product $product)
+    private function getPathsToClear($field)
     {
-        $customFields = [];
-        $allCustomFields = $this->customFieldProvider->getEntityCustomFields($this->productClass);
-
-        foreach ($product->getVariantFields() as $fieldName) {
-            if (array_key_exists($fieldName, $allCustomFields)) {
-                $fieldData = $allCustomFields[$fieldName];
-                $customFields[] = [
-                    'name' => $fieldData['name'],
-                    'label' => $fieldData['label']
-                ];
-            }
-        }
-
-        return $customFields;
+        return [
+            sprintf('[%s][%s]', FormatterConfiguration::COLUMNS_KEY, $field),
+            sprintf('%s[%s]', SorterConfiguration::COLUMNS_PATH, $field),
+            sprintf('%s[%s]', FilterConfiguration::COLUMNS_PATH, $field),
+        ];
     }
 }
