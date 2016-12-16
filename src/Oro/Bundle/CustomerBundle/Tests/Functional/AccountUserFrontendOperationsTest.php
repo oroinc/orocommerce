@@ -10,7 +10,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 /**
  * @dbIsolation
  */
-class AccountUserFrontendActionsTest extends WebTestCase
+class AccountUserFrontendOperationsTest extends WebTestCase
 {
     protected function setUp()
     {

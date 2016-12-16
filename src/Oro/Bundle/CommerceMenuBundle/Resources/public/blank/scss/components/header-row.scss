@@ -52,7 +52,7 @@
     .header-row {
         &__trigger {
             position: relative;
-            z-index: z('base') + 8999;
+            z-index: z('dropdown') + 1;
 
             text-align: center;
         }
