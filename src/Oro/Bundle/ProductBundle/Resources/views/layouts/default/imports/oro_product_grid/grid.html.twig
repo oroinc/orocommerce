@@ -84,9 +84,8 @@
 
 {% block __oro_product_grid__datagrid_toolbar_display_options_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        'data-page-component-module': 'oroui/js/app/components/view-component',
+        'data-page-component-module': 'oroproduct/js/app/components/catalog-switch-component',
         'data-page-component-options': {
-            'view': 'oroproduct/js/app/views/catalog-switch-view',
             'parameterName': 'frontend-product-search-grid[row-view]'
         },
         class: attr.class|default('') ~ " catalog__filter-controls__item display-options pull-right"

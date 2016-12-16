@@ -2,27 +2,26 @@ define(function(require) {
     'use strict';
 
     var CatalogSwitchView;
-    var BaseView = require('oroui/js/app/views/base/view');
+    var BaseComponent = require('oroui/js/app/components/base/component');
     var UrlHelper = require('orodatagrid/js/url-helper');
     var $ = require('jquery');
     var _ = require('underscore');
     var mediator = require('oroui/js/mediator');
 
-    CatalogSwitchView = BaseView.extend(_.extend({}, UrlHelper, {
+    CatalogSwitchView = BaseComponent.extend(_.extend({}, UrlHelper, {
         parameterName: null,
-
-        events: {
-            'click [data-catalog-view-trigger]': '_onSwitch'
-        },
 
         initialize: function(options) {
             CatalogSwitchView.__super__.initialize.apply(this, arguments);
 
             this.parameterName = options.parameterName;
+
+            options._sourceElement
+                .on('click', '[data-catalog-view-trigger]', _.bind(this._onSwitch, this));
         },
 
         _onSwitch: function(e) {
-            if (location.search != '') {
+            if (location.search !== '') {
                 e.preventDefault();
 
                 var value = $(e.currentTarget).data('catalog-view-trigger');
@@ -34,7 +33,7 @@ define(function(require) {
         },
 
         updateUrlParameter: function(url, param, value) {
-            var regex = new RegExp("(" + encodeURIComponent(param) + "=)[^\&]+");
+            var regex = new RegExp('(' + encodeURIComponent(param) + '=)[^\&]+');
 
             if (!regex.test(url)) {
                 return this.addUrlParameter(url, param, value);
