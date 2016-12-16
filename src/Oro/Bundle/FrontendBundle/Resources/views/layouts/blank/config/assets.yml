@@ -2,4 +2,6 @@ styles:
     inputs:
         - 'bundles/orofrontend/blank/scss/variables/bootstrap4-variables-config.scss' # Must be first
         - 'bundles/orofrontend/blank/scss/variables/bootstrap4-config.scss'
+        - 'bundles/orofrontend/blank/scss/settings/global-settings.scss'
+        - 'bundles/orofrontend/blank/scss/variables/notification-flash-container-config.scss'
         - 'bundles/orofrontend/blank/scss/styles.scss'
