@@ -9,7 +9,7 @@ use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
 
-class ShippingMethodConfigsRuleTest extends \PHPUnit_Framework_TestCase
+class ShippingMethodsConfigsRuleTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTestCaseTrait;
     use EntityTrait;

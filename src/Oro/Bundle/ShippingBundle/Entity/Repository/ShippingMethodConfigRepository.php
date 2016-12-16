@@ -4,7 +4,7 @@ namespace Oro\Bundle\ShippingBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 
-class ShippingRuleMethodConfigRepository extends EntityRepository
+class ShippingMethodConfigRepository extends EntityRepository
 {
     /**
      * @param string $method

@@ -9,7 +9,7 @@ use Oro\Bundle\ShippingBundle\Model\ExtendShippingMethodTypeConfig;
 
 /**
  * @ORM\Table(name="oro_ship_method_type_config")
- * @ORM\Entity(repositoryClass="Oro\Bundle\ShippingBundle\Entity\Repository\ShippingRuleMethodTypeConfigRepository")
+ * @ORM\Entity(repositoryClass="Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodTypeConfigRepository")
  * @Config
  */
 class ShippingMethodTypeConfig extends ExtendShippingMethodTypeConfig

@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Functional\Entity\Repository;
 
-use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingRuleMethodConfigRepository;
+use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodConfigRepository;
 use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethod;
 use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingRules;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -10,10 +10,10 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 /**
  * @dbIsolation
  */
-class ShippingRuleMethodConfigRepositoryTest extends WebTestCase
+class ShippingMethodConfigRepositoryTest extends WebTestCase
 {
     /**
-     * @var ShippingRuleMethodConfigRepository
+     * @var ShippingMethodConfigRepository
      */
     protected $repository;
 
