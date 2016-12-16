@@ -9,7 +9,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 /**
  * @dbIsolation
  */
-class AccountUserActionsTest extends WebTestCase
+class AccountUserOperationsTest extends WebTestCase
 {
     const EMAIL = LoadAccountUserData::EMAIL;
 
