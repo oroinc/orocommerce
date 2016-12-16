@@ -27,6 +27,14 @@ define(function(require) {
 
             LineItemsView.__super__.initialize.apply(this, arguments);
 
+            this.subview('productsPricesComponent', new ProductsPricesComponent({
+                _sourceElement: this.$el,
+                tierPrices: this.options.tierPrices,
+                currency: this.options.currency,
+                tierPricesRoute: this.options.tierPricesRoute
+            }));
+
+            this._deferredRender();
             this.initLayout({
                 prices: this.options.tierPrices
             }).done(_.bind(this.handleLayoutInit, this));
@@ -39,13 +47,9 @@ define(function(require) {
             this.$el.find('.add-lineitem').mousedown(function(e) {
                 $(this).click();
             });
-
-            this.subview('productsPricesComponent', new ProductsPricesComponent({
-                _sourceElement: this.$el,
-                tierPrices: this.options.tierPrices,
-                currency: this.options.currency,
-                tierPricesRoute: this.options.tierPricesRoute
-            }));
+            this.$el.find('.view-loading').remove();
+            this.$el.find('.request-form__content').show();
+            this._resolveDeferredRender();
         },
 
         /**

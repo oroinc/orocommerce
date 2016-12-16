@@ -1,13 +1,18 @@
-.request-form-entity {
+.request-form-editline__product .input-append {
     @extend .flexible-container;
-    
-    &__set {
+    .select2-choice {
+        max-width: none !important;
+    }
+
+    .entity-select-btn {
         @extend .flexible-container__side;
-        
-        padding-left: 5px;
+
+        margin-left: 5px;
     }
     
-    &__selector {
+    .select2-container {
         @extend .flexible-container__base;
+
+        border-radius: $input-border-radius;
     }
 }

@@ -156,7 +156,7 @@ define(function(require) {
             changeQuantity = changeQuantity && this.changeQuantity;
 
             var foundKey = unit + ' ' + quantity + ' ' + (changeQuantity ? 1 : 0);
-            var price = null;
+            var price = this.foundPrice[foundKey] || null;
 
             if (!price) {
                 if (changeQuantity) {

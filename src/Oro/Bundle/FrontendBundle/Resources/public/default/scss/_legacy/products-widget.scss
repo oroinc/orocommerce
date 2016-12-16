@@ -85,6 +85,12 @@
       padding: 4px 8px;
     }
   }
+
+  .matched-tier-price {
+    > td {
+      font-weight: 700;
+    }
+  }
 }
 
 .product-item {

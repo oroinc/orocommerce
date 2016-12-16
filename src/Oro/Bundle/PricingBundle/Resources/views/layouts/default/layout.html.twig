@@ -85,7 +85,7 @@
                         </tr>
                         <% addNewLine = true %>
                         <% _.each(prices, function(price) { %>
-                            <tr>
+                            <tr class="<% if (!_.isEmpty(matchedPrice) && price.unit === matchedPrice.unit && parseFloat(price.price) === parseFloat(matchedPrice.price)) { %>matched-tier-price<% } %>">
                                 <td><%= price.quantity %></td>
                                 <td>
                                     <% if (clickable) { %>

@@ -63,6 +63,7 @@ define(function(require) {
         findPrice: function() {
             var price = ProductPricesEditableView.__super__.findPrice.apply(this, arguments);
             this.model.set('found_price', price);
+            this.getElement('priceValue').data('found_price', price);
             return price;
         },
 
@@ -70,6 +71,7 @@ define(function(require) {
          * @inheritDoc
          */
         setFoundPrice: function() {
+            this.findPrice();
             if (this.options.matchedPriceEnabled && this.getElement('priceValue').hasClass('matched-price')) {
                 this.setPriceValue(this.findPriceValue());
             }
@@ -128,8 +130,7 @@ define(function(require) {
             return $(this.templates.pricesHintContent({
                 model: this.model.attributes,
                 prices: this.prices,
-                modelUnit: this.model.get('unit'),
-                modelPrice: this.model.get('price'),
+                matchedPrice: this.findPrice(),
                 clickable: true,
                 formatter: NumberFormatter
             }));

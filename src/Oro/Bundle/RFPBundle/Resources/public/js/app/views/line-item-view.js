@@ -103,9 +103,15 @@ define(function(require) {
             this.initModel(options);
             this.initializeElements(options);
             this.model.set('productUnits', this.options.units[this.model.get('productId')] || []);
+
+            this.$el.on('options:set:lineItemModel', _.bind(function(e, options) {
+                options.lineItemModel = this.model;
+            }, this));
+
+            this._deferredRender();
             this.initLayout({
                 lineItemModel: this.model
-            }).done(_.bind(this.checkAddButton, this));
+            }).done(_.bind(this.handleLayoutInit, this));
         },
 
         initModel: function(options) {
@@ -117,6 +123,11 @@ define(function(require) {
                     this.model.set(attribute, value);
                 }
             }, this);
+        },
+
+        handleLayoutInit: function() {
+            this.checkAddButton();
+            this._resolveDeferredRender();
         },
 
         checkAddButton: function() {

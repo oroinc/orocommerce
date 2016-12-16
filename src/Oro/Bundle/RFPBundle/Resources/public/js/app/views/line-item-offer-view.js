@@ -7,6 +7,7 @@ define(function(require) {
 
     LineItemOfferView = BaseProductView.extend({
         initialize: function(options) {
+            this.$el.trigger('options:set:lineItemModel', options);
             this.lineItemModel = options.lineItemModel;
             this.lineItemModel.on('change', this.updateModel, this);
             this.updateModel();
