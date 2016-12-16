@@ -37,7 +37,7 @@ class BasicOrderShippingLineItemConverter implements OrderShippingLineItemConver
      */
     public function convertLineItems(Collection $orderLineItems)
     {
-        if (null === $this->shippingLineItemCollectionFactory || null === $this->shippingLineItemCollectionFactory) {
+        if (null === $this->shippingLineItemCollectionFactory || null === $this->shippingLineItemBuilderFactory) {
             return null;
         }
 
