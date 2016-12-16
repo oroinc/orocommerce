@@ -130,7 +130,7 @@ class OrderLineItemHandler
 
     /**
      * @param OrderLineItem $lineItem
-     * @return null|TaxCodeInterface
+     * @return null|string
      */
     protected function getAccountTaxCode(OrderLineItem $lineItem)
     {

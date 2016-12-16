@@ -1,0 +1,11 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'layout.html.twig'
+        - '@add':
+            id: product_prices
+            parentId: product_view_price_container
+            blockType: product_prices
+            options:
+                visible: '=data["product"].getUnitPrecisions()!=null'
+                productPrices: '=data["frontend_product_prices"].getByProduct(data["product"])'

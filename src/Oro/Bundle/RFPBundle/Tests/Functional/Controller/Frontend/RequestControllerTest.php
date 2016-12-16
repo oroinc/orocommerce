@@ -293,6 +293,34 @@ class RequestControllerTest extends WebTestCase
                     ]
                 ],
             ],
+            'account2 user2 (all account user requests and full permissions)' => [
+                'input' => [
+                    'login' => LoadUserData::ACCOUNT2_USER2,
+                    'password' => LoadUserData::ACCOUNT2_USER2,
+                ],
+                'expected' => [
+                    'code' => 200,
+                    'data' => [
+                        LoadRequestData::REQUEST5,
+                        LoadRequestData::REQUEST6,
+                    ],
+                    'columns' => [
+                        'id',
+                        'statusLabel',
+                        'poNumber',
+                        'shipUntil',
+                        'createdAt',
+                        'update_link',
+                        'view_link',
+                        'action_configuration',
+                    ],
+                    'action_configuration' => [
+                        'view' => true,
+                        'update' => true,
+                        'delete' => false
+                    ]
+                ],
+            ],
             'parent account user1 (all requests)' => [
                 'input' => [
                     'login' => LoadUserData::PARENT_ACCOUNT_USER1,
