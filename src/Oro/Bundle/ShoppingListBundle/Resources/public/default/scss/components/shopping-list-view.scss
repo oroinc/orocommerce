@@ -4,4 +4,12 @@
   .order-checkout-widget__container {
     min-width: 280px;
   }
+
+  .order-checkout-widget__table {
+    td {
+      &:first-child {
+        padding-right: 6px;
+      }
+    }
+  }
 }
