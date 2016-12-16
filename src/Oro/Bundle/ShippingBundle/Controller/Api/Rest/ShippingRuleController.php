@@ -38,7 +38,7 @@ class ShippingRuleController extends RestController implements ClassResourceInte
      *      defaults={"version"="latest", "_format"="json"}
      * )
      * @ApiDoc(description="Enable Shipping Rule", resource=true)
-     * @AclAncestor("oro_shipping_rule_update")
+     * @AclAncestor("oro_shipping_methods_configs_rule_update")
      *
      * @return Response
      */
@@ -83,7 +83,7 @@ class ShippingRuleController extends RestController implements ClassResourceInte
      *      defaults={"version"="latest", "_format"="json"}
      * )
      * @ApiDoc(description="Disable Shipping Rule", resource=true)
-     * @AclAncestor("oro_shipping_rule_update")
+     * @AclAncestor("oro_shipping_methods_configs_rule_update")
      *
      * @return Response
      */

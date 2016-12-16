@@ -8,8 +8,8 @@
 {% block pageHeader %}
     {% set breadcrumbs = {
     'entity': entity,
-    'indexPath': path('oro_shipping_rule_index'),
-    'indexLabel': 'oro.shipping.shippingrule.entity_plural_label'|trans,
+    'indexPath': path('oro_shipping_methods_configs_rule_index'),
+    'indexLabel': 'oro.shipping.shippingmethodsconfigsrule.entity_plural_label'|trans,
     'entityTitle': entity.name|default('N/A'|trans)
     } %}
     {{ parent() }}
@@ -20,7 +20,7 @@
     {%- set shippingRuleInformation -%}
         <div class="row-fluid form-horizontal">
             <div class="responsive-block">
-                {{ UI.renderProperty('oro.shipping.shippingrule.name.label'|trans, entity.name) }}
+                {{ UI.renderProperty('oro.shipping.shippingmethodsconfigsrule.name.label'|trans, entity.name) }}
                 {{ UI.renderProperty('oro.shipping.shippingrule.enabled.label'|trans, entity.enabled ?
                 'oro.shipping.shippingrule.enabled_yes.label'|trans
                 :

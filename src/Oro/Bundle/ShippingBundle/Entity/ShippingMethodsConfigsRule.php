@@ -17,6 +17,10 @@ use Oro\Bundle\ShippingBundle\Model\ExtendShippingMethodsConfigsRule;
  *     name="oro_ship_method_configs_rule"
  * )
  * @Config(
+ *      routeName="oro_shipping_methods_configs_rule_index",
+ *      routeView="oro_shipping_methods_configs_rule_view",
+ *      routeCreate="oro_shipping_methods_configs_rule_create",
+ *      routeUpdate="oro_shipping_methods_configs_rule_update",
  *      defaultValues={
  *          "dataaudit"={
  *              "auditable"=true

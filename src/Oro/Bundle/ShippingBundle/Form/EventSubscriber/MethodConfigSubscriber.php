@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ShippingBundle\Form\EventSubscriber;
 
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
-use Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleMethodTypeConfigCollectionType;
+use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodTypeConfigCollectionType;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
@@ -11,7 +11,7 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 
-class RuleMethodConfigSubscriber implements EventSubscriberInterface
+class MethodConfigSubscriber implements EventSubscriberInterface
 {
     /**
      * @var FormFactoryInterface
@@ -81,7 +81,7 @@ class RuleMethodConfigSubscriber implements EventSubscriberInterface
     {
         $shippingMethod = $this->methodRegistry->getShippingMethod($method);
         $oldOptions = $form->get('typeConfigs')->getConfig()->getOptions();
-        $form->add('typeConfigs', ShippingRuleMethodTypeConfigCollectionType::class, array_merge($oldOptions, [
+        $form->add('typeConfigs', ShippingMethodTypeConfigCollectionType::class, array_merge($oldOptions, [
             'is_grouped' => $shippingMethod->isGrouped(),
         ]));
 

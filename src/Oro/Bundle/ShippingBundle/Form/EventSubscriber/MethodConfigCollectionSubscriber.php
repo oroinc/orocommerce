@@ -9,7 +9,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
-class RuleMethodConfigCollectionSubscriber implements EventSubscriberInterface
+class MethodConfigCollectionSubscriber implements EventSubscriberInterface
 {
     /**
      * @var ShippingMethodRegistry

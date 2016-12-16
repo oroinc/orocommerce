@@ -1,7 +1,7 @@
 datagrids:
-    shipping-rule-grid:
-        acl_resource: oro_shipping_rule_view
-        extended_entity_name: %oro_shipping.entity.shipping_rule.class%
+    shipping-methods-configs-rule-grid:
+        acl_resource: oro_shipping_methods_configs_rule_view
+        extended_entity_name: %oro_shipping.entity.shipping_methods_configs_rule.class%
         options:
             entityHint:        shipping rule
             entity_pagination: true
@@ -17,13 +17,13 @@ datagrids:
                     - shipping_rule.currency
                     - shipping_rule.conditions
                 from:
-                    - { table: %oro_shipping.entity.shipping_rule.class%, alias: shipping_rule }
+                    - { table: %oro_shipping.entity.shipping_methods_configs_rule.class%, alias: shipping_rule }
 
         columns:
             id:
                 label:         oro.shipping.shippingrule.id.label
             name:
-                label:         oro.shipping.shippingrule.name.label
+                label:         oro.shipping.shippingmethodsconfigsrule.name.label
             enabled:
                 label:         oro.shipping.shippingrule.enabled.label
                 frontend_type: boolean
@@ -47,11 +47,11 @@ datagrids:
             id: ~
             view_link:
                 type:    url
-                route:   oro_shipping_rule_view
+                route:   oro_shipping_methods_configs_rule_view
                 params:  [ id ]
             update_link:
                 type:    url
-                route:   oro_shipping_rule_update
+                route:   oro_shipping_methods_configs_rule_update
                 params:  [ id ]
             enable_link:
                 type:       url
@@ -102,26 +102,26 @@ datagrids:
             view:
                 type:          navigate
                 link:          view_link
-                acl_resource:  oro_shipping_rule_view
+                acl_resource:  oro_shipping_methods_configs_rule_view
                 icon:          eye
                 label:         oro.grid.action.view
                 rowAction:     true
             update:
                 type:         navigate
                 link:         update_link
-                acl_resource: oro_shipping_rule_update
+                acl_resource: oro_shipping_methods_configs_rule_update
                 icon:         pencil-square-o
                 label:        oro.grid.action.update
                 rowAction:    true
             enable:
                 type:         ajax
-                acl_resource: oro_shipping_rule_update
+                acl_resource: oro_shipping_methods_configs_rule_update
                 label:        oro.shipping.datagrid.action.enable
                 icon:         check
                 link:         enable_link
             disable:
                 type:         ajax
-                acl_resource: oro_shipping_rule_update
+                acl_resource: oro_shipping_methods_configs_rule_update
                 label:        oro.shipping.datagrid.action.disable
                 icon:         close
                 link:         disable_link
@@ -139,15 +139,15 @@ datagrids:
         mass_actions:
             enable:
                 type:         shippingruleenable
-                acl_resource: oro_shipping_rule_update
+                acl_resource: oro_shipping_methods_configs_rule_update
                 label:        oro.shipping.datagrid.action.enable
                 icon:         check
-                entity_name:  %oro_shipping.entity.shipping_rule.class%
+                entity_name:  %oro_shipping.entity.shipping_methods_configs_rule.class%
                 data_identifier: shipping_rule.id
             disable:
                 type:         shippingruledisable
-                acl_resource: oro_shipping_rule_update
+                acl_resource: oro_shipping_methods_configs_rule_update
                 label:        oro.shipping.datagrid.action.disable
                 icon:         close
-                entity_name:  %oro_shipping.entity.shipping_rule.class%
+                entity_name:  %oro_shipping.entity.shipping_methods_configs_rule.class%
                 data_identifier: shipping_rule.id

@@ -3,12 +3,12 @@
 namespace Oro\Bundle\ShippingBundle\Form\Handler;
 
 use Doctrine\ORM\EntityManager;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-class ShippingRuleHandler
+class ShippingMethodsConfigsRuleHandler
 {
     const UPDATE_FLAG = 'update_methods_flag';
 
@@ -36,10 +36,10 @@ class ShippingRuleHandler
 
     /**
      * @param FormInterface $form
-     * @param ShippingRule $entity
+     * @param ShippingMethodsConfigsRule $entity
      * @return bool
      */
-    public function process(FormInterface $form, ShippingRule $entity)
+    public function process(FormInterface $form, ShippingMethodsConfigsRule $entity)
     {
         $form->setData($entity);
 

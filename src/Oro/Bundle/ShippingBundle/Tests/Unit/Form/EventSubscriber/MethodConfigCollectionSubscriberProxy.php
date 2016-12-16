@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Form\EventSubscriber;
 
-use Oro\Bundle\ShippingBundle\Form\EventSubscriber\RuleMethodTypeConfigCollectionSubscriber;
+use Oro\Bundle\ShippingBundle\Form\EventSubscriber\MethodConfigCollectionSubscriber;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 use Symfony\Component\Form\FormFactoryInterface;
 
-class RuleMethodTypeConfigCollectionSubscriberProxy extends RuleMethodTypeConfigCollectionSubscriber
+class MethodConfigCollectionSubscriberProxy extends MethodConfigCollectionSubscriber
 {
     /**
      * @var FormFactoryInterface
@@ -19,7 +19,7 @@ class RuleMethodTypeConfigCollectionSubscriberProxy extends RuleMethodTypeConfig
     protected $methodRegistry;
 
     /**
-     * RuleMethodTypeConfigCollectionSubscriberProxy constructor.
+     * MethodTypeConfigCollectionSubscriberProxy constructor.
      */
     public function __construct()
     {
@@ -29,7 +29,7 @@ class RuleMethodTypeConfigCollectionSubscriberProxy extends RuleMethodTypeConfig
      * @param FormFactoryInterface $factory
      * @return $this
      */
-    public function setFactory(FormFactoryInterface$factory)
+    public function setFactory(FormFactoryInterface $factory)
     {
         $this->factory = $factory;
         return $this;

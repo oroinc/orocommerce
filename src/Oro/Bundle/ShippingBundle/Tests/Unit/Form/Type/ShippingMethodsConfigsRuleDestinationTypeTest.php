@@ -10,7 +10,7 @@ use Oro\Bundle\AddressBundle\Form\Type\CountryType;
 use Oro\Bundle\AddressBundle\Form\Type\RegionType;
 use Oro\Bundle\FormBundle\Form\Extension\AdditionalAttrExtension;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination;
-use Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleDestinationType;
+use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodsConfigsRuleDestinationType;
 use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
@@ -20,9 +20,9 @@ use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class ShippingRuleDestinationTypeTest extends FormIntegrationTestCase
+class ShippingMethodsConfigsRuleDestinationTypeTest extends FormIntegrationTestCase
 {
-    /** @var ShippingRuleDestinationType */
+    /** @var ShippingMethodsConfigsRuleDestinationType */
     protected $formType;
 
     /** @var AddressCountryAndRegionSubscriber */
@@ -32,12 +32,12 @@ class ShippingRuleDestinationTypeTest extends FormIntegrationTestCase
     {
         parent::setUp();
         $this->subscriber = new AddressCountryAndRegionSubscriberStub();
-        $this->formType = new ShippingRuleDestinationType($this->subscriber);
+        $this->formType = new ShippingMethodsConfigsRuleDestinationType($this->subscriber);
     }
 
     public function testGetBlockPrefix()
     {
-        $this->assertEquals(ShippingRuleDestinationType::NAME, $this->formType->getBlockPrefix());
+        $this->assertEquals(ShippingMethodsConfigsRuleDestinationType::NAME, $this->formType->getBlockPrefix());
     }
 
     public function testBuildFormSubscriber()

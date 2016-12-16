@@ -12,15 +12,15 @@ use Oro\Bundle\CurrencyBundle\Utils\CurrencyNameHelper;
 use Oro\Bundle\FormBundle\Form\Extension\AdditionalAttrExtension;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
 use Oro\Bundle\ShippingBundle\Form\Type\FlatRateShippingMethodTypeOptionsType;
-use Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleDestinationType;
-use Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleMethodConfigCollectionType;
-use Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleMethodConfigType;
-use Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleMethodTypeConfigCollectionType;
-use Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleType;
+use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodConfigCollectionType;
+use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodConfigType;
+use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodsConfigsRuleDestinationType;
+use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodsConfigsRuleType;
+use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodTypeConfigCollectionType;
 use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethod;
 use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethodProvider;
 use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethodType;
@@ -34,22 +34,22 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Translation\TranslatorInterface;
 
-class RuleMethodTypeConfigCollectionSubscriberTest extends FormIntegrationTestCase
+class MethodConfigSubscriberTest extends FormIntegrationTestCase
 {
     /**
-     * @var RuleMethodTypeConfigCollectionSubscriberProxy
+     * @var MethodConfigCollectionSubscriberProxy
+     */
+    protected $methodConfigCollectionSubscriber;
+
+    /**
+     * @var MethodTypeConfigCollectionSubscriberProxy
+     */
+    protected $methodTypeConfigCollectionSubscriber;
+
+    /**
+     * @var MethodConfigSubscriberProxy
      */
     protected $subscriber;
-
-    /**
-     * @var RuleMethodConfigSubscriberProxy
-     */
-    protected $ruleMethodConfigSubscriber;
-
-    /**
-     * @var RuleMethodConfigCollectionSubscriberProxy
-     */
-    protected $ruleMethodConfigCollectionSubscriber;
 
     /**
      * @var ShippingMethodRegistry
@@ -59,14 +59,15 @@ class RuleMethodTypeConfigCollectionSubscriberTest extends FormIntegrationTestCa
     public function setUp()
     {
         $this->methodRegistry = new ShippingMethodRegistry();
-        $this->subscriber = new RuleMethodTypeConfigCollectionSubscriberProxy();
-        $this->ruleMethodConfigSubscriber = new RuleMethodConfigSubscriberProxy();
-        $this->ruleMethodConfigCollectionSubscriber = new RuleMethodConfigCollectionSubscriberProxy();
+        $this->methodTypeConfigCollectionSubscriber = new MethodTypeConfigCollectionSubscriberProxy();
+        $this->methodConfigCollectionSubscriber = new MethodConfigCollectionSubscriberProxy();
+        $this->subscriber = new MethodConfigSubscriberProxy();
         parent::setUp();
-        $this->subscriber->setFactory($this->factory)->setMethodRegistry($this->methodRegistry);
-        $this->ruleMethodConfigSubscriber->setFactory($this->factory)->setMethodRegistry($this->methodRegistry);
-        $this->ruleMethodConfigCollectionSubscriber
+        $this->methodTypeConfigCollectionSubscriber
             ->setFactory($this->factory)->setMethodRegistry($this->methodRegistry);
+        $this->methodConfigCollectionSubscriber
+            ->setFactory($this->factory)->setMethodRegistry($this->methodRegistry);
+        $this->subscriber->setFactory($this->factory)->setMethodRegistry($this->methodRegistry);
     }
 
     public function test()
@@ -76,7 +77,7 @@ class RuleMethodTypeConfigCollectionSubscriberTest extends FormIntegrationTestCa
                 FormEvents::PRE_SET_DATA => 'preSet',
                 FormEvents::PRE_SUBMIT => 'preSubmit'
             ],
-            RuleMethodTypeConfigCollectionSubscriberProxy::getSubscribedEvents()
+            MethodTypeConfigCollectionSubscriberProxy::getSubscribedEvents()
         );
     }
 
@@ -84,8 +85,8 @@ class RuleMethodTypeConfigCollectionSubscriberTest extends FormIntegrationTestCa
     {
         $flatRate = new FlatRateShippingMethodProvider();
         $this->methodRegistry->addProvider($flatRate);
-        $form = $this->factory->create(ShippingRuleType::class);
-        $shippingRule = new ShippingRule();
+        $form = $this->factory->create(ShippingMethodsConfigsRuleType::class);
+        $shippingRule = new ShippingMethodsConfigsRule();
         $methodConfig = new ShippingMethodConfig();
         $methodConfig->setMethod(FlatRateShippingMethod::IDENTIFIER);
         $shippingRule->addMethodConfig($methodConfig);
@@ -112,8 +113,8 @@ class RuleMethodTypeConfigCollectionSubscriberTest extends FormIntegrationTestCa
     {
         $flatRate = new FlatRateShippingMethodProvider();
         $this->methodRegistry->addProvider($flatRate);
-        $form = $this->factory->create(ShippingRuleType::class);
-        $shippingRule = new ShippingRule();
+        $form = $this->factory->create(ShippingMethodsConfigsRuleType::class);
+        $shippingRule = new ShippingMethodsConfigsRule();
         $methodConfig = new ShippingMethodConfig();
         $methodConfig->setMethod(FlatRateShippingMethod::IDENTIFIER);
         $typeConfig = new ShippingMethodTypeConfig();
@@ -138,8 +139,8 @@ class RuleMethodTypeConfigCollectionSubscriberTest extends FormIntegrationTestCa
     {
         $flatRate = new FlatRateShippingMethodProvider();
         $this->methodRegistry->addProvider($flatRate);
-        $form = $this->factory->create(ShippingRuleType::class);
-        $shippingRule = new ShippingRule();
+        $form = $this->factory->create(ShippingMethodsConfigsRuleType::class);
+        $shippingRule = new ShippingMethodsConfigsRule();
 
         $form->setData($shippingRule);
         $form->submit([
@@ -218,22 +219,23 @@ class RuleMethodTypeConfigCollectionSubscriberTest extends FormIntegrationTestCa
         return [
             new PreloadedExtension(
                 [
-                    ShippingRuleType::class => new ShippingRuleType($this->methodRegistry, $translator),
+                    ShippingMethodsConfigsRuleType::class
+                    => new ShippingMethodsConfigsRuleType($this->methodRegistry, $translator),
                     FlatRateShippingMethodTypeOptionsType::class
                     => new FlatRateShippingMethodTypeOptionsType($roundingService),
-                    ShippingRuleMethodConfigCollectionType::class
-                    => new ShippingRuleMethodConfigCollectionType($this->ruleMethodConfigCollectionSubscriber),
-                    ShippingRuleMethodConfigType::class
-                    => new ShippingRuleMethodConfigType($this->ruleMethodConfigSubscriber, $this->methodRegistry),
-                    ShippingRuleMethodTypeConfigCollectionType::class =>
-                        new ShippingRuleMethodTypeConfigCollectionType($this->subscriber),
+                    ShippingMethodConfigCollectionType::class
+                    => new ShippingMethodConfigCollectionType($this->methodConfigCollectionSubscriber),
+                    ShippingMethodConfigType::class
+                    => new ShippingMethodConfigType($this->subscriber, $this->methodRegistry),
+                    ShippingMethodTypeConfigCollectionType::class =>
+                        new ShippingMethodTypeConfigCollectionType($this->methodTypeConfigCollectionSubscriber),
                     CurrencySelectionType::NAME => new CurrencySelectionType(
                         $currencyProvider,
                         $this->getMockBuilder(LocaleSettings::class)->disableOriginalConstructor()->getMock(),
                         $this->getMockBuilder(CurrencyNameHelper::class)->disableOriginalConstructor()->getMock()
                     ),
                     CollectionType::NAME => new CollectionType(),
-                    ShippingRuleDestinationType::NAME => new ShippingRuleDestinationType(
+                    ShippingMethodsConfigsRuleDestinationType::NAME => new ShippingMethodsConfigsRuleDestinationType(
                         new AddressCountryAndRegionSubscriberStub()
                     ),
                     'oro_country' => new CountryType(),

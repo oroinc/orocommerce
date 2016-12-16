@@ -11,9 +11,9 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraint;
 
-class ShippingRuleMethodTypeConfigType extends AbstractType
+class ShippingMethodTypeConfigType extends AbstractType
 {
-    const BLOCK_PREFIX = 'oro_shipping_rule_method_type_config';
+    const BLOCK_PREFIX = 'oro_shipping_method_type_config';
 
     /**
      * {@inheritdoc}

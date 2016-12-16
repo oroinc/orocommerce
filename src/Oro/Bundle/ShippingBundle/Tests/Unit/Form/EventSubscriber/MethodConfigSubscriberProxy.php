@@ -2,12 +2,12 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Form\EventSubscriber;
 
-use Oro\Bundle\ShippingBundle\Form\EventSubscriber\RuleMethodConfigSubscriber;
+use Oro\Bundle\ShippingBundle\Form\EventSubscriber\MethodConfigSubscriber;
 use Symfony\Component\Form\FormFactoryInterface;
 
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 
-class RuleMethodConfigSubscriberProxy extends RuleMethodConfigSubscriber
+class MethodConfigSubscriberProxy extends MethodConfigSubscriber
 {
     /**
      * @var FormFactoryInterface

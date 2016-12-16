@@ -2,31 +2,31 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Form\Type;
 
-use Oro\Bundle\ShippingBundle\Form\EventSubscriber\RuleMethodTypeConfigCollectionSubscriber;
-use Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleMethodTypeConfigCollectionType;
+use Oro\Bundle\ShippingBundle\Form\EventSubscriber\MethodTypeConfigCollectionSubscriber;
+use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodTypeConfigCollectionType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Symfony\Component\Form\FormBuilderInterface;
 
 class ShippingRuleConfigurationCollectionTypeTest extends FormIntegrationTestCase
 {
-    /** @var ShippingRuleMethodTypeConfigCollectionType */
+    /** @var ShippingMethodTypeConfigCollectionType */
     protected $formType;
 
-    /** @var RuleMethodTypeConfigCollectionSubscriber */
+    /** @var MethodTypeConfigCollectionSubscriber */
     protected $subscriber;
 
     protected function setUp()
     {
         parent::setUp();
-        $this->subscriber = $this->getMockBuilder(RuleMethodTypeConfigCollectionSubscriber::class)
+        $this->subscriber = $this->getMockBuilder(MethodTypeConfigCollectionSubscriber::class)
             ->disableOriginalConstructor()->getMock();
-        $this->formType = new ShippingRuleMethodTypeConfigCollectionType($this->subscriber);
+        $this->formType = new ShippingMethodTypeConfigCollectionType($this->subscriber);
     }
 
     public function testGetBlockPrefix()
     {
         $this->assertEquals(
-            ShippingRuleMethodTypeConfigCollectionType::BLOCK_PREFIX,
+            ShippingMethodTypeConfigCollectionType::BLOCK_PREFIX,
             $this->formType->getBlockPrefix()
         );
     }
