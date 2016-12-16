@@ -19,8 +19,6 @@ class PaymentMethodsConfigsRuleTest extends \PHPUnit_Framework_TestCase
             ['id', '1'],
             ['rule', new Rule()],
             ['currency', 'USD'],
-            ['createdAt', $now, false],
-            ['updatedAt', $now, false],
         ];
 
         $entity = new PaymentMethodsConfigsRule();

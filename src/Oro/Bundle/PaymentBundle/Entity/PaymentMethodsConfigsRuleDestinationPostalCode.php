@@ -9,7 +9,7 @@ use Oro\Bundle\PaymentBundle\Model\ExtendPaymentMethodsConfigsRuleDestinationPos
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="oro_payment_mtds_cfgs_rl_d_p_c")
+ * @ORM\Table(name="oro_payment_mtdscfgsrl_dst_pc")
  * @ORM\HasLifecycleCallbacks
  * @Config(
  *     mode="hidden",

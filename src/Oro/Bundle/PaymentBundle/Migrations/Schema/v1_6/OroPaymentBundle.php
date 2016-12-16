@@ -52,12 +52,8 @@ class OroPaymentBundle implements Migration
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('rule_id', 'integer', []);
         $table->addColumn('currency', 'string', ['notnull' => false, 'length' => 3]);
-        $table->addColumn('created_at', 'datetime', []);
-        $table->addColumn('updated_at', 'datetime', []);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['rule_id'], 'idx_oro_payment_mtds_cfgs_rl_rule_id', []);
-        $table->addIndex(['created_at'], 'idx_oro_payment_mtds_cfgs_rl_created_at', []);
-        $table->addIndex(['updated_at'], 'idx_oro_payment_mtds_cfgs_rl_updated_at', []);
     }
 
     /**
@@ -80,20 +76,20 @@ class OroPaymentBundle implements Migration
     }
 
     /**
-     * Create oro_payment_mtds_cfgs_rl_d_p_c table
+     * Create oro_payment_mtdscfgsrl_dst_pc table
      *
      * @param Schema $schema
      */
     protected function createOroPaymentMethodsConfigsRuleDestinationPostalCodeTable(Schema $schema)
     {
-        $table = $schema->createTable('oro_payment_mtds_cfgs_rl_d_p_c');
+        $table = $schema->createTable('oro_payment_mtdscfgsrl_dst_pc');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('destination_id', 'integer', []);
         $table->addColumn('name', 'text', []);
         $table->setPrimaryKey(['id']);
         $table->addIndex(
             ['destination_id'],
-            'idx_oro_payment_mtds_cfgs_rl_d_p_c_destination_id',
+            'idx_oro_payment_mtdscfgsrl_dst_pc_destination_id',
             []
         );
     }
@@ -159,13 +155,13 @@ class OroPaymentBundle implements Migration
     }
 
     /**
-     * Add oro_payment_mtds_cfgs_rl_d_p_c foreign keys.
+     * Add oro_payment_mtdscfgsrl_dst_pc foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroPaymentMethodsConfigsRuleDestinationPostalCodeForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('oro_payment_mtds_cfgs_rl_d_p_c');
+        $table = $schema->getTable('oro_payment_mtdscfgsrl_dst_pc');
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_payment_mtds_cfgs_rl_d'),
             ['destination_id'],

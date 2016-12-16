@@ -13,13 +13,7 @@ use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
 
 /**
  * @ORM\Entity
- * @ORM\Table(
- *     name="oro_payment_mtds_cfgs_rl",
- *     indexes={
- *         @ORM\Index(name="idx_oro_payment_mtds_cfgs_rl_created_at", columns={"created_at"}),
- *         @ORM\Index(name="idx_oro_payment_mtds_cfgs_rl_updated_at", columns={"updated_at"})
- *     }
- * )
+ * @ORM\Table(name="oro_payment_mtds_cfgs_rl")
  * @ORM\HasLifecycleCallbacks()
  * @Config
  */
@@ -99,67 +93,12 @@ class PaymentMethodsConfigsRule extends ExtendPaymentMethodsConfigsRule implemen
      */
     protected $currency;
 
-    /**
-     * @var \DateTime $createdAt
-     *
-     * @ORM\Column(name="created_at", type="datetime")
-     * @ConfigField(
-     *      defaultValues={
-     *          "entity"={
-     *              "label"="oro.ui.created_at"
-     *          },
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $createdAt;
-
-    /**
-     * @var \DateTime $updatedAt
-     *
-     * @ORM\Column(name="updated_at", type="datetime")
-     * @ConfigField(
-     *      defaultValues={
-     *          "entity"={
-     *              "label"="oro.ui.updated_at"
-     *          },
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $updatedAt;
-
     public function __construct()
     {
         parent::__construct();
 
         $this->methodConfigs = new ArrayCollection();
         $this->destinations = new ArrayCollection();
-    }
-
-    /**
-     * Pre persist event handler
-     *
-     * @ORM\PrePersist
-     */
-    public function prePersist()
-    {
-        $this->createdAt = new \DateTime('now', new \DateTimeZone('UTC'));
-        $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
-    }
-
-    /**
-     * Pre update event handler
-     *
-     * @ORM\PreUpdate
-     */
-    public function preUpdate()
-    {
-        $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
     }
 
     /**
@@ -281,44 +220,6 @@ class PaymentMethodsConfigsRule extends ExtendPaymentMethodsConfigsRule implemen
     public function setCurrency($currency)
     {
         $this->currency = $currency;
-
-        return $this;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getCreatedAt()
-    {
-        return $this->createdAt;
-    }
-
-    /**
-     * @param \DateTime $createdAt
-     * @return $this
-     */
-    public function setCreatedAt($createdAt)
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getUpdatedAt()
-    {
-        return $this->updatedAt;
-    }
-
-    /**
-     * @param \DateTime $updatedAt
-     * @return $this
-     */
-    public function setUpdatedAt($updatedAt)
-    {
-        $this->updatedAt = $updatedAt;
 
         return $this;
     }
