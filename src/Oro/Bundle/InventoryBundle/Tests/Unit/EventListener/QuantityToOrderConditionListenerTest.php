@@ -4,7 +4,6 @@ namespace Oro\Bundle\InventoryBundle\Tests\Unit\EventListener;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
-use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use Oro\Bundle\CheckoutBundle\Event\CheckoutValidateEvent;
@@ -17,7 +16,9 @@ use Oro\Bundle\ProductBundle\Model\QuickAddRow;
 use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
 use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\WorkflowBundle\Entity\WorkflowDefinition;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
+use Oro\Bundle\WorkflowBundle\Model\WorkflowResult;
 use Oro\Component\Action\Event\ExtendableConditionEvent;
 
 class QuantityToOrderConditionListenerTest extends \PHPUnit_Framework_TestCase
@@ -127,34 +128,35 @@ class QuantityToOrderConditionListenerTest extends \PHPUnit_Framework_TestCase
         $this->quantityToOrderConditionListener->onCheckoutValidate($this->event);
     }
 
-    public function testOnCreateOrderCheckIgnored()
+    public function testOnStartCheckoutConditionCheckIgnored()
     {
         $event = new ExtendableConditionEvent();
         $event->setContext(new \stdClass());
 
         $this->validatorService->expects($this->never())
             ->method('isLineItemListValid');
-        $this->quantityToOrderConditionListener->onCreateOrderCheck($event);
+        $this->quantityToOrderConditionListener->onStartCheckoutConditionCheck($event);
     }
 
-    public function testOnCreateOrderCheckAddsErrorToEvent()
+    public function testOnStartCheckoutConditionCheckAddsErrorToEvent()
     {
-        $context = $this->getMock(ActionData::class);
-        $shoppingList = $this->getMock(ShoppingList::class);
-        $context->expects($this->exactly(2))
-            ->method('getEntity')
-            ->willReturn($shoppingList);
-        $event = $this->getMock(ExtendableConditionEvent::class);
-        $event->expects($this->once())
-            ->method('getContext')
-            ->willReturn($context);
-        $event->expects($this->once())
-            ->method('addError');
+        $workflowDefinition = new WorkflowDefinition();
+        $workflowDefinition->setRelatedEntity(Checkout::class);
 
-        $this->validatorService->expects($this->once())
-            ->method('isLineItemListValid')
-            ->willReturn(false);
-        $this->quantityToOrderConditionListener->onCreateOrderCheck($event);
+        $shoppingList = $this->getMock(ShoppingList::class);
+
+        $workflowItem = new WorkflowItem();
+        $workflowItem->setWorkflowName('b2b_flow_checkout')
+            ->setDefinition($workflowDefinition)
+            ->getResult()
+            ->set('shoppingList', $shoppingList);
+
+        $event = $this->getMock(ExtendableConditionEvent::class);
+        $event->expects($this->once())->method('getContext')->willReturn($workflowItem);
+        $event->expects($this->once())->method('addError');
+
+        $this->validatorService->expects($this->once())->method('isLineItemListValid')->willReturn(false);
+        $this->quantityToOrderConditionListener->onStartCheckoutConditionCheck($event);
     }
 
     public function testOnCheckoutConditionCheckAddsError()

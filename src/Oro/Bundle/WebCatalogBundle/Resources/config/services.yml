@@ -40,15 +40,12 @@ services:
             - '@oro_web_catalog.content_variant_provider.registry'
         public: false
 
-    oro_web_catalog.content_variant_title_provider:
-        class: 'Oro\Component\WebCatalog\ChainContentVariantTitleProvider'
-        public: false
-
     oro_web_catalog.content_node_tree_handler:
         class: Oro\Bundle\WebCatalogBundle\JsTree\ContentNodeTreeHandler
         arguments:
             - '%oro_web_catalog.entity.content_node.class%'
             - '@doctrine'
+            - '@oro_locale.helper.localization'
 
     oro_web_catalog.twig.extension:
         class: Oro\Bundle\WebCatalogBundle\Twig\WebCatalogExtension
@@ -65,10 +62,8 @@ services:
         arguments:
             - '@oro_web_catalog.model.content_node_materialized_path_modifier'
             - '@oro_commerce_entity.extra_insert_entity_storage'
-            - '@oro_web_catalog.content_node_utils.content_node_name_filler'
             - '@oro_web_catalog.generator.slug_generator.link'
         tags:
-            - { name: doctrine.orm.entity_listener, entity: '%oro_web_catalog.entity.content_node.class%', event: prePersist }
             - { name: doctrine.orm.entity_listener, entity: '%oro_web_catalog.entity.content_node.class%', event: postPersist }
             - { name: doctrine.orm.entity_listener, entity: '%oro_web_catalog.entity.content_node.class%', event: preUpdate }
 
@@ -121,8 +116,6 @@ services:
 
     oro_web_catalog.form.type.content_node:
         class: Oro\Bundle\WebCatalogBundle\Form\Type\ContentNodeType
-        arguments:
-            - '@oro_web_catalog.content_node_utils.content_node_name_filler'
         tags:
             - { name: form.type, alias: oro_web_catalog_content_node }
 
@@ -137,12 +130,6 @@ services:
             - '@oro_web_catalog.content_variant_type.registry'
         tags:
             - { name: form.type, alias: oro_web_catalog_content_variant_collection }
-
-    oro_web_catalog.content_node_utils.content_node_name_filler:
-        class: 'Oro\Bundle\WebCatalogBundle\ContentNodeUtils\ContentNodeNameFiller'
-        public: true
-        arguments:
-            - '@oro_web_catalog.content_variant_title_provider'
 
     oro_web_catalog.generator.slug_generator:
         class: Oro\Bundle\WebCatalogBundle\Generator\SlugGenerator

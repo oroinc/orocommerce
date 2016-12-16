@@ -267,6 +267,10 @@ class ProductUnitPrecision implements ProductUnitHolderInterface
      */
     public function __toString()
     {
-        return $this->getUnit()->getCode() . ' ' . $this->getPrecision();
+        if ($this->getUnit()) {
+            return $this->getUnit()->getCode() . ' ' . $this->getPrecision();
+        }
+
+        return '';
     }
 }

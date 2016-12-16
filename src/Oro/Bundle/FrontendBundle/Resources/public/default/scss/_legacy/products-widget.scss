@@ -61,14 +61,6 @@
 }
 
 .prices-hint-content {
-  .popover-title {
-    display: none;
-  }
-
-  .popover-content {
-    padding: 5px;
-  }
-
   .table {
     margin-bottom: 0;
 
@@ -699,12 +691,6 @@
 
       input[type="text"] {
         text-align: center;
-      }
-
-      .btn_has-dropdown {
-        @media (max-width: 1235px) {
-          width: 100%;
-        }
       }
     }
 

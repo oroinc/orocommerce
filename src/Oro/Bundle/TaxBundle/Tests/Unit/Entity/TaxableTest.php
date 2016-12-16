@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Unit\Entity;
 
+use Brick\Math\BigDecimal;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Bundle\TaxBundle\Model\Address;
 use Oro\Bundle\TaxBundle\Model\Result;
@@ -18,13 +19,14 @@ class TaxableTest extends \PHPUnit_Framework_TestCase
             ['origin', new Address()],
             ['destination', new Address()],
             ['taxationAddress', new Address()],
-            ['quantity', 20],
-            ['price', '10'],
-            ['amount', '100'],
+            ['quantity', BigDecimal::of('20'), false],
+            ['price', BigDecimal::of('10'), false],
+            ['amount', BigDecimal::of('100'), false],
             ['items', new \SplObjectStorage(), false],
             ['result', new Result(), false],
             ['context', new \ArrayObject(), false],
             ['className', '\stdClass'],
+            ['shippingCost', BigDecimal::of('10'), false],
         ];
 
         $this->assertPropertyAccessors($this->createTaxable(), $properties);

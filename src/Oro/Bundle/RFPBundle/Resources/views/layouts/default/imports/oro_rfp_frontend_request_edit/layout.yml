@@ -43,7 +43,7 @@ layout:
                         text: oro.frontend.rfp.request.create_form.send.label
                         style: auto
                         attr:
-                            class: btn_xlg
+                            class: 'btn--size-l '
             tree:
                 __root:
                     __rfp_form_start: ~
