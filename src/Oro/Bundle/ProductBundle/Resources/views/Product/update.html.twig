@@ -87,7 +87,7 @@
 
     {% set additionalData = [] %}
     {% for child in form.children if child.vars.extra_field is defined and child.vars.extra_field %}
-        {% if child.vars.name not in form.variantFields %}
+        {% if child.vars.name not in entity.variantFields %}
             {% set additionalData = additionalData|merge([form_row(child)]) %}
         {% endif %}
     {% endfor %}

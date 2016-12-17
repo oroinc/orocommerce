@@ -35,7 +35,7 @@ class UniqueProductVariantLinksValidator extends ConstraintValidator
             throw new \InvalidArgumentException(
                 sprintf(
                     'Entity must be instance of "%s", "%s" given',
-                    'Oro\Bundle\ProductBundle\Entity\Product',
+                    Product::class,
                     is_object($value) ? get_class($value) : gettype($value)
                 )
             );

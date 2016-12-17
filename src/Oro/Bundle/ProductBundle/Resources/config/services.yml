@@ -238,6 +238,7 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.product-product-variants-view, method: onBuildAfter }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.product-product-variants-edit, method: onBuildAfter }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.product-product-variants-edit, method: onBuildBeforeHideUnsuitable }
 
     oro_product.validator.unique_variant_links:
         class: 'Oro\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinksValidator'
@@ -497,14 +498,6 @@ services:
            - "@request_stack"
         tags:
             - { name: kernel.event_listener, event: kernel.exception, method: onAccessException }
-
-    oro_product.event_listener.product_variants_datagrid_listener:
-        class: 'Oro\Bundle\ProductBundle\EventListener\ProductVariantsGridEventListener'
-        arguments:
-            - '@oro_entity.doctrine_helper'
-            - '%oro_product.entity.product.class%'
-        tags:
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.product-product-variants-edit, method: onBuildBefore }
 
     oro_product.content_variant_type.product_page:
         class: Oro\Bundle\ProductBundle\ContentVariantType\ProductPageContentVariantType
