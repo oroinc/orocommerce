@@ -89,7 +89,10 @@
                 quantityComponentOptions: {
                     dataKey: constant('Oro\\Bundle\\ProductBundle\\Form\\Type\\FrontendLineItemType::NAME'),
                     enable: resource_granted('oro_shopping_list_frontend_update'),
-                }
+                },
+                singleUnitMode: singleUnitMode,
+                singleUnitModeCodeVisible: singleUnitModeCodeVisible,
+                configDefaultUnit: configDefaultUnit
             }
         },
         '~class': ' shopping-lists__link'
@@ -150,14 +153,14 @@
                                 <div class="shopping-lists-static"
                                      data-role="line-item-view">
                                     <span class="shopping-lists-units__number"><%= lineItem.quantity %></span>
-                                    {% if singleUnitModeCodeVisible %}
-                                        <span class="shopping-lists-units__separate">/</span>
+                                    <% if (!isProductApplySingleUnitMode([lineItem.unit]) || singleUnitModeCodeVisible) { %>
+                                        <span class="shopping-lists-units__separate"></span>
                                         <span class="shopping-lists-units__measurements"><%= _.__(
                                             'oro.product.product_unit.' + lineItem.unit + '.value.label',
                                             {count: lineItem.quantity},
                                             lineItem.quantity
                                         ) %></span>
-                                    {% endif %}
+                                    <% } %>
                                     <div class="shopping-lists-units__actions">
                                         <ul class="actions-row">
                                             <li class="actions-row__item actions-row__item--edit">
@@ -202,13 +205,13 @@
                                                disabled="disabled" required>
                                     </li>
                                     <li class="shopping-lists-modify__select">
-                                        {% if singleUnitMode and productPrimaryUnitSingleAndDefault %}
+                                        <% if (isProductApplySingleUnitMode(productUnits) && isProductApplySingleUnitMode([lineItem.unit])) { %>
                                             <input type="hidden" name="unit" value="<%= lineItem.unit %>" data-role="field__unit" required />
 
-                                            {% if singleUnitModeCodeVisible %}
-                                                / <%= lineItem.unit %>
-                                            {% endif %}
-                                        {% else %}
+                                            <% if (singleUnitModeCodeVisible) { %>
+                                                <%= lineItem.unit %>
+                                            <% } %>
+                                        <% } else { %>
                                             <select class="oro-select2 oro-select2--size-s" name="unit"
                                                     data-role="field__unit" required>
                                                 <% _.each(productUnits, function(unit) { %>
@@ -219,7 +222,7 @@
                                                     <% } %>
                                                 <% }); %>
                                             </select>
-                                        {% endif %}
+                                        <% } %>
                                     </li>
                                     <li class="shopping-lists-modify__badges">
                                         <span class="shopping-lists-modify__edit">
@@ -275,19 +278,19 @@
                                        data-role="add-form-qty">
                             </li>
                             <li class="shopping-lists-modify__select">
-                                {% if singleUnitMode and productPrimaryUnitSingleAndDefault %}
-                                    <input type="hidden" name="oro_product_frontend_line_item[unit]" value="{{ product.primaryUnitPrecision.unit }}" data-role="add-form-unit"/>
+                                <% if (singleUnitMode && isProductApplySingleUnitMode(productUnits)) { %>
+                                    <input type="hidden" name="oro_product_frontend_line_item[unit]" value="<%= unit %>" data-role="add-form-unit"/>
 
-                                    {% if singleUnitModeCodeVisible %}
-                                        / {{ product.primaryUnitPrecision.unit.code|oro_format_product_unit_label }}
-                                    {% endif %}
-                                {% else %}
+                                    <% if (singleUnitModeCodeVisible) { %>
+                                        <%= unit %>
+                                    <% } %>
+                                <% } else { %>
                                     <select class="oro-select2 oro-select2--size-s" name="oro_product_frontend_line_item[unit]" data-role="add-form-unit">
                                         <% _.each(productUnits, function(unit) { %>
                                         <option value="<%= unit %>"><%= unit %></option>
                                         <% }); %>
                                     </select>
-                                {% endif %}
+                                <% } %>
                             </li>
                             <li class="shopping-lists-modify__badges">
                                 <span class="shopping-lists-modify__edit">
