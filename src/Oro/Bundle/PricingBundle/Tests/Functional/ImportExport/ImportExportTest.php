@@ -6,9 +6,14 @@ use Akeneo\Bundle\BatchBundle\Job\DoctrineJobRepository as BatchJobRepository;
 
 use Symfony\Component\DomCrawler\Form;
 
+use Oro\Bundle\ImportExportBundle\Async\ExportMessageProcessor;
 use Oro\Bundle\ImportExportBundle\Processor\ProcessorRegistry;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
+use Oro\Bundle\NotificationBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Component\MessageQueue\Transport\Null\NullMessage;
+use Oro\Component\MessageQueue\Transport\SessionInterface;
 
 /**
  * @dbIsolation
@@ -16,6 +21,8 @@ use Oro\Bundle\PricingBundle\Entity\PriceList;
  */
 class ImportExportTest extends WebTestCase
 {
+    use MessageQueueExtension;
+
     /**
      * @var string
      */
@@ -69,36 +76,86 @@ class ImportExportTest extends WebTestCase
         return $batchJobRepository->getJobManager();
     }
 
-    /**
-     * @param string $strategy
-     * @param int $expectedAdd
-     * @param int $expectedUpdate
-     * @dataProvider strategyDataProvider
-     */
-    public function testImportExport($strategy, $expectedAdd, $expectedUpdate)
+    public function testShouldExportData()
     {
-        $this->doExport(8, 0);
-        $this->file = $this->getExportFile();
+        $this->client->followRedirects(false);
+        $this->client->request(
+            'GET',
+            $this->getUrl(
+                'oro_importexport_export_instant',
+                [
+                    'processorAlias' => 'oro_pricing_product_price',
+                    '_format' => 'json',
+                    'options[price_list_id]' => $this->getReference('price_list_1')->getId(),
+                    'importJob' => 'price_list_product_prices_entity_import_from_csv',
+                    'exportJob' => 'price_list_product_prices_export_to_csv'
+                ]
+            )
+        );
 
-        // @todo - must be fixed in BAP-12713
-        $this->validateImportFile($strategy);
-        $crawler = $this->client->getCrawler();
-        $this->assertEquals(0, $crawler->filter('.import-errors')->count());
-        $this->doImport($strategy, $expectedAdd, $expectedUpdate);
+        $data = $this->getJsonResponseContent($this->client->getResponse(), 200);
+        $this->assertCount(1, $data);
+        $this->assertTrue($data['success']);
+
+        $filePath = $this->processExportMessage();
+
+        $content = file_get_contents($filePath);
+        $content = str_getcsv($content, "\n", '"', '"');
+        $this->assertCount(9, $content);
+
+        unlink($filePath); // remove trash
     }
 
-    public function testExportWithRelations()
+    public function testShouldExportCorrectDataWithRelations()
     {
-        $this->priceList = $this->getReference('price_list_2');
-        $this->doExport(9, 0);
+        $this->client->followRedirects(false);
+        $this->client->request(
+            'GET',
+            $this->getUrl(
+                'oro_importexport_export_instant',
+                [
+                    'processorAlias' => 'oro_pricing_product_price',
+                    '_format' => 'json',
+                    'options[price_list_id]' => $this->getReference('price_list_2')->getId(),
+                    'importJob' => 'price_list_product_prices_entity_import_from_csv',
+                    'exportJob' => 'price_list_product_prices_export_to_csv'
+                ]
+            )
+        );
+
+        $data = $this->getJsonResponseContent($this->client->getResponse(), 200);
+        $this->assertCount(1, $data);
+        $this->assertTrue($data['success']);
+
+        $filePath = $this->processExportMessage();
 
         $locator = $this->getContainer()->get('file_locator');
         $this->assertFileEquals(
             $locator->locate(
                 '@OroPricingBundle/Tests/Functional/ImportExport/data/expected_export_with_relations.csv'
             ),
-            $this->getExportFile()
+            $filePath
         );
+
+        unlink($filePath); // remove trash
+    }
+
+    /**
+     * @param string $strategy
+     * @param int $expectedAdd
+     * @param int $expectedUpdate
+     * @dataProvider strategyDataProvider
+     */
+    public function testImportProcess($strategy, $expectedAdd, $expectedUpdate)
+    {
+        $this->file = $this->getExportFile();
+
+        $this->validateImportFile($strategy);
+        $crawler = $this->client->getCrawler();
+        $this->assertEquals(0, $crawler->filter('.import-errors')->count());
+        $this->doImport($strategy, $expectedAdd, $expectedUpdate);
+
+        unlink($this->file); // remove trash
     }
 
     /**
@@ -302,48 +359,6 @@ class ImportExportTest extends WebTestCase
     }
 
     /**
-     * @param int $expectedReadCount
-     * @param int $expectedErrorsCount
-     */
-    protected function doExport($expectedReadCount, $expectedErrorsCount)
-    {
-        $this->client->followRedirects(false);
-        $this->client->request(
-            'GET',
-            $this->getUrl(
-                'oro_importexport_export_instant',
-                [
-                    'processorAlias' => 'oro_pricing_product_price',
-                    '_format' => 'json',
-                    'options[price_list_id]' => $this->priceList->getId(),
-                    'importJob' => 'price_list_product_prices_entity_import_from_csv',
-                    'exportJob' => 'price_list_product_prices_export_to_csv'
-                ]
-            )
-        );
-
-        $data = $this->getJsonResponseContent($this->client->getResponse(), 200);
-
-        $this->assertTrue($data['success']);
-
-        // @todo - tests must be implemented after BAP-12713
-        $this->assertEquals($expectedReadCount, $data['readsCount']);
-        $this->assertEquals($expectedErrorsCount, $data['errorsCount']);
-
-        $this->client->request(
-            'GET',
-            $data['url'],
-            [],
-            [],
-            $this->generateNoHashNavigationHeader()
-        );
-
-        $result = $this->client->getResponse();
-        $this->assertResponseStatusCodeEquals($result, 200);
-        $this->assertResponseContentTypeEquals($result, 'text/csv');
-    }
-
-    /**
      * @return string
      */
     protected function getExportFile()
@@ -362,10 +377,69 @@ class ImportExportTest extends WebTestCase
 
         $result = json_decode($result->getContent(), true);
         $chains = explode('/', $result['url']);
+
         return $this
             ->getContainer()
             ->get('oro_importexport.file.file_system_operator')
             ->getTemporaryFile(end($chains))
             ->getRealPath();
+    }
+
+    /**
+     * @return string
+     */
+    protected function processExportMessage()
+    {
+        $sentMessages = $this->getSentMessages();
+        $exportMessageData = reset($sentMessages);
+        $this->tearDownMessageCollector();
+
+        $message = new NullMessage();
+        $message->setMessageId('abc');
+        $message->setBody(json_encode($exportMessageData['message']));
+
+        /** @var ExportMessageProcessor $processor */
+        $processor = $this->getContainer()->get('oro_importexport.async.export');
+        $processorResult = $processor->process($message, $this->createSessionInterfaceMock());
+
+        $this->assertEquals(ExportMessageProcessor::ACK, $processorResult);
+
+        $sentMessages = $this->getSentMessages();
+        foreach ($sentMessages as $messageData) {
+            if (Topics::SEND_NOTIFICATION_EMAIL === $messageData['topic']) {
+                break;
+            }
+        }
+
+        preg_match('/http.*\.csv/', $messageData['message']['body'], $match);
+        $urlChunks = explode('/', $match[0]);
+        $filename = end($urlChunks);
+
+        $this->client->request(
+            'GET',
+            $this->getUrl('oro_importexport_export_download', ['fileName' => $filename]),
+            [],
+            [],
+            $this->generateNoHashNavigationHeader()
+        );
+
+        $result = $this->client->getResponse();
+
+        $this->assertResponseStatusCodeEquals($result, 200);
+        $this->assertResponseContentTypeEquals($result, 'text/csv');
+        $this->assertStringStartsWith(
+            'attachment; filename="oro_pricing_product_price_',
+            $result->headers->get('Content-Disposition')
+        );
+
+        return $result->getFile()->getPathname();
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|SessionInterface
+     */
+    private function createSessionInterfaceMock()
+    {
+        return $this->getMock(SessionInterface::class);
     }
 }

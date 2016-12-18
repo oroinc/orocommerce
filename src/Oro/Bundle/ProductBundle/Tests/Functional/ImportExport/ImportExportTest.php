@@ -9,12 +9,17 @@ use Doctrine\ORM\EntityManager;
 use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\Yaml\Yaml;
 
-use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\ImportExportBundle\Async\ExportMessageProcessor;
 use Oro\Bundle\ImportExportBundle\Job\JobExecutor;
 use Oro\Bundle\ImportExportBundle\Processor\ProcessorRegistry;
+use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
+use Oro\Bundle\NotificationBundle\Async\Topics;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\SecurityBundle\Authentication\Token\OrganizationToken;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Component\MessageQueue\Transport\Null\NullMessage;
+use Oro\Component\MessageQueue\Transport\SessionInterface;
 
 /**
  * @dbIsolationPerTest
@@ -24,6 +29,8 @@ use Oro\Bundle\ProductBundle\Entity\Product;
  */
 class ImportExportTest extends WebTestCase
 {
+    use MessageQueueExtension;
+
     /**
      * @var string
      */
@@ -65,20 +72,50 @@ class ImportExportTest extends WebTestCase
         return $batchJobRepository->getJobManager();
     }
 
+    public function testShouldExportCorrectData()
+    {
+        $this->client->followRedirects(false);
+        $this->client->request(
+            'GET',
+            $this->getUrl(
+                'oro_importexport_export_instant',
+                ['processorAlias' => 'oro_product_product', '_format' => 'json']
+            )
+        );
+
+        $data = $this->getJsonResponseContent($this->client->getResponse(), 200);
+        $this->assertCount(1, $data);
+        $this->assertTrue($data['success']);
+
+        $exportedDataFilePath = $this->processExportMessage();
+
+        $expectedDataFilePath = $this->getContainer()->get('file_locator')->locate(
+            '@OroProductBundle/Tests/Functional/ImportExport/data/expected_export_product_row.csv'
+        );
+
+        $exportedData = $this->getFileContents($exportedDataFilePath);
+        $expectedData = $this->getFileContents($expectedDataFilePath);
+
+        $commonFields = array_intersect($expectedData[0], $exportedData[0]);
+
+        $expectedValues = $this->extractFieldValues($commonFields, $expectedData);
+        $exportedValues = $this->extractFieldValues($commonFields, $exportedData);
+
+        $this->assertEquals($expectedValues, $exportedValues);
+
+        unlink($exportedDataFilePath); // remove trash
+    }
+    
     /**
      * @param string $strategy
      * @dataProvider strategyDataProvider
      */
-    public function testImportExport($strategy)
+    public function testImportProcess($strategy)
     {
-        // @todo - must be fixed in BAP-12713
         $importTemplateFile = $this->getImportTemplate();
         $this->validateImportFile($strategy, $importTemplateFile);
         $data = $this->doImport($strategy);
         $this->assertImportResponse($data, 1, 0);
-
-        $this->doExport();
-        $this->validateExportResultWithImportTemplate($importTemplateFile);
     }
 
     /**
@@ -133,57 +170,6 @@ class ImportExportTest extends WebTestCase
 
         $crawler = $this->client->getCrawler();
         $this->assertEquals(0, $crawler->filter('.import-errors')->count());
-    }
-
-    protected function doExport()
-    {
-        $this->client->followRedirects(false);
-        $this->client->request(
-            'GET',
-            $this->getUrl(
-                'oro_importexport_export_instant',
-                [
-                    'processorAlias' => 'oro_product_product',
-                    '_format' => 'json',
-                ]
-            )
-        );
-
-        $data = $this->getJsonResponseContent($this->client->getResponse(), 200);
-
-        $this->assertTrue($data['success']);
-
-        // @todo - tests must be implemented after BAP-12713
-        $this->assertEquals(1, $data['readsCount']);
-        $this->assertEquals(0, $data['errorsCount']);
-
-        $this->client->request(
-            'GET',
-            $data['url'],
-            [],
-            [],
-            $this->generateNoHashNavigationHeader()
-        );
-
-        $result = $this->client->getResponse();
-        $this->assertResponseStatusCodeEquals($result, 200);
-        $this->assertResponseContentTypeEquals($result, 'text/csv');
-    }
-
-    /**
-     * @param string $importTemplateFile
-     */
-    protected function validateExportResultWithImportTemplate($importTemplateFile)
-    {
-        $importTemplate = $this->getFileContents($importTemplateFile);
-        $exportedData = $this->getFileContents($this->getExportFile());
-
-        $commonFields = array_intersect($importTemplate[0], $exportedData[0]);
-
-        $importTemplateValues = $this->extractFieldValues($commonFields, $importTemplate);
-        $exportedDataValues = $this->extractFieldValues($commonFields, $exportedData);
-
-        $this->assertEquals($importTemplateValues, $exportedDataValues);
     }
 
     /**
@@ -256,19 +242,11 @@ class ImportExportTest extends WebTestCase
         $result = $this
             ->getContainer()
             ->get('oro_importexport.handler.export')
-            ->handleExport(
+            ->getExportResult(
                 JobExecutor::JOB_EXPORT_TO_CSV,
                 'oro_product_product',
                 ProcessorRegistry::TYPE_EXPORT
             );
-
-        $this->assertResponseStatusCodeEquals($result, 200);
-        $this->assertResponseContentTypeEquals($result, 'application/json');
-
-        $result = json_decode($result->getContent(), true);
-
-        $this->assertTrue($result['success']);
-        $this->assertEquals(0, $result['errorsCount']);
 
         $chains = explode('/', $result['url']);
 
@@ -544,5 +522,63 @@ class ImportExportTest extends WebTestCase
             $this->getContainer()->get('doctrine')->getRepository('OroUserBundle:User')->findOneBy([])
         );
         $this->getContainer()->get('security.token_storage')->setToken($token);
+    }
+
+    /**
+     * @return string
+     */
+    protected function processExportMessage()
+    {
+        $sentMessages = $this->getSentMessages();
+        $exportMessageData = reset($sentMessages);
+        $this->tearDownMessageCollector();
+
+        $message = new NullMessage();
+        $message->setMessageId('abc');
+        $message->setBody(json_encode($exportMessageData['message']));
+
+        /** @var ExportMessageProcessor $processor */
+        $processor = $this->getContainer()->get('oro_importexport.async.export');
+        $processorResult = $processor->process($message, $this->createSessionInterfaceMock());
+
+        $this->assertEquals(ExportMessageProcessor::ACK, $processorResult);
+
+        $sentMessages = $this->getSentMessages();
+        foreach ($sentMessages as $messageData) {
+            if (Topics::SEND_NOTIFICATION_EMAIL === $messageData['topic']) {
+                break;
+            }
+        }
+
+        preg_match('/http.*\.csv/', $messageData['message']['body'], $match);
+        $urlChunks = explode('/', $match[0]);
+        $filename = end($urlChunks);
+
+        $this->client->request(
+            'GET',
+            $this->getUrl('oro_importexport_export_download', ['fileName' => $filename]),
+            [],
+            [],
+            $this->generateNoHashNavigationHeader()
+        );
+
+        $result = $this->client->getResponse();
+
+        $this->assertResponseStatusCodeEquals($result, 200);
+        $this->assertResponseContentTypeEquals($result, 'text/csv');
+        $this->assertStringStartsWith(
+            'attachment; filename="oro_product_product_',
+            $result->headers->get('Content-Disposition')
+        );
+
+        return $result->getFile()->getPathname();
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|SessionInterface
+     */
+    private function createSessionInterfaceMock()
+    {
+        return $this->getMock(SessionInterface::class);
     }
 }
