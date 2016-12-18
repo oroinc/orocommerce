@@ -57,6 +57,7 @@ class CustomFieldProvider
                 'name' => $configId->getFieldName(),
                 'type' => $configId->getFieldType(),
                 'label' => $entityConfig->get('label'),
+                'is_serialized' => $extendConfig->get('is_serialized', false, false)
             ];
         }
 
