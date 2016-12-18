@@ -1,0 +1,62 @@
+{% block _top_nav_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " topbar"
+    }) %}
+    <div {{ block('block_attributes') }}>
+        <div class="container-fluid">
+            <div class="row">
+                {{ block_widget(block) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block _top_nav_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " topbar-navigation"
+    }) %}
+
+    {% set child_attr = layout_attr_defaults(child_attr, {
+        '~class': ' topbar-navigation__item'
+    }) %}
+
+    {% set link_attr = layout_attr_defaults(link_attr, {
+        '~class': 'topbar-navigation__link'
+    }) %}
+
+    <div class="topbar-navigation-wrap">
+        {{ block('menu_widget') }}
+    </div>
+{% endblock %}
+
+{% block _top_nav_menu_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " col-md-7 col-sm-7 text-right"
+    }) %}
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _top_nav_controls_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+    '~class': " pull-left col-md-5 col-sm-5"
+    }) %}
+    {% set dom_relocation_options =  {
+        responsive: [
+            {
+                screenType: 'tablet',
+                moveTo: '[data-main-menu-container]'
+            }
+        ]
+    }|json_encode %}
+
+    <div {{ block('block_attributes') }}>
+        <ul class="topbar-navigation topbar-navigation--controls"
+            data-dom-relocation
+            data-dom-relocation-options="{{ dom_relocation_options }}"
+        >
+            {{ block_widget(block) }}
+        </ul>
+    </div>
+{% endblock %}

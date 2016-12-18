@@ -1,0 +1,91 @@
+{% block _header_row_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'data-page-component-module': 'orocommercemenu/default/js/components/header-row',
+        '~class': ' header-row'
+    }) %}
+
+    {% if isMobileVersion() %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~data-sticky': {
+                isSticky: true,
+                autoWidth: true,
+                toggleClass: 'header-row--fixed',
+                placeholderId: 'sticky-header-row',
+            }
+        }) %}
+    {% endif %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+
+    <input type="radio" id="header-row-overlay" class="header-row-helper" name="dropdowns" checked="checked" hidden="hidden">
+    <label class="header-row-overlay hidden-on-desktop" for="header-row-overlay"></label>
+{% endblock %}
+
+{% block _header_row_main_menu_widget %}
+    <input type="radio" id="header-row-links" class="header-row-helper" name="dropdowns" hidden="hidden">
+    <div class="header-row__container header-row__container--unstack">
+        <label class="header-row__trigger hidden-on-desktop" for="header-row-links">
+            <div class="nav-trigger">
+                <span class="nav-trigger__icon nav-trigger__icon--transparent nav-trigger__icon--large">
+                    <span class="fa-navicon fa--gray fa--no-offset"></span>
+                </span>
+            </div>
+        </label>
+        <div class="header-row__toggle">
+            <div class="header-row__dropdown" data-main-menu-container>
+                {{ block_widget(block) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block _main_menu_extra_container_widget %}
+    {% set attr =  layout_attr_defaults(attr, {
+        'data-main-menu-extra-container': ''
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _main_menu_container_widget %}
+    {% set attr =  layout_attr_defaults(attr, {
+        '~class': ' main-menu-outer collapse-view',
+        'data-page-component-module': "oroui/js/app/components/jquery-widget-component",
+        '~data-page-component-options': {
+            widgetModule: 'oroui/js/widget/collapse-widget',
+            open: false
+        }
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _main_menu_list_widget %}
+    {% set attr =  layout_attr_defaults(attr, {
+        '~class': ' main-menu-outer__container main-menu'
+    }) %}
+    <ul {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </ul>
+{% endblock %}
+
+{% block _main_menu_widget %}
+    {% spaceless %}
+        {% for child in item.children -%}
+            {% if child.displayed and child.extras.isAllowed %}
+                <li class="main-menu__item">
+                    <a href="{{ app.request.getUriForPath(child.uri) }}" class="main-menu__link">
+                        {% set label = child.extras.custom is defined and child.extras.custom == true ? child.label : child.label|trans %}
+                        <span>{{ label }}</span>
+                    </a>
+                </li>
+            {% endif %}
+        {%- endfor %}
+    {% endspaceless %}
+{% endblock %}

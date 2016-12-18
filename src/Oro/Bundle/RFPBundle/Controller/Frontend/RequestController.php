@@ -138,8 +138,8 @@ class RequestController extends Controller
             $rfpRequest,
             $this->get('oro_rfp.layout.data_provider.request_form')->getRequestForm($rfpRequest),
             function (RFPRequest $rfpRequest) use ($securityFacade) {
-                if ($securityFacade->isGranted('ACCOUNT_VIEW', $rfpRequest)) {
-                    $route = $securityFacade->isGranted('ACCOUNT_EDIT', $rfpRequest)
+                if ($securityFacade->isGranted('VIEW', $rfpRequest)) {
+                    $route = $securityFacade->isGranted('EDIT', $rfpRequest)
                         ? 'oro_rfp_frontend_request_update'
                         : 'oro_rfp_frontend_request_view';
 
@@ -155,7 +155,7 @@ class RequestController extends Controller
                 ];
             },
             function (RFPRequest $rfpRequest) use ($securityFacade) {
-                if ($securityFacade->isGranted('ACCOUNT_VIEW', $rfpRequest)) {
+                if ($securityFacade->isGranted('VIEW', $rfpRequest)) {
                     return [
                         'route' => 'oro_rfp_frontend_request_view',
                         'parameters' => ['id' => $rfpRequest->getId()],

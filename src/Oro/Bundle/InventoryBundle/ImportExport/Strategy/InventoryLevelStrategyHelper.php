@@ -20,7 +20,17 @@ class InventoryLevelStrategyHelper extends AbstractInventoryLevelStrategyHelper
         $this->errors = $errors;
 
         $product = $this->getProcessedEntity($newEntities, 'product');
+        if (!$product) {
+            // The product should exist, otherwise an error should have been added in InventoryStatusesStrategyHelper,
+            // but if in any case the product is null at this step, this import entry should not be processed
+            return;
+        }
+
         $productUnitPrecision = $this->getProcessedEntity($newEntities, 'productUnitPrecision');
+        if (!$productUnitPrecision) {
+            // Same as the product comment above
+            return;
+        }
 
         /** @var InventoryLevel $existingEntity */
         $existingEntity = $this->getExistingInventoryLevel(

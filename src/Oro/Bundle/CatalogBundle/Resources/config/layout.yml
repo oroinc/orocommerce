@@ -41,3 +41,12 @@ services:
             - "@oro_product.product.manager"
         tags:
             - { name: layout.data_provider, alias: categories_products }
+
+    oro_catalog.layout_context_configurator.product_categories:
+        class: Oro\Bundle\CatalogBundle\Layout\Extension\ProductCategoriesContextConfigurator
+        arguments:
+            - '@request_stack'
+            - '@doctrine'
+            - '@oro_catalog.layout.data_provider.category'
+        tags:
+            - { name: layout.context_configurator }

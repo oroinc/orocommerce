@@ -583,11 +583,6 @@ datagrids:
                 route: oro_customer_frontend_account_user_role_update
                 params:
                     - id
-            delete_link:
-                type: url
-                route: oro_api_frontend_account_delete_accountuserrole
-                params:
-                    - id
         actions:
             view:
                 acl_resource:  oro_account_frontend_account_user_role_view
@@ -595,19 +590,15 @@ datagrids:
                 label:         oro.grid.action.view
                 link:          view_link
                 icon:          eye
+                order:         10
                 rowAction:     true
             update:
                 type:          navigate
                 label:         oro.grid.action.update
                 link:          update_link
                 icon:          pencil-square-o
+                order:         20
                 acl_resource:  oro_account_frontend_account_user_role_update
-            delete:
-                type:          delete
-                label:         oro.grid.action.delete
-                link:          delete_link
-                icon:          trash-o
-                acl_resource:  oro_account_frontend_account_user_role_delete
         action_configuration: ['@oro_customer.datagrid.action_permission_provider', "getAccountUserRolePermission"]
 
     account-account-users-grid-update-basic:

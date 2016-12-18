@@ -12,10 +12,15 @@ use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
+use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class OroCheckoutBundle implements Migration, DatabasePlatformAwareInterface, RenameExtensionAwareInterface
+class OroCheckoutBundle implements
+    Migration,
+    DatabasePlatformAwareInterface,
+    RenameExtensionAwareInterface,
+    OrderedMigrationInterface
 {
     use DatabasePlatformAwareTrait;
 
@@ -133,6 +138,17 @@ class OroCheckoutBundle implements Migration, DatabasePlatformAwareInterface, Re
         $comparator = new Comparator();
 
         return $comparator->compare($schema, $toSchema)->toSql($this->platform);
+    }
+
+    /**
+     * Should be executed before:
+     * @see \Oro\Bundle\CheckoutBundle\Migrations\Schema\v1_2\MigrateNotes
+     *
+     * {@inheritdoc}
+     */
+    public function getOrder()
+    {
+        return 0;
     }
 
     /**

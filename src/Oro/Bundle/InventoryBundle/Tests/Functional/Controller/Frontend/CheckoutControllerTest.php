@@ -238,9 +238,9 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         $buttonClasses = $continueButton->attr('class');
 
         if (!$minError && !$maxError) {
-            $this->assertContains('btn-orange', $buttonClasses);
+            $this->assertContains('btn--info', $buttonClasses);
         } else {
-            $this->assertNotContains('btn-orange', $buttonClasses);
+            $this->assertNotContains('btn--info', $buttonClasses);
         }
 
         $this->assertCurrentStep($crawler, $shouldBeFirstStep);

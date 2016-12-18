@@ -169,9 +169,12 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
         }
 
         if ($schema->getTable(self::ORDER_TABLE)->hasColumn(self::NOTE_WAREHOUSE_ASSOCIATION_COLUMN_BETA1)) {
+            $this->dropForeignKeyAndColumn($schema, self::ORDER_TABLE, self::NOTE_WAREHOUSE_ASSOCIATION_COLUMN_BETA1);
+        }
+        if ($schema->getTable(self::ORDER_TABLE)->hasColumn(self::ORDER_WAREHOUSE_ASSOCIATION_COLUMN)) {
             $this->dropForeignKeyAndColumn($schema, self::ORDER_TABLE, self::ORDER_WAREHOUSE_ASSOCIATION_COLUMN);
         }
-        if ($schema->getTable(self::ORDER_TABLE)->hasColumn(self::ORDER_LINE_ITEM_TABLE)) {
+        if ($schema->getTable(self::ORDER_LINE_ITEM_TABLE)->hasColumn(self::ORDER_WAREHOUSE_ASSOCIATION_COLUMN)) {
             $this->dropForeignKeyAndColumn(
                 $schema,
                 self::ORDER_LINE_ITEM_TABLE,

@@ -36,8 +36,7 @@ class ActionPermissionProviderTest extends \PHPUnit_Framework_TestCase
      */
     protected $accountUserRoleActionList = [
         'view',
-        'update',
-        'delete'
+        'update'
     ];
 
     /** @var \PHPUnit_Framework_MockObject_MockObject|SecurityFacade */
@@ -151,8 +150,7 @@ class ActionPermissionProviderTest extends \PHPUnit_Framework_TestCase
                 'isGranted' => true,
                 'expected' => [
                     'view' => true,
-                    'update' => true,
-                    'delete' => false
+                    'update' => true
                 ]
             ],
             'user have no permission to create and role is predefined' => [
@@ -160,8 +158,7 @@ class ActionPermissionProviderTest extends \PHPUnit_Framework_TestCase
                 'isGranted' => false,
                 'expected' => [
                     'view' => true,
-                    'update' => false,
-                    'delete' => false
+                    'update' => false
                 ]
             ],
             'user have no permission to create and role is no predefined' => [
@@ -169,8 +166,7 @@ class ActionPermissionProviderTest extends \PHPUnit_Framework_TestCase
                 'isGranted' => false,
                 'expected' => [
                     'view' => true,
-                    'update' => true,
-                    'delete' => true
+                    'update' => true
                 ]
             ],
         ];

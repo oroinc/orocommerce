@@ -52,12 +52,6 @@ oro_account_pagestate_api:
     options:
         frontend: true
 
-oro_account_frontend_account_user_role_api:
-    resource: "@OroCustomerBundle/Controller/Frontend/Api/Rest/AccountUserRoleController.php"
-    type:     rest
-    options:
-        frontend: true
-
 oro_account_frontend_country_region_api:
     resource: "@OroCustomerBundle/Controller/Frontend/Api/Rest/CountryRegionsController.php"
     type:     rest

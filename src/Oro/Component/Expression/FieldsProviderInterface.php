@@ -14,6 +14,14 @@ interface FieldsProviderInterface
 
     /**
      * @param string $className
+     * @param bool $numericOnly
+     * @param bool $withRelations
+     * @return array
+     */
+    public function getDetailedFieldsInformation($className, $numericOnly = false, $withRelations = false);
+
+    /**
+     * @param string $className
      * @param null|string $fieldName
      * @return string
      */

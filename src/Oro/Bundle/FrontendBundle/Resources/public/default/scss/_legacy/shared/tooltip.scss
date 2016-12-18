@@ -15,8 +15,6 @@
     position: relative;
 
     display: inline-block;
-    *display: inline;
-    *zoom: 1;
   }
 
   &__content {
@@ -33,13 +31,13 @@
     font-size: $base-font-size;
     color: get-color('additional', 'dark');
 
-    &.ttip__content_dark {
+    &.dark {
       padding: 6px 15px;
 
       background: rgba(0,0,0,1);
       color: get-color('additional', 'ultra');
-      font-size: 1.2rem;
-      line-height: 2.3rem;
+      font-size: 12px;
+      line-height: 1.9;
 
       &:after {
         bottom: -6px;
