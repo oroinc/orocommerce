@@ -71,23 +71,25 @@ class InvalidateCacheAtHandler
             /** @var  UPSTransport $transport */
             $transport = $channel->getTransport();
             $oldDateTime = $transport->getInvalidateCacheAt();
-            if ($oldDateTime) {
-                $this->deferredScheduler->removeSchedule(
-                    self::COMMAND,
-                    [sprintf('--id=%d', $transport->getId())],
-                    $this->convertDatetimeToCron($oldDateTime)
-                );
+            if ($oldDateTime != $newDateTime) {
+                if ($oldDateTime) {
+                    $this->deferredScheduler->removeSchedule(
+                        self::COMMAND,
+                        [sprintf('--id=%d', $transport->getId())],
+                        $this->convertDatetimeToCron($oldDateTime)
+                    );
+                }
+                if ($newDateTime) {
+                    $this->deferredScheduler->addSchedule(
+                        self::COMMAND,
+                        [sprintf('--id=%d', $transport->getId())],
+                        $this->convertDatetimeToCron($newDateTime)
+                    );
+                }
+                $this->deferredScheduler->flush();
+                $transport->setInvalidateCacheAt($newDateTime);
+                $this->manager->flush();
             }
-            if ($newDateTime) {
-                $this->deferredScheduler->addSchedule(
-                    self::COMMAND,
-                    [sprintf('--id=%d', $transport->getId())],
-                    $this->convertDatetimeToCron($newDateTime)
-                );
-            }
-            $this->deferredScheduler->flush();
-            $transport->setInvalidateCacheAt($newDateTime);
-            $this->manager->flush();
         }
     }
 
