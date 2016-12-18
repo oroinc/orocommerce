@@ -46,7 +46,8 @@ class UniqueProductVariantLinksValidator extends ConstraintValidator
         }
 
         $this->validateLinksWithoutFields($value, $constraint);
-        $this->validateVariantLinks($value, $constraint);
+        $this->validateLinksHaveFilledFields($value, $constraint);
+        $this->validateUniqueVariantLinks($value, $constraint);
     }
 
     /**
@@ -66,7 +67,37 @@ class UniqueProductVariantLinksValidator extends ConstraintValidator
      * @param Product $value
      * @param UniqueProductVariantLinks $constraint
      */
-    private function validateVariantLinks(Product $value, UniqueProductVariantLinks $constraint)
+    private function validateLinksHaveFilledFields(Product $value, UniqueProductVariantLinks $constraint)
+    {
+        $variantFields = $value->getVariantFields();
+        $variantLinks = $value->getVariantLinks();
+
+        foreach ($variantLinks as $variantLink) {
+            $product = $variantLink->getProduct();
+            if (!$product) {
+                continue;
+            }
+
+            foreach ($variantFields as $variantField) {
+                if ($this->propertyAccessor->isReadable($product, $variantField)) {
+                    $value = $this->propertyAccessor->getValue($product, $variantField);
+
+                    if ($value === null) {
+                        $this->context->addViolation($constraint->variantLinkHasNoFilledFieldMessage, [
+                            '%variant_sku%' => $product->getSku(),
+                            '%field%' => $variantField
+                        ]);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * @param Product $value
+     * @param UniqueProductVariantLinks $constraint
+     */
+    private function validateUniqueVariantLinks(Product $value, UniqueProductVariantLinks $constraint)
     {
         $variantHashes = [];
         $variantFields = $value->getVariantFields();

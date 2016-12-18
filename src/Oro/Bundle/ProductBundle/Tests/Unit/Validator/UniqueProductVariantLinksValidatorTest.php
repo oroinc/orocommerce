@@ -257,6 +257,30 @@ class UniqueProductVariantLinksValidatorTest extends \PHPUnit_Framework_TestCase
         $this->service->validate($product, new UniqueProductVariantLinks());
     }
 
+    public function testAddViolationWhenProductHasNoFilledField()
+    {
+        $product = $this->prepareProduct(
+            [
+                self::VARIANT_FIELD_KEY_SIZE,
+                self::VARIANT_FIELD_KEY_COLOR,
+                self::VARIANT_FIELD_KEY_SLIM_FIT
+            ],
+            [
+                [
+                    self::VARIANT_FIELD_KEY_SLIM_FIT => true
+                ]
+            ]
+        );
+
+        $constraint = new UniqueProductVariantLinks();
+
+        $this->context->expects($this->exactly(2))
+            ->method('addViolation')
+            ->with($constraint->variantLinkHasNoFilledFieldMessage);
+
+        $this->service->validate($product, $constraint);
+    }
+
     /**
      * @param array $variantFields
      * @param array $variantLinkFields
@@ -280,7 +304,7 @@ class UniqueProductVariantLinksValidatorTest extends \PHPUnit_Framework_TestCase
             }
 
             if (array_key_exists(self::VARIANT_FIELD_KEY_SLIM_FIT, $fields)) {
-                $variantProduct->setSlimFit($fields[self::VARIANT_FIELD_KEY_SLIM_FIT]);
+                $variantProduct->setSlimFit((bool)$fields[self::VARIANT_FIELD_KEY_SLIM_FIT]);
             }
 
             $variantLink = new ProductVariantLink($product, $variantProduct);

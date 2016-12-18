@@ -29,8 +29,13 @@ class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit_Framework_
     const LABEL_COLOR = 'Color';
     const LABEL_SIZE = 'Size';
 
-    const PRODUCT_CLASS = 'stdClass';
-    const PRODUCT_DATAGRID_ALIAS = 'product';
+    const PRODUCT_CLASS = 'productClass';
+    const PRODUCT_ALIAS = 'product';
+
+    const PRODUCT_VARIANT_LINK_CLASS = 'productVariantLinkClass';
+    const PRODUCT_VARIANT_LINK_ALIAS = 'productVariantLinkAlias';
+
+    const DATAGRID_NAME = 'Datagrid name';
 
     /** @var DatagridConfiguration */
     private $config;
@@ -88,21 +93,16 @@ class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit_Framework_
             ->with(self::PRODUCT_CLASS)
             ->willReturn($this->productEntityCustomFields);
 
-        $fromPart = $this->getFromPart();
-        $this->setValueByPath($fromPart, '[source][query][from]', [
-            [
-                'table' => self::PRODUCT_CLASS,
-                'alias' => self::PRODUCT_DATAGRID_ALIAS,
-            ],
-        ]);
+        $initConfig = $this->getInitConfig();
 
-        $this->config = DatagridConfiguration::create($fromPart);
+        $this->config = DatagridConfiguration::create($initConfig);
         $this->parameterBag = new ParameterBag();
 
         $this->listener = new ProductVariantCustomFieldsDatagridListener(
             $doctrineHelper,
             $this->customFieldProvider,
-            self::PRODUCT_CLASS
+            self::PRODUCT_CLASS,
+            self::PRODUCT_VARIANT_LINK_CLASS
         );
     }
 
@@ -119,13 +119,64 @@ class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit_Framework_
         $this->setParameterBag();
         $this->listener->onBuildBeforeHideUnsuitable($this->prepareBuildBeforeEvent($this->config));
 
-        $expectedConfigValue = $this->getFromPart();
+        $expectedConfigValue = $this->getInitConfig();
         $this->setValueByPath($expectedConfigValue, '[source][query][where][and]', [
-            'product.color is not null',
-            'product.size is not null',
+            sprintf('%s.color IS NOT NULL', self::PRODUCT_ALIAS),
+            sprintf('%s.size IS NOT NULL', self::PRODUCT_ALIAS),
+        ]);
+
+        $this->setValueByPath($expectedConfigValue, '[source][query][where][or]', [
+            sprintf('%s.id IS NOT NULL', self::PRODUCT_VARIANT_LINK_ALIAS)
         ]);
 
         $this->assertEquals($expectedConfigValue, $this->config->toArray());
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage [source][query][from] is missing for grid "Datagrid name"
+     */
+    public function testOnBuildBeforeHideUnsuitableWithoutFrom()
+    {
+        $product = new Product();
+        $product->setVariantFields([
+            self::FIELD_COLOR,
+            self::FIELD_SIZE,
+        ]);
+
+        $this->prepareRepositoryProduct($product);
+
+        $this->config->offsetUnsetByPath('[source][query][from]');
+
+        $this->setParameterBag();
+        $this->listener->onBuildBeforeHideUnsuitable($this->prepareBuildBeforeEvent($this->config));
+    }
+
+    // @codingStandardsIgnoreStart
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage "productVariantLinkClass" is missing in [source][query][join][left] for grid "Datagrid name"
+     */
+    // @codingStandardsIgnoreEnd
+    public function testOnBuildBeforeHideUnsuitableWithoutCorrectVariantLinkJoin()
+    {
+        $product = new Product();
+        $product->setVariantFields([
+            self::FIELD_COLOR,
+            self::FIELD_SIZE,
+        ]);
+
+        $this->prepareRepositoryProduct($product);
+
+        $this->config->offsetSetByPath('[source][query][join][left]', [
+            [
+                'join' => 'notVariantLinkClass',
+                'alias' => 'notVariantLinkClassAlias',
+            ],
+        ]);
+
+        $this->setParameterBag();
+        $this->listener->onBuildBeforeHideUnsuitable($this->prepareBuildBeforeEvent($this->config));
     }
 
     public function testOnBuildBeforeHideUnsuitableNoVariantFields()
@@ -136,7 +187,7 @@ class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit_Framework_
         $this->setParameterBag();
         $this->listener->onBuildBeforeHideUnsuitable($this->prepareBuildBeforeEvent($this->config));
 
-        $expectedConfigValue = $this->getFromPart();
+        $expectedConfigValue = $this->getInitConfig();
         $this->setValueByPath($expectedConfigValue, '[source][query][where][and]', ['1 = 0']);
         $this->assertEquals($expectedConfigValue, $this->config->toArray());
     }
@@ -145,7 +196,7 @@ class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit_Framework_
     {
         $this->listener->onBuildBeforeHideUnsuitable($this->prepareBuildBeforeEvent($this->config));
 
-        $expectedConfigValue = $this->getFromPart();
+        $expectedConfigValue = $this->getInitConfig();
         $this->assertEquals($expectedConfigValue, $this->config->toArray());
     }
 
@@ -156,7 +207,7 @@ class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit_Framework_
         $this->setParameterBag();
         $this->listener->onBuildBeforeHideUnsuitable($this->prepareBuildBeforeEvent($this->config));
 
-        $expectedConfigValue = $this->getFromPart();
+        $expectedConfigValue = $this->getInitConfig();
         $this->assertEquals($expectedConfigValue, $this->config->toArray());
     }
 
@@ -245,17 +296,26 @@ class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit_Framework_
     /**
      * @return array
      */
-    private function getFromPart()
+    private function getInitConfig()
     {
-        $fromPart = [];
-        $this->setValueByPath($fromPart, '[source][query][from]', [
+        $initConfig = [];
+        $this->setValueByPath($initConfig, '[source][query][from]', [
             [
                 'table' => self::PRODUCT_CLASS,
-                'alias' => self::PRODUCT_DATAGRID_ALIAS,
+                'alias' => self::PRODUCT_ALIAS,
             ],
         ]);
 
-        return $fromPart;
+        $this->setValueByPath($initConfig, '[source][query][join][left]', [
+            [
+                'join' => self::PRODUCT_VARIANT_LINK_CLASS,
+                'alias' => self::PRODUCT_VARIANT_LINK_ALIAS,
+            ],
+        ]);
+
+        $this->setValueByPath($initConfig, '[name]', self::DATAGRID_NAME);
+
+        return $initConfig;
     }
 
     private function setParameterBag()
