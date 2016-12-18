@@ -62,17 +62,4 @@ class CustomFieldProvider
 
         return $customFields;
     }
-
-    /**
-     * @param string $entityName
-     * @return array
-     */
-    public function getEntityCustomVariantFields($entityName)
-    {
-        $customFields = $this->getEntityCustomFields($entityName);
-
-        return array_filter($customFields, function ($field) {
-            return in_array($field['type'], ['boolean', 'enum'], true);
-        });
-    }
 }
