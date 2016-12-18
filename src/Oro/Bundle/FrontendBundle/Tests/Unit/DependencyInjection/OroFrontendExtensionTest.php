@@ -57,23 +57,14 @@ class OroFrontendExtensionTest extends \PHPUnit_Framework_TestCase
             ],            [
                 'format_listener' => [
                     'rules' => [
-                        ['path' => '^/api/(?!(soap|rest|doc)(/|$)+)'],
+                        ['path' => '^/api/(?!(rest|doc)(/|$)+)'],
                         ['path' => '^/api/rest'],
-                    ],
-                ],
-            ],
-            [
-                'view' => [],
-                'format_listener' => [
-                    'rules' => [
-                        ['path' => '^/api/soap'],
-                        [],
                     ],
                 ],
             ],
         ];
         $expected = $configs;
-        $expected[3]['format_listener']['rules'][0]['path'] = '^/admin/api/(?!(soap|rest|doc)(/|$)+)';
+        $expected[3]['format_listener']['rules'][0]['path'] = '^/admin/api/(?!(rest|doc)(/|$)+)';
 
         $container->expects($this->once())->method('getExtensionConfig')->with('fos_rest')->willReturn($configs);
         $container->expects($this->once())->method('getParameter')->with('web_backend_prefix')->willReturn('/admin');

@@ -82,6 +82,9 @@ use Oro\Bundle\RedirectBundle\Entity\SluggableTrait;
  *          "form"={
  *              "form_type"="oro_product_select",
  *              "grid_name"="products-select-grid"
+ *          },
+ *          "attribute"={
+ *              "has_attributes"=true
  *          }
  *      }
  * )
