@@ -12,6 +12,9 @@ use Oro\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinks;
 use Oro\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinksValidator;
 use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class UniqueProductVariantLinksValidatorTest extends \PHPUnit_Framework_TestCase
 {
     const VARIANT_FIELD_KEY_COLOR = 'color';
