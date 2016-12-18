@@ -496,7 +496,7 @@ class RequestControllerTest extends WebTestCase
         $this->initClient([], $authParams);
 
         $crawler = $this->client->request('GET', $this->getUrl('oro_rfp_frontend_request_create'));
-        $form = $crawler->selectButton('Submit Request For Quote')->form();
+        $form = $crawler->selectButton('Submit Request')->form();
 
         $crfToken = $this->getContainer()->get('security.csrf.token_manager')->getToken('oro_rfp_frontend_request');
 
@@ -589,7 +589,7 @@ class RequestControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         static::assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $form = $crawler->selectButton('Submit Request For Quote')->form();
+        $form = $crawler->selectButton('Submit Request')->form();
 
         /** @var array $formRequestProducts */
         $formRequestProducts = $form->get('oro_rfp_frontend_request[requestProducts]');
@@ -676,7 +676,7 @@ class RequestControllerTest extends WebTestCase
         $id = $result['id'];
         $crawler = $this->client->request('GET', $this->getUrl('oro_rfp_frontend_request_update', ['id' => $id]));
 
-        $form = $crawler->selectButton('Submit Request For Quote')->form();
+        $form = $crawler->selectButton('Submit Request')->form();
 
         $form['oro_rfp_frontend_request[firstName]'] = LoadRequestData::FIRST_NAME . '_UPDATE';
         $form['oro_rfp_frontend_request[lastName]'] = LoadRequestData::LAST_NAME . '_UPDATE';
