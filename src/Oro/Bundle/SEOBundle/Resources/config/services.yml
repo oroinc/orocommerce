@@ -76,3 +76,10 @@ services:
         class: 'Oro\Bundle\SEOBundle\Form\Extension\ContentNodeFormExtension'
         tags:
             - { name: form.type_extension, alias: oro_web_catalog_content_node }
+
+    oro_seo.provider.content_node_content_variant_provider:
+        class: Oro\Bundle\SEOBundle\Provider\ContentNodeContentVariantProvider
+        arguments:
+            - '@oro_locale.helper.localization'
+        tags:
+            - { name: oro_web_catalog.content_variant_provider }

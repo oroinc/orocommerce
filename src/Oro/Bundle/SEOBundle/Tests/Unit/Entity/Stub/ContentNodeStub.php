@@ -26,8 +26,8 @@ class ContentNodeStub implements ContentNodeInterface
     /**
      * {@inheritdoc}
      */
-    public function getName()
+    public function getContentVariants()
     {
-        return 'name';
+        return [];
     }
 }
