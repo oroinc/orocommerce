@@ -3,33 +3,43 @@
 namespace Oro\Bundle\ShippingBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 
 class ShippingMethodsConfigsRuleRepository extends EntityRepository
 {
     /**
+     * @param AddressInterface $shippingAddress
      * @param string $currency
-     * @param string $countryIso2Code
-     * @return ShippingMethodsConfigsRule[]
+     * @return array|ShippingMethodsConfigsRule[]
      */
-    public function getByCurrencyAndCountry($currency, $countryIso2Code)
+    public function getByDestinationAndCurrency(AddressInterface $shippingAddress, $currency)
     {
         return $this->createQueryBuilder('methodsConfigsRule')
             ->addSelect('methodConfigs', 'typeConfigs')
-            ->leftJoin(
+            ->innerJoin(
                 'methodsConfigsRule.destinations',
-                'destinations',
+                'destination',
                 'WITH',
-                'destinations.methodsConfigsRule = methodsConfigsRule and destinations.country = :country'
+                'destination.methodsConfigsRule = methodsConfigsRule and 
+                    destination.country = :country and
+                    destination.region = :region'
             )
-            ->leftJoin('methodsConfigsRule.destinations', 'nullDestinations')
+            ->innerJoin(
+                'destination.postalCodes',
+                'postalCode',
+                'WITH',
+                'postalCode.destination = destination and postalCode.name in :postalCodes'
+            )
             ->leftJoin('methodsConfigsRule.methodConfigs', 'methodConfigs')
             ->leftJoin('methodConfigs.typeConfigs', 'typeConfigs')
             ->where('methodsConfigsRule.currency = :currency')
-            ->andWhere('nullDestinations.id is null or destinations.id is not null')
-            ->setParameter('country', $countryIso2Code)
+            ->setParameter('country', $shippingAddress->getCountryIso2())
+            ->setParameter('region', $shippingAddress->getRegionCode())
+            ->setParameter('postalCodes', explode(',', $shippingAddress->getPostalCode()))
             ->setParameter('currency', $currency)
-            ->getQuery()->execute();
+            ->getQuery()->execute()
+        ;
     }
 
     /**
