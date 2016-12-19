@@ -113,11 +113,11 @@
 
     <table {{ block('block_attributes') }}>
         <thead class="checkout-order-summary__grid-head">
-        <tr data-scrollable-content-head>
-            <th>{{ 'oro.checkout.order_summary.item'|trans }}</th>
-            <th class="text-center">{{ 'oro.checkout.order_summary.quantity'|trans }}</th>
-            <th class="text-right" data-scrollable-item-has-offset>{{ 'oro.checkout.order_summary.price'|trans }}</th>
-        </tr>
+            <tr data-scrollable-content-head>
+                <th class="checkout-order-summary__grid-th">{{ 'oro.checkout.order_summary.item'|trans }}</th>
+                <th class="checkout-order-summary__grid-th">{{ 'oro.checkout.order_summary.quantity'|trans }}</th>
+                <th class="checkout-order-summary__grid-th" data-scrollable-item-has-offset>{{ 'oro.checkout.order_summary.price'|trans }}</th>
+            </tr>
         </thead>
         <tbody>
         <tr>
