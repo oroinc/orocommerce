@@ -32,6 +32,11 @@ class DestinationPostalCodeTransformerTest extends \PHPUnit_Framework_TestCase
         static::assertSame('123, 753', $this->transformer->transform($this->postalCodes));
     }
 
+    public function testTransformOnNull()
+    {
+        static::assertSame('', $this->transformer->transform(null));
+    }
+
     public function testReverseTransform()
     {
         static::assertEquals($this->postalCodes, $this->transformer->reverseTransform('123, 753'));

@@ -123,7 +123,7 @@ class ShippingMethodsConfigsRuleController extends RestController implements Cla
      *      id="oro_shipping_rule_delete",
      *      type="entity",
      *      permission="DELETE",
-     *      class="OroShippingBundle:ShippingRule"
+     *      class="OroShippingBundle:ShippingMethodsConfigsRule"
      * )
      *
      * @param int $id

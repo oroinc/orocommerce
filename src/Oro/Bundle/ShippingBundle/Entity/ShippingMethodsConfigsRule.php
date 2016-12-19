@@ -73,7 +73,7 @@ class ShippingMethodsConfigsRule extends ExtendShippingMethodsConfigsRule implem
      *
      * @ORM\OneToMany(
      *     targetEntity="Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig",
-     *     mappedBy="rule",
+     *     mappedBy="methodConfigsRule",
      *     cascade={"ALL"},
      *     fetch="EAGER",
      *     orphanRemoval=true
@@ -86,7 +86,7 @@ class ShippingMethodsConfigsRule extends ExtendShippingMethodsConfigsRule implem
      *
      * @ORM\OneToMany(
      *     targetEntity="Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination",
-     *     mappedBy="rule",
+     *     mappedBy="methodConfigsRule",
      *     cascade={"ALL"},
      *     fetch="EAGER",
      *     orphanRemoval=true

@@ -123,7 +123,7 @@ class ShippingMethodsConfigsRuleController extends Controller
      *     id="oro_shipping_methods_configs_rule_update",
      *     type="entity",
      *     permission="EDIT",
-     *     class="OroShippingBundle:ShippingRule"
+     *     class="OroShippingBundle:ShippingMethodsConfigsRule"
      * )
      * @param string $gridName
      * @param string $actionName

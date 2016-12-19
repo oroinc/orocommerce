@@ -10,8 +10,8 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class ShippingMethodExtension extends \Twig_Extension
 {
     const SHIPPING_METHOD_EXTENSION_NAME = 'oro_shipping_method';
-    const DEFAULT_METHOD_CONFIG_TEMPLATE = 'OroShippingBundle:ShippingRule:shippingMethodWithOptions.html.twig';
-    const FLAT_RATE_METHOD_CONFIG_TEMPLATE = 'OroShippingBundle:ShippingRule:flatRateMethodWithOptions.html.twig';
+    const DEFAULT_METHOD_CONFIG_TEMPLATE = 'OroShippingBundle:ShippingMethodsConfigsRule:shippingMethodWithOptions.html.twig';
+    const FLAT_RATE_METHOD_CONFIG_TEMPLATE = 'OroShippingBundle:ShippingMethodsConfigsRule:flatRateMethodWithOptions.html.twig';
 
     /**
      * @var ShippingMethodLabelFormatter

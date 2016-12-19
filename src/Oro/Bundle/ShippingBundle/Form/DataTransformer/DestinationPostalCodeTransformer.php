@@ -14,6 +14,10 @@ class DestinationPostalCodeTransformer implements DataTransformerInterface
      */
     public function transform($postalCodes)
     {
+        if (!$postalCodes) {
+            return '';
+        }
+
         $postalCodesString = '';
         foreach ($postalCodes as $postalCode) {
             $postalCodesString .= $postalCode->getName() . ', ';

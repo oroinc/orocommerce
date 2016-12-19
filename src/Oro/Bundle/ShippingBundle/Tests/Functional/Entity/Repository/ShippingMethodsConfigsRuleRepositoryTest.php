@@ -50,7 +50,7 @@ class ShippingMethodsConfigsRuleRepositoryTest extends WebTestCase
         $expectedShippingRules = $this->getEntitiesByReferences($expectedRules);
         /** @var ShippingMethodsConfigsRule $expectedShippingRule */
         $expectedShippingRule = $expectedShippingRules[0];
-        $shippingRules = $this->repository->getByCurrencyAndCountry(
+        $shippingRules = $this->repository->getByDestinationAndCurrency(
             $currency,
             $country
         );
