@@ -1,7 +1,41 @@
 parameters:
     oro_commerce_menu.entity.menu_update.class: 'Oro\Bundle\CommerceMenuBundle\Entity\MenuUpdate'
 
+    oro_commerce_menu.menu_update.scope_type: 'menu_frontend_visibility'
+
 services:
+    oro_commerce_menu.manager.menu_update:
+        class: Oro\Bundle\NavigationBundle\Manager\MenuUpdateManager
+        arguments:
+            - "@doctrine"
+            - "@oro_menu.builder_chain"
+            - "@oro_navigation.menu_helper.menu_update"
+        calls:
+            - [ setEntityClass, [ '%oro_commerce_menu.entity.menu_update.class%' ]]
+
+    oro_commerce_menu.namespace_migration_provider:
+        class: 'Oro\Bundle\CommerceMenuBundle\CacheWarmer\NamespaceMigrationProvider'
+        tags:
+            - {name: oro_installer.namespace_migration_provider, priority: 15}
+
+    oro_commerce_menu.scope_criteria_provider.account:
+        parent: oro_customer.account_scope_criteria_provider
+        tags:
+            - {name: oro_scope.provider, scopeType: '%oro_commerce_menu.menu_update.scope_type%', priority: 30}
+
+    oro_commerce_menu.scope_criteria_provider.account_group:
+        parent: oro_customer.account_group_scope_criteria_provider
+        tags:
+            - {name: oro_scope.provider, scopeType: '%oro_commerce_menu.menu_update.scope_type%', priority: 20}
+
+    oro_commerce_menu.menu_update.builder.menu_frontend_visibility:
+        parent: oro_navigation.menu_update.builder.abstract
+        calls:
+          - [setClassName, ['%oro_commerce_menu.entity.menu_update.class%']]
+          - [setScopeType, ['%oro_commerce_menu.menu_update.scope_type%']]
+        tags:
+            - { name: oro_menu.builder, priority: 200 }
+
     oro_commerce_menu.menu.condition.condition_extension:
         class: 'Oro\Bundle\CommerceMenuBundle\Menu\Condition\ConditionExtension'
         public: false
@@ -31,28 +65,6 @@ services:
             - '@knp_menu.matcher'
         tags:
             - { name: twig.extension }
-
-    oro_commerce_menu.ownership_provider.global:
-        class: Oro\Bundle\NavigationBundle\Menu\Provider\GlobalOwnershipProvider
-        arguments:
-            - '@doctrine'
-            - '%oro_commerce_menu.entity.menu_update.class%'
-        tags:
-            - { name: oro_navigation.ownership_provider, area: frontend, priority: 100 }
-
-    oro_commerce_menu.ownership_provider.account:
-        class: 'Oro\Bundle\CommerceMenuBundle\Provider\AccountOwnershipProvider'
-        arguments:
-            - '@doctrine'
-            - '%oro_commerce_menu.entity.menu_update.class%'
-            - '@security.token_storage'
-        tags:
-            - { name: oro_navigation.ownership_provider, area: frontend, priority: 200 }
-
-    oro_commerce_menu.namespace_migration_provider:
-        class: 'Oro\Bundle\CommerceMenuBundle\CacheWarmer\NamespaceMigrationProvider'
-        tags:
-            - {name: oro_installer.namespace_migration_provider, priority: 15}
 
     oro_commerce_menu.listener.update_entity_config_relations:
         class: 'Oro\Bundle\CommerceMenuBundle\CacheWarmer\UpdateEntityConfigWarmer'
