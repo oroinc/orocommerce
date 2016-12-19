@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Provider;
 
-
 use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
@@ -19,7 +18,7 @@ class ShippingMethodsConfigsRulesProviderTest extends \PHPUnit_Framework_TestCas
             ->disableOriginalConstructor()
             ->getMock();
         $repository->expects(static::once())
-            ->method('getByCurrencyAndCountry')
+            ->method('getByDestinationAndCurrency')
             ->willReturn([new ShippingMethodsConfigsRule()]);
 
         $converter = $this->getMockBuilder(ShippingContextToRuleValuesConverter::class)
