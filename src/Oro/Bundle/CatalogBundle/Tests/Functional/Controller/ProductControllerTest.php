@@ -97,7 +97,8 @@ class ProductControllerTest extends WebTestCase
             ),
             ['_widgetContainer' => 'widget']
         );
-        $json = $crawler->filterXPath('//*[@data-page-component-options]')->attr('data-page-component-options');
+        $json = $crawler->filterXPath('//*[@data-collapse-container][@data-page-component-options]')
+            ->attr('data-page-component-options');
         $this->assertJson($json);
         $arr = json_decode($json, true);
         $this->assertEquals($arr['defaultCategoryId'], $categoryId);
