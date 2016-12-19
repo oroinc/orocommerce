@@ -67,6 +67,8 @@ class ShippingMethodsConfigsRuleRepositoryTest extends WebTestCase
      */
     public function testGetRulesWithoutShippingMethods()
     {
+        $this->markTestSkipped('refactor in BB-6393');
+
         $rulesWithoutShippingMethods = $this->repository->getRulesWithoutShippingMethods();
         $enabledRulesWithoutShippingMethods = $this->repository->getRulesWithoutShippingMethods(true);
 
@@ -79,6 +81,8 @@ class ShippingMethodsConfigsRuleRepositoryTest extends WebTestCase
      */
     public function testDisableRulesWithoutShippingMethods()
     {
+        $this->markTestSkipped('refactor in BB-6393');
+
         $this->repository->disableRulesWithoutShippingMethods();
 
         $rulesWithoutShippingMethods = $this->repository->getRulesWithoutShippingMethods();

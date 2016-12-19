@@ -36,7 +36,7 @@ class ShippingMethodsConfigsRuleControllerTest extends WebTestCase
         );
         $result = $this->client->getResponse();
         static::assertJsonResponseStatusCodeEquals($result, 200);
-        static::assertEquals(false, $this->getReference('shipping_rule.1')->isEnabled());
+        static::assertEquals(false, $this->getReference('shipping_rule.1')->getRule()->isEnabled());
     }
 
     /**
@@ -55,37 +55,6 @@ class ShippingMethodsConfigsRuleControllerTest extends WebTestCase
         );
         $result = $this->client->getResponse();
         static::assertJsonResponseStatusCodeEquals($result, 200);
-        static::assertEquals(true, $this->getReference('shipping_rule.1')->isEnabled());
-    }
-
-    /*
-    public function testDelete()
-    {
-        /** @var ShippingMethodsConfigsRule $shippingRule */
-        /*$shippingRule = $this->getReference('shipping_rule.1');
-        $this->client->request(
-            'DELETE',
-            $this->getUrl('oro_api_delete_shippingrules', ['id' => $shippingRule->getId()]),
-            [],
-            [],
-            static::generateWsseAuthHeader()
-        );
-        $result = $this->client->getResponse();
-        $this->assertEmptyResponseStatusCodeEquals($result, 204);
-    }*/
-
-    public function testDeleteWOPermission()
-    {
-        /** @var ShippingMethodsConfigsRule $shippingRule */
-        $shippingRule = $this->getReference('shipping_rule.1');
-        $this->client->request(
-            'DELETE',
-            $this->getUrl('oro_api_delete_shippingrules', ['id' => $shippingRule->getId()]),
-            [],
-            [],
-            static::generateWsseAuthHeader(LoadUserData::USER_VIEWER, LoadUserData::USER_VIEWER)
-        );
-        $result = $this->client->getResponse();
-        static::assertJsonResponseStatusCodeEquals($result, 403);
+        static::assertEquals(true, $this->getReference('shipping_rule.1')->getRule()->isEnabled());
     }
 }
