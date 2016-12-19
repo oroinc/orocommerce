@@ -97,50 +97,7 @@ class PaymentLineItem extends ParameterBag implements PaymentLineItemInterface
      */
     public function setPrice(Price $price = null)
     {
-        $this->price = $price;
-
-        return $this;
-    }
-
-    /**
-     * @param Product $product
-     * @return $this
-     */
-    public function setProduct(Product $product = null)
-    {
-        $this->product = $product;
-
-        return $this;
-    }
-
-    /**
-     * @param ProductHolderInterface $holder
-     * @return $this
-     */
-    public function setProductHolder(ProductHolderInterface $holder = null)
-    {
-        $this->productHolder = $holder;
-        return $this;
-    }
-
-    /**
-     * @param ProductUnit $productUnit
-     * @return $this
-     */
-    public function setProductUnit(ProductUnit $productUnit = null)
-    {
-        $this->productUnit = $productUnit;
-
-        return $this;
-    }
-
-    /**
-     * @param $quantity
-     * @return $this
-     */
-    public function setQuantity($quantity)
-    {
-        $this->quantity = $quantity;
+        $this->set(self::FIELD_PRICE, $price);
 
         return $this;
     }
