@@ -29,21 +29,21 @@ oro:
         estimated_shipping_cost_amount.label: 'Estimated Shipping Cost Amount'
         overridden_shipping_cost_amount.label: 'Overridden Shipping Cost Amount'
         total_currency.label: 'Total currency'
-        total_value.label: 'Total value'
-        total_base_currency.label: 'Total in base currency'
-        base_total_value.label: 'Total in base currency'
+        total_value.label: 'Total'
+        total_base_currency.label: 'Total (%sign%)'
+        base_total_value.label: 'Total (%sign%)'
         subtotal_currency.label: 'Subtotal currency'
-        subtotal_value.label: 'Subtotal value'
-        subtotal_base_currency.label: 'Subtotal in base currency'
-        base_subtotal_value.label: 'Subtotal in base currency'
+        subtotal_value.label: 'Subtotal'
+        subtotal_base_currency.label: 'Subtotal (%sign%)'
+        base_subtotal_value.label: 'Subtotal (%sign%)'
 
         subtotal:
             label: Subtotal
-            base.label: 'Subtotal in base currency'
+            base.label: 'Subtotal (%sign%)'
 
         total:
             label: Total
-            base.label: 'Total in base currency'
+            base.label: 'Total (%sign%)'
 
         # TODO: remove after resolving https://magecore.atlassian.net/browse/BAP-3940
         shipping_cost_amount.label: 'Shipping Cost Amount'
