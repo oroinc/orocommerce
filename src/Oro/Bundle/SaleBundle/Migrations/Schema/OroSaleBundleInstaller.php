@@ -580,8 +580,6 @@ class OroSaleBundleInstaller implements
         );
         $table->addColumn('total_currency', 'string', ['notnull' => false, 'length' => 3]);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['account_user_id']);
-        $table->addIndex(['account_id']);
     }
 
     /**

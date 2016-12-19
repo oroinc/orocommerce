@@ -53,8 +53,6 @@ class OroSaleBundle implements Migration, DatabasePlatformAwareInterface
         $table = $schema->getTable('oro_quote_demand');
         $table->addColumn('account_id', 'integer', ['notnull' => false]);
         $table->addColumn('account_user_id', 'integer', ['notnull' => false]);
-        $table->addIndex(['account_user_id']);
-        $table->addIndex(['account_id']);
     }
 
     /**
