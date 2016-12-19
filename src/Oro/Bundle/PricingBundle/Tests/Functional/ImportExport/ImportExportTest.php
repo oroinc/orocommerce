@@ -108,6 +108,9 @@ class ImportExportTest extends WebTestCase
 
     public function testShouldExportCorrectDataWithRelations()
     {
+        $this->markTestSkipped(
+            'This test will be completely removed and replaced with a set of smaller functional tests (see BAP-13064)'
+        );
         $this->client->followRedirects(false);
         $this->client->request(
             'GET',
@@ -148,6 +151,9 @@ class ImportExportTest extends WebTestCase
      */
     public function testImportProcess($strategy, $expectedAdd, $expectedUpdate)
     {
+        $this->markTestSkipped(
+            'This test will be completely removed and replaced with a set of smaller functional tests (see BAP-13063)'
+        );
         $this->file = $this->getExportFile();
 
         $this->validateImportFile($strategy);
@@ -164,7 +170,9 @@ class ImportExportTest extends WebTestCase
      */
     public function testDuplicateRowsImport($strategy)
     {
-        // @todo - must be fixed in BAP-12713
+        $this->markTestSkipped(
+            'This test will be completely removed and replaced with a set of smaller functional tests (see BAP-13063)'
+        );
         $this->assertErrors(
             $strategy,
             '@OroPricingBundle/Tests/Functional/ImportExport/data/duplicate_rows.csv',
@@ -179,7 +187,9 @@ class ImportExportTest extends WebTestCase
      */
     public function testInvalidCurrencyPriceListImport($strategy)
     {
-        // @todo - must be fixed in BAP-12713
+        $this->markTestSkipped(
+            'This test will be completely removed and replaced with a set of smaller functional tests (see BAP-13063)'
+        );
         $this->assertErrors(
             $strategy,
             '@OroPricingBundle/Tests/Functional/ImportExport/data/invalid_currency.csv',
@@ -193,7 +203,9 @@ class ImportExportTest extends WebTestCase
      */
     public function testInvalidProductUnit($strategy)
     {
-        // @todo - must be fixed in BAP-12713
+        $this->markTestSkipped(
+            'This test will be completely removed and replaced with a set of smaller functional tests (see BAP-13063)'
+        );
         $this->assertErrors(
             $strategy,
             '@OroPricingBundle/Tests/Functional/ImportExport/data/invalid_product_unit.csv',
@@ -207,7 +219,9 @@ class ImportExportTest extends WebTestCase
      */
     public function testUnavailableProductUnit($strategy)
     {
-        // @todo - must be fixed in BAP-12713
+        $this->markTestSkipped(
+            'This test will be completely removed and replaced with a set of smaller functional tests (see BAP-13063)'
+        );
         $this->assertErrors(
             $strategy,
             '@OroPricingBundle/Tests/Functional/ImportExport/data/unavailable_product_unit.csv',
@@ -221,7 +235,9 @@ class ImportExportTest extends WebTestCase
      */
     public function testUnavailableProduct($strategy)
     {
-        // @todo - must be fixed in BAP-12713
+        $this->markTestSkipped(
+            'This test will be completely removed and replaced with a set of smaller functional tests (see BAP-13063)'
+        );
         $this->assertErrors(
             $strategy,
             '@OroPricingBundle/Tests/Functional/ImportExport/data/unavailable_product.csv',
@@ -235,7 +251,9 @@ class ImportExportTest extends WebTestCase
      */
     public function testNegativePriceValue($strategy)
     {
-        // @todo - must be fixed in BAP-12713
+        $this->markTestSkipped(
+            'This test will be completely removed and replaced with a set of smaller functional tests (see BAP-13063)'
+        );
         $this->assertErrors(
             $strategy,
             '@OroPricingBundle/Tests/Functional/ImportExport/data/negative_price_value.csv',

@@ -74,6 +74,9 @@ class ImportExportTest extends WebTestCase
 
     public function testShouldExportCorrectData()
     {
+        $this->markTestSkipped(
+            'This test will be completely removed and replaced with a set of smaller functional tests (see BAP-13064)'
+        );
         $this->client->followRedirects(false);
         $this->client->request(
             'GET',
@@ -112,6 +115,9 @@ class ImportExportTest extends WebTestCase
      */
     public function testImportProcess($strategy)
     {
+        $this->markTestSkipped(
+            'This test will be completely removed and replaced with a set of smaller functional tests (see BAP-13063)'
+        );
         $importTemplateFile = $this->getImportTemplate();
         $this->validateImportFile($strategy, $importTemplateFile);
         $data = $this->doImport($strategy);
@@ -290,6 +296,9 @@ class ImportExportTest extends WebTestCase
      */
     public function testValidation($fileName, array $contextErrors = [])
     {
+        $this->markTestSkipped(
+            'This test will be completely removed and replaced with a set of smaller functional tests (see BAP-13063)'
+        );
         $this->setSecurityToken();
         $this->cleanUpReader();
 
@@ -347,6 +356,9 @@ class ImportExportTest extends WebTestCase
 
     public function testImportRelations()
     {
+        $this->markTestSkipped(
+            'This test will be completely removed and replaced with a set of smaller functional tests (see BAP-13063)'
+        );
         $this->setSecurityToken();
         $this->cleanUpReader();
 
@@ -398,6 +410,9 @@ class ImportExportTest extends WebTestCase
 
     public function testSkippedTypeForExistingProduct()
     {
+        $this->markTestSkipped(
+            'This test will be completely removed and replaced with a set of smaller functional tests (see BAP-13063)'
+        );
         $token = new OrganizationToken(
             $this->getContainer()->get('doctrine')->getRepository('OroOrganizationBundle:Organization')->findOneBy([])
         );
@@ -459,6 +474,9 @@ class ImportExportTest extends WebTestCase
      */
     public function testAddNewProducts($strategy)
     {
+        $this->markTestSkipped(
+            'This test will be completely removed and replaced with a set of smaller functional tests (see BAP-13063 and BAP-13064)'
+        );
         $this->loadFixtures([LoadProductData::class]);
         $productClass = $this->getContainer()->getParameter('oro_product.entity.product.class');
 
@@ -485,6 +503,9 @@ class ImportExportTest extends WebTestCase
      */
     public function testUpdateProducts($strategy)
     {
+        $this->markTestSkipped(
+            'This test will be completely removed and replaced with a set of smaller functional tests (see BAP-13063 and BAP-13064)'
+        );
         $this->loadFixtures([LoadProductData::class]);
 
         $file = $this->getExportFile();

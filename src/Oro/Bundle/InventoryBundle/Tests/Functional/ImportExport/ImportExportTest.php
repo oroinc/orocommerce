@@ -60,7 +60,9 @@ class ImportExportTest extends AbstractImportExportTestCase
      */
     public function testImportExport($strategy)
     {
-        // @todo - must be fixed in BAP-12713
+        $this->markTestSkipped(
+            'This test will be completely removed and replaced with a set of smaller functional tests (see BAP-13063)'
+        );
         $this->validateImportFile($strategy);
         $this->doImport($strategy);
     }
@@ -174,6 +176,9 @@ class ImportExportTest extends AbstractImportExportTestCase
 
     public function testExportInventoryStatusesOnly()
     {
+        $this->markTestSkipped(
+            'This test will be completely removed and replaced with a set of smaller functional tests (see BAP-13064)'
+        );
         $fileContent = $this->assertExportInfluencedByProcessorChoice(
             'oro_product.inventory_status_only',
             $this->inventoryStatusOnlyHeader
@@ -194,12 +199,14 @@ class ImportExportTest extends AbstractImportExportTestCase
 
     public function testExportDetailedInventoryLevel()
     {
+        $this->markTestSkipped(
+            'This test will be completely removed and replaced with a set of smaller functional tests (see BAP-13064)'
+        );
         $fileContent = $this->assertExportInfluencedByProcessorChoice(
             'oro_inventory.detailed_inventory_levels',
             $this->inventoryLevelHeader
         );
 
-        // @todo - must be fixed in BAP-12713
         $expectedRows = count(
             $this->client->getContainer()->get('oro_entity.doctrine_helper')
                 ->getEntityRepository(InventoryLevel::class)
@@ -271,6 +278,9 @@ class ImportExportTest extends AbstractImportExportTestCase
      */
     public function testExportTemplateInventoryStatusOnly($exportChoice, $expectedHeader)
     {
+        $this->markTestSkipped(
+            'This test will be completely removed and replaced with a set of smaller functional tests (see BAP-13064)'
+        );
         $this->client->useHashNavigation(false);
         $parameters = $this->getDefaultRequestParameters();
         $parameters['processorAlias'] = 'oro_inventory.detailed_inventory_levels_template';
