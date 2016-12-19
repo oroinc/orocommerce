@@ -140,7 +140,7 @@ class CheckoutRepository extends EntityRepository
                 $qb->expr()->eq('checkout.deleted', ':deleted')
             )
             ->setParameter('quote', $quote)
-            ->setParameter('deleted', false,  Type::BOOLEAN)
+            ->setParameter('deleted', false, Type::BOOLEAN)
             ->getQuery()
             ->getOneOrNullResult();
     }

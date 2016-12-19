@@ -194,6 +194,8 @@ oro:
             total.label: 'Total'
             subtotal.label: 'Subtotal'
             total_currency.label: 'Total Currency'
+            account.label: 'Customer'
+            account_user.label: 'Customer User'
 
         controller:
             quote:
