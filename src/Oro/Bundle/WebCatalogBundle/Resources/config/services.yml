@@ -81,6 +81,12 @@ services:
             - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: onFormPreSetData }
             - { name: kernel.event_listener, event: oro_config.settings_before_save, method: onSettingsSaveBefore }
 
+    oro_web_catalog.event_listener.webcatalog_config:
+        class: Oro\Bundle\WebCatalogBundle\EventListener\WebCatalogConfigChangeListener
+        arguments: ['@event_dispatcher']
+        tags:
+            - { name: kernel.event_listener, event: oro_config.update_after, method: onConfigurationUpdate } 
+
     oro_web_catalog.event_listener.request_listener:
         class: Oro\Bundle\WebCatalogBundle\EventListener\RequestListener
         arguments:
