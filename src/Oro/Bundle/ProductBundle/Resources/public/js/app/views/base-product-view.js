@@ -30,12 +30,16 @@ define(function(require) {
 
             this.initModel(options);
             this.initializeElements(options);
+
+            this._deferredRender();
             this.initLayout({
                 productModel: this.model
             }).done(_.bind(this.handleLayoutInit, this));
         },
 
-        handleLayoutInit: function() {},
+        handleLayoutInit: function() {
+            this._resolveDeferredRender();
+        },
 
         initModel: function(options) {
             this.modelAttr = $.extend(true, {}, this.modelAttr, options.modelAttr || {});

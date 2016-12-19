@@ -1,0 +1,13 @@
+.flexible-container {
+    display: flex;
+
+    &__side {
+        flex: 0 0 auto;
+    }
+
+    &__base {
+        width: 0;
+        
+        flex: 1 0 auto;
+    }
+}

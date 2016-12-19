@@ -21,15 +21,6 @@ services:
         tags:
             - { name: layout.data_provider, alias: oro_cms_login_page }
 
-    oro_cms.provider.landing_page_title_provider:
-        class: 'Oro\Bundle\CMSBundle\Provider\PageTitleProvider'
-        public: false
-        arguments:
-            - '@property_accessor'
-            - '@oro_locale.helper.localization.link'
-        tags:
-            - { name: oro_web_catalog.content_variant_title_provider }
-
     oro_cms.content_variant_type.cms_page:
         class: Oro\Bundle\CMSBundle\ContentVariantType\CmsPageContentVariantType
         public: false

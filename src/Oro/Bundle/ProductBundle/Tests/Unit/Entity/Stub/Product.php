@@ -39,6 +39,11 @@ class Product extends BaseProduct
     private $color;
 
     /**
+     * @var bool
+     */
+    private $slimFit;
+
+    /**
      * @var array
      */
     private $localizedFields = [
@@ -166,5 +171,21 @@ class Product extends BaseProduct
     public function setColor($color)
     {
         $this->color = $color;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSlimFit()
+    {
+        return $this->slimFit;
+    }
+
+    /**
+     * @param bool $slimFit
+     */
+    public function setSlimFit($slimFit)
+    {
+        $this->slimFit = $slimFit;
     }
 }
