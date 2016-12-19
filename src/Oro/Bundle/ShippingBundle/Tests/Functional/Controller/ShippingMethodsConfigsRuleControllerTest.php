@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Functional\Controller;
 
-use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethod;
 use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethodType;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
-use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingRules;
+use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingMethodsConfigsRules;
 use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\TranslationBundle\Translation\Translator;
@@ -19,7 +19,7 @@ use Symfony\Component\DomCrawler\Form;
  * @dbIsolation
  * @group CommunityEdition
  */
-class ShippingRuleControllerTest extends WebTestCase
+class ShippingMethodsConfigsRuleControllerTest extends WebTestCase
 {
     const NAME = 'New rule';
 
@@ -37,21 +37,21 @@ class ShippingRuleControllerTest extends WebTestCase
     {
         $this->initClient();
         $this->client->useHashNavigation(true);
-        $this->loadFixtures([LoadShippingRules::class, LoadUserData::class]);
+        $this->loadFixtures([LoadShippingMethodsConfigsRules::class, LoadUserData::class]);
         $this->registry = static::getContainer()->get('oro_shipping.shipping_method.registry');
         $this->translator = static::getContainer()->get('translator');
     }
 
     public function testIndex()
     {
-        $auth = $this->generateBasicAuthHeader(LoadUserData::USER_VIEWER_CREATOR, LoadUserData::USER_VIEWER_CREATOR);
+        $auth = static::generateBasicAuthHeader(LoadUserData::USER_VIEWER_CREATOR, LoadUserData::USER_VIEWER_CREATOR);
         $this->initClient([], $auth);
         $crawler = $this->client->request('GET', $this->getUrl('oro_shipping_methods_configs_rule_index'));
         $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('shipping-methods-configs-rule-grid', $crawler->html());
+        static::assertHtmlResponseStatusCodeEquals($result, 200);
+        static::assertContains('shipping-methods-configs-rule-grid', $crawler->html());
         $href = $crawler->selectLink('Create Shipping Rule')->attr('href');
-        $this->assertEquals($this->getUrl('oro_shipping_methods_configs_rule_create'), $href);
+        static::assertEquals($this->getUrl('oro_shipping_methods_configs_rule_create'), $href);
 
         $response = $this->client->requestGrid([
             'gridName' => 'shipping-methods-configs-rule-grid',
@@ -62,7 +62,7 @@ class ShippingRuleControllerTest extends WebTestCase
 
         $data = $result['data'];
 
-        /** @var ShippingRule $shippingRule */
+        /** @var ShippingMethodsConfigsRule $shippingRule */
         $shippingRule = $this->getReference('shipping_rule.1');
 
         $shipMethods = $shippingRule->getMethodConfigs();
@@ -76,11 +76,11 @@ class ShippingRuleControllerTest extends WebTestCase
             'data' => [
                 [
                     'id' => $shippingRule->getId(),
-                    'name' => $shippingRule->getName(),
-                    'enabled' => $shippingRule->isEnabled(),
-                    'priority' => $shippingRule->getPriority(),
+                    'name' => $shippingRule->getRule()->getName(),
+                    'enabled' => $shippingRule->getRule()->isEnabled(),
+                    'sortOrder' => $shippingRule->getRule()->getSortOrder(),
                     'currency' => $shippingRule->getCurrency(),
-                    'conditions' => $shippingRule->getConditions(),
+                    'expression' => $shippingRule->getRule()->getExpression(),
                     'methodConfigs' => $shipMethodsLabels,
                     'destinations' => implode('</br>', $shippingRule->getDestinations()->getValues()),
                 ],
@@ -89,9 +89,9 @@ class ShippingRuleControllerTest extends WebTestCase
                 'id',
                 'name',
                 'enabled',
-                'priority',
+                'sortOrder',
                 'currency',
-                'conditions',
+                'expression',
                 'methodConfigs',
                 'destinations',
                 'delete_link',
@@ -132,11 +132,11 @@ class ShippingRuleControllerTest extends WebTestCase
 
     public function testIndexWithoutCreate()
     {
-        $this->initClient([], $this->generateBasicAuthHeader(LoadUserData::USER_VIEWER, LoadUserData::USER_VIEWER));
+        $this->initClient([], static::generateBasicAuthHeader(LoadUserData::USER_VIEWER, LoadUserData::USER_VIEWER));
         $crawler = $this->client->request('GET', $this->getUrl('oro_shipping_methods_configs_rule_index'));
         $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertEquals(0, $crawler->selectLink('Create Shipping Rule')->count());
+        static::assertHtmlResponseStatusCodeEquals($result, 200);
+        static::assertEquals(0, $crawler->selectLink('Create Shipping Rule')->count());
     }
 
     /**
@@ -146,7 +146,7 @@ class ShippingRuleControllerTest extends WebTestCase
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(LoadUserData::USER_VIEWER_CREATOR, LoadUserData::USER_VIEWER_CREATOR)
+            static::generateBasicAuthHeader(LoadUserData::USER_VIEWER_CREATOR, LoadUserData::USER_VIEWER_CREATOR)
         );
         $crawler = $this->client->request('GET', $this->getUrl('oro_shipping_methods_configs_rule_create'));
 
@@ -188,7 +188,7 @@ class ShippingRuleControllerTest extends WebTestCase
         $this->client->followRedirects(true);
         $crawler = $this->client->request($form->getMethod(), $form->getUri(), $formValues);
 
-        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+        static::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
         $html = $crawler->html();
 
@@ -204,8 +204,8 @@ class ShippingRuleControllerTest extends WebTestCase
      */
     public function testView($name)
     {
-        $this->initClient([], $this->generateBasicAuthHeader());
-        $shippingRule = $this->getShippingRuleByName($name);
+        $this->initClient([], static::generateBasicAuthHeader());
+        $shippingRule = $this->getShippingMethodsConfigsRuleByName($name);
 
         $crawler = $this->client->request(
             'GET',
@@ -213,7 +213,7 @@ class ShippingRuleControllerTest extends WebTestCase
         );
 
         $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        static::assertHtmlResponseStatusCodeEquals($result, 200);
 
         $html = $crawler->html();
 
@@ -239,16 +239,19 @@ class ShippingRuleControllerTest extends WebTestCase
     /**
      * @depends testCreate
      * @param string $name
-     * @return ShippingRule|object|null
+     * @return ShippingMethodsConfigsRule|object|null
      */
     public function testUpdate($name)
     {
-        $shippingRule = $this->getShippingRuleByName($name);
+        $shippingRule = $this->getShippingMethodsConfigsRuleByName($name);
 
         $this->assertNotEmpty($shippingRule);
 
         $id = $shippingRule->getId();
-        $crawler = $this->client->request('GET', $this->getUrl('oro_shipping_methods_configs_rule_update', ['id' => $id]));
+        $crawler = $this->client->request(
+            'GET',
+            $this->getUrl('oro_shipping_methods_configs_rule_update', ['id' => $id])
+        );
 
         $html = $crawler->html();
 
@@ -291,36 +294,36 @@ class ShippingRuleControllerTest extends WebTestCase
         $this->client->followRedirects(true);
         $crawler = $this->client->request($form->getMethod(), $form->getUri(), $formValues);
 
-        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+        static::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
         $html = $crawler->html();
-        $this->assertContains('Shipping rule has been saved', $html);
+        static::assertContains('Shipping rule has been saved', $html);
 
-        $shippingRule = $this->getShippingRuleByName($newName);
-        $this->assertEquals($id, $shippingRule->getId());
+        $shippingRule = $this->getShippingMethodsConfigsRuleByName($newName);
+        static::assertEquals($id, $shippingRule->getId());
 
         $this->checkCurrency($shippingRule->getCurrency());
         $destination = $shippingRule->getDestinations();
-        $this->assertEquals('TH', $destination[0]->getCountry()->getIso2Code());
-        $this->assertEquals('TH-83', $destination[0]->getRegion()->getCombinedCode());
-        $this->assertEquals('54321', $destination[0]->getPostalCode());
+        static::assertEquals('TH', $destination[0]->getCountry()->getIso2Code());
+        static::assertEquals('TH-83', $destination[0]->getRegion()->getCombinedCode());
+        static::assertEquals('54321', $destination[0]->getPostalCode());
         $methodConfigs = $shippingRule->getMethodConfigs();
-        $this->assertEquals(FlatRateShippingMethod::IDENTIFIER, $methodConfigs[0]->getMethod());
-        $this->assertEquals(
+        static::assertEquals(FlatRateShippingMethod::IDENTIFIER, $methodConfigs[0]->getMethod());
+        static::assertEquals(
             24,
             $methodConfigs[0]->getTypeConfigs()[0]->getOptions()[FlatRateShippingMethodType::PRICE_OPTION]
         );
-        $this->assertFalse($shippingRule->isEnabled());
+        static::assertFalse($shippingRule->isEnabled());
 
         return $shippingRule;
     }
 
     /**
      * @depends testUpdate
-     * @param ShippingRule $shippingRule
+     * @param ShippingMethodsConfigsRule $shippingRule
      */
-    public function testCancel(ShippingRule $shippingRule)
+    public function testCancel(ShippingMethodsConfigsRule $shippingRule)
     {
-        $shippingRule = $this->getShippingRuleByName($shippingRule->getName());
+        $shippingRule = $this->getShippingMethodsConfigsRuleByName($shippingRule->getRule()->getName());
 
         $this->assertNotEmpty($shippingRule);
 
@@ -337,25 +340,25 @@ class ShippingRuleControllerTest extends WebTestCase
         $this->client->click($link);
         $response = $this->client->getResponse();
 
-        $this->assertHtmlResponseStatusCodeEquals($response, 200);
+        static::assertHtmlResponseStatusCodeEquals($response, 200);
 
         $html = $response->getContent();
 
-        $this->assertContains($shippingRule->getName(), $html);
+        static::assertContains($shippingRule->getName(), $html);
         $this->checkCurrenciesOnPage($shippingRule->getCurrency(), $html);
         $destination = $shippingRule->getDestinations();
-        $this->assertContains((string)$destination[0], $html);
+        static::assertContains((string)$destination[0], $html);
         $methodConfigs = $shippingRule->getMethodConfigs();
         $label = $this->registry->getShippingMethod($methodConfigs[0]->getMethod())->getLabel();
-        $this->assertContains($this->translator->trans($label), $html);
+        static::assertContains($this->translator->trans($label), $html);
     }
 
     /**
      * @depends testUpdate
-     * @param ShippingRule $shippingRule
-     * @return object|ShippingRule
+     * @param ShippingMethodsConfigsRule $shippingRule
+     * @return object|ShippingMethodsConfigsRule
      */
-    public function testUpdateRemoveDestination(ShippingRule $shippingRule)
+    public function testUpdateRemoveDestination(ShippingMethodsConfigsRule $shippingRule)
     {
         $this->assertNotEmpty($shippingRule);
 
@@ -377,16 +380,19 @@ class ShippingRuleControllerTest extends WebTestCase
         $this->client->followRedirects(true);
         $this->client->request($form->getMethod(), $form->getUri(), $formValues);
 
-        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        $shippingRule = $this->getEntityManager()->find('OroShippingBundle:ShippingRule', $shippingRule->getId());
-        $this->assertCount(0, $shippingRule->getDestinations());
+        static::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+        $shippingRule = $this->getEntityManager()->find(
+            'OroShippingBundle:ShippingMethodsConfigsRule',
+            $shippingRule->getId()
+        );
+        static::assertCount(0, $shippingRule->getDestinations());
 
         return $shippingRule;
     }
 
     public function testStatusDisableMass()
     {
-        $this->initClient([], $this->generateBasicAuthHeader());
+        $this->initClient([], static::generateBasicAuthHeader());
         $shippingRule1 = $this->getReference('shipping_rule.1');
         $shippingRule2 = $this->getReference('shipping_rule.2');
         $url = $this->getUrl(
@@ -408,10 +414,10 @@ class ShippingRuleControllerTest extends WebTestCase
         $this->assertTrue($data['successful']);
         $this->assertSame(2, $data['count']);
         $this->assertFalse(
-            $this->getShippingRuleByName($shippingRule1->getName())->isEnabled()
+            $this->getShippingMethodsConfigsRuleByName($shippingRule1->getName())->isEnabled()
         );
         $this->assertFalse(
-            $this->getShippingRuleByName($shippingRule2->getName())->isEnabled()
+            $this->getShippingMethodsConfigsRuleByName($shippingRule2->getName())->isEnabled()
         );
     }
 
@@ -420,7 +426,7 @@ class ShippingRuleControllerTest extends WebTestCase
      */
     public function testStatusEnableMass()
     {
-        $this->initClient([], $this->generateBasicAuthHeader());
+        $this->initClient([], static::generateBasicAuthHeader());
         $shippingRule1 = $this->getReference('shipping_rule.1');
         $shippingRule2 = $this->getReference('shipping_rule.2');
         $url = $this->getUrl(
@@ -442,19 +448,19 @@ class ShippingRuleControllerTest extends WebTestCase
         $this->assertTrue($data['successful']);
         $this->assertSame(2, $data['count']);
         $this->assertTrue(
-            $this->getShippingRuleByName($shippingRule1->getName())->isEnabled()
+            $this->getShippingMethodsConfigsRuleByName($shippingRule1->getName())->isEnabled()
         );
         $this->assertTrue(
-            $this->getShippingRuleByName($shippingRule2->getName())->isEnabled()
+            $this->getShippingMethodsConfigsRuleByName($shippingRule2->getName())->isEnabled()
         );
     }
 
-    public function testShippingRuleEditWOPermission()
+    public function testShippingMethodsConfigsRuleEditWOPermission()
     {
         $authParams = static::generateBasicAuthHeader(LoadUserData::USER_VIEWER, LoadUserData::USER_VIEWER);
         $this->initClient([], $authParams);
 
-        /** @var ShippingRule $shippingRule */
+        /** @var ShippingMethodsConfigsRule $shippingRule */
         $shippingRule = $this->getReference('shipping_rule.1');
 
         $this->client->request(
@@ -462,15 +468,15 @@ class ShippingRuleControllerTest extends WebTestCase
             $this->getUrl('oro_shipping_methods_configs_rule_update', ['id' => $shippingRule->getId()])
         );
 
-        $this->assertJsonResponseStatusCodeEquals($this->client->getResponse(), 403);
+        static::assertJsonResponseStatusCodeEquals($this->client->getResponse(), 403);
     }
 
-    public function testShippingRuleEdit()
+    public function testShippingMethodsConfigsRuleEdit()
     {
         $authParams = static::generateBasicAuthHeader(LoadUserData::USER_EDITOR, LoadUserData::USER_EDITOR);
         $this->initClient([], $authParams);
 
-        /** @var ShippingRule $shippingRule */
+        /** @var ShippingMethodsConfigsRule $shippingRule */
         $shippingRule = $this->getReference('shipping_rule.1');
 
         $crawler = $this->client->request(
@@ -478,17 +484,17 @@ class ShippingRuleControllerTest extends WebTestCase
             $this->getUrl('oro_shipping_methods_configs_rule_update', ['id' => $shippingRule->getId()])
         );
 
-        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+        static::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
         /** @var Form $form */
         $form = $crawler->selectButton('Save')->form();
 
-        $form['oro_shipping_rule[enabled]'] = !$shippingRule->isEnabled();
-        $form['oro_shipping_rule[name]'] = $shippingRule->getName().' new name';
-        $form['oro_shipping_rule[priority]'] = $shippingRule->getPriority() + 1;
+        $form['oro_shipping_rule[enabled]'] = !$shippingRule->getRule()->isEnabled();
+        $form['oro_shipping_rule[name]'] = $shippingRule->getRule()->getName().' new name';
+        $form['oro_shipping_rule[sortOrder]'] = $shippingRule->getRule()->getSortOrder() + 1;
         $form['oro_shipping_rule[currency]'] = $shippingRule->getCurrency() === 'USD' ? 'EUR' : 'USD';
-        $form['oro_shipping_rule[stopProcessing]'] = !$shippingRule->isStopProcessing();
-        $form['oro_shipping_rule[conditions]'] = $shippingRule->getConditions().' new data';
+        $form['oro_shipping_rule[stopProcessing]'] = !$shippingRule->getRule()->isStopProcessing();
+        $form['oro_shipping_rule[expression]'] = $shippingRule->getRule()->getExpression().' new data';
         $form['oro_shipping_rule[destinations][0][postalCode]'] = '11111';
         $form['oro_shipping_rule[methodConfigs][0][typeConfigs][0][options][price]'] = 12;
         $form['oro_shipping_rule[methodConfigs][0][typeConfigs][0][enabled]'] = true;
@@ -496,8 +502,8 @@ class ShippingRuleControllerTest extends WebTestCase
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
 
-        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        $this->assertContains('Shipping rule has been saved', $crawler->html());
+        static::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+        static::assertContains('Shipping rule has been saved', $crawler->html());
     }
 
     public function testDeleteButtonNotVisible()
@@ -519,19 +525,19 @@ class ShippingRuleControllerTest extends WebTestCase
      */
     protected function getEntityManager()
     {
-        return $this->getContainer()
+        return static::getContainer()
             ->get('doctrine')
-            ->getManagerForClass('OroShippingBundle:ShippingRule');
+            ->getManagerForClass('OroShippingBundle:ShippingMethodsConfigsRule');
     }
 
     /**
      * @param string $name
-     * @return ShippingRule|object|null
+     * @return ShippingMethodsConfigsRule|object|null
      */
-    protected function getShippingRuleByName($name)
+    protected function getShippingMethodsConfigsRuleByName($name)
     {
         return $this->getEntityManager()
-            ->getRepository('OroShippingBundle:ShippingRule')
+            ->getRepository('OroShippingBundle:ShippingMethodsConfigsRule')
             ->findOneBy(['name' => $name]);
     }
 }

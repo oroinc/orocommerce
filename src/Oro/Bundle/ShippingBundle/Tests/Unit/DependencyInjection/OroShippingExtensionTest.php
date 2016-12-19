@@ -37,7 +37,7 @@ class OroShippingExtensionTest extends ExtensionTestCase
             'oro_shipping.shipping_price.provider',
             'oro_shipping.provider.measure_units.conversion',
             'oro_shipping.condition.has_applicable_shipping_methods',
-            'oro_shipping.datagrid.shipping_rule_actions_visibility_provider'
+            'oro_shipping.datagrid.shipping_rule_actions_visibility_provider',
             'oro_shipping.converter.shipping_context_to_rule_values',
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);

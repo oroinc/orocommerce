@@ -10,7 +10,7 @@
         'entity':      entity,
         'indexPath':   path('oro_shipping_methods_configs_rule_index'),
         'indexLabel': 'oro.shipping.shippingmethodsconfigsrule.entity_plural_label'|trans,
-        'entityTitle': entity.name|slice(0, 50)
+        'entityTitle': entity.rule.name|slice(0, 50)
         } %}
         {{ parent() }}
     {% else %}

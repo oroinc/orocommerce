@@ -113,29 +113,6 @@ class ShippingMethodsConfigsRuleController extends RestController implements Cla
     }
 
     /**
-     * Rest delete
-     *
-     * @ApiDoc(
-     *      description="Delete Shipping Rule",
-     *      resource=true
-     * )
-     * @Acl(
-     *      id="oro_shipping_rule_delete",
-     *      type="entity",
-     *      permission="DELETE",
-     *      class="OroShippingBundle:ShippingMethodsConfigsRule"
-     * )
-     *
-     * @param int $id
-     * @return Response
-     *
-     */
-    /*public function deleteAction($id)
-    {
-        return $this->handleDeleteRequest($id);
-    }*/
-
-    /**
      * {@inheritdoc}
      */
     public function getManager()
