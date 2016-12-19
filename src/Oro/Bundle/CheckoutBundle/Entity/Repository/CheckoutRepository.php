@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CheckoutBundle\Entity\Repository;
 
+use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\EntityRepository;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
@@ -36,7 +37,7 @@ class CheckoutRepository extends EntityRepository
             ->setParameter('ids', $checkoutIds)
             ->getQuery()
             ->getScalarResult();
-        
+
         return $this->extractCheckoutItemsCounts($databaseResults);
     }
 
@@ -86,10 +87,10 @@ class CheckoutRepository extends EntityRepository
             $ids,
             $itemCounts
         );
-        
+
         return $result;
     }
-    
+
     /**
      * Collecting Quote and ShoppingList objects from the query result
      * and integrating into one dataset, indexed by Checkout ID.
@@ -102,7 +103,7 @@ class CheckoutRepository extends EntityRepository
         if (!count($results)) {
             return [];
         }
-        
+
         $quotes         = array_column($results, 'quote');
         $shoppingLists  = array_column($results, 'shoppingList');
         $ids            = array_column($results, 'id');
@@ -110,7 +111,7 @@ class CheckoutRepository extends EntityRepository
         // we will overwrite one array with another
         // thus get rid of nulls, as they should not overwrite real values
         $quotes         = array_filter($quotes);
-        
+
         $integrated     = array_replace($shoppingLists, $quotes);
 
         $result         = array_combine(
@@ -134,9 +135,12 @@ class CheckoutRepository extends EntityRepository
             ->innerJoin('source.quoteDemand', 'qd')
             ->innerJoin('qd.quote', 'quote')
             ->where(
-                $qb->expr()->eq('quote', ':quote')
+                $qb->expr()->eq('quote', ':quote'),
+                $qb->expr()->eq('source.deleted', ':deleted'),
+                $qb->expr()->eq('checkout.deleted', ':deleted')
             )
             ->setParameter('quote', $quote)
+            ->setParameter('deleted', false,  Type::BOOLEAN)
             ->getQuery()
             ->getOneOrNullResult();
     }

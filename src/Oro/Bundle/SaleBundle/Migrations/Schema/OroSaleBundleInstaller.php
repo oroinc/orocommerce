@@ -565,6 +565,8 @@ class OroSaleBundleInstaller implements
     {
         $table = $schema->createTable('oro_quote_demand');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('account_id', 'integer', ['notnull' => false]);
+        $table->addColumn('account_user_id', 'integer', ['notnull' => false]);
         $table->addColumn('quote_id', 'integer', ['notnull' => false]);
         $table->addColumn(
             'subtotal',
@@ -578,6 +580,8 @@ class OroSaleBundleInstaller implements
         );
         $table->addColumn('total_currency', 'string', ['notnull' => false, 'length' => 3]);
         $table->setPrimaryKey(['id']);
+        $table->addIndex(['account_user_id']);
+        $table->addIndex(['account_id']);
     }
 
     /**
@@ -625,6 +629,18 @@ class OroSaleBundleInstaller implements
     protected function addOroSaleQuoteDemandForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('oro_quote_demand');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_account'),
+            ['account_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_account_user'),
+            ['account_user_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_sale_quote'),
             ['quote_id'],
