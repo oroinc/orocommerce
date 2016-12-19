@@ -3,6 +3,8 @@
 namespace Oro\Bundle\ShippingBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
@@ -10,8 +12,13 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  */
-class OroShippingBundleInstaller implements Installation
+class OroShippingBundleInstaller implements Installation, ActivityExtensionAwareInterface
 {
+    /**
+     * @var ActivityExtension
+     */
+    protected $activityExtension;
+
     /**
      * {@inheritdoc}
      */
@@ -74,6 +81,8 @@ class OroShippingBundleInstaller implements Installation
         $table->addColumn('currency', 'string', ['notnull' => false, 'length' => 3]);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['rule_id'], 'IDX_1FA57D60744E0351', []);
+
+        $this->activityExtension->addActivityAssociation($schema, 'oro_note', 'oro_ship_method_configs_rule');
     }
 
     /**
@@ -322,5 +331,13 @@ class OroShippingBundleInstaller implements Installation
             ['iso2_code'],
             ['onDelete' => null, 'onUpdate' => null]
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setActivityExtension(ActivityExtension $activityExtension)
+    {
+        $this->activityExtension = $activityExtension;
     }
 }
