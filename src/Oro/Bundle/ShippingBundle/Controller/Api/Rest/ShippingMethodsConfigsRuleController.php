@@ -3,28 +3,24 @@
 namespace Oro\Bundle\ShippingBundle\Controller\Api\Rest;
 
 use Doctrine\Common\Persistence\ObjectManager;
-
-use Nelmio\ApiDocBundle\Annotation\ApiDoc;
-
-use Symfony\Component\HttpFoundation\Response;
-
 use FOS\RestBundle\Controller\Annotations\Get;
 use FOS\RestBundle\Controller\Annotations\NamePrefix;
 use FOS\RestBundle\Controller\Annotations\RouteResource;
 use FOS\RestBundle\Routing\ClassResourceInterface;
 use FOS\RestBundle\Util\Codes;
 use FOS\RestBundle\View\View;
-
+use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @RouteResource("shippingrules")
  * @NamePrefix("oro_api_")
  */
-class ShippingRuleController extends RestController implements ClassResourceInterface
+class ShippingMethodsConfigsRuleController extends RestController implements ClassResourceInterface
 {
     /**
      * Enable shipping rule
@@ -44,11 +40,11 @@ class ShippingRuleController extends RestController implements ClassResourceInte
      */
     public function enableAction($id)
     {
-        /** @var ShippingRule $shippingRule */
+        /** @var ShippingMethodsConfigsRule $shippingRule */
         $shippingRule = $this->getManager()->find($id);
 
         if ($shippingRule) {
-            $shippingRule->setEnabled(true);
+            $shippingRule->getRule()->setEnabled(true);
             /** @var ObjectManager $objectManager */
             $objectManager = $this->getManager()->getObjectManager();
             $objectManager->persist($shippingRule);
@@ -89,11 +85,11 @@ class ShippingRuleController extends RestController implements ClassResourceInte
      */
     public function disableAction($id)
     {
-        /** @var ShippingRule $shippingRule */
+        /** @var ShippingMethodsConfigsRule $shippingRule */
         $shippingRule = $this->getManager()->find($id);
 
         if ($shippingRule) {
-            $shippingRule->setEnabled(false);
+            $shippingRule->getRule()->setEnabled(false);
             /** @var ObjectManager $objectManager */
             $objectManager = $this->getManager()->getObjectManager();
             $objectManager->persist($shippingRule);
@@ -134,10 +130,10 @@ class ShippingRuleController extends RestController implements ClassResourceInte
      * @return Response
      *
      */
-    public function deleteAction($id)
+    /*public function deleteAction($id)
     {
         return $this->handleDeleteRequest($id);
-    }
+    }*/
 
     /**
      * {@inheritdoc}

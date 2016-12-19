@@ -50,8 +50,8 @@ services:
         tags:
             - { name: form.type, alias: oro_shipping_weight }
 
-    oro_shipping.form.type.rule:
-        class: Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleType
+    oro_shipping.form.type.shipping_methods_configs_rule:
+        class: Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodsConfigsRuleType
         arguments:
             - '@oro_shipping.shipping_method.registry'
             - '@translator'

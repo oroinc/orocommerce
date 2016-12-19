@@ -1,16 +1,16 @@
 {% extends 'OroUIBundle:actions:view.html.twig' %}
 {% import 'OroUIBundle::macros.html.twig' as UI %}
 {% import 'OroEntityConfigBundle::macros.html.twig' as entityConfig %}
-{% import 'OroShippingBundle:ShippingRule:macros.html.twig' as ShipRuleMacro %}
+{% import 'OroShippingBundle:ShippingMethodsConfigsRule:macros.html.twig' as ShipRuleMacro %}
 
-{% oro_title_set({params : {"%label%": entity.name|default('N/A') }}) %}
+{% oro_title_set({params : {"%label%": entity.rule.name|default('N/A') }}) %}
 
 {% block pageHeader %}
     {% set breadcrumbs = {
-    'entity': entity,
-    'indexPath': path('oro_shipping_methods_configs_rule_index'),
-    'indexLabel': 'oro.shipping.shippingmethodsconfigsrule.entity_plural_label'|trans,
-    'entityTitle': entity.name|default('N/A'|trans)
+        'entity': entity,
+        'indexPath': path('oro_shipping_methods_configs_rule_index'),
+        'indexLabel': 'oro.shipping.shippingmethodsconfigsrule.entity_plural_label'|trans,
+        'entityTitle': entity.rule.name|default('N/A'|trans)
     } %}
     {{ parent() }}
 {% endblock pageHeader %}
@@ -20,25 +20,25 @@
     {%- set shippingRuleInformation -%}
         <div class="row-fluid form-horizontal">
             <div class="responsive-block">
-                {{ UI.renderProperty('oro.shipping.shippingmethodsconfigsrule.name.label'|trans, entity.name) }}
-                {{ UI.renderProperty('oro.shipping.shippingrule.enabled.label'|trans, entity.enabled ?
-                'oro.shipping.shippingrule.enabled_yes.label'|trans
+                {{ UI.renderProperty('oro.rule.name.label'|trans, entity.rule.name) }}
+                {{ UI.renderProperty('oro.rule.enabled.label'|trans, entity.rule.enabled ?
+                'oro.rule.enabled_yes.label'|trans
                 :
-                'oro.shipping.shippingrule.enabled_no.label'|trans
+                'oro.rule.enabled_no.label'|trans
                 ) }}
-                {{ UI.renderProperty('oro.shipping.shippingrule.priority.label'|trans, entity.priority) }}
-                {{ UI.renderProperty('oro.shipping.shippingrule.currency.label'|trans, entity.currency) }}
-                {{ UI.renderProperty('oro.shipping.shippingrule.conditions.label'|trans, entity.conditions) }}
+                {{ UI.renderProperty('oro.rule.sort_order.label'|trans, entity.rule.sortOrder) }}
+                {{ UI.renderProperty('oro.shipping.shippingmethodsconfigsrule.currency.label'|trans, entity.currency) }}
+                {{ UI.renderProperty('oro.rule.expression.label'|trans, entity.rule.expression) }}
 
                 {% if entity.destinations.count %}
                     {{ UI.renderHtmlProperty(
-                    'oro.shipping.shippingrule.destinations.label'|trans,
+                    'oro.shipping.shippingmethodsconfigsrule.destinations.label'|trans,
                     UI.renderList(entity.destinations)) }}
                 {% endif %}
 
                 {% if entity.methodConfigs.count %}
                     {{ UI.renderHtmlProperty(
-                    'oro.shipping.shippingrule.method_configs.label'|trans,
+                    'oro.shipping.shippingmethodsconfigsrule.method_configs.label'|trans,
                     ShipRuleMacro.renderShippingMethodsConfigs(entity.methodConfigs, entity.currency)) }}
                 {% endif %}
             </div>

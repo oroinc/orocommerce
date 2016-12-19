@@ -6,6 +6,7 @@ use Oro\Bundle\AddressBundle\Form\EventListener\AddressCountryAndRegionSubscribe
 use Oro\Bundle\AddressBundle\Form\Type\CountryType;
 use Oro\Bundle\AddressBundle\Form\Type\RegionType;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination;
+use Oro\Bundle\ShippingBundle\Form\DataTransformer\DestinationPostalCodeTransformer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -46,6 +47,9 @@ class ShippingMethodsConfigsRuleDestinationType extends AbstractType
                 ['required' => false, 'random_id' => true, 'label' => 'oro.address.region_text.label']
             )
             ->add('postalCodes', TextType::class, ['required' => false, 'label' => 'oro.address.postal_code.label']);
+
+        $builder->get('postalCodes')->addModelTransformer(new DestinationPostalCodeTransformer());
+
     }
 
     /**

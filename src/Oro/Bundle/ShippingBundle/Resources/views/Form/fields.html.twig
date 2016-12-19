@@ -216,9 +216,9 @@
     {{ form_rest(form) }}
 {% endblock %}
 
-{% block oro_shipping_rule_destination_widget %}
+{% block oro_shipping_methods_configs_rule_destination_widget %}
     {{ form_row(form.country) }}
     {{ form_row(form.region) }}
-    {{ form_row(form.postalCode) }}
+    {{ form_row(form.postalCodes) }}
     {{ form_rest(form) }}
 {% endblock %}

@@ -7,7 +7,7 @@ use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\ShippingBundle\Form\Handler\ShippingMethodsConfigsRuleHandler;
-use Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleType;
+use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodsConfigsRuleType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -95,7 +95,7 @@ class ShippingMethodsConfigsRuleController extends Controller
      */
     protected function update(ShippingMethodsConfigsRule $entity, Request $request)
     {
-        $form = $this->createForm(ShippingRuleType::class);
+        $form = $this->createForm(ShippingMethodsConfigsRuleType::class);
         if ($this->get('oro_shipping.form.handler.shipping_methods_configs_rule')->process($form, $entity)) {
             $this->get('session')->getFlashBag()->add(
                 'success',
@@ -108,7 +108,7 @@ class ShippingMethodsConfigsRuleController extends Controller
         if ($request->get(ShippingMethodsConfigsRuleHandler::UPDATE_FLAG, false)) {
             // take different form due to JS validation should be shown even in case
             // when it was not validated on backend
-            $form = $this->createForm(ShippingRuleType::class, $form->getData());
+            $form = $this->createForm(ShippingMethodsConfigsRuleType::class, $form->getData());
         }
 
         return [
