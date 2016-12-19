@@ -229,29 +229,22 @@ services:
         tags:
             - {name: oro_product.default_product_unit_provider, priority: 0}
 
-    oro_product.provider.product_title_provider:
-        class: 'Oro\Bundle\ProductBundle\Provider\ProductTitleProvider'
-        public: false
-        arguments:
-            - '@property_accessor'
-            - '@oro_locale.helper.localization.link'
-        tags:
-            - { name: oro_web_catalog.content_variant_title_provider }
-
     oro_product.event_listener.product_variant_custom_fields_datagrid:
         class: 'Oro\Bundle\ProductBundle\EventListener\ProductVariantCustomFieldsDatagridListener'
         arguments:
             - "@oro_entity.doctrine_helper"
             - "@oro_product.provider.custom_field_provider"
             - '%oro_product.entity.product.class%'
+            - '%oro_product.entity.product_variant_link.class%'
         tags:
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.oro_product-product_variants-product_view, method: onBuildBefore }
-            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.oro_product-product_variants-product_view, method: onResultAfter }
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.oro_product-product_variants-product_edit, method: onBuildBefore }
-            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.oro_product-product_variants-product_edit, method: onResultAfter }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.product-product-variants-view, method: onBuildAfter }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.product-product-variants-edit, method: onBuildAfter }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.product-product-variants-edit, method: onBuildBeforeHideUnsuitable }
 
     oro_product.validator.unique_variant_links:
         class: 'Oro\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinksValidator'
+        arguments:
+            - "@property_accessor"
         tags:
             - { name: validator.constraint_validator, alias: oro_product_unique_variant_links }
 
@@ -381,6 +374,14 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid, method: onPreBuild }
             - { name: kernel.event_listener, event: oro_datagrid.search_datasource.result.after.frontend-product-search-grid, method: onResultAfter }
+
+    oro_product.event_listener.product_handler:
+        class: 'Oro\Bundle\ProductBundle\EventListener\ProductHandlerListener'
+        arguments:
+            - '@property_accessor'
+            - '@logger'
+        tags:
+            - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush, method: onBeforeFlush }
 
     oro_product.layout.data_provider.frontend_datagrid_row_view:
         class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\FrontendDatagridRowViewProvider'

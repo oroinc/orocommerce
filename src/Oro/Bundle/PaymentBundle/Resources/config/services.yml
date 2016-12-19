@@ -198,3 +198,14 @@ services:
         arguments:
             - '@event_dispatcher'
             - '@oro_entity.entity_alias_resolver'
+
+    oro_payment.context.doctrine_line_item_collection_factory:
+        class: 'Oro\Bundle\PaymentBundle\Context\LineItem\Collection\Doctrine\Factory\DoctrinePaymentLineItemCollectionFactory'
+
+    oro_payment.context.builder_factory_basic:
+        class: 'Oro\Bundle\PaymentBundle\Context\Builder\Basic\Factory\BasicPaymentContextBuilderFactory'
+        arguments:
+            - '@oro_payment.context.doctrine_line_item_collection_factory'
+
+    oro_payment.line_item.builder_factory_basic:
+        class: 'Oro\Bundle\PaymentBundle\Context\LineItem\Builder\Basic\Factory\BasicPaymentLineItemBuilderFactory'

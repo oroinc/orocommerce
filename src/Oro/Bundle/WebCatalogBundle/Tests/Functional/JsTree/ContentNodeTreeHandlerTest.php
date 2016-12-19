@@ -52,7 +52,7 @@ class ContentNodeTreeHandlerTest extends AbstractTreeHandlerTestCase
             /** @var ContentNode $entity */
             $entity = $this->getReference($data['entity']);
             $data['id'] = $entity->getId();
-            $data['text'] = $entity->getName();
+            $data['text'] = $this->getTitle($entity);
             if ($data['parent'] !== AbstractTreeHandler::ROOT_PARENT_VALUE) {
                 $data['parent'] = $this->getReference($data['parent'])->getId();
             }
@@ -215,9 +215,9 @@ class ContentNodeTreeHandlerTest extends AbstractTreeHandlerTestCase
                 ['level' => 'DESC', 'left' => 'DESC']
             );
         return array_reduce($entities, function ($result, ContentNode $node) {
-            $result[$node->getName()] = [];
+            $result[$this->getTitle($node)] = [];
             if ($node->getParentNode()) {
-                $result[$node->getName()]['parent'] = $node->getParentNode()->getName();
+                $result[$this->getTitle($node)]['parent'] = $this->getTitle($node->getParentNode());
             }
             return $result;
         }, []);
@@ -231,5 +231,18 @@ class ContentNodeTreeHandlerTest extends AbstractTreeHandlerTestCase
         $expectedRoot = $this->getReference(LoadContentNodesData::CATALOG_2_ROOT);
 
         $this->assertEquals($expectedRoot, $this->handler->getTreeRootByWebCatalog($webCatalog));
+    }
+
+    /**
+     * @param ContentNode $contentNode
+     * @return string
+     */
+    protected function getTitle(ContentNode $contentNode)
+    {
+        $titleValue = $this->getContainer()
+            ->get('oro_locale.helper.localization')
+            ->getFirstNonEmptyLocalizedValue($contentNode->getTitles());
+
+        return $titleValue ? $titleValue->getString() : '';
     }
 }

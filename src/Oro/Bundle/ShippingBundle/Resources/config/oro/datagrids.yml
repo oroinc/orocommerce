@@ -124,6 +124,7 @@ datagrids:
                 label:        oro.shipping.datagrid.action.disable
                 icon:         close
                 link:         disable_link
+        action_configuration: ['@oro_shipping.datagrid.shipping_rule_actions_visibility_provider', getActionsVisibility]
         mass_actions:
             enable:
                 type:         shippingruleenable

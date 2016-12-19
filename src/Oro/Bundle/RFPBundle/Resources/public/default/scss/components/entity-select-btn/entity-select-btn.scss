@@ -1,0 +1,13 @@
+.entity-select-btn {
+    padding: $entity-select-btn-padding;
+
+    background: get-color('additional', 'ultra');
+
+    line-height: 1;
+
+    border: 1px solid get-color('additional', 'light');
+
+    i {
+        margin-right: 0;
+    }
+}
