@@ -37,16 +37,12 @@ define(function(require) {
          * @param {object} params
          */
         updateGridContent: function(params) {
-            this.hideLoading();
-
             this.themeOptions.serverRendered = true;
 
             this.$el.find('.grid-body').html(params.gridContent.html());
 
-            this.collection.reset(params.data);
-            mediator.trigger('grid_load:complete', this.collection, this.$el);
-            this.initLayout();
-            this.trigger('content:update');
+            this.collection.reset(params.responseJSON.data.data);
+            this._afterRequest(params.responseJSON);
         },
 
         /**
@@ -64,7 +60,6 @@ define(function(require) {
             this.renderNoDataBlock();
             this.renderLoadingMask();
 
-            this.delegateEvents();
             this.listenTo(this.collection, 'reset', this.renderNoDataBlock);
 
             this._deferredRender();
@@ -94,7 +89,7 @@ define(function(require) {
             this.switchAppearanceClass(_.result(this.metadata.state, 'appearanceType'));
 
             this.collection.on('gridContentUpdate', function() {
-                self.showLoading();
+                self._beforeRequest();
             });
             return this;
         },
@@ -104,9 +99,16 @@ define(function(require) {
          * @param {null|"ascending"|"descending"} direction
          */
         sort: function(column, direction) {
-            this.showLoading();
-
             BackendGrid.__super__.sort.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
+        undelegateEvents: function() {
+            this.collection.off('gridContentUpdate');
+
+            BackendGrid.__super__.undelegateEvents.apply(this, arguments);
         }
     });
 

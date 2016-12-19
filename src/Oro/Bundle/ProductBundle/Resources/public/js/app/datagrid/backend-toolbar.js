@@ -11,6 +11,9 @@ define(function(require) {
 
     BackendToolbar = Toolbar.extend({
         /** @property */
+        template: null,
+
+        /** @property */
         pagination: BackendPagination,
 
         /** @property */

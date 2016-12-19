@@ -17,24 +17,6 @@ define(function(require) {
          * @inheritDoc
          */
         initialize: function(options) {
-            options = options || {};
-
-            if (!options.collection) {
-                throw new TypeError('"collection" is required');
-            }
-
-            if (options.items) {
-                this.items = options.items;
-            }
-
-            this.collection = options.collection;
-            this.listenTo(this.collection, 'add', this.render);
-            this.listenTo(this.collection, 'remove', this.render);
-            this.listenTo(this.collection, 'reset', this.render);
-
-            this.enabled = options.enable !== false;
-            this.hidden = options.hide === true;
-
             BackendPageSize.__super__.initialize.call(this, options);
         },
 

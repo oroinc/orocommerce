@@ -40,10 +40,7 @@ define(function(require) {
                 var options = $data.find('[data-page-component-name=frontend-product-search-grid]')
                                    .data('page-component-options');
                 var params = {
-                    data: options.data.data,
-                    metadata: options.data.metadata || {},
-                    options: options.data.options || {},
-                    toolbarOptions: options.metadata.options.toolbarOptions,
+                    responseJSON: options,
                     gridContent: $data.find('.grid-body')
                 };
 
