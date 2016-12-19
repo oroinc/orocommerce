@@ -10,3 +10,4 @@ oro:
         sort_order.label: Sort Order
         stop_processing.label: Stop Further Rule Processing
         expression.label: Expression
+        methods_configs_rule.label: Methods Configs Rule
