@@ -137,7 +137,7 @@ services:
     oro_order.event_listener.order.total:
         class: 'Oro\Bundle\OrderBundle\EventListener\Order\OrderTotalEventListener'
         arguments:
-            - '@oro_pricing.subtotal_processor.total_processor_provider'
+            - '@oro_order.provider.total_processor'
         tags:
             - { name: kernel.event_listener, event: oro_order.order, method: onOrderEvent, priority: -255 }
 
@@ -301,3 +301,11 @@ services:
             - '@doctrine'
         tags:
             - { name: oro_multi_currency.currency_checker_provider }
+
+    oro_order.provider.total_processor:
+        class: Oro\Bundle\OrderBundle\Provider\TotalProvider
+        arguments:
+            - '@oro_pricing.subtotal_processor.total_processor_provider'
+            - '@oro_currency.config.currency'
+            - '@oro_currency.converter.rate'
+

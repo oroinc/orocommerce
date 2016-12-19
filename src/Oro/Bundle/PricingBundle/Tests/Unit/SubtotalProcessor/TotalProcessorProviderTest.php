@@ -503,57 +503,6 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
         );
     }
 
-    public function testGetTotalWithSubtotalsWithBaseCurrencyValues()
-    {
-        $this->translator->expects($this->once())
-            ->method('trans')
-            ->with(sprintf('oro.pricing.subtotals.%s.label', TotalProcessorProvider::TYPE))
-            ->willReturn(ucfirst(TotalProcessorProvider::TYPE));
-
-        $entity = $this->prepareSubtotals(new EntityStub(), 2);
-
-        $this->currencyProvider
-            ->expects($this->once())
-            ->method('getDefaultCurrency')
-            ->willReturn('USD');
-        $totals = $this->provider->enableRecalculation()->getTotalWithSubtotalsWithBaseCurrencyValues($entity);
-        $this->assertInternalType('array', $totals);
-        $this->assertArrayHasKey(TotalProcessorProvider::TYPE, $totals);
-        $this->assertEquals(
-            [
-                'type' => 'total',
-                'label' => 'Total',
-                'amount' => 182.0,
-                'currency' => 'USD',
-                'visible' => null,
-                'data' => null,
-            ],
-            $totals[TotalProcessorProvider::TYPE]
-        );
-        $this->assertArrayHasKey(TotalProcessorProvider::SUBTOTALS, $totals);
-        $this->assertEquals(
-            [
-                [
-                    'type' => 'subtotal',
-                    'label' => 'Total',
-                    'amount' => 142.0,
-                    'currency' => 'USD',
-                    'visible' => null,
-                    'data' => null,
-                ],
-                [
-                    'type' => 'subtotal',
-                    'label' => 'Total',
-                    'amount' => 40.0,
-                    'currency' => 'USD',
-                    'visible' => null,
-                    'data' => null,
-                ],
-            ],
-            $totals[TotalProcessorProvider::SUBTOTALS]
-        );
-    }
-
     /**
      * @param SubtotalProviderInterface $subtotalProvider
      */

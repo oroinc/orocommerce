@@ -6,9 +6,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
-use Oro\Bundle\CurrencyBundle\Converter\RateConverterInterface;
-use Oro\Bundle\CurrencyBundle\Entity\MultiCurrency;
-use Oro\Bundle\CurrencyBundle\Provider\DefaultCurrencyProviderInterface;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
@@ -17,7 +14,6 @@ use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\CacheAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalCacheAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
-use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 
 class TotalProcessorProvider extends AbstractSubtotalProvider
 {
@@ -37,34 +33,22 @@ class TotalProcessorProvider extends AbstractSubtotalProvider
     /** @var bool */
     protected $recalculationEnabled = false;
 
-    /** @var RateConverterInterface  */
-    protected $rateConverter;
-
-    /** @var DefaultCurrencyProviderInterface  */
-    protected $defaultCurrencyProvider;
-
     /**
      * @param SubtotalProviderRegistry $subtotalProviderRegistry
      * @param TranslatorInterface $translator
      * @param RoundingServiceInterface $rounding
      * @param UserCurrencyManager $currencyManager
-     * @param RateConverterInterface $rateConverter
-     * @param DefaultCurrencyProviderInterface $defaultCurrencyProvider
      */
     public function __construct(
         SubtotalProviderRegistry $subtotalProviderRegistry,
         TranslatorInterface $translator,
         RoundingServiceInterface $rounding,
-        UserCurrencyManager $currencyManager,
-        RateConverterInterface $rateConverter,
-        DefaultCurrencyProviderInterface $defaultCurrencyProvider
+        UserCurrencyManager $currencyManager
     ) {
         parent::__construct($currencyManager);
         $this->subtotalProviderRegistry = $subtotalProviderRegistry;
         $this->translator = $translator;
         $this->rounding = $rounding;
-        $this->rateConverter = $rateConverter;
-        $this->defaultCurrencyProvider = $defaultCurrencyProvider;
     }
 
     /**
@@ -94,66 +78,6 @@ class TotalProcessorProvider extends AbstractSubtotalProvider
                 )
                 ->toArray(),
         ];
-    }
-
-    /**
-     * Calculate and return total with subtotals
-     * and with values in base currency converted to Array
-     * Used by Orders
-     *
-     * @param $entity
-     *
-     * @return array
-     */
-    public function getTotalWithSubtotalsWithBaseCurrencyValues($entity)
-    {
-        $defaultCurrency = $this->defaultCurrencyProvider->getDefaultCurrency();
-        $total = $this->getTotal($entity);
-        if ($total->getCurrency() !== $defaultCurrency) {
-            $this->addSubtotalBaseCurrencyConversion($total, $defaultCurrency);
-        }
-        $subtotals = $this->getSubtotals($entity);
-        foreach ($subtotals as $item) {
-            if ($item->getType() == LineItemSubtotalProvider::TYPE
-                && $item->getCurrency() !== $defaultCurrency
-            ) {
-                $this->addSubtotalBaseCurrencyConversion($item, $defaultCurrency);
-            }
-        }
-
-        return [
-            self::TYPE => $total->toArray(),
-            self::SUBTOTALS => $subtotals
-                ->map(
-                    function (Subtotal $subtotal) {
-                        return $subtotal->toArray();
-                    }
-                )
-                ->toArray(),
-        ];
-    }
-
-    /**
-     * Set value in base currency to data
-     * @param Subtotal $total
-     * @param $defaultCurrency
-     */
-    protected function addSubtotalBaseCurrencyConversion(Subtotal $total, $defaultCurrency)
-    {
-        $baseSubtotal = MultiCurrency::create(
-            $total->getAmount(),
-            $total->getCurrency()
-        );
-        $baseSubtotalValue = $this->rateConverter->getBaseCurrencyAmount($baseSubtotal);
-        $data = $total->getData() ? $total->getData() : [];
-        $totalData = array_merge(
-            $data,
-            [
-                'baseAmount' => $baseSubtotalValue,
-                'baseCurrency' => $defaultCurrency
-            ]
-        );
-        $total->setData($totalData);
     }
 
     /**

@@ -192,6 +192,6 @@ class OrderController extends AbstractOrderController
      */
     protected function getTotalProcessor()
     {
-        return $this->get('oro_pricing.subtotal_processor.total_processor_provider');
+        return $this->get('oro_order.provider.total_processor');
     }
 }
