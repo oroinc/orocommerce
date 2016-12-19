@@ -49,7 +49,6 @@ class ShippingMethodsConfigsRuleDestinationType extends AbstractType
             ->add('postalCodes', TextType::class, ['required' => false, 'label' => 'oro.address.postal_code.label']);
 
         $builder->get('postalCodes')->addModelTransformer(new DestinationPostalCodeTransformer());
-
     }
 
     /**

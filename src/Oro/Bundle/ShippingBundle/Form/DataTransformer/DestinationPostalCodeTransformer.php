@@ -28,12 +28,16 @@ class DestinationPostalCodeTransformer implements DataTransformerInterface
     }
 
     /**
-     * @param string $postalCodesString
+     * @param string|null $postalCodesString
      * @return ArrayCollection|ShippingMethodsConfigsRuleDestinationPostalCode[]
      */
     public function reverseTransform($postalCodesString)
     {
         $postalCodes = new ArrayCollection();
+
+        if (!$postalCodesString || $postalCodesString === '') {
+            return $postalCodes;
+        }
 
         $postalCodeNames = explode(',', $postalCodesString);
         foreach ($postalCodeNames as $postalCodeName) {

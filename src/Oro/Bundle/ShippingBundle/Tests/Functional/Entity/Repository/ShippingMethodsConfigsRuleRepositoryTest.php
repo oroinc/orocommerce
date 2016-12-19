@@ -3,16 +3,23 @@
 namespace Oro\Bundle\ShippingBundle\Tests\Functional\Entity\Repository;
 
 use Doctrine\ORM\EntityManager;
+use Oro\Bundle\AddressBundle\Entity\Country;
+use Oro\Bundle\AddressBundle\Entity\Region;
+use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodsConfigsRuleRepository;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingMethodsConfigsRules;
+use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingAddressStub;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 /**
  * @dbIsolation
  */
 class ShippingMethodsConfigsRuleRepositoryTest extends WebTestCase
 {
+    use EntityTrait;
+
     /**
      * @var ShippingMethodsConfigsRuleRepository
      */
@@ -40,24 +47,19 @@ class ShippingMethodsConfigsRuleRepositoryTest extends WebTestCase
     /**
      * @dataProvider getByCurrencyAndCountryDataProvider
      *
+     * @param AddressInterface $shippingAddress
      * @param string $currency
-     * @param string $country
-     * @param array $expectedRules
+     * @param array|ShippingMethodsConfigsRule[] $expectedRules
      */
-    public function testGetByCurrencyAndCountry($currency, $country, array $expectedRules)
+    public function testGetByDestinationAndCurrency($shippingAddress, $currency, array $expectedRules)
     {
-        /** @var ShippingMethodsConfigsRule[]|array $expectedShippingRule */
         $expectedShippingRules = $this->getEntitiesByReferences($expectedRules);
-        /** @var ShippingMethodsConfigsRule $expectedShippingRule */
-        $expectedShippingRule = $expectedShippingRules[0];
         $shippingRules = $this->repository->getByDestinationAndCurrency(
-            $currency,
-            $country
+            $shippingAddress,
+            $currency
         );
 
-        static::assertNotFalse(strpos(serialize($shippingRules), $expectedShippingRule->getRule()->getName()));
-        static::assertNotFalse(strpos(serialize($shippingRules), $expectedShippingRule->getCurrency()));
-        static::assertNotFalse(strpos(serialize($shippingRules), $expectedShippingRule->getRule()->getExpression()));
+        static::assertEquals($expectedShippingRules, $shippingRules);
     }
 
     /**
@@ -93,21 +95,37 @@ class ShippingMethodsConfigsRuleRepositoryTest extends WebTestCase
     {
         return [
             [
-                'currency' => 'USD',
-                'country' => 'US',
+                'shippingAddress' => $this->getEntity(ShippingAddressStub::class, [
+                    'country' => new Country('US'),
+                    'region' => $this->getEntity(Region::class, [
+                        'combinedCode' => 'US-NY',
+                        'code' => 'NY',
+                    ]),
+                    'postalCode' => '12345',
+                ]),
+                'currency' => 'EUR',
                 'expectedRules' => [
-                    'shipping_rule.8',
-                    'shipping_rule.7',
+                    'shipping_rule.1',
+                    'shipping_rule.4',
                 ]
             ],
             [
-                'currency' => 'EUR',
-                'country' => 'US',
+                'shippingAddress' => $this->getEntity(ShippingAddressStub::class),
+                'currency' => 'USD',
                 'expectedRules' => [
-                    'shipping_rule.1',
+                    'shipping_rule.7',
+                    'shipping_rule.8',
+                ]
+            ],
+            [
+                'shippingAddress' => $this->getEntity(ShippingAddressStub::class, [
+                    'country' => new Country('FR'),
+                ]),
+                'currency' => 'EUR',
+                'expectedRules' => [
                     'shipping_rule.2',
-                    'shipping_rule.4',
-                    'shipping_rule.5',
+                    'shipping_rule.3',
+                    'shipping_rule.6',
                 ]
             ],
         ];

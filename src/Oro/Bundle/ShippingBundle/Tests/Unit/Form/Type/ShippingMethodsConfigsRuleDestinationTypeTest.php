@@ -50,6 +50,9 @@ class ShippingMethodsConfigsRuleDestinationTypeTest extends FormIntegrationTestC
         $builder->expects($this->any())
             ->method('add')
             ->willReturn($builder);
+        $builder->expects($this->any())
+            ->method('get')
+            ->willReturn($builder);
         $this->formType->buildForm($builder, []);
     }
 

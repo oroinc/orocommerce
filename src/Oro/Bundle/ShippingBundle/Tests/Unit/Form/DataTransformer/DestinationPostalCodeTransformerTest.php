@@ -41,4 +41,10 @@ class DestinationPostalCodeTransformerTest extends \PHPUnit_Framework_TestCase
     {
         static::assertEquals($this->postalCodes, $this->transformer->reverseTransform('123, 753'));
     }
+
+    public function testReverseTransformOnEmpty()
+    {
+        static::assertEquals(new ArrayCollection(), $this->transformer->reverseTransform(''));
+        static::assertEquals(new ArrayCollection(), $this->transformer->reverseTransform(null));
+    }
 }
