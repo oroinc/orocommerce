@@ -90,15 +90,4 @@ class PaymentLineItem extends ParameterBag implements PaymentLineItemInterface
     {
         return $this->get(self::FIELD_PRODUCT_UNIT_CODE);
     }
-
-    /**
-     * @param Price $price
-     * @return $this
-     */
-    public function setPrice(Price $price = null)
-    {
-        $this->set(self::FIELD_PRICE, $price);
-
-        return $this;
-    }
 }
