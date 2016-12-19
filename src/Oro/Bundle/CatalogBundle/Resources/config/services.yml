@@ -175,6 +175,7 @@ services:
         class: Oro\Bundle\CatalogBundle\Provider\ProductsContentVariantProvider
         tags:
             - { name: oro_web_catalog.content_variant_provider }
+
     oro_catalog.event_listener.category_content_variant_index:
         class: 'Oro\Bundle\CatalogBundle\EventListener\CategoryContentVariantIndexListener'
         arguments:
