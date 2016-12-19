@@ -83,7 +83,7 @@ class ShoppingListFrontendActionsTest extends FrontendActionTestCase
 
         $crawler = $this->client->request('GET', $data['redirectUrl']);
 
-        $lineItems = $crawler->filter('.rfp-lineitem-product');
+        $lineItems = $crawler->filter('.request-form-editline__product');
         $this->assertNotEmpty($lineItems);
         $content = $lineItems->html();
         foreach ($shoppingList->getLineItems() as $lineItem) {

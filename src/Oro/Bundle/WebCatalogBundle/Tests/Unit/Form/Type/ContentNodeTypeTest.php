@@ -11,7 +11,6 @@ use Oro\Bundle\NavigationBundle\Tests\Unit\Form\Type\Stub\RouteChoiceTypeStub;
 use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugType;
 use Oro\Bundle\RedirectBundle\Tests\Unit\Form\Type\Stub\LocalizedSlugTypeStub;
 use Oro\Bundle\ScopeBundle\Form\Type\ScopeCollectionType;
-use Oro\Bundle\WebCatalogBundle\ContentNodeUtils\ContentNodeNameFiller;
 use Oro\Bundle\WebCatalogBundle\ContentVariantType\ContentVariantTypeRegistry;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
@@ -36,22 +35,13 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
     protected $type;
 
     /**
-     * @var ContentNodeNameFiller|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $nameFiller;
-
-    /**
      * {@inheritDoc}
      */
     protected function setUp()
     {
         parent::setUp();
 
-        $this->nameFiller = $this->getMockBuilder(ContentNodeNameFiller::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->type = new ContentNodeType($this->nameFiller);
+        $this->type = new ContentNodeType();
     }
 
     /**
@@ -140,13 +130,7 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
 
         $this->assertTrue($form->has('parentNode'));
         $this->assertTrue($form->has('titles'));
-        $this->assertTrue($form->has('name'));
         $this->assertTrue($form->has('scopes'));
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals(ContentNodeType::NAME, $this->type->getName());
     }
 
     public function testGetBlockPrefix()
@@ -163,15 +147,6 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
      */
     public function testSubmit($existingData, $submittedData, $expectedData)
     {
-        $this->nameFiller->expects($this->once())
-            ->method('fillName')
-            ->with($existingData)
-            ->willReturnCallback(
-                function (ContentNode $data) {
-                    $data->setName('filled_name');
-                }
-            );
-
         $form = $this->factory->create($this->type, $existingData);
 
         $this->assertEquals($existingData, $form->getData());
@@ -208,9 +183,9 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
                     'titles' => [['string' => 'new_content_node_title']]
                 ],
                 (new ContentNode())
-                    ->setName('filled_name')
                     ->addTitle((new LocalizedFallbackValue())->setString('new_content_node_title'))
-                    ->setParentScopeUsed(false),
+                    ->setParentScopeUsed(false)
+                    ->setRewriteVariantTitle(false),
             ],
             'existing entity' => [
                 (new ContentNode())
@@ -220,10 +195,10 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
                 [
                     'titles' => [['string' => 'content_node_title'], ['string' => 'another_node_title']],
                     'slugPrototypes' => [['string' => 'content_node_slug'], ['string' => 'another_node_slug']],
-                    'parentScopeUsed' => false
+                    'parentScopeUsed' => false,
+                    'rewriteVariantTitle' => true
                 ],
                 (new ContentNode())
-                    ->setName('filled_name')
                     ->addTitle((new LocalizedFallbackValue())->setString('content_node_title'))
                     ->addTitle((new LocalizedFallbackValue())->setString('another_node_title'))
                     ->addSlugPrototype((new LocalizedFallbackValue())->setString('content_node_slug'))
@@ -246,12 +221,13 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
                             'scopes' => [],
                         ]
                     ],
-                    'parentScopeUsed' => true
+                    'parentScopeUsed' => true,
+                    'rewriteVariantTitle' => true
                 ],
                 (new ContentNode())
-                    ->setName('filled_name')
                     ->setParentNode($this->getEntity(ContentNode::class, ['id' => 1]))
                     ->setParentScopeUsed(true)
+                    ->setRewriteVariantTitle(true)
                     ->addTitle((new LocalizedFallbackValue())->setString('content_node_title'))
                     ->addTitle((new LocalizedFallbackValue())->setString('another_node_title'))
                     ->addSlugPrototype((new LocalizedFallbackValue())->setString('content_node_slug'))
@@ -282,11 +258,12 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
                             'systemPageRoute' => 'some_route',
                             'scopes' => []
                         ]
-                    ]
+                    ],
+                    'rewriteVariantTitle' => false
                 ],
                 (new ContentNode())
-                    ->setName('filled_name')
                     ->setParentScopeUsed(false)
+                    ->setRewriteVariantTitle(false)
                     ->addTitle((new LocalizedFallbackValue())->setString('content_node_title'))
                     ->addTitle((new LocalizedFallbackValue())->setString('another_node_title'))
                     ->addSlugPrototype((new LocalizedFallbackValue())->setString('content_node_slug'))

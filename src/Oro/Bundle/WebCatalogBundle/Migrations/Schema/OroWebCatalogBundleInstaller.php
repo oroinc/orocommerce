@@ -138,8 +138,8 @@ class OroWebCatalogBundleInstaller implements
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('parent_id', 'integer', ['notnull' => false]);
         $table->addColumn('web_catalog_id', 'integer', []);
-        $table->addColumn('name', 'string', ['length' => 255]);
         $table->addColumn('parent_scope_used', 'boolean', ['default' => true]);
+        $table->addColumn('rewrite_variant_title', 'boolean', ['default' => true]);
         $table->addColumn('materialized_path', 'string', ['notnull' => false, 'length' => 1024]);
         $table->addColumn('tree_left', 'integer', []);
         $table->addColumn('tree_level', 'integer', []);
