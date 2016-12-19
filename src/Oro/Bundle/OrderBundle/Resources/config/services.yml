@@ -97,6 +97,7 @@ services:
         arguments:
             - '@oro_pricing.subtotal_processor.total_processor_provider'
             - '@oro_pricing.subtotal_processor.provider.subtotal_line_item'
+            - '@oro_currency.converter.rate'
 
     oro_order.handler.order_shipping_tracking:
         class: 'Oro\Bundle\OrderBundle\Handler\OrderShippingTrackingHandler'
@@ -136,7 +137,7 @@ services:
     oro_order.event_listener.order.total:
         class: 'Oro\Bundle\OrderBundle\EventListener\Order\OrderTotalEventListener'
         arguments:
-            - '@oro_pricing.subtotal_processor.total_processor_provider'
+            - '@oro_order.provider.total_processor'
         tags:
             - { name: kernel.event_listener, event: oro_order.order, method: onOrderEvent, priority: -255 }
 
@@ -242,6 +243,7 @@ services:
             - '@oro_pricing.subtotal_processor.total_processor_provider'
             - '@oro_pricing.subtotal_processor.provider.subtotal_line_item'
             - '@oro_order.provider.discount_subtotal'
+            - '@oro_currency.converter.rate'
 
     oro_order.layout.provider.order_payment_status:
         class: 'Oro\Bundle\OrderBundle\Layout\DataProvider\OrderPaymentStatusProvider'
@@ -291,3 +293,19 @@ services:
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@?oro_shipping.factory.shipping_context_factory'
+
+    oro_order.provider.order_currency_checker:
+        class: Oro\Bundle\OrderBundle\Provider\CurrencyCheckerProvider
+        public: false
+        arguments:
+            - '@doctrine'
+        tags:
+            - { name: oro_multi_currency.currency_checker_provider }
+
+    oro_order.provider.total_processor:
+        class: Oro\Bundle\OrderBundle\Provider\TotalProvider
+        arguments:
+            - '@oro_pricing.subtotal_processor.total_processor_provider'
+            - '@oro_currency.config.currency'
+            - '@oro_currency.converter.rate'
+
