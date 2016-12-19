@@ -83,9 +83,14 @@
 {% endblock %}
 
 {% block __oro_product_grid__datagrid_toolbar_display_options_widget %}
-    {% set attr = attr|merge({
+    {% set attr = layout_attr_defaults(attr, {
+        'data-page-component-module': 'oroproduct/js/app/components/catalog-switch-component',
+        'data-page-component-options': {
+            'parameterName': 'frontend-product-search-grid[row-view]'
+        },
         class: attr.class|default('') ~ " catalog__filter-controls__item display-options pull-right"
     }) %}
+
     <div{{ block('block_attributes') }}>
         {% set row_view_key = constant('Oro\\Bundle\\ProductBundle\\DataGrid\\DataGridThemeHelper::GRID_THEME_PARAM_NAME') %}
         <span class="fs14 va-m_md hidden-sm hidden-xs">Display: &nbsp;</span>

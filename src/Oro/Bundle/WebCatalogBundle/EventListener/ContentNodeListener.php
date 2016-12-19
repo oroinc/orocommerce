@@ -5,7 +5,6 @@ namespace Oro\Bundle\WebCatalogBundle\EventListener;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Oro\Bundle\CommerceEntityBundle\Storage\ExtraActionEntityStorageInterface;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
-use Oro\Bundle\WebCatalogBundle\ContentNodeUtils\ContentNodeNameFiller;
 use Oro\Bundle\WebCatalogBundle\Generator\SlugGenerator;
 use Oro\Bundle\WebCatalogBundle\Model\ContentNodeMaterializedPathModifier;
 use Oro\Component\DependencyInjection\ServiceLink;
@@ -25,11 +24,6 @@ class ContentNodeListener
     protected $storage;
 
     /**
-     * @var ContentNodeNameFiller
-     */
-    protected $contentNodeNameFiller;
-
-    /**
      * @var ServiceLink
      */
     protected $slugGeneratorLink;
@@ -37,27 +31,16 @@ class ContentNodeListener
     /**
      * @param ContentNodeMaterializedPathModifier $modifier
      * @param ExtraActionEntityStorageInterface $storage
-     * @param ContentNodeNameFiller $contentNodeNameFiller
      * @param ServiceLink $slugGenerator
      */
     public function __construct(
         ContentNodeMaterializedPathModifier $modifier,
         ExtraActionEntityStorageInterface $storage,
-        ContentNodeNameFiller $contentNodeNameFiller,
         ServiceLink $slugGenerator
     ) {
         $this->modifier = $modifier;
         $this->storage = $storage;
-        $this->contentNodeNameFiller = $contentNodeNameFiller;
         $this->slugGeneratorLink = $slugGenerator;
-    }
-
-    /**
-     * @param ContentNode $contentNode
-     */
-    public function prePersist(ContentNode $contentNode)
-    {
-        $this->contentNodeNameFiller->fillName($contentNode);
     }
 
     /**

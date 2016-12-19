@@ -284,6 +284,9 @@ services:
         class: 'Oro\Bundle\ShippingBundle\Context\ShippingContextCacheKeyGenerator'
         public: false
 
+    oro_shipping.datagrid.shipping_rule_actions_visibility_provider:
+        class: 'Oro\Bundle\ShippingBundle\Datagrid\ShippingRuleActionsVisibilityProvider'
+
     oro_shipping.converter.shipping_context_to_rule_values:
         class: 'Oro\Bundle\ShippingBundle\Converter\ShippingContextToRuleValuesConverter'
         arguments:

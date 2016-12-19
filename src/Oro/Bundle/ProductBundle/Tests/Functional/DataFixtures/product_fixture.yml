@@ -103,7 +103,7 @@ product8:
     productCode: product.8
     inventoryStatus: in_stock
     status: enabled
-    type: simple
+    type: configurable
     primaryUnitPrecision:
         code: milliliter
         precision: 0
