@@ -283,3 +283,6 @@ services:
     oro_shipping.shipping_context.cache_key_generator:
         class: 'Oro\Bundle\ShippingBundle\Context\ShippingContextCacheKeyGenerator'
         public: false
+
+    oro_shipping.datagrid.shipping_rule_actions_visibility_provider:
+        class: 'Oro\Bundle\ShippingBundle\Datagrid\ShippingRuleActionsVisibilityProvider'

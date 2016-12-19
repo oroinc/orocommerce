@@ -7,6 +7,7 @@ use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtension;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
+use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class OroCommerceMenuBundleInstaller implements
@@ -56,6 +57,9 @@ class OroCommerceMenuBundleInstaller implements
 
         /** Associations */
         $this->addOroCommerceMenuUpdateImageAssociation($schema);
+
+        /** Cleaning up MenuBundle */
+        $this->removeMenuBundleTables($schema, $queries);
     }
 
     /**
@@ -169,6 +173,58 @@ class OroCommerceMenuBundleInstaller implements
             self::MAX_MENU_UPDATE_IMAGE_SIZE_IN_MB,
             self::THUMBNAIL_WIDTH_SIZE_IN_PX,
             self::THUMBNAIL_HEIGHT_SIZE_IN_PX
+        );
+    }
+
+    /**
+     * Remove `MenuBundle` tables and entity configs
+     *
+     * @param Schema $schema
+     * @param QueryBag $queries
+     */
+    protected function removeMenuBundleTables(Schema $schema, QueryBag $queries)
+    {
+        $this->safeDropTable($schema, 'orob2b_menu_item');
+        $this->safeDropTable($schema, 'orob2b_menu_item_title');
+        $this->safeDropTable($schema, 'oro_menu_item');
+        $this->safeDropTable($schema, 'oro_menu_item_title');
+
+        $this->dropEntityConfig($queries, 'OroB2B\Bundle\MenuBundle\Entity\MenuItem');
+        $this->dropEntityConfig($queries, 'Oro\Bundle\MenuBundle\Entity\MenuItem');
+    }
+
+    /**
+     * @param Schema $schema
+     * @param string $tableName
+     */
+    protected function safeDropTable(Schema $schema, $tableName)
+    {
+        if ($schema->hasTable($tableName)) {
+            $schema->dropTable($tableName);
+        }
+    }
+
+    /**
+     * @param QueryBag $queries
+     * @param string $className
+     */
+    protected function dropEntityConfig(QueryBag $queries, $className)
+    {
+        $queries->addPostQuery(
+            new ParametrizedSqlMigrationQuery(
+                'DELETE FROM oro_entity_config_field WHERE entity_id IN ('
+                . 'SELECT id FROM oro_entity_config WHERE class_name = :class)',
+                ['class' => $className],
+                ['class' => 'string']
+            )
+        );
+
+        $queries->addPostQuery(
+            new ParametrizedSqlMigrationQuery(
+                'DELETE FROM oro_entity_config WHERE class_name = :class',
+                ['class' => $className],
+                ['class' => 'string']
+            )
         );
     }
 }

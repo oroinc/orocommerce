@@ -4,9 +4,8 @@ define(function(require) {
     var LineItemsView;
     var $ = require('jquery');
     var _ = require('underscore');
-    var routing = require('routing');
-    var mediator = require('oroui/js/mediator');
     var BaseView = require('oroui/js/app/views/base/view');
+    var ProductsPricesComponent = require('oropricing/js/app/components/products-prices-component');
 
     /**
      * @export ororfp/js/app/views/line-items-view
@@ -21,31 +20,36 @@ define(function(require) {
         },
 
         /**
-         * @property {jQuery}
-         */
-        $form: null,
-
-        /**
-         * @property {jQuery}
-         */
-        $el: null,
-
-        /**
          * @inheritDoc
          */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});
-            this.initLayout().done(_.bind(this.handleLayoutInit, this));
+
+            LineItemsView.__super__.initialize.apply(this, arguments);
+
+            this.subview('productsPricesComponent', new ProductsPricesComponent({
+                _sourceElement: this.$el,
+                tierPrices: this.options.tierPrices,
+                currency: this.options.currency,
+                tierPricesRoute: this.options.tierPricesRoute
+            }));
+
+            this._deferredRender();
+            this.initLayout({
+                prices: this.options.tierPrices
+            }).done(_.bind(this.handleLayoutInit, this));
         },
 
         /**
          * Doing something after loading child components
          */
         handleLayoutInit: function() {
-            this.$form = this.$el.closest('form');
             this.$el.find('.add-lineitem').mousedown(function(e) {
                 $(this).click();
             });
+            this.$el.find('.view-loading').remove();
+            this.$el.find('.request-form__content').show();
+            this._resolveDeferredRender();
         },
 
         /**

@@ -70,7 +70,9 @@ class ProductUnitRepositoryTest extends WebTestCase
 
     public function testGetProductsUnitsNoQuery()
     {
-        $em = $this->getContainer()->get('doctrine')->getManagerForClass('OroMenuBundle:MenuItem');
+        $em = $this->getContainer()->get('doctrine')->getManagerForClass(
+            $this->getContainer()->getParameter('oro_product.entity.product_unit.class')
+        );
         $queryAnalyzer = new QueryAnalyzer($em->getConnection()->getDatabasePlatform());
 
         $prevLogger = $em->getConnection()->getConfiguration()->getSQLLogger();
@@ -169,7 +171,9 @@ class ProductUnitRepositoryTest extends WebTestCase
 
     public function testGetProductsUnitsByCodesNoQuery()
     {
-        $em = $this->getContainer()->get('doctrine')->getManagerForClass('OroMenuBundle:MenuItem');
+        $em = $this->getContainer()->get('doctrine')->getManagerForClass(
+            $this->getContainer()->getParameter('oro_product.entity.product_unit.class')
+        );
         $queryAnalyzer = new QueryAnalyzer($em->getConnection()->getDatabasePlatform());
 
         $prevLogger = $em->getConnection()->getConfiguration()->getSQLLogger();

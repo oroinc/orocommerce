@@ -137,12 +137,16 @@ class ProductType extends AbstractType
             )
             ->add(
                 'variantFields',
-                ProductCustomFieldsChoiceType::NAME,
-                ['label' => 'oro.product.variant_fields.label']
+                ProductCustomVariantFieldsChoiceType::NAME,
+                [
+                    'label' => 'oro.product.variant_fields.label',
+                    'tooltip' => 'oro.product.form.tooltip.variant_fields',
+                ]
             )
             ->add(
                 'images',
-                ProductImageCollectionType::NAME
+                ProductImageCollectionType::NAME,
+                ['required' => false]
             )
             ->add('type', HiddenType::class)
             ->add(
@@ -183,7 +187,7 @@ class ProductType extends AbstractType
                 ]
             );
         }
-        if ($product instanceof Product && $product->getHasVariants()) {
+        if ($product instanceof Product && $product->isConfigurable()) {
             $form
                 ->add(
                     'variantLinks',

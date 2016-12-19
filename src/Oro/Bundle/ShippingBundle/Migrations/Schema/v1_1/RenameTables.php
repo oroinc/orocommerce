@@ -6,9 +6,10 @@ use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
+use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class RenameTables implements Migration, RenameExtensionAwareInterface
+class RenameTables implements Migration, RenameExtensionAwareInterface, OrderedMigrationInterface
 {
     /**
      * @var RenameExtension
@@ -38,6 +39,17 @@ class RenameTables implements Migration, RenameExtensionAwareInterface
             ['product_id', 'product_unit_code'],
             'oro_shipping_product_opts_uidx'
         );
+    }
+
+    /**
+     * Should be executed before:
+     * @see \Oro\Bundle\ShippingBundle\Migrations\Schema\v1_1\MigrateNotes
+     *
+     * {@inheritdoc}
+     */
+    public function getOrder()
+    {
+        return 0;
     }
 
     /**
