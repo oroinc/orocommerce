@@ -18,43 +18,6 @@ operations:
                     route: oro_order_create
                     route_parameters: {'storage': true}
 
-    oro_shoppinglist_frontend_createorder:
-        label: oro.frontend.shoppinglist.btn.create_order
-        applications: [commerce]
-        routes:
-            - oro_shopping_list_frontend_view
-        acl_resource: oro_checkout_frontend_checkout
-        order: 10
-        button_options:
-            icon: fa-briefcase
-        conditions:
-            '@extendable':
-                events: [extendable_operation.create_order]
-        preconditions:
-            '@and':
-                - '@action_available': start_checkout
-                - '@has_elements': $lineItems
-                - '@has_price_in_shopping_line_items': $lineItems
-                - '@workflow_available_by_record_group':
-                    group_name: b2b_checkout_flow
-                    entity_class: Oro\Bundle\CheckoutBundle\Entity\Checkout
-        actions:
-            - '@assign_url':
-                attribute: $.editLink
-                route: oro_shopping_list_frontend_view
-                route_parameters: { 'id': $.data.id }
-            - '@translate':
-                attribute: $.sourceRemoveLabel
-                id: oro.frontend.shoppinglist.workflow.remove_source.label
-            - '@start_checkout':
-                source_name: 'shoppingList'
-                source_entity: $.data
-                settings:
-                    allow_manual_source_remove: true
-                    remove_source: true
-                    source_remove_label: $.sourceRemoveLabel
-                    edit_order_link: $.editLink
-
     oro_shoppinglist_frontend_products_add_to_shoppinglist_base:
         label: oro.shoppinglist.product.add_to_shopping_list.label
         applications: [commerce]
@@ -87,31 +50,6 @@ operations:
         button_options:
             page_component_options:
                 quickAddComponentPrefix: 'quick-add-import'
-
-    oro_shoppinglist_frontend_products_quick_add_to_checkout:
-        label: oro.order.btn.create_order
-        applications: [commerce]
-        routes:
-            - oro_product_frontend_quick_add
-            - oro_product_frontend_quick_add_copy_paste
-            - oro_product_frontend_quick_add_import
-        order: 20
-        button_options:
-            icon: fa-briefcase
-            class: 'btn--action'
-            template: OroActionBundle:Operation:ajax-button.html.twig
-            data:
-                component_name: oro_shopping_list_to_checkout_quick_add_processor
-            page_component_module: oroproduct/js/app/components/quick-add-form-button-component
-            page_component_options:
-                component_name: '[name$="[component]"]'
-        preactions:
-            - '@call_service_method':
-                service: oro_shopping_list.processor.quick_add_to_checkout
-                method: isAllowed
-                attribute: $.isAllowed
-        preconditions:
-            '@equal': [true, $.isAllowed]
 
     oro_shoppinglist_frontend_addlineitem:
         extends: oro_shoppinglist_lineitem_base
@@ -238,7 +176,7 @@ operations:
         routes:
             - oro_shopping_list_frontend_view
         acl_resource: oro_rfp_frontend_request_create
-        order: 20
+        order: 220
         button_options:
             icon: fa-briefcase
         preconditions:

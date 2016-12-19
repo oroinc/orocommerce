@@ -148,12 +148,12 @@ class ProductVariantFieldValidatorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param array $variantFields
-     * @return StubProduct
+     * @return Product
      */
     private function prepareProductWithVariantFields(array $variantFields)
     {
         $product = new Product();
-        $product->setHasVariants(true);
+        $product->setType(Product::TYPE_CONFIGURABLE);
         $product->setVariantFields($variantFields);
 
         return $product;

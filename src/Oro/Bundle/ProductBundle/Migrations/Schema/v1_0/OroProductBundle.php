@@ -4,14 +4,14 @@ namespace Oro\Bundle\ProductBundle\Migrations\Schema\v1_0;
 
 use Doctrine\DBAL\Schema\Schema;
 
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtension;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
-use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -19,7 +19,7 @@ use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
 class OroProductBundle implements
     Migration,
     ExtendExtensionAwareInterface,
-    NoteExtensionAwareInterface,
+    ActivityExtensionAwareInterface,
     AttachmentExtensionAwareInterface
 {
     const PRODUCT_TABLE_NAME = 'orob2b_product';
@@ -32,35 +32,11 @@ class OroProductBundle implements
     /** @var ExtendExtension */
     protected $extendExtension;
 
-    /** @var NoteExtension */
-    protected $noteExtension;
-
     /** @var AttachmentExtension */
     protected $attachmentExtension;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setAttachmentExtension(AttachmentExtension $attachmentExtension)
-    {
-        $this->attachmentExtension = $attachmentExtension;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setExtendExtension(ExtendExtension $extendExtension)
-    {
-        $this->extendExtension = $extendExtension;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setNoteExtension(NoteExtension $noteExtension)
-    {
-        $this->noteExtension = $noteExtension;
-    }
+    /** @var  ActivityExtension */
+    protected $activityExtension;
 
     /**
      * {@inheritdoc}
@@ -272,7 +248,7 @@ class OroProductBundle implements
      */
     protected function addNoteAssociations(Schema $schema)
     {
-        $this->noteExtension->addNoteAssociation($schema, self::PRODUCT_TABLE_NAME);
+        $this->activityExtension->addActivityAssociation($schema, 'oro_note', self::PRODUCT_TABLE_NAME);
     }
 
     /**
@@ -294,5 +270,29 @@ class OroProductBundle implements
             [],
             self::MAX_PRODUCT_ATTACHMENT_SIZE_IN_MB
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setAttachmentExtension(AttachmentExtension $attachmentExtension)
+    {
+        $this->attachmentExtension = $attachmentExtension;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setExtendExtension(ExtendExtension $extendExtension)
+    {
+        $this->extendExtension = $extendExtension;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setActivityExtension(ActivityExtension $activityExtension)
+    {
+        $this->activityExtension = $activityExtension;
     }
 }

@@ -151,17 +151,17 @@ class CheckoutControllerAclTest extends WebTestCase
             'user from another account' => [
                 'resource' => LoadCheckoutACLData::CHECKOUT_ACC_1_USER_BASIC,
                 'user' => LoadCheckoutUserACLData::USER_ACCOUNT_2_ROLE_LOCAL,
-                'status' => 404,
+                'status' => 403,
             ],
             'user from parent account : LOCAL' => [
                 'resource' => LoadCheckoutACLData::CHECKOUT_ACC_1_1_USER_LOCAL,
                 'user' => LoadCheckoutUserACLData::USER_ACCOUNT_1_ROLE_LOCAL,
-                'status' => 404,
+                'status' => 403,
             ],
             'user from same account : BASIC' => [
                 'resource' => LoadCheckoutACLData::CHECKOUT_ACC_1_USER_LOCAL,
                 'user' => LoadCheckoutUserACLData::USER_ACCOUNT_1_ROLE_BASIC,
-                'status' => 404,
+                'status' => 403,
             ],
             'user from same account : LOCAL' => [
                 'resource' => LoadCheckoutACLData::CHECKOUT_ACC_1_USER_BASIC,

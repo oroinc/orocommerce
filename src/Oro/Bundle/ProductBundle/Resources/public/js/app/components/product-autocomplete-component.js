@@ -9,6 +9,16 @@ define(function(require) {
 
     ProductAutocompleteComponent = AutocompleteComponent.extend({
         /**
+         * {Object}
+         */
+        defer: null,
+
+        /**
+         * {String}
+         */
+        itemFromAutocomplete: null,
+
+        /**
          * {@inheritDoc}
          */
         initialize: function(options) {
@@ -38,34 +48,42 @@ define(function(require) {
             }, this.options.product);
             this.updateProduct();
 
-            this.$el.change(_.bind(this.change, this));
+            this.$el.on('blur', _.bind(this.onBlur, this));
+            this.$el.on('change', _.bind(this.onChange, this));
         },
 
-        change: function() {
-            var self = this;
-            this.resetProduct();
+        onBlur: function(event) {
+            var $autoComplete = $(event.relatedTarget).parents('.typeahead:first');
 
-            var val = this.$el.val();
-            var autocompleteResult = this.resultsMapping[val] || null;
-
-            if (autocompleteResult) {
-                this.product.sku = autocompleteResult.sku;
-                this.product.name = autocompleteResult['defaultName.string'];
-            } else {
-                val = val.toUpperCase();
-                _.each(this.resultsMapping, function(autocompleteResult) {
-                    if (autocompleteResult.sku === val) {
-                        self.product.sku = autocompleteResult.sku;
-                        self.product.name = autocompleteResult['defaultName.string'];
-                    }
-                });
-            }
-
-            if (this.product.sku || !val) {
-                this.updateProduct();
-            } else {
+            // if relatedTarget is typeahead item, there is no need to validate it
+            // otherwise updater will be executed
+            if (!$autoComplete.length) {
+                var val = this.$el.val();
+                if (!val || this.itemFromAutocomplete) {
+                    return false;
+                }
                 this.validateProduct(val);
             }
+        },
+
+        onChange: function(event) {
+            if (!event.originalEvent) {
+                return false;
+            }
+            this.resetProduct();
+        },
+
+        /**
+         * {@inheritDoc}
+         */
+        updater: function(item) {
+            this.itemFromAutocomplete = item;
+
+            this.product.sku = this.resultsMapping[item].sku;
+            this.product.name = this.resultsMapping[item]['defaultName.string'];
+            this.updateProduct();
+
+            return this.resultsMapping[item].sku;
         },
 
         validateProduct: function(val) {
@@ -82,14 +100,14 @@ define(function(require) {
                     }
                     self.updateProduct();
                 },
-                error: function(xhr) {
+                error: function() {
                     self.updateProduct();
                 }
             });
         },
 
         resetProduct: function() {
-            this.product.sku = this.product.name = null;
+            this.itemFromAutocomplete = this.product.sku = this.product.name = null;
 
             this.$name.hide().find('span').html('');
             this.$success.hide();
@@ -106,6 +124,12 @@ define(function(require) {
                 this.$error.show();
                 this.$el.addClass(this.options.errorClass);
             }
+        },
+
+        dispose: function() {
+            delete this.defer;
+            delete this.itemFromAutocomplete;
+            ProductAutocompleteComponent.__super__.dispose.apply(this, arguments);
         }
     });
 

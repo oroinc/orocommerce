@@ -5,6 +5,8 @@ define(function(require) {
     var BaseView = require('oroui/js/app/views/base/view');
     var ElementsHelper = require('orofrontend/js/app/elements-helper');
     var layout = require('oroui/js/layout');
+    var BaseModel = require('oroui/js/app/models/base/model');
+    var NumberFormatter = require('orolocale/js/formatter/number');
     var _ = require('underscore');
     var $ = require('jquery');
 
@@ -31,8 +33,8 @@ define(function(require) {
 
         modelEvents: {
             'prices setPrices': ['change', 'setPrices'],
-            'quantity setPrice': ['change', 'onQuantityChange'],
-            'unit setPrice': ['change', 'onUnitChange'],
+            'quantity setFoundPrice': ['change', 'onQuantityChange'],
+            'unit setFoundPrice': ['change', 'onUnitChange'],
             'price updateUI': ['change', 'updateUI']
         },
 
@@ -72,6 +74,10 @@ define(function(require) {
                 this.model = options.productModel;
             }
 
+            if (!this.model) {
+                this.model = new BaseModel();
+            }
+
             _.each(this.modelAttr, function(value, attribute) {
                 if (!this.model.has(attribute)) {
                     this.model.set(attribute, value);
@@ -81,13 +87,15 @@ define(function(require) {
 
         renderHint: function() {
             var $pricesHint = this.getElement('pricesHint');
-            var content = this.getHintContent();
-
-            if (!$pricesHint.length || !content.length) {
+            if (!$pricesHint.length) {
                 return;
             }
 
+            var content = this.getHintContent();
             $pricesHint.toggleClass('disabled', content.length === 0);
+            if (!content.length) {
+                return;
+            }
 
             if (!$pricesHint.data('popover')) {
                 layout.initPopoverForElements($pricesHint, {
@@ -120,21 +128,21 @@ define(function(require) {
                 this.prices[unit] = unitPrices;
             }, this);
 
-            this.setPrice();
+            this.setFoundPrice();
         },
 
         onQuantityChange: function(options) {
             if (options.manually) {
                 this.changeQuantity = false;
             }
-            this.setPrice();
+            this.setFoundPrice();
         },
 
         onUnitChange: function(options) {
-            this.setPrice(options.manually || false);
+            this.setFoundPrice(options.manually || false);
         },
 
-        setPrice: function(changeQuantity) {
+        setFoundPrice: function(changeQuantity) {
             this.setPriceValue(this.findPrice(changeQuantity));
         },
 
@@ -148,7 +156,7 @@ define(function(require) {
             changeQuantity = changeQuantity && this.changeQuantity;
 
             var foundKey = unit + ' ' + quantity + ' ' + (changeQuantity ? 1 : 0);
-            var price = null;
+            var price = this.foundPrice[foundKey] || null;
 
             if (!price) {
                 if (changeQuantity) {
@@ -183,9 +191,9 @@ define(function(require) {
                 this.getElement('price').addClass('hidden');
                 this.getElement('priceNotFound').removeClass('hidden');
             } else {
-                this.getElement('unit').html(price.formatted_unit);
+                this.getElement('unit').text(price.formatted_unit);
 
-                this.getElement('priceValue').html(price.formatted_price);
+                this.getElement('priceValue').text(price.formatted_price);
 
                 this.getElement('priceNotFound').addClass('hidden');
                 this.getElement('price').removeClass('hidden');

@@ -97,6 +97,8 @@ oro.tax:
             us_sales_tax.title: 'US Sales Tax'
             eu_vat_tax.title: 'EU VAT tax'
             origin_address.title: 'Origin'
+            shipping.title: 'Shipping'
+            shipping_tax.title: 'Shipping Tax'
         fields:
             tax_provider.label: 'Provider'
             tax_enable.label: 'Enabled'
@@ -122,6 +124,10 @@ oro.tax:
             digital_products_us.label: 'Digital Products Tax Codes'
             digital_products_eu.label: 'Digital Products Tax Codes'
             origin_address.label: 'Origin Address'
+            shipping_tax_code.label: 'Tax Code'
+            shipping_tax_code.tooltip: 'Selected product tax class will be used to calculate tax on shipping.'
+            shipping_rates_include_tax.label: 'Shipping Rates Include Tax'
+            shipping_rates_include_tax.tooltip: 'Use to avoid charging taxes on shipping twice if the shipping rates provided by the shipping carrier(s) or entered manually in the management console already include tax.'
 
     providers:
         built_in.label: Built-In Table Rates
