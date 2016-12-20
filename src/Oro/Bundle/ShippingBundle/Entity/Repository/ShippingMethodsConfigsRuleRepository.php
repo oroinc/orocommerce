@@ -2,42 +2,57 @@
 
 namespace Oro\Bundle\ShippingBundle\Entity\Repository;
 
-use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
+use Oro\Bundle\LocaleBundle\Model\AddressInterface;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 
 class ShippingMethodsConfigsRuleRepository extends EntityRepository
 {
     /**
+     * @param AddressInterface $shippingAddress
      * @param string $currency
-     * @param string $countryIso2Code
-     * @return ShippingRule[]
+     * @return array|ShippingMethodsConfigsRule[]
      */
-    public function getEnabledOrderedRulesByCurrencyAndCountry($currency, $countryIso2Code)
+    public function getByDestinationAndCurrency(AddressInterface $shippingAddress, $currency)
     {
-        return $this->createQueryBuilder('rule')
+        $query = $this->createQueryBuilder('methodsConfigsRule')
             ->addSelect('methodConfigs', 'typeConfigs')
-            ->leftJoin(
-                'rule.destinations',
-                'destinations',
-                'WITH',
-                'destinations.rule = rule and destinations.country = :country'
-            )
-            ->leftJoin('rule.destinations', 'nullDestinations')
-            ->leftJoin('rule.methodConfigs', 'methodConfigs')
+            ->leftJoin('methodsConfigsRule.methodConfigs', 'methodConfigs')
             ->leftJoin('methodConfigs.typeConfigs', 'typeConfigs')
-            ->where('rule.currency = :currency')
-            ->andWhere('rule.enabled = true')
-            ->andWhere('nullDestinations.id is null or destinations.id is not null')
-            ->setParameter('country', $countryIso2Code)
-            ->setParameter('currency', $currency)
-            ->orderBy('rule.priority')
-            ->addOrderBy('rule.id')
-            ->getQuery()->execute();
+            ->where('methodsConfigsRule.currency = :currency')
+            ->setParameter('currency', $currency);
+        if ($shippingAddress->getCountryIso2()) {
+            $query->innerJoin(
+                'methodsConfigsRule.destinations',
+                'destination',
+                'WITH',
+                'destination.country = :country'
+            )->setParameter('country', $shippingAddress->getCountryIso2());
+            if ($shippingAddress->getRegionCode()) {
+                $query->innerJoin(
+                    'destination.region',
+                    'region',
+                    'WITH',
+                    'region.code = :regionCode'
+                )->setParameter('regionCode', $shippingAddress->getRegionCode());
+            }
+            if ($shippingAddress->getPostalCode()) {
+                $query->innerJoin(
+                    'destination.postalCodes',
+                    'postalCode',
+                    'WITH',
+                    'postalCode.name in (:postalCodes)'
+                )->setParameter('postalCodes', explode(',', $shippingAddress->getPostalCode()));
+            }
+        }
+
+        return $query->getQuery()->execute();
     }
 
     /**
      * @param bool $onlyEnabled
      * @return mixed
+     * TODO: refactor in BB-6393
      */
     public function getRulesWithoutShippingMethods($onlyEnabled = false)
     {
@@ -52,6 +67,9 @@ class ShippingMethodsConfigsRuleRepository extends EntityRepository
                   ->getQuery()->execute();
     }
 
+    /**
+     * TODO: refactor in BB-6393
+     */
     public function disableRulesWithoutShippingMethods()
     {
         $rules = $this->getRulesWithoutShippingMethods(true);
@@ -65,24 +83,5 @@ class ShippingMethodsConfigsRuleRepository extends EntityRepository
                 ->setParameter('rules', $enabledRulesIds)
                 ->getQuery()->execute();
         }
-    }
-
-    /**
-     * @return \DateTime|null
-     */
-    public function getLastUpdateAt()
-    {
-        $updatedAt = $this->createQueryBuilder('s')
-            ->select('s.updatedAt')
-            ->orderBy('s.updatedAt', Criteria::DESC)
-            ->setMaxResults(1)
-            ->getQuery()
-            ->execute();
-
-        if (count($updatedAt) === 1) {
-            $updatedAt = reset($updatedAt);
-            return $updatedAt['updatedAt'];
-        }
-        return null;
     }
 }
