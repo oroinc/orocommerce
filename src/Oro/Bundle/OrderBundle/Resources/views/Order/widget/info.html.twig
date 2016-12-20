@@ -1,5 +1,6 @@
 {% import 'OroUIBundle::macros.html.twig' as UI %}
 {% import 'OroEntityConfigBundle::macros.html.twig' as entityConfig %}
+{% import 'OroCurrencyBundle::macros.html.twig' as currency %}
 {% import 'OroAddressBundle::macros.html.twig' as address %}
 
 {% set sourceEntityBlock %}
@@ -25,6 +26,7 @@
             {{ UI.renderProperty('oro.order.po_number.label'|trans, order.poNumber) }}
             {{ UI.renderProperty('oro.order.currency.label'|trans, order.currency) }}
             {{ UI.renderProperty('oro.order.subtotal.label'|trans, order.subtotal|oro_format_currency({'currency': order.currency})) }}
+            {{ currency.convert_to_base_currency(order.subtotalObject, '', order, 'subtotal') }}
 
             {% if resource_granted('VIEW', order.account) %}
                 {% set accountView = UI.renderUrl(path('oro_customer_account_view', {'id': order.account.id}), order.account|oro_format_name|default('oro.ui.empty'|trans)) %}

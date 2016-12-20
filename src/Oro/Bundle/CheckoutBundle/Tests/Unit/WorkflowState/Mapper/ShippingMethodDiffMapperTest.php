@@ -72,7 +72,7 @@ class ShippingMethodDiffMapperTest extends AbstractCheckoutDiffMapperTest
      */
     public function testGetCurrentState($methodPrice, $methodName, $typeName, $expected)
     {
-        $shippingContext = new ShippingContext();
+        $shippingContext = new ShippingContext([]);
         $this->shippingContextFactory->expects(static::once())
             ->method('create')
             ->willReturn($shippingContext);
