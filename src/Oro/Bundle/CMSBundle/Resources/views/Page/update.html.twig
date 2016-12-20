@@ -3,7 +3,11 @@
 
 {% set entityId = entity.id %}
 
-{% oro_title_set({params : {"%title%": entity.title, '%entityName%': 'oro.cms.page.entity_label'|trans} }) %}
+{% if entityId %}
+    {% oro_title_set({params : {"%title%": entity.defaultTitle.string, '%entityName%': 'oro.cms.page.entity_label'|trans} }) %}
+{% else %}
+    {% oro_title_set({params : {'%entityName%': 'oro.cms.page.entity_label'|trans} }) %}
+{% endif %}
 
 {% set formAction = entityId ? path('oro_cms_page_update', { 'id': entityId }) : path('oro_cms_page_create')  %}
 
@@ -24,7 +28,7 @@
             'entity':      entity,
             'indexPath':   path('oro_cms_page_index'),
             'indexLabel': 'oro.cms.page.entity_plural_label'|trans,
-            'entityTitle': entity.title|default('N/A'|trans)
+            'entityTitle': entity.defaultTitle.string|default('N/A'|trans)
         } %}
         {{ parent() }}
     {% else %}
@@ -49,8 +53,8 @@
             'subblocks': [{
                 'title': '',
                 'data': [
-                    form_row(form.title),
-                    form_row(form.slug)
+                    form_row(form.titles),
+                    form_row(form.slugPrototypes)
                 ]
             }]
         },
@@ -69,14 +73,4 @@
     }%}
 
     {{ parent() }}
-
-    {% set options = {
-        'targetInput': '#' ~ form.title.vars.id,
-        'recipientInput': '#' ~ form.slug.slug.vars.id,
-        'modeName': 'oro_cms_page[slug][mode]'
-    } %}
-    <div
-        data-page-component-module="orocms/js/app/components/slugify-component"
-        data-page-component-options="{{ options|json_encode }}"
-    ></div>
 {% endblock content_data %}

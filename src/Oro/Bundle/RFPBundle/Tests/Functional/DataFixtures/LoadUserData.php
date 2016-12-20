@@ -25,6 +25,7 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
     const ROLE2 = 'rfp-role2';
     const ROLE3 = 'rfp-role3';
     const ROLE4 = 'rfp-role4';
+    const ROLE5 = 'rfp-role5';
 
     const PARENT_ACCOUNT = 'rfp-parent-account';
     const ACCOUNT1 = 'rfp-account1';
@@ -34,6 +35,7 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
     const ACCOUNT1_USER2    = 'rfp-account1-user2@example.com';
     const ACCOUNT1_USER3    = 'rfp-account1-user3@example.com';
     const ACCOUNT2_USER1    = 'rfp-account2-user1@example.com';
+    const ACCOUNT2_USER2    = 'rfp-account2-user2@example.com';
     const PARENT_ACCOUNT_USER1    = 'rfp-parent-account-user1@example.com';
     const PARENT_ACCOUNT_USER2    = 'rfp-parent-account-user2@example.com';
 
@@ -72,6 +74,16 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
             ],
         ],
         self::ROLE4 => [
+            [
+                'class' => 'oro_rfp.entity.request.class',
+                'acls'  => ['VIEW_DEEP', 'CREATE_DEEP', 'EDIT_DEEP'],
+            ],
+            [
+                'class' => 'oro_customer.entity.account_user.class',
+                'acls'  => ['VIEW_DEEP'],
+            ],
+        ],
+        self::ROLE5 => [
             [
                 'class' => 'oro_rfp.entity.request.class',
                 'acls'  => ['VIEW_DEEP', 'CREATE_DEEP', 'EDIT_DEEP'],
@@ -135,6 +147,14 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
             'password'  => self::ACCOUNT2_USER1,
             'account'   => self::ACCOUNT2,
             'role'      => self::ROLE1,
+        ],
+        [
+            'email'     => self::ACCOUNT2_USER2,
+            'firstname' => 'User22FN',
+            'lastname'  => 'User22LN',
+            'password'  => self::ACCOUNT2_USER2,
+            'account'   => self::ACCOUNT2,
+            'role'      => self::ROLE5,
         ],
         [
             'email'     => self::PARENT_ACCOUNT_USER1,

@@ -1,5 +1,6 @@
 {% extends 'OroUIBundle:actions:update.html.twig' %}
 {% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+{% import 'OroUIBundle::macros.html.twig' as UI %}
 
 {% set entityId = entity.id %}
 {% set parentCategoryId = entity.parentCategory ? entity.parentCategory.id : null %}
@@ -70,6 +71,7 @@
                     form_widget(form.removeProducts, {'id': 'categoryRemoveProducts'}),
                     form_row(form.parentCategory),
                     form_row(form.titles),
+                    form_row(form.slugPrototypes),
                     form_row(form.shortDescriptions),
                     form_row(form.longDescriptions),
                     form_row(form.smallImage),
@@ -133,10 +135,15 @@
                 'onSelectRoute' : 'oro_catalog_category_update',
                 'onMoveRoute' : 'oro_catalog_category_move'
             } %}
-            <div
-                data-page-component-module="orocatalog/js/app/components/tree-manage-component"
-                data-page-component-options="{{ treeOptions|json_encode }}"
-            ></div>
+
+            {{ UI.renderJsTree(
+                {
+                    'module': 'orocatalog/js/app/components/tree-manage-component',
+                    'label': 'oro.catalog.category.entity_plural_label'|trans,
+                    'treeOptions': treeOptions
+                },
+                ['expand', 'collapse']
+            ) }}
         </div>
     </div>
     <div class="category-data">

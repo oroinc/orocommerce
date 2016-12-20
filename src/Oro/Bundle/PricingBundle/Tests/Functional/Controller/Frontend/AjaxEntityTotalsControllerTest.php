@@ -3,17 +3,17 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Controller\Frontend;
 
 use Doctrine\Common\Util\ClassUtils;
-
-use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\CurrencyBundle\DependencyInjection\Configuration as CurrencyConfig;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\CustomerBundle\Entity\AccountUserSettings;
-use Oro\Bundle\PricingBundle\DependencyInjection\Configuration;
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
+ * @group CommunityEdition
  * @dbIsolation
  */
 class AjaxEntityTotalsControllerTest extends WebTestCase
@@ -39,8 +39,8 @@ class AjaxEntityTotalsControllerTest extends WebTestCase
         $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
 
         // set account user not default currency
-        $this->getContainer()->get('oro_config.manager')
-            ->set(Configuration::getConfigKeyByName(Configuration::ENABLED_CURRENCIES), ['EUR', 'USD']);
+        $manager = $this->getContainer()->get('oro_config.manager');
+        $manager->set(CurrencyConfig::getConfigKeyByName(CurrencyConfig::KEY_DEFAULT_CURRENCY), 'EUR');
         $user = $this->getCurrentUser();
         $website = $this->getCurrentWebsite();
         $settings = new AccountUserSettings($website);

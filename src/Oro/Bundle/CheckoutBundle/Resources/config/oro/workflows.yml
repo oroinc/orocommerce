@@ -109,6 +109,34 @@ workflows:
                     - back_to_shipping_address_on_fail_address
                     - __start__
         transitions:
+            start_from_shoppinglist:
+                is_start: true
+                step_to: enter_billing_address
+                is_unavailable_hidden: true
+                transition_definition: start_from_shoppinglist_definition
+                frontend_options:
+                    icon: fa-briefcase
+                init_routes:
+                    - oro_shopping_list_frontend_view
+
+            start_from_quickorderform:
+                is_start: true
+                step_to: enter_billing_address
+                is_unavailable_hidden: true
+                transition_definition: start_from_quickorderform_definition
+                frontend_options:
+                    icon: fa-briefcase
+                    class: 'btn--action'
+                    data:
+                        component_name: oro_shopping_list_to_checkout_quick_add_processor
+                        page-component-module: oroproduct/js/app/components/quick-add-form-button-component
+                        page-component-options:
+                            component_name: '[name$="[component]"]'
+                init_routes:
+                    - oro_product_frontend_quick_add
+                    - oro_product_frontend_quick_add_copy_paste
+                    - oro_product_frontend_quick_add_import
+
             continue_to_shipping_address:
                 step_to: enter_shipping_address
                 transition_definition: continue_to_shipping_address_definition
@@ -192,10 +220,6 @@ workflows:
                         - '@generate_checkout_state_snapshot':
                             entity: $checkout
                             attribute: $.result.initCheckoutState
-                        - '@call_service_method':
-                            service: oro_checkout.action.default_shipping_method_setter
-                            method: setDefaultShippingMethod
-                            method_parameters: [$checkout]
                     attribute_fields:
                         shipping_method:
                             options:
@@ -316,6 +340,41 @@ workflows:
                 is_hidden: true
 
         transition_definitions:
+            start_from_quickorderform_definition:
+                preactions:
+                    - '@call_service_method':
+                        attribute: $.result.isAllowed
+                        service: oro_shopping_list.processor.quick_add_to_checkout
+                        method: isAllowed
+                preconditions:
+                    '@and':
+                        - '@not_empty': $init_context
+                        - '@equal': [true, $.result.isAllowed]
+
+            start_from_shoppinglist_definition:
+                preactions:
+                    - '@find_entity':
+                        conditions:
+                            '@not_empty': $init_context
+                        parameters:
+                            class: $init_context.entityClass
+                            identifier: $init_context.entityId
+                            attribute: $.result.shoppingList
+                preconditions:
+                    '@and':
+                        - '@has_elements': $.result.shoppingList.lineItems
+                        - '@has_price_in_shopping_line_items': $.result.shoppingList.lineItems
+                        - '@extendable':
+                            events: [extendable_condition.start_checkout]
+                actions:
+                    - '@run_action_group':
+                        action_group: start_shoppinglist_checkout
+                        parameters_mapping:
+                            shoppingList: $.result.shoppingList
+                        results:
+                            data.checkout: $.checkout
+                            result.redirectUrl: $.redirectUrl
+
             __start___definition:
                 actions:
                     - '@assign_value': [$payment_save_for_later, true]
@@ -534,6 +593,10 @@ workflows:
 
             continue_to_payment_definition:
                 preactions:
+                    - '@call_service_method':
+                        service: oro_checkout.action.default_shipping_method_setter
+                        method: setDefaultShippingMethod
+                        method_parameters: [$checkout]
                     - '@generate_checkout_state_snapshot':
                         entity: $checkout
                         attribute: $.result.currentCheckoutState

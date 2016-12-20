@@ -37,7 +37,8 @@ class OroProductBundleTest extends \PHPUnit_Framework_TestCase
                 Product::class => [
                     'name' => 'names',
                     'description' => 'descriptions',
-                    'shortDescription' => 'shortDescriptions'
+                    'shortDescription' => 'shortDescriptions',
+                    'slugPrototype' => 'slugPrototypes'
                 ]
             ],
             'classes',

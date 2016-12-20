@@ -450,7 +450,7 @@ datagrids:
                 link:           view_link
                 icon:           eye
                 rowAction:      true
-                acl_permission: ACCOUNT_VIEW
+                acl_permission: VIEW
                 acl_class:      %oro_rfp.entity.request.class%
             update:
                 type:           navigate
@@ -458,5 +458,5 @@ datagrids:
                 link:           update_link
                 icon:           pencil-square-o
                 rowAction:      true
-                acl_permission: ACCOUNT_EDIT
+                acl_permission: EDIT
                 acl_class:      %oro_rfp.entity.request.class%

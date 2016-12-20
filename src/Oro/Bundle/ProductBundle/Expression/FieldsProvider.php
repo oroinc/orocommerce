@@ -12,11 +12,19 @@ class FieldsProvider implements FieldsProviderInterface
     /**
      * @var array
      */
-    static protected $supportedTypes = [
+    static protected $supportedNumericTypes = [
         'integer' => true,
         'float' => true,
         'money' => true,
         'decimal' => true,
+    ];
+
+    /**
+     * @var array
+     */
+    static protected $supportedRelationTypes = [
+        'ref-one' => true,
+        'manyToOne' => true
     ];
 
     /**
@@ -35,6 +43,16 @@ class FieldsProvider implements FieldsProviderInterface
     protected $entityFields = [];
 
     /**
+     * @var array
+     */
+    protected $fieldsWhiteList = [];
+
+    /**
+     * @var array
+     */
+    protected $fieldsBlackList = [];
+
+    /**
      * @param ServiceLink $entityFieldProviderLink
      * @param DoctrineHelper $doctrineHelper
      */
@@ -45,12 +63,30 @@ class FieldsProvider implements FieldsProviderInterface
     }
 
     /**
+     * @param string $className
+     * @param string $fieldName
+     */
+    public function addFieldToWhiteList($className, $fieldName)
+    {
+        $this->fieldsWhiteList[$className][$fieldName] = true;
+    }
+
+    /**
+     * @param string $className
+     * @param string $fieldName
+     */
+    public function addFieldToBlackList($className, $fieldName)
+    {
+        $this->fieldsBlackList[$className][$fieldName] = true;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getFields($className, $numericOnly = false, $withRelations = false)
     {
         $realClassName = $this->getRealClassName($className);
-        $fields = $this->getEntityFields($realClassName, $numericOnly, $withRelations);
+        $fields = $this->getDetailedFieldsInformation($realClassName, $numericOnly, $withRelations);
 
         return array_keys($fields);
     }
@@ -85,7 +121,7 @@ class FieldsProvider implements FieldsProviderInterface
         if ($fieldName) {
             $numericOnly = false;
             $withRelations = true;
-            $fields = $this->getEntityFields($className, $numericOnly, $withRelations);
+            $fields = $this->getDetailedFieldsInformation($className, $numericOnly, $withRelations);
             if (array_key_exists($fieldName, $fields)) {
                 $className = $fields[$fieldName]['related_entity_name'];
             } else {
@@ -102,9 +138,9 @@ class FieldsProvider implements FieldsProviderInterface
      * @param string $className
      * @param bool $numericOnly
      * @param bool $withRelations
-     * @return mixed
+     * @return array
      */
-    protected function getEntityFields($className, $numericOnly, $withRelations)
+    public function getDetailedFieldsInformation($className, $numericOnly = false, $withRelations = false)
     {
         $cacheKey = $this->getCacheKey($className, $numericOnly, $withRelations);
         if (!array_key_exists($cacheKey, $this->entityFields)) {
@@ -119,10 +155,19 @@ class FieldsProvider implements FieldsProviderInterface
             );
             $this->entityFields[$cacheKey] = [];
             foreach ($fields as $field) {
-                if ($numericOnly && empty(self::$supportedTypes[$field['type']])) {
+                $fieldName = $field['name'];
+                if ($this->isBlacklistedField($className, $fieldName)) {
                     continue;
                 }
-                $this->entityFields[$cacheKey][$field['name']] = $field;
+                if (!$this->isWhitelistedField($className, $fieldName)) {
+                    if ($numericOnly && empty(self::$supportedNumericTypes[$field['type']])) {
+                        continue;
+                    }
+                    if ($withRelations && $this->isSupportedRelation($field)) {
+                        continue;
+                    }
+                }
+                $this->entityFields[$cacheKey][$fieldName] = $field;
             }
         }
 
@@ -147,7 +192,7 @@ class FieldsProvider implements FieldsProviderInterface
      */
     protected function getField($className, $fieldName)
     {
-        $entityFields = $this->getEntityFields($className, false, true);
+        $entityFields = $this->getDetailedFieldsInformation($className, false, true);
         if (array_key_exists($fieldName, $entityFields)) {
             return $entityFields[$fieldName];
         }
@@ -161,5 +206,35 @@ class FieldsProvider implements FieldsProviderInterface
     protected function getFieldsProvider()
     {
         return $this->entityFieldProviderLink->getService();
+    }
+
+    /**
+     * @param array $field
+     * @return bool
+     */
+    protected function isSupportedRelation(array $field)
+    {
+        return array_key_exists('relation_type', $field)
+            && empty(self::$supportedRelationTypes[$field['relation_type']]);
+    }
+
+    /**
+     * @param string $className
+     * @param string $fieldName
+     * @return bool
+     */
+    protected function isWhitelistedField($className, $fieldName)
+    {
+        return !empty($this->fieldsWhiteList[$className][$fieldName]);
+    }
+
+    /**
+     * @param string $className
+     * @param string $fieldName
+     * @return bool
+     */
+    protected function isBlacklistedField($className, $fieldName)
+    {
+        return !empty($this->fieldsBlackList[$className][$fieldName]);
     }
 }
