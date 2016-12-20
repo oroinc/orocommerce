@@ -16,11 +16,11 @@ security:
 
         # override pattern
         wsse_secured:
-            pattern:                        ^%web_backend_prefix%/api/(rest|soap).*
+            pattern:                        ^%web_backend_prefix%/api/rest.*
 
         # override pattern
         api_wsse_secured:
-            pattern:                        ^%web_backend_prefix%/api/(?!(doc|rest|soap))($|.*)
+            pattern:                        ^%web_backend_prefix%/api/(?!(doc|rest))($|.*)
 
         # override pattern
         login:

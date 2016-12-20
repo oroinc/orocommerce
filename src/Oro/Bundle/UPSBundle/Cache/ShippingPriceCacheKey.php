@@ -18,12 +18,12 @@ class ShippingPriceCacheKey
     private $priceRequest;
 
     /**
-     * @var array
+     * @var string
      */
     private $methodId;
 
     /**
-     * @var array
+     * @var string
      */
     private $typeId;
 
@@ -64,7 +64,7 @@ class ShippingPriceCacheKey
     }
 
     /**
-     * @return array
+     * @return string
      */
     public function getMethodId()
     {
@@ -72,7 +72,7 @@ class ShippingPriceCacheKey
     }
 
     /**
-     * @param array $methodId
+     * @param string $methodId
      * @return $this
      */
     public function setMethodId($methodId)
@@ -82,7 +82,7 @@ class ShippingPriceCacheKey
     }
 
     /**
-     * @return array
+     * @return string
      */
     public function getTypeId()
     {
@@ -90,7 +90,7 @@ class ShippingPriceCacheKey
     }
 
     /**
-     * @param array $typeId
+     * @param string $typeId
      * @return $this
      */
     public function setTypeId($typeId)
