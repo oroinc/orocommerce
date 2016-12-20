@@ -3,7 +3,6 @@
 namespace Oro\Bundle\UPSBundle\Factory;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
@@ -184,6 +183,10 @@ class PriceRequestFactory
 
         $productsInfo =[];
         foreach ($lineItems as $lineItem) {
+            if (null === $lineItem->getProduct()) {
+                return [];
+            }
+
             $productsInfo[$lineItem->getProduct()->getId()] = [
                 'product' => $lineItem->getProduct(),
                 'productUnit' => $lineItem->getProductUnit(),
