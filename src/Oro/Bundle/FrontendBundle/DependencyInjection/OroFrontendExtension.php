@@ -44,7 +44,7 @@ class OroFrontendExtension extends Extension implements PrependExtensionInterfac
                 if (isset($config['format_listener']['rules']) && is_array($config['format_listener']['rules'])) {
                     foreach ($config['format_listener']['rules'] as $key => $rule) {
                         // add backend prefix to API format listener route
-                        if (!empty($rule['path']) && $rule['path'] === '^/api/(?!(soap|rest|doc)(/|$)+)') {
+                        if (!empty($rule['path']) && $rule['path'] === '^/api/(?!(rest|doc)(/|$)+)') {
                             $backendPrefix = $container->getParameter('web_backend_prefix');
                             $rule['path'] = str_replace('/api/', $backendPrefix . '/api/', $rule['path']);
                             $config['format_listener']['rules'][$key] = $rule;

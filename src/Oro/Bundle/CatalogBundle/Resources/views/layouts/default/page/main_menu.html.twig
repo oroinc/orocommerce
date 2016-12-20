@@ -7,13 +7,14 @@
         {% set hasSublist = category.childCategories is not empty %}
         <li class="main-menu__item {{ hasSublist ? "main-menu__item--ancestor": "" }}" {{ hasSublist ? "data-dropdown-trigger": "" }}
                 {% if hasSublist %}
-                    data-page-component-module="oroui/js/app/components/jquery-widget-component"
+                    data-page-component-module="oroui/js/app/components/viewport-component"
                     data-page-component-options="{{ {
+                        screenType: 'tablet',
+                        component: 'oroui/js/app/components/jquery-widget-component',
                         widgetModule: 'oroui/js/widget/collapse-widget',
                         trigger: '[data-collapse-trigger-second]',
                         container: '[data-collapse-container-second]',
                         hideSibling: true,
-                        breakpoint: 1100,
                         open: false
                     }|json_encode }}"
                 {% endif %}

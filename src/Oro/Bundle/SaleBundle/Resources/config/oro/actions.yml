@@ -231,16 +231,21 @@ action_groups:
                         parameters: [$.disallow_shipping_address_edit, false]
             - '@assign_value':
                 parameters: [$.shippingEstimate, $.data.quote.shippingEstimate]
-            - '@start_checkout':
-                source_name: 'quoteDemand'
-                source_entity: $.data
-                force: true
-                data:
-                    shippingAddress: $.orderAddress
-                    shippingCost: $.shippingEstimate
-                settings:
-                    allow_manual_source_remove: false
-                    auto_remove_source: true
-                    edit_order_link: $.editLink
-                    disallow_shipping_address_edit: $.disallow_shipping_address_edit
-                    disallow_shipping_method_edit: $.disallow_shipping_method_edit
+                
+            - '@run_action_group':
+                action_group: start_checkout
+                parameters_mapping:
+                    sourceCriteria:
+                        quoteDemand: $.data
+                    force: true
+                    data:
+                        shippingAddress: $.orderAddress
+                        shippingCost: $.shippingEstimate
+                    settings:
+                        allow_manual_source_remove: false
+                        auto_remove_source: true
+                        edit_order_link: $.editLink
+                        disallow_shipping_address_edit: $.disallow_shipping_address_edit
+                        disallow_shipping_method_edit: $.disallow_shipping_method_edit
+                results:
+                    redirectUrl: $.redirectUrl

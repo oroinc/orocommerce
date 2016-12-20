@@ -39,7 +39,7 @@ class CheckoutShippingContextProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetPaymentStatus()
     {
-        $context = new ShippingContext();
+        $context = new ShippingContext([]);
 
         $this->shippingContextFactory->expects($this->once())
             ->method('create')

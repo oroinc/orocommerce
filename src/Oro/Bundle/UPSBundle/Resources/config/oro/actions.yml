@@ -1,8 +1,6 @@
 operations:
     oro_integration_invalidate_cache:
         label: oro.ups.form.invalidate_cache.label
-        entities:
-            - Oro\Bundle\IntergrationBundle\Entity\Channel
         routes:
             - oro_integration_update
         acl_resource: [UPDATE, entity:Oro\Bundle\IntegrationBundle\Entity\Channel]
