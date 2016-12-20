@@ -1,11 +1,11 @@
 {% block __oro_product_grid__product_widget %}
-    {% set product = datagrid_row|merge{
-        getDefaultName: product.name
-    } %}
+    {% set product = datagrid_row|merge({
+        getDefaultName: datagrid_row.name
+    }) %}
 
     {% do block|merge_context({
         class_prefix: themeOptions.currentRowView,
-        product: datagrid_row
+        product: product
     }) %}
 
     {{ block_widget(block) }}
