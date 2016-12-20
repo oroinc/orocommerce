@@ -16,6 +16,27 @@ operations:
             - applications
             - preconditions
             - datagrids
+
+    oro_checkout_view:
+        applications: [commerce]
+        label: oro.checkout.grid.checkout_link.label
+        button_options:
+            icon: shopping-cart
+        acl_resource: oro_checkout_frontend_checkout
+        preactions:
+            - '@get_active_user': $.currentUser
+        preconditions:
+            '@and':
+                - '@not_blank': $.data
+                - '@equal': [$accountUser, $.currentUser]
+        actions:
+            - '@redirect':
+                route: oro_checkout_frontend_checkout
+                route_parameters:
+                    id: $.data.id
+        datagrids:
+            - frontend-checkouts-grid
+
 action_groups:
     oro_update_shipping_price:
         parameters:
@@ -110,33 +131,21 @@ action_groups:
                 default: false
         actions:
             # find or create checkout and checkout source
-            - '@assign_value': [$.sourceCriteria.deleted, false]
-            - '@find_entity':
-                attribute: $.source
-                class: 'Oro\Bundle\CheckoutBundle\Entity\CheckoutSource'
-                where: $.sourceCriteria
-            - '@create_entity':
-                conditions:
-                    '@empty': $.source
-                parameters:
-                    attribute: $.source
-                    class: 'Oro\Bundle\CheckoutBundle\Entity\CheckoutSource'
-                    data: $.sourceCriteria
             - '@get_active_user': $.currentUser
-            - '@find_entity':
-                conditions:
-                    '@not_empty': $.source.id
-                parameters:
-                    attribute: $.checkout
-                    class: 'Oro\Bundle\CheckoutBundle\Entity\Checkout'
-                    where:
-                        source: $.source
-                        accountUser: $.currentUser
-                        deleted: false
+            - '@call_service_method':
+                attribute: $.checkout
+                service: 'oro_checkout.repository.checkout'
+                method: findCheckoutByAccountUserAndSourceCriteria
+                method_parameters: [$.currentUser, $.sourceCriteria]
+
             - '@tree':
                 conditions:
                     '@empty': $.checkout.id
                 actions:
+                    - '@create_entity':
+                        attribute: $.source
+                        class: 'Oro\Bundle\CheckoutBundle\Entity\CheckoutSource'
+                        data: $.sourceCriteria
                     - '@create_entity':
                         attribute: $.checkout
                         class: 'Oro\Bundle\CheckoutBundle\Entity\Checkout'

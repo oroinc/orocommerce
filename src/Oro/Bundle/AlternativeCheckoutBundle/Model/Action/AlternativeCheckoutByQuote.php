@@ -3,6 +3,9 @@
 namespace Oro\Bundle\AlternativeCheckoutBundle\Model\Action;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Symfony\Component\Security\Core\SecurityContextInterface;
+
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository;
 use Oro\Component\Action\Action\AbstractAction;
@@ -25,6 +28,11 @@ class AlternativeCheckoutByQuote extends AbstractAction
     protected $contextAccessor;
 
     /**
+     * @var SecurityContextInterface
+     */
+    protected $securityContext;
+
+    /**
      * @var array
      */
     protected $options;
@@ -32,12 +40,17 @@ class AlternativeCheckoutByQuote extends AbstractAction
     /**
      * @param ContextAccessor $contextAccessor
      * @param ManagerRegistry $registry
+     * @param SecurityContextInterface $securityContext
      */
-    public function __construct(ContextAccessor $contextAccessor, ManagerRegistry $registry)
-    {
+    public function __construct(
+        ContextAccessor $contextAccessor,
+        ManagerRegistry $registry,
+        SecurityContextInterface $securityContext
+    ) {
         parent::__construct($contextAccessor);
 
         $this->registry = $registry;
+        $this->securityContext = $securityContext;
     }
 
     /**
@@ -63,9 +76,25 @@ class AlternativeCheckoutByQuote extends AbstractAction
     {
         /** @var Checkout $checkout */
         $quote = $this->contextAccessor->getValue($context, $this->options[self::QUOTE]);
-        $checkout = $this->getRepository()->getCheckoutByQuote($quote);
+        $checkout = $this->getRepository()->getCheckoutByQuote($quote, $this->getUser());
 
         $this->contextAccessor->setValue($context, $this->options[self::CHECKOUT_ATTRIBUTE], $checkout);
+    }
+
+    /**
+     * @return AccountUser|null
+     */
+    protected function getUser()
+    {
+        if (null === ($token = $this->securityContext->getToken())) {
+            return null;
+        }
+
+        if (!is_object($user = $token->getUser())) {
+            return null;
+        }
+
+        return $user;
     }
 
     /**
