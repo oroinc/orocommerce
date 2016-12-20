@@ -4,21 +4,21 @@ namespace Oro\Bundle\ShippingBundle\Converter;
 
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
-use Oro\Bundle\ShippingBundle\ExpressionLanguage\LineItemDecoratorFactory;
+use Oro\Bundle\ShippingBundle\ExpressionLanguage\DecoratedProductLineItemFactory;
 
 class ShippingContextToRuleValuesConverter
 {
     /**
-     * @var LineItemDecoratorFactory
+     * @var DecoratedProductLineItemFactory
      */
-    protected $lineItemDecoratorFactory;
+    protected $decoratedProductLineItemFactory;
 
     /**
-     * @param LineItemDecoratorFactory $lineItemDecoratorFactory
+     * @param DecoratedProductLineItemFactory $decoratedProductLineItemFactory
      */
-    public function __construct(LineItemDecoratorFactory $lineItemDecoratorFactory)
+    public function __construct(DecoratedProductLineItemFactory $decoratedProductLineItemFactory)
     {
-        $this->lineItemDecoratorFactory = $lineItemDecoratorFactory;
+        $this->decoratedProductLineItemFactory = $decoratedProductLineItemFactory;
     }
 
     /**
@@ -27,11 +27,12 @@ class ShippingContextToRuleValuesConverter
      */
     public function convert(ShippingContextInterface $context)
     {
-        $lineItems = $context->getLineItems();
+        $lineItems = $context->getLineItems()->toArray();
 
         return [
             'lineItems' => array_map(function (ShippingLineItemInterface $lineItem) use ($lineItems) {
-                return $this->lineItemDecoratorFactory->createOrderLineItemDecorator($lineItems, $lineItem);
+                return $this->decoratedProductLineItemFactory
+                    ->createLineItemWithDecoratedProductByLineItem($lineItems, $lineItem);
             }, $lineItems),
             'billingAddress' => $context->getBillingAddress(),
             'shippingAddress' => $context->getShippingAddress(),
