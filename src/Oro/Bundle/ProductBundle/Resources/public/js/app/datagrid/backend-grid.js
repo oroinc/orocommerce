@@ -42,6 +42,7 @@ define(function(require) {
             this.$el.find('.grid-body').html(params.gridContent.html());
 
             this.collection.reset(params.responseJSON.data.data);
+            this.initLayout({collection: this.collection});
             this._afterRequest(params.responseJSON);
         },
 
@@ -92,14 +93,6 @@ define(function(require) {
                 self._beforeRequest();
             });
             return this;
-        },
-
-        /**
-         * @param {string} column
-         * @param {null|"ascending"|"descending"} direction
-         */
-        sort: function(column, direction) {
-            BackendGrid.__super__.sort.apply(this, arguments);
         },
 
         /**

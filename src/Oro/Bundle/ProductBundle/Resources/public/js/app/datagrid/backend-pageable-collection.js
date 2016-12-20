@@ -13,6 +13,8 @@ define(function(require) {
          * @param {object} options
          */
         fetch: function(options) {
+            this.trigger('beforeFetch', this, options);
+
             this._fetch(options);
         },
 
