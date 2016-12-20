@@ -7,14 +7,14 @@ use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class ModifyOldTables implements Migration, OrderedMigrationInterface
+class DropShippingRuleTable implements Migration, OrderedMigrationInterface
 {
     /**
      * @return int
      */
     public function getOrder()
     {
-        return 30;
+        return 40;
     }
 
     /**
@@ -22,15 +22,6 @@ class ModifyOldTables implements Migration, OrderedMigrationInterface
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        $this->modifyOroShippingRuleDestinationTable($schema);
-    }
-
-    /**
-     * @param Schema $schema
-     */
-    private function modifyOroShippingRuleDestinationTable(Schema $schema)
-    {
-        $table = $schema->getTable('oro_shipping_rule_destination');
-        $table->dropColumn('postal_code');
+        $schema->dropTable('oro_shipping_rule');
     }
 }

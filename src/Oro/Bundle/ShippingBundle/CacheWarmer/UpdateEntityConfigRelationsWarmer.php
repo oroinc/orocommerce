@@ -1,12 +1,13 @@
 <?php
 
-namespace Oro\Bundle\InventoryBundle\CacheWarmer;
+namespace Oro\Bundle\ShippingBundle\CacheWarmer;
 
 use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
 
 /**
- * Removes relations of ShippingRul entity from different associations (Note, ActivityList), at the level of
- * entity config data, because this entity was removed and is not available anymore.
+ * Removes relations of Warehouse entity from different associations (Note, ActivityList), at the level of
+ * entity config data, because this entity was moved to commerce-enterprise and is not available anymore
+ * in the commerce community application.
  */
 class UpdateEntityConfigRelationsWarmer implements CacheWarmerInterface
 {
