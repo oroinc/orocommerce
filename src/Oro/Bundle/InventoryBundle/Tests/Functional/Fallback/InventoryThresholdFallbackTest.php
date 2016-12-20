@@ -7,6 +7,7 @@ use Symfony\Component\DomCrawler\Form;
 
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
+use Oro\Bundle\EntityBundle\Tests\Functional\Helper\FallbackTestTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -16,6 +17,8 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
  */
 class InventoryThresholdFallbackTest extends WebTestCase
 {
+    use FallbackTestTrait;
+
     const VIEW_INVENTORY_THRESHOLD_XPATH =
     "//label[text() = 'Inventory Threshold']/following-sibling::div/div[contains(@class,  'control-label')]";
 
@@ -39,7 +42,7 @@ class InventoryThresholdFallbackTest extends WebTestCase
     {
         $newValue = 2.5;
         $product = $this->getReference(LoadProductData::PRODUCT_1);
-        $crawler = $this->setProductInventoryThresholdField($product, $newValue, false, null);
+        $crawler = $this->setProductInventoryThresholdField($product, $newValue, null);
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
         $value = $crawler->filterXPath(self::VIEW_INVENTORY_THRESHOLD_XPATH)->html();
         $this->assertEquals($newValue, $value);
@@ -81,26 +84,15 @@ class InventoryThresholdFallbackTest extends WebTestCase
      * @param mixed $fallbackValue
      * @return Crawler
      */
-    protected function setProductInventoryThresholdField($product, $ownValue, $useFallbackValue, $fallbackValue)
+    protected function setProductInventoryThresholdField($product, $ownValue, $fallbackValue)
     {
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_update', ['id' => $product->getId()]));
 
         /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
         $form['input_action'] = 'save_and_close';
-        if (is_null($ownValue)) {
-            unset($form['oro_product[inventoryThreshold][scalarValue]']);
-        } else {
-            $form['oro_product[inventoryThreshold][scalarValue]'] = $ownValue;
-        }
-        if (!is_null($useFallbackValue)) {
-            $form['oro_product[inventoryThreshold][useFallback]'] = $useFallbackValue;
-        }
-        if (is_null($fallbackValue)) {
-            unset($form['oro_product[inventoryThreshold][fallback]']);
-        } else {
-            $form['oro_product[inventoryThreshold][fallback]'] = $fallbackValue;
-        }
+
+        $this->updateFallbackField($form, $ownValue, $fallbackValue, 'oro_product', 'inventoryThreshold');
 
         $this->client->followRedirects(true);
 

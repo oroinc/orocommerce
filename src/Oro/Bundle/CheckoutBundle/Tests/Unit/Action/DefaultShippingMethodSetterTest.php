@@ -61,7 +61,7 @@ class DefaultShippingMethodSetterTest extends \PHPUnit_Framework_TestCase
     public function testSetDefaultShippingMethodEmptyApplicable()
     {
         $checkout = $this->getEntity(Checkout::class);
-        $context = new ShippingContext();
+        $context = new ShippingContext([]);
         $this->contextProviderFactory->expects($this->once())
             ->method('create')
             ->with($checkout)
@@ -79,7 +79,7 @@ class DefaultShippingMethodSetterTest extends \PHPUnit_Framework_TestCase
     {
         /** @var Checkout $checkout */
         $checkout = $this->getEntity(Checkout::class);
-        $context = new ShippingContext();
+        $context = new ShippingContext([]);
         $this->contextProviderFactory->expects($this->once())
             ->method('create')
             ->with($checkout)

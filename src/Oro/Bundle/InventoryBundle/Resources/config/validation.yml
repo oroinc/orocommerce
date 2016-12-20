@@ -9,3 +9,11 @@ Oro\Bundle\InventoryBundle\Entity\InventoryLevel:
             - NotBlank: ~
         productUnitPrecision:
             - NotBlank: ~
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    constraints:
+        - Oro\Bundle\InventoryBundle\Validator\Constraints\ProductQuantityToOrderLimit: ~
+
+Oro\Bundle\ProductBundle\Model\ProductRow:
+    constraints:
+        - Oro\Bundle\InventoryBundle\Validator\Constraints\ProductRowQuantity: { groups: [not_request_for_quote] }

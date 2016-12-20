@@ -4,25 +4,17 @@ namespace Oro\Bundle\CatalogBundle\Migrations\Schema\v1_0;
 
 use Doctrine\DBAL\Schema\Schema;
 
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
-use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
 
-class OroCatalogBundle implements Migration, NoteExtensionAwareInterface
+class OroCatalogBundle implements Migration, ActivityExtensionAwareInterface
 {
-    /** @var NoteExtension */
-    protected $noteExtension;
-
     /**
-     * Sets the NoteExtension
-     *
-     * @param NoteExtension $noteExtension
+     * @var ActivityExtension
      */
-    public function setNoteExtension(NoteExtension $noteExtension)
-    {
-        $this->noteExtension = $noteExtension;
-    }
+    protected $activityExtension;
 
     /**
      * {@inheritdoc}
@@ -57,7 +49,9 @@ class OroCatalogBundle implements Migration, NoteExtensionAwareInterface
         $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->setPrimaryKey(['id']);
-        $this->noteExtension->addNoteAssociation($schema, 'orob2b_catalog_category');
+
+
+        $this->activityExtension->addActivityAssociation($schema, 'oro_note', 'orob2b_catalog_category');
     }
 
     /**
@@ -146,5 +140,15 @@ class OroCatalogBundle implements Migration, NoteExtensionAwareInterface
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
+    }
+
+    /**
+     * Sets the ActivityExtension
+     *
+     * @param ActivityExtension $activityExtension
+     */
+    public function setActivityExtension(ActivityExtension $activityExtension)
+    {
+        $this->activityExtension = $activityExtension;
     }
 }

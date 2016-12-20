@@ -1,0 +1,14 @@
+.request-form-editnote {
+    padding: 7px 10px;
+    
+    border-radius: 4px;
+    background: get-color('additional', 'light');
+
+    &__body {
+        display: none;
+    }
+
+    &__toggle:checked ~ &__body {
+        display: block;
+    }
+}

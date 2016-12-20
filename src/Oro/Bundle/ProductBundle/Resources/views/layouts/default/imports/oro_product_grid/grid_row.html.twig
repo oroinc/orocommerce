@@ -1,4 +1,8 @@
 {% block __oro_product_grid__product_widget %}
+    {% set product = datagrid_row|merge{
+        getDefaultName: product.name
+    } %}
+
     {% do block|merge_context({
         class_prefix: themeOptions.currentRowView,
         product: datagrid_row

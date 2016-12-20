@@ -62,7 +62,18 @@ class Configuration implements ConfigurationInterface
                     'type' => 'array',
                     'value' => []
                 ],
-                'origin_address' => ['type' => 'array', 'value' => []],
+                'origin_address' => [
+                    'type' => 'array',
+                    'value' => []
+                ],
+                'shipping_tax_code' => [
+                    'type' => 'array',
+                    'value' => []
+                ],
+                'shipping_rates_include_tax' => [
+                    'type' => 'boolean',
+                    'value' => false
+                ]
             ]
         );
 

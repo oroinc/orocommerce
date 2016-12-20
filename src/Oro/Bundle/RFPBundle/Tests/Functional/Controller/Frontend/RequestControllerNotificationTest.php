@@ -197,7 +197,7 @@ class RequestControllerNotificationTest extends WebTestCase
         $this->initClient([], $authParams);
 
         $crawler = $this->client->request('GET', $this->getUrl('oro_rfp_frontend_request_create'));
-        $form = $crawler->selectButton('Submit Request For Quote')->form();
+        $form = $crawler->selectButton('Submit Request')->form();
 
         $crfToken = $this->getContainer()->get('security.csrf.token_manager')->getToken('oro_rfp_frontend_request');
 

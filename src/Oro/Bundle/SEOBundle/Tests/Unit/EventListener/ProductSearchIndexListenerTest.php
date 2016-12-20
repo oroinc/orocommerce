@@ -36,31 +36,55 @@ class ProductSearchIndexListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getLocalizationsByWebsiteId')
             ->willReturn($localizations);
 
-        $event->expects($this->exactly(4))
+        $event->expects($this->exactly(8))
             ->method('addPlaceholderField')
             ->withConsecutive(
                 [
                     1,
                     'all_text_LOCALIZATION_ID',
-                    'Polish metaTitle Polish meta description Polish meta keywords',
+                    'Polish meta description',
                     [LocalizationIdPlaceholder::NAME => 1],
                 ],
                 [
                     1,
                     'all_text_LOCALIZATION_ID',
-                    'English metaTitle English meta description English meta keywords',
+                    'Polish meta keywords',
+                    [LocalizationIdPlaceholder::NAME => 1],
+                ],
+                [
+                    1,
+                    'all_text_LOCALIZATION_ID',
+                    'English meta description',
+                    [LocalizationIdPlaceholder::NAME => 2],
+                ],
+                [
+                    1,
+                    'all_text_LOCALIZATION_ID',
+                    'English meta keywords',
                     [LocalizationIdPlaceholder::NAME => 2],
                 ],
                 [
                     2,
                     'all_text_LOCALIZATION_ID',
-                    'Polish metaTitle Polish meta description Polish meta keywords',
+                    'Polish meta description',
                     [LocalizationIdPlaceholder::NAME => 1],
                 ],
                 [
                     2,
                     'all_text_LOCALIZATION_ID',
-                    'English metaTitle English meta description English meta keywords',
+                    'Polish meta keywords',
+                    [LocalizationIdPlaceholder::NAME => 1],
+                ],
+                [
+                    2,
+                    'all_text_LOCALIZATION_ID',
+                    'English meta description',
+                    [LocalizationIdPlaceholder::NAME => 2],
+                ],
+                [
+                    2,
+                    'all_text_LOCALIZATION_ID',
+                    'English meta keywords',
                     [LocalizationIdPlaceholder::NAME => 2],
                 ]
             );
@@ -91,40 +115,29 @@ class ProductSearchIndexListenerTest extends \PHPUnit_Framework_TestCase
         foreach ($entityIds as $id) {
             $product = $this->getMock(
                 Product::class,
-                ['getId', 'getMetaTitle', 'getMetaDescription', 'getMetaKeyword']
+                ['getId', 'getMetaDescription', 'getMetaKeyword']
             );
 
-            $product->expects($this->at(0))
-                ->method('getMetaTitle')
-                ->willReturn("Polish\n metaTitle");
-
-            $product->expects($this->at(1))
-                ->method('getMetaDescription')
-                ->willReturn('Polish meta description');
-
-            $product->expects($this->at(2))
-                ->method('getMetaKeyword')
-                ->willReturn('Polish meta keywords');
-
-            $product->expects($this->at(3))
+            $product->expects($this->any())
                 ->method('getId')
                 ->willReturn($id);
 
-            $product->expects($this->at(4))
-                ->method('getMetaTitle')
-                ->willReturn('English metaTitle');
-
-            $product->expects($this->at(5))
+            $product->expects($this->any())
                 ->method('getMetaDescription')
-                ->willReturn("\tEnglish meta\r\n description");
-
-            $product->expects($this->at(6))
+                ->willReturnMap(
+                    [
+                        [$localizations['PL'], 'Polish meta description'],
+                        [$localizations['EN'], "\tEnglish meta\r\n description"],
+                    ]
+                );
+            $product->expects($this->any())
                 ->method('getMetaKeyword')
-                ->willReturn('English meta keywords');
-
-            $product->expects($this->at(7))
-                ->method('getId')
-                ->willReturn($id);
+                ->willReturnMap(
+                    [
+                        [$localizations['PL'], 'Polish meta keywords'],
+                        [$localizations['EN'], 'English meta keywords'],
+                    ]
+                );
 
             $result[] = $product;
         }

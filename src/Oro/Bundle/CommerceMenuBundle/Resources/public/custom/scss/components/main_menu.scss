@@ -1,0 +1,73 @@
+// @theme: custom;
+
+.sidebar__menu {
+    max-height: none;
+    margin-top: 3px;
+    padding: 30px 15px 30px 30px;
+
+    border: 0;
+    background-color: get-color('additional', 'base');
+
+    &:first-child {
+        margin-top: 0;
+    }
+
+    &--collapsible {
+        background-color: get-color('additional', 'base');
+
+        .main-menu__list {
+            padding: 20px 0 0 35px;
+        }
+    }
+
+    .main-menu__list {
+        display: block;
+    }
+
+    .main-menu__item {
+        min-height: initial;
+        margin-bottom: 20px;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+
+    .main-menu__link {
+        min-height: initial;
+        padding: 0;
+
+        font-size: $base-font-size--s;
+        line-height: 1.46;
+
+        text-align: left;
+
+        color: get-color('additional', 'dark');
+
+        &:hover {
+            text-decoration: underline;
+        }
+
+        &--is-trigger {
+            &:hover {
+                text-decoration: none;
+            }
+        }
+    }
+}
+
+@include breakpoint('tablet') {
+    .sidebar__menu {
+        margin: 0;
+        padding: 20px;
+
+        border: 1px solid get-color('additional', 'base');
+        border-right: 0;
+        border-left: 0;
+        background: transparent;
+
+        &--collapsible {
+            border: 0
+        }
+    }
+}

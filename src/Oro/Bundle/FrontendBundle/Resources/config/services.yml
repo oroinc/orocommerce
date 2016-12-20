@@ -155,13 +155,24 @@ services:
             - '@oro_frontend.provider.current_application.inner'
             - '@security.token_storage'
 
-    oro_frontend.provider.route:
-        class: 'Oro\Bundle\FrontendBundle\Provider\ActionRouteProvider'
+    oro_frontend.provider.action_route:
+        class: 'Oro\Bundle\FrontendBundle\Provider\RouteProvider'
         decorates: oro_action.provider.route
         arguments:
-            - '@oro_frontend.provider.route.inner'
+            - '@oro_frontend.provider.action_route.inner'
             - '@security.token_storage'
             - 'oro_frontend_action_widget_form'
             - 'oro_frontend_action_widget_form'
             - 'oro_frontend_action_operation_execute'
             - 'oro_frontend_action_widget_buttons'
+
+    oro_frontend.provider.workflow_route:
+        class: 'Oro\Bundle\FrontendBundle\Provider\RouteProvider'
+        decorates: oro_workflow.provider.route
+        arguments:
+            - '@oro_frontend.provider.workflow_route.inner'
+            - '@security.token_storage'
+            - 'oro_frontend_workflow_widget_start_transition_form'
+            - 'oro_frontend_workflow_start_transition_form'
+            - 'oro_api_frontend_workflow_start'
+            - 'oro_frontend_workflow_widget_buttons'

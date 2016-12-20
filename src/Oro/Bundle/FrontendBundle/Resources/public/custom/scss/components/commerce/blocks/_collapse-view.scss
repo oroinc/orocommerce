@@ -1,8 +1,11 @@
+// @theme: custom;
+
 .sidebar__menu {
   .collapse-view {
     &__trigger {
       vertical-align: baseline;
-      margin-left: 10px;
+      margin-right: 5px;
+      margin-left: 5px;
     }
 
     &__text {
@@ -11,8 +14,10 @@
       font-weight: 700;
     }
   }
+}
 
-  @include breakpoint('tablet') {
-    display: none;
-  }
+@include breakpoint('tablet') {
+    .main-menu-outer {
+        display: none;
+    }
 }

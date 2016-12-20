@@ -107,7 +107,7 @@ datagrids:
                 type:         navigate
                 label:        oro.grid.action.view
                 link:         view_link
-                icon:         eye-open
+                icon:         eye
                 acl_resource: oro_customer_account_view
                 rowAction:    true
 
@@ -163,20 +163,20 @@ datagrids:
                 type:         navigate
                 label:        oro.grid.action.view
                 link:         view_link
-                icon:         eye-open
+                icon:         eye
                 acl_resource: oro_customer_account_group_view
                 rowAction:    true
             update:
                 type:          navigate
                 label:         oro.grid.action.update
                 link:          update_link
-                icon:          edit
+                icon:          pencil-square-o
                 acl_resource:  oro_customer_account_group_update
             delete:
                 type:          delete
                 label:         oro.grid.action.delete
                 link:          delete_link
-                icon:          trash
+                icon:          trash-o
                 acl_resource:  oro_customer_account_group_delete
 
     account-group-accounts-grid-basic:
@@ -218,7 +218,7 @@ datagrids:
                 type:         navigate
                 label:        oro.grid.action.view
                 link:         view_link
-                icon:         eye-open
+                icon:         eye
                 acl_resource: oro_customer_account_view
         options:
             entityHint: account
@@ -407,7 +407,7 @@ datagrids:
                 type:          navigate
                 label:         oro.grid.action.view
                 link:          view_link
-                icon:          eye-open
+                icon:          eye
                 acl_resource:  oro_account_account_user_view
                 rowAction:     true
         action_configuration: ['@oro_customer.datagrid.action_permission_provider', "getUserPermissions"]
@@ -426,7 +426,7 @@ datagrids:
                 type:          navigate
                 label:         oro.grid.action.view
                 link:          view_link
-                icon:          eye-open
+                icon:          eye
                 acl_resource:  oro_account_account_user_view
                 rowAction:     true
 
@@ -525,7 +525,7 @@ datagrids:
                 type:          navigate
                 label:         oro.grid.action.view
                 link:          view_link
-                icon:          eye-open
+                icon:          eye
                 rowAction:     true
 
     account-account-user-roles-grid:
@@ -583,31 +583,22 @@ datagrids:
                 route: oro_customer_frontend_account_user_role_update
                 params:
                     - id
-            delete_link:
-                type: url
-                route: oro_api_frontend_account_delete_accountuserrole
-                params:
-                    - id
         actions:
             view:
                 acl_resource:  oro_account_frontend_account_user_role_view
                 type:          navigate
                 label:         oro.grid.action.view
                 link:          view_link
-                icon:          eye-open
+                icon:          eye
+                order:         10
                 rowAction:     true
             update:
                 type:          navigate
                 label:         oro.grid.action.update
                 link:          update_link
-                icon:          edit
+                icon:          pencil-square-o
+                order:         20
                 acl_resource:  oro_account_frontend_account_user_role_update
-            delete:
-                type:          delete
-                label:         oro.grid.action.delete
-                link:          delete_link
-                icon:          trash
-                acl_resource:  oro_account_frontend_account_user_role_delete
         action_configuration: ['@oro_customer.datagrid.action_permission_provider', "getAccountUserRolePermission"]
 
     account-account-users-grid-update-basic:
@@ -753,7 +744,7 @@ datagrids:
                 type:         navigate
                 label:        oro.grid.action.view
                 link:         view_link
-                icon:         eye-open
+                icon:         eye
                 acl_resource: oro_account_frontend_account_user_view
                 rowAction:    true
 
@@ -911,20 +902,20 @@ datagrids:
                 type:          navigate
                 label:         oro.grid.action.view
                 link:          view_link
-                icon:          eye-open
+                icon:          eye
                 acl_resource:  oro_account_frontend_account_user_view
                 rowAction:     true
             update:
                 type:          navigate
                 label:         oro.grid.action.update
                 link:          update_link
-                icon:          edit
+                icon:          pencil-square-o
                 acl_resource:  oro_account_frontend_account_user_update
             delete:
                 type:          delete
                 label:         oro.grid.action.delete
                 link:          delete_link
-                icon:          trash
+                icon:          trash-o
                 acl_resource:  oro_account_frontend_account_user_delete
         action_configuration: ['@oro_customer.datagrid.action_permission_provider', "getUserPermissions"]
 
@@ -1081,7 +1072,7 @@ datagrids:
             delete:
                 type:          delete
                 link:          delete_link
-                icon:          trash
+                icon:          trash-o
                 acl_resource:  oro_account_frontend_account_address_remove
 
     frontend-account-account-user-address-grid:
@@ -1111,5 +1102,5 @@ datagrids:
             delete:
                 type:          delete
                 link:          delete_link
-                icon:          trash
+                icon:          trash-o
                 acl_resource:  oro_account_frontend_account_user_address_remove

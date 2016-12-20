@@ -11,6 +11,13 @@ services:
         tags:
             - { name: validator.constraint_validator, alias: oro_shopping_list_line_item_validator }
 
+    oro_shopping_list.validator.line_item_collection:
+        class: 'Oro\Bundle\ShoppingListBundle\Validator\Constraints\LineItemCollectionValidator'
+        arguments:
+            - '@event_dispatcher'
+        tags:
+            - { name: validator.constraint_validator, alias: oro_shopping_list_line_item_collection_validator }
+
     oro_shopping_list.line_item.manager.api:
         class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
         parent: oro_soap.manager.entity_manager.abstract
@@ -89,10 +96,10 @@ services:
         parent: oro_shopping_list.processor.abstract_quick_add
         calls:
             - [setShoppingListManager, ['@oro_shopping_list.shopping_list.manager']]
-            - [setOperationManager, ['@oro_action.operation_manager']]
+            - [setActionGroupRegistry, ['@oro_action.action_group_registry']]
             - [setTranslator, ['@translator']]
             - [setDateFormatter, ['@oro_locale.formatter.date_time']]
-            - [setOperationName, ['oro_shoppinglist_frontend_createorder']]
+            - [setActionGroupName, ['start_shoppinglist_checkout']]
         tags:
             - { name: oro_product.quick_add_processor }
 
@@ -255,3 +262,10 @@ services:
         parent: oro.cache.abstract
         calls:
             - [ setNamespace, [ 'shopping_list' ] ]
+
+    oro_shopping_list.validator_service.line_item:
+        class: 'Oro\Bundle\ShoppingListBundle\Validator\LineItemErrorsProvider'
+        arguments:
+            - '@validator'
+        tags:
+            - { name: layout.data_provider, alias: oro_line_item_errors }

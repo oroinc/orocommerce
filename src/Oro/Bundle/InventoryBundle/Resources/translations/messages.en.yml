@@ -47,18 +47,50 @@ oro:
                 not_found_entity: The specified %entity% has not been found in the system
                 general_error: General error:
 
+        product:
+            error:
+                quantity_over_max_limit: 'You cannot order more than %limit% units of %sku%: %product_name%'
+                quantity_below_min_limit: 'You cannot order less than %limit% units of %sku%: %product_name%'
+                quantity_limit_is_zero: 'The item %sku%: %product_name% is not available to order.'
+
+        fields:
+            product:
+                minimum_quantity_to_order.label: Minimum Quantity To Order
+                maximum_quantity_to_order.label: Maximum Quantity To Order
+            category:
+                minimum_quantity_to_order.label: Minimum Quantity To Order
+                maximum_quantity_to_order.label: Maximum Quantity To Order
+
         system_configuration:
             groups:
                 product_options.title: Product Options
                 product_inventory_options.title: Product Inventory Options
+                product_quantity_limitations.title: Quantity Limitations
+                limitations.title: Limitations
             fields:
-                manage_inventory.label: Manage Inventory
+                manage_inventory.label: Managed Inventory
                 inventory_threshold.label: Inventory Threshold
+                backorders.label: Backorders
+                decrement_inventory:
+                    label: Decrement Inventory
+                    tooltip: Decrement inventory when order is created
+                minimum_quantity_to_order.label: Minimum Quantity To Order
+                maximum_quantity_to_order.label: Maximum Quantity To Order
 
         manage_inventory:
-            label: Manage Inventory
+            label: Managed Inventory
             choice:
                 'true': Yes
                 'false': No
         inventory_threshold:
             label: Inventory Threshold
+        decrement_inventory:
+            label: Decrement Inventory
+            choice:
+                'true': Yes
+                'false': No
+        backorders:
+            label: Backorders
+            choice:
+                'true': Yes
+                'false': No

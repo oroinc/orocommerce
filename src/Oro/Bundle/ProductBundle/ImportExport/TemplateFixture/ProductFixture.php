@@ -98,6 +98,7 @@ class ProductFixture extends AbstractTemplateRepository implements TemplateFixtu
 
         $entity->setSku('sku_001')
             ->setStatus('enabled')
+            ->setType(Product::TYPE_SIMPLE)
             ->setInventoryStatus($inventoryStatus)
             ->addName($name)
             ->addName($localizedName)
@@ -106,8 +107,7 @@ class ProductFixture extends AbstractTemplateRepository implements TemplateFixtu
             ->addDescription($description)
             ->addDescription($localizedDescription)
             ->addShortDescription($shortDescription)
-            ->addShortDescription($localizedShortDescription)
-            ->setHasVariants(true);
+            ->addShortDescription($localizedShortDescription);
     }
 
     /**

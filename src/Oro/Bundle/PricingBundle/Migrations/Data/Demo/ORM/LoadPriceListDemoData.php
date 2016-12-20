@@ -40,9 +40,10 @@ class LoadPriceListDemoData extends AbstractFixture implements ContainerAwareInt
         $handler = fopen($filePath, 'r');
         $headers = fgetcsv($handler, 1000, ',');
 
+        $currencies = [$this->container->get('oro_currency.config.currency')->getDefaultCurrency()];
+
         while (($data = fgetcsv($handler, 1000, ',')) !== false) {
             $row = array_combine($headers, array_values($data));
-            $currencies = array_map('trim', explode(',', $row['currencies']));
 
             $priceList = new PriceList();
             $priceList

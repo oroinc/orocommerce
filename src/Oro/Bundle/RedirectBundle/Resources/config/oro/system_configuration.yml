@@ -1,0 +1,32 @@
+system_configuration:
+    fields:
+        oro_redirect.enable_direct_url:
+            data_type: boolean
+            type: oro_config_checkbox
+            priority: 500
+            options:
+                label: oro.redirect.system_configuration.fields.enable_direct_url.label
+                required: false
+
+        oro_redirect.canonical_url_type:
+            data_type: string
+            type: 'Symfony\Component\Form\Extension\Core\Type\ChoiceType'
+            priority: 300
+            options:
+                label: oro.redirect.system_configuration.fields.canonical_url_type.label
+                choices:
+                    system: oro.redirect.system_configuration.fields.canonical_url_type.choice.system.label
+                    direct: oro.redirect.system_configuration.fields.canonical_url_type.choice.direct.label
+
+    tree:
+        system_configuration:
+            platform:
+                children:
+                    websites:
+                        children:
+                            routing:
+                                children:
+                                    websites_routing_general:
+                                        children:
+                                            - oro_redirect.enable_direct_url
+                                            - oro_redirect.canonical_url_type

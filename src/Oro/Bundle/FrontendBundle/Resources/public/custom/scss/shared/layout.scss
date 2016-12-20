@@ -1,4 +1,5 @@
-/* START MIDDLE BAR FOR CUSTOM TEMPLATE */
+// @theme: custom;
+
 @include breakpoint('tablet') {
   .middlebar {
     padding: 10px 0 0;
@@ -7,7 +8,7 @@
     &__right {
       width: 100%;
       margin-left: auto;
-      margin: 5px 0 -25px;
+      margin: 5px 0 -10px;
       display: block;
     }
 
