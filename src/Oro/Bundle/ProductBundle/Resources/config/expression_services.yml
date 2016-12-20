@@ -93,3 +93,10 @@ services:
             - '@translator'
         tags:
             - { name: validator.constraint_validator, alias: oro_product.validator_constraints.expression_validator }
+
+    oro_product.autocomplete_fields_provider:
+        class: Oro\Bundle\ProductBundle\Expression\Autocomplete\AutocompleteFieldsProvider
+        arguments:
+            - '@oro_product.expression.parser'
+            - '@oro_product.expression.fields_provider'
+            - '@translator'

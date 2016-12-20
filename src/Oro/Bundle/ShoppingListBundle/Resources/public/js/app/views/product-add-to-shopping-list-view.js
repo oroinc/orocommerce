@@ -7,7 +7,6 @@ define(function(require) {
     var ApiAccessor = require('oroui/js/tools/api-accessor');
     var routing = require('routing');
     var mediator = require('oroui/js/mediator');
-    var Error = require('oroui/js/error');
     var $ = require('jquery');
     var _ = require('underscore');
 
@@ -410,7 +409,6 @@ define(function(require) {
                 },
                 error: function(xhr) {
                     mediator.execute('hideLoading');
-                    Error.handle({}, xhr, {enforce: true});
                 }
             });
         },

@@ -16,7 +16,7 @@ use Oro\Bundle\SaleBundle\Model\ExtendQuoteAddress;
  * @Config(
  *       defaultValues={
  *          "entity"={
- *              "icon"="icon-map-marker"
+ *              "icon"="fa-map-marker"
  *          },
  *          "note"={
  *              "immutable"=true

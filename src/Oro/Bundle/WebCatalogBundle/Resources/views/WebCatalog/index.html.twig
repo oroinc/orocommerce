@@ -1,0 +1,16 @@
+{% extends 'OroUIBundle:actions:index.html.twig' %}
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+
+{% set pageTitle = 'oro.webcatalog.entity_plural_label'|trans %}
+{% set gridName = 'web-catalog-grid' %}
+
+{% block navButtons %}
+    {% if resource_granted('oro_web_catalog_create') %}
+        <div class="btn-group">
+            {{ UI.addButton({
+                'path': path('oro_web_catalog_create'),
+                'entity_label': 'oro.webcatalog.entity_label'|trans
+            }) }}
+        </div>
+    {% endif %}
+{% endblock %}

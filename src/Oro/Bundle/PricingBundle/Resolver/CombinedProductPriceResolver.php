@@ -9,10 +9,16 @@ use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToPriceListRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
+use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
 class CombinedProductPriceResolver
 {
+    /**
+     * @var CombinedPriceListTriggerHandler
+     */
+    protected $triggerHandler;
+
     /**
      * @var ManagerRegistry
      */
@@ -41,11 +47,16 @@ class CombinedProductPriceResolver
     /**
      * @param ManagerRegistry $registry
      * @param InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor
+     * @param CombinedPriceListTriggerHandler $triggerHandler
      */
-    public function __construct(ManagerRegistry $registry, InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor,
+        CombinedPriceListTriggerHandler $triggerHandler
+    ) {
         $this->registry = $registry;
         $this->insertFromSelectQueryExecutor = $insertFromSelectQueryExecutor;
+        $this->triggerHandler = $triggerHandler;
     }
 
     /**
@@ -80,6 +91,7 @@ class CombinedProductPriceResolver
             $combinedPriceList,
             $product
         );
+        $this->triggerHandler->processByProduct($combinedPriceList, $product);
     }
 
     /**

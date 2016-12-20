@@ -5,7 +5,7 @@ navigation:
                 label:           'oro.product.menu.products_tab.label'
                 uri:             '#'
                 extras:
-                    icon:        icon-briefcase
+                    icon:        fa-briefcase
                     position:    300
 
             product_list:
@@ -36,12 +36,25 @@ navigation:
                     position:    100
                     routes:      ['/^oro_product_frontend_product/']
 
+            product_attributes_index:
+                label: 'oro.product.menu.product_attributes'
+                route: 'oro_attribute_index'
+                route_parameters:
+                    alias: 'product'
+                extras:
+                    routes: ['oro_attribute*']
+
         tree:
             application_menu:
                 children:
                     products_tab:
                         children:
                             product_list: ~
+                    system_tab:
+                        children:
+                            attributes_list:
+                                children:
+                                    product_attributes_index: ~
             shortcuts:
                 children:
                     shortcut_product_list: ~

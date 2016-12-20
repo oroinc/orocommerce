@@ -15,7 +15,7 @@
     <div{{ block('block_attributes') }}>
         <div class="checkout__head">
             <h2 class="checkout__title">
-                <span class="badge badge_md badge_circle badge_orange">{{ stepOrder }}</span>
+                <span class="checkout__title-icon">{{ stepOrder }}</span>
                 {{ workflowStep.label|trans({},'workflows') }}
             </h2>
         </div>
@@ -58,17 +58,18 @@
              data-page-component-options="{{ {
                  widgetModule: 'oroui/js/widget/collapse-widget',
                  storageKey: id,
-                 animationSpeed: 0
+                 animationSpeed: 0,
+                 forcedState: (false == isLineItemListValid) ? true : null
              }|json_encode() }}"
         >
             <div class="checkout-order-summary__header">
                 <div data-collapse-trigger>
                     <div class="checkout-order-summary__icon-group">
-                        <span class="badge badge_sm badge_orange badge_circled-corners mmr7-md mmr7-sm">
-                          <i class="cf-basket"></i>
+                        <span class="badge-square">
+                          <i class="fa-shopping-cart"></i>
                         </span>
                         <span class="collapse-view__trigger">
-                            <i class="collapse-view__trigger-icon cf-play cf--gray checkout-order-summary__icon-play"></i>
+                            <i class="collapse-view__trigger-icon fa-caret-right"></i>
                         </span>
                     </div>
                     <h3 class="checkout-order-summary__title">{{ 'oro.checkout.order_summary.label'|trans }}</h3>
@@ -80,7 +81,7 @@
                 {% set editLink = workflowItem.data.get('edit_order_link') %}
                 {% if editLink %}
                     <a href="{{ editLink }}" class="checkout-order-summary__edit-link">
-                        <i class="cf-pencil"></i>
+                        <i class="fa-pencil"></i>
                         {{ 'oro.checkout.order_summary.edit_order'|trans }}
                     </a>
                 {% endif %}
@@ -165,6 +166,22 @@
                                     </div>
                                 </td>
                             </tr>
+                            {% set errorPath = 'product.' ~ lineItem.productSku %}
+                            {% if lineItemErrors is iterable and lineItemErrors[errorPath] is defined and lineItemErrors[errorPath] is iterable %}
+                                {% for error in lineItemErrors[errorPath] %}
+                                    <script>
+                                        require(['oroui/js/messenger'], function(messenger) {
+                                            messenger.notificationFlashMessage('error', '{{ error.message }}', {
+                                                style: 'validation',
+                                                container: $('#product-error-{{ lineItem.productSku }}')
+                                            })
+                                        });
+                                    </script>
+                                    <tr>
+                                        <td id="product-error-{{ lineItem.productSku }}" colspan="3"></td>
+                                    </tr>
+                                {% endfor %}
+                            {% endif %}
                         {% endfor %}
                         </tbody>
                     </table>
@@ -177,7 +194,7 @@
             {% if hasEditList %}
                 <td class="oro-grid-table__edit">
                     <a href="{{ editLink }}">
-                        <i class="cf-pencil"></i>
+                        <i class="fa-pencil"></i>
                         {{ 'oro.checkout.order_summary.edit_order'|trans }}
                     </a>
                 </td>

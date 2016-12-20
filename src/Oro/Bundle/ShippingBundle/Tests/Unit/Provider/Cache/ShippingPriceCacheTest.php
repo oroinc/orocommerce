@@ -4,6 +4,7 @@ namespace Oro\Bundle\ShippingBundle\Provider\Cache;
 
 use Doctrine\Common\Cache\CacheProvider;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\DoctrineShippingLineItemCollection;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextCacheKeyGenerator;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
@@ -51,8 +52,7 @@ class ShippingPriceCacheTest extends \PHPUnit_Framework_TestCase
      */
     public function testHasPrice($isContains, $hasPrice)
     {
-        /** @var ShippingContextInterface $context */
-        $context = $this->getEntity(ShippingContext::class);
+        $context = $this->createShippingContext([]);
 
         $this->cacheProvider->expects(static::once())
             ->method('contains')
@@ -84,8 +84,7 @@ class ShippingPriceCacheTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetPrice($isContains, Price $price = null)
     {
-        /** @var ShippingContextInterface $context */
-        $context = $this->getEntity(ShippingContext::class);
+        $context = $this->createShippingContext([]);
 
         $this->cacheProvider->expects(static::once())
             ->method('contains')
@@ -116,10 +115,9 @@ class ShippingPriceCacheTest extends \PHPUnit_Framework_TestCase
 
     public function testSavePrice()
     {
-        /** @var ShippingContextInterface $context */
-        $context = $this->getEntity(ShippingContext::class, [
-            'sourceEntity' => new \stdClass(),
-            'sourceEntityIdentifier' => 1,
+        $context = $this->createShippingContext([
+            ShippingContext::FIELD_SOURCE_ENTITY => new \stdClass(),
+            ShippingContext::FIELD_SOURCE_ENTITY_ID => 1
         ]);
 
         $price = Price::create(10, 'USD');
@@ -138,5 +136,19 @@ class ShippingPriceCacheTest extends \PHPUnit_Framework_TestCase
             ->method('deleteAll');
 
         $this->cache->deleteAllPrices();
+    }
+
+    /**
+     * @param array $params
+     *
+     * @return ShippingContext
+     */
+    private function createShippingContext(array $params)
+    {
+        $actualParams = array_merge([
+            ShippingContext::FIELD_LINE_ITEMS => new DoctrineShippingLineItemCollection([])
+        ], $params);
+
+        return new ShippingContext($actualParams);
     }
 }

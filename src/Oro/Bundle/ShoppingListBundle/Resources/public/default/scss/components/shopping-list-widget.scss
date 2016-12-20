@@ -1,3 +1,5 @@
+// @theme: default
+
 .shopping-list-widget {
   &:hover > .header-row__toggle {
     display: block !important;
@@ -59,9 +61,13 @@
       color: get-color('additional', 'dark');
     }
 
-    [class^="cf-"]:before {
-      font-size: 18px;
-      color: get-color('ui', 'normal');
+    [class^="fa-"] {
+      margin-right: 5px;
+
+      &:before {
+        font-size: 18px;
+        color: get-color('ui', 'normal');
+      }
     }
   }
 }
@@ -110,6 +116,12 @@
 
     background: transparent;
   }
+
+  &__icon {
+    margin-right: 3px;
+
+    @include badge(33px);
+  }
 }
 
 .order-builder-clear-btn {
@@ -151,7 +163,7 @@
 // *** All code below has not implemented yet!!!
 .main-menu__item {
   .cart-widget__list-trigger {
-    text-indent: .4rem;
+    text-indent: 4px;
   }
 }
 

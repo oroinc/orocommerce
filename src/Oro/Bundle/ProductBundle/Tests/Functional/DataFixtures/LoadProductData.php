@@ -81,7 +81,8 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
                 ->setOrganization($organization)
                 ->setInventoryStatus($inventoryStatuses[$item['inventoryStatus']])
                 ->setStatus($item['status'])
-                ->setPrimaryUnitPrecision($unitPrecision);
+                ->setPrimaryUnitPrecision($unitPrecision)
+                ->setType($item['type']);
 
             if (!empty($item['names'])) {
                 foreach ($item['names'] as $name) {

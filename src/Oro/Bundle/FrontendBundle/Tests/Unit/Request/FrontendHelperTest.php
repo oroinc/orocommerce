@@ -84,7 +84,7 @@ class FrontendHelperTest extends \PHPUnit_Framework_TestCase
             ->with('installed');
 
         $helper = new FrontendHelper(self::BACKEND_PREFIX, $container);
-        $this->assertSame(false, $helper->isFrontendRequest());
+        $this->assertFalse($helper->isFrontendRequest());
     }
 
     public function testIsFrontendRequestNotInstalled()
@@ -107,6 +107,48 @@ class FrontendHelperTest extends \PHPUnit_Framework_TestCase
             ->willReturn(false);
 
         $helper = new FrontendHelper(self::BACKEND_PREFIX, $container);
-        $this->assertSame(false, $helper->isFrontendRequest(new Request([], [], ['_route' => 'test'])));
+        $this->assertFalse($helper->isFrontendRequest(new Request([], [], ['_route' => 'test'])));
+    }
+
+    public function testIsFrontendUrlForNotInstalled()
+    {
+        /** @var ContainerInterface|\PHPUnit_Framework_MockObject_MockObject $container */
+        $container = $this->getMock(ContainerInterface::class);
+
+        $container->expects($this->once())
+            ->method('getParameter')
+            ->with('installed')
+            ->willReturn(false);
+
+        $helper = new FrontendHelper(self::BACKEND_PREFIX, $container);
+        $this->assertFalse($helper->isFrontendUrl('/test'));
+    }
+
+    public function testIsFrontendUrlForBackendUrl()
+    {
+        /** @var ContainerInterface|\PHPUnit_Framework_MockObject_MockObject $container */
+        $container = $this->getMock(ContainerInterface::class);
+
+        $container->expects($this->once())
+            ->method('getParameter')
+            ->with('installed')
+            ->willReturn(true);
+
+        $helper = new FrontendHelper(self::BACKEND_PREFIX, $container);
+        $this->assertFalse($helper->isFrontendUrl(self::BACKEND_PREFIX . '/test'));
+    }
+
+    public function testIsFrontendUrl()
+    {
+        /** @var ContainerInterface|\PHPUnit_Framework_MockObject_MockObject $container */
+        $container = $this->getMock(ContainerInterface::class);
+
+        $container->expects($this->once())
+            ->method('getParameter')
+            ->with('installed')
+            ->willReturn(true);
+
+        $helper = new FrontendHelper(self::BACKEND_PREFIX, $container);
+        $this->assertTrue($helper->isFrontendUrl('/test'));
     }
 }

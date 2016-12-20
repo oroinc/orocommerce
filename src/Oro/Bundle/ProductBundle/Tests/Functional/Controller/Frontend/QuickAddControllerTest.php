@@ -197,8 +197,8 @@ abstract class QuickAddControllerTest extends WebTestCase
             self::VALIDATION_ERROR_ROWS => 3,
             self::VALIDATION_ERRORS     => [
                 sprintf(self::VALIDATION_ERROR_NOT_FOUND, 'SKU1'),
-                sprintf(self::VALIDATION_ERROR_MALFORMED, 5),
-                sprintf(self::VALIDATION_ERROR_MALFORMED, 6)
+                sprintf(self::VALIDATION_ERROR_MALFORMED, 6),
+                sprintf(self::VALIDATION_ERROR_MALFORMED, 7)
             ]
         ];
 

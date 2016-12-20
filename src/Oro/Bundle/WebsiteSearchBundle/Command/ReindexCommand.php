@@ -64,10 +64,10 @@ class ReindexCommand extends ContainerAwareCommand
      */
     private function getStartingMessage($class, $websiteId)
     {
-        $websitePlaceholder = $websiteId ? sprintf(' and website id %d', $websiteId) : '';
+        $websitePlaceholder = $websiteId ? sprintf(' and website ID %d', $websiteId) : '';
 
         return sprintf(
-            'Starting reindex task for "%s"%s...',
+            'Starting reindex task for %s%s...',
             $class ?: 'all mapped entities',
             $websitePlaceholder
         );

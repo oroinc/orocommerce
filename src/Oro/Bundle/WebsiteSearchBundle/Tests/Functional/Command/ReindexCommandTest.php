@@ -22,7 +22,7 @@ class ReindexCommandTest extends WebTestCase
         );
 
         $expectedOutput = <<<COUT
-Starting reindex task for "Oro\Bundle\TestFrameworkBundle\Entity\TestProduct" and website id 123...
+Starting reindex task for Oro\Bundle\TestFrameworkBundle\Entity\TestProduct and website ID 123...
 Reindex finished successfully.
 
 COUT;

@@ -7,6 +7,7 @@ use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtension;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
+use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class OroCommerceMenuBundleInstaller implements
@@ -37,7 +38,7 @@ class OroCommerceMenuBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_1';
+        return 'v1_2';
     }
 
     /**
@@ -51,11 +52,15 @@ class OroCommerceMenuBundleInstaller implements
         $this->createOroCommerceMenuUpdateDescriptionTable($schema);
 
         /** Foreign keys generation **/
+        $this->addOroCommerceMenuUpdateForeignKeys($schema);
         $this->addOroCommerceMenuUpdateTitleForeignKeys($schema);
         $this->addOroCommerceMenuUpdateDescriptionForeignKeys($schema);
 
         /** Associations */
         $this->addOroCommerceMenuUpdateImageAssociation($schema);
+
+        /** Cleaning up MenuBundle */
+        $this->removeMenuBundleTables($schema, $queries);
     }
 
     /**
@@ -71,16 +76,15 @@ class OroCommerceMenuBundleInstaller implements
         $table->addColumn('parent_key', 'string', ['length' => 100, 'notnull' => false]);
         $table->addColumn('uri', 'string', ['length' => 1023, 'notnull' => false]);
         $table->addColumn('menu', 'string', ['length' => 100]);
-        $table->addColumn('ownership_type', 'string', []);
-        $table->addColumn('owner_id', 'integer', ['notnull' => true]);
         $table->addColumn('icon', 'string', ['length' => 150, 'notnull' => false]);
         $table->addColumn('is_active', 'boolean', []);
         $table->addColumn('is_divider', 'boolean', []);
         $table->addColumn('is_custom', 'boolean', []);
         $table->addColumn('priority', 'integer', ['notnull' => false]);
+        $table->addColumn('scope_id', 'integer', ['notnull' => true]);
         $table->addColumn('condition', 'string', ['length' => 512, 'notnull' => false]);
         $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['key', 'ownership_type', 'owner_id'], 'oro_commerce_menu_upd_uidx');
+        $table->addUniqueIndex(['key', 'scope_id', 'menu'], 'oro_commerce_menu_upd_uidx');
     }
 
     /**
@@ -169,6 +173,73 @@ class OroCommerceMenuBundleInstaller implements
             self::MAX_MENU_UPDATE_IMAGE_SIZE_IN_MB,
             self::THUMBNAIL_WIDTH_SIZE_IN_PX,
             self::THUMBNAIL_HEIGHT_SIZE_IN_PX
+        );
+    }
+
+    /**
+     * Add `oro_commerce_menu_upd` foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOroCommerceMenuUpdateForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable(self::ORO_COMMERCE_MENU_UPDATE_TABLE_NAME);
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_scope'),
+            ['scope_id'],
+            ['id']
+        );
+    }
+
+    /**
+     * Remove `MenuBundle` tables and entity configs
+     *
+     * @param Schema $schema
+     * @param QueryBag $queries
+     */
+    protected function removeMenuBundleTables(Schema $schema, QueryBag $queries)
+    {
+        $this->safeDropTable($schema, 'orob2b_menu_item');
+        $this->safeDropTable($schema, 'orob2b_menu_item_title');
+        $this->safeDropTable($schema, 'oro_menu_item');
+        $this->safeDropTable($schema, 'oro_menu_item_title');
+
+        $this->dropEntityConfig($queries, 'OroB2B\Bundle\MenuBundle\Entity\MenuItem');
+        $this->dropEntityConfig($queries, 'Oro\Bundle\MenuBundle\Entity\MenuItem');
+    }
+
+    /**
+     * @param Schema $schema
+     * @param string $tableName
+     */
+    protected function safeDropTable(Schema $schema, $tableName)
+    {
+        if ($schema->hasTable($tableName)) {
+            $schema->dropTable($tableName);
+        }
+    }
+
+    /**
+     * @param QueryBag $queries
+     * @param string $className
+     */
+    protected function dropEntityConfig(QueryBag $queries, $className)
+    {
+        $queries->addPostQuery(
+            new ParametrizedSqlMigrationQuery(
+                'DELETE FROM oro_entity_config_field WHERE entity_id IN ('
+                . 'SELECT id FROM oro_entity_config WHERE class_name = :class)',
+                ['class' => $className],
+                ['class' => 'string']
+            )
+        );
+
+        $queries->addPostQuery(
+            new ParametrizedSqlMigrationQuery(
+                'DELETE FROM oro_entity_config WHERE class_name = :class',
+                ['class' => $className],
+                ['class' => 'string']
+            )
         );
     }
 }

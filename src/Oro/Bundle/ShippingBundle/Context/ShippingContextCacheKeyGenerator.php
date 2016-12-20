@@ -14,14 +14,14 @@ class ShippingContextCacheKeyGenerator
     {
         $lineItems = array_map(function (ShippingLineItemInterface $item) {
             return $this->lineItemToString($item);
-        }, $context->getLineItems());
+        }, $context->getLineItems()->toArray());
 
         // if order of line item was changed, hash should not be changed
         usort($lineItems, function ($a, $b) {
             return strcmp(md5($a), md5($b));
         });
 
-        return crc32(implode('', array_merge($lineItems, [
+        return (string)crc32(implode('', array_merge($lineItems, [
             $context->getCurrency(),
             $context->getPaymentMethod(),
             $this->addressToString($context->getBillingAddress()),
