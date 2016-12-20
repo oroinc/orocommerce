@@ -148,7 +148,7 @@ class IndexDataProviderTest extends \PHPUnit_Framework_TestCase
             ->willReturnCallback(
                 function ($name, IndexEntityEvent $event) use ($indexData) {
                     foreach ($indexData as $data) {
-                        $method = count($data) === 3 ? 'addField' : 'addPlaceholderField';
+                        $method = count($data) === 4 ? 'addField' : 'addPlaceholderField';
                         call_user_func_array([$event, $method], $data);
                     }
                 }
@@ -172,14 +172,14 @@ class IndexDataProviderTest extends \PHPUnit_Framework_TestCase
             'simple field' => [
                 'entityConfig' => ['fields' => [['name' => 'sku', 'type' => Query::TYPE_TEXT]]],
                 'indexData' => [
-                    [1, 'sku', 'SKU-01'],
+                    [1, 'sku', 'SKU-01', false],
                 ],
-                'expected' => [1 => ['text' => ['sku' => 'SKU-01', 'all_text' => 'SKU-01']]],
+                'expected' => [1 => ['text' => ['sku' => 'SKU-01']]],
             ],
             'simple field with html' => [
                 'entityConfig' => ['fields' => [['name' => 'title', 'type' => Query::TYPE_TEXT]]],
                 'indexData' => [
-                    [1, 'title', '<p>SKU-01</p>'],
+                    [1, 'title', '<p>SKU-01</p>', true],
                 ],
                 'expected' => [1 => ['text' => ['title' => 'SKU-01', 'all_text' => 'SKU-01']]],
             ],
@@ -193,7 +193,7 @@ class IndexDataProviderTest extends \PHPUnit_Framework_TestCase
                     ],
                 ],
                 'indexData' => [
-                    [1, 'title_WEBSITE_ID', '<p>SKU-01</p>', ['WEBSITE_ID' => 1, 'LOCALIZATION_ID' => 5]],
+                    [1, 'title_WEBSITE_ID', '<p>SKU-01</p>', ['WEBSITE_ID' => 1, 'LOCALIZATION_ID' => 5], true],
                 ],
                 'expected' => [
                     1 => [
@@ -213,16 +213,16 @@ class IndexDataProviderTest extends \PHPUnit_Framework_TestCase
                             'type' => Query::TYPE_TEXT,
                         ],
                         [
-                            'name' => 'description_LOCALIZATION_ID',
+                            'name' => 'descr_LOCALIZATION_ID',
                             'type' => Query::TYPE_TEXT,
                         ],
                     ],
                 ],
                 'indexData' => [
-                    [1, 'title_WEBSITE_ID', '<p>SKU-01</p>', ['WEBSITE_ID' => 1, 'LOCALIZATION_ID' => 5]],
-                    [1, 'title_WEBSITE_ID', '<p>SKU-01-gb</p>', ['WEBSITE_ID' => 1, 'LOCALIZATION_ID' => 6]],
-                    [1, 'description_LOCALIZATION_ID', '<p>en_US</p>', ['WEBSITE_ID' => 1, 'LOCALIZATION_ID' => 5]],
-                    [1, 'description_LOCALIZATION_ID', '<p>en_GB</p>', ['WEBSITE_ID' => 1, 'LOCALIZATION_ID' => 6]],
+                    [1, 'title_WEBSITE_ID', '<p>SKU-01</p>', ['WEBSITE_ID' => 1, 'LOCALIZATION_ID' => 5], true],
+                    [1, 'title_WEBSITE_ID', '<p>SKU-01-gb</p>', ['WEBSITE_ID' => 1, 'LOCALIZATION_ID' => 6], true],
+                    [1, 'descr_LOCALIZATION_ID', '<p>en_US</p>', ['WEBSITE_ID' => 1, 'LOCALIZATION_ID' => 5], true],
+                    [1, 'descr_LOCALIZATION_ID', '<p>en_GB</p>', ['WEBSITE_ID' => 1, 'LOCALIZATION_ID' => 6], true],
                 ],
                 'expected' => [
                     1 => [
@@ -231,8 +231,8 @@ class IndexDataProviderTest extends \PHPUnit_Framework_TestCase
                             'all_text' => 'SKU-01 en_US SKU-01-gb en_GB',
                             'all_text_5' => 'SKU-01 en_US',
                             'all_text_6' => 'SKU-01-gb en_GB',
-                            'description_5' => 'en_US',
-                            'description_6' => 'en_GB',
+                            'descr_5' => 'en_US',
+                            'descr_6' => 'en_GB',
                         ],
                     ],
                 ],
@@ -246,7 +246,7 @@ class IndexDataProviderTest extends \PHPUnit_Framework_TestCase
                         ],
                     ],
                 ],
-                'indexData' => [[1, 'qty', 1]],
+                'indexData' => [[1, 'qty', 1, true]],
                 'expected' => [
                     1 => [
                         'integer' => ['qty' => 1],
@@ -255,7 +255,7 @@ class IndexDataProviderTest extends \PHPUnit_Framework_TestCase
             ],
             'empty config field' => [
                 'entityConfig' => [],
-                'indexData' => [[1, 'qty', 1]],
+                'indexData' => [[1, 'qty', 1, true]],
                 'expected' => [],
             ],
             'do not drop value in all_text and all_text_localization fields, like metadata' => [
@@ -266,7 +266,7 @@ class IndexDataProviderTest extends \PHPUnit_Framework_TestCase
                             'type' => Query::TYPE_TEXT,
                         ],
                         [
-                            'name' => 'description_LOCALIZATION_ID',
+                            'name' => 'descr_LOCALIZATION_ID',
                             'type' => Query::TYPE_TEXT,
                         ],
                         [
@@ -276,13 +276,13 @@ class IndexDataProviderTest extends \PHPUnit_Framework_TestCase
                     ],
                 ],
                 'indexData' => [
-                    [1, 'title_WEBSITE_ID', '<p>SKU-01</p>', ['WEBSITE_ID' => 1, 'LOCALIZATION_ID' => 5]],
-                    [1, 'title_WEBSITE_ID', '<p>SKU-01-gb</p>', ['WEBSITE_ID' => 1, 'LOCALIZATION_ID' => 6]],
-                    [1, 'description_LOCALIZATION_ID', '<p>en_US</p>', ['WEBSITE_ID' => 1, 'LOCALIZATION_ID' => 5]],
-                    [1, 'description_LOCALIZATION_ID', '<p>en_GB</p>', ['WEBSITE_ID' => 1, 'LOCALIZATION_ID' => 6]],
-                    [1, 'all_text', 'for_all_text'],
-                    [1, 'all_text_LOCALIZATION_ID', 'title5 descr5 keywords5', ['LOCALIZATION_ID' => 5]],
-                    [1, 'all_text_LOCALIZATION_ID', 'title6 descr6 keywords6', ['LOCALIZATION_ID' => 6]],
+                    [1, 'title_WEBSITE_ID', '<p>SKU-01</p>', ['WEBSITE_ID' => 1, 'LOCALIZATION_ID' => 5], true],
+                    [1, 'title_WEBSITE_ID', '<p>SKU-01-gb</p>', ['WEBSITE_ID' => 1, 'LOCALIZATION_ID' => 6], true],
+                    [1, 'descr_LOCALIZATION_ID', '<p>en_US</p>', ['WEBSITE_ID' => 1, 'LOCALIZATION_ID' => 5], true],
+                    [1, 'descr_LOCALIZATION_ID', '<p>en_GB</p>', ['WEBSITE_ID' => 1, 'LOCALIZATION_ID' => 6], true],
+                    [1, 'all_text', 'for_all_text', true],
+                    [1, 'all_text_LOCALIZATION_ID', 'title5 descr5 keywords5', ['LOCALIZATION_ID' => 5], true],
+                    [1, 'all_text_LOCALIZATION_ID', 'title6 descr6 keywords6', ['LOCALIZATION_ID' => 6], true],
                 ],
                 'expected' => [
                     1 => [
@@ -292,8 +292,8 @@ class IndexDataProviderTest extends \PHPUnit_Framework_TestCase
                                 'title6 descr6 keywords6',
                             'all_text_5' => 'SKU-01 en_US title5 descr5 keywords5 for_all_text',
                             'all_text_6' => 'SKU-01-gb en_GB title6 descr6 keywords6 for_all_text',
-                            'description_5' => 'en_US',
-                            'description_6' => 'en_GB',
+                            'descr_5' => 'en_US',
+                            'descr_6' => 'en_GB',
                         ],
                     ],
                 ],
@@ -316,9 +316,9 @@ class IndexDataProviderTest extends \PHPUnit_Framework_TestCase
                     ],
                 ],
                 'indexData' => [
-                    [1, 'integer_WEBSITE_ID', 1, ['WEBSITE_ID' => 1, 'LOCALIZATION_ID' => 5]],
-                    [1, 'datetime_LOCALIZATION_ID', $date, ['WEBSITE_ID' => 1, 'LOCALIZATION_ID' => 6]],
-                    [1, 'decimal_WEBSITE_ID', 1.1, ['WEBSITE_ID' => 2, 'LOCALIZATION_ID' => 5]],
+                    [1, 'integer_WEBSITE_ID', 1, ['WEBSITE_ID' => 1, 'LOCALIZATION_ID' => 5], true],
+                    [1, 'datetime_LOCALIZATION_ID', $date, ['WEBSITE_ID' => 1, 'LOCALIZATION_ID' => 6], true],
+                    [1, 'decimal_WEBSITE_ID', 1.1, ['WEBSITE_ID' => 2, 'LOCALIZATION_ID' => 5], true],
                 ],
                 'expected' => [
                     1 => [

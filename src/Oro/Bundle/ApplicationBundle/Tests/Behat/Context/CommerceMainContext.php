@@ -13,6 +13,7 @@ class CommerceMainContext extends OroFeatureContext implements OroPageObjectAwar
     use PageObjectDictionary;
 
     /**
+     * This step used for login bayer from frontend of commerce
      * Example: Given I login as AmandaRCole@example.org buyer
      *
      * @Given /^I login as (?P<email>\S+) buyer$/

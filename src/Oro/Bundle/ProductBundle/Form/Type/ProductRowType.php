@@ -36,8 +36,7 @@ class ProductRowType extends AbstractProductAwareType
                     'required' => false,
                     'label' => 'oro.product.quantity.label',
                 ]
-            )
-        ;
+            );
     }
 
     /**
@@ -48,7 +47,7 @@ class ProductRowType extends AbstractProductAwareType
         $resolver->setDefaults(
             [
                 'validation_required' => false,
-                'data_class'=> 'Oro\Bundle\ProductBundle\Model\ProductRow'
+                'data_class' => 'Oro\Bundle\ProductBundle\Model\ProductRow'
             ]
         );
         $resolver->setAllowedTypes('validation_required', 'bool');

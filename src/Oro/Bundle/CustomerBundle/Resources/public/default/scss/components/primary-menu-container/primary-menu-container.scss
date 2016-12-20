@@ -10,8 +10,8 @@
 
 @include breakpoint('desktop') {
     .primary-menu-container {
-        .icon-minus,
-        .icon-plus {
+        .fa-minus,
+        .fa-plus {
             opacity: 0;
         }
     }
@@ -21,8 +21,8 @@
     .primary-menu-container {
         padding: $primary-menu-container-inner-offset-tablet;
 
-        .icon-minus,
-        .icon-plus {
+        .fa-minus,
+        .fa-plus {
             position: absolute;
             right: 10px;
             top: 15px;
@@ -30,16 +30,16 @@
             font-size: 12px;
         }
 
-        .icon-minus {
+        .fa-minus {
             opacity: 0;
         }
 
         .expanded & {
-            .icon-plus {
+            .fa-plus {
                 opacity: 0;
             }
 
-            .icon-minus {
+            .fa-minus {
                 opacity: 1;
             }
         }

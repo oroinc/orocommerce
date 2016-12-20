@@ -2,12 +2,14 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Total;
 
+use Oro\Bundle\CurrencyBundle\Entity\MultiCurrency;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Provider\DiscountSubtotalProvider;
 use Oro\Bundle\OrderBundle\Total\TotalHelper;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
+use Oro\Bundle\CurrencyBundle\Converter\RateConverterInterface;
 
 class TotalHelperTest extends \PHPUnit_Framework_TestCase
 {
@@ -22,6 +24,9 @@ class TotalHelperTest extends \PHPUnit_Framework_TestCase
 
     /** @var DiscountSubtotalProvider|\PHPUnit_Framework_MockObject_MockObject */
     protected $discountSubtotalProvider;
+
+    /** @var RateConverterInterface|\PHPUnit_Framework_MockObject_MockObject */
+    protected $rateConverter;
 
     protected function setUp()
     {
@@ -43,10 +48,15 @@ class TotalHelperTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->rateConverter = $this->getMockBuilder('Oro\Bundle\CurrencyBundle\Converter\RateConverterInterface')
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->helper = new TotalHelper(
             $this->totalProvider,
             $this->lineItemSubtotalProvider,
-            $this->discountSubtotalProvider
+            $this->discountSubtotalProvider,
+            $this->rateConverter
         );
     }
 
@@ -60,6 +70,13 @@ class TotalHelperTest extends \PHPUnit_Framework_TestCase
         $this->lineItemSubtotalProvider->expects($this->any())
             ->method('getSubtotal')
             ->willReturn($subtotal);
+
+        $this->rateConverter
+            ->expects($this->once())
+            ->method('getBaseCurrencyAmount')
+            ->willReturnCallback(function (MultiCurrency $multiCurrency) {
+                return $multiCurrency->getValue();
+            });
 
         $order = new Order();
         $this->helper->fillSubtotals($order);
@@ -98,6 +115,13 @@ class TotalHelperTest extends \PHPUnit_Framework_TestCase
         $this->totalProvider->expects($this->any())
             ->method('getTotal')
             ->willReturn($total);
+
+        $this->rateConverter
+            ->expects($this->once())
+            ->method('getBaseCurrencyAmount')
+            ->willReturnCallback(function (MultiCurrency $multiCurrency) {
+                return $multiCurrency->getValue();
+            });
 
         $order = new Order();
         $this->helper->fillTotal($order);

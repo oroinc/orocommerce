@@ -3,29 +3,35 @@
 namespace Oro\Bundle\ShippingBundle\Migrations\Schema\v1_2;
 
 use Doctrine\DBAL\Schema\Schema;
+
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
-use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
 
-class ShippingRuleNotes implements Migration, NoteExtensionAwareInterface
+class ShippingRuleNotes implements Migration, ActivityExtensionAwareInterface
 {
-    /** @var NoteExtension */
-    protected $noteExtension;
-
     /**
-     * {@inheritdoc}
+     * @var ActivityExtension
      */
-    public function setNoteExtension(NoteExtension $noteExtension)
-    {
-        $this->noteExtension = $noteExtension;
-    }
+    protected $activityExtension;
 
     /**
      * {@inheritdoc}
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        $this->noteExtension->addNoteAssociation($schema, 'oro_shipping_rule');
+        $associationTableName = $this->activityExtension->getAssociationTableName('oro_note', 'oro_shipping_rule');
+        if (!$schema->hasTable($associationTableName)) {
+            $this->activityExtension->addActivityAssociation($schema, 'oro_note', 'oro_shipping_rule');
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setActivityExtension(ActivityExtension $activityExtension)
+    {
+        $this->activityExtension = $activityExtension;
     }
 }

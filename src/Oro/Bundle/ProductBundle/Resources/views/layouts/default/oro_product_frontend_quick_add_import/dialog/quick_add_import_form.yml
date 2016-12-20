@@ -36,7 +36,7 @@ layout:
                 type: input
                 action: reset
                 text: Cancel
-                style: gray
+                style: ''
         - '@add':
             id: quick_add_import_form_submit
             parentId: widget_actions
@@ -45,7 +45,7 @@ layout:
                 type: input
                 action: submit
                 text: Upload
-                style: orange
+                style: btn--info
         - '@move':
             id: widget_actions
             parentId: widget_content

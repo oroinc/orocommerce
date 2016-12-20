@@ -6,14 +6,12 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 
 class LoadProductMetaData extends AbstractFixture implements DependentFixtureInterface
 {
     use SEOMetaDataFieldsTrait;
 
-    const META_TITLES = 'metaTitles';
     const META_DESCRIPTIONS = 'metaDescriptions';
     const META_KEYWORDS = 'metaKeywords';
 
@@ -22,7 +20,6 @@ class LoadProductMetaData extends AbstractFixture implements DependentFixtureInt
      */
     public static $metadata = [
         LoadProductData::PRODUCT_1 => [
-            self::META_TITLES => LoadProductData::PRODUCT_1,
             self::META_DESCRIPTIONS => self::META_DESCRIPTIONS,
             self::META_KEYWORDS => self::META_KEYWORDS,
         ]
@@ -47,7 +44,7 @@ class LoadProductMetaData extends AbstractFixture implements DependentFixtureInt
     public function getDependencies()
     {
         return [
-            'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
+            LoadProductData::class,
         ];
     }
 }

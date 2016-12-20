@@ -5,19 +5,19 @@ namespace Oro\Bundle\CommerceMenuBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\CommerceMenuBundle\Model\ExtendMenuUpdate;
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\NavigationBundle\Entity\MenuUpdateInterface;
 use Oro\Bundle\NavigationBundle\Entity\MenuUpdateTrait;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Oro\Bundle\NavigationBundle\Entity\Repository\MenuUpdateRepository")
  * @ORM\Table(
  *      name="oro_commerce_menu_upd",
  *      uniqueConstraints={
  *          @ORM\UniqueConstraint(
  *              name="oro_commerce_menu_upd_uidx",
- *              columns={"key", "ownership_type", "owner_id"}
+ *              columns={"key", "scope_id", "menu"}
  *          )
  *      }
  * )
@@ -68,7 +68,7 @@ use Oro\Bundle\NavigationBundle\Entity\MenuUpdateTrait;
  * @Config(
  *      defaultValues={
  *          "entity"={
- *              "icon"="icon-th"
+ *              "icon"="fa-th"
  *          }
  *      }
  * )

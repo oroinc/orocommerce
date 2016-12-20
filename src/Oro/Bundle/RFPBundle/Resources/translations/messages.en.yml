@@ -149,15 +149,17 @@ oro:
 
         frontend:
             request:
+                title.label: 'Products'
                 lineitem:
                     product: 'Product'
                     requested:
                         label: ''
                         quantity: 'Requested Quantity'
                         price: 'Target Price'
-                        add: 'Add Line'
+                        add: 'Add Another Line'
                     notes: 'Notes'
-                    add: 'Add Product'
+                    add: 'Add Another Product'
+                    qty: 'QTY'
         feature:
             label: 'Request For Quote'
             description: 'Request For Quote allows users to place Requests for chosen products'
@@ -193,6 +195,7 @@ oro:
                 assigned_account_users.label: 'Assigned To'
                 create_form.back.label: 'Back'
                 create_form.submit.label: 'Submit Request For Quote'
+                create_form.send.label: 'Submit Request'
                 page_title.label: 'RFQ #%id%: %firstName% %lastName%'
                 title.label: 'Request For Quote #%id%'
                 cancellation_reason.label: 'Cancelation Reason'

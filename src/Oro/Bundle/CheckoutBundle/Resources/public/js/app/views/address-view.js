@@ -43,6 +43,10 @@ define(function(require) {
                 this.$addressSelector.focus();
             }
             this.$addressSelector.prop('disabled', disabled || isOneOption).inputWidget('refresh');
+            if (isOneOption) {
+                this.$addressSelector.inputWidget('dispose');
+                this.$addressSelector.hide();
+            }
         },
 
         _onAddressChanged: function(e) {

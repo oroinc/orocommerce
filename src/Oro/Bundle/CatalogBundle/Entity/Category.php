@@ -5,25 +5,56 @@ namespace Oro\Bundle\CatalogBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-
 use Gedmo\Mapping\Annotation as Gedmo;
-
+use Oro\Bundle\CatalogBundle\Model\ExtendCategory;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\CatalogBundle\Model\ExtendCategory;
+use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
+use Oro\Bundle\RedirectBundle\Entity\SluggableTrait;
 use Oro\Component\Tree\Entity\TreeTrait;
 
 /**
  * @ORM\Table(name="oro_catalog_category")
  * @ORM\Entity(repositoryClass="Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository")
  * @Gedmo\Tree(type="nested")
+ * @ORM\AssociationOverrides({
+ *      @ORM\AssociationOverride(
+ *          name="slugPrototypes",
+ *          joinTable=@ORM\JoinTable(
+ *              name="oro_catalog_cat_slug_prototype",
+ *              joinColumns={
+ *                  @ORM\JoinColumn(name="category_id", referencedColumnName="id", onDelete="CASCADE")
+ *              },
+ *              inverseJoinColumns={
+ *                  @ORM\JoinColumn(
+ *                      name="localized_value_id",
+ *                      referencedColumnName="id",
+ *                      onDelete="CASCADE",
+ *                      unique=true
+ *                  )
+ *              }
+ *          )
+ *      ),
+ *     @ORM\AssociationOverride(
+ *          name="slugs",
+ *          joinTable=@ORM\JoinTable(
+ *              name="oro_catalog_cat_slug",
+ *              joinColumns={
+ *                  @ORM\JoinColumn(name="category_id", referencedColumnName="id", onDelete="CASCADE")
+ *              },
+ *              inverseJoinColumns={
+ *                  @ORM\JoinColumn(name="slug_id", referencedColumnName="id", unique=true, onDelete="CASCADE")
+ *              }
+ *          )
+ *      )
+ * })
  * @Config(
  *      routeName="oro_catalog_category_index",
  *      defaultValues={
  *          "entity"={
- *              "icon"="icon-folder-close"
+ *              "icon"="fa-folder"
  *          },
  *          "security"={
  *              "type"="ACL",
@@ -41,9 +72,10 @@ use Oro\Component\Tree\Entity\TreeTrait;
  *
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class Category extends ExtendCategory
+class Category extends ExtendCategory implements SluggableInterface
 {
     use TreeTrait;
+    use SluggableTrait;
 
     const MATERIALIZED_PATH_DELIMITER = '_';
 
@@ -251,13 +283,15 @@ class Category extends ExtendCategory
     {
         parent::__construct();
 
-        $this->titles            = new ArrayCollection();
-        $this->childCategories   = new ArrayCollection();
-        $this->products          = new ArrayCollection();
+        $this->titles = new ArrayCollection();
+        $this->childCategories = new ArrayCollection();
+        $this->products = new ArrayCollection();
         $this->shortDescriptions = new ArrayCollection();
-        $this->longDescriptions  = new ArrayCollection();
-        $this->createdAt         = new \DateTime('now', new \DateTimeZone('UTC'));
-        $this->updatedAt         = new \DateTime('now', new \DateTimeZone('UTC'));
+        $this->longDescriptions = new ArrayCollection();
+        $this->slugPrototypes = new ArrayCollection();
+        $this->slugs = new ArrayCollection();
+        $this->createdAt = new \DateTime('now', new \DateTimeZone('UTC'));
+        $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
     }
 
     /**
@@ -450,7 +484,7 @@ class Category extends ExtendCategory
      */
     public function __toString()
     {
-        return (string) $this->getDefaultTitle();
+        return (string)$this->getDefaultTitle();
     }
 
     /**

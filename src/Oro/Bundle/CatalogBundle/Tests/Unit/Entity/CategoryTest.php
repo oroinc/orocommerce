@@ -4,6 +4,7 @@ namespace Oro\Bundle\CatalogBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Bundle\CatalogBundle\Entity\CategoryDefaultProductOptions;
 use Oro\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Category;
@@ -42,6 +43,11 @@ class CategoryTest extends \PHPUnit_Framework_TestCase
         ];
 
         $this->assertPropertyAccessors(new Category(), $properties);
+
+        $this->assertPropertyCollections(new Category(), [
+            ['slugPrototypes', new LocalizedFallbackValue()],
+            ['slugs', new Slug()],
+        ]);
     }
 
     public function testConstruct()

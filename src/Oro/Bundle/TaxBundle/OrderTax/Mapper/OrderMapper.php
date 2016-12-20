@@ -25,7 +25,6 @@ class OrderMapper extends AbstractOrderMapper
     public function map($order)
     {
         $taxable = (new Taxable())
-            ->setAmount($order->getSubtotal())
             ->setIdentifier($order->getId())
             ->setClassName(ClassUtils::getClass($order))
             ->setItems($this->mapLineItems($order->getLineItems()))
@@ -34,6 +33,14 @@ class OrderMapper extends AbstractOrderMapper
             ->setTaxationAddress($this->getTaxationAddress($order))
             ->setContext($this->getContext($order))
             ->setCurrency($order->getCurrency());
+
+        if ($order->getSubtotal()) {
+            $taxable->setAmount($order->getSubtotal());
+        }
+
+        if ($order->getShippingCost()) {
+            $taxable->setShippingCost($order->getShippingCost()->getValue());
+        }
 
         return $taxable;
     }

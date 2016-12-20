@@ -5,7 +5,7 @@ navigation:
                 label:  'oro.inventory.menu.inventory_tab.label'
                 uri:    '#'
                 extras:
-                    icon:     icon-building
+                    icon:     fa-building-o
                     position: 400
 
             inventory_level_list:

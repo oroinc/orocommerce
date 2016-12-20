@@ -4,25 +4,19 @@ namespace Oro\Bundle\WebsiteBundle\Migrations\Schema\v1_2;
 
 use Doctrine\DBAL\Schema\Schema;
 
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
-use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
 
-class OroWebsiteBundle implements Migration, NoteExtensionAwareInterface
+class OroWebsiteBundle implements Migration, ActivityExtensionAwareInterface
 {
     const WEBSITE_TABLE_NAME = 'orob2b_website';
 
-    /** @var NoteExtension */
-    protected $noteExtension;
-
     /**
-     * @inheritDoc
+     * @var ActivityExtension
      */
-    public function setNoteExtension(NoteExtension $noteExtension)
-    {
-        $this->noteExtension = $noteExtension;
-    }
+    protected $activityExtension;
 
     /**
      * @inheritDoc
@@ -50,7 +44,7 @@ class OroWebsiteBundle implements Migration, NoteExtensionAwareInterface
      */
     protected function addNoteAssociations(Schema $schema)
     {
-        $this->noteExtension->addNoteAssociation($schema, self::WEBSITE_TABLE_NAME);
+        $this->activityExtension->addActivityAssociation($schema, 'oro_note', self::WEBSITE_TABLE_NAME);
     }
 
     /**
@@ -61,5 +55,13 @@ class OroWebsiteBundle implements Migration, NoteExtensionAwareInterface
     {
         $table = $schema->getTable(self::WEBSITE_TABLE_NAME);
         $table->getColumn('url')->setNotnull(false);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setActivityExtension(ActivityExtension $activityExtension)
+    {
+        $this->activityExtension = $activityExtension;
     }
 }
