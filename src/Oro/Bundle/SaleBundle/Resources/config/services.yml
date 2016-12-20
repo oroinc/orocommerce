@@ -46,8 +46,7 @@ services:
         public: false
         arguments:
             - '@oro_order.handler.order_currency_handler'
-            - '@oro_pricing.subtotal_processor.provider.subtotal_line_item'
-            - '@oro_pricing.subtotal_processor.total_processor_provider'
+            - '@oro_order.handler.order_totals_handler'
             - '@doctrine'
 
     oro_sale.service.quote_product_offer_matcher:
@@ -159,3 +158,11 @@ services:
         arguments: ["@request_stack"]
         tags:
              - { name: doctrine.event_listener, event: preUpdate }
+
+    oro_sale.provider.quote_currency_checker:
+       class: Oro\Bundle\SaleBundle\Provider\CurrencyCheckerProvider
+       public: false
+       arguments:
+           - '@doctrine'
+       tags:
+           - { name: oro_multi_currency.currency_checker_provider }
