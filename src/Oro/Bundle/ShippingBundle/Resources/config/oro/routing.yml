@@ -1,4 +1,4 @@
-oro_shipping_rule:
+oro_shipping_methods_configs_rule:
     resource:     "@OroShippingBundle/Controller/ShippingMethodsConfigsRuleController.php"
     type:         annotation
     prefix:       /shippingrule

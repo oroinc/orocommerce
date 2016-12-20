@@ -73,8 +73,11 @@
             'subblocks': [
                 {
                     'data': [
-                        form_row(form.rule),
+                        form_row(form.rule.enabled),
+                        form_row(form.rule.name),
+                        form_row(form.rule.sortOrder),
                         form_row(form.currency),
+                        form_row(form.rule.stopProcessing),
                     ]
                 },
             ]
@@ -85,6 +88,16 @@
                 {
                     'data': [
                         form_widget(form.destinations, {'attr': {'class': 'oro-shipping-rule-collection oro-shipping-rule-destinations-collection row-oro'}}),
+                    ]
+                }
+            ]
+        },
+        {
+            'title': 'oro.shipping.sections.shippingrule_conditions'|trans,
+            'subblocks': [
+                {
+                    'data': [
+                        form_row(form.rule.expression),
                     ]
                 }
             ]

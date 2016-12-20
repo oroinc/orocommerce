@@ -156,18 +156,18 @@ class ShippingMethodsConfigsRuleControllerTest extends WebTestCase
         $name = 'New Rule';
 
         $formValues = $form->getPhpValues();
-        $formValues['oro_shipping_rule']['name'] = $name;
-        $formValues['oro_shipping_rule']['enabled'] = false;
-        $formValues['oro_shipping_rule']['currency'] = 'USD';
-        $formValues['oro_shipping_rule']['priority'] = 1;
-        $formValues['oro_shipping_rule']['destinations'] = [
+        $formValues['oro_shipping_methods_configs_rule']['rule']['name'] = $name;
+        $formValues['oro_shipping_methods_configs_rule']['rule']['enabled'] = false;
+        $formValues['oro_shipping_methods_configs_rule']['currency'] = 'USD';
+        $formValues['oro_shipping_methods_configs_rule']['rule']['sortOrder'] = 1;
+        $formValues['oro_shipping_methods_configs_rule']['destinations'] = [
             [
-                'postalCode' => '54321',
+                'postalCodes' => '54321',
                 'country' => 'FR',
                 'region' => 'FR-75'
             ]
         ];
-        $formValues['oro_shipping_rule']['methodConfigs'] = [
+        $formValues['oro_shipping_methods_configs_rule']['methodConfigs'] = [
             [
                 'method' => FlatRateShippingMethod::IDENTIFIER,
                 'options' => [],
@@ -262,18 +262,18 @@ class ShippingMethodsConfigsRuleControllerTest extends WebTestCase
 
         $newName = 'New name for new rule';
         $formValues = $form->getPhpValues();
-        $formValues['oro_shipping_rule']['name'] = $newName;
-        $formValues['oro_shipping_rule']['enabled'] = false;
-        $formValues['oro_shipping_rule']['currency'] = 'USD';
-        $formValues['oro_shipping_rule']['priority'] = 1;
-        $formValues['oro_shipping_rule']['destinations'] = [
+        $formValues['oro_shipping_methods_configs_rule']['rule']['name'] = $newName;
+        $formValues['oro_shipping_methods_configs_rule']['rule']['enabled'] = false;
+        $formValues['oro_shipping_methods_configs_rule']['currency'] = 'USD';
+        $formValues['oro_shipping_methods_configs_rule']['rule']['sortOrder'] = 1;
+        $formValues['oro_shipping_methods_configs_rule']['destinations'] = [
             [
-                'postalCode' => '54321',
+                'postalCodes' => '54321',
                 'country' => 'TH',
                 'region' => 'TH-83'
             ]
         ];
-        $formValues['oro_shipping_rule']['methodConfigs'] = [
+        $formValues['oro_shipping_methods_configs_rule']['methodConfigs'] = [
             [
                 'method' => FlatRateShippingMethod::IDENTIFIER,
                 'options' => [],
@@ -375,7 +375,7 @@ class ShippingMethodsConfigsRuleControllerTest extends WebTestCase
         $form = $crawler->selectButton('Save and Close')->form();
 
         $formValues = $form->getPhpValues();
-        $formValues['oro_shipping_rule']['destinations'] = [];
+        $formValues['oro_shipping_methods_configs_rule']['destinations'] = [];
 
         $this->client->followRedirects(true);
         $this->client->request($form->getMethod(), $form->getUri(), $formValues);
@@ -489,15 +489,15 @@ class ShippingMethodsConfigsRuleControllerTest extends WebTestCase
         /** @var Form $form */
         $form = $crawler->selectButton('Save')->form();
 
-        $form['oro_shipping_rule[enabled]'] = !$shippingRule->getRule()->isEnabled();
-        $form['oro_shipping_rule[name]'] = $shippingRule->getRule()->getName().' new name';
-        $form['oro_shipping_rule[sortOrder]'] = $shippingRule->getRule()->getSortOrder() + 1;
-        $form['oro_shipping_rule[currency]'] = $shippingRule->getCurrency() === 'USD' ? 'EUR' : 'USD';
-        $form['oro_shipping_rule[stopProcessing]'] = !$shippingRule->getRule()->isStopProcessing();
-        $form['oro_shipping_rule[expression]'] = $shippingRule->getRule()->getExpression().' new data';
-        $form['oro_shipping_rule[destinations][0][postalCode]'] = '11111';
-        $form['oro_shipping_rule[methodConfigs][0][typeConfigs][0][options][price]'] = 12;
-        $form['oro_shipping_rule[methodConfigs][0][typeConfigs][0][enabled]'] = true;
+        $form['oro_shipping_methods_configs_rule[rule][enabled]'] = !$shippingRule->getRule()->isEnabled();
+        $form['oro_shipping_methods_configs_rule[rule][name]'] = $shippingRule->getRule()->getName().' new name';
+        $form['oro_shipping_methods_configs_rule[rule][sortOrder]'] = $shippingRule->getRule()->getSortOrder() + 1;
+        $form['oro_shipping_methods_configs_rule[currency]'] = $shippingRule->getCurrency() === 'USD' ? 'EUR' : 'USD';
+        $form['oro_shipping_methods_configs_rule[rule][stopProcessing]'] = !$shippingRule->getRule()->isStopProcessing();
+        $form['oro_shipping_methods_configs_rule[rule][expression]'] = $shippingRule->getRule()->getExpression().' new data';
+        $form['oro_shipping_methods_configs_rule[destinations][0][postalCode]'] = '11111';
+        $form['oro_shipping_methods_configs_rule[methodConfigs][0][typeConfigs][0][options][price]'] = 12;
+        $form['oro_shipping_methods_configs_rule[methodConfigs][0][typeConfigs][0][enabled]'] = true;
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);

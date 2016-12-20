@@ -6,7 +6,7 @@ navigation:
                 route:           'oro_shipping_methods_configs_rule_index'
                 extras:
                     position:    100
-                    routes:      ['/^oro_shipping_rule/']
+                    routes:      ['/^oro_shipping_methods_configs_rule/']
                     description: 'oro.shipping.menu.shipping_rule.description'
 
             shortcut_shipping_rule:

@@ -16,7 +16,7 @@ class ShippingMethodConfigCollectionType extends AbstractType
     const NAME = 'oro_shipping_method_config_collection';
 
     /**
-     * @var ShippingMethodRegistry
+     * @var MethodConfigCollectionSubscriber
      */
     protected $subscriber;
 
