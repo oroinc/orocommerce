@@ -305,14 +305,14 @@ class ShippingMethodsConfigsRuleControllerTest extends WebTestCase
         $destination = $shippingRule->getDestinations();
         static::assertEquals('TH', $destination[0]->getCountry()->getIso2Code());
         static::assertEquals('TH-83', $destination[0]->getRegion()->getCombinedCode());
-        static::assertEquals('54321', $destination[0]->getPostalCodes());
+        static::assertEquals('54321', $destination[0]->getPostalCodes()->current()->getName());
         $methodConfigs = $shippingRule->getMethodConfigs();
         static::assertEquals(FlatRateShippingMethod::IDENTIFIER, $methodConfigs[0]->getMethod());
         static::assertEquals(
             24,
             $methodConfigs[0]->getTypeConfigs()[0]->getOptions()[FlatRateShippingMethodType::PRICE_OPTION]
         );
-        static::assertFalse($shippingRule->isEnabled());
+        static::assertFalse($shippingRule->getRule()->isEnabled());
 
         return $shippingRule;
     }
