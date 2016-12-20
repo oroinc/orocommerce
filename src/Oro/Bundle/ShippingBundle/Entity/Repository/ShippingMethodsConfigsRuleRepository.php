@@ -15,31 +15,40 @@ class ShippingMethodsConfigsRuleRepository extends EntityRepository
      */
     public function getByDestinationAndCurrency(AddressInterface $shippingAddress, $currency)
     {
-        return $this->createQueryBuilder('methodsConfigsRule')
+        $query = $this->createQueryBuilder('methodsConfigsRule')
             ->addSelect('methodConfigs', 'typeConfigs')
-            ->innerJoin(
-                'methodsConfigsRule.destinations',
-                'destination',
-                'WITH',
-                'destination.methodsConfigsRule = methodsConfigsRule and 
-                    destination.country = :country and
-                    destination.region = :region'
-            )
-            ->innerJoin(
-                'destination.postalCodes',
-                'postalCode',
-                'WITH',
-                'postalCode.destination = destination and postalCode.name in :postalCodes'
-            )
             ->leftJoin('methodsConfigsRule.methodConfigs', 'methodConfigs')
             ->leftJoin('methodConfigs.typeConfigs', 'typeConfigs')
             ->where('methodsConfigsRule.currency = :currency')
-            ->setParameter('country', $shippingAddress->getCountryIso2())
-            ->setParameter('region', $shippingAddress->getRegionCode())
-            ->setParameter('postalCodes', explode(',', $shippingAddress->getPostalCode()))
-            ->setParameter('currency', $currency)
-            ->getQuery()->execute()
-        ;
+            ->setParameter('currency', $currency);
+
+        if ($shippingAddress->getCountryIso2()) {
+            $query->innerJoin(
+                'methodsConfigsRule.destinations',
+                'destination',
+                'WITH',
+                'destination.country = :country'
+            )->setParameter('country', $shippingAddress->getCountryIso2());
+
+            if ($shippingAddress->getRegionCode()) {
+                $query->innerJoin(
+                    'destination.region',
+                    'region',
+                    'WITH',
+                    'region.code = :regionCode'
+                )->setParameter('regionCode', $shippingAddress->getRegionCode());
+            }
+            if ($shippingAddress->getPostalCode()) {
+                $query->innerJoin(
+                    'destination.postalCodes',
+                    'postalCode',
+                    'WITH',
+                    'postalCode.name in (:postalCodes)'
+                )->setParameter('postalCodes', explode(',', $shippingAddress->getPostalCode()));
+            }
+        }
+
+        return $query->getQuery()->execute();
     }
 
     /**
