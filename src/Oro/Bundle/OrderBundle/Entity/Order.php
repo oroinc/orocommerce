@@ -480,54 +480,6 @@ class Order extends ExtendOrder implements
         $this->updateTotal();
     }
 
-    /**
-     * @ORM\PostLoad
-     */
-    public function loadMultiCurrencyFields()
-    {
-        $this->subtotal = MultiCurrency::create(
-            $this->subtotalValue,
-            $this->currency,
-            $this->baseSubtotalValue
-        );
-        $this->total = MultiCurrency::create(
-            $this->totalValue,
-            $this->currency,
-            $this->baseTotalValue
-        );
-    }
-
-    /**
-     * @ORM\PrePersist
-     * @ORM\PreUpdate
-     *
-     * @return void
-     */
-    public function updateMultiCurrencyFields()
-    {
-        if ($this->subtotal instanceof MultiCurrency) {
-            $this->subtotalValue = $this->subtotal->getValue();
-            if (null !== $this->subtotalValue && '' !== $this->subtotalValue) {
-                $this->setSubtotalCurrency($this->subtotal->getCurrency());
-                $this->setBaseSubtotalValue($this->subtotal->getBaseCurrencyValue());
-            } else {
-                $this->setSubtotalCurrency(null);
-                $this->setBaseSubtotalValue(null);
-            }
-        }
-
-        if ($this->total instanceof MultiCurrency) {
-            $this->totalValue = $this->total->getValue();
-            if (null !== $this->totalValue && '' !== $this->totalValue) {
-                $this->setTotalCurrency($this->total->getCurrency());
-                $this->setBaseTotalValue($this->total->getBaseCurrencyValue());
-            } else {
-                $this->setTotalCurrency(null);
-                $this->setBaseTotalValue(null);
-            }
-        }
-    }
-
 
     /**
      * @return string
