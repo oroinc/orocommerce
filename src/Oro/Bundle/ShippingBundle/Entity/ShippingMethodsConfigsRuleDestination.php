@@ -293,6 +293,7 @@ class ShippingMethodsConfigsRuleDestination
     public function addPostalCode(ShippingMethodsConfigsRuleDestinationPostalCode $postalCode)
     {
         if (!$this->hasPostalCode($postalCode)) {
+            $postalCode->setDestination($this);
             $this->postalCodes->add($postalCode);
         }
 

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Functional\Controller;
 
+use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethod;
 use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethodType;
@@ -94,7 +95,6 @@ class ShippingMethodsConfigsRuleControllerTest extends WebTestCase
                 'expression',
                 'methodConfigs',
                 'destinations',
-                'delete_link',
                 'disable_link',
                 'enable_link',
                 'update_link',
@@ -217,7 +217,7 @@ class ShippingMethodsConfigsRuleControllerTest extends WebTestCase
 
         $html = $crawler->html();
 
-        $this->assertContains($shippingRule->getName(), $html);
+        $this->assertContains($shippingRule->getRule()->getName(), $html);
         $this->checkCurrenciesOnPage($shippingRule->getCurrency(), $html);
         $destination = $shippingRule->getDestinations();
         $this->assertContains((string)$destination[0], $html);
@@ -305,7 +305,7 @@ class ShippingMethodsConfigsRuleControllerTest extends WebTestCase
         $destination = $shippingRule->getDestinations();
         static::assertEquals('TH', $destination[0]->getCountry()->getIso2Code());
         static::assertEquals('TH-83', $destination[0]->getRegion()->getCombinedCode());
-        static::assertEquals('54321', $destination[0]->getPostalCode());
+        static::assertEquals('54321', $destination[0]->getPostalCodes());
         $methodConfigs = $shippingRule->getMethodConfigs();
         static::assertEquals(FlatRateShippingMethod::IDENTIFIER, $methodConfigs[0]->getMethod());
         static::assertEquals(
@@ -344,7 +344,7 @@ class ShippingMethodsConfigsRuleControllerTest extends WebTestCase
 
         $html = $response->getContent();
 
-        static::assertContains($shippingRule->getName(), $html);
+        static::assertContains($shippingRule->getRule()->getName(), $html);
         $this->checkCurrenciesOnPage($shippingRule->getCurrency(), $html);
         $destination = $shippingRule->getDestinations();
         static::assertContains((string)$destination[0], $html);
@@ -393,7 +393,9 @@ class ShippingMethodsConfigsRuleControllerTest extends WebTestCase
     public function testStatusDisableMass()
     {
         $this->initClient([], static::generateBasicAuthHeader());
+        /** @var ShippingMethodsConfigsRule $shippingRule1 */
         $shippingRule1 = $this->getReference('shipping_rule.1');
+        /** @var ShippingMethodsConfigsRule $shippingRule2 */
         $shippingRule2 = $this->getReference('shipping_rule.2');
         $url = $this->getUrl(
             'oro_status_shipping_rule_massaction',
@@ -414,10 +416,10 @@ class ShippingMethodsConfigsRuleControllerTest extends WebTestCase
         $this->assertTrue($data['successful']);
         $this->assertSame(2, $data['count']);
         $this->assertFalse(
-            $this->getShippingMethodsConfigsRuleByName($shippingRule1->getName())->isEnabled()
+            $this->getShippingMethodsConfigsRuleById($shippingRule1->getId())->getRule()->isEnabled()
         );
         $this->assertFalse(
-            $this->getShippingMethodsConfigsRuleByName($shippingRule2->getName())->isEnabled()
+            $this->getShippingMethodsConfigsRuleById($shippingRule2->getId())->getRule()->isEnabled()
         );
     }
 
@@ -427,7 +429,9 @@ class ShippingMethodsConfigsRuleControllerTest extends WebTestCase
     public function testStatusEnableMass()
     {
         $this->initClient([], static::generateBasicAuthHeader());
+        /** @var ShippingMethodsConfigsRule $shippingRule1 */
         $shippingRule1 = $this->getReference('shipping_rule.1');
+        /** @var ShippingMethodsConfigsRule $shippingRule2 */
         $shippingRule2 = $this->getReference('shipping_rule.2');
         $url = $this->getUrl(
             'oro_status_shipping_rule_massaction',
@@ -448,10 +452,10 @@ class ShippingMethodsConfigsRuleControllerTest extends WebTestCase
         $this->assertTrue($data['successful']);
         $this->assertSame(2, $data['count']);
         $this->assertTrue(
-            $this->getShippingMethodsConfigsRuleByName($shippingRule1->getName())->isEnabled()
+            $this->getShippingMethodsConfigsRuleById($shippingRule1->getId())->getRule()->isEnabled()
         );
         $this->assertTrue(
-            $this->getShippingMethodsConfigsRuleByName($shippingRule2->getName())->isEnabled()
+            $this->getShippingMethodsConfigsRuleById($shippingRule2->getId())->getRule()->isEnabled()
         );
     }
 
@@ -489,13 +493,14 @@ class ShippingMethodsConfigsRuleControllerTest extends WebTestCase
         /** @var Form $form */
         $form = $crawler->selectButton('Save')->form();
 
-        $form['oro_shipping_methods_configs_rule[rule][enabled]'] = !$shippingRule->getRule()->isEnabled();
-        $form['oro_shipping_methods_configs_rule[rule][name]'] = $shippingRule->getRule()->getName().' new name';
-        $form['oro_shipping_methods_configs_rule[rule][sortOrder]'] = $shippingRule->getRule()->getSortOrder() + 1;
+        $rule = $shippingRule->getRule();
+        $form['oro_shipping_methods_configs_rule[rule][enabled]'] = !$rule->isEnabled();
+        $form['oro_shipping_methods_configs_rule[rule][name]'] = $rule->getName().' new name';
+        $form['oro_shipping_methods_configs_rule[rule][sortOrder]'] = $rule->getSortOrder() + 1;
         $form['oro_shipping_methods_configs_rule[currency]'] = $shippingRule->getCurrency() === 'USD' ? 'EUR' : 'USD';
-        $form['oro_shipping_methods_configs_rule[rule][stopProcessing]'] = !$shippingRule->getRule()->isStopProcessing();
-        $form['oro_shipping_methods_configs_rule[rule][expression]'] = $shippingRule->getRule()->getExpression().' new data';
-        $form['oro_shipping_methods_configs_rule[destinations][0][postalCode]'] = '11111';
+        $form['oro_shipping_methods_configs_rule[rule][stopProcessing]'] = !$rule->isStopProcessing();
+        $form['oro_shipping_methods_configs_rule[rule][expression]'] = $rule->getExpression().' new data';
+        $form['oro_shipping_methods_configs_rule[destinations][0][postalCodes]'] = '11111';
         $form['oro_shipping_methods_configs_rule[methodConfigs][0][typeConfigs][0][options][price]'] = 12;
         $form['oro_shipping_methods_configs_rule[methodConfigs][0][typeConfigs][0][enabled]'] = true;
 
@@ -536,8 +541,24 @@ class ShippingMethodsConfigsRuleControllerTest extends WebTestCase
      */
     protected function getShippingMethodsConfigsRuleByName($name)
     {
+        /** @var Rule $rule */
+        $rule = $this->getEntityManager()
+            ->getRepository('OroRuleBundle:Rule')
+            ->findOneBy(['name' => $name]);
+
         return $this->getEntityManager()
             ->getRepository('OroShippingBundle:ShippingMethodsConfigsRule')
-            ->findOneBy(['name' => $name]);
+            ->findOneBy(['rule' => $rule]);
+    }
+
+    /**
+     * @param int $id
+     * @return ShippingMethodsConfigsRule|null
+     */
+    protected function getShippingMethodsConfigsRuleById($id)
+    {
+        return $this->getEntityManager()
+            ->getRepository('OroShippingBundle:ShippingMethodsConfigsRule')
+            ->find($id);
     }
 }

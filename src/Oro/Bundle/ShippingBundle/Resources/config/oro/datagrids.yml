@@ -52,10 +52,6 @@ datagrids:
                 type:    url
                 route:   oro_shipping_methods_configs_rule_view
                 params:  [ id ]
-            update_link:
-                type:    url
-                route:   oro_shipping_methods_configs_rule_update
-                params:  [ id ]
             enable_link:
                 type:       url
                 route:      oro_api_enable_shippingrules
@@ -105,13 +101,6 @@ datagrids:
                 icon:          eye
                 label:         oro.grid.action.view
                 rowAction:     true
-            update:
-                type:         navigate
-                link:         update_link
-                acl_resource: oro_shipping_methods_configs_rule_update
-                icon:         pencil-square-o
-                label:        oro.grid.action.update
-                rowAction:    true
             enable:
                 type:         ajax
                 acl_resource: oro_shipping_methods_configs_rule_update
