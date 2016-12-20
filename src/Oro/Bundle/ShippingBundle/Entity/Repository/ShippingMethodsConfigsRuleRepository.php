@@ -21,6 +21,7 @@ class ShippingMethodsConfigsRuleRepository extends EntityRepository
             ->leftJoin('methodConfigs.typeConfigs', 'typeConfigs')
             ->where('methodsConfigsRule.currency = :currency')
             ->setParameter('currency', $currency);
+
         if ($shippingAddress->getCountryIso2()) {
             $query->innerJoin(
                 'methodsConfigsRule.destinations',
@@ -28,6 +29,7 @@ class ShippingMethodsConfigsRuleRepository extends EntityRepository
                 'WITH',
                 'destination.country = :country'
             )->setParameter('country', $shippingAddress->getCountryIso2());
+
             if ($shippingAddress->getRegionCode()) {
                 $query->innerJoin(
                     'destination.region',

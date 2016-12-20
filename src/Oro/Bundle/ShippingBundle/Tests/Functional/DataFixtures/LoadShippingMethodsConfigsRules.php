@@ -26,9 +26,9 @@ class LoadShippingMethodsConfigsRules extends AbstractFixture
         foreach ($this->getShippingRuleData() as $reference => $data) {
             $rule = new Rule();
             $rule->setName($reference)
-                ->setEnabled($data['enabled'])
-                ->setSortOrder($data['sortOrder'])
-                ->setExpression($data['expression']);
+                ->setEnabled($data['rule']['enabled'])
+                ->setSortOrder($data['rule']['sortOrder'])
+                ->setExpression($data['rule']['expression']);
 
             $entity = new ShippingMethodsConfigsRule();
             $entity->setRule($rule)
