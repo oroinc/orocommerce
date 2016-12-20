@@ -142,17 +142,17 @@ class WebCatalogEntityIndexerListener
             return [];
         }
 
-        $nodesQueryBuilder = $this->registry->getManagerForClass(ContentNode::class)
+        $nodes = $this->registry->getManagerForClass(ContentNode::class)
             ->getRepository(ContentNode::class)
             ->getNodesByIds($nodeIds);
 
-        $nodes = [];
+        $indexedNodes = [];
         /** @var ContentNode $node */
-        foreach ($nodesQueryBuilder->getQuery()->getResult() as $node) {
-            $nodes[$node->getId()] = $node;
+        foreach ($nodes as $node) {
+            $indexedNodes[$node->getId()] = $node;
         }
 
-        return $nodes;
+        return $indexedNodes;
     }
 
     /**

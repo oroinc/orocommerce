@@ -60,7 +60,7 @@ class ContentNodeRepository extends NestedTreeRepository
 
     /**
      * @param array $ids
-     * @return QueryBuilder
+     * @return ContentNode[]
      */
     public function getNodesByIds(array $ids)
     {
@@ -68,6 +68,6 @@ class ContentNodeRepository extends NestedTreeRepository
         $qb->andWhere('node.id IN (:ids)')
             ->setParameter('ids', $ids);
 
-        return $qb;
+        return $qb->getQuery()->getResult();
     }
 }
