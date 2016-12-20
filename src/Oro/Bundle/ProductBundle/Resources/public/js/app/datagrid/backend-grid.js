@@ -37,8 +37,6 @@ define(function(require) {
          * @param {object} params
          */
         updateGridContent: function(params) {
-            this.themeOptions.serverRendered = true;
-
             this.$el.find('.grid-body').html(params.gridContent.html());
 
             this.collection.reset(params.responseJSON.data.data);

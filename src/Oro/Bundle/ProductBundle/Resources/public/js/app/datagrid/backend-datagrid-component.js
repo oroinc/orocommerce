@@ -22,8 +22,16 @@ define(function(require) {
             }
 
             ProductDataGidComponent.__super__.collectModules.apply(this, arguments);
-        }
+        },
 
+        /**
+         * @inheritDoc
+         */
+        insertDataGrid: function(options) {
+            var selector = options.gridMainContainer || '.oro-datagrid';
+
+            this.$el = options.$el.find(selector);
+        }
     });
 
     return ProductDataGidComponent;

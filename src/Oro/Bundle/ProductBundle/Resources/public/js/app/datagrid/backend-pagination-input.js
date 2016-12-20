@@ -12,13 +12,6 @@ define(function(require) {
             el: '[data-grid-pagination]'
         },
 
-        /**
-         * @inheritDoc
-         */
-        initialize: function(options) {
-            BackendPaginationInput.__super__.initialize.apply(this, arguments);
-        },
-
         makeHandles: function(handles) {
             handles = BackendPaginationInput.__super__.makeHandles.apply(this, arguments);
 

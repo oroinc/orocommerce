@@ -9,10 +9,6 @@ define(function(require) {
         themeOptions: {
             optionPrefix: 'backendsortingdropdown',
             el: '[data-grid-sorting]'
-        },
-
-        initialize: function(options) {
-            BackendSortingDropdown.__super__.initialize.call(this, options);
         }
     });
 

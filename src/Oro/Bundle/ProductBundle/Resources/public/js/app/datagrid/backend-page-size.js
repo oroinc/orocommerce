@@ -16,13 +16,6 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        initialize: function(options) {
-            BackendPageSize.__super__.initialize.call(this, options);
-        },
-
-        /**
-         * @inheritDoc
-         */
         render: function() {
             var $select = this.$el.find('[data-grid-pagesize-selector]');
             var currentSizeLabel = _.filter(
