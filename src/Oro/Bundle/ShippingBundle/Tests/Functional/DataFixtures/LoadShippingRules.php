@@ -6,10 +6,10 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRuleDestination;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodConfig;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
 use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethod;
 use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethodType;
 use Symfony\Component\Yaml\Yaml;
@@ -40,7 +40,7 @@ class LoadShippingRules extends AbstractFixture
                     ->getRepository('OroAddressBundle:Country')
                     ->findOneBy(['iso2Code' => $destination['country']]);
 
-                $shippingRuleDestination = new ShippingRuleDestination();
+                $shippingRuleDestination = new ShippingMethodsConfigsRuleDestination();
                 $shippingRuleDestination
                     ->setRule($entity)
                     ->setCountry($country);
@@ -63,14 +63,14 @@ class LoadShippingRules extends AbstractFixture
 
             if (array_key_exists('methodConfigs', $data)) {
                 foreach ($data['methodConfigs'] as $methodConfigData) {
-                    $methodConfig = new ShippingRuleMethodConfig();
+                    $methodConfig = new ShippingMethodConfig();
 
                     $methodConfig
                         ->setRule($entity)
                         ->setMethod(FlatRateShippingMethod::IDENTIFIER);
 
                     foreach ($methodConfigData['typeConfigs'] as $typeConfigData) {
-                        $typeConfig = new ShippingRuleMethodTypeConfig();
+                        $typeConfig = new ShippingMethodTypeConfig();
                         $typeConfig->setType(FlatRateShippingMethodType::IDENTIFIER)
                             ->setOptions([
                                 FlatRateShippingMethodType::PRICE_OPTION => $typeConfigData['options']['price'],

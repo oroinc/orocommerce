@@ -44,7 +44,7 @@ class OroRuleBundleInstaller implements Installation
         $table->addColumn('enabled', 'boolean', ['default' => '1']);
         $table->addColumn('sort_order', 'integer', []);
         $table->addColumn('stop_processing', 'boolean', ['default' => '0']);
-        $table->addColumn('expression', 'text', []);
+        $table->addColumn('expression', 'text', ['notnull' => false]);
         $table->addColumn('created_at', 'datetime', []);
         $table->addColumn('updated_at', 'datetime', []);
         $table->setPrimaryKey(['id']);

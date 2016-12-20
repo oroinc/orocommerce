@@ -2,8 +2,9 @@
 
 namespace Oro\Bundle\ShippingBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
@@ -17,7 +18,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
  *     mode="hidden",
  * )
  */
-class ShippingRuleDestination
+class ShippingMethodsConfigsRuleDestination
 {
     /**
      * @var integer
@@ -36,19 +37,17 @@ class ShippingRuleDestination
     protected $id;
 
     /**
-     * @var string
+     * @var Collection|ShippingMethodsConfigsRuleDestinationPostalCode[]
      *
-     * @ORM\Column(name="postal_code", type="string", length=255, nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "importexport"={
-     *              "order"=10,
-     *              "identity"=true
-     *          }
-     *      }
+     * @ORM\OneToMany(
+     *     targetEntity="ShippingMethodsConfigsRuleDestinationPostalCode",
+     *     mappedBy="destination",
+     *     cascade={"ALL"},
+     *     fetch="EAGER",
+     *     orphanRemoval=true
      * )
      */
-    protected $postalCode;
+    protected $postalCodes;
 
     /**
      * @var Region
@@ -99,9 +98,12 @@ class ShippingRuleDestination
     protected $country;
 
     /**
-     * @var ShippingRule
+     * @var ShippingMethodsConfigsRule
      *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ShippingBundle\Entity\ShippingRule", inversedBy="destinations")
+     * @ORM\ManyToOne(
+     *     targetEntity="Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule",
+     *     inversedBy="destinations"
+     * )
      * @ORM\JoinColumn(name="rule_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
      * @ConfigField(
      *      defaultValues={
@@ -111,7 +113,13 @@ class ShippingRuleDestination
      *      }
      * )
      */
-    protected $rule;
+    protected $methodConfigsRule;
+
+
+    public function __construct()
+    {
+        $this->postalCodes = new ArrayCollection();
+    }
 
     /**
      * Get id
@@ -121,19 +129,6 @@ class ShippingRuleDestination
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Set id
-     *
-     * @param int $id
-     * @return $this
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-
-        return $this;
     }
 
     /**
@@ -203,29 +198,6 @@ class ShippingRuleDestination
     }
 
     /**
-     * Set postal_code
-     *
-     * @param string $postalCode
-     * @return $this
-     */
-    public function setPostalCode($postalCode)
-    {
-        $this->postalCode = $postalCode;
-
-        return $this;
-    }
-
-    /**
-     * Get postal_code
-     *
-     * @return string
-     */
-    public function getPostalCode()
-    {
-        return $this->postalCode;
-    }
-
-    /**
      * Set country
      *
      * @param Country $country
@@ -279,36 +251,78 @@ class ShippingRuleDestination
     }
 
     /**
-     * Set rule
-     *
-     * @param ShippingRule $rule
+     * @param ShippingMethodsConfigsRule $methodConfigsRule
      * @return $this
      */
-    public function setRule($rule)
+    public function setMethodConfigsRule(ShippingMethodsConfigsRule $methodConfigsRule)
     {
-        $this->rule = $rule;
+        $this->methodConfigsRule = $methodConfigsRule;
 
         return $this;
     }
 
     /**
-     * Get rule
-     *
-     * @return ShippingRule
+     * @return ShippingMethodsConfigsRule
      */
-    public function getRule()
+    public function getMethodConfigsRule()
     {
-        return $this->rule;
+        return $this->methodConfigsRule;
     }
 
     /**
-     * Convert address to string
-     *
+     * @return Collection|ShippingMethodsConfigsRuleDestinationPostalCode[]
+     */
+    public function getPostalCodes()
+    {
+        return $this->postalCodes;
+    }
+
+    /**
+     * @param ShippingMethodsConfigsRuleDestinationPostalCode $postalCode
+     * @return bool
+     */
+    public function hasPostalCode(ShippingMethodsConfigsRuleDestinationPostalCode $postalCode)
+    {
+        return $this->postalCodes->contains($postalCode);
+    }
+
+    /**
+     * @param ShippingMethodsConfigsRuleDestinationPostalCode $postalCode
+     * @return $this
+     */
+    public function addPostalCode(ShippingMethodsConfigsRuleDestinationPostalCode $postalCode)
+    {
+        if (!$this->hasPostalCode($postalCode)) {
+            $this->postalCodes->add($postalCode);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param ShippingMethodsConfigsRuleDestinationPostalCode $postalCode
+     * @return $this
+     */
+    public function removePostalCode(ShippingMethodsConfigsRuleDestinationPostalCode $postalCode)
+    {
+        $this->postalCodes->removeElement($postalCode);
+
+        return $this;
+    }
+
+    /**
      * @return string
      */
     public function __toString()
     {
-        $countryPostalStr = implode(' ', array_filter([$this->getCountry(), $this->getPostalCode()]));
+        $postalCodesNames = [];
+        foreach ($this->getPostalCodes() as $postalCode) {
+            $postalCodesNames[] .= $postalCode->getName();
+        }
+
+        $postalCodesStr = implode(', ', $postalCodesNames);
+        $countryPostalStr = implode(' ', array_filter([$this->getCountry(), $postalCodesStr]));
+
         return implode(', ', array_filter([$this->getRegionName(), $countryPostalStr]));
     }
 }

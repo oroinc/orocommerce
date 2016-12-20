@@ -28,7 +28,7 @@ class OroRuleBundle implements Migration
         $table->addColumn('enabled', 'boolean', ['default' => true]);
         $table->addColumn('sort_order', 'integer', []);
         $table->addColumn('stop_processing', 'boolean', ['default' => false]);
-        $table->addColumn('expression', 'text', []);
+        $table->addColumn('expression', 'text', ['notnull' => false]);
         $table->addColumn('created_at', 'datetime', []);
         $table->addColumn('updated_at', 'datetime', []);
 

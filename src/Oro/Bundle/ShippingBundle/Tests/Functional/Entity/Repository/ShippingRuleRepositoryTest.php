@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ShippingBundle\Tests\Functional\Entity\Repository;
 
 use Doctrine\ORM\EntityManager;
-use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingRuleRepository;
+use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodsConfigsRuleRepository;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
 use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingRules;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -14,7 +14,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 class ShippingRuleRepositoryTest extends WebTestCase
 {
     /**
-     * @var ShippingRuleRepository
+     * @var ShippingMethodsConfigsRuleRepository
      */
     protected $repository;
 

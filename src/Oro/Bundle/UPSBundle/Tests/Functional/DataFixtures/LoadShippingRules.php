@@ -7,12 +7,10 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRuleDestination;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodConfig;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig;
-use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethod;
-use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethodType;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
 use Oro\Bundle\UPSBundle\Method\UPSShippingMethod;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -67,7 +65,7 @@ class LoadShippingRules extends AbstractFixture implements DependentFixtureInter
                     ->getRepository('OroAddressBundle:Country')
                     ->findOneBy(['iso2Code' => $destination['country']]);
 
-                $shippingRuleDestination = new ShippingRuleDestination();
+                $shippingRuleDestination = new ShippingMethodsConfigsRuleDestination();
                 $shippingRuleDestination
                     ->setRule($entity)
                     ->setCountry($country);
@@ -91,13 +89,13 @@ class LoadShippingRules extends AbstractFixture implements DependentFixtureInter
 
             foreach ($shippingMethods as $shippingMethod) {
                 if ($shippingMethod instanceof UPSShippingMethod) {
-                    $methodConfig = new ShippingRuleMethodConfig();
+                    $methodConfig = new ShippingMethodConfig();
                     $methodConfig
                         ->setRule($entity)
                         ->setMethod($shippingMethod->getIdentifier());
 
                     foreach ($shippingMethod->getTypes() as $shippingMethodType) {
-                        $typeConfig = new ShippingRuleMethodTypeConfig();
+                        $typeConfig = new ShippingMethodTypeConfig();
                         $typeConfig->setType($shippingMethodType->getIdentifier());
                         $typeConfig->setEnabled(false);
                         $methodConfig->addTypeConfig($typeConfig);

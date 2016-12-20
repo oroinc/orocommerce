@@ -2,14 +2,16 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestinationPostalCode;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRuleDestination;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
 
-class ShippingRuleDestinationTest extends \PHPUnit_Framework_TestCase
+class ShippingMethodsConfigsRuleDestinationTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTestCaseTrait;
     use EntityTrait;
@@ -25,7 +27,7 @@ class ShippingRuleDestinationTest extends \PHPUnit_Framework_TestCase
     protected $country;
 
     /**
-     * @var ShippingRuleDestination
+     * @var ShippingMethodsConfigsRuleDestination
      */
     protected $shippingRuleDestination;
 
@@ -33,12 +35,13 @@ class ShippingRuleDestinationTest extends \PHPUnit_Framework_TestCase
     {
         $this->country = $this->createMockCountry();
         $this->region = $this->createMockRegion();
+
         $this->shippingRuleDestination = $this->getEntity(
-            'Oro\Bundle\ShippingBundle\Entity\ShippingRuleDestination',
+            'Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination',
             [
                 'region' => $this->region,
                 'country' => $this->country,
-                'postalCode' => '12345',
+                'postalCodes' => new ArrayCollection([$this->createPostalCode('123')]),
             ]
         );
     }
@@ -47,14 +50,19 @@ class ShippingRuleDestinationTest extends \PHPUnit_Framework_TestCase
     {
         $properties = [
             ['id', 1],
-            ['postalCode', 'fr4a'],
             ['region', new Region('code')],
             ['regionText', 'text'],
             ['country', new Country('UA')],
-            ['rule', new ShippingRule()],
+            ['methodConfigsRule', new ShippingMethodsConfigsRule()],
         ];
 
-        $this->assertPropertyAccessors(new ShippingRuleDestination(), $properties);
+        $destination = new ShippingMethodsConfigsRuleDestination();
+        static::assertPropertyAccessors($destination, $properties);
+        static::assertPropertyCollection(
+            $destination,
+            'postalCodes',
+            $this->createPostalCode('123')
+        );
     }
 
     public function testGetRegionName()
@@ -100,7 +108,10 @@ class ShippingRuleDestinationTest extends \PHPUnit_Framework_TestCase
      */
     public function testToString(array $data, $expectedString)
     {
-        $entity = (string)$this->getEntity('Oro\Bundle\ShippingBundle\Entity\ShippingRuleDestination', $data);
+        $entity = (string) $this->getEntity(
+            'Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination',
+            $data
+        );
         $this->assertEquals($expectedString, $entity);
     }
 
@@ -114,7 +125,7 @@ class ShippingRuleDestinationTest extends \PHPUnit_Framework_TestCase
                 'data' => [
                     'country' => $this->createMockCountry(),
                     'region' => $this->createMockRegion(),
-                    'postalCode' => '12345',
+                    'postalCodes' => new ArrayCollection([$this->createPostalCode('12345')]),
                 ],
                 'expectedString' => 'RegionName, CountryName 12345'
             ],
@@ -122,7 +133,10 @@ class ShippingRuleDestinationTest extends \PHPUnit_Framework_TestCase
                 'data' => [
                     'country' => $this->createMockCountry(),
                     'region' => null,
-                    'postalCode' => '12345, 54321',
+                    'postalCodes' => new ArrayCollection([
+                        $this->createPostalCode('12345'),
+                        $this->createPostalCode('54321'),
+                    ]),
                 ],
                 'expectedString' => 'CountryName 12345, 54321'
             ],
@@ -130,7 +144,7 @@ class ShippingRuleDestinationTest extends \PHPUnit_Framework_TestCase
                 'data' => [
                     'country' => $this->createMockCountry('SecondCountryName'),
                     'region' => $this->createMockRegion('SecondRegionName'),
-                    'postalCode' => null,
+                    'postalCodes' => new ArrayCollection(),
                 ],
                 'expectedString' => 'SecondRegionName, SecondCountryName'
             ],
@@ -138,7 +152,7 @@ class ShippingRuleDestinationTest extends \PHPUnit_Framework_TestCase
                 'data' => [
                     'country' => $this->createMockCountry(),
                     'region' => null,
-                    'postalCode' => null,
+                    'postalCodes' => new ArrayCollection(),
                 ],
                 'expectedString' => 'CountryName'
             ]
@@ -190,5 +204,14 @@ class ShippingRuleDestinationTest extends \PHPUnit_Framework_TestCase
             ->method('getCode')
             ->will($this->returnValue($code));
         return $result;
+    }
+
+    /**
+     * @param string $name
+     * @return ShippingMethodsConfigsRuleDestinationPostalCode
+     */
+    protected function createPostalCode($name)
+    {
+        return (new ShippingMethodsConfigsRuleDestinationPostalCode())->setName($name);
     }
 }

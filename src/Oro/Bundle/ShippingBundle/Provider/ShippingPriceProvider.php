@@ -4,8 +4,8 @@ namespace Oro\Bundle\ShippingBundle\Provider;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodConfig;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
 use Oro\Bundle\ShippingBundle\Method\PricesAwareShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 use Oro\Bundle\ShippingBundle\Provider\Cache\ShippingPriceCache;
@@ -128,10 +128,10 @@ class ShippingPriceProvider
 
     /**
      * @param ShippingContextInterface $context
-     * @param ShippingRuleMethodConfig $methodConfig
+     * @param ShippingMethodConfig $methodConfig
      * @return array
      */
-    protected function getMethodTypesConfigs(ShippingContextInterface $context, ShippingRuleMethodConfig $methodConfig)
+    protected function getMethodTypesConfigs(ShippingContextInterface $context, ShippingMethodConfig $methodConfig)
     {
         $method = $this->registry->getShippingMethod($methodConfig->getMethod());
         $methodId = $method->getIdentifier();
@@ -186,7 +186,7 @@ class ShippingPriceProvider
     {
         return array_reduce(
             $typeConfigs,
-            function (array $result, ShippingRuleMethodTypeConfig $config) {
+            function (array $result, ShippingMethodTypeConfig $config) {
                 if ($config->isEnabled()) {
                     $result[$config->getType()] = $config->getOptions();
                 }

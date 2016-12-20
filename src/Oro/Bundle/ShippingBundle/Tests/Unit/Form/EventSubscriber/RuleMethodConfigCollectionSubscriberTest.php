@@ -13,7 +13,7 @@ use Oro\Bundle\FormBundle\Form\Extension\AdditionalAttrExtension;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodConfig;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
 use Oro\Bundle\ShippingBundle\Form\Type\FlatRateShippingMethodTypeOptionsType;
 use Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleDestinationType;
 use Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleMethodConfigCollectionType;
@@ -82,7 +82,7 @@ class RuleMethodConfigCollectionSubscriberTest extends FormIntegrationTestCase
     {
         $form = $this->factory->create(ShippingRuleType::class);
         $shippingRule = new ShippingRule();
-        $methodConfig = new ShippingRuleMethodConfig();
+        $methodConfig = new ShippingMethodConfig();
         $methodConfig->setMethod(FlatRateShippingMethod::IDENTIFIER);
         $shippingRule->addMethodConfig($methodConfig);
         $form->setData($shippingRule);

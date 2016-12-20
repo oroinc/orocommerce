@@ -6,9 +6,9 @@ use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
-use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingRuleRepository;
+use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodsConfigsRuleRepository;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRuleDestination;
 use Oro\Bundle\ShippingBundle\ExpressionLanguage\LineItemDecoratorFactory;
 use Oro\Component\ExpressionLanguage\ExpressionLanguage;
 use Psr\Log\LoggerInterface;
@@ -108,7 +108,7 @@ class ShippingRulesProvider
     }
 
     /**
-     * @param ShippingRuleDestination[]|\Traversable $destinations
+     * @param ShippingMethodsConfigsRuleDestination[]|\Traversable $destinations
      * @param ShippingContextInterface $context
      * @return mixed
      */
@@ -158,7 +158,7 @@ class ShippingRulesProvider
             return [];
         }
 
-        /** @var ShippingRuleRepository $repository */
+        /** @var ShippingMethodsConfigsRuleRepository $repository */
         $repository = $this->doctrineHelper
             ->getEntityManagerForClass('OroShippingBundle:ShippingRule')
             ->getRepository('OroShippingBundle:ShippingRule');

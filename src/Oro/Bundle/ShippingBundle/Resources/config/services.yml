@@ -7,7 +7,6 @@ parameters:
     oro_shipping.entity.freight_class.class: Oro\Bundle\ShippingBundle\Entity\FreightClass
     oro_shipping.entity.weight_unit.class: Oro\Bundle\ShippingBundle\Entity\WeightUnit
     oro_shipping.entity.product_shipping_options.class: Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions
-    oro_shipping.entity.shipping_rule.class: Oro\Bundle\ShippingBundle\Entity\ShippingRule
 
 services:
     oro_shipping.shipping_rule.manager.api:
@@ -291,3 +290,17 @@ services:
         class: 'Oro\Bundle\ShippingBundle\Converter\ShippingContextToRuleValuesConverter'
         arguments:
             - '@oro_shipping.expression_language.line_item_decorator_factory'
+
+    oro_shipping.listener.update_entity_config_relations:
+        class: 'Oro\Bundle\ShippingBundle\CacheWarmer\UpdateEntityConfigRelationsWarmer'
+        arguments:
+            - '@oro_shipping.entity_config_relations_migration'
+        tags:
+            - { name: oro_entity_extend.warmer, priority: -500 }
+
+    oro_shipping.entity_config_relations_migration:
+        class: 'Oro\Bundle\ShippingBundle\CacheWarmer\EntityConfigRelationsMigration'
+        arguments:
+            - '@doctrine'
+            - '@logger'
+            - '%installed%'

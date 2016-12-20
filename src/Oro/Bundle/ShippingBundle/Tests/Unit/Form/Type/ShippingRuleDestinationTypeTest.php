@@ -2,25 +2,23 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\OptionsResolver\Options;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\ChoiceList\ArrayChoiceList;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\PreloadedExtension;
-
 use Genemu\Bundle\FormBundle\Form\JQuery\Type\Select2Type;
-
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\AddressBundle\Form\EventListener\AddressCountryAndRegionSubscriber;
 use Oro\Bundle\AddressBundle\Form\Type\CountryType;
 use Oro\Bundle\AddressBundle\Form\Type\RegionType;
 use Oro\Bundle\FormBundle\Form\Extension\AdditionalAttrExtension;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination;
+use Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleDestinationType;
 use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRuleDestination;
-use Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleDestinationType;
+use Symfony\Component\Form\ChoiceList\ArrayChoiceList;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\PreloadedExtension;
+use Symfony\Component\OptionsResolver\Options;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ShippingRuleDestinationTypeTest extends FormIntegrationTestCase
 {
@@ -79,7 +77,10 @@ class ShippingRuleDestinationTypeTest extends FormIntegrationTestCase
         ]);
 
         $this->assertTrue($form->isValid());
-        $this->assertEquals((new ShippingRuleDestination())->setCountry(new Country('US')), $form->getData());
+        $this->assertEquals(
+            (new ShippingMethodsConfigsRuleDestination())->setCountry(new Country('US')),
+            $form->getData()
+        );
     }
 
     /**
@@ -90,7 +91,7 @@ class ShippingRuleDestinationTypeTest extends FormIntegrationTestCase
         return [
             [null],
             [
-                (new ShippingRuleDestination())->setCountry(new Country('AF'))
+                (new ShippingMethodsConfigsRuleDestination())->setCountry(new Country('AF'))
             ],
         ];
     }

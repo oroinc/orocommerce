@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ShippingBundle\Model;
 
-class ExtendShippingRule
+class ExtendShippingMethodsConfigsRule
 {
     /**
      * Constructor

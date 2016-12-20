@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ShippingBundle\Form\EventSubscriber;
 
 use Doctrine\Common\Collections\Collection;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
 use Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleMethodTypeConfigType;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
@@ -47,7 +47,7 @@ class RuleMethodTypeConfigCollectionSubscriber implements EventSubscriberInterfa
     {
         /** @var FormInterface|Form[] $form */
         $form = $event->getForm();
-        /** @var Collection|ShippingRuleMethodTypeConfig[] $data */
+        /** @var Collection|ShippingMethodTypeConfig[] $data */
         $data = $event->getData();
 
         if (!$data) {
@@ -72,7 +72,7 @@ class RuleMethodTypeConfigCollectionSubscriber implements EventSubscriberInterfa
         foreach ($method->getTypes() as $type) {
             if (null !== $type && !in_array($type->getIdentifier(), $renderedTypes, true)) {
                 $this->createTypeForm($form, $index, $method, $type);
-                $entity = new ShippingRuleMethodTypeConfig();
+                $entity = new ShippingMethodTypeConfig();
                 $entity->setType($type->getIdentifier())
                     ->setMethodConfig($methodConfig);
                 $data->set($index, $entity);

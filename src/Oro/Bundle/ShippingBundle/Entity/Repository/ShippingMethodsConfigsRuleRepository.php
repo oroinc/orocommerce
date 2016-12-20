@@ -4,9 +4,8 @@ namespace Oro\Bundle\ShippingBundle\Entity\Repository;
 
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
 
-class ShippingRuleRepository extends EntityRepository
+class ShippingMethodsConfigsRuleRepository extends EntityRepository
 {
     /**
      * @param string $currency

@@ -10,9 +10,9 @@ use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
-use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingRuleRepository;
+use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodsConfigsRuleRepository;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRuleDestination;
 use Oro\Bundle\ShippingBundle\ExpressionLanguage\LineItemDecoratorFactory;
 use Oro\Bundle\ShippingBundle\Provider\ShippingRulesProvider;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingAddressStub;
@@ -24,7 +24,7 @@ class ShippingRulesProviderTest extends \PHPUnit_Framework_TestCase
     use EntityTrait;
 
     /**
-     * @var ShippingRuleRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingMethodsConfigsRuleRepository|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $repository;
 
@@ -49,7 +49,7 @@ class ShippingRulesProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->repository = $this->getMockBuilder(ShippingRuleRepository::class)
+        $this->repository = $this->getMockBuilder(ShippingMethodsConfigsRuleRepository::class)
             ->disableOriginalConstructor()->getMock();
 
         $entityManager = $this->getMockBuilder('\Doctrine\ORM\EntityManager')
@@ -115,7 +115,7 @@ class ShippingRulesProviderTest extends \PHPUnit_Framework_TestCase
                 ]),
                 'shippingRule' => $this->getEntity(ShippingRule::class, [
                     'destinations' => [
-                        $this->getEntity(ShippingRuleDestination::class, [
+                        $this->getEntity(ShippingMethodsConfigsRuleDestination::class, [
                             'country' => new Country('US')
                         ])
                     ]
@@ -136,7 +136,7 @@ class ShippingRulesProviderTest extends \PHPUnit_Framework_TestCase
                 ]),
                 'shippingRule' => $this->getEntity(ShippingRule::class, [
                     'destinations' => [
-                        $this->getEntity(ShippingRuleDestination::class, [
+                        $this->getEntity(ShippingMethodsConfigsRuleDestination::class, [
                             'country' => new Country('US'),
                             'region' => $this->getEntity(Region::class, [
                                 'combinedCode' => 'US-CA',
@@ -161,7 +161,7 @@ class ShippingRulesProviderTest extends \PHPUnit_Framework_TestCase
                 ]),
                 'shippingRule' => $this->getEntity(ShippingRule::class, [
                     'destinations' => [
-                        $this->getEntity(ShippingRuleDestination::class, [
+                        $this->getEntity(ShippingMethodsConfigsRuleDestination::class, [
                             'country' => new Country('US'),
                             'region' => $this->getEntity(Region::class, [
                                 'combinedCode' => 'US-CA',
@@ -182,7 +182,7 @@ class ShippingRulesProviderTest extends \PHPUnit_Framework_TestCase
                 ]),
                 'shippingRule' => $this->getEntity(ShippingRule::class, [
                     'destinations' => [
-                        $this->getEntity(ShippingRuleDestination::class, [
+                        $this->getEntity(ShippingMethodsConfigsRuleDestination::class, [
                             'country' => new Country('FR')
                         ])
                     ]
@@ -203,7 +203,7 @@ class ShippingRulesProviderTest extends \PHPUnit_Framework_TestCase
                 ]),
                 'shippingRule' => $this->getEntity(ShippingRule::class, [
                     'destinations' => [
-                        $this->getEntity(ShippingRuleDestination::class, [
+                        $this->getEntity(ShippingMethodsConfigsRuleDestination::class, [
                             'country' => new Country('US'),
                             'region' => $this->getEntity(Region::class, [
                                 'combinedCode' => 'US-MI',
@@ -228,7 +228,7 @@ class ShippingRulesProviderTest extends \PHPUnit_Framework_TestCase
                 ]),
                 'shippingRule' => $this->getEntity(ShippingRule::class, [
                     'destinations' => [
-                        $this->getEntity(ShippingRuleDestination::class, [
+                        $this->getEntity(ShippingMethodsConfigsRuleDestination::class, [
                             'country' => new Country('US'),
                             'region' => $this->getEntity(Region::class, [
                                 'combinedCode' => 'US-CA',
@@ -286,7 +286,7 @@ customerUser.firstName = "First Name"
 EXPRESSION
                     ,
                     'destinations' => [
-                        $this->getEntity(ShippingRuleDestination::class, [
+                        $this->getEntity(ShippingMethodsConfigsRuleDestination::class, [
                             'country' => new Country('US'),
                             'region' => $this->getEntity(Region::class, [
                                 'combinedCode' => 'US-CA',
@@ -341,7 +341,7 @@ EXPRESSION
         $shippingRule1 = $this->getEntity(ShippingRule::class, [
             'id' => 1,
             'destinations' => [
-                $this->getEntity(ShippingRuleDestination::class, [
+                $this->getEntity(ShippingMethodsConfigsRuleDestination::class, [
                     'country' => new Country('US'),
                     'region' => $this->getEntity(Region::class, [
                         'combinedCode' => 'US-CA',
@@ -354,7 +354,7 @@ EXPRESSION
         $shippingRule2 = $this->getEntity(ShippingRule::class, [
             'id' => 2,
             'destinations' => [
-                $this->getEntity(ShippingRuleDestination::class, [
+                $this->getEntity(ShippingMethodsConfigsRuleDestination::class, [
                     'country' => new Country('FR'),
                 ])
             ]
@@ -362,7 +362,7 @@ EXPRESSION
         $shippingRule3 = $this->getEntity(ShippingRule::class, [
             'id' => 3,
             'destinations' => [
-                $this->getEntity(ShippingRuleDestination::class, [
+                $this->getEntity(ShippingMethodsConfigsRuleDestination::class, [
                     'country' => new Country('US'),
                     'region' => $this->getEntity(Region::class, [
                         'combinedCode' => 'US-CA',

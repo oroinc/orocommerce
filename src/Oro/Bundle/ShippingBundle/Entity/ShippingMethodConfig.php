@@ -8,14 +8,14 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
-use Oro\Bundle\ShippingBundle\Model\ExtendShippingRuleMethodConfig;
+use Oro\Bundle\ShippingBundle\Model\ExtendShippingMethodConfig;
 
 /**
- * @ORM\Table(name="oro_shipping_rule_mthd_config")
- * @ORM\Entity(repositoryClass="Oro\Bundle\ShippingBundle\Entity\Repository\ShippingRuleMethodConfigRepository")
+ * @ORM\Table(name="oro_ship_method_config")
+ * @ORM\Entity(repositoryClass="Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodConfigRepository")
  * @Config
  */
-class ShippingRuleMethodConfig extends ExtendShippingRuleMethodConfig
+class ShippingMethodConfig extends ExtendShippingMethodConfig
 {
     /**
      * @ORM\Id
@@ -39,7 +39,7 @@ class ShippingRuleMethodConfig extends ExtendShippingRuleMethodConfig
     protected $method;
 
     /**
-     * @var string
+     * @var array
      *
      * @ORM\Column(name="options", type="array")
      * @ConfigField(
@@ -53,10 +53,10 @@ class ShippingRuleMethodConfig extends ExtendShippingRuleMethodConfig
     protected $options = [];
 
     /**
-     * @var Collection|ShippingRuleMethodConfig[]
+     * @var Collection|ShippingMethodConfig[]
      *
      * @ORM\OneToMany(
-     *     targetEntity="Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig",
+     *     targetEntity="Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig",
      *     mappedBy="methodConfig",
      *     cascade={"ALL"},
      *     fetch="EAGER",
@@ -66,9 +66,12 @@ class ShippingRuleMethodConfig extends ExtendShippingRuleMethodConfig
     protected $typeConfigs;
 
     /**
-     * @var ShippingRule
+     * @var ShippingMethodsConfigsRule
      *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ShippingBundle\Entity\ShippingRule", inversedBy="methodConfigs")
+     * @ORM\ManyToOne(
+     *     targetEntity="Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule",
+     *     inversedBy="methodConfigs"
+     * )
      * @ORM\JoinColumn(name="rule_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
      * @ConfigField(
      *      defaultValues={
@@ -78,11 +81,9 @@ class ShippingRuleMethodConfig extends ExtendShippingRuleMethodConfig
      *      }
      * )
      */
-    protected $rule;
+    protected $methodConfigsRule;
 
-    /**
-     * Construct
-     */
+
     public function __construct()
     {
         parent::__construct();
@@ -106,20 +107,20 @@ class ShippingRuleMethodConfig extends ExtendShippingRuleMethodConfig
     }
 
     /**
-     * @return ShippingRule
+     * @return ShippingMethodsConfigsRule
      */
-    public function getRule()
+    public function getMethodConfigsRule()
     {
-        return $this->rule;
+        return $this->methodConfigsRule;
     }
 
     /**
-     * @param ShippingRule $rule
+     * @param ShippingMethodsConfigsRule $rule
      * @return $this
      */
-    public function setRule(ShippingRule $rule)
+    public function setMethodConfigsRule(ShippingMethodsConfigsRule $rule)
     {
-        $this->rule = $rule;
+        $this->methodConfigsRule = $rule;
         return $this;
     }
 
@@ -142,7 +143,7 @@ class ShippingRuleMethodConfig extends ExtendShippingRuleMethodConfig
     }
 
     /**
-     * @return string
+     * @return array
      */
     public function getOptions()
     {
@@ -150,7 +151,7 @@ class ShippingRuleMethodConfig extends ExtendShippingRuleMethodConfig
     }
 
     /**
-     * @param string $options
+     * @param array $options
      * @return $this
      */
     public function setOptions($options)
@@ -160,19 +161,19 @@ class ShippingRuleMethodConfig extends ExtendShippingRuleMethodConfig
     }
 
     /**
-     * @param ShippingRuleMethodTypeConfig $lineItem
+     * @param ShippingMethodTypeConfig $lineItem
      * @return bool
      */
-    public function hasTypeConfig(ShippingRuleMethodTypeConfig $lineItem)
+    public function hasTypeConfig(ShippingMethodTypeConfig $lineItem)
     {
         return $this->typeConfigs->contains($lineItem);
     }
 
     /**
-     * @param ShippingRuleMethodTypeConfig $typeConfig
+     * @param ShippingMethodTypeConfig $typeConfig
      * @return $this
      */
-    public function addTypeConfig(ShippingRuleMethodTypeConfig $typeConfig)
+    public function addTypeConfig(ShippingMethodTypeConfig $typeConfig)
     {
         if (!$this->hasTypeConfig($typeConfig)) {
             $this->typeConfigs[] = $typeConfig;
@@ -183,10 +184,10 @@ class ShippingRuleMethodConfig extends ExtendShippingRuleMethodConfig
     }
 
     /**
-     * @param ShippingRuleMethodTypeConfig $typeConfig
+     * @param ShippingMethodTypeConfig $typeConfig
      * @return $this
      */
-    public function removeTypeConfig(ShippingRuleMethodTypeConfig $typeConfig)
+    public function removeTypeConfig(ShippingMethodTypeConfig $typeConfig)
     {
         if ($this->hasTypeConfig($typeConfig)) {
             $this->typeConfigs->removeElement($typeConfig);
@@ -196,7 +197,7 @@ class ShippingRuleMethodConfig extends ExtendShippingRuleMethodConfig
     }
 
     /**
-     * @return Collection|ShippingRuleMethodTypeConfig[]
+     * @return Collection|ShippingMethodTypeConfig[]
      */
     public function getTypeConfigs()
     {
