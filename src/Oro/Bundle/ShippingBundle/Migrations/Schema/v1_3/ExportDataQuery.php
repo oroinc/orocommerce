@@ -2,11 +2,12 @@
 
 namespace Oro\Bundle\ShippingBundle\Migrations\Schema\v1_3;
 
+use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
 use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
 use Psr\Log\LoggerInterface;
 
-class FillNewTables extends ParametrizedSqlMigrationQuery
+class ExportDataQuery extends ParametrizedSqlMigrationQuery
 {
     /**
      * {@inheritdoc}
@@ -94,7 +95,7 @@ class FillNewTables extends ParametrizedSqlMigrationQuery
                 'enabled' => $row['enabled'],
                 'sort_order' => $row['priority'],
                 'stop_processing' => $row['stop_processing'],
-                'expression' => $row['conditions'],
+                'expression' => $row['conditions'].'',
                 'created_at' => $row['created_at'],
                 'updated_at' => $row['updated_at'],
             ];
@@ -113,7 +114,11 @@ class FillNewTables extends ParametrizedSqlMigrationQuery
             $ruleId = 0;
             if (!$dryRun) {
                 $this->connection->executeUpdate($query, $params, $types);
-                $ruleId = (int) $this->connection->lastInsertId();
+                $ruleId = $this->connection->lastInsertId(
+                    $this->connection->getDatabasePlatform() instanceof PostgreSqlPlatform
+                        ? 'oro_rule_id_seq'
+                        : null
+                );
             }
 
             $query = '

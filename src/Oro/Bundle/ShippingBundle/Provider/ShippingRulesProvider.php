@@ -9,7 +9,8 @@ use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
 use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingRuleRepository;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
-use Oro\Bundle\ShippingBundle\ExpressionLanguage\LineItemDecoratorFactory;
+use Oro\Bundle\ShippingBundle\Entity\ShippingRuleDestination;
+use Oro\Bundle\ShippingBundle\ExpressionLanguage\DecoratedProductLineItemFactory;
 use Oro\Component\ExpressionLanguage\ExpressionLanguage;
 use Psr\Log\LoggerInterface;
 
@@ -21,9 +22,9 @@ class ShippingRulesProvider
     protected $doctrineHelper;
 
     /**
-     * @var LineItemDecoratorFactory
+     * @var DecoratedProductLineItemFactory
      */
-    protected $lineItemDecoratorFactory;
+    protected $decoratedProductLineItemFactory;
 
     /**
      * @var LoggerInterface
@@ -32,16 +33,16 @@ class ShippingRulesProvider
 
     /**
      * @param DoctrineHelper $doctrineHelper
-     * @param LineItemDecoratorFactory $lineItemDecoratorFactory
+     * @param DecoratedProductLineItemFactory $decoratedProductLineItemFactory
      * @param LoggerInterface $logger
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
-        LineItemDecoratorFactory $lineItemDecoratorFactory,
+        DecoratedProductLineItemFactory $decoratedProductLineItemFactory,
         LoggerInterface $logger
     ) {
         $this->doctrineHelper = $doctrineHelper;
-        $this->lineItemDecoratorFactory = $lineItemDecoratorFactory;
+        $this->decoratedProductLineItemFactory = $decoratedProductLineItemFactory;
         $this->logger = $logger;
     }
 
@@ -83,11 +84,12 @@ class ShippingRulesProvider
         }, function ($arguments, $field) {
             return count($field);
         });
-        $lineItems = $context->getLineItems();
+        $lineItems = $context->getLineItems()->toArray();
         try {
             return $language->evaluate($condition, [
                 'lineItems' => array_map(function (ShippingLineItemInterface $lineItem) use ($lineItems) {
-                    return $this->lineItemDecoratorFactory->createOrderLineItemDecorator($lineItems, $lineItem);
+                    return $this->decoratedProductLineItemFactory
+                        ->createLineItemWithDecoratedProductByLineItem($lineItems, $lineItem);
                 }, $lineItems),
                 'billingAddress' => $context->getBillingAddress(),
                 'shippingAddress' => $context->getShippingAddress(),

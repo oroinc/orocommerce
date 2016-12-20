@@ -45,7 +45,7 @@ class ShippingMethodsConfigsRuleRepositoryTest extends WebTestCase
     }
 
     /**
-     * @dataProvider getByCurrencyAndCountryDataProvider
+     * @dataProvider getByDestinationAndCurrencyDataProvider
      *
      * @param AddressInterface $shippingAddress
      * @param string $currency
@@ -95,7 +95,7 @@ class ShippingMethodsConfigsRuleRepositoryTest extends WebTestCase
     /**
      * @return array
      */
-    public function getByCurrencyAndCountryDataProvider()
+    public function getByDestinationAndCurrencyDataProvider()
     {
         return [
             [

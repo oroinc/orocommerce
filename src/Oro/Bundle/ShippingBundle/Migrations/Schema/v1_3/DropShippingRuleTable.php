@@ -7,28 +7,20 @@ use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class DropShippingRule implements Migration, OrderedMigrationInterface
+class DropShippingRuleTable implements Migration, OrderedMigrationInterface
 {
     /**
      * @return int
      */
     public function getOrder()
     {
-        return 5;
+        return 40;
     }
 
     /**
      * {@inheritdoc}
      */
     public function up(Schema $schema, QueryBag $queries)
-    {
-        $this->dropOroShippingRuleTable($schema);
-    }
-
-    /**
-     * @param Schema $schema
-     */
-    private function dropOroShippingRuleTable(Schema $schema)
     {
         $schema->dropTable('oro_shipping_rule');
     }
