@@ -3,19 +3,19 @@
 namespace Oro\Bundle\OrderBundle\EventListener\Order;
 
 use Oro\Bundle\OrderBundle\Event\OrderEvent;
-use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
+use Oro\Bundle\OrderBundle\Provider\TotalProvider;
 
 class OrderTotalEventListener
 {
     const TOTALS_KEY = 'totals';
 
-    /** @var TotalProcessorProvider */
+    /** @var TotalProvider */
     protected $provider;
 
     /**
-     * @param TotalProcessorProvider $provider
+     * @param TotalProvider $provider
      */
-    public function __construct(TotalProcessorProvider $provider)
+    public function __construct(TotalProvider $provider)
     {
         $this->provider = $provider;
     }
@@ -27,7 +27,7 @@ class OrderTotalEventListener
     {
         $order = $event->getOrder();
 
-        $totals = $this->provider->getTotalWithSubtotalsAsArray($order);
+        $totals = $this->provider->getTotalWithSubtotalsWithBaseCurrencyValues($order, false);
 
         $event->getData()->offsetSet(self::TOTALS_KEY, $totals);
     }

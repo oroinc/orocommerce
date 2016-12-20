@@ -4,3 +4,4 @@ oro.product:
             unit_rounding_type: 'Select the rounding type that can be used for product units.'
             unit_precision: 'To allow fractional quantities set the precision to a positive value. Zero value disables fractional quantities, only whole quantities will be allowed.'
             has_variants: 'Please save the product to add variants'
+            variant_fields: 'Fields with type "select" and "boolean" are available'

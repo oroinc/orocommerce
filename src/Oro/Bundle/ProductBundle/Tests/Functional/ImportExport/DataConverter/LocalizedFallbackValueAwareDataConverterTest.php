@@ -99,7 +99,6 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
 
         $this->converter->setEntityName($productClass);
 
-        $x = $this->converter->convertToExportFormat($data);
         $this->assertEquals($expected, $this->converter->convertToExportFormat($data));
     }
 
@@ -116,6 +115,7 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
                 [
                     'sku' => '',
                     'status' => '',
+                    'type' => '',
                     'inventory_status.id' => '',
                     'names.default.fallback' => 'system',
                     'names.default.value' => 'default value',
@@ -147,7 +147,6 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
                     'shortDescriptions.English (Canada).value' => '',
                     'shortDescriptions.Spanish.fallback' => '',
                     'shortDescriptions.Spanish.value' => '',
-                    'hasVariants' => '',
                     'variantFields' => '',
                     'primaryUnitPrecision.unit.code' => '',
                     'primaryUnitPrecision.precision' => '',
@@ -190,6 +189,7 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
                 [
                     'sku' => '',
                     'status' => '',
+                    'type' => '',
                     'inventory_status.id' => '',
                     'names.default.fallback' => '',
                     'names.default.value' => '',
@@ -221,7 +221,6 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
                     'shortDescriptions.English (Canada).value' => '',
                     'shortDescriptions.Spanish.fallback' => '',
                     'shortDescriptions.Spanish.value' => '',
-                    'hasVariants' => '',
                     'variantFields' => '',
                     'primaryUnitPrecision.unit.code' => '',
                     'primaryUnitPrecision.precision' => '',
@@ -269,6 +268,7 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
                 [
                     'sku' => '',
                     'status' => '',
+                    'type' => '',
                     'inventory_status.id' => '',
                     'names.default.fallback' => '',
                     'names.default.value' => '',
@@ -300,7 +300,6 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
                     'shortDescriptions.English (Canada).value' => '',
                     'shortDescriptions.Spanish.fallback' => '',
                     'shortDescriptions.Spanish.value' => '',
-                    'hasVariants' => '',
                     'variantFields' => '',
                     'primaryUnitPrecision.unit.code' => '',
                     'primaryUnitPrecision.precision' => '',

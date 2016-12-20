@@ -10,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
@@ -96,7 +97,7 @@ class QuoteController extends Controller
      *
      * @param Request $request
      * @param QuoteDemand $quoteDemand
-     * @return array
+     * @return array|Response
      */
     public function choiceAction(Request $request, QuoteDemand $quoteDemand)
     {
@@ -113,6 +114,8 @@ class QuoteController extends Controller
                     ->findByName('oro_sale_frontend_quote_accept_and_submit_to_order');
                 if ($actionGroup) {
                     $actionData = $actionGroup->execute(new ActionData(['data' => $quoteDemand]));
+
+                    $this->getDoctrine()->getManagerForClass(QuoteDemand::class)->flush();
 
                     $redirectUrl = $actionData->getRedirectUrl();
                     if ($redirectUrl) {

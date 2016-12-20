@@ -9,10 +9,10 @@ oro:
         sku.placeholder: "Enter Item Number"
         quantity.label: Qty
         quantity.placeholder: "Qty #"
-        has_variants.label: Has Variants
         variant_fields.label: Variant Fields
         inventory_status.label: Inventory Status
         status.label: Status
+        type.label: Type
         owner.label: Owner
         organization.label: Organization
         primary_unit_precision.label: Unit of Quantity
@@ -39,9 +39,17 @@ oro:
         content_variant:
             product_page.label: Product Page
 
+        type:
+            simple: Simple
+            configurable: Configurable
+
         status:
             enabled: Enabled
             disabled: Disabled
+
+        type:
+            simple: Simple Product
+            configurable: Configurable Product
 
         visibility:
             visible.label: Yes
@@ -113,6 +121,7 @@ oro:
             shortcut_new_product.label: Create new product
             shortcut_new_product.description: Create new product item
             shortcut_product_list.description: Show list of existing products
+            product_attributes: Product attributes
 
         acl:
             view_products.label: View products
