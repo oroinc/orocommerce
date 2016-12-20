@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\WebCatalogBundle\JsTree;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentNodeRepository;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
@@ -13,16 +15,34 @@ use Oro\Component\Tree\Handler\AbstractTreeHandler;
 class ContentNodeTreeHandler extends AbstractTreeHandler
 {
     /**
+     * @var LocalizationHelper
+     */
+    protected $localizationHelper;
+
+    /**
+     * @param string $entityClass
+     * @param ManagerRegistry $managerRegistry
+     * @param LocalizationHelper $localizationHelper
+     */
+    public function __construct($entityClass, ManagerRegistry $managerRegistry, LocalizationHelper $localizationHelper)
+    {
+        parent::__construct($entityClass, $managerRegistry);
+
+        $this->localizationHelper = $localizationHelper;
+    }
+
+    /**
      * @param ContentNode $entity
      *
      * {@inheritdoc}
      */
     protected function formatEntity($entity)
     {
+        $titleValue = $this->localizationHelper->getFirstNonEmptyLocalizedValue($entity->getTitles());
         return [
             'id'     => $entity->getId(),
             'parent' => $entity->getParentNode() ? $entity->getParentNode()->getId() : null,
-            'text'   => $entity->getName(),
+            'text'   => $titleValue ? $titleValue->getString() : '',
             'state'  => [
                 'opened' => $entity->getParentNode() === null
             ]

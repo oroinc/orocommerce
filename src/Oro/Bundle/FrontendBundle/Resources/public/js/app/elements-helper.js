@@ -24,6 +24,7 @@ define(function(require) {
         elementEventNamespace: '.elementEvent',
 
         initializeElements: function(options) {
+            this.$html = $('html');
             this.elementsInitialized = true;
             $.extend(true, this, _.pick(options, ['elements', 'modelElements']));
             this.$elements = this.$elements || {};
@@ -99,11 +100,15 @@ define(function(require) {
         },
 
         delegateElementEvent: function(key, event, callback) {
+            var self = this;
             if (!_.isFunction(callback)) {
                 callback = _.bind(this[callback], this);
             }
             this.getElement(key).on(event + this.elementEventNamespace + this.cid, function(e) {
-                callback(e, key);
+                var options = {
+                    manually: self.isChangedManually(this, e)
+                };
+                callback(e, options);
             });
         },
 
@@ -189,11 +194,8 @@ define(function(require) {
             if (!validator || validator.element(element)) {
                 var options = {
                     event: e,
-                    manually: false
+                    manually: this.isChangedManually(element, e)
                 };
-                if (e) {
-                    e.manually = options.manually = e.manually || (e.originalEvent && e.currentTarget === element);
-                }
 
                 this.model.set(modelKey, value, options);
             }
@@ -210,6 +212,19 @@ define(function(require) {
             }
 
             $element.val(value).change();
+        },
+
+        isChangedManually: function(element, e) {
+            var manually = false;
+            if (e) {
+                if (e.manually !== undefined) {
+                    manually = e.manually;
+                } else {
+                    manually = Boolean(e.originalEvent && e.currentTarget === element);
+                }
+                e.manually = manually;
+            }
+            return manually;
         }
     };
 });

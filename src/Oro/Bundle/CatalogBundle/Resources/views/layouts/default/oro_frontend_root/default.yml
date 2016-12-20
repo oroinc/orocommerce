@@ -19,15 +19,21 @@ layout:
                         items:
                             -
                                 image: '/bundles/orocatalog/default/scss/components/hero-promo-item/hero-promo-item-1.png'
+                                image_medium: '/bundles/orocatalog/default/scss/components/hero-promo-item/hero-promo-item-1-medium.png'
+                                image_small: '/bundles/orocatalog/default/scss/components/hero-promo-item/hero-promo-item-1-small.png'
                                 prelabel: 'New items in stock'
                                 label: 'For Medical Professionals'
                                 link: /product/
                                 link_label: View items
                             -
                                 image: '/bundles/orocatalog/default/scss/components/hero-promo-item/hero-promo-item-2.png'
+                                image_medium: '/bundles/orocatalog/default/scss/components/hero-promo-item/hero-promo-item-2-medium.png'
+                                image_small: '/bundles/orocatalog/default/scss/components/hero-promo-item/hero-promo-item-2-small.png'
                                 link: /product/?categoryId=2&includeSubcategories=1
                             -
                                 image: '/bundles/orocatalog/default/scss/components/hero-promo-item/hero-promo-item-3.png'
+                                image_medium: '/bundles/orocatalog/default/scss/components/hero-promo-item/hero-promo-item-3-medium.png'
+                                image_small: '/bundles/orocatalog/default/scss/components/hero-promo-item/hero-promo-item-3-small.png'
                                 link: /product/?categoryId=7&includeSubcategories=1
                         use_slider: true
                         slider_options: {slidesToShow: 1}

@@ -16,7 +16,6 @@ styles:
         - 'bundles/orofrontend/default/scss/variables/notifications-config.scss'
         - 'bundles/orofrontend/default/scss/variables/primary-menu-config.scss'
         - 'bundles/orofrontend/default/scss/variables/notification-config.scss'
-        - 'bundles/orofrontend/default/scss/variables/notification-flash-container-config.scss'
         - 'bundles/orofrontend/default/scss/variables/notification-flash-config.scss'
         - 'bundles/orofrontend/default/scss/variables/grid-header-cell-config.scss'
         - 'bundles/orofrontend/default/scss/styles.scss'
