@@ -62,7 +62,14 @@
             <ul class="main-menu__sublist">
                 {% do block|merge_context({'categories': category.childCategories }) %}
                 {{ block_widget(block) }}
+                <li class="main-menu__sublist__item main-menu__view-parent">
+                    <a href="{{ path('oro_product_frontend_product_index', {'categoryId': category.id, 'includeSubcategories': true}) }}"
+                       class="main-menu__sublist__link">
+                        <span>All {{ category.titles|localized_value }}</span>
+                    </a>
+                </li>
             </ul>
+
         </div>
         <!-- ENDTOP NAVIGATION SUBLIST -->
     {% endif %}

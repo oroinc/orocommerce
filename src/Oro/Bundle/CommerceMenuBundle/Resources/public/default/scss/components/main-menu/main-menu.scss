@@ -18,6 +18,10 @@
 
     .main-menu {
         display: flex !important;
+
+        &__view-parent {
+            display: none;
+        }
     }
 }
 
@@ -71,7 +75,7 @@
                 position: relative;
                 padding-left: 15px;
 
-                .cf-down-open-mini {
+                .fa-angle-down {
                     position: absolute;
                     left: 0;
                     top: 50%;
