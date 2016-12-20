@@ -109,7 +109,6 @@ services:
     oro_shipping.repository.shipping_methods_configs_rule:
         class: 'Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodsConfigsRuleRepository'
         parent: oro_entity.abstract_repository
-        public: false
         arguments:
             - 'Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule'
 
