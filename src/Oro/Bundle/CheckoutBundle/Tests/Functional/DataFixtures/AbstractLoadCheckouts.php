@@ -71,8 +71,10 @@ abstract class AbstractLoadCheckouts extends AbstractFixture implements
             ->findOneBy(['username' => LoadAccountUserData::AUTH_USER]);
         $website = $this->getReference(LoadWebsiteData::WEBSITE1);
         foreach ($this->getData() as $name => $checkoutData) {
+            $accountUserEmail = isset($checkoutData['accountUser']) ? $checkoutData['accountUser'] : null;
+
             $checkout = $this->createCheckout();
-            $checkout->setAccountUser($accountUser);
+            $checkout->setAccountUser($accountUserEmail ? $this->getReference($accountUserEmail) : $accountUser);
             $checkout->setOrganization($accountUser->getOrganization());
             $checkout->setWebsite($website);
             $source = new CheckoutSource();
