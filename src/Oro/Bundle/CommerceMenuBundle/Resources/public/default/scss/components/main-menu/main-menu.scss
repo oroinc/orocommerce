@@ -100,4 +100,18 @@
             margin-top: 0;
         }
     }
+
+    .main-menu-outer {
+        &__text {
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .collapse-view {
+            &__trigger-icon {
+                margin-right: 5px;
+                color: get-color('additional', 'dark');
+            }
+        }
+    }
 }
