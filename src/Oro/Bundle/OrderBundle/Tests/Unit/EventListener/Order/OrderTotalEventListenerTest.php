@@ -17,21 +17,21 @@ class OrderTotalEventListenerTest extends \PHPUnit_Framework_TestCase
     protected $listener;
 
     /** @var TotalProcessorProvider|\PHPUnit_Framework_MockObject_MockObject */
-    protected $totalProcessorProvider;
+    protected $totalProvider;
 
     protected function setUp()
     {
-        $this->totalProcessorProvider = $this
-            ->getMockBuilder('Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider')
+        $this->totalProvider = $this
+            ->getMockBuilder('Oro\Bundle\OrderBundle\Provider\TotalProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->listener = new OrderTotalEventListener($this->totalProcessorProvider);
+        $this->listener = new OrderTotalEventListener($this->totalProvider);
     }
 
     protected function tearDown()
     {
-        unset($this->listener, $this->totalProcessorProvider);
+        unset($this->listener, $this->totalProvider);
     }
 
     public function testOnOrderEvent()
@@ -43,8 +43,8 @@ class OrderTotalEventListenerTest extends \PHPUnit_Framework_TestCase
 
         $total = $this->getSubtotal('type', 'label', 100, 'USD', true);
 
-        $this->totalProcessorProvider->expects($this->once())
-            ->method('getTotalWithSubtotalsAsArray')
+        $this->totalProvider->expects($this->once())
+            ->method('getTotalWithSubtotalsWithBaseCurrencyValues')
             ->with($order)
             ->willReturn($total->toArray());
 

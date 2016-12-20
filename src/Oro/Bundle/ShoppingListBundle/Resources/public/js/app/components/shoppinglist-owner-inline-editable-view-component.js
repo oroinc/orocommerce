@@ -7,7 +7,6 @@ define(function(require) {
     var ViewComponent = require('oroui/js/app/components/view-component');
     var mediator = require('oroui/js/mediator');
     var routing = require('routing');
-    var Error = require('oroui/js/error');
     var $ = require('jquery');
     var _ = require('underscore');
 
@@ -42,7 +41,6 @@ define(function(require) {
                 },
                 error: function(xhr) {
                     mediator.execute('showFlashMessage', 'error', xhr.responseText);
-                    Error.handle({}, xhr, {enforce: true});
                 }
             });
         },

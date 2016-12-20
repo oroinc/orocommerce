@@ -2,14 +2,15 @@
 
 namespace Oro\Bundle\ShippingBundle\ExpressionLanguage;
 
-use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
 use Oro\Bundle\EntityBundle\Helper\FieldHelper;
+use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
 use Oro\Bundle\ShippingBundle\QueryDesigner\SelectQueryConverter;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 
-class LineItemDecoratorFactory
+class DecoratedProductLineItemFactory
 {
     /**
      * @var EntityFieldProvider
@@ -52,28 +53,45 @@ class LineItemDecoratorFactory
     /**
      * @param array $lineItems
      * @param ShippingLineItemInterface $lineItem
-     * @return LineItemDecorator
+     *
+     * @return ShippingLineItem
      */
-    public function createOrderLineItemDecorator(array $lineItems, ShippingLineItemInterface $lineItem)
+    public function createLineItemWithDecoratedProductByLineItem(array $lineItems, ShippingLineItemInterface $lineItem)
     {
-        return new LineItemDecorator($this, $lineItems, $lineItem);
+        return new ShippingLineItem(
+            [
+                ShippingLineItem::FIELD_PRICE => $lineItem->getPrice(),
+                ShippingLineItem::FIELD_PRODUCT_UNIT => $lineItem->getProductUnit(),
+                ShippingLineItem::FIELD_PRODUCT_UNIT_CODE => $lineItem->getProductUnitCode(),
+                ShippingLineItem::FIELD_QUANTITY => $lineItem->getQuantity(),
+                ShippingLineItem::FIELD_PRODUCT_HOLDER => $lineItem->getProductHolder(),
+                ShippingLineItem::FIELD_PRODUCT_SKU => $lineItem->getProductSku(),
+                ShippingLineItem::FIELD_WEIGHT => $lineItem->getWeight(),
+                ShippingLineItem::FIELD_DIMENSIONS => $lineItem->getDimensions(),
+                ShippingLineItem::FIELD_PRODUCT => $this->createDecoratedProduct($lineItems, $lineItem->getProduct()),
+            ]
+        );
     }
 
     /**
      * @param array $lineItems
      * @param Product $product
+     *
      * @return ProductDecorator
      */
-    public function createProductDecorator(array $lineItems, Product $product)
+    private function createDecoratedProduct(array $lineItems, Product $product)
     {
         return new ProductDecorator(
             $this->entityFieldProvider,
             $this->converter,
             $this->doctrine,
             $this->fieldHelper,
-            array_map(function (ShippingLineItemInterface $lineItem) {
-                return $lineItem->getProduct();
-            }, $lineItems),
+            array_map(
+                function (ShippingLineItemInterface $lineItem) {
+                    return $lineItem->getProduct();
+                },
+                $lineItems
+            ),
             $product
         );
     }
