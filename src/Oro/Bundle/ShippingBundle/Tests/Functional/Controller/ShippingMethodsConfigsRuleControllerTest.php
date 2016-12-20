@@ -97,7 +97,6 @@ class ShippingMethodsConfigsRuleControllerTest extends WebTestCase
                 'destinations',
                 'disable_link',
                 'enable_link',
-                'update_link',
                 'view_link',
                 'action_configuration'
             ],
