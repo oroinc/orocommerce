@@ -21,7 +21,8 @@ class OroPaymentExtensionTest extends ExtensionTestCase
             'oro_payment.twig.payment_method_extension',
             'oro_payment.context.doctrine_line_item_collection_factory',
             'oro_payment.context.builder_factory_basic',
-            'oro_payment.line_item.builder_factory_basic'
+            'oro_payment.line_item.builder_factory_basic',
+            'oro_payment.context.rules_converter_basic'
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
     }
