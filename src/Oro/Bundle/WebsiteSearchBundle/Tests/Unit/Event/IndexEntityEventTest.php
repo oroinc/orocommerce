@@ -8,6 +8,15 @@ use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderValue;
 
 class IndexEntityEventTest extends \PHPUnit_Framework_TestCase
 {
+    public function testGetEntityClass()
+    {
+        $className = 'testClass';
+
+        $event = new IndexEntityEvent($className, [], []);
+
+        $this->assertEquals($className, $event->getEntityClass());
+    }
+
     public function testGetEntityIds()
     {
         $entities = [new \stdClass(), new \stdClass()];
