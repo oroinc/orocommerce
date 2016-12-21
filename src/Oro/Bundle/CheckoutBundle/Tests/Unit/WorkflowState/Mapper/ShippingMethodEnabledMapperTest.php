@@ -68,7 +68,7 @@ class ShippingMethodEnabledMapperTest extends AbstractCheckoutDiffMapperTest
     {
         $this->checkout->setShippingMethod($methodName)->setShippingMethodType($typeName);
 
-        $shippingContext = new ShippingContext();
+        $shippingContext = new ShippingContext([]);
         $this->shippingContextFactory->expects(static::any())
             ->method('create')
             ->willReturn($shippingContext);

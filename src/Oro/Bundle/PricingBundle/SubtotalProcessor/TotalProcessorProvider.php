@@ -94,16 +94,12 @@ class TotalProcessorProvider extends AbstractSubtotalProvider
         $total->setType(self::TYPE);
         $translation = sprintf('oro.pricing.subtotals.%s.label', $total->getType());
         $total->setLabel($this->translator->trans($translation));
-        $baseCurrency = $this->getBaseCurrency($entity);
-        $total->setCurrency($baseCurrency);
+        $total->setCurrency($this->getBaseCurrency($entity));
 
         $totalAmount = 0.0;
         foreach ($this->getSubtotals($entity) as $subtotal) {
             $rowTotal = $subtotal->getAmount();
 
-            if ($baseCurrency !== $subtotal->getCurrency()) {
-                $rowTotal *= $this->getExchangeRate($subtotal->getCurrency(), $baseCurrency);
-            }
             $totalAmount = $this->calculateTotal($subtotal->getOperation(), $rowTotal, $totalAmount);
         }
         $total->setAmount($this->rounding->round($totalAmount));

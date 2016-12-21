@@ -13,15 +13,3 @@
         }
     }
 }
-
-@include breakpoint('tablet-small') {
-    .page-main {
-        &__content {
-            flex-direction: column;
-
-            &.sticky-nav {
-                padding-top: 50px;
-            }
-        }
-    }
-}

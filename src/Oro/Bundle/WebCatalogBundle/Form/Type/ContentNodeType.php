@@ -7,12 +7,10 @@ use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugType;
 use Oro\Bundle\ScopeBundle\Form\Type\ScopeCollectionType;
 use Oro\Bundle\ValidationBundle\Validator\Constraints\UrlSafe;
-use Oro\Bundle\WebCatalogBundle\ContentNodeUtils\ContentNodeNameFiller;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -22,19 +20,6 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 class ContentNodeType extends AbstractType
 {
     const NAME = 'oro_web_catalog_content_node';
-
-    /**
-     * @var ContentNodeNameFiller
-     */
-    private $nameFiller;
-
-    /**
-     * @param ContentNodeNameFiller $nameFiller
-     */
-    public function __construct(ContentNodeNameFiller $nameFiller)
-    {
-        $this->nameFiller = $nameFiller;
-    }
 
     /**
      * @param FormBuilderInterface $builder
@@ -55,7 +40,8 @@ class ContentNodeType extends AbstractType
                 LocalizedFallbackValueCollectionType::NAME,
                 [
                     'label' => 'oro.webcatalog.contentnode.titles.label',
-                    'required' => false
+                    'required' => true,
+                    'options' => ['constraints' => [new NotBlank()]]
                 ]
             )
             ->add(
@@ -66,6 +52,14 @@ class ContentNodeType extends AbstractType
                         'scope_type' => 'web_content',
                         'web_catalog' => $contentNode ? $contentNode->getWebCatalog() : null
                     ],
+                ]
+            )
+            ->add(
+                'rewriteVariantTitle',
+                CheckboxType::class,
+                [
+                    'label' => 'oro.webcatalog.contentnode.rewrite_variant_title.label',
+                    'required' => false
                 ]
             )
             ->add(
@@ -113,20 +107,6 @@ class ContentNodeType extends AbstractType
                 );
             }
 
-            $nameRequired = false;
-            if ($data->getId()) {
-                $nameRequired = true;
-            }
-
-            $form->add(
-                'name',
-                TextType::class,
-                [
-                    'label' => 'oro.webcatalog.contentnode.name.label',
-                    'required' => $nameRequired
-                ]
-            );
-
             $defaultVariant = $data->getDefaultVariant();
             if ($defaultVariant) {
                 $defaultVariant->resetScopes();
@@ -142,8 +122,6 @@ class ContentNodeType extends AbstractType
         /** @var ContentNode $contentNode */
         $data = $event->getData();
         if ($data instanceof ContentNode) {
-            $this->nameFiller->fillName($data);
-
             if ($data->getParentNode()) {
                 if ($data->isParentScopeUsed()) {
                     $data->resetScopes();

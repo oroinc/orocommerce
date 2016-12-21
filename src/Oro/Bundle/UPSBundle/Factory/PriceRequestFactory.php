@@ -3,7 +3,6 @@
 namespace Oro\Bundle\UPSBundle\Factory;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
@@ -93,7 +92,7 @@ class PriceRequestFactory
             $weightLimit = self::MAX_PACKAGE_WEIGHT_LBS;
         }
 
-        $packages = $this->createPackages($context->getLineItems(), $unitOfWeight, $weightLimit);
+        $packages = $this->createPackages($context->getLineItems()->toArray(), $unitOfWeight, $weightLimit);
         if (count($packages) > 0) {
             $priceRequest->setPackages($packages);
             return $priceRequest;
@@ -184,6 +183,10 @@ class PriceRequestFactory
 
         $productsInfo =[];
         foreach ($lineItems as $lineItem) {
+            if (null === $lineItem->getProduct()) {
+                return [];
+            }
+
             $productsInfo[$lineItem->getProduct()->getId()] = [
                 'product' => $lineItem->getProduct(),
                 'productUnit' => $lineItem->getProductUnit(),

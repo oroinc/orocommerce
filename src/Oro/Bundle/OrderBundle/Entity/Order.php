@@ -33,7 +33,6 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  *      routeView="oro_order_view",
  *      routeCreate="oro_order_create",
  *      routeUpdate="oro_order_update",
- *      routeCommerceName="oro_order_frontend_index",
  *      routeCommerceView="oro_order_frontend_view",
  *      defaultValues={
  *          "entity"={
@@ -480,7 +479,6 @@ class Order extends ExtendOrder implements
         $this->updateTotal();
     }
 
-
     /**
      * @return string
      */
@@ -660,14 +658,6 @@ class Order extends ExtendOrder implements
         $this->currency = $currency;
         $this->subtotal->setCurrency($currency);
         $this->total->setCurrency($currency);
-
-        if ($this->subtotal instanceof MultiCurrency) {
-            $this->subtotal->setCurrency($currency);
-        }
-
-        if ($this->total instanceof MultiCurrency) {
-            $this->total->setCurrency($currency);
-        }
 
         return $this;
     }

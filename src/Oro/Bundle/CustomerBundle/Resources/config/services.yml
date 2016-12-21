@@ -130,13 +130,6 @@ services:
             - '%oro_customer.entity.account_user.class%'
             - "@doctrine.orm.entity_manager"
 
-    oro_customer.account_user_role.manager.api:
-        class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
-        parent: oro_soap.manager.entity_manager.abstract
-        arguments:
-            - '%oro_customer.entity.account_user_role.class%'
-            - "@doctrine.orm.entity_manager"
-
     oro_customer.datagrid.action_permission_provider:
         class: 'Oro\Bundle\CustomerBundle\Datagrid\ActionPermissionProvider'
         arguments:

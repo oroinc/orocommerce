@@ -5,9 +5,10 @@ namespace Oro\Bundle\CheckoutBundle\Factory;
 use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\OrderBundle\Converter\OrderShippingLineItemConverterInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
-use Oro\Bundle\ShippingBundle\Context\ShippingContext;
-use Oro\Bundle\ShippingBundle\Factory\ShippingContextFactory;
+use Oro\Bundle\ShippingBundle\Context\Builder\Factory\ShippingContextBuilderFactoryInterface;
+use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 
 class CheckoutShippingContextFactory
 {
@@ -22,44 +23,46 @@ class CheckoutShippingContextFactory
     protected $totalProcessor;
 
     /**
-     * @var ShippingContextFactory
+     * @var OrderShippingLineItemConverterInterface
      */
-    protected $shippingContextFactory;
+    private $shippingLineItemConverter;
+
+    /**
+     * @var ShippingContextBuilderFactoryInterface|null
+     */
+    private $shippingContextBuilderFactory = null;
 
     /**
      * @param CheckoutLineItemsManager $checkoutLineItemsManager
      * @param TotalProcessorProvider $totalProcessor
-     * @param ShippingContextFactory $shippingContextFactory
+     * @param OrderShippingLineItemConverterInterface $shippingLineItemConverter
+     * @param null|ShippingContextBuilderFactoryInterface $shippingContextBuilderFactory
      */
     public function __construct(
         CheckoutLineItemsManager $checkoutLineItemsManager,
         TotalProcessorProvider $totalProcessor,
-        ShippingContextFactory $shippingContextFactory
+        OrderShippingLineItemConverterInterface $shippingLineItemConverter,
+        ShippingContextBuilderFactoryInterface $shippingContextBuilderFactory = null
     ) {
         $this->checkoutLineItemsManager = $checkoutLineItemsManager;
         $this->totalProcessor = $totalProcessor;
-        $this->shippingContextFactory = $shippingContextFactory;
+        $this->shippingLineItemConverter = $shippingLineItemConverter;
+        $this->shippingContextBuilderFactory = $shippingContextBuilderFactory;
     }
 
     /**
      * @param Checkout $checkout
-     * @return ShippingContext
+     *
+     * @return ShippingContextInterface
      */
     public function create(Checkout $checkout)
     {
-        $shippingContext = $this->shippingContextFactory->create();
+        if (null === $this->shippingContextBuilderFactory) {
+            return null;
+        }
 
-        $shippingContext->setSourceEntity($checkout);
-        $shippingContext->setSourceEntityIdentifier($checkout->getId());
-        $shippingContext->setShippingAddress($checkout->getShippingAddress());
-        $shippingContext->setBillingAddress($checkout->getBillingAddress());
-        $shippingContext->setCurrency($checkout->getCurrency());
-        $shippingContext->setPaymentMethod($checkout->getPaymentMethod());
-        $shippingContext->setLineItems(
-            $this->checkoutLineItemsManager->getData($checkout)->toArray()
-        );
-        $shippingContext->setCustomer($checkout->getAccount());
-        $shippingContext->setCustomerUser($checkout->getAccountUser());
+        $lineItems = $this->checkoutLineItemsManager->getData($checkout);
+        $convertedLineItems = $this->shippingLineItemConverter->convertLineItems($lineItems);
 
         $total = $this->totalProcessor->getTotal($checkout);
         $subtotal = Price::create(
@@ -67,8 +70,34 @@ class CheckoutShippingContextFactory
             $total->getCurrency()
         );
 
-        $shippingContext->setSubtotal($subtotal);
+        $shippingContextBuilder = $this->shippingContextBuilderFactory->createShippingContextBuilder(
+            $checkout->getCurrency(),
+            $subtotal,
+            $checkout,
+            (string)$checkout->getId()
+        );
 
-        return $shippingContext;
+        if (null !== $checkout->getShippingAddress()) {
+            $shippingContextBuilder->setShippingAddress($checkout->getShippingAddress());
+        }
+
+        if (null !== $checkout->getBillingAddress()) {
+            $shippingContextBuilder->setBillingAddress($checkout->getBillingAddress());
+        }
+
+        if (null !== $checkout->getPaymentMethod()) {
+            $shippingContextBuilder->setPaymentMethod($checkout->getPaymentMethod());
+        }
+
+        if (false === $convertedLineItems->isEmpty()) {
+            $shippingContextBuilder->setLineItems($convertedLineItems);
+        }
+
+        if (null !== $checkout->getAccount()) {
+            $shippingContextBuilder->setCustomer($checkout->getAccount());
+            $shippingContextBuilder->setCustomerUser($checkout->getAccountUser());
+        }
+
+        return $shippingContextBuilder->getResult();
     }
 }
