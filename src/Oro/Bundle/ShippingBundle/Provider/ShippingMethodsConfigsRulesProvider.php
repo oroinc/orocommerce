@@ -40,10 +40,17 @@ class ShippingMethodsConfigsRulesProvider
      */
     public function getAllFilteredShippingMethodsConfigs(ShippingContextInterface $context)
     {
-        $methodsConfigsRules = $this->repository->getByDestinationAndCurrency(
-            $context->getShippingAddress(),
-            $context->getCurrency()
-        );
+        if ($context->getShippingAddress()) {
+            $methodsConfigsRules = $this->repository->getByDestinationAndCurrency(
+                $context->getShippingAddress(),
+                $context->getCurrency()
+            );
+        } else {
+            $methodsConfigsRules = $this->repository->getByCurrencyWithoutDestination(
+                $context->getCurrency()
+            );
+        }
+
         $arrayContext = $this->converter->convert($context);
 
         return $this->filtrationService->getFilteredRuleOwners(
