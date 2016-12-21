@@ -529,7 +529,6 @@ class ImportExportTest extends WebTestCase
             [
                 'success'    => true,
                 'message'    => 'File was successfully imported.',
-                'errorsUrl'  => null,
                 'importInfo' => $added . ' products were added, ' . $updated . ' products were updated',
             ],
             $data

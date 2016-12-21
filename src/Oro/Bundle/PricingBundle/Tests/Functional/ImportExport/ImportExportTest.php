@@ -365,7 +365,6 @@ class ImportExportTest extends WebTestCase
             [
                 'success' => true,
                 'message' => 'File was successfully imported.',
-                'errorsUrl' => null,
                 'importInfo' => sprintf(
                     '%s product prices were added, %s product prices were updated',
                     $expectedAdd,
