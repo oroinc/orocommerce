@@ -22,7 +22,7 @@ class ImportExportTest extends AbstractImportExportTest
         $filePath = implode(DIRECTORY_SEPARATOR, [__DIR__, 'data', 'import.csv']);
 
         $this->validateImportFile($strategy, $filePath);
-        $this->doImport('oro_product_product.add_or_replace');
+        $this->doImport($strategy);
 
         $productRepository = $this->getRepository($productClass);
 
@@ -36,8 +36,8 @@ class ImportExportTest extends AbstractImportExportTest
         /** @var Product $sku1Product */
         $sku1Product = $productRepository->findOneBy(['sku' => 'sku1']);
 
-        $categorySecond = $categoryRepository->findOneByDefaultTitle(LoadCategoryData::SECOND_LEVEL1);
         $categoryFirst = $categoryRepository->findOneByDefaultTitle(LoadCategoryData::FIRST_LEVEL);
+        $categorySecond = $categoryRepository->findOneByDefaultTitle(LoadCategoryData::SECOND_LEVEL1);
 
         $categoryFirst->removeProduct($sku1Product);
         $categorySecond->addProduct($sku1Product);
@@ -47,11 +47,11 @@ class ImportExportTest extends AbstractImportExportTest
 
         // Reimport after change category
         $this->validateImportFile($strategy, $filePath);
-        $this->doImport('oro_product_product.add_or_replace');
+        $this->doImport($strategy);
 
         /** @var Product $sku1Product */
         $sku1Product = $productRepository->findOneBy(['sku' => 'sku1']);
         $category = $categoryRepository->findOneByProduct($sku1Product);
-        $this->assertEquals(LoadCategoryData::SECOND_LEVEL1, $category->getDefaultTitle()->getString());
+        $this->assertEquals(LoadCategoryData::FIRST_LEVEL, $category->getDefaultTitle()->getString());
     }
 }
