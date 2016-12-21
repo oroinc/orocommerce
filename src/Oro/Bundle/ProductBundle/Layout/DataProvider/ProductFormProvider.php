@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Layout\DataProvider;
 
+use Oro\Bundle\ProductBundle\Form\Type\FrontendVariantFiledType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
@@ -105,6 +106,11 @@ class ProductFormProvider extends AbstractFormProvider
         }
 
         return $this->getFormView(FrontendLineItemType::NAME, $lineItem, [], $cacheKeyOptions);
+    }
+
+    public function getVariantFieldsView(Product $product)
+    {
+        return $this->getFormView(FrontendVariantFiledType::NAME, null, ['product' => $product]);
     }
 
     /**

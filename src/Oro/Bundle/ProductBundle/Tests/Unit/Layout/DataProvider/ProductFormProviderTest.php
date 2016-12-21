@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Layout\DataProvider;
 
+use Oro\Bundle\ProductBundle\Form\Type\FrontendVariantFiledType;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -233,6 +234,25 @@ class ProductFormProviderTest extends \PHPUnit_Framework_TestCase
 
         // Get form with existing data in locale cache
         $data = $this->provider->getLineItemFormView($product);
+        $this->assertInstanceOf(FormView::class, $data);
+    }
+
+    public function testGetVariantFieldsView()
+    {
+        $product = new Product();
+        $formView = $this->getMock(FormView::class);
+
+        $expectedForm = $this->getMock(FormInterface::class);
+        $expectedForm->expects($this->once())
+            ->method('createView')
+            ->willReturn($formView);
+
+        $this->formFactory->expects($this->once())
+            ->method('create')
+            ->with(FrontendVariantFiledType::NAME)
+            ->willReturn($expectedForm);
+
+        $data = $this->provider->getVariantFieldsView($product);
         $this->assertInstanceOf(FormView::class, $data);
     }
 }
