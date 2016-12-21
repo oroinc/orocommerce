@@ -95,7 +95,7 @@ class OroPaymentBundleInstaller implements Installation
     {
         $table = $schema->createTable('oro_payment_mtds_cfgs_rl');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('rule_id', 'integer', []);
+        $table->addColumn('rule_id', 'integer', ['notnull' => false]);
         $table->addColumn('currency', 'string', ['notnull' => false, 'length' => 3]);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['rule_id'], 'idx_oro_payment_mtds_cfgs_rl_rule_id', []);
@@ -132,11 +132,7 @@ class OroPaymentBundleInstaller implements Installation
         $table->addColumn('destination_id', 'integer', []);
         $table->addColumn('name', 'text', []);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(
-            ['destination_id'],
-            'idx_oro_payment_mtdscfgsrl_dst_pc_destination_id',
-            []
-        );
+        $table->addIndex(['destination_id'], 'idx_oro_payment_mtdscfgsrl_dst_pc_destination_id', []);
     }
 
     /**

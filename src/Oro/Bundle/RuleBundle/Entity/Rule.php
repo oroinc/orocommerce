@@ -2,14 +2,11 @@
 
 namespace Oro\Bundle\RuleBundle\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
-use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
 use Oro\Bundle\RuleBundle\Model\ExtendRule;
 
 /**
@@ -144,26 +141,6 @@ class Rule extends ExtendRule implements DatesAwareInterface
     private $expression;
 
     /**
-     * @var Collection|PaymentMethodsConfigsRule[]
-     *
-     * @ORM\OneToMany(
-     *     targetEntity="Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule",
-     *     mappedBy="rule",
-     *     cascade={"ALL"},
-     *     fetch="EAGER",
-     *     orphanRemoval=true
-     * )
-     */
-    protected $methodsConfigsRule;
-
-    public function __construct()
-    {
-        parent::__construct();
-
-        $this->methodsConfigsRule = new ArrayCollection();
-    }
-
-    /**
      * @ORM\PrePersist
      */
     public function prePersist()
@@ -281,49 +258,6 @@ class Rule extends ExtendRule implements DatesAwareInterface
     public function setExpression($expression)
     {
         $this->expression = $expression;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|PaymentMethodsConfigsRule[]
-     */
-    public function getMethodsConfigsRule()
-    {
-        return $this->methodsConfigsRule;
-    }
-
-    /**
-     * @param PaymentMethodsConfigsRule $methodsConfigsRule
-     * @return bool
-     */
-    public function hasMethodsConfigsRule(PaymentMethodsConfigsRule $methodsConfigsRule)
-    {
-        return $this->methodsConfigsRule->contains($methodsConfigsRule);
-    }
-
-    /**
-     * @param PaymentMethodsConfigsRule $methodsConfigsRule
-     * @return $this
-     */
-    public function addMethodsConfigsRule(PaymentMethodsConfigsRule $methodsConfigsRule)
-    {
-        if (!$this->hasMethodsConfigsRule($methodsConfigsRule)) {
-            $this->methodsConfigsRule[] = $methodsConfigsRule;
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param PaymentMethodsConfigsRule $methodsConfigsRule
-     * @return $this
-     */
-    public function removeMethodsConfigsRule(PaymentMethodsConfigsRule $methodsConfigsRule)
-    {
-        if ($this->hasMethodsConfigsRule($methodsConfigsRule)) {
-            $this->methodsConfigsRule->removeElement($methodsConfigsRule);
-        }
 
         return $this;
     }

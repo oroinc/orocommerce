@@ -51,8 +51,8 @@ class PaymentMethodsConfigsRule extends ExtendPaymentMethodsConfigsRule implemen
     /**
      * @var Rule
      *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\RuleBundle\Entity\Rule", inversedBy="methodsConfigsRule")
-     * @ORM\JoinColumn(name="rule_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\RuleBundle\Entity\Rule")
+     * @ORM\JoinColumn(name="rule_id", referencedColumnName="id", onDelete="CASCADE")
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={
@@ -113,7 +113,7 @@ class PaymentMethodsConfigsRule extends ExtendPaymentMethodsConfigsRule implemen
      * @param Rule $rule
      * @return $this
      */
-    public function setMethodConfig(Rule $rule)
+    public function setRule(Rule $rule)
     {
         $this->rule = $rule;
 
