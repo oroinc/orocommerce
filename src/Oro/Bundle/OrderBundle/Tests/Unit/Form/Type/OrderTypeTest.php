@@ -129,7 +129,7 @@ class OrderTypeTest extends TypeTestCase
     public function testConfigureOptions()
     {
         /* @var $resolver \PHPUnit_Framework_MockObject_MockObject|OptionsResolver */
-        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
+        $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with(
@@ -336,7 +336,7 @@ class OrderTypeTest extends TypeTestCase
         $OrderLineItemType->setDataClass('Oro\Bundle\OrderBundle\Entity\OrderLineItem');
         $currencySelectionType = new CurrencySelectionTypeStub();
 
-        $this->validator = $this->getMock(
+        $this->validator = $this->createMock(
             'Symfony\Component\Validator\Validator\ValidatorInterface'
         );
         $this->validator
@@ -429,7 +429,7 @@ class OrderTypeTest extends TypeTestCase
      */
     protected function preparePriceType()
     {
-        return PriceTypeGenerator::createPriceType();
+        return PriceTypeGenerator::createPriceType($this);
     }
 
     /**

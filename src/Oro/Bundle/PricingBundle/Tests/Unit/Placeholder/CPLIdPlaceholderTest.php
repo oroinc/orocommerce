@@ -36,7 +36,7 @@ class CPLIdPlaceholderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->tokenStorage = $this->getMock(TokenStorageInterface::class);
+        $this->tokenStorage = $this->createMock(TokenStorageInterface::class);
 
         $this->placeholder = new CPLIdPlaceholder($this->priceListTreeHandler, $this->tokenStorage);
     }
@@ -57,7 +57,7 @@ class CPLIdPlaceholderTest extends \PHPUnit_Framework_TestCase
         $account = new Account();
         $user->setAccount($account);
 
-        $token = $this->getMock(TokenInterface::class);
+        $token = $this->createMock(TokenInterface::class);
         $token->method('getUser')->willReturn($user);
         $this->tokenStorage->method('getToken')->willReturn($token);
 
@@ -71,7 +71,7 @@ class CPLIdPlaceholderTest extends \PHPUnit_Framework_TestCase
 
     public function testReplaceDefaultUserNotAuthenticated()
     {
-        $token = $this->getMock(TokenInterface::class);
+        $token = $this->createMock(TokenInterface::class);
         $token->method('getUser')->willReturn(null);
         $this->tokenStorage->method('getToken')->willReturn($token);
 
@@ -103,7 +103,7 @@ class CPLIdPlaceholderTest extends \PHPUnit_Framework_TestCase
         $account = new Account();
         $user->setAccount($account);
 
-        $token = $this->getMock(TokenInterface::class);
+        $token = $this->createMock(TokenInterface::class);
         $token->method('getUser')->willReturn($user);
         $this->tokenStorage->method('getToken')->willReturn($token);
 

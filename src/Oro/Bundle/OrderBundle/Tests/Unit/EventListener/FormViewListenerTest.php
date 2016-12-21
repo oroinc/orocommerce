@@ -29,7 +29,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
         parent::setUp();
         $this->request = $this->getRequest();
         /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
-        $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
+        $requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
         $requestStack->expects($this->any())->method('getCurrentRequest')->willReturn($this->request);
         $this->listener = new FormViewListener($this->translator, $this->doctrineHelper, $requestStack);
     }

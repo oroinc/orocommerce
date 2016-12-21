@@ -102,7 +102,7 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         $order = new Order();
 
         /** @var Account|\PHPUnit_Framework_MockObject_MockObject $account */
-        $account = $this->getMock('Oro\Bundle\CustomerBundle\Entity\Account');
+        $account = $this->createMock('Oro\Bundle\CustomerBundle\Entity\Account');
         $account->expects($this->any())
             ->method('getId')
             ->will($this->returnValue(1));

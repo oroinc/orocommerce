@@ -137,8 +137,9 @@ class ZipCodeTypeTest extends FormIntegrationTestCase
         );
         $zipCodeFieldsValidator->expects($this->any())->method('initialize')->willReturnCallback(
             function (ExecutionContext $legacyContext) use ($zipCodeFieldsValidator) {
-                $context = $this->getMock('Symfony\Component\Validator\Context\ExecutionContextInterface');
-                $builder = $this->getMock('Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface');
+                $context = $this->createMock('Symfony\Component\Validator\Context\ExecutionContextInterface');
+                $builder = $this
+                    ->createMock('Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface');
 
                 $context->expects($this->any())->method('buildViolation')->with($this->isType('string'))
                     ->willReturnCallback(

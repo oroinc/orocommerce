@@ -38,7 +38,7 @@ class PriceAttributesProductFormExtensionTest extends FormIntegrationTestCase
      */
     protected function setUp()
     {
-        $this->registry = $this->getMock(RegistryInterface::class);
+        $this->registry = $this->createMock(RegistryInterface::class);
 
         parent::setUp();
     }
@@ -76,12 +76,12 @@ class PriceAttributesProductFormExtensionTest extends FormIntegrationTestCase
     public function testSubmit()
     {
 
-        $em = $this->getMock(ObjectManager::class);
+        $em = $this->createMock(ObjectManager::class);
 
-        $priceRepository = $this->getMock(ObjectRepository::class);
+        $priceRepository = $this->createMock(ObjectRepository::class);
         $priceRepository->expects($this->once())->method('findBy')->willReturn([]);
 
-        $attributeRepository = $this->getMock(ObjectRepository::class);
+        $attributeRepository = $this->createMock(ObjectRepository::class);
         $attributeRepository->expects($this->once())->method('findAll')->willReturn([]);
 
         $em->expects($this->exactly(2))->method('getRepository')->willReturnMap([
@@ -98,7 +98,7 @@ class PriceAttributesProductFormExtensionTest extends FormIntegrationTestCase
 
     public function testDataAddedOnPostSetData()
     {
-        $em = $this->getMock(ObjectManager::class);
+        $em = $this->createMock(ObjectManager::class);
 
         $product = new Product();
         $unit1 = (new ProductUnit())->setCode('item');
@@ -114,7 +114,7 @@ class PriceAttributesProductFormExtensionTest extends FormIntegrationTestCase
             ->setName('Price Attribute 2')
             ->addCurrencyByCode('USD');
 
-        $priceRepository = $this->getMock(ObjectRepository::class);
+        $priceRepository = $this->createMock(ObjectRepository::class);
         $price1USD = (new PriceAttributeProductPrice())->setUnit($unit1)
             ->setPrice(Price::create('100', 'USD'))
             ->setQuantity(1)
@@ -132,7 +132,7 @@ class PriceAttributesProductFormExtensionTest extends FormIntegrationTestCase
             ->setProduct($product);
         $priceRepository->expects($this->once())->method('findBy')->willReturn([$price1USD, $price1EUR, $price2USD]);
 
-        $attributeRepository = $this->getMock(ObjectRepository::class);
+        $attributeRepository = $this->createMock(ObjectRepository::class);
         $attributeRepository->expects($this->once())
             ->method('findAll')
             ->willReturn([$priceAttribute1, $priceAttribute2]);
@@ -178,7 +178,7 @@ class PriceAttributesProductFormExtensionTest extends FormIntegrationTestCase
 
     public function testPostSubmitNewPricesPersisted()
     {
-        $em = $this->getMock(ObjectManager::class);
+        $em = $this->createMock(ObjectManager::class);
 
         $product = new Product();
         $unit = (new ProductUnit())->setCode('item');
@@ -189,7 +189,7 @@ class PriceAttributesProductFormExtensionTest extends FormIntegrationTestCase
             ->addCurrencyByCode('USD')
             ->addCurrencyByCode('EUR');
 
-        $priceRepository = $this->getMock(ObjectRepository::class);
+        $priceRepository = $this->createMock(ObjectRepository::class);
         $priceUSD = $this->getEntity(PriceAttributeProductPrice::class, ['id' => 1])
             ->setUnit($unit)
             ->setPrice(Price::create('100', 'USD'))
@@ -198,7 +198,7 @@ class PriceAttributesProductFormExtensionTest extends FormIntegrationTestCase
             ->setProduct($product);
         $priceRepository->expects($this->once())->method('findBy')->willReturn([$priceUSD]);
 
-        $attributeRepository = $this->getMock(ObjectRepository::class);
+        $attributeRepository = $this->createMock(ObjectRepository::class);
         $attributeRepository->expects($this->once())
             ->method('findAll')
             ->willReturn([$priceAttribute]);
@@ -233,7 +233,7 @@ class PriceAttributesProductFormExtensionTest extends FormIntegrationTestCase
 
     public function testPostSubmitPricesWithoutValueRemoved()
     {
-        $em = $this->getMock(ObjectManager::class);
+        $em = $this->createMock(ObjectManager::class);
 
         $product = new Product();
         $unit = (new ProductUnit())->setCode('item');
@@ -244,7 +244,7 @@ class PriceAttributesProductFormExtensionTest extends FormIntegrationTestCase
             ->addCurrencyByCode('EUR')
             ->addCurrencyByCode('USD');
 
-        $priceRepository = $this->getMock(ObjectRepository::class);
+        $priceRepository = $this->createMock(ObjectRepository::class);
         $priceUSD = $this->getEntity(PriceAttributeProductPrice::class, ['id' => 1])
             ->setUnit($unit)
             ->setPrice(Price::create('100', 'USD'))
@@ -253,7 +253,7 @@ class PriceAttributesProductFormExtensionTest extends FormIntegrationTestCase
             ->setProduct($product);
         $priceRepository->expects($this->once())->method('findBy')->willReturn([$priceUSD]);
 
-        $attributeRepository = $this->getMock(ObjectRepository::class);
+        $attributeRepository = $this->createMock(ObjectRepository::class);
         $attributeRepository->expects($this->once())
             ->method('findAll')
             ->willReturn([$priceAttribute]);

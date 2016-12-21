@@ -68,14 +68,14 @@ class FreightClassExtensionPassTest extends \PHPUnit_Framework_TestCase
             ->with(FreightClassExtensionPass::PROVIDER_TAG)
             ->willReturn(['provider_service' => ['class' => '\stdClass']]);
 
-        $definition = $this->getMock('Symfony\Component\DependencyInjection\Definition');
+        $definition = $this->createMock('Symfony\Component\DependencyInjection\Definition');
 
         $this->container->expects($this->exactly(2))
             ->method('getDefinition')
             ->willReturnMap(
                 [
                     [FreightClassExtensionPass::EXTENSION_SERVICE_ID, $definition],
-                    ['provider_service', $this->getMock('Symfony\Component\DependencyInjection\Definition')]
+                    ['provider_service', $this->createMock('Symfony\Component\DependencyInjection\Definition')]
                 ]
             );
 

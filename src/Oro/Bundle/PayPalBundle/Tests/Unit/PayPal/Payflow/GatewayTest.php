@@ -25,7 +25,7 @@ class GatewayTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->processorRegistry = $this->getMock(
+        $this->processorRegistry = $this->createMock(
             'Oro\Bundle\PayPalBundle\PayPal\Payflow\Processor\ProcessorRegistry'
         );
 
@@ -34,7 +34,7 @@ class GatewayTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->client = $this->getMock('Oro\Bundle\PayPalBundle\PayPal\Payflow\Client\ClientInterface');
+        $this->client = $this->createMock('Oro\Bundle\PayPalBundle\PayPal\Payflow\Client\ClientInterface');
 
         $this->gateway = new Gateway($this->client, $this->requestRegistry, $this->processorRegistry);
     }
@@ -51,7 +51,7 @@ class GatewayTest extends \PHPUnit_Framework_TestCase
             Partner::PARTNER => 'PARTNER',
         ];
 
-        $request = $this->getMock('Oro\Bundle\PayPalBundle\PayPal\Payflow\Request\RequestInterface');
+        $request = $this->createMock('Oro\Bundle\PayPalBundle\PayPal\Payflow\Request\RequestInterface');
         $request
             ->expects($this->once())
             ->method('configureOptions')
@@ -68,7 +68,7 @@ class GatewayTest extends \PHPUnit_Framework_TestCase
             ->with($action)
             ->willReturn($request);
 
-        $processor = $this->getMock('Oro\Bundle\PayPalBundle\PayPal\Payflow\Processor\ProcessorInterface');
+        $processor = $this->createMock('Oro\Bundle\PayPalBundle\PayPal\Payflow\Processor\ProcessorInterface');
         $processor
             ->expects($this->once())
             ->method('configureOptions')
@@ -189,7 +189,7 @@ class GatewayTest extends \PHPUnit_Framework_TestCase
 
     protected function prepareRequest()
     {
-        $request = $this->getMock('Oro\Bundle\PayPalBundle\PayPal\Payflow\Request\RequestInterface');
+        $request = $this->createMock('Oro\Bundle\PayPalBundle\PayPal\Payflow\Request\RequestInterface');
         $request
             ->expects($this->once())
             ->method('configureOptions')
@@ -205,7 +205,7 @@ class GatewayTest extends \PHPUnit_Framework_TestCase
             ->method('getRequest')
             ->willReturn($request);
 
-        $processor = $this->getMock('Oro\Bundle\PayPalBundle\PayPal\Payflow\Processor\ProcessorInterface');
+        $processor = $this->createMock('Oro\Bundle\PayPalBundle\PayPal\Payflow\Processor\ProcessorInterface');
         $this->processorRegistry
             ->expects($this->once())
             ->method('getProcessor')

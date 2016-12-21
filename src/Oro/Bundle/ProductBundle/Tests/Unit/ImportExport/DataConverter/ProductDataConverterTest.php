@@ -36,7 +36,7 @@ class ProductDataConverterTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->eventDispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
+        $this->eventDispatcher = $this->createMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
 
         $this->dataConverter = new ProductDataConverter($this->fieldHelper, $relationCalculator);
         $this->dataConverter->setEntityName('Oro\Bundle\ProductBundle\Entity\Product');

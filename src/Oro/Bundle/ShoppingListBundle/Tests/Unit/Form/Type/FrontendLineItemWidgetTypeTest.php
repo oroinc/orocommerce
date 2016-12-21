@@ -66,7 +66,7 @@ class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
     {
         parent::setUp();
 
-        $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+        $this->translator = $this->createMock('Symfony\Component\Translation\TranslatorInterface');
         $this->aclHelper = $this->getMockBuilder(AclHelper::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -191,7 +191,7 @@ class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
             ->getMock();
 
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject| $form */
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
         $this->type->finishView($view, $form, []);
 
@@ -219,7 +219,7 @@ class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
     protected function getTokenStorage()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|TokenInterface $accountUser */
-        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $token = $this->createMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|AccountUser $accountUser */
         $accountUser = $this->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\AccountUser')
@@ -232,7 +232,7 @@ class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
 
         /** @var TokenStorageInterface|\PHPUnit_Framework_MockObject_MockObject $tokenStorage */
         $tokenStorage = $this
-            ->getMock('Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage');
+            ->createMock('Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage');
 
         $tokenStorage
             ->expects($this->any())

@@ -74,8 +74,8 @@ class AccountUserHandlerTest extends FormHandlerTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
-        $this->logger = $this->getMock('Psr\Log\LoggerInterface');
+        $this->translator = $this->createMock('Symfony\Component\Translation\TranslatorInterface');
+        $this->logger = $this->createMock('Psr\Log\LoggerInterface');
 
         $this->handler = new AccountUserHandler(
             $this->form,
@@ -109,7 +109,7 @@ class AccountUserHandlerTest extends FormHandlerTestCase
             $organization->setName('test');
 
             $organizationToken =
-                $this->getMock('Oro\Bundle\SecurityBundle\Authentication\Token\OrganizationContextTokenInterface');
+                $this->createMock('Oro\Bundle\SecurityBundle\Authentication\Token\OrganizationContextTokenInterface');
             $organizationToken->expects($this->any())
                 ->method('getOrganizationContext')
                 ->willReturn($organization);

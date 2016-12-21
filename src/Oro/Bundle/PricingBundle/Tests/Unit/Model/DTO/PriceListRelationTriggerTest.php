@@ -28,13 +28,13 @@ class PriceListRelationTriggerTest extends \PHPUnit_Framework_TestCase
     public function testToArray()
     {
         /** @var Website|\PHPUnit_Framework_MockObject_MockObject $website */
-        $website = $this->getMock(Website::class);
+        $website = $this->createMock(Website::class);
         $website->method('getId')->willReturn(1);
         /** @var Account|\PHPUnit_Framework_MockObject_MockObject $account */
-        $account = $this->getMock(Account::class);
+        $account = $this->createMock(Account::class);
         $account->method('getId')->willReturn(1);
         /** @var AccountGroup|\PHPUnit_Framework_MockObject_MockObject $accountGroup */
-        $accountGroup = $this->getMock(AccountGroup::class);
+        $accountGroup = $this->createMock(AccountGroup::class);
         $accountGroup->method('getId')->willReturn(1);
         $trigger = new PriceListRelationTrigger();
         $trigger->setWebsite($website)

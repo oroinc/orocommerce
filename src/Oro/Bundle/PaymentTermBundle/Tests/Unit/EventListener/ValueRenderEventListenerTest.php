@@ -32,7 +32,7 @@ class ValueRenderEventListenerTest extends \PHPUnit_Framework_TestCase
         $this->associationProvider = $this->getMockBuilder(PaymentTermAssociationProvider::class)
             ->disableOriginalConstructor()->getMock();
 
-        $this->router = $this->getMock(RouterInterface::class);
+        $this->router = $this->createMock(RouterInterface::class);
         $this->router->expects($this->any())->method('generate')->willReturnCallback(
             function ($routeName, array $routeParams) {
                 $this->assertArrayHasKey('id', $routeParams);

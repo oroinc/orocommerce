@@ -63,7 +63,7 @@ class AccountDatagridListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->datagrid = $this->getMock(DatagridInterface::class);
+        $this->datagrid = $this->createMock(DatagridInterface::class);
         $this->datagridConfig = $this->getMockBuilder(DatagridConfiguration::class)
             ->disableOriginalConstructor()
             ->getMock();

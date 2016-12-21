@@ -17,7 +17,7 @@ class ZeroAmountAuthorizationRedirectListenerTest extends \PHPUnit_Framework_Tes
 
     protected function setUp()
     {
-        $this->config = $this->getMock(PayflowGatewayConfigInterface::class);
+        $this->config = $this->createMock(PayflowGatewayConfigInterface::class);
         $this->listener = new ZeroAmountAuthorizationRedirectListener($this->config);
     }
 
@@ -28,7 +28,7 @@ class ZeroAmountAuthorizationRedirectListenerTest extends \PHPUnit_Framework_Tes
 
     public function testOnRequirePaymentRedirectEnabled()
     {
-        $paymentMethod = $this->getMock(PaymentMethodInterface::class);
+        $paymentMethod = $this->createMock(PaymentMethodInterface::class);
         $event = new RequirePaymentRedirectEvent($paymentMethod);
 
         $this->config->expects($this->once())
@@ -42,7 +42,7 @@ class ZeroAmountAuthorizationRedirectListenerTest extends \PHPUnit_Framework_Tes
 
     public function onRequirePaymentRedirectDisabled()
     {
-        $paymentMethod = $this->getMock(PaymentMethodInterface::class);
+        $paymentMethod = $this->createMock(PaymentMethodInterface::class);
         $event = new RequirePaymentRedirectEvent($paymentMethod);
 
         $this->config->expects($this->once())

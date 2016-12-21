@@ -26,7 +26,7 @@ class SystemConfigListenerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $this->registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
         $this->userClass = 'Oro\Bundle\UserBundle\Entity\User';
 
         $this->listener = new SystemConfigListener($this->registry, $this->userClass);

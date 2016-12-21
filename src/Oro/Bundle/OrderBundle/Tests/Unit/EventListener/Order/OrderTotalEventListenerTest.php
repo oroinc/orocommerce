@@ -37,7 +37,7 @@ class OrderTotalEventListenerTest extends \PHPUnit_Framework_TestCase
     public function testOnOrderEvent()
     {
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
         $order = new Order();
 

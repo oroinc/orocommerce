@@ -40,7 +40,7 @@ class EntityTaxListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->metadata = $this->getMock('Doctrine\Common\Persistence\Mapping\ClassMetadata');
+        $this->metadata = $this->createMock('Doctrine\Common\Persistence\Mapping\ClassMetadata');
         $this->entityManager->expects($this->any())->method('getClassMetadata')->willReturn($this->metadata);
 
         $this->listener = new EntityTaxListener($this->taxManager);

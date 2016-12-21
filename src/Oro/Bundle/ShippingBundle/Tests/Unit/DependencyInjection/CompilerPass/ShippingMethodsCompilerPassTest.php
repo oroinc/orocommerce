@@ -84,7 +84,7 @@ class ShippingMethodsCompilerPassTest extends \PHPUnit_Framework_TestCase
             ->with($this->equalTo(ShippingMethodsCompilerPass::TAG))
             ->will($this->returnValue(['service' => ['class' => [[]]]]));
 
-        $definition = $this->getMock('Symfony\Component\DependencyInjection\Definition');
+        $definition = $this->createMock('Symfony\Component\DependencyInjection\Definition');
 
         $this->container->expects($this->once())
             ->method('getDefinition')

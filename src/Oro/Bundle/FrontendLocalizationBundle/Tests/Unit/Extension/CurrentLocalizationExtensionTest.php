@@ -29,8 +29,8 @@ class CurrentLocalizationExtensionTest extends \PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-        $this->tokenStorage = $this->getMock(TokenStorageInterface::class);
-        $this->token = $this->getMock(TokenInterface::class);
+        $this->tokenStorage = $this->createMock(TokenStorageInterface::class);
+        $this->token = $this->createMock(TokenInterface::class);
 
         $this->localizationManager = $this->getMockBuilder(UserLocalizationManager::class)
             ->disableOriginalConstructor()

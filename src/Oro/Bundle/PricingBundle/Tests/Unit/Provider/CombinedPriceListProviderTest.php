@@ -78,7 +78,7 @@ class CombinedPriceListProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function getCombinedPriceListDataProvider()
     {
-        $priceList = $this->getMock('Oro\Bundle\PricingBundle\Entity\CombinedPriceList');
+        $priceList = $this->createMock('Oro\Bundle\PricingBundle\Entity\CombinedPriceList');
         $priceList->expects($this->any())->method('getName')->willReturn('');
         $priceList->expects($this->any())->method('getCurrencies')->willReturn([]);
 
@@ -163,7 +163,7 @@ class CombinedPriceListProviderTest extends \PHPUnit_Framework_TestCase
     {
         $priceListsRelations = [];
         foreach ($relations as $priceListData) {
-            $priceList = $this->getMock('Oro\Bundle\PricingBundle\Entity\PriceList');
+            $priceList = $this->createMock('Oro\Bundle\PricingBundle\Entity\PriceList');
             $priceList->expects($this->any())
                 ->method('getId')
                 ->willReturn($priceListData['price_list_id']);
@@ -193,6 +193,6 @@ class CombinedPriceListProviderTest extends \PHPUnit_Framework_TestCase
      */
     protected function getRegistryMock()
     {
-        return $this->getMock('Symfony\Bridge\Doctrine\RegistryInterface');
+        return $this->createMock('Symfony\Bridge\Doctrine\RegistryInterface');
     }
 }
