@@ -1,26 +1,28 @@
 <?php
 
-namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\DataProvider;
+namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Layout\DataProvider;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Doctrine\ORM\EntityManagerInterface;
+
+use Symfony\Component\HttpFoundation\ParameterBag;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
+
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\WebCatalogBundle\Cache\ResolvedData\ResolvedContentNode;
 use Oro\Bundle\WebCatalogBundle\Cache\ResolvedData\ResolvedContentVariant;
 use Oro\Bundle\WebCatalogBundle\ContentNodeUtils\ContentNodeTreeResolverInterface;
-use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
-use Oro\Bundle\WebCatalogBundle\DataProvider\MenuDataProvider;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentNodeRepository;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
+use Oro\Bundle\WebCatalogBundle\Layout\DataProvider\MenuDataProvider;
 use Oro\Bundle\WebCatalogBundle\Provider\WebCatalogProvider;
+
 use Oro\Component\Testing\Unit\EntityTrait;
-use Symfony\Component\HttpFoundation\ParameterBag;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 class MenuDataProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -78,9 +80,12 @@ class MenuDataProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     * @dataProvider getItemsDataProvider
+     *
+     * @param ResolvedContentNode $resolvedRootNode
+     * @param array               $expectedData
      */
-    public function testGetItems()
+    public function testGetItems(ResolvedContentNode $resolvedRootNode, array $expectedData)
     {
         $webCatalogId = 42;
         $webCatalog = $this->getEntity(WebCatalog::class, ['id' => $webCatalogId]);
@@ -93,34 +98,6 @@ class MenuDataProviderTest extends \PHPUnit_Framework_TestCase
         $this->requestStack->expects($this->once())
             ->method('getMasterRequest')
             ->willReturn($request);
-
-        $resolvedRootNodeVariant = new ResolvedContentVariant();
-        $resolvedRootNodeVariant->addLocalizedUrl((new LocalizedFallbackValue())->setString('/'));
-
-        
-        $childNodeVariant = new ResolvedContentVariant();
-        $childNodeVariant->addLocalizedUrl((new LocalizedFallbackValue())->setString('/node2'));
-
-        $resolvedRootNodeTitle = 'node1';
-        $resolvedRootNodeTitleCollection =  new ArrayCollection([(new LocalizedFallbackValue())
-            ->setString($resolvedRootNodeTitle)]);
-        $resolvedRootNode = new ResolvedContentNode(
-            1,
-            'root',
-            $resolvedRootNodeTitleCollection,
-            $resolvedRootNodeVariant
-        );
-
-        $childNodeTitle = 'node2';
-        $childNodeTitlesCollection = new ArrayCollection([(new LocalizedFallbackValue())->setString($childNodeTitle)]);
-        $childNode = new ResolvedContentNode(
-            1,
-            'root__node2',
-            $childNodeTitlesCollection,
-            $childNodeVariant
-        );
-
-        $resolvedRootNode->addChildNode($childNode);
 
         $this->webCatalogProvider->expects($this->once())
             ->method('getWebCatalog')
@@ -157,23 +134,63 @@ class MenuDataProviderTest extends \PHPUnit_Framework_TestCase
             }));
 
         $actual = $this->menuDataProvider->getItems();
-        $this->assertEquals(
-            [
-                [
-                    MenuDataProvider::IDENTIFIER => 'root',
-                    MenuDataProvider::LABEL => 'node1',
-                    MenuDataProvider::URL => '/',
-                    MenuDataProvider::CHILDREN => [
-                        [
-                            MenuDataProvider::IDENTIFIER => 'root__node2',
-                            MenuDataProvider::LABEL => 'node2',
-                            MenuDataProvider::URL => '/node2',
-                            MenuDataProvider::CHILDREN => []
-                        ]
+        $this->assertEquals($expectedData, $actual);
+    }
+
+    /**
+     * @return array
+     */
+    public function getItemsDataProvider()
+    {
+        return [
+            'root without children' => [
+                'resolvedRootNode' => $this->getResolvedContentNode(1, 'root', 'node1', '/'),
+                'expectedData' => []
+            ],
+            'root with children' => [
+                'resolvedRootNode' => $this->getResolvedContentNode(1, 'root', 'node1', '/', [
+                    $this->getResolvedContentNode(1, 'root__node2', 'node2', '/node2')
+                ]),
+                'expectedData' => [
+                    [
+                        MenuDataProvider::IDENTIFIER => 'root__node2',
+                        MenuDataProvider::LABEL => 'node2',
+                        MenuDataProvider::URL => '/node2',
+                        MenuDataProvider::CHILDREN => []
                     ]
                 ]
             ],
-            $actual
+        ];
+    }
+
+    /**
+     * @param string                $id
+     * @param string                $identifier
+     * @param string                $title
+     * @param string                $url
+     * @param ResolvedContentNode[] $children
+     *
+     * @return ResolvedContentNode
+     */
+    private function getResolvedContentNode($id, $identifier, $title, $url, array $children = [])
+    {
+        $nodeVariant = new ResolvedContentVariant();
+        $nodeVariant->addLocalizedUrl((new LocalizedFallbackValue())->setString($url));
+
+        $nodeTitleCollection =  new ArrayCollection([(new LocalizedFallbackValue())
+            ->setString($title)]);
+
+        $resolvedRootNode = new ResolvedContentNode(
+            $id,
+            $identifier,
+            $nodeTitleCollection,
+            $nodeVariant
         );
+
+        foreach ($children as $child) {
+            $resolvedRootNode->addChildNode($child);
+        }
+
+        return $resolvedRootNode;
     }
 }

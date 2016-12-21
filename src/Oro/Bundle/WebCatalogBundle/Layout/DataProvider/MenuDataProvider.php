@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\WebCatalogBundle\DataProvider;
+namespace Oro\Bundle\WebCatalogBundle\Layout\DataProvider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
@@ -69,20 +69,24 @@ class MenuDataProvider
      */
     public function getItems()
     {
-        $items = [];
         $request = $this->requestStack->getMasterRequest();
 
+        $rootItem = [];
         if ($request && $scope = $request->attributes->get('_web_content_scope')) {
             $webCatalog = $this->webCatalogProvider->getWebCatalog();
             if ($webCatalog) {
                 $rootNode = $this->getContentNodeRepository()->getRootNodeByWebCatalog($webCatalog);
                 $resolvedNode = $this->contentNodeTreeResolverFacade->getResolvedContentNode($rootNode, $scope);
 
-                $items[] = $this->prepareItemsData($resolvedNode);
+                $rootItem = $this->prepareItemsData($resolvedNode);
             }
         }
 
-        return $items;
+        if (array_key_exists(self::CHILDREN, $rootItem)) {
+            return $rootItem[self::CHILDREN];
+        }
+
+        return [];
     }
 
     /**

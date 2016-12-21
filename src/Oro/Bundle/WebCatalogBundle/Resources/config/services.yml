@@ -222,7 +222,7 @@ services:
             - '@oro_web_catalog.cache'
 
     oro_web_catalog.layout.data_provider.menu_data:
-        class: Oro\Bundle\WebCatalogBundle\DataProvider\MenuDataProvider
+        class: Oro\Bundle\WebCatalogBundle\Layout\DataProvider\MenuDataProvider
         arguments:
             - '@doctrine'
             - '@oro_web_catalog.web_catalog_provider'
