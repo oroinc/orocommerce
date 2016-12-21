@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -10,6 +11,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
+use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugType;
+use Oro\Bundle\ValidationBundle\Validator\Constraints\UrlSafe;
 use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
@@ -47,6 +50,8 @@ class ProductType extends AbstractType
     }
 
     /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     *
      * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -132,11 +137,27 @@ class ProductType extends AbstractType
             )
             ->add(
                 'variantFields',
-                ProductCustomFieldsChoiceType::NAME,
-                ['label' => 'oro.product.variant_fields.label']
-            )->add(
+                ProductCustomVariantFieldsChoiceType::NAME,
+                [
+                    'label' => 'oro.product.variant_fields.label',
+                    'tooltip' => 'oro.product.form.tooltip.variant_fields',
+                ]
+            )
+            ->add(
                 'images',
-                ProductImageCollectionType::NAME
+                ProductImageCollectionType::NAME,
+                ['required' => false]
+            )
+            ->add('type', HiddenType::class)
+            ->add(
+                'slugPrototypes',
+                LocalizedSlugType::NAME,
+                [
+                    'label'    => 'oro.product.slug_prototypes.label',
+                    'required' => false,
+                    'options'  => ['constraints' => [new UrlSafe()]],
+                    'source_field' => 'names',
+                ]
             )
             ->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetDataListener'])
             ->addEventListener(FormEvents::POST_SET_DATA, [$this, 'postSetDataListener'])
@@ -166,7 +187,7 @@ class ProductType extends AbstractType
                 ]
             );
         }
-        if ($product instanceof Product && $product->getHasVariants()) {
+        if ($product instanceof Product && $product->isConfigurable()) {
             $form
                 ->add(
                     'variantLinks',

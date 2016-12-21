@@ -91,6 +91,7 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
                 'id' => 777,
                 'sku' => 'sku123',
                 'status' => Product::STATUS_ENABLED,
+                'type' => Product::TYPE_CONFIGURABLE,
                 'inventoryStatus' => $inventoryStatus,
             ]
         );
@@ -158,52 +159,59 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
         $this->listener->onWebsiteSearchIndex($event);
 
         $expected[$product->getId()] = [
-            'product_id' => $product->getId(),
-            'sku' => 'sku123',
-            'sku_uppercase' => 'SKU123',
-            'status' => Product::STATUS_ENABLED,
-            'inventory_status' => Product::INVENTORY_STATUS_IN_STOCK,
+            'product_id' => ['value' => $product->getId(), 'all_text' => false],
+            'sku' => ['value' => 'sku123', 'all_text' => true],
+            'sku_uppercase' => ['value' => 'SKU123', 'all_text' => true],
+            'status' => ['value' => Product::STATUS_ENABLED, 'all_text' => false],
+            'type' => ['value' => Product::TYPE_CONFIGURABLE, 'all_text' => false],
+            'inventory_status' => ['value' => Product::INVENTORY_STATUS_IN_STOCK, 'all_text' => false],
             'name_LOCALIZATION_ID' => [
-                new PlaceholderValue(
-                    $this->prepareLocalizedValue(null, 'Default name', null),
-                    [LocalizationIdPlaceholder::NAME => Localization::DEFAULT_LOCALIZATION]
-                ),
-                new PlaceholderValue(
-                    $this->prepareLocalizedValue($firstLocale, self::NAME_DEFAULT_LOCALE, null),
-                    [LocalizationIdPlaceholder::NAME => $firstLocale->getId()]
-                ),
-                new PlaceholderValue(
-                    $this->prepareLocalizedValue($secondLocale, self::NAME_CUSTOM_LOCALE, null),
-                    [LocalizationIdPlaceholder::NAME => $secondLocale->getId()]
-                ),
-            ],
-            'description_LOCALIZATION_ID' => [
-                new PlaceholderValue(
-                    $this->prepareLocalizedValue(null, 'Default description', null),
-                    [LocalizationIdPlaceholder::NAME => Localization::DEFAULT_LOCALIZATION]
-                ),
-                new PlaceholderValue(
-                    $this->prepareLocalizedValue($firstLocale, null, self::DESCRIPTION_DEFAULT_LOCALE),
-                    [LocalizationIdPlaceholder::NAME => $firstLocale->getId()]
-                ),
-                new PlaceholderValue(
-                    $this->prepareLocalizedValue($secondLocale, null, self::DESCRIPTION_CUSTOM_LOCALE),
-                    [LocalizationIdPlaceholder::NAME => $secondLocale->getId()]
-                ),
+                [
+                    'value' => new PlaceholderValue(
+                        $this->prepareLocalizedValue($firstLocale, self::NAME_DEFAULT_LOCALE, null),
+                        [LocalizationIdPlaceholder::NAME => $firstLocale->getId()]
+                    ),
+                    'all_text' => true,
+                ],
+                [
+                    'value' => new PlaceholderValue(
+                        $this->prepareLocalizedValue($secondLocale, self::NAME_CUSTOM_LOCALE, null),
+                        [LocalizationIdPlaceholder::NAME => $secondLocale->getId()]
+                    ),
+                    'all_text' => true,
+                ],
             ],
             'short_description_LOCALIZATION_ID' => [
-                new PlaceholderValue(
-                    $this->prepareLocalizedValue(null, 'Default short description', null),
-                    [LocalizationIdPlaceholder::NAME => Localization::DEFAULT_LOCALIZATION]
-                ),
-                new PlaceholderValue(
-                    $this->prepareLocalizedValue($firstLocale, null, self::SHORT_DESCRIPTION_DEFAULT_LOCALE),
-                    [LocalizationIdPlaceholder::NAME => $firstLocale->getId()]
-                ),
-                new PlaceholderValue(
-                    $this->prepareLocalizedValue($secondLocale, null, self::SHORT_DESCRIPTION_CUSTOM_LOCALE),
-                    [LocalizationIdPlaceholder::NAME => $secondLocale->getId()]
-                ),
+                [
+                    'value' => new PlaceholderValue(
+                        $this->prepareLocalizedValue($firstLocale, null, self::SHORT_DESCRIPTION_DEFAULT_LOCALE),
+                        [LocalizationIdPlaceholder::NAME => $firstLocale->getId()]
+                    ),
+                    'all_text' => true,
+                ],
+                [
+                    'value' => new PlaceholderValue(
+                        $this->prepareLocalizedValue($secondLocale, null, self::SHORT_DESCRIPTION_CUSTOM_LOCALE),
+                        [LocalizationIdPlaceholder::NAME => $secondLocale->getId()]
+                    ),
+                    'all_text' => true,
+                ],
+            ],
+            'all_text_LOCALIZATION_ID' => [
+                [
+                    'value' => new PlaceholderValue(
+                        $this->prepareLocalizedValue($firstLocale, null, self::DESCRIPTION_DEFAULT_LOCALE),
+                        [LocalizationIdPlaceholder::NAME => $firstLocale->getId()]
+                    ),
+                    'all_text' => true,
+                ],
+                [
+                    'value' => new PlaceholderValue(
+                        $this->prepareLocalizedValue($secondLocale, null, self::DESCRIPTION_CUSTOM_LOCALE),
+                        [LocalizationIdPlaceholder::NAME => $secondLocale->getId()]
+                    ),
+                    'all_text' => true,
+                ],
             ],
         ];
 

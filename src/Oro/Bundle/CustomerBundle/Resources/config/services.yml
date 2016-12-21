@@ -51,6 +51,7 @@ services:
         class: 'Oro\Bundle\CustomerBundle\EventListener\Datagrid\AccountDatagridListener'
         arguments:
             - "@oro_customer.security.account_user_provider"
+            - "@oro_customer.repository.account"
             - ["@oro_customer.datagrid.account_action_permission_provider", "getActions"]
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before, method: onBuildBeforeFrontendItems }
@@ -128,13 +129,6 @@ services:
         parent: oro_soap.manager.entity_manager.abstract
         arguments:
             - '%oro_customer.entity.account_user.class%'
-            - "@doctrine.orm.entity_manager"
-
-    oro_customer.account_user_role.manager.api:
-        class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
-        parent: oro_soap.manager.entity_manager.abstract
-        arguments:
-            - '%oro_customer.entity.account_user_role.class%'
             - "@doctrine.orm.entity_manager"
 
     oro_customer.datagrid.action_permission_provider:
@@ -610,6 +604,7 @@ services:
             - { name: oro_service_link, service: oro_customer.account_group_scope_criteria_provider }
             - { name: oro_scope.provider, scopeType: account_group_category_visibility, priority: 30 }
             - { name: oro_scope.provider, scopeType: account_group_product_visibility, priority: 30 }
+            - { name: oro_scope.provider, scopeType: web_content, priority: 100 }
             - { name: oro_scope.provider, scopeType: workflow_definition, priority: 20 }
 
     oro_customer.account_scope_criteria_provider.link:
@@ -618,6 +613,7 @@ services:
             - { name: oro_service_link, service: oro_customer.account_scope_criteria_provider }
             - { name: oro_scope.provider, scopeType: account_category_visibility, priority: 30 }
             - { name: oro_scope.provider, scopeType: account_product_visibility, priority: 30 }
+            - { name: oro_scope.provider, scopeType: web_content, priority: 1000 }
             - { name: oro_scope.provider, scopeType: workflow_definition, priority: 30 }
 
     oro_customer.entity_ownership.listener:
@@ -647,3 +643,9 @@ services:
             - '@oro_customer.acl.resolver.role_translation_prefix'
         tags:
             - { name: oro_datagrid.datasource, type: account-user-workflow-permission-grid-provider }
+
+    oro_customer.repository.account:
+        class: 'Oro\Bundle\CustomerBundle\Entity\Repository\AccountRepository'
+        parent: oro_entity.abstract_repository
+        arguments:
+            - '%oro_customer.entity.account.class%'

@@ -260,92 +260,6 @@
   float: right;
   margin: 0;
 
-  .mass-action-controls {
-    .pinned-dropdown {
-      .btn-group {
-        position: relative;
-
-        display: inline-block;
-        min-height: 47px;
-        min-width: 140px;
-        margin-bottom: 0;
-        padding: 0;
-        border: 0;
-        vertical-align: middle;
-        border-radius: 4px;
-
-        background: get-color('additional', 'darker');
-        color: get-color('additional', 'ultra');
-        font-size: 15px;
-        line-height: 1;
-        font-weight: 400;
-        text-align: center;
-        white-space: nowrap;
-
-        user-select: none;
-        touch-action: manipulation;
-        cursor: pointer;
-
-        > .direct-link {
-          float: left;
-          display: block;
-          width: calc(100% - 36px);
-          margin: 0;
-          padding: 0 15px;
-
-          color: get-color('additional', 'ultra');
-          line-height: 3.1;
-
-          @include ellipsis();
-        }
-
-        &.icons-holder .direct-link {
-          width: 100%;
-        }
-
-        > .dropdown-toggle {
-          float: left;
-          display: block;
-          width: 36px;
-          margin: 0;
-          padding: 0 12px;
-          border-left: 1px solid rgba(255,255,255,.3);
-
-          color: get-color('additional', 'ultra');
-          line-height: 3.1;
-
-          @include ellipsis();
-        }
-      }
-
-      &.btn-inactive .btn-group {
-        background-color: get-color('additional', 'middle');
-      }
-    }
-
-    @include clearfix();
-  }
-
-  .action-button {
-    display: inline-block;
-    margin: 0 10px 0 0;
-    padding: 0 29px;
-    vertical-align: middle;
-    border-radius: 4px;
-
-    background: get-color('additional', 'middle');
-    color: get-color('additional', 'ultra');
-    font-size: $base-font-size;
-    line-height: 3.35;
-    font-weight: 400;
-    text-align: center;
-    white-space: nowrap;
-
-    user-select: none;
-    touch-action: manipulation;
-    cursor: pointer;
-  }
-
   .widget-content {
     .action-button {
       background-color: get-color('additional', 'darker');
@@ -353,6 +267,12 @@
       &.btn-inactive {
         background-color: get-color('additional', 'middle');
       }
+    }
+  }
+
+  .btn-group {
+    .btn:not(.dropdown-toggle) {
+      margin-left: $offset-x-m;
     }
   }
 }

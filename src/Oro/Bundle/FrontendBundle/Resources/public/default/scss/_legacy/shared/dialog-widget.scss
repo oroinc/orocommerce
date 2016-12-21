@@ -43,18 +43,17 @@
     }
 
     .ui-icon-closethick {
-      $ui-icon-closethick-icon: '\e5cd';
 
       text-indent: 0;
 
+      @include fa-icon($fa-var-remove);
+
       &:before {
-        content: "#{$ui-icon-closethick-icon}";
         display: inline-block;
         vertical-align: middle;
         width: 1em;
         height: 1em;
 
-        font-family: $base-font-icon;
         font-weight: normal;
         font-style: normal;
         font-size: 21px;

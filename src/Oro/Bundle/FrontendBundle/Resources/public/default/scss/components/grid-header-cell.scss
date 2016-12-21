@@ -1,0 +1,23 @@
+// @theme: default
+
+.grid-header-cell {
+    &.sortable {
+        .caret {
+            display: inline-block;
+            margin: $grid-header-cell-caret-offset;
+            
+            border-top: $grid-header-cell-caret-size solid $grid-header-cell-caret-color;
+            border-right: $grid-header-cell-caret-size solid transparent;
+            border-left: $grid-header-cell-caret-size solid transparent;
+            vertical-align: middle;
+
+            transition: all .2s;
+        }
+    }
+    
+    &.descending {
+        .caret {
+            transform: rotate(180deg);
+        }
+    }
+}

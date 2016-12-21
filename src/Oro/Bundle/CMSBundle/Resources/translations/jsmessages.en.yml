@@ -1,3 +1,0 @@
-oro:
-    cms:
-        slugify_error: "Impossible slug generation for {{ string }}"

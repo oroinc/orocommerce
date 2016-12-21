@@ -50,7 +50,6 @@ class FieldsProviderTest extends WebTestCase
                 true,
                 [
                     'createdAt',
-                    'hasVariants',
                     'id',
                     'sku',
                     'status',
@@ -62,7 +61,6 @@ class FieldsProviderTest extends WebTestCase
                     'inventory_status',
                     'metaDescriptions',
                     'metaKeywords',
-                    'metaTitles',
                     'names',
                     'organization',
                     'owner',
@@ -78,7 +76,6 @@ class FieldsProviderTest extends WebTestCase
                 false,
                 [
                     'createdAt',
-                    'hasVariants',
                     'id',
                     'sku',
                     'status',

@@ -16,8 +16,6 @@ oro:
         customer_notes.frontend.label: Notes
         po_number.label: PO Number
         ship_until.label: Do Not Ship Later Than
-        subtotal.label: Subtotal
-        total.label: Total
         payment_method.label: Payment Method
         payment_status.label: Payment Status
         billing_address.label: Billing Address
@@ -30,6 +28,22 @@ oro:
         overridden_shipping_cost.label: 'Overridden Shipping Cost'
         estimated_shipping_cost_amount.label: 'Estimated Shipping Cost Amount'
         overridden_shipping_cost_amount.label: 'Overridden Shipping Cost Amount'
+        total_currency.label: 'Total currency'
+        total_value.label: 'Total'
+        total_base_currency.label: 'Total (%sign%)'
+        base_total_value.label: 'Total (%sign%)'
+        subtotal_currency.label: 'Subtotal currency'
+        subtotal_value.label: 'Subtotal'
+        subtotal_base_currency.label: 'Subtotal (%sign%)'
+        base_subtotal_value.label: 'Subtotal (%sign%)'
+
+        subtotal:
+            label: Subtotal
+            base.label: 'Subtotal (%sign%)'
+
+        total:
+            label: Total
+            base.label: 'Total (%sign%)'
 
         # TODO: remove after resolving https://magecore.atlassian.net/browse/BAP-3940
         shipping_cost_amount.label: 'Shipping Cost Amount'

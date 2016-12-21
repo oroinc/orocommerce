@@ -1,3 +1,5 @@
+// @theme: custom
+
 /*=== START COMPONENTS===*/
 @import 'components/header.scss';
 @import 'components/notification-messages.scss';
@@ -5,6 +7,3 @@
 
 /* Commerce theme */
 @import 'components/commerce/commerce.scss';
-
-/* Layout styles */
-@import 'shared/layout.scss';

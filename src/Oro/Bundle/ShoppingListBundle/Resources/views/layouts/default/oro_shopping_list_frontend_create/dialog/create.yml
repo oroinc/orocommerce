@@ -35,7 +35,7 @@ layout:
                     options:
                         action: reset
                         text: oro.shoppinglist.create_new_form.cancel_label
-                        style: gray
+                        style: ''
                 form_actions_create:
                     blockType: button
                     options:

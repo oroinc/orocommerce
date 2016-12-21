@@ -9,6 +9,8 @@ use Oro\Bundle\OrderBundle\Provider\DiscountSubtotalProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
+use Oro\Bundle\CurrencyBundle\Converter\RateConverterInterface;
+use Oro\Bundle\CurrencyBundle\Entity\MultiCurrency;
 
 class TotalHelper
 {
@@ -21,6 +23,9 @@ class TotalHelper
     /** @var DiscountSubtotalProvider */
     protected $discountSubtotalProvider;
 
+    /** @var RateConverterInterface */
+    protected $rateConverter;
+
     /**
      * @param TotalProcessorProvider $totalProvider
      * @param LineItemSubtotalProvider $lineItemSubtotalProvider
@@ -29,11 +34,13 @@ class TotalHelper
     public function __construct(
         TotalProcessorProvider $totalProvider,
         LineItemSubtotalProvider $lineItemSubtotalProvider,
-        DiscountSubtotalProvider $discountSubtotalProvider
+        DiscountSubtotalProvider $discountSubtotalProvider,
+        RateConverterInterface $rateConverter
     ) {
         $this->totalProvider = $totalProvider;
         $this->lineItemSubtotalProvider = $lineItemSubtotalProvider;
         $this->discountSubtotalProvider = $discountSubtotalProvider;
+        $this->rateConverter = $rateConverter;
     }
 
     /**
@@ -43,7 +50,11 @@ class TotalHelper
     {
         $subtotal = $this->lineItemSubtotalProvider->getSubtotal($order);
 
-        $order->setSubtotal($subtotal->getAmount());
+        $subtotalObject = MultiCurrency::create($subtotal->getAmount(), $subtotal->getCurrency());
+        $baseSubtotal = $this->rateConverter->getBaseCurrencyAmount($subtotalObject);
+        $subtotalObject->setBaseCurrencyValue($baseSubtotal);
+
+        $order->setSubtotalObject($subtotalObject);
         if ($subtotal->getAmount() > 0) {
             foreach ($order->getDiscounts() as $discount) {
                 if ($discount->getType() === OrderDiscount::TYPE_AMOUNT) {
@@ -76,11 +87,10 @@ class TotalHelper
     public function fillTotal(Order $order)
     {
         $total = $this->totalProvider->getTotal($order);
-        if ($total) {
-            $order->setTotal($total->getAmount());
-        } else {
-            $order->setTotal(0.0);
-        }
+        $totalObject = MultiCurrency::create($total->getAmount(), $total->getCurrency());
+        $baseTotal = $this->rateConverter->getBaseCurrencyAmount($totalObject);
+        $totalObject->setBaseCurrencyValue($baseTotal);
+        $order->setTotalObject($totalObject);
     }
 
     /**

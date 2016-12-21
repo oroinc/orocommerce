@@ -70,6 +70,10 @@ oro:
             fields:
                 manage_inventory.label: Managed Inventory
                 inventory_threshold.label: Inventory Threshold
+                backorders.label: Backorders
+                decrement_inventory:
+                    label: Decrement Inventory
+                    tooltip: Decrement inventory when order is created
                 minimum_quantity_to_order.label: Minimum Quantity To Order
                 maximum_quantity_to_order.label: Maximum Quantity To Order
 
@@ -80,3 +84,13 @@ oro:
                 'false': No
         inventory_threshold:
             label: Inventory Threshold
+        decrement_inventory:
+            label: Decrement Inventory
+            choice:
+                'true': Yes
+                'false': No
+        backorders:
+            label: Backorders
+            choice:
+                'true': Yes
+                'false': No

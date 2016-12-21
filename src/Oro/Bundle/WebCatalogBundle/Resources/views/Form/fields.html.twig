@@ -1,0 +1,137 @@
+{% macro oro_web_catalog_content_variant_collection_item_prototype(form, name, disabled) %}
+    {% spaceless %}
+    <div data-content="{{ name }}"
+         data-validation-optional-group
+         data-role="content-variant-item"
+         class="content-variant-item {% if form.default.vars.data %}content-variant-item-default{% endif %}"
+         {% if form.vars.attr['data-validation-optional-group-handler'] is defined %}
+             data-validation-optional-group-handler="{{ form.vars.attr['data-validation-optional-group-handler'] }}"
+         {% endif %}
+         data-page-component-module="oroui/js/app/components/view-component"
+         data-page-component-options="{{ {
+             view: 'orowebcatalog/js/app/views/scope-toggle-view',
+             selectors: {
+                 useParentScopeSelector: '#' ~ form.default.vars.id,
+                 scopesSelector: '.scope-elements'
+             }
+         }|json_encode }}"
+    >
+        <h5 class="content-variant-item-title">
+            {{ form_widget(form.default) }}
+            {{ oro_web_catalog_content_variant_title(form.type.vars.data)|trans }}
+            <span class="label label-info content-variant-item-default-label">{{ "oro.webcatalog.contentvariant.default.label"|trans }}</span>
+        </h5>
+
+        {{ form_widget(form, {disabled: disabled}) }}
+
+        <div class="scope-elements">
+            <h5>{{ form.scopes.vars.label|trans }}</h5>
+            {{ form_widget(form.scopes) }}
+        </div>
+
+        <div class="hide">
+            {{ form_rest(form) }}
+        </div>
+
+        <button class="removeVariantBtn btn btn-action btn-link" type="button" data-related="{{ name }}" data-action="remove">×</button>
+    </div>
+    {% endspaceless %}
+{% endmacro %}
+
+{% macro oro_web_catalog_content_variant_prototype_attributes(form) %}
+    {% for contentVarientTypeName, contentVariantPrototypeData in form.vars.prototypes %}
+        {% set contentVariantPrototypeForm = contentVariantPrototypeData.form %}
+        {% set contentVariantPrototypeFormHtml = _self.oro_web_catalog_content_variant_collection_item_prototype(
+            contentVariantPrototypeForm,
+            contentVariantPrototypeForm.vars.name,
+            form.vars.disabled
+        ) %}
+        data-prototype-{{ contentVarientTypeName }}="{{ contentVariantPrototypeFormHtml|escape }}"
+    {% endfor %}
+{% endmacro %}
+
+{% macro oro_web_catalog_content_variant_button(form) %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% set numberOfVariants = form.vars.prototypes|length %}
+
+    <div class="btn-group pull-right">
+    {% if numberOfVariants > 0 %}
+        {% set contentVarientTypeName = form.vars.prototypes|keys|first %}
+        {% set variant = form.vars.prototypes[contentVarientTypeName] %}
+
+        {% set buttonsHtml = UI.button({
+            'path': 'javascript: void(0);',
+            'label': 'oro.webcatalog.form.add_variant.label'|trans({'%variantName%': variant.title|trans }),
+            'data': {
+                'content-variant-type-name': contentVarientTypeName,
+                'role': 'variant-button'
+            }
+        }) %}
+
+        {% for contentVarientTypeName in form.vars.prototypes|keys|slice(1) %}
+            {% set variant = form.vars.prototypes[contentVarientTypeName] %}
+
+            {% set buttonsHtml = buttonsHtml ~ UI.button({
+                'path': 'javascript: void(0);',
+                'label': 'oro.webcatalog.form.add_variant.label'|trans({'%variantName%': variant.title|trans }),
+                'data': {
+                    'content-variant-type-name': contentVarientTypeName,
+                    'role': 'variant-button'
+                }
+            }) %}
+        {% endfor %}
+
+        {{ UI.pinnedDropdownButton({'html': buttonsHtml}) }}
+    {% endif %}
+    </div>
+{% endmacro %}
+
+{% block oro_web_catalog_content_variant_collection_widget %}
+    {% spaceless %}
+        {% set prototype_name = form.vars.prototype_name %}
+        {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-content-variant-collection' }) %}
+        <div {{ block('widget_container_attributes') }}
+            data-role="content-variant-collection"
+            data-page-component-module="orowebcatalog/js/app/components/content-variant-collection-component"
+            data-last-index="{{ form.children|length}}"
+            data-prototype-name="{{ prototype_name }}"
+            {{ _self.oro_web_catalog_content_variant_prototype_attributes(form) }}
+        >
+            <input type="hidden" name="validate_{{ full_name }}" data-collection-name="{{ full_name }}" data-name="collection-validation" disabled data-validate-element>
+
+            <div class="content-variant-add-btn-container clearfix-oro">
+                {{ _self.oro_web_catalog_content_variant_button(form) }}
+            </div>
+
+            <div class="variant-collection" data-role="collection-container"
+                 data-page-component-module="oroui/js/app/components/view-component"
+                 data-page-component-options="{{ {
+                     view: 'orowebcatalog/js/app/views/default-variant-collection-view',
+                     defaultSelector: '[name$="[default]"]'
+                 }|json_encode }}"
+            >
+                {% if form.children|length %}
+                    {% for child in form.children %}
+                        {{ _self.oro_web_catalog_content_variant_collection_item_prototype(child, child.vars.full_name, form.vars.disabled) }}
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+        {{ _self.content_vriant_default_js(_context) }}
+    {% endspaceless %}
+{% endblock %}
+
+{% macro content_vriant_default_js(context) %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    <div {{ UI.renderPageComponentAttributes({
+        module: 'oroui/js/app/components/view-component',
+        options: {
+            _sourceElement: '#' ~ context.id,
+            view: 'orowebcatalog/js/app/views/variants-collection-view'
+        }
+    }) }}></div>
+{% endmacro %}
+
+{% block oro_web_catalog_system_page_variant_widget %}
+    {{ form_row(form.systemPageRoute) }}
+{% endblock %}

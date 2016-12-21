@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\PricingBundle\Form\Extension;
 
+use Oro\Bundle\CurrencyBundle\Provider\CurrencyProviderInterface;
+use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
@@ -10,19 +12,8 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Intl\Intl;
 use Symfony\Component\Translation\TranslatorInterface;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
-
 class SystemCurrencyFormExtension extends AbstractTypeExtension
 {
-    const ALLOWED_CURRENCIES = 'oro_currency.allowed_currencies';
-    const ENABLED_CURRENCIES = 'oro_pricing.enabled_currencies';
-
-    /**
-     * @var ConfigManager
-     */
-    protected $configManager;
-
     /**
      * @var LocaleSettings
      */
@@ -34,18 +25,23 @@ class SystemCurrencyFormExtension extends AbstractTypeExtension
     protected $translator;
 
     /**
-     * @param ConfigManager $configManager
+     * @var CurrencyProviderInterface
+     */
+    protected $currencyProvider;
+
+    /**
      * @param LocaleSettings $localeSettings
      * @param TranslatorInterface $translator
+     * @param CurrencyProviderInterface $currencyProvider
      */
     public function __construct(
-        ConfigManager $configManager,
         LocaleSettings $localeSettings,
-        TranslatorInterface $translator
+        TranslatorInterface $translator,
+        CurrencyProviderInterface $currencyProvider
     ) {
-        $this->configManager = $configManager;
         $this->localeSettings = $localeSettings;
         $this->translator = $translator;
+        $this->currencyProvider = $currencyProvider;
     }
 
     /**
@@ -71,7 +67,7 @@ class SystemCurrencyFormExtension extends AbstractTypeExtension
     {
         $form = $event->getForm();
         $restrict = $form->getConfig()->getOption('restrict');
-        $enabledCurrencies = $this->configManager->get('oro_pricing.enabled_currencies');
+        $enabledCurrencies = $this->currencyProvider->getCurrencyList();
 
         if ($restrict && $enabledCurrencies) {
             $allowedCurrencies = (array) $form->getData();

@@ -40,22 +40,7 @@
     {% endif %}
     {% block stats %}
         {{ parent() }}
-        <div class="clearfix customer-info well-small customer-simple">
-            <div class="customer-content pull-left">
-                <div class="clearfix">
-                    <ul class="inline">
-                        <li>
-                            {{- form.category.vars.label|trans -}}:
-                            {%- if form.category.vars.data is not null -%}
-                                {{- form.category.vars.data.defaultTitle|title -}}
-                            {%- else -%}
-                                {{- 'N/A'|trans -}}
-                            {%- endif -%}
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
+        {% placeholder oro_product_step_two_info with {'form' : form} %}
     {% endblock stats %}
 {% endblock pageHeader %}
 
@@ -65,6 +50,12 @@
     {%  set generalData = [
         form_row(form.sku)
     ] %}
+
+    {% if form.type.vars.value == constant('Oro\\Bundle\\ProductBundle\\Entity\\Product::TYPE_CONFIGURABLE') %}
+        {% set generalData = generalData|merge([
+            form_row(form.variantFields)
+        ]) %}
+    {% endif %}
 
     {% set generalData = generalData|merge([
         form_row(form.names),
