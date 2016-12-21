@@ -123,8 +123,6 @@ class ShoppingListFrontendActionsTest extends FrontendActionTestCase
             $this->getUrl('oro_shopping_list_frontend_view', ['id' => $shoppingList->getId()])
         );
 
-        //print_r(['rc' => $this->client->getResponse()->getContent()]);
-
         $link = $crawler->selectLink('Create Order')->link();
 
         $this->client->click($link);
