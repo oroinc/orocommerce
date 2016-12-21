@@ -62,9 +62,9 @@ class CategoryVisibilityProcessorTest extends \PHPUnit_Framework_TestCase
         $this->registry = $this->getMockBuilder(ManagerRegistry::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->messageFactory = $this->getMock(MessageFactoryInterface::class);
-        $this->logger = $this->getMock(LoggerInterface::class);
-        $this->cacheBuilder = $this->getMock(CacheBuilderInterface::class);
+        $this->messageFactory = $this->createMock(MessageFactoryInterface::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
+        $this->cacheBuilder = $this->createMock(CacheBuilderInterface::class);
         $this->productMessageHandler = $this->getMockBuilder(ProductMessageHandler::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -99,12 +99,12 @@ class CategoryVisibilityProcessorTest extends \PHPUnit_Framework_TestCase
             ->with(CategoryVisibilityResolved::class)
             ->willReturn($em);
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
-        $message = $this->getMock(MessageInterface::class);
+        $message = $this->createMock(MessageInterface::class);
         $message->expects($this->any())
             ->method('getBody')
             ->willReturn($body);
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
-        $session = $this->getMock(SessionInterface::class);
+        $session = $this->createMock(SessionInterface::class);
         $visibilityEntity = new CategoryVisibility();
         $this->messageFactory->expects($this->once())
             ->method('getEntityFromMessage')

@@ -48,7 +48,7 @@ class AccountIdPlaceholderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetValueWhenAccountUserIsNotAccountUser()
     {
-        $token = $this->getMock(TokenInterface::class);
+        $token = $this->createMock(TokenInterface::class);
         $token
             ->expects($this->once())
             ->method('getUser')
@@ -73,7 +73,7 @@ class AccountIdPlaceholderTest extends \PHPUnit_Framework_TestCase
             ->method('getId')
             ->willReturn($accountUserId);
 
-        $token = $this->getMock(TokenInterface::class);
+        $token = $this->createMock(TokenInterface::class);
         $token
             ->expects($this->once())
             ->method('getUser')

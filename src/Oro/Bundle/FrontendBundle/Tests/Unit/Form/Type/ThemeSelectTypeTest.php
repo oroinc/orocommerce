@@ -87,7 +87,7 @@ class ThemeSelectTypeTest extends \PHPUnit_Framework_TestCase
 
         $view = new FormView();
         /** @var \PHPUnit_Framework_MockObject_MockObject|FormInterface $form */
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
         $options = [];
 
         $this->type->finishView($view, $form, $options);

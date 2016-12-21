@@ -72,7 +72,7 @@ class InvalidateCacheScheduleCommandTest extends \PHPUnit_Framework_TestCase
             ->with(UPSTransport::class)
             ->willReturn($em);
 
-        $this->container = $this->getMock(ContainerBuilder::class);
+        $this->container = $this->createMock(ContainerBuilder::class);
 
         $this->transport = $this->getMockBuilder(UPSTransport::class)
             ->disableOriginalConstructor()

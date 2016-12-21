@@ -32,7 +32,7 @@ class AccountUserByAccountExtensionTest extends \PHPUnit_Framework_TestCase
 
         $this->extension = new AccountUserByAccountExtension();
         /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
-        $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
+        $requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
         $requestStack->expects($this->any())->method('getCurrentRequest')->willReturn($this->request);
         $this->extension->setRequestStack($requestStack);
     }

@@ -17,7 +17,7 @@ class ProcessorRegistryTest extends \PHPUnit_Framework_TestCase
 
     public function testAddProcessor()
     {
-        $processor = $this->getMock('Oro\Bundle\PayPalBundle\PayPal\Payflow\Processor\ProcessorInterface');
+        $processor = $this->createMock('Oro\Bundle\PayPalBundle\PayPal\Payflow\Processor\ProcessorInterface');
         $processor->expects($this->once())->method('getCode')->willReturn('PayPal');
 
         $this->registry->addProcessor($processor);

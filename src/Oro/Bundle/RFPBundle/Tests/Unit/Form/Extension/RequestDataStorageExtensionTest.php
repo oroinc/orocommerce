@@ -60,8 +60,8 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
         parent::setUp();
 
         /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
-        $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
-        $this->request = $this->getMock('Symfony\Component\HttpFoundation\Request');
+        $requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
+        $this->request = $this->createMock('Symfony\Component\HttpFoundation\Request');
         $this->configManager = $this->getMockBuilder(ConfigManager::class)
             ->disableOriginalConstructor()
             ->getMock();

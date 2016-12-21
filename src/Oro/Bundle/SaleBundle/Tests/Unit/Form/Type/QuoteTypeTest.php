@@ -70,7 +70,7 @@ class QuoteTypeTest extends AbstractTest
     public function testConfigureOptions()
     {
         /* @var $resolver \PHPUnit_Framework_MockObject_MockObject|OptionsResolver */
-        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
+        $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with(
@@ -309,7 +309,7 @@ class QuoteTypeTest extends AbstractTest
     public function testBuildFormWithPaymetTerm()
     {
         /** @var FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder */
-        $builder = $this->getMock(FormBuilderInterface::class);
+        $builder = $this->createMock(FormBuilderInterface::class);
         $quote = new Quote();
         $accountGroup = new AccountGroup();
         $account = new Account();
@@ -324,7 +324,7 @@ class QuoteTypeTest extends AbstractTest
     public function testBuildFormWithNoPaymetTerm()
     {
         /** @var FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder */
-        $builder = $this->getMock(FormBuilderInterface::class);
+        $builder = $this->createMock(FormBuilderInterface::class);
         $quote = new Quote();
 
         $builder->expects($this->atMost(12))->method('add')->willReturn($builder);
@@ -346,7 +346,7 @@ class QuoteTypeTest extends AbstractTest
         ;
 
         /* @var $registry ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject */
-        $registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
 
         /* @var $productUnitLabelFormatter \PHPUnit_Framework_MockObject_MockObject|ProductUnitLabelFormatter */
         $productUnitLabelFormatter = $this->getMockBuilder(

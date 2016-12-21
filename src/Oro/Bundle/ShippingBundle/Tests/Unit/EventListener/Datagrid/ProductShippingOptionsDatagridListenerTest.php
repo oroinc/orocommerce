@@ -58,7 +58,7 @@ class ProductShippingOptionsDatagridListenerTest extends \PHPUnit_Framework_Test
     public function testOnBuildBefore()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
-        $datagrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
+        $datagrid = $this->createMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
 
         $this->listener->setProductShippingOptionsClass(static::PRODUCT_SHIPPING_OPTIONS_CLASS);
 
@@ -89,7 +89,7 @@ class ProductShippingOptionsDatagridListenerTest extends \PHPUnit_Framework_Test
     public function testOnResultAfter(array $sourceResults = [], array $expectedResults = [])
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|ObjectRepository $repository */
-        $repository = $this->getMock('Doctrine\Common\Persistence\ObjectRepository');
+        $repository = $this->createMock('Doctrine\Common\Persistence\ObjectRepository');
         $repository->expects($this->once())
             ->method('findBy')
             ->with(['product' => [42, 100]], ['productUnit' => 'ASC'])
@@ -109,7 +109,7 @@ class ProductShippingOptionsDatagridListenerTest extends \PHPUnit_Framework_Test
             ->willReturn($repository);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
-        $datagrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
+        $datagrid = $this->createMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
 
         $event = new OrmResultAfter($datagrid, $sourceResults);
 

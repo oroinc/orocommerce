@@ -31,7 +31,7 @@ class QuoteProductValidatorTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->context      = $this->getMock('Symfony\Component\Validator\ExecutionContextInterface');
+        $this->context      = $this->createMock('Symfony\Component\Validator\ExecutionContextInterface');
         $this->constraint   = new Constraints\QuoteProduct();
         $this->validator    = new Constraints\QuoteProductValidator();
         $this->validator->initialize($this->context);

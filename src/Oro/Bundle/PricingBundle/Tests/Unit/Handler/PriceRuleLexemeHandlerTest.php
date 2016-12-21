@@ -48,7 +48,7 @@ class PriceRuleLexemeHandlerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->fieldsProvider = $this->getMock(FieldsProviderInterface::class);
+        $this->fieldsProvider = $this->createMock(FieldsProviderInterface::class);
 
         $this->priceRuleLexemeHandler = new PriceRuleLexemeHandler(
             $this->doctrineHelper,

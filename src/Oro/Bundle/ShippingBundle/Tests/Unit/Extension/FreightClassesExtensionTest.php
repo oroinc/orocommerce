@@ -28,7 +28,7 @@ class FreightClassesExtensionTest extends \PHPUnit_Framework_TestCase
     public function testIsApplicable(FreightClass $inputData, $expectedData)
     {
         /* @var $options ProductShippingOptionsInterface|\PHPUnit_Framework_MockObject_MockObject */
-        $options = $this->getMock('Oro\Bundle\ShippingBundle\Entity\ProductShippingOptionsInterface');
+        $options = $this->createMock('Oro\Bundle\ShippingBundle\Entity\ProductShippingOptionsInterface');
 
         $this->assertEquals($expectedData, $this->extension->isApplicable($inputData, $options));
     }

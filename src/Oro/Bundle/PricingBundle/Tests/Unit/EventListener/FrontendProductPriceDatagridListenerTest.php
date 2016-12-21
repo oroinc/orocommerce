@@ -55,7 +55,7 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCa
             ->disableOriginalConstructor()
             ->getMock();
 
-        $translator = $this->getMock(TranslatorInterface::class);
+        $translator = $this->createMock(TranslatorInterface::class);
         $translator->method('trans')
             ->willReturnMap([
                 ['oro.pricing.productprice.price.label', [], null, null, 'Price'],
@@ -98,7 +98,7 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCa
         $this->setUpPriceListRequestHandler($priceListId, $priceCurrencies);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
-        $datagrid = $this->getMock(DatagridInterface::class);
+        $datagrid = $this->createMock(DatagridInterface::class);
         $config   = DatagridConfiguration::create([]);
 
         $event = new BuildBefore($datagrid, $config);
@@ -159,7 +159,7 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCa
         /** @var SearchQueryInterface $query */
         $query = $this->getMockBuilder(SearchQueryInterface::class)->getMock();
         /** @var DatagridInterface $datagrid */
-        $datagrid = $this->getMock(DatagridInterface::class);
+        $datagrid = $this->createMock(DatagridInterface::class);
         $event    = new SearchResultAfter($datagrid, $query, []);
         $this->listener->onResultAfter($event);
     }
@@ -174,7 +174,7 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCa
         /** @var SearchQueryInterface $query */
         $query = $this->getMockBuilder(SearchQueryInterface::class)->getMock();
         /** @var DatagridInterface $datagrid */
-        $datagrid = $this->getMock(DatagridInterface::class);
+        $datagrid = $this->createMock(DatagridInterface::class);
         $event    = new SearchResultAfter($datagrid, $query, [new ResultRecord([])]);
         $this->listener->onResultAfter($event);
     }
@@ -198,7 +198,7 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCa
         /** @var SearchQueryInterface $query */
         $query = $this->getMockBuilder(SearchQueryInterface::class)->getMock();
         /** @var DatagridInterface $datagrid */
-        $datagrid = $this->getMock(DatagridInterface::class);
+        $datagrid = $this->createMock(DatagridInterface::class);
         $event    = new SearchResultAfter($datagrid, $query, [new ResultRecord($products)]);
         $this->listener->onResultAfter($event);
 

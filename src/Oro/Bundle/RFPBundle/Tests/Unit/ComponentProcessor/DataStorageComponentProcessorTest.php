@@ -51,7 +51,7 @@ class DataStorageComponentProcessorTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->router = $this->getMock(UrlGeneratorInterface::class);
+        $this->router = $this->createMock(UrlGeneratorInterface::class);
 
         $this->storage = $this->getMockBuilder(ProductDataStorage::class)
             ->disableOriginalConstructor()
@@ -65,7 +65,7 @@ class DataStorageComponentProcessorTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->translator = $this->getMock(TranslatorInterface::class);
+        $this->translator = $this->createMock(TranslatorInterface::class);
 
         $this->requestDataStorageExtension = $this->getMockBuilder(RequestDataStorageExtension::class)
             ->disableOriginalConstructor()

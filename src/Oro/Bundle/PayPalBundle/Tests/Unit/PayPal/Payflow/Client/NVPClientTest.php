@@ -22,8 +22,8 @@ class NVPClientTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->httpClient = $this->getMock('Guzzle\Http\ClientInterface');
-        $this->encoder = $this->getMock('Oro\Bundle\PayPalBundle\PayPal\Payflow\NVP\EncoderInterface');
+        $this->httpClient = $this->createMock('Guzzle\Http\ClientInterface');
+        $this->encoder = $this->createMock('Oro\Bundle\PayPalBundle\PayPal\Payflow\NVP\EncoderInterface');
         $this->client = new NVPClient($this->httpClient, $this->encoder);
     }
 
@@ -55,7 +55,7 @@ class NVPClientTest extends \PHPUnit_Framework_TestCase
             ->with(true)
             ->willReturn($responseString);
 
-        $request = $this->getMock('Guzzle\Http\Message\RequestInterface');
+        $request = $this->createMock('Guzzle\Http\Message\RequestInterface');
         $request
             ->expects($this->once())
             ->method('send')
@@ -145,7 +145,7 @@ class NVPClientTest extends \PHPUnit_Framework_TestCase
         $address = 'http://127.0.0.1';
         $options = [];
 
-        $request = $this->getMock('Guzzle\Http\Message\EntityEnclosingRequestInterface');
+        $request = $this->createMock('Guzzle\Http\Message\EntityEnclosingRequestInterface');
         $request
             ->expects($this->once())
             ->method('send')
