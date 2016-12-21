@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\RuleBundle\Tests\Unit\Entity;
 
+use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
 use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -27,5 +28,6 @@ class RuleTest extends \PHPUnit_Framework_TestCase
 
         $rule = new Rule();
         static::assertPropertyAccessors($rule, $properties);
+        static::assertPropertyCollection($rule, 'methodsConfigsRule', new PaymentMethodsConfigsRule());
     }
 }

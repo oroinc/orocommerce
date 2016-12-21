@@ -11,8 +11,6 @@ use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRuleDestination;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRuleDestinationPostalCode;
 use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodsConfigsRuleDestinationCollectionType;
-use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodsConfigsRuleDestinationPostalCodeCollectionType;
-use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodsConfigsRuleDestinationPostalCodeType;
 use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodsConfigsRuleDestinationType;
 use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -153,12 +151,6 @@ class PaymentMethodsConfigsRuleDestinationCollectionTypeTest extends FormIntegra
                     PaymentMethodsConfigsRuleDestinationType::NAME => new PaymentMethodsConfigsRuleDestinationType(
                         new AddressCountryAndRegionSubscriberStub()
                     ),
-////                    PaymentMethodsConfigsRuleDestinationPostalCodeType::NAME =>
-////                        new PaymentMethodsConfigsRuleDestinationPostalCodeType()
-////                    ,
-//                    PaymentMethodsConfigsRuleDestinationPostalCodeCollectionType::NAME =>
-//                        new PaymentMethodsConfigsRuleDestinationPostalCodeCollectionType()
-//                    ,
                     'oro_country' => new CountryType(),
                     'oro_region' => new RegionType(),
                     'genemu_jqueryselect2_translatable_entity' => new Select2Type('translatable_entity'),
