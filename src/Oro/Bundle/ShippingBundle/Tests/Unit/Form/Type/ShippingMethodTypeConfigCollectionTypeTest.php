@@ -7,7 +7,7 @@ use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodTypeConfigCollectionType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Symfony\Component\Form\FormBuilderInterface;
 
-class ShippingRuleConfigurationCollectionTypeTest extends FormIntegrationTestCase
+class ShippingMethodTypeConfigCollectionTypeTest extends FormIntegrationTestCase
 {
     /** @var ShippingMethodTypeConfigCollectionType */
     protected $formType;
