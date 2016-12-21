@@ -7,7 +7,6 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
-use Oro\Bundle\WebCatalogBundle\ContentVariantProvider\ContentVariantProvider;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
@@ -17,6 +16,7 @@ use Oro\Bundle\WebsiteSearchBundle\Engine\IndexDataProvider;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
+use Oro\Component\WebCatalog\ContentVariantProviderInterface;
 
 class WebCatalogEntityIndexerListener
 {
@@ -41,7 +41,7 @@ class WebCatalogEntityIndexerListener
     private $websiteContextManager;
 
     /**
-     * @var ContentVariantProvider
+     * @var ContentVariantProviderInterface
      */
     private $contentVariantProvider;
 
@@ -55,7 +55,7 @@ class WebCatalogEntityIndexerListener
      * @param ConfigManager $configManager
      * @param AbstractWebsiteLocalizationProvider $websiteLocalizationProvider
      * @param WebsiteContextManager $websiteContextManager
-     * @param ContentVariantProvider $contentVariantProvider
+     * @param ContentVariantProviderInterface $contentVariantProvider
      * @param LocalizationHelper $localizationHelper
      */
     public function __construct(
@@ -63,7 +63,7 @@ class WebCatalogEntityIndexerListener
         ConfigManager $configManager,
         AbstractWebsiteLocalizationProvider $websiteLocalizationProvider,
         WebsiteContextManager $websiteContextManager,
-        ContentVariantProvider $contentVariantProvider,
+        ContentVariantProviderInterface $contentVariantProvider,
         LocalizationHelper $localizationHelper
     ) {
         $this->registry = $registry;
