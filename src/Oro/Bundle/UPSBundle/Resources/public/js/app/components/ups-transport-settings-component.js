@@ -9,7 +9,6 @@ define(function(require) {
     var routing = require('routing');
     var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
     var BaseComponent = require('oroui/js/app/components/base/component');
-    var Error = require('oroui/js/error');
 
     UPSTransportSettingsComponent = BaseComponent.extend({
         /**
@@ -62,9 +61,6 @@ define(function(require) {
                     },
                     complete: function () {
                         self.loadingMaskView.hide();
-                    },
-                    error: function (xhr) {
-                        Error.handle({}, xhr, {enforce: true});
                     }
                 });
             } else {

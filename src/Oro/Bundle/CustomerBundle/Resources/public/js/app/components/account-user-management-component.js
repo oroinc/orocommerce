@@ -6,7 +6,6 @@ define(function (require) {
     var AccountUserManagementComponent,
         BaseComponent = require('oroui/js/app/components/base/component'),
         mediator = require('oroui/js/mediator'),
-        Error = require('oroui/js/error'),
         $ = require('jquery');
 
     AccountUserManagementComponent = BaseComponent.extend({
@@ -24,11 +23,8 @@ define(function (require) {
                             });
                         }
                         mediator.execute('refreshPage');
-                    },
-                    error: function(xhr) {
-                        Error.handle({}, xhr, {enforce: true});
                     }
-                })
+                });
             });
         }
     });

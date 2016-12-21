@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CustomerBundle\Tests\Unit\EventListener\Datagrid;
 
+use Oro\Bundle\CustomerBundle\Entity\Repository\AccountRepository;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
@@ -9,12 +10,15 @@ use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\CustomerBundle\EventListener\Datagrid\AccountDatagridListener;
 use Oro\Bundle\CustomerBundle\Security\AccountUserProvider;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 /**
  * @dbIsolation
  */
 class AccountDatagridListenerTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTrait;
+
     /**
      * @var AccountDatagridListener
      */
@@ -31,6 +35,11 @@ class AccountDatagridListenerTest extends \PHPUnit_Framework_TestCase
     protected $securityProvider;
 
     /**
+     * @var AccountRepository|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $repository;
+
+    /**
      * @var DatagridInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $datagrid;
@@ -41,24 +50,28 @@ class AccountDatagridListenerTest extends \PHPUnit_Framework_TestCase
     protected $datagridConfig;
 
     /**
+     * @var array
+     */
+    protected $childIds = [42];
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
-        $this->securityProvider = $this->getMockBuilder('Oro\Bundle\CustomerBundle\Security\AccountUserProvider')
+        $this->securityProvider = $this->getMockBuilder(AccountUserProvider::class)
             ->disableOriginalConstructor()
-            ->getMock()
-        ;
+            ->getMock();
 
-        $this->datagrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
-        $this->datagridConfig = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration')
+        $this->datagrid = $this->getMock(DatagridInterface::class);
+        $this->datagridConfig = $this->getMockBuilder(DatagridConfiguration::class)
             ->disableOriginalConstructor()
-            ->getMock()
-        ;
+            ->getMock();
 
-        $this->listener = new AccountDatagridListener(
-            $this->securityProvider
-        );
+        $this->repository = $this->getMockBuilder(AccountRepository::class)->disableOriginalConstructor()->getMock();
+        $this->repository->expects($this->any())->method('getChildrenIds')->willReturn($this->childIds);
+
+        $this->listener = new AccountDatagridListener($this->securityProvider, $this->repository);
     }
 
     /**
@@ -71,19 +84,25 @@ class AccountDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $this->securityProvider->expects($this->any())
             ->method('isGrantedViewLocal')
             ->with($this->entityClass)
-            ->willReturn($inputData['grantedViewLocal'])
-        ;
+            ->willReturn($inputData['grantedViewLocal']);
+        $this->securityProvider->expects($this->any())
+            ->method('isGrantedViewDeep')
+            ->with($this->entityClass)
+            ->willReturn($inputData['grantedViewDeep']);
+        $this->securityProvider->expects($this->any())
+            ->method('isGrantedViewSystem')
+            ->with($this->entityClass)
+            ->willReturn($inputData['grantedViewSystem']);
 
         $this->securityProvider->expects($this->any())
             ->method('isGrantedViewAccountUser')
             ->with($this->entityClass)
-            ->willReturn($inputData['grantedViewAccountUser'])
-        ;
+            ->willReturn($inputData['grantedViewAccountUser']);
 
-        $this->securityProvider->expects($this->any())
-            ->method('getLoggedUser')
-            ->willReturn($inputData['user'])
-        ;
+        /** @var AccountUser $user */
+        $user = $inputData['user'];
+
+        $this->securityProvider->expects($this->any())->method('getLoggedUser')->willReturn($user);
 
         $datagridConfig = DatagridConfiguration::create($inputData['config']);
 
@@ -95,6 +114,7 @@ class AccountDatagridListenerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @return array
      */
     public function buildBeforeFrontendQuotesProvider()
@@ -105,6 +125,8 @@ class AccountDatagridListenerTest extends \PHPUnit_Framework_TestCase
                     'user' => null,
                     'config' => $this->getConfig(),
                     'grantedViewLocal' => false,
+                    'grantedViewDeep' => false,
+                    'grantedViewSystem' => false,
                     'grantedViewAccountUser' => false,
                 ],
                 'expected' => [
@@ -116,6 +138,8 @@ class AccountDatagridListenerTest extends \PHPUnit_Framework_TestCase
                     'user' => $this->getAccountUser(),
                     'config' => $this->getConfig(false, null, null, false),
                     'grantedViewLocal' => false,
+                    'grantedViewDeep' => false,
+                    'grantedViewSystem' => false,
                     'grantedViewAccountUser' => false,
                 ],
                 'expected' => [
@@ -127,6 +151,8 @@ class AccountDatagridListenerTest extends \PHPUnit_Framework_TestCase
                     'user' => $this->getAccountUser(),
                     'config' => $this->getConfig(false, null, null, true, false),
                     'grantedViewLocal' => false,
+                    'grantedViewDeep' => false,
+                    'grantedViewSystem' => false,
                     'grantedViewAccountUser' => false,
                 ],
                 'expected' => [
@@ -138,6 +164,8 @@ class AccountDatagridListenerTest extends \PHPUnit_Framework_TestCase
                     'user' => $this->getAccountUser(),
                     'config' => $this->getConfig(),
                     'grantedViewLocal' => false,
+                    'grantedViewDeep' => false,
+                    'grantedViewSystem' => false,
                     'grantedViewAccountUser' => false,
                 ],
                 'expected' => [
@@ -149,6 +177,8 @@ class AccountDatagridListenerTest extends \PHPUnit_Framework_TestCase
                     'user' => $this->getAccountUser(),
                     'config' => $this->getConfig(),
                     'grantedViewLocal' => false,
+                    'grantedViewDeep' => false,
+                    'grantedViewSystem' => false,
                     'grantedViewAccountUser' => false,
                 ],
                 'expected' => [
@@ -160,6 +190,8 @@ class AccountDatagridListenerTest extends \PHPUnit_Framework_TestCase
                     'user' => $this->getAccountUser(3, 2),
                     'config' => $this->getConfig(),
                     'grantedViewLocal' => true,
+                    'grantedViewDeep' => false,
+                    'grantedViewSystem' => false,
                     'grantedViewAccountUser' => false,
                 ],
                 'expected' => [
@@ -171,10 +203,41 @@ class AccountDatagridListenerTest extends \PHPUnit_Framework_TestCase
                     'user' => $this->getAccountUser(4, 3),
                     'config' => $this->getConfig(true),
                     'grantedViewLocal' => true,
+                    'grantedViewDeep' => false,
+                    'grantedViewSystem' => false,
                     'grantedViewAccountUser' => true,
+                    'customerId' => 3
                 ],
                 'expected' => [
                     'config' => $this->getConfig(true, 3, 4),
+                ],
+            ],
+            'AccountUser::VIEW_LOCAL and Entity::VIEW_DEEP' => [
+                'input' => [
+                    'user' => $this->getAccountUser(4, 3),
+                    'config' => $this->getConfig(true),
+                    'grantedViewLocal' => false,
+                    'grantedViewDeep' => true,
+                    'grantedViewSystem' => false,
+                    'grantedViewAccountUser' => true,
+                    'customerId' => 3
+                ],
+                'expected' => [
+                    'config' => $this->getConfig(true, 3, 4, true, true, true),
+                ],
+            ],
+            'AccountUser::VIEW_LOCAL and Entity::VIEW_SYSTEM' => [
+                'input' => [
+                    'user' => $this->getAccountUser(4, 3),
+                    'config' => $this->getConfig(true),
+                    'grantedViewLocal' => false,
+                    'grantedViewDeep' => false,
+                    'grantedViewSystem' => true,
+                    'grantedViewAccountUser' => true,
+                    'customerId' => 3
+                ],
+                'expected' => [
+                    'config' => $this->getConfig(true, 3, 4, true, true, true),
                 ],
             ],
         ];
@@ -182,30 +245,15 @@ class AccountDatagridListenerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param int $id
-     * @param int $accountId
-     * @return AccountUser|\PHPUnit_Framework_MockObject_MockObject
+     * @param int $customerId
+     * @return AccountUser
      */
-    protected function getAccountUser($id = null, $accountId = null)
+    protected function getAccountUser($id = null, $customerId = null)
     {
-        /* @var $account Account|\PHPUnit_Framework_MockObject_MockObject */
-        $account = $this->getMock('Oro\Bundle\CustomerBundle\Entity\Account');
-        $account->expects($this->any())
-            ->method('getId')
-            ->willReturn($accountId)
-        ;
-
-        /* @var $user AccountUser|\PHPUnit_Framework_MockObject_MockObject */
-        $user = $this->getMock('Oro\Bundle\CustomerBundle\Entity\AccountUser');
-        $user->expects($this->any())
-            ->method('getAccount')
-            ->willReturn($account)
-        ;
-        $user->expects($this->any())
-            ->method('getId')
-            ->willReturn($id)
-        ;
-
-        return $user;
+        return $this->getEntity(
+            AccountUser::class,
+            ['id' => $id, 'account' => $this->getEntity(Account::class, ['id' => $customerId])]
+        );
     }
 
     /**
@@ -214,6 +262,7 @@ class AccountDatagridListenerTest extends \PHPUnit_Framework_TestCase
      * @param bool $accountUserId
      * @param bool $accountUserOwner
      * @param bool $sourceQueryFrom
+     * @param bool $withChildIds
      * @return array
      */
     protected function getConfig(
@@ -221,7 +270,8 @@ class AccountDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $accountId = null,
         $accountUserId = null,
         $accountUserOwner = true,
-        $sourceQueryFrom = true
+        $sourceQueryFrom = true,
+        $withChildIds = false
     ) {
         $config = [
             'options' => [],
@@ -263,7 +313,11 @@ class AccountDatagridListenerTest extends \PHPUnit_Framework_TestCase
             $config['source']['skip_acl_apply'] = true;
             $config['source']['query']['where'] = [
                 'and' => [
-                    sprintf('(tableAlias.account = %d OR tableAlias.accountUser = %d)', $accountId, $accountUserId),
+                    sprintf(
+                        '(tableAlias.account IN (%s) OR tableAlias.accountUser = %d)',
+                        implode(',', array_merge([$accountId], $withChildIds ? $this->childIds : [])),
+                        $accountUserId
+                    ),
                 ]
             ];
         }

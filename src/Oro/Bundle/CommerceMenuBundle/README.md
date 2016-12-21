@@ -24,7 +24,7 @@ navigation:
 
         tree:
             top_nav:
-                area: frontend                    # identifier area for menus using in frontend
+                scope_type: menu_frontend_visibility                    # identifier scope type for menus using in frontend
                 children:
                     first_menu_item ~
                     second_menu_item ~

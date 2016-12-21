@@ -242,6 +242,13 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
                 'unit' => 'liter',
                 'cpl' => $this->getReference('1f')->getId(),
             ],
+            [
+                'product' => (string)$product1->getId(),
+                'value' => '0.0000',
+                'currency' => 'USD',
+                'unit' => 'milliliter',
+                'cpl' => $this->getReference('1f')->getId(),
+            ],
         ];
         usort($expected, [$this, 'sort']);
         usort($actual, [$this, 'sort']);
@@ -280,7 +287,7 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
             ],
             [
                 'product' => (string)$product1->getId(),
-                'value' => '10.0000',
+                'value' => '0.0000',
                 'currency' => 'USD',
                 'cpl' => $this->getReference('1f')->getId(),
             ],
