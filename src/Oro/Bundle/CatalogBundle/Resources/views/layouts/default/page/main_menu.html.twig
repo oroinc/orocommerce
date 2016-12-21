@@ -65,7 +65,7 @@
                 <li class="main-menu__sublist__item main-menu__view-parent">
                     <a href="{{ path('oro_product_frontend_product_index', {'categoryId': category.id, 'includeSubcategories': true}) }}"
                        class="main-menu__sublist__link">
-                        <span>All {{ category.titles|localized_value }}</span>
+                        <span>{{ 'oro.catalog.menu.all.label'|trans ~ " " ~ category.titles|localized_value }}</span>
                     </a>
                 </li>
             </ul>
@@ -80,7 +80,7 @@
     class: attr.class|default('') ~ " main-menu__sublist__item"
     }) %}
     <li {{ block('block_attributes') }}>
-        <div class="main-menu__sublist__title">By Category</div>
+        <div class="main-menu__sublist__title">{{ 'oro.catalog.menu.by_category.label'|trans }}</div>
         {% for category in categories %}
             {% do block|merge_context({'category': category}) %}
             {{ block('container_widget') }}
@@ -135,7 +135,7 @@
     class: attr.class|default('') ~ " main-menu__sublist__item main-menu__sublist__item_has-sales-block"
     }) %}
     <li {{ block('block_attributes') }}>
-        <div class="main-menu__sublist__title">On Sale</div>
+        <div class="main-menu__sublist__title">{{ 'oro.catalog.menu.on_sale.label'|trans }}</div>
         <div class="sales-block">
             <a href="#">
                 <img class="img-responsive"
