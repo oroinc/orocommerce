@@ -149,7 +149,7 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
                 '1f',
                 'product.1',
                 null,
-                ['bottle', 'liter']
+                ['bottle', 'liter', 'milliliter']
             ],
             [
                 '1f',
