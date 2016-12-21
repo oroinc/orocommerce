@@ -9,8 +9,10 @@ use Oro\Bundle\ProductBundle\ImportExport\Event\ProductStrategyEvent;
 
 class ProductStrategyEventListener extends AbstractProductImportEventListener
 {
+    /** @var array */
     private $productsToAdd = [];
 
+    /** @var bool */
     private $flushInProgress = false;
 
     /**
@@ -35,6 +37,7 @@ class ProductStrategyEventListener extends AbstractProductImportEventListener
 
         $category = $this->getCategoryByDefaultTitle($categoryDefaultTitle);
         if ($category) {
+            // We can't add product to category directly due to doctrine2 bug
             $this->productsToAdd[] = [$category, $product];
         }
     }
@@ -47,7 +50,7 @@ class ProductStrategyEventListener extends AbstractProductImportEventListener
      */
     public function preFlush(PreFlushEventArgs $event)
     {
-        if (!$this->productsToAdd || $this->flushInProgress) {
+        if ($this->flushInProgress || !$this->productsToAdd) {
             return;
         }
 
