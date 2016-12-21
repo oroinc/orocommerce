@@ -1,0 +1,15 @@
+payment.payment_methods_configs_rule.1:
+    currency: 'USD'
+    rule_reference: 'rule.1'
+
+payment.payment_methods_configs_rule.2:
+    currency: 'EUR'
+    rule_reference: 'rule.2'
+
+payment.payment_methods_configs_rule.3:
+    currency: 'USD'
+    rule_reference: 'rule.3'
+
+payment.payment_methods_configs_rule.4:
+    currency: 'EUR'
+    rule_reference: 'rule.3'

@@ -212,3 +212,16 @@ services:
 
     oro_payment.context.rules_converter_basic:
         class: 'Oro\Bundle\PaymentBundle\Context\Converter\Basic\BasicPaymentContextToRulesValueConverter'
+
+    oro_payment.repository.payment_methods_configs_rule:
+        class: 'Oro\Bundle\PaymentBundle\Entity\Repository\PaymentMethodsConfigsRuleRepository'
+        parent: oro_entity.abstract_repository
+        arguments:
+            - 'Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule'
+
+    oro_payment.payment_methods_configs.rules_provider_basic:
+        class: 'Oro\Bundle\PaymentBundle\Provider\BasicPaymentMethodsConfigsRulesProvider'
+        arguments:
+            - '@oro_payment.context.rules_converter_basic'
+            - '@oro_payment.repository.payment_methods_configs_rule'
+            - '@oro_rule.rule_filtration.service'
