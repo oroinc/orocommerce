@@ -46,7 +46,7 @@ class CheckoutRepository extends EntityRepository
      * Returning the source information of the checkouts.
      *
      * @param array $checkoutIds
-     * @return array ['<id>' => '<CheckoutSourceEntityInterface>']
+     * @return array ['<id>' => '<CheckoutSourceEntityInterface>', ...]
      */
     public function getSourcePerCheckout(array $checkoutIds)
     {
