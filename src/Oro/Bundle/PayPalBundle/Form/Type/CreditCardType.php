@@ -19,8 +19,7 @@ class CreditCardType extends AbstractType
     /** {@inheritdoc} */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder
-            ->add(
+        $builder->add(
                 'ACCT',
                 'text',
                 [
@@ -50,8 +49,7 @@ class CreditCardType extends AbstractType
                         new Length(['min' => '12', 'max' => '19']),
                     ],
                 ]
-            )
-            ->add(
+            )->add(
                 'expirationDate',
                 'oro_paypal_credit_card_expiration_date',
                 [
@@ -66,8 +64,7 @@ class CreditCardType extends AbstractType
                         'data-expiration-date' => true,
                     ],
                 ]
-            )
-            ->add(
+            ) ->add(
                 'EXPDATE',
                 'hidden',
                 [
@@ -78,8 +75,7 @@ class CreditCardType extends AbstractType
             );
 
         if ($options['requireCvvEntryEnabled']) {
-            $builder
-                ->add(
+            $builder->add(
                     'CVV2',
                     'password',
                     [
