@@ -78,7 +78,7 @@ class ProductStrategyEventListenerTest extends AbstractProductImportEventListene
         $this->listener->onProcessAfter($event);
 
         /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
-        $em = $this->getMockBuilder(EntityManagerInterface::class)->getMock();
+        $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->never())
             ->method('flush');
 
@@ -90,7 +90,7 @@ class ProductStrategyEventListenerTest extends AbstractProductImportEventListene
     public function testPreFlushWithEmptyProductToAdd()
     {
         /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
-        $em = $this->getMockBuilder(EntityManagerInterface::class)->getMock();
+        $em = $this->createMock(EntityManagerInterface::class);
 
         $em->expects($this->never())
             ->method('flush');
@@ -116,7 +116,7 @@ class ProductStrategyEventListenerTest extends AbstractProductImportEventListene
         $this->assertEmpty($category->getProducts());
 
         /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
-        $em = $this->getMockBuilder(EntityManagerInterface::class)->getMock();
+        $em = $this->createMock(EntityManagerInterface::class);
 
         $em->expects($this->once())
             ->method('flush');
@@ -153,7 +153,7 @@ class ProductStrategyEventListenerTest extends AbstractProductImportEventListene
         $this->assertEmpty($category->getProducts());
 
         /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
-        $em = $this->getMockBuilder(EntityManagerInterface::class)->getMock();
+        $em = $this->createMock(EntityManagerInterface::class);
 
         $em->expects($this->once())
             ->method('flush');
@@ -186,7 +186,7 @@ class ProductStrategyEventListenerTest extends AbstractProductImportEventListene
         $this->assertEmpty($category->getProducts());
 
         /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
-        $em = $this->getMockBuilder(EntityManagerInterface::class)->getMock();
+        $em = $this->createMock(EntityManagerInterface::class);
 
         $em->expects($this->once())
             ->method('flush');
@@ -219,7 +219,7 @@ class ProductStrategyEventListenerTest extends AbstractProductImportEventListene
         $this->assertEmpty($category->getProducts());
 
         /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
-        $em = $this->getMockBuilder(EntityManagerInterface::class)->getMock();
+        $em = $this->createMock(EntityManagerInterface::class);
 
         $event = new PreFlushEventArgs($em);
 
