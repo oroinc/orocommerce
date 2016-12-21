@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\EntityExtendBundle\Form\Type\EnumSelectType;
 use Symfony\Component\Form\ChoiceList\Factory\ChoiceListFactoryInterface;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\PreloadedExtension;
@@ -58,7 +59,7 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    $enumSelectStub->getName() => $enumSelectStub,
+                    EnumSelectType::class => $enumSelectStub,
                     $choiceType->getName() => $choiceType,
                 ],
                 []
@@ -101,7 +102,7 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
         $options['product'] = $product;
 
         $this->customFieldProvider->expects($this->once())
-            ->method('getEntityCustomVariantFields')
+            ->method('getEntityCustomFields')
             ->with(Product::class)
             ->willReturn([
                 self::FIELD_COLOR => [
@@ -167,7 +168,7 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
         $options['product'] = $product;
 
         $this->customFieldProvider->expects($this->once())
-            ->method('getEntityCustomVariantFields')
+            ->method('getEntityCustomFields')
             ->with(Product::class)
             ->willReturn([
                 'stringField' => [

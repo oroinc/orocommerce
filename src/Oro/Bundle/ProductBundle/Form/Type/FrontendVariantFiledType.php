@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Form\Type;
 
+use Oro\Bundle\EntityExtendBundle\Form\Type\EnumSelectType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -38,7 +39,7 @@ class FrontendVariantFiledType extends AbstractType
         if ($product->getType() === Product::TYPE_CONFIGURABLE && !empty($product->getVariantFields())) {
             $class = ClassUtils::getClass($product);
 
-            $variantFieldData = $this->customFieldProvider->getEntityCustomVariantFields($class);
+            $variantFieldData = $this->customFieldProvider->getEntityCustomFields($class);
             foreach ($product->getVariantFields() as $fieldName) {
                 list($type, $fieldOptions) = $this->prepareFieldByType(
                     $variantFieldData[$fieldName]['type'],
@@ -90,7 +91,7 @@ class FrontendVariantFiledType extends AbstractType
         switch ($type) {
             case 'enum':
                 $options = $this->getEnumOptions($class, $fieldName);
-                return ['oro_enum_select', $options];
+                return [EnumSelectType::NAME, $options];
             case 'boolean':
                 $options['choices'] = ['No', 'Yes'];
                 return ['choice', $options];
