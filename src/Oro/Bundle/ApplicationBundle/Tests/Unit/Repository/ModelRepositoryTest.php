@@ -42,9 +42,9 @@ class ModelRepositoryTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->managerRegistry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
-        $this->eventDispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
-        $this->modelFactory = $this->getMock('Oro\Bundle\ApplicationBundle\Factory\ModelFactoryInterface');
+        $this->managerRegistry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $this->eventDispatcher = $this->createMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
+        $this->modelFactory = $this->createMock('Oro\Bundle\ApplicationBundle\Factory\ModelFactoryInterface');
 
         $this->repository = new ModelRepository(
             $this->managerRegistry,
@@ -80,7 +80,7 @@ class ModelRepositoryTest extends \PHPUnit_Framework_TestCase
                 }
             );
 
-        $objectManager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
+        $objectManager = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
         $objectManager->expects($this->once())
             ->method('find')
             ->with(self::ENTITY_CLASS, $alteredIdentifier)
@@ -136,7 +136,7 @@ class ModelRepositoryTest extends \PHPUnit_Framework_TestCase
             ->method('dispatch')
             ->with('model.find.before.test_model', new ModelIdentifierEvent($identifier));
 
-        $objectManager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
+        $objectManager = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
 
         if ($isProxy) {
             $proxy = new \DateTime();
@@ -206,7 +206,7 @@ class ModelRepositoryTest extends \PHPUnit_Framework_TestCase
                 }
             );
 
-        $objectManager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
+        $objectManager = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
         $objectManager->expects($this->at(0))
             ->method($processMethod)
             ->with($firstEntity);
@@ -241,10 +241,11 @@ class ModelRepositoryTest extends \PHPUnit_Framework_TestCase
      * @param string $entityClass
      * @param string $expectedException
      * @dataProvider constructExceptionsDataProvider
+     * @expectedException \LogicException
      */
     public function testConstructExceptions($modelClass, $entityClass, $expectedException)
     {
-        $this->setExpectedException('\LogicException', $expectedException);
+        $this->expectExceptionMessage($expectedException);
 
         new ModelRepository(
             $this->managerRegistry,
@@ -290,7 +291,7 @@ class ModelRepositoryTest extends \PHPUnit_Framework_TestCase
         $identifier = 1;
         $entity = new \DateTime();
 
-        $objectManager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
+        $objectManager = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
         $objectManager->expects($this->once())
             ->method('find')
             ->with(self::ENTITY_CLASS, $identifier)

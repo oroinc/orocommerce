@@ -23,15 +23,15 @@ class NodeToQueryDesignerConverterTest extends \PHPUnit_Framework_TestCase
     public function testConvert()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|NodeInterface $subNode */
-        $subNode = $this->getMock(NodeInterface::class);
+        $subNode = $this->createMock(NodeInterface::class);
         /** @var \PHPUnit_Framework_MockObject_MockObject|NodeInterface $node */
-        $node = $this->getMock(NodeInterface::class);
+        $node = $this->createMock(NodeInterface::class);
         $node->expects($this->once())
             ->method('getNodes')
             ->willReturn([$subNode]);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|ColumnInformationProviderInterface $columnInfoProvider */
-        $columnInfoProvider = $this->getMock(ColumnInformationProviderInterface::class);
+        $columnInfoProvider = $this->createMock(ColumnInformationProviderInterface::class);
         $columnInfoProvider->expects($this->once())
             ->method('fillColumnInformation')
             ->willReturnCallback(

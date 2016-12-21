@@ -37,7 +37,7 @@ class CategoryFallbackProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetFallbackHolderEntityThrowsExceptionIfNotProduct()
     {
-        $this->setExpectedException(InvalidFallbackArgumentException::class);
+        $this->expectException(InvalidFallbackArgumentException::class);
         $this->categoryFallbackProvider->getFallbackHolderEntity(new \stdClass(), 'test');
     }
 

@@ -17,7 +17,7 @@ class OroWebCatalogBundleTest extends \PHPUnit_Framework_TestCase
     {
         $container = new ContainerBuilder();
 
-        $kernel = $this->getMock(KernelInterface::class);
+        $kernel = $this->createMock(KernelInterface::class);
 
         $bundle = new OroWebCatalogBundle($kernel);
         $bundle->build($container);

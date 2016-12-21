@@ -48,7 +48,7 @@ class ProductPriceFilterTypeTest extends NumberRangeFilterTypeTest
     public function getRegistry()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|ProductUnit $productUnitMock */
-        $productUnitMock = $this->getMock('Oro\Bundle\ProductBundle\Entity\ProductUnit');
+        $productUnitMock = $this->createMock('Oro\Bundle\ProductBundle\Entity\ProductUnit');
         $productUnitMock->expects($this->any())
             ->method('getCode')
             ->will($this->returnValue('item'));
@@ -74,7 +74,7 @@ class ProductPriceFilterTypeTest extends NumberRangeFilterTypeTest
             ->with('OroProductBundle:ProductUnit')
             ->will($this->returnValue($productUnitRepository));
 
-        $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $this->registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
         $this->registry->expects($this->any())
             ->method('getManagerForClass')
             ->with('OroProductBundle:ProductUnit')

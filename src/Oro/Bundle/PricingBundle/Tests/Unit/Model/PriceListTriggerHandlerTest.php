@@ -35,7 +35,7 @@ class PriceListTriggerHandlerTest extends \PHPUnit_Framework_TestCase
         $this->triggerFactory = $this->getMockBuilder(PriceListTriggerFactory::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->messageProducer = $this->getMock(MessageProducerInterface::class);
+        $this->messageProducer = $this->createMock(MessageProducerInterface::class);
         $this->handler = new PriceListTriggerHandler(
             $this->triggerFactory,
             $this->messageProducer

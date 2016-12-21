@@ -51,7 +51,7 @@ class ProductRowQuantityValidatorTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->constraint = new ProductRowQuantity();
-        $this->context = $this->getMock(ExecutionContextInterface::class);
+        $this->context = $this->createMock(ExecutionContextInterface::class);
         $this->validator = new ProductRowQuantityValidator(
             $this->validatorService,
             $this->doctrineHelper
@@ -186,7 +186,7 @@ class ProductRowQuantityValidatorTest extends \PHPUnit_Framework_TestCase
             ->willReturn($violationBuilder);
         $violationBuilder->expects($this->once())
             ->method('atPath')
-            ->willReturn($this->getMock(ConstraintViolationBuilderInterface::class));
+            ->willReturn($this->createMock(ConstraintViolationBuilderInterface::class));
         $this->validator->validate($productRow, $this->constraint);
     }
 
@@ -231,7 +231,7 @@ class ProductRowQuantityValidatorTest extends \PHPUnit_Framework_TestCase
             ->willReturn($violationBuilder);
         $violationBuilder->expects($this->once())
             ->method('atPath')
-            ->willReturn($this->getMock(ConstraintViolationBuilderInterface::class));
+            ->willReturn($this->createMock(ConstraintViolationBuilderInterface::class));
         $this->validator->validate($productRow, $this->constraint);
     }
 }

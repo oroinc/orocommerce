@@ -28,8 +28,8 @@ class DefaultRequestStatusTypeTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->choices = [
-            $this->getMock(self::REQUEST_STATUS_CLASS),
-            $this->getMock(self::REQUEST_STATUS_CLASS),
+            $this->createMock(self::REQUEST_STATUS_CLASS),
+            $this->createMock(self::REQUEST_STATUS_CLASS),
         ];
 
         $repository = $this->getMockBuilder('Oro\Bundle\RFPBundle\Entity\Repository\RequestStatusRepository')

@@ -30,7 +30,7 @@ class AccountDatagridListenerTest extends \PHPUnit_Framework_TestCase
     public function testOnBuildBeforeWithoutExtendClass()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
-        $datagrid = $this->getMock(DatagridInterface::class);
+        $datagrid = $this->createMock(DatagridInterface::class);
         $config = DatagridConfiguration::create([]);
 
         $this->associationProvider->expects($this->never())->method($this->anything());
@@ -44,7 +44,7 @@ class AccountDatagridListenerTest extends \PHPUnit_Framework_TestCase
     public function testOnBuildBeforeWithoutExtendClassNotAccount()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
-        $datagrid = $this->getMock(DatagridInterface::class);
+        $datagrid = $this->createMock(DatagridInterface::class);
         $config = DatagridConfiguration::create(
             [DynamicFieldsExtension::EXTEND_ENTITY_CONFIG_PATH => \stdClass::class]
         );
@@ -63,7 +63,7 @@ class AccountDatagridListenerTest extends \PHPUnit_Framework_TestCase
     public function testOnBuildBeforeWithoutAssociationNames()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
-        $datagrid = $this->getMock(DatagridInterface::class);
+        $datagrid = $this->createMock(DatagridInterface::class);
         $config = DatagridConfiguration::create(
             [DynamicFieldsExtension::EXTEND_ENTITY_CONFIG_PATH => Account::class]
         );
@@ -82,7 +82,7 @@ class AccountDatagridListenerTest extends \PHPUnit_Framework_TestCase
     public function testOnBuildBeforeWithoutGroupAssociationNames()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
-        $datagrid = $this->getMock(DatagridInterface::class);
+        $datagrid = $this->createMock(DatagridInterface::class);
         $config = DatagridConfiguration::create(
             [DynamicFieldsExtension::EXTEND_ENTITY_CONFIG_PATH => Account::class]
         );
@@ -106,7 +106,7 @@ class AccountDatagridListenerTest extends \PHPUnit_Framework_TestCase
     public function testOnBuildBeforeSupportAccountGroupPaymentTermFallback()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
-        $datagrid = $this->getMock(DatagridInterface::class);
+        $datagrid = $this->createMock(DatagridInterface::class);
         $config = DatagridConfiguration::create(
             [
                 DynamicFieldsExtension::EXTEND_ENTITY_CONFIG_PATH => Account::class,
@@ -171,7 +171,7 @@ class AccountDatagridListenerTest extends \PHPUnit_Framework_TestCase
     public function testOnBuildBeforeSupportAccountGroupPaymentTermFallbackWithMultipleGroups()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
-        $datagrid = $this->getMock(DatagridInterface::class);
+        $datagrid = $this->createMock(DatagridInterface::class);
         $config = DatagridConfiguration::create(
             [
                 DynamicFieldsExtension::EXTEND_ENTITY_CONFIG_PATH => Account::class,

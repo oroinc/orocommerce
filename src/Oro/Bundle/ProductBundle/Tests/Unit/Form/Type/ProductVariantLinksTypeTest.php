@@ -46,7 +46,7 @@ class ProductVariantLinksTypeTest extends FormIntegrationTestCase
     {
         parent::setUp();
 
-        $this->transformer = $this->getMock(
+        $this->transformer = $this->createMock(
             'Oro\Bundle\ProductBundle\Form\DataTransformer\ProductVariantLinksDataTransformer'
         );
         $this->formType = new ProductVariantLinksType($this->transformer);

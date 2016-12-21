@@ -29,7 +29,7 @@ class TotalCalculateListenerTest extends \PHPUnit_Framework_TestCase
         $this->formFactory = $this->getMockBuilder('Symfony\Component\Form\FormFactory')
             ->disableOriginalConstructor()->getMock();
 
-        $this->applicationProvider = $this->getMock(CurrentApplicationProviderInterface::class);
+        $this->applicationProvider = $this->createMock(CurrentApplicationProviderInterface::class);
 
         $this->listener = new TotalCalculateListener($this->formFactory, $this->applicationProvider);
     }
@@ -65,7 +65,7 @@ class TotalCalculateListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->formFactory->expects($this->once())->method('create')->willReturn($form);
 
-        $entity = $this->getMock('Oro\Bundle\OrderBundle\Entity\Order');
+        $entity = $this->createMock('Oro\Bundle\OrderBundle\Entity\Order');
 
         if ($expected['resetDiscounts']) {
             $entity->expects($this->once())->method('resetDiscounts');

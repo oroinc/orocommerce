@@ -24,7 +24,7 @@ class ParentAccountSearchHandler extends SearchHandler
         if ($accountId) {
             /** @var AccountRepository $repository */
             $repository = $this->entityRepository;
-            $children = $repository->getChildrenIds($this->aclHelper, $accountId);
+            $children = $repository->getChildrenIds($accountId, $this->aclHelper);
             $entityIds = array_diff($entityIds, array_merge($children, [$accountId]));
         }
 

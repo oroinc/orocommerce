@@ -15,6 +15,7 @@ use Oro\Bundle\TaxBundle\Transformer\TaxTransformerInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class TaxManagerTest extends \PHPUnit_Framework_TestCase
 {
@@ -91,7 +92,7 @@ class TaxManagerTest extends \PHPUnit_Framework_TestCase
         $this->factory->expects($this->once())->method('create')->willReturn($taxable);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|TaxTransformerInterface $transformer */
-        $transformer = $this->getMock('Oro\Bundle\TaxBundle\Transformer\TaxTransformerInterface');
+        $transformer = $this->createMock('Oro\Bundle\TaxBundle\Transformer\TaxTransformerInterface');
         $this->manager->addTransformer('stdClass', $transformer);
 
         $this->taxValueManager->expects($this->once())->method('getTaxValue')
@@ -112,7 +113,7 @@ class TaxManagerTest extends \PHPUnit_Framework_TestCase
         $this->factory->expects($this->once())->method('create')->willReturn($taxable);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|TaxTransformerInterface $transformer */
-        $transformer = $this->getMock('Oro\Bundle\TaxBundle\Transformer\TaxTransformerInterface');
+        $transformer = $this->createMock('Oro\Bundle\TaxBundle\Transformer\TaxTransformerInterface');
         $transformer->expects($this->once())->method('transform')->willReturnCallback(
             function (TaxValue $taxValue) {
                 return $taxValue->getResult();
@@ -173,7 +174,7 @@ class TaxManagerTest extends \PHPUnit_Framework_TestCase
         $this->factory->expects($this->exactly(2))->method('create')->willReturn($taxable);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|TaxTransformerInterface $transformer */
-        $transformer = $this->getMock('Oro\Bundle\TaxBundle\Transformer\TaxTransformerInterface');
+        $transformer = $this->createMock('Oro\Bundle\TaxBundle\Transformer\TaxTransformerInterface');
         $transformer->expects($this->once())->method('transform')->willReturnCallback(
             function (TaxValue $taxValue) {
                 return $taxValue->getResult();
@@ -225,7 +226,7 @@ class TaxManagerTest extends \PHPUnit_Framework_TestCase
         $this->factory->expects($this->exactly(3))->method('create')->willReturn($taxable);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|TaxTransformerInterface $transformer */
-        $transformer = $this->getMock('Oro\Bundle\TaxBundle\Transformer\TaxTransformerInterface');
+        $transformer = $this->createMock('Oro\Bundle\TaxBundle\Transformer\TaxTransformerInterface');
         $transformer->expects($this->once())->method('reverseTransform')->willReturnCallback(
             function (Result $result) use ($taxValue) {
                 $taxValue->setResult($result);
@@ -286,7 +287,7 @@ class TaxManagerTest extends \PHPUnit_Framework_TestCase
         $this->factory->expects($this->exactly(3))->method('create')->willReturn($taxable);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|TaxTransformerInterface $transformer */
-        $transformer = $this->getMock('Oro\Bundle\TaxBundle\Transformer\TaxTransformerInterface');
+        $transformer = $this->createMock('Oro\Bundle\TaxBundle\Transformer\TaxTransformerInterface');
         $transformer->expects($this->exactly(2))
             ->method('reverseTransform')
             ->willReturnCallback(
@@ -446,7 +447,7 @@ class TaxManagerTest extends \PHPUnit_Framework_TestCase
         $this->factory->expects($this->exactly(2))->method('create')->willReturn($taxable);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|TaxTransformerInterface $transformer */
-        $transformer = $this->getMock('Oro\Bundle\TaxBundle\Transformer\TaxTransformerInterface');
+        $transformer = $this->createMock('Oro\Bundle\TaxBundle\Transformer\TaxTransformerInterface');
         $transformer->expects($this->once())
             ->method('reverseTransform')
             ->willReturnCallback(

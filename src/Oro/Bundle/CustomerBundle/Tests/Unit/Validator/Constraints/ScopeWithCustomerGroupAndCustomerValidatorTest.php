@@ -18,7 +18,7 @@ class ScopeWithCustomerGroupAndCustomerValidatorTest extends \PHPUnit_Framework_
 
     public function testValidateEmptyCollection()
     {
-        $value = $this->getMock(Collection::class);
+        $value = $this->createMock(Collection::class);
         $value->expects($this->once())
             ->method('isEmpty')
             ->willReturn(true);
@@ -29,7 +29,7 @@ class ScopeWithCustomerGroupAndCustomerValidatorTest extends \PHPUnit_Framework_
             ->getMock();
 
         /** @var ExecutionContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
-        $context = $this->getMock('Symfony\Component\Validator\Context\ExecutionContextInterface');
+        $context = $this->createMock('Symfony\Component\Validator\Context\ExecutionContextInterface');
         $context->expects($this->never())
             ->method('addViolation');
 
@@ -46,7 +46,7 @@ class ScopeWithCustomerGroupAndCustomerValidatorTest extends \PHPUnit_Framework_
             'accountGroup' => $this->getEntity(AccountGroup::class, ['id' => 42]),
         ]);
 
-        $value = $this->getMock(Collection::class);
+        $value = $this->createMock(Collection::class);
         $value->expects($this->once())
             ->method('isEmpty')
             ->willReturn(false);
@@ -57,7 +57,7 @@ class ScopeWithCustomerGroupAndCustomerValidatorTest extends \PHPUnit_Framework_
 
         $constraint = new ScopeWithCustomerGroupAndCustomer();
 
-        $builder = $this->getMock('\Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface');
+        $builder = $this->createMock('\Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface');
         $builder->expects($this->once())
             ->method('atPath')
             ->with("[$index]")
@@ -66,7 +66,7 @@ class ScopeWithCustomerGroupAndCustomerValidatorTest extends \PHPUnit_Framework_
             ->method('addViolation');
 
         /** @var ExecutionContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
-        $context = $this->getMock('Symfony\Component\Validator\Context\ExecutionContextInterface');
+        $context = $this->createMock('Symfony\Component\Validator\Context\ExecutionContextInterface');
         $context->expects($this->once())
             ->method('buildViolation')
             ->with($constraint->message)

@@ -56,14 +56,15 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
     {
         parent::setUp();
         $this->subtotalProviderRegistry =
-            $this->getMock('Oro\Bundle\PricingBundle\SubtotalProcessor\SubtotalProviderRegistry');
+            $this->createMock('Oro\Bundle\PricingBundle\SubtotalProcessor\SubtotalProviderRegistry');
 
-        $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+        $this->translator = $this->createMock('Symfony\Component\Translation\TranslatorInterface');
 
-        $this->currencyProvider = $this->getMock('Oro\Bundle\CurrencyBundle\Provider\DefaultCurrencyProviderInterface');
-        $this->rateProvider = $this->getMock('Oro\Bundle\CurrencyBundle\Converter\RateConverterInterface');
+        $this->currencyProvider = $this
+            ->createMock('Oro\Bundle\CurrencyBundle\Provider\DefaultCurrencyProviderInterface');
+        $this->rateProvider = $this->createMock('Oro\Bundle\CurrencyBundle\Converter\RateConverterInterface');
 
-        $this->roundingService = $this->getMock('Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface');
+        $this->roundingService = $this->createMock('Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface');
         $this->roundingService->expects($this->any())
             ->method('round')
             ->will(

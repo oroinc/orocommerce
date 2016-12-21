@@ -20,7 +20,7 @@ class ContentVariantProviderRegistryTest extends \PHPUnit_Framework_TestCase
     public function testAddContentVariantProvider()
     {
         /** @var ContentVariantProviderInterface|\PHPUnit_Framework_MockObject_MockObject $provider */
-        $provider = $this->getMock(ContentVariantProviderInterface::class);
+        $provider = $this->createMock(ContentVariantProviderInterface::class);
         $this->registry->addProvider($provider);
 
         $this->assertEquals([$provider], $this->registry->getProviders());
@@ -29,10 +29,10 @@ class ContentVariantProviderRegistryTest extends \PHPUnit_Framework_TestCase
     public function testGetProviders()
     {
         /** @var ContentVariantProviderInterface|\PHPUnit_Framework_MockObject_MockObject $provider1 */
-        $provider1 = $this->getMock(ContentVariantProviderInterface::class);
+        $provider1 = $this->createMock(ContentVariantProviderInterface::class);
 
         /** @var ContentVariantProviderInterface|\PHPUnit_Framework_MockObject_MockObject $provider2 */
-        $provider2 = $this->getMock(ContentVariantProviderInterface::class);
+        $provider2 = $this->createMock(ContentVariantProviderInterface::class);
 
         $this->registry->addProvider($provider1);
         $this->registry->addProvider($provider2);

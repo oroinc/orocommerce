@@ -9,7 +9,7 @@ class ProductSearchQueryRestrictionEventTest extends \PHPUnit_Framework_TestCase
 {
     public function testGetQuery()
     {
-        $query = $this->getMock(Query::class);
+        $query = $this->createMock(Query::class);
 
         $event = new ProductSearchQueryRestrictionEvent($query);
 

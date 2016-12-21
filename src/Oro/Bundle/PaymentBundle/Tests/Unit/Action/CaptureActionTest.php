@@ -79,7 +79,7 @@ class CaptureActionTest extends AbstractActionTest
             ->setEntityIdentifier($data['testEntityIdentifier']);
 
         /** @var PaymentMethodInterface|\PHPUnit_Framework_MockObject_MockObject $paymentMethod */
-        $paymentMethod = $this->getMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface');
+        $paymentMethod = $this->createMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface');
         $paymentMethod->expects($this->once())
             ->method('execute')
             ->with(PaymentMethodInterface::CAPTURE, $capturePaymentTransaction)
