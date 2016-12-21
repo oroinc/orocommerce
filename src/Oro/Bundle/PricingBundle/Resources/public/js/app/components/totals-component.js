@@ -268,6 +268,13 @@ define(function(require) {
 
             item.formattedAmount = NumberFormatter.formatCurrency(item.amount, item.currency);
 
+            if(item.data && item.data.baseAmount && item.data.baseCurrency) {
+                item.formattedBaseAmount = NumberFormatter.formatCurrency(
+                    item.data.baseAmount,
+                    item.data.baseCurrency
+                );
+            }
+
             var renderedItem = null;
 
             if (localItem.template) {

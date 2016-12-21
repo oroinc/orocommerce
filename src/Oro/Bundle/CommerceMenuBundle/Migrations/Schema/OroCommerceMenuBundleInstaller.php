@@ -52,6 +52,7 @@ class OroCommerceMenuBundleInstaller implements
         $this->createOroCommerceMenuUpdateDescriptionTable($schema);
 
         /** Foreign keys generation **/
+        $this->addOroCommerceMenuUpdateForeignKeys($schema);
         $this->addOroCommerceMenuUpdateTitleForeignKeys($schema);
         $this->addOroCommerceMenuUpdateDescriptionForeignKeys($schema);
 
@@ -75,16 +76,15 @@ class OroCommerceMenuBundleInstaller implements
         $table->addColumn('parent_key', 'string', ['length' => 100, 'notnull' => false]);
         $table->addColumn('uri', 'string', ['length' => 1023, 'notnull' => false]);
         $table->addColumn('menu', 'string', ['length' => 100]);
-        $table->addColumn('ownership_type', 'string', []);
-        $table->addColumn('owner_id', 'integer', ['notnull' => true]);
         $table->addColumn('icon', 'string', ['length' => 150, 'notnull' => false]);
         $table->addColumn('is_active', 'boolean', []);
         $table->addColumn('is_divider', 'boolean', []);
         $table->addColumn('is_custom', 'boolean', []);
         $table->addColumn('priority', 'integer', ['notnull' => false]);
+        $table->addColumn('scope_id', 'integer', ['notnull' => true]);
         $table->addColumn('condition', 'string', ['length' => 512, 'notnull' => false]);
         $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['key', 'ownership_type', 'owner_id'], 'oro_commerce_menu_upd_uidx');
+        $table->addUniqueIndex(['key', 'scope_id', 'menu'], 'oro_commerce_menu_upd_uidx');
     }
 
     /**
@@ -173,6 +173,21 @@ class OroCommerceMenuBundleInstaller implements
             self::MAX_MENU_UPDATE_IMAGE_SIZE_IN_MB,
             self::THUMBNAIL_WIDTH_SIZE_IN_PX,
             self::THUMBNAIL_HEIGHT_SIZE_IN_PX
+        );
+    }
+
+    /**
+     * Add `oro_commerce_menu_upd` foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOroCommerceMenuUpdateForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable(self::ORO_COMMERCE_MENU_UPDATE_TABLE_NAME);
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_scope'),
+            ['scope_id'],
+            ['id']
         );
     }
 

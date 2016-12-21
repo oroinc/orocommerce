@@ -81,6 +81,11 @@ class ProductCustomVariantFieldsChoiceType extends AbstractType
             return in_array($field['type'], ['boolean', 'enum'], true);
         });
 
+        // Skip serialized fields. Should be improved in BB-6526
+        $customVariantFields = array_filter($customVariantFields, function ($field) {
+            return !$field['is_serialized'];
+        });
+
         foreach ($customVariantFields as $field) {
             $result[$field['name']] = $field['label'];
         }

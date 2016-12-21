@@ -31,22 +31,32 @@ class ProductCustomVariantFieldsChoiceTypeTest extends FormIntegrationTestCase
         'size' => [
             'name' => 'size',
             'type' => 'enum',
-            'label' => 'Size Label'
+            'label' => 'Size Label',
+            'is_serialized' => false,
         ],
         'color' => [
             'name' => 'color',
             'type' => 'enum',
-            'label' => 'Color Label'
+            'label' => 'Color Label',
+            'is_serialized' => false,
         ],
         'boolValue' => [
             'name' => 'boolValue',
             'type' => 'boolean',
-            'label' => 'Some Bool Label'
+            'label' => 'Some Bool Label',
+            'is_serialized' => false,
+        ],
+        'boolSerializedValue' => [
+            'name' => 'boolSerializedValue',
+            'type' => 'boolean',
+            'label' => 'Some Serialized Bool Label',
+            'is_serialized' => true,
         ],
         'textValue' => [
             'name' => 'textValue',
             'type' => 'text',
-            'label' => 'Some Text Label'
+            'label' => 'Some Text Label',
+            'is_serialized' => false,
         ],
 
     ];

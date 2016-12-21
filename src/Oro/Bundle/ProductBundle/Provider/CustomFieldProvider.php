@@ -57,22 +57,10 @@ class CustomFieldProvider
                 'name' => $configId->getFieldName(),
                 'type' => $configId->getFieldType(),
                 'label' => $entityConfig->get('label'),
+                'is_serialized' => $extendConfig->get('is_serialized', false, false)
             ];
         }
 
         return $customFields;
-    }
-
-    /**
-     * @param string $entityName
-     * @return array
-     */
-    public function getEntityCustomVariantFields($entityName)
-    {
-        $customFields = $this->getEntityCustomFields($entityName);
-
-        return array_filter($customFields, function ($field) {
-            return in_array($field['type'], ['boolean', 'enum'], true);
-        });
     }
 }

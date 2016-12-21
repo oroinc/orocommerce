@@ -53,12 +53,14 @@ class CustomFieldProviderTest extends \PHPUnit_Framework_TestCase
                         'label' => 'Size Label',
                         'type' => 'string',
                         'state' => 'Active',
+                        'is_serialized' => true,
                     ],
                     'color' => [
                         'owner' => 'Custom',
                         'label' => 'Color Label',
                         'type' => 'string',
                         'state' => 'Requires update',
+                        'is_serialized' => false,
                     ],
                     'weight' => [
                         'owner' => 'Custom',
@@ -69,13 +71,23 @@ class CustomFieldProviderTest extends \PHPUnit_Framework_TestCase
                     'id' => [
                         'owner' => 'System',
                         'label' => 'Id Label',
-                        'type' => 'string'
+                        'type' => 'string',
                     ],
                 ],
 
                 'expectedResult' => [
-                    'size' => ['name' => 'size', 'label' => 'Size Label', 'type' => 'string'],
-                    'color' => ['name' => 'color', 'label' => 'Color Label', 'type' => 'string']
+                    'size' => [
+                        'name' => 'size',
+                        'label' => 'Size Label',
+                        'type' => 'string',
+                        'is_serialized' => true
+                    ],
+                    'color' => [
+                        'name' => 'color',
+                        'label' => 'Color Label',
+                        'type' => 'string',
+                        'is_serialized' => false,
+                    ],
                 ],
             ]
         ];

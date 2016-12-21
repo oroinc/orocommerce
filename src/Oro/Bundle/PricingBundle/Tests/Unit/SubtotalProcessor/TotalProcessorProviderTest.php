@@ -3,10 +3,13 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor;
 
 use Doctrine\Common\Collections\ArrayCollection;
+
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\CurrencyBundle\Entity\CurrencyAwareInterface;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\CurrencyBundle\Converter\RateConverterInterface;
+use Oro\Bundle\CurrencyBundle\Provider\DefaultCurrencyProviderInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
@@ -38,6 +41,12 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
      */
     protected $translator;
 
+    /** @var  \PHPUnit_Framework_MockObject_MockObject|RateConverterInterface */
+    protected $rateProvider;
+
+    /** @var  \PHPUnit_Framework_MockObject_MockObject|DefaultCurrencyProviderInterface */
+    protected $currencyProvider;
+
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|RoundingServiceInterface
      */
@@ -50,6 +59,9 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
             $this->getMock('Oro\Bundle\PricingBundle\SubtotalProcessor\SubtotalProviderRegistry');
 
         $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+
+        $this->currencyProvider = $this->getMock('Oro\Bundle\CurrencyBundle\Provider\DefaultCurrencyProviderInterface');
+        $this->rateProvider = $this->getMock('Oro\Bundle\CurrencyBundle\Converter\RateConverterInterface');
 
         $this->roundingService = $this->getMock('Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface');
         $this->roundingService->expects($this->any())
@@ -66,7 +78,9 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
             $this->subtotalProviderRegistry,
             $this->translator,
             $this->roundingService,
-            $this->currencyManager
+            $this->currencyManager,
+            $this->rateProvider,
+            $this->currencyProvider
         );
     }
 

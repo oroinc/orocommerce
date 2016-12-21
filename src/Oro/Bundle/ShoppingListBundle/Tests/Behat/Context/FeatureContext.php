@@ -46,7 +46,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $page->assertTitle('Request A Quote');
         $this->waitForAjax();
 
-        $this->getSession()->getPage()->pressButton('Submit Request For Quote');
+        $this->getSession()->getPage()->pressButton('Submit Request');
         $this->waitForAjax();
     }
 

@@ -51,7 +51,7 @@
         form_row(form.sku)
     ] %}
 
-    {% if form.type.vars.data == constant('Oro\\Bundle\\ProductBundle\\Entity\\Product::TYPE_CONFIGURABLE') %}
+    {% if form.type.vars.value == constant('Oro\\Bundle\\ProductBundle\\Entity\\Product::TYPE_CONFIGURABLE') %}
         {% set generalData = generalData|merge([
             form_row(form.variantFields)
         ]) %}

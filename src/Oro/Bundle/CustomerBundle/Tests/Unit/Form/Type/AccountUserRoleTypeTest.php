@@ -15,8 +15,7 @@ class AccountUserRoleTypeTest extends AbstractAccountUserRoleTypeTest
         $defaultData,
         $viewData,
         array $submittedData,
-        $expectedData,
-        array $expectedFieldData = []
+        $expectedData
     ) {
         $form = $this->factory->create($this->formType, $defaultData, $options);
 
@@ -43,12 +42,6 @@ class AccountUserRoleTypeTest extends AbstractAccountUserRoleTypeTest
             $this->assertEquals($expectedData->getRole(), $actualData->getRole());
         } else {
             $this->assertNotEmpty($actualData->getRole());
-        }
-
-        foreach ($expectedFieldData as $field => $data) {
-            $this->assertTrue($form->has($field));
-            $fieldForm = $form->get($field);
-            $this->assertEquals($data, $fieldForm->getData());
         }
     }
 

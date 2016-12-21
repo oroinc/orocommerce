@@ -22,7 +22,7 @@
   background: get-color('ui', 'error');
   color: get-color('ui', 'error-dark');
 
-  @include fa-icon('\f071');
+  @include fa-icon($fa-var-warning);
 
   &:before {
 
