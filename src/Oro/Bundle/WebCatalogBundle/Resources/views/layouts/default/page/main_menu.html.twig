@@ -93,7 +93,8 @@
 {% block _web_catalog_menu_second_level_item_simple_widget %}
     {% for category in categories %}
         {% if (use_for is not empty and category.identifier in use_for|keys) or
-            (not_use_for is not empty and category.identifier not in not_use_for|keys) %}
+            (not_use_for is not empty and category.identifier not in not_use_for|keys) or
+            (use_for is empty and not_use_for is empty)%}
             {% set hasSublist = category.children is not empty %}
             {% set class = attr.class|default('') ~ " main-menu__subcategory" %}
             {% set class = hasSublist ? class ~ " main-menu__sublist--has-sibling" : class %}
@@ -115,7 +116,8 @@
 {% block _web_catalog_menu_second_level_item_head_widget %}
     {% for category in categories %}
         {% if (use_for is not empty and category.identifier in use_for|keys) or
-            (not_use_for is not empty and category.identifier not in not_use_for|keys) %}
+            (not_use_for is not empty and category.identifier not in not_use_for|keys) or
+            (use_for is empty and not_use_for is empty) %}
             {% set hasSublist = category.children is not empty %}
             {% set class = attr.class|default('') ~ " main-menu__subcategory" %}
             {% set class = hasSublist ? class ~ " main-menu__sublist--has-sibling" : class %}
@@ -137,7 +139,8 @@
 {% block _web_catalog_menu_second_level_item_mega_widget %}
     {% for category in categories %}
         {% if (use_for is not empty and category.identifier in use_for|keys) or
-            (not_use_for is not empty and category.identifier not in not_use_for|keys) %}
+            (not_use_for is not empty and category.identifier not in not_use_for|keys) or
+            (use_for is empty and not_use_for is empty) %}
 
             {% if use_for[category.identifier].title is defined %}
                 <div class="main-menu__sublist-title">{{ use_for[category.identifier].title }}</div>
@@ -162,6 +165,23 @@
 {% endblock %}
 
 {% block _web_catalog_menu_third_level_item_mega_widget %}
+    {% set attr = attr|merge({class: attr.class|default('') ~ " main-menu__sublist_subnested"}) %}
+
+    <ul {{ block('block_attributes') }}>
+        {% for category in categories %}
+            {% set hasSublist = category.children is not empty %}
+            <li>
+                <a class="link" href="{{ app.request.uriForPath(category.url) }}">{{ category.label }}</a>
+                {% if hasSublist %}
+                    {% do block|merge_context({'categories': category.children }) %}
+                    {{ block('container_widget') }}
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
+
+{% block _web_catalog_menu_four_level_item_mega_widget %}
     {% set attr = attr|merge({class: attr.class|default('') ~ " main-menu__sublist_subnested"}) %}
 
     <ul {{ block('block_attributes') }}>

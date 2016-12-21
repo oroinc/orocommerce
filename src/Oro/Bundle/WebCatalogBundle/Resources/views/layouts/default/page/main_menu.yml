@@ -12,49 +12,29 @@ layout:
                     siblingId: ~
                     prepend: true
                     options:
-                        categories: '=data["web_catalog_menu"].getItems()'
+                        categories: '=data["web_catalog_menu"].getItems()[0]["children"]'
                         max_size: 6
                 web_catalog_menu_first_level_item_simple:
                     blockType: menu_item
                     options:
-                        use_for:
-                            simple: ~
-                            simple2: ~
-                            link: ~
+                        not_use_for:
+                            root__products: ~
                 web_catalog_menu_first_level_item_head:
                     blockType: menu_item
-                    options:
-                        use_for:
-                            with_head: ~
                 web_catalog_menu_first_level_item_mega:
                     blockType: menu_item
                     options:
                         use_for:
-                            mega: ~
+                            root__products: ~
                 web_catalog_menu_second_level_item_simple:
                     blockType: menu_item
-                    options:
-                        use_for:
-                            root/bestsellers/for_women: ~
-                            root/bestsellers/for_men2: ~
-                            root/bestsellers/for_women2: ~
                 web_catalog_menu_second_level_item_head:
                     blockType: menu_item
-                    options:
-                        use_for:
-                            root/sales/winter_sale: ~
-                            root/sales/summer_sale: ~
-                            root/sales/ny_sale: ~
                 web_catalog_menu_second_level_item_mega:
                     blockType: menu_item
-                    options:
-                        use_for:
-                            root/sales/winter_sale1: { title: 'By Category' }
-                            root/sales/apple: { title: 'By Brand' }
-                            root/sales/shirts: { title: 'By Item' }
-                        not_use_for:
-                            root/sales/jackets: ~
                 web_catalog_menu_third_level_item_mega:
+                    blockType: menu_item
+                web_catalog_menu_four_level_item_mega:
                     blockType: menu_item
             tree:
                 main_menu_container:
@@ -67,4 +47,5 @@ layout:
                             web_catalog_menu_first_level_item_mega:
                                 web_catalog_menu_second_level_item_mega:
                                     web_catalog_menu_third_level_item_mega:
+                                        web_catalog_menu_four_level_item_mega: ~
     conditions: 'context["web_catalog_id"]'
