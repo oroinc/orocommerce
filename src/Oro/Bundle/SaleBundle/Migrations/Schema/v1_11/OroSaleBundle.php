@@ -38,8 +38,8 @@ class OroSaleBundle implements Migration, DatabasePlatformAwareInterface
         } else {
             $queries->addQuery('UPDATE oro_quote_demand d
                 SET account_id = c.account_id, account_user_id = c.account_user_id
-                    FROM oro_checkout_source s INNER JOIN oro_checkout c ON c.source_id = s.id
-                    WHERE s.quoteDemand_id = d.id');
+                FROM oro_checkout_source s INNER JOIN oro_checkout c ON c.source_id = s.id
+                WHERE s.quoteDemand_id = d.id');
         }
 
         $queries->addQuery('DELETE FROM oro_quote_demand WHERE account_id IS NULL AND account_user_id IS NULL');
