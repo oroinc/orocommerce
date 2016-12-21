@@ -37,13 +37,13 @@ class IndexDataProviderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->eventDispatcher = $this->getMock(EventDispatcherInterface::class);
+        $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
 
         $this->aliasResolver = $this->getMockBuilder(EntityAliasResolver::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->placeholder = $this->getMock(PlaceholderInterface::class);
+        $this->placeholder = $this->createMock(PlaceholderInterface::class);
 
         $this->tagHelper = $this->getMockBuilder(HtmlTagHelper::class)
             ->disableOriginalConstructor()
@@ -88,7 +88,7 @@ class IndexDataProviderTest extends \PHPUnit_Framework_TestCase
     {
         $this->aliasResolver->expects($this->once())->method('getAlias')->with(\stdClass::class)->willReturn('std');
 
-        $em = $this->getMock(EntityManagerInterface::class);
+        $em = $this->createMock(EntityManagerInterface::class);
         $qb = new QueryBuilder($em);
 
         $this->assertEmpty($qb->getDQLPart('select'));

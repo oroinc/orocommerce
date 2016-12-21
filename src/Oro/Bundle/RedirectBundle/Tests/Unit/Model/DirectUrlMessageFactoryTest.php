@@ -22,7 +22,7 @@ class DirectUrlMessageFactoryTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->registry = $this->getMock(ManagerRegistry::class);
+        $this->registry = $this->createMock(ManagerRegistry::class);
         $this->factory = new DirectUrlMessageFactory($this->registry);
     }
 
@@ -49,7 +49,7 @@ class DirectUrlMessageFactoryTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetEntityFromMessageInvalidMessage(array $message)
     {
-        $this->setExpectedException(InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         $this->factory->getEntityFromMessage($message);
     }
@@ -78,7 +78,7 @@ class DirectUrlMessageFactoryTest extends \PHPUnit_Framework_TestCase
         $entity = new SluggableEntityStub();
         $entity->setId(1);
 
-        $em = $this->getMock(EntityManagerInterface::class);
+        $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->once())
             ->method('find')
             ->with(SluggableEntityStub::class, 1)

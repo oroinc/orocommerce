@@ -36,7 +36,7 @@ class ProductPriceAllowedUnitsTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->constraint = new ProductPriceAllowedUnits();
-        $this->context = $this->getMock('Symfony\Component\Validator\ExecutionContextInterface');
+        $this->context = $this->createMock('Symfony\Component\Validator\ExecutionContextInterface');
 
         $this->validator = new ProductPriceAllowedUnitsValidator();
         $this->validator->initialize($this->context);

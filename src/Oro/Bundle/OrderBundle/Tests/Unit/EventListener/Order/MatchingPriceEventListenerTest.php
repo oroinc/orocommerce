@@ -25,7 +25,7 @@ class MatchingPriceEventListenerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $this->form = $this->createMock('Symfony\Component\Form\FormInterface');
 
         $this->priceMatcher = $this->getMockBuilder('Oro\Bundle\OrderBundle\Pricing\PriceMatcher')
             ->disableOriginalConstructor()

@@ -35,7 +35,7 @@ class QuoteAddressManagerTest extends AbstractAddressManagerTest
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $this->registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
 
         $this->manager = new QuoteAddressManager(
             $this->provider,
@@ -65,12 +65,12 @@ class QuoteAddressManagerTest extends AbstractAddressManagerTest
         AbstractAddress $expectedAccountUserAddress = null,
         QuoteAddress $quoteAddress = null
     ) {
-        $classMetadata = $this->getMock('Doctrine\Common\Persistence\Mapping\ClassMetadata');
+        $classMetadata = $this->createMock('Doctrine\Common\Persistence\Mapping\ClassMetadata');
         $classMetadata->expects($this->once())->method('getFieldNames')->willReturn(['street', 'city', 'label']);
         $classMetadata->expects($this->once())->method('getAssociationNames')
             ->willReturn(['country', 'region']);
 
-        $em = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
+        $em = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
         $em->expects($this->once())->method('getClassMetadata')->willReturn($classMetadata);
 
         $this->registry->expects($this->any())->method('getManagerForClass')->with($this->isType('string'))

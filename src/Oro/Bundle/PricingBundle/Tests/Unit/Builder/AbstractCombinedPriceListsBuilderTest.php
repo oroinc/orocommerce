@@ -113,7 +113,7 @@ abstract class AbstractCombinedPriceListsBuilderTest extends \PHPUnit_Framework_
      */
     protected function setUp()
     {
-        $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $this->registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
 
         $this->priceListCollectionProvider = $this
             ->getMockBuilder('Oro\Bundle\PricingBundle\Provider\PriceListCollectionProvider')
@@ -139,13 +139,13 @@ abstract class AbstractCombinedPriceListsBuilderTest extends \PHPUnit_Framework_
             ->getMockBuilder('Doctrine\ORM\EntityRepository')
             ->disableOriginalConstructor()
             ->getMock();
-        $fallbackEm = $this->getMock('\Doctrine\Common\Persistence\ObjectManager');
+        $fallbackEm = $this->createMock('\Doctrine\Common\Persistence\ObjectManager');
         $fallbackEm->expects($this->any())
             ->method('getRepository')
             ->with($this->fallbackClass)
             ->will($this->returnValue($this->fallbackRepository));
 
-        $combinedPriceListEm = $this->getMock('\Doctrine\Common\Persistence\ObjectManager');
+        $combinedPriceListEm = $this->createMock('\Doctrine\Common\Persistence\ObjectManager');
         $combinedPriceListEm->expects($this->any())
             ->method('getRepository')
             ->with($this->combinedPriceListClass)
@@ -155,7 +155,7 @@ abstract class AbstractCombinedPriceListsBuilderTest extends \PHPUnit_Framework_
             ->disableOriginalConstructor()
             ->getMock();
 
-        $priceListToEntityEm = $this->getMock('\Doctrine\Common\Persistence\ObjectManager');
+        $priceListToEntityEm = $this->createMock('\Doctrine\Common\Persistence\ObjectManager');
         $priceListToEntityEm->expects($this->any())
             ->method('getRepository')
             ->with($this->priceListToEntityClass)
@@ -164,7 +164,7 @@ abstract class AbstractCombinedPriceListsBuilderTest extends \PHPUnit_Framework_
         $this->combinedPriceListToEntityRepository = $this->getMockBuilder($this->getPriceListToEntityRepositoryClass())
             ->disableOriginalConstructor()
             ->getMock();
-        $combinedPriceListToEntityEm = $this->getMock('\Doctrine\Common\Persistence\ObjectManager');
+        $combinedPriceListToEntityEm = $this->createMock('\Doctrine\Common\Persistence\ObjectManager');
         $combinedPriceListToEntityEm->expects($this->any())
             ->method('getRepository')
             ->with($this->combinedPriceListToEntityClass)

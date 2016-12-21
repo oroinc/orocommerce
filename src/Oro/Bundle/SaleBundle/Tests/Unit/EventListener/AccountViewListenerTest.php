@@ -38,8 +38,8 @@ class AccountViewListenerTest extends FormViewListenerTestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->request = $this->getMock('Symfony\Component\HttpFoundation\Request');
-        $this->requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
+        $this->request = $this->createMock('Symfony\Component\HttpFoundation\Request');
+        $this->requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
         $this->requestStack->expects($this->any())
             ->method('getCurrentRequest')
             ->willReturn($this->request);

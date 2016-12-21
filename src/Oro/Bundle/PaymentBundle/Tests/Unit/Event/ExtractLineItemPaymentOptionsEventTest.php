@@ -16,7 +16,7 @@ class ExtractLineItemPaymentOptionsEventTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->entityMock = $this->getMock(LineItemsAwareInterface::class);
+        $this->entityMock = $this->createMock(LineItemsAwareInterface::class);
         $this->event = new ExtractLineItemPaymentOptionsEvent($this->entityMock);
     }
 

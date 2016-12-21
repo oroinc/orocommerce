@@ -30,7 +30,7 @@ class ProductSelectTypeTest extends FormIntegrationTestCase
 
     protected function setUp()
     {
-        $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+        $this->translator = $this->createMock('Symfony\Component\Translation\TranslatorInterface');
 
         $this->translator
             ->expects(static::any())
@@ -57,7 +57,7 @@ class ProductSelectTypeTest extends FormIntegrationTestCase
     public function testConfigureOptions()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|OptionsResolver $resolver */
-        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
+        $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with(
@@ -164,7 +164,7 @@ class ProductSelectTypeTest extends FormIntegrationTestCase
     protected function createProductHolder($id, $productSku, Product $product = null)
     {
         /* @var $productHolder \PHPUnit_Framework_MockObject_MockObject|ProductHolderInterface */
-        $productHolder = $this->getMock('Oro\Bundle\ProductBundle\Model\ProductHolderInterface');
+        $productHolder = $this->createMock('Oro\Bundle\ProductBundle\Model\ProductHolderInterface');
         $productHolder
             ->expects($this->any())
             ->method('getEntityIdentifier')
@@ -208,7 +208,7 @@ class ProductSelectTypeTest extends FormIntegrationTestCase
     public function testFinishView(array $dataParameters)
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|FormInterface $form */
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
         $formView = new FormView();
         $this->type->finishView($formView, $form, [

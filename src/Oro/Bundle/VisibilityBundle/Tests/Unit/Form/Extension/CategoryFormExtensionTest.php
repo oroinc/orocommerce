@@ -55,7 +55,7 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
     protected function getExtensions()
     {
         /** @var ManagerRegistry $registry */
-        $registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
 
         /** @var VisibilityPostSetDataListener|\PHPUnit_Framework_MockObject_MockObject $postSetDataListener */
         $postSetDataListener = $this->getMockBuilder(

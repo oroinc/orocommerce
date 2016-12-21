@@ -68,7 +68,7 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
     public function testOnBuildBeforeAccounts()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
-        $datagrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
+        $datagrid = $this->createMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
         $config = DatagridConfiguration::create([]);
 
         $event = new BuildBefore($datagrid, $config);
@@ -95,7 +95,7 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
     public function testOnBuildBeforeAccountGroups()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
-        $datagrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
+        $datagrid = $this->createMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
         $config = DatagridConfiguration::create([]);
 
         $event = new BuildBefore($datagrid, $config);

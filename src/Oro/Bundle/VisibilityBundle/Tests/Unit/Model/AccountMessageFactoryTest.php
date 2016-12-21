@@ -70,13 +70,13 @@ class AccountMessageFactoryTest extends \PHPUnit_Framework_TestCase
 
     public function testGetEntityFromMessageEmptyException()
     {
-        $this->setExpectedException(InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->accountMessageFactory->getEntityFromMessage([]);
     }
 
     public function testGetEntityFromMessageRequiredIdException()
     {
-        $this->setExpectedException(InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->accountMessageFactory->getEntityFromMessage(['id' => null]);
     }
 }

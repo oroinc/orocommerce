@@ -42,10 +42,10 @@ class FirewallTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         /** @var FirewallMapInterface|\PHPUnit_Framework_MockObject_MockObject $map */
-        $map = $this->getMock(FirewallMapInterface::class);
+        $map = $this->createMock(FirewallMapInterface::class);
 
         /** @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject $dispatcher */
-        $dispatcher = $this->getMock(EventDispatcherInterface::class);
+        $dispatcher = $this->createMock(EventDispatcherInterface::class);
 
         $this->baseFirewall = $this->getMockBuilder(FrameworkFirewall::class)
             ->disableOriginalConstructor()
@@ -217,7 +217,7 @@ class FirewallTest extends \PHPUnit_Framework_TestCase
         $server = ['server' => true];
 
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session */
-        $session = $this->getMock(SessionInterface::class);
+        $session = $this->createMock(SessionInterface::class);
         $locale = 'en_GB';
         $defaultLocale = 'en';
         $requestedUrl = '/test';
@@ -238,7 +238,7 @@ class FirewallTest extends \PHPUnit_Framework_TestCase
             ->willReturn(true);
 
         /** @var KernelInterface|\PHPUnit_Framework_MockObject_MockObject $kernel */
-        $kernel = $this->getMock(KernelInterface::class);
+        $kernel = $this->createMock(KernelInterface::class);
         $requestType = KernelInterface::MASTER_REQUEST;
 
         /** @var GetResponseEvent|\PHPUnit_Framework_MockObject_MockObject $event */
@@ -325,7 +325,7 @@ class FirewallTest extends \PHPUnit_Framework_TestCase
         $server = ['server' => true];
 
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session */
-        $session = $this->getMock(SessionInterface::class);
+        $session = $this->createMock(SessionInterface::class);
         $locale = 'en_GB';
         $defaultLocale = 'en';
         $requestedUrl = '/test';
@@ -346,7 +346,7 @@ class FirewallTest extends \PHPUnit_Framework_TestCase
             ->willReturn(true);
 
         /** @var KernelInterface|\PHPUnit_Framework_MockObject_MockObject $kernel */
-        $kernel = $this->getMock(KernelInterface::class);
+        $kernel = $this->createMock(KernelInterface::class);
         $requestType = KernelInterface::MASTER_REQUEST;
 
         /** @var GetResponseEvent|\PHPUnit_Framework_MockObject_MockObject $event */
@@ -409,7 +409,7 @@ class FirewallTest extends \PHPUnit_Framework_TestCase
     public function testOnKernelFinishRequestNoSlugApplied()
     {
         /** @var KernelInterface|\PHPUnit_Framework_MockObject_MockObject $kernel */
-        $kernel = $this->getMock(KernelInterface::class);
+        $kernel = $this->createMock(KernelInterface::class);
 
         $requestType = KernelInterface::MASTER_REQUEST;
         $request = Request::create('/slug');
@@ -423,11 +423,11 @@ class FirewallTest extends \PHPUnit_Framework_TestCase
     public function testOnKernelFinishRequestSlugApplied()
     {
         /** @var KernelInterface|\PHPUnit_Framework_MockObject_MockObject $kernel */
-        $kernel = $this->getMock(KernelInterface::class);
+        $kernel = $this->createMock(KernelInterface::class);
         $requestType = KernelInterface::MASTER_REQUEST;
 
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session */
-        $session = $this->getMock(SessionInterface::class);
+        $session = $this->createMock(SessionInterface::class);
 
         $request = Request::create('/slug');
         $request->attributes->set('_resolved_slug_url', '/test');

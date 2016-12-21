@@ -139,6 +139,6 @@ class PriceListCollectionTypeTest extends FormIntegrationTestCase
      */
     protected function getFormMock()
     {
-        return $this->getMock('Symfony\Component\Form\FormInterface');
+        return $this->createMock('Symfony\Component\Form\FormInterface');
     }
 }

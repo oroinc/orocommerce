@@ -36,7 +36,7 @@ class ProductNormalizerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->eventDispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
+        $this->eventDispatcher = $this->createMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
 
         $this->productClass = 'Oro\Bundle\ProductBundle\Entity\Product';
         $this->productNormalizer = new ProductNormalizer($this->fieldHelper);
