@@ -5,7 +5,6 @@ namespace Oro\Bundle\PaymentBundle\Form\Type;
 use Oro\Bundle\AddressBundle\Form\EventListener\AddressCountryAndRegionSubscriber;
 use Oro\Bundle\AddressBundle\Form\Type\CountryType;
 use Oro\Bundle\AddressBundle\Form\Type\RegionType;
-use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRuleDestination;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -45,9 +44,8 @@ class PaymentMethodsConfigsRuleDestinationType extends AbstractType
                 HiddenType::class,
                 ['required' => false, 'label' => 'oro.address.region_text.label']
             )
-            ->add('postalCodes', CollectionType::class, [
+            ->add('postalCodes', PaymentMethodsConfigsRuleDestinationPostalCodeCollectionType::class, [
                 'required' => false,
-                'entry_type' => PaymentMethodsConfigsRuleDestinationPostalCodeType::class,
                 'label' => 'oro.payment.paymentmethodsconfigsruledestination.postal_codes.label',
             ])
         ;

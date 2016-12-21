@@ -141,10 +141,13 @@ class PaymentMethodsConfigsRuleDestination extends ExtendPaymentMethodsConfigsRu
 
     /**
      * @param PaymentMethodsConfigsRule $methodsConfigsRule
+     * @return $this
      */
     public function setMethodsConfigsRule($methodsConfigsRule)
     {
         $this->methodsConfigsRule = $methodsConfigsRule;
+
+        return $this;
     }
 
     /**
@@ -215,6 +218,7 @@ class PaymentMethodsConfigsRuleDestination extends ExtendPaymentMethodsConfigsRu
     public function setRegion($region)
     {
         $this->region = $region;
+
         return $this;
     }
 

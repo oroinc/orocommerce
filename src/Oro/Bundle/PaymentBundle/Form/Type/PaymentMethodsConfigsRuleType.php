@@ -12,7 +12,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class PaymentMethodsConfigsRuleType extends AbstractType
 {
-    const BLOCK_PREFIX = 'oro_payment_methods_configs_rule';
+    const NAME = 'oro_payment_methods_configs_rule';
 
     /**
      * {@inheritdoc}
@@ -24,17 +24,15 @@ class PaymentMethodsConfigsRuleType extends AbstractType
                 'required' => false,
                 'label' => 'oro.payment.paymentmethodsconfigsrule.method_configs.label',
             ])
-            ->add('destinations', CollectionType::class, [
+            ->add('destinations', PaymentMethodsConfigsRuleDestinationCollectionType::class, [
                 'required' => false,
-                'entry_type' => PaymentMethodsConfigsRuleDestinationCollectionType::class,
                 'label' => 'oro.payment.paymentmethodsconfigsrule.destinations.label',
             ])
             ->add('currency', CurrencySelectionType::class, [
                 'label' => 'oro.payment.paymentmethodsconfigsrule.currency.label',
                 'empty_value' => 'oro.currency.currency.form.choose',
             ])
-            ->add('rule', CollectionType::class, [
-                'entry_type' => RuleType::class,
+            ->add('rule', RuleType::class, [
                 'label' => 'oro.payment.paymentmethodsconfigsrule.rule.label',
             ]);
     }
@@ -54,6 +52,6 @@ class PaymentMethodsConfigsRuleType extends AbstractType
      */
     public function getBlockPrefix()
     {
-        return self::BLOCK_PREFIX;
+        return self::NAME;
     }
 }
