@@ -2,226 +2,106 @@
 
 namespace Oro\Bundle\ShippingBundle\Context;
 
-use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
-use Oro\Bundle\ShippingBundle\Model\Dimensions;
-use Oro\Bundle\ShippingBundle\Model\Weight;
+use Symfony\Component\HttpFoundation\ParameterBag;
 
-class ShippingLineItem implements ShippingLineItemInterface
+class ShippingLineItem extends ParameterBag implements ShippingLineItemInterface
 {
-    /**
-     * @var Product
-     */
-    private $product;
+    const FIELD_PRICE = 'price';
+    const FIELD_PRODUCT = 'product';
+    const FIELD_PRODUCT_HOLDER = 'product_holder';
+    const FIELD_PRODUCT_SKU = 'product_sku';
+    const FIELD_ENTITY_IDENTIFIER = 'entity_id';
+    const FIELD_QUANTITY = 'quantity';
+    const FIELD_PRODUCT_UNIT = 'product_unit';
+    const FIELD_PRODUCT_UNIT_CODE = 'product_unit_code';
+    const FIELD_WEIGHT = 'weight';
+    const FIELD_DIMENSIONS = 'dimensions';
 
     /**
-     * @var ProductHolderInterface
+     * {@inheritDoc}
      */
-    private $productHolder;
+    public function __construct(array $parameters)
+    {
+        parent::__construct($parameters);
+    }
 
     /**
-     * @var integer
-     */
-    private $quantity;
-
-    /**
-     * @var ProductUnit
-     */
-    private $productUnit;
-
-    /**
-     * @var Price
-     */
-    private $price;
-
-    /**
-     * @var Weight
-     */
-    private $weight;
-
-    /**
-     * @var Dimensions
-     */
-    private $dimensions;
-
-    /**
-     * @return Price
+     * {@inheritDoc}
      */
     public function getPrice()
     {
-        return $this->price;
+        return $this->get(self::FIELD_PRICE);
     }
 
     /**
-     * @param Price $price
-     * @return $this
-     */
-    public function setPrice(Price $price = null)
-    {
-        $this->price = $price;
-
-        return $this;
-    }
-
-    /**
-     * Get product
-     *
-     * @return Product
+     * {@inheritDoc}
      */
     public function getProduct()
     {
-        return $this->product;
+        return $this->get(self::FIELD_PRODUCT);
     }
 
     /**
-     * @param Product $product
-     * @return $this
-     */
-    public function setProduct(Product $product = null)
-    {
-        $this->product = $product;
-
-        return $this;
-    }
-
-    /**
-     * Get productSku
-     *
-     * @return string
-     * @throws \InvalidArgumentException
-     */
-    public function getProductSku()
-    {
-        if ($this->product === null) {
-            throw new \InvalidArgumentException('product is not defined.');
-        }
-
-        return $this->product->getSku();
-    }
-
-    /**
-     * Get id
-     *
-     * @return mixed
-     * @throws \InvalidArgumentException
-     */
-    public function getEntityIdentifier()
-    {
-        return $this->productHolder ? $this->productHolder->getEntityIdentifier() : null;
-    }
-
-    /**
-     * Get productHolder
-     *
-     * @return ProductHolderInterface
+     * {@inheritDoc}
      */
     public function getProductHolder()
     {
-        return $this->productHolder;
+        return $this->get(self::FIELD_PRODUCT_HOLDER);
     }
 
     /**
-     * @param ProductHolderInterface $holder
-     * @return $this
+     * {@inheritDoc}
      */
-    public function setProductHolder(ProductHolderInterface $holder = null)
+    public function getProductSku()
     {
-        $this->productHolder = $holder;
-        return $this;
+        return $this->get(self::FIELD_PRODUCT_SKU);
     }
 
     /**
-     * Get product
-     *
-     * @return ProductUnit
+     * {@inheritDoc}
      */
-    public function getProductUnit()
+    public function getEntityIdentifier()
     {
-        return $this->productUnit;
+        return $this->get(self::FIELD_ENTITY_IDENTIFIER);
     }
 
     /**
-     * @param ProductUnit $productUnit
-     * @return $this
-     */
-    public function setProductUnit(ProductUnit $productUnit = null)
-    {
-        $this->productUnit = $productUnit;
-
-        return $this;
-    }
-
-    /**
-     * Get productUnitCode
-     *
-     * @return string
-     * @throws \InvalidArgumentException
-     */
-    public function getProductUnitCode()
-    {
-        if ($this->productUnit === null) {
-            throw new \InvalidArgumentException('productUnit is not defined.');
-        }
-
-        return $this->productUnit->getCode();
-    }
-
-    /**
-     * @return int
+     * {@inheritDoc}
      */
     public function getQuantity()
     {
-        return $this->quantity;
+        return $this->get(self::FIELD_QUANTITY);
     }
 
     /**
-     * @param $quantity
-     * @return $this
+     * {@inheritDoc}
      */
-    public function setQuantity($quantity)
+    public function getProductUnit()
     {
-        $this->quantity = $quantity;
-
-        return $this;
+        return $this->get(self::FIELD_PRODUCT_UNIT);
     }
 
     /**
-     * @return Weight|null
+     * {@inheritDoc}
+     */
+    public function getProductUnitCode()
+    {
+        return $this->get(self::FIELD_PRODUCT_UNIT_CODE);
+    }
+
+    /**
+     * {@inheritDoc}
      */
     public function getWeight()
     {
-        return $this->weight;
+        return $this->get(self::FIELD_WEIGHT);
     }
 
     /**
-     * @param Weight $weight
-     * @return $this
-     */
-    public function setWeight(Weight $weight = null)
-    {
-        $this->weight = $weight;
-
-        return $this;
-    }
-
-    /**
-     * @return Dimensions|null
+     * {@inheritDoc}
      */
     public function getDimensions()
     {
-        return $this->dimensions;
-    }
-
-    /**
-     * @param Dimensions $dimensions
-     * @return $this
-     */
-    public function setDimensions(Dimensions $dimensions = null)
-    {
-        $this->dimensions = $dimensions;
-
-        return $this;
+        return $this->get(self::FIELD_DIMENSIONS);
     }
 }

@@ -18,7 +18,7 @@ class FallbackProcessorTest extends \PHPUnit_Framework_TestCase
 
     public function testConfigureOptionsDoNothing()
     {
-        $resolver = $this->getMock('Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsResolver');
+        $resolver = $this->createMock('Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsResolver');
         $resolver->expects($this->never())->method($this->anything());
 
         $this->processor->configureOptions($resolver);

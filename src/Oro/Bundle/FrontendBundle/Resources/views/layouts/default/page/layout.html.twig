@@ -13,6 +13,16 @@
     {% endif %}
 {% endblock %}
 
+{% block body_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': '  body ' ~ (isMobileVersion() ? 'mobile' : 'desktop') ~ '-version'
+    }) %}
+
+    <body {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </body>
+{% endblock %}
+
 {% block _page_header_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' page-header'
@@ -97,7 +107,7 @@
     {% if content|length %}
         <h1{{ block('block_attributes') }}>
             {% if titleIcon is defined %}
-            <span class="badge badge_sm badge_circle badge_orange badge_has-inline-sibling">
+            <span class="badge">
                 <i class="{{ titleIcon }}"></i>
             </span>
             {% endif %}
@@ -109,7 +119,7 @@
 {% block _notification_widget %}
     {% set attr = layout_attr_defaults(attr, {
         'id': 'flash-messages',
-        '~class': ' notification-flash-container container-fluid',
+        '~class': ' notification-flash-container',
         'data-sticky': {
             'placeholderId': 'sticky-element-notification'
         }

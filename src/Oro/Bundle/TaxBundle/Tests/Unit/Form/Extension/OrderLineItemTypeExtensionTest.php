@@ -58,7 +58,7 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->sectionProvider = $this->getMock('Oro\Bundle\OrderBundle\Form\Section\SectionProvider');
+        $this->sectionProvider = $this->createMock('Oro\Bundle\OrderBundle\Form\Section\SectionProvider');
 
         $this->extension = new OrderLineItemTypeExtension(
             $this->taxationSettingsProvider,
@@ -86,7 +86,7 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit_Framework_TestCase
             ->willReturn(true);
 
         /** @var FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder */
-        $builder = $this->getMock('Symfony\Component\Form\FormBuilderInterface');
+        $builder = $this->createMock('Symfony\Component\Form\FormBuilderInterface');
         $builder->expects($this->never())->method($this->anything());
 
         $this->totalProvider->expects($this->once())->method('enableRecalculation');
@@ -102,7 +102,7 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit_Framework_TestCase
 
         $this->taxManager->expects($this->never())->method('getTax');
 
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
         $view = new FormView();
         $this->extension->finishView($view, $form, []);
     }
@@ -116,7 +116,7 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit_Framework_TestCase
         $this->taxManager->expects($this->never())->method('getTax');
 
 
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
         $form->expects($this->once())->method('getData')->willReturn(null);
         $view = new FormView();
         $this->extension->finishView($view, $form, []);
@@ -135,7 +135,7 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit_Framework_TestCase
             ->method('getTax')
             ->willReturn($result);
 
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
         $form->expects($this->once())->method('getData')->willReturn(new \stdClass());
         $view = new FormView();
         $this->extension->finishView($view, $form, []);
@@ -162,7 +162,7 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit_Framework_TestCase
 
         $view = new FormView();
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
         $this->extension->buildView($view, $form, []);
     }
 
@@ -174,7 +174,7 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit_Framework_TestCase
 
         $view = new FormView();
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
         $this->extension->buildView($view, $form, []);
     }
 
@@ -184,7 +184,7 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit_Framework_TestCase
             ->method('isEnabled')
             ->willReturn(false);
 
-        $builder = $this->getMock('Symfony\Component\Form\FormBuilderInterface');
+        $builder = $this->createMock('Symfony\Component\Form\FormBuilderInterface');
         $builder->expects($this->never())->method('add');
 
         $this->extension->buildForm($builder, []);

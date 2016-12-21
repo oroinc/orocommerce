@@ -121,7 +121,7 @@ class SecureArrayTypeTest extends \PHPUnit_Framework_TestCase
     public function testTextIsUsedToStoreData()
     {
         /** @var DatabasePlatformMock|\PHPUnit_Framework_MockObject_MockObject $platform */
-        $platform = $this->getMock('Oro\Component\TestUtils\ORM\Mocks\DatabasePlatformMock');
+        $platform = $this->createMock('Oro\Component\TestUtils\ORM\Mocks\DatabasePlatformMock');
 
         $platform->expects($this->once())->method('getClobTypeDeclarationSQL');
 
@@ -131,7 +131,7 @@ class SecureArrayTypeTest extends \PHPUnit_Framework_TestCase
     public function testRequiresSQLCommentHint()
     {
         /** @var DatabasePlatformMock|\PHPUnit_Framework_MockObject_MockObject $platform */
-        $platform = $this->getMock('Oro\Component\TestUtils\ORM\Mocks\DatabasePlatformMock');
+        $platform = $this->createMock('Oro\Component\TestUtils\ORM\Mocks\DatabasePlatformMock');
         $this->assertTrue($this->type->requiresSQLCommentHint($platform));
     }
 }

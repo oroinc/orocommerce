@@ -51,6 +51,7 @@ services:
         class: 'Oro\Bundle\CustomerBundle\EventListener\Datagrid\AccountDatagridListener'
         arguments:
             - "@oro_customer.security.account_user_provider"
+            - "@oro_customer.repository.account"
             - ["@oro_customer.datagrid.account_action_permission_provider", "getActions"]
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before, method: onBuildBeforeFrontendItems }
@@ -128,13 +129,6 @@ services:
         parent: oro_soap.manager.entity_manager.abstract
         arguments:
             - '%oro_customer.entity.account_user.class%'
-            - "@doctrine.orm.entity_manager"
-
-    oro_customer.account_user_role.manager.api:
-        class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
-        parent: oro_soap.manager.entity_manager.abstract
-        arguments:
-            - '%oro_customer.entity.account_user_role.class%'
             - "@doctrine.orm.entity_manager"
 
     oro_customer.datagrid.action_permission_provider:
@@ -649,3 +643,9 @@ services:
             - '@oro_customer.acl.resolver.role_translation_prefix'
         tags:
             - { name: oro_datagrid.datasource, type: account-user-workflow-permission-grid-provider }
+
+    oro_customer.repository.account:
+        class: 'Oro\Bundle\CustomerBundle\Entity\Repository\AccountRepository'
+        parent: oro_entity.abstract_repository
+        arguments:
+            - '%oro_customer.entity.account.class%'

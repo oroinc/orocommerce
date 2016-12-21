@@ -40,7 +40,7 @@ abstract class AbstractPayflowGatewayViewTest extends \PHPUnit_Framework_TestCas
             ->getMock();
 
         $this->paymentConfig =
-            $this->getMock('Oro\Bundle\PayPalBundle\Method\Config\PayflowGatewayConfigInterface');
+            $this->createMock('Oro\Bundle\PayPalBundle\Method\Config\PayflowGatewayConfigInterface');
 
         $this->methodView = $this->getMethodView();
     }
@@ -82,8 +82,8 @@ abstract class AbstractPayflowGatewayViewTest extends \PHPUnit_Framework_TestCas
 
     public function testGetOptionsWithoutZeroAmount()
     {
-        $formView = $this->getMock('Symfony\Component\Form\FormView');
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $formView = $this->createMock('Symfony\Component\Form\FormView');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
         $form->expects($this->once())->method('createView')->willReturn($formView);
 
@@ -128,8 +128,8 @@ abstract class AbstractPayflowGatewayViewTest extends \PHPUnit_Framework_TestCas
 
     public function testGetOptionsWithZeroAmountWithoutTransaction()
     {
-        $formView = $this->getMock('Symfony\Component\Form\FormView');
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $formView = $this->createMock('Symfony\Component\Form\FormView');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
         $form->expects($this->once())->method('createView')->willReturn($formView);
 
@@ -175,8 +175,8 @@ abstract class AbstractPayflowGatewayViewTest extends \PHPUnit_Framework_TestCas
 
     public function testGetOptions()
     {
-        $formView = $this->getMock('Symfony\Component\Form\FormView');
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $formView = $this->createMock('Symfony\Component\Form\FormView');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
         $form->expects($this->once())->method('createView')->willReturn($formView);
 
@@ -228,8 +228,8 @@ abstract class AbstractPayflowGatewayViewTest extends \PHPUnit_Framework_TestCas
 
     public function testGetOptionsWithLaterUse()
     {
-        $formView = $this->getMock('Symfony\Component\Form\FormView');
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $formView = $this->createMock('Symfony\Component\Form\FormView');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
         $form->expects($this->once())->method('createView')->willReturn($formView);
 
@@ -283,8 +283,8 @@ abstract class AbstractPayflowGatewayViewTest extends \PHPUnit_Framework_TestCas
 
     public function testGetOptionsWithAuthForRequiredAmount()
     {
-        $formView = $this->getMock('Symfony\Component\Form\FormView');
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $formView = $this->createMock('Symfony\Component\Form\FormView');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
         $form->expects($this->once())->method('createView')->willReturn($formView);
 

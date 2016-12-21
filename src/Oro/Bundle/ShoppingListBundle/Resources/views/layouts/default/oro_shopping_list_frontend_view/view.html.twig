@@ -11,7 +11,7 @@
             data-page-component-options="{{ {
                 view: 'oroui/js/app/views/layout-subtree-view',
                 blockId : block.vars.id,
-                reloadEvents: ['product:quantity-unit:update']
+                reloadEvents: ['product:quantity-unit:update', 'workflow:transitions_failure']
             }|json_encode }}"
             data-layout="separate">
         {{ block_widget(block) }}
@@ -20,7 +20,7 @@
 
 {% block _no_shopping_lists_widget %}
     <div class="cart-list_empty">
-        <span class="badge badge_orange badge_xlg badge_circle"><i class="fa-shopping-cart"></i></span>
+        <span class="cart-list_empty__icon"><i class="fa-shopping-cart"></i></span>
         <span class="fs24 va-m_md">{{ 'oro.frontend.shoppinglist.view.not_have_available'|trans }}</span>
     </div>
 {% endblock %}
@@ -337,7 +337,7 @@
                                         removeClass: 'line_item',
                                         confirmMessage: 'oro.frontend.shoppinglist.messages.line_item_delete_confirm'|trans,
                                         sucsessMessage: 'oro.frontend.shoppinglist.messages.line_item_deleted'|trans,
-                                        okButtonClass: 'btn ok theme-btn_sm btn-orange',
+                                        okButtonClass: 'btn ok btn--info',
                                         cancelButtonClass: 'btn cancel theme-btn_sm btn_gray'
                                     }
                                 }) }} >
@@ -419,9 +419,9 @@
 {% block _shopping_list_line_items_empty_widget %}
     {% set attr = attr|merge({ class: attr.class|default('') ~ " cart-list_empty"}) %}
     <div {{ block('block_attributes') }}>
-          <span class="badge badge_orange badge_xlg badge_circle">
+        <span class="cart-list_empty__icon">
             <i class="fa-shopping-cart"></i>
-          </span>
+        </span>
         <span class="fs24 va-m_md">{{ 'oro.frontend.shoppinglist.view.empty'|trans }}</span>
     </div>
 {% endblock %}
@@ -442,14 +442,14 @@
 
 {% block _shopping_list_delete_button_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
-        <button class="btn btn_default theme-btn_sm btn-dark fs15 mr1-md" {{ UI.renderPageComponentAttributes({
+        <button class="btn btn--action" {{ UI.renderPageComponentAttributes({
             module: 'orofrontend/js/app/components/delete-item-component',
             options: {
                 url: path('oro_api_delete_shoppinglist', {'id': shoppingList.id}),
                 redirect: path('oro_shopping_list_frontend_view'),
                 confirmMessage: 'oro.frontend.shoppinglist.messages.delete_confirm'|trans,
                 sucsessMessage: 'oro.frontend.shoppinglist.messages.deleted'|trans,
-                okButtonClass: 'btn ok theme-btn_sm btn-orange',
+                okButtonClass: 'btn ok btn--info',
                 cancelButtonClass: 'btn cancel theme-btn_sm btn_gray'
             }
         }) }} >
@@ -464,7 +464,9 @@
 {% endblock %}
 
 {% block _shopping_list_combined_button_widget %}
-    <div data-name="empty-items__hide">
-        {{ block_widget(block) }}
+    <div data-name="empty-items__hide" class="clearfix">
+        <div class="order-checkout-widget__col">
+            {{ block_widget(block) }}
+        </div>
     </div>
 {% endblock %}

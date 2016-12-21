@@ -54,11 +54,11 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
 
     protected function setUp()
     {
-        $this->context = $this->getMock(ExecutionContextInterface::class);
+        $this->context = $this->createMock(ExecutionContextInterface::class);
 
         $this->parser = $this->getMockBuilder(ExpressionParser::class)->disableOriginalConstructor()->getMock();
-        $this->fieldsProvider = $this->getMock(FieldsProviderInterface::class);
-        $this->translator = $this->getMock(TranslatorInterface::class);
+        $this->fieldsProvider = $this->createMock(FieldsProviderInterface::class);
+        $this->translator = $this->createMock(TranslatorInterface::class);
 
         $this->translator->expects($this->any())
             ->method('trans')
@@ -207,7 +207,7 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
             ->with(null)
             ->willReturn(null);
 
-        $builder = $this->getMock(ConstraintViolationBuilderInterface::class);
+        $builder = $this->createMock(ConstraintViolationBuilderInterface::class);
         $builder->expects($this->at(0))->method('atPath')->with('currencyExpression')->willReturn($builder);
         $builder->expects($this->at(1))->method('addViolation');
         $this->context->expects($this->once())
@@ -304,7 +304,7 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
             ->with(null)
             ->willReturn(null);
 
-        $builder = $this->getMock(ConstraintViolationBuilderInterface::class);
+        $builder = $this->createMock(ConstraintViolationBuilderInterface::class);
         $builder->expects($this->at(0))->method('atPath')->with('currencyExpression')->willReturn($builder);
         $builder->expects($this->at(1))->method('addViolation');
         $this->context->expects($this->once())
@@ -394,7 +394,7 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
             ->with($quantityExpression)
             ->willReturn($parsedQuantityExpression);
 
-        $builder = $this->getMock(ConstraintViolationBuilderInterface::class);
+        $builder = $this->createMock(ConstraintViolationBuilderInterface::class);
         $builder->expects($this->at(0))->method('atPath')->with('quantityExpression')->willReturn($builder);
         $builder->expects($this->at(1))->method('addViolation');
         $this->context->expects($this->once())
@@ -476,7 +476,7 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
             ->with($ruleExpression)
             ->willReturn($parsedRuleExpression);
 
-        $builder = $this->getMock(ConstraintViolationBuilderInterface::class);
+        $builder = $this->createMock(ConstraintViolationBuilderInterface::class);
         $builder->expects($this->at(0))->method('atPath')->with('quantityExpression')->willReturn($builder);
         $builder->expects($this->at(1))->method('addViolation');
         $this->context->expects($this->once())
@@ -564,7 +564,7 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
             ->with(null)
             ->willReturn(null);
 
-        $builder = $this->getMock(ConstraintViolationBuilderInterface::class);
+        $builder = $this->createMock(ConstraintViolationBuilderInterface::class);
         $builder->expects($this->at(0))->method('atPath')->with('productUnitExpression')->willReturn($builder);
         $builder->expects($this->at(1))->method('addViolation');
         $this->context->expects($this->once())
@@ -663,7 +663,7 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
             ->with(null)
             ->willReturn(null);
 
-        $builder = $this->getMock(ConstraintViolationBuilderInterface::class);
+        $builder = $this->createMock(ConstraintViolationBuilderInterface::class);
         $builder->expects($this->at(0))->method('atPath')->with('productUnitExpression')->willReturn($builder);
         $builder->expects($this->at(1))->method('addViolation');
         $this->context->expects($this->once())

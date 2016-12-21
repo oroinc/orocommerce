@@ -27,7 +27,7 @@ class TaxFactoryTest extends \PHPUnit_Framework_TestCase
     public function testAddMapperAndCreate()
     {
         /** @var TaxMapperInterface|\PHPUnit_Framework_MockObject_MockObject $mapper */
-        $mapper = $this->getMock('Oro\Bundle\TaxBundle\Mapper\TaxMapperInterface');
+        $mapper = $this->createMock('Oro\Bundle\TaxBundle\Mapper\TaxMapperInterface');
         $mapper
             ->expects($this->once())
             ->method('getProcessingClassName')
@@ -70,7 +70,7 @@ class TaxFactoryTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($this->factory->supports(new \stdClass()));
 
         /** @var TaxMapperInterface|\PHPUnit_Framework_MockObject_MockObject $mapper */
-        $mapper = $this->getMock('Oro\Bundle\TaxBundle\Mapper\TaxMapperInterface');
+        $mapper = $this->createMock('Oro\Bundle\TaxBundle\Mapper\TaxMapperInterface');
         $mapper
             ->expects($this->once())
             ->method('getProcessingClassName')

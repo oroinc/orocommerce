@@ -9,6 +9,7 @@ use Oro\Bundle\OrderBundle\Handler\OrderTotalsHandler;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
+use Oro\Bundle\CurrencyBundle\Converter\RateConverterInterface;
 
 class OrderTotalsHandlerTest extends \PHPUnit_Framework_TestCase
 {
@@ -27,6 +28,9 @@ class OrderTotalsHandlerTest extends \PHPUnit_Framework_TestCase
      */
     protected $handler;
 
+    /** @var RateConverterInterface  */
+    protected $rateConverter;
+
     protected function setUp()
     {
         $this->totalsProvider = $this
@@ -39,9 +43,15 @@ class OrderTotalsHandlerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->rateConverter = $this
+            ->getMockBuilder('Oro\Bundle\CurrencyBundle\Converter\RateConverterInterface')
+            ->setMethods(['getBaseCurrencyAmount'])
+            ->getMock();
+
         $this->handler = new OrderTotalsHandler(
             $this->totalsProvider,
-            $this->lineItemSubtotalProvider
+            $this->lineItemSubtotalProvider,
+            $this->rateConverter
         );
     }
 

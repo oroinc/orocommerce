@@ -61,14 +61,6 @@
 }
 
 .prices-hint-content {
-  .popover-title {
-    display: none;
-  }
-
-  .popover-content {
-    padding: 5px;
-  }
-
   .table {
     margin-bottom: 0;
 
@@ -83,6 +75,12 @@
     td {
       width: 50%;
       padding: 4px 8px;
+    }
+  }
+
+  .matched-tier-price {
+    > td {
+      font-weight: 700;
     }
   }
 }
@@ -693,12 +691,6 @@
 
       input[type="text"] {
         text-align: center;
-      }
-
-      .btn_has-dropdown {
-        @media (max-width: 1235px) {
-          width: 100%;
-        }
       }
     }
 

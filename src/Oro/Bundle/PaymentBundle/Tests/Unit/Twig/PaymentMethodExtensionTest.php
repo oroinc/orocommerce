@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\src\Oro\Bundle\PaymentBundle\Tests\Unit\Twig;
+namespace Oro\Bundle\PaymentBundle\Tests\Unit\Twig;
 
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Formatter\PaymentMethodLabelFormatter;

@@ -21,7 +21,7 @@ class ExtendableConditionTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->eventDispatcher = $this->getMock(EventDispatcherInterface::class);
+        $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
         $this->extendableCondition = new ExtendableCondition($this->eventDispatcher);
     }
 
@@ -65,7 +65,7 @@ class ExtendableConditionTest extends \PHPUnit_Framework_TestCase
     public function testInitializeThrowsExceptionIfNoEventsSpecified()
     {
         $options = [];
-        $this->setExpectedException(ExtendableEventNameMissingException::class);
+        $this->expectException(ExtendableEventNameMissingException::class);
         $this->extendableCondition->initialize($options);
     }
 

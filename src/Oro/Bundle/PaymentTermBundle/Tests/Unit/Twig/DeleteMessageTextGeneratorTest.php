@@ -26,7 +26,7 @@ class DeleteMessageTextGeneratorTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->router = $this->getMock(RouterInterface::class);
+        $this->router = $this->createMock(RouterInterface::class);
         $this->router->expects($this->any())
             ->method('generate')
             ->willReturnCallback(

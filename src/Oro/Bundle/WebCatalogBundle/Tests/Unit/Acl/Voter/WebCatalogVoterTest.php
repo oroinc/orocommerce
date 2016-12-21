@@ -115,7 +115,7 @@ class WebCatalogVoterTest extends \PHPUnit_Framework_TestCase
             ->willReturn(false);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|TokenInterface $token */
-        $token = $this->getMock(TokenInterface::class);
+        $token = $this->createMock(TokenInterface::class);
         $this->assertEquals(
             WebCatalogVoter::ACCESS_ABSTAIN,
             $this->voter->vote($token, $object, ['DELETE'])
@@ -143,7 +143,7 @@ class WebCatalogVoterTest extends \PHPUnit_Framework_TestCase
             ->willReturn(true);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|TokenInterface $token */
-        $token = $this->getMock(TokenInterface::class);
+        $token = $this->createMock(TokenInterface::class);
         $this->assertEquals(
             WebCatalogVoter::ACCESS_DENIED,
             $this->voter->vote($token, $object, ['DELETE'])

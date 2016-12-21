@@ -4,28 +4,49 @@ namespace Oro\Bundle\WebsiteBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
 
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
-use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
 use Oro\Bundle\ScopeBundle\Migration\Extension\ScopeExtensionAwareInterface;
 use Oro\Bundle\ScopeBundle\Migration\Extension\ScopeExtensionAwareTrait;
 
-class OroWebsiteBundleInstaller implements Installation, NoteExtensionAwareInterface, ScopeExtensionAwareInterface
+class OroWebsiteBundleInstaller implements
+    Installation,
+    ActivityExtensionAwareInterface,
+    ExtendExtensionAwareInterface,
+    ScopeExtensionAwareInterface
 {
     use ScopeExtensionAwareTrait;
 
     const WEBSITE_TABLE_NAME = 'oro_website';
 
-    /** @var NoteExtension */
-    protected $noteExtension;
+    /**
+     * @var ExtendExtension
+     */
+    protected $extendExtension;
 
     /**
-     * @inheritDoc
+     * @var ActivityExtension
      */
-    public function setNoteExtension(NoteExtension $noteExtension)
+    protected $activityExtension;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setExtendExtension(ExtendExtension $extendExtension)
     {
-        $this->noteExtension = $noteExtension;
+        $this->extendExtension = $extendExtension;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setActivityExtension(ActivityExtension $activityExtension)
+    {
+        $this->activityExtension = $activityExtension;
     }
 
     /**
@@ -138,7 +159,7 @@ class OroWebsiteBundleInstaller implements Installation, NoteExtensionAwareInter
      */
     protected function addNoteAssociations(Schema $schema)
     {
-        $this->noteExtension->addNoteAssociation($schema, self::WEBSITE_TABLE_NAME);
+        $this->activityExtension->addActivityAssociation($schema, 'oro_note', self::WEBSITE_TABLE_NAME);
     }
 
     /**

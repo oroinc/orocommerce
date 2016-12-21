@@ -24,7 +24,7 @@ class DatabaseTransportTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->registry = $this->getMock(ManagerRegistry::class);
+        $this->registry = $this->createMock(ManagerRegistry::class);
         $this->databaseTransport = new DatabaseTransport($this->registry);
     }
 
@@ -46,7 +46,7 @@ class DatabaseTransportTest extends \PHPUnit_Framework_TestCase
         $messageEntity->setReceiverEntityFQCN('EntityFQCN');
         $messageEntity->setReceiverEntityId(42);
 
-        $em = $this->getMock(EntityManagerInterface::class);
+        $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->once())
             ->method('persist')
             ->with($messageEntity);
@@ -76,7 +76,7 @@ class DatabaseTransportTest extends \PHPUnit_Framework_TestCase
             ->method('removeMessages')
             ->with($channel, $topic, $receiverEntityFQCN, $receiverEntityId);
 
-        $em = $this->getMock(EntityManagerInterface::class);
+        $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->once())
             ->method('getRepository')
             ->with(NotificationMessage::class)
@@ -121,7 +121,7 @@ class DatabaseTransportTest extends \PHPUnit_Framework_TestCase
             ->with($channel, $receiverEntityFQCN, $receiverEntityId, $topic)
             ->willReturn($messages);
 
-        $em = $this->getMock(EntityManagerInterface::class);
+        $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->once())
             ->method('getRepository')
             ->with(NotificationMessage::class)

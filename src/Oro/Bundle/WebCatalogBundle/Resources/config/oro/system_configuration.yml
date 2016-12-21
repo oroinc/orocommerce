@@ -8,7 +8,8 @@ system_configuration:
             options:
                 label: oro.webcatalog.system_configuration.fields.web_catalog.label
                 tooltip: oro.webcatalog.system_configuration.fields.web_catalog.tooltip
-                required: true
+                required: false
+                create_enabled: false
     tree:
         system_configuration:
             platform:

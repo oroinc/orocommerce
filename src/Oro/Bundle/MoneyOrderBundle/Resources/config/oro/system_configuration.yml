@@ -78,6 +78,7 @@ system_configuration:
                 label: oro.pricing.system_configuration.fields.enabled_currencies.label
                 required: true
                 multiple: true
+                full_currency_name: true
                 constraints:
                     - NotBlank: ~
 

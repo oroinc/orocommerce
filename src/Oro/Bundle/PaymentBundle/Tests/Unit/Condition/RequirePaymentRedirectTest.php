@@ -27,8 +27,8 @@ class RequirePaymentRedirectTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->paymentMethodRegistry = $this->getMock(PaymentMethodRegistry::class);
-        $this->dispatcher = $this->getMock(EventDispatcherInterface::class);
+        $this->paymentMethodRegistry = $this->createMock(PaymentMethodRegistry::class);
+        $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
         $this->condition = new RequirePaymentRedirect($this->paymentMethodRegistry, $this->dispatcher);
     }
 
@@ -57,7 +57,7 @@ class RequirePaymentRedirectTest extends \PHPUnit_Framework_TestCase
     {
         $context = new \stdClass();
         $errors = $this->getMockForAbstractClass(Collection::class);
-        $paymentMethod = $this->getMock(PaymentMethodInterface::class);
+        $paymentMethod = $this->createMock(PaymentMethodInterface::class);
 
         $this->paymentMethodRegistry->expects($this->once())
             ->method('getPaymentMethod')

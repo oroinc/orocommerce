@@ -86,7 +86,7 @@ class ProductUnitStrategyHelper extends AbstractInventoryLevelStrategyHelper
      */
     protected function getProductUnitPrecision(Product $product, ProductUnit $productUnit = null)
     {
-        if ($productUnit) {
+        if ($productUnit && !empty(trim($productUnit->getCode()))) {
             return $this->checkAndRetrieveEntity(
                 ProductUnitPrecision::class,
                 [

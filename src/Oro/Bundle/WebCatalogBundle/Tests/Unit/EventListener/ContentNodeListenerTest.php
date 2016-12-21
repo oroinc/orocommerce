@@ -4,7 +4,6 @@ namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\EventListener;
 
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Oro\Bundle\CommerceEntityBundle\Storage\ExtraActionEntityStorageInterface;
-use Oro\Bundle\WebCatalogBundle\ContentNodeUtils\ContentNodeNameFiller;
 use Oro\Bundle\WebCatalogBundle\Generator\SlugGenerator;
 use Oro\Bundle\WebCatalogBundle\Model\ContentNodeMaterializedPathModifier;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
@@ -27,11 +26,6 @@ class ContentNodeListenerTest extends \PHPUnit_Framework_TestCase
     protected $storage;
 
     /**
-     * @var ContentNodeNameFiller|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $contentNodeNameFiller;
-
-    /**
      * @var SlugGenerator|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $slugGenerator;
@@ -47,11 +41,8 @@ class ContentNodeListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->storage = $this->getMock(ExtraActionEntityStorageInterface::class);
+        $this->storage = $this->createMock(ExtraActionEntityStorageInterface::class);
 
-        $this->contentNodeNameFiller = $this->getMockBuilder(ContentNodeNameFiller::class)
-            ->disableOriginalConstructor()
-            ->getMock();
         $this->slugGenerator = $this->getMockBuilder(SlugGenerator::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -65,20 +56,8 @@ class ContentNodeListenerTest extends \PHPUnit_Framework_TestCase
         $this->contentNodeListener = new ContentNodeListener(
             $this->modifier,
             $this->storage,
-            $this->contentNodeNameFiller,
             $generatorLink
         );
-    }
-
-    public function testPrePersist()
-    {
-        $contentNode = new ContentNode();
-
-        $this->contentNodeNameFiller->expects($this->once())
-            ->method('fillName')
-            ->with($contentNode);
-
-        $this->contentNodeListener->prePersist($contentNode);
     }
 
     public function testPostPersist()
