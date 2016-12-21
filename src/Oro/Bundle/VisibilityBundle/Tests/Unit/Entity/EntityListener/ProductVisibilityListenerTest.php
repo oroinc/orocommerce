@@ -35,7 +35,7 @@ class ProductVisibilityListenerTest extends \PHPUnit_Framework_TestCase
     public function testPostPersist()
     {
         /** @var VisibilityInterface|\PHPUnit_Framework_MockObject_MockObject $visibility * */
-        $visibility = $this->getMock(VisibilityInterface::class);
+        $visibility = $this->createMock(VisibilityInterface::class);
 
         $this->visibilityChangeMessageHandler->expects($this->once())
             ->method('addMessageToSchedule')
@@ -46,7 +46,7 @@ class ProductVisibilityListenerTest extends \PHPUnit_Framework_TestCase
     public function testPreUpdate()
     {
         /** @var VisibilityInterface|\PHPUnit_Framework_MockObject_MockObject $visibility * */
-        $visibility = $this->getMock(VisibilityInterface::class);
+        $visibility = $this->createMock(VisibilityInterface::class);
 
         $this->visibilityChangeMessageHandler->expects($this->once())
             ->method('addMessageToSchedule')
@@ -58,7 +58,7 @@ class ProductVisibilityListenerTest extends \PHPUnit_Framework_TestCase
     public function testPreRemove()
     {
         /** @var VisibilityInterface|\PHPUnit_Framework_MockObject_MockObject $visibility * */
-        $visibility = $this->getMock(VisibilityInterface::class);
+        $visibility = $this->createMock(VisibilityInterface::class);
 
         $this->visibilityChangeMessageHandler->expects($this->once())
             ->method('addMessageToSchedule')

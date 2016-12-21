@@ -281,7 +281,7 @@ class AccountTypedAddressWithDefaultTypeTest extends FormIntegrationTestCase
      */
     private function createTranslatorMock()
     {
-        $translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+        $translator = $this->createMock('Symfony\Component\Translation\TranslatorInterface');
         $translator->expects($this->any())->method('trans')->will(
             $this->returnCallback(
                 function ($message) {

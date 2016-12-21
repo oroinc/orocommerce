@@ -85,7 +85,7 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
             $this->prepareProductUnitSelectionChoices(),
             ProductPriceUnitSelectorType::NAME
         );
-        $priceType = PriceTypeGenerator::createPriceType();
+        $priceType = PriceTypeGenerator::createPriceType($this);
 
         return [
             new PreloadedExtension(

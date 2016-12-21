@@ -67,7 +67,7 @@ class VisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->registry = $this->getMock(ManagerRegistry::class);
+        $this->registry = $this->createMock(ManagerRegistry::class);
 
         $this->visibilityChoicesProvider = $this
             ->getMockBuilder(VisibilityChoicesProvider::class)
@@ -105,7 +105,7 @@ class VisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnPreBuild()
     {
-        $repository = $this->getMock(ObjectRepository::class);
+        $repository = $this->createMock(ObjectRepository::class);
         $repository->method('find')->with(1)->willReturn(new Category());
         $this->registry->method('getRepository')->with(Category::class)->willReturn($repository);
 
@@ -141,7 +141,7 @@ class VisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
     public function testOnOrmResultBeforeQuery()
     {
         $scope = new Scope();
-        $repository = $this->getMock(ObjectRepository::class);
+        $repository = $this->createMock(ObjectRepository::class);
         $repository->method('find')->with(1)->willReturn($scope);
         $this->registry->method('getRepository')->with(Scope::class)->willReturn($repository);
 
@@ -152,7 +152,7 @@ class VisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
             ->with($scope, 'account_category_visibility')
             ->willReturn($scopeCriteria);
 
-        $datagrid = $this->getMock(DatagridInterface::class);
+        $datagrid = $this->createMock(DatagridInterface::class);
         $datagrid->method('getParameters')->willReturn(new ParameterBag(['scope_id' => 1]));
         $datagrid->method('getName')->willReturn(self::ACCOUNT_CATEGORY_VISIBILITY_GRID);
         $qb = $this->getMockBuilder(QueryBuilder::class)
@@ -176,7 +176,7 @@ class VisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
             ->with($scope, 'account_category_visibility')
             ->willReturn($scopeCriteria);
 
-        $datagrid = $this->getMock(DatagridInterface::class);
+        $datagrid = $this->createMock(DatagridInterface::class);
         $datagrid->method('getParameters')->willReturn(new ParameterBag([]));
         $datagrid->method('getName')->willReturn(self::ACCOUNT_CATEGORY_VISIBILITY_GRID);
         $qb = $this->getMockBuilder(QueryBuilder::class)
@@ -257,7 +257,7 @@ class VisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getQueryBuilder')
             ->willReturn($qb);
 
-        $dataGrid = $this->getMock(DatagridInterface::class);
+        $dataGrid = $this->createMock(DatagridInterface::class);
         $dataGrid
             ->expects($this->any())
             ->method('getName')
@@ -286,7 +286,7 @@ class VisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
             return $bag;
         }
 
-        $repository = $this->getMock(ObjectRepository::class);
+        $repository = $this->createMock(ObjectRepository::class);
         $repository->expects($this->exactly(1))
             ->method('find')
             ->willReturnMap(

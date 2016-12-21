@@ -36,9 +36,9 @@ class OrderAddressTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->constraint = new OrderAddress(['validationGroups' => ['Default', 'AbstractAddress', 'Frontend']]);
-        $this->validator = $this->getMock('Symfony\Component\Validator\Validator\ValidatorInterface');
+        $this->validator = $this->createMock('Symfony\Component\Validator\Validator\ValidatorInterface');
         /** @var ExecutionContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
-        $this->context = $this->getMock('Symfony\Component\Validator\Context\ExecutionContextInterface');
+        $this->context = $this->createMock('Symfony\Component\Validator\Context\ExecutionContextInterface');
         $this->orderAddressValidator = new OrderAddressValidator($this->validator);
         $this->orderAddressValidator->initialize($this->context);
     }
@@ -56,7 +56,7 @@ class OrderAddressTest extends \PHPUnit_Framework_TestCase
     public function testValidateException()
     {
         $this->orderAddressValidator->initialize($this->context);
-        $this->orderAddressValidator->validate(null, $this->getMock('Symfony\Component\Validator\Constraint'));
+        $this->orderAddressValidator->validate(null, $this->createMock('Symfony\Component\Validator\Constraint'));
     }
 
     public function testValidate()
@@ -72,7 +72,8 @@ class OrderAddressTest extends \PHPUnit_Framework_TestCase
             ->method('validate')
             ->with($value, null, ['Default', 'AbstractAddress', 'Frontend'])
             ->willReturn([$constraintViolation]);
-        $violationBuilder = $this->getMock('Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface');
+        $violationBuilder = $this
+            ->createMock('Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface');
         $violationBuilder->expects($this->once())->method('atPath')->willReturnSelf();
         $this->context->expects($this->once())
             ->method('buildViolation')

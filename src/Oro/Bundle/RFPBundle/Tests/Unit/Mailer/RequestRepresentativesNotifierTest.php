@@ -46,7 +46,7 @@ class RequestRepresentativesNotifierTest extends \PHPUnit_Framework_TestCase
         $this->configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->request = $this->getMock('Oro\Bundle\RFPBundle\Entity\Request');
+        $this->request = $this->createMock('Oro\Bundle\RFPBundle\Entity\Request');
 
         $this->requestToQuoteRepresentativesNotifier = new RequestRepresentativesNotifier(
             $this->processor,
@@ -181,11 +181,11 @@ class RequestRepresentativesNotifierTest extends \PHPUnit_Framework_TestCase
     protected function configureRequestMock()
     {
         $this->owner = new User();
-        $this->accountUser = $this->getMock('Oro\Bundle\CustomerBundle\Entity\AccountUser');
+        $this->accountUser = $this->createMock('Oro\Bundle\CustomerBundle\Entity\AccountUser');
         $this->accountUser->expects($this->any())
             ->method('getOwner')
             ->willReturn($this->owner);
-        $this->account = $this->getMock('Oro\Bundle\CustomerBundle\Entity\AccountUser');
+        $this->account = $this->createMock('Oro\Bundle\CustomerBundle\Entity\AccountUser');
         $this->account->expects($this->any())
             ->method('getOwner')
             ->willReturn($this->owner);

@@ -25,7 +25,7 @@ class PriceListRelationTriggerFactoryTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->registry = $this->getMock(RegistryInterface::class);
+        $this->registry = $this->createMock(RegistryInterface::class);
 
         $this->factory = new PriceListRelationTriggerFactory($this->registry);
     }
@@ -36,7 +36,7 @@ class PriceListRelationTriggerFactoryTest extends \PHPUnit_Framework_TestCase
         $account = new Account();
         $accountGroup = new AccountGroup();
 
-        $accountRepository = $this->getMock(ObjectRepository::class);
+        $accountRepository = $this->createMock(ObjectRepository::class);
         $accountRepository->expects($this->once())
             ->method('find')->with(1)->willReturn($account);
         $this->registry->expects($this->at(0))
@@ -44,7 +44,7 @@ class PriceListRelationTriggerFactoryTest extends \PHPUnit_Framework_TestCase
             ->with(Account::class)
             ->willReturn($accountRepository);
 
-        $accountGroupRepository = $this->getMock(ObjectRepository::class);
+        $accountGroupRepository = $this->createMock(ObjectRepository::class);
         $accountGroupRepository->expects($this->once())
             ->method('find')->with(1)->willReturn($accountGroup);
         $this->registry->expects($this->at(1))
@@ -52,7 +52,7 @@ class PriceListRelationTriggerFactoryTest extends \PHPUnit_Framework_TestCase
             ->with(AccountGroup::class)
             ->willReturn($accountGroupRepository);
 
-        $accountRepository = $this->getMock(ObjectRepository::class);
+        $accountRepository = $this->createMock(ObjectRepository::class);
         $accountRepository->expects($this->once())
             ->method('find')->with(1)->willReturn($website);
         $this->registry->expects($this->at(2))
@@ -79,7 +79,7 @@ class PriceListRelationTriggerFactoryTest extends \PHPUnit_Framework_TestCase
         $body = json_encode([]);
 
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message */
-        $message = $this->getMock(MessageInterface::class);
+        $message = $this->createMock(MessageInterface::class);
         $message->method('getBody')->willReturn($body);
 
         $this->assertEquals(new PriceListRelationTrigger(), $this->factory->createFromArray([]));

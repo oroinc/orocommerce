@@ -41,12 +41,12 @@ class ProductCategoriesContextConfiguratorTest extends \PHPUnit_Framework_TestCa
 
     protected function setUp()
     {
-        $this->requestStack = $this->getMock(RequestStack::class, [], [], '', false);
-        $this->registry = $this->getMock(ManagerRegistry::class, [], [], '', false);
-        $this->categoryProvider = $this->getMock(CategoryProvider::class, [], [], '', false);
+        $this->requestStack = $this->createMock(RequestStack::class);
+        $this->registry = $this->createMock(ManagerRegistry::class);
+        $this->categoryProvider = $this->createMock(CategoryProvider::class);
 
-        $this->currentRequest = $this->getMock(Request::class);
-        $this->currentRequest->attributes = $this->getMock(ParameterBag::class);
+        $this->currentRequest = $this->createMock(Request::class);
+        $this->currentRequest->attributes = $this->createMock(ParameterBag::class);
 
         $this->configurator = new ProductCategoriesContextConfigurator(
             $this->requestStack,
@@ -73,10 +73,10 @@ class ProductCategoriesContextConfiguratorTest extends \PHPUnit_Framework_TestCa
             ->method('getCurrentCategory')
             ->willReturn($category);
 
-        $context = $this->getMock(ContextInterface::class);
+        $context = $this->createMock(ContextInterface::class);
         $context->expects($this->exactly(2))
             ->method('getResolver')
-            ->willReturn($this->getMock(OptionsResolver::class));
+            ->willReturn($this->createMock(OptionsResolver::class));
 
         $context->expects($this->at(2))
             ->method('set')
@@ -112,19 +112,19 @@ class ProductCategoriesContextConfiguratorTest extends \PHPUnit_Framework_TestCa
         $category = $this->getEntity(Category::class, ['id' => 2, 'parentCategory' => $parentCategory]);
 
         $product = $this->getEntity(Product::class);
-        $productRepository = $this->getMock(ProductRepository::class, [], [], '', false);
+        $productRepository = $this->createMock(ProductRepository::class);
         $productRepository->expects($this->once())
             ->method('find')
             ->with(1)
             ->willReturn($product);
 
-        $categoryRepository = $this->getMock(CategoryRepository::class, [], [], '', false);
+        $categoryRepository = $this->createMock(CategoryRepository::class);
         $categoryRepository->expects($this->once())
             ->method('findOneByProduct')
             ->with($product)
             ->willReturn($category);
 
-        $em = $this->getMock(EntityManagerInterface::class);
+        $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->at(0))
             ->method('getRepository')
             ->with(Product::class)
@@ -138,10 +138,10 @@ class ProductCategoriesContextConfiguratorTest extends \PHPUnit_Framework_TestCa
             ->method('getManagerForClass')
             ->willReturn($em);
 
-        $context = $this->getMock(ContextInterface::class);
+        $context = $this->createMock(ContextInterface::class);
         $context->expects($this->exactly(2))
             ->method('getResolver')
-            ->willReturn($this->getMock(OptionsResolver::class));
+            ->willReturn($this->createMock(OptionsResolver::class));
 
         $context->expects($this->at(2))
             ->method('set')
@@ -156,14 +156,14 @@ class ProductCategoriesContextConfiguratorTest extends \PHPUnit_Framework_TestCa
 
     public function testConfigureWhenCurrentRequestIsNotSet()
     {
-        $requestStack = $this->getMock(RequestStack::class);
-        $registry = $this->getMock(ManagerRegistry::class, [], [], '', false);
-        $categoryProvider = $this->getMock(CategoryProvider::class, [], [], '', false);
+        $requestStack = $this->createMock(RequestStack::class);
+        $registry = $this->createMock(ManagerRegistry::class);
+        $categoryProvider = $this->createMock(CategoryProvider::class);
 
-        $context = $this->getMock(ContextInterface::class);
+        $context = $this->createMock(ContextInterface::class);
         $context->expects($this->never())
             ->method('getResolver')
-            ->willReturn($this->getMock(OptionsResolver::class));
+            ->willReturn($this->createMock(OptionsResolver::class));
 
         $configurator = new ProductCategoriesContextConfigurator($requestStack, $registry, $categoryProvider);
         $configurator->configureContext($context);
@@ -180,10 +180,10 @@ class ProductCategoriesContextConfiguratorTest extends \PHPUnit_Framework_TestCa
             ->with('_route')
             ->willReturn(ProductCategoriesContextConfigurator::PRODUCT_LIST_ROUTE);
 
-        $context = $this->getMock(ContextInterface::class);
+        $context = $this->createMock(ContextInterface::class);
         $context->expects($this->exactly(2))
             ->method('getResolver')
-            ->willReturn($this->getMock(OptionsResolver::class));
+            ->willReturn($this->createMock(OptionsResolver::class));
 
         $context->expects($this->at(2))
             ->method('set')
@@ -207,7 +207,7 @@ class ProductCategoriesContextConfiguratorTest extends \PHPUnit_Framework_TestCa
             ->with('_route')
             ->willReturn('not_allowed_route');
 
-        $context = $this->getMock(ContextInterface::class);
+        $context = $this->createMock(ContextInterface::class);
         $context->expects($this->never())->method('getResolver');
 
         $this->configurator->configureContext($context);

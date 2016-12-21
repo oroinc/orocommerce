@@ -47,9 +47,9 @@ class InventoryLevelHandlerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->form = $this->getMock(FormInterface::class);
-        $this->manager = $this->getMock(ObjectManager::class);
-        $this->roundingService = $this->getMock(RoundingServiceInterface::class);
+        $this->form = $this->createMock(FormInterface::class);
+        $this->manager = $this->createMock(ObjectManager::class);
+        $this->roundingService = $this->createMock(RoundingServiceInterface::class);
         $this->request = new Request();
 
         $this->handler = new InventoryLevelHandler(
@@ -105,7 +105,7 @@ class InventoryLevelHandlerTest extends \PHPUnit_Framework_TestCase
             ->willReturn($formData);
 
         // mock repository behvaiour
-        $repository = $this->getMock('Doctrine\Common\Persistence\ObjectRepository');
+        $repository = $this->createMock('Doctrine\Common\Persistence\ObjectRepository');
         $repository->expects($this->any())
             ->method('findOneBy')
             ->willReturnCallback(

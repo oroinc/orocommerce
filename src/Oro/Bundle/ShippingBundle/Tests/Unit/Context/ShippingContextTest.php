@@ -60,10 +60,10 @@ class ShippingContextTest extends \PHPUnit_Framework_TestCase
         $this->customerUserMock = $this->getMockBuilder(AccountUser::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->lineItemsCollectionMock = $this->getMock(ShippingLineItemCollectionInterface::class);
-        $this->billingAddressMock = $this->getMock(AddressInterface::class);
-        $this->shippingAddressMock = $this->getMock(AddressInterface::class);
-        $this->shippingOriginMock = $this->getMock(AddressInterface::class);
+        $this->lineItemsCollectionMock = $this->createMock(ShippingLineItemCollectionInterface::class);
+        $this->billingAddressMock = $this->createMock(AddressInterface::class);
+        $this->shippingAddressMock = $this->createMock(AddressInterface::class);
+        $this->shippingOriginMock = $this->createMock(AddressInterface::class);
         $this->subtotalMock = $this->getMockBuilder(Price::class)
             ->disableOriginalConstructor()
             ->getMock();

@@ -27,8 +27,9 @@ class AbstractSessionDataStorageTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->session = $this->getMock('Symfony\Component\HttpFoundation\Session\SessionInterface');
-        $this->sessionBag = $this->getMock('Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface');
+        $this->session = $this->createMock('Symfony\Component\HttpFoundation\Session\SessionInterface');
+        $this->sessionBag = $this
+            ->createMock('Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface');
         $this->session->expects($this->atMost(1))->method('getBag')->willReturn($this->sessionBag);
 
         $this->initStorage();

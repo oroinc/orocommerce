@@ -52,7 +52,7 @@ class ShippingLineItemTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->productHolderMock = $this->getMock(ProductHolderInterface::class);
+        $this->productHolderMock = $this->createMock(ProductHolderInterface::class);
 
         $this->dimensionsMock = $this->getMockBuilder(Dimensions::class)
             ->disableOriginalConstructor()

@@ -40,7 +40,7 @@ class CategoryPageVariantTypeTest extends FormIntegrationTestCase
     {
         parent::setUp();
 
-        $this->registry = $this->getMock(ManagerRegistry::class);
+        $this->registry = $this->createMock(ManagerRegistry::class);
         $this->type = new CategoryPageVariantType($this->registry);
     }
 
@@ -176,7 +176,7 @@ class CategoryPageVariantTypeTest extends FormIntegrationTestCase
             ->willReturn(ContentVariantStub::class);
 
         /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
-        $em = $this->getMock(EntityManagerInterface::class);
+        $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->any())
             ->method('getClassMetadata')
             ->withConsecutive(

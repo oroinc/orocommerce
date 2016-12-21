@@ -43,7 +43,7 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+        $this->translator = $this->createMock('Symfony\Component\Translation\TranslatorInterface');
         $this->translator->expects($this->any())
             ->method('trans')
             ->with($this->isType('string'))
@@ -105,7 +105,7 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $this->setUpPriceListRequestHandler($priceListId, $priceCurrencies);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
-        $datagrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
+        $datagrid = $this->createMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
         $config = DatagridConfiguration::create([]);
 
         $event = new BuildBefore($datagrid, $config);
@@ -293,7 +293,7 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
         }
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
-        $datagrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
+        $datagrid = $this->createMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
         $event = new OrmResultAfter($datagrid, $sourceResultRecords);
         $this->listener->onResultAfter($event);
         $actualResults = $event->getRecords();

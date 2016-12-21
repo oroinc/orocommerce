@@ -36,10 +36,11 @@ class OrderLineItemsHasCountTest extends \PHPUnit_Framework_TestCase
      * @dataProvider initializeDataProvider
      * @param array $options
      * @param $message
+     * @expectedException \Oro\Component\ConfigExpression\Exception\InvalidArgumentException
      */
     public function testInitializeExceptions(array $options, $message)
     {
-        $this->setExpectedException('Oro\Component\ConfigExpression\Exception\InvalidArgumentException', $message);
+        $this->expectExceptionMessage($message);
         $this->condition->initialize($options);
     }
 
@@ -64,12 +65,12 @@ class OrderLineItemsHasCountTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
+    /**
+     * @expectedException \Oro\Component\ConfigExpression\Exception\InvalidArgumentException
+     * @expectedExceptionMessage Entity must implement Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface
+     */
     public function testEvaluateException()
     {
-        $this->setExpectedException(
-            'Oro\Component\ConfigExpression\Exception\InvalidArgumentException',
-            'Entity must implement Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface'
-        );
         $context = [];
         $this->condition->initialize(['entity' => []]);
         $this->condition->evaluate($context);
@@ -83,7 +84,7 @@ class OrderLineItemsHasCountTest extends \PHPUnit_Framework_TestCase
     public function testEvaluate(array $lineItems, $expectedResult)
     {
         /** @var CheckoutInterface|\PHPUnit_Framework_MockObject_MockObject $checkout */
-        $checkout = $this->getMock('Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface');
+        $checkout = $this->createMock('Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface');
         $context = [];
         $this->condition->initialize(['entity' => $checkout]);
         $this->manager->expects($this->once())
@@ -100,7 +101,7 @@ class OrderLineItemsHasCountTest extends \PHPUnit_Framework_TestCase
         return [
             [
                 'lineItems' => [
-                    $this->getMock('Oro\Bundle\OrderBundle\Entity\OrderLineItem'),
+                    $this->createMock('Oro\Bundle\OrderBundle\Entity\OrderLineItem'),
                 ],
                 'expectedResult' => true,
             ],

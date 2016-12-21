@@ -46,7 +46,7 @@ class ProductPrimaryUnitPrecisionTypeTest extends FormIntegrationTestCase
      */
     protected function setUp()
     {
-        $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+        $this->translator = $this->createMock('Symfony\Component\Translation\TranslatorInterface');
         $this->translator
             ->expects(static::any())
             ->method('trans')

@@ -39,7 +39,7 @@ class AccountUserRoleVoterTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->container = $this->getMock('Symfony\Component\DependencyInjection\ContainerInterface');
+        $this->container = $this->createMock('Symfony\Component\DependencyInjection\ContainerInterface');
 
         $this->voter = new AccountUserRoleVoter($this->doctrineHelper);
         $this->voter->setContainer($this->container);
@@ -132,7 +132,7 @@ class AccountUserRoleVoterTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($entityRepository));
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|TokenInterface $token */
-        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $token = $this->createMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
         $this->assertEquals(
             $expected,
             $this->voter->vote($token, $object, [AccountUserRoleVoter::ATTRIBUTE_DELETE])
@@ -205,7 +205,7 @@ class AccountUserRoleVoterTest extends \PHPUnit_Framework_TestCase
         }
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|TokenInterface $token */
-        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $token = $this->createMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
 
         $this->assertEquals(
             $expected,
@@ -254,7 +254,7 @@ class AccountUserRoleVoterTest extends \PHPUnit_Framework_TestCase
         }
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|TokenInterface $token */
-        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $token = $this->createMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
 
         $this->assertEquals(
             $expected,

@@ -59,9 +59,9 @@ class OrderShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->shippingLineItemConverterMock = $this->getMock(OrderShippingLineItemConverterInterface::class);
+        $this->shippingLineItemConverterMock = $this->createMock(OrderShippingLineItemConverterInterface::class);
 
-        $this->shippingContextBuilderFactoryMock = $this->getMock(ShippingContextBuilderFactoryInterface::class);
+        $this->shippingContextBuilderFactoryMock = $this->createMock(ShippingContextBuilderFactoryInterface::class);
 
         $this->repositoryMock = $this
             ->getMockBuilder(PaymentTransactionRepository::class)
@@ -72,7 +72,7 @@ class OrderShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->contextBuilder = $this->getMock(ShippingContextBuilderInterface::class);
+        $this->contextBuilder = $this->createMock(ShippingContextBuilderInterface::class);
 
         $this->factory = new OrderShippingContextFactory(
             $this->doctrineHelper,
@@ -84,7 +84,7 @@ class OrderShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
     public function testCreate()
     {
         /** @var AddressInterface $address */
-        $address = $this->getMock(OrderAddress::class);
+        $address = $this->createMock(OrderAddress::class);
         $currency = 'USD';
         $paymentMethod = 'SomePaymentMethod';
         $amount = 100;

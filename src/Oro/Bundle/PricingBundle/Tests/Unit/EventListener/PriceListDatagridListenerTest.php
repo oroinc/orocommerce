@@ -23,7 +23,7 @@ class PriceListDatagridListenerTest extends \PHPUnit_Framework_TestCase
     {
         $params = new ParameterBag();
         /** @var DatagridInterface|\PHPUnit_Framework_MockObject_MockObject $datagrid */
-        $datagrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
+        $datagrid = $this->createMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
         $datagrid->expects($this->once())->method('getParameters')->willReturn($params);
         /** @var BuildBefore|\PHPUnit_Framework_MockObject_MockObject $event */
         $event = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Event\BuildBefore')
