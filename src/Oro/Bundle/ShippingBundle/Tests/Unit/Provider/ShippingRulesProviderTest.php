@@ -11,7 +11,7 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\DoctrineShippingLineItemCollection;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
-use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodsConfigsRuleRepository;
+use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingRuleRepository;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRuleDestination;
@@ -26,7 +26,7 @@ class ShippingRulesProviderTest extends \PHPUnit_Framework_TestCase
     use EntityTrait;
 
     /**
-     * @var ShippingMethodsConfigsRuleRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingRuleRepository|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $repository;
 
@@ -51,7 +51,7 @@ class ShippingRulesProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->repository = $this->getMockBuilder(ShippingMethodsConfigsRuleRepository::class)
+        $this->repository = $this->getMockBuilder(ShippingRuleRepository::class)
             ->disableOriginalConstructor()->getMock();
 
         $entityManager = $this->getMockBuilder('\Doctrine\ORM\EntityManager')

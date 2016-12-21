@@ -6,15 +6,17 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
-use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
+use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestinationPostalCode;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
 use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethod;
 use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethodType;
 use Symfony\Component\Yaml\Yaml;
 
-class LoadShippingRules extends AbstractFixture
+class LoadShippingMethodsConfigsRules extends AbstractFixture
 {
     /**
      * {@inheritdoc}
@@ -22,12 +24,14 @@ class LoadShippingRules extends AbstractFixture
     public function load(ObjectManager $manager)
     {
         foreach ($this->getShippingRuleData() as $reference => $data) {
-            $entity = new ShippingRule();
-            $entity
-                ->setName($reference)
-                ->setEnabled($data['enabled'])
-                ->setPriority($data['priority'])
-                ->setConditions($data['conditions'])
+            $rule = new Rule();
+            $rule->setName($reference)
+                ->setEnabled($data['rule']['enabled'])
+                ->setSortOrder($data['rule']['sortOrder'])
+                ->setExpression($data['rule']['expression']);
+
+            $entity = new ShippingMethodsConfigsRule();
+            $entity->setRule($rule)
                 ->setCurrency($data['currency']);
 
             if (!array_key_exists('destinations', $data)) {
@@ -42,7 +46,7 @@ class LoadShippingRules extends AbstractFixture
 
                 $shippingRuleDestination = new ShippingMethodsConfigsRuleDestination();
                 $shippingRuleDestination
-                    ->setRule($entity)
+                    ->setMethodConfigsRule($entity)
                     ->setCountry($country);
 
                 if (array_key_exists('region', $destination)) {
@@ -53,8 +57,14 @@ class LoadShippingRules extends AbstractFixture
                     $shippingRuleDestination->setRegion($region);
                 }
 
-                if (array_key_exists('postalCode', $destination)) {
-                    $shippingRuleDestination->setPostalCode($destination['postalCode']);
+                if (array_key_exists('postalCodes', $destination)) {
+                    foreach ($destination['postalCodes'] as $postalCode) {
+                        $destinationPostalCode = new ShippingMethodsConfigsRuleDestinationPostalCode();
+                        $destinationPostalCode->setName($postalCode['name'])
+                            ->setDestination($shippingRuleDestination);
+
+                        $shippingRuleDestination->addPostalCode($destinationPostalCode);
+                    }
                 }
 
                 $manager->persist($shippingRuleDestination);
@@ -66,7 +76,7 @@ class LoadShippingRules extends AbstractFixture
                     $methodConfig = new ShippingMethodConfig();
 
                     $methodConfig
-                        ->setRule($entity)
+                        ->setMethodConfigsRule($entity)
                         ->setMethod(FlatRateShippingMethod::IDENTIFIER);
 
                     foreach ($methodConfigData['typeConfigs'] as $typeConfigData) {
@@ -99,6 +109,6 @@ class LoadShippingRules extends AbstractFixture
      */
     protected function getShippingRuleData()
     {
-        return Yaml::parse(file_get_contents(__DIR__.'/data/shipping_rules.yml'));
+        return Yaml::parse(file_get_contents(__DIR__.'/data/shipping_methods_configs_rules.yml'));
     }
 }

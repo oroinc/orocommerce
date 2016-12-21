@@ -1,7 +1,8 @@
 shipping_rule.1:
-    enabled: true
-    priority: 0
-    conditions: 'true'
+    rule:
+        enabled: true
+        sortOrder: 0
+        expression: 'true'
     currency: 'EUR'
     methodConfigs:
          -
@@ -12,13 +13,16 @@ shipping_rule.1:
                         price: 10
     destinations:
         -
-            postalCode: '12345'
+            postalCodes:
+                -
+                    name: '12345'
             country: 'US'
             region: 'NY'
 shipping_rule.2:
-    enabled: true
-    priority: 1
-    conditions: 'true'
+    rule:
+        enabled: true
+        sortOrder: 1
+        expression: 'true'
     currency: 'EUR'
     methodConfigs:
          -
@@ -34,9 +38,10 @@ shipping_rule.2:
             country: 'FR'
             region: 'FR-75'
 shipping_rule.3:
-    enabled: false
-    priority: 2
-    conditions: 'true'
+    rule:
+        enabled: false
+        sortOrder: 2
+        expression: 'true'
     currency: 'EUR'
     methodConfigs:
          -
@@ -52,9 +57,10 @@ shipping_rule.3:
         -
             country: 'FR'
 shipping_rule.4:
-    enabled: true
-    priority: 2
-    conditions: 'true'
+    rule:
+        enabled: true
+        sortOrder: 2
+        expression: 'true'
     currency: 'EUR'
     methodConfigs:
          -
@@ -65,13 +71,18 @@ shipping_rule.4:
                         price: 10
     destinations:
         -
-            postalCode: '12345, 12346'
+            postalCodes:
+                -
+                    name: '12345'
+                -
+                    name: '12346'
             country: 'US'
             region: 'NY'
 shipping_rule.5:
-    enabled: true
-    priority: 2
-    conditions: 'true'
+    rule:
+        enabled: true
+        sortOrder: 2
+        expression: 'true'
     currency: 'EUR'
     methodConfigs:
          -
@@ -81,9 +92,10 @@ shipping_rule.5:
                         type: 'per_item'
                         price: 10
 shipping_rule.6:
-    enabled: true
-    priority: 2
-    conditions: 'true'
+    rule:
+        enabled: true
+        sortOrder: 2
+        expression: 'true'
     currency: 'EUR'
     methodConfigs:
          -
@@ -96,9 +108,10 @@ shipping_rule.6:
         -
             country: 'FR'
 shipping_rule.7:
-    enabled: true
-    priority: 3
-    conditions: 'true'
+    rule:
+        enabled: true
+        sortOrder: 3
+        expression: 'true'
     currency: 'USD'
     methodConfigs:
          -
@@ -109,13 +122,16 @@ shipping_rule.7:
                         price: 10
     destinations:
         -
-            postalCode: '12346'
+            postalCodes:
+                -
+                    name: '12346'
             country: 'US'
             region: 'NY'
 shipping_rule.8:
-    enabled: true
-    priority: 0
-    conditions: 'true'
+    rule:
+        enabled: true
+        sortOrder: 0
+        expression: 'true'
     currency: 'USD'
     methodConfigs:
          -
@@ -125,12 +141,14 @@ shipping_rule.8:
                         type: 'per_order'
                         price: 10
 shipping_rule.9:
-    enabled: true
-    priority: 0
-    conditions: 'true'
+    rule:
+        enabled: true
+        sortOrder: 0
+        expression: 'true'
     currency: 'UAH'
 shipping_rule.10:
-    enabled: false
-    priority: 0
-    conditions: 'true'
+    rule:
+        enabled: false
+        sortOrder: 0
+        expression: 'true'
     currency: 'UAH'

@@ -12,7 +12,7 @@ use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Bundle\ShippingBundle\Model\ExtendShippingMethodsConfigsRule;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodsConfigsRuleRepository")
  * @ORM\Table(
  *     name="oro_ship_method_configs_rule"
  * )
@@ -69,7 +69,7 @@ class ShippingMethodsConfigsRule extends ExtendShippingMethodsConfigsRule implem
      *
      * @ORM\OneToMany(
      *     targetEntity="Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig",
-     *     mappedBy="rule",
+     *     mappedBy="methodConfigsRule",
      *     cascade={"ALL"},
      *     fetch="EAGER",
      *     orphanRemoval=true
@@ -82,7 +82,7 @@ class ShippingMethodsConfigsRule extends ExtendShippingMethodsConfigsRule implem
      *
      * @ORM\OneToMany(
      *     targetEntity="Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination",
-     *     mappedBy="rule",
+     *     mappedBy="methodConfigsRule",
      *     cascade={"ALL"},
      *     fetch="EAGER",
      *     orphanRemoval=true
