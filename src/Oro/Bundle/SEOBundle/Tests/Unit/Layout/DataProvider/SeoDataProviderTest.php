@@ -8,7 +8,7 @@ use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\SEOBundle\Layout\DataProvider\SeoDataProvider;
 use Oro\Bundle\SEOBundle\Tests\Unit\Entity\Stub\ContentNodeStub;
 use Oro\Bundle\SEOBundle\Tests\Unit\Entity\Stub\ProductStub;
-use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
+use Oro\Component\WebCatalog\Entity\ContentNodeAwareInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\PropertyAccess\PropertyAccess;
@@ -50,7 +50,7 @@ class SeoDataProviderTest extends \PHPUnit_Framework_TestCase
         $node = new ContentNodeStub();
         $node->addMetaDescriptions((new LocalizedFallbackValue())->setString('descr'));
 
-        $contentVariant = $this->createMock(ContentVariantInterface::class);
+        $contentVariant = $this->createMock(ContentNodeAwareInterface::class);
         $contentVariant->expects($this->any())
             ->method('getNode')
             ->willReturn($node);
@@ -79,7 +79,7 @@ class SeoDataProviderTest extends \PHPUnit_Framework_TestCase
     {
         $node = new ContentNodeStub();
 
-        $contentVariant = $this->createMock(ContentVariantInterface::class);
+        $contentVariant = $this->createMock(ContentNodeAwareInterface::class);
         $contentVariant->expects($this->any())
             ->method('getNode')
             ->willReturn($node);

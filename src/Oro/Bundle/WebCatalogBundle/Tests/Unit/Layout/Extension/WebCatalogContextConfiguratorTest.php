@@ -96,7 +96,6 @@ class WebCatalogContextConfiguratorTest extends \PHPUnit_Framework_TestCase
     public function notAllowedTypesDataProvider()
     {
         return [
-            'integer' => [1],
             'array' => [[1]],
             'boolean' => [false],
             'object' => [new \stdClass()],
