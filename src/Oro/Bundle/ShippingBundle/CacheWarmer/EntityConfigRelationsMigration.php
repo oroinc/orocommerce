@@ -9,6 +9,7 @@ use Oro\Bundle\ActivityBundle\EntityConfig\ActivityScope;
 use Oro\Bundle\ActivityListBundle\Entity\ActivityList;
 use Oro\Bundle\ActivityListBundle\Tools\ActivityListEntityConfigDumperExtension;
 use Oro\Bundle\EntityConfigBundle\Migration\RemoveManyToManyRelationQuery;
+use Oro\Bundle\EntityConfigBundle\Migration\RemoveManyToOneRelationQuery;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
@@ -42,11 +43,8 @@ class EntityConfigRelationsMigration
      * @param LoggerInterface $logger
      * @param bool $applicationInstalled
      */
-    public function __construct(
-        ManagerRegistry $managerRegistry,
-        LoggerInterface $logger,
-        $applicationInstalled
-    ) {
+    public function __construct(ManagerRegistry $managerRegistry, LoggerInterface $logger, $applicationInstalled)
+    {
         $this->managerRegistry = $managerRegistry;
         $this->logger = $logger;
         $this->applicationInstalled = (bool)$applicationInstalled;
@@ -69,31 +67,65 @@ class EntityConfigRelationsMigration
             return;
         }
 
-        $targetEntityClassName = static::SHIPPING_RULE_CLASS_NAME;
+        $this->removeNoteRelationBeforeUpdateAssociationKind($configConnection);
+        $this->removeNoteRelationAfterUpdateAssociationKind($configConnection);
 
-        $activityListAssociationName = ExtendHelper::buildAssociationName(
-            $targetEntityClassName,
-            ActivityListEntityConfigDumperExtension::ASSOCIATION_KIND
+        $this->removeActivityListRelation($configConnection);
+
+        $this->removeShippingRuleFromEntityConfig($configConnection);
+    }
+
+    /**
+     * @param Connection $configConnection
+     */
+    private function removeNoteRelationBeforeUpdateAssociationKind(Connection $configConnection)
+    {
+        $associationName = ExtendHelper::buildAssociationName(static::SHIPPING_RULE_CLASS_NAME);
+        $this->executeUpdateRelationsQuery(
+            new RemoveManyToOneRelationQuery(Note::class, $associationName),
+            $configConnection
         );
+    }
 
-        $noteAssociationName = ExtendHelper::buildAssociationName(
-            $targetEntityClassName,
+    /**
+     * @param Connection $configConnection
+     */
+    private function removeNoteRelationAfterUpdateAssociationKind(Connection $configConnection)
+    {
+        $associationName = ExtendHelper::buildAssociationName(
+            static::SHIPPING_RULE_CLASS_NAME,
             ActivityScope::ASSOCIATION_KIND
         );
-
         $this->executeUpdateRelationsQuery(
-            new RemoveManyToManyRelationQuery(Note::class, $noteAssociationName),
+            new RemoveManyToManyRelationQuery(Note::class, $associationName),
             $configConnection
         );
+    }
+
+    /**
+     * @param Connection $configConnection
+     */
+    private function removeActivityListRelation(Connection $configConnection)
+    {
+        $associationName = ExtendHelper::buildAssociationName(
+            static::SHIPPING_RULE_CLASS_NAME,
+            ActivityListEntityConfigDumperExtension::ASSOCIATION_KIND
+        );
         $this->executeUpdateRelationsQuery(
-            new RemoveManyToManyRelationQuery(ActivityList::class, $activityListAssociationName),
+            new RemoveManyToManyRelationQuery(ActivityList::class, $associationName),
             $configConnection
         );
+    }
 
+    /**
+     * @param Connection $configConnection
+     */
+    private function removeShippingRuleFromEntityConfig(Connection $configConnection)
+    {
         $this->executeUpdateRelationsQuery(
             new ParametrizedSqlMigrationQuery(
                 'DELETE FROM oro_entity_config WHERE class_name = :class_name',
-                ['class_name' => $targetEntityClassName],
+                ['class_name' => static::SHIPPING_RULE_CLASS_NAME],
                 ['class_name' => Type::STRING]
             ),
             $configConnection
@@ -104,7 +136,7 @@ class EntityConfigRelationsMigration
      * @param ParametrizedMigrationQuery $query
      * @param Connection $connection
      */
-    protected function executeUpdateRelationsQuery(ParametrizedMigrationQuery $query, Connection $connection)
+    private function executeUpdateRelationsQuery(ParametrizedMigrationQuery $query, Connection $connection)
     {
         $query->setConnection($connection);
         $query->execute($this->logger);
