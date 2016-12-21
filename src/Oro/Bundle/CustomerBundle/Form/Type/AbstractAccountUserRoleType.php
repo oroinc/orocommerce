@@ -83,26 +83,6 @@ abstract class AbstractAccountUserRoleType extends AbstractType
             ]
         );
 
-        foreach ($options['privilege_config'] as $fieldName => $config) {
-            $builder->add(
-                $fieldName,
-                PrivilegeCollectionType::NAME,
-                [
-                    'type' => AclPrivilegeType::NAME,
-                    'allow_add' => true,
-                    'prototype' => false,
-                    'allow_delete' => false,
-                    'mapped' => false,
-                    'options' => [
-                        'privileges_config' => $config,
-                    ],
-                    'page_component_options' => [
-                        'accessLevelRoute' => $options['access_level_route']
-                    ],
-                ]
-            );
-        }
-
         $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
             /** @var AccountUserRole|null $role */
             $role = $event->getData();

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CustomerBundle\EventListener\Datagrid;
 
+use Oro\Bundle\CustomerBundle\Entity\Repository\AccountRepository;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Extension\Action\ActionExtension;
@@ -29,17 +30,27 @@ class AccountDatagridListener
     protected $securityProvider;
 
     /**
+     * @var AccountRepository
+     */
+    protected $repository;
+
+    /**
      * @var array
      */
     protected $actionCallback;
 
     /**
      * @param AccountUserProvider $securityProvider
+     * @param AccountRepository $repository
      * @param array $actionCallback
      */
-    public function __construct(AccountUserProvider $securityProvider, array $actionCallback = null)
-    {
+    public function __construct(
+        AccountUserProvider $securityProvider,
+        AccountRepository $repository,
+        array $actionCallback = null
+    ) {
         $this->securityProvider = $securityProvider;
+        $this->repository = $repository;
         $this->actionCallback = $actionCallback;
     }
 
@@ -73,6 +84,8 @@ class AccountDatagridListener
 
         if ($this->permissionShowAllAccountItems()) {
             $this->showAllAccountItems($config);
+        } elseif ($this->permissionShowAllAccountItemsForChild()) {
+            $this->showAllAccountItems($config, true);
         }
 
         if (null !== ($accountUserColumn = $config->offsetGetByPath(self::ACCOUNT_USER_COLUMN))) {
@@ -84,19 +97,26 @@ class AccountDatagridListener
 
     /**
      * @param DatagridConfiguration $config
+     * @param bool $withChildCustomers
      */
-    protected function showAllAccountItems(DatagridConfiguration $config)
+    protected function showAllAccountItems(DatagridConfiguration $config, $withChildCustomers = false)
     {
         $config->offsetSetByPath(DatagridConfiguration::DATASOURCE_SKIP_ACL_APPLY_PATH, true);
 
-        $user = $this->getUser();
-
         $where = $config->offsetGetByPath('[source][query][where]', ['and' => []]);
 
+        $user = $this->getUser();
+        $customerId = $user->getCustomer()->getId();
+        $ids = [$customerId];
+
+        if ($withChildCustomers) {
+            $ids = array_merge($ids, $this->repository->getChildrenIds($customerId));
+        }
+
         $where['and'][] = sprintf(
-            '(%s.account = %d OR %s.accountUser = %d)',
+            '(%s.account IN (%s) OR %s.accountUser = %d)',
             $this->entityAlias,
-            $user->getAccount()->getId(),
+            implode(',', $ids),
             $this->entityAlias,
             $user->getId()
         );
@@ -113,8 +133,7 @@ class AccountDatagridListener
         $config
             ->offsetUnsetByPath(sprintf('[columns][%s]', $column))
             ->offsetUnsetByPath(sprintf('[sorters][columns][%s]', $column))
-            ->offsetUnsetByPath(sprintf('[filters][columns][%s]', $column))
-        ;
+            ->offsetUnsetByPath(sprintf('[filters][columns][%s]', $column));
     }
 
     /**
@@ -131,6 +150,15 @@ class AccountDatagridListener
     protected function permissionShowAllAccountItems()
     {
         return $this->securityProvider->isGrantedViewLocal($this->entityClass);
+    }
+
+    /**
+     * @return boolean
+     */
+    protected function permissionShowAllAccountItemsForChild()
+    {
+        return $this->securityProvider->isGrantedViewDeep($this->entityClass) ||
+            $this->securityProvider->isGrantedViewSystem($this->entityClass);
     }
 
     /**

@@ -23,7 +23,7 @@
 
     &__wrapper {
       position: absolute;
-      z-index: 200;
+      z-index: z('dropdown') + 1;
       right: 2px;
       padding: 0;
       width: 382px;
@@ -35,6 +35,8 @@
 
       @include breakpoint('tablet') {
         width: 100%;
+
+        overflow-y: visible;
       }
     }
   }
@@ -59,10 +61,13 @@
       color: get-color('additional', 'dark');
     }
 
-    [class^="cf-"]:before,
-    [class^="fa-"]:before {
-      font-size: 18px;
-      color: get-color('ui', 'normal');
+    [class^="fa-"] {
+      margin-right: 5px;
+
+      &:before {
+        font-size: 18px;
+        color: get-color('ui', 'normal');
+      }
     }
   }
 }
