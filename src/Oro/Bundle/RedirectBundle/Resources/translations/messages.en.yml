@@ -1,5 +1,15 @@
 oro:
     redirect:
+        entity_label: Redirect
+        entity_plural_label: Redirects
+        from.label: From URL
+        from_hash.label: From URL Hash
+        id.label: ID
+        to.label: To URL
+        type.label: Redirect Type
+        slug.label: Slug
+        website.label: Website
+
         slug:
             entity_label:           'Slug'
             entity_plural_label:    'Slugs'
@@ -7,3 +17,16 @@ oro:
             url.label:              'Url'
             route_name.label:       'Route name'
             route_parameters.label: 'Route parameters'
+            url_hash.label: URL Hash
+            redirects.label: Redirects
+            scopes.label: Scopes
+            localization.label: Localization
+
+        system_configuration:
+            fields:
+                enable_direct_url.label: 'Enable Direct URLs'
+                canonical_url_type:
+                    label: 'Canonical URL Type'
+                    choice:
+                        system.label: 'System URL'
+                        direct.label: 'Direct URL'

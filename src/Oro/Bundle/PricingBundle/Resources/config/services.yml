@@ -69,7 +69,7 @@ services:
         arguments:
             - '@session'
             - '@security.token_storage'
-            - '@oro_config.manager'
+            - '@oro_currency.config.currency'
             - '@oro_website.manager'
             - '@oro_account_user.manager'
 
@@ -361,14 +361,6 @@ services:
         tags:
             - { name: validator.constraint_validator, alias: oro_pricing_price_list_product_prices_currency_validator }
 
-    oro_pricing.validator.default_currency:
-        class: 'Oro\Bundle\PricingBundle\Validator\Constraints\DefaultCurrencyValidator'
-        public: true
-        arguments:
-            - "@oro_config.manager"
-        tags:
-            - { name: validator.constraint_validator, alias: oro_pricing_default_currency_validator }
-
     oro_pricing.validator.dates_chain:
         class: 'Oro\Bundle\PricingBundle\Validator\Constraints\DatesChainValidator'
         arguments:
@@ -654,6 +646,8 @@ services:
             - '@translator'
             - '@oro_currency.rounding.price_rounding_service'
             - '@oro_pricing.user_currency_manager'
+            - '@oro_currency.converter.rate'
+            - '@oro_currency.config.currency'
 
     oro_pricing.subtotal_processor.provider.subtotal_line_item:
         class: 'Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider'

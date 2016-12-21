@@ -33,8 +33,11 @@
         <a href="{{ app.request.getUriForPath(item.link) }}">
         {% endif %}
         <div class="hero-promo-item__picture">
-            <img class="hero-promo-item__img"
-                 src="{{ asset(item.image) }}">
+            <picture>
+                <source srcset="{{ asset(item.image_small) }}" media="(max-width: 414px)">
+                <source srcset="{{ asset(item.image_medium) }}" media="(max-width: 992px)">
+                <img src="{{ asset(item.image) }}" class="hero-promo-item__img" alt="{{ item.label|default('') ? item.label : '' }}">
+            </picture>
         </div>
         <div class="hero-promo-item__info">
             {% if item.prelabel|default('') or item.label|default('') or item.link|default('') %}
@@ -47,7 +50,7 @@
                             <h2 class="hero-promo-item__title">{{ item.label }}</h2>
                         {% endif %}
                         {% if item.link|default('') and item.link_label|default('') %}
-                            <a href="{{ app.request.getUriForPath(item.link) }}" class="btn theme-btn btn-dark hero-promo-item__view-btn">
+                            <a href="{{ app.request.getUriForPath(item.link) }}" class="btn btn--action btn-info--size-l hero-promo-item__view-btn">
                                 {{ item.link_label }} <i class="fa-angle-right"></i>
                             </a>
                         {% endif %}

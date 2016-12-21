@@ -62,8 +62,7 @@ class FrontendAccountUserRoleTypeTest extends AbstractAccountUserRoleTypeTest
         $defaultData,
         $viewData,
         array $submittedData,
-        $expectedData,
-        array $expectedFieldData = []
+        $expectedData
     ) {
         $form = $this->factory->create($this->formType, $defaultData, $options);
 
@@ -90,12 +89,6 @@ class FrontendAccountUserRoleTypeTest extends AbstractAccountUserRoleTypeTest
             $this->assertEquals($expectedData->getRole(), $actualData->getRole());
         } else {
             $this->assertNotEmpty($actualData->getRole());
-        }
-
-        foreach ($expectedFieldData as $field => $data) {
-            $this->assertTrue($form->has($field));
-            $fieldForm = $form->get($field);
-            $this->assertEquals($data, $fieldForm->getData());
         }
     }
 
@@ -133,11 +126,7 @@ class FrontendAccountUserRoleTypeTest extends AbstractAccountUserRoleTypeTest
                     'label' => $roleLabel,
                     'account' => $defaultRole->getAccount()->getName()
                 ],
-                'expectedData' => $defaultRole,
-                'expectedFieldData' => [
-                    'entity' => [],
-                    'action' => []
-                ],
+                'expectedData' => $defaultRole
             ],
             'existing' => [
                 'options' => ['privilege_config' => $this->privilegeConfig],
@@ -145,15 +134,9 @@ class FrontendAccountUserRoleTypeTest extends AbstractAccountUserRoleTypeTest
                 'viewData' => $existingRoleBefore,
                 'submittedData' => [
                     'label' => $alteredRoleLabel,
-                    'entity' => ['first'],
-                    'action' => ['second'],
                     'account' => $existingRoleBefore->getAccount()->getName()
                 ],
-                'expectedData' => $existingRoleAfter,
-                'expectedFieldData' => [
-                    'entity' => ['first'],
-                    'action' => ['second'],
-                ],
+                'expectedData' => $existingRoleAfter
             ]
         ];
     }

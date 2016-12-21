@@ -1,3 +1,0 @@
-config:
-    paths:
-        'oromenu/default/js/components/header-row': 'bundles/oromenu/default/js/components/header-row/header-row.js'

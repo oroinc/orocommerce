@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\PricingBundle\EventListener;
 
+use Symfony\Bridge\Doctrine\RegistryInterface;
+
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\PricingBundle\DependencyInjection\Configuration;
 use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
@@ -10,7 +12,6 @@ use Oro\Bundle\PricingBundle\Placeholder\CurrencyPlaceholder;
 use Oro\Bundle\PricingBundle\Placeholder\UnitPlaceholder;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 
 class WebsiteSearchProductPriceIndexerListener
 {

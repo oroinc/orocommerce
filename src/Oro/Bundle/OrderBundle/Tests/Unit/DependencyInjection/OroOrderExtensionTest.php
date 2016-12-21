@@ -22,7 +22,6 @@ class OroOrderExtensionTest extends ExtensionTestCase
 
         $expectedDefinitions = [
             'oro_order.form.type.order',
-            'oro_order.order.manager.api',
             'oro_order.form.type.order_shipping_tracking',
             'oro_order.form.type.order_shipping_tracking_collection',
             'oro_order.form.type.select_switch_input',

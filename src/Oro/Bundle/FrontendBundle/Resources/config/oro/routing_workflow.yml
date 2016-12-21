@@ -1,0 +1,28 @@
+oro_frontend_workflow_start_transition_form:
+    path: /workflow/start/{workflowName}/{transitionName}
+    defaults: { _controller: OroWorkflowBundle:Workflow:startTransition }
+    options:
+        frontend: true
+
+oro_frontend_workflow_widget_buttons:
+    path: /workflowwidget/buttons/{entityClass}/{entityId}
+    defaults: { _controller: OroWorkflowBundle:Widget:buttons }
+    options:
+        frontend: true
+
+oro_frontend_workflow_widget_start_transition_form:
+    path: /transition/create/attributes/{workflowName}/{transitionName}
+    defaults: { _controller: OroWorkflowBundle:Widget:startTransitionForm }
+    options:
+        frontend: true
+
+oro_frontend_workflow_api:
+    resource:     "@OroFrontendBundle/Controller/Api/Rest/WorkflowController.php"
+    type:         rest
+    requirements:
+        version:  latest|v1
+        _format:  json
+    defaults:
+        version:  latest
+    options:
+        frontend: true

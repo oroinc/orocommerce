@@ -34,7 +34,7 @@
 
 {% block _main_menu_shopping_lists_dropdown_widget %}
     <div class="cart-widget__content">
-        <span class="badge badge_md badge_circle badge_orange badge_i-block cart-widget__clipboard">
+        <span class="cart-widget__icon">
             <i class="fa-clipboard"></i>
         </span>
         <span class="cart-widget__list-trigger">
@@ -104,7 +104,7 @@
     {% import 'OroUIBundle::macros.html.twig' as UI %}
     {{ UI.clientLink({
         'aCss': 'shopping-list-widget__create-btn',
-        'iCss': 'fa-plus-circle nmmt3-md',
+        'iCss': 'fa-plus-circle',
         'label' : 'oro.frontend.shoppinglist.view.create_new_shopping_list.label'|trans,
         'widget' : {
             'type' : 'shopping-list-create',

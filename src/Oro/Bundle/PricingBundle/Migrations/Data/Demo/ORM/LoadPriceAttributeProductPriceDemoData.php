@@ -29,16 +29,11 @@ class LoadPriceAttributeProductPriceDemoData extends AbstractLoadProductPriceDem
 
         $priceAttributes = [
             'MSRP' => [
-                'currencies' => ['USD', 'EUR'],
+                'currencies' => [$this->getDefaultCurrency()],
             ],
             'MAP' => [
-                'currencies' => ['USD'],
+                'currencies' => [$this->getDefaultCurrency()],
             ],
-        ];
-
-        $xRate = [
-            'USD' => 1.00,
-            'EUR' => 0.89,
         ];
 
         while (($data = fgetcsv($handler, 1000, ',')) !== false) {
@@ -49,7 +44,7 @@ class LoadPriceAttributeProductPriceDemoData extends AbstractLoadProductPriceDem
             foreach ($priceAttributes as $attributeName => $attributeOptions) {
                 $priceAttributePriceList = $this->getPriceAttribute($manager, $attributeName);
                 foreach ($attributeOptions['currencies'] as $currency) {
-                    $amount = round($row[$attributeName] * $xRate[$currency], 2);
+                    $amount = round($row[$attributeName], 2);
                     $price = Price::create($amount, $currency);
 
                     $priceAttributeProductPrice = new PriceAttributeProductPrice();

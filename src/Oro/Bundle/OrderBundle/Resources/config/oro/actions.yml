@@ -43,6 +43,7 @@ operations:
     DELETE:
         exclude_datagrids:
             - order-line-items-grid
+            - frontend-orders-grid
 
     oro_order_update_order:
         extends: UPDATE
