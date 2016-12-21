@@ -2,12 +2,12 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
-use Oro\Bundle\EntityExtendBundle\Form\Type\EnumSelectType;
 use Symfony\Component\Form\ChoiceList\Factory\ChoiceListFactoryInterface;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+use Oro\Bundle\EntityExtendBundle\Form\Type\EnumSelectType;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\FrontendVariantFiledType;
@@ -59,7 +59,7 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    EnumSelectType::class => $enumSelectStub,
+                    EnumSelectType::NAME => $enumSelectStub,
                     $choiceType->getName() => $choiceType,
                 ],
                 []

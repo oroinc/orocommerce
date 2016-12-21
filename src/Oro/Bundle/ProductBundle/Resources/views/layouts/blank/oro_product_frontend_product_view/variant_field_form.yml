@@ -24,4 +24,3 @@ layout:
                         variant_field_form_start: ~
                         variant_field_form_fields: ~
                         variant_field_form_end: ~
-#    conditions: 'context["is_logged_in"]'

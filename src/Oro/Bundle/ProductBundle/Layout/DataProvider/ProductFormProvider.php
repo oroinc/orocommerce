@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\ProductBundle\Layout\DataProvider;
 
-use Oro\Bundle\ProductBundle\Form\Type\FrontendVariantFiledType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
+use Oro\Bundle\ProductBundle\Form\Type\FrontendVariantFiledType;
 use Oro\Bundle\LayoutBundle\Layout\DataProvider\AbstractFormProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
