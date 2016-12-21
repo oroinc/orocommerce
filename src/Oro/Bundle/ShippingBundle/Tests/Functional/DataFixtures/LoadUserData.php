@@ -32,6 +32,10 @@ class LoadUserData extends AbstractFixture implements ContainerAwareInterface
                 'class' => 'oro_shipping.entity.shipping_methods_configs_rule.class',
                 'acls'  => ['VIEW_SYSTEM'],
             ],
+            [
+                'class' => 'oro_rule.entity.rule.class',
+                'acls'  => ['VIEW_SYSTEM'],
+            ],
         ],
         self::ROLE_EDIT => [
             [

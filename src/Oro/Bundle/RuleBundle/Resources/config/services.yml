@@ -1,3 +1,6 @@
+parameters:
+    oro_rule.entity.rule.class: Oro\Bundle\RuleBundle\Entity\Rule
+
 services:
     oro_rule.rule_filtration.service:
         class: 'Oro\Bundle\RuleBundle\RuleFiltration\BasicRuleFiltrationService'
