@@ -7,6 +7,7 @@ define(function(require) {
     var mediator = require('oroui/js/mediator');
     var PageableCollection = require('orodatagrid/js/pageable-collection');
     var LayoutSubtreeManager = require('oroui/js/layout-subtree-manager');
+    var tools = require('oroui/js/tools');
 
     BackendPageableCollection = PageableCollection.extend({
         /**
@@ -30,12 +31,18 @@ define(function(require) {
 
             var data = options.data || {};
 
+            // set up query params
+            var url = options.url || _.result(this, 'url') || '';
+            var qsi = url.indexOf('?');
+            if (qsi !== -1) {
+                _.extend(data, tools.unpackFromQueryString(url.slice(qsi + 1)));
+            }
+
             options.data = data;
 
             data.appearanceType = state.appearanceType;
             data = this.processQueryParams(data, state);
             this.processFiltersParams(data, state);
-
 
             LayoutSubtreeManager.get('product_datagrid', options.data, function(content) {
                 var $data = $('<div/>').append(content);
