@@ -10,6 +10,9 @@ use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry;
 use Oro\Bundle\PaymentBundle\Provider\PaymentContextProvider;
 use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class PaymentMethodsProviderTest extends \PHPUnit_Framework_TestCase
 {
     const METHOD = 'Method';
@@ -50,7 +53,7 @@ class PaymentMethodsProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->paymentMethodRegistry = $this->getMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry');
+        $this->paymentMethodRegistry = $this->createMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry');
 
         $this->paymentTransactionProvider = $this->getMockBuilder(PaymentTransactionProvider::class)
             ->disableOriginalConstructor()->getMock();
@@ -79,7 +82,7 @@ class PaymentMethodsProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetViewsWithoutEntity()
     {
-        $view = $this->getMock('Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface');
+        $view = $this->createMock('Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface');
         $view->expects($this->once())->method('getLabel')->willReturn('label');
         $view->expects($this->once())->method('getBlock')->willReturn('block');
         $view->expects($this->once())
@@ -114,7 +117,7 @@ class PaymentMethodsProviderTest extends \PHPUnit_Framework_TestCase
             ->with($this->identicalTo($entity))
             ->willReturn($context);
 
-        $view = $this->getMock('Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface');
+        $view = $this->createMock('Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface');
         $view->expects($this->once())->method('getOptions')->with($context);
 
         $this->paymentMethodViewRegistry->expects($this->once())->method('getPaymentMethodViews')->willReturn(
@@ -131,7 +134,7 @@ class PaymentMethodsProviderTest extends \PHPUnit_Framework_TestCase
     public function testIsPaymentMethodEnabled($expected)
     {
         /** @var PaymentMethodInterface|\PHPUnit_Framework_MockObject_MockObject $paymentMethod */
-        $paymentMethod = $this->getMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface');
+        $paymentMethod = $this->createMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface');
         $paymentMethod->expects($this->once())
             ->method('isEnabled')
             ->willReturn($expected);
@@ -177,7 +180,7 @@ class PaymentMethodsProviderTest extends \PHPUnit_Framework_TestCase
         $this->paymentContextProvider->expects($this->any())->method('processContext')->willReturn($this->contextData);
 
         /** @var PaymentMethodInterface|\PHPUnit_Framework_MockObject_MockObject $paymentMethod */
-        $paymentMethod = $this->getMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface');
+        $paymentMethod = $this->createMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface');
         $paymentMethod->expects($this->once())->method('isEnabled')->willReturn($isEnabled);
         $paymentMethod->expects($isEnabled ? $this->once() : $this->never())
             ->method('isApplicable')
@@ -241,7 +244,7 @@ class PaymentMethodsProviderTest extends \PHPUnit_Framework_TestCase
         $this->paymentContextProvider->expects($this->any())->method('processContext')->willReturn($this->contextData);
 
         /** @var PaymentMethodInterface|\PHPUnit_Framework_MockObject_MockObject $paymentMethod */
-        $paymentMethod = $this->getMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface');
+        $paymentMethod = $this->createMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface');
         $paymentMethod->expects($this->once())->method('isEnabled')->willReturn($isEnabled);
         $paymentMethod->expects($isEnabled ? $this->once() : $this->never())
             ->method('isApplicable')

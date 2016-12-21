@@ -213,7 +213,7 @@ abstract class AbstractQuoteAddressProviderTest extends \PHPUnit_Framework_TestC
             ->disableOriginalConstructor()
             ->getMock();
 
-        $manager = $this->getMock('Doctrine\ORM\EntityManagerInterface');
+        $manager = $this->createMock('Doctrine\ORM\EntityManagerInterface');
         $manager->expects($this->any())
             ->method('getRepository')
             ->with($this->accountAddressClass)
@@ -237,7 +237,7 @@ abstract class AbstractQuoteAddressProviderTest extends \PHPUnit_Framework_TestC
             ->disableOriginalConstructor()
             ->getMock();
 
-        $manager = $this->getMock('Doctrine\ORM\EntityManagerInterface');
+        $manager = $this->createMock('Doctrine\ORM\EntityManagerInterface');
         $manager->expects($this->any())
             ->method('getRepository')
             ->with($this->accountUserAddressClass)

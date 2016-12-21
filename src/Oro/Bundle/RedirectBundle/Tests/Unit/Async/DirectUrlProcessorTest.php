@@ -50,15 +50,15 @@ class DirectUrlProcessorTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->registry = $this->getMock(ManagerRegistry::class);
+        $this->registry = $this->createMock(ManagerRegistry::class);
         $this->generator = $this->getMockBuilder(SlugEntityGenerator::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->messageFactory = $this->getMock(MessageFactoryInterface::class);
+        $this->messageFactory = $this->createMock(MessageFactoryInterface::class);
         $this->databaseExceptionHelper = $this->getMockBuilder(DatabaseExceptionHelper::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->logger = $this->getMock(LoggerInterface::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
         $this->processor = new DirectUrlProcessor(
             $this->registry,
             $this->generator,
@@ -71,10 +71,10 @@ class DirectUrlProcessorTest extends \PHPUnit_Framework_TestCase
     public function testProcessInvalidMessage()
     {
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
-        $message = $this->getMock(MessageInterface::class);
+        $message = $this->createMock(MessageInterface::class);
 
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
-        $session = $this->getMock(SessionInterface::class);
+        $session = $this->createMock(SessionInterface::class);
 
         $class = \stdClass::class;
         $id = null;
@@ -105,10 +105,10 @@ class DirectUrlProcessorTest extends \PHPUnit_Framework_TestCase
     public function testProcessInvalidMessageOnGetEntity()
     {
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
-        $message = $this->getMock(MessageInterface::class);
+        $message = $this->createMock(MessageInterface::class);
 
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
-        $session = $this->getMock(SessionInterface::class);
+        $session = $this->createMock(SessionInterface::class);
 
         $class = \stdClass::class;
         $id = null;
@@ -124,7 +124,7 @@ class DirectUrlProcessorTest extends \PHPUnit_Framework_TestCase
             ->willReturn($class);
 
         /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
-        $em = $this->getMock(EntityManagerInterface::class);
+        $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->once())
             ->method('beginTransaction');
 
@@ -156,10 +156,10 @@ class DirectUrlProcessorTest extends \PHPUnit_Framework_TestCase
     public function testProcessExceptionOutsideTransaction()
     {
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
-        $message = $this->getMock(MessageInterface::class);
+        $message = $this->createMock(MessageInterface::class);
 
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
-        $session = $this->getMock(SessionInterface::class);
+        $session = $this->createMock(SessionInterface::class);
 
         $class = \stdClass::class;
         $id = null;
@@ -187,10 +187,10 @@ class DirectUrlProcessorTest extends \PHPUnit_Framework_TestCase
     public function testProcessExceptionInTransaction()
     {
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
-        $message = $this->getMock(MessageInterface::class);
+        $message = $this->createMock(MessageInterface::class);
 
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
-        $session = $this->getMock(SessionInterface::class);
+        $session = $this->createMock(SessionInterface::class);
 
         $class = \stdClass::class;
         $id = null;
@@ -206,7 +206,7 @@ class DirectUrlProcessorTest extends \PHPUnit_Framework_TestCase
             ->willReturn($class);
 
         /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
-        $em = $this->getMock(EntityManagerInterface::class);
+        $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->once())
             ->method('beginTransaction');
 
@@ -235,10 +235,10 @@ class DirectUrlProcessorTest extends \PHPUnit_Framework_TestCase
     public function testProcessExceptionDeadlockInTransaction()
     {
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
-        $message = $this->getMock(MessageInterface::class);
+        $message = $this->createMock(MessageInterface::class);
 
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
-        $session = $this->getMock(SessionInterface::class);
+        $session = $this->createMock(SessionInterface::class);
 
         $class = \stdClass::class;
         $id = null;
@@ -257,7 +257,7 @@ class DirectUrlProcessorTest extends \PHPUnit_Framework_TestCase
             ->willReturn($class);
 
         /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
-        $em = $this->getMock(EntityManagerInterface::class);
+        $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->once())
             ->method('beginTransaction');
 
@@ -290,10 +290,10 @@ class DirectUrlProcessorTest extends \PHPUnit_Framework_TestCase
     public function testProcessExceptionDriverExceptionInTransaction()
     {
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
-        $message = $this->getMock(MessageInterface::class);
+        $message = $this->createMock(MessageInterface::class);
 
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
-        $session = $this->getMock(SessionInterface::class);
+        $session = $this->createMock(SessionInterface::class);
 
         $class = \stdClass::class;
         $id = null;
@@ -312,7 +312,7 @@ class DirectUrlProcessorTest extends \PHPUnit_Framework_TestCase
             ->willReturn($class);
 
         /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
-        $em = $this->getMock(EntityManagerInterface::class);
+        $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->once())
             ->method('beginTransaction');
 
@@ -345,10 +345,10 @@ class DirectUrlProcessorTest extends \PHPUnit_Framework_TestCase
     public function testProcess()
     {
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
-        $message = $this->getMock(MessageInterface::class);
+        $message = $this->createMock(MessageInterface::class);
 
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
-        $session = $this->getMock(SessionInterface::class);
+        $session = $this->createMock(SessionInterface::class);
 
         $class = \stdClass::class;
         $id = null;
@@ -364,7 +364,7 @@ class DirectUrlProcessorTest extends \PHPUnit_Framework_TestCase
             ->willReturn($class);
 
         /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
-        $em = $this->getMock(EntityManagerInterface::class);
+        $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->once())
             ->method('beginTransaction');
 
@@ -376,7 +376,7 @@ class DirectUrlProcessorTest extends \PHPUnit_Framework_TestCase
             ->method('commit');
 
         /** @var SluggableInterface $entity */
-        $entity = $this->getMock(SluggableInterface::class);
+        $entity = $this->createMock(SluggableInterface::class);
         $this->messageFactory->expects($this->once())
             ->method('getEntityFromMessage')
             ->with($messageData)

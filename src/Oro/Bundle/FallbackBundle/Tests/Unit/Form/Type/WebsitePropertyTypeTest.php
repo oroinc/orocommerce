@@ -32,7 +32,7 @@ class WebsitePropertyTypeTest extends FormIntegrationTestCase
 
     protected function setUp()
     {
-        $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $this->registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
 
         parent::setUp();
 
@@ -48,7 +48,7 @@ class WebsitePropertyTypeTest extends FormIntegrationTestCase
         $websiteCollection->setWebsiteClass(self::WEBSITE_CLASS);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface $translator */
-        $translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+        $translator = $this->createMock('Symfony\Component\Translation\TranslatorInterface');
 
         return [
             new PreloadedExtension(

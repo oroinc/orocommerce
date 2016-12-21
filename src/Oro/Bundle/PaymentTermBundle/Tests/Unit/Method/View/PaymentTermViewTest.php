@@ -32,7 +32,7 @@ class PaymentTermViewTest extends \PHPUnit_Framework_TestCase
 
         $this->translator = new StubTranslator();
 
-        $this->paymentConfig = $this->getMock(PaymentTermConfigInterface::class);
+        $this->paymentConfig = $this->createMock(PaymentTermConfigInterface::class);
 
         $this->methodView = new PaymentTermView($this->paymentTermProvider, $this->translator, $this->paymentConfig);
     }

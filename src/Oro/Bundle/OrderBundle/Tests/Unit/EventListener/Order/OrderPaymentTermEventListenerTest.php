@@ -45,7 +45,7 @@ class OrderPaymentTermEventListenerTest extends \PHPUnit_Framework_TestCase
     public function testThrowExceptionWhenAccountUserHasWrongAccount()
     {
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
         /** @var Account $account1 */
         $account1 = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account', ['id' => 1]);
@@ -68,7 +68,7 @@ class OrderPaymentTermEventListenerTest extends \PHPUnit_Framework_TestCase
     public function testSkipValidationWithoutAccountUser()
     {
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
         $order = new Order();
 
@@ -83,7 +83,7 @@ class OrderPaymentTermEventListenerTest extends \PHPUnit_Framework_TestCase
     public function testAccountUserWithoutOrderAccount()
     {
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
         $accountUser = new AccountUser();
         $accountUser->setAccount(new Account());
@@ -105,7 +105,7 @@ class OrderPaymentTermEventListenerTest extends \PHPUnit_Framework_TestCase
     public function testAccountUserWithoutAccount()
     {
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
         $accountUser = new AccountUser();
 
@@ -121,7 +121,7 @@ class OrderPaymentTermEventListenerTest extends \PHPUnit_Framework_TestCase
     public function testAccountUserAccountValid()
     {
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
         /** @var Account $account */
         $account = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account', ['id' => 1]);
@@ -152,7 +152,7 @@ class OrderPaymentTermEventListenerTest extends \PHPUnit_Framework_TestCase
         PaymentTerm $accountGroupPaymentTerm = null
     ) {
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
         $order = new Order();
         $order->setAccount($account);

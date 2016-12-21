@@ -29,7 +29,7 @@ class PayflowExpressCheckoutListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->logger = $this->getMock('Psr\Log\LoggerInterface');
+        $this->logger = $this->createMock('Psr\Log\LoggerInterface');
 
         $this->listener = new PayflowExpressCheckoutListener($this->paymentMethodRegistry);
         $this->listener->setLogger($this->logger);
@@ -80,7 +80,7 @@ class PayflowExpressCheckoutListenerTest extends \PHPUnit_Framework_TestCase
         $event = new CallbackReturnEvent($data);
         $event->setPaymentTransaction($transaction);
 
-        $paymentMethod = $this->getMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface');
+        $paymentMethod = $this->createMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface');
         $paymentMethod->expects($this->once())
             ->method('execute')
             ->with('complete', $transaction);
@@ -155,7 +155,7 @@ class PayflowExpressCheckoutListenerTest extends \PHPUnit_Framework_TestCase
             ->setPaymentMethod('complete')
             ->setReference('token');
 
-        $paymentMethod = $this->getMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface');
+        $paymentMethod = $this->createMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface');
         $paymentMethod->expects($this->once())
             ->method('execute')
             ->willThrowException(new \InvalidArgumentException());

@@ -32,7 +32,7 @@ class VisibilityChangeSetValidatorTest extends \PHPUnit_Framework_TestCase
         $this->constraint = new VisibilityChangeSet(['entityClass' => Account::class]);
         $this->value = new ArrayCollection();
         $this->visibilityChangeSetValidator = new VisibilityChangeSetValidator();
-        $this->context = $this->getMock('Symfony\Component\Validator\Context\ExecutionContextInterface');
+        $this->context = $this->createMock('Symfony\Component\Validator\Context\ExecutionContextInterface');
         $this->visibilityChangeSetValidator->initialize($this->context);
     }
 

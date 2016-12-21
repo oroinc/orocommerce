@@ -21,7 +21,7 @@ class FlashMessageRendererTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->flashBag = $this->getMock(FlashBagInterface::class);
+        $this->flashBag = $this->createMock(FlashBagInterface::class);
         $this->flashMessageRenderer = new FlashMessageRenderer($this->flashBag);
     }
 

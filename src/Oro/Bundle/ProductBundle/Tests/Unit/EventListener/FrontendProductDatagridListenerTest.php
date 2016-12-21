@@ -58,7 +58,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->doctrine = $this->getMock('Symfony\Bridge\Doctrine\RegistryInterface');
+        $this->doctrine = $this->createMock('Symfony\Bridge\Doctrine\RegistryInterface');
 
         $this->attachmentManager = $this->getMockBuilder('Oro\Bundle\AttachmentBundle\Manager\AttachmentManager')
             ->disableOriginalConstructor()->getMock();
@@ -235,12 +235,12 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
 
         $images = [];
         foreach ($productWithImages as $index => $productId) {
-            $product = $this->getMock('Oro\Bundle\ProductBundle\Entity\Product', ['getId', 'getImages']);
+            $product = $this->createMock('Oro\Bundle\ProductBundle\Entity\Product', ['getId', 'getImages']);
             $product->expects($this->any())
                 ->method('getId')
                 ->willReturn($productId);
 
-            $image = $this->getMock('Oro\Bundle\AttachmentBundle\Entity\File');
+            $image = $this->createMock('Oro\Bundle\AttachmentBundle\Entity\File');
             $images[$productId] = $image;
 
             $this->attachmentManager->expects($this->at($index))

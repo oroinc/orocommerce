@@ -31,7 +31,7 @@ class PaymentMethodSupportsTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->paymentMethodRegistry = $this->getMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry');
+        $this->paymentMethodRegistry = $this->createMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry');
         $this->condition = new PaymentMethodSupports($this->paymentMethodRegistry);
     }
 
@@ -68,7 +68,7 @@ class PaymentMethodSupportsTest extends \PHPUnit_Framework_TestCase
         $errors = $this->getMockForAbstractClass('Doctrine\Common\Collections\Collection');
 
         /** @var PaymentMethodInterface | \PHPUnit_Framework_MockObject_MockObject $paymentMethod */
-        $paymentMethod = $this->getMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface');
+        $paymentMethod = $this->createMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface');
         $paymentMethod->expects($this->once())
             ->method('supports')
             ->with($data[self::ACTION_NAME_KEY])

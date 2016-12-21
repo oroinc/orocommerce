@@ -87,7 +87,7 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $this->registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
 
         $this->converter = new QuoteToOrderConverter(
             $this->orderCurrencyHandler,
@@ -542,7 +542,7 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
     protected function assertDoctrineCalled()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|ObjectManager $manager */
-        $manager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
+        $manager = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
         $manager->expects($this->once())
             ->method('persist')
             ->with($this->isInstanceOf('Oro\Bundle\OrderBundle\Entity\Order'));
