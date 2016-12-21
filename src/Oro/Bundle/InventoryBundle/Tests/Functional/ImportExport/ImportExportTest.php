@@ -184,7 +184,6 @@ class ImportExportTest extends AbstractImportExportTestCase
             $this->inventoryStatusOnlyHeader
         );
 
-        // @todo - must be fixed in BAP-12713
         $expectedRows = count(
             $this->client->getContainer()->get('oro_entity.doctrine_helper')
                 ->getEntityRepository(Product::class)
@@ -264,7 +263,6 @@ class ImportExportTest extends AbstractImportExportTestCase
         $this->assertArrayHasKey('success', $response);
         $this->assertTrue($response['success']);
 
-        // @todo - must be fixed in BAP-12713
         $fileContent = $this->downloadFile($response['url']);
         $this->assertEquals($fileContent[0], $expectedHeader);
 
