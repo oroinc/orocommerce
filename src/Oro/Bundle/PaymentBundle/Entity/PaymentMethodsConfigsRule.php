@@ -52,7 +52,7 @@ class PaymentMethodsConfigsRule extends ExtendPaymentMethodsConfigsRule implemen
      * @var Rule
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\RuleBundle\Entity\Rule")
-     * @ORM\JoinColumn(name="rule_id", referencedColumnName="id", onDelete="CASCADE")
+     * @ORM\JoinColumn(name="rule_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={
@@ -79,7 +79,7 @@ class PaymentMethodsConfigsRule extends ExtendPaymentMethodsConfigsRule implemen
     /**
      * @var string
      *
-     * @ORM\Column(name="currency", type="string", length=3, nullable=true)
+     * @ORM\Column(name="currency", type="string", length=3, nullable=false)
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={

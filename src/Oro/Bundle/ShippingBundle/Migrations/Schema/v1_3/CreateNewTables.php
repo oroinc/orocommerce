@@ -53,8 +53,8 @@ class CreateNewTables implements Migration, OrderedMigrationInterface, ActivityE
         $table = $schema->createTable('oro_ship_method_configs_rule');
 
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('rule_id', 'integer', ['notnull' => false]);
-        $table->addColumn('currency', 'string', ['notnull' => false, 'length' => 3]);
+        $table->addColumn('rule_id', 'integer', ['notnull' => true]);
+        $table->addColumn('currency', 'string', ['notnull' => true, 'length' => 3]);
 
         $table->setPrimaryKey(['id']);
 
@@ -62,7 +62,7 @@ class CreateNewTables implements Migration, OrderedMigrationInterface, ActivityE
             $schema->getTable('oro_rule'),
             ['rule_id'],
             ['id'],
-            ['onUpdate' => null, 'onDelete' => 'SET NULL']
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
 
         $this->activityExtension->addActivityAssociation($schema, 'oro_note', $tableName);

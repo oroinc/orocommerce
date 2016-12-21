@@ -42,7 +42,7 @@ class OroShippingBundle implements Migration
         $table->addColumn('enabled', 'boolean', ['default' => true]);
         $table->addColumn('priority', 'integer', []);
         $table->addColumn('conditions', 'text', ['notnull' => false]);
-        $table->addColumn('currency', 'string', ['notnull' => false, 'length' => 3]);
+        $table->addColumn('currency', 'string', ['notnull' => true, 'length' => 3]);
         $table->addColumn('stop_processing', 'boolean', ['default' => false]);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['enabled', 'currency'], 'oro_shipping_rule_en_cur_idx', []);
@@ -57,7 +57,7 @@ class OroShippingBundle implements Migration
     {
         $table = $schema->createTable('oro_shipping_rule_mthd_config');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('rule_id', 'integer', []);
+        $table->addColumn('rule_id', 'integer', ['notnull' => true]);
         $table->addColumn('method', 'string', ['length' => 255]);
         $table->addColumn('options', 'array', ['comment' => '(DC2Type:array)']);
         $table->setPrimaryKey(['id']);
@@ -88,7 +88,7 @@ class OroShippingBundle implements Migration
     {
         $table = $schema->createTable('oro_shipping_rule_destination');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('rule_id', 'integer', []);
+        $table->addColumn('rule_id', 'integer', ['notnull' => true]);
         $table->addColumn('country_code', 'string', ['length' => 2]);
         $table->addColumn('region_code', 'string', ['notnull' => false, 'length' => 16]);
         $table->addColumn('postal_code', 'string', ['notnull' => false, 'length' => 255]);
