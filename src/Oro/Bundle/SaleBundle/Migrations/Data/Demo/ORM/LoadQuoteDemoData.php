@@ -126,18 +126,7 @@ class LoadQuoteDemoData extends AbstractFixture implements
      */
     protected function getCurrencies()
     {
-        $currencies = $this->container->get('oro_config.manager')->get('oro_currency.allowed_currencies');
-
-        if (!$currencies) {
-            //TODO: BB-3824 Change the getting currency from system configuration
-            $currencies = (array)$this->container->get('oro_locale.settings')->getCurrency();
-        }
-
-        if (!$currencies) {
-            throw new \LogicException('There are no currencies in system');
-        }
-
-        return $currencies;
+        return $this->container->get('oro_currency.config.currency')->getCurrencyList();
     }
 
     /**

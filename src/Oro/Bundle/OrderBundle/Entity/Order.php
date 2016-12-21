@@ -5,7 +5,10 @@ namespace Oro\Bundle\OrderBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+
+use Oro\Bundle\CurrencyBundle\Entity\MultiCurrency;
 use Oro\Bundle\CurrencyBundle\Entity\CurrencyAwareInterface;
+use Oro\Bundle\CurrencyBundle\Entity\MultiCurrencyHolderInterface;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\AccountOwnerAwareInterface;
 use Oro\Bundle\CustomerBundle\Entity\Ownership\AuditableFrontendAccountUserAwareTrait;
@@ -24,17 +27,16 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * @ORM\Table(name="oro_order",indexes={@ORM\Index(name="oro_order_created_at_index", columns={"created_at"})})
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Oro\Bundle\OrderBundle\Entity\Repository\OrderRepository")
  * @Config(
  *      routeName="oro_order_index",
  *      routeView="oro_order_view",
  *      routeCreate="oro_order_create",
  *      routeUpdate="oro_order_update",
- *      routeCommerceName="oro_order_frontend_index",
  *      routeCommerceView="oro_order_frontend_view",
  *      defaultValues={
  *          "entity"={
- *              "icon"="icon-briefcase"
+ *              "icon"="fa-briefcase"
  *          },
  *          "ownership"={
  *              "owner_type"="USER",
@@ -73,7 +75,8 @@ class Order extends ExtendOrder implements
     ShippingAwareInterface,
     CurrencyAwareInterface,
     DiscountAwareInterface,
-    SubtotalAwareInterface
+    SubtotalAwareInterface,
+    MultiCurrencyHolderInterface
 {
     use AuditableUserAwareTrait;
     use AuditableFrontendAccountUserAwareTrait;
@@ -188,33 +191,127 @@ class Order extends ExtendOrder implements
      */
     protected $currency;
 
+
     /**
-     * @var float
+     * Changes to this value object wont affect entity change set
+     * To change persisted price value you should create and set new Multicurrency
      *
-     * @ORM\Column(name="subtotal", type="money", nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
+     * @var Multicurrency
      */
     protected $subtotal;
 
     /**
-     * @var float
+     * @var string
      *
-     * @ORM\Column(name="total", type="money", nullable=true)
+     * @ORM\Column(name="subtotal_currency", type="currency", length=3, nullable=true)
      * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
+     *  defaultValues={
+     *      "dataaudit"={
+     *          "auditable"=true
+     *     }
+     *  }
      * )
      */
+    protected $subtotalCurrency;
+
+    /**
+     * @var double
+     *
+     * @ORM\Column(name="subtotal_value", type="money_value", nullable=true)
+     * @ConfigField(
+     *  defaultValues={
+     *      "form"={
+     *          "form_type"="oro_money",
+     *          "form_options"={
+     *              "constraints"={{"Range":{"min":0}}},
+     *          }
+     *      },
+     *      "dataaudit"={
+     *          "auditable"=true
+     *      },
+     *     "multicurrency"={
+     *          "target" = "subtotal",
+     *          "virtual_field" = "subtotalBaseCurrency"
+     *      }
+     *  }
+     * )
+     */
+    protected $subtotalValue;
+
+    /**
+     * @var float
+     *
+     * @ORM\Column(name="base_subtotal_value", type="money", nullable=true)
+     * @ConfigField(
+     *  defaultValues={
+     *      "dataaudit"={
+     *          "auditable"=true
+     *      }
+     *  }
+     * )
+     */
+    protected $baseSubtotalValue;
+
+    /**
+     * Changes to this value object wont affect entity change set
+     * To change persisted price value you should create and set new Multicurrency
+     *
+     * @var Multicurrency
+     */
     protected $total;
+
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="total_currency", type="currency", length=3, nullable=true)
+     * @ConfigField(
+     *  defaultValues={
+     *      "dataaudit"={
+     *          "auditable"=true
+     *     }
+     *  }
+     * )
+     */
+    protected $totalCurrency;
+
+    /**
+     * @var double
+     *
+     * @ORM\Column(name="total_value", type="money_value", nullable=true)
+     * @ConfigField(
+     *  defaultValues={
+     *      "form"={
+     *          "form_type"="oro_money",
+     *          "form_options"={
+     *              "constraints"={{"Range":{"min":0}}},
+     *          }
+     *      },
+     *      "dataaudit"={
+     *          "auditable"=true
+     *      },
+     *     "multicurrency"={
+     *          "target" = "total",
+     *          "virtual_field" = "totalBaseCurrency"
+     *      }
+     *  }
+     * )
+     */
+    protected $totalValue;
+
+    /**
+     * @var float
+     *
+     * @ORM\Column(name="base_total_value", type="money", nullable=true)
+     * @ConfigField(
+     *  defaultValues={
+     *      "dataaudit"={
+     *          "auditable"=true
+     *      }
+     *  }
+     * )
+     */
+    protected $baseTotalValue;
 
     /**
      * @var Website
@@ -350,6 +447,36 @@ class Order extends ExtendOrder implements
         $this->lineItems = new ArrayCollection();
         $this->discounts = new ArrayCollection();
         $this->shippingTrackings = new ArrayCollection();
+        $this->loadMultiCurrencyFields();
+    }
+
+    /**
+     * @ORM\PostLoad
+     */
+    public function loadMultiCurrencyFields()
+    {
+        $this->subtotal = MultiCurrency::create(
+            $this->subtotalValue,
+            $this->currency,
+            $this->baseSubtotalValue
+        );
+        $this->total = MultiCurrency::create(
+            $this->totalValue,
+            $this->currency,
+            $this->baseTotalValue
+        );
+    }
+
+    /**
+     * @ORM\PreFlush
+     *
+     * @return void
+     */
+    public function updateMultiCurrencyFields()
+    {
+        $this->fixCurrencyInMultiCurrencyFields();
+        $this->updateSubtotal();
+        $this->updateTotal();
     }
 
     /**
@@ -524,11 +651,13 @@ class Order extends ExtendOrder implements
      *
      * @param string $currency
      *
-     * @return Order
+     * @return $this
      */
     public function setCurrency($currency)
     {
         $this->currency = $currency;
+        $this->subtotal->setCurrency($currency);
+        $this->total->setCurrency($currency);
 
         return $this;
     }
@@ -544,15 +673,37 @@ class Order extends ExtendOrder implements
     }
 
     /**
+     * @return float
+     */
+    public function getBaseSubtotalValue()
+    {
+        return $this->baseSubtotalValue;
+    }
+
+    /**
+     * @param float $baseValue
+     *
+     * @return $this
+     */
+    public function setBaseSubtotalValue($baseValue)
+    {
+        $this->baseSubtotalValue = $baseValue;
+        $this->subtotal->setBaseCurrencyValue($baseValue);
+
+        return $this;
+    }
+
+    /**
      * Set subtotal
      *
-     * @param float $subtotal
+     * @param float $value
      *
-     * @return Order
+     * @return $this
      */
-    public function setSubtotal($subtotal)
+    public function setSubtotal($value)
     {
-        $this->subtotal = $subtotal;
+        $this->subtotalValue = $value;
+        $this->subtotal->setValue($value);
 
         return $this;
     }
@@ -562,19 +713,61 @@ class Order extends ExtendOrder implements
      */
     public function getSubtotal()
     {
+        return $this->subtotal->getValue();
+    }
+
+    /**
+     * @param MultiCurrency $subtotal
+     *
+     * @return $this
+     */
+    public function setSubtotalObject(MultiCurrency $subtotal)
+    {
+        $this->subtotal = $subtotal;
+
+        return $this;
+    }
+
+    /**
+     * @return MultiCurrency
+     */
+    public function getSubtotalObject()
+    {
         return $this->subtotal;
+    }
+
+    /**
+     * @return float
+     */
+    public function getBaseTotalValue()
+    {
+        return $this->baseTotalValue;
+    }
+
+    /**
+     * @param $baseValue
+     *
+     * @return $this
+     */
+    public function setBaseTotalValue($baseValue)
+    {
+        $this->baseTotalValue = $baseValue;
+        $this->total->setBaseCurrencyValue($baseValue);
+
+        return $this;
     }
 
     /**
      * Set total
      *
-     * @param float $total
+     * @param float $value
      *
-     * @return Order
+     * @return $this
      */
-    public function setTotal($total)
+    public function setTotal($value)
     {
-        $this->total = $total;
+        $this->totalValue = $value;
+        $this->total->setValue($value);
 
         return $this;
     }
@@ -586,7 +779,27 @@ class Order extends ExtendOrder implements
      */
     public function getTotal()
     {
+        return $this->total->getValue();
+    }
+
+    /**
+     * @return MultiCurrency
+     */
+    public function getTotalObject()
+    {
         return $this->total;
+    }
+
+    /**
+     * @param MultiCurrency $total
+     *
+     * @return $this
+     */
+    public function setTotalObject(MultiCurrency $total)
+    {
+        $this->total = $total;
+
+        return $this;
     }
 
     /**
@@ -1023,5 +1236,60 @@ class Order extends ExtendOrder implements
         }
 
         return $this;
+    }
+
+    protected function fixCurrencyInMultiCurrencyFields()
+    {
+        $multiCurrencyFields = [$this->total, $this->subtotal];
+        /**
+         * @var MultiCurrency $multiCurrencyField
+         */
+        foreach ($multiCurrencyFields as $multiCurrencyField) {
+            if ($multiCurrencyField->getCurrency() !== $this->currency) {
+                $multiCurrencyField->setCurrency($this->currency);
+            }
+        }
+    }
+
+    /**
+     * @param string $subtotalCurrency
+     */
+    protected function setSubtotalCurrency($subtotalCurrency)
+    {
+        $this->subtotalCurrency = $subtotalCurrency;
+        $this->subtotal->setCurrency($subtotalCurrency);
+    }
+
+    /**
+     * @param string $totalCurrency
+     */
+    protected function setTotalCurrency($totalCurrency)
+    {
+        $this->totalCurrency = $totalCurrency;
+        $this->total->setCurrency($totalCurrency);
+    }
+
+    protected function updateSubtotal()
+    {
+        $this->subtotalValue = $this->subtotal->getValue();
+        if (null !== $this->subtotalValue) {
+            $this->setSubtotalCurrency($this->subtotal->getCurrency());
+            $this->setBaseSubtotalValue($this->subtotal->getBaseCurrencyValue());
+            return;
+        }
+
+        $this->setBaseSubtotalValue(null);
+    }
+
+    protected function updateTotal()
+    {
+        $this->totalValue = $this->total->getValue();
+        if (null !== $this->totalValue) {
+            $this->setTotalCurrency($this->total->getCurrency());
+            $this->setBaseTotalValue($this->total->getBaseCurrencyValue());
+            return;
+        }
+
+        $this->setBaseTotalValue(null);
     }
 }

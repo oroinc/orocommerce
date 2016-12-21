@@ -13,6 +13,16 @@
     {% endif %}
 {% endblock %}
 
+{% block body_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': '  body ' ~ (isMobileVersion() ? 'mobile' : 'desktop') ~ '-version'
+    }) %}
+
+    <body {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </body>
+{% endblock %}
+
 {% block _page_header_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' page-header'
@@ -97,7 +107,7 @@
     {% if content|length %}
         <h1{{ block('block_attributes') }}>
             {% if titleIcon is defined %}
-            <span class="badge badge_sm badge_circle badge_orange badge_has-inline-sibling">
+            <span class="badge">
                 <i class="{{ titleIcon }}"></i>
             </span>
             {% endif %}
@@ -109,24 +119,28 @@
 {% block _notification_widget %}
     {% set attr = layout_attr_defaults(attr, {
         'id': 'flash-messages',
-        '~class': ' notification-flash-container container-fluid',
+        '~class': ' notification-flash-container',
         'data-sticky': {
             'placeholderId': 'sticky-element-notification'
         }
     }) %}
     <div{{ block('block_attributes') }}></div>
     <script type="text/template" id="message-item-template">
-        <% iconClass = 'cf-check' %>
-        <% if (type === "error" || type === "warning") {
-            iconClass = 'cf-attention';
-        }%>
-        <div class="notification-flash--<%= type %> alert">
-            <div class="notification-flash__badge">
-                <i class="<%= iconClass %>"></i>
+        <% if (style === 'validation') { %>
+            <span class="validation-<%= type %>"><%= message %></span>
+        <% } else { %>
+            <% iconClass = 'fa-check' %>
+            <% if (type === "error" || type === "warning") {
+            iconClass = 'fa-exclamation-triangle';
+            }%>
+            <div class="notification-flash--<%= type %> alert">
+                <div class="notification-flash__badge">
+                    <i class="<%= iconClass %>"></i>
+                </div>
+                <button class="notification-flash__close" data-dismiss="alert"><i class="fa-close"></i></button>
+                <div class="notification-flash__text"><%= message %></div>
             </div>
-            <button class="notification-flash__close" data-dismiss="alert"><i class="cf-clear"></i></button>
-            <div class="notification-flash__text"><%= message %></div>
-        </div>
+        <% } %>
     </script>
     <script type="text/javascript">
         require(['jquery', 'oroui/js/messenger'],

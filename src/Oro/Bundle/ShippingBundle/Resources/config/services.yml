@@ -23,11 +23,6 @@ services:
         arguments:
             - '@oro_entity.doctrine_helper'
 
-    oro_shipping.factory.shipping_context_factory:
-        class: 'Oro\Bundle\ShippingBundle\Factory\ShippingContextFactory'
-        arguments:
-            - '@oro_shipping.shipping_origin.provider'
-
     oro_shipping.event_listener.config.shipping_origin:
         class: 'Oro\Bundle\ShippingBundle\EventListener\Config\ShippingOriginEventListener'
         arguments:
@@ -218,15 +213,13 @@ services:
         public: false
         arguments:
             - '@oro_entity.doctrine_helper'
-            - '@oro_shipping.expression_language.line_item_decorator_factory'
+            - '@oro_shipping.expression_language.decorated_product_line_item_factory'
             - '@logger'
 
     oro_shipping.shipping_price.provider.cache:
         class: 'Oro\Bundle\ShippingBundle\Provider\Cache\ShippingPriceCache'
-        public: false
         arguments:
             - '@oro_shipping.price.cache'
-            - '@doctrine'
             - '@oro_shipping.shipping_context.cache_key_generator'
 
     oro_shipping.price.cache:
@@ -265,8 +258,8 @@ services:
         calls:
             - [setVirtualRelationProvider, ['@oro_entity.virtual_relation_provider.chain']]
 
-    oro_shipping.expression_language.line_item_decorator_factory:
-        class: 'Oro\Bundle\ShippingBundle\ExpressionLanguage\LineItemDecoratorFactory'
+    oro_shipping.expression_language.decorated_product_line_item_factory:
+        class: 'Oro\Bundle\ShippingBundle\ExpressionLanguage\DecoratedProductLineItemFactory'
         arguments:
             - '@oro_entity.entity_field_provider'
             - '@oro_shipping.query_designer.select_query_converter'
@@ -285,3 +278,18 @@ services:
     oro_shipping.shipping_context.cache_key_generator:
         class: 'Oro\Bundle\ShippingBundle\Context\ShippingContextCacheKeyGenerator'
         public: false
+
+    oro_shipping.context.doctrine_line_item_collection_factory:
+        class: 'Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\Factory\DoctrineShippingLineItemCollectionFactory'
+
+    oro_shipping.context.builder_factory_basic:
+        class: 'Oro\Bundle\ShippingBundle\Context\Builder\Basic\Factory\BasicShippingContextBuilderFactory'
+        arguments:
+            - '@oro_shipping.context.doctrine_line_item_collection_factory'
+            - '@oro_shipping.shipping_origin.provider'
+
+    oro_shipping.line_item.factory_basic:
+        class: 'Oro\Bundle\ShippingBundle\Context\LineItem\Builder\Basic\Factory\BasicShippingLineItemBuilderFactory'
+
+    oro_shipping.datagrid.shipping_rule_actions_visibility_provider:
+        class: 'Oro\Bundle\ShippingBundle\Datagrid\ShippingRuleActionsVisibilityProvider'

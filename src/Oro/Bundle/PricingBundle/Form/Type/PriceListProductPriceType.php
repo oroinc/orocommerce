@@ -73,7 +73,7 @@ class PriceListProductPriceType extends AbstractType
                 PriceType::NAME,
                 [
                     'required' => true,
-                    'compact' => true,
+                    'compact' => false,
                     'label' => 'oro.pricing.productprice.price.label',
                     'currencies_list' => $currencies,
                     'currency_empty_value' => false,

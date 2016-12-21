@@ -1,0 +1,18 @@
+.request-form-editline__product .input-append {
+    @extend .flexible-container;
+    .select2-choice {
+        max-width: none !important;
+    }
+
+    .entity-select-btn {
+        @extend .flexible-container__side;
+
+        margin-left: 5px;
+    }
+    
+    .select2-container {
+        @extend .flexible-container__base;
+
+        border-radius: $input-border-radius;
+    }
+}

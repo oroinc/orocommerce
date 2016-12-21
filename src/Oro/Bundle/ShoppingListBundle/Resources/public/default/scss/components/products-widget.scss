@@ -1,3 +1,5 @@
+// @theme: default
+
 .product-item__qty {
   //Override current grid
   &.product-item__qty_no-image-view {
@@ -9,25 +11,6 @@
         float: left;
         width: calc(50% - 5px);
         margin-left: 10px;
-
-        .btn-group,
-        .btn_has-dropdown {
-          margin-top: 0;
-          min-height: inherit;
-          height: 43px;
-          min-width: inherit;
-
-          a {
-            line-height: 42px;
-          }
-
-          .direct-link {
-            @include direct-link();
-
-            line-height: 42px;
-            height: 100%;
-          }
-        }
       }
     }
 
@@ -56,18 +39,9 @@
   }
 
   .add-product-from-view-component {
-    .pull-right {
-      float: none !important;
+    font-size: $font-size-base;
 
-      .btn-group,
-      .btn_has-dropdown {
-        width: 100%;
-
-        a {
-          font-size: $base-font-size !important;
-        }
-      }
-    }
+    @include clearfix();
   }
 
   .form__col {

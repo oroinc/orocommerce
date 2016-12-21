@@ -24,14 +24,14 @@ use Oro\Bundle\RFPBundle\Model\ExtendRequest;
  * Request
  *
  * @ORM\Table("oro_rfp_request")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Oro\Bundle\RFPBundle\Entity\Repository\RequestRepository")
  * @Config(
  *      routeName="oro_rfp_request_index",
  *      routeView="oro_rfp_request_view",
  *      routeUpdate="oro_rfp_request_update",
  *      defaultValues={
  *          "entity"={
- *              "icon"="icon-file-text"
+ *              "icon"="fa-file-text"
  *          },
  *          "security"={
  *              "type"="ACL",

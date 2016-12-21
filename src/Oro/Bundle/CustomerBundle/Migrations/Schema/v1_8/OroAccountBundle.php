@@ -11,9 +11,10 @@ use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\MigrationConstraintTrait;
+use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class OroAccountBundle implements Migration, RenameExtensionAwareInterface
+class OroAccountBundle implements Migration, RenameExtensionAwareInterface, OrderedMigrationInterface
 {
     use MigrationConstraintTrait;
 
@@ -32,11 +33,9 @@ class OroAccountBundle implements Migration, RenameExtensionAwareInterface
         $this->renameActivityTables($schema, $queries);
         $this->renameCustomerActivityTables($schema, $queries);
         $this->updateAttachments($schema, $queries);
-        $this->updateNotes($schema, $queries);
 
         $this->renameOldActivityTables($queries);
         $this->updateOldAttachments($queries);
-        $this->updateOldNotes($queries);
 
         $this->updateTableField($queries);
         $queries->addPostQuery(new RenameConfigSectionQuery('oro_account', 'oro_customer'));
@@ -220,166 +219,6 @@ class OroAccountBundle implements Migration, RenameExtensionAwareInterface
     }
 
     /**
-     * @param Schema $schema
-     * @param QueryBag $queries
-     *
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     */
-    private function updateNotes(Schema $schema, QueryBag $queries)
-    {
-        $extension = $this->renameExtension;
-        $notes = $schema->getTable('oro_note');
-
-        $notes->removeForeignKey('FK_BA066CE135CF6547');
-        $extension->renameColumn(
-            $schema,
-            $queries,
-            $notes,
-            'account_user_7e92c4f1_id',
-            'account_user_5919fc1d_id'
-        );
-        $extension->addForeignKeyConstraint(
-            $schema,
-            $queries,
-            'oro_note',
-            'oro_account_user',
-            ['account_user_5919fc1d_id'],
-            ['id'],
-            ['onDelete' => 'SET NULL']
-        );
-        $queries->addQuery(new UpdateExtendRelationQuery(
-            'Oro\Bundle\NoteBundle\Entity\Note',
-            'Oro\Bundle\CustomerBundle\Entity\AccountUser',
-            'account_user_7e92c4f1',
-            'account_user_5919fc1d',
-            RelationType::MANY_TO_ONE
-        ));
-
-        $notes->removeForeignKey('FK_BA066CE17017C4');
-        $extension->renameColumn(
-            $schema,
-            $queries,
-            $notes,
-            'account_user_role_abeddea9_id',
-            'account_user_role_604160ea_id'
-        );
-        $extension->addForeignKeyConstraint(
-            $schema,
-            $queries,
-            'oro_note',
-            'oro_account_user_role',
-            ['account_user_role_604160ea_id'],
-            ['id'],
-            ['onDelete' => 'SET NULL']
-        );
-        $queries->addQuery(new UpdateExtendRelationQuery(
-            'Oro\Bundle\NoteBundle\Entity\Note',
-            'Oro\Bundle\CustomerBundle\Entity\AccountUserRole',
-            'account_user_role_abeddea9',
-            'account_user_role_604160ea',
-            RelationType::MANY_TO_ONE
-        ));
-
-        if ($notes->hasForeignKey('FK_BA066CE1140E2435')) {
-            $notes->removeForeignKey('FK_BA066CE1140E2435');
-        } elseif ($notes->hasForeignKey('fk_oro_note_account_8d93c122_id')) {
-            $notes->removeForeignKey('fk_oro_note_account_8d93c122_id');
-        }
-
-        if ($notes->hasIndex('IDX_BA066CE1140E2435')) {
-            $notes->dropIndex('IDX_BA066CE1140E2435');
-        }
-
-        $extension->renameColumn(
-            $schema,
-            $queries,
-            $notes,
-            'account_8d93c122_id',
-            'account_8d1f63b9_id'
-        );
-        $extension->addForeignKeyConstraint(
-            $schema,
-            $queries,
-            'oro_note',
-            'oro_account',
-            ['account_8d1f63b9_id'],
-            ['id'],
-            ['onDelete' => 'SET NULL']
-        );
-
-        $queries->addQuery(new UpdateExtendRelationQuery(
-            'Oro\Bundle\NoteBundle\Entity\Note',
-            'Oro\Bundle\CustomerBundle\Entity\Account',
-            'account_8d93c122',
-            'account_8d1f63b9',
-            RelationType::MANY_TO_ONE
-        ));
-
-        $notes->removeForeignKey('FK_BA066CE1254D1CEE');
-        $extension->renameColumn(
-            $schema,
-            $queries,
-            $notes,
-            'account_group_a8897e69_id',
-            'account_group_1125b02_id'
-        );
-        $extension->addForeignKeyConstraint(
-            $schema,
-            $queries,
-            'oro_note',
-            'oro_account_group',
-            ['account_group_1125b02_id'],
-            ['id'],
-            ['onDelete' => 'SET NULL']
-        );
-        $queries->addQuery(new UpdateExtendRelationQuery(
-            'Oro\Bundle\NoteBundle\Entity\Note',
-            'Oro\Bundle\CustomerBundle\Entity\AccountGroup',
-            'account_group_a8897e69',
-            'account_group_1125b02',
-            RelationType::MANY_TO_ONE
-        ));
-    }
-
-    /**
-     * @param QueryBag $queries
-     */
-    private function updateOldNotes(QueryBag $queries)
-    {
-        $queries->addQuery(new UpdateExtendRelationQuery(
-            'Oro\Bundle\NoteBundle\Entity\Note',
-            'Oro\Bundle\CustomerBundle\Entity\AccountUser',
-            'account_user_1cc98a31',
-            'account_user_5919fc1d',
-            RelationType::MANY_TO_ONE
-        ));
-
-        $queries->addQuery(new UpdateExtendRelationQuery(
-            'Oro\Bundle\NoteBundle\Entity\Note',
-            'Oro\Bundle\CustomerBundle\Entity\AccountUserRole',
-            'account_user_role_5d57148e',
-            'account_user_role_604160ea',
-            RelationType::MANY_TO_ONE
-        ));
-
-        $queries->addQuery(new UpdateExtendRelationQuery(
-            'Oro\Bundle\NoteBundle\Entity\Note',
-            'Oro\Bundle\CustomerBundle\Entity\Account',
-            'account_557018f',
-            'account_8d1f63b9',
-            RelationType::MANY_TO_ONE
-        ));
-
-        $queries->addQuery(new UpdateExtendRelationQuery(
-            'Oro\Bundle\NoteBundle\Entity\Note',
-            'Oro\Bundle\CustomerBundle\Entity\AccountGroup',
-            'account_group_338fe797',
-            'account_group_1125b02',
-            RelationType::MANY_TO_ONE
-        ));
-    }
-
-    /**
      * @param QueryBag $queries
      */
     private function updateTableField(QueryBag $queries)
@@ -448,5 +287,16 @@ class OroAccountBundle implements Migration, RenameExtensionAwareInterface
         $schema->dropTable('oro_acc_grp_prod_vsb_resolv');
 
         $queries->addQuery(new RemoveVisibilityFromEntityConfigQuery());
+    }
+
+    /**
+     * Should be executed before:
+     * @see \Oro\Bundle\CustomerBundle\Migrations\Schema\v1_8\MigrateNotes
+     *
+     * {@inheritdoc}
+     */
+    public function getOrder()
+    {
+        return 0;
     }
 }

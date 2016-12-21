@@ -59,16 +59,6 @@
   }
 }
 
-.catalog-view-option {
-  color: get-color('additional', 'middle');
-}
-
-.current {
-  .catalog-view-option {
-    color: get-color('primary', 'base');
-  }
-}
-
 .catalog-filter {
   position: relative;
   padding: 15px 10px 4px 90px;

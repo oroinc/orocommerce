@@ -6,7 +6,6 @@ use Oro\Bundle\WebsiteSearchBundle\Engine\IndexDataProvider;
 use Oro\Bundle\WebsiteBundle\Provider\AbstractWebsiteLocalizationProvider;
 use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
-use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
@@ -54,31 +53,25 @@ class ProductSearchIndexListener
         foreach ($products as $product) {
             // Localized fields
             foreach ($localizations as $localization) {
-                $metaStrings = $this->getMetaStringsFromProduct($product, $localization);
+                $metaDescription = $this->cleanUpString($product->getMetaDescription($localization));
                 $event->addPlaceholderField(
                     $product->getId(),
                     IndexDataProvider::ALL_TEXT_L10N_FIELD,
-                    $metaStrings,
-                    [LocalizationIdPlaceholder::NAME => $localization->getId()]
+                    $metaDescription,
+                    [LocalizationIdPlaceholder::NAME => $localization->getId()],
+                    true
+                );
+
+                $metaKeyword = $this->cleanUpString($product->getMetaKeyword($localization));
+                $event->addPlaceholderField(
+                    $product->getId(),
+                    IndexDataProvider::ALL_TEXT_L10N_FIELD,
+                    $metaKeyword,
+                    [LocalizationIdPlaceholder::NAME => $localization->getId()],
+                    true
                 );
             }
         }
-    }
-
-    /**
-     * @param Product      $product
-     * @param Localization $localization
-     * @return string
-     */
-    private function getMetaStringsFromProduct(Product $product, Localization $localization)
-    {
-        $metaTitle       = $product->getMetaTitle($localization);
-        $metaDescription = $product->getMetaDescription($localization);
-        $metaKeyword     = $product->getMetaKeyword($localization);
-
-        $string = $metaTitle . ' ' . $metaDescription . ' ' . $metaKeyword;
-
-        return $this->cleanUpString($string);
     }
 
     /**
