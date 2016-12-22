@@ -20,34 +20,34 @@ class CreditCardType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add(
-                'ACCT',
-                'text',
-                [
-                    'required' => true,
-                    'label' => 'oro.paypal.credit_card.card_number.label',
-                    'mapped' => false,
-                    'attr' => [
-                        'data-validation' => [
-                            'credit-card-number' => [
-                                'message' => 'oro.paypal.validation.credit_card',
-                                'payload' => null,
-                            ],
-                            'credit-card-type' => [
-                                'message' => 'oro.paypal.validation.credit_card_type',
-                                'payload' => null,
-                            ]
+            'ACCT',
+            'text',
+            [
+                'required' => true,
+                'label' => 'oro.paypal.credit_card.card_number.label',
+                'mapped' => false,
+                'attr' => [
+                    'data-validation' => [
+                        'credit-card-number' => [
+                            'message' => 'oro.paypal.validation.credit_card',
+                            'payload' => null,
                         ],
-                        'data-credit-card-type-validator' => 'credit-card-type',
-                        'data-card-number' => true,
-                        'autocomplete' => 'off',
-                        'data-gateway' => true,
-                        'placeholder' => false,
+                        'credit-card-type' => [
+                            'message' => 'oro.paypal.validation.credit_card_type',
+                            'payload' => null,
+                        ]
                     ],
-                    'constraints' => [
-                        new Integer(),
-                        new NotBlank(),
-                        new Length(['min' => '12', 'max' => '19']),
-                    ],
+                    'data-credit-card-type-validator' => 'credit-card-type',
+                    'data-card-number' => true,
+                    'autocomplete' => 'off',
+                    'data-gateway' => true,
+                    'placeholder' => false,
+                ],
+                'constraints' => [
+                    new Integer(),
+                    new NotBlank(),
+                    new Length(['min' => '12', 'max' => '19']),
+                ],
                 ]
             )->add(
                 'expirationDate',
@@ -76,24 +76,24 @@ class CreditCardType extends AbstractType
 
         if ($options['requireCvvEntryEnabled']) {
             $builder->add(
-                    'CVV2',
-                    'password',
-                    [
-                        'required' => true,
-                        'label' => 'oro.paypal.credit_card.cvv2.label',
-                        'mapped' => false,
-                        'block_name' => 'payment_credit_card_cvv',
-                        'constraints' => [
-                            new Integer(['message' => 'oro.payment.number.error']),
-                            new NotBlank(),
-                            new Length(['min' => 3, 'max' => 4]),
-                        ],
-                        'attr' => [
-                            'data-card-cvv' => true,
-                            'data-gateway' => true,
-                            'placeholder' => false,
-                        ],
-                    ]
+                'CVV2',
+                'password',
+                [
+                    'required' => true,
+                    'label' => 'oro.paypal.credit_card.cvv2.label',
+                    'mapped' => false,
+                    'block_name' => 'payment_credit_card_cvv',
+                    'constraints' => [
+                        new Integer(['message' => 'oro.payment.number.error']),
+                        new NotBlank(),
+                        new Length(['min' => 3, 'max' => 4]),
+                    ],
+                    'attr' => [
+                        'data-card-cvv' => true,
+                        'data-gateway' => true,
+                        'placeholder' => false,
+                    ],
+                ]
                 );
         }
 
