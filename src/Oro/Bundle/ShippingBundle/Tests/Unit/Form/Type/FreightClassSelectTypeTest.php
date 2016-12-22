@@ -45,7 +45,7 @@ class FreightClassSelectTypeTest extends AbstractShippingOptionSelectTypeTest
         $formView = new FormView();
         $formView->vars['choices'] = [];
         
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
         $form->expects($this->once())
             ->method('getParent')
             ->willReturnCallback(function () use ($inputData) {
@@ -53,7 +53,7 @@ class FreightClassSelectTypeTest extends AbstractShippingOptionSelectTypeTest
                     return null;
                 }
 
-                $parent = $this->getMock('Symfony\Component\Form\FormInterface');
+                $parent = $this->createMock('Symfony\Component\Form\FormInterface');
                 $parent->expects($this->once())
                     ->method('getData')
                     ->willReturn($inputData['parentData']);

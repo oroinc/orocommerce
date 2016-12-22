@@ -15,13 +15,13 @@ class BinaryNodeTest extends \PHPUnit_Framework_TestCase
     public function testNode()
     {
         /** @var NodeInterface|\PHPUnit_Framework_MockObject_MockObject $left */
-        $left = $this->getMock(NodeInterface::class);
+        $left = $this->createMock(NodeInterface::class);
         $left->expects($this->any())
             ->method('getNodes')
             ->willReturn([$left]);
 
         /** @var NodeInterface|\PHPUnit_Framework_MockObject_MockObject $right */
-        $right = $this->getMock(NodeInterface::class);
+        $right = $this->createMock(NodeInterface::class);
         $right->expects($this->any())
             ->method('getNodes')
             ->willReturn([$right]);
@@ -42,11 +42,11 @@ class BinaryNodeTest extends \PHPUnit_Framework_TestCase
     public function testIsBooleanOperation($operation)
     {
         /** @var NodeInterface|\PHPUnit_Framework_MockObject_MockObject $left */
-        $left = $this->getMock(NodeInterface::class);
+        $left = $this->createMock(NodeInterface::class);
         $left->expects($this->never())
             ->method('isBoolean');
         /** @var NodeInterface|\PHPUnit_Framework_MockObject_MockObject $right */
-        $right = $this->getMock(NodeInterface::class);
+        $right = $this->createMock(NodeInterface::class);
         $right->expects($this->never())
             ->method('isBoolean');
         $node = new BinaryNode($left, $right, $operation);
@@ -71,11 +71,11 @@ class BinaryNodeTest extends \PHPUnit_Framework_TestCase
     public function testIsBooleanExpression($operation)
     {
         /** @var NodeInterface|\PHPUnit_Framework_MockObject_MockObject $left */
-        $left = $this->getMock(NodeInterface::class);
+        $left = $this->createMock(NodeInterface::class);
         $left->expects($this->never())
             ->method('isBoolean');
         /** @var NodeInterface|\PHPUnit_Framework_MockObject_MockObject $right */
-        $right = $this->getMock(NodeInterface::class);
+        $right = $this->createMock(NodeInterface::class);
         $right->expects($this->never())
             ->method('isBoolean');
 
@@ -108,12 +108,12 @@ class BinaryNodeTest extends \PHPUnit_Framework_TestCase
     public function testIsBooleanForMathExpression($leftBoolean, $rightBoolean, $expected)
     {
         /** @var NodeInterface|\PHPUnit_Framework_MockObject_MockObject $left */
-        $left = $this->getMock(NodeInterface::class);
+        $left = $this->createMock(NodeInterface::class);
         $left->expects($this->any())
             ->method('isBoolean')
             ->willReturn($leftBoolean);
         /** @var NodeInterface|\PHPUnit_Framework_MockObject_MockObject $right */
-        $right = $this->getMock(NodeInterface::class);
+        $right = $this->createMock(NodeInterface::class);
         $right->expects($this->any())
             ->method('isBoolean')
             ->willReturn($rightBoolean);
@@ -142,9 +142,9 @@ class BinaryNodeTest extends \PHPUnit_Framework_TestCase
     public function testIsNotMathOperation($operation)
     {
         /** @var NodeInterface|\PHPUnit_Framework_MockObject_MockObject $left */
-        $left = $this->getMock(NodeInterface::class);
+        $left = $this->createMock(NodeInterface::class);
         /** @var NodeInterface|\PHPUnit_Framework_MockObject_MockObject $right */
-        $right = $this->getMock(NodeInterface::class);
+        $right = $this->createMock(NodeInterface::class);
 
         $node = new BinaryNode($left, $right, $operation);
         $this->assertFalse($node->isMathOperation());
@@ -157,9 +157,9 @@ class BinaryNodeTest extends \PHPUnit_Framework_TestCase
     public function testIsMathOperation($operation)
     {
         /** @var NodeInterface|\PHPUnit_Framework_MockObject_MockObject $left */
-        $left = $this->getMock(NodeInterface::class);
+        $left = $this->createMock(NodeInterface::class);
         /** @var NodeInterface|\PHPUnit_Framework_MockObject_MockObject $right */
-        $right = $this->getMock(NodeInterface::class);
+        $right = $this->createMock(NodeInterface::class);
 
         $node = new BinaryNode($left, $right, $operation);
         $this->assertTrue($node->isMathOperation());

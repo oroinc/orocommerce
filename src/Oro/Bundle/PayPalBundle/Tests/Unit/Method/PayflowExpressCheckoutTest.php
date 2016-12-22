@@ -57,8 +57,8 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->gateway = $this->getMockBuilder(Gateway::class)->disableOriginalConstructor()->getMock();
-        $this->router = $this->getMock(RouterInterface::class);
-        $this->paymentConfig = $this->getMock(PayflowExpressCheckoutConfigInterface::class);
+        $this->router = $this->createMock(RouterInterface::class);
+        $this->paymentConfig = $this->createMock(PayflowExpressCheckoutConfigInterface::class);
         $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)->disableOriginalConstructor()->getMock();
 
         $this->optionsProvider = $this->getMockBuilder(ExtractOptionsProvider::class)

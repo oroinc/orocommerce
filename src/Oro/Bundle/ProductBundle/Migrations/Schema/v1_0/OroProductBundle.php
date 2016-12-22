@@ -6,8 +6,8 @@ use Doctrine\DBAL\Schema\Schema;
 
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
-use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtension;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
+use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareTrait;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
@@ -22,6 +22,8 @@ class OroProductBundle implements
     ActivityExtensionAwareInterface,
     AttachmentExtensionAwareInterface
 {
+    use AttachmentExtensionAwareTrait;
+
     const PRODUCT_TABLE_NAME = 'orob2b_product';
     const PRODUCT_UNIT_TABLE_NAME = 'orob2b_product_unit';
     const PRODUCT_UNIT_PRECISION_TABLE_NAME = 'orob2b_product_unit_precision';
@@ -31,9 +33,6 @@ class OroProductBundle implements
 
     /** @var ExtendExtension */
     protected $extendExtension;
-
-    /** @var AttachmentExtension */
-    protected $attachmentExtension;
 
     /** @var  ActivityExtension */
     protected $activityExtension;
@@ -270,14 +269,6 @@ class OroProductBundle implements
             [],
             self::MAX_PRODUCT_ATTACHMENT_SIZE_IN_MB
         );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setAttachmentExtension(AttachmentExtension $attachmentExtension)
-    {
-        $this->attachmentExtension = $attachmentExtension;
     }
 
     /**

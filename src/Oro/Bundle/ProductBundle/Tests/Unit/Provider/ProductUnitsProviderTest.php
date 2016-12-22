@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Tests\UnitProvider;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Provider;
 
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
@@ -33,18 +33,18 @@ class ProductUnitsProviderTest extends \PHPUnit_Framework_TestCase
             ->method('getAllUnits')
             ->will($this->returnValue($productUnits));
 
-        $manager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
+        $manager = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
         $manager->expects($this->once())
             ->method('getRepository')
             ->with('Oro\Bundle\ProductBundle\Entity\ProductUnit')
             ->willReturn($productUnitRepository);
 
-        $managerRegistry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $managerRegistry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
         $managerRegistry->expects($this->any())
             ->method('getManagerForClass')
             ->with('Oro\Bundle\ProductBundle\Entity\ProductUnit')
             ->willReturn($manager);
-        
+
         $formatter = $this->getMockBuilder('Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter')
             ->disableOriginalConstructor()
             ->getMock();

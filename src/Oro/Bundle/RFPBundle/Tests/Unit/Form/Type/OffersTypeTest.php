@@ -59,7 +59,7 @@ class OffersTypeTest extends FormIntegrationTestCase
         $formType = new OffersType();
 
         /* @var $form FormInterface|\PHPUnit_Framework_MockObject_MockObject */
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
         $formType->finishView($view, $form, ['offers' => []]);
 

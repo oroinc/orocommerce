@@ -18,7 +18,8 @@ class FrontendOwnershipMetadataTest extends \PHPUnit_Framework_TestCase
     {
         if ($exceptionDefinition) {
             list ($exception, $message) = $exceptionDefinition;
-            $this->setExpectedException($exception, $message);
+            $this->expectException($exception);
+            $this->expectExceptionMessage($message);
         }
 
         list ($frontendOwnerType, $frontendOwnerFieldName, $frontendOwnerColumnName) = $ownerType;

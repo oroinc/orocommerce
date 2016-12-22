@@ -4,6 +4,7 @@ define(function(require) {
     var HeaderRowComponent;
     var BaseComponent = require('oroui/js/app/components/base/component');
     var mediator = require('oroui/js/mediator');
+    var tools = require('oroui/js/tools');
     var $ = require('jquery');
     var _ = require('underscore');
 
@@ -14,25 +15,17 @@ define(function(require) {
         $el: null,
 
         /**
-         * @property {Object}
-         */
-        options: {
-            isMobile: false
-        },
-
-        /**
          * @inheritDoc
          */
         initialize: function(options) {
-            this.options = _.defaults(options || {}, this.options);
-            this.$el = $(this.options._sourceElement);
+            this.$el = $(options._sourceElement);
         },
 
         /**
          * @inheritDoc
          */
         delegateListeners: function() {
-            if (this.options.isMobile) {
+            if (tools.isMobile()) {
                 this.listenTo(mediator, 'layout:reposition', _.debounce(this.addScroll, 40));
                 this.listenTo(mediator, 'sticky-panel:toggle-state', _.debounce(this.addScroll, 40));
             }

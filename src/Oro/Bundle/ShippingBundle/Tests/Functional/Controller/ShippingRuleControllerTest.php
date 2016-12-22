@@ -99,6 +99,7 @@ class ShippingRuleControllerTest extends WebTestCase
                 'enable_link',
                 'update_link',
                 'view_link',
+                'action_configuration'
             ],
         ];
 
@@ -352,6 +353,7 @@ class ShippingRuleControllerTest extends WebTestCase
     /**
      * @depends testUpdate
      * @param ShippingRule $shippingRule
+     * @return object|ShippingRule
      */
     public function testUpdateRemoveDestination(ShippingRule $shippingRule)
     {

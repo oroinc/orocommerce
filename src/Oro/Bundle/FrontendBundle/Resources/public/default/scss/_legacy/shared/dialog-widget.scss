@@ -46,7 +46,7 @@
 
       text-indent: 0;
 
-      @include fa-icon('\f00d');
+      @include fa-icon($fa-var-remove);
 
       &:before {
         display: inline-block;

@@ -20,7 +20,7 @@ class PayflowExpressCheckoutViewTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->paymentConfig =
-            $this->getMock('Oro\Bundle\PayPalBundle\Method\Config\PayflowExpressCheckoutConfigInterface');
+            $this->createMock('Oro\Bundle\PayPalBundle\Method\Config\PayflowExpressCheckoutConfigInterface');
 
         $this->methodView = $this->createMethodView();
     }

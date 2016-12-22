@@ -209,7 +209,7 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
             ->method('getFailedMessage')
             ->willReturn($message);
 
-        $flashBag = $this->getMock('Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface');
+        $flashBag = $this->createMock('Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface');
         $flashBag->expects($this->once())
             ->method('add')
             ->with('error')

@@ -64,13 +64,13 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
      */
     protected function setUp()
     {
+        $this->translator = $this->createMock('Symfony\Component\Translation\TranslatorInterface');
         $this->singleUnitModeService = $this->getMockBuilder(SingleUnitModeService::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->defaultProductUnitProvider = $this->getMockBuilder(SystemDefaultProductUnitProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->translator = $this->getMock(TranslatorInterface::class);
         $this->translator
             ->expects(static::any())
             ->method('trans')
@@ -114,7 +114,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
     public function testConfigureOptions()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|OptionsResolver $resolver */
-        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
+        $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects(static::exactly(2))
             ->method('setDefaults')
             ->with(static::isType('array'))
@@ -148,17 +148,17 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
      */
     public function testGetProductUnits($option, $primaryUnitPrecision, $additionalUnitPrecisions, $expectedData)
     {
-        $config = $this->getMock('Symfony\Component\Form\FormConfigInterface');
+        $config = $this->createMock('Symfony\Component\Form\FormConfigInterface');
         $config->expects($this->any())
             ->method('getOptions')
             ->willReturn($option);
 
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
         $form->expects($this->any())
             ->method('getConfig')
             ->willReturn($config);
 
-        $product = $this->getMock('Oro\Bundle\ProductBundle\Entity\Product');
+        $product = $this->createMock('Oro\Bundle\ProductBundle\Entity\Product');
         $product->expects($this->any())
             ->method('getPrimaryUnitPrecision')
             ->willReturn($primaryUnitPrecision);
@@ -572,7 +572,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
         ProductHolderInterface $productHolder = null
     ) {
         /* @var $productUmitHolder \PHPUnit_Framework_MockObject_MockObject|ProductUnitHolderInterface */
-        $productUnitHolder = $this->getMock('Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface');
+        $productUnitHolder = $this->createMock('Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface');
         $productUnitHolder
             ->expects(static::any())
             ->method('getEntityIdentifier')
@@ -601,7 +601,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
     protected function createProductHolder($productSku, Product $product = null)
     {
         /* @var $productHolder \PHPUnit_Framework_MockObject_MockObject|ProductHolderInterface */
-        $productHolder = $this->getMock('Oro\Bundle\ProductBundle\Model\ProductHolderInterface');
+        $productHolder = $this->createMock('Oro\Bundle\ProductBundle\Model\ProductHolderInterface');
 
         $productHolder
             ->expects(static::any())
@@ -639,11 +639,11 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
         $form = $this->factory->create($this->formType, $productUnitHolder, $options);
 
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $parentForm */
-        $parentForm = $this->getMock('Symfony\Component\Form\FormInterface');
+        $parentForm = $this->createMock('Symfony\Component\Form\FormInterface');
         $parentForm->expects($this->any())->method('has')->willReturn($expectedFieldOverride);
 
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $productForm */
-        $productForm = $this->getMock('Symfony\Component\Form\FormInterface');
+        $productForm = $this->createMock('Symfony\Component\Form\FormInterface');
         $form->setParent($parentForm);
 
         if ($expectedFieldOverride) {

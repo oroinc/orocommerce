@@ -29,8 +29,8 @@ class DataGridThemeHelperTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
-        $this->session = $this->getMock('Symfony\Component\HttpFoundation\Session\SessionInterface');
+        $this->requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
+        $this->session = $this->createMock('Symfony\Component\HttpFoundation\Session\SessionInterface');
 
         $this->helper = new DataGridThemeHelper($this->requestStack, $this->session);
     }

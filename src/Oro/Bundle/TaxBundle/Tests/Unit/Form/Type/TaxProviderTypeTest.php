@@ -38,7 +38,7 @@ class TaxProviderTypeTest extends \PHPUnit_Framework_TestCase
      */
     protected function getProviderMock($name, $label)
     {
-        $mock = $this->getMock('Oro\Bundle\TaxBundle\Provider\TaxProviderInterface');
+        $mock = $this->createMock('Oro\Bundle\TaxBundle\Provider\TaxProviderInterface');
         $mock->expects($this->once())->method('getName')->willReturn($name);
         $mock->expects($this->once())->method('getLabel')->willReturn($label);
 

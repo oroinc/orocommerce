@@ -33,7 +33,7 @@ class FrontendFilterTest extends \PHPUnit_Framework_TestCase
     public function testNoRequestBehaviour()
     {
         /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
-        $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
+        $requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
         $requestStack->expects($this->any())->method('getCurrentRequest')->willReturn(null);
         $this->filter = new FrontendFilter($this->helper, $requestStack);
         $this->assertTrue($this->filter->isBackendRoute());
@@ -48,7 +48,7 @@ class FrontendFilterTest extends \PHPUnit_Framework_TestCase
     {
         $request = new Request();
         /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
-        $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
+        $requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
         $requestStack->expects($this->any())->method('getCurrentRequest')->willReturn($request);
         $this->filter = new FrontendFilter($this->helper, $requestStack);
 

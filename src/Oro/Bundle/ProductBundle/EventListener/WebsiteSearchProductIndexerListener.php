@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\ProductBundle\EventListener;
 
-use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteBundle\Provider\AbstractWebsiteLocalizationProvider;
 use Oro\Bundle\WebsiteBundle\Provider\WebsiteLocalizationProvider;
+use Oro\Bundle\WebsiteSearchBundle\Engine\IndexDataProvider;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
@@ -54,35 +54,11 @@ class WebsiteSearchProductIndexerListener
         foreach ($products as $product) {
             // Non localized fields
             $event->addField($product->getId(), 'product_id', $product->getId());
-            $event->addField($product->getId(), 'sku', $product->getSku());
-            $event->addField($product->getId(), 'sku_uppercase', strtoupper($product->getSku()));
+            $event->addField($product->getId(), 'sku', $product->getSku(), true);
+            $event->addField($product->getId(), 'sku_uppercase', strtoupper($product->getSku()), true);
             $event->addField($product->getId(), 'status', $product->getStatus());
             $event->addField($product->getId(), 'inventory_status', $product->getInventoryStatus()->getId());
             $event->addField($product->getId(), 'type', $product->getType());
-
-
-            // Localized fields
-            $placeholders = [LocalizationIdPlaceholder::NAME => Localization::DEFAULT_LOCALIZATION];
-            $event->addPlaceholderField(
-                $product->getId(),
-                'name_LOCALIZATION_ID',
-                (string)$product->getDefaultName(),
-                $placeholders
-            );
-
-            $event->addPlaceholderField(
-                $product->getId(),
-                'description_LOCALIZATION_ID',
-                (string)$product->getDefaultDescription(),
-                $placeholders
-            );
-
-            $event->addPlaceholderField(
-                $product->getId(),
-                'short_description_LOCALIZATION_ID',
-                (string)$product->getDefaultShortDescription(),
-                $placeholders
-            );
 
             foreach ($localizations as $localization) {
                 $localizationId = $localization->getId();
@@ -91,21 +67,24 @@ class WebsiteSearchProductIndexerListener
                     $product->getId(),
                     'name_LOCALIZATION_ID',
                     (string)$product->getName($localization),
-                    $placeholders
-                );
-
-                $event->addPlaceholderField(
-                    $product->getId(),
-                    'description_LOCALIZATION_ID',
-                    (string)$product->getDescription($localization),
-                    $placeholders
+                    $placeholders,
+                    true
                 );
 
                 $event->addPlaceholderField(
                     $product->getId(),
                     'short_description_LOCALIZATION_ID',
                     (string)$product->getShortDescription($localization),
-                    $placeholders
+                    $placeholders,
+                    true
+                );
+
+                $event->addPlaceholderField(
+                    $product->getId(),
+                    IndexDataProvider::ALL_TEXT_L10N_FIELD,
+                    (string)$product->getDescription($localization),
+                    $placeholders,
+                    true
                 );
             }
         }

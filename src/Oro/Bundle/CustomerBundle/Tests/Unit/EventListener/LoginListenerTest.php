@@ -39,7 +39,7 @@ class LoginListenerTest extends \PHPUnit_Framework_TestCase
     {
         $this->request = Request::create(self::TEST_URL);
 
-        $this->token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $this->token = $this->createMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
 
         $this->event = $this->getMockBuilder('Symfony\Component\Security\Http\Event\InteractiveLoginEvent')
             ->disableOriginalConstructor()

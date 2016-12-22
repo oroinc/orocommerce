@@ -51,10 +51,10 @@ class MappingConfigurationCacheLoaderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->resourceHashProvider = $this->getMock(ResourcesHashProvider::class);
-        $this->cacheProvider = $this->getMock(CacheProvider::class);
+        $this->resourceHashProvider = $this->createMock(ResourcesHashProvider::class);
+        $this->cacheProvider = $this->createMock(CacheProvider::class);
 
-        $this->configurationLoader = $this->getMock(ConfigurationLoaderInterface::class);
+        $this->configurationLoader = $this->createMock(ConfigurationLoaderInterface::class);
         $this->configurationLoader
             ->expects($this->any())
             ->method('getConfiguration')

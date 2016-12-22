@@ -77,7 +77,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
      */
     protected function preparePriceType()
     {
-        return PriceTypeGenerator::createPriceType();
+        return PriceTypeGenerator::createPriceType($this);
     }
 
     /**
@@ -202,7 +202,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
     protected function createRequestProduct($id, $product, $productSku)
     {
         /* @var $requestProduct \PHPUnit_Framework_MockObject_MockObject|RequestProduct */
-        $requestProduct = $this->getMock('Oro\Bundle\RFPBundle\Entity\RequestProduct');
+        $requestProduct = $this->createMock('Oro\Bundle\RFPBundle\Entity\RequestProduct');
         $requestProduct
             ->expects(static::any())
             ->method('getId')

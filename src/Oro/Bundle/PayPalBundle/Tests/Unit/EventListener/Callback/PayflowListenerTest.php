@@ -38,7 +38,7 @@ class PayflowListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->logger = $this->getMock('Psr\Log\LoggerInterface');
+        $this->logger = $this->createMock('Psr\Log\LoggerInterface');
 
         $this->listener = new PayflowListener($this->session, $this->paymentMethodRegistry);
         $this->listener->setLogger($this->logger);
@@ -57,7 +57,7 @@ class PayflowListenerTest extends \PHPUnit_Framework_TestCase
             ->setPaymentMethod('payment_method')
             ->setResponse(['existing' => 'response']);
 
-        $paymentMethod = $this->getMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface');
+        $paymentMethod = $this->createMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface');
         $paymentMethod->expects($this->once())
             ->method('execute')
             ->with('complete', $paymentTransaction);
@@ -88,7 +88,7 @@ class PayflowListenerTest extends \PHPUnit_Framework_TestCase
             ->setPaymentMethod('payment_method')
             ->setResponse(['existing' => 'response']);
 
-        $paymentMethod = $this->getMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface');
+        $paymentMethod = $this->createMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface');
         $paymentMethod->expects($this->once())
             ->method('execute')
             ->willThrowException(new \InvalidArgumentException());
@@ -168,7 +168,7 @@ class PayflowListenerTest extends \PHPUnit_Framework_TestCase
     {
         $event = new CallbackReturnEvent(['RESULT' => ResponseStatusMap::SECURE_TOKEN_EXPIRED]);
 
-        $flashBag = $this->getMock('Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface');
+        $flashBag = $this->createMock('Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface');
         $flashBag->expects($this->once())
             ->method('set')
             ->with('warning', 'oro.paypal.result.token_expired');

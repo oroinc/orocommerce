@@ -85,9 +85,8 @@ services:
         class: 'Oro\Bundle\SearchBundle\EventListener\ORM\FulltextIndexListener'
         public: false
         arguments:
-            - '%database_driver%'
             - 'oro_website_search_text'
-            - '%oro_website_search.index_text_table_name%'
+            - '@doctrine.dbal.default_connection'
         tags:
             - { name: doctrine.event_listener, event: loadClassMetadata, connection: search }
 

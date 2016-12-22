@@ -19,7 +19,7 @@ class PlaceholderExpressionVisitorTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->placeholder = $this->getMock(PlaceholderInterface::class);
+        $this->placeholder = $this->createMock(PlaceholderInterface::class);
         $this->visitor = new PlaceholderExpressionVisitor($this->placeholder);
     }
 

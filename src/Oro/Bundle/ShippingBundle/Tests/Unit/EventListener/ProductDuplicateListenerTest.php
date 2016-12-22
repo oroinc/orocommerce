@@ -42,8 +42,8 @@ class ProductDuplicateListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener = new ProductDuplicateListener($this->doctrineHelper);
         $this->listener->setProductShippingOptionsClass(self::CLASS_NAME);
 
-        $this->repository = $this->getMock('Doctrine\Common\Persistence\ObjectRepository');
-        $this->objectManager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
+        $this->repository = $this->createMock('Doctrine\Common\Persistence\ObjectRepository');
+        $this->objectManager = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepository')

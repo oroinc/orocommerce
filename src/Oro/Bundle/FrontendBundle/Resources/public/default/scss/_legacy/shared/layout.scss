@@ -269,6 +269,15 @@
   }
 }
 
+.action-selectbox_custom_in-pager {
+  display: inline-block;
+
+  .select2-container {
+    a.select2-choice {
+      padding: 8px !important;
+    }
+  }
+}
 .loading {
   @include clearfix();
 }
@@ -302,4 +311,13 @@
 
 .shopping-list {
   @include list-normalize();
+}
+
+
+@include breakpoint('mobile') {
+  .catalog__filter-controls {
+    &__item {
+      margin-right: 0;
+    }
+  }
 }
