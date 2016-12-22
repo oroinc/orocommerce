@@ -15,7 +15,7 @@ class TaxCodeGridListenerTest extends AbstractTaxCodeGridListenerTest
         $gridConfig->offsetSetByPath('[source][query][from]', [['alias' => 'account']]);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $dataGrid */
-        $dataGrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
+        $dataGrid = $this->createMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
         $event = new BuildBefore($dataGrid, $gridConfig);
 
         $metadata = $this->getMockBuilder('Doctrine\ORM\Mapping\ClassMetadata')->disableOriginalConstructor()
@@ -64,7 +64,7 @@ class TaxCodeGridListenerTest extends AbstractTaxCodeGridListenerTest
     {
         $gridConfig = DatagridConfiguration::create(['name' => 'std-grid']);
         /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $dataGrid */
-        $dataGrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
+        $dataGrid = $this->createMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
         $event = new BuildBefore($dataGrid, $gridConfig);
 
         $this->listener->onBuildBefore($event);

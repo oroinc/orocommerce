@@ -46,7 +46,7 @@ class ProductPriceBuilderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->registry = $this->getMock(ManagerRegistry::class);
+        $this->registry = $this->createMock(ManagerRegistry::class);
         $this->insertFromSelectQueryExecutor = $this->getMockBuilder(InsertFromSelectQueryExecutor::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -67,10 +67,10 @@ class ProductPriceBuilderTest extends \PHPUnit_Framework_TestCase
     public function testBuildByPriceListNoRules()
     {
         /** @var PriceList|\PHPUnit_Framework_MockObject_MockObject $priceList * */
-        $priceList = $this->getMock(PriceList::class);
+        $priceList = $this->createMock(PriceList::class);
 
         /** @var Product|\PHPUnit_Framework_MockObject_MockObject $product * */
-        $product = $this->getMock(Product::class);
+        $product = $this->createMock(Product::class);
 
         $repo = $this->getRepositoryMock();
         $repo->expects($this->once())
@@ -90,7 +90,7 @@ class ProductPriceBuilderTest extends \PHPUnit_Framework_TestCase
     public function testBuildByPriceListNoRulesWithoutProduct()
     {
         /** @var PriceList|\PHPUnit_Framework_MockObject_MockObject $priceList * */
-        $priceList = $this->getMock(PriceList::class);
+        $priceList = $this->createMock(PriceList::class);
 
         $repo = $this->getRepositoryMock();
         $repo->expects($this->once())
@@ -113,7 +113,7 @@ class ProductPriceBuilderTest extends \PHPUnit_Framework_TestCase
         $priceList = new PriceList();
 
         /** @var Product|\PHPUnit_Framework_MockObject_MockObject $product * */
-        $product = $this->getMock(Product::class);
+        $product = $this->createMock(Product::class);
 
         $rule1 = new PriceRule();
         $rule1->setPriority(10);
@@ -155,7 +155,7 @@ class ProductPriceBuilderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $em = $this->getMock(EntityManagerInterface::class);
+        $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->once())
             ->method('getRepository')
             ->with(ProductPrice::class)

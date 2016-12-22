@@ -45,7 +45,7 @@ class AccountFormViewListenerTest extends FormViewListenerTestCase
     public function testOnViewNoRequest()
     {
         /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
-        $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
+        $requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
 
         $listener = $this->getListener($requestStack);
 
@@ -53,7 +53,7 @@ class AccountFormViewListenerTest extends FormViewListenerTestCase
             ->method('getEntityReference');
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $env */
-        $env = $this->getMock('\Twig_Environment');
+        $env = $this->createMock('\Twig_Environment');
         $event = $this->createEvent($env);
         $listener->onAccountView($event);
     }
@@ -87,7 +87,7 @@ class AccountFormViewListenerTest extends FormViewListenerTestCase
         $this->setRepositoryExpectationsForAccount($account, $priceListsToAccount, $fallbackEntity, $websites);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $environment */
-        $environment = $this->getMock('\Twig_Environment');
+        $environment = $this->createMock('\Twig_Environment');
         $environment->expects($this->once())
             ->method('render')
             ->with(
@@ -117,13 +117,13 @@ class AccountFormViewListenerTest extends FormViewListenerTestCase
         $templateHtml = 'template_html';
 
         /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
-        $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
+        $requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
 
         /** @var AccountFormViewListener $listener */
         $listener = $this->getListener($requestStack);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $environment */
-        $environment = $this->getMock('\Twig_Environment');
+        $environment = $this->createMock('\Twig_Environment');
         $environment->expects($this->once())
             ->method('render')
             ->with('OroPricingBundle:Account:price_list_update.html.twig', ['form' => $formView])
@@ -245,7 +245,7 @@ class AccountFormViewListenerTest extends FormViewListenerTestCase
     protected function getRequestStack($request)
     {
         /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
-        $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
+        $requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
         $requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
         return $requestStack;
     }

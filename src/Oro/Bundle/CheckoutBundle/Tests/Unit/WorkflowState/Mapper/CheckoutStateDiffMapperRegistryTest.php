@@ -80,6 +80,6 @@ class CheckoutStateDiffMapperRegistryTest extends \PHPUnit_Framework_TestCase
      */
     protected function getMapper()
     {
-        return $this->getMock(CheckoutStateDiffMapperInterface::class);
+        return $this->createMock(CheckoutStateDiffMapperInterface::class);
     }
 }

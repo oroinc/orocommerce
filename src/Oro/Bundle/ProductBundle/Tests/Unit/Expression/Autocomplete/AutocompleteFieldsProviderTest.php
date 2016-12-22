@@ -34,8 +34,8 @@ class AutocompleteFieldsProviderTest extends \PHPUnit_Framework_TestCase
         $this->expressionParser = $this->getMockBuilder(ExpressionParser::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->fieldsProvider = $this->getMock(FieldsProviderInterface::class);
-        $this->translator = $this->getMock(TranslatorInterface::class);
+        $this->fieldsProvider = $this->createMock(FieldsProviderInterface::class);
+        $this->translator = $this->createMock(TranslatorInterface::class);
 
         $this->provider = new AutocompleteFieldsProvider(
             $this->expressionParser,

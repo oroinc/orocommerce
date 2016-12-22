@@ -71,14 +71,14 @@ class PriceRuleProcessorTest extends \PHPUnit_Framework_TestCase
         $this->priceBuilder = $this->getMockBuilder(ProductPriceBuilder::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->logger = $this->getMock(LoggerInterface::class);
-        $this->registry = $this->getMock(ManagerRegistry::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
+        $this->registry = $this->createMock(ManagerRegistry::class);
 
         $this->messenger = $this->getMockBuilder(Messenger::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->translator = $this->getMock(TranslatorInterface::class);
+        $this->translator = $this->createMock(TranslatorInterface::class);
 
         $this->priceRuleProcessor = new PriceRuleProcessor(
             $this->triggerFactory,
@@ -95,7 +95,7 @@ class PriceRuleProcessorTest extends \PHPUnit_Framework_TestCase
         $data = ['test' => 1];
         $body = json_encode($data);
 
-        $em = $this->getMock(EntityManagerInterface::class);
+        $em = $this->createMock(EntityManagerInterface::class);
 
         $em->expects($this->once())
             ->method('beginTransaction');
@@ -109,13 +109,13 @@ class PriceRuleProcessorTest extends \PHPUnit_Framework_TestCase
             ->willReturn($em);
 
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
-        $message = $this->getMock(MessageInterface::class);
+        $message = $this->createMock(MessageInterface::class);
         $message->expects($this->any())
             ->method('getBody')
             ->willReturn($body);
 
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
-        $session = $this->getMock(SessionInterface::class);
+        $session = $this->createMock(SessionInterface::class);
 
         $this->logger->expects($this->once())
             ->method('error')
@@ -139,7 +139,7 @@ class PriceRuleProcessorTest extends \PHPUnit_Framework_TestCase
     {
         $exception = new \Exception('Some error');
 
-        $em = $this->getMock(EntityManagerInterface::class);
+        $em = $this->createMock(EntityManagerInterface::class);
 
         $em->expects($this->once())
             ->method('beginTransaction');
@@ -153,13 +153,13 @@ class PriceRuleProcessorTest extends \PHPUnit_Framework_TestCase
             ->willReturn($em);
 
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
-        $message = $this->getMock(MessageInterface::class);
+        $message = $this->createMock(MessageInterface::class);
         $message->expects($this->any())
             ->method('getBody')
             ->willThrowException($exception);
 
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
-        $session = $this->getMock(SessionInterface::class);
+        $session = $this->createMock(SessionInterface::class);
 
         $this->logger->expects($this->once())
             ->method('error')
@@ -183,7 +183,7 @@ class PriceRuleProcessorTest extends \PHPUnit_Framework_TestCase
         $body = json_encode($data);
         $exception = new \Exception('Some error');
 
-        $em = $this->getMock(EntityManagerInterface::class);
+        $em = $this->createMock(EntityManagerInterface::class);
 
         $em->expects($this->once())
             ->method('beginTransaction');
@@ -203,13 +203,13 @@ class PriceRuleProcessorTest extends \PHPUnit_Framework_TestCase
         $trigger = new PriceListTrigger($priceList, $product);
 
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
-        $message = $this->getMock(MessageInterface::class);
+        $message = $this->createMock(MessageInterface::class);
         $message->expects($this->any())
             ->method('getBody')
             ->willReturn($body);
 
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
-        $session = $this->getMock(SessionInterface::class);
+        $session = $this->createMock(SessionInterface::class);
 
         $this->triggerFactory->expects($this->once())
             ->method('createFromArray')
@@ -264,13 +264,13 @@ class PriceRuleProcessorTest extends \PHPUnit_Framework_TestCase
         $trigger = new PriceListTrigger($priceList, $product);
 
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
-        $message = $this->getMock(MessageInterface::class);
+        $message = $this->createMock(MessageInterface::class);
         $message->expects($this->any())
             ->method('getBody')
             ->willReturn($body);
 
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
-        $session = $this->getMock(SessionInterface::class);
+        $session = $this->createMock(SessionInterface::class);
 
         $this->triggerFactory->expects($this->once())
             ->method('createFromArray')
@@ -281,7 +281,7 @@ class PriceRuleProcessorTest extends \PHPUnit_Framework_TestCase
             ->method('buildByPriceList')
             ->with($priceList, $product);
 
-        $manager = $this->getMock(EntityManagerInterface::class);
+        $manager = $this->createMock(EntityManagerInterface::class);
 
         $manager->expects($this->once())
             ->method('refresh');

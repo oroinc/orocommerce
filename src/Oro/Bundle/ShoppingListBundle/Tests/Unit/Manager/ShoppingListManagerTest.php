@@ -91,7 +91,7 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->registry = $this->getManagerRegistry();
-        $this->cache = $this->getMock(Cache::class);
+        $this->cache = $this->createMock(Cache::class);
         $this->manager = new ShoppingListManager(
             $this->registry,
             $tokenStorage,
@@ -331,7 +331,7 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
             ->willReturn($repository);
 
         /* @var $registry ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject */
-        $registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
         $registry->expects($this->once())
             ->method('getManagerForClass')
             ->willReturn($entityManager);
@@ -361,14 +361,14 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
     protected function getTokenStorage(AccountUser $accountUser)
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|TokenInterface $securityToken */
-        $securityToken = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $securityToken = $this->createMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
         $securityToken->expects($this->any())
             ->method('getUser')
             ->willReturn($accountUser);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|TokenStorageInterface $tokenStorage */
         $tokenStorage = $this
-            ->getMock('Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface');
+            ->createMock('Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface');
         $tokenStorage->expects($this->any())
             ->method('getToken')
             ->willReturn($securityToken);
@@ -381,7 +381,7 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
      */
     protected function getTranslator()
     {
-        return $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+        return $this->createMock('Symfony\Component\Translation\TranslatorInterface');
     }
 
     /**
@@ -417,16 +417,6 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
             ->getMockBuilder('Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository')
             ->disableOriginalConstructor()
             ->getMock();
-
-        $shoppingListRepository->expects($this->any())
-            ->method('findCurrentForAccountUser')
-            ->willReturnCallback(function (AccountUser $accountUser) {
-                if ($accountUser->getFirstName() === 'setCurrent') {
-                    return $this->shoppingListOne;
-                }
-
-                return null;
-            });
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|LineItemRepository $lineItemRepository */
         $lineItemRepository = $this
@@ -474,7 +464,7 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
             });
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry $managerRegistry */
-        $managerRegistry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $managerRegistry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
         $managerRegistry->expects($this->any())
             ->method('getManagerForClass')
             ->willReturn($entityManager);

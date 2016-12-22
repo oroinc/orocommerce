@@ -28,7 +28,7 @@ class VisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->registry = $this->getMock(ManagerRegistry::class);
+        $this->registry = $this->createMock(ManagerRegistry::class);
         $product = $this->getEntity(Product::class, ['id' => 1]);
         $scope = $this->getEntity(Scope::class, ['id' => 1]);
         $visibility = $this->getEntity(
@@ -41,7 +41,7 @@ class VisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $visibilityRepository = $this->getMock(ObjectRepository::class);
+        $visibilityRepository = $this->createMock(ObjectRepository::class);
         $visibilityRepository->method('find')->willReturnMap(
             [
                 [1, $visibility],
@@ -49,14 +49,14 @@ class VisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $scopeRepository = $this->getMock(ObjectRepository::class);
+        $scopeRepository = $this->createMock(ObjectRepository::class);
         $scopeRepository->method('find')->willReturnMap(
             [
                 [1, $scope],
                 [2, null],
             ]
         );
-        $productRepository = $this->getMock(ObjectRepository::class);
+        $productRepository = $this->createMock(ObjectRepository::class);
         $productRepository->method('find')->willReturnMap(
             [
                 [1, $product],
@@ -64,7 +64,7 @@ class VisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $em = $this->getMock(ObjectManager::class);
+        $em = $this->createMock(ObjectManager::class);
         $em->method('getRepository')
             ->willReturnMap(
                 [
@@ -150,7 +150,8 @@ class VisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetEntityFromMessageException(array $data, $message)
     {
-        $this->setExpectedException(InvalidArgumentException::class, $message);
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage($message);
         $this->visibilityMessageFactory->getEntityFromMessage($data);
     }
 

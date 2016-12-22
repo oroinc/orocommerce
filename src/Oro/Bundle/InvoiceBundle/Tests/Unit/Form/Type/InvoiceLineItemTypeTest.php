@@ -109,7 +109,7 @@ class InvoiceLineItemTypeTest extends FormIntegrationTestCase
             ProductUnitSelectionType::NAME
         );
 
-        $priceType = PriceTypeGenerator::createPriceType();
+        $priceType = PriceTypeGenerator::createPriceType($this);
 
         $orderPriceType = new PriceTypeSelectorType();
         $dateType = new OroDateType();

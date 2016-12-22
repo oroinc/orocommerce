@@ -41,7 +41,7 @@ abstract class AbstractQuoteToProductTestCase extends FormIntegrationTestCase
      */
     protected function getRoundingService()
     {
-        $roundingService = $this->getMock('Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface');
+        $roundingService = $this->createMock('Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface');
         $roundingService->expects($this->any())
             ->method('round')
             ->willReturnCallback(

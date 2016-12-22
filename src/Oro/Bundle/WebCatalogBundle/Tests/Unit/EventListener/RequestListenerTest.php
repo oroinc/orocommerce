@@ -26,7 +26,7 @@ class RequestListenerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->registry = $this->getMock(ManagerRegistry::class);
+        $this->registry = $this->createMock(ManagerRegistry::class);
         $this->listener = new RequestListener($this->registry);
     }
 
@@ -91,14 +91,14 @@ class RequestListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $variant = $this->getMock(ContentVariantInterface::class);
+        $variant = $this->createMock(ContentVariantInterface::class);
 
         $repo->expects($this->once())
             ->method('findVariantBySlug')
             ->with($slug)
             ->willReturn($variant);
 
-        $em = $this->getMock(EntityManagerInterface::class);
+        $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->once())
             ->method('getRepository')
             ->with(ContentVariant::class)

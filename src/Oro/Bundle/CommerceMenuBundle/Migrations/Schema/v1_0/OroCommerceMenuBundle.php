@@ -4,8 +4,8 @@ namespace Oro\Bundle\CommerceMenuBundle\Migrations\Schema\v1_0;
 
 use Doctrine\DBAL\Schema\Schema;
 
-use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtension;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
+use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
@@ -13,23 +13,14 @@ class OroCommerceMenuBundle implements
     Migration,
     AttachmentExtensionAwareInterface
 {
+    use AttachmentExtensionAwareTrait;
+
     const ORO_FRONTEND_NAVIGATION_MENU_UPDATE_TABLE_NAME = 'oro_front_nav_menu_upd';
     const ORO_FRONTEND_NAVIGATION_MENU_UPDATE_TITLE_TABLE_NAME = 'oro_front_nav_menu_upd_title';
 
     const MAX_MENU_UPDATE_IMAGE_SIZE_IN_MB = 10;
     const THUMBNAIL_WIDTH_SIZE_IN_PX = 100;
     const THUMBNAIL_HEIGHT_SIZE_IN_PX = 100;
-
-    /** @var AttachmentExtension */
-    protected $attachmentExtension;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setAttachmentExtension(AttachmentExtension $attachmentExtension)
-    {
-        $this->attachmentExtension = $attachmentExtension;
-    }
 
     /**
      * {@inheritdoc}

@@ -100,7 +100,7 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
 
         $productSelect = new ProductSelectTypeStub();
 
-        $priceType = PriceTypeGenerator::createPriceType();
+        $priceType = PriceTypeGenerator::createPriceType($this);
 
         return [
             new PreloadedExtension(

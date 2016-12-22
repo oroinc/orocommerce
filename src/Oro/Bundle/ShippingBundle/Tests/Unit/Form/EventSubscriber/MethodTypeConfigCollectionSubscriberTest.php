@@ -188,7 +188,7 @@ class MethodTypeConfigCollectionSubscriberTest extends FormIntegrationTestCase
      */
     public function getExtensions()
     {
-        $roundingService = $this->getMock(RoundingServiceInterface::class);
+        $roundingService = $this->createMock(RoundingServiceInterface::class);
         $roundingService->expects($this->any())
             ->method('getPrecision')
             ->willReturn(4);
@@ -208,7 +208,7 @@ class MethodTypeConfigCollectionSubscriberTest extends FormIntegrationTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $translator = $this->getMock(TranslatorInterface::class);
+        $translator = $this->createMock(TranslatorInterface::class);
         $translator->expects(static::any())
             ->method('trans')
             ->will(static::returnCallback(function ($message) {

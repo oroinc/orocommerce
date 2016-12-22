@@ -28,7 +28,7 @@ class EnabledTypeConfigsValidationGroupValidatorTest extends \PHPUnit_Framework_
     protected function setUp()
     {
         $this->constraint = new EnabledTypeConfigsValidationGroup();
-        $this->context = $this->getMock(ExecutionContextInterface::class);
+        $this->context = $this->createMock(ExecutionContextInterface::class);
 
         $this->validator = new EnabledTypeConfigsValidationGroupValidator();
         $this->validator->initialize($this->context);
@@ -63,7 +63,7 @@ class EnabledTypeConfigsValidationGroupValidatorTest extends \PHPUnit_Framework_
 
     public function testValidateWithDuplications()
     {
-        $builder = $this->getMock(ConstraintViolationBuilderInterface::class);
+        $builder = $this->createMock(ConstraintViolationBuilderInterface::class);
 
         $this->context->expects($this->once())
             ->method('buildViolation')
@@ -104,11 +104,13 @@ class EnabledTypeConfigsValidationGroupValidatorTest extends \PHPUnit_Framework_
         $this->validator->validate('test', $this->constraint);
     }
 
+    /**
+     * @expectedException \Symfony\Component\Validator\Exception\UnexpectedTypeException
+     */
     public function testUnexpectedItem()
     {
-        $this->setExpectedException(
-            '\Symfony\Component\Validator\Exception\UnexpectedTypeException',
-            'Expected argument of type "Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig",'
+        $this->expectExceptionMessage(
+            'Expected argument of type "Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig",'
             . ' "stdClass" given'
         );
         $data = new ArrayCollection([new \stdClass()]);

@@ -49,11 +49,11 @@ class RemoveUsedShippingServiceValidatorTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->doctrine = $this->getMock(ManagerRegistry::class);
-        $this->registry = $this->getMock(ShippingMethodRegistry::class);
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
+        $this->registry = $this->createMock(ShippingMethodRegistry::class);
 
         $this->constraint = new RemoveUsedShippingService();
-        $this->context = $this->getMock(ExecutionContextInterface::class);
+        $this->context = $this->createMock(ExecutionContextInterface::class);
 
         $this->validator =
             new RemoveUsedShippingServiceValidator($this->doctrine, $this->registry);
@@ -131,7 +131,7 @@ class RemoveUsedShippingServiceValidatorTest extends \PHPUnit_Framework_TestCase
             ->method('findBy')
             ->willReturn($this->createShippingServices(array_diff($enabledTypes, $submitted), true));
 
-        $manager = $this->getMock('Doctrine\ORM\EntityManagerInterface');
+        $manager = $this->createMock('Doctrine\ORM\EntityManagerInterface');
         $manager->expects(static::any())
             ->method('getRepository')
             ->willReturnMap([
@@ -216,7 +216,7 @@ class RemoveUsedShippingServiceValidatorTest extends \PHPUnit_Framework_TestCase
      */
     protected function createForm($data, $path)
     {
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
         $form->expects(static::any())
             ->method('offsetExists')
             ->with($path)

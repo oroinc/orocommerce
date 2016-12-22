@@ -25,6 +25,10 @@ layout:
                     blockType: product_image
                     options:
                         product: '=data["product"]'
+                product_media_popup:
+                    blockType: product_image
+                    options:
+                        product: '=data["product"]'
                 product_view_main_container:
                     blockType: container
                 product_view_content_container:
@@ -54,6 +58,7 @@ layout:
                         product_view_primary_container:
                             product_view_title: ~
                         product_view_aside_container:
+                            product_media_popup: ~
                             product_media: ~
                         product_view_main_container:
                                 product_view_sku: ~

@@ -17,7 +17,7 @@ class AccountRolePageListenerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+        $translator = $this->createMock('Symfony\Component\Translation\TranslatorInterface');
         $translator->expects($this->any())
             ->method('trans')
             ->willReturnCallback(function ($value) {
@@ -30,9 +30,9 @@ class AccountRolePageListenerTest extends \PHPUnit_Framework_TestCase
     public function testOnUpdatePageRenderWithoutRequest()
     {
         $event = new BeforeFormRenderEvent(
-            $this->getMock('Symfony\Component\Form\FormView'),
+            $this->createMock('Symfony\Component\Form\FormView'),
             [],
-            $this->getMock('\Twig_Environment'),
+            $this->createMock('\Twig_Environment'),
             null
         );
 
@@ -44,9 +44,9 @@ class AccountRolePageListenerTest extends \PHPUnit_Framework_TestCase
     public function testOnUpdatePageRenderOnWrongPage()
     {
         $event = new BeforeFormRenderEvent(
-            $this->getMock('Symfony\Component\Form\FormView'),
+            $this->createMock('Symfony\Component\Form\FormView'),
             [],
-            $this->getMock('\Twig_Environment'),
+            $this->createMock('\Twig_Environment'),
             null
         );
 
@@ -60,9 +60,9 @@ class AccountRolePageListenerTest extends \PHPUnit_Framework_TestCase
     public function testOnUpdatePageRenderOnNonCloneRolePage()
     {
         $event = new BeforeFormRenderEvent(
-            $this->getMock('Symfony\Component\Form\FormView'),
+            $this->createMock('Symfony\Component\Form\FormView'),
             [],
-            $this->getMock('\Twig_Environment'),
+            $this->createMock('\Twig_Environment'),
             null
         );
 
@@ -87,7 +87,7 @@ class AccountRolePageListenerTest extends \PHPUnit_Framework_TestCase
         $entity = new AccountUserRole();
         $form = new FormView();
         $form->vars['value'] = $entity;
-        $twig = $this->getMock('\Twig_Environment');
+        $twig = $this->createMock('\Twig_Environment');
         $event = new BeforeFormRenderEvent(
             $form,
             [
@@ -142,7 +142,7 @@ class AccountRolePageListenerTest extends \PHPUnit_Framework_TestCase
     public function testOnViewPageRenderWithoutRequest()
     {
         $event = new BeforeViewRenderEvent(
-            $this->getMock('\Twig_Environment'),
+            $this->createMock('\Twig_Environment'),
             [],
             new \stdClass()
         );
@@ -155,7 +155,7 @@ class AccountRolePageListenerTest extends \PHPUnit_Framework_TestCase
     public function testOnViewPageRenderOnNonUpdateRolePage()
     {
         $event = new BeforeViewRenderEvent(
-            $this->getMock('\Twig_Environment'),
+            $this->createMock('\Twig_Environment'),
             [],
             new \stdClass()
         );
@@ -170,7 +170,7 @@ class AccountRolePageListenerTest extends \PHPUnit_Framework_TestCase
     public function testOnViewPageRender()
     {
         $entity = new AccountUserRole();
-        $twig = $this->getMock('\Twig_Environment');
+        $twig = $this->createMock('\Twig_Environment');
         $event = new BeforeViewRenderEvent(
             $twig,
             [

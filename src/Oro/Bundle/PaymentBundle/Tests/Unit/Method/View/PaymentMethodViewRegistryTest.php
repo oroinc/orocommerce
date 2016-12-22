@@ -36,7 +36,7 @@ class PaymentMethodViewRegistryTest extends \PHPUnit_Framework_TestCase
         $this->registry->addPaymentMethodView($testView2);
         $this->registry->addPaymentMethodView($testViewMethodDisabled);
 
-        $paymentMethod = $this->getMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface');
+        $paymentMethod = $this->createMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface');
         $paymentMethod->expects($this->exactly(3))->method('isEnabled')
             ->willReturnOnConsecutiveCalls(true, true, false);
         $paymentMethod->expects($this->exactly(2))->method('isApplicable')->willReturnOnConsecutiveCalls(true, false);
@@ -56,7 +56,7 @@ class PaymentMethodViewRegistryTest extends \PHPUnit_Framework_TestCase
         $this->registry->addPaymentMethodView($testView);
         $this->registry->addPaymentMethodView($testView2);
 
-        $paymentMethod = $this->getMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface');
+        $paymentMethod = $this->createMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface');
 
         $paymentMethod
             ->expects($this->exactly(2))
@@ -87,7 +87,7 @@ class PaymentMethodViewRegistryTest extends \PHPUnit_Framework_TestCase
         $this->registry->addPaymentMethodView($testView);
         $this->registry->addPaymentMethodView($testView2);
 
-        $paymentMethod = $this->getMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface');
+        $paymentMethod = $this->createMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface');
 
         $paymentMethod
             ->expects($this->exactly(2))
@@ -136,7 +136,7 @@ class PaymentMethodViewRegistryTest extends \PHPUnit_Framework_TestCase
      */
     protected function getTypeMock($name, $order = 0)
     {
-        $type = $this->getMock('Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface');
+        $type = $this->createMock('Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface');
         $type->expects($this->any())->method('getPaymentMethodType')->will($this->returnValue($name));
         $type->expects($this->any())->method('getOrder')->will($this->returnValue($order));
 
