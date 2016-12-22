@@ -96,7 +96,7 @@ class PaymentMethodProviderTest extends \PHPUnit_Framework_TestCase
     {
         $methodConfigMocks = [];
         foreach ($configuredMethodTypes as $configuredMethodType) {
-            $methodConfigMocks[] = $this->createPaymentMethodsConfigMock($configuredMethodType);
+            $methodConfigMocks[] = $this->createPaymentMethodConfigMock($configuredMethodType);
         }
 
         $configsRuleMock = $this->getMockBuilder(PaymentMethodsConfigsRule::class)
@@ -116,7 +116,7 @@ class PaymentMethodProviderTest extends \PHPUnit_Framework_TestCase
      *
      * @return PaymentMethodConfig|\PHPUnit_Framework_MockObject_MockObject
      */
-    private function createPaymentMethodsConfigMock($configuredMethodType)
+    private function createPaymentMethodConfigMock($configuredMethodType)
     {
         $methodConfigMock = $this->getMockBuilder(PaymentMethodConfig::class)
             ->disableOriginalConstructor()
