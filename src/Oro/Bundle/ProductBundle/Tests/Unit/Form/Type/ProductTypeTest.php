@@ -76,7 +76,7 @@ class ProductTypeTest extends FormIntegrationTestCase
      */
     protected function setUp()
     {
-        $this->roundingService = $this->getMock('Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface');
+        $this->roundingService = $this->createMock('Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface');
         $this->defaultProductUnitProvider = $this
             ->getMockBuilder('Oro\Bundle\ProductBundle\Provider\ChainDefaultProductUnitProvider')
             ->disableOriginalConstructor()

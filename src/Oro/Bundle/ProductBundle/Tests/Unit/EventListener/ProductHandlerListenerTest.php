@@ -32,7 +32,7 @@ class ProductHandlerListenerTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
-        $this->logger = $this->getMock(LoggerInterface::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
         $this->listener = new ProductHandlerListener($this->propertyAccessor, $this->logger);
     }
 
@@ -83,7 +83,7 @@ class ProductHandlerListenerTest extends \PHPUnit_Framework_TestCase
     protected function createEvent($entity)
     {
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
-        $form = $this->getMock(FormInterface::class);
+        $form = $this->createMock(FormInterface::class);
         return new AfterFormProcessEvent($form, $entity);
     }
 

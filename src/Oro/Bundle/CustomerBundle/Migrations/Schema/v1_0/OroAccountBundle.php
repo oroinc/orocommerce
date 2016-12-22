@@ -6,8 +6,8 @@ use Doctrine\DBAL\Schema\Schema;
 
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
-use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtension;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
+use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareTrait;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
@@ -23,6 +23,8 @@ class OroAccountBundle implements
     ActivityExtensionAwareInterface,
     ExtendExtensionAwareInterface
 {
+    use AttachmentExtensionAwareTrait;
+
     const ORO_B2B_ACCOUNT_TABLE_NAME = 'orob2b_account';
     const ORO_B2B_ACCOUNT_USER_TABLE_NAME = 'orob2b_account_user';
     const ORO_B2B_ACC_USER_ACCESS_ROLE_TABLE_NAME = 'orob2b_acc_user_access_role';
@@ -44,21 +46,8 @@ class OroAccountBundle implements
     /** @var ExtendExtension */
     protected $extendExtension;
 
-    /** @var AttachmentExtension */
-    protected $attachmentExtension;
-
     /** @var ActivityExtension */
     protected $activityExtension;
-
-    /**
-     * Sets the AttachmentExtension
-     *
-     * @param AttachmentExtension $attachmentExtension
-     */
-    public function setAttachmentExtension(AttachmentExtension $attachmentExtension)
-    {
-        $this->attachmentExtension = $attachmentExtension;
-    }
 
     /**
      * Sets the ActivityExtension

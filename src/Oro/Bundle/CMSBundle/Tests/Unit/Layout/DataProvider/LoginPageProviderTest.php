@@ -23,7 +23,7 @@ class LoginPageProviderTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->managerRegistry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $this->managerRegistry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
         $this->provider = new LoginPageProvider($this->managerRegistry);
         $this->provider->setLoginPageClass(self::LOGIN_PAGE_CLASS);
     }
@@ -33,7 +33,7 @@ class LoginPageProviderTest extends \PHPUnit_Framework_TestCase
         $loginPage = new LoginPage();
 
         /** @var ObjectRepository|\PHPUnit_Framework_MockObject_MockObject $repository */
-        $repository = $this->getMock('Doctrine\Common\Persistence\ObjectRepository');
+        $repository = $this->createMock('Doctrine\Common\Persistence\ObjectRepository');
         $repository->expects($this->once())
             ->method('findOneBy')
             ->with([])

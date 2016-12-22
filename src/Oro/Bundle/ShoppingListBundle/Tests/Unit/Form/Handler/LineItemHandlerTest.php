@@ -63,8 +63,8 @@ class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
                 ->disableOriginalConstructor()
                 ->getMock();
 
-        $this->lineItem = $this->getMock('Oro\Bundle\ShoppingListBundle\Entity\LineItem');
-        $shoppingList = $this->getMock('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList');
+        $this->lineItem = $this->createMock('Oro\Bundle\ShoppingListBundle\Entity\LineItem');
+        $shoppingList = $this->createMock('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList');
 
         $this->lineItem->expects($this->any())
             ->method('getShoppingList')
@@ -89,7 +89,7 @@ class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
     public function testProcessFormNotValid()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|EntityManagerInterface $manager */
-        $manager = $this->getMock('Doctrine\ORM\EntityManagerInterface');
+        $manager = $this->createMock('Doctrine\ORM\EntityManagerInterface');
         $manager->expects($this->once())
             ->method('beginTransaction');
         $manager->expects($this->never())
@@ -128,7 +128,7 @@ class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
         $this->request = Request::create('/', 'PUT');
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|EntityManagerInterface $manager */
-        $manager = $this->getMock('Doctrine\ORM\EntityManagerInterface');
+        $manager = $this->createMock('Doctrine\ORM\EntityManagerInterface');
         $manager->expects($this->once())
             ->method('beginTransaction');
         $manager->expects($this->once())

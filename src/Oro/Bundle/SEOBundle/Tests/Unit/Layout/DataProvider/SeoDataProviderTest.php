@@ -50,7 +50,7 @@ class SeoDataProviderTest extends \PHPUnit_Framework_TestCase
         $node = new ContentNodeStub();
         $node->addMetaDescriptions((new LocalizedFallbackValue())->setString('descr'));
 
-        $contentVariant = $this->getMock(ContentVariantInterface::class);
+        $contentVariant = $this->createMock(ContentVariantInterface::class);
         $contentVariant->expects($this->any())
             ->method('getNode')
             ->willReturn($node);
@@ -79,7 +79,7 @@ class SeoDataProviderTest extends \PHPUnit_Framework_TestCase
     {
         $node = new ContentNodeStub();
 
-        $contentVariant = $this->getMock(ContentVariantInterface::class);
+        $contentVariant = $this->createMock(ContentVariantInterface::class);
         $contentVariant->expects($this->any())
             ->method('getNode')
             ->willReturn($node);

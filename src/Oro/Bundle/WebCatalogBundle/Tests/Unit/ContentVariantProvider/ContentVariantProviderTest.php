@@ -21,9 +21,7 @@ class ContentVariantProviderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->markTestIncomplete('TODO: Fix in scope of BB-6463');
-
-        $this->providerRegistry = $this->getMock(ContentVariantProviderRegistry::class);
+        $this->providerRegistry = $this->createMock(ContentVariantProviderRegistry::class);
         $this->contentVariantProvider = new ContentVariantProvider($this->providerRegistry);
     }
 
@@ -36,13 +34,13 @@ class ContentVariantProviderTest extends \PHPUnit_Framework_TestCase
     {
         $className = 'stdClass';
 
-        $provider1 = $this->getMock(ContentVariantProviderInterface::class);
+        $provider1 = $this->createMock(ContentVariantProviderInterface::class);
         $provider1->expects($this->once())
             ->method('isSupportedClass')
             ->with($className)
             ->willReturn(false);
 
-        $provider2 = $this->getMock(ContentVariantProviderInterface::class);
+        $provider2 = $this->createMock(ContentVariantProviderInterface::class);
         $provider2->expects($this->once())
             ->method('isSupportedClass')
             ->with($className)
@@ -62,13 +60,13 @@ class ContentVariantProviderTest extends \PHPUnit_Framework_TestCase
     {
         $className = 'stdClass';
 
-        $provider1 = $this->getMock(ContentVariantProviderInterface::class);
+        $provider1 = $this->createMock(ContentVariantProviderInterface::class);
         $provider1->expects($this->once())
             ->method('isSupportedClass')
             ->with($className)
             ->willReturn(false);
 
-        $provider2 = $this->getMock(ContentVariantProviderInterface::class);
+        $provider2 = $this->createMock(ContentVariantProviderInterface::class);
         $provider2->expects($this->once())
             ->method('isSupportedClass')
             ->with($className)
@@ -99,7 +97,7 @@ class ContentVariantProviderTest extends \PHPUnit_Framework_TestCase
             $provider2ContentVariant1
         ];
 
-        $provider1 = $this->getMock(ContentVariantProviderInterface::class);
+        $provider1 = $this->createMock(ContentVariantProviderInterface::class);
         $provider1->expects($this->once())
             ->method('getContentVariantsByEntity')
             ->with($entity)
@@ -108,7 +106,7 @@ class ContentVariantProviderTest extends \PHPUnit_Framework_TestCase
                 $provider1ContentVariant2
             ]);
 
-        $provider2 = $this->getMock(ContentVariantProviderInterface::class);
+        $provider2 = $this->createMock(ContentVariantProviderInterface::class);
         $provider2->expects($this->once())
             ->method('getContentVariantsByEntity')
             ->with($entity)
@@ -167,7 +165,7 @@ class ContentVariantProviderTest extends \PHPUnit_Framework_TestCase
             ]
         ];
 
-        $provider1 = $this->getMock(ContentVariantProviderInterface::class);
+        $provider1 = $this->createMock(ContentVariantProviderInterface::class);
         $provider1->expects($this->once())
             ->method('getContentVariantsByEntities')
             ->with($entities)
@@ -176,7 +174,7 @@ class ContentVariantProviderTest extends \PHPUnit_Framework_TestCase
                 $secondEntityId => [$contentVariant2]
             ]);
 
-        $provider2 = $this->getMock(ContentVariantProviderInterface::class);
+        $provider2 = $this->createMock(ContentVariantProviderInterface::class);
         $provider2->expects($this->once())
             ->method('getContentVariantsByEntities')
             ->with($entities)

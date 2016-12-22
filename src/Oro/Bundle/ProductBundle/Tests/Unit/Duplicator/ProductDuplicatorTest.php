@@ -220,6 +220,9 @@ class ProductDuplicatorTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($imageCopy, $productImageCopy->getImage());
     }
 
+    /**
+     * @expectedException \Exception
+     */
     public function testDuplicateFailed()
     {
         $product = (new Product())
@@ -246,8 +249,6 @@ class ProductDuplicatorTest extends \PHPUnit_Framework_TestCase
             ->will($this->throwException(new \Exception()));
         $this->connection->expects($this->once())
             ->method('rollback');
-
-        $this->setExpectedException('Exception');
 
         $this->duplicator->duplicate($product);
     }

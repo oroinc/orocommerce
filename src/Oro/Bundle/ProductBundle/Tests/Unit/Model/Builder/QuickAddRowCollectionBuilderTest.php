@@ -80,7 +80,7 @@ class QuickAddRowCollectionBuilderTest extends \PHPUnit_Framework_TestCase
             ->getMockBuilder(ProductRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->eventDispatcher = $this->getMock(EventDispatcherInterface::class);
+        $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
 
         $this->productManager = $this
             ->getMockBuilder(ProductManager::class)
@@ -129,10 +129,11 @@ class QuickAddRowCollectionBuilderTest extends \PHPUnit_Framework_TestCase
         $this->assertValidCollection($this->builder->buildFromFile($file));
     }
 
+    /**
+     * @expectedException \Box\Spout\Common\Exception\UnsupportedTypeException
+     */
     public function testBuildFromFileWithInvalidFormat()
     {
-        $this->setExpectedException('Box\Spout\Common\Exception\UnsupportedTypeException');
-
         $this->builder->buildFromFile(new UploadedFile(__DIR__ . '/files/quick-order.txt', 'quick-order.txt'));
     }
 
@@ -197,7 +198,7 @@ class QuickAddRowCollectionBuilderTest extends \PHPUnit_Framework_TestCase
      */
     protected function prepareProduct($sku)
     {
-        $product = $this->getMock('Oro\Bundle\ProductBundle\Entity\Product');
+        $product = $this->createMock('Oro\Bundle\ProductBundle\Entity\Product');
         $product->expects($this->once())
             ->method('getSku')
             ->willReturn($sku);

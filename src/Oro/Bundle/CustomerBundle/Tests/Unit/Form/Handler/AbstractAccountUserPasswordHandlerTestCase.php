@@ -40,9 +40,9 @@ abstract class AbstractAccountUserPasswordHandlerTestCase extends \PHPUnit_Frame
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+        $this->translator = $this->createMock('Symfony\Component\Translation\TranslatorInterface');
 
-        $this->form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $this->form = $this->createMock('Symfony\Component\Form\FormInterface');
         $this->request = $this->getMockBuilder('Symfony\Component\HttpFoundation\Request')
             ->disableOriginalConstructor()
             ->getMock();

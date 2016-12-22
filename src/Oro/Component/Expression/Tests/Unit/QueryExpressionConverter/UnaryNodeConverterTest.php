@@ -15,7 +15,7 @@ class UnaryNodeConverterTest extends \PHPUnit_Framework_TestCase
         $expr = new Expr();
         $params = [];
 
-        $node = $this->getMock(NodeInterface::class);
+        $node = $this->createMock(NodeInterface::class);
         $converter = new UnaryNodeConverter();
         $this->assertNull($converter->convert($node, $expr, $params));
     }
@@ -30,9 +30,9 @@ class UnaryNodeConverterTest extends \PHPUnit_Framework_TestCase
         $expr = new Expr();
         $params = [];
         $aliasMapping = [];
-        $subNode = $this->getMock(NodeInterface::class);
+        $subNode = $this->createMock(NodeInterface::class);
 
-        $mainConverter = $this->getMock(QueryExpressionConverterInterface::class);
+        $mainConverter = $this->createMock(QueryExpressionConverterInterface::class);
         $converter = new UnaryNodeConverter();
         $converter->setConverter($mainConverter);
 

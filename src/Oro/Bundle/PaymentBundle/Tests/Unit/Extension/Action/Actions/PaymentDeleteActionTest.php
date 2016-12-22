@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\src\Oro\Bundle\PaymentBundle\Tests\Unit\Extension\Action\Actions;
+namespace Oro\Bundle\PaymentBundle\Tests\Unit\Extension\Action\Actions;
 
 use Oro\Bundle\DataGridBundle\Extension\Action\ActionConfiguration;
 use Oro\Bundle\PaymentBundle\Extension\Action\Actions\PaymentDeleteAction;

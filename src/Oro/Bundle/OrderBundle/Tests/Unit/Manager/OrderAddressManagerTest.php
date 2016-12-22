@@ -34,7 +34,7 @@ class OrderAddressManagerTest extends AbstractAddressManagerTest
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $this->registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
 
         $this->manager = new OrderAddressManager(
             $this->provider,
@@ -64,12 +64,12 @@ class OrderAddressManagerTest extends AbstractAddressManagerTest
         AbstractAddress $expectedAccountUserAddress = null,
         OrderAddress $orderAddress = null
     ) {
-        $classMetadata = $this->getMock('Doctrine\Common\Persistence\Mapping\ClassMetadata');
+        $classMetadata = $this->createMock('Doctrine\Common\Persistence\Mapping\ClassMetadata');
         $classMetadata->expects($this->once())->method('getFieldNames')->willReturn(['street', 'city', 'label']);
         $classMetadata->expects($this->once())->method('getAssociationNames')
             ->willReturn(['country', 'region']);
 
-        $em = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
+        $em = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
         $em->expects($this->once())->method('getClassMetadata')->willReturn($classMetadata);
 
         $this->registry->expects($this->any())->method('getManagerForClass')->with($this->isType('string'))
@@ -315,8 +315,8 @@ class OrderAddressManagerTest extends AbstractAddressManagerTest
      */
     protected function getManager(array $addresses, $types)
     {
-        $repo = $this->getMock('\Doctrine\Common\Persistence\ObjectRepository');
-        $manager = $this->getMock('\Doctrine\Common\Persistence\ObjectManager');
+        $repo = $this->createMock('\Doctrine\Common\Persistence\ObjectRepository');
+        $manager = $this->createMock('\Doctrine\Common\Persistence\ObjectManager');
         $manager->expects($this->any())
             ->method('getRepository')
             ->willReturn($repo);

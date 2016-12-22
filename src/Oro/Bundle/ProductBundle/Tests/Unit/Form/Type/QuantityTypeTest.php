@@ -122,7 +122,8 @@ class QuantityTypeTest extends FormIntegrationTestCase
     ) {
         if ($expectedException) {
             list($exception, $message) = $expectedException;
-            $this->setExpectedException($exception, $message);
+            $this->expectException($exception);
+            $this->expectExceptionMessage($message);
         }
 
         $this->parentType->setQuantityOptions($options);
@@ -245,7 +246,7 @@ class QuantityTypeTest extends FormIntegrationTestCase
      */
     protected function getProductHolder(Product $product = null)
     {
-        $holder = $this->getMock('Oro\Bundle\ProductBundle\Model\ProductHolderInterface');
+        $holder = $this->createMock('Oro\Bundle\ProductBundle\Model\ProductHolderInterface');
         $holder->expects($this->any())->method('getProduct')->willReturn($product);
 
         return $holder;

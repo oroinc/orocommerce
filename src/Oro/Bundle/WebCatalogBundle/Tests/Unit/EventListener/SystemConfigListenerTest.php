@@ -25,7 +25,7 @@ class SystemConfigListenerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->registry = $this->getMock(ManagerRegistry::class);
+        $this->registry = $this->createMock(ManagerRegistry::class);
 
         $this->listener = new SystemConfigListener($this->registry);
     }

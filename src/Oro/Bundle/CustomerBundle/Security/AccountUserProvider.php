@@ -73,10 +73,7 @@ class AccountUserProvider
      */
     public function isGrantedViewBasic($class)
     {
-        return $this->isGrantedEntityMask(
-            $class,
-            $this->getMaskBuilderForPermission('VIEW')->getMask('MASK_VIEW_BASIC')
-        );
+        return $this->isGranted($class, 'VIEW', 'BASIC');
     }
 
     /**
@@ -85,10 +82,25 @@ class AccountUserProvider
      */
     public function isGrantedViewLocal($class)
     {
-        return $this->isGrantedEntityMask(
-            $class,
-            $this->getMaskBuilderForPermission('VIEW')->getMask('MASK_VIEW_LOCAL')
-        );
+        return $this->isGranted($class, 'VIEW', 'LOCAL');
+    }
+
+    /**
+     * @param string $class
+     * @return boolean
+     */
+    public function isGrantedViewDeep($class)
+    {
+        return $this->isGranted($class, 'VIEW', 'DEEP');
+    }
+
+    /**
+     * @param string $class
+     * @return boolean
+     */
+    public function isGrantedViewSystem($class)
+    {
+        return $this->isGranted($class, 'VIEW', 'SYSTEM');
     }
 
     /**
@@ -97,10 +109,7 @@ class AccountUserProvider
      */
     public function isGrantedEditBasic($class)
     {
-        return $this->isGrantedEntityMask(
-            $class,
-            $this->getMaskBuilderForPermission('EDIT')->getMask('MASK_EDIT_BASIC')
-        );
+        return $this->isGranted($class, 'EDIT', 'BASIC');
     }
 
     /**
@@ -109,10 +118,7 @@ class AccountUserProvider
      */
     public function isGrantedEditLocal($class)
     {
-        return $this->isGrantedEntityMask(
-            $class,
-            $this->getMaskBuilderForPermission('EDIT')->getMask('MASK_EDIT_LOCAL')
-        );
+        return $this->isGranted($class, 'EDIT', 'LOCAL');
     }
 
     /**
@@ -126,11 +132,28 @@ class AccountUserProvider
             return false;
         }
 
-        if (!$this->isGrantedViewLocal($class)) {
-            return false;
+        if ($this->isGrantedViewLocal($class) ||
+            $this->isGrantedViewDeep($class) ||
+            $this->isGrantedViewSystem($class)
+        ) {
+            return true;
         }
 
-        return true;
+        return false;
+    }
+
+    /**
+     * @param string $class
+     * @param string $permission
+     * @param string $level
+     * @return bool
+     */
+    private function isGranted($class, $permission, $level)
+    {
+        return $this->isGrantedEntityMask(
+            $class,
+            $this->getMaskBuilderForPermission($permission)->getMask('MASK_' . $permission . '_' . $level)
+        );
     }
 
     /**

@@ -34,7 +34,7 @@ class DuplicateTest extends \PHPUnit_Framework_TestCase
     {
         $this->contextAccessor = new ContextAccessor();
         $this->action = new Duplicate($this->contextAccessor);
-        $this->eventDispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
+        $this->eventDispatcher = $this->createMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
         $this->action->setDispatcher($this->eventDispatcher);
         $this->action->setDuplicatorFactory($this->getDuplicateFactory());
     }
@@ -70,7 +70,8 @@ class DuplicateTest extends \PHPUnit_Framework_TestCase
      */
     public function testInitializeException(array $options, $exception, $exceptionMessage)
     {
-        $this->setExpectedException($exception, $exceptionMessage);
+        $this->expectException($exception);
+        $this->expectExceptionMessage($exceptionMessage);
         $this->action->initialize($options);
     }
 
@@ -128,7 +129,7 @@ class DuplicateTest extends \PHPUnit_Framework_TestCase
         $contextAccessor = $this->getMockBuilder(ContextAccessor::class)->disableOriginalConstructor()->getMock();
 
         /** @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject $eventDispatcher $eventDispatcher */
-        $eventDispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
+        $eventDispatcher = $this->createMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
 
         $action = new Duplicate($contextAccessor);
         $action->setDispatcher($eventDispatcher);

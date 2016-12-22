@@ -30,15 +30,15 @@ class ProductSelectionGridExtensionTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->tokenStorage = $this
-            ->getMock('Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface');
+            ->createMock('Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface');
         $this->productListModifier = $this
             ->getMockBuilder('Oro\Bundle\PricingBundle\Model\FrontendProductListModifier')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->request = $this->getMock('Symfony\Component\HttpFoundation\Request');
+        $this->request = $this->createMock('Symfony\Component\HttpFoundation\Request');
         /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
-        $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
+        $requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
         $requestStack->expects($this->any())->method('getCurrentRequest')->willReturn($this->request);
 
         $this->extension = new ProductSelectionGridExtension(
@@ -89,7 +89,7 @@ class ProductSelectionGridExtensionTest extends \PHPUnit_Framework_TestCase
      */
     protected function getTockenMock($getUser = false)
     {
-        $tokenMock = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $tokenMock = $this->createMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
 
         if ($getUser) {
             $tokenMock->expects($this->any())
@@ -115,7 +115,7 @@ class ProductSelectionGridExtensionTest extends \PHPUnit_Framework_TestCase
 
         $gridName = 'products-select-grid-frontend';
 
-        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $token = $this->createMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
         $token->expects($this->any())
             ->method('getUser')
             ->will($this->returnValue(new AccountUser()));

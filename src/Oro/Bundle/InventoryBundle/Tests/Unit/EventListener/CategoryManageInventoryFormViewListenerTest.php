@@ -41,7 +41,7 @@ class CategoryManageInventoryFormViewListenerTest extends FormViewListenerTestCa
     protected function setUp()
     {
         parent::setUp();
-        $this->requestStack = $this->getMock(RequestStack::class);
+        $this->requestStack = $this->createMock(RequestStack::class);
 
         $this->request = $this->getMockBuilder(Request::class)
             ->disableOriginalConstructor()
@@ -114,7 +114,7 @@ class CategoryManageInventoryFormViewListenerTest extends FormViewListenerTestCa
             ->method('getEnvironment')
             ->willReturn($env);
 
-        $scrollData = $this->getMock(ScrollData::class);
+        $scrollData = $this->createMock(ScrollData::class);
 
         $this->event->expects($this->once())
             ->method('getScrollData')
