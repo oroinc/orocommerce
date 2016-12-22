@@ -38,7 +38,7 @@ class PaymentMethodsConfigsRuleRepositoryTest extends WebTestCase
     {
         $allConfigsRules = $this->repository->findAll();
 
-        $this->assertEquals(4, count($allConfigsRules));
+        $this->assertEquals(6, count($allConfigsRules));
     }
 
     /**
@@ -72,7 +72,10 @@ class PaymentMethodsConfigsRuleRepositoryTest extends WebTestCase
         $expectedConfigsRules = $this->getConfigsRulesByReferences($data['expectedEntityReferences']);
         $configsRules = $this->repository->getByDestinationAndCurrency($billingAddress, $currency);
 
-        $this->assertEquals(sort($expectedConfigsRules), sort($configsRules));
+        sort($expectedConfigsRules);
+        sort($configsRules);
+
+        $this->assertEquals($expectedConfigsRules, $configsRules);
     }
 
     /**
@@ -99,7 +102,10 @@ class PaymentMethodsConfigsRuleRepositoryTest extends WebTestCase
                     'combinedRegionCode' => 'AE-AJ',
                     'postalCode' => '12345',
                     'currency' => 'USD',
-                    'expectedEntityReferences' => []
+                    'expectedEntityReferences' => [
+                        'payment.payment_methods_configs_rule.5',
+                        'payment.payment_methods_configs_rule.6',
+                    ]
                 ],
             ],
             3 => [
@@ -109,7 +115,9 @@ class PaymentMethodsConfigsRuleRepositoryTest extends WebTestCase
                     'postalCode' => '12345',
                     'currency' => 'USD',
                     'expectedEntityReferences' => [
-                        'payment.payment_methods_configs_rule.1'
+                        'payment.payment_methods_configs_rule.1',
+                        'payment.payment_methods_configs_rule.5',
+                        'payment.payment_methods_configs_rule.6',
                     ],
                 ],
             ],
@@ -119,7 +127,10 @@ class PaymentMethodsConfigsRuleRepositoryTest extends WebTestCase
                     'combinedRegionCode' => 'AD-02',
                     'postalCode' => '12123345',
                     'currency' => 'USD',
-                    'expectedEntityReferences' => []
+                    'expectedEntityReferences' => [
+                        'payment.payment_methods_configs_rule.5',
+                        'payment.payment_methods_configs_rule.6',
+                    ]
                 ],
             ],
             5 => [
@@ -129,11 +140,27 @@ class PaymentMethodsConfigsRuleRepositoryTest extends WebTestCase
                     'postalCode' => '43561',
                     'currency' => 'USD',
                     'expectedEntityReferences' => [
-                        'payment.payment_methods_configs_rule.4'
+                        'payment.payment_methods_configs_rule.1',
+                        'payment.payment_methods_configs_rule.5',
+                        'payment.payment_methods_configs_rule.6',
                     ]
                 ],
             ]
         ];
+    }
+
+    public function testGetByCurrencyWithoutDestination()
+    {
+        $expectedConfigsRules = $this->getConfigsRulesByReferences([
+            'payment.payment_methods_configs_rule.5',
+            'payment.payment_methods_configs_rule.6',
+        ]);
+        $configsRules = $this->repository->getByCurrencyWithoutDestination('USD');
+
+        sort($expectedConfigsRules);
+        sort($configsRules);
+
+        $this->assertEquals($expectedConfigsRules, $configsRules);
     }
 
     /**

@@ -132,9 +132,12 @@ class PaymentMethodConfig extends ExtendPaymentMethodConfig
 
     /**
      * @param array $options
+     * @return $this
      */
     public function setOptions($options)
     {
         $this->options = $options;
+
+        return $this;
     }
 }

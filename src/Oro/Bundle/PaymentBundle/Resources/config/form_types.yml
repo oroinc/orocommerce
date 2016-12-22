@@ -1,0 +1,37 @@
+services:
+    oro_payment.form.type.method_config_collection:
+        class: Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodConfigCollectionType
+        tags:
+            - { name: form.type, alias: oro_payment_method_config_collection }
+
+    oro_payment.form.type.method_config:
+        class: Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodConfigType
+        tags:
+            - { name: form.type, alias: oro_payment_method_config }
+
+    oro_payment.form.type.methods_configs_rule_destination_collection:
+        class: Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodsConfigsRuleDestinationCollectionType
+        tags:
+            - { name: form.type, alias: oro_payment_methods_configs_rule_destination_collection }
+
+    oro_payment.form.type.methods_configs_rule_destination_postal_code_collection:
+        class: Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodsConfigsRuleDestinationPostalCodeCollectionType
+        tags:
+            - { name: form.type, alias: oro_payment_methods_configs_rule_destination_postal_code_collection }
+
+    oro_payment.form.type.methods_configs_rule_destination_postal_code:
+        class: Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodsConfigsRuleDestinationPostalCodeType
+        tags:
+            - { name: form.type, alias: oro_payment_methods_configs_rule_destination_postal_code }
+
+    oro_payment.form.type.methods_configs_rule_destination:
+        class: Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodsConfigsRuleDestinationType
+        arguments:
+            - '@oro_address.form.listener.address'
+        tags:
+            - { name: form.type, alias: oro_payment_methods_configs_rule_destination }
+
+    oro_payment.form.type.methods_configs_rule:
+        class: Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodsConfigsRuleType
+        tags:
+            - { name: form.type, alias: oro_payment_methods_configs_rule }
