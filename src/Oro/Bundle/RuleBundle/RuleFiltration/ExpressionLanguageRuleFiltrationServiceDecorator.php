@@ -38,7 +38,7 @@ class ExpressionLanguageRuleFiltrationServiceDecorator implements RuleFiltration
         foreach ($ruleOwners as $ruleOwner) {
             $rule = $ruleOwner->getRule();
 
-            if ($this->expressionApplicable($rule->getExpression(), $context)) {
+            if (!$rule->getExpression() || $this->expressionApplicable($rule->getExpression(), $context)) {
                 $filteredOwners[] = $ruleOwner;
             }
         }

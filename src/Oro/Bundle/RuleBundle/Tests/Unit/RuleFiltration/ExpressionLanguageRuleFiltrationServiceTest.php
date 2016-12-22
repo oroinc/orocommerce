@@ -72,6 +72,7 @@ class ExpressionLanguageRuleFiltrationServiceTest extends \PHPUnit_Framework_Tes
         $applicable = $this->createApplicableOwner('1');
         $notApplicable = $this->createNotApplicableOwner('2');
         $exceptionOwner = $this->createExceptionOwner();
+        $nullExpressionOwner = $this->createNullExpressionOwner('3');
 
         return [
             'testOnlyApplicablePass' => [
@@ -81,6 +82,10 @@ class ExpressionLanguageRuleFiltrationServiceTest extends \PHPUnit_Framework_Tes
             'testWithWrongLanguageExpression' => [
                 [$applicable, $exceptionOwner, $applicable],
                 [$applicable, $applicable]
+            ],
+            'testWithNullLanguageExpression' => [
+                [$nullExpressionOwner, $notApplicable, $applicable],
+                [$nullExpressionOwner, $applicable]
             ],
         ];
     }
@@ -135,6 +140,20 @@ class ExpressionLanguageRuleFiltrationServiceTest extends \PHPUnit_Framework_Tes
 
         $rule->setName($name)
             ->setExpression(self::EXPRESSION_VARIABLE . ' = ' . self::EXPRESSION_VALUE);
+
+        return $this->createRuleOwner($rule);
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return RuleOwnerInterface
+     */
+    private function createNullExpressionOwner($name)
+    {
+        $rule = new Rule();
+
+        $rule->setName($name);
 
         return $this->createRuleOwner($rule);
     }
