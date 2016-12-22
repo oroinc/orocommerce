@@ -58,7 +58,7 @@ class RequestStatusTranslationTypeTest extends \PHPUnit_Framework_TestCase
     public function testBuildView()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|Form $form */
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
         $view = new FormView();
 
         $this->assertArrayNotHasKey('labels', $view->vars);

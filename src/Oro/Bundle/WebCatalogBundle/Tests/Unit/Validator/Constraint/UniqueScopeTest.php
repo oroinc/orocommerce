@@ -35,7 +35,7 @@ class UniqueScopeTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->context = $this->getMock(ExecutionContextInterface::class);
+        $this->context = $this->createMock(ExecutionContextInterface::class);
         $this->constraint = new UniqueScope();
 
         $this->validator = new UniqueScopeValidator();
@@ -105,7 +105,7 @@ class UniqueScopeTest extends \PHPUnit_Framework_TestCase
             (new ContentVariant())->addScope($scope2)->addScope($scope1),
         ];
         $value = new ArrayCollection($values);
-        $constraintBuilder = $this->getMock(ConstraintViolationBuilderInterface::class);
+        $constraintBuilder = $this->createMock(ConstraintViolationBuilderInterface::class);
         $constraintBuilder->expects($this->once())
             ->method('atPath')
             ->with('[1].scopes[1]')

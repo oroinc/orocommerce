@@ -43,7 +43,7 @@ class PurchaseActionTest extends AbstractActionTest
             ->setPaymentMethod($options['paymentMethod']);
 
         /** @var PaymentMethodInterface|\PHPUnit_Framework_MockObject_MockObject $paymentMethod */
-        $paymentMethod = $this->getMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface');
+        $paymentMethod = $this->createMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface');
         $paymentMethod->expects($this->once())
             ->method('execute')
             ->with(PaymentMethodInterface::PURCHASE, $paymentTransaction)
@@ -224,7 +224,7 @@ class PurchaseActionTest extends AbstractActionTest
             ->willReturn($paymentTransaction);
 
         /** @var PaymentMethodInterface|\PHPUnit_Framework_MockObject_MockObject $paymentMethod */
-        $paymentMethod = $this->getMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface');
+        $paymentMethod = $this->createMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface');
         $paymentMethod->expects($this->once())->method('supports')->with('validate')->willReturn(true);
 
         $this->paymentMethodRegistry->expects($this->once())->method('getPaymentMethod')
@@ -272,7 +272,7 @@ class PurchaseActionTest extends AbstractActionTest
             ->willReturn($sourcePaymentTransaction);
 
         /** @var PaymentMethodInterface|\PHPUnit_Framework_MockObject_MockObject $paymentMethod */
-        $paymentMethod = $this->getMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface');
+        $paymentMethod = $this->createMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface');
         $paymentMethod->expects($this->once())->method('supports')->with('validate')->willReturn(true);
         $paymentMethod
             ->expects($this->once())
@@ -378,7 +378,7 @@ class PurchaseActionTest extends AbstractActionTest
             ->willReturn($paymentTransaction);
 
         /** @var PaymentMethodInterface|\PHPUnit_Framework_MockObject_MockObject $paymentMethod */
-        $paymentMethod = $this->getMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface');
+        $paymentMethod = $this->createMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface');
         $paymentMethod->expects($this->once())->method('execute')->willThrowException(new \Exception());
 
         $this->paymentMethodRegistry

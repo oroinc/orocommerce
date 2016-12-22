@@ -29,7 +29,7 @@ class ContentVariantTypeRegistryTest extends \PHPUnit_Framework_TestCase
         $pageTypeName = 'test_type';
 
         /** @var ContentVariantTypeInterface|\PHPUnit_Framework_MockObject_MockObject $pageType */
-        $pageType = $this->getMock(ContentVariantTypeInterface::class);
+        $pageType = $this->createMock(ContentVariantTypeInterface::class);
 
         $pageType->expects($this->any())
             ->method('getName')
@@ -43,7 +43,7 @@ class ContentVariantTypeRegistryTest extends \PHPUnit_Framework_TestCase
     public function testGetPageType()
     {
         /** @var ContentVariantTypeInterface|\PHPUnit_Framework_MockObject_MockObject $pageType */
-        $pageType = $this->getMock(ContentVariantTypeInterface::class);
+        $pageType = $this->createMock(ContentVariantTypeInterface::class);
 
         $pageType->expects($this->any())
             ->method('getName')
@@ -59,10 +59,8 @@ class ContentVariantTypeRegistryTest extends \PHPUnit_Framework_TestCase
     {
         $unknownPageType = 'unknown';
 
-        $this->setExpectedException(
-            InvalidArgumentException::class,
-            sprintf('Content variant type "%s" is not known.', $unknownPageType)
-        );
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage(sprintf('Content variant type "%s" is not known.', $unknownPageType));
         
         $this->registry->getContentVariantType($unknownPageType);
     }
@@ -73,14 +71,14 @@ class ContentVariantTypeRegistryTest extends \PHPUnit_Framework_TestCase
         $pageType2Name = 'test_type_2';
 
         /** @var ContentVariantTypeInterface|\PHPUnit_Framework_MockObject_MockObject $pageType1 */
-        $pageType1 = $this->getMock(ContentVariantTypeInterface::class);
+        $pageType1 = $this->createMock(ContentVariantTypeInterface::class);
 
         $pageType1->expects($this->any())
             ->method('getName')
             ->willReturn($pageType1Name);
 
         /** @var ContentVariantTypeInterface|\PHPUnit_Framework_MockObject_MockObject $pageType2 */
-        $pageType2 = $this->getMock(ContentVariantTypeInterface::class);
+        $pageType2 = $this->createMock(ContentVariantTypeInterface::class);
 
         $pageType2->expects($this->any())
             ->method('getName')
@@ -106,7 +104,7 @@ class ContentVariantTypeRegistryTest extends \PHPUnit_Framework_TestCase
         $pageType2Name = 'test_type_2';
 
         /** @var ContentVariantTypeInterface|\PHPUnit_Framework_MockObject_MockObject $pageType1 */
-        $pageType1 = $this->getMock(ContentVariantTypeInterface::class);
+        $pageType1 = $this->createMock(ContentVariantTypeInterface::class);
 
         $pageType1->expects($this->any())
             ->method('getName')
@@ -116,7 +114,7 @@ class ContentVariantTypeRegistryTest extends \PHPUnit_Framework_TestCase
             ->willReturn(true);
 
         /** @var ContentVariantTypeInterface|\PHPUnit_Framework_MockObject_MockObject $pageType2 */
-        $pageType2 = $this->getMock(ContentVariantTypeInterface::class);
+        $pageType2 = $this->createMock(ContentVariantTypeInterface::class);
 
         $pageType2->expects($this->any())
             ->method('getName')
@@ -140,14 +138,14 @@ class ContentVariantTypeRegistryTest extends \PHPUnit_Framework_TestCase
 
     public function testGetFormType()
     {
-        $type1 = $this->getMock(ContentVariantTypeInterface::class);
+        $type1 = $this->createMock(ContentVariantTypeInterface::class);
         $type1->expects($this->any())
             ->method('getName')
             ->willReturn('type1');
         $type1->expects($this->never())
             ->method('getFormType');
 
-        $type2 = $this->getMock(ContentVariantTypeInterface::class);
+        $type2 = $this->createMock(ContentVariantTypeInterface::class);
         $type2->expects($this->any())
             ->method('getName')
             ->willReturn('type2');

@@ -21,8 +21,8 @@ class ProductAssignmentRuleExpressionPreprocessorTest extends \PHPUnit_Framework
 
     protected function setUp()
     {
-        $registry = $this->getMock(ManagerRegistry::class);
-        $this->em = $this->getMock(EntityManagerInterface::class);
+        $registry = $this->createMock(ManagerRegistry::class);
+        $this->em = $this->createMock(EntityManagerInterface::class);
         $registry->expects($this->any())
             ->method('getManagerForClass')
             ->willReturn($this->em);

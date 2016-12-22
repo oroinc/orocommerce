@@ -19,7 +19,7 @@
             </td>
         </tr>
         <% _.each(unitPrices, function(price) { %>
-        <tr class="<% if (!_.isNull(modelPrice) && unit === modelUnit && parseFloat(price.price) === parseFloat(modelPrice)) { %>matched-tier-price<% } %>">
+        <tr class="<% if (!_.isEmpty(matchedPrice) && unit === matchedPrice.unit && parseFloat(price.price) === parseFloat(matchedPrice.price)) { %>matched-tier-price<% } %>">
             <td><div class="text-right"><%= price.quantity %>:</div></td>
             <td>
                 <div class="text-left">

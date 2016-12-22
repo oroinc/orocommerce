@@ -160,19 +160,6 @@
     {{ form_widget(form, {'class_prefix': 'checkout'}) }}
 {% endblock %}
 
-{% block genemu_jqueryselect2_widget %}
-    {% set component_options = {
-        containerCssClass: 'oro-select2 oro-select2--size-m'
-    } %}
-
-    {{ form_widget(form, { 'attr': {
-        'class': 'select',
-        'data-input-widget-options': component_options|json_encode
-    } }) }}
-
-    {{ parent() }}
-{% endblock %}
-
 {# TODO: remove due BB-3540 #}
 {%- block form_errors -%}
     {%- if errors|length > 0 -%}

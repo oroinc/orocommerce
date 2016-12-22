@@ -18,7 +18,7 @@ class PayPalTest extends \PHPUnit_Framework_TestCase
 
     public function testConfigureOptionsDoNothingIfNoSwipe()
     {
-        $resolver = $this->getMock('Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsResolver');
+        $resolver = $this->createMock('Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsResolver');
         $resolver->expects($this->once())->method('isDefined')->with('SWIPE')->willReturn(false);
         $resolver->expects($this->never())->method('remove');
 
@@ -28,7 +28,7 @@ class PayPalTest extends \PHPUnit_Framework_TestCase
 
     public function testConfigureOptionsRemoveSwipe()
     {
-        $resolver = $this->getMock('Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsResolver');
+        $resolver = $this->createMock('Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsResolver');
         $resolver->expects($this->once())->method('isDefined')->with('SWIPE')->willReturn(true);
         $resolver->expects($this->once())->method('remove')->with('SWIPE');
 

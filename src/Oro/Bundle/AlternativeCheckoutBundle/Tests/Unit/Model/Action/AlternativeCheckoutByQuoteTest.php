@@ -24,12 +24,12 @@ class AlternativeCheckoutByQuoteTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $this->registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
 
         $this->contextAccessor = new ContextAccessor();
 
         $this->action = new AlternativeCheckoutByQuote($this->contextAccessor, $this->registry);
-        $this->action->setDispatcher($this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface'));
+        $this->action->setDispatcher($this->createMock('Symfony\Component\EventDispatcher\EventDispatcherInterface'));
     }
 
     protected function tearDown()
@@ -61,7 +61,8 @@ class AlternativeCheckoutByQuoteTest extends \PHPUnit_Framework_TestCase
      */
     public function testInitializeException(array $inputData, $exception, $exceptionMessage)
     {
-        $this->setExpectedException($exception, $exceptionMessage);
+        $this->expectException($exception);
+        $this->expectExceptionMessage($exceptionMessage);
 
         $this->action->initialize($inputData);
     }
@@ -124,7 +125,7 @@ class AlternativeCheckoutByQuoteTest extends \PHPUnit_Framework_TestCase
             ->willReturn($checkout);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|ObjectManager $em */
-        $em = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
+        $em = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
         $em->expects($this->once())
             ->method('getRepository')
             ->with('OroCheckoutBundle:Checkout')

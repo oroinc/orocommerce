@@ -7,8 +7,8 @@ use Doctrine\DBAL\Types\Type;
 
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
-use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtension;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
+use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareTrait;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
@@ -28,6 +28,7 @@ class OroAccountBundleInstaller implements
     ExtendExtensionAwareInterface,
     ScopeExtensionAwareInterface
 {
+    use AttachmentExtensionAwareTrait;
     use ScopeExtensionAwareTrait;
 
     const ORO_ACCOUNT_TABLE_NAME = 'oro_account';
@@ -59,21 +60,8 @@ class OroAccountBundleInstaller implements
     /** @var ExtendExtension */
     protected $extendExtension;
 
-    /** @var AttachmentExtension */
-    protected $attachmentExtension;
-
     /** @var ActivityExtension */
     protected $activityExtension;
-
-    /**
-     * Sets the AttachmentExtension
-     *
-     * @param AttachmentExtension $attachmentExtension
-     */
-    public function setAttachmentExtension(AttachmentExtension $attachmentExtension)
-    {
-        $this->attachmentExtension = $attachmentExtension;
-    }
 
     /**
      * Sets the ActivityExtension

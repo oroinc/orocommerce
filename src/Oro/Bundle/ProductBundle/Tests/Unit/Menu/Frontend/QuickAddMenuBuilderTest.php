@@ -20,7 +20,7 @@ class QuickAddMenuBuilderTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->componentRegistry = $this
-            ->getMock('Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry');
+            ->createMock('Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry');
 
         $this->builder = new QuickAddMenuBuilder($this->componentRegistry);
     }
@@ -41,7 +41,7 @@ class QuickAddMenuBuilderTest extends \PHPUnit_Framework_TestCase
             ->method('hasAllowedProcessor')->willReturn($hasAllowedProcessor);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|\Knp\Menu\ItemInterface $menu */
-        $menu = $this->getMock('Knp\Menu\ItemInterface');
+        $menu = $this->createMock('Knp\Menu\ItemInterface');
 
         if ($hasAllowedProcessor) {
             $menu->expects($this->once())

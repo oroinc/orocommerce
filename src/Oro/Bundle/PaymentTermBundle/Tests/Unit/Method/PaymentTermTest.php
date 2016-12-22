@@ -51,7 +51,7 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->config = $this->getMock(PaymentTermConfigInterface::class);
+        $this->config = $this->createMock(PaymentTermConfigInterface::class);
 
         $this->paymentTransaction = new PaymentTransaction();
         $this->paymentTransaction->setSuccessful(false);

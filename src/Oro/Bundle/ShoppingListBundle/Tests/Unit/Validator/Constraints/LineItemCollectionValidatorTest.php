@@ -29,7 +29,7 @@ class LineItemCollectionValidatorTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->eventDispatcher = $this->getMock(EventDispatcherInterface::class);
+        $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
         $this->lineItemCollectionValidator = new LineItemCollectionValidator($this->eventDispatcher);
         $this->constraint = $this->getMockBuilder(Constraint::class)
             ->disableOriginalConstructor()
@@ -58,7 +58,7 @@ class LineItemCollectionValidatorTest extends \PHPUnit_Framework_TestCase
                     $event->addError('testSku', 'testMessage');
                 }
             );
-        $executionContext = $this->getMock(ExecutionContextInterface::class);
+        $executionContext = $this->createMock(ExecutionContextInterface::class);
         $this->lineItemCollectionValidator->initialize($executionContext);
         $violationBuilder = $this->getMockBuilder(ConstraintViolationBuilder::class)
             ->disableOriginalConstructor()
@@ -68,7 +68,7 @@ class LineItemCollectionValidatorTest extends \PHPUnit_Framework_TestCase
             ->willReturn($violationBuilder);
         $violationBuilder->expects($this->once())
             ->method('atPath')
-            ->willReturn($this->getMock(ConstraintViolationBuilderInterface::class));
+            ->willReturn($this->createMock(ConstraintViolationBuilderInterface::class));
         $this->lineItemCollectionValidator->validate([], $this->constraint);
     }
 }

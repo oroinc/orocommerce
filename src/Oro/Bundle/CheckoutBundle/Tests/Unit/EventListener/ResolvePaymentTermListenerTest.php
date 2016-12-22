@@ -52,9 +52,9 @@ class ResolvePaymentTermListenerTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->event = new ResolvePaymentTermEvent();
-        $this->requestStack = $this->getMock(RequestStack::class);
-        $this->registry = $this->getMock(ManagerRegistry::class);
-        $this->manager = $this->getMock(ObjectManager::class);
+        $this->requestStack = $this->createMock(RequestStack::class);
+        $this->registry = $this->createMock(ManagerRegistry::class);
+        $this->manager = $this->createMock(ObjectManager::class);
         $this->paymentTermProvider = $this->getMockBuilder(PaymentTermProvider::class)
             ->disableOriginalConstructor()->getMock();
 
@@ -95,7 +95,7 @@ class ResolvePaymentTermListenerTest extends \PHPUnit_Framework_TestCase
     public function testOnResolvePaymentTermEntityDemand()
     {
         /** @var Checkout|\PHPUnit_Framework_MockObject_MockObject $checkout */
-        $checkout = $this->getMock(Checkout::class);
+        $checkout = $this->createMock(Checkout::class);
 
         $this->mockGetCurrentCheckout($checkout);
         $checkout->expects($this->once())->method('getSourceEntity')->willReturn(null);
@@ -107,9 +107,9 @@ class ResolvePaymentTermListenerTest extends \PHPUnit_Framework_TestCase
     public function testOnResolvePaymentTermBadCheckoutSource()
     {
         /** @var Checkout|\PHPUnit_Framework_MockObject_MockObject $checkout */
-        $checkout = $this->getMock(Checkout::class);
+        $checkout = $this->createMock(Checkout::class);
         /** @var CheckoutSourceEntityInterface|\PHPUnit_Framework_MockObject_MockObject $checkoutSource */
-        $checkoutSourceEntity = $this->getMock(CheckoutSourceEntityInterface::class);
+        $checkoutSourceEntity = $this->createMock(CheckoutSourceEntityInterface::class);
 
         $this->mockGetCurrentCheckout($checkout);
         $checkout->expects($this->once())->method('getSourceEntity')->willReturn($checkoutSourceEntity);
@@ -121,7 +121,7 @@ class ResolvePaymentTermListenerTest extends \PHPUnit_Framework_TestCase
     public function testOnResolvePaymentTermNoPaymentTerm()
     {
         /** @var Checkout|\PHPUnit_Framework_MockObject_MockObject $checkout */
-        $checkout = $this->getMock(Checkout::class);
+        $checkout = $this->createMock(Checkout::class);
         $checkoutSourceEntity = new PaymentTermAwareStub();
 
         $this->mockGetCurrentCheckout($checkout);
@@ -134,7 +134,7 @@ class ResolvePaymentTermListenerTest extends \PHPUnit_Framework_TestCase
     public function testOnResolvePaymentTerm()
     {
         /** @var Checkout|\PHPUnit_Framework_MockObject_MockObject $checkout */
-        $checkout = $this->getMock(Checkout::class);
+        $checkout = $this->createMock(Checkout::class);
         /** @var CheckoutSource|\PHPUnit_Framework_MockObject_MockObject $checkoutSource */
         $paymentTerm = new PaymentTerm();
         $checkoutSourceEntity = new PaymentTermAwareStub($paymentTerm);

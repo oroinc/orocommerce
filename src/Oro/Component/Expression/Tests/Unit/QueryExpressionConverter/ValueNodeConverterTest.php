@@ -14,7 +14,7 @@ class ValueNodeConverterTest extends \PHPUnit_Framework_TestCase
         $expr = new Expr();
         $params = [];
 
-        $node = $this->getMock(NodeInterface::class);
+        $node = $this->createMock(NodeInterface::class);
         $converter = new ValueNodeConverter();
         $this->assertNull($converter->convert($node, $expr, $params));
     }

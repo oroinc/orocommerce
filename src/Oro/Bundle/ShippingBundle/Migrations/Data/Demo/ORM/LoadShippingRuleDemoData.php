@@ -13,7 +13,7 @@ use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethodType;
 class LoadShippingRuleDemoData extends AbstractFixture
 {
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function load(ObjectManager $manager)
     {

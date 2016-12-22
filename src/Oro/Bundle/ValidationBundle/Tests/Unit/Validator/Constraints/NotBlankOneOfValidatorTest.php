@@ -40,9 +40,9 @@ class NotBlankOneOfValidatorTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->context = $this->getMock(ExecutionContextInterface::class);
+        $this->context = $this->createMock(ExecutionContextInterface::class);
         $this->constraint = new NotBlankOneOf();
-        $this->translator = $this->getMock(TranslatorInterface::class);
+        $this->translator = $this->createMock(TranslatorInterface::class);
 
         $this->translator->expects($this->any())
             ->method('trans')
@@ -100,7 +100,7 @@ class NotBlankOneOfValidatorTest extends \PHPUnit_Framework_TestCase
         ];
         $this->constraint->fields = [$fieldGroup];
 
-        $violationBuilder = $this->getMock(ConstraintViolationBuilderInterface::class);
+        $violationBuilder = $this->createMock(ConstraintViolationBuilderInterface::class);
 
         $violationBuilder->expects($this->at(0))
             ->method('atPath')
@@ -110,7 +110,7 @@ class NotBlankOneOfValidatorTest extends \PHPUnit_Framework_TestCase
         $violationBuilder->expects($this->at(2))
             ->method('atPath')
             ->with('field2')
-            ->willReturn($this->getMock(ConstraintViolationBuilderInterface::class));
+            ->willReturn($this->createMock(ConstraintViolationBuilderInterface::class));
 
         $this->context
             ->expects($this->exactly(2))

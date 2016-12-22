@@ -3,6 +3,7 @@ types:
         label: oro.product.productimage.type.main.label
         dimensions:
             - product_original
+            - product_gallery_popup
             - product_large
             - product_extra_large
             - product_medium
@@ -23,6 +24,7 @@ types:
         max_number: ~
 dimensions:
     product_original: { width: ~, height: ~ }
+    product_gallery_popup: { width: 610, height: 610 }
     product_extra_large: { width: 378, height: 378 }
     product_large: { width: 268, height: 268 }
     product_medium: { width: 203, height: 203 }

@@ -217,6 +217,9 @@ class QuoteControllerTest extends WebTestCase
                             'qid' => LoadQuoteData::QUOTE11,
                         ],
                         [
+                            'qid' => LoadQuoteData::QUOTE2,
+                        ],
+                        [
                             'qid' => LoadQuoteData::QUOTE3,
                         ],
                         [
@@ -224,6 +227,9 @@ class QuoteControllerTest extends WebTestCase
                         ],
                         [
                             'qid' => LoadQuoteData::QUOTE5,
+                        ],
+                        [
+                            'qid' => LoadQuoteData::QUOTE6,
                         ],
                         [
                             'qid' => LoadQuoteData::QUOTE7,
@@ -244,6 +250,7 @@ class QuoteControllerTest extends WebTestCase
                         'shipUntil',
                         'view_link',
                         'action_configuration',
+                        'accountUserName'
                     ],
                 ],
             ]
