@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ShippingBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 
@@ -15,40 +16,31 @@ class ShippingMethodsConfigsRuleRepository extends EntityRepository
      */
     public function getByDestinationAndCurrency(AddressInterface $shippingAddress, $currency)
     {
-        $query = $this->createQueryBuilder('methodsConfigsRule')
-            ->addSelect('methodConfigs', 'typeConfigs')
-            ->leftJoin('methodsConfigsRule.methodConfigs', 'methodConfigs')
-            ->leftJoin('methodConfigs.typeConfigs', 'typeConfigs')
-            ->where('methodsConfigsRule.currency = :currency')
-            ->setParameter('currency', $currency);
+        return $this->getByCurrencyQuery($currency)
+            ->leftJoin('methodsConfigsRule.destinations', 'destination')
+            ->leftJoin('destination.region', 'region')
+            ->leftJoin('destination.postalCodes', 'postalCode')
+            ->andWhere('destination.country = :country or destination.country is null')
+            ->andWhere('region.code = :regionCode or region.code is null')
+            ->andWhere('postalCode.name in (:postalCodes) or postalCode.name is null')
+            ->setParameter('country', $shippingAddress->getCountryIso2())
+            ->setParameter('regionCode', $shippingAddress->getRegionCode())
+            ->setParameter('postalCodes', explode(',', $shippingAddress->getPostalCode()))
+            ->getQuery()->execute()
+        ;
+    }
 
-        if ($shippingAddress->getCountryIso2()) {
-            $query->innerJoin(
-                'methodsConfigsRule.destinations',
-                'destination',
-                'WITH',
-                'destination.country = :country'
-            )->setParameter('country', $shippingAddress->getCountryIso2());
-
-            if ($shippingAddress->getRegionCode()) {
-                $query->innerJoin(
-                    'destination.region',
-                    'region',
-                    'WITH',
-                    'region.code = :regionCode'
-                )->setParameter('regionCode', $shippingAddress->getRegionCode());
-            }
-            if ($shippingAddress->getPostalCode()) {
-                $query->innerJoin(
-                    'destination.postalCodes',
-                    'postalCode',
-                    'WITH',
-                    'postalCode.name in (:postalCodes)'
-                )->setParameter('postalCodes', explode(',', $shippingAddress->getPostalCode()));
-            }
-        }
-
-        return $query->getQuery()->execute();
+    /**
+     * @param string $currency
+     * @return array|ShippingMethodsConfigsRule[]
+     */
+    public function getByCurrencyWithoutDestination($currency)
+    {
+        return $this->getByCurrencyQuery($currency)
+            ->leftJoin('methodsConfigsRule.destinations', 'destination')
+            ->andWhere('destination.id is null')
+            ->getQuery()
+            ->execute();
     }
 
     /**
@@ -85,5 +77,20 @@ class ShippingMethodsConfigsRuleRepository extends EntityRepository
                 ->setParameter('rules', $enabledRulesIds)
                 ->getQuery()->execute();
         }
+    }
+
+    /**
+     * @param string $currency
+     * @return QueryBuilder
+     */
+    private function getByCurrencyQuery($currency)
+    {
+        return $this->createQueryBuilder('methodsConfigsRule')
+            ->addSelect('methodConfigs', 'typeConfigs')
+            ->leftJoin('methodsConfigsRule.methodConfigs', 'methodConfigs')
+            ->leftJoin('methodConfigs.typeConfigs', 'typeConfigs')
+            ->where('methodsConfigsRule.currency = :currency')
+            ->setParameter('currency', $currency)
+        ;
     }
 }

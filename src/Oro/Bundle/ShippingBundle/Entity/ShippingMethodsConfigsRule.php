@@ -54,7 +54,7 @@ class ShippingMethodsConfigsRule extends ExtendShippingMethodsConfigsRule implem
      * @var Rule
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\RuleBundle\Entity\Rule", cascade={"persist", "remove"})
-     * @ORM\JoinColumn(name="rule_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
+     * @ORM\JoinColumn(name="rule_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -97,7 +97,7 @@ class ShippingMethodsConfigsRule extends ExtendShippingMethodsConfigsRule implem
     /**
      * @var string
      *
-     * @ORM\Column(name="currency", type="string", length=3, nullable=true)
+     * @ORM\Column(name="currency", type="string", length=3, nullable=false)
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={

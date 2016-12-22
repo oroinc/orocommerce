@@ -53,13 +53,70 @@ class ShippingMethodsConfigsRuleRepositoryTest extends WebTestCase
      */
     public function testGetByDestinationAndCurrency($shippingAddress, $currency, array $expectedRules)
     {
-        $expectedShippingRules = $this->getEntitiesByReferences($expectedRules);
-        $shippingRules = $this->repository->getByDestinationAndCurrency(
+        $expectedRules = $this->getEntitiesByReferences($expectedRules);
+        $actualRules = $this->repository->getByDestinationAndCurrency(
             $shippingAddress,
             $currency
         );
 
-        static::assertEquals($expectedShippingRules, $shippingRules);
+        static::assertEquals($expectedRules, $actualRules);
+    }
+
+    /**
+     * @return array
+     */
+    public function getByDestinationAndCurrencyDataProvider()
+    {
+        return [
+            [
+                'shippingAddress' => $this->getEntity(ShippingAddressStub::class, [
+                    'country' => new Country('US'),
+                    'region' => $this->getEntity(Region::class, [
+                        'combinedCode' => 'US-NY',
+                        'code' => 'NY',
+                    ]),
+                    'postalCode' => '12345',
+                ]),
+                'currency' => 'EUR',
+                'expectedRules' => [
+                    'shipping_rule.1',
+                    'shipping_rule.2',
+                    'shipping_rule.3',
+                    'shipping_rule.4',
+                    'shipping_rule.5',
+                ]
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider getByCurrencyWithoutDestinationDataProvider
+     *
+     * @param string $currency
+     * @param array|ShippingMethodsConfigsRule[] $expectedRules
+     */
+    public function testGetByCurrencyWithoutDestination($currency, array $expectedRules)
+    {
+        $expectedRules = $this->getEntitiesByReferences($expectedRules);
+        $actualRules = $this->repository->getByCurrencyWithoutDestination($currency);
+
+        static::assertEquals($expectedRules, $actualRules);
+    }
+
+    /**
+     * @return array
+     */
+    public function getByCurrencyWithoutDestinationDataProvider()
+    {
+        return [
+            [
+                'currency' => 'UAH',
+                'expectedRules' => [
+                    'shipping_rule.10',
+                    'shipping_rule.11',
+                ]
+            ],
+        ];
     }
 
     /**
@@ -90,49 +147,6 @@ class ShippingMethodsConfigsRuleRepositoryTest extends WebTestCase
 
         static::assertCount(2, $rulesWithoutShippingMethods);
         static::assertCount(0, $enabledRulesWithoutShippingMethods);
-    }
-
-    /**
-     * @return array
-     */
-    public function getByDestinationAndCurrencyDataProvider()
-    {
-        return [
-            [
-                'shippingAddress' => $this->getEntity(ShippingAddressStub::class, [
-                    'country' => new Country('US'),
-                    'region' => $this->getEntity(Region::class, [
-                        'combinedCode' => 'US-NY',
-                        'code' => 'NY',
-                    ]),
-                    'postalCode' => '12345',
-                ]),
-                'currency' => 'EUR',
-                'expectedRules' => [
-                    'shipping_rule.1',
-                    'shipping_rule.4',
-                ]
-            ],
-            [
-                'shippingAddress' => $this->getEntity(ShippingAddressStub::class),
-                'currency' => 'USD',
-                'expectedRules' => [
-                    'shipping_rule.7',
-                    'shipping_rule.8',
-                ]
-            ],
-            [
-                'shippingAddress' => $this->getEntity(ShippingAddressStub::class, [
-                    'country' => new Country('FR'),
-                ]),
-                'currency' => 'EUR',
-                'expectedRules' => [
-                    'shipping_rule.2',
-                    'shipping_rule.3',
-                    'shipping_rule.6',
-                ]
-            ],
-        ];
     }
 
     /**

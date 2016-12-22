@@ -12,44 +12,80 @@ use Oro\Bundle\ShippingBundle\Provider\ShippingMethodsConfigsRulesProvider;
 
 class ShippingMethodsConfigsRulesProviderTest extends \PHPUnit_Framework_TestCase
 {
-    public function testGetAllFilteredShippingMethodsConfigs()
-    {
-        $repository = $this->getMockBuilder(ShippingMethodsConfigsRuleRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $repository->expects(static::once())
-            ->method('getByDestinationAndCurrency')
-            ->willReturn([new ShippingMethodsConfigsRule()]);
+    /** @var \PHPUnit_Framework_MockObject_MockObject|ShippingMethodsConfigsRuleRepository */
+    private $repository;
 
-        $converter = $this->getMockBuilder(ShippingContextToRuleValuesConverter::class)
+    /** @var \PHPUnit_Framework_MockObject_MockObject|ShippingContextToRuleValuesConverter */
+    private $converter;
+
+    /** @var \PHPUnit_Framework_MockObject_MockObject|RuleFiltrationServiceInterface */
+    private $filtrationService;
+
+    /** @var ShippingMethodsConfigsRulesProvider */
+    private $provider;
+
+    /** @var array|ShippingMethodsConfigsRule[] */
+    private $ruleCollection;
+
+    protected function setUp()
+    {
+        $this->repository = $this->getMockBuilder(ShippingMethodsConfigsRuleRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $converter->expects(static::once())
+
+        $this->converter = $this->getMockBuilder(ShippingContextToRuleValuesConverter::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->converter->expects(static::once())
             ->method('convert')
             ->willReturn([]);
 
-        $result = [
+        $this->ruleCollection = [
             (new ShippingMethodsConfigsRule())->setCurrency('USD'),
             (new ShippingMethodsConfigsRule())->setCurrency('UAH'),
         ];
-        $filtrationService = $this->getMockBuilder(RuleFiltrationServiceInterface::class)
+
+        $this->filtrationService = $this->getMockBuilder(RuleFiltrationServiceInterface::class)
             ->setMethods(['getFilteredRuleOwners'])
             ->getMock();
-        $filtrationService->expects(static::once())
+        $this->filtrationService->expects(static::once())
             ->method('getFilteredRuleOwners')
-            ->willReturn($result);
+            ->willReturn($this->ruleCollection);
 
-        $provider = new ShippingMethodsConfigsRulesProvider(
-            $filtrationService,
-            $converter,
-            $repository
+        $this->provider = new ShippingMethodsConfigsRulesProvider(
+            $this->filtrationService,
+            $this->converter,
+            $this->repository
         );
+    }
 
-        $address = $this->getMock(AddressInterface::class);
+    public function testGetAllFilteredShippingMethodsConfigsWithShippingAddress()
+    {
+        $this->repository->expects(static::once())
+            ->method('getByDestinationAndCurrency')
+            ->willReturn([new ShippingMethodsConfigsRule()]);
+
         $context = new ShippingContext([
-            ShippingContext::FIELD_SHIPPING_ADDRESS => $address
+            ShippingContext::FIELD_SHIPPING_ADDRESS => $this->getMock(AddressInterface::class)
         ]);
 
-        static::assertSame($result, $provider->getAllFilteredShippingMethodsConfigs($context));
+        static::assertSame(
+            $this->ruleCollection,
+            $this->provider->getAllFilteredShippingMethodsConfigs($context)
+        );
+    }
+
+    public function testGetAllFilteredShippingMethodsConfigsWithoutShippingAddress()
+    {
+        $this->repository->expects(static::once())
+            ->method('getByCurrencyWithoutDestination')
+            ->willReturn([new ShippingMethodsConfigsRule()]);
+
+        $context = new ShippingContext([]);
+
+        static::assertSame(
+            $this->ruleCollection,
+            $this->provider->getAllFilteredShippingMethodsConfigs($context)
+        );
     }
 }

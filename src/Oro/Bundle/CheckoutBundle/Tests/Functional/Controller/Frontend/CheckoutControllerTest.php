@@ -5,7 +5,7 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend;
 use Oro\Bundle\CheckoutBundle\Event\CheckoutValidateEvent;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 use Symfony\Component\DomCrawler\Crawler;
@@ -401,12 +401,12 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
     protected function disableShippingRules()
     {
         $modifiedRules = [];
-        $shippingRules = $this->registry->getRepository(ShippingRule::class)->findAll();
-        /** @var ShippingRule $shippingRule */
+        $shippingRules = $this->registry->getRepository(ShippingMethodsConfigsRule::class)->findAll();
+        /** @var ShippingMethodsConfigsRule $shippingRule */
         foreach ($shippingRules as $shippingRule) {
-            if ($shippingRule->isEnabled()) {
+            if ($shippingRule->getRule()->isEnabled()) {
                 $modifiedRules[] = $shippingRule->getId();
-                $shippingRule->setEnabled(false);
+                $shippingRule->getRule()->setEnabled(false);
             }
         }
         $this->registry->getManager()->flush();
@@ -419,11 +419,11 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
      */
     protected function enableShippingRules($modifiedRules)
     {
-        $shippingRules = $this->registry->getRepository(ShippingRule::class)->findAll();
-        /** @var ShippingRule $shippingRule */
+        $shippingRules = $this->registry->getRepository(ShippingMethodsConfigsRule::class)->findAll();
+        /** @var ShippingMethodsConfigsRule $shippingRule */
         foreach ($shippingRules as $shippingRule) {
             if (in_array($shippingRule->getId(), $modifiedRules, null)) {
-                $shippingRule->setEnabled(true);
+                $shippingRule->getRule()->setEnabled(true);
             }
         }
         $this->registry->getManager()->flush();
