@@ -48,7 +48,7 @@ layout:
                     blockType: combined_buttons
                     options:
                         visible: '=data["entity"].hasOfferVariants()!==null && data["entity"].isAcceptable()==true'
-                        buttons: '=data["button_provider"].getAll(data["entity"])'
+                        buttons: '=data["buttons"].getAll(data["entity"])'
                 quote_view_accept_container:
                     blockType: container
                 quote_shipping_address:

@@ -12,7 +12,7 @@ layout:
                     blockType: line_buttons
                     options:
                         visible: '=data["entity"]!=null'
-                        buttons: '=data["button_provider"].getAll(data["entity"])'
+                        buttons: '=data["buttons"].getAll(data["entity"])'
                 __account_user_view_information:
                     blockType: container
                 __account_user_view_information_title:

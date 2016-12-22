@@ -23,4 +23,4 @@ layout:
             parentId: __datagrid_toolbar_button_container
             blockType: combined_buttons
             options:
-                buttons: '=data["button_provider"].getAll()'
+                buttons: '=data["buttons"].getAll()'

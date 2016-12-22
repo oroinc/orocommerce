@@ -26,7 +26,7 @@ layout:
                     blockType: line_buttons
                     options:
                         visible: '=data["entity"]!=null'
-                        buttons: '=data["button_provider"].getAll(data["entity"])'
+                        buttons: '=data["buttons"].getAll(data["entity"])'
                 account_user_role_items:
                     blockType: container
                 account_user_role_items_view_users:
