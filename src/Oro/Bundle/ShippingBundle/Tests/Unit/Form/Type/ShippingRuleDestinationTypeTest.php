@@ -44,7 +44,7 @@ class ShippingRuleDestinationTypeTest extends FormIntegrationTestCase
 
     public function testBuildFormSubscriber()
     {
-        $builder = $this->getMock(FormBuilderInterface::class);
+        $builder = $this->createMock(FormBuilderInterface::class);
         $builder->expects($this->once())
             ->method('addEventSubscriber')
             ->with($this->subscriber)

@@ -68,7 +68,7 @@ class ProductDataStorageSessionBagPassTest extends \PHPUnit_Framework_TestCase
                 ]
             );
 
-        $definition = $this->getMock('Symfony\Component\DependencyInjection\Definition');
+        $definition = $this->createMock('Symfony\Component\DependencyInjection\Definition');
 
         $this->container->expects($this->once())
             ->method('getDefinition')

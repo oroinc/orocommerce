@@ -23,7 +23,7 @@ class ResolverEventConnectorTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|ResolverInterface $resolver */
-        $this->resolver = $this->getMock('Oro\Bundle\TaxBundle\Resolver\ResolverInterface');
+        $this->resolver = $this->createMock('Oro\Bundle\TaxBundle\Resolver\ResolverInterface');
         $this->connector = new ResolverEventConnector($this->resolver);
     }
 

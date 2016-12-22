@@ -118,7 +118,7 @@ class FrontendOwnerTreeProviderTest extends OrmTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->container = $this->getMock('Symfony\Component\DependencyInjection\ContainerInterface');
+        $this->container = $this->createMock('Symfony\Component\DependencyInjection\ContainerInterface');
         $this->container->expects($this->any())
             ->method('get')
             ->willReturnMap(
@@ -158,7 +158,7 @@ class FrontendOwnerTreeProviderTest extends OrmTestCase
         $sql,
         $result
     ) {
-        $stmt = $this->getMock('Oro\Component\TestUtils\ORM\Mocks\StatementMock');
+        $stmt = $this->createMock('Oro\Component\TestUtils\ORM\Mocks\StatementMock');
         $stmt->expects($this->once())
             ->method('fetchAll')
             ->willReturn($result);

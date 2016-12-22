@@ -60,7 +60,7 @@ class ProductTaxExtensionTest extends AbstractTaxExtensionTest
         $productTaxExtension = $this->getExtension();
 
         /** @var FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder */
-        $builder = $this->getMock('Symfony\Component\Form\FormBuilderInterface');
+        $builder = $this->createMock('Symfony\Component\Form\FormBuilderInterface');
         $builder->expects($this->once())
             ->method('add')
             ->with(

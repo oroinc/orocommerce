@@ -130,7 +130,7 @@ abstract class AbstractAccountUserRoleTypeTest extends FormIntegrationTestCase
 
         $this->formType->finishView(
             $formView,
-            $this->getMock('Symfony\Component\Form\FormInterface'),
+            $this->createMock('Symfony\Component\Form\FormInterface'),
             ['privilege_config' => $privilegeConfig]
         );
 

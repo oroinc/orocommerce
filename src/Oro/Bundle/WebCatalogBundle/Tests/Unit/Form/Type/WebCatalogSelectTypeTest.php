@@ -35,7 +35,7 @@ class WebCatalogSelectTypeTest extends FormIntegrationTestCase
     public function testSetDefaultOptions()
     {
         /* @var $resolver OptionsResolver|\PHPUnit_Framework_MockObject_MockObject */
-        $resolver = $this->getMock(OptionsResolver::class);
+        $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with($this->isType('array'))

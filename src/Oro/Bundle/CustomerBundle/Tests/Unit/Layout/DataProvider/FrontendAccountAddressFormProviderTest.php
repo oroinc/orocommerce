@@ -28,7 +28,7 @@ class FrontendAccountAddressFormProviderTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->mockFormFactory = $this->getMockBuilder('Symfony\Component\Form\FormFactoryInterface')->getMock();
-        $this->router = $this->getMock('Symfony\Component\Routing\Generator\UrlGeneratorInterface');
+        $this->router = $this->createMock('Symfony\Component\Routing\Generator\UrlGeneratorInterface');
 
         $this->provider = new FrontendAccountAddressFormProvider($this->mockFormFactory, $this->router);
     }
@@ -66,7 +66,7 @@ class FrontendAccountAddressFormProviderTest extends \PHPUnit_Framework_TestCase
             ->method('getId')
             ->willReturn(1);
 
-        $mockFormView = $this->getMock(FormView::class);
+        $mockFormView = $this->createMock(FormView::class);
 
         $mockForm = $this->getMockBuilder(FormInterface::class)->getMock();
         $mockForm->expects($this->once())

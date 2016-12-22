@@ -38,10 +38,6 @@ class WebsiteSearchCompilerPassTest extends \PHPUnit_Framework_TestCase
             ->expects($this->never())
             ->method('findTaggedServiceIds');
 
-        $this->containerBuilder
-            ->expects($this->never())
-            ->method('addMethodCall');
-
         $this->runCompilerPass();
     }
 

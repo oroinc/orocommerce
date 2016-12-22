@@ -42,7 +42,7 @@ abstract class AbstractQuickAddProcessorTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $this->registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
 
         $this->messageGenerator = $this->getMockBuilder('Oro\Bundle\ShoppingListBundle\Generator\MessageGenerator')
             ->disableOriginalConstructor()

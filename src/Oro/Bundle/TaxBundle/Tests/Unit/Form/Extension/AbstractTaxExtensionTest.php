@@ -85,10 +85,10 @@ abstract class AbstractTaxExtensionTest extends \PHPUnit_Framework_TestCase
      */
     protected function createEvent($data)
     {
-        $taxCodeForm = $this->getMock('Symfony\Component\Form\FormInterface');
+        $taxCodeForm = $this->createMock('Symfony\Component\Form\FormInterface');
 
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $mainForm */
-        $mainForm = $this->getMock('Symfony\Component\Form\FormInterface');
+        $mainForm = $this->createMock('Symfony\Component\Form\FormInterface');
         $mainForm->expects($this->any())
             ->method('get')
             ->with('taxCode')

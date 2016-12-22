@@ -41,7 +41,7 @@ class ContentNodeListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->storage = $this->getMock(ExtraActionEntityStorageInterface::class);
+        $this->storage = $this->createMock(ExtraActionEntityStorageInterface::class);
 
         $this->slugGenerator = $this->getMockBuilder(SlugGenerator::class)
             ->disableOriginalConstructor()

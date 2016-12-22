@@ -42,14 +42,14 @@ class OrderLineItemDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
+        $this->requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
         $this->sessionStorage = $this->getMockBuilder('Oro\Bundle\ProductBundle\Storage\DataStorageInterface')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->formDataStorage = $this->getMock('Oro\Bundle\RFPBundle\Storage\OffersFormStorage');
+        $this->formDataStorage = $this->createMock('Oro\Bundle\RFPBundle\Storage\OffersFormStorage');
 
-        $this->sectionProvider = $this->getMock('Oro\Bundle\OrderBundle\Form\Section\SectionProvider');
+        $this->sectionProvider = $this->createMock('Oro\Bundle\OrderBundle\Form\Section\SectionProvider');
 
         $this->featureChecker = $this->getMockBuilder(FeatureChecker::class)
             ->disableOriginalConstructor()
@@ -75,7 +75,7 @@ class OrderLineItemDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
         $this->featureChecker->expects($this->never())
             ->method($this->anything());
 
-        $request = $this->getMock('Symfony\Component\HttpFoundation\Request');
+        $request = $this->createMock('Symfony\Component\HttpFoundation\Request');
         $request->expects($this->once())->method('get')->willReturn(true);
         $this->requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
 
@@ -84,7 +84,7 @@ class OrderLineItemDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
 
         $view = new FormView();
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
         $this->extension->buildView($view, $form, []);
     }
 
@@ -96,7 +96,7 @@ class OrderLineItemDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
             ->with('test')
             ->willReturn(true);
 
-        $request = $this->getMock('Symfony\Component\HttpFoundation\Request');
+        $request = $this->createMock('Symfony\Component\HttpFoundation\Request');
         $request->expects($this->once())->method('get')->willReturn(true);
         $this->requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
 
@@ -105,17 +105,17 @@ class OrderLineItemDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
 
         $view = new FormView();
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
         $this->extension->buildView($view, $form, []);
     }
 
     public function testBuildFormWithoutParent()
     {
-        $request = $this->getMock('Symfony\Component\HttpFoundation\Request');
+        $request = $this->createMock('Symfony\Component\HttpFoundation\Request');
         $request->expects($this->once())->method('get')->willReturn(true);
         $this->requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
 
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
         $data = new \stdClass();
 
         $form->expects($this->any())->method('getData')->willReturn($data);
@@ -128,12 +128,12 @@ class OrderLineItemDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testBuildFormWithoutParentData()
     {
-        $request = $this->getMock('Symfony\Component\HttpFoundation\Request');
+        $request = $this->createMock('Symfony\Component\HttpFoundation\Request');
         $request->expects($this->once())->method('get')->willReturn(true);
         $this->requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
 
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
-        $parent = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
+        $parent = $this->createMock('Symfony\Component\Form\FormInterface');
         $data = new \stdClass();
 
         $form->expects($this->any())->method('getData')->willReturn($data);
@@ -153,12 +153,12 @@ class OrderLineItemDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
         $entity = new \stdClass();
         $entity->prop = 'value';
 
-        $request = $this->getMock('Symfony\Component\HttpFoundation\Request');
+        $request = $this->createMock('Symfony\Component\HttpFoundation\Request');
         $request->expects($this->once())->method('get')->willReturn(true);
         $this->requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
 
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
-        $parentForm = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
+        $parentForm = $this->createMock('Symfony\Component\Form\FormInterface');
         $form->expects($this->once())->method('getParent')->willReturn($parentForm);
         $form->expects($this->once())->method('getData')->willReturn($entity);
         $parentForm->expects($this->once())->method('getData')->willReturn(
@@ -174,12 +174,12 @@ class OrderLineItemDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
     {
         $entity = new \stdClass();
 
-        $request = $this->getMock('Symfony\Component\HttpFoundation\Request');
+        $request = $this->createMock('Symfony\Component\HttpFoundation\Request');
         $request->expects($this->once())->method('get')->willReturn(true);
         $this->requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
 
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
-        $parentForm = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
+        $parentForm = $this->createMock('Symfony\Component\Form\FormInterface');
         $form->expects($this->once())->method('getParent')->willReturn($parentForm);
         $form->expects($this->once())->method('getData')->willReturn($entity);
         $parentForm->expects($this->once())->method('getData')->willReturn(new ArrayCollection());
@@ -200,7 +200,7 @@ class OrderLineItemDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testBuildFormMissingKey()
     {
-        $request = $this->getMock('Symfony\Component\HttpFoundation\Request');
+        $request = $this->createMock('Symfony\Component\HttpFoundation\Request');
         $request->expects($this->once())->method('get')->willReturn(true);
         $this->requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
 
@@ -214,7 +214,7 @@ class OrderLineItemDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testBuildFormWrongType()
     {
-        $request = $this->getMock('Symfony\Component\HttpFoundation\Request');
+        $request = $this->createMock('Symfony\Component\HttpFoundation\Request');
         $request->expects($this->once())->method('get')->willReturn(true);
         $this->requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
 
@@ -230,14 +230,14 @@ class OrderLineItemDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
     {
         $offer = ['quantity' => 1, 'unit' => 'kg'];
 
-        $request = $this->getMock('Symfony\Component\HttpFoundation\Request');
+        $request = $this->createMock('Symfony\Component\HttpFoundation\Request');
         $request->expects($this->once())->method('get')->willReturn(true);
         $this->requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
 
         $this->sessionStorage->expects($this->once())->method('get')->willReturn([$offer]);
 
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
-        $parent = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
+        $parent = $this->createMock('Symfony\Component\Form\FormInterface');
         $data = new \stdClass();
 
         $form->expects($this->any())->method('getData')->willReturn($data);
@@ -257,7 +257,7 @@ class OrderLineItemDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
     protected function getBuilderMock($expectsAddEventListener = false, FormInterface $form = null)
     {
         if (!$form) {
-            $form = $this->getMock('Symfony\Component\Form\FormInterface');
+            $form = $this->createMock('Symfony\Component\Form\FormInterface');
         }
 
         if ($expectsAddEventListener) {
@@ -269,7 +269,7 @@ class OrderLineItemDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
         }
 
         /** @var  $builder */
-        $builder = $this->getMock('Symfony\Component\Form\FormBuilderInterface');
+        $builder = $this->createMock('Symfony\Component\Form\FormBuilderInterface');
         if ($expectsAddEventListener) {
             $builder->expects($this->exactly(2))->method('addEventListener')->with(
                 $this->isType('string'),
@@ -336,7 +336,7 @@ class OrderLineItemDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
     public function testBuildFormDisabled()
     {
         $this->extension->addFeature('test');
-        $request = $this->getMock('Symfony\Component\HttpFoundation\Request');
+        $request = $this->createMock('Symfony\Component\HttpFoundation\Request');
         $request->expects($this->never())->method('get');
         $this->requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
 

@@ -29,11 +29,11 @@ class SearchMessageProcessorTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->indexer = $this->getMock(IndexerInterface::class);
+        $this->indexer = $this->createMock(IndexerInterface::class);
 
         $this->processor = new SearchMessageProcessor($this->indexer);
 
-        $this->session = $this->getMock(SessionInterface::class);
+        $this->session = $this->createMock(SessionInterface::class);
     }
 
     /**
@@ -41,7 +41,7 @@ class SearchMessageProcessorTest extends \PHPUnit_Framework_TestCase
      */
     public function testProcessingMessage($messageBody, $topic, $expectedMethod)
     {
-        $message = $this->getMock(MessageInterface::class);
+        $message = $this->createMock(MessageInterface::class);
 
         $message->method('getBody')
             ->will($this->returnValue(json_encode($messageBody)));
@@ -58,7 +58,7 @@ class SearchMessageProcessorTest extends \PHPUnit_Framework_TestCase
 
     public function testRejectOnUnsupportedTopic()
     {
-        $message = $this->getMock(MessageInterface::class);
+        $message = $this->createMock(MessageInterface::class);
 
         $message->method('getBody')
             ->will($this->returnValue(json_encode('body')));

@@ -100,7 +100,7 @@ class ProductDecrementQuantityFormViewListenerTest extends FormViewListenerTestC
         $this->event->expects($this->once())
             ->method('getEnvironment')
             ->willReturn($env);
-        $scrollData = $this->getMock(ScrollData::class);
+        $scrollData = $this->createMock(ScrollData::class);
         $scrollData->expects($this->once())
             ->method('addSubBlockData');
         $this->event->expects($this->once())

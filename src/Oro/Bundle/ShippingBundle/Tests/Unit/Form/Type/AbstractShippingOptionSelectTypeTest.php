@@ -202,7 +202,7 @@ abstract class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestC
     protected function createUnit($code)
     {
         /** @var MeasureUnitInterface|\PHPUnit_Framework_MockObject_MockObject $unit */
-        $unit = $this->getMock('Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface');
+        $unit = $this->createMock('Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface');
         $unit->expects($this->any())
             ->method('getCode')
             ->willReturn($code);
