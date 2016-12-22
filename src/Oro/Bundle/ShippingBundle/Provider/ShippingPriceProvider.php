@@ -12,7 +12,7 @@ use Oro\Bundle\ShippingBundle\Provider\Cache\ShippingPriceCache;
 
 class ShippingPriceProvider
 {
-    /** @var ShippingRulesProvider */
+    /** @var ShippingMethodsConfigsRulesProvider */
     protected $shippingRulesProvider;
 
     /** @var ShippingMethodRegistry */
@@ -22,12 +22,12 @@ class ShippingPriceProvider
     protected $priceCache;
 
     /**
-     * @param ShippingRulesProvider $shippingRulesProvider
+     * @param ShippingMethodsConfigsRulesProvider $shippingRulesProvider
      * @param ShippingMethodRegistry $registry
      * @param ShippingPriceCache $priceCache
      */
     public function __construct(
-        ShippingRulesProvider $shippingRulesProvider,
+        ShippingMethodsConfigsRulesProvider $shippingRulesProvider,
         ShippingMethodRegistry $registry,
         ShippingPriceCache $priceCache
     ) {
@@ -44,7 +44,7 @@ class ShippingPriceProvider
     {
         $result = [];
 
-        $rules = $this->shippingRulesProvider->getApplicableShippingRules($context);
+        $rules = $this->shippingRulesProvider->getAllFilteredShippingMethodsConfigs($context);
         foreach ($rules as $rule) {
             foreach ($rule->getMethodConfigs() as $methodConfig) {
                 $methodId = $methodConfig->getMethod();
@@ -100,7 +100,7 @@ class ShippingPriceProvider
             return null;
         }
 
-        $rules = $this->shippingRulesProvider->getApplicableShippingRules($context);
+        $rules = $this->shippingRulesProvider->getAllFilteredShippingMethodsConfigs($context);
         foreach ($rules as $rule) {
             foreach ($rule->getMethodConfigs() as $methodConfig) {
                 if ($methodConfig->getMethod() !== $methodId) {

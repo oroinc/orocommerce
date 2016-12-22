@@ -4,23 +4,21 @@ namespace Oro\Bundle\ShippingBundle\Form\Type;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
+use Oro\Bundle\RuleBundle\Form\Type\RuleType;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
 
-class ShippingRuleType extends AbstractType
+class ShippingMethodsConfigsRuleType extends AbstractType
 {
-    const BLOCK_PREFIX = 'oro_shipping_rule';
+    const BLOCK_PREFIX = 'oro_shipping_methods_configs_rule';
 
     /**
      * @var ShippingMethodRegistry
@@ -47,28 +45,19 @@ class ShippingRuleType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('name', TextareaType::class, ['label' => 'oro.shipping.shippingrule.name.label'])
-            ->add('enabled', CheckboxType::class, ['label' => 'oro.shipping.shippingrule.enabled.label'])
-            ->add('priority', NumberType::class, ['label' => 'oro.shipping.shippingrule.priority.label'])
+        $builder
+            ->add('rule', RuleType::class, ['label' => 'oro.shipping.shippingmethodsconfigsrule.rule.label'])
             ->add('currency', CurrencySelectionType::class, [
-                'label' => 'oro.shipping.shippingrule.currency.label',
+                'label' => 'oro.shipping.shippingmethodsconfigsrule.currency.label',
                 'empty_value' => 'oro.currency.currency.form.choose',
             ])
             ->add('destinations', CollectionType::class, [
                 'required' => false,
-                'entry_type' => ShippingRuleDestinationType::class,
-                'label' => 'oro.shipping.shippingrule.shipping_destinations.label',
+                'entry_type' => ShippingMethodsConfigsRuleDestinationType::class,
+                'label' => 'oro.shipping.shippingmethodsconfigsrule.destinations.label',
             ])
-            ->add('conditions', TextareaType::class, [
+            ->add('methodConfigs', ShippingMethodConfigCollectionType::class, [
                 'required' => false,
-                'label' => 'oro.shipping.shippingrule.conditions.label',
-            ])
-            ->add('methodConfigs', ShippingRuleMethodConfigCollectionType::class, [
-                'required' => false,
-            ])
-            ->add('stopProcessing', CheckboxType::class, [
-                'required' => false,
-                'label' => 'oro.shipping.shippingrule.stop_processing.label',
             ])
             ->add('method', ChoiceType::class, [
                 'mapped' => false,
@@ -90,7 +79,7 @@ class ShippingRuleType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => ShippingRule::class,
+            'data_class' => ShippingMethodsConfigsRule::class,
         ]);
     }
 

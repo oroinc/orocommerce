@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ShippingBundle\Form\Type;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
-use Oro\Bundle\ShippingBundle\Form\EventSubscriber\RuleMethodConfigCollectionSubscriber;
+use Oro\Bundle\ShippingBundle\Form\EventSubscriber\MethodConfigCollectionSubscriber;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -11,19 +11,19 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class ShippingRuleMethodConfigCollectionType extends AbstractType
+class ShippingMethodConfigCollectionType extends AbstractType
 {
-    const NAME = 'oro_shipping_rule_method_config_collection';
+    const NAME = 'oro_shipping_method_config_collection';
 
     /**
-     * @var ShippingMethodRegistry
+     * @var MethodConfigCollectionSubscriber
      */
     protected $subscriber;
 
     /**
-     * @param RuleMethodConfigCollectionSubscriber $subscriber
+     * @param MethodConfigCollectionSubscriber $subscriber
      */
-    public function __construct(RuleMethodConfigCollectionSubscriber $subscriber)
+    public function __construct(MethodConfigCollectionSubscriber $subscriber)
     {
         $this->subscriber = $subscriber;
     }
@@ -44,7 +44,7 @@ class ShippingRuleMethodConfigCollectionType extends AbstractType
         $resolver->setDefaults([
             'show_form_when_empty' => false,
             'allow_add' => true,
-            'entry_type' => ShippingRuleMethodConfigType::class,
+            'entry_type' => ShippingMethodConfigType::class,
         ]);
     }
 

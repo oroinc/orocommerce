@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Functional\Controller;
 
-use Symfony\Component\DomCrawler\Form;
-
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ShippingBundle\Form\Extension\ProductFormExtension;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Symfony\Component\DomCrawler\Form;
 
 /**
  * @dbIsolation
@@ -15,7 +14,7 @@ class AjaxProductShippingOptionsControllerTest extends WebTestCase
 {
     protected function setUp()
     {
-        $this->initClient([], $this->generateBasicAuthHeader());
+        $this->initClient([], static::generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
         $this->loadFixtures(['Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadProductShippingOptions']);
     }
@@ -58,7 +57,7 @@ class AjaxProductShippingOptionsControllerTest extends WebTestCase
             array_merge($formValues, ['activeUnitCode' => 'box'])
         );
 
-        $result = $this->getJsonResponseContent($this->client->getResponse(), 200);
+        $result = static::getJsonResponseContent($this->client->getResponse(), 200);
         $result = reset($result['units']);
 
         $this->assertEquals($requiredFreightClass, $result);

@@ -6,17 +6,19 @@ use Oro\Bundle\AddressBundle\Form\EventListener\AddressCountryAndRegionSubscribe
 use Oro\Bundle\AddressBundle\Form\Type\CountryType;
 use Oro\Bundle\AddressBundle\Form\Type\RegionType;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination;
+use Oro\Bundle\ShippingBundle\Form\DataTransformer\DestinationPostalCodeTransformer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
+use Symfony\Component\OptionsResolver\Exception\AccessException;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class ShippingRuleDestinationType extends AbstractType
+class ShippingMethodsConfigsRuleDestinationType extends AbstractType
 {
-    const NAME = 'oro_shipping_rule_destination';
+    const NAME = 'oro_shipping_methods_configs_rule_destination';
 
     /**
      * @var AddressCountryAndRegionSubscriber
@@ -44,11 +46,14 @@ class ShippingRuleDestinationType extends AbstractType
                 HiddenType::class,
                 ['required' => false, 'random_id' => true, 'label' => 'oro.address.region_text.label']
             )
-            ->add('postalCode', TextType::class, ['required' => false, 'label' => 'oro.address.postal_code.label']);
+            ->add('postalCodes', TextType::class, ['required' => false, 'label' => 'oro.address.postal_code.label']);
+
+        $builder->get('postalCodes')->addModelTransformer(new DestinationPostalCodeTransformer());
     }
 
     /**
      * @param OptionsResolver $resolver
+     * @throws AccessException
      */
     public function configureOptions(OptionsResolver $resolver)
     {

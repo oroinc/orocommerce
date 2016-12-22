@@ -29,7 +29,7 @@ class ShippingMethodsConfigsRuleDestinationPostalCode
     /**
      * @var ShippingMethodsConfigsRuleDestination
      *
-     * @ORM\ManyToOne(targetEntity="ShippingMethodsConfigsRuleDestination")
+     * @ORM\ManyToOne(targetEntity="ShippingMethodsConfigsRuleDestination", inversedBy="postalCodes")
      * @ORM\JoinColumn(name="destination_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     private $destination;

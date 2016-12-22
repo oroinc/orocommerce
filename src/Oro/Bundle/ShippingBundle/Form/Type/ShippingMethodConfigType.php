@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ShippingBundle\Form\Type;
 
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
-use Oro\Bundle\ShippingBundle\Form\EventSubscriber\RuleMethodConfigSubscriber;
+use Oro\Bundle\ShippingBundle\Form\EventSubscriber\MethodConfigSubscriber;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 use Symfony\Component\Form\AbstractType;
@@ -13,9 +13,9 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class ShippingRuleMethodConfigType extends AbstractType
+class ShippingMethodConfigType extends AbstractType
 {
-    const NAME = 'oro_shipping_rule_method_config';
+    const NAME = 'oro_shipping_method_config';
 
     /**
      * @var ShippingMethodRegistry
@@ -23,15 +23,15 @@ class ShippingRuleMethodConfigType extends AbstractType
     protected $methodRegistry;
 
     /**
-     * @var RuleMethodConfigSubscriber
+     * @var MethodConfigSubscriber
      */
     protected $subscriber;
 
     /**
-     * @param RuleMethodConfigSubscriber $subscriber
+     * @param MethodConfigSubscriber $subscriber
      * @param ShippingMethodRegistry $methodRegistry
      */
-    public function __construct(RuleMethodConfigSubscriber $subscriber, ShippingMethodRegistry $methodRegistry)
+    public function __construct(MethodConfigSubscriber $subscriber, ShippingMethodRegistry $methodRegistry)
     {
         $this->subscriber = $subscriber;
         $this->methodRegistry = $methodRegistry;
@@ -43,7 +43,7 @@ class ShippingRuleMethodConfigType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('method', HiddenType::class, ['required' => false]);
-        $builder->add('typeConfigs', ShippingRuleMethodTypeConfigCollectionType::class);
+        $builder->add('typeConfigs', ShippingMethodTypeConfigCollectionType::class);
         $builder->add('options', HiddenType::class);
 
         $builder->addEventSubscriber($this->subscriber);

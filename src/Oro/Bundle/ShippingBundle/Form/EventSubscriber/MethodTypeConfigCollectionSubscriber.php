@@ -4,7 +4,7 @@ namespace Oro\Bundle\ShippingBundle\Form\EventSubscriber;
 
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
-use Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleMethodTypeConfigType;
+use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodTypeConfigType;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
@@ -14,7 +14,7 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 
-class RuleMethodTypeConfigCollectionSubscriber implements EventSubscriberInterface
+class MethodTypeConfigCollectionSubscriber implements EventSubscriberInterface
 {
     /**
      * @var ShippingMethodRegistry
@@ -117,7 +117,7 @@ class RuleMethodTypeConfigCollectionSubscriber implements EventSubscriberInterfa
         ShippingMethodInterface $method,
         ShippingMethodTypeInterface $type
     ) {
-        $form->add($index, ShippingRuleMethodTypeConfigType::class, [
+        $form->add($index, ShippingMethodTypeConfigType::class, [
             'options_type' => $type->getOptionsConfigurationFormType(),
             'auto_initialize' => false,
             'label' => $type->getLabel(),

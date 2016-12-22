@@ -30,12 +30,8 @@ Oro\Bundle\ShippingBundle\Model\Weight:
         value:
             - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
 
-Oro\Bundle\ShippingBundle\Entity\ShippingRule:
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule:
     properties:
-        name:
-            - NotBlank: ~
-        priority:
-            - NotBlank: ~
         destinations:
             - Valid: ~
         methodConfigs:

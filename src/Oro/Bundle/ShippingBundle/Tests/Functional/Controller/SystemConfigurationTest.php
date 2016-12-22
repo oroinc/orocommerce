@@ -13,10 +13,10 @@ class SystemConfigurationTest extends WebTestCase
 
     protected function setUp()
     {
-        $this->initClient([], $this->generateBasicAuthHeader());
+        $this->initClient([], static::generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
 
-        $this->configManager = $this->getContainer()->get('oro_config.global');
+        $this->configManager = static::getContainer()->get('oro_config.global');
     }
 
     protected function tearDown()
@@ -37,9 +37,9 @@ class SystemConfigurationTest extends WebTestCase
             )
         );
 
-        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+        static::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
-        $token = $this->getContainer()->get('security.csrf.token_manager')->getToken('shipping_origin')->getValue();
+        $token = static::getContainer()->get('security.csrf.token_manager')->getToken('shipping_origin')->getValue();
         $form = $crawler->selectButton('Save settings')->form();
         $formData = ArrayUtil::arrayMergeRecursiveDistinct(
             $form->getPhpValues(),
@@ -64,7 +64,7 @@ class SystemConfigurationTest extends WebTestCase
         $this->client->followRedirects(true);
         $this->client->request($form->getMethod(), $form->getUri(), $formData);
 
-        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+        static::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
         $this->configManager->reload();
 

@@ -17,6 +17,10 @@ use Oro\Bundle\ShippingBundle\Model\ExtendShippingMethodsConfigsRule;
  *     name="oro_ship_method_configs_rule"
  * )
  * @Config(
+ *      routeName="oro_shipping_methods_configs_rule_index",
+ *      routeView="oro_shipping_methods_configs_rule_view",
+ *      routeCreate="oro_shipping_methods_configs_rule_create",
+ *      routeUpdate="oro_shipping_methods_configs_rule_update",
  *      defaultValues={
  *          "dataaudit"={
  *              "auditable"=true
@@ -50,7 +54,7 @@ class ShippingMethodsConfigsRule extends ExtendShippingMethodsConfigsRule implem
      * @var Rule
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\RuleBundle\Entity\Rule", cascade={"persist", "remove"})
-     * @ORM\JoinColumn(name="rule_id", referencedColumnName="id", nullable=false, onDelete="SET NULL")
+     * @ORM\JoinColumn(name="rule_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={

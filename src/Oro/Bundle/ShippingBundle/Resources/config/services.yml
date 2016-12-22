@@ -7,14 +7,14 @@ parameters:
     oro_shipping.entity.freight_class.class: Oro\Bundle\ShippingBundle\Entity\FreightClass
     oro_shipping.entity.weight_unit.class: Oro\Bundle\ShippingBundle\Entity\WeightUnit
     oro_shipping.entity.product_shipping_options.class: Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions
-    oro_shipping.entity.shipping_rule.class: Oro\Bundle\ShippingBundle\Entity\ShippingRule
+    oro_shipping.entity.shipping_methods_configs_rule.class: Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule
 
 services:
     oro_shipping.shipping_rule.manager.api:
         class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
         parent: oro_soap.manager.entity_manager.abstract
         arguments:
-            - '%oro_shipping.entity.shipping_rule.class%'
+            - '%oro_shipping.entity.shipping_methods_configs_rule.class%'
             - "@doctrine.orm.entity_manager"
 
     oro_shipping.factory.shipping_origin_model_factory:
@@ -210,7 +210,7 @@ services:
     oro_shipping.shipping_price.provider:
         class: 'Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider'
         arguments:
-            - '@oro_shipping.shipping_rule.provider'
+            - '@oro_shipping.methods_configs_rules.provider'
             - '@oro_shipping.shipping_method.registry'
             - '@oro_shipping.shipping_price.provider.cache'
 
@@ -242,8 +242,8 @@ services:
         calls:
             - [setNamespace, ['oro_shipping_price']]
 
-    oro_shipping.form.handler.shipping_rule:
-        class: 'Oro\Bundle\ShippingBundle\Form\Handler\ShippingRuleHandler'
+    oro_shipping.form.handler.shipping_methods_configs_rule:
+        class: 'Oro\Bundle\ShippingBundle\Form\Handler\ShippingMethodsConfigsRuleHandler'
         scope: request
         arguments:
             - '@request'
