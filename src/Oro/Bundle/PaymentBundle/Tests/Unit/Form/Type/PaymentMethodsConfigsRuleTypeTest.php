@@ -9,8 +9,8 @@ use Oro\Bundle\AddressBundle\Form\EventListener\AddressCountryAndRegionSubscribe
 use Oro\Bundle\AddressBundle\Form\Type\CountryType;
 use Oro\Bundle\AddressBundle\Form\Type\RegionType;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
-use Oro\Bundle\CurrencyBundle\Provider\CurrencyProviderInterface;
 use Oro\Bundle\CurrencyBundle\Model\LocaleSettings;
+use Oro\Bundle\CurrencyBundle\Provider\CurrencyProviderInterface;
 use Oro\Bundle\CurrencyBundle\Utils\CurrencyNameHelper;
 use Oro\Bundle\FormBundle\Form\Extension\AdditionalAttrExtension;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
@@ -24,10 +24,10 @@ use Oro\Bundle\RuleBundle\Form\Type\RuleType;
 use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-use Symfony\Component\OptionsResolver\Options;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\ChoiceList\ArrayChoiceList;
 use Symfony\Component\Form\PreloadedExtension;
+use Symfony\Component\OptionsResolver\Options;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class PaymentMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
 {
