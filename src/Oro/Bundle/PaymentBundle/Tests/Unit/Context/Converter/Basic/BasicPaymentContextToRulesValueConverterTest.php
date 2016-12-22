@@ -5,14 +5,23 @@ namespace Oro\Bundle\PaymentBundle\Tests\Unit\Context\Converter\Basic;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\EntityBundle\Helper\FieldHelper;
+use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
 use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 use Oro\Bundle\PaymentBundle\Context\Converter\Basic\BasicPaymentContextToRulesValueConverter;
 use Oro\Bundle\PaymentBundle\Context\LineItem\Collection\Doctrine\DoctrinePaymentLineItemCollection;
 use Oro\Bundle\PaymentBundle\Context\PaymentContext;
 use Oro\Bundle\PaymentBundle\Context\PaymentLineItem;
+use Oro\Bundle\PaymentBundle\ExpressionLanguage\DecoratedProductLineItemFactory;
+use Oro\Bundle\PaymentBundle\QueryDesigner\SelectQueryConverter;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 class BasicPaymentContextToRulesValueConverterTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTrait;
+
     /**
      * @var AddressInterface|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -61,10 +70,29 @@ class BasicPaymentContextToRulesValueConverterTest extends \PHPUnit_Framework_Te
 
     public function testConvert()
     {
+        $converter = $this->getMockBuilder(SelectQueryConverter::class)
+            ->disableOriginalConstructor()->getMock();
+
+        $doctrine = $this->getMockBuilder(ManagerRegistry::class)
+            ->disableOriginalConstructor()->getMockForAbstractClass();
+
+        $fieldProvider = $this->getMockBuilder(EntityFieldProvider::class)
+            ->disableOriginalConstructor()->getMock();
+
+        $fieldHelper = $this->getMockBuilder(FieldHelper::class)
+            ->disableOriginalConstructor()->getMock();
+
+        $factory = new DecoratedProductLineItemFactory(
+            $fieldProvider,
+            $converter,
+            $doctrine,
+            $fieldHelper
+        );
+
         $paymentContext = new PaymentContext([
             PaymentContext::FIELD_LINE_ITEMS => new DoctrinePaymentLineItemCollection([
-                new PaymentLineItem([]),
-                new PaymentLineItem([])
+                new PaymentLineItem([PaymentLineItem::FIELD_PRODUCT => $this->getEntity(Product::class, ['id' => 1])]),
+                new PaymentLineItem([PaymentLineItem::FIELD_PRODUCT => $this->getEntity(Product::class, ['id' => 2])])
             ]),
             PaymentContext::FIELD_BILLING_ADDRESS => $this->billingAddressMock,
             PaymentContext::FIELD_SHIPPING_ADDRESS => $this->shippingAddressMock,
@@ -77,13 +105,16 @@ class BasicPaymentContextToRulesValueConverterTest extends \PHPUnit_Framework_Te
         ]);
 
 
-        $converter = new BasicPaymentContextToRulesValueConverter();
+        $converter = new BasicPaymentContextToRulesValueConverter($factory);
 
         $this->assertEquals([
-            'lineItems' => new DoctrinePaymentLineItemCollection([
-                new PaymentLineItem([]),
-                new PaymentLineItem([])
-            ]),
+            'lineItems' => array_map(function (PaymentLineItem $lineItem) use ($paymentContext, $factory) {
+                return $factory
+                    ->createLineItemWithDecoratedProductByLineItem(
+                        $paymentContext->getLineItems()->toArray(),
+                        $lineItem
+                    );
+            }, $paymentContext->getLineItems()->toArray()),
             'billingAddress' =>  $this->billingAddressMock,
             'shippingAddress' => $this->shippingAddressMock,
             'shippingOrigin' => $this->shippingOriginMock,

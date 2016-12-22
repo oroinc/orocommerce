@@ -132,11 +132,7 @@ class OroPaymentBundleInstaller implements Installation
         $table->addColumn('destination_id', 'integer', []);
         $table->addColumn('name', 'text', []);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(
-            ['destination_id'],
-            'idx_oro_payment_mtdscfgsrl_dst_pc_destination_id',
-            []
-        );
+        $table->addIndex(['destination_id'], 'idx_oro_payment_mtdscfgsrl_dst_pc_destination_id', []);
     }
 
     /**

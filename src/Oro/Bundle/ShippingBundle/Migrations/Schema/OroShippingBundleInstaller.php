@@ -61,7 +61,7 @@ class OroShippingBundleInstaller implements Installation, ActivityExtensionAware
     {
         $table = $schema->createTable('oro_ship_method_config');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('rule_id', 'integer', []);
+        $table->addColumn('rule_id', 'integer', ['notnull' => true]);
         $table->addColumn('method', 'string', ['length' => 255]);
         $table->addColumn('options', 'array', ['comment' => '(DC2Type:array)']);
         $table->setPrimaryKey(['id']);
@@ -77,8 +77,8 @@ class OroShippingBundleInstaller implements Installation, ActivityExtensionAware
     {
         $table = $schema->createTable('oro_ship_method_configs_rule');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('rule_id', 'integer', ['notnull' => false]);
-        $table->addColumn('currency', 'string', ['notnull' => false, 'length' => 3]);
+        $table->addColumn('rule_id', 'integer', ['notnull' => true]);
+        $table->addColumn('currency', 'string', ['notnull' => true, 'length' => 3]);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['rule_id'], 'IDX_1FA57D60744E0351', []);
 
@@ -178,7 +178,7 @@ class OroShippingBundleInstaller implements Installation, ActivityExtensionAware
     {
         $table = $schema->createTable('oro_shipping_rule_destination');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('rule_id', 'integer', []);
+        $table->addColumn('rule_id', 'integer', ['notnull' => true]);
         $table->addColumn('region_code', 'string', ['notnull' => false, 'length' => 16]);
         $table->addColumn('country_code', 'string', ['length' => 2]);
         $table->addColumn('region_text', 'string', ['notnull' => false, 'length' => 255]);
@@ -229,7 +229,7 @@ class OroShippingBundleInstaller implements Installation, ActivityExtensionAware
             $schema->getTable('oro_rule'),
             ['rule_id'],
             ['id'],
-            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
     }
 

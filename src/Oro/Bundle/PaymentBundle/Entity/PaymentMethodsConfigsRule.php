@@ -51,7 +51,7 @@ class PaymentMethodsConfigsRule extends ExtendPaymentMethodsConfigsRule implemen
     /**
      * @var Rule
      *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\RuleBundle\Entity\Rule", inversedBy="methodsConfigsRule")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\RuleBundle\Entity\Rule")
      * @ORM\JoinColumn(name="rule_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
      * @ConfigField(
      *      defaultValues={
@@ -79,7 +79,7 @@ class PaymentMethodsConfigsRule extends ExtendPaymentMethodsConfigsRule implemen
     /**
      * @var string
      *
-     * @ORM\Column(name="currency", type="string", length=3, nullable=true)
+     * @ORM\Column(name="currency", type="string", length=3, nullable=false)
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -113,7 +113,7 @@ class PaymentMethodsConfigsRule extends ExtendPaymentMethodsConfigsRule implemen
      * @param Rule $rule
      * @return $this
      */
-    public function setMethodConfig(Rule $rule)
+    public function setRule(Rule $rule)
     {
         $this->rule = $rule;
 
