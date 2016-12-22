@@ -10,11 +10,11 @@ use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\EntityBundle\Helper\FieldHelper;
 use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\DoctrineShippingLineItemCollection;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
-use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
 use Oro\Bundle\ShippingBundle\Converter\ShippingContextToRuleValuesConverter;
-use Oro\Bundle\ShippingBundle\ExpressionLanguage\LineItemDecoratorFactory;
+use Oro\Bundle\ShippingBundle\ExpressionLanguage\DecoratedProductLineItemFactory;
 use Oro\Bundle\ShippingBundle\QueryDesigner\SelectQueryConverter;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingAddressStub;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -45,7 +45,7 @@ class ShippingContextToRuleValuesConverterTest extends \PHPUnit_Framework_TestCa
     protected $fieldHelper;
 
     /**
-     * @var LineItemDecoratorFactory
+     * @var DecoratedProductLineItemFactory
      */
     protected $factory;
 
@@ -71,7 +71,7 @@ class ShippingContextToRuleValuesConverterTest extends \PHPUnit_Framework_TestCa
         $this->fieldHelper = $this->getMockBuilder(FieldHelper::class)
             ->disableOriginalConstructor()->getMock();
 
-        $this->factory = new LineItemDecoratorFactory(
+        $this->factory = new DecoratedProductLineItemFactory(
             $this->fieldProvider,
             $this->converter,
             $this->doctrine,
@@ -83,66 +83,65 @@ class ShippingContextToRuleValuesConverterTest extends \PHPUnit_Framework_TestCa
         );
     }
 
-    public function testConvert()
+    /**
+     * @dataProvider convertDataProvider
+     * @param ShippingContext $context
+     */
+    public function testConvert(ShippingContext $context)
     {
-        $contextData = $this->getShippingContextData();
-        /** @var ShippingContextInterface $context */
-        $context = $this->getEntity(ShippingContext::class, $contextData);
-        $expected = $contextData;
-        $expected['lineItems'] = array_map(function (ShippingLineItem $lineItem) use ($expected) {
-            $lineItem->setProductHolder($lineItem);
-            return $this->factory->createOrderLineItemDecorator($expected['lineItems'], $lineItem);
-        }, $expected['lineItems']);
-
-        $this->assertEquals($expected, $this->shippingContextToRuleValuesConverter->convert($context));
+        $expectedValues = [
+            'lineItems' => array_map(function (ShippingLineItem $lineItem) use ($context) {
+                return $this->factory
+                    ->createLineItemWithDecoratedProductByLineItem($context->getLineItems()->toArray(), $lineItem);
+            }, $context->getLineItems()->toArray()),
+            'shippingOrigin' => $context->getShippingOrigin(),
+            'billingAddress' => $context->getBillingAddress(),
+            'shippingAddress' => $context->getShippingAddress(),
+            'paymentMethod' => $context->getPaymentMethod(),
+            'currency' => $context->getCurrency(),
+            'subtotal' => $context->getSubtotal(),
+            'customer' => $context->getCustomer(),
+            'customerUser' => $context->getCustomerUser(),
+        ];
+        $this->assertEquals($expectedValues, $this->shippingContextToRuleValuesConverter->convert($context));
     }
 
     /**
      * @return array
      */
-    protected function getShippingContextData()
+    public function convertDataProvider()
     {
         return [
-            'lineItems' => [$this->getEntity(
-                ShippingLineItem::class,
-                ['product' => $this->getEntity(Product::class, ['id' => 1])]
-            )],
-            'shippingOrigin' => $this->getEntity(ShippingAddressStub::class, [
-                'region' => $this->getEntity(Region::class, [
-                    'code' => 'CA',
+            [
+                'context' => new ShippingContext([
+                    ShippingContext::FIELD_LINE_ITEMS => new DoctrineShippingLineItemCollection([
+                        new ShippingLineItem([
+                            ShippingLineItem::FIELD_PRODUCT => $this->getEntity(Product::class, ['id' => 1]),
+                        ]),
+                    ]),
+                    ShippingContext::FIELD_SHIPPING_ORIGIN => $this->getEntity(ShippingAddressStub::class, [
+                        'region' => $this->getEntity(Region::class, [
+                            'code' => 'CA',
+                        ]),
+                    ]),
+                    ShippingContext::FIELD_BILLING_ADDRESS => $this->getEntity(ShippingAddressStub::class, [
+                        'country' => new Country('US'),
+                    ]),
+                    ShippingContext::FIELD_SHIPPING_ADDRESS => $this->getEntity(ShippingAddressStub::class, [
+                        'country' => new Country('US'),
+                        'region' => $this->getEntity(Region::class, [
+                            'combinedCode' => 'US-CA',
+                            'code' => 'CA',
+                        ]),
+                        'postalCode' => '90401',
+                    ]),
+                    ShippingContext::FIELD_PAYMENT_METHOD => 'integration_payment_method',
+                    ShippingContext::FIELD_CURRENCY => 'USD',
+                    ShippingContext::FIELD_SUBTOTAL => Price::create(10.0, 'USD'),
+                    ShippingContext::FIELD_CUSTOMER => (new Account())->setName('Customer Name'),
+                    ShippingContext::FIELD_CUSTOMER_USER => (new AccountUser())->setFirstName('First Name'),
                 ]),
-            ]),
-            'billingAddress' => $this->getEntity(ShippingAddressStub::class, [
-                'country' => new Country('US'),
-            ]),
-            'shippingAddress' => $this->getEntity(ShippingAddressStub::class, [
-                'country' => new Country('US'),
-                'region' => $this->getEntity(Region::class, [
-                    'combinedCode' => 'US-CA',
-                    'code' => 'CA',
-                ]),
-                'postalCode' => '90401',
-            ]),
-            'paymentMethod' => 'integration_payment_method',
-            'currency' => 'USD',
-            'subtotal' => Price::create(10.0, 'USD'),
-            'customer' => (new Account())->setName('Customer Name'),
-            'customerUser' => (new AccountUser())->setFirstName('First Name'),
+            ],
         ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function tearDown()
-    {
-        unset(
-            $this->converter,
-            $this->doctrine,
-            $this->fieldProvider,
-            $this->fieldHelper,
-            $this->factory,
-            $this->shippingContextToRuleValuesConverter
-        );
     }
 }

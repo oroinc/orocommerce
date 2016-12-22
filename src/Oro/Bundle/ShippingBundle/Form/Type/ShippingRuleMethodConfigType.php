@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ShippingBundle\Form\Type;
 
-use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodConfig;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
 use Oro\Bundle\ShippingBundle\Form\EventSubscriber\RuleMethodConfigSubscriber;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
@@ -70,7 +70,7 @@ class ShippingRuleMethodConfigType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => ShippingRuleMethodConfig::class,
+            'data_class' => ShippingMethodConfig::class,
         ]);
     }
 

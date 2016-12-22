@@ -6,8 +6,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodConfig;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
@@ -135,7 +135,7 @@ class RemoveUsedShippingServiceValidatorTest extends \PHPUnit_Framework_TestCase
         $manager->expects(static::any())
             ->method('getRepository')
             ->willReturnMap([
-                ['OroShippingBundle:ShippingRuleMethodConfig', $repository1],
+                ['OroShippingBundle:ShippingMethodConfig', $repository1],
                 ['OroUPSBundle:ShippingService', $repository2],
             ]);
 
@@ -197,13 +197,13 @@ class RemoveUsedShippingServiceValidatorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param array $codes
-     * @return ShippingRuleMethodConfig
+     * @return ShippingMethodConfig
      */
     protected function createShippingRuleMethod($codes)
     {
-        $method = new ShippingRuleMethodConfig();
+        $method = new ShippingMethodConfig();
         foreach ($codes as $code) {
-            $type = (new ShippingRuleMethodTypeConfig())->setType($code['code'])->setEnabled($code['enabled']);
+            $type = (new ShippingMethodTypeConfig())->setType($code['code'])->setEnabled($code['enabled']);
             $method->addTypeConfig($type);
         }
         return $method;

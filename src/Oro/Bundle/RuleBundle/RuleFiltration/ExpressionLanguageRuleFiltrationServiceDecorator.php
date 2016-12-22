@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\RuleBundle\RuleFiltration;
 
+use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
 use Oro\Component\ExpressionLanguage\ExpressionLanguage;
 use Psr\Log\LoggerInterface;
 
@@ -28,6 +29,7 @@ class ExpressionLanguageRuleFiltrationServiceDecorator implements RuleFiltration
     }
 
     /**
+     * @param RuleOwnerInterface[]|array $ruleOwners
      * {@inheritdoc}
      */
     public function getFilteredRuleOwners(array $ruleOwners, array $context)

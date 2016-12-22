@@ -12,7 +12,7 @@ use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Oro\Bundle\PaymentBundle\Entity\Repository\PaymentMethodsConfigsRuleRepository")
  * @ORM\Table(name="oro_payment_mtds_cfgs_rl")
  * @ORM\HasLifecycleCallbacks()
  * @Config
@@ -51,7 +51,7 @@ class PaymentMethodsConfigsRule extends ExtendPaymentMethodsConfigsRule implemen
     /**
      * @var Rule
      *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\RuleBundle\Entity\Rule", inversedBy="methodsConfigsRule")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\RuleBundle\Entity\Rule")
      * @ORM\JoinColumn(name="rule_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
      * @ConfigField(
      *      defaultValues={
@@ -79,7 +79,7 @@ class PaymentMethodsConfigsRule extends ExtendPaymentMethodsConfigsRule implemen
     /**
      * @var string
      *
-     * @ORM\Column(name="currency", type="string", length=3, nullable=true)
+     * @ORM\Column(name="currency", type="string", length=3, nullable=false)
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={

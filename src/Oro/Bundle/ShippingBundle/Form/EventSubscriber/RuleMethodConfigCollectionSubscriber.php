@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ShippingBundle\Form\EventSubscriber;
 
 use Doctrine\Common\Collections\Collection;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodConfig;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
@@ -40,7 +40,7 @@ class RuleMethodConfigCollectionSubscriber implements EventSubscriberInterface
      */
     public function preSet(FormEvent $event)
     {
-        /** @var Collection|ShippingRuleMethodConfig[] $data */
+        /** @var Collection|ShippingMethodConfig[] $data */
         $data = $event->getData();
         $form = $event->getForm();
 

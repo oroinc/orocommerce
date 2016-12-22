@@ -71,7 +71,7 @@ class FlatRateShippingMethodType implements ShippingMethodTypeInterface
             case static::PER_ITEM_TYPE:
                 $countItems = array_sum(array_map(function (ShippingLineItemInterface $item) {
                     return $item->getQuantity();
-                }, $context->getLineItems()));
+                }, $context->getLineItems()->toArray()));
                 $price = $countItems * (float)$price;
                 break;
             default:

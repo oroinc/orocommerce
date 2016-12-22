@@ -47,7 +47,7 @@ Oro\Bundle\ShippingBundle\Entity\ShippingRule:
             - Currency: ~
             - NotBlank: ~
 
-Oro\Bundle\ShippingBundle\Entity\ShippingRuleDestination:
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination:
     properties:
         country:
             - NotBlank: ~
@@ -55,7 +55,7 @@ Oro\Bundle\ShippingBundle\Entity\ShippingRuleDestination:
         region:
             - Valid: ~
 
-Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodConfig:
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig:
     properties:
         method:
             - NotBlank: ~
@@ -63,7 +63,7 @@ Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodConfig:
             - Valid: ~
             - Oro\Bundle\ShippingBundle\Validator\Constraints\EnabledTypeConfigsValidationGroup: ~
 
-Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig:
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig:
     properties:
         type:
             - NotBlank: ~
