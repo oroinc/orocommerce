@@ -31,15 +31,11 @@
 
         overflow: hidden;
 
-        &:hover,
-        &:visited,
-        &:focus {
+        @include element-state('hover') {
             text-decoration: none;
 
             color: get-color('additional', 'darker');
-        }
 
-        &:hover {
             .quick-access__text {
                 text-decoration: underline;
             }
@@ -50,7 +46,7 @@
         vertical-align: middle;
     }
 
-    &__icon {
+    .badge {
         margin-right: 5px;
 
         @include badge(20px, 11px, get-color('primary', 'light'), 3px);
@@ -60,7 +56,7 @@
         }
 
         &--dark {
-            background-color: get-color('primary', 'dark');
+            background-color: get-color('primary', 'base');
         }
     }
 }
