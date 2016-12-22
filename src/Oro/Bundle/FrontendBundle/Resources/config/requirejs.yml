@@ -36,5 +36,6 @@ config:
 
         'slick': 'bundles/orofrontend/default/vendors/slick/slick.min.js'
         'orofrontend/js/app/components/list-slider-component': 'bundles/orofrontend/js/app/components/list-slider-component.js'
+        'orofrontend/js/app/components/popup-gallery-widget': 'bundles/orofrontend/js/app/components/popup-gallery-widget.js'
     appmodules:
         - orofrontend/js/app/modules/inline-editor-types-map-module
