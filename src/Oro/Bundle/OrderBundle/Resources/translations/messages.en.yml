@@ -1,3 +1,21 @@
+"Order History": "Order History"
+"close": "close"
+"Billing Information": "Billing Information"
+"Payment": "Payment"
+"Shipping Information": "Shipping Information"
+"Billing Information": "Billing Information"
+"Shipping Method": "Shipping Method"
+"Order Review": "Order Review"
+"Payment": "Payment"
+"Paid in full": "Paid in full"
+"Payment authorized": "Payment authorized"
+"Pending payment": "Pending payment"
+"Payment declined": "Payment declined"
+"Paid partially": "Paid partially"
+"Alternative Checkout": "Alternative Checkout"
+"Checkout": "Checkout"
+"USD": "USD"
+"EUR": "EUR"
 oro:
     order:
         entity_label: Order
