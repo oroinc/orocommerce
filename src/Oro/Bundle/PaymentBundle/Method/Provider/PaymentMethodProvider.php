@@ -20,8 +20,6 @@ class PaymentMethodProvider
     private $paymentMethodsConfigsRulesProvider;
 
     /**
-     * PaymentMethodProvider constructor.
-     *
      * @param PaymentMethodRegistry $paymentMethodRegistry
      * @param PaymentMethodsConfigsRulesProviderInterface $paymentMethodsConfigsRulesProvider
      */
@@ -36,7 +34,7 @@ class PaymentMethodProvider
     /**
      * @param PaymentContextInterface $context
      *
-     * @return PaymentMethodInterface[]|array
+     * @return PaymentMethodInterface[]
      */
     public function getApplicablePaymentMethods(PaymentContextInterface $context)
     {

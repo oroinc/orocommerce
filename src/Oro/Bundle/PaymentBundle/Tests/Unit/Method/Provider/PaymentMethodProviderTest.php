@@ -45,12 +45,8 @@ class PaymentMethodProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetApplicablePaymentMethods()
     {
-        $typesPerForConfig = [
-            ['SomeType'],
-            ['PayPal', 'SomeOtherType'],
-        ];
-
-        $configsRules = $this->getPaymentMethodsConfigsRulesMock($typesPerForConfig);
+        $configsRules[] = $this->createPaymentMethodsConfigsRuleMock(['SomeType']);
+        $configsRules[] = $this->createPaymentMethodsConfigsRuleMock(['PayPal', 'SomeOtherType']);
 
         $this->paymentMethodsConfigsRulesProviderMock
             ->expects($this->once())
@@ -58,7 +54,28 @@ class PaymentMethodProviderTest extends \PHPUnit_Framework_TestCase
             ->with($this->paymentContextMock)
             ->willReturn($configsRules);
 
-        $expectedPaymentMethodsMocks = $this->buildRegistryMock($typesPerForConfig);
+        $someTypeMethodMock = $this->createPaymentMethodMock('SomeType');
+        $payPalMethodMock = $this->createPaymentMethodMock('PayPal');
+        $someOtherTypeMethodMock = $this->createPaymentMethodMock('SomeOtherType');
+
+        $this->paymentMethodRegistryMock
+            ->expects($this->exactly(3))
+            ->method('getPaymentMethod')
+            ->will(
+                $this->returnValueMap(
+                    [
+                        ['SomeType', $someTypeMethodMock],
+                        ['PayPal', $payPalMethodMock],
+                        ['SomeOtherType', $someOtherTypeMethodMock],
+                    ]
+                )
+            );
+
+        $expectedPaymentMethodsMocks = [
+            'SomeType' => $someTypeMethodMock,
+            'PayPal' => $payPalMethodMock,
+            'SomeOtherType' => $someOtherTypeMethodMock,
+        ];
 
         $provider = new PaymentMethodProvider(
             $this->paymentMethodRegistryMock,
@@ -71,74 +88,58 @@ class PaymentMethodProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @var array|string[] $typesPerForConfig
+     * @var string[] $configuredMethodTypes
      *
-     * @return PaymentMethodsConfigsRule[]|\PHPUnit_Framework_MockObject_MockObject
+     * @return PaymentMethodsConfigsRule|\PHPUnit_Framework_MockObject_MockObject
      */
-    private function getPaymentMethodsConfigsRulesMock(array $typesPerForConfig)
+    private function createPaymentMethodsConfigsRuleMock(array $configuredMethodTypes)
     {
-        $configsRulesMocks = [];
-
-        foreach ($typesPerForConfig as $configuredMethodTypes) {
-            $methodConfigMocks = [];
-
-            foreach ($configuredMethodTypes as $configuredMethodType) {
-                $methodConfigMock = $this->getMockBuilder(PaymentMethodConfig::class)
-                    ->disableOriginalConstructor()
-                    ->getMock();
-                $methodConfigMock
-                    ->expects($this->exactly(2))
-                    ->method('getType')
-                    ->willReturn($configuredMethodType);
-                $methodConfigMocks[] = $methodConfigMock;
-            }
-
-            $configsRuleMock = $this->getMockBuilder(PaymentMethodsConfigsRule::class)
-                ->disableOriginalConstructor()
-                ->getMock();
-
-            $configsRuleMock
-                ->expects($this->once())
-                ->method('getMethodConfigs')
-                ->willReturn($methodConfigMocks);
-
-            $configsRulesMocks[] = $configsRuleMock;
+        $methodConfigMocks = [];
+        foreach ($configuredMethodTypes as $configuredMethodType) {
+            $methodConfigMocks[] = $this->createPaymentMethodsConfigMock($configuredMethodType);
         }
 
-        return $configsRulesMocks;
+        $configsRuleMock = $this->getMockBuilder(PaymentMethodsConfigsRule::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $configsRuleMock
+            ->expects($this->once())
+            ->method('getMethodConfigs')
+            ->willReturn($methodConfigMocks);
+
+        return $configsRuleMock;
     }
 
     /**
-     * @param array|string[] $typesPerForConfig
+     * @param string $configuredMethodType
      *
-     * @return array|PaymentMethodInterface[]|\PHPUnit_Framework_MockObject_MockObject
+     * @return PaymentMethodConfig|\PHPUnit_Framework_MockObject_MockObject
      */
-    private function buildRegistryMock(array $typesPerForConfig)
+    private function createPaymentMethodsConfigMock($configuredMethodType)
     {
-        $paymentMethodsMocks = [];
+        $methodConfigMock = $this->getMockBuilder(PaymentMethodConfig::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        $counter = 0;
-        foreach ($typesPerForConfig as $configuredMethodTypes) {
-            foreach ($configuredMethodTypes as $configuredMethodType) {
-                $paymentMethodMock = $this->getMock(PaymentMethodInterface::class);
+        $methodConfigMock
+            ->expects($this->exactly(2))
+            ->method('getType')
+            ->willReturn($configuredMethodType);
 
-                // so that one mock is different from another
-                $paymentMethodMock
-                    ->expects($this->never())
-                    ->method('getType')
-                    ->willReturn($configuredMethodType);
+        return $methodConfigMock;
+    }
 
-                $this->paymentMethodRegistryMock
-                    ->expects($this->at($counter))
-                    ->method('getPaymentMethod')
-                    ->with($configuredMethodType)
-                    ->willReturn($paymentMethodMock);
-
-                $counter++;
-                $paymentMethodsMocks[$configuredMethodType] = $paymentMethodMock;
-            }
-        }
-
-        return $paymentMethodsMocks;
+    /**
+     * @param string $methodType
+     *
+     * @return PaymentMethodInterface|\PHPUnit_Framework_MockObject_Builder_InvocationMocker
+     */
+    private function createPaymentMethodMock($methodType)
+    {
+        return $this->getMock(PaymentMethodInterface::class)
+            ->expects($this->never())
+            ->method('getType')
+            ->willReturn($methodType);
     }
 }
