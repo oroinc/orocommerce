@@ -48,7 +48,7 @@ class CreditCardType extends AbstractType
                     new NotBlank(),
                     new Length(['min' => '12', 'max' => '19']),
                 ],
-                ]
+            ]
             )->add(
                 'expirationDate',
                 'oro_paypal_credit_card_expiration_date',
@@ -94,7 +94,7 @@ class CreditCardType extends AbstractType
                         'placeholder' => false,
                     ],
                 ]
-                );
+            );
         }
 
         if ($options['zeroAmountAuthorizationEnabled']) {
