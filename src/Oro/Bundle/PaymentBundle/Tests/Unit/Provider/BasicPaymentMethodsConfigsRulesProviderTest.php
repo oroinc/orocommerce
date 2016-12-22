@@ -64,7 +64,7 @@ class BasicPaymentMethodsConfigsRulesProviderTest extends \PHPUnit_Framework_Tes
         array_pop($expectedConfigs);
 
         $this->paymentContextMock
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('getBillingAddress')
             ->willReturn($someAddress);
 
@@ -77,6 +77,62 @@ class BasicPaymentMethodsConfigsRulesProviderTest extends \PHPUnit_Framework_Tes
             ->expects($this->once())
             ->method('getByDestinationAndCurrency')
             ->with($someAddress, $someCurrency)
+            ->willReturn($ruleConfigs);
+
+        $this->paymentContextToRulesValueConverterMock
+            ->expects($this->once())
+            ->method('convert')
+            ->willReturn($convertedContext);
+
+        $this->ruleFiltrationServiceMock
+            ->expects($this->once())
+            ->method('getFilteredRuleOwners')
+            ->with($ruleConfigs, $convertedContext)
+            ->willReturn($expectedConfigs);
+
+        $provider = new BasicPaymentMethodsConfigsRulesProvider(
+            $this->paymentContextToRulesValueConverterMock,
+            $this->paymentMethodsConfigsRuleRepositoryMock,
+            $this->ruleFiltrationServiceMock
+        );
+
+        $filteredConfigs = $provider->getFilteredPaymentMethodsConfigs($this->paymentContextMock);
+
+        $this->assertEquals($expectedConfigs, $filteredConfigs);
+    }
+
+    public function testGetFilteredPaymentMethodsConfigsWithoutBillingAddress()
+    {
+        $someCurrency = 'USD';
+        $convertedContext = ['currency' => $someCurrency];
+
+        $ruleConfigs = [
+            $this->createPaymentMethodsConfigsRuleMock(),
+            $this->createPaymentMethodsConfigsRuleMock(),
+            $this->createPaymentMethodsConfigsRuleMock(),
+        ];
+
+        $expectedConfigs = $ruleConfigs;
+        array_pop($expectedConfigs);
+
+        $this->paymentContextMock
+            ->expects($this->once())
+            ->method('getBillingAddress')
+            ->willReturn(null);
+
+        $this->paymentContextMock
+            ->expects($this->once())
+            ->method('getCurrency')
+            ->willReturn($someCurrency);
+
+        $this->paymentMethodsConfigsRuleRepositoryMock
+            ->expects($this->never())
+            ->method('getByDestinationAndCurrency');
+
+        $this->paymentMethodsConfigsRuleRepositoryMock
+            ->expects($this->once())
+            ->method('getByCurrencyWithoutDestination')
+            ->with($someCurrency)
             ->willReturn($ruleConfigs);
 
         $this->paymentContextToRulesValueConverterMock

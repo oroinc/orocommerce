@@ -36,7 +36,7 @@ class LoadPaymentMethodsConfigsRuleData extends AbstractFixture implements Depen
 
             $entity
                 ->setCurrency($data['currency'])
-                ->setMethodConfig($rule);
+                ->setRule($rule);
 
             $manager->persist($entity);
 

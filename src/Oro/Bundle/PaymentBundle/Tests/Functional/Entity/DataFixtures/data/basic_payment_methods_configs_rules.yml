@@ -13,3 +13,11 @@ payment.payment_methods_configs_rule.3:
 payment.payment_methods_configs_rule.4:
     currency: 'EUR'
     rule_reference: 'rule.3'
+
+payment.payment_methods_configs_rule.5:
+    currency: 'USD'
+    rule_reference: 'rule.3'
+
+payment.payment_methods_configs_rule.6:
+    currency: 'USD'
+    rule_reference: 'rule.3'

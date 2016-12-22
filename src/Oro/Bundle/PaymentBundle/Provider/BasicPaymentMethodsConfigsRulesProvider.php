@@ -46,13 +46,26 @@ class BasicPaymentMethodsConfigsRulesProvider implements PaymentMethodsConfigsRu
      */
     public function getFilteredPaymentMethodsConfigs(PaymentContextInterface $context)
     {
-        $rulesConfigs = $this->repository->getByDestinationAndCurrency(
-            $context->getBillingAddress(),
-            $context->getCurrency()
-        );
-
+        $rulesConfigs = $this->getRulesConfigs($context);
         $rulesContext = $this->paymentContextToRulesValueConverter->convert($context);
 
         return $this->ruleFiltrationService->getFilteredRuleOwners($rulesConfigs, $rulesContext);
+    }
+
+    /**
+     * @param PaymentContextInterface $context
+     *
+     * @return \Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule[]
+     */
+    private function getRulesConfigs(PaymentContextInterface $context)
+    {
+        if (null === $context->getBillingAddress()) {
+            return $this->repository->getByCurrencyWithoutDestination($context->getCurrency());
+        }
+
+        return $this->repository->getByDestinationAndCurrency(
+            $context->getBillingAddress(),
+            $context->getCurrency()
+        );
     }
 }
