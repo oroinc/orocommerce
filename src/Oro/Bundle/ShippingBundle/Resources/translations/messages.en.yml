@@ -65,7 +65,7 @@ oro:
             id.label: Id
             method.label: Method
             options.label: Options
-            methodConfigsRule.label: Shipping Rule
+            method_configs_rule.label: Shipping Rule
             type_configs.label: Types
         shippingmethodtypeconfig:
             entity_label: Shipping Rule Method Type Config
