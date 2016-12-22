@@ -37,6 +37,9 @@ action_groups:
         parameters:
             shoppingList:
                 type: Oro\Bundle\ShoppingListBundle\Entity\ShoppingList
+            forceStartCheckout:
+                type: bool
+                default: false
         actions:
             - '@assign_url':
                 attribute: $.editLink
@@ -50,11 +53,12 @@ action_groups:
                 parameters_mapping:
                     sourceCriteria:
                         shoppingList: $.shoppingList
-                    settings: # also update restart_checkout workflow when modifying this section
+                    settings:
                         allow_manual_source_remove: true
                         remove_source: true
                         edit_order_link: $.editLink
                         source_remove_label: $.sourceRemoveLabel
+                    force: $.forceStartCheckout
                 results:
                     redirectUrl: $.redirectUrl
                     checkout: $.checkout
@@ -168,25 +172,6 @@ action_groups:
                     - '@copy_values': [$.checkout, $.checkoutData]
 
             - '@flush_entity': $.checkout
-
-    restart_checkout:
-        actions:
-            - '@assign_url':
-                attribute: $.editLink
-                route: oro_shopping_list_frontend_view
-                route_parameters: {id: $.shoppingList.id}
-            - '@translate':
-                id: 'oro.frontend.shoppinglist.workflow.remove_source.label'
-                attribute: $.sourceRemoveLabel
-            - '@run_action_group':
-                action_group: update_workflow_item
-                parameters_mapping:
-                    entity: $.checkout
-                    data:
-                        allow_manual_source_remove: true
-                        remove_source: true
-                        edit_order_link: $.editLink
-                        source_remove_label: $.sourceRemoveLabel
 
     update_workflow_item:
         parameters:
