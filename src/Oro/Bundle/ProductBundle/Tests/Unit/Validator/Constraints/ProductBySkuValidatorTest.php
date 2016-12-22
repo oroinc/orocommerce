@@ -41,7 +41,7 @@ class ProductBySkuValidatorTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->context = $this->getMock('Symfony\Component\Validator\ExecutionContextInterface');
+        $this->context = $this->createMock('Symfony\Component\Validator\ExecutionContextInterface');
         $this->constraint = $this->getMockBuilder('Oro\Bundle\ProductBundle\Validator\Constraints\ProductBySku')
             ->disableOriginalConstructor()
             ->getMock();
@@ -78,7 +78,7 @@ class ProductBySkuValidatorTest extends \PHPUnit_Framework_TestCase
             $products = null;
         }
 
-        $config = $this->getMock('Symfony\Component\Form\FormConfigInterface');
+        $config = $this->createMock('Symfony\Component\Form\FormConfigInterface');
         $config->expects($this->any())
             ->method('getOptions')
             ->willReturn(
@@ -97,7 +97,7 @@ class ProductBySkuValidatorTest extends \PHPUnit_Framework_TestCase
             ->with('products')
             ->willReturn($products);
 
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
         $form->expects($this->once())
             ->method('offsetExists')
             ->with('products')

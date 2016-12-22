@@ -158,7 +158,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
      */
     protected function preparePriceType()
     {
-        return PriceTypeGenerator::createPriceType();
+        return PriceTypeGenerator::createPriceType($this);
     }
 
     /**

@@ -23,8 +23,8 @@ class CategoryHandlerTest extends FormHandlerTestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->eventDispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
-        $this->entity = $this->getMock('Oro\Bundle\CatalogBundle\Entity\Category');
+        $this->eventDispatcher = $this->createMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
+        $this->entity = $this->createMock('Oro\Bundle\CatalogBundle\Entity\Category');
         $this->handler = new CategoryHandler($this->form, $this->request, $this->manager, $this->eventDispatcher);
     }
 
@@ -149,7 +149,7 @@ class CategoryHandlerTest extends FormHandlerTestCase
     
     protected function assertCategoryUnitPrecisionUpdate()
     {
-        $defaultProductOptions = $this->getMock('Oro\Bundle\CatalogBundle\Entity\CategoryDefaultProductOptions');
+        $defaultProductOptions = $this->createMock('Oro\Bundle\CatalogBundle\Entity\CategoryDefaultProductOptions');
         $defaultProductOptions->expects($this->once())
             ->method('updateUnitPrecision');
         $this->entity->expects($this->any())

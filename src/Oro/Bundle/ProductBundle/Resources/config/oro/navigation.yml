@@ -42,7 +42,15 @@ navigation:
                 route_parameters:
                     alias: 'product'
                 extras:
-                    routes: ['oro_attribute*']
+                    routes: ['oro_attribute_*']
+
+            product_attribute_families:
+                label: 'oro.product.menu.product_attribute_families'
+                route: 'oro_attribute_family_index'
+                route_parameters:
+                    alias: 'product'
+                extras:
+                    routes: ['oro_attribute_family_*']
 
         tree:
             application_menu:
@@ -54,6 +62,7 @@ navigation:
                         children:
                             attributes_list:
                                 children:
+                                    product_attribute_families: ~
                                     product_attributes_index: ~
             shortcuts:
                 children:
@@ -68,7 +77,6 @@ navigation:
         oro_product_view:   '%%sku%% - %%name%%'
         oro_product_update: '%%sku%% - %%name%% - Edit'
         oro_product_create: 'Create Product'
-
         oro_product_frontend_product_index: ~
         oro_product_frontend_product_view: '%%name%%'
         oro_product_frontend_quick_add: 'oro.product.frontend.quick_add.title'

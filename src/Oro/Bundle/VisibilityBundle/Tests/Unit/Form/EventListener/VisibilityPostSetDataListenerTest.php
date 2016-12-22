@@ -44,8 +44,8 @@ class VisibilityPostSetDataListenerTest extends \PHPUnit_Framework_TestCase
     public function testOnPostSetData()
     {
         $product = $this->getEntity(Product::class, ['id' => 1]);
-        $form = $this->getMock(FormInterface::class);
-        $formConfig = $this->getMock(FormConfigInterface::class);
+        $form = $this->createMock(FormInterface::class);
+        $formConfig = $this->createMock(FormConfigInterface::class);
         $formConfig->method('getOption')->with('allClass')->willReturn(ProductVisibility::class);
         $form->method('getData')->willReturn($product);
         $form->method('getConfig')->willReturn($formConfig);
@@ -83,9 +83,9 @@ class VisibilityPostSetDataListenerTest extends \PHPUnit_Framework_TestCase
             );
 
 
-        $allForm = $this->getMock(FormInterface::class);
-        $accountForm = $this->getMock(FormInterface::class);
-        $accountGroupForm = $this->getMock(FormInterface::class);
+        $allForm = $this->createMock(FormInterface::class);
+        $accountForm = $this->createMock(FormInterface::class);
+        $accountGroupForm = $this->createMock(FormInterface::class);
 
         $form->method('get')->willReturnMap(
             [

@@ -33,7 +33,7 @@ class WebsiteUrlResolverTest extends \PHPUnit_Framework_TestCase
         $this->configManager = $this->getMockBuilder(ConfigManager::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->urlGenerator = $this->getMock(UrlGeneratorInterface::class);
+        $this->urlGenerator = $this->createMock(UrlGeneratorInterface::class);
         $this->websiteUrlResolver = new WebsiteUrlResolver($this->configManager, $this->urlGenerator);
     }
 

@@ -64,10 +64,10 @@ class PaymentTermExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testBuildWithoutParent()
     {
-        $form = $this->getMock(FormInterface::class);
+        $form = $this->createMock(FormInterface::class);
         $form->expects($this->once())->method('getParent')->willReturn(null);
         $formEvent = new FormEvent($form, new PaymentTermAwareStub());
-        $builder = $this->getMock(FormBuilderInterface::class);
+        $builder = $this->createMock(FormBuilderInterface::class);
 
         $this->addCallbackAssert($builder, $formEvent);
 
@@ -76,12 +76,12 @@ class PaymentTermExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testBuildWithoutParentData()
     {
-        $parent = $this->getMock(FormInterface::class);
-        $form = $this->getMock(FormInterface::class);
+        $parent = $this->createMock(FormInterface::class);
+        $form = $this->createMock(FormInterface::class);
         $form->expects($this->once())->method('getParent')->willReturn($parent);
         $parent->expects($this->once())->method('getData')->willReturn(null);
         $formEvent = new FormEvent($form, new PaymentTermAwareStub());
-        $builder = $this->getMock(FormBuilderInterface::class);
+        $builder = $this->createMock(FormBuilderInterface::class);
 
         $this->addCallbackAssert($builder, $formEvent);
 
@@ -90,12 +90,12 @@ class PaymentTermExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testBuildParentDataNotAccountOwnerAwareInterface()
     {
-        $parent = $this->getMock(FormInterface::class);
-        $form = $this->getMock(FormInterface::class);
+        $parent = $this->createMock(FormInterface::class);
+        $form = $this->createMock(FormInterface::class);
         $form->expects($this->once())->method('getParent')->willReturn($parent);
         $parent->expects($this->once())->method('getData')->willReturn(new \stdClass());
         $formEvent = new FormEvent($form, new PaymentTermAwareStub());
-        $builder = $this->getMock(FormBuilderInterface::class);
+        $builder = $this->createMock(FormBuilderInterface::class);
 
         $this->addCallbackAssert($builder, $formEvent);
 
@@ -118,18 +118,18 @@ class PaymentTermExtensionTest extends \PHPUnit_Framework_TestCase
         $this->paymentTermProvider->expects($this->once())->method('getAccountGroupPaymentTermByOwner')
             ->willReturn($accountGroupPaymentTerm);
 
-        $parent = $this->getMock(FormInterface::class);
+        $parent = $this->createMock(FormInterface::class);
         $parent->expects($this->once())->method('getData')->willReturn(new PaymentTermAwareStub());
         $parent->expects($this->any())->method('getName')->willReturn('parent');
 
-        $type = $this->getMock(ResolvedFormTypeInterface::class);
+        $type = $this->createMock(ResolvedFormTypeInterface::class);
         $type->expects($this->any())->method('getName')->willReturn('entity');
 
-        $config = $this->getMock(FormConfigInterface::class);
+        $config = $this->createMock(FormConfigInterface::class);
         $config->expects($this->once())->method('getOptions')->willReturn([]);
         $config->expects($this->once())->method('getType')->willReturn($type);
 
-        $form = $this->getMock(FormInterface::class);
+        $form = $this->createMock(FormInterface::class);
         $form->expects($this->once())->method('getParent')->willReturn($parent);
         $form->expects($this->once())->method('getConfig')->willReturn($config);
         $form->expects($this->any())->method('getName')->willReturn('paymentTerm');
@@ -151,7 +151,7 @@ class PaymentTermExtensionTest extends \PHPUnit_Framework_TestCase
         );
 
         $formEvent = new FormEvent($form, new PaymentTermAwareStub());
-        $builder = $this->getMock(FormBuilderInterface::class);
+        $builder = $this->createMock(FormBuilderInterface::class);
 
         $this->addCallbackAssert($builder, $formEvent);
 

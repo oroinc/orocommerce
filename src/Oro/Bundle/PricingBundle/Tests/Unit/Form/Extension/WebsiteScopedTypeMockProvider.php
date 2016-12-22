@@ -52,7 +52,7 @@ class WebsiteScopedTypeMockProvider extends \PHPUnit_Framework_TestCase
             ->willReturn($em);
 
         /** @var WebsiteProviderInterface|\PHPUnit_Framework_MockObject_MockObject $websiteProvider */
-        $websiteProvider = $this->getMock('Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface');
+        $websiteProvider = $this->createMock('Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface');
         $websiteProvider->expects($this->any())
             ->method('getWebsites')
             ->willReturn([$website]);

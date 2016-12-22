@@ -268,7 +268,7 @@ class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit_Framework_
      */
     private function prepareDatagrid(DatagridConfiguration $config = null)
     {
-        $datagrid = $this->getMock(DatagridInterface::class);
+        $datagrid = $this->createMock(DatagridInterface::class);
         $datagrid->expects($this->any())
             ->method('getParameters')
             ->willReturn($this->parameterBag);

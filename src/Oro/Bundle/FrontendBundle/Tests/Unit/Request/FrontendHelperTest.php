@@ -22,11 +22,11 @@ class FrontendHelperTest extends \PHPUnit_Framework_TestCase
         $request = Request::create($path) ;
 
         /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
-        $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
+        $requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
         $requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
 
         /** @var ContainerInterface|\PHPUnit_Framework_MockObject_MockObject $container */
-        $container = $this->getMock(ContainerInterface::class);
+        $container = $this->createMock(ContainerInterface::class);
         $container->expects($this->any())
             ->method('get')
             ->with('request_stack')
@@ -69,11 +69,11 @@ class FrontendHelperTest extends \PHPUnit_Framework_TestCase
     public function testIsFrontendRequestWithoutPath()
     {
         /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
-        $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
+        $requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
         $requestStack->expects($this->once())->method('getCurrentRequest')->willReturn(null);
 
         /** @var ContainerInterface|\PHPUnit_Framework_MockObject_MockObject $container */
-        $container = $this->getMock(ContainerInterface::class);
+        $container = $this->createMock(ContainerInterface::class);
         $container->expects($this->any())
             ->method('get')
             ->with('request_stack')
@@ -90,12 +90,12 @@ class FrontendHelperTest extends \PHPUnit_Framework_TestCase
     public function testIsFrontendRequestNotInstalled()
     {
         /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
-        $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
+        $requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
         $requestStack->expects($this->never())
             ->method('getCurrentRequest');
 
         /** @var ContainerInterface|\PHPUnit_Framework_MockObject_MockObject $container */
-        $container = $this->getMock(ContainerInterface::class);
+        $container = $this->createMock(ContainerInterface::class);
         $container->expects($this->any())
             ->method('get')
             ->with('request_stack')
@@ -113,7 +113,7 @@ class FrontendHelperTest extends \PHPUnit_Framework_TestCase
     public function testIsFrontendUrlForNotInstalled()
     {
         /** @var ContainerInterface|\PHPUnit_Framework_MockObject_MockObject $container */
-        $container = $this->getMock(ContainerInterface::class);
+        $container = $this->createMock(ContainerInterface::class);
 
         $container->expects($this->once())
             ->method('getParameter')
@@ -127,7 +127,7 @@ class FrontendHelperTest extends \PHPUnit_Framework_TestCase
     public function testIsFrontendUrlForBackendUrl()
     {
         /** @var ContainerInterface|\PHPUnit_Framework_MockObject_MockObject $container */
-        $container = $this->getMock(ContainerInterface::class);
+        $container = $this->createMock(ContainerInterface::class);
 
         $container->expects($this->once())
             ->method('getParameter')
@@ -141,7 +141,7 @@ class FrontendHelperTest extends \PHPUnit_Framework_TestCase
     public function testIsFrontendUrl()
     {
         /** @var ContainerInterface|\PHPUnit_Framework_MockObject_MockObject $container */
-        $container = $this->getMock(ContainerInterface::class);
+        $container = $this->createMock(ContainerInterface::class);
 
         $container->expects($this->once())
             ->method('getParameter')

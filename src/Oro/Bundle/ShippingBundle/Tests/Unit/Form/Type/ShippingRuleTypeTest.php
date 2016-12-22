@@ -78,7 +78,7 @@ class ShippingRuleTypeTest extends FormIntegrationTestCase
         $this->ruleMethodConfigCollectionSubscriber
             ->setFactory($this->factory)->setMethodRegistry($this->methodRegistry);
 
-        $translator = $this->getMock(TranslatorInterface::class);
+        $translator = $this->createMock(TranslatorInterface::class);
         $translator->expects(static::any())
             ->method('trans')
             ->will(static::returnCallback(function ($message) {
@@ -184,7 +184,7 @@ class ShippingRuleTypeTest extends FormIntegrationTestCase
      */
     public function getExtensions()
     {
-        $roundingService = $this->getMock(RoundingServiceInterface::class);
+        $roundingService = $this->createMock(RoundingServiceInterface::class);
         $roundingService->expects($this->any())
             ->method('getPrecision')
             ->willReturn(4);

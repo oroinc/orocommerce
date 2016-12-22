@@ -33,7 +33,7 @@ class ProductAccessExceptionListenerTest extends \PHPUnit_Framework_TestCase
         $this->event = $this->getMockBuilder(GetResponseForExceptionEvent::class)
             ->disableOriginalConstructor()->getMock();
 
-        $this->requestStack = $this->getMock(RequestStack::class);
+        $this->requestStack = $this->createMock(RequestStack::class);
 
         $this->testable = new ProductAccessExceptionListener($this->requestStack);
     }

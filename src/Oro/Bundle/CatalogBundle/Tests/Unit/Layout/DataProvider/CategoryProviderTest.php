@@ -30,9 +30,9 @@ class CategoryProviderTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->requestProductHandler = $this->getMock(RequestProductHandler::class, [], [], '', false);
-        $this->categoryRepository = $this->getMock(CategoryRepository::class, [], [], '', false);
-        $this->categoryTreeProvider = $this->getMock(CategoryTreeProvider::class, [], [], '', false);
+        $this->requestProductHandler = $this->createMock(RequestProductHandler::class);
+        $this->categoryRepository = $this->createMock(CategoryRepository::class);
+        $this->categoryTreeProvider = $this->createMock(CategoryTreeProvider::class);
 
         $this->categoryProvider = new CategoryProvider(
             $this->requestProductHandler,
@@ -124,11 +124,11 @@ class CategoryProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetParentCategories()
     {
-        $category = $this->getMock(Category::class);
+        $category = $this->createMock(Category::class);
         $categoryId = 1;
 
-        $categoryParent = $this->getMock(Category::class);
-        $categoryParent2 = $this->getMock(Category::class);
+        $categoryParent = $this->createMock(Category::class);
+        $categoryParent2 = $this->createMock(Category::class);
 
         $category->expects($this->once())
             ->method('getParentCategory')

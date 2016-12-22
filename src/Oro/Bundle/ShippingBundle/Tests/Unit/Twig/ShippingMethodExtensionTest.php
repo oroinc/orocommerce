@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\src\Oro\Bundle\ShippingBundle\Tests\Unit\Twig;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\Twig;
 
 use Oro\Bundle\ShippingBundle\Event\ShippingMethodConfigDataEvent;
 use Oro\Bundle\ShippingBundle\Formatter\ShippingMethodLabelFormatter;

@@ -27,7 +27,7 @@ class ExtractLineItemPaymentOptionsListenerTest extends \PHPUnit_Framework_TestC
 
     public function setUp()
     {
-        $this->translator = $this->getMock(TranslatorInterface::class);
+        $this->translator = $this->createMock(TranslatorInterface::class);
         $this->taxManager = $this->getMockBuilder(TaxManager::class)->disableOriginalConstructor()->getMock();
         $this->listener = new ExtractLineItemPaymentOptionsListener($this->translator, $this->taxManager);
 

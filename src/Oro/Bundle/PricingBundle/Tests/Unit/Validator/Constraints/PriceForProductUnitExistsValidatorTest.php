@@ -35,11 +35,11 @@ class PriceForProductUnitExistsValidatorTest extends \PHPUnit_Framework_TestCase
         // remove precision
         // now collection has deleted element
         $value->removeElement($productUnitPrecision);
-        $repository = $this->getMock(ObjectRepository::class);
-        $em = $this->getMock(ObjectManager::class);
+        $repository = $this->createMock(ObjectRepository::class);
+        $em = $this->createMock(ObjectManager::class);
         $em->method('getRepository')->willReturn($repository);
         /** @var RegistryInterface|\PHPUnit_Framework_MockObject_MockObject $registry */
-        $registry = $this->getMock(RegistryInterface::class);
+        $registry = $this->createMock(RegistryInterface::class);
         $registry->method('getManagerForClass')->willReturn($em);
 
         // prices for deleted product unit exist, violation should be added
@@ -75,11 +75,11 @@ class PriceForProductUnitExistsValidatorTest extends \PHPUnit_Framework_TestCase
         // remove precision
         // now collection has deleted element
         $value->removeElement($productUnitPrecision);
-        $repository = $this->getMock(ObjectRepository::class);
-        $em = $this->getMock(ObjectManager::class);
+        $repository = $this->createMock(ObjectRepository::class);
+        $em = $this->createMock(ObjectManager::class);
         $em->method('getRepository')->willReturn($repository);
         /** @var RegistryInterface|\PHPUnit_Framework_MockObject_MockObject $registry */
-        $registry = $this->getMock(RegistryInterface::class);
+        $registry = $this->createMock(RegistryInterface::class);
         $registry->method('getManagerForClass')->willReturn($em);
 
         // prices for deleted product unit not exist, violation shouldn't be added
@@ -106,7 +106,7 @@ class PriceForProductUnitExistsValidatorTest extends \PHPUnit_Framework_TestCase
     protected function createPersistentCollectionForUnitPrecisions($elements)
     {
         /** @var EntityManagerInterface $em */
-        $em = $this->getMock(EntityManagerInterface::class);
+        $em = $this->createMock(EntityManagerInterface::class);
         /** @var ClassMetadata $classMetadata */
         $classMetadata = $this->getMockBuilder(ClassMetadata::class)->disableOriginalConstructor()->getMock();
         $collection = new ArrayCollection($elements);

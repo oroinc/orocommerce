@@ -29,7 +29,7 @@ class CategoryVisibilityPostSubmitListenerTest extends \PHPUnit_Framework_TestCa
 
     protected function setUp()
     {
-        $this->registry = $this->getMock(ManagerRegistry::class);
+        $this->registry = $this->createMock(ManagerRegistry::class);
 
         $this->dataHandler = $this->getMockBuilder(VisibilityFormPostSubmitDataHandler::class)
             ->disableOriginalConstructor()
@@ -40,14 +40,14 @@ class CategoryVisibilityPostSubmitListenerTest extends \PHPUnit_Framework_TestCa
 
     public function testOnPostSubmit()
     {
-        $form = $this->getMock(FormInterface::class);
+        $form = $this->createMock(FormInterface::class);
         $category = new Category();
-        $visibilityForm = $this->getMock(FormInterface::class);
+        $visibilityForm = $this->createMock(FormInterface::class);
         $visibilityForm->method('getData')->willReturn($category);
         $form->method('get')->with('visibility')->willReturn($visibilityForm);
         $event = new AfterFormProcessEvent($form, $category);
 
-        $em = $this->getMock(EntityManagerInterface::class);
+        $em = $this->createMock(EntityManagerInterface::class);
         $this->registry->method('getManagerForClass')->willReturn($em);
 
         $this->dataHandler->expects($this->once())

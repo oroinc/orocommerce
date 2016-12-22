@@ -82,7 +82,7 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->session = $this->getMock(SessionInterface::class);
+        $this->session = $this->createMock(SessionInterface::class);
 
         $this->securityFacade = $this->getMockBuilder(SecurityFacade::class)
             ->disableOriginalConstructor()
@@ -92,14 +92,14 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->request = $this->getMock(Request::class);
+        $this->request = $this->createMock(Request::class);
         $this->request->expects($this->any())->method('getSession')->willReturn($this->session);
-        $this->requestStack = $this->getMock(RequestStack::class);
+        $this->requestStack = $this->createMock(RequestStack::class);
         $this->requestStack->expects($this->any())->method('getCurrentRequest')->willReturn($this->request);
 
         $this->repository = $this->getMockBuilder(PriceListRepository::class)
             ->disableOriginalConstructor()->getMock();
-        $this->registry = $this->getMock(ManagerRegistry::class);
+        $this->registry = $this->createMock(ManagerRegistry::class);
         $this->relationsProvider = $this->getMockBuilder(AccountUserRelationsProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -139,7 +139,7 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function testGetPriceListWithoutRequest()
     {
-        $em = $this->getMock(ObjectManager::class);
+        $em = $this->createMock(ObjectManager::class);
         $em->expects($this->any())
             ->method('getRepository')
             ->willReturn($this->repository);
@@ -158,7 +158,7 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function testGetPriceListWithoutParam()
     {
-        $em = $this->getMock(ObjectManager::class);
+        $em = $this->createMock(ObjectManager::class);
         $em->expects($this->any())
             ->method('getRepository')
             ->willReturn($this->repository);
@@ -176,7 +176,7 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function testGetPriceList()
     {
-        $em = $this->getMock(ObjectManager::class);
+        $em = $this->createMock(ObjectManager::class);
         $em->expects($this->any())
             ->method('getRepository')
             ->willReturn($this->repository);
@@ -205,7 +205,7 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
      */
     public function testDefaultPriceListNotFound()
     {
-        $em = $this->getMock(ObjectManager::class);
+        $em = $this->createMock(ObjectManager::class);
         $em->expects($this->any())
             ->method('getRepository')
             ->willReturn($this->repository);
@@ -221,7 +221,7 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function testGetPriceListNotFound()
     {
-        $em = $this->getMock(ObjectManager::class);
+        $em = $this->createMock(ObjectManager::class);
         $em->expects($this->any())
             ->method('getRepository')
             ->willReturn($this->repository);
@@ -302,7 +302,7 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
             $repositoryMap[] = [Account::class, $accountRepo];
         }
 
-        $em = $this->getMock(ObjectManager::class);
+        $em = $this->createMock(ObjectManager::class);
         $em->expects($this->any())
             ->method('getRepository')
             ->willReturnMap($repositoryMap);

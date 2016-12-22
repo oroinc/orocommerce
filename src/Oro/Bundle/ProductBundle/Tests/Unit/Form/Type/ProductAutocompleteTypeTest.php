@@ -36,7 +36,7 @@ class ProductAutocompleteTypeTest extends \PHPUnit_Framework_TestCase
     public function testConfigureOptions()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|OptionsResolver $resolver */
-        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
+        $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects($this->at(0))
             ->method('setDefaults')
             ->with(
@@ -72,7 +72,7 @@ class ProductAutocompleteTypeTest extends \PHPUnit_Framework_TestCase
         $view = new FormView();
 
         /** @var FormConfigInterface|\PHPUnit_Framework_MockObject_MockObject $form */
-        $config = $this->getMock('Symfony\Component\Form\FormConfigInterface');
+        $config = $this->createMock('Symfony\Component\Form\FormConfigInterface');
         $config->expects($this->any())
             ->method('getOptions')
             ->willReturn(
@@ -84,7 +84,7 @@ class ProductAutocompleteTypeTest extends \PHPUnit_Framework_TestCase
             );
 
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
         $form->expects($this->any())->method('getConfig')->willReturn($config);
 
         $view->vars['product'] = $product;
