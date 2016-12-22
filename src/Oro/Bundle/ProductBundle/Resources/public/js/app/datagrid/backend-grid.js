@@ -64,6 +64,7 @@ define(function(require) {
             this._deferredRender();
 
             mediator.trigger('grid_load:complete', this.collection, this.$grid);
+
             this.initLayout({
                 collection: this.collection
             }).always(_.bind(function() {
@@ -98,6 +99,7 @@ define(function(require) {
          */
         undelegateEvents: function() {
             this.collection.off('gridContentUpdate');
+            mediator.off('grid-content-loaded');
 
             BackendGrid.__super__.undelegateEvents.apply(this, arguments);
         }

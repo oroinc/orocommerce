@@ -35,7 +35,7 @@ define(function(require) {
                 .filter('[value=' + currentSizeLabel[0] +']')
                 .attr('selected', true);
 
-            $select.trigger('change');
+            $select.inputWidget('val', currentSizeLabel[0]);
 
             if (this.hidden) {
                 this.$el.hide();

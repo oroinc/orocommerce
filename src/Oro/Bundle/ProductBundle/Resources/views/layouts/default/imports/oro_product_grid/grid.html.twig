@@ -1,9 +1,6 @@
 {% block __oro_product_grid__datagrid_widget %}
     {% set compact_view = '' %}
     {% set buttonsId = 'datagrid_row_product_line_item_form_buttons' %}
-    {% if blocks[buttonsId] is not defined or blocks[buttonsId].children is empty %}
-        {% set compact_view = ' product-item--compact' %}
-    {% endif %}
     {% set themeOptions = grid_render_parameters.themeOptions|default({}) %}
     {% set grid_render_parameters = grid_render_parameters|merge({'themeOptions': themeOptions|merge({
         'headerHide': true,
