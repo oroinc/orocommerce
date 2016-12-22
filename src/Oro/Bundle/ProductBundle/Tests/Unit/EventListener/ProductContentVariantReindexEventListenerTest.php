@@ -249,7 +249,7 @@ class ProductContentVariantReindexEventListenerTest extends \PHPUnit_Framework_T
         $contentVariant->setType($type);
         if ($productId !== 0) {
             /** @var Product|\PHPUnit_Framework_MockObject_MockObject $product */
-            $product = $this->getMock(Product::class);
+            $product = $this->createMock(Product::class);
             $product->method('getId')
                 ->willReturn($productId);
 
@@ -277,9 +277,9 @@ class ProductContentVariantReindexEventListenerTest extends \PHPUnit_Framework_T
 
     protected function prepareMocksForOnFormFlush()
     {
-        $this->contentNode = $this->getMock(ContentNodeInterface::class);
+        $this->contentNode = $this->createMock(ContentNodeInterface::class);
         /** @var FormInterface $form */
-        $form = $this->getMock(FormInterface::class);
+        $form = $this->createMock(FormInterface::class);
 
         $this->afterFormProcessEvent = new AfterFormProcessEvent($form, $this->contentNode);
     }

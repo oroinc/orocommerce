@@ -30,7 +30,7 @@ class ProductsContentVariantProviderTest extends \PHPUnit_Framework_TestCase
     {
         $this->provider = new ProductsContentVariantProvider();
 
-        $this->exprMock = $this->getMock(Expr::class);
+        $this->exprMock = $this->createMock(Expr::class);
         $this->exprMock->method('eq')->willReturn($this->exprMock);
 
         $this->queryBuilderMock = $this->getMockBuilder(QueryBuilder::class)->disableOriginalConstructor()->getMock();

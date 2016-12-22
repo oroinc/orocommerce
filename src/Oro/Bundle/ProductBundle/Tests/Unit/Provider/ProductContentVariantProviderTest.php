@@ -24,13 +24,13 @@ class ProductContentVariantProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetValues()
     {
-        $contentNode = $this->getMock(ContentNode::class);
+        $contentNode = $this->createMock(ContentNode::class);
         $this->assertEquals([], $this->provider->getValues($contentNode));
     }
 
     public function testGetLocalizedValues()
     {
-        $contentNode = $this->getMock(ContentNode::class);
+        $contentNode = $this->createMock(ContentNode::class);
         $this->assertEquals([], $this->provider->getLocalizedValues($contentNode));
     }
 
