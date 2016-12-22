@@ -112,7 +112,7 @@ shipping_rule.7:
         enabled: true
         sortOrder: 3
         expression: 'true'
-    currency: 'USD'
+    currency: 'EUR'
     methodConfigs:
          -
             typeConfigs:
@@ -130,6 +130,16 @@ shipping_rule.7:
 shipping_rule.8:
     rule:
         enabled: true
+        sortOrder: 3
+        expression: 'true'
+    currency: 'EUR'
+    destinations:
+        -
+            country: 'US'
+            region: 'AL'
+shipping_rule.9:
+    rule:
+        enabled: true
         sortOrder: 0
         expression: 'true'
     currency: 'USD'
@@ -140,15 +150,25 @@ shipping_rule.8:
                     options:
                         type: 'per_order'
                         price: 10
-shipping_rule.9:
+shipping_rule.10:
     rule:
         enabled: true
         sortOrder: 0
         expression: 'true'
     currency: 'UAH'
-shipping_rule.10:
+shipping_rule.11:
     rule:
         enabled: false
         sortOrder: 0
         expression: 'true'
     currency: 'UAH'
+shipping_rule.12:
+    rule:
+        enabled: true
+        sortOrder: 0
+        expression: 'true'
+    currency: 'UAH'
+    destinations:
+        -
+            country: 'US'
+            region: 'NY'
