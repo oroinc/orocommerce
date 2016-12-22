@@ -31,7 +31,7 @@
 
         overflow: hidden;
 
-        @include element-state('hover') {
+        &:hover {
             text-decoration: none;
 
             color: get-color('additional', 'darker');
@@ -46,7 +46,7 @@
         vertical-align: middle;
     }
 
-    .badge {
+    &__icon {
         margin-right: 5px;
 
         @include badge(20px, 11px, get-color('primary', 'light'), 3px);
