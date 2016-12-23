@@ -48,7 +48,7 @@ class WebsiteSearchProductVisibilityIndexerListenerTest extends \PHPUnit_Framewo
     {
         $websiteId = 1;
         $context =  [AbstractIndexer::CONTEXT_CURRENT_WEBSITE_ID_KEY => $websiteId];
-        $event = new IndexEntityEvent([], $context);
+        $event = new IndexEntityEvent(\stdClass::class, [], $context);
 
         $this->websiteContextManager
             ->expects($this->once())
@@ -69,7 +69,7 @@ class WebsiteSearchProductVisibilityIndexerListenerTest extends \PHPUnit_Framewo
      */
     public function testOnWebsiteSearchIndexWhenWebsiteIdIsNotInContext()
     {
-        $event = new IndexEntityEvent([], []);
+        $event = new IndexEntityEvent(\stdClass::class, [], []);
 
         $this->visibilityIndexer
             ->expects($this->never())
