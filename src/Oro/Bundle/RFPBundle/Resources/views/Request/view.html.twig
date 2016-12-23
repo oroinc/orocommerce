@@ -76,7 +76,7 @@
                                     </td>
                                 {% endif %}
                                 <td class="rfp-line_item-requested_quantity rfp-line_item-requested_quantity-{% if loop.first %}first{% else %}not_first{% endif %}">
-                                    {% if oro_is_single_unit_mode() and not oro_is_single_unit_mode_code_visible() %}
+                                    {% if oro_is_single_unit_mode() and not oro_is_single_unit_mode_code_visible() and oro_is_unit_primary_default(subItem.productUnit.code) %}
                                         {{ quantity ? quantity : 'N/A'|trans }}
                                     {% else %}
                                         {{ quantity ? quantity|oro_format_short_product_unit_value(subItem.productUnit) : 'N/A'|trans }}

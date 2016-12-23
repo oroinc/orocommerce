@@ -51,7 +51,7 @@ class SingleUnitModeDataGridListenerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
     }
 
-    public function testOnBuildBeforeSingleModeAndCodeVisibleEnabled()
+    public function testSingleModeEnabled()
     {
         $expectedQuantityResult = array_merge(
             [
@@ -98,11 +98,6 @@ class SingleUnitModeDataGridListenerTest extends \PHPUnit_Framework_TestCase
             ->method('isSingleUnitMode')
             ->willReturn(true);
 
-        $this->singleModeProvider
-            ->expects($this->once())
-            ->method('isSingleUnitModeCodeVisible')
-            ->willReturn(true);
-
         $listener = new SingleUnitModeDataGridListener(
             $this->basicOnBuildBeforeTestData['unitColumnName'],
             $this->basicOnBuildBeforeTestData['quantityColumnName'],
@@ -117,60 +112,7 @@ class SingleUnitModeDataGridListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expectedUnitResult, $config->offsetGetByPath($unitColumnPath));
     }
 
-    public function testOnBuildBeforeSingleModeEnabled()
-    {
-        $expectedQuantityResult = $this->basicOnBuildBeforeTestData['initialQuantityColumnParams'];
-        $expectedUnitResult = null;
-
-        $quantityColumnPath = sprintf(
-            DatagridConfiguration::COLUMN_PATH,
-            $this->basicOnBuildBeforeTestData['quantityColumnName']
-        );
-
-        $unitColumnPath = sprintf(
-            DatagridConfiguration::COLUMN_PATH,
-            $this->basicOnBuildBeforeTestData['unitColumnName']
-        );
-
-        $config = DatagridConfiguration::create([]);
-        $config->offsetSetByPath($quantityColumnPath, $this->basicOnBuildBeforeTestData['initialQuantityColumnParams']);
-        $config->offsetSetByPath($unitColumnPath, $this->basicOnBuildBeforeTestData['initialUnitColumnParams']);
-
-        $this->dataGridMock
-            ->expects($this->once())
-            ->method('getConfig')
-            ->willReturn($config);
-
-        $this->eventMock
-            ->expects($this->once())
-            ->method('getDatagrid')
-            ->willReturn($this->dataGridMock);
-
-        $this->singleModeProvider
-            ->expects($this->once())
-            ->method('isSingleUnitMode')
-            ->willReturn(true);
-
-        $this->singleModeProvider
-            ->expects($this->once())
-            ->method('isSingleUnitModeCodeVisible')
-            ->willReturn(false);
-
-        $listener = new SingleUnitModeDataGridListener(
-            $this->basicOnBuildBeforeTestData['unitColumnName'],
-            $this->basicOnBuildBeforeTestData['quantityColumnName'],
-            $this->basicOnBuildBeforeTestData['quantityTemplate'],
-            $this->basicOnBuildBeforeTestData['quantityTemplateContext'],
-            $this->singleModeProvider
-        );
-
-        $listener->onBuildBefore($this->eventMock);
-
-        $this->assertEquals($expectedQuantityResult, $config->offsetGetByPath($quantityColumnPath));
-        $this->assertEquals($expectedUnitResult, $config->offsetGetByPath($unitColumnPath));
-    }
-
-    public function testOnSingleModeDisabled()
+    public function testSingleModeDisabled()
     {
         $expectedQuantityResult = $this->basicOnBuildBeforeTestData['initialQuantityColumnParams'];
         $expectedUnitResult = $this->basicOnBuildBeforeTestData['initialUnitColumnParams'];

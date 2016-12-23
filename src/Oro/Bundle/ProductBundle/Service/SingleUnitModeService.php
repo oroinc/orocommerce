@@ -67,4 +67,14 @@ class SingleUnitModeService
     {
         return $this->configManager->get(Configuration::getConfigKeyByName(Configuration::DEFAULT_UNIT));
     }
+
+    /**
+     * @param string $unitCode
+     *
+     * @return bool
+     */
+    public function isUnitPrimaryDefault($unitCode)
+    {
+        return $this->configManager->get(Configuration::getConfigKeyByName(Configuration::DEFAULT_UNIT)) === $unitCode;
+    }
 }

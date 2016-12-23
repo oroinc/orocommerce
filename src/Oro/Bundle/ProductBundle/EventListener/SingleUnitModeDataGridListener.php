@@ -70,11 +70,6 @@ class SingleUnitModeDataGridListener
         $config = $event->getDatagrid()->getConfig();
 
         $config->removeColumn($this->unitColumnName);
-
-        if (!$this->singleUnitModeService->isSingleUnitModeCodeVisible()) {
-            return;
-        }
-
         $this->addUnitLabelToQuantityColumn($config);
     }
 

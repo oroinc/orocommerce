@@ -70,6 +70,10 @@ class ProductUnitValueExtension extends \Twig_Extension
             new \Twig_SimpleFunction(
                 'oro_is_product_primary_unit_single_and_default',
                 [$this->unitModeProvider, 'isProductPrimaryUnitSingleAndDefault']
+            ),
+            new \Twig_SimpleFunction(
+                'oro_is_unit_primary_default',
+                [$this->unitModeProvider, 'isUnitPrimaryDefault']
             )
         ];
     }
