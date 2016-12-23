@@ -288,6 +288,7 @@ class PaymentMethodsConfigsRuleControllerTest extends WebTestCase
         $destination = $paymentRule->getDestinations();
         static::assertEquals('TH', $destination[0]->getCountry()->getIso2Code());
         static::assertEquals('TH-83', $destination[0]->getRegion()->getCombinedCode());
+        static::assertEquals('54321', $destination[0]->getPostalCodes()->current()->getName());
         $methodConfigs = $paymentRule->getMethodConfigs();
         static::assertEquals(self::PAYMENT_METHOD_TYPE, $methodConfigs[0]->getType());
 

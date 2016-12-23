@@ -9,11 +9,8 @@ use Oro\Bundle\AddressBundle\Form\EventListener\AddressCountryAndRegionSubscribe
 use Oro\Bundle\AddressBundle\Form\Type\CountryType;
 use Oro\Bundle\AddressBundle\Form\Type\RegionType;
 use Oro\Bundle\FormBundle\Form\Extension\AdditionalAttrExtension;
-use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRuleDestination;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRuleDestinationPostalCode;
-use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodsConfigsRuleDestinationPostalCodeCollectionType;
-use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodsConfigsRuleDestinationPostalCodeType;
 use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodsConfigsRuleDestinationType;
 use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
@@ -50,13 +47,17 @@ class PaymentMethodsConfigsRuleDestinationTypeTest extends FormIntegrationTestCa
 
     public function testBuildFormSubscriber()
     {
-        $builder = $this->getMock(FormBuilderInterface::class);
+        /** @var FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder */
+        $builder = $this->getMockBuilder(FormBuilderInterface::class)->getMock();
         $builder->expects($this->once())
             ->method('addEventSubscriber')
             ->with($this->subscriber)
             ->willReturn($builder);
-        $builder->expects($this->any())
+        $builder->expects(static::any())
             ->method('add')
+            ->willReturn($builder);
+        $builder->expects(static::once())
+            ->method('get')
             ->willReturn($builder);
         $this->formType->buildForm($builder, []);
     }
@@ -70,51 +71,57 @@ class PaymentMethodsConfigsRuleDestinationTypeTest extends FormIntegrationTestCa
         $this->assertContains('oro_api_country_get_regions', $options['region_route']);
     }
 
-    /**
-     * @dataProvider submitDataProvider
-     *
-     * @param array|null $data
-     */
-    public function testSubmit($data)
+    public function testSubmitNull()
     {
-        $form = $this->factory->create($this->formType, $data);
+        $destination = null;
 
-        $this->assertEquals($data, $form->getData());
+        $form = $this->factory->create($this->formType, $destination);
+
+        $this->assertEquals($destination, $form->getData());
 
         $form->submit([
             'country' => 'US',
             'region' => 'US-AL',
-            'postalCodes' => [['name' => 'code1'], ['name' => 'code2']],
+            'postalCodes' => 'code1, code2',
         ]);
 
+        $destination = (new PaymentMethodsConfigsRuleDestination())
+            ->setCountry(new Country('US'))
+            ->setRegion(new Region('US-AL'))
+            ->addPostalCode((new PaymentMethodsConfigsRuleDestinationPostalCode())->setName('code1'))
+            ->addPostalCode((new PaymentMethodsConfigsRuleDestinationPostalCode())->setName('code2'));
         $this->assertTrue($form->isValid());
         $this->assertEquals(
-            (new PaymentMethodsConfigsRuleDestination())
-                ->setCountry(new Country('US'))
-                ->setRegion(new Region('US-AL'))
-                ->addPostalCode((new PaymentMethodsConfigsRuleDestinationPostalCode())->setName('code1'))
-                ->addPostalCode((new PaymentMethodsConfigsRuleDestinationPostalCode())->setName('code2')),
+            $destination,
             $form->getData()
         );
     }
 
-    /**
-     * @return array
-     */
-    public function submitDataProvider()
+    public function testSubmit()
     {
-        return [
-            [null],
-            [
-                (new PaymentMethodsConfigsRuleDestination())
-                    ->setCountry(new Country('US'))
-                    ->setRegion(new Region('US-AL'))
-                    ->addPostalCode((new PaymentMethodsConfigsRuleDestinationPostalCode())->setName('code1'))
-                    ->addPostalCode((new PaymentMethodsConfigsRuleDestinationPostalCode())->setName('code2'))
-            ],
-        ];
-    }
+        $destination = (new PaymentMethodsConfigsRuleDestination())
+            ->setCountry(new Country('US'))
+            ->setRegion(new Region('US-AL'))
+            ->addPostalCode((new PaymentMethodsConfigsRuleDestinationPostalCode())->setName('code1'))
+            ->addPostalCode((new PaymentMethodsConfigsRuleDestinationPostalCode())->setName('code2'));
 
+        $form = $this->factory->create($this->formType, $destination);
+
+        $this->assertEquals($destination, $form->getData());
+
+        $form->submit([
+            'country' => 'US',
+            'region' => 'US-AL',
+            'postalCodes' => 'code1, code2',
+        ]);
+
+        $this->assertTrue($form->isValid());
+        $this->assertEquals(
+            $destination,
+            $form->getData()
+        );
+    }
+    
     /**
      * {@inheritdoc}
      */
@@ -165,13 +172,6 @@ class PaymentMethodsConfigsRuleDestinationTypeTest extends FormIntegrationTestCa
         return [
             new PreloadedExtension(
                 [
-                    CollectionType::NAME => new CollectionType(),
-                    PaymentMethodsConfigsRuleDestinationPostalCodeType::NAME =>
-                        new PaymentMethodsConfigsRuleDestinationPostalCodeType()
-                    ,
-                    PaymentMethodsConfigsRuleDestinationPostalCodeCollectionType::NAME =>
-                        new PaymentMethodsConfigsRuleDestinationPostalCodeCollectionType()
-                    ,
                     'oro_country' => new CountryType(),
                     'genemu_jqueryselect2_translatable_entity' => new Select2Type('translatable_entity'),
                     'translatable_entity' => $translatableEntity,

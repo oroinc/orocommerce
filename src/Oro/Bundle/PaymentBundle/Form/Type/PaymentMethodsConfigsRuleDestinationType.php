@@ -6,8 +6,10 @@ use Oro\Bundle\AddressBundle\Form\EventListener\AddressCountryAndRegionSubscribe
 use Oro\Bundle\AddressBundle\Form\Type\CountryType;
 use Oro\Bundle\AddressBundle\Form\Type\RegionType;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRuleDestination;
+use Oro\Bundle\PaymentBundle\Form\DataTransformer\DestinationPostalCodeTransformer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -44,12 +46,13 @@ class PaymentMethodsConfigsRuleDestinationType extends AbstractType
                 HiddenType::class,
                 ['required' => false, 'label' => 'oro.address.region_text.label']
             )
-            ->add('postalCodes', PaymentMethodsConfigsRuleDestinationPostalCodeCollectionType::class, [
+            ->add('postalCodes', TextType::class, [
                 'required' => false,
                 'label' => 'oro.payment.paymentmethodsconfigsruledestination.postal_codes.label',
             ])
         ;
 
+        $builder->get('postalCodes')->addModelTransformer(new DestinationPostalCodeTransformer());
     }
 
     /**
