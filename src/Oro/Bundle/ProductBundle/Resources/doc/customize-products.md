@@ -7,6 +7,7 @@ This guide is intended for those already familiar with layouts. So, please, read
  - [Product View Page](./customize-pdp.md)
     - [Simple Product](./customize-pdp.md#simple-product)
     - [Configurable Product](./customize-pdp.md#configurable-product)
+    - [Change Product Page by Category](./customize-pdp.md#change-product-page-by-category)
     - [Product Family](./customize-pdp.md#product-family)
         - [Attribute Set (example 1)](./customize-pdp.md#attribute-set-example-1)
         - [Attribute Set (example 2)](./customize-pdp.md#attribute-set-example-2)

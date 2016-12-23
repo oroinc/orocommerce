@@ -20,12 +20,33 @@ class WorkflowController extends FOSRestController
      * )
      *
      * @param Request $request
+     *
      * @return Response
      */
     public function startAction(Request $request)
     {
         return $this->forward(
             'OroWorkflowBundle:Api\Rest\Workflow:start',
+            $request->attributes->all(),
+            $request->query->all()
+        );
+    }
+
+    /**
+     * @Rest\Get(
+     *      "/api/rest/{version}/workflow/transit/{workflowItemId}/{transitionName}",
+     *      requirements={"version"="latest|v1", "workflowItemId"="\d+"},
+     *      defaults={"version"="latest", "_format"="json"}
+     * )
+     *
+     * @param Request $request
+     *
+     * @return Response
+     */
+    public function transitAction(Request $request)
+    {
+        return $this->forward(
+            'OroWorkflowBundle:Api\Rest\Workflow:transit',
             $request->attributes->all(),
             $request->query->all()
         );
