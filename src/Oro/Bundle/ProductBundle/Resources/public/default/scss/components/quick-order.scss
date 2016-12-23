@@ -284,6 +284,13 @@
     width: 100%;
   }
 
+  tr:first-child {
+    th,
+    td {
+      border-top: none;
+    }
+  }
+
   .import-errors {
     display: none;
 

@@ -16,6 +16,8 @@ use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 
 class FormViewListener
 {
+    const PRICING_BLOCK_NAME = 'prices';
+
     /**
      * @var TranslatorInterface
      */
@@ -137,8 +139,8 @@ class FormViewListener
     protected function addProductPricesBlock(ScrollData $scrollData, $html)
     {
         $blockLabel = $this->translator->trans('oro.pricing.productprice.entity_plural_label');
-        $blockId = $scrollData->addBlock($blockLabel, 10);
-        $subBlockId = $scrollData->addSubBlock($blockId);
-        $scrollData->addSubBlockData($blockId, $subBlockId, $html);
+        $scrollData->addNamedBlock(self::PRICING_BLOCK_NAME, $blockLabel, 10);
+        $subBlockId = $scrollData->addSubBlock(self::PRICING_BLOCK_NAME);
+        $scrollData->addSubBlockData(self::PRICING_BLOCK_NAME, $subBlockId, $html, 'productPriceAttributesPrices');
     }
 }

@@ -31,15 +31,11 @@
 
         overflow: hidden;
 
-        &:hover,
-        &:visited,
-        &:focus {
+        &:hover {
             text-decoration: none;
 
             color: get-color('additional', 'darker');
-        }
 
-        &:hover {
             .quick-access__text {
                 text-decoration: underline;
             }
@@ -60,7 +56,7 @@
         }
 
         &--dark {
-            background-color: get-color('primary', 'dark');
+            background-color: get-color('primary', 'base');
         }
     }
 }
