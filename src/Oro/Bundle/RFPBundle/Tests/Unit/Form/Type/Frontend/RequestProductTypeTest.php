@@ -38,7 +38,7 @@ class RequestProductTypeTest extends AbstractTest
      */
     protected function setUp()
     {
-        $this->translator   = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+        $this->translator   = $this->createMock('Symfony\Component\Translation\TranslatorInterface');
 
         $this->formType     = new RequestProductType($this->translator);
         $this->formType->setDataClass('Oro\Bundle\RFPBundle\Entity\RequestProduct');
@@ -49,7 +49,7 @@ class RequestProductTypeTest extends AbstractTest
     public function testConfigureOptions()
     {
         /* @var $resolver \PHPUnit_Framework_MockObject_MockObject|OptionsResolver */
-        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
+        $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects(static::once())
             ->method('setDefaults')
             ->with($this->callback(function (array $options) {

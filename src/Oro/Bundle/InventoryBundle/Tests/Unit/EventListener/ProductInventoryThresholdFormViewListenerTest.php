@@ -41,7 +41,7 @@ class ProductInventoryThresholdFormViewListenerTest extends FormViewListenerTest
     protected function setUp()
     {
         parent::setUp();
-        $this->requestStack = $this->getMock(RequestStack::class);
+        $this->requestStack = $this->createMock(RequestStack::class);
 
         $this->request = $this->getMockBuilder(Request::class)
             ->disableOriginalConstructor()
@@ -110,7 +110,7 @@ class ProductInventoryThresholdFormViewListenerTest extends FormViewListenerTest
             ->willReturn($this->em);
         $env = $this->getMockBuilder(\Twig_Environment::class)->disableOriginalConstructor()->getMock();
         $this->event->expects($this->once())->method('getEnvironment')->willReturn($env);
-        $scrollData = $this->getMock(ScrollData::class);
+        $scrollData = $this->createMock(ScrollData::class);
         $scrollData->expects($this->once())
             ->method('addSubBlockData');
         $this->event->expects($this->once())->method('getScrollData')->willReturn($scrollData);

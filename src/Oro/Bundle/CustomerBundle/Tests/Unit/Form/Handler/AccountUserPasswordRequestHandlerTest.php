@@ -130,7 +130,7 @@ class AccountUserPasswordRequestHandlerTest extends AbstractAccountUserPasswordH
             ->method('isValid')
             ->will($this->returnValue(true));
 
-        $emailSubform = $this->getMock('Symfony\Component\Form\FormInterface');
+        $emailSubform = $this->createMock('Symfony\Component\Form\FormInterface');
         $emailSubform->expects($this->once())
             ->method('getData')
             ->will($this->returnValue($email));

@@ -37,19 +37,19 @@ class SignInProviderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->parameterBag = $this->getMock(ParameterBag::class);
+        $this->parameterBag = $this->createMock(ParameterBag::class);
 
-        $this->request = $this->getMock(Request::class);
+        $this->request = $this->createMock(Request::class);
         $this->request->attributes = $this->parameterBag;
 
         /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
-        $this->requestStack = $this->getMock(RequestStack::class);
+        $this->requestStack = $this->createMock(RequestStack::class);
         $this->requestStack->expects($this->any())
             ->method('getCurrentRequest')
             ->will($this->returnValue($this->request));
 
-        $this->securityFacade = $this->getMock(SecurityFacade::class, [], [], '', false);
-        $this->csrfTokenManager = $this->getMock(CsrfTokenManagerInterface::class);
+        $this->securityFacade = $this->createMock(SecurityFacade::class);
+        $this->csrfTokenManager = $this->createMock(CsrfTokenManagerInterface::class);
 
         $this->dataProvider = new SignInProvider($this->requestStack, $this->securityFacade, $this->csrfTokenManager);
     }
@@ -57,7 +57,7 @@ class SignInProviderTest extends \PHPUnit_Framework_TestCase
     public function testGetLastNameWithSession()
     {
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session */
-        $session = $this->getMock(SessionInterface::class);
+        $session = $this->createMock(SessionInterface::class);
         $this->request
             ->expects($this->once())
             ->method('getSession')
@@ -84,7 +84,7 @@ class SignInProviderTest extends \PHPUnit_Framework_TestCase
     public function testGetErrorWithSession()
     {
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session */
-        $session = $this->getMock(SessionInterface::class);
+        $session = $this->createMock(SessionInterface::class);
         $this->request
             ->expects($this->once())
             ->method('getSession')
@@ -108,7 +108,7 @@ class SignInProviderTest extends \PHPUnit_Framework_TestCase
     public function testGetErrorWithoutSession()
     {
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session */
-        $session = $this->getMock(SessionInterface::class);
+        $session = $this->createMock(SessionInterface::class);
         $this->request
             ->expects($this->once())
             ->method('getSession')
@@ -125,7 +125,7 @@ class SignInProviderTest extends \PHPUnit_Framework_TestCase
         $dataProvider = new SignInProvider($this->requestStack, $this->securityFacade, $this->csrfTokenManager);
 
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session */
-        $session = $this->getMock(SessionInterface::class);
+        $session = $this->createMock(SessionInterface::class);
         $this->request
             ->expects($this->once())
             ->method('getSession')
@@ -151,7 +151,7 @@ class SignInProviderTest extends \PHPUnit_Framework_TestCase
     public function testGetCSRFToken()
     {
         /** @var CsrfToken|\PHPUnit_Framework_MockObject_MockObject $csrfToken */
-        $csrfToken = $this->getMock(CsrfToken::class, [], [], '', false);
+        $csrfToken = $this->createMock(CsrfToken::class);
         $csrfToken->expects($this->once())
             ->method('getValue')
             ->will($this->returnValue('csrf_token'));

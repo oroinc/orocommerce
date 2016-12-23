@@ -17,7 +17,7 @@ class MeasureTransformerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->repository = $this->getMock('Doctrine\Common\Persistence\ObjectRepository');
+        $this->repository = $this->createMock('Doctrine\Common\Persistence\ObjectRepository');
 
         $this->transformer = new MeasureTransformer($this->repository);
     }
@@ -94,7 +94,7 @@ class MeasureTransformerTest extends \PHPUnit_Framework_TestCase
     protected function createUnit($code = null)
     {
         /** @var MeasureUnitInterface|\PHPUnit_Framework_MockObject_MockObject $unit */
-        $unit = $this->getMock('Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface');
+        $unit = $this->createMock('Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface');
         $unit->expects($this->any())
             ->method('getCode')
             ->willReturn($code);

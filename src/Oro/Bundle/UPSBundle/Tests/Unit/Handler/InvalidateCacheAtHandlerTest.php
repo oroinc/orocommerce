@@ -65,7 +65,7 @@ class InvalidateCacheAtHandlerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->manager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
+        $this->manager = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|Registry $managerRegistry */
         $this->managerRegistry = $this->getMockBuilder(Registry::class)
@@ -112,7 +112,7 @@ class InvalidateCacheAtHandlerTest extends \PHPUnit_Framework_TestCase
         $removeCronString = null
     ) {
         /** @var \PHPUnit_Framework_MockObject_MockObject|FormInterface $form */
-        $form = $this->getMock(FormInterface::class);
+        $form = $this->createMock(FormInterface::class);
         $transport = $this->getEntity(
             UPSTransport::class,
             [
@@ -137,12 +137,12 @@ class InvalidateCacheAtHandlerTest extends \PHPUnit_Framework_TestCase
                 $addCronString
             );
 
-        $this->channel = $this->getMock(Channel::class);
+        $this->channel = $this->createMock(Channel::class);
         $this->channel->expects(static::once())
             ->method('getTransport')
             ->willReturn($transport);
 
-        $invalidateNow = $this->getMock(FormInterface::class);
+        $invalidateNow = $this->createMock(FormInterface::class);
         $invalidateNow->expects(static::once())
             ->method('getData')
             ->willReturn(null);
@@ -153,7 +153,7 @@ class InvalidateCacheAtHandlerTest extends \PHPUnit_Framework_TestCase
             ->with('invalidateNow')
             ->willReturn($invalidateNow);
 
-        $invalidateCacheAt = $this->getMock(FormInterface::class);
+        $invalidateCacheAt = $this->createMock(FormInterface::class);
         $invalidateCacheAt->expects(static::once())
             ->method('getData')
             ->willReturn($datetime);
@@ -166,7 +166,7 @@ class InvalidateCacheAtHandlerTest extends \PHPUnit_Framework_TestCase
         $this->manager->expects(static::once())
             ->method('flush');
 
-        $this->shippingPriceCache->expects(static::never())->method('deleteAll');
+        $this->shippingPriceCache->expects(static::never())->method('deleteAllPrices');
         $this->handler->process($this->channel, $form);
     }
 
@@ -196,16 +196,16 @@ class InvalidateCacheAtHandlerTest extends \PHPUnit_Framework_TestCase
     public function testProcessInvalidateNow()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|FormInterface $form */
-        $form = $this->getMock(FormInterface::class);
+        $form = $this->createMock(FormInterface::class);
 
         $transport = $this->getEntity(UPSTransport::class, ['id' => 1]);
 
-        $this->channel = $this->getMock(Channel::class);
+        $this->channel = $this->createMock(Channel::class);
         $this->channel->expects(static::once())
             ->method('getTransport')
             ->willReturn($transport);
 
-        $invalidateNow = $this->getMock(FormInterface::class);
+        $invalidateNow = $this->createMock(FormInterface::class);
         $invalidateNow->expects(static::once())
             ->method('getData')
             ->willReturn('1');

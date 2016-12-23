@@ -37,14 +37,14 @@ class ShoppingListOwnerManagerTest extends \PHPUnit_Framework_TestCase
     {
         $this->aclHelper = $this->getMockBuilder(AclHelper::class)->disableOriginalConstructor()->getMock();
         $configProvider = $this->getMockBuilder(ConfigProvider::class)->disableOriginalConstructor()->getMock();
-        $entityConfig = $this->getMock(ConfigInterface::class);
+        $entityConfig = $this->createMock(ConfigInterface::class);
         $configProvider->method('getConfig')->with(ShoppingList::class)->willReturn($entityConfig);
         $entityConfig->method('get')->willReturnMap([
             ['frontend_owner_field_name', false, null, 'accountUser'],
             ['organization_field_name', false, null, 'organisation'],
         ]);
 
-        $this->registry = $this->getMock(RegistryInterface::class);
+        $this->registry = $this->createMock(RegistryInterface::class);
 
         $this->manager = new ShoppingListOwnerManager(
             $this->aclHelper,
@@ -81,7 +81,7 @@ class ShoppingListOwnerManagerTest extends \PHPUnit_Framework_TestCase
         $queryWithCriteria->method('getOneOrNullResult')->willReturn($user);
 
         $shoppingList = new ShoppingList();
-        $em = $this->getMock(EntityManagerInterface::class);
+        $em = $this->createMock(EntityManagerInterface::class);
         $this->registry->method('getManagerForClass')->with(ShoppingList::class)->willReturn($em);
         $em->expects($this->once())->method('flush');
 
@@ -99,7 +99,7 @@ class ShoppingListOwnerManagerTest extends \PHPUnit_Framework_TestCase
         $user = new AccountUser();
         $repo->method('find')->with(1)->willReturn($user);
 
-        $em = $this->getMock(EntityManagerInterface::class);
+        $em = $this->createMock(EntityManagerInterface::class);
         $this->registry->method('getManagerForClass')->with(ShoppingList::class)->willReturn($em);
 
         // if new owner is same as current owner don't run flush
@@ -124,7 +124,7 @@ class ShoppingListOwnerManagerTest extends \PHPUnit_Framework_TestCase
             ->willReturn($repo);
         // user with requested id not exists
         $repo->method('find')->with(1)->willReturn(null);
-        $em = $this->getMock(EntityManagerInterface::class);
+        $em = $this->createMock(EntityManagerInterface::class);
         $this->registry->method('getManagerForClass')->with(ShoppingList::class)->willReturn($em);
 
         // flush should not be called
@@ -160,12 +160,12 @@ class ShoppingListOwnerManagerTest extends \PHPUnit_Framework_TestCase
         $qb->expects($this->at(3))->method('getQuery')->willReturn($queryWithCriteria);
         $queryWithCriteria->method('getOneOrNullResult')->willReturn(null);
 
-        $em = $this->getMock(EntityManagerInterface::class);
+        $em = $this->createMock(EntityManagerInterface::class);
         $this->registry->method('getManagerForClass')->with(ShoppingList::class)->willReturn($em);
 
         // flush should not be called
         $em->expects($this->never())->method('flush');
-        $this->setExpectedException(AccessDeniedException::class);
+        $this->expectException(AccessDeniedException::class);
         $this->manager->setOwner(1, new ShoppingList());
     }
 

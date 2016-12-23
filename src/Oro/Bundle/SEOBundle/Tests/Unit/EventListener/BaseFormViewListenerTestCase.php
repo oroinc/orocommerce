@@ -36,7 +36,7 @@ class BaseFormViewListenerTestCase extends FormViewListenerTestCase
 
         $this->request = $this->getRequest();
 
-        $this->requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
+        $this->requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
         $this->requestStack->expects($this->any())->method('getCurrentRequest')->willReturn($this->request);
     }
 

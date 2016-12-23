@@ -25,8 +25,8 @@ class PriceRuleTriggerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->priceList = $this->getMock(PriceList::class);
-        $this->product = $this->getMock(Product::class);
+        $this->priceList = $this->createMock(PriceList::class);
+        $this->product = $this->createMock(Product::class);
         $this->priceRuleTrigger = new PriceListTrigger($this->priceList, $this->product);
     }
 

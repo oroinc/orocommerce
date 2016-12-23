@@ -30,7 +30,7 @@ class ComponentProcessorRegistryTest extends \PHPUnit_Framework_TestCase
      */
     protected function getProcessorMock($name)
     {
-        $processor = $this->getMock('Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorInterface');
+        $processor = $this->createMock('Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorInterface');
         $processor->expects($this->any())
             ->method('getName')
             ->will($this->returnValue($name));

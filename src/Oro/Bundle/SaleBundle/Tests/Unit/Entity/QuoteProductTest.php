@@ -10,6 +10,7 @@ use Oro\Bundle\SaleBundle\Entity\QuoteProductRequest;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class QuoteProductTest extends AbstractTest
 {
@@ -363,12 +364,12 @@ class QuoteProductTest extends AbstractTest
      */
     public function getProductNameProvider()
     {
-        $product1 = $this->getMock('Oro\Bundle\ProductBundle\Entity\Product');
+        $product1 = $this->createMock('Oro\Bundle\ProductBundle\Entity\Product');
         $product1->expects($this->any())
             ->method('__toString')
             ->willReturn('Product 1');
         ;
-        $product2 = $this->getMock('Oro\Bundle\ProductBundle\Entity\Product');
+        $product2 = $this->createMock('Oro\Bundle\ProductBundle\Entity\Product');
         $product2->expects($this->any())
             ->method('__toString')
             ->willReturn('Product 2');

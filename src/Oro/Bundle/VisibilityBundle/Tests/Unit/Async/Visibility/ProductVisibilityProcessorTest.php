@@ -51,12 +51,12 @@ class ProductVisibilityProcessorTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->registry = $this->getMock(ManagerRegistry::class);
+        $this->registry = $this->createMock(ManagerRegistry::class);
         $this->messageFactory = $this->getMockBuilder(MessageFactoryInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->cacheBuilder = $this->getMock(CacheBuilderInterface::class);
-        $this->logger = $this->getMock(LoggerInterface::class);
+        $this->cacheBuilder = $this->createMock(CacheBuilderInterface::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
 
         $this->databaseExceptionHelper = $this->getMockBuilder(DatabaseExceptionHelper::class)
             ->disableOriginalConstructor()
@@ -78,7 +78,7 @@ class ProductVisibilityProcessorTest extends \PHPUnit_Framework_TestCase
         $data = ['test' => 42];
         $body = json_encode($data);
 
-        $em = $this->getMock(EntityManagerInterface::class);
+        $em = $this->createMock(EntityManagerInterface::class);
 
         $em->expects($this->once())
             ->method('beginTransaction');
@@ -95,13 +95,13 @@ class ProductVisibilityProcessorTest extends \PHPUnit_Framework_TestCase
             ->willReturn($em);
 
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message * */
-        $message = $this->getMock(MessageInterface::class);
+        $message = $this->createMock(MessageInterface::class);
         $message->expects($this->any())
             ->method('getBody')
             ->willReturn($body);
 
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session * */
-        $session = $this->getMock(SessionInterface::class);
+        $session = $this->createMock(SessionInterface::class);
 
         $this->logger->expects($this->once())
             ->method('error')
@@ -134,7 +134,7 @@ class ProductVisibilityProcessorTest extends \PHPUnit_Framework_TestCase
         $data = ['test' => 42];
         $body = json_encode($data);
 
-        $em = $this->getMock(EntityManagerInterface::class);
+        $em = $this->createMock(EntityManagerInterface::class);
 
         $em->expects($this->once())
             ->method('beginTransaction');
@@ -151,13 +151,13 @@ class ProductVisibilityProcessorTest extends \PHPUnit_Framework_TestCase
             ->willReturn($em);
 
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message * */
-        $message = $this->getMock(MessageInterface::class);
+        $message = $this->createMock(MessageInterface::class);
         $message->expects($this->any())
             ->method('getBody')
             ->willReturn($body);
 
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session * */
-        $session = $this->getMock(SessionInterface::class);
+        $session = $this->createMock(SessionInterface::class);
 
         $this->logger->expects($this->once())
             ->method('error')
@@ -192,7 +192,7 @@ class ProductVisibilityProcessorTest extends \PHPUnit_Framework_TestCase
     {
         $exception = new \Exception('Exception message');
 
-        $em = $this->getMock(EntityManagerInterface::class);
+        $em = $this->createMock(EntityManagerInterface::class);
 
         $em->expects($this->once())
             ->method('beginTransaction');
@@ -206,7 +206,7 @@ class ProductVisibilityProcessorTest extends \PHPUnit_Framework_TestCase
             ->willReturn($em);
 
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message * */
-        $message = $this->getMock(MessageInterface::class);
+        $message = $this->createMock(MessageInterface::class);
         $message->expects($this->any())
             ->method('getBody')
             ->will($this->throwException($exception));
@@ -219,7 +219,7 @@ class ProductVisibilityProcessorTest extends \PHPUnit_Framework_TestCase
             );
 
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session * */
-        $session = $this->getMock(SessionInterface::class);
+        $session = $this->createMock(SessionInterface::class);
 
         $this->databaseExceptionHelper->expects($this->never())
             ->method('isDeadlock');
@@ -235,7 +235,7 @@ class ProductVisibilityProcessorTest extends \PHPUnit_Framework_TestCase
         $data = ['test' => 42];
         $body = json_encode($data);
 
-        $em = $this->getMock(EntityManagerInterface::class);
+        $em = $this->createMock(EntityManagerInterface::class);
 
         $em->expects($this->once())
             ->method('beginTransaction');
@@ -252,13 +252,13 @@ class ProductVisibilityProcessorTest extends \PHPUnit_Framework_TestCase
             ->willReturn($em);
 
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message * */
-        $message = $this->getMock(MessageInterface::class);
+        $message = $this->createMock(MessageInterface::class);
         $message->expects($this->any())
             ->method('getBody')
             ->willReturn($body);
 
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session * */
-        $session = $this->getMock(SessionInterface::class);
+        $session = $this->createMock(SessionInterface::class);
 
         $visibilityEntity = new ProductVisibility();
 

@@ -38,7 +38,7 @@ class UniqueProductVariantLinksValidatorTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->context = $this->getMock(ExecutionContextInterface::class);
+        $this->context = $this->createMock(ExecutionContextInterface::class);
         $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
         $this->service = new UniqueProductVariantLinksValidator($this->propertyAccessor);
         $this->service->initialize($this->context);

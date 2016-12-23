@@ -35,7 +35,7 @@ class FieldsProviderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->registry = $this->getMock(ManagerRegistry::class);
+        $this->registry = $this->createMock(ManagerRegistry::class);
 
         $this->entityFieldProvider = $this->getMockBuilder(EntityFieldProvider::class)
             ->disableOriginalConstructor()
@@ -262,7 +262,8 @@ class FieldsProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetRealClassNameException()
     {
-        $this->setExpectedException(\InvalidArgumentException::class, 'Field "field" is not found in class stdClass');
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Field "field" is not found in class stdClass');
         $this->entityFieldProvider->method('getFields')->willReturn([]);
         $this->fieldsProvider->getRealClassName('stdClass::field');
     }

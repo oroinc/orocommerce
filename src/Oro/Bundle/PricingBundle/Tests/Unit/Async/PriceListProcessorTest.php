@@ -85,13 +85,13 @@ class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
         $this->eventDispatcher = $this->getMockBuilder(EventDispatcher::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->logger = $this->getMock(LoggerInterface::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
 
         $this->repository = $this->getMockBuilder(CombinedPriceListRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->registry = $this->getMock(ManagerRegistry::class);
+        $this->registry = $this->createMock(ManagerRegistry::class);
 
         $this->databaseExceptionHelper = $this->getMockBuilder(DatabaseExceptionHelper::class)
             ->disableOriginalConstructor()
@@ -117,7 +117,7 @@ class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
         $data = ['test' => 1];
         $body = json_encode($data);
 
-        $em = $this->getMock(EntityManagerInterface::class);
+        $em = $this->createMock(EntityManagerInterface::class);
 
         $em->expects($this->once())
             ->method('beginTransaction');
@@ -131,13 +131,13 @@ class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
             ->willReturn($em);
 
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
-        $message = $this->getMock(MessageInterface::class);
+        $message = $this->createMock(MessageInterface::class);
         $message->expects($this->any())
             ->method('getBody')
             ->willReturn($body);
 
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
-        $session = $this->getMock(SessionInterface::class);
+        $session = $this->createMock(SessionInterface::class);
 
         $this->logger->expects($this->once())
             ->method('error')
@@ -164,7 +164,7 @@ class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $em = $this->getMock(EntityManagerInterface::class);
+        $em = $this->createMock(EntityManagerInterface::class);
 
         $em->expects($this->once())
             ->method('beginTransaction');
@@ -178,13 +178,13 @@ class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
             ->willReturn($em);
 
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
-        $message = $this->getMock(MessageInterface::class);
+        $message = $this->createMock(MessageInterface::class);
         $message->expects($this->any())
             ->method('getBody')
             ->willThrowException($exception);
 
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
-        $session = $this->getMock(SessionInterface::class);
+        $session = $this->createMock(SessionInterface::class);
 
         $this->logger->expects($this->once())
             ->method('error')
@@ -204,7 +204,7 @@ class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
     {
         $exception = new \Exception('Some error');
 
-        $em = $this->getMock(EntityManagerInterface::class);
+        $em = $this->createMock(EntityManagerInterface::class);
 
         $em->expects($this->once())
             ->method('beginTransaction');
@@ -218,7 +218,7 @@ class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
             ->willReturn($em);
 
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
-        $message = $this->getMock(MessageInterface::class);
+        $message = $this->createMock(MessageInterface::class);
         $message->expects($this->any())
             ->method('getBody')
             ->will($this->throwException($exception));
@@ -228,7 +228,7 @@ class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
             ->with('Unexpected exception occurred during Combined Price Lists build', ['exception' => $exception]);
 
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
-        $session = $this->getMock(SessionInterface::class);
+        $session = $this->createMock(SessionInterface::class);
 
         $this->databaseExceptionHelper->expects($this->never())
             ->method('isDeadlock');
@@ -244,7 +244,7 @@ class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
         $data = ['test' => 1];
         $body = json_encode($data);
 
-        $em = $this->getMock(EntityManagerInterface::class);
+        $em = $this->createMock(EntityManagerInterface::class);
 
         $em->expects($this->once())
             ->method('beginTransaction');
@@ -268,13 +268,13 @@ class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
         $trigger = new PriceListTrigger($priceList, $product);
 
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
-        $message = $this->getMock(MessageInterface::class);
+        $message = $this->createMock(MessageInterface::class);
         $message->expects($this->any())
             ->method('getBody')
             ->willReturn($body);
 
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
-        $session = $this->getMock(SessionInterface::class);
+        $session = $this->createMock(SessionInterface::class);
 
         $this->triggerFactory->expects($this->once())
             ->method('createFromArray')
@@ -282,7 +282,7 @@ class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
             ->willReturn($trigger);
 
         $cplId = 1;
-        $cpl = $this->getMock(CombinedPriceList::class);
+        $cpl = $this->createMock(CombinedPriceList::class);
         $cpl->expects($this->once())
             ->method('getId')
             ->willReturn($cplId);

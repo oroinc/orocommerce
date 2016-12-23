@@ -33,7 +33,7 @@ class ProductPriceCurrencyTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->constraint = new ProductPriceCurrency();
-        $this->context = $this->getMock('Symfony\Component\Validator\ExecutionContextInterface');
+        $this->context = $this->createMock('Symfony\Component\Validator\ExecutionContextInterface');
 
         $this->validator = new ProductPriceCurrencyValidator();
         $this->validator->initialize($this->context);
@@ -97,12 +97,12 @@ class ProductPriceCurrencyTest extends \PHPUnit_Framework_TestCase
         $this->validator->validate($productPrice, $this->constraint);
     }
 
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage must be instance of "Oro\Bundle\PricingBundle\Entity\ProductPrice", "stdClass" given
+     */
     public function testNotExpectedValueException()
     {
-        $this->setExpectedException(
-            '\InvalidArgumentException',
-            'Value must be instance of "Oro\Bundle\PricingBundle\Entity\ProductPrice", "stdClass" given'
-        );
         $this->validator->validate(new \stdClass(), $this->constraint);
     }
 

@@ -64,7 +64,7 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->transport = $this->getMock(TransportInterface::class);
+        $this->transport = $this->createMock(TransportInterface::class);
         $this->transport->expects(static::any())
             ->method('getSettingsEntityFQCN')
             ->willReturn(static::DATA_CLASS);
@@ -209,7 +209,7 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
             ->method('getSystemShippingOrigin')
             ->willReturn($shippingOrigin);
 
-        $repository = $this->getMock('Doctrine\Common\Persistence\ObjectRepository');
+        $repository = $this->createMock('Doctrine\Common\Persistence\ObjectRepository');
         $repository->expects(static::once())
             ->method('findOneBy')
             ->willReturn(new Country('US'));
@@ -298,7 +298,7 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
     public function testConfigureOptions()
     {
         /** @var OptionsResolver|\PHPUnit_Framework_MockObject_MockObject $resolver */
-        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
+        $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects(static::once())
             ->method('setDefaults')
             ->with([

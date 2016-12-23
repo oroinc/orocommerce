@@ -19,7 +19,7 @@ use Oro\Bundle\ProductBundle\Tests\Unit\ContentVariant\Stub\ContentVariantStub;
 
 class ProductContentVariantReindexEventListenerTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var OnFlushEventArgs|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var OnFlushEventArgs */
     private $onFlushEventArgs;
 
     /** @var UnitOfWork|\PHPUnit_Framework_MockObject_MockObject */
@@ -46,7 +46,7 @@ class ProductContentVariantReindexEventListenerTest extends \PHPUnit_Framework_T
         $this->eventListener = new ProductContentVariantReindexEventListener($this->eventDispatcher);
     }
 
-    public function testItAcceptsOnlyContentNodeAfterFlush()
+    public function testItAcceptsOnlyContentVariantAfterFlush()
     {
         $this->prepareMocksForOnFlush();
 
@@ -92,7 +92,7 @@ class ProductContentVariantReindexEventListenerTest extends \PHPUnit_Framework_T
         $this->eventListener->onFlush($this->onFlushEventArgs);
     }
 
-    public function testItReindexWithManyProductAfterFlush()
+    public function testItReindexWithManyProductsAfterFlush()
     {
         $this->prepareMocksForOnFlush();
 
@@ -122,6 +122,10 @@ class ProductContentVariantReindexEventListenerTest extends \PHPUnit_Framework_T
         $this->unitOfWork
             ->method('getScheduledEntityDeletions')
             ->willReturn([$contentVariant5, $contentVariant6]);
+
+        $this->unitOfWork
+            ->method('getEntityChangeSet')
+            ->willReturn([]);
 
         $this->eventListener->onFlush($this->onFlushEventArgs);
     }
@@ -153,6 +157,41 @@ class ProductContentVariantReindexEventListenerTest extends \PHPUnit_Framework_T
         $this->unitOfWork
             ->method('getScheduledEntityDeletions')
             ->willReturn([$contentVariant1, $contentVariant2, $contentVariant3]);
+
+        $this->unitOfWork
+            ->method('getEntityChangeSet')
+            ->willReturn([]);
+
+        $this->eventListener->onFlush($this->onFlushEventArgs);
+    }
+
+    public function testItReindexWithManyProductsAfterFlushWithChangeset()
+    {
+        $this->prepareMocksForOnFlush();
+
+        $this->eventDispatcher
+            ->expects($this->once())
+            ->method('dispatch')
+            ->with(
+                ReindexationRequestEvent::EVENT_NAME,
+                new ReindexationRequestEvent([Product::class], [], [3, 1, 2])
+            );
+
+        $contentVariant1 = $this->generateContentVariant(ProductPageContentVariantType::TYPE, 1);
+        $contentVariant2 = $this->generateContentVariant(ProductPageContentVariantType::TYPE, 2);
+        $oldProduct = $contentVariant1->getProductPageProduct();
+        $newProduct = $this->generateProduct(3);
+        $contentVariant1->setProductPageProduct($newProduct);
+
+
+        $this->unitOfWork
+            ->method('getScheduledEntityInsertions')
+            ->willReturn([$contentVariant1, $contentVariant2]);
+
+        $this->unitOfWork
+            ->method('getEntityChangeSet')
+            ->with($contentVariant1)
+            ->willReturn(['product_page_product' => [$oldProduct, $newProduct]]);
 
         $this->eventListener->onFlush($this->onFlushEventArgs);
     }
@@ -239,7 +278,7 @@ class ProductContentVariantReindexEventListenerTest extends \PHPUnit_Framework_T
     }
 
     /**
-     * @param $type
+     * @param string $type
      * @param int $productId
      * @return ContentVariantStub
      */
@@ -248,11 +287,7 @@ class ProductContentVariantReindexEventListenerTest extends \PHPUnit_Framework_T
         $contentVariant = new ContentVariantStub();
         $contentVariant->setType($type);
         if ($productId !== 0) {
-            /** @var Product|\PHPUnit_Framework_MockObject_MockObject $product */
-            $product = $this->getMock(Product::class);
-            $product->method('getId')
-                ->willReturn($productId);
-
+            $product = $this->generateProduct($productId);
             $contentVariant->setProductPageProduct($product);
         }
 
@@ -277,10 +312,22 @@ class ProductContentVariantReindexEventListenerTest extends \PHPUnit_Framework_T
 
     protected function prepareMocksForOnFormFlush()
     {
-        $this->contentNode = $this->getMock(ContentNodeInterface::class);
+        $this->contentNode = $this->createMock(ContentNodeInterface::class);
         /** @var FormInterface $form */
-        $form = $this->getMock(FormInterface::class);
+        $form = $this->createMock(FormInterface::class);
 
         $this->afterFormProcessEvent = new AfterFormProcessEvent($form, $this->contentNode);
+    }
+
+    /**
+     * @param int $productId
+     * @return Product|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function generateProduct($productId)
+    {
+        $product = $this->createMock(Product::class);
+        $product->method('getId')
+            ->willReturn($productId);
+        return $product;
     }
 }

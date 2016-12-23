@@ -33,13 +33,13 @@ class ProductUnitsProviderTest extends \PHPUnit_Framework_TestCase
             ->method('getAllUnits')
             ->will($this->returnValue($productUnits));
 
-        $manager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
+        $manager = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
         $manager->expects($this->once())
             ->method('getRepository')
             ->with('Oro\Bundle\ProductBundle\Entity\ProductUnit')
             ->willReturn($productUnitRepository);
 
-        $managerRegistry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $managerRegistry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
         $managerRegistry->expects($this->any())
             ->method('getManagerForClass')
             ->with('Oro\Bundle\ProductBundle\Entity\ProductUnit')

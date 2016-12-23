@@ -48,15 +48,15 @@ class OrderRequestHandlerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->objectManager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
+        $this->objectManager = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
 
-        $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $this->registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
         $this->registry->expects($this->any())->method('getManagerForClass')->willReturn($this->objectManager);
 
-        $this->request = $this->getMock('Symfony\Component\HttpFoundation\Request');
+        $this->request = $this->createMock('Symfony\Component\HttpFoundation\Request');
 
         /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
-        $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
+        $requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
         $requestStack->expects($this->any())->method('getCurrentRequest')->willReturn($this->request);
 
         $this->handler = new OrderRequestHandler(

@@ -42,15 +42,15 @@ class ContentNodeHandlerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->form = $this->getMock(FormInterface::class);
+        $this->form = $this->createMock(FormInterface::class);
         $this->request = $this->getMockBuilder(Request::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->slugGenerator = $this->getMockBuilder(SlugGenerator::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->manager = $this->getMock(ObjectManager::class);
-        $this->eventDispatcher = $this->getMock(EventDispatcherInterface::class);
+        $this->manager = $this->createMock(ObjectManager::class);
+        $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
 
         $this->contentNodeHandler = new ContentNodeHandler(
             $this->request,

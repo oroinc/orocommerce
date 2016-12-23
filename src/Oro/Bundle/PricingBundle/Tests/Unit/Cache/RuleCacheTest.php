@@ -32,8 +32,8 @@ class RuleCacheTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->cache = $this->getMock(Cache::class);
-        $this->registry = $this->getMock(ManagerRegistry::class);
+        $this->cache = $this->createMock(Cache::class);
+        $this->registry = $this->createMock(ManagerRegistry::class);
         $this->ruleCache = new RuleCache($this->cache, $this->registry);
     }
 
@@ -41,7 +41,7 @@ class RuleCacheTest extends \PHPUnit_Framework_TestCase
     {
         $id = 'test';
         /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
-        $em = $this->getMock(EntityManagerInterface::class);
+        $em = $this->createMock(EntityManagerInterface::class);
         $qb = new QueryBuilder($em);
         $this->cache->expects($this->once())
             ->method('contains')

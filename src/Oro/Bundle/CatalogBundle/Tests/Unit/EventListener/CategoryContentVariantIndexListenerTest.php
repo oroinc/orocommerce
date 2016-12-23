@@ -60,7 +60,7 @@ class CategoryContentVariantIndexListenerTest extends \PHPUnit_Framework_TestCas
             ->willReturn([]);
 
         /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $entityManager */
-        $entityManager = $this->getMock(EntityManagerInterface::class);
+        $entityManager = $this->createMock(EntityManagerInterface::class);
         $entityManager->expects($this->once())
             ->method('getUnitOfWork')
             ->willReturn($unitOfWork);
@@ -87,7 +87,7 @@ class CategoryContentVariantIndexListenerTest extends \PHPUnit_Framework_TestCas
             ->willReturn([new \stdClass()]);
 
         /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $entityManager */
-        $entityManager = $this->getMock(EntityManagerInterface::class);
+        $entityManager = $this->createMock(EntityManagerInterface::class);
         $entityManager->expects($this->once())
             ->method('getUnitOfWork')
             ->willReturn($unitOfWork);
@@ -98,7 +98,7 @@ class CategoryContentVariantIndexListenerTest extends \PHPUnit_Framework_TestCas
         $this->listener->onFlush(new OnFlushEventArgs($entityManager));
     }
 
-    public function testOnFlushWithCategories()
+    public function testOnFlushWithCategoriesWithoutChangeSet()
     {
         $emptyCategory = $this->getEntity(Category::class);
         $firstCategory = $this->getEntity(Category::class, ['id' => 1]);
@@ -142,9 +142,12 @@ class CategoryContentVariantIndexListenerTest extends \PHPUnit_Framework_TestCas
         $unitOfWork->expects($this->once())
             ->method('getScheduledEntityDeletions')
             ->willReturn([$thirdEntity, $thirdVariant, $incorrectTypeVariant, $thirdCategory]);
+        $unitOfWork->expects($this->any())
+            ->method('getEntityChangeSet')
+            ->willReturn([]);
 
         /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $entityManager */
-        $entityManager = $this->getMock(EntityManagerInterface::class);
+        $entityManager = $this->createMock(EntityManagerInterface::class);
         $entityManager->expects($this->once())
             ->method('getUnitOfWork')
             ->willReturn($unitOfWork);
@@ -156,11 +159,51 @@ class CategoryContentVariantIndexListenerTest extends \PHPUnit_Framework_TestCas
         $this->listener->onFlush(new OnFlushEventArgs($entityManager));
     }
 
+    public function testOnFlushWithCategoriesWithChangeSet()
+    {
+        $oldCategory = $this->getEntity(Category::class, ['id' => 1]);
+        $newCategory = $this->getEntity(Category::class, ['id' => 2]);
+
+        $variant = $this->getEntity(
+            ContentVariantStub::class,
+            ['categoryPageCategory' => $newCategory, 'type' => CategoryPageContentVariantType::TYPE]
+        );
+
+        $unitOfWork = $this->getMockBuilder(UnitOfWork::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $unitOfWork->expects($this->once())
+            ->method('getScheduledEntityInsertions')
+            ->willReturn([]);
+        $unitOfWork->expects($this->once())
+            ->method('getScheduledEntityUpdates')
+            ->willReturn([$variant]);
+        $unitOfWork->expects($this->once())
+            ->method('getScheduledEntityDeletions')
+            ->willReturn([]);
+        $unitOfWork->expects($this->once())
+            ->method('getEntityChangeSet')
+            ->with($variant)
+            ->willReturn(['category_page_category' => [$oldCategory, $newCategory]]);
+
+        /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $entityManager */
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $entityManager->expects($this->once())
+            ->method('getUnitOfWork')
+            ->willReturn($unitOfWork);
+
+        $this->indexScheduler->expects($this->once())
+            ->method('scheduleProductsReindex')
+            ->with([1 => $oldCategory, 2 => $newCategory], null, true);
+
+        $this->listener->onFlush(new OnFlushEventArgs($entityManager));
+    }
+
     public function testOnFormAfterFlushNotNode()
     {
         $entity = new \stdClass();
         /** @var FormInterface $form */
-        $form = $this->getMock(FormInterface::class);
+        $form = $this->createMock(FormInterface::class);
 
         $this->indexScheduler->expects($this->never())
             ->method('scheduleProductsReindex');
@@ -172,13 +215,13 @@ class CategoryContentVariantIndexListenerTest extends \PHPUnit_Framework_TestCas
     {
         $incorrectTypeVariant = $this->getEntity(ContentVariantStub::class, ['type' => 'incorrectType']);
 
-        $node = $this->getMock(ContentNodeInterface::class);
+        $node = $this->createMock(ContentNodeInterface::class);
         $node->expects($this->any())
             ->method('getContentVariants')
             ->willReturn(new ArrayCollection([$incorrectTypeVariant]));
 
         /** @var FormInterface $form */
-        $form = $this->getMock(FormInterface::class);
+        $form = $this->createMock(FormInterface::class);
 
         $this->indexScheduler->expects($this->never())
             ->method('scheduleProductsReindex');
@@ -209,7 +252,7 @@ class CategoryContentVariantIndexListenerTest extends \PHPUnit_Framework_TestCas
             ['type' => 'incorrectType']
         );
 
-        $node = $this->getMock(ContentNodeInterface::class);
+        $node = $this->createMock(ContentNodeInterface::class);
         $node->expects($this->any())
             ->method('getContentVariants')
             ->willReturn(new ArrayCollection(
@@ -217,7 +260,7 @@ class CategoryContentVariantIndexListenerTest extends \PHPUnit_Framework_TestCas
             ));
 
         /** @var FormInterface $form */
-        $form = $this->getMock(FormInterface::class);
+        $form = $this->createMock(FormInterface::class);
 
         $this->indexScheduler->expects($this->once())
             ->method('scheduleProductsReindex')

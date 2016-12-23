@@ -40,7 +40,7 @@ class OrderAddressProviderTest extends AbstractQuoteAddressProviderTest
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $this->registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
 
         $this->aclHelper = $this->getMockBuilder('Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper')
             ->disableOriginalConstructor()
