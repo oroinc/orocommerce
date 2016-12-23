@@ -11,7 +11,7 @@ use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 class BasicPaymentLineItemBuilderFactory implements PaymentLineItemBuilderFactoryInterface
 {
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function createBuilder(
         Price $price,

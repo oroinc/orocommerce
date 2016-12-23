@@ -35,6 +35,7 @@ class ShippingMethodsConfigsRuleController extends RestController implements Cla
      * @ApiDoc(description="Enable Shipping Rule", resource=true)
      * @AclAncestor("oro_shipping_methods_configs_rule_update")
      *
+     * @param int $id
      * @return Response
      */
     public function enableAction($id)
@@ -80,6 +81,7 @@ class ShippingMethodsConfigsRuleController extends RestController implements Cla
      * @ApiDoc(description="Disable Shipping Rule", resource=true)
      * @AclAncestor("oro_shipping_methods_configs_rule_update")
      *
+     * @param int $id
      * @return Response
      */
     public function disableAction($id)
