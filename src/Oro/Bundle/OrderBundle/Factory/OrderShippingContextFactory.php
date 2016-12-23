@@ -48,7 +48,7 @@ class OrderShippingContextFactory
      */
     public function create(Order $order)
     {
-        if (null === $this->shippingContextBuilderFactory || null === $this->shippingLineItemConverter) {
+        if (null === $this->shippingContextBuilderFactory) {
             return null;
         }
 

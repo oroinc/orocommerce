@@ -38,7 +38,7 @@ class OrderPaymentContextFactory
      */
     public function create(Order $order)
     {
-        if (null === $this->paymentContextBuilderFactory || null === $this->paymentLineItemConverter) {
+        if (null === $this->paymentContextBuilderFactory) {
             return null;
         }
 
