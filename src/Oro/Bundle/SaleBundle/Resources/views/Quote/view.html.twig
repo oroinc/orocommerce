@@ -71,7 +71,7 @@
                                 </td>
                             {% endif %}
                             <td class="quote-line_item-quantity quote-line_item-quantity-{% if loop.first %}first{% else %}not_first{% endif %}">
-                                {% if oro_is_single_unit_mode() and not oro_is_single_unit_mode_code_visible() and oro_is_unit_primary_default(quoteProductOffer.productUnit.code) %}
+                                {% if oro_is_single_unit_mode() and not oro_is_single_unit_mode_code_visible() and oro_is_default_primary_unit(quoteProductOffer.productUnit.code) %}
                                     {{ quoteProductOffer.quantity }}
                                 {% else %}
                                     {{ quoteProductOffer.quantity|oro_format_short_product_unit_value(quoteProductOffer.productUnit) }}

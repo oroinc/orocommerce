@@ -1,5 +1,5 @@
 {{ record.getValue(quantityColumnName) }}
 
-{% if oro_is_single_unit_mode_code_visible() or not oro_is_unit_primary_default(record.getValue(unitColumnName)) %}
+{% if oro_is_single_unit_mode_code_visible() or not oro_is_default_primary_unit(record.getValue(unitColumnName)) %}
     {{ record.getValue(unitColumnName)|oro_format_product_unit_label(isShortUnitCode, isPluralUnitCode) }}
 {% endif %}
