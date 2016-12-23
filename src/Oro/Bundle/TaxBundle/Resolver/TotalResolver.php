@@ -95,8 +95,8 @@ class TotalResolver implements ResolverInterface
     protected function adjustAmounts(AbstractResultElement $data, $adjustment)
     {
         $arrayCopy = $data->getArrayCopy();
-        if($data instanceof TaxResultElement) {
-            $currentData =new TaxResultElement($arrayCopy);
+        if ($data instanceof TaxResultElement) {
+            $currentData = new TaxResultElement($arrayCopy);
         } else {
             $currentData = new ResultElement($arrayCopy);
         }
