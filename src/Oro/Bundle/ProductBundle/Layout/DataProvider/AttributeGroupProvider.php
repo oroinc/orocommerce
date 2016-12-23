@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\ProductBundle\Layout\DataProvider;
 
-use Oro\Bundle\EntityExtendBundle\Entity\AttributeFamily;
-use Oro\Bundle\EntityExtendBundle\Entity\AttributeGroup;
+use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
+use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeGroup;
 
 class AttributeGroupProvider
 {

@@ -3,8 +3,8 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Layout\DataProvider;
 
-use Oro\Bundle\EntityExtendBundle\Entity\AttributeFamily;
-use Oro\Bundle\EntityExtendBundle\Entity\AttributeGroup;
+use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
+use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeGroup;
 use Oro\Bundle\ProductBundle\Layout\DataProvider\AttributeGroupProvider;
 
 class AttributeGroupProviderTest extends \PHPUnit_Framework_TestCase
