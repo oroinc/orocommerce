@@ -38,38 +38,7 @@ class LoadShippingMethodsConfigsRules extends AbstractFixture
                 $data['destinations'] = [];
             }
 
-            foreach ($data['destinations'] as $destination) {
-                /** @var Country $country */
-                $country = $manager
-                    ->getRepository('OroAddressBundle:Country')
-                    ->findOneBy(['iso2Code' => $destination['country']]);
-
-                $shippingRuleDestination = new ShippingMethodsConfigsRuleDestination();
-                $shippingRuleDestination
-                    ->setMethodConfigsRule($entity)
-                    ->setCountry($country);
-
-                if (array_key_exists('region', $destination)) {
-                    /** @var Region $region */
-                    $region = $manager
-                        ->getRepository('OroAddressBundle:Region')
-                        ->findOneBy(['combinedCode' => $destination['country'].'-'.$destination['region']]);
-                    $shippingRuleDestination->setRegion($region);
-                }
-
-                if (array_key_exists('postalCodes', $destination)) {
-                    foreach ($destination['postalCodes'] as $postalCode) {
-                        $destinationPostalCode = new ShippingMethodsConfigsRuleDestinationPostalCode();
-                        $destinationPostalCode->setName($postalCode['name'])
-                            ->setDestination($shippingRuleDestination);
-
-                        $shippingRuleDestination->addPostalCode($destinationPostalCode);
-                    }
-                }
-
-                $manager->persist($shippingRuleDestination);
-                $entity->addDestination($shippingRuleDestination);
-            }
+            $this->setDestinations($entity, $manager, $data);
 
             if (array_key_exists('methodConfigs', $data)) {
                 foreach ($data['methodConfigs'] as $methodConfigData) {
@@ -110,5 +79,46 @@ class LoadShippingMethodsConfigsRules extends AbstractFixture
     protected function getShippingRuleData()
     {
         return Yaml::parse(file_get_contents(__DIR__.'/data/shipping_methods_configs_rules.yml'));
+    }
+
+    /**
+     * @param ShippingMethodsConfigsRule $entity
+     * @param ObjectManager $manager
+     * @param array $data
+     */
+    private function setDestinations(ShippingMethodsConfigsRule $entity, ObjectManager $manager, $data)
+    {
+        foreach ($data['destinations'] as $destination) {
+            /** @var Country $country */
+            $country = $manager
+                ->getRepository('OroAddressBundle:Country')
+                ->findOneBy(['iso2Code' => $destination['country']]);
+
+            $shippingRuleDestination = new ShippingMethodsConfigsRuleDestination();
+            $shippingRuleDestination
+                ->setMethodConfigsRule($entity)
+                ->setCountry($country);
+
+            if (array_key_exists('region', $destination)) {
+                /** @var Region $region */
+                $region = $manager
+                    ->getRepository('OroAddressBundle:Region')
+                    ->findOneBy(['combinedCode' => $destination['country'].'-'.$destination['region']]);
+                $shippingRuleDestination->setRegion($region);
+            }
+
+            if (array_key_exists('postalCodes', $destination)) {
+                foreach ($destination['postalCodes'] as $postalCode) {
+                    $destinationPostalCode = new ShippingMethodsConfigsRuleDestinationPostalCode();
+                    $destinationPostalCode->setName($postalCode['name'])
+                        ->setDestination($shippingRuleDestination);
+
+                    $shippingRuleDestination->addPostalCode($destinationPostalCode);
+                }
+            }
+
+            $manager->persist($shippingRuleDestination);
+            $entity->addDestination($shippingRuleDestination);
+        }
     }
 }
