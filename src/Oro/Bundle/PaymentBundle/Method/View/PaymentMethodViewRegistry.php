@@ -2,23 +2,10 @@
 
 namespace Oro\Bundle\PaymentBundle\Method\View;
 
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
-
 class PaymentMethodViewRegistry
 {
-    /** @var PaymentMethodRegistry */
-    protected $paymentMethodRegistry;
-
     /** @var PaymentMethodViewInterface[] */
     protected $paymentMethodViews = [];
-
-    /**
-     * @param PaymentMethodRegistry $paymentMethodRegistry
-     */
-    public function __construct(PaymentMethodRegistry $paymentMethodRegistry)
-    {
-        $this->paymentMethodRegistry = $paymentMethodRegistry;
-    }
 
     /**
      * Add payment method type to the registry

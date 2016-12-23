@@ -42,6 +42,10 @@ class PaymentMethodsProvider
     {
         $methods = $this->paymentMethodProvider->getApplicablePaymentMethods($context);
 
+        if (count($methods) === 0) {
+            return [];
+        }
+
         $methodTypes = array_map(function (PaymentMethodInterface $method) {
             return $method->getType();
         }, $methods);
