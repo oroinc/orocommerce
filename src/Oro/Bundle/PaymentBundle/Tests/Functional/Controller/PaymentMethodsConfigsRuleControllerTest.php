@@ -103,7 +103,6 @@ class PaymentMethodsConfigsRuleControllerTest extends WebTestCase
                 'disable_link',
                 'enable_link',
                 'update_link',
-                'delete_link',
                 'view_link',
                 'action_configuration'
             ],
@@ -263,6 +262,7 @@ class PaymentMethodsConfigsRuleControllerTest extends WebTestCase
         $formValues['oro_payment_methods_configs_rule']['rule']['sortOrder'] = 1;
         $formValues['oro_payment_methods_configs_rule']['destinations'] = [
             [
+                'postalCodes' => '54321',
                 'country' => 'TH',
                 'region' => 'TH-83'
             ]

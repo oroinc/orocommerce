@@ -79,7 +79,7 @@ class PaymentMethodsConfigsRuleDestinationCollectionTypeTest extends FormIntegra
                     [
                         'country' => 'US',
                         'region' => 'US-AL',
-                        'postalCodes' => [['name' => 'code1'], ['name' => 'code2']],
+                        'postalCodes' => 'code1, code2',
                     ],
                     [
                         'country' => 'US',

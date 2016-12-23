@@ -65,7 +65,7 @@ class PaymentMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
     {
         parent::setUp();
 
-        $this->translator = $this->getMock(TranslatorInterface::class);
+        $this->translator = $this->getMockBuilder(TranslatorInterface::class)->getMock();
         $this->paymentMethodRegistry = $this->getMockBuilder(PaymentMethodRegistry::class)
             ->disableOriginalConstructor()
             ->getMock();

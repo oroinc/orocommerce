@@ -66,7 +66,7 @@ class ShippingMethodsConfigsRulesProviderTest extends \PHPUnit_Framework_TestCas
             ->willReturn([new ShippingMethodsConfigsRule()]);
 
         $context = new ShippingContext([
-            ShippingContext::FIELD_SHIPPING_ADDRESS => $this->getMock(AddressInterface::class)
+            ShippingContext::FIELD_SHIPPING_ADDRESS => $this->getMockBuilder(AddressInterface::class)->getMock()
         ]);
 
         static::assertSame(

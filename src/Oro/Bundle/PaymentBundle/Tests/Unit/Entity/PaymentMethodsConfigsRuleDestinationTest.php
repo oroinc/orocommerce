@@ -3,11 +3,11 @@
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
-use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRuleDestinationPostalCode;
-use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\AddressBundle\Entity\Country;
+use Oro\Bundle\AddressBundle\Entity\Region;
+use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRuleDestination;
+use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRuleDestinationPostalCode;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Component\Testing\Unit\EntityTrait;
 
@@ -184,7 +184,7 @@ class PaymentMethodsConfigsRuleDestinationTest extends \PHPUnit_Framework_TestCa
      */
     protected function createMockRegion($name = 'RegionName', $code = 'RegionCode')
     {
-        $result = $this->getMock(Region::class, [], ['combinedCode']);
+        $result = $this->getMockBuilder(Region::class)->setConstructorArgs(['combinedCode'])->getMock();
         $result->expects($this->any())
             ->method('__toString')
             ->will($this->returnValue($name));

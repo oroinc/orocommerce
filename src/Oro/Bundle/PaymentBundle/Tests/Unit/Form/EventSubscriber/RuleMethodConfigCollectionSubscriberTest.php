@@ -91,7 +91,7 @@ class RuleMethodConfigCollectionSubscriberTest extends FormIntegrationTestCase
      */
     public function getExtensions()
     {
-        $roundingService = $this->getMock(RoundingServiceInterface::class);
+        $roundingService = $this->getMockBuilder(RoundingServiceInterface::class)->getMock();
         $roundingService->expects($this->any())
             ->method('getPrecision')
             ->willReturn(4);
@@ -113,7 +113,7 @@ class RuleMethodConfigCollectionSubscriberTest extends FormIntegrationTestCase
             ->getMock();
 
         /** @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject $translator */
-        $translator = $this->getMock(TranslatorInterface::class);
+        $translator = $this->getMockBuilder(TranslatorInterface::class)->getMock();
         $translator->expects(static::any())
             ->method('trans')
             ->will(static::returnCallback(function ($message) {

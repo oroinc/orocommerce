@@ -133,7 +133,7 @@ class PaymentMethodConfigCollectionTypeTest extends FormIntegrationTestCase
     public function testBuildFormSubscriber()
     {
         /** @var FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder */
-        $builder = $this->getMock(FormBuilderInterface::class);
+        $builder = $this->getMockBuilder(FormBuilderInterface::class)->getMock();
         $builder->expects($this->once())
             ->method('addEventSubscriber')
             ->with($this->subscriber)
