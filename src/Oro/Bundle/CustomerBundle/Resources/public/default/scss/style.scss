@@ -22,7 +22,10 @@
   }
 
   .oro-account__controls-list {
-    text-align: right;
+    position: relative;
+    z-index: 1;
+    float: right;
+    margin: 0 15px 0 0;
   }
 
   .customer-info {
