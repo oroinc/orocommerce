@@ -52,6 +52,10 @@ class CheckoutRepository extends EntityRepository
     {
         /* @var $checkouts Checkout[] */
         $checkouts = $this->createQueryBuilder('c')
+            ->select('c, s, sl, qd')
+            ->innerJoin('c.source', 's')
+            ->leftJoin('s.shoppingList', 'sl')
+            ->leftJoin('s.quoteDemand', 'qd')
             ->where('c.id in (:ids)')
             ->setParameter('ids', $checkoutIds)
             ->getQuery()
@@ -119,19 +123,23 @@ class CheckoutRepository extends EntityRepository
 
     /**
      * @param AccountUser $accountUser
-     * @param array $sourceCriteria
+     * @param array $sourceCriteria [shoppingList => ShoppingList, deleted => false]
      * @return array
      */
     public function findCheckoutByAccountUserAndSourceCriteria(AccountUser $accountUser, array $sourceCriteria)
     {
         $qb = $this->createQueryBuilder('c');
         $qb->innerJoin('c.source', 's')
-            ->where('c.accountUser = :accountUser AND c.deleted = :deleted AND s.deleted = :deleted')
+            ->where(
+                $qb->expr()->eq('c.accountUser', ':accountUser'),
+                $qb->expr()->eq('c.deleted', ':deleted'),
+                $qb->expr()->eq('s.deleted', ':deleted')
+            )
             ->setParameter('accountUser', $accountUser)
             ->setParameter('deleted', false, Type::BOOLEAN);
 
         foreach ($sourceCriteria as $field => $value) {
-            $qb->andWhere(sprintf('s.%s = :%s', $field, $field))
+            $qb->andWhere($qb->expr()->eq('s.' . $field, ':' . $field))
                 ->setParameter($field, $value);
         }
 

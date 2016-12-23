@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\SaleBundle\Tests\Functional;
+namespace Oro\Bundle\CheckoutBundle\Tests\Functional;
 
 use Symfony\Component\DomCrawler\Form;
 
@@ -12,7 +12,7 @@ use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData;
 /**
  * @dbIsolation
  */
-class QuoteFrontendActionsTest extends FrontendActionTestCase
+class QuoteFrontendOperationsTest extends FrontendActionTestCase
 {
     /**
      * {@inheritdoc}
@@ -28,10 +28,6 @@ class QuoteFrontendActionsTest extends FrontendActionTestCase
 
     public function testSubmitOrdersFromSingleQuote()
     {
-        if (!$this->client->getContainer()->hasParameter('oro_checkout.entity.checkout.class')) {
-            $this->markTestSkipped('CheckoutBundle disabled');
-        }
-
         // start checkout from first user
         $this->loginUser(LoadUserData::ACCOUNT1_USER2);
         $firstData = $this->startCheckout($this->getReference(LoadQuoteData::QUOTE4));

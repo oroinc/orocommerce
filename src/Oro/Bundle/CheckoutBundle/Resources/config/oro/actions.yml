@@ -17,26 +17,6 @@ operations:
             - preconditions
             - datagrids
 
-    oro_checkout_view:
-        applications: [commerce]
-        label: oro.checkout.grid.checkout_link.label
-        button_options:
-            icon: shopping-cart
-        acl_resource: oro_checkout_frontend_checkout
-        preactions:
-            - '@get_active_user': $.currentUser
-        preconditions:
-            '@and':
-                - '@not_blank': $.data
-                - '@equal': [$accountUser, $.currentUser]
-        actions:
-            - '@redirect':
-                route: oro_checkout_frontend_checkout
-                route_parameters:
-                    id: $.data.id
-        datagrids:
-            - frontend-checkouts-grid
-
 action_groups:
     oro_update_shipping_price:
         parameters:

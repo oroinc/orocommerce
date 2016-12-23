@@ -66,15 +66,18 @@ abstract class AbstractLoadCheckouts extends AbstractFixture implements
     {
         $this->manager = $manager;
         $this->clearPreconditions();
-        /** @var AccountUser $accountUser */
-        $accountUser = $manager->getRepository('OroCustomerBundle:AccountUser')
+        /** @var AccountUser $defaultAccountUser */
+        $defaultAccountUser = $manager->getRepository('OroCustomerBundle:AccountUser')
             ->findOneBy(['username' => LoadAccountUserData::AUTH_USER]);
         $website = $this->getReference(LoadWebsiteData::WEBSITE1);
         foreach ($this->getData() as $name => $checkoutData) {
-            $accountUserEmail = isset($checkoutData['accountUser']) ? $checkoutData['accountUser'] : null;
+            /* @var $accountUser AccountUser */
+            $accountUser = isset($checkoutData['accountUser']) ?
+                $this->getReference($checkoutData['accountUser']) :
+                $defaultAccountUser;
 
             $checkout = $this->createCheckout();
-            $checkout->setAccountUser($accountUserEmail ? $this->getReference($accountUserEmail) : $accountUser);
+            $checkout->setAccountUser($accountUser);
             $checkout->setOrganization($accountUser->getOrganization());
             $checkout->setWebsite($website);
             $source = new CheckoutSource();

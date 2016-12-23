@@ -136,6 +136,7 @@ services:
             - '@oro_entity.entity_name_resolver'
             - '@oro_checkout.grid_totals_metadata.cache'
             - '@oro_checkout.datagrid.checkout_grid_helper'
+            - "@oro_security.security_facade"
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-checkouts-grid, method: onBuildBefore }
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-checkouts-grid, method: onResultAfter }
