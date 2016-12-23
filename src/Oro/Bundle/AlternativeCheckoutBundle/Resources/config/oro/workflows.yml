@@ -1180,11 +1180,16 @@ workflows:
                                 entity: $checkout
                                 state: $.result.currentCheckoutState
                                 token: $state_token
+                    - '@call_service_method':
+                        service: oro_checkout.factory.payment_context_factory
+                        method: create
+                        method_parameters: [$checkout]
+                        attribute: $.result.paymentContext
                 preconditions:
                     '@and':
                         - '@payment_method_applicable':
                             payment_method: 'payment_term'
-                            entity: $checkout
+                            context: $.result.paymentContext
                         - '@order_line_item_has_count':
                             message: oro.checkout.workflow.condition.order_line_item_has_count.message
                             parameters:

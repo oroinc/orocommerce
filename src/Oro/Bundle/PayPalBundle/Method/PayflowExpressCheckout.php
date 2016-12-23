@@ -98,22 +98,6 @@ class PayflowExpressCheckout implements PaymentMethodInterface
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function isEnabled()
-    {
-        return $this->config->isEnabled();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isApplicable(array $context = [])
-    {
-        return true;
-    }
-
-    /**
      * @param string $actionName
      * @return bool
      */

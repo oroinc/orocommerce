@@ -44,6 +44,7 @@ abstract class AbstractPayflowGatewayTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
+        $this->markTestSkipped('BB-5476');
         $this->gateway = $this->getMockBuilder('Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway')
             ->disableOriginalConstructor()
             ->getMock();

@@ -40,7 +40,7 @@ class PayflowGatewayView implements PaymentMethodViewInterface
     }
 
     /** {@inheritdoc} */
-    public function getOptions(array $context = [])
+    public function getOptions()
     {
         $isZeroAmountAuthorizationEnabled = $this->config->isZeroAmountAuthorizationEnabled();
 

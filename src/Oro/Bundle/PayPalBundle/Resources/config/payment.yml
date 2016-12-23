@@ -28,7 +28,6 @@ services:
         public: false
         arguments:
             - '@oro_paypal.paypal.payflow_gateway.gateway='
-            - '@oro_paypal.payment_method.payflow_gateway.config'
             - '@router'
         tags:
             - { name: oro_payment.payment_method }
@@ -38,7 +37,6 @@ services:
         public: false
         arguments:
             - '@oro_paypal.paypal.payflow_gateway.gateway='
-            - '@oro_paypal.payment_method.paypal_payments_pro.config'
             - '@router'
         tags:
             - { name: oro_payment.payment_method }

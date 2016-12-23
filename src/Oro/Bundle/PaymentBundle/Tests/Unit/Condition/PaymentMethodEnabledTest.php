@@ -18,6 +18,7 @@ class PaymentMethodEnabledTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
+        $this->markTestSkipped('BB-5476');
         $this->paymentMethodRegistry = $this->createMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry');
         $this->condition = new PaymentMethodEnabled($this->paymentMethodRegistry);
     }

@@ -27,7 +27,7 @@ class PayflowExpressCheckoutView implements PaymentMethodViewInterface
     }
 
     /** {@inheritdoc} */
-    public function getOptions(array $context = [])
+    public function getOptions()
     {
         return [];
     }

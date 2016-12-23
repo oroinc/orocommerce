@@ -36,7 +36,7 @@ class PaymentTermView implements PaymentMethodViewInterface
     }
 
     /** {@inheritdoc} */
-    public function getOptions(array $context = [])
+    public function getOptions()
     {
         $paymentTerm = $this->paymentTermProvider->getCurrentPaymentTerm();
 

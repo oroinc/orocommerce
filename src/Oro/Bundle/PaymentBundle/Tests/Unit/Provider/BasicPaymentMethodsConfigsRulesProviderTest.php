@@ -162,7 +162,7 @@ class BasicPaymentMethodsConfigsRulesProviderTest extends \PHPUnit_Framework_Tes
      */
     private function createAddressMock()
     {
-        return $this->getMock(AddressInterface::class);
+        return $this->createMock(AddressInterface::class);
     }
 
     /**

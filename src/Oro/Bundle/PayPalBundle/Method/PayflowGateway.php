@@ -6,7 +6,6 @@ use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
-use Oro\Bundle\PayPalBundle\Method\Config\PayflowGatewayConfigInterface;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Option as GatewayOption;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
@@ -15,6 +14,7 @@ use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 
 /**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class PayflowGateway implements PaymentMethodInterface
@@ -31,18 +31,13 @@ class PayflowGateway implements PaymentMethodInterface
     /** @var RouterInterface */
     protected $router;
 
-    /** @var PayflowGatewayConfigInterface */
-    protected $config;
-
     /**
      * @param Gateway $gateway
-     * @param PayflowGatewayConfigInterface $config
      * @param RouterInterface $router
      */
-    public function __construct(Gateway $gateway, PayflowGatewayConfigInterface $config, RouterInterface $router)
+    public function __construct(Gateway $gateway, RouterInterface $router)
     {
         $this->gateway = $gateway;
-        $this->config = $config;
         $this->router = $router;
     }
 
@@ -314,22 +309,6 @@ class PayflowGateway implements PaymentMethodInterface
         }
 
         return $option;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isApplicable(array $context = [])
-    {
-        return $this->config->isCountryApplicable($context) && $this->config->isCurrencyApplicable($context);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isEnabled()
-    {
-        return $this->config->isEnabled();
     }
 
     /**

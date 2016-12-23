@@ -11,19 +11,6 @@ class MoneyOrder implements PaymentMethodInterface
     const TYPE = 'money_order';
 
     /**
-     * @var MoneyOrderConfigInterface
-     */
-    protected $config;
-
-    /**
-     * @param MoneyOrderConfigInterface $config
-     */
-    public function __construct(MoneyOrderConfigInterface $config)
-    {
-        $this->config = $config;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function execute($action, PaymentTransaction $paymentTransaction)
@@ -36,26 +23,9 @@ class MoneyOrder implements PaymentMethodInterface
     /**
      * {@inheritdoc}
      */
-    public function isEnabled()
-    {
-        return $this->config->isEnabled();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getType()
     {
         return self::TYPE;
-    }
-
-    /**
-     * @param array $context
-     * @return bool
-     */
-    public function isApplicable(array $context = [])
-    {
-        return $this->config->isCountryApplicable($context) && $this->config->isCurrencyApplicable($context);
     }
 
     /**

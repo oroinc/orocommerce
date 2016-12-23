@@ -26,7 +26,7 @@ class MoneyOrderView implements PaymentMethodViewInterface
     /**
      * {@inheritdoc}
      */
-    public function getOptions(array $context = [])
+    public function getOptions()
     {
         return [
             'pay_to' => $this->config->getPayTo(),

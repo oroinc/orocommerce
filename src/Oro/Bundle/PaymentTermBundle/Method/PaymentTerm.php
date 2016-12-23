@@ -6,7 +6,6 @@ use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\PaymentTermBundle\Method\Config\PaymentTermConfigInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
@@ -24,23 +23,17 @@ class PaymentTerm implements PaymentMethodInterface
     /** @var DoctrineHelper */
     protected $doctrineHelper;
 
-    /** @var PaymentTermConfigInterface */
-    protected $config;
-
     /**
      * @param PaymentTermProvider $paymentTermProvider
-     * @param PaymentTermConfigInterface $config
      * @param PropertyAccessor $propertyAccessor
      * @param DoctrineHelper $doctrineHelper
      */
     public function __construct(
         PaymentTermProvider $paymentTermProvider,
-        PaymentTermConfigInterface $config,
         PropertyAccessor $propertyAccessor,
         DoctrineHelper $doctrineHelper
     ) {
         $this->paymentTermProvider = $paymentTermProvider;
-        $this->config = $config;
         $this->propertyAccessor = $propertyAccessor;
         $this->doctrineHelper = $doctrineHelper;
     }
@@ -78,23 +71,9 @@ class PaymentTerm implements PaymentMethodInterface
     }
 
     /** {@inheritdoc} */
-    public function isEnabled()
-    {
-        return $this->config->isEnabled();
-    }
-
-    /** {@inheritdoc} */
     public function getType()
     {
         return self::TYPE;
-    }
-
-    /** {@inheritdoc} */
-    public function isApplicable(array $context = [])
-    {
-        return $this->config->isCountryApplicable($context)
-            && (bool)$this->paymentTermProvider->getCurrentPaymentTerm()
-            && $this->config->isCurrencyApplicable($context);
     }
 
     /** {@inheritdoc} */

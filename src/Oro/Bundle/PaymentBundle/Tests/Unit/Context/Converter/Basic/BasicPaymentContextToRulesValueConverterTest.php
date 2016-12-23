@@ -54,9 +54,9 @@ class BasicPaymentContextToRulesValueConverterTest extends \PHPUnit_Framework_Te
 
     public function setUp()
     {
-        $this->shippingAddressMock = $this->getMock(AddressInterface::class);
-        $this->billingAddressMock = $this->getMock(AddressInterface::class);
-        $this->shippingOriginMock = $this->getMock(AddressInterface::class);
+        $this->shippingAddressMock = $this->createMock(AddressInterface::class);
+        $this->billingAddressMock = $this->createMock(AddressInterface::class);
+        $this->shippingOriginMock = $this->createMock(AddressInterface::class);
         $this->customerMock = $this->getMockBuilder(Account::class)
             ->disableOriginalConstructor()
             ->getMock();
