@@ -2,14 +2,18 @@
 
 namespace Oro\Bundle\ProductBundle\Form\Type;
 
+use Oro\Bundle\ProductBundle\Form\DataTransformer\ProductVariantFieldsTransformer;
+use Oro\Bundle\ProductBundle\Form\EventSubscriber\ProductVariantFieldsSubscriber;
+
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\ProductBundle\Provider\CustomFieldProvider;
 
-class ProductCustomVariantFieldsChoiceType extends AbstractType
+class ProductCustomVariantFieldsCollectionType extends AbstractType
 {
-    const NAME = 'oro_product_custom_variant_fields_choice';
+    const NAME = 'oro_product_custom_variant_fields_collection';
 
     /**
      * @var CustomFieldProvider
@@ -37,11 +41,30 @@ class ProductCustomVariantFieldsChoiceType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'choices'              => $this->getCustomVariantFields(),
-            'multiple'             => true,
-            'expanded'             => true,
-            'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"'
+            'type' => 'oro_product_variant_field',
+            'multiple' => true,
+            'expanded' => true,
+            'allow_add' => false,
+            'allow_delete' => false,
         ]);
+    }
+
+    /**
+     * @param FormBuilderInterface $builder
+     * @param array $options
+     */
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $builder->addEventSubscriber(
+            new ProductVariantFieldsSubscriber(
+                $options['entry_type'],
+                $this->customFieldProvider,
+                $this->productClass,
+                $options['entry_options']
+            )
+        );
+
+        $builder->addModelTransformer(new ProductVariantFieldsTransformer());
     }
 
     /**
@@ -49,7 +72,7 @@ class ProductCustomVariantFieldsChoiceType extends AbstractType
      */
     public function getParent()
     {
-        return 'choice';
+        return 'oro_collection';
     }
 
     /**
@@ -66,25 +89,5 @@ class ProductCustomVariantFieldsChoiceType extends AbstractType
     public function getBlockPrefix()
     {
         return static::NAME;
-    }
-
-    /**
-     * @return array
-     */
-    protected function getCustomVariantFields()
-    {
-        $result = [];
-        $customFields = $this->customFieldProvider->getEntityCustomFields($this->productClass);
-
-        // Show only boolean and enum as allowed
-        $customVariantFields = array_filter($customFields, function ($field) {
-            return in_array($field['type'], ['boolean', 'enum'], true);
-        });
-
-        foreach ($customVariantFields as $field) {
-            $result[$field['name']] = $field['label'];
-        }
-
-        return $result;
     }
 }

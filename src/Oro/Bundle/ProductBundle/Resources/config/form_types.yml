@@ -94,13 +94,18 @@ services:
         tags:
             - { name: form.type_extension, alias: integer }
 
-    oro_product.form.type.custom_variant_fields_choice:
-        class: 'Oro\Bundle\ProductBundle\Form\Type\ProductCustomVariantFieldsChoiceType'
+    oro_product.form.type.custom_variant_fields_collection:
+        class: 'Oro\Bundle\ProductBundle\Form\Type\ProductCustomVariantFieldsCollectionType'
         arguments:
             - '@oro_product.provider.custom_field_provider'
             - '%oro_product.entity.product.class%'
         tags:
-            - { name: form.type, alias: oro_product_custom_variant_fields_choice }
+            - { name: form.type, alias: oro_product_custom_variant_fields_collection }
+
+    oro_product.type.variant_field:
+        class: 'Oro\Bundle\ProductBundle\Form\Type\ProductVariantFieldType'
+        tags:
+            - { name: form.type, alias: oro_product_variant_field }
 
     oro_product.form.type.product_variant_links:
         class: 'Oro\Bundle\ProductBundle\Form\Type\ProductVariantLinksType'

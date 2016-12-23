@@ -137,7 +137,7 @@ class ProductType extends AbstractType
             )
             ->add(
                 'variantFields',
-                ProductCustomVariantFieldsChoiceType::NAME,
+                ProductCustomVariantFieldsCollectionType::NAME,
                 [
                     'label' => 'oro.product.variant_fields.label',
                     'tooltip' => 'oro.product.form.tooltip.variant_fields',
