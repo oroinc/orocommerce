@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Form\Type;
 
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
@@ -14,6 +15,9 @@ use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductDa
  */
 class ProductStepOneTypeTest extends WebTestCase
 {
+    const CATEGORY_ID = 1;
+    const ATTRIBUTE_FAMILY_ID = 1;
+
     /**
      * @var FormFactoryInterface
      */
@@ -44,12 +48,13 @@ class ProductStepOneTypeTest extends WebTestCase
     {
         $submitData['_token'] = $this->tokenManager->getToken('product')->getValue();
         // submit form
-        $form = $this->formFactory->create(ProductStepOneType::NAME, []);
+        $form = $this->formFactory->create(ProductStepOneType::NAME, null);
         $form->submit($submitData);
         $this->assertEquals($isValid, $form->isValid());
         if ($isValid) {
             $this->assertEquals($submitData['category'], $form->get('category')->getViewData());
             $this->assertEquals($submitData['type'], $form->get('type')->getViewData());
+            $this->assertEquals($submitData['attributeFamily'], $form->get('attributeFamily')->getViewData());
         }
     }
 
@@ -60,23 +65,35 @@ class ProductStepOneTypeTest extends WebTestCase
     {
         return [
             'empty category' => [
-                'submitData' => ['category' => null, 'type' => 'simple'],
+                'submitData' => ['category' => null, 'type' => 'simple', 'attributeFamily' => null],
                 'isValid' => true,
             ],
             'invalid category' => [
-                'submitData' => ['category' => 999, 'type' => 'simple'],
+                'submitData' => ['category' => 999, 'type' => 'simple', 'attributeFamily' => 999],
                 'isValid' => false
             ],
             'valid data' => [
-                'submitData' => ['category' => 1, 'type' => 'simple'],
+                'submitData' => [
+                    'category' => self::CATEGORY_ID,
+                    'type' => 'simple',
+                    'attributeFamily' => self::ATTRIBUTE_FAMILY_ID
+                ],
                 'isValid' => true
             ],
             'wrong type' => [
-                'submitData' => ['category' => 1, 'type' => 'wrong_type'],
+                'submitData' => [
+                    'category' => self::CATEGORY_ID,
+                    'type' => 'wrong_type',
+                    'attributeFamily' => self::ATTRIBUTE_FAMILY_ID
+                ],
                 'isValid' => false
             ],
             'type configurable' => [
-                'submitData' => ['category' => 1, 'type' => 'configurable'],
+                'submitData' => [
+                    'category' => self::CATEGORY_ID,
+                    'type' => 'configurable',
+                    'attributeFamily' => self::ATTRIBUTE_FAMILY_ID
+                ],
                 'isValid' => true
             ]
         ];

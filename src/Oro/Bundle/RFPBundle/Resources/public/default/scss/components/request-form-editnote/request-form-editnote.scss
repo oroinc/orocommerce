@@ -8,7 +8,8 @@
         display: none;
     }
 
-    &__toggle:checked ~ &__body {
+    &__toggle:checked ~ &__body,
+    .checked ~ &__body {
         display: block;
     }
 }

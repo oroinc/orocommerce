@@ -32,14 +32,17 @@ define(function(require) {
                 return;
             }
             var productUnits = model.get('product_units');
-            var select = this.options._sourceElement.find('select');
-            select.empty();
-            for (var i = 0; i < productUnits.length; i++) {
-                var unitCode = productUnits[i];
-                var unitValue = _.__(this.options.unitLabel.replace('%s', unitCode));
-                select.append($('<option></option>').attr('value', unitCode).text(unitValue));
+            if (productUnits) {
+                var select = this.options._sourceElement.find('select');
+                select.empty();
+                for (var i = 0; i < productUnits.length; i++) {
+                    var unitCode = productUnits[i];
+                    var unitValue = _.__(this.options.unitLabel.replace('%s', unitCode));
+                    select.append($('<option></option>').attr('value', unitCode).text(unitValue));
+                }
+                select.change();
             }
-            select.change();
+
         }
     });
 
