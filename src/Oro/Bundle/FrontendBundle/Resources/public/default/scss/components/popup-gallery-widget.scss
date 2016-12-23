@@ -39,7 +39,7 @@
   .slick-prev {
     left: -45px;
 
-    @include fa-icon($fa-var-chevron-left ,after);
+    @include fa-icon($fa-var-chevron-left, after);
 
     &:after {
       margin: 2px 0 0 -1px;
