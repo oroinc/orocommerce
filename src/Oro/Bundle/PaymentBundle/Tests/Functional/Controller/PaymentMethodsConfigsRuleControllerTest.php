@@ -166,16 +166,16 @@ class PaymentMethodsConfigsRuleControllerTest extends WebTestCase
         $formValues['oro_payment_methods_configs_rule']['rule']['enabled'] = false;
         $formValues['oro_payment_methods_configs_rule']['currency'] = 'USD';
         $formValues['oro_payment_methods_configs_rule']['rule']['sortOrder'] = 1;
+        $formValues['oro_payment_methods_configs_rule']['rule']['expression'] = 1;
         $formValues['oro_payment_methods_configs_rule']['destinations'] = [
             [
-                'postalCodes' => '54321',
-                'country' => 'FR',
-                'region' => 'FR-75'
+                'country'     => 'FR',
+                'region'      => 'FR-75'
             ]
         ];
         $formValues['oro_payment_methods_configs_rule']['methodConfigs'] = [
             [
-                'type' => self::PAYMENT_METHOD_TYPE,
+                'type'    => self::PAYMENT_METHOD_TYPE,
                 'options' => [],
             ]
         ];
@@ -263,7 +263,6 @@ class PaymentMethodsConfigsRuleControllerTest extends WebTestCase
         $formValues['oro_payment_methods_configs_rule']['rule']['sortOrder'] = 1;
         $formValues['oro_payment_methods_configs_rule']['destinations'] = [
             [
-                'postalCodes' => '54321',
                 'country' => 'TH',
                 'region' => 'TH-83'
             ]
@@ -289,7 +288,6 @@ class PaymentMethodsConfigsRuleControllerTest extends WebTestCase
         $destination = $paymentRule->getDestinations();
         static::assertEquals('TH', $destination[0]->getCountry()->getIso2Code());
         static::assertEquals('TH-83', $destination[0]->getRegion()->getCombinedCode());
-        static::assertEquals('54321', $destination[0]->getPostalCodes()->current()->getName());
         $methodConfigs = $paymentRule->getMethodConfigs();
         static::assertEquals(self::PAYMENT_METHOD_TYPE, $methodConfigs[0]->getType());
 
@@ -379,7 +377,7 @@ class PaymentMethodsConfigsRuleControllerTest extends WebTestCase
         /** @var PaymentMethodsConfigsRule $paymentRule2 */
         $paymentRule2 = $this->getReference('payment.payment_methods_configs_rule.2');
         $url = $this->getUrl(
-            'oro_status_payment_rule_massaction',
+            'oro_payment_methods_configs_massaction',
             [
                 'gridName' => 'payment-methods-configs-rule-grid',
                 'actionName' => 'disable',
@@ -415,7 +413,7 @@ class PaymentMethodsConfigsRuleControllerTest extends WebTestCase
         /** @var PaymentMethodsConfigsRule $paymentRule2 */
         $paymentRule2 = $this->getReference('payment.payment_methods_configs_rule.2');
         $url = $this->getUrl(
-            'oro_status_payment_rule_massaction',
+            'oro_payment_methods_configs_massaction',
             [
                 'gridName' => 'payment-methods-configs-rule-grid',
                 'actionName' => 'enable',
@@ -456,41 +454,6 @@ class PaymentMethodsConfigsRuleControllerTest extends WebTestCase
         static::assertJsonResponseStatusCodeEquals($this->client->getResponse(), 403);
     }
 
-    public function testPaymentMethodsConfigsRuleEdit()
-    {
-        $authParams = static::generateBasicAuthHeader(LoadUserData::USER_EDITOR, LoadUserData::USER_EDITOR);
-        $this->initClient([], $authParams);
-
-        /** @var PaymentMethodsConfigsRule $paymentRule */
-        $paymentRule = $this->getReference('payment.payment_methods_configs_rule.1');
-
-        $crawler = $this->client->request(
-            'GET',
-            $this->getUrl('oro_payment_methods_configs_rule_update', ['id' => $paymentRule->getId()])
-        );
-
-        static::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-
-        /** @var Form $form */
-        $form = $crawler->selectButton('Save')->form();
-
-        $rule = $paymentRule->getRule();
-        $form['oro_payment_methods_configs_rule[rule][enabled]'] = !$rule->isEnabled();
-        $form['oro_payment_methods_configs_rule[rule][name]'] = $rule->getName().' new name';
-        $form['oro_payment_methods_configs_rule[rule][sortOrder]'] = $rule->getSortOrder() + 1;
-        $form['oro_payment_methods_configs_rule[currency]'] = $paymentRule->getCurrency() === 'USD' ? 'EUR' : 'USD';
-        $form['oro_payment_methods_configs_rule[rule][stopProcessing]'] = !$rule->isStopProcessing();
-        $form['oro_payment_methods_configs_rule[rule][expression]'] = $rule->getExpression().' new data';
-        $form['oro_payment_methods_configs_rule[destinations][0][postalCodes]'] = '11111';
-        $form['oro_payment_methods_configs_rule[methodConfigs][0][typeConfigs][0][options][price]'] = 12;
-        $form['oro_payment_methods_configs_rule[methodConfigs][0][typeConfigs][0][enabled]'] = true;
-
-        $this->client->followRedirects(true);
-        $crawler = $this->client->submit($form);
-
-        static::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        static::assertContains('Payment rule has been saved', $crawler->html());
-    }
 
     public function testDeleteButtonNotVisible()
     {
