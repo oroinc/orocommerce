@@ -14,7 +14,7 @@ class ProductVariantFieldType extends AbstractType
     {
         $builder
             ->add('priority', 'hidden', ['empty_data' => 9999])
-            ->add('is_default', 'checkbox', ['required' => false, 'label' => $options['label']]);
+            ->add('is_selected', 'checkbox', ['required' => false, 'label' => $options['label']]);
     }
 
     /**

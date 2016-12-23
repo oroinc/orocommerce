@@ -33,7 +33,7 @@ class ProductVariantFieldsTransformer implements DataTransformerInterface
 
         $transformedData = [];
         foreach ($value as $name => $item) {
-            if (isset($item['is_default']) && $item['is_default']) {
+            if (isset($item['is_selected']) && $item['is_selected']) {
                 $transformedData[] = $name;
             }
         }

@@ -84,7 +84,7 @@ class ProductVariantFieldsSubscriber implements EventSubscriberInterface
 
             $data[$field['name']] = [
                 'priority' => $selected ? $priority : 9999,
-                'is_default' => $selected,
+                'is_selected' => $selected,
             ];
 
             $fieldsToAdd[$field['name']] = [
