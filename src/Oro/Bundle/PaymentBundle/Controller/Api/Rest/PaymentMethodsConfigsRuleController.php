@@ -14,7 +14,6 @@ use FOS\RestBundle\Util\Codes;
 use FOS\RestBundle\View\View;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
-use Oro\Bundle\SecurityBundle\Annotation\Acl;
 
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
@@ -118,29 +117,6 @@ class PaymentMethodsConfigsRuleController extends RestController implements Clas
         return $this->handleView(
             $view
         );
-    }
-
-    /**
-     * Rest delete
-     *
-     * @ApiDoc(
-     *      description="Delete Payment Rule",
-     *      resource=true
-     * )
-     * @Acl(
-     *      id="oro_payment_methods_configs_rule_delete",
-     *      type="entity",
-     *      permission="DELETE",
-     *      class="OroPaymentBundle:PaymentMethodsConfigsRule"
-     * )
-     *
-     * @param int $id
-     * @return Response
-     *
-     */
-    public function deleteAction($id)
-    {
-        return $this->handleDeleteRequest($id);
     }
 
     /**
