@@ -38,7 +38,7 @@ class RFPActionDeciderTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         $this->requestStack = $this->getMockBuilder(RequestStack::class)->disableOriginalConstructor()->getMock();
         $this->request = $this->getMockBuilder(Request::class)->disableOriginalConstructor()->getMock();
-        $this->requestStack->expects($this->any())->method('getCurrentRequest')->willReturn($this->request);
+        $this->requestStack->expects($this->any())->method('getMasterRequest')->willReturn($this->request);
         $this->decider = new RFPActionDecider($this->eventDispatcher, $this->requestStack);
     }
 
