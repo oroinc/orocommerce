@@ -9,7 +9,7 @@ In this example we consider how to customize product list page with 3 different 
 
 ### Getting started
 
-Every product list page contains current **category_id** in layout context.
+Every product list page contains current **category_id** and **category_ids** in layout context.
 So you can use it in the your layout update **conditions**. When you customize any page don't forget to use **Symfony Profiler** and look into **Layout** section.
 You can find there current layout **context** data and actual layout **tree**. Please see [Debug Information](https://github.com/orocrm/platform/tree/master/src/Oro/Bundle/LayoutBundle/Resources/doc/debug_information.md) for more details.
 

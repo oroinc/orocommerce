@@ -11,6 +11,8 @@ use Oro\Bundle\UIBundle\View\ScrollData;
 
 abstract class BaseFormViewListener
 {
+    const SEO_BLOCK_ID = 'seo';
+
     /**
      * @var TranslatorInterface
      */
@@ -118,11 +120,11 @@ abstract class BaseFormViewListener
     protected function addSEOBlock(ScrollData $scrollData, $descriptionTemplate, $keywordsTemplate)
     {
         $blockLabel = $this->translator->trans('oro.seo.label');
-        $blockId = $scrollData->addBlock($blockLabel, $this->blockPriority);
-        $leftSubBlock = $scrollData->addSubBlock($blockId);
-        $rightSubBlock = $scrollData->addSubBlock($blockId);
-        $scrollData->addSubBlockData($blockId, $leftSubBlock, $descriptionTemplate);
-        $scrollData->addSubBlockData($blockId, $rightSubBlock, $keywordsTemplate);
+        $scrollData->addNamedBlock(self::SEO_BLOCK_ID, $blockLabel, $this->blockPriority);
+        $leftSubBlock = $scrollData->addSubBlock(self::SEO_BLOCK_ID);
+        $rightSubBlock = $scrollData->addSubBlock(self::SEO_BLOCK_ID);
+        $scrollData->addSubBlockData(self::SEO_BLOCK_ID, $leftSubBlock, $descriptionTemplate, 'metaDescriptions');
+        $scrollData->addSubBlockData(self::SEO_BLOCK_ID, $rightSubBlock, $keywordsTemplate, 'metaKeywords');
     }
 
     /**

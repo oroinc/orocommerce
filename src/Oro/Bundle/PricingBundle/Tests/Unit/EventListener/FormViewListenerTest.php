@@ -143,11 +143,11 @@ class FormViewListenerTest extends FormViewListenerTestCase
     {
         $this->assertEquals(
             'oro.pricing.productprice.entity_plural_label.trans',
-            $scrollData[ScrollData::DATA_BLOCKS][1][ScrollData::TITLE]
+            $scrollData[ScrollData::DATA_BLOCKS]['prices'][ScrollData::TITLE]
         );
         $this->assertEquals(
-            [$html],
-            $scrollData[ScrollData::DATA_BLOCKS][1][ScrollData::SUB_BLOCKS][0][ScrollData::DATA]
+            ['productPriceAttributesPrices' => $html],
+            $scrollData[ScrollData::DATA_BLOCKS]['prices'][ScrollData::SUB_BLOCKS][0][ScrollData::DATA]
         );
     }
 
