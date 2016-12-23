@@ -44,7 +44,6 @@ class PaymentMethodsProviderTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->markTestSkipped('BB-5476');
         $this->paymentMethodViewRegistry = $this
             ->getMockBuilder('Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry')
             ->disableOriginalConstructor()

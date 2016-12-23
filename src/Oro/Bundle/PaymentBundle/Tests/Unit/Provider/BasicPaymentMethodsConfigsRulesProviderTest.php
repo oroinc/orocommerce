@@ -34,7 +34,7 @@ class BasicPaymentMethodsConfigsRulesProviderTest extends \PHPUnit_Framework_Tes
 
     public function setUp()
     {
-        $this->paymentContextToRulesValueConverterMock = $this->getMock(
+        $this->paymentContextToRulesValueConverterMock = $this->createMock(
             PaymentContextToRulesValueConverterInterface::class
         );
 
@@ -43,9 +43,9 @@ class BasicPaymentMethodsConfigsRulesProviderTest extends \PHPUnit_Framework_Tes
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->ruleFiltrationServiceMock = $this->getMock(RuleFiltrationServiceInterface::class);
+        $this->ruleFiltrationServiceMock = $this->createMock(RuleFiltrationServiceInterface::class);
 
-        $this->paymentContextMock = $this->getMock(PaymentContextInterface::class);
+        $this->paymentContextMock = $this->createMock(PaymentContextInterface::class);
     }
 
     public function testGetFilteredPaymentMethodsConfigs()

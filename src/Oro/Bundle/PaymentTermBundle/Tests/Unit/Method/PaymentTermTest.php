@@ -40,7 +40,6 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->markTestSkipped('BB-5476');
         $this->paymentTermProvider = $this->getMockBuilder('Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider')
             ->disableOriginalConstructor()
             ->getMock();

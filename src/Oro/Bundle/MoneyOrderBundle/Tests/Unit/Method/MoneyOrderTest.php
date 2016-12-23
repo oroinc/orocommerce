@@ -43,7 +43,6 @@ class MoneyOrderTest extends \PHPUnit_Framework_TestCase
 
     public function testIsEnabled()
     {
-        $this->markTestSkipped('BB-5476');
         $this->setConfig($this->at(0), Configuration::MONEY_ORDER_ENABLED_KEY, true);
         $this->assertTrue($this->method->isEnabled());
 
@@ -83,7 +82,6 @@ class MoneyOrderTest extends \PHPUnit_Framework_TestCase
 
     public function testIsApplicable()
     {
-        $this->markTestSkipped('BB-5476');
         $this->configManager->expects($this->exactly(2))
             ->method('get')
             ->withConsecutive(
@@ -97,7 +95,6 @@ class MoneyOrderTest extends \PHPUnit_Framework_TestCase
 
     public function testIsApplicableWithoutCountry()
     {
-        $this->markTestSkipped('BB-5476');
         $this->configManager->expects($this->exactly(2))
             ->method('get')
             ->withConsecutive(
