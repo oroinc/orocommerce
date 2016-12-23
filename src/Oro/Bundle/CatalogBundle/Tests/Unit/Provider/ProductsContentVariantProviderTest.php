@@ -3,7 +3,6 @@
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\Provider;
 
 use Doctrine\ORM\Query\Expr;
-use Doctrine\ORM\QueryBuilder;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\CatalogBundle\Provider\ProductsContentVariantProvider;
@@ -16,41 +15,15 @@ class ProductsContentVariantProviderTest extends \PHPUnit_Framework_TestCase
      */
     protected $provider;
 
-    /**
-     * @var QueryBuilder|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $queryBuilderMock;
-
-    /**
-     * @var Expr|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $exprMock;
-
     public function setUp()
     {
         $this->provider = new ProductsContentVariantProvider();
-
-        $this->exprMock = $this->createMock(Expr::class);
-        $this->exprMock->method('eq')->willReturn($this->exprMock);
-
-        $this->queryBuilderMock = $this->getMockBuilder(QueryBuilder::class)->disableOriginalConstructor()->getMock();
-        $this->queryBuilderMock->method('expr')->willReturn($this->exprMock);
-        $this->queryBuilderMock->method('leftJoin')->willReturn($this->queryBuilderMock);
-        $this->queryBuilderMock->method('setParameter')->willReturn($this->queryBuilderMock);
     }
 
     public function testSupportedClass()
     {
         $this->assertTrue($this->provider->isSupportedClass(Product::class));
         $this->assertFalse($this->provider->isSupportedClass('Test'));
-    }
-
-    public function testModifyNodeQueryBuilderByEntities()
-    {
-        $this->queryBuilderMock->expects(self::atLeast(2))->method('leftJoin');
-        $this->queryBuilderMock->expects(self::once())->method('setParameter');
-        $this->queryBuilderMock->expects(self::once())->method('addSelect');
-        $this->provider->modifyNodeQueryBuilderByEntities($this->queryBuilderMock, Product::class, []);
     }
 
     public function testGetRecordId()

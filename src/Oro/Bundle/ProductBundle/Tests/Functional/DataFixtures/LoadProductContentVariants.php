@@ -9,23 +9,27 @@ use Oro\Bundle\FrontendTestFrameworkBundle\Entity\TestContentVariant;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\TestFrameworkBundle\Test\DataFixtures\AbstractFixture;
 
-class LoadTestContentVariant extends AbstractFixture implements DependentFixtureInterface
+class LoadProductContentVariants extends AbstractFixture implements DependentFixtureInterface
 {
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public function getDependencies()
     {
         return [LoadProductData::class];
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public function load(ObjectManager $manager)
     {
-        $this->createTestContentVariant($manager, 'test_content_variant.1', $this->getReference('product.1'));
-        $this->createTestContentVariant($manager, 'test_content_variant.2', $this->getReference('product.2'));
-        $this->createTestContentVariant($manager, 'test_content_variant.3', $this->getReference('product.3'));
-        $this->createTestContentVariant($manager, 'test_content_variant.4');
-        $this->createTestContentVariant($manager, 'test_content_variant.5');
-        $this->createTestContentVariant($manager, 'test_content_variant.6');
+        $this->createTestContentVariant($manager, 'test_product_variant.1', $this->getReference('product.1'));
+        $this->createTestContentVariant($manager, 'test_product_variant.2', $this->getReference('product.2'));
+        $this->createTestContentVariant($manager, 'test_product_variant.3', $this->getReference('product.3'));
+        $this->createTestContentVariant($manager, 'test_product_variant.4');
+        $this->createTestContentVariant($manager, 'test_product_variant.5');
+        $this->createTestContentVariant($manager, 'test_product_variant.6');
 
         $manager->flush();
     }
@@ -35,7 +39,7 @@ class LoadTestContentVariant extends AbstractFixture implements DependentFixture
      * @param string $reference
      * @param Product|null $product
      */
-    private function createTestContentVariant(ObjectManager $manager, $reference, $product = null)
+    private function createTestContentVariant(ObjectManager $manager, $reference, Product $product = null)
     {
         $testContentVariant = new TestContentVariant();
         $testContentVariant->setProductPageProduct($product);
