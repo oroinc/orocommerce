@@ -34,11 +34,11 @@ Oro\Bundle\OrderBundle\Entity\Order:
             - NotBlank: ~
         website:
             - NotBlank: ~
-#        lineItems:
-#            - Count:
-#                min: 1
-#                minMessage: 'oro.order.orderlineitem.count'
-#            - Valid: ~
+        lineItems:
+            - Count:
+                min: 1
+                minMessage: 'oro.order.orderlineitem.count'
+            - Valid: ~
 
 Oro\Bundle\OrderBundle\Entity\OrderLineItem:
     constraints:
