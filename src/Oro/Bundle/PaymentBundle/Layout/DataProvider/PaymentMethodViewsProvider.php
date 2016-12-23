@@ -8,7 +8,7 @@ use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProvider;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry;
 use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 
-class PaymentMethodsProvider
+class PaymentMethodViewsProvider
 {
     /** @var PaymentMethodViewRegistry */
     protected $paymentMethodViewRegistry;

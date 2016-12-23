@@ -3,24 +3,19 @@
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\Layout\DataProvider;
 
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
+use Oro\Bundle\PaymentBundle\Layout\DataProvider\PaymentMethodViewsProvider;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProvider;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
-use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\PaymentBundle\Layout\DataProvider\PaymentMethodsProvider;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry;
-use Oro\Bundle\PaymentBundle\Provider\PaymentContextProvider;
 use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
+use Oro\Component\Testing\Unit\EntityTrait;
 
-/**
- * @SuppressWarnings(PHPMD.TooManyMethods)
- * @SuppressWarnings(PHPMD.TooManyPublicMethods)
- */
-class PaymentMethodsProviderTest extends \PHPUnit_Framework_TestCase
+class PaymentMethodViewsProviderTest extends \PHPUnit_Framework_TestCase
 {
-    const METHOD = 'Method';
     use EntityTrait;
+
+    const METHOD = 'Method';
 
     /**
      * @var PaymentMethodViewRegistry|\PHPUnit_Framework_MockObject_MockObject
@@ -38,7 +33,7 @@ class PaymentMethodsProviderTest extends \PHPUnit_Framework_TestCase
     protected $paymentTransactionProvider;
 
     /**
-     * @var PaymentMethodsProvider
+     * @var PaymentMethodViewsProvider
      */
     protected $provider;
 
@@ -59,7 +54,7 @@ class PaymentMethodsProviderTest extends \PHPUnit_Framework_TestCase
         $this->paymentTransactionProvider = $this->getMockBuilder(PaymentTransactionProvider::class)
             ->disableOriginalConstructor()->getMock();
 
-        $this->provider = new PaymentMethodsProvider(
+        $this->provider = new PaymentMethodViewsProvider(
             $this->paymentMethodViewRegistry,
             $this->paymentMethodProvider,
             $this->paymentTransactionProvider

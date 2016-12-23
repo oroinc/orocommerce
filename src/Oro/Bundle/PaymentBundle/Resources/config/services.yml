@@ -55,13 +55,13 @@ services:
             - '@oro_payment.payment_methods_configs.rules_provider_basic'
 
     oro_payment.provider.methods_provider:
-        class: 'Oro\Bundle\PaymentBundle\Layout\DataProvider\PaymentMethodsProvider'
+        class: 'Oro\Bundle\PaymentBundle\Layout\DataProvider\PaymentMethodViewsProvider'
         arguments:
             - '@oro_payment.payment_method.view.registry'
             - '@oro_payment.method.provider.method_provider'
             - '@oro_payment.provider.payment_transaction'
         tags:
-            - { name: layout.data_provider, alias: oro_payment_methods_provider }
+            - { name: layout.data_provider, alias: oro_payment_method_views_provider }
 
     oro_payment.provider.method_widget_provider:
         class: 'Oro\Bundle\PaymentBundle\Layout\DataProvider\PaymentMethodWidgetProvider'

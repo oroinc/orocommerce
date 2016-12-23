@@ -20,12 +20,12 @@ class OrderShippingContextFactory
     /**
      * @var OrderShippingLineItemConverterInterface
      */
-    private $shippingLineItemConverter = null;
+    private $shippingLineItemConverter;
 
     /**
      * @var ShippingContextBuilderFactoryInterface|null
      */
-    private $shippingContextBuilderFactory = null;
+    private $shippingContextBuilderFactory;
 
     /**
      * @param DoctrineHelper $doctrineHelper
@@ -35,7 +35,7 @@ class OrderShippingContextFactory
     public function __construct(
         DoctrineHelper $doctrineHelper,
         OrderShippingLineItemConverterInterface $shippingLineItemConverter,
-        ShippingContextBuilderFactoryInterface $shippingContextBuilderFactory
+        ShippingContextBuilderFactoryInterface $shippingContextBuilderFactory = null
     ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->shippingLineItemConverter = $shippingLineItemConverter;
