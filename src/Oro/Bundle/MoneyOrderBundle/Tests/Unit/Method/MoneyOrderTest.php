@@ -5,8 +5,6 @@ namespace Oro\Bundle\MoneyOrderBundle\Tests\Unit\Method;
 use Oro\Bundle\MoneyOrderBundle\DependencyInjection\OroMoneyOrderExtension;
 use Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfig;
 use Oro\Bundle\MoneyOrderBundle\Method\MoneyOrder;
-use Oro\Bundle\MoneyOrderBundle\DependencyInjection\Configuration;
-use Oro\Bundle\PaymentBundle\DependencyInjection\Configuration as PaymentConfiguration;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Tests\Unit\Method\ConfigTestTrait;
 
@@ -27,11 +25,6 @@ class MoneyOrderTest extends \PHPUnit_Framework_TestCase
         $this->method = new MoneyOrder($config);
     }
 
-    protected function tearDown()
-    {
-        unset($this->method, $this->configManager);
-    }
-
     public function testExecute()
     {
         $transaction = new PaymentTransaction();
@@ -39,15 +32,6 @@ class MoneyOrderTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals([], $this->method->execute('', $transaction));
         $this->assertTrue($transaction->isSuccessful());
-    }
-
-    public function testIsEnabled()
-    {
-        $this->setConfig($this->at(0), Configuration::MONEY_ORDER_ENABLED_KEY, true);
-        $this->assertTrue($this->method->isEnabled());
-
-        $this->setConfig($this->at(0), Configuration::MONEY_ORDER_ENABLED_KEY, false);
-        $this->assertFalse($this->method->isEnabled());
     }
 
     public function testGetType()
@@ -78,32 +62,6 @@ class MoneyOrderTest extends \PHPUnit_Framework_TestCase
             [false, MoneyOrder::VALIDATE],
             [true, MoneyOrder::PURCHASE],
         ];
-    }
-
-    public function testIsApplicable()
-    {
-        $this->configManager->expects($this->exactly(2))
-            ->method('get')
-            ->withConsecutive(
-                [$this->getConfigKey(Configuration::MONEY_ORDER_ALLOWED_COUNTRIES_KEY)],
-                [$this->getConfigKey(Configuration::MONEY_ORDER_ALLOWED_CURRENCIES)]
-            )
-            ->willReturnOnConsecutiveCalls(PaymentConfiguration::ALLOWED_COUNTRIES_ALL, ['USD']);
-
-        $this->assertTrue($this->method->isApplicable(['currency' => 'USD']));
-    }
-
-    public function testIsApplicableWithoutCountry()
-    {
-        $this->configManager->expects($this->exactly(2))
-            ->method('get')
-            ->withConsecutive(
-                [$this->getConfigKey(Configuration::MONEY_ORDER_ALLOWED_COUNTRIES_KEY)],
-                [$this->getConfigKey(Configuration::MONEY_ORDER_SELECTED_COUNTRIES_KEY)]
-            )
-            ->willReturnOnConsecutiveCalls(PaymentConfiguration::ALLOWED_COUNTRIES_SELECTED, []);
-
-        $this->assertFalse($this->method->isApplicable(['country' => 'US']));
     }
 
     /**

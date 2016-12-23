@@ -2,12 +2,12 @@
 
 namespace Oro\Bundle\MoneyOrderBundle\Tests\Unit\Method\View;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\MoneyOrderBundle\DependencyInjection\Configuration;
+use Oro\Bundle\MoneyOrderBundle\DependencyInjection\OroMoneyOrderExtension;
 use Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfig;
 use Oro\Bundle\MoneyOrderBundle\Method\MoneyOrder;
 use Oro\Bundle\MoneyOrderBundle\Method\View\MoneyOrderView;
-use Oro\Bundle\MoneyOrderBundle\DependencyInjection\OroMoneyOrderExtension;
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
 class MoneyOrderViewTest extends \PHPUnit_Framework_TestCase
 {
@@ -30,11 +30,6 @@ class MoneyOrderViewTest extends \PHPUnit_Framework_TestCase
         $this->methodView = new MoneyOrderView($this->config);
     }
 
-    protected function tearDown()
-    {
-        unset($this->methodView, $this->configManager);
-    }
-
     public function testGetOptions()
     {
         $data = ['pay_to' => 'Pay To', 'send_to' => 'Send To'];
@@ -48,13 +43,6 @@ class MoneyOrderViewTest extends \PHPUnit_Framework_TestCase
     public function testGetBlock()
     {
         $this->assertEquals('_payment_methods_money_order_widget', $this->methodView->getBlock());
-    }
-
-    public function testGetOrder()
-    {
-        $order = '100';
-        $this->setConfig($this->once(), Configuration::MONEY_ORDER_SORT_ORDER_KEY, $order);
-        $this->assertEquals((int)$order, $this->methodView->getOrder());
     }
 
     public function testGetPaymentMethodType()

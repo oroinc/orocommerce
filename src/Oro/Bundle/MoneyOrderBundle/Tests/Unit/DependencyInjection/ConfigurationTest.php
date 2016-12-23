@@ -2,11 +2,9 @@
 
 namespace Oro\Bundle\MoneyOrderBundle\Tests\Unit\DependencyInjection;
 
-use Symfony\Component\Config\Definition\Processor;
-
-use Oro\Bundle\PaymentBundle\DependencyInjection\Configuration as PaymentConfiguration;
 use Oro\Bundle\MoneyOrderBundle\DependencyInjection\Configuration;
 use Oro\Bundle\MoneyOrderBundle\DependencyInjection\OroMoneyOrderExtension;
+use Symfony\Component\Config\Definition\Processor;
 
 class ConfigurationTest extends \PHPUnit_Framework_TestCase
 {
@@ -33,6 +31,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
     {
         $configuration = new Configuration();
         $processor = new Processor();
+
         $this->assertEquals($expected, $processor->processConfiguration($configuration, $configs));
     }
 
@@ -47,10 +46,6 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                 'expected' => [
                     'settings' => [
                         'resolved' => true,
-                        Configuration::MONEY_ORDER_ENABLED_KEY => [
-                            'value' => false,
-                            'scope' => 'app'
-                        ],
                         Configuration::MONEY_ORDER_LABEL_KEY => [
                             'value' => Configuration::MONEY_ORDER_LABEL,
                             'scope' => 'app'
@@ -59,28 +54,12 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                             'value' => Configuration::MONEY_ORDER_LABEL,
                             'scope' => 'app'
                         ],
-                        Configuration::MONEY_ORDER_SORT_ORDER_KEY => [
-                            'value' => Configuration::MONEY_ORDER_SORT_ORDER,
-                            'scope' => 'app'
-                        ],
                         Configuration::MONEY_ORDER_PAY_TO_KEY => [
                             'value' => '',
                             'scope' => 'app'
                         ],
                         Configuration::MONEY_ORDER_SEND_TO_KEY => [
                             'value' => '',
-                            'scope' => 'app'
-                        ],
-                        Configuration::MONEY_ORDER_ALLOWED_COUNTRIES_KEY => [
-                            'value' => PaymentConfiguration::ALLOWED_COUNTRIES_ALL,
-                            'scope' => 'app'
-                        ],
-                        Configuration::MONEY_ORDER_SELECTED_COUNTRIES_KEY => [
-                            'value' => [],
-                            'scope' => 'app'
-                        ],
-                        Configuration::MONEY_ORDER_ALLOWED_CURRENCIES => [
-                            'value' => ['USD'],
                             'scope' => 'app'
                         ],
                     ]
