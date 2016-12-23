@@ -106,7 +106,7 @@ class StopProcessingRuleFiltrationServiceTest extends \PHPUnit_Framework_TestCas
      */
     private function createRuleOwner(Rule $rule)
     {
-        $ruleOwner = $this->getMock(RuleOwnerInterface::class, ['getRule']);
+        $ruleOwner = $this->createPartialMock(RuleOwnerInterface::class, ['getRule']);
         $ruleOwner->expects(static::any())
             ->method('getRule')
             ->willReturn($rule);

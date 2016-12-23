@@ -3,16 +3,15 @@
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Validator\Constraints;
 
 use Doctrine\Common\Collections\ArrayCollection;
-
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
-use Symfony\Component\Validator\Constraint;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
-use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
-
 use Oro\Bundle\ShippingBundle\Validator\Constraints\EnabledTypeConfigsValidationGroup;
 use Oro\Bundle\ShippingBundle\Validator\Constraints\EnabledTypeConfigsValidationGroupValidator;
 use Oro\Bundle\ShippingBundle\Validator\Constraints\UniqueProductUnitShippingOptions;
 use Oro\Bundle\ShippingBundle\Validator\Constraints\UniqueProductUnitShippingOptionsValidator;
+use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Component\Validator\Exception\UnexpectedTypeException;
+use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
 
 class EnabledTypeConfigsValidationGroupValidatorTest extends \PHPUnit_Framework_TestCase
 {
@@ -104,13 +103,11 @@ class EnabledTypeConfigsValidationGroupValidatorTest extends \PHPUnit_Framework_
         $this->validator->validate('test', $this->constraint);
     }
 
-    /**
-     * @expectedException \Symfony\Component\Validator\Exception\UnexpectedTypeException
-     */
     public function testUnexpectedItem()
     {
+        $this->expectException(UnexpectedTypeException::class);
         $this->expectExceptionMessage(
-            'Expected argument of type "Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig",'
+            'Expected argument of type "Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig",'
             . ' "stdClass" given'
         );
         $data = new ArrayCollection([new \stdClass()]);

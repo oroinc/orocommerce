@@ -46,31 +46,30 @@ class ShippingMethodsConfigsRuleRepository extends EntityRepository
     /**
      * @param bool $onlyEnabled
      * @return mixed
-     * TODO: refactor in BB-6393
      */
     public function getRulesWithoutShippingMethods($onlyEnabled = false)
     {
-        $qb = $this->createQueryBuilder('rule')
+        $qb = $this->createQueryBuilder('methodsConfigsRule')
             ->select('rule.id')
-            ->leftJoin('rule.methodConfigs', 'methodConfigs');
+            ->leftJoin('methodsConfigsRule.methodConfigs', 'methodConfigs')
+            ->leftJoin('methodsConfigsRule.rule', 'rule');
         if ($onlyEnabled) {
             $qb->andWhere('rule.enabled = true');
         }
-        return $qb->having('COUNT(methodConfigs.id) = 0')
-                  ->groupBy('rule.id')
-                  ->getQuery()->execute();
+        return $qb
+            ->having('COUNT(methodConfigs.id) = 0')
+            ->groupBy('methodsConfigsRule.id')
+            ->getQuery()->execute()
+        ;
     }
 
-    /**
-     * TODO: refactor in BB-6393
-     */
     public function disableRulesWithoutShippingMethods()
     {
         $rules = $this->getRulesWithoutShippingMethods(true);
-        $enabledRulesIds = array_column($rules, 'id');
         if (0 < count($rules)) {
-            $qb = $this->createQueryBuilder('rule');
-            $qb->update()
+            $enabledRulesIds = array_column($rules, 'id');
+            $qb = $this->createQueryBuilder('methodsConfigsRule');
+            $qb->update('OroRuleBundle:Rule', 'rule')
                 ->set('rule.enabled', ':newValue')
                 ->setParameter('newValue', false)
                 ->where($qb->expr()->in('rule.id', ':rules'))

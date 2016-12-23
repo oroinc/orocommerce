@@ -75,7 +75,7 @@ class EnabledRuleFiltrationServiceTest extends \PHPUnit_Framework_TestCase
      */
     private function createRuleOwner(Rule $rule)
     {
-        $ruleOwner = $this->getMock(RuleOwnerInterface::class, ['getRule']);
+        $ruleOwner = $this->createPartialMock(RuleOwnerInterface::class, ['getRule']);
         $ruleOwner->expects(static::any())
             ->method('getRule')
             ->willReturn($rule);

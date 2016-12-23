@@ -25,7 +25,7 @@ class UPSChannelEntityListener
                 $entityManager->getRepository('OroShippingBundle:ShippingMethodConfig')
                     ->deleteByMethod($configuredMethod->getMethod());
             }
-            $entityManager->getRepository('OroShippingBundle:ShippingRule')
+            $entityManager->getRepository('OroShippingBundle:ShippingMethodsConfigsRule')
                 ->disableRulesWithoutShippingMethods();
         }
     }

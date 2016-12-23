@@ -22,8 +22,8 @@ class BasicRuleFiltrationServiceTest extends \PHPUnit_Framework_TestCase
         $context = [];
 
         $ruleOwners = [
-            $this->getMock(RuleOwnerInterface::class, ['getRule']),
-            $this->getMock(RuleOwnerInterface::class, ['getRule']),
+            $this->createPartialMock(RuleOwnerInterface::class, ['getRule']),
+            $this->createPartialMock(RuleOwnerInterface::class, ['getRule']),
         ];
 
         static::assertEquals($ruleOwners, $this->service->getFilteredRuleOwners($ruleOwners, $context));

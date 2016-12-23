@@ -116,7 +116,7 @@ class RemoveUsedShippingServiceValidatorTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         $repository1->expects(static::any())
             ->method('findBy')
-            ->willReturn([$this->createShippingRuleMethod($configured)]);
+            ->willReturn([$this->createShippingMethodsConfigsRule($configured)]);
 
         $enabledTypes = [];
         foreach ($configured as $v) {
@@ -199,7 +199,7 @@ class RemoveUsedShippingServiceValidatorTest extends \PHPUnit_Framework_TestCase
      * @param array $codes
      * @return ShippingMethodConfig
      */
-    protected function createShippingRuleMethod($codes)
+    protected function createShippingMethodsConfigsRule($codes)
     {
         $method = new ShippingMethodConfig();
         foreach ($codes as $code) {

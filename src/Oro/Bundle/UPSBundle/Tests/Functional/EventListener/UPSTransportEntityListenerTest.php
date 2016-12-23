@@ -16,7 +16,7 @@ class UPSTransportEntityListenerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], static::generateBasicAuthHeader());
-        $this->loadFixtures(['Oro\Bundle\UPSBundle\Tests\Functional\DataFixtures\LoadShippingRules']);
+        $this->loadFixtures(['Oro\Bundle\UPSBundle\Tests\Functional\DataFixtures\LoadShippingMethodsConfigsRules']);
     }
 
     public function testPostUpdate()

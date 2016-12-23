@@ -119,33 +119,23 @@ class ShippingMethodsConfigsRuleRepositoryTest extends WebTestCase
         ];
     }
 
-    /**
-     * TODO: refactor in BB-6393
-     */
     public function testGetRulesWithoutShippingMethods()
     {
-        $this->markTestSkipped('refactor in BB-6393');
-
         $rulesWithoutShippingMethods = $this->repository->getRulesWithoutShippingMethods();
         $enabledRulesWithoutShippingMethods = $this->repository->getRulesWithoutShippingMethods(true);
 
-        static::assertCount(2, $rulesWithoutShippingMethods);
-        static::assertCount(1, $enabledRulesWithoutShippingMethods);
+        static::assertCount(4, $rulesWithoutShippingMethods);
+        static::assertCount(3, $enabledRulesWithoutShippingMethods);
     }
 
-    /**
-     * TODO: refactor in BB-6393
-     */
     public function testDisableRulesWithoutShippingMethods()
     {
-        $this->markTestSkipped('refactor in BB-6393');
-
         $this->repository->disableRulesWithoutShippingMethods();
 
         $rulesWithoutShippingMethods = $this->repository->getRulesWithoutShippingMethods();
         $enabledRulesWithoutShippingMethods = $this->repository->getRulesWithoutShippingMethods(true);
 
-        static::assertCount(2, $rulesWithoutShippingMethods);
+        static::assertCount(4, $rulesWithoutShippingMethods);
         static::assertCount(0, $enabledRulesWithoutShippingMethods);
     }
 
