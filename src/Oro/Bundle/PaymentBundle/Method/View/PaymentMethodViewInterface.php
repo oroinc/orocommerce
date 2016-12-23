@@ -16,11 +16,6 @@ interface PaymentMethodViewInterface
     public function getBlock();
 
     /**
-     * @return int
-     */
-    public function getOrder();
-
-    /**
      * @return string
      */
     public function getLabel();

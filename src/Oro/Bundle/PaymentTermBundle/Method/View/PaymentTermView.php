@@ -59,12 +59,6 @@ class PaymentTermView implements PaymentMethodViewInterface
     }
 
     /** {@inheritdoc} */
-    public function getOrder()
-    {
-        return $this->config->getOrder();
-    }
-
-    /** {@inheritdoc} */
     public function getLabel()
     {
         return $this->config->getLabel();
