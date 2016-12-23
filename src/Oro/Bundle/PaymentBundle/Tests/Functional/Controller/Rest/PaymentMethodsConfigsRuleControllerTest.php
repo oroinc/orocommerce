@@ -1,42 +1,48 @@
 <?php
 
-namespace Oro\Bundle\ShippingBundle\Tests\Functional\Controller\Api\Rest;
+namespace Oro\Bundle\PaymentBundle\Tests\Functional\Controller\Api\Rest;
 
-use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
-use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadUserData;
+use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
+use Oro\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
  * @dbIsolation
  */
-class ShippingMethodsConfigsRuleControllerTest extends WebTestCase
+class PaymentMethodsConfigsRuleControllerTest extends WebTestCase
 {
     protected function setUp()
     {
         $this->initClient([]);
         $this->client->useHashNavigation(true);
+
+        $currentBundleDataFixturesNameSpace = 'Oro\Bundle\PaymentBundle\Tests\Functional';
         $this->loadFixtures(
             [
-                'Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingMethodsConfigsRules',
-                'Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadUserData'
+                $currentBundleDataFixturesNameSpace.'\Entity\DataFixtures\LoadPaymentMethodsConfigsRuleData',
+                $currentBundleDataFixturesNameSpace.'\Entity\DataFixtures\LoadPaymentMethodsConfigsRuleDestinationData',
+                $currentBundleDataFixturesNameSpace.'\DataFixtures\LoadUserData'
             ]
         );
     }
 
     public function testDisableAction()
     {
-        /** @var ShippingMethodsConfigsRule $shippingRule */
-        $shippingRule = $this->getReference('shipping_rule.1');
+        /** @var PaymentMethodsConfigsRule $paymentRule */
+        $paymentRule = $this->getReference('payment.payment_methods_configs_rule.1');
         $this->client->request(
             'GET',
-            $this->getUrl('oro_api_disable_shippingrules', ['id' => $shippingRule->getId()]),
+            $this->getUrl('oro_api_disable_paymentmethodsconfigsrules', ['id' => $paymentRule->getId()]),
             [],
             [],
             static::generateWsseAuthHeader(LoadUserData::USER_EDITOR, LoadUserData::USER_EDITOR)
         );
         $result = $this->client->getResponse();
         static::assertJsonResponseStatusCodeEquals($result, 200);
-        static::assertEquals(false, $this->getReference('shipping_rule.1')->getRule()->isEnabled());
+        static::assertEquals(
+            false,
+            $this->getReference('payment.payment_methods_configs_rule.1')->getRule()->isEnabled()
+        );
     }
 
     /**
@@ -44,17 +50,20 @@ class ShippingMethodsConfigsRuleControllerTest extends WebTestCase
      */
     public function testEnableAction()
     {
-        /** @var ShippingMethodsConfigsRule $shippingRule */
-        $shippingRule = $this->getReference('shipping_rule.1');
+        /** @var PaymentMethodsConfigsRule $paymentRule */
+        $paymentRule = $this->getReference('payment.payment_methods_configs_rule.1');
         $this->client->request(
             'GET',
-            $this->getUrl('oro_api_enable_shippingrules', ['id' => $shippingRule->getId()]),
+            $this->getUrl('oro_api_enable_paymentmethodsconfigsrules', ['id' => $paymentRule->getId()]),
             [],
             [],
             static::generateWsseAuthHeader(LoadUserData::USER_EDITOR, LoadUserData::USER_EDITOR)
         );
         $result = $this->client->getResponse();
         static::assertJsonResponseStatusCodeEquals($result, 200);
-        static::assertEquals(true, $this->getReference('shipping_rule.1')->getRule()->isEnabled());
+        static::assertEquals(
+            true,
+            $this->getReference('payment.payment_methods_configs_rule.1')->getRule()->isEnabled()
+        );
     }
 }
