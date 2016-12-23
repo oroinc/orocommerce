@@ -67,10 +67,6 @@ class ProductContentVariantReindexEventListener
      */
     private function collectProductIds($entities, array &$productIds, UnitOfWork $unitOfWork = null)
     {
-        if (empty($entities)) {
-            return;
-        }
-
         foreach ($entities as $entity) {
             if (!$entity instanceof ContentVariantInterface
                 || $entity->getType() !== ProductPageContentVariantType::TYPE
@@ -81,8 +77,13 @@ class ProductContentVariantReindexEventListener
             $this->addProduct($entity->getProductPageProduct(), $productIds);
             if ($unitOfWork) {
                 $entityChangeSet = $unitOfWork->getEntityChangeSet($entity);
-                if (array_key_exists('product_page_product', $entityChangeSet)) {
+                if (!array_key_exists('product_page_product', $entityChangeSet)) {
+                    continue;
+                }
+                if (!empty($entityChangeSet['product_page_product'][0])) {
                     $this->addProduct($entityChangeSet['product_page_product'][0], $productIds);
+                }
+                if (!empty($entityChangeSet['product_page_product'][1])) {
                     $this->addProduct($entityChangeSet['product_page_product'][1], $productIds);
                 }
             }

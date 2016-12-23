@@ -91,10 +91,10 @@ class CategoryContentVariantIndexListener
                     if (!array_key_exists('category_page_category', $changeSet)) {
                         continue;
                     }
-                    if (!is_null($changeSet['category_page_category'][0])) {
+                    if (!empty($changeSet['category_page_category'][0])) {
                         $this->addCategory($categories, $changeSet['category_page_category'][0]);
                     }
-                    if (!is_null($changeSet['category_page_category'][1])) {
+                    if (!empty($changeSet['category_page_category'][1])) {
                         $this->addCategory($categories, $changeSet['category_page_category'][1]);
                     }
                 }

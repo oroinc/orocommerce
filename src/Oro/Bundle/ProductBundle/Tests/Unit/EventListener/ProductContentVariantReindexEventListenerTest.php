@@ -165,7 +165,7 @@ class ProductContentVariantReindexEventListenerTest extends \PHPUnit_Framework_T
         $this->eventListener->onFlush($this->onFlushEventArgs);
     }
 
-    public function testItReindexWithManyProductsAfterFlushWithChangeset()
+    public function testItReindexWithManyProductsAfterFlushWithChangeSet()
     {
         $this->prepareMocksForOnFlush();
 
@@ -183,15 +183,54 @@ class ProductContentVariantReindexEventListenerTest extends \PHPUnit_Framework_T
         $newProduct = $this->generateProduct(3);
         $contentVariant1->setProductPageProduct($newProduct);
 
-
         $this->unitOfWork
             ->method('getScheduledEntityInsertions')
             ->willReturn([$contentVariant1, $contentVariant2]);
+        $this->unitOfWork
+            ->method('getScheduledEntityUpdates')
+            ->willReturn([]);
+        $this->unitOfWork
+            ->method('getScheduledEntityDeletions')
+            ->willReturn([]);
 
         $this->unitOfWork
             ->method('getEntityChangeSet')
             ->with($contentVariant1)
             ->willReturn(['product_page_product' => [$oldProduct, $newProduct]]);
+
+        $this->eventListener->onFlush($this->onFlushEventArgs);
+    }
+
+    public function testItReindexWithManyProductsAfterFlushWithEmptyChangeSet()
+    {
+        $this->prepareMocksForOnFlush();
+
+        $this->eventDispatcher
+            ->expects($this->once())
+            ->method('dispatch')
+            ->with(
+                ReindexationRequestEvent::EVENT_NAME,
+                new ReindexationRequestEvent([Product::class], [], [1])
+            );
+
+        $contentVariant = $this->generateContentVariant(ProductPageContentVariantType::TYPE, 1);
+        $product = $this->generateProduct(1);
+        $contentVariant->setProductPageProduct($product);
+
+        $this->unitOfWork
+            ->method('getScheduledEntityInsertions')
+            ->willReturn([$contentVariant]);
+        $this->unitOfWork
+            ->method('getScheduledEntityUpdates')
+            ->willReturn([]);
+        $this->unitOfWork
+            ->method('getScheduledEntityDeletions')
+            ->willReturn([]);
+
+        $this->unitOfWork
+            ->method('getEntityChangeSet')
+            ->with($contentVariant)
+            ->willReturn(['product_page_product' => [0 => null, 1 => null]]);
 
         $this->eventListener->onFlush($this->onFlushEventArgs);
     }
