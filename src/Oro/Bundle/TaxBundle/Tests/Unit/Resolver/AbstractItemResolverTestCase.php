@@ -46,7 +46,7 @@ abstract class AbstractItemResolverTestCase extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->matcher = $this->getMock('Oro\Bundle\TaxBundle\Matcher\MatcherInterface');
+        $this->matcher = $this->createMock('Oro\Bundle\TaxBundle\Matcher\MatcherInterface');
 
         $this->resolver = $this->createResolver();
     }

@@ -47,14 +47,14 @@ class PriceListProductAssignmentBuilderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->registry = $this->getMock(ManagerRegistry::class);
+        $this->registry = $this->createMock(ManagerRegistry::class);
         $this->insertFromSelectQueryExecutor = $this->getMockBuilder(InsertFromSelectQueryExecutor::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->ruleCompiler = $this->getMockBuilder(ProductAssignmentRuleCompiler::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->eventDispatcher = $this->getMock(EventDispatcherInterface::class);
+        $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
 
         $this->priceListProductAssignmentBuilder = new PriceListProductAssignmentBuilder(
             $this->registry,
@@ -67,7 +67,7 @@ class PriceListProductAssignmentBuilderTest extends \PHPUnit_Framework_TestCase
     public function testBuildByPriceListNoAssignmentRules()
     {
         /** @var PriceList|\PHPUnit_Framework_MockObject_MockObject $priceList */
-        $priceList = $this->getMock(PriceList::class);
+        $priceList = $this->createMock(PriceList::class);
 
         $this->assertClearGeneratedPricesCall($priceList);
         $this->insertFromSelectQueryExecutor->expects($this->never())
@@ -81,7 +81,7 @@ class PriceListProductAssignmentBuilderTest extends \PHPUnit_Framework_TestCase
         $fields = ['product', 'priceList', 'manual'];
 
         /** @var PriceList|\PHPUnit_Framework_MockObject_MockObject $priceList */
-        $priceList = $this->getMock(PriceList::class);
+        $priceList = $this->createMock(PriceList::class);
         $priceList->expects($this->once())
             ->method('getProductAssignmentRule')
             ->willReturn('product.id < 100');
@@ -123,7 +123,7 @@ class PriceListProductAssignmentBuilderTest extends \PHPUnit_Framework_TestCase
         $product = new Product();
 
         /** @var PriceList|\PHPUnit_Framework_MockObject_MockObject $priceList */
-        $priceList = $this->getMock(PriceList::class);
+        $priceList = $this->createMock(PriceList::class);
         $priceList->expects($this->once())
             ->method('getProductAssignmentRule')
             ->willReturn('product.id < 100');
@@ -175,10 +175,7 @@ class PriceListProductAssignmentBuilderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $priceListToProductRepository->method('deleteInvalidPrices')
-            ->with($priceList);
-
-        $em = $this->getMock(EntityManagerInterface::class);
+        $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->exactly(2))
             ->method('getRepository')
             ->willReturnMap(

@@ -75,7 +75,7 @@ class ShippingPricgetApplicableShippingMethodsConfigsRuleseProviderTest extends 
             ])
         ];
 
-        $this->registry = $this->getMock(ShippingMethodRegistry::class);
+        $this->registry = $this->createMock(ShippingMethodRegistry::class);
         $this->registry->expects($this->any())
             ->method('getShippingMethod')
             ->will($this->returnCallback(function ($methodId) use ($methods) {

@@ -25,7 +25,8 @@ class RequestTest extends \PHPUnit_Framework_TestCase
     {
         if ($error) {
             list ($exception, $message) = $error;
-            $this->setExpectedException($exception, $message);
+            $this->expectException($exception);
+            $this->expectExceptionMessage($message);
         }
 
         // new lines in yml

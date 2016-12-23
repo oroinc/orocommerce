@@ -319,7 +319,7 @@ class AccountTypeTest extends FormIntegrationTestCase
     protected function getEventDispatcher()
     {
         if (!$this->eventDispatcher) {
-            $this->eventDispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
+            $this->eventDispatcher = $this->createMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
         }
 
         return $this->eventDispatcher;

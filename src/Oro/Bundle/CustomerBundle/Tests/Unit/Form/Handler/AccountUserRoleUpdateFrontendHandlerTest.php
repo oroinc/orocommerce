@@ -48,7 +48,7 @@ class AccountUserRoleUpdateFrontendHandlerTest extends AbstractAccountUserRoleUp
         $request = new Request();
         $request->setMethod('POST');
 
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
         $this->formFactory->expects($this->once())
             ->method('create')
             ->with(
@@ -78,7 +78,7 @@ class AccountUserRoleUpdateFrontendHandlerTest extends AbstractAccountUserRoleUp
         $handler->setRequest($request);
         $handler->setTokenStorage($this->tokenStorage);
 
-        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $token = $this->createMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
         $token->expects($this->any())->method('getUser')->willReturn($accountUser);
         $this->tokenStorage->expects($this->any())->method('getToken')->willReturn($token);
 
@@ -127,7 +127,7 @@ class AccountUserRoleUpdateFrontendHandlerTest extends AbstractAccountUserRoleUp
         $request = new Request();
         $request->setMethod('GET');
 
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
         $this->formFactory->expects($this->once())->method('create')->willReturn($form);
 
         $handler = new AccountUserRoleUpdateFrontendHandler(
@@ -140,7 +140,7 @@ class AccountUserRoleUpdateFrontendHandlerTest extends AbstractAccountUserRoleUp
         $handler->setRequest($request);
         $handler->setTokenStorage($this->tokenStorage);
 
-        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $token = $this->createMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
         $token->expects($this->any())->method('getUser')->willReturn($accountUser);
         $this->tokenStorage->expects($this->any())->method('getToken')->willReturn($token);
 
@@ -159,13 +159,13 @@ class AccountUserRoleUpdateFrontendHandlerTest extends AbstractAccountUserRoleUp
 
         $this->ownershipConfigProvider->expects($this->exactly(3))->method('hasConfig')->willReturn(true);
 
-        $privilegesForm = $this->getMock('Symfony\Component\Form\FormInterface');
+        $privilegesForm = $this->createMock('Symfony\Component\Form\FormInterface');
         $privilegesForm->expects($this->any())
             ->method('setData');
         $form->expects($this->any())->method('get')
             ->willReturn($privilegesForm);
 
-        $metadata = $this->getMock('Oro\Bundle\SecurityBundle\Owner\Metadata\OwnershipMetadataInterface');
+        $metadata = $this->createMock('Oro\Bundle\SecurityBundle\Owner\Metadata\OwnershipMetadataInterface');
         $metadata->expects($this->exactly(2))->method('hasOwner')->willReturnOnConsecutiveCalls(true, false);
         $this->chainMetadataProvider->expects($this->any())->method('getMetadata')->willReturn($metadata);
 
@@ -233,7 +233,7 @@ class AccountUserRoleUpdateFrontendHandlerTest extends AbstractAccountUserRoleUp
         $handler->setRequest($request);
         $handler->setTokenStorage($this->tokenStorage);
 
-        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $token = $this->createMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
         $token->expects($this->any())->method('getUser')->willReturn(new \stdClass());
         $this->tokenStorage->expects($this->any())->method('getToken')->willReturn($token);
 

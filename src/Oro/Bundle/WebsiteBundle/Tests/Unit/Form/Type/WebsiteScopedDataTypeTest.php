@@ -79,7 +79,7 @@ class WebsiteScopedDataTypeTest extends FormIntegrationTestCase
             ->willReturn($em);
 
         /** @var WebsiteProviderInterface|\PHPUnit_Framework_MockObject_MockObject $websiteProvider */
-        $websiteProvider = $this->getMock('Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface');
+        $websiteProvider = $this->createMock('Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface');
         $websiteProvider->expects($this->any())
             ->method('getWebsites')
             ->willReturn([$website]);
@@ -135,7 +135,7 @@ class WebsiteScopedDataTypeTest extends FormIntegrationTestCase
         $view = new FormView();
 
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
         $this->formType->buildView($view, $form, ['region_route' => 'test']);
 
         $this->assertArrayHasKey('websites', $view->vars);

@@ -25,7 +25,7 @@ class ExpressionParserTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->fieldsProvider = $this->getMock(FieldsProviderInterface::class);
+        $this->fieldsProvider = $this->createMock(FieldsProviderInterface::class);
         $this->expressionParser = new ExpressionParser(
             new ExpressionLanguageConverter($this->fieldsProvider)
         );
@@ -100,7 +100,8 @@ class ExpressionParserTest extends \PHPUnit_Framework_TestCase
      */
     public function testParseException($expression, $exceptionMessage)
     {
-        $this->setExpectedException(SyntaxError::class, $exceptionMessage);
+        $this->expectException(SyntaxError::class);
+        $this->expectExceptionMessage($exceptionMessage);
         $this->expressionParser->parse($expression);
     }
 

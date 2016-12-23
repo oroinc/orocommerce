@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\src\Oro\Bundle\ShippingBundle\Tests\Unit\Formatter;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\Formatter;
 
 use Oro\Bundle\ShippingBundle\Formatter\ShippingMethodLabelFormatter;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;

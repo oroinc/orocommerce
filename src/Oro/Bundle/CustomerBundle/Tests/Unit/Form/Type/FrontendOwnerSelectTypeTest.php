@@ -39,7 +39,7 @@ class FrontendOwnerSelectTypeTest extends FormIntegrationTestCase
     protected function setUp()
     {
         $this->aclHelper = $this->createAclHelperMock();
-        $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $this->registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
         $this->configProvider = $this->getMockBuilder(ConfigProvider::class)->disableOriginalConstructor()->getMock();
         $this->formType = new FrontendOwnerSelectType($this->aclHelper, $this->registry, $this->configProvider);
     }

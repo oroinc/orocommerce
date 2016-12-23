@@ -81,7 +81,7 @@ class PaymentTermAssociationProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetTargetField()
     {
-        $config = $this->getMock(ConfigInterface::class);
+        $config = $this->createMock(ConfigInterface::class);
         $config->expects($this->once())->method('get')->with('target_field')->willReturn('target_field_val');
 
         $this->configProvider->expects($this->once())->method('getConfig')->with(\stdClass::class, 'fieldName')

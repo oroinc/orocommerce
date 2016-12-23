@@ -193,7 +193,7 @@ class ShippingMethodsConfigsRuleDestinationTest extends \PHPUnit_Framework_TestC
      */
     protected function createMockRegion($name = 'RegionName', $code = 'RegionCode')
     {
-        $result = $this->getMock('Oro\Bundle\AddressBundle\Entity\Region', [], ['combinedCode']);
+        $result = $this->createMock('Oro\Bundle\AddressBundle\Entity\Region', [], ['combinedCode']);
         $result->expects($this->any())
             ->method('__toString')
             ->will($this->returnValue($name));

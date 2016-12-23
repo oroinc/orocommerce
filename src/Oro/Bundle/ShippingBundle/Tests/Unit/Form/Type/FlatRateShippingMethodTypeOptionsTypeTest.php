@@ -16,7 +16,7 @@ class FlatRateShippingMethodTypeOptionsTypeTest extends FormIntegrationTestCase
     protected function setUp()
     {
         parent::setUp();
-        $roundingService = $this->getMock(RoundingServiceInterface::class);
+        $roundingService = $this->createMock(RoundingServiceInterface::class);
         $roundingService->expects($this->any())
             ->method('getPrecision')
             ->willReturn(4);

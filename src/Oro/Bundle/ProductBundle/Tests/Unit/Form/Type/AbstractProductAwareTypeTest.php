@@ -57,8 +57,8 @@ class AbstractProductAwareTypeTest extends FormIntegrationTestCase
     public function productOptionsDataProvider()
     {
         $product = new Product();
-        $productHolder = $this->getMock('Oro\Bundle\ProductBundle\Model\ProductHolderInterface');
-        $productHolderWithProduct = $this->getMock('Oro\Bundle\ProductBundle\Model\ProductHolderInterface');
+        $productHolder = $this->createMock('Oro\Bundle\ProductBundle\Model\ProductHolderInterface');
+        $productHolderWithProduct = $this->createMock('Oro\Bundle\ProductBundle\Model\ProductHolderInterface');
         $productHolderWithProduct->expects($this->once())->method('getProduct')->willReturn($product);
 
         return [
@@ -94,8 +94,8 @@ class AbstractProductAwareTypeTest extends FormIntegrationTestCase
     public function parentDataProvider()
     {
         $product = new Product();
-        $productHolder = $this->getMock('Oro\Bundle\ProductBundle\Model\ProductHolderInterface');
-        $productHolderWithProduct = $this->getMock('Oro\Bundle\ProductBundle\Model\ProductHolderInterface');
+        $productHolder = $this->createMock('Oro\Bundle\ProductBundle\Model\ProductHolderInterface');
+        $productHolderWithProduct = $this->createMock('Oro\Bundle\ProductBundle\Model\ProductHolderInterface');
         $productHolderWithProduct->expects($this->once())->method('getProduct')->willReturn($product);
 
         return [

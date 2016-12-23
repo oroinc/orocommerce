@@ -118,7 +118,7 @@ class FrontendOwnerTreeProviderTest extends OrmTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->container = $this->getMock('Symfony\Component\DependencyInjection\ContainerInterface');
+        $this->container = $this->createMock('Symfony\Component\DependencyInjection\ContainerInterface');
         $this->container->expects($this->any())
             ->method('get')
             ->willReturnMap(
@@ -152,33 +152,13 @@ class FrontendOwnerTreeProviderTest extends OrmTestCase
      * @param string                                   $sql
      * @param array                                    $result
      */
-    protected function setQueryExpectationAt(
-        \PHPUnit_Framework_MockObject_MockObject $conn,
-        $expectsAt,
-        $sql,
-        $result
-    ) {
-        $stmt = $this->createFetchStatementMock($result);
-        $conn
-            ->expects($this->at($expectsAt))
-            ->method('query')
-            ->with($sql)
-            ->will($this->returnValue($stmt));
-    }
-
-    /**
-     * @param \PHPUnit_Framework_MockObject_MockObject $conn
-     * @param int                                      $expectsAt
-     * @param string                                   $sql
-     * @param array                                    $result
-     */
     protected function setFetchAllQueryExpectationAt(
         \PHPUnit_Framework_MockObject_MockObject $conn,
         $expectsAt,
         $sql,
         $result
     ) {
-        $stmt = $this->getMock('Oro\Component\TestUtils\ORM\Mocks\StatementMock');
+        $stmt = $this->createMock('Oro\Component\TestUtils\ORM\Mocks\StatementMock');
         $stmt->expects($this->once())
             ->method('fetchAll')
             ->willReturn($result);

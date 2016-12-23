@@ -59,7 +59,7 @@ class RecordOwnerDataListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getToken')
             ->will($this->returnValue($token));
 
-        $args = new LifecycleEventArgs($entity, $this->getMock(ObjectManager::class));
+        $args = new LifecycleEventArgs($entity, $this->createMock(ObjectManager::class));
         $this->configProvider->expects($this->once())
             ->method('hasConfig')
             ->will($this->returnValue(true));
@@ -88,7 +88,7 @@ class RecordOwnerDataListenerTest extends \PHPUnit_Framework_TestCase
         $user = new User();
         $user->setId(1);
 
-        $account = $this->getMock(Account::class);
+        $account = $this->createMock(Account::class);
         $user->setAccount($account);
 
         $userConfig = new Config($entityConfigId);

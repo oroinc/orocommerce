@@ -38,7 +38,7 @@ class PriceListToProductDuplicatorTest extends \PHPUnit_Framework_TestCase
         $this->manager = $this->getMockBuilder(ObjectManager::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->registry = $this->getMock(RegistryInterface::class);
+        $this->registry = $this->createMock(RegistryInterface::class);
         $this->insertQueryExecutor = $this->getMockBuilder(InsertFromSelectQueryExecutor::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -51,10 +51,10 @@ class PriceListToProductDuplicatorTest extends \PHPUnit_Framework_TestCase
     public function testDuplicate()
     {
         /** @var PriceList|\PHPUnit_Framework_MockObject_MockObject $sourcePriceList **/
-        $sourcePriceList = $this->getMock(PriceList::class);
+        $sourcePriceList = $this->createMock(PriceList::class);
 
         /** @var PriceList|\PHPUnit_Framework_MockObject_MockObject $targetPriceList **/
-        $targetPriceList = $this->getMock(PriceList::class);
+        $targetPriceList = $this->createMock(PriceList::class);
 
         $entityName = PriceListToProduct::class;
         $this->priceListToProductDuplicator->setEntityName($entityName);

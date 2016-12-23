@@ -97,7 +97,7 @@ class FreightClassesProviderTest extends MeasureUnitProviderTest
      */
     protected function getClassesExtension(array $classes)
     {
-        $extension = $this->getMock('Oro\Bundle\ShippingBundle\Extension\FreightClassesExtensionInterface');
+        $extension = $this->createMock('Oro\Bundle\ShippingBundle\Extension\FreightClassesExtensionInterface');
         $extension->expects($this->any())
             ->method('isApplicable')
             ->willReturnCallback(function (FreightClass $class, ProductShippingOptions $options) use ($classes) {

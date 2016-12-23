@@ -34,7 +34,7 @@ class ShippingPriceCacheTest extends \PHPUnit_Framework_TestCase
         $this->cacheProvider = $this->getMockBuilder(CacheProvider::class)
             ->setMethods(['fetch', 'contains', 'save', 'deleteAll'])->getMockForAbstractClass();
 
-        $this->keyGenerator = $this->getMock(ShippingContextCacheKeyGenerator::class);
+        $this->keyGenerator = $this->createMock(ShippingContextCacheKeyGenerator::class);
         $this->keyGenerator->expects(static::any())
             ->method('generateKey')
             ->will(static::returnCallback(function (ShippingContextInterface $context) {
