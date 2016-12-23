@@ -3,15 +3,21 @@
 namespace Oro\Bundle\CheckoutBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\CheckoutBundle\Tests\Functional\Controller\WorkflowDefinitionCheckoutTestCase as BaseTest;
+use Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadTranslations;
 
 /**
  * @dbIsolation
  */
 class WorkflowDefinitionControllerTest extends BaseTest
 {
+    public function setUp()
+    {
+        parent::setUp();
+        $this->loadFixtures([LoadTranslations::class]);
+    }
+
     public function testCheckoutWorkflowViewPage()
     {
-        $this->markTestSkipped("Skipped until BAP-13043 gets resolved!");
         $this->assertCheckoutWorkflowCorrectViewPage(
             'b2b_flow_checkout',
             'Checkout',
