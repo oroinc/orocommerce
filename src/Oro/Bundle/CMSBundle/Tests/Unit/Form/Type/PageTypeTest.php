@@ -30,7 +30,7 @@ class PageTypeTest extends FormIntegrationTestCase
         /**
          * @var \Symfony\Component\Validator\ValidatorInterface|\PHPUnit_Framework_MockObject_MockObject $validator
          */
-        $validator = $this->getMock('\Symfony\Component\Validator\ValidatorInterface');
+        $validator = $this->createMock('\Symfony\Component\Validator\ValidatorInterface');
         $validator->expects($this->any())
             ->method('validate')
             ->will($this->returnValue(new ConstraintViolationList()));
@@ -63,7 +63,7 @@ class PageTypeTest extends FormIntegrationTestCase
         /**
          * @var \Doctrine\Common\Persistence\ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject $registry
          */
-        $registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
 
         $registry->expects($this->any())
             ->method('getManagerForClass')
@@ -82,7 +82,7 @@ class PageTypeTest extends FormIntegrationTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $htmlTagProvider = $this->getMock('Oro\Bundle\FormBundle\Provider\HtmlTagProvider');
+        $htmlTagProvider = $this->createMock('Oro\Bundle\FormBundle\Provider\HtmlTagProvider');
         $htmlTagProvider->expects($this->any())
             ->method('getAllowedElements')
             ->willReturn(['br', 'a']);

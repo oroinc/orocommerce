@@ -31,7 +31,7 @@ class FrontendAccountUserFormProviderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->router = $this->getMock('Symfony\Component\Routing\Generator\UrlGeneratorInterface');
+        $this->router = $this->createMock('Symfony\Component\Routing\Generator\UrlGeneratorInterface');
 
         $this->formFactory = $this
             ->getMockBuilder('Symfony\Component\Form\FormFactory')
@@ -95,9 +95,9 @@ class FrontendAccountUserFormProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetForgotPasswordFormView()
     {
-        $formView = $this->getMock(FormView::class);
+        $formView = $this->createMock(FormView::class);
 
-        $expectedForm = $this->getMock('Symfony\Component\Form\Test\FormInterface');
+        $expectedForm = $this->createMock('Symfony\Component\Form\Test\FormInterface');
         $expectedForm->expects($this->once())
             ->method('createView')
             ->willReturn($formView);
@@ -118,7 +118,7 @@ class FrontendAccountUserFormProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetForgotPasswordForm()
     {
-        $expectedForm = $this->getMock('Symfony\Component\Form\Test\FormInterface');
+        $expectedForm = $this->createMock('Symfony\Component\Form\Test\FormInterface');
 
         $this->formFactory->expects($this->once())
             ->method('create')
@@ -136,9 +136,9 @@ class FrontendAccountUserFormProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetResetPasswordFormView()
     {
-        $formView = $this->getMock(FormView::class);
+        $formView = $this->createMock(FormView::class);
 
-        $expectedForm = $this->getMock('Symfony\Component\Form\Test\FormInterface');
+        $expectedForm = $this->createMock('Symfony\Component\Form\Test\FormInterface');
         $expectedForm->expects($this->once())
             ->method('createView')
             ->willReturn($formView);
@@ -159,7 +159,7 @@ class FrontendAccountUserFormProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetResetPasswordForm()
     {
-        $expectedForm = $this->getMock('Symfony\Component\Form\Test\FormInterface');
+        $expectedForm = $this->createMock('Symfony\Component\Form\Test\FormInterface');
 
         $this->formFactory->expects($this->once())
             ->method('create')
@@ -177,8 +177,8 @@ class FrontendAccountUserFormProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetAccountUserSelectFormView()
     {
-        $form = $this->getMock(FormInterface::class);
-        $view = $this->getMock(FormView::class);
+        $form = $this->createMock(FormInterface::class);
+        $view = $this->createMock(FormView::class);
 
         $form->expects($this->once())
             ->method('createView')
@@ -278,16 +278,16 @@ class FrontendAccountUserFormProviderTest extends \PHPUnit_Framework_TestCase
     protected function assertAccountUserFormHandlerCalled($method = 'TEST')
     {
         /** @var FormConfigInterface|\PHPUnit_Framework_MockObject_MockObject $config */
-        $config = $this->getMock('Symfony\Component\Form\FormConfigInterface');
+        $config = $this->createMock('Symfony\Component\Form\FormConfigInterface');
         $config->expects($this->any())
             ->method('getMethod')
             ->willReturn($method);
 
         /** @var FormView|\PHPUnit_Framework_MockObject_MockObject $config */
-        $view = $this->getMock('Symfony\Component\Form\FormView');
+        $view = $this->createMock('Symfony\Component\Form\FormView');
         $view->vars = ['multipart' => null];
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
         $form->expects($this->any())
             ->method('getConfig')
@@ -310,16 +310,16 @@ class FrontendAccountUserFormProviderTest extends \PHPUnit_Framework_TestCase
     protected function assertAccountUserProfileFormHandlerCalled($method = 'TEST')
     {
         /** @var FormConfigInterface|\PHPUnit_Framework_MockObject_MockObject $config */
-        $config = $this->getMock('Symfony\Component\Form\FormConfigInterface');
+        $config = $this->createMock('Symfony\Component\Form\FormConfigInterface');
         $config->expects($this->any())
             ->method('getMethod')
             ->willReturn($method);
 
         /** @var FormView|\PHPUnit_Framework_MockObject_MockObject $config */
-        $view = $this->getMock('Symfony\Component\Form\FormView');
+        $view = $this->createMock('Symfony\Component\Form\FormView');
         $view->vars = ['multipart' => null];
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
         $form->expects($this->any())
             ->method('getConfig')

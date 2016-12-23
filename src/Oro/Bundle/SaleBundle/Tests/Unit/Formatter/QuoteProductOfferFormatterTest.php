@@ -23,7 +23,7 @@ class QuoteProductOfferFormatterTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->translator   = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+        $this->translator   = $this->createMock('Symfony\Component\Translation\TranslatorInterface');
 
         $this->formatter    = new QuoteProductOfferFormatter($this->translator);
     }

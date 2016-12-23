@@ -22,7 +22,7 @@ class PaymentMethodWidgetProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetPaymentMethodWidgetName()
     {
-        $entity = $this->getMock(PaymentMethodAwareInterface::class);
+        $entity = $this->createMock(PaymentMethodAwareInterface::class);
         $entity->expects($this->once())
             ->method('getPaymentMethod')
             ->willReturn('payment_method');

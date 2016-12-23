@@ -26,16 +26,16 @@ class AsyncIndexerTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->messageProducer = $this->getMock(MessageProducerInterface::class);
+        $this->messageProducer = $this->createMock(MessageProducerInterface::class);
 
-        $this->baseIndexer = $this->getMock(IndexerInterface::class);
+        $this->baseIndexer = $this->createMock(IndexerInterface::class);
 
         $this->indexer = new AsyncIndexer($this->baseIndexer, $this->messageProducer);
     }
 
     public function testSaveOne()
     {
-        $entity = $this->getMock(Item::class);
+        $entity = $this->createMock(Item::class);
         $entity->method('getId')
             ->willReturn(101);
 
@@ -60,11 +60,11 @@ class AsyncIndexerTest extends \PHPUnit_Framework_TestCase
 
     public function testSaveMany()
     {
-        $entity1 = $this->getMock(Item::class);
+        $entity1 = $this->createMock(Item::class);
         $entity1->method('getId')
             ->willReturn(101);
 
-        $entity2 = $this->getMock(Item::class);
+        $entity2 = $this->createMock(Item::class);
         $entity2->method('getId')
             ->willReturn(102);
 
@@ -95,7 +95,7 @@ class AsyncIndexerTest extends \PHPUnit_Framework_TestCase
 
     public function testDeleteOne()
     {
-        $entity = $this->getMock(Item::class);
+        $entity = $this->createMock(Item::class);
         $entity->method('getId')
             ->willReturn(101);
 
@@ -120,11 +120,11 @@ class AsyncIndexerTest extends \PHPUnit_Framework_TestCase
 
     public function testDeleteMany()
     {
-        $entity1 = $this->getMock(Item::class);
+        $entity1 = $this->createMock(Item::class);
         $entity1->method('getId')
             ->willReturn(101);
 
-        $entity2 = $this->getMock(Item::class);
+        $entity2 = $this->createMock(Item::class);
         $entity2->method('getId')
             ->willReturn(102);
 

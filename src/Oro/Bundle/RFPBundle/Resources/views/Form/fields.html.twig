@@ -136,8 +136,12 @@
             <div class="request-form-editline__note">
                 <div class="request-form-editnote">
                     {% set notes = form.comment %}
-                    <input type="checkbox" name="{{ 'lineItem'~id }}" class="custom-checkbox__input request-form-editnote__toggle" id="{{ 'lineItem-'~prototype_name }}"{% if notes is not empty %} checked="checked"{% endif %}>
                     <label for="{{ 'lineItem-'~prototype_name }}" class="custom-checkbox">
+                        <input type="checkbox"
+                               name="{{ 'lineItem'~id }}"
+                               id="{{ 'lineItem-'~prototype_name }}"{% if notes is not empty %} checked="checked"{% endif %}
+                               class="custom-checkbox__input custom-checkbox__input"
+                        >
                         <span class="custom-checkbox__icon"></span>
                         <span class="custom-checkbox__text">{{ 'oro.frontend.shoppinglist.view.add_item_note.label'|trans }}</span>
                     </label>

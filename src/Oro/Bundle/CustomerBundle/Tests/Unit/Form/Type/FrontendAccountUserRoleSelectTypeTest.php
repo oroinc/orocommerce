@@ -70,7 +70,7 @@ class FrontendAccountUserRoleSelectTypeTest extends FormIntegrationTestCase
             ->with('account')
             ->willReturn($this->qb);
         /** @var $em ObjectManager|\PHPUnit_Framework_MockObject_MockObject */
-        $em = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
+        $em = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
         $em->expects($this->any())
             ->method('getRepository')
             ->with('Oro\Bundle\CustomerBundle\Entity\AccountUserRole')
@@ -109,7 +109,7 @@ class FrontendAccountUserRoleSelectTypeTest extends FormIntegrationTestCase
     public function testConfigureOptions()
     {
         /** @var $resolver OptionsResolver|\PHPUnit_Framework_MockObject_MockObject */
-        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
+        $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
 
         $qb = new ORMQueryBuilderLoader($this->qb);
 
@@ -136,7 +136,7 @@ class FrontendAccountUserRoleSelectTypeTest extends FormIntegrationTestCase
             ->getMock();
         $securityFacade->expects($this->once())->method('getLoggedUser')->willReturn(null);
         /** @var $resolver OptionsResolver|\PHPUnit_Framework_MockObject_MockObject */
-        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
+        $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $roleFormType = new FrontendAccountUserRoleSelectType($securityFacade, $this->registry, $this->aclHelper);
         $roleFormType->configureOptions($resolver);
     }

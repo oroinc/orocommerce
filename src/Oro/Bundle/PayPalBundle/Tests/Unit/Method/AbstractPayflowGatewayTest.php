@@ -53,7 +53,7 @@ abstract class AbstractPayflowGatewayTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $this->paymentConfig =
-            $this->getMock('Oro\Bundle\PayPalBundle\Method\Config\PayflowGatewayConfigInterface');
+            $this->createMock('Oro\Bundle\PayPalBundle\Method\Config\PayflowGatewayConfigInterface');
 
         $this->method = $this->getMethod();
     }

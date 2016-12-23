@@ -20,7 +20,7 @@ class CheckoutStateDiffManagerTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->mapperRegistry = $this->getMock(CheckoutStateDiffMapperRegistry::class);
+        $this->mapperRegistry = $this->createMock(CheckoutStateDiffMapperRegistry::class);
         $this->checkoutStateDiffManager = new CheckoutStateDiffManager($this->mapperRegistry);
     }
 
@@ -344,7 +344,7 @@ class CheckoutStateDiffManagerTest extends \PHPUnit_Framework_TestCase
      */
     protected function getBaseMapperMock($name)
     {
-        $mapper = $this->getMock('Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\CheckoutStateDiffMapperInterface');
+        $mapper = $this->createMock('Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\CheckoutStateDiffMapperInterface');
 
         $mapper
             ->expects($this->any())

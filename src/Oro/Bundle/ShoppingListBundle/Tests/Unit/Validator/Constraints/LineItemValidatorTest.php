@@ -49,8 +49,8 @@ class LineItemValidatorTest extends \PHPUnit_Framework_TestCase
             ->getMockBuilder('Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->context = $this->getMock('Symfony\Component\Validator\ExecutionContextInterface');
-        $this->lineItem = $this->getMock('Oro\Bundle\ShoppingListBundle\Entity\LineItem');
+        $this->context = $this->createMock('Symfony\Component\Validator\ExecutionContextInterface');
+        $this->lineItem = $this->createMock('Oro\Bundle\ShoppingListBundle\Entity\LineItem');
         $this->constraint = $this->getMockBuilder('Oro\Bundle\ShoppingListBundle\Validator\Constraints\LineItem')
             ->disableOriginalConstructor()
             ->getMock();

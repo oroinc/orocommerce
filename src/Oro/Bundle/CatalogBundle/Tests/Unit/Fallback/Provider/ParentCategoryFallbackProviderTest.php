@@ -39,7 +39,7 @@ class ParentCategoryFallbackProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetFallbackHolderEntityThrowsException()
     {
-        $this->setExpectedException(InvalidFallbackArgumentException::class);
+        $this->expectException(InvalidFallbackArgumentException::class);
         $this->parentCategoryFallbackProvider->getFallbackHolderEntity(new \stdClass(), 'test');
     }
 

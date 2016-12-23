@@ -37,7 +37,7 @@ class TaxValueManagerTest extends \PHPUnit_Framework_TestCase
         $id = 1;
         $taxValue = new TaxValue();
 
-        $repository = $this->getMock('Doctrine\Common\Persistence\ObjectRepository');
+        $repository = $this->createMock('Doctrine\Common\Persistence\ObjectRepository');
         $repository->expects($this->once())->method('findOneBy')
             ->with(
                 $this->logicalAnd(
@@ -60,7 +60,7 @@ class TaxValueManagerTest extends \PHPUnit_Framework_TestCase
         $class = 'Oro\Bundle\TaxBundle\Entity\TaxValue';
         $id = 1;
 
-        $repository = $this->getMock('Doctrine\Common\Persistence\ObjectRepository');
+        $repository = $this->createMock('Doctrine\Common\Persistence\ObjectRepository');
         $repository->expects($this->once())->method('findOneBy')
             ->with(
                 $this->logicalAnd(
@@ -83,7 +83,7 @@ class TaxValueManagerTest extends \PHPUnit_Framework_TestCase
     {
         $taxValue = new TaxValue();
 
-        $em = $this->getMock('Doctrine\ORM\EntityManagerInterface');
+        $em = $this->createMock('Doctrine\ORM\EntityManagerInterface');
         $uow = $this->getMockBuilder('\Doctrine\ORM\UnitOfWork')->disableOriginalConstructor()->getMock();
         $uow->expects($this->once())->method('scheduleExtraUpdate')->with(
             $taxValue,
@@ -120,7 +120,7 @@ class TaxValueManagerTest extends \PHPUnit_Framework_TestCase
         $cachedTaxValue = new TaxValue();
         $notCachedTaxValue = new TaxValue();
 
-        $repository = $this->getMock('Doctrine\Common\Persistence\ObjectRepository');
+        $repository = $this->createMock('Doctrine\Common\Persistence\ObjectRepository');
 
         $repository->expects($this->exactly(2))
             ->method('findOneBy')

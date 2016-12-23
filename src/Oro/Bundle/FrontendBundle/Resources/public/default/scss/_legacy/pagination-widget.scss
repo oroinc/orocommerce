@@ -77,3 +77,13 @@
     }
   }
 }
+
+@include breakpoint('tablet') {
+  .oro-pagination {
+    > span {
+      + .oro-pagination__pager {
+        margin: 0;
+      }
+    }
+  }
+}

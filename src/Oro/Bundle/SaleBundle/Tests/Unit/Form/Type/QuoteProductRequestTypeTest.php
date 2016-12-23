@@ -44,7 +44,7 @@ class QuoteProductRequestTypeTest extends AbstractTest
     public function testConfigureOptions()
     {
         /* @var $resolver \PHPUnit_Framework_MockObject_MockObject|OptionsResolver */
-        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
+        $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with($this->callback(function (array $options) {
@@ -176,7 +176,7 @@ class QuoteProductRequestTypeTest extends AbstractTest
         }
 
         /* @var $item \PHPUnit_Framework_MockObject_MockObject|QuoteProductRequest */
-        $item = $this->getMock('Oro\Bundle\SaleBundle\Entity\QuoteProductRequest');
+        $item = $this->createMock('Oro\Bundle\SaleBundle\Entity\QuoteProductRequest');
         $item
             ->expects($this->any())
             ->method('getId')
@@ -216,7 +216,7 @@ class QuoteProductRequestTypeTest extends AbstractTest
      */
     protected function getExtensions()
     {
-        $priceType                  = PriceTypeGenerator::createPriceType();
+        $priceType                  = PriceTypeGenerator::createPriceType($this);
         $productUnitSelectionType   = $this->prepareProductUnitSelectionType();
 
         return [

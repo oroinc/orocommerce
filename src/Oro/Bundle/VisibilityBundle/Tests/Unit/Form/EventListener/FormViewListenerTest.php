@@ -35,11 +35,11 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface $translator */
-        $translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+        $translator = $this->createMock('Symfony\Component\Translation\TranslatorInterface');
 
         $this->doctrineHelper = $this->getDoctrineHelper();
 
-        $this->requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
+        $this->requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
 
         $listener = new FormViewListener($translator, $this->doctrineHelper, $this->requestStack);
         $this->listener = $listener;
@@ -116,7 +116,7 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
     protected function getScrollData()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|ScrollData $scrollData */
-        $scrollData = $this->getMock('Oro\Bundle\UIBundle\View\ScrollData');
+        $scrollData = $this->createMock('Oro\Bundle\UIBundle\View\ScrollData');
 
         $scrollData->expects($this->once())
             ->method('addBlock');

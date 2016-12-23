@@ -43,7 +43,7 @@ class OrderShippingTrackingHandlerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->manager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
+        $this->manager = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
         /** @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry $managerRegistry */
         $managerRegistry = $this->getMockBuilder('Doctrine\Bundle\DoctrineBundle\Registry')
             ->disableOriginalConstructor()
@@ -53,8 +53,8 @@ class OrderShippingTrackingHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('getManagerForClass')
             ->willReturn($this->manager);
 
-        $this->form = $this->getMock('Symfony\Component\Form\FormInterface');
-        $this->order = $this->getMock('Oro\Bundle\OrderBundle\Entity\Order');
+        $this->form = $this->createMock('Symfony\Component\Form\FormInterface');
+        $this->order = $this->createMock('Oro\Bundle\OrderBundle\Entity\Order');
 
         $this->handler = new OrderShippingTrackingHandler($managerRegistry);
     }

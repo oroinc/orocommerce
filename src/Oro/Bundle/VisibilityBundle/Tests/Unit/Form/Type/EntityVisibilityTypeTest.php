@@ -62,7 +62,7 @@ class EntityVisibilityTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        $validator = $this->getMock(ValidatorInterface::class);
+        $validator = $this->createMock(ValidatorInterface::class);
         $metadata = $this->getMockBuilder(ClassMetadata::class)
             ->disableOriginalConstructor()
             ->getMock();

@@ -25,11 +25,11 @@ class GetCheckoutStateActionTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->contextAccessor = $this->getMock(ContextAccessor::class);
-        $this->diffStorage = $this->getMock(CheckoutDiffStorageInterface::class);
+        $this->contextAccessor = $this->createMock(ContextAccessor::class);
+        $this->diffStorage = $this->createMock(CheckoutDiffStorageInterface::class);
         $this->action = new GetCheckoutStateAction($this->contextAccessor, $this->diffStorage);
 
-        $this->dispatcher = $this->getMock(EventDispatcherInterface::class);
+        $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
         $this->action->setDispatcher($this->dispatcher);
     }
 
