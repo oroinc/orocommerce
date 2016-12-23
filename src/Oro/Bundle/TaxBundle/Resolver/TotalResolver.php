@@ -94,7 +94,13 @@ class TotalResolver implements ResolverInterface
      */
     protected function adjustAmounts(AbstractResultElement $data, $adjustment)
     {
-        $currentData = new ResultElement($data->getArrayCopy());
+        $arrayCopy = $data->getArrayCopy();
+        if($data instanceof TaxResultElement) {
+            $currentData =new TaxResultElement($arrayCopy);
+        } else {
+            $currentData = new ResultElement($arrayCopy);
+        }
+
         $keysToAdjust = [ResultElement::TAX_AMOUNT => $adjustment];
 
         if ($this->settingsProvider->isProductPricesIncludeTax()) {
