@@ -17,7 +17,7 @@ layout:
             prepend: true
             options:
                 class_prefix: 'checkout'
-                views: '=data["oro_payment_methods_provider"].getViews(data["checkout_payment_context"].getContext(data["checkout"]))'
+                views: '=data["oro_payment_method_views_provider"].getViews(data["checkout_payment_context"].getContext(data["checkout"]))'
                 currentPaymentMethod: '=data["checkout"].getPaymentMethod()'
 
     conditions: 'context["workflowStepName"]=="enter_payment"'

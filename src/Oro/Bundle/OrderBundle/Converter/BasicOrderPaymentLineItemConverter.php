@@ -3,7 +3,6 @@
 namespace Oro\Bundle\OrderBundle\Converter;
 
 use Doctrine\Common\Collections\Collection;
-use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\PaymentBundle\Context\LineItem\Builder\Factory\PaymentLineItemBuilderFactoryInterface;
 use Oro\Bundle\PaymentBundle\Context\LineItem\Collection\Factory\PaymentLineItemCollectionFactoryInterface;
 
@@ -12,12 +11,12 @@ class BasicOrderPaymentLineItemConverter implements OrderPaymentLineItemConverte
     /**
      * @var PaymentLineItemCollectionFactoryInterface|null
      */
-    private $paymentLineItemCollectionFactory = null;
+    private $paymentLineItemCollectionFactory;
 
     /**
      * @var PaymentLineItemBuilderFactoryInterface|null
      */
-    private $paymentLineItemBuilderFactory = null;
+    private $paymentLineItemBuilderFactory;
 
     /**
      * @param null|PaymentLineItemCollectionFactoryInterface $paymentLineItemCollectionFactory
@@ -32,7 +31,6 @@ class BasicOrderPaymentLineItemConverter implements OrderPaymentLineItemConverte
     }
 
     /**
-     * @param OrderLineItem[]|Collection $orderLineItems
      * {@inheritDoc}
      */
     public function convertLineItems(Collection $orderLineItems)

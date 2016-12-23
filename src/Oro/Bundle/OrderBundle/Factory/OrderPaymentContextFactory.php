@@ -13,12 +13,12 @@ class OrderPaymentContextFactory
     /**
      * @var OrderPaymentLineItemConverterInterface
      */
-    private $paymentLineItemConverter = null;
+    private $paymentLineItemConverter;
 
     /**
      * @var PaymentContextBuilderFactoryInterface|null
      */
-    private $paymentContextBuilderFactory = null;
+    private $paymentContextBuilderFactory;
 
     /**
      * @param OrderPaymentLineItemConverterInterface $paymentLineItemConverter
@@ -26,7 +26,7 @@ class OrderPaymentContextFactory
      */
     public function __construct(
         OrderPaymentLineItemConverterInterface $paymentLineItemConverter,
-        PaymentContextBuilderFactoryInterface $paymentContextBuilderFactory
+        PaymentContextBuilderFactoryInterface $paymentContextBuilderFactory = null
     ) {
         $this->paymentLineItemConverter = $paymentLineItemConverter;
         $this->paymentContextBuilderFactory = $paymentContextBuilderFactory;
@@ -38,7 +38,7 @@ class OrderPaymentContextFactory
      */
     public function create(Order $order)
     {
-        if (null === $this->paymentContextBuilderFactory || null === $this->paymentLineItemConverter) {
+        if (null === $this->paymentContextBuilderFactory) {
             return null;
         }
 

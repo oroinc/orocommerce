@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PayPalBundle\Method;
 
+use Oro\Bundle\PayPalBundle\Method\Config\PayflowGatewayConfigInterface;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -31,13 +32,18 @@ class PayflowGateway implements PaymentMethodInterface
     /** @var RouterInterface */
     protected $router;
 
+    /** @var PayflowGatewayConfigInterface */
+    protected $config;
+
     /**
      * @param Gateway $gateway
+     * @param PayflowGatewayConfigInterface $config
      * @param RouterInterface $router
      */
-    public function __construct(Gateway $gateway, RouterInterface $router)
+    public function __construct(Gateway $gateway, PayflowGatewayConfigInterface $config, RouterInterface $router)
     {
         $this->gateway = $gateway;
+        $this->config = $config;
         $this->router = $router;
     }
 

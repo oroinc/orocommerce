@@ -118,15 +118,6 @@ abstract class AbstractPayflowGatewayTest extends \PHPUnit_Framework_TestCase
         $this->method->execute($transaction->getAction(), $transaction);
     }
 
-    public function testIsEnabled()
-    {
-        $this->paymentConfig->expects($this->once())
-            ->method('isEnabled')
-            ->willReturn(true);
-
-        $this->assertTrue($this->method->isEnabled());
-    }
-
     /**
      * @param bool $expected
      * @param string $actionName
@@ -818,57 +809,6 @@ abstract class AbstractPayflowGatewayTest extends \PHPUnit_Framework_TestCase
      * @return string
      */
     abstract protected function getConfigPrefix();
-
-    public function testIsApplicableWithoutContext()
-    {
-        $this->assertFalse($this->method->isApplicable(['currency' => ['USD']]));
-    }
-
-    public function testIsApplicableWithAllCountries()
-    {
-        $context = ['currency' => 'USD'];
-        $this->paymentConfig->expects($this->once())
-            ->method('isCountryApplicable')
-            ->with($context)
-            ->willReturn(true);
-
-        $this->paymentConfig->expects($this->once())
-            ->method('isCurrencyApplicable')
-            ->with($context)
-            ->willReturn(true);
-
-        $this->assertTrue($this->method->isApplicable($context));
-    }
-
-    public function testIsApplicableWithSelectedCountriesNotMatch()
-    {
-        $context = ['country' => 'UK'];
-        $this->paymentConfig->expects($this->once())
-            ->method('isCountryApplicable')
-            ->with($context)
-            ->willReturn(false);
-
-        $this->paymentConfig->expects($this->never())
-            ->method('isCurrencyApplicable');
-
-        $this->assertFalse($this->method->isApplicable($context));
-    }
-
-    public function testIsApplicableWithSelectedCountries()
-    {
-        $context = ['country' => 'US', 'currency' => 'USD'];
-        $this->paymentConfig->expects($this->once())
-            ->method('isCountryApplicable')
-            ->with($context)
-            ->willReturn(true);
-
-        $this->paymentConfig->expects($this->once())
-            ->method('isCurrencyApplicable')
-            ->with($context)
-            ->willReturn(true);
-
-        $this->assertTrue($this->method->isApplicable(['country' => 'US', 'currency' => 'USD']));
-    }
 
     public function testComplete()
     {

@@ -25,7 +25,7 @@ operations:
                 - '@payment_method_applicable':
                     parameters:
                         payment_method: $.authorizePaymentTransaction.paymentMethod
-                        entity: $.paymentContext
+                        context: $.paymentContext
         actions:
             - '@payment_capture':
                 attribute: $.result

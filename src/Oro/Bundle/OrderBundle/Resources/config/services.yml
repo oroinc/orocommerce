@@ -301,7 +301,6 @@ services:
             - '@oro_order.payment_line_item.converter_basic'
             - '@?oro_payment.context.builder_factory_basic'
 
-
     oro_order.shipping_line_item.converter_basic:
         class: 'Oro\Bundle\OrderBundle\Converter\BasicOrderShippingLineItemConverter'
         arguments:

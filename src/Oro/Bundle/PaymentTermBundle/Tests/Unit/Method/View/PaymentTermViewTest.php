@@ -71,17 +71,6 @@ class PaymentTermViewTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('_payment_methods_payment_term_widget', $this->methodView->getBlock());
     }
 
-    public function testGetOrder()
-    {
-        $order = '100';
-
-        $this->paymentConfig->expects($this->once())
-            ->method('getOrder')
-            ->willReturn((int)$order);
-
-        $this->assertEquals((int)$order, $this->methodView->getOrder());
-    }
-
     public function testGetPaymentMethodType()
     {
         $this->assertEquals('payment_term', $this->methodView->getPaymentMethodType());

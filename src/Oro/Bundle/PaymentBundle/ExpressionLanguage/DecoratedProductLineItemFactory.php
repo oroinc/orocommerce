@@ -58,6 +58,8 @@ class DecoratedProductLineItemFactory
      */
     public function createLineItemWithDecoratedProductByLineItem(array $lineItems, PaymentLineItemInterface $lineItem)
     {
+        $product = $lineItem->getProduct();
+
         return new PaymentLineItem(
             [
                 PaymentLineItem::FIELD_PRICE => $lineItem->getPrice(),
@@ -66,7 +68,8 @@ class DecoratedProductLineItemFactory
                 PaymentLineItem::FIELD_QUANTITY => $lineItem->getQuantity(),
                 PaymentLineItem::FIELD_PRODUCT_HOLDER => $lineItem->getProductHolder(),
                 PaymentLineItem::FIELD_PRODUCT_SKU => $lineItem->getProductSku(),
-                PaymentLineItem::FIELD_PRODUCT => $this->createDecoratedProduct($lineItems, $lineItem->getProduct()),
+                PaymentLineItem::FIELD_PRODUCT
+                    => $product ? $this->createDecoratedProduct($lineItems, $product) : null,
             ]
         );
     }

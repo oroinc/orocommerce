@@ -21,7 +21,7 @@ use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\DoctrineShipp
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
-class ShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
+class CheckoutShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
 {
     /** @var CheckoutShippingContextFactory|\PHPUnit_Framework_MockObject_MockObject */
     protected $factory;
@@ -76,20 +76,6 @@ class ShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
             $this->shippingContextBuilderFactoryMock
         );
     }
-
-    protected function tearDown()
-    {
-        unset(
-            $this->factory,
-            $this->checkout,
-            $this->shoppingList,
-            $this->checkoutLineItemsManager,
-            $this->totalProcessorProvider,
-            $this->shippingContextFactory,
-            $this->shippingLineItemConverter
-        );
-    }
-
 
     public function testCreate()
     {

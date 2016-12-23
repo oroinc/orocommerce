@@ -25,29 +25,29 @@ class CheckoutPaymentContextFactory
     /**
      * @var OrderPaymentLineItemConverterInterface
      */
-    private $shippingLineItemConverter;
+    private $paymentLineItemConverter;
 
     /**
      * @var PaymentContextBuilderFactoryInterface|null
      */
-    private $shippingContextBuilderFactory = null;
+    private $paymentContextBuilderFactory = null;
 
     /**
      * @param CheckoutLineItemsManager $checkoutLineItemsManager
      * @param TotalProcessorProvider $totalProcessor
-     * @param OrderPaymentLineItemConverterInterface $shippingLineItemConverter
-     * @param null|PaymentContextBuilderFactoryInterface $shippingContextBuilderFactory
+     * @param OrderPaymentLineItemConverterInterface $paymentLineItemConverter
+     * @param null|PaymentContextBuilderFactoryInterface $paymentContextBuilderFactory
      */
     public function __construct(
         CheckoutLineItemsManager $checkoutLineItemsManager,
         TotalProcessorProvider $totalProcessor,
-        OrderPaymentLineItemConverterInterface $shippingLineItemConverter,
-        PaymentContextBuilderFactoryInterface $shippingContextBuilderFactory = null
+        OrderPaymentLineItemConverterInterface $paymentLineItemConverter,
+        PaymentContextBuilderFactoryInterface $paymentContextBuilderFactory = null
     ) {
         $this->checkoutLineItemsManager = $checkoutLineItemsManager;
         $this->totalProcessor = $totalProcessor;
-        $this->shippingLineItemConverter = $shippingLineItemConverter;
-        $this->shippingContextBuilderFactory = $shippingContextBuilderFactory;
+        $this->paymentLineItemConverter = $paymentLineItemConverter;
+        $this->paymentContextBuilderFactory = $paymentContextBuilderFactory;
     }
 
     /**
@@ -57,12 +57,12 @@ class CheckoutPaymentContextFactory
      */
     public function create(Checkout $checkout)
     {
-        if (null === $this->shippingContextBuilderFactory) {
+        if (null === $this->paymentContextBuilderFactory) {
             return null;
         }
 
         $lineItems = $this->checkoutLineItemsManager->getData($checkout);
-        $convertedLineItems = $this->shippingLineItemConverter->convertLineItems($lineItems);
+        $convertedLineItems = $this->paymentLineItemConverter->convertLineItems($lineItems);
 
         $total = $this->totalProcessor->getTotal($checkout);
         $subtotal = Price::create(
@@ -70,7 +70,7 @@ class CheckoutPaymentContextFactory
             $total->getCurrency()
         );
 
-        $shippingContextBuilder = $this->shippingContextBuilderFactory->createPaymentContextBuilder(
+        $paymentContextBuilder = $this->paymentContextBuilderFactory->createPaymentContextBuilder(
             $checkout->getCurrency(),
             $subtotal,
             $checkout,
@@ -78,26 +78,26 @@ class CheckoutPaymentContextFactory
         );
 
         if (null !== $checkout->getBillingAddress()) {
-            $shippingContextBuilder->setBillingAddress($checkout->getBillingAddress());
+            $paymentContextBuilder->setBillingAddress($checkout->getBillingAddress());
         }
 
         if (null !== $checkout->getBillingAddress()) {
-            $shippingContextBuilder->setBillingAddress($checkout->getBillingAddress());
+            $paymentContextBuilder->setBillingAddress($checkout->getBillingAddress());
         }
 
         if (null !== $checkout->getShippingMethod()) {
-            $shippingContextBuilder->setShippingMethod($checkout->getShippingMethod());
+            $paymentContextBuilder->setShippingMethod($checkout->getShippingMethod());
         }
 
         if (false === $convertedLineItems->isEmpty()) {
-            $shippingContextBuilder->setLineItems($convertedLineItems);
+            $paymentContextBuilder->setLineItems($convertedLineItems);
         }
 
         if (null !== $checkout->getAccount()) {
-            $shippingContextBuilder->setCustomer($checkout->getAccount());
-            $shippingContextBuilder->setCustomerUser($checkout->getAccountUser());
+            $paymentContextBuilder->setCustomer($checkout->getAccount());
+            $paymentContextBuilder->setCustomerUser($checkout->getAccountUser());
         }
 
-        return $shippingContextBuilder->getResult();
+        return $paymentContextBuilder->getResult();
     }
 }

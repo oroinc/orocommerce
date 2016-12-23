@@ -8,7 +8,7 @@ use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProvider;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry;
 use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 
-class PaymentMethodsProvider
+class PaymentMethodViewsProvider
 {
     /** @var PaymentMethodViewRegistry */
     protected $paymentMethodViewRegistry;
@@ -41,6 +41,10 @@ class PaymentMethodsProvider
     public function getViews(PaymentContextInterface $context)
     {
         $methods = $this->paymentMethodProvider->getApplicablePaymentMethods($context);
+
+        if (count($methods) === 0) {
+            return [];
+        }
 
         $methodTypes = array_map(function (PaymentMethodInterface $method) {
             return $method->getType();
