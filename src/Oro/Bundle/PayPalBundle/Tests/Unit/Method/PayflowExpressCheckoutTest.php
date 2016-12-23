@@ -117,20 +117,6 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
         $this->assertSame('payflow_express_checkout', $this->expressCheckout->getType());
     }
 
-    public function testIsEnabled()
-    {
-        $this->paymentConfig->expects($this->once())
-            ->method('isEnabled')
-            ->willReturn(true);
-
-        $this->assertTrue($this->expressCheckout->isEnabled());
-    }
-
-    public function testIsApplicable()
-    {
-        $this->assertTrue($this->expressCheckout->isApplicable());
-    }
-
     /**
      * @param bool $expected
      * @param string $actionName
