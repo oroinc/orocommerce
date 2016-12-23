@@ -18,6 +18,7 @@ use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\CheckoutBundle\Datagrid\CheckoutGridHelper;
 use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository;
 use Oro\Bundle\SaleBundle\Entity\Quote;
+use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\CheckoutBundle\Datagrid\CheckoutGridListener;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
@@ -61,14 +62,19 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
     protected $checkoutRepository;
 
     /**
-     * @var CheckoutGridListener
-     */
-    protected $listener;
-
-    /**
      * @var EntityNameResolver|\PHPUnit_Framework_MockObject_MockObject
      */
     private $entityNameResolver;
+
+    /**
+     * @var SecurityFacade|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $securityFacade;
+
+    /**
+     * @var CheckoutGridListener
+     */
+    protected $listener;
 
     protected function setUp()
     {
@@ -136,13 +142,17 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
                                          ->disableOriginalConstructor()
                                          ->getMock();
 
+        $this->securityFacade = $this->getMockBuilder(SecurityFacade::class)
+            ->disableOriginalConstructor()->getMock();
+
         $this->listener = new CheckoutGridListener(
             $this->currencyManager,
             $this->checkoutRepository,
             $this->totalProcessor,
             $this->entityNameResolver,
             $this->cache,
-            $this->checkoutGridHelper
+            $this->checkoutGridHelper,
+            $this->securityFacade
         );
     }
 
