@@ -23,7 +23,7 @@ class ProductVariantFieldsTransformer implements DataTransformerInterface
             return null;
         }
 
-        usort($value, function ($a, $b) {
+        uasort($value, function ($a, $b) {
             if (isset($a['priority']) && isset($b['priority'])) {
                 return $a['priority'] - $b['priority'];
             }
@@ -32,9 +32,9 @@ class ProductVariantFieldsTransformer implements DataTransformerInterface
         });
 
         $transformedData = [];
-        foreach ($value as $item) {
-            if (isset($item['is_default']) && isset($item['id']) && $item['is_default']) {
-                $transformedData[] = $item['id'];
+        foreach ($value as $name => $item) {
+            if (isset($item['is_default']) && $item['is_default']) {
+                $transformedData[] = $name;
             }
         }
 

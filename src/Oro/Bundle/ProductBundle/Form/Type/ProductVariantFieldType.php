@@ -13,10 +13,8 @@ class ProductVariantFieldType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('id', 'hidden')
-            ->add('priority', 'hidden', ['empty_data' => 9999]);
-
-        $builder->add('is_default', 'checkbox', ['required' => false, 'label' => $options['label']]);
+            ->add('priority', 'hidden', ['empty_data' => 9999])
+            ->add('is_default', 'checkbox', ['required' => false, 'label' => $options['label']]);
     }
 
     /**

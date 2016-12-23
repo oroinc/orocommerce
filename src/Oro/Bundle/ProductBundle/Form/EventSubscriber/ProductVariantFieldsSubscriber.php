@@ -82,15 +82,14 @@ class ProductVariantFieldsSubscriber implements EventSubscriberInterface
             $priority = array_search($field['name'], $eventData);
             $selected = $priority !== false;
 
-            $data[] = [
-                'id' => $field['name'],
+            $data[$field['name']] = [
                 'priority' => $selected ? $priority : 9999,
                 'is_default' => $selected,
             ];
 
-            end($data);
-            $fieldsToAdd[] = [
-                'priority' => $selected ? $priority : 9999,
+            $fieldsToAdd[$field['name']] = [
+                'name' => $field['name'],
+                'priority' => $data[$field['name']]['priority'],
                 'label' => $field['label'],
             ];
         }
@@ -99,9 +98,9 @@ class ProductVariantFieldsSubscriber implements EventSubscriberInterface
             return $a['priority'] - $b['priority'];
         });
 
-        foreach ($fieldsToAdd as $key => $field) {
-            $form->add($key, $this->type, array_replace(array(
-                'property_path' => '['.$key.']',
+        foreach ($fieldsToAdd as $field) {
+            $form->add($field['name'], $this->type, array_replace(array(
+                'property_path' => '['.$field['name'].']',
                 'label' => $field['label'],
             ), $this->options));
         }
