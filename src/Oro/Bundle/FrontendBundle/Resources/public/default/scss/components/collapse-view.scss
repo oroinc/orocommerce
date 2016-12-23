@@ -1,51 +1,48 @@
 .collapse-view {
-  &__trigger {
-    display: inline-block;
-    vertical-align: middle;
+    &__trigger {
+        display: inline-block;
 
-    color: get-color('ui', 'normal');
+        cursor: pointer;
+        vertical-align: middle;
 
-    cursor: pointer;
+        color: get-color('ui', 'normal');
 
-    &-icon {
-      margin-top: -2px;
-      
-      font-size: 16px;
-
-      color: get-color('additional', 'dark');
-      
-      transition: all 200ms linear;
-    }
-
-    &:focus,
-    &:hover {
-      text-decoration: none;
-    }
-
-    &.orange {
-      color: get-color('primary', 'base');
-    }
-  }
-
-  &__container {
-    display: none;
-  }
-
-  // Init widget
-  &.init {}
-
-  // Open widget
-  &.expanded {
-    .collapse-view {
-      &__trigger {
         &-icon {
-          transform: rotate(90deg);
-        }
-      }
+            margin: -2px 5px 0 5px;
 
-      &__container {
-        display: block;
-      }
+            font-size: 16px;
+
+            transition: all 200ms linear;
+
+            color: get-color('additional', 'dark');
+        }
+
+        &:focus,
+        &:hover {
+            text-decoration: none;
+        }
+
+        &.orange {
+            color: get-color('primary', 'base');
+        }
     }
-  }
+
+    &__container {
+        display: none;
+    }
+
+    // Open widget
+    &.expanded {
+        .collapse-view {
+            &__trigger {
+                &-icon {
+                    transform: rotate(90deg);
+                }
+            }
+
+            &__container {
+                display: block;
+            }
+        }
+    }
 }

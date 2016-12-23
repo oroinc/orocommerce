@@ -62,6 +62,8 @@ class ProductControllerTest extends WebTestCase
     const IMAGE_TYPE_CHECKED_CLASS = 'fa-check-square-o';
     const IMAGE_FILENAME_ATTR = 'title';
 
+    const ATTRIBUTE_FAMILY_ID = 1;
+
     /**
      * @var array
      */
@@ -107,6 +109,7 @@ class ProductControllerTest extends WebTestCase
         $formValues['input_action'] = 'oro_product_create';
         $formValues['oro_product_step_one']['category'] = self::CATEGORY_ID;
         $formValues['oro_product_step_one']['type'] = Product::TYPE_SIMPLE;
+        $formValues['oro_product_step_one']['attributeFamily'] = self::ATTRIBUTE_FAMILY_ID;
 
         $this->client->followRedirects(true);
         $crawler = $this->client->request(
@@ -129,7 +132,7 @@ class ProductControllerTest extends WebTestCase
         $formValues = $form->getPhpValues();
         $formValues['oro_product']['sku'] = self::TEST_SKU;
         $formValues['oro_product']['owner'] = $this->getBusinessUnitId();
-        $formValues['oro_product']['inventoryStatus'] = Product::INVENTORY_STATUS_IN_STOCK;
+        $formValues['oro_product']['inventory_status'] = Product::INVENTORY_STATUS_IN_STOCK;
         $formValues['oro_product']['status'] = Product::STATUS_DISABLED;
         $formValues['oro_product']['names']['values']['default'] = self::DEFAULT_NAME;
         $formValues['oro_product']['descriptions']['values']['default'] = self::DEFAULT_DESCRIPTION;
@@ -201,13 +204,14 @@ class ProductControllerTest extends WebTestCase
         /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
 
+        $data = $form->getPhpValues()['oro_product'];
         $submittedData = [
             'input_action' => 'save_and_stay',
-            'oro_product' => [
+            'oro_product' => array_merge($data, [
                 '_token' => $form['oro_product[_token]']->getValue(),
                 'sku' => self::UPDATED_SKU,
                 'owner' => $this->getBusinessUnitId(),
-                'inventoryStatus' => Product::INVENTORY_STATUS_OUT_OF_STOCK,
+                'inventory_status' => Product::INVENTORY_STATUS_OUT_OF_STOCK,
                 'status' => Product::STATUS_ENABLED,
                 'type' => Product::TYPE_SIMPLE,
                 'primaryUnitPrecision' => [
@@ -249,7 +253,7 @@ class ProductControllerTest extends WebTestCase
                         'additional' => 1
                     ]
                 ]
-            ],
+            ]),
         ];
 
         $filesData = [
@@ -398,13 +402,14 @@ class ProductControllerTest extends WebTestCase
         /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
 
+        $data = $form->getPhpValues()['oro_product'];
         $submittedData = [
             'input_action' => 'save_and_duplicate',
-            'oro_product' => [
+            'oro_product' => array_merge($data, [
                 '_token' => $form['oro_product[_token]']->getValue(),
                 'sku' => self::FIRST_DUPLICATED_SKU,
                 'owner' => $this->getBusinessUnitId(),
-                'inventoryStatus' => Product::INVENTORY_STATUS_OUT_OF_STOCK,
+                'inventory_status' => Product::INVENTORY_STATUS_OUT_OF_STOCK,
                 'status' => Product::STATUS_ENABLED,
                 'type' => Product::TYPE_SIMPLE,
                 'primaryUnitPrecision' => $form->getPhpValues()['oro_product']['primaryUnitPrecision'],
@@ -431,7 +436,7 @@ class ProductControllerTest extends WebTestCase
                     'ids' => [$localization->getId() => $localizedName->getId()],
                 ],
                 'images' => []//remove all images
-            ],
+            ]),
         ];
 
         $this->client->followRedirects(true);

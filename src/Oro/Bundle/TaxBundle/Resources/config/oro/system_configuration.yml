@@ -19,8 +19,10 @@ system_configuration:
             title: oro.tax.system_configuration.groups.tax_digital_products.title
         us_sales_tax:
             title: oro.tax.system_configuration.groups.us_sales_tax.title
+            icon: fa-usd
         eu_vat_tax:
             title: oro.tax.system_configuration.groups.eu_vat_tax.title
+            icon: fa-eur
         shipping:
             title: oro.tax.system_configuration.groups.shipping.title
             icon: fa-truck

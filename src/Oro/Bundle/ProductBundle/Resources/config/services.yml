@@ -534,3 +534,17 @@ services:
         class: Oro\Bundle\ProductBundle\Provider\ProductContentVariantProvider
         tags:
             - { name: oro_web_catalog.content_variant_provider }
+            
+    oro_product.event_listener.attribute_family_form_view:
+        parent: oro_entity_config.event_listener.attribute_family_form_view.abstract
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-create-step-one, method: onEdit }
+
+    oro_product.event_listener.attributes_form_view:
+        parent: oro_entity_config.event_listener.attributes_form_view.abstract
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onEdit, priority: -255 }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-create-step-two, method: onEdit, priority: -255 }
+            - { name: kernel.event_listener, event: entity_form.render.before, method: onFormRender, priority: -255 }
+            - { name: kernel.event_listener, event: entity_view.render.before, method: onViewRender, priority: -255 }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-view, method: onViewList, priority: -255 }
