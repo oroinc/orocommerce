@@ -36,20 +36,21 @@ define(function(require) {
             }
 
             var productUnits = model.get('product_units');
-            var select = this.options._sourceElement.find('select');
-            select.empty();
+            if (productUnits) {
+                var select = this.options._sourceElement.find('select');
+                select.empty();
+                for (var i = 0; i < productUnits.length; i++) {
+                    var unitCode = productUnits[i];
+                    var unitValue = _.__(this.options.unitLabel.replace('%s', unitCode));
+                    select.append($('<option></option>').attr('value', unitCode).text(unitValue));
+                }
+                select.change();
 
-            for (var i = 0; i < productUnits.length; i++) {
-                var unitCode = productUnits[i];
-                var unitValue = _.__(this.options.unitLabel.replace('%s', unitCode));
-                select.append($('<option></option>').attr('value', unitCode).text(unitValue));
-            }
-            select.change();
-
-            if (this.isProductApplySingleUnitMode(productUnits)) {
-                select.select2("container").hide();
-                if (this.options.singleUnitModeCodeVisible) {
-                    select.parent().append('<span class="unit-label">/ ' + productUnits[0] + '</span>');
+                if (this.isProductApplySingleUnitMode(productUnits)) {
+                    select.select2("container").hide();
+                    if (this.options.singleUnitModeCodeVisible) {
+                        select.parent().append('<span class="unit-label">/ ' + productUnits[0] + '</span>');
+                    }
                 }
             }
         },
