@@ -5,8 +5,11 @@ namespace Oro\Bundle\ProductBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+
+use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamilyAwareInterface;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
@@ -100,6 +103,7 @@ use Oro\Bundle\RedirectBundle\Entity\SluggableTrait;
 class Product extends ExtendProduct implements
     OrganizationAwareInterface,
     \JsonSerializable,
+    AttributeFamilyAwareInterface,
     SluggableInterface
 {
     use SluggableTrait;
@@ -140,6 +144,9 @@ class Product extends ExtendProduct implements
      *          "importexport"={
      *              "identity"=true,
      *              "order"=10
+     *          },
+     *          "attribute"={
+     *              "is_attribute"=true
      *          }
      *      }
      * )
@@ -315,6 +322,9 @@ class Product extends ExtendProduct implements
      *              "order"=40,
      *              "full"=true,
      *              "fallback_field"="string"
+     *          },
+     *          "attribute"={
+     *              "is_attribute"=true
      *          }
      *      }
      * )
@@ -347,6 +357,9 @@ class Product extends ExtendProduct implements
      *              "order"=60,
      *              "full"=true,
      *              "fallback_field"="text"
+     *          },
+     *          "attribute"={
+     *              "is_attribute"=true
      *          }
      *      }
      * )
@@ -397,6 +410,9 @@ class Product extends ExtendProduct implements
      *              "order"=50,
      *              "full"=true,
      *              "fallback_field"="text"
+     *          },
+     *          "attribute"={
+     *              "is_attribute"=true
      *          }
      *      }
      * )
@@ -419,6 +435,9 @@ class Product extends ExtendProduct implements
      *          },
      *          "importexport"={
      *               "excluded"=true
+     *          },
+     *          "attribute"={
+     *              "is_attribute"=true
      *          }
      *      }
      * )
@@ -441,6 +460,14 @@ class Product extends ExtendProduct implements
      *  )
      */
     protected $type = self::TYPE_SIMPLE;
+
+    /**
+     * @var AttributeFamily
+     *
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily")
+     * @ORM\JoinColumn(name="attribute_family_id", referencedColumnName="id", onDelete="RESTRICT")
+     */
+    protected $attributeFamily;
 
     /**
      * {@inheritdoc}
@@ -1086,5 +1113,24 @@ class Product extends ExtendProduct implements
         $additionalPrecisionsSorted = new ArrayCollection(array_values($additionalPrecisions->toArray()));
 
         return $additionalPrecisionsSorted;
+    }
+
+    /**
+     * @param AttributeFamily $attributeFamily
+     * @return $this
+     */
+    public function setAttributeFamily(AttributeFamily $attributeFamily)
+    {
+        $this->attributeFamily = $attributeFamily;
+
+        return $this;
+    }
+
+    /**
+     * @return AttributeFamily
+     */
+    public function getAttributeFamily()
+    {
+        return $this->attributeFamily;
     }
 }
