@@ -12,8 +12,6 @@ use Oro\Bundle\WorkflowBundle\Tests\Functional\DataFixtures\LoadWorkflowTranslat
 
 class LoadTranslations extends LoadWorkflowTranslations
 {
-    const TRANSLATION_PATH = __DIR__ . '/../../../Resources/translations/workflows.en.yml';
-
     /**
      * {@inheritdoc}
      */
@@ -21,7 +19,7 @@ class LoadTranslations extends LoadWorkflowTranslations
     {
         $loader = new YamlFileLoader();
         $catalog = $loader->load(
-            static::TRANSLATION_PATH,
+            static::getTranslationPath(),
             Translator::DEFAULT_LOCALE,
             WorkflowTranslationHelper::TRANSLATION_DOMAIN
         );
@@ -32,5 +30,13 @@ class LoadTranslations extends LoadWorkflowTranslations
 
         $this->getTranslationManager()->flush();
         $this->container->get('translator.default')->rebuildCache();
+    }
+
+    /**
+     * @return string
+     */
+    protected static function getTranslationPath()
+    {
+        return __DIR__ . '/../../../Resources/translations/workflows.en.yml';
     }
 }

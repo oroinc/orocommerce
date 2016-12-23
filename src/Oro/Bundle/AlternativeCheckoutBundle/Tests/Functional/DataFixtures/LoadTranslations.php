@@ -6,5 +6,11 @@ use Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadTranslations as 
 
 class LoadTranslations extends BaseLoadTranslations
 {
-    const TRANSLATION_PATH = __DIR__ . '/../../../Resources/translations/workflows.en.yml';
+    /**
+     * {@inheritdoc}
+     */
+    protected static function getTranslationPath()
+    {
+        return __DIR__ . '/../../../Resources/translations/workflows.en.yml';
+    }
 }
