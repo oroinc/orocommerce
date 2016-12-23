@@ -38,6 +38,7 @@ class ProductWithPricesTest extends WebTestCase
     const DEFAULT_NAME = 'default name';
 
     const CATEGORY_ID = 1;
+    const ATTRIBUTE_FAMILY_ID = 1;
 
     /**
      * {@inheritDoc}
@@ -60,6 +61,7 @@ class ProductWithPricesTest extends WebTestCase
         $formValues['input_action'] = 'oro_product_create';
         $formValues['oro_product_step_one']['category'] = self::CATEGORY_ID;
         $formValues['oro_product_step_one']['type'] = Product::TYPE_SIMPLE;
+        $formValues['oro_product_step_one']['attributeFamily'] = self::ATTRIBUTE_FAMILY_ID;
 
         $this->client->followRedirects(true);
         $crawler = $this->client->request('POST', $this->getUrl('oro_product_create'), $formValues);
@@ -74,11 +76,12 @@ class ProductWithPricesTest extends WebTestCase
 
         $localizations = $this->getLocalizations();
 
-        $formData = [
+        $formData = $form->getPhpValues()['oro_product'];
+        $formData = array_merge($formData, [
             '_token' => $form['oro_product[_token]']->getValue(),
             'owner'  => $this->getBusinessUnitId(),
             'sku'    => self::TEST_SKU,
-            'inventoryStatus' => Product::INVENTORY_STATUS_IN_STOCK,
+            'inventory_status' => Product::INVENTORY_STATUS_IN_STOCK,
             'primaryUnitPrecision' => [
                 'unit'      => self::FIRST_UNIT_CODE,
                 'precision' => self::FIRST_UNIT_PRECISION
@@ -103,18 +106,16 @@ class ProductWithPricesTest extends WebTestCase
             ],
             'status' => Product::STATUS_ENABLED,
             'type' => Product::TYPE_SIMPLE,
-        ];
+        ]);
 
         $formData['names']['values']['default'] = self::DEFAULT_NAME;
         foreach ($localizations as $localization) {
             $formData['names']['values']['localizations'][$localization->getId()]['fallback'] = FallbackType::SYSTEM;
         }
-
         $crawler = $this->client->request($form->getMethod(), $form->getUri(), [
             'input_action'        => 'save_and_stay',
             'oro_product' => $formData
         ]);
-
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 

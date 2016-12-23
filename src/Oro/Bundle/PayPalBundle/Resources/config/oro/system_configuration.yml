@@ -2,6 +2,7 @@ system_configuration:
     groups:
         paypal_payments_pro:
             title: oro.paypal.system_configuration.groups.paypal_payments_pro.title
+            icon: fa-paypal
         paypal_payments_pro_display:
             title: oro.paypal.system_configuration.groups.display_options.title
         paypal_payments_pro_integration:
@@ -15,6 +16,7 @@ system_configuration:
 
         payflow_gateway:
             title: oro.paypal.system_configuration.groups.payflow_gateway.title
+            icon: fa-cc-paypal
         payflow_gateway_display:
             title: oro.paypal.system_configuration.groups.display_options.title
         payflow_gateway_integration:

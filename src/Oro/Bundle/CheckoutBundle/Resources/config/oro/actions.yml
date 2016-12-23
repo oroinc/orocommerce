@@ -38,6 +38,9 @@ action_groups:
         parameters:
             shoppingList:
                 type: Oro\Bundle\ShoppingListBundle\Entity\ShoppingList
+            forceStartCheckout:
+                type: bool
+                default: false
         actions:
             - '@assign_url':
                 attribute: $.editLink
@@ -56,6 +59,7 @@ action_groups:
                         remove_source: true
                         edit_order_link: $.editLink
                         source_remove_label: $.sourceRemoveLabel
+                    force: $.forceStartCheckout
                 results:
                     redirectUrl: $.redirectUrl
                     checkout: $.checkout
@@ -80,10 +84,10 @@ action_groups:
                     sourceCriteria: $.sourceCriteria
                     checkoutData: $.data
                     updateData: $.force
-                results: 
+                results:
                     checkout: $.checkout
                     force: $.updateData
-                    
+
             - '@tree':
                 conditions:
                     '@equal': [true, $.force]
@@ -93,12 +97,12 @@ action_groups:
                         parameters_mapping:
                             entity: $.checkout
                             data: $.settings
-                            
+
             - '@redirect':
                 route: oro_checkout_frontend_checkout
                 route_parameters:
                     id: $.checkout.id
-                
+
     find_checkout:
         parameters:
             sourceCriteria:
@@ -157,10 +161,10 @@ action_groups:
                     - '@copy_values': [$.checkout, $.checkoutData]
 
             - '@flush_entity': $.checkout
-                    
+
     update_workflow_item:
         parameters:
-            entity: 
+            entity:
                 type: object
             data:
                 type: array
@@ -174,11 +178,11 @@ action_groups:
             - '@assign_value':
                 - $.workflowItem
                 - $.workflowItems[0]
-            
+
             - '@copy_values': [$.workflowItem.data, $.data]
 
             - '@call_method':
                 object: $.workflowItem
                 method: setUpdated
-                
+
             - '@flush_entity': $.workflowItem
