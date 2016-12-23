@@ -3,16 +3,41 @@
 namespace Oro\Bundle\PaymentBundle\Form\Type;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
-use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
 use Oro\Bundle\RuleBundle\Form\Type\RuleType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class PaymentMethodsConfigsRuleType extends AbstractType
 {
-    const NAME = 'oro_payment_methods_configs_rule';
+    const BLOCK_PREFIX = 'oro_payment_methods_configs_rule';
+
+    /**
+     * @var PaymentMethodRegistry
+     */
+    protected $methodRegistry;
+
+    /**
+     * @var TranslatorInterface
+     */
+    protected $translator;
+
+    /**
+     * @param PaymentMethodRegistry $methodRegistry
+     * @param TranslatorInterface $translator
+     */
+    public function __construct(PaymentMethodRegistry $methodRegistry, TranslatorInterface $translator)
+    {
+        $this->methodRegistry = $methodRegistry;
+        $this->translator = $translator;
+    }
 
     /**
      * {@inheritdoc}
@@ -21,20 +46,31 @@ class PaymentMethodsConfigsRuleType extends AbstractType
     {
         $builder
             ->add('methodConfigs', PaymentMethodConfigCollectionType::class, [
-                'required' => false,
-                'label' => 'oro.payment.paymentmethodsconfigsrule.method_configs.label',
+                'required' => false
             ])
             ->add('destinations', PaymentMethodsConfigsRuleDestinationCollectionType::class, [
                 'required' => false,
-                'label' => 'oro.payment.paymentmethodsconfigsrule.destinations.label',
+                'label'    => 'oro.payment.paymentmethodsconfigsrule.destinations.label',
             ])
             ->add('currency', CurrencySelectionType::class, [
-                'label' => 'oro.payment.paymentmethodsconfigsrule.currency.label',
+                'label'       => 'oro.payment.paymentmethodsconfigsrule.currency.label',
                 'empty_value' => 'oro.currency.currency.form.choose',
             ])
             ->add('rule', RuleType::class, [
                 'label' => 'oro.payment.paymentmethodsconfigsrule.rule.label',
+            ])
+            ->add('method', ChoiceType::class, [
+                'mapped'  => false,
+                'choices' => $this->getMethods(),
             ]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function buildView(FormView $view, FormInterface $form, array $options)
+    {
+        $view->vars['methods'] = $this->getMethods(true);
     }
 
     /**
@@ -52,6 +88,25 @@ class PaymentMethodsConfigsRuleType extends AbstractType
      */
     public function getBlockPrefix()
     {
-        return self::NAME;
+        return self::BLOCK_PREFIX;
+    }
+
+    /**
+     * @param bool $translate
+     * @return array
+     */
+    protected function getMethods($translate = false)
+    {
+        return array_reduce(
+            $this->methodRegistry->getPaymentMethods(),
+            function (array $result, PaymentMethodInterface $method) use ($translate) {
+                $type = $method->getType();
+                $result[$type] = $translate ?
+                    $this->translator->trans(sprintf('oro.payment.admin.%s.label', $type)) : $type;
+
+                return $result;
+            },
+            []
+        );
     }
 }

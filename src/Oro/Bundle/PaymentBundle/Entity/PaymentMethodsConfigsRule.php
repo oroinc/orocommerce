@@ -14,8 +14,21 @@ use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
 /**
  * @ORM\Entity(repositoryClass="Oro\Bundle\PaymentBundle\Entity\Repository\PaymentMethodsConfigsRuleRepository")
  * @ORM\Table(name="oro_payment_mtds_cfgs_rl")
- * @ORM\HasLifecycleCallbacks()
- * @Config
+ * @Config(
+ *      routeName="oro_payment_methods_configs_rule_index",
+ *      routeView="oro_payment_methods_configs_rule_view",
+ *      routeCreate="oro_payment_methods_configs_rule_create",
+ *      routeUpdate="oro_payment_methods_configs_rule_update",
+ *      defaultValues={
+ *          "dataaudit"={
+ *              "auditable"=true
+ *          },
+ *          "security"={
+ *              "type"="ACL",
+ *              "group_name"=""
+ *          }
+ *      }
+ * )
  */
 class PaymentMethodsConfigsRule extends ExtendPaymentMethodsConfigsRule implements RuleOwnerInterface
 {
@@ -51,7 +64,10 @@ class PaymentMethodsConfigsRule extends ExtendPaymentMethodsConfigsRule implemen
     /**
      * @var Rule
      *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\RuleBundle\Entity\Rule")
+     * @ORM\ManyToOne(
+     *     targetEntity="Oro\Bundle\RuleBundle\Entity\Rule",
+     *     cascade={"persist", "remove"}
+     * )
      * @ORM\JoinColumn(name="rule_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
      * @ConfigField(
      *      defaultValues={
@@ -153,6 +169,7 @@ class PaymentMethodsConfigsRule extends ExtendPaymentMethodsConfigsRule implemen
     {
         if (!$this->hasMethodConfig($methodConfig)) {
             $this->methodConfigs[] = $methodConfig;
+            $methodConfig->setMethodsConfigsRule($this);
         }
 
         return $this;
@@ -187,6 +204,7 @@ class PaymentMethodsConfigsRule extends ExtendPaymentMethodsConfigsRule implemen
     {
         if (!$this->destinations->contains($destination)) {
             $this->destinations->add($destination);
+            $destination->setMethodsConfigsRule($this);
         }
 
         return $this;

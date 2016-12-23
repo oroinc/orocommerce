@@ -4,17 +4,25 @@ namespace Oro\Bundle\PaymentBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig;
+use Oro\Bundle\PaymentBundle\Form\EventSubscriber\RuleMethodConfigCollectionSubscriber;
 use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodConfigCollectionType;
 use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodConfigType;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
+use Oro\Bundle\PaymentBundle\Tests\Unit\Form\EventListener\Stub\RuleMethodConfigCollectionSubscriberStub;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\PreloadedExtension;
+use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Validation;
 
 class PaymentMethodConfigCollectionTypeTest extends FormIntegrationTestCase
 {
     use EntityTrait;
+
+    /** @var RuleMethodConfigCollectionSubscriber */
+    protected $subscriber;
 
     /**
      * @var PaymentMethodConfigCollectionType
@@ -24,7 +32,8 @@ class PaymentMethodConfigCollectionTypeTest extends FormIntegrationTestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->type = new PaymentMethodConfigCollectionType();
+        $this->subscriber = new RuleMethodConfigCollectionSubscriberStub();
+        $this->type = new PaymentMethodConfigCollectionType($this->subscriber);
     }
 
     /**
@@ -56,26 +65,26 @@ class PaymentMethodConfigCollectionTypeTest extends FormIntegrationTestCase
     {
         return [
             'test' => [
-                'existing' => [
+                'existing'  => [
                     new PaymentMethodConfig(),
                     new PaymentMethodConfig(),
                     new PaymentMethodConfig(),
                 ],
                 'submitted' => [
                     [
-                        'type' => 'PP',
+                        'type'    => 'PP',
                         'options' => ['client_id' => 5],
                     ],
                     [
-                        'type' => 'MO',
+                        'type'    => 'MO',
                         'options' => ['client_id' => 5],
                     ],
                     [
-                        'type' => 'PT',
+                        'type'    => 'PT',
                         'options' => ['client_id' => 5],
                     ]
                 ],
-                'expected' => [
+                'expected'  => [
                     (new PaymentMethodConfig())->setType('PP')->setOptions(['client_id' => 5]),
                     (new PaymentMethodConfig())->setType('MO')->setOptions(['client_id' => 5]),
                     (new PaymentMethodConfig())->setType('PT')->setOptions(['client_id' => 5]),
@@ -89,11 +98,16 @@ class PaymentMethodConfigCollectionTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
+        /** @var PaymentMethodRegistry|\PHPUnit_Framework_MockObject_MockObject $methodRegistry */
+        $methodRegistry = $this->getMockBuilder(PaymentMethodRegistry::class)->disableOriginalConstructor()->getMock();
+        /** @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject $translator */
+        $translator = $this->getMockBuilder(TranslatorInterface::class)->disableOriginalConstructor()->getMock();
+
         return [
             new PreloadedExtension(
                 [
-                    CollectionType::NAME => new CollectionType(),
-                    PaymentMethodConfigType::NAME => new PaymentMethodConfigType(),
+                    CollectionType::NAME          => new CollectionType(),
+                    PaymentMethodConfigType::NAME => new PaymentMethodConfigType($methodRegistry, $translator),
                 ],
                 []
             ),
@@ -108,11 +122,22 @@ class PaymentMethodConfigCollectionTypeTest extends FormIntegrationTestCase
 
     public function testGetParent()
     {
-        static::assertSame(CollectionType::NAME, $this->type->getParent());
+        static::assertSame(CollectionType::class, $this->type->getParent());
     }
 
     public function testGetBlockPrefix()
     {
         static::assertSame(PaymentMethodConfigCollectionType::NAME, $this->type->getBlockPrefix());
+    }
+
+    public function testBuildFormSubscriber()
+    {
+        /** @var FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder */
+        $builder = $this->getMock(FormBuilderInterface::class);
+        $builder->expects($this->once())
+            ->method('addEventSubscriber')
+            ->with($this->subscriber)
+            ->willReturn($builder);
+        $this->type->buildForm($builder, []);
     }
 }

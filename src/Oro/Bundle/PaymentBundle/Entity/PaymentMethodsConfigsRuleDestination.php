@@ -184,6 +184,7 @@ class PaymentMethodsConfigsRuleDestination extends ExtendPaymentMethodsConfigsRu
     public function addPostalCode(PaymentMethodsConfigsRuleDestinationPostalCode $postalCode)
     {
         if (!$this->postalCodes->contains($postalCode)) {
+            $postalCode->setDestination($this);
             $this->postalCodes->add($postalCode);
         }
 

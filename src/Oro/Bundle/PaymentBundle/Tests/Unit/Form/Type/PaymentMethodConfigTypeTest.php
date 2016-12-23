@@ -2,13 +2,11 @@
 
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\Form\Type;
 
-use Oro\Bundle\EntityExtendBundle\Validator\Validation;
-use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig;
 use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodConfigType;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
-use Symfony\Component\Form\PreloadedExtension;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class PaymentMethodConfigTypeTest extends FormIntegrationTestCase
 {
@@ -17,9 +15,21 @@ class PaymentMethodConfigTypeTest extends FormIntegrationTestCase
      */
     protected $formType;
 
+    /** @var PaymentMethodRegistry|\PHPUnit_Framework_MockObject_MockObject */
+    protected $paymentMethodRegistry;
+
+    /** @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject */
+    protected $translator;
+
     protected function setUp()
     {
-        $this->formType = new PaymentMethodConfigType();
+        $this->paymentMethodRegistry = $this->getMockBuilder('Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->translator = $translator = $this->getMockBuilder(TranslatorInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->formType = new PaymentMethodConfigType($this->paymentMethodRegistry, $this->translator);
 
         parent::setUp();
     }
@@ -64,23 +74,6 @@ class PaymentMethodConfigTypeTest extends FormIntegrationTestCase
             [
                 (new PaymentMethodConfig())->setType('PP')->setOptions(['client_id' => 5])
             ],
-        ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getExtensions()
-    {
-        return [
-            new PreloadedExtension(
-                [
-                    CollectionType::NAME => new CollectionType(),
-                    PaymentMethodConfigType::NAME => new PaymentMethodConfigType(),
-                ],
-                []
-            ),
-            new ValidatorExtension(Validation::createValidator())
         ];
     }
 }

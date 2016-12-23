@@ -1,7 +1,25 @@
 parameters:
     oro_payment.entity.payment_transaction.class: Oro\Bundle\PaymentBundle\Entity\PaymentTransaction
+    oro_payment.entity.payment_methods_configs_rule.class: Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule
 
 services:
+    oro_payment.payment_methods_configs_rule.manager.api:
+        class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
+        parent: oro_soap.manager.entity_manager.abstract
+        arguments:
+            - '%oro_payment.entity.payment_methods_configs_rule.class%'
+            - "@doctrine.orm.entity_manager"
+
+    oro_payment.form.handler.payment_methods_configs_rule:
+        class: 'Oro\Bundle\PaymentBundle\Form\Handler\PaymentMethodsConfigsRuleHandler'
+        scope: request
+        arguments:
+            - '@request'
+            - '@doctrine.orm.entity_manager'
+
+    oro_payment.datagrid.payment_rule_actions_visibility_provider:
+        class: 'Oro\Bundle\PaymentBundle\Datagrid\PaymentRuleActionsVisibilityProvider'
+
     oro_payment.formatter.payment_method_label:
         class: 'Oro\Bundle\PaymentBundle\Formatter\PaymentMethodLabelFormatter'
         arguments:
@@ -14,6 +32,7 @@ services:
         arguments:
             - "@oro_payment.provider.payment_transaction"
             - "@oro_payment.formatter.payment_method_label"
+            - '@event_dispatcher'
         tags:
             - { name: twig.extension }
 
