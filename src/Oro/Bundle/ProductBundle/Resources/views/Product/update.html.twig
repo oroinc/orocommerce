@@ -87,7 +87,7 @@
 
     {% set additionalData = [] %}
     {% for child in form.children if child.vars.extra_field is defined and child.vars.extra_field %}
-        {% if child.vars.name not in form.variantFields %}
+        {% if child.vars.name not in entity.variantFields %}
             {% set additionalData = additionalData|merge([form_row(child)]) %}
         {% endif %}
     {% endfor %}
@@ -122,7 +122,7 @@
                 'data' : [
                     form_widget(variantLinksForm.appendVariants, {'id': 'productAppendVariants'}),
                     form_widget(variantLinksForm.removeVariants, {'id': 'productRemoveVariants'}),
-                    dataGrid.renderGrid('oro_product-product_variants-product_edit', {'parentProduct': entity.id}, { cssClass: 'inner-grid' })
+                    dataGrid.renderGrid('product-product-variants-edit', {'parentProduct': entity.id}, { cssClass: 'inner-grid' })
                 ]
             }]
         }] ) %}

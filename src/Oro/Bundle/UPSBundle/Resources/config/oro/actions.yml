@@ -1,20 +1,16 @@
 operations:
     oro_integration_invalidate_cache:
         label: oro.ups.form.invalidate_cache.label
-        entities:
-            - Oro\Bundle\IntergrationBundle\Entity\Channel
         routes:
             - oro_integration_update
         acl_resource: [UPDATE, entity:Oro\Bundle\IntegrationBundle\Entity\Channel]
         button_options:
             icon: fa-clock-o
-            page_component_module:
-                'oroups/js/app/components/invalidate-cache-button-component'
         frontend_options:
             template: OroUPSBundle:Action:invalidateCache.html.twig
-            title: oro.ups.form.invalidate_cache.label
+            title: oro.ups.form.invalidate_cache.title
             options:
-                width: 550
+                width: 505
                 modal: false
                 stateEnabled: false
                 incrementalPosition: false
@@ -22,6 +18,9 @@ operations:
                 allowMinimize: false
                 maximizedHeightDecreaseBy: minimize-bar
         attributes:
+            invalidateType:
+                label: oro.ups.form.invalidate_cache.label
+                type: string
             invalidateCacheAt:
                 label: oro.ups.form.invalidate_cache_at.label
                 type: entity
@@ -36,6 +35,13 @@ operations:
                     class: Oro\Bundle\IntegrationBundle\Entity\Channel
         form_options:
             attribute_fields:
+                invalidateType:
+                    form_type: choice
+                    options:
+                        placeholder: false
+                        choices:
+                            scheduled: oro.ups.form.invalidate_cache.type.scheduled
+                            immediate: oro.ups.form.invalidate_cache.type.immediate
                 invalidateCacheAt:
                     form_type: Oro\Bundle\FormBundle\Form\Type\OroDateTimeType
                 invalidateNow:
@@ -63,6 +69,5 @@ operations:
                     '@empty': $.invalidateNow
                 message: oro.ups.form.invalidate_cache.flash.save_success
                 type: 'success'
-            - '@refresh_grid': unknown-grid
         preconditions:
             '@equal': [$type, $.upstype]

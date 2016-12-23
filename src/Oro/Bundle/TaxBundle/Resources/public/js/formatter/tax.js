@@ -14,7 +14,19 @@ define(['underscore', 'orolocale/js/formatter/number', 'orolocale/js/locale-sett
                     currency = localeSettings.defaults.currency;
                 }
 
+                if (_.isNaN(parseFloat(value))) {
+                    return value;
+                }
+
                 return NumberFormatter.formatCurrency(value, currency);
+            };
+
+            var formatPercent = function(value) {
+                if (value.indexOf('%') > -1) {
+                    return value;
+                }
+
+                return NumberFormatter.formatPercent(value);
             };
 
             return {
@@ -52,7 +64,7 @@ define(['underscore', 'orolocale/js/formatter/number', 'orolocale/js/locale-sett
                         tax: localItem.tax,
                         taxAmount: formatElement(localItem.taxAmount, localItem.currency),
                         taxableAmount: formatElement(localItem.taxableAmount, localItem.currency),
-                        rate: NumberFormatter.formatPercent(localItem.rate)
+                        rate: formatPercent(localItem.rate)
                     };
                 },
 

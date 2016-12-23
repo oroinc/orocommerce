@@ -1,4 +1,5 @@
 styles:
     inputs:
+        - 'bundles/orofrontend/custom/scss/variables/notification-flash-container-config.scss'
         - 'bundles/orofrontend/custom/scss/styles.scss'
     output: 'css/layout/custom/styles.css'

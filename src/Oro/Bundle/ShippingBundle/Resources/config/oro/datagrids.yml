@@ -136,6 +136,7 @@ datagrids:
                     confirm_ok:      oro.shipping.delete_shipping_rule_window.button_ok
                     confirm_title:   oro.shipping.delete_shipping_rule_window.title
                     success:         oro.shipping.delete_shipping_rule_window.success
+        action_configuration: ['@oro_shipping.datagrid.shipping_rule_actions_visibility_provider', getActionsVisibility]
         mass_actions:
             enable:
                 type:         shippingruleenable

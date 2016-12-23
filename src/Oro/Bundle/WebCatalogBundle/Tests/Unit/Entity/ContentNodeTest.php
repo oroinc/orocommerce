@@ -18,7 +18,6 @@ class ContentNodeTest extends \PHPUnit_Framework_TestCase
         $this->assertPropertyAccessors(new ContentNode(), [
             ['parentNode', new ContentNode()],
             ['webCatalog', new WebCatalog()],
-            ['name', 'Node name'],
             ['materializedPath', 'path/to/node'],
             ['left', 30],
             ['level', 42],
@@ -26,7 +25,8 @@ class ContentNodeTest extends \PHPUnit_Framework_TestCase
             ['root', 1],
             ['createdAt', new \DateTime()],
             ['updatedAt', new \DateTime()],
-            ['parentScopeUsed', true]
+            ['parentScopeUsed', true],
+            ['rewriteVariantTitle', true]
         ]);
         $this->assertPropertyCollections(new ContentNode(), [
             ['childNodes', new ContentNode()],

@@ -14,9 +14,6 @@ Oro\Bundle\ProductBundle\Entity\Product:
             name: sku_uppercase
             type: text
         -
-            name: description_LOCALIZATION_ID
-            type: text
-        -
             name: short_description_LOCALIZATION_ID
             type: text
         -

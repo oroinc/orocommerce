@@ -110,25 +110,15 @@ abstract class AbstractAccountUserRoleTypeTest extends FormIntegrationTestCase
                     'label' => $roleLabel,
                 ],
                 'expectedData' => $defaultRole,
-                'expectedFieldData' => [
-                    'entity' => [],
-                    'action' => [],
-                ],
             ],
             'existing' => [
                 'options' => ['privilege_config' => $this->privilegeConfig],
                 'defaultData' => $existingRoleBefore,
                 'viewData' => $existingRoleBefore,
                 'submittedData' => [
-                    'label' => $alteredRoleLabel,
-                    'entity' => ['first'],
-                    'action' => ['second'],
+                    'label' => $alteredRoleLabel
                 ],
                 'expectedData' => $existingRoleAfter,
-                'expectedFieldData' => [
-                    'entity' => ['first'],
-                    'action' => ['second'],
-                ],
             ]
         ];
     }
@@ -221,7 +211,6 @@ abstract class AbstractAccountUserRoleTypeTest extends FormIntegrationTestCase
         $defaultData,
         $viewData,
         array $submittedData,
-        $expectedData,
-        array $expectedFieldData = []
+        $expectedData
     );
 }

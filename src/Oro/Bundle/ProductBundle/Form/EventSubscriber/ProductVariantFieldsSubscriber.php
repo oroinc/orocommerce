@@ -121,6 +121,11 @@ class ProductVariantFieldsSubscriber implements EventSubscriberInterface
             return in_array($field['type'], ['boolean', 'enum'], true);
         });
 
+        // Skip serialized fields. Should be improved in BB-6526
+        $customVariantFields = array_filter($customVariantFields, function ($field) {
+            return !$field['is_serialized'];
+        });
+
         return $customVariantFields;
     }
 }

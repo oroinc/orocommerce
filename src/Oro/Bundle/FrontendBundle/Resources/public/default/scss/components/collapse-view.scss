@@ -8,11 +8,13 @@
     cursor: pointer;
 
     &-icon {
-      transition: all 200ms linear;
+      margin-top: -2px;
+      
+      font-size: 16px;
 
-      &:hover {
-        color: get-color('additional', 'dark');
-      }
+      color: get-color('additional', 'dark');
+      
+      transition: all 200ms linear;
     }
 
     &:focus,

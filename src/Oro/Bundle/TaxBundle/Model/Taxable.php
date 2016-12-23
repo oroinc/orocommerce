@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\TaxBundle\Model;
 
+use Brick\Math\BigDecimal;
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 
 class Taxable
@@ -36,19 +37,24 @@ class Taxable
     protected $taxationAddress;
 
     /**
-     * @var int
+     * @var BigDecimal
      */
-    protected $quantity = 1;
+    protected $quantity;
 
     /**
-     * @var string
+     * @var BigDecimal
      */
-    protected $price = 0;
+    protected $price;
 
     /**
-     * @var string
+     * @var BigDecimal
      */
-    protected $amount = 0;
+    protected $amount;
+
+    /**
+     * @var BigDecimal
+     */
+    protected $shippingCost;
 
     /**
      * @var \SplObjectStorage|Taxable[]
@@ -72,6 +78,11 @@ class Taxable
 
     public function __construct()
     {
+        $this->quantity = BigDecimal::one();
+        $this->price = BigDecimal::zero();
+        $this->amount = BigDecimal::zero();
+        $this->shippingCost = BigDecimal::zero();
+
         $this->items = new \SplObjectStorage();
         $this->result = new Result();
         $this->context = new \ArrayObject();
@@ -135,7 +146,7 @@ class Taxable
     }
 
     /**
-     * @return int
+     * @return BigDecimal
      */
     public function getQuantity()
     {
@@ -143,18 +154,18 @@ class Taxable
     }
 
     /**
-     * @param int $quantity
+     * @param string $quantity
      * @return Taxable
      */
     public function setQuantity($quantity)
     {
-        $this->quantity = $quantity;
+        $this->quantity = BigDecimal::of($quantity);
 
         return $this;
     }
 
     /**
-     * @return string
+     * @return BigDecimal
      */
     public function getPrice()
     {
@@ -167,13 +178,13 @@ class Taxable
      */
     public function setPrice($price)
     {
-        $this->price = (string)$price;
+        $this->price = BigDecimal::of($price);
 
         return $this;
     }
 
     /**
-     * @return string
+     * @return BigDecimal
      */
     public function getAmount()
     {
@@ -186,7 +197,26 @@ class Taxable
      */
     public function setAmount($amount)
     {
-        $this->amount = (string)$amount;
+        $this->amount = BigDecimal::of($amount);
+
+        return $this;
+    }
+
+    /**
+     * @return BigDecimal
+     */
+    public function getShippingCost()
+    {
+        return $this->shippingCost;
+    }
+
+    /**
+     * @param string $shippingCost
+     * @return Taxable
+     */
+    public function setShippingCost($shippingCost)
+    {
+        $this->shippingCost = BigDecimal::of($shippingCost);
 
         return $this;
     }
