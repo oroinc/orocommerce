@@ -63,8 +63,7 @@ class TotalResolver implements ResolverInterface
             $taxResults = $mergedTaxResults;
         }
 
-        if ($this->settingsProvider->isStartCalculationOnTotal() &&
-            array_key_exists(ResultElement::ADJUSTMENT, $data)) {
+        if ($this->settingsProvider->isStartCalculationOnTotal()) {
             try {
                 $adjustment = BigDecimal::of($data[ResultElement::ADJUSTMENT]);
                 $adjustedAmounts = $this->adjustAmounts($data, $adjustment);
