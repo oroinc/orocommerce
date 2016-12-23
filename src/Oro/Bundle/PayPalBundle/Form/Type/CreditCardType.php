@@ -49,30 +49,30 @@ class CreditCardType extends AbstractType
                     new Length(['min' => '12', 'max' => '19']),
                 ],
             ]
-            )->add(
-                'expirationDate',
-                'oro_paypal_credit_card_expiration_date',
-                [
-                    'required' => true,
-                    'label' => 'oro.paypal.credit_card.expiration_date.label',
-                    'mapped' => false,
-                    'placeholder' => [
-                        'year' => 'Year',
-                        'month' => 'Month',
-                    ],
-                    'attr' => [
-                        'data-expiration-date' => true,
-                    ],
-                ]
-            ) ->add(
-                'EXPDATE',
-                'hidden',
-                [
-                    'attr' => [
-                        'data-gateway' => true,
-                    ],
-                ]
-            );
+        )->add(
+            'expirationDate',
+            'oro_paypal_credit_card_expiration_date',
+            [
+                'required' => true,
+                'label' => 'oro.paypal.credit_card.expiration_date.label',
+                'mapped' => false,
+                'placeholder' => [
+                    'year' => 'Year',
+                    'month' => 'Month',
+                ],
+                'attr' => [
+                    'data-expiration-date' => true,
+                ],
+            ]
+        )->add(
+            'EXPDATE',
+            'hidden',
+            [
+                'attr' => [
+                    'data-gateway' => true,
+                ],
+            ]
+        );
 
         if ($options['requireCvvEntryEnabled']) {
             $builder->add(
