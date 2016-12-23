@@ -21,7 +21,7 @@ class LettersTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->constraint = new Letters();
-        $this->context = $this->getMock('Symfony\Component\Validator\ExecutionContextInterface');
+        $this->context = $this->createMock('Symfony\Component\Validator\ExecutionContextInterface');
         $this->validator = new RegexValidator();
         $this->validator->initialize($this->context);
     }

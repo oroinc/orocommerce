@@ -52,7 +52,7 @@ abstract class AbstractProductImportEventListenerTest extends \PHPUnit_Framework
 
     public function setUp()
     {
-        $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $this->registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
         $this->mockCategoryRepository();
     }
 

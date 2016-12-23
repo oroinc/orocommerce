@@ -49,7 +49,7 @@ class MenuItemExtensionTest extends \PHPUnit_Framework_TestCase
     public function testIsCurrent()
     {
         /** @var ItemInterface|\PHPUnit_Framework_MockObject_MockObject $item */
-        $item = $this->getMock(ItemInterface::class);
+        $item = $this->createMock(ItemInterface::class);
 
         $this->matcher
             ->expects($this->once())
@@ -63,7 +63,7 @@ class MenuItemExtensionTest extends \PHPUnit_Framework_TestCase
     public function testIsAncestor()
     {
         /** @var ItemInterface|\PHPUnit_Framework_MockObject_MockObject $item */
-        $item = $this->getMock(ItemInterface::class);
+        $item = $this->createMock(ItemInterface::class);
 
         $this->matcher
             ->expects($this->once())

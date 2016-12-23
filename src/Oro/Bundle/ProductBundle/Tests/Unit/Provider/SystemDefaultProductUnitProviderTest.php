@@ -47,13 +47,13 @@ class SystemDefaultProductUnitProviderTest extends \PHPUnit_Framework_TestCase
             ->method('findOneBy')
             ->will($this->returnValue($productUnit));
 
-        $manager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
+        $manager = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
         $manager->expects($this->once())
             ->method('getRepository')
             ->with('OroProductBundle:ProductUnit')
             ->willReturn($productUnitRepository);
 
-        $managerRegistry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $managerRegistry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
         $managerRegistry->expects($this->any())
             ->method('getManagerForClass')
             ->with('OroProductBundle:ProductUnit')

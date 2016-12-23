@@ -19,8 +19,8 @@ class WebsiteQueryFactoryTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->queryFactory    = $this->getMock(QueryFactoryInterface::class);
-        $this->engine          = $this->getMock(EngineV2Interface::class);
+        $this->queryFactory    = $this->createMock(QueryFactoryInterface::class);
+        $this->engine          = $this->createMock(EngineV2Interface::class);
     }
 
     public function testCreate()

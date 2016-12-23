@@ -72,7 +72,7 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->em = $this->getMock(EntityManagerInterface::class);
+        $this->em = $this->createMock(EntityManagerInterface::class);
 
         $metadata = $this->getMockBuilder(ClassMetadata::class)
                          ->disableOriginalConstructor()
@@ -150,7 +150,7 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
     {
         $configuration = $this->getGridConfiguration();
         /** @var DatagridInterface $datagrid */
-        $datagrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
+        $datagrid = $this->createMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
         $event    = new BuildBefore($datagrid, $configuration);
         $this->listener->onBuildBefore($event);
 
@@ -169,7 +169,7 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
     {
         $configuration = $this->getGridConfiguration();
         /** @var DatagridInterface $datagrid */
-        $datagrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
+        $datagrid = $this->createMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
         $event    = new BuildBefore($datagrid, $configuration);
         $this->listener->onBuildBefore($event);
 
@@ -270,7 +270,7 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
         $records = [];
 
         for ($i = 1; $i <= 10; $i++) {
-            $record = $this->getMock(
+            $record = $this->createMock(
                 'Oro\Bundle\DataGridBundle\Datasource\ResultRecord',
                 ['getValue', 'addData'],
                 [[]]
@@ -427,7 +427,7 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
     protected function getFieldConfig(array $parameters)
     {
         /** @var ConfigIdInterface $configId */
-        $configId = $this->getMock('Oro\Bundle\EntityConfigBundle\Config\Id\ConfigIdInterface');
+        $configId = $this->createMock('Oro\Bundle\EntityConfigBundle\Config\Id\ConfigIdInterface');
 
         return new Config($configId, $parameters);
     }

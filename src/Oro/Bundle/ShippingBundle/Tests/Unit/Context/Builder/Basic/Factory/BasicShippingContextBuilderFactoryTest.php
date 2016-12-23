@@ -39,14 +39,14 @@ class BasicShippingContextBuilderFactoryTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->lineItemsCollectionMock = $this->getMock(ShippingLineItemCollectionInterface::class);
+        $this->lineItemsCollectionMock = $this->createMock(ShippingLineItemCollectionInterface::class);
         $this->subtotalMock = $this->getMockBuilder(Price::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->sourceEntityMock = $this->getMockBuilder(Checkout::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->shippingLineItemCollectionFactoryMock = $this->getMock(
+        $this->shippingLineItemCollectionFactoryMock = $this->createMock(
             ShippingLineItemCollectionFactoryInterface::class
         );
         $this->shippingOriginProviderMock = $this->getMockBuilder(ShippingOriginProvider::class)

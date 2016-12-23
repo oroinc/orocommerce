@@ -29,17 +29,17 @@ class CreditCardFormProviderTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->formFactory = $this->getMock('Symfony\Component\Form\FormFactoryInterface');
-        $this->router = $this->getMock('Symfony\Component\Routing\Generator\UrlGeneratorInterface');
+        $this->formFactory = $this->createMock('Symfony\Component\Form\FormFactoryInterface');
+        $this->router = $this->createMock('Symfony\Component\Routing\Generator\UrlGeneratorInterface');
 
         $this->provider = new CreditCardFormProvider($this->formFactory, $this->router);
     }
 
     public function testGetCreditCardFormView()
     {
-        $formView = $this->getMock(FormView::class);
+        $formView = $this->createMock(FormView::class);
 
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
         $form->expects($this->once())
             ->method('createView')
             ->willReturn($formView);

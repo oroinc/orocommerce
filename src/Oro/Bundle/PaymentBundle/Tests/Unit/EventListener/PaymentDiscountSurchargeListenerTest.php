@@ -19,7 +19,7 @@ class PaymentDiscountSurchargeListenerTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->provider = $this->getMock(SubtotalProviderInterface::class);
+        $this->provider = $this->createMock(SubtotalProviderInterface::class);
         $this->listener = new PaymentDiscountSurchargeListener($this->provider);
     }
 

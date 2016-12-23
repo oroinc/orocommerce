@@ -38,7 +38,7 @@ class OrderDiscountItemTypeTest extends FormIntegrationTestCase
     {
         $view = new FormView();
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
         $options = [
             'currency' => 'USD',

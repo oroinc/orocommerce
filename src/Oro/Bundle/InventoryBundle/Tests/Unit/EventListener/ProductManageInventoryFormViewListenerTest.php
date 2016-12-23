@@ -41,7 +41,7 @@ class ProductManageInventoryFormViewListenerTest extends FormViewListenerTestCas
     protected function setUp()
     {
         parent::setUp();
-        $this->requestStack = $this->getMock(RequestStack::class);
+        $this->requestStack = $this->createMock(RequestStack::class);
 
         $this->request = $this->getMockBuilder(Request::class)
             ->disableOriginalConstructor()
@@ -105,7 +105,7 @@ class ProductManageInventoryFormViewListenerTest extends FormViewListenerTestCas
             ->willReturn($this->em);
         $env = $this->getMockBuilder(\Twig_Environment::class)->disableOriginalConstructor()->getMock();
         $this->event->expects($this->once())->method('getEnvironment')->willReturn($env);
-        $scrollData = $this->getMock(ScrollData::class);
+        $scrollData = $this->createMock(ScrollData::class);
         $this->event->expects($this->once())->method('getScrollData')->willReturn($scrollData);
         $scrollData->expects($this->once())->method('getData')->willReturn(
             ['dataBlocks' => [1 => ['title' => 'oro.product.sections.inventory.trans']]]

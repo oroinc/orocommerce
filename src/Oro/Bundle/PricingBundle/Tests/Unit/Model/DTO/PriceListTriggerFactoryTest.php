@@ -27,17 +27,17 @@ class PriceListTriggerFactoryTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->registry = $this->getMock(ManagerRegistry::class);
+        $this->registry = $this->createMock(ManagerRegistry::class);
         $this->priceRuleTriggerFactory = new PriceListTriggerFactory($this->registry);
     }
 
     public function testCreate()
     {
         /** @var PriceList|\PHPUnit_Framework_MockObject_MockObject $priceList **/
-        $priceList = $this->getMock(PriceList::class);
+        $priceList = $this->createMock(PriceList::class);
 
         /** @var Product|\PHPUnit_Framework_MockObject_MockObject $product **/
-        $product = $this->getMock(Product::class);
+        $product = $this->createMock(Product::class);
 
         $trigger = $this->priceRuleTriggerFactory->create($priceList, $product);
         $this->assertInstanceOf(PriceListTrigger::class, $trigger);
@@ -71,7 +71,7 @@ class PriceListTriggerFactoryTest extends \PHPUnit_Framework_TestCase
         /** @var Product $product */
         $product = $this->getEntity(Product::class, ['id' => 2]);
 
-        $em = $this->getMock(EntityManagerInterface::class);
+        $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->exactly(2))
             ->method('find')
             ->withConsecutive(
@@ -97,20 +97,22 @@ class PriceListTriggerFactoryTest extends \PHPUnit_Framework_TestCase
 
     public function testCreateFromArrayInvalidData()
     {
-        $this->setExpectedException(InvalidArgumentException::class, 'Message should not be empty.');
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Message should not be empty.');
         $this->priceRuleTriggerFactory->createFromArray(null);
     }
 
     public function testCreateFromArrayNoPriceList()
     {
-        $this->setExpectedException(InvalidArgumentException::class, 'Price List is required.');
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Price List is required.');
 
         $data = [
             PriceListTriggerFactory::PRICE_LIST => 1,
             PriceListTriggerFactory::PRODUCT => 2
         ];
 
-        $em = $this->getMock(EntityManagerInterface::class);
+        $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->once())
             ->method('find')
             ->with(PriceList::class, 1)

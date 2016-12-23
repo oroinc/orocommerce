@@ -25,7 +25,7 @@ class ProductVisibilitySearchQueryModifierTest extends \PHPUnit_Framework_TestCa
         $query = $this->getMockBuilder(Query::class)
             ->disableOriginalConstructor()->getMock();
 
-        $criteria = $this->getMock(Criteria::class);
+        $criteria = $this->createMock(Criteria::class);
 
         $expression = Criteria::expr()->in('status', $statuses);
 
@@ -47,7 +47,7 @@ class ProductVisibilitySearchQueryModifierTest extends \PHPUnit_Framework_TestCa
         $query = $this->getMockBuilder(Query::class)
             ->disableOriginalConstructor()->getMock();
 
-        $criteria = $this->getMock(Criteria::class);
+        $criteria = $this->createMock(Criteria::class);
 
         $expression = Criteria::expr()->in('inventory_status', $statuses);
 

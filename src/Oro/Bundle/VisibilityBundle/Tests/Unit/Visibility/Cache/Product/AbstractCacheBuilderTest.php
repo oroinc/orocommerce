@@ -28,9 +28,9 @@ abstract class AbstractCacheBuilderTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->builders = [
-            $this->getMock($this->cacheBuilderInterface),
-            $this->getMock($this->cacheBuilderInterface),
-            $this->getMock($this->cacheBuilderInterface)
+            $this->createMock($this->cacheBuilderInterface),
+            $this->createMock($this->cacheBuilderInterface),
+            $this->createMock($this->cacheBuilderInterface)
         ];
     }
 
@@ -42,14 +42,14 @@ abstract class AbstractCacheBuilderTest extends \PHPUnit_Framework_TestCase
 
         $this->assertCallAllBuilders(
             'buildCache',
-            $this->getMock(Scope::class)
+            $this->createMock(Scope::class)
         );
     }
 
     public function testResolveVisibilitySettings()
     {
-        $mock = $this->getMock('Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface');
-        $concreteBuilder = $this->getMock($this->cacheBuilderInterface);
+        $mock = $this->createMock('Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface');
+        $concreteBuilder = $this->createMock($this->cacheBuilderInterface);
 
         $concreteBuilder->expects($this->once())
             ->method('isVisibilitySettingsSupported')
@@ -77,7 +77,7 @@ abstract class AbstractCacheBuilderTest extends \PHPUnit_Framework_TestCase
     {
         $result = $this->assertCallAllBuilders(
             'isVisibilitySettingsSupported',
-            $this->getMock('Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface')
+            $this->createMock('Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface')
         );
 
         $this->assertFalse($result);
@@ -88,7 +88,7 @@ abstract class AbstractCacheBuilderTest extends \PHPUnit_Framework_TestCase
      */
     public function testIsVisibilitySettingsSupported()
     {
-        $concreteBuilder = $this->getMock($this->cacheBuilderInterface);
+        $concreteBuilder = $this->createMock($this->cacheBuilderInterface);
 
         $concreteBuilder->expects($this->once())
             ->method('isVisibilitySettingsSupported')
@@ -99,7 +99,7 @@ abstract class AbstractCacheBuilderTest extends \PHPUnit_Framework_TestCase
 
         $result = $this->assertCallAllBuilders(
             'isVisibilitySettingsSupported',
-            $this->getMock('Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface')
+            $this->createMock('Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface')
         );
 
         $this->assertTrue($result);
@@ -107,7 +107,7 @@ abstract class AbstractCacheBuilderTest extends \PHPUnit_Framework_TestCase
 
     public function testBuildCache()
     {
-        $this->assertCallAllBuilders('buildCache', $this->getMock(Scope::class));
+        $this->assertCallAllBuilders('buildCache', $this->createMock(Scope::class));
     }
 
     /**

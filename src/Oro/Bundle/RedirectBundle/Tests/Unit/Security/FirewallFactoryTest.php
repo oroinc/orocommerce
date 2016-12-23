@@ -12,10 +12,10 @@ class FirewallFactoryTest extends \PHPUnit_Framework_TestCase
     public function testCreate()
     {
         /** @var FirewallMapInterface|\PHPUnit_Framework_MockObject_MockObject $map */
-        $map = $this->getMock(FirewallMapInterface::class);
+        $map = $this->createMock(FirewallMapInterface::class);
 
         /** @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject $dispatcher */
-        $dispatcher = $this->getMock(EventDispatcherInterface::class);
+        $dispatcher = $this->createMock(EventDispatcherInterface::class);
 
         $factory = new FirewallFactory();
         $this->assertInstanceOf(FrameworkFirewall::class, $factory->create($map, $dispatcher));

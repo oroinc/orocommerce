@@ -52,7 +52,7 @@ class OrderPossibleShippingMethodsEventListenerTest extends \PHPUnit_Framework_T
         $this->priceProvider->expects(static::never())
             ->method('getApplicableMethodsWithTypesData');
 
-        $event = new OrderEvent($this->getMock(FormInterface::class), $order, $submittedData);
+        $event = new OrderEvent($this->createMock(FormInterface::class), $order, $submittedData);
 
         $this->listener->onOrderEvent($event);
 
@@ -85,7 +85,7 @@ class OrderPossibleShippingMethodsEventListenerTest extends \PHPUnit_Framework_T
     public function testOnOrderEvent(array $methods, $submittedData, array $expectedMethods)
     {
         $order = new Order();
-        $context = $this->getMock(ShippingContextInterface::class);
+        $context = $this->createMock(ShippingContextInterface::class);
         $this->factory->expects(static::any())
             ->method('create')
             ->with($order)
@@ -96,7 +96,7 @@ class OrderPossibleShippingMethodsEventListenerTest extends \PHPUnit_Framework_T
             ->with($context)
             ->willReturn($methods);
 
-        $event = new OrderEvent($this->getMock(FormInterface::class), $order, $submittedData);
+        $event = new OrderEvent($this->createMock(FormInterface::class), $order, $submittedData);
 
         $this->listener->onOrderEvent($event);
 
@@ -174,7 +174,7 @@ class OrderPossibleShippingMethodsEventListenerTest extends \PHPUnit_Framework_T
             ->method('getApplicableMethodsWithTypesData');
 
         $methods = ['field' => 'value'];
-        $event = new OrderEvent($this->getMock(FormInterface::class), $order, $methods);
+        $event = new OrderEvent($this->createMock(FormInterface::class), $order, $methods);
 
         $this->listener->onOrderEvent($event);
 
