@@ -10,6 +10,7 @@ use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
@@ -18,6 +19,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\Migrations\Data\ORM\LoadProductDefaultAttributeFamilyData;
 
 class LoadProductDemoData extends AbstractFixture implements ContainerAwareInterface
 {
@@ -68,6 +70,7 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
         $outOfStockStatus = $this->getOutOfStockInventoryStatus($manager);
 
         $allImageTypes = $this->getImageTypes();
+        $defaultAttributeFamily = $this->getDefaultAttributeFamily($manager);
 
         while (($data = fgetcsv($handler, 1000, ',')) !== false) {
             $row = array_combine($headers, array_values($data));
@@ -102,6 +105,7 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
             $product = new Product();
             $product->setOwner($businessUnit)
                 ->setOrganization($organization)
+                ->setAttributeFamily($defaultAttributeFamily)
                 ->setSku($row['sku'])
                 ->setInventoryStatus($outOfStockStatus)
                 ->setStatus(Product::STATUS_ENABLED)
@@ -206,5 +210,16 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
         }
 
         return $this->productUnis[$code];
+    }
+
+    /**
+     * @param ObjectManager $manager
+     * @return AttributeFamily|null
+     */
+    private function getDefaultAttributeFamily(ObjectManager $manager)
+    {
+        $familyRepository = $manager->getRepository(AttributeFamily::class);
+
+        return $familyRepository->findOneBy(['code' => LoadProductDefaultAttributeFamilyData::DEFAULT_FAMILY_CODE]);
     }
 }
