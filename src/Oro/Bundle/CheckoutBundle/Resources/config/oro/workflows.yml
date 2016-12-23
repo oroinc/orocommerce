@@ -715,7 +715,7 @@ workflows:
                             parameters: $checkout.paymentMethod
                         - '@payment_method_applicable':
                             message: oro.checkout.workflow.condition.payment_method_is_not_applicable.message
-                            payment_method: 'payment_term'
+                            payment_method: $checkout.paymentMethod
                             context: $.result.paymentContext
                         - '@check_request':
                             message: Invalid request
@@ -837,7 +837,7 @@ workflows:
                             parameters: [$payment_in_progress, true]
                         - '@payment_method_applicable':
                             message: oro.checkout.workflow.condition.payment_method_is_not_applicable_please_return_to_payment_step.message
-                            payment_method: 'payment_term'
+                            payment_method: $checkout.paymentMethod
                             context: $.result.paymentContext
                 conditions:
                     '@and':

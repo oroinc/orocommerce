@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend;
 
+use Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadPaymentMethodsConfigsRuleData;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountAddresses;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
 use Oro\Bundle\ActionBundle\Model\ActionData;
@@ -63,18 +64,27 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
             [],
             $this->generateBasicAuthHeader(TestAccountUserData::AUTH_USER, TestAccountUserData::AUTH_PW)
         );
-        $this->loadFixtures(
-            [
-                LoadAccountUserData::class,
-                LoadAccountAddresses::class,
-                LoadProductUnitPrecisions::class,
-                LoadShoppingListLineItems::class,
-                LoadCombinedProductPrices::class,
-                LoadPaymentTermData::class,
-                LoadShippingMethodsConfigsRules::class,
-            ]
-        );
+        $paymentFixtures = (array)$this->getPaymentFixtures();
+        $this->loadFixtures(array_merge([
+            LoadAccountUserData::class,
+            LoadAccountAddresses::class,
+            LoadProductUnitPrecisions::class,
+            LoadShoppingListLineItems::class,
+            LoadCombinedProductPrices::class,
+            LoadShippingMethodsConfigsRules::class,
+        ], $paymentFixtures));
         $this->registry = $this->getContainer()->get('doctrine');
+    }
+
+    /**
+     * @return array
+     */
+    protected function getPaymentFixtures()
+    {
+        return [
+            LoadPaymentTermData::class,
+            LoadPaymentMethodsConfigsRuleData::class
+        ];
     }
 
     /**
