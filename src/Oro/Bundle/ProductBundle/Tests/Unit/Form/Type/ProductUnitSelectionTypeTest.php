@@ -2,28 +2,28 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
-use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
-use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
-use Oro\Bundle\ProductBundle\Provider\SystemDefaultProductUnitProvider;
-use Oro\Bundle\ProductBundle\Service\SingleUnitModeService;
-use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitHolderTypeStub;
-use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Validation;
+use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+
+use Doctrine\Common\Collections\ArrayCollection;
+
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
+use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitHolderTypeStub;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -45,16 +45,6 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
     protected $labels = [];
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|SingleUnitModeService
-     */
-    protected $singleUnitModeService;
-
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|SystemDefaultProductUnitProvider
-     */
-    protected $defaultProductUnitProvider;
-
-    /**
      * @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface
      */
     protected $translator;
@@ -65,12 +55,6 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
     protected function setUp()
     {
         $this->translator = $this->createMock('Symfony\Component\Translation\TranslatorInterface');
-        $this->singleUnitModeService = $this->getMockBuilder(SingleUnitModeService::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->defaultProductUnitProvider = $this->getMockBuilder(SystemDefaultProductUnitProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
         $this->translator
             ->expects(static::any())
             ->method('trans')
@@ -80,12 +64,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
                 }
             );
         $productUnitLabelFormatter = new ProductUnitLabelFormatter($this->translator);
-        $this->formType = new ProductUnitSelectionType(
-            $productUnitLabelFormatter,
-            $this->translator,
-            $this->singleUnitModeService,
-            $this->defaultProductUnitProvider
-        );
+        $this->formType = new ProductUnitSelectionType($productUnitLabelFormatter, $this->translator);
         $this->formType->setEntityClass('Oro\Bundle\ProductBundle\Entity\ProductUnit');
 
         parent::setUp();
@@ -172,7 +151,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
             'getProductUnits'
         );
         $method->setAccessible(true);
-        $this->assertEquals($expectedData, $method->invokeArgs($this->formType, [$form, $product]));
+        $this->assertEquals($expectedData, $method->invokeArgs($this->formType, array($form, $product)));
     }
 
     /**
@@ -223,41 +202,6 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
                 ['box']
             ]
         ];
-    }
-
-    public function testSingleUnitModeProductUnits()
-    {
-        $unit = (new ProductUnit())->setCode('test01');
-        $precision = (new ProductUnitPrecision())->setUnit($unit);
-        $product = (new Product())->setPrimaryUnitPrecision($precision);
-
-        $method = new \ReflectionMethod(
-            'Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType',
-            'getSingleUnitModeProductUnits'
-        );
-        $method->setAccessible(true);
-        $this->assertEquals([$unit], $method->invokeArgs($this->formType, [$product]));
-    }
-
-    public function testSingleUnitModeProductUnitsWithDefault()
-    {
-        $unit = (new ProductUnit())->setCode('test01');
-        $unit2 = (new ProductUnit())->setCode('test02');
-        $precision = (new ProductUnitPrecision())->setUnit($unit);
-        $precision2 = (new ProductUnitPrecision())->setUnit($unit2);
-        $product = (new Product())->setPrimaryUnitPrecision($precision);
-
-        $this->defaultProductUnitProvider
-            ->expects(static::once())
-            ->method('getDefaultProductUnitPrecision')
-            ->willReturn($precision2);
-
-        $method = new \ReflectionMethod(
-            'Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType',
-            'getSingleUnitModeProductUnits'
-        );
-        $method->setAccessible(true);
-        $this->assertEquals([$unit, $unit2], $method->invokeArgs($this->formType, [$product]));
     }
 
     /**
@@ -631,11 +575,6 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
         array $options = [],
         $expectedFieldOverride = false
     ) {
-        $this->singleUnitModeService
-            ->expects(static::any())
-            ->method('isSingleUnitMode')
-            ->willReturn(true);
-
         $form = $this->factory->create($this->formType, $productUnitHolder, $options);
 
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $parentForm */
@@ -672,7 +611,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
         }
 
         $event = new FormEvent($form, null);
-        $this->formType->setSingleModeUnits($event);
+        $this->formType->setAcceptableUnits($event);
     }
 
     /**
@@ -719,7 +658,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
     {
         $unitPrecision = new ProductUnitPrecision();
         $unitPrecision->setUnit($this->getProductUnit());
-        $productHolder = $this->createProductHolder($code, (new Product())->setPrimaryUnitPrecision($unitPrecision));
+        $productHolder = $this->createProductHolder($code, (new Product())->addUnitPrecision($unitPrecision));
 
         return $productHolder;
     }

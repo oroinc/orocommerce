@@ -30,17 +30,13 @@ class ProductPriceUnitSelectorType extends ProductUnitSelectionType
             return parent::getProductUnits($form, $product);
         }
 
-        if ($this->singleUnitModeService->isSingleUnitMode()) {
-            return $this->getSingleUnitModeProductUnits($product);
-        }
-
         /** @var ProductUnitPrecision $primaryUnitPrecision */
         $primaryUnitPrecision = $productForm->get('primaryUnitPrecision')->getData();
 
         /** @var ProductUnitPrecision[] $additionalUnitPrecisions */
         $additionalUnitPrecisions = $productForm->get('additionalUnitPrecisions')->getData();
 
-        return $this->getProductUnitsForMultiUnitMode($primaryUnitPrecision, $additionalUnitPrecisions);
+        return $this->getAllProductEnabledUnits($primaryUnitPrecision, $additionalUnitPrecisions);
     }
 
     /**
@@ -48,10 +44,8 @@ class ProductPriceUnitSelectorType extends ProductUnitSelectionType
      * @param ProductUnitPrecision[] $additionalUnitPrecisions
      * @return ProductUnit[]
      */
-    protected function getProductUnitsForMultiUnitMode(
-        ProductUnitPrecision $primaryUnitPrecision,
-        $additionalUnitPrecisions
-    ) {
+    protected function getAllProductEnabledUnits(ProductUnitPrecision $primaryUnitPrecision, $additionalUnitPrecisions)
+    {
         $units = [];
         if ($primaryUnitPrecision) {
             $units[] = $primaryUnitPrecision->getUnit();

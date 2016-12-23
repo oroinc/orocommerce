@@ -222,6 +222,7 @@ services:
         public: false
         arguments:
             - "@oro_config.manager"
+            - "@oro_product.provider.default_product_unit_provider.system"
 
     oro_product.layout.data_provider.single_unit_mode:
         class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\SingleUnitModeProvider'
@@ -239,7 +240,7 @@ services:
         public: false
         arguments:
             - "@oro_config.manager"
-            - "@doctrine"
+            - "@oro_entity.doctrine_helper"
         tags:
             - {name: oro_product.default_product_unit_provider, priority: 0}
 

@@ -6,8 +6,6 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
-use Oro\Bundle\ProductBundle\Provider\SystemDefaultProductUnitProvider;
-use Oro\Bundle\ProductBundle\Service\SingleUnitModeService;
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
@@ -38,31 +36,13 @@ class ProductUnitSelectionType extends AbstractProductAwareType
     protected $entityClass;
 
     /**
-     * @var SingleUnitModeService
-     */
-    protected $singleUnitModeService;
-
-    /**
-     * @var SystemDefaultProductUnitProvider
-     */
-    protected $defaultProductUnitProvider;
-
-    /**
      * @param ProductUnitLabelFormatter $productUnitFormatter
      * @param TranslatorInterface $translator
-     * @param SingleUnitModeService $singleUnitModeService
-     * @param SystemDefaultProductUnitProvider $defaultProductUnitProvider
      */
-    public function __construct(
-        ProductUnitLabelFormatter $productUnitFormatter,
-        TranslatorInterface $translator,
-        SingleUnitModeService $singleUnitModeService,
-        SystemDefaultProductUnitProvider $defaultProductUnitProvider
-    ) {
+    public function __construct(ProductUnitLabelFormatter $productUnitFormatter, TranslatorInterface $translator)
+    {
         $this->productUnitFormatter = $productUnitFormatter;
         $this->translator = $translator;
-        $this->singleUnitModeService = $singleUnitModeService;
-        $this->defaultProductUnitProvider = $defaultProductUnitProvider;
     }
 
     /**
@@ -70,19 +50,15 @@ class ProductUnitSelectionType extends AbstractProductAwareType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'setSingleModeUnits']);
+        $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'setAcceptableUnits']);
         $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'validateUnits']);
     }
 
     /**
      * @param FormEvent $event
      */
-    public function setSingleModeUnits(FormEvent $event)
+    public function setAcceptableUnits(FormEvent $event)
     {
-        if (!$this->singleUnitModeService->isSingleUnitMode()) {
-            return;
-        }
-
         $form = $event->getForm();
         $options = $form->getConfig()->getOptions();
 
@@ -100,13 +76,10 @@ class ProductUnitSelectionType extends AbstractProductAwareType
             return;
         }
 
-        //replace entity choices
-        $options['choices'] = $this->getSingleUnitModeProductUnits($product);
+        $options['choices'] = $this->getProductUnits($form, $product);
         $options['choices_updated'] = true;
-        $options['choice_loader'] = null;
-        $options['choice_list'] = null;
 
-        $formParent->add($form->getName(), $this->getName(), $options);
+        $formParent->add($form->getName(), static::class, $options);
     }
 
     /**
@@ -147,10 +120,6 @@ class ProductUnitSelectionType extends AbstractProductAwareType
         $choices = [];
 
         if ($product) {
-            if ($this->singleUnitModeService->isSingleUnitMode()) {
-                return $this->getSingleUnitModeProductUnits($product);
-            }
-
             foreach ($product->getAdditionalUnitPrecisions() as $unitPrecision) {
                 if ($sell === null) {
                     $choices[] = $unitPrecision->getUnit();
@@ -167,28 +136,6 @@ class ProductUnitSelectionType extends AbstractProductAwareType
         }
 
         return $choices;
-    }
-
-    /**
-     * @param Product $product
-     * @return ProductUnit[]
-     */
-    protected function getSingleUnitModeProductUnits(Product $product)
-    {
-        $units = [];
-        $defaultUnit = $this->defaultProductUnitProvider->getDefaultProductUnitPrecision();
-        $primaryUnitPrecision = $product->getPrimaryUnitPrecision();
-        $primaryUnitCode = null;
-
-        if ($primaryUnitPrecision) {
-            $units[] = $primaryUnitPrecision->getUnit();
-            $primaryUnitCode = $primaryUnitPrecision->getUnit()->getCode();
-        }
-        if ($defaultUnit && $defaultUnit->getUnit()->getCode() !== $primaryUnitCode) {
-            $units[] = $defaultUnit->getUnit();
-        }
-
-        return $units;
     }
 
     /**

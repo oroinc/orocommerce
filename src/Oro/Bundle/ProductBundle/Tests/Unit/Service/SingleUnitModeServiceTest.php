@@ -6,6 +6,7 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\Provider\DefaultProductUnitProviderInterface;
 use Oro\Bundle\ProductBundle\Service\SingleUnitModeService;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
@@ -24,12 +25,20 @@ class SingleUnitModeServiceTest extends \PHPUnit_Framework_TestCase
      */
     protected $configManager;
 
+    /**
+     * @var DefaultProductUnitProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $unitProvider;
+
     public function setUp()
     {
         $this->configManager = $this->getMockBuilder(ConfigManager::class)
             ->disableOriginalConstructor()->getMock();
 
-        $this->unitModeProvider = new SingleUnitModeService($this->configManager);
+        $this->unitProvider = $this->getMockBuilder(DefaultProductUnitProviderInterface::class)
+            ->disableOriginalConstructor()->getMock();
+
+        $this->unitModeProvider = new SingleUnitModeService($this->configManager, $this->unitProvider);
     }
 
     public function testIsSingleUnitMode()
@@ -117,12 +126,15 @@ class SingleUnitModeServiceTest extends \PHPUnit_Framework_TestCase
 
     public function testGetConfigDefaultUnit()
     {
-        $defaultUnit = 'item';
-
-        $this->configManager->expects(static::once())
-            ->method('get')
-            ->with('oro_product.default_unit')
+        $defaultUnit = $this->createMock(ProductUnit::class);
+        $defaultUnitPrecision = $this->createMock(ProductUnitPrecision::class);
+        $defaultUnitPrecision->expects(static::once())
+            ->method('getUnit')
             ->willReturn($defaultUnit);
+
+        $this->unitProvider->expects(static::once())
+            ->method('getDefaultProductUnitPrecision')
+            ->willReturn($defaultUnitPrecision);
 
         $this->assertEquals($defaultUnit, $this->unitModeProvider->getConfigDefaultUnit());
     }

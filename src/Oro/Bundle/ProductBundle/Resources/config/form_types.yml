@@ -1,3 +1,6 @@
+parameters:
+    oro_product.form.type.product_primary_unit_precision.class: 'Oro\Bundle\ProductBundle\Form\Type\ProductPrimaryUnitPrecisionType'
+
 services:
     # Product form types
     oro_product.form.type.product:
@@ -30,8 +33,6 @@ services:
         arguments:
             - "@oro_product.formatter.product_unit_label"
             - "@translator"
-            - "@oro_product.service.single_unit_mode"
-            - "@oro_product.provider.default_product_unit_provider.system"
         calls:
             - [setEntityClass, ['%oro_product.entity.product_unit.class%']]
         tags:
@@ -46,7 +47,7 @@ services:
             - { name: form.type, alias: oro_quantity }
 
     oro_product.form.type.product_primary_unit_precision:
-        class: 'Oro\Bundle\ProductBundle\Form\Type\ProductPrimaryUnitPrecisionType'
+        class: '%oro_product.form.type.product_primary_unit_precision.class%'
         public: true
         calls:
             - [setDataClass, ['%oro_product.entity.product_unit_precision.class%']]

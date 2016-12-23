@@ -5,20 +5,31 @@ namespace Oro\Bundle\ProductBundle\Service;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Provider\DefaultProductUnitProviderInterface;
 
 class SingleUnitModeService
 {
     /**
      * @var ConfigManager
      */
-    protected $configManager;
+    private $configManager;
+
+    /**
+     * @var DefaultProductUnitProviderInterface
+     */
+    private $defaultProductUnitProvider;
 
     /**
      * @param ConfigManager $configManager
+     * @param DefaultProductUnitProviderInterface $defaultProductUnitProvider
      */
-    public function __construct(ConfigManager $configManager)
-    {
+    public function __construct(
+        ConfigManager $configManager,
+        DefaultProductUnitProviderInterface $defaultProductUnitProvider
+    ) {
         $this->configManager = $configManager;
+        $this->defaultProductUnitProvider = $defaultProductUnitProvider;
     }
 
     /**
@@ -61,11 +72,15 @@ class SingleUnitModeService
     }
 
     /**
-     * @return string
+     * @return null|ProductUnit
      */
     public function getConfigDefaultUnit()
     {
-        return $this->configManager->get(Configuration::getConfigKeyByName(Configuration::DEFAULT_UNIT));
+        $defaultUnitPrecision = $this->defaultProductUnitProvider->getDefaultProductUnitPrecision();
+        if ($defaultUnitPrecision) {
+            return $defaultUnitPrecision->getUnit();
+        }
+        return null;
     }
 
     /**

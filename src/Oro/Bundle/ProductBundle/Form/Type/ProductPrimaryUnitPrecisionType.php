@@ -52,14 +52,7 @@ class ProductPrimaryUnitPrecisionType extends AbstractType
                     ]
                 );
             } else {
-                $form->add(
-                    'unit',
-                    ProductUnitSelectionType::NAME,
-                    [
-                        'compact' => $options['compact'],
-                        'product' => $unitPrecision ? $unitPrecision->getProduct() : null
-                    ]
-                );
+                $form->add('unit', ProductUnitSelectionType::NAME, ['compact' => $options['compact']]);
             }
         });
     }

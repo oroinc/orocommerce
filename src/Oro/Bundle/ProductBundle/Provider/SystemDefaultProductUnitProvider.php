@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\ProductBundle\Provider;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 
@@ -13,40 +13,31 @@ class SystemDefaultProductUnitProvider implements DefaultProductUnitProviderInte
     /**
      * @var ConfigManager
      */
-    protected $configManager;
+    private $configManager;
 
     /**
-     * @var ManagerRegistry
+     * @var DoctrineHelper
      */
-    protected $registry;
+    private $doctrineHelper;
 
     /**
      * @param ConfigManager $configManager
-     * @param ManagerRegistry $registry
+     * @param DoctrineHelper $doctrineHelper
      */
-    public function __construct(ConfigManager $configManager, ManagerRegistry $registry)
+    public function __construct(ConfigManager $configManager, DoctrineHelper $doctrineHelper)
     {
         $this->configManager = $configManager;
-        $this->registry = $registry;
+        $this->doctrineHelper = $doctrineHelper;
     }
-    
+
     /**
      * @return ProductUnitPrecision|null
      */
     public function getDefaultProductUnitPrecision()
     {
-        $defaultUnitValue = $this->configManager->get('oro_product.default_unit');
-        $defaultUnitPrecision = (int)$this->configManager->get('oro_product.default_unit_precision');
-
-        $unit = $this->registry
-            ->getManagerForClass('OroProductBundle:ProductUnit')
-            ->getRepository('OroProductBundle:ProductUnit')
-            ->findOneBy(['code' => $defaultUnitValue]);
-        if ($unit instanceof ProductUnit) {
-            $productUnitPrecision = new ProductUnitPrecision();
-            return $productUnitPrecision->setUnit($unit)->setPrecision($defaultUnitPrecision);
-        } else {
-            return null;
-        }
+        $defaultUnitCode = $this->configManager->get(Configuration::getConfigKeyByName(Configuration::DEFAULT_UNIT));
+        $defaultPrecision = (int)$this->configManager->get('oro_product.default_unit_precision');
+        $unit = $this->doctrineHelper->getEntityReference(ProductUnit::class, $defaultUnitCode);
+        return (new ProductUnitPrecision())->setUnit($unit)->setPrecision($defaultPrecision);
     }
 }
