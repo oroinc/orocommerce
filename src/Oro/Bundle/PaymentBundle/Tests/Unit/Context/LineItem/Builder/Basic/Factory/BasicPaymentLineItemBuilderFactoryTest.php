@@ -35,7 +35,7 @@ class BasicPaymentLineItemBuilderFactoryTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->productHolderMock = $this->getMock(ProductHolderInterface::class);
+        $this->productHolderMock = $this->createMock(ProductHolderInterface::class);
     }
 
     public function testCreate()

@@ -58,7 +58,7 @@ class ShippingMethodsConfigsRuleRepository extends EntityRepository
         }
         return $qb
             ->having('COUNT(methodConfigs.id) = 0')
-            ->groupBy('methodsConfigsRule.id')
+            ->groupBy('rule.id')
             ->getQuery()->execute()
         ;
     }

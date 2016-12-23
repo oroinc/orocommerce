@@ -59,7 +59,12 @@ class ShippingMethodsConfigsRuleRepositoryTest extends WebTestCase
             $currency
         );
 
-        static::assertEquals($expectedRules, $actualRules);
+        static::assertEquals(count($expectedRules), count($actualRules));
+        static::assertTrue(in_array($expectedRules[0], $actualRules, true));
+        static::assertTrue(in_array($expectedRules[1], $actualRules, true));
+        static::assertTrue(in_array($expectedRules[2], $actualRules, true));
+        static::assertTrue(in_array($expectedRules[3], $actualRules, true));
+        static::assertTrue(in_array($expectedRules[4], $actualRules, true));
     }
 
     /**
@@ -89,34 +94,19 @@ class ShippingMethodsConfigsRuleRepositoryTest extends WebTestCase
         ];
     }
 
-    /**
-     * @dataProvider getByCurrencyWithoutDestinationDataProvider
-     *
-     * @param string $currency
-     * @param array|ShippingMethodsConfigsRule[] $expectedRules
-     */
-    public function testGetByCurrencyWithoutDestination($currency, array $expectedRules)
+    public function testGetByCurrencyWithoutDestination()
     {
-        $expectedRules = $this->getEntitiesByReferences($expectedRules);
+        $currency = 'UAH';
+        $expectedRules = $this->getEntitiesByReferences([
+            'shipping_rule.10',
+            'shipping_rule.11',
+        ]);
+
         $actualRules = $this->repository->getByCurrencyWithoutDestination($currency);
 
-        static::assertEquals($expectedRules, $actualRules);
-    }
-
-    /**
-     * @return array
-     */
-    public function getByCurrencyWithoutDestinationDataProvider()
-    {
-        return [
-            [
-                'currency' => 'UAH',
-                'expectedRules' => [
-                    'shipping_rule.10',
-                    'shipping_rule.11',
-                ]
-            ],
-        ];
+        static::assertEquals(count($expectedRules), count($actualRules));
+        static::assertTrue(in_array($expectedRules[0], $actualRules, true));
+        static::assertTrue(in_array($expectedRules[1], $actualRules, true));
     }
 
     public function testGetRulesWithoutShippingMethods()

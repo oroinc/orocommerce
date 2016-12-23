@@ -137,7 +137,7 @@ class PaymentMethodProviderTest extends \PHPUnit_Framework_TestCase
      */
     private function createPaymentMethodMock($methodType)
     {
-        return $this->getMock(PaymentMethodInterface::class)
+        return $this->createMock(PaymentMethodInterface::class)
             ->expects($this->never())
             ->method('getType')
             ->willReturn($methodType);

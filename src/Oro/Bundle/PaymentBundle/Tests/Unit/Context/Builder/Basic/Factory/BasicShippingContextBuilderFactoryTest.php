@@ -33,14 +33,14 @@ class BasicPaymentContextBuilderFactoryTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->lineItemsCollectionMock = $this->getMock(PaymentLineItemCollectionInterface::class);
+        $this->lineItemsCollectionMock = $this->createMock(PaymentLineItemCollectionInterface::class);
         $this->subtotalMock = $this->getMockBuilder(Price::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->sourceEntityMock = $this->getMockBuilder(Checkout::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->paymentLineItemCollectionFactoryMock = $this->getMock(
+        $this->paymentLineItemCollectionFactoryMock = $this->createMock(
             PaymentLineItemCollectionFactoryInterface::class
         );
     }

@@ -55,9 +55,9 @@ class PaymentContextTest extends \PHPUnit_Framework_TestCase
         $this->customerUserMock = $this->getMockBuilder(AccountUser::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->lineItemsCollectionMock = $this->getMock(PaymentLineItemCollectionInterface::class);
-        $this->billingAddressMock = $this->getMock(AddressInterface::class);
-        $this->shippingAddressMock = $this->getMock(AddressInterface::class);
+        $this->lineItemsCollectionMock = $this->createMock(PaymentLineItemCollectionInterface::class);
+        $this->billingAddressMock = $this->createMock(AddressInterface::class);
+        $this->shippingAddressMock = $this->createMock(AddressInterface::class);
         $this->subtotalMock = $this->getMockBuilder(Price::class)
             ->disableOriginalConstructor()
             ->getMock();
