@@ -163,7 +163,10 @@ oro:
                 default_product_unit.title: 'Primary Unit'
                 product_images.title: 'Product Images'
                 product_image_watermark.title: 'Product Image Watermark'
+                quick_order.title: Quick Order Form
+                quick_order_form.title: Quick Order Form
             fields:
+                enable_quick_order_form.title: Enable Quick Order Form
                 unit_rounding_type.label: 'Unit Rounding Type'
                 general_frontend_inventory_statuses_visibility.label: 'Visible Inventory Statuses'
                 default_unit.label: 'Default Primary Unit'
@@ -339,3 +342,8 @@ oro:
     webcatalog:
         contentvariant:
             product_collection_page_rule.label: Product Collection Assignment Rule
+
+    feature:
+        quick_order_form:
+            label: Quick Order Form
+            description: Quick Order Form functionality allows users to have a simpler and faster way of making orders or requests for quote
