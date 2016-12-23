@@ -70,16 +70,6 @@ abstract class AbstractPayflowGatewayViewTest extends \PHPUnit_Framework_TestCas
      */
     abstract protected function getAllowedCCTypesKey();
 
-    protected function tearDown()
-    {
-        unset(
-            $this->methodView,
-            $this->paymentConfig,
-            $this->formFactory,
-            $this->paymentTransactionProvider
-        );
-    }
-
     public function testGetOptionsWithoutZeroAmount()
     {
         $formView = $this->createMock('Symfony\Component\Form\FormView');

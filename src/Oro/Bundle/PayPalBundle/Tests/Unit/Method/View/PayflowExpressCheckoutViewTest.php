@@ -40,17 +40,6 @@ class PayflowExpressCheckoutViewTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('_payment_methods_payflow_express_checkout_widget', $this->methodView->getBlock());
     }
 
-    public function testGetOrder()
-    {
-        $order = '100';
-
-        $this->paymentConfig->expects($this->once())
-            ->method('getOrder')
-            ->willReturn((int)$order);
-
-        $this->assertSame((int)$order, $this->methodView->getOrder());
-    }
-
     public function testGetPaymentMethodType()
     {
         $this->assertEquals('payflow_express_checkout', $this->methodView->getPaymentMethodType());

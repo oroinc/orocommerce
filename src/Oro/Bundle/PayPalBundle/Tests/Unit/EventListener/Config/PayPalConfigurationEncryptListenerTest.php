@@ -43,11 +43,9 @@ class PayPalConfigurationEncryptListenerTest extends \PHPUnit_Framework_TestCase
     {
         $encryptedPasswordData = 'encrypted_password_data';
 
-        $fullEnabledKey = $this->getFullConfigKey(Configuration::PAYFLOW_GATEWAY_ENABLED_KEY);
         $fullPasswordKey = $this->getFullConfigKey(Configuration::PAYFLOW_GATEWAY_PASSWORD_KEY);
 
         $settings = [
-            $fullEnabledKey => ['value' => true],
             $fullPasswordKey => ['value' => 'password'],
         ];
 
@@ -60,12 +58,6 @@ class PayPalConfigurationEncryptListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener->beforeSave($event);
 
         $actualSettings = $event->getSettings();
-
-        $this->assertArrayHasKey($fullEnabledKey, $actualSettings);
-        $this->assertEquals(
-            $settings[$fullEnabledKey],
-            $actualSettings[$fullEnabledKey]
-        );
 
         $this->assertArrayHasKey($fullPasswordKey, $actualSettings);
         $this->assertEquals(['value' => $encryptedPasswordData], $actualSettings[$fullPasswordKey]);
@@ -115,18 +107,6 @@ class PayPalConfigurationEncryptListenerTest extends \PHPUnit_Framework_TestCase
                 'value' => 'email@example.com',
                 'full' => false,
                 'expectedValue' => 'encrypted_email@example.com'
-            ],
-            'full with non-encryptable value' => [
-                'key' => $this->getFullConfigKey(Configuration::PAYFLOW_GATEWAY_ENABLED_KEY),
-                'value' => ['value' => true],
-                'full' => true,
-                'expectedValue' => ['value' => true]
-            ],
-            'non-full with non-encryptable value' => [
-                'key' => $this->getFullConfigKey(Configuration::PAYFLOW_GATEWAY_ENABLED_KEY),
-                'value' => true,
-                'full' => false,
-                'expectedValue' => true
             ],
             'unhandled key' => [
                 'key' => 'somekey.key',
