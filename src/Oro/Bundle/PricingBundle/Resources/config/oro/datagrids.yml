@@ -205,6 +205,8 @@ datagrids:
         extends:                base-price-list-relations-grid
         source:
             query:
+                select:
+                    - relatedEntity.id as relatedEntityId
                 from:
                     - { table: %oro_pricing.entity.price_list.class%, alias: priceList }
                 join:
@@ -217,6 +219,8 @@ datagrids:
         properties:
             view_link:
                 route:  oro_customer_account_group_view
+                params:
+                    id: relatedEntityId
         actions:
             view:
                 acl_resource: oro_account_group_view

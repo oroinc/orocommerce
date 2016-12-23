@@ -34,7 +34,7 @@ define(function(require) {
             this.$form = this.$button.closest('form');
 
             if (this.formHasErrors() && !this.options.submitWithErrors) {
-                this.$button.addClass('btn-inactive');
+                this.$button.addClass('disabled');
             }
 
             this.$button.on('click', _.bind(this.submit, this));
