@@ -157,7 +157,7 @@ class WebsiteSearchCategoryIndexerListenerTest extends \PHPUnit_Framework_TestCa
             ->method('getCategoryMapByProducts')
             ->willReturn([$product->getId() => $category]);
 
-        $event = new IndexEntityEvent([$product], ['some_context']);
+        $event = new IndexEntityEvent(Product::class, [$product], ['some_context']);
 
         $this->websiteContextManager
             ->expects($this->once())

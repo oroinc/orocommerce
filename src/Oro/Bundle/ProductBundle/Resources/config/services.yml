@@ -271,6 +271,14 @@ services:
         tags:
             - { name: kernel.event_listener, event: console.command, name: onConsoleCommand }
 
+    oro_product.event_listener.product_content_variant_reindex:
+        class: 'Oro\Bundle\ProductBundle\EventListener\ProductContentVariantReindexEventListener'
+        arguments:
+            - "@event_dispatcher"
+        tags:
+            - { name: doctrine.event_listener, event: onFlush }
+            - { name: kernel.event_listener, event: oro.form.update_handler.after_entity_flush, method: onFormAfterFlush }
+
     oro_product.model.product_visibility_query_builder_modifier:
         class: 'Oro\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier'
         public: false
@@ -522,6 +530,11 @@ services:
         tags:
             - { name: layout.data_provider, alias: oro_product_quick_add_collection }
 
+    oro_product.provider.product_content_variant_provider:
+        class: Oro\Bundle\ProductBundle\Provider\ProductContentVariantProvider
+        tags:
+            - { name: oro_web_catalog.content_variant_provider }
+            
     oro_product.event_listener.attribute_family_form_view:
         parent: oro_entity_config.event_listener.attribute_family_form_view.abstract
         tags:

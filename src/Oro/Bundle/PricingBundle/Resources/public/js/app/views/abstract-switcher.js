@@ -18,6 +18,7 @@ define(function(require) {
             errorMessage: ''
         },
 
+        $form: null,
         field: null,
         expression: null,
         expressionInput: null,
@@ -32,10 +33,10 @@ define(function(require) {
             this.visibleClass = 'visible';
             this.options = _.defaults(options || {}, this.options);
             if (!this.options.selectors.fieldType) {
-                throw "Option fieldType must be defined";
+                throw 'Option fieldType must be defined';
             }
             if (!this.options.selectors.expressionType) {
-                throw "Option expressionType must be defined";
+                throw 'Option expressionType must be defined';
             }
 
             this.field = this.$el.find('div' + this.options.selectors.fieldType);
@@ -116,11 +117,30 @@ define(function(require) {
         },
 
         isValid: function() {
-            throw "Abstract method isValid not implemented";
+            throw 'Abstract method isValid not implemented';
         },
 
         addValidationError: function() {
-            throw "Abstract method addValidationError not implemented";
+            throw 'Abstract method addValidationError not implemented';
+        },
+
+        /**
+         * @inheritDoc
+         */
+        dispose: function(options) {
+            if (this.disposed) {
+                return;
+            }
+
+            delete this.options;
+            delete this.field;
+            delete this.$form;
+            delete this.expression;
+            delete this.expressionInput;
+            delete this.expressionLink;
+            delete this.fieldLink;
+
+            AbstractSwitcher.__super__.dispose.apply(this, arguments);
         }
     });
 
