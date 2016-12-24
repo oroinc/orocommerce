@@ -19,12 +19,14 @@ class PaymentRuleActionsVisibilityProvider
             $visibility[$action] = true;
         }
 
+        $rule = $record->getValue('rule');
+
         if (array_key_exists('enable', $visibility)) {
-            $visibility['enable'] = !$record->getValue('enabled');
+            $visibility['enable'] = !$rule->isEnabled();
         }
 
         if (array_key_exists('disable', $visibility)) {
-            $visibility['disable'] = $record->getValue('enabled');
+            $visibility['disable'] = $rule->isEnabled();
         }
 
         return $visibility;
