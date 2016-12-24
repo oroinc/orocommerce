@@ -42,7 +42,7 @@ class SystemPageContentVariantTypeTest extends \PHPUnit_Framework_TestCase
     public function testGetRouteData()
     {
         /** @var ContentVariant|\PHPUnit_Framework_MockObject_MockObject $contentVariant **/
-        $contentVariant = $this->getMock(ContentVariant::class);
+        $contentVariant = $this->createMock(ContentVariant::class);
         $contentVariant->expects($this->once())
             ->method('getSystemPageRoute')
             ->willReturn('test_route');

@@ -28,7 +28,7 @@ config:
         'orofrontend/default/js/app/views/sticky-panel-view': 'orofrontend/default/js/app/views/sticky-panel-view.js'
         'orofrontend/default/js/app/views/dom-relocation-view': 'orofrontend/default/js/app/views/dom-relocation-view.js'
         'orofrontend/default/js/app/modules/input-widgets': 'bundles/orofrontend/default/js/app/modules/input-widgets.js'
-        'orofrontend/default/js/app/modules/action-manager': 'bundles/orofrontend/default/js/app/modules/action-manager.js'
+        'orofrontend/default/js/app/modules/button-manager': 'bundles/orofrontend/default/js/app/modules/button-manager.js'
         'orofrontend/default/js/app/modules/delete-action': 'bundles/orofrontend/default/js/app/modules/delete-action.js'
         'orofrontend/default/js/app/modules/select-filter': 'bundles/orofrontend/default/js/app/modules/select-filter.js'
 
@@ -38,5 +38,6 @@ config:
         'orofrontend/js/app/components/list-slider-component': 'bundles/orofrontend/js/app/components/list-slider-component.js'
         'orofrontend/default/js/app/components/rule-editor-component': 'orofrontend/default/js/app/components/rule-editor-component.js'
         'orofrontend/default/js/app/views/rule-editor-view': 'orofrontend/default/js/app/views/rule-editor-view.js'
+        'orofrontend/js/app/components/popup-gallery-widget': 'bundles/orofrontend/js/app/components/popup-gallery-widget.js'
     appmodules:
         - orofrontend/js/app/modules/inline-editor-types-map-module

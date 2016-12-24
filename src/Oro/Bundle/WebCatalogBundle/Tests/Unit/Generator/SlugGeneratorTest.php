@@ -30,7 +30,7 @@ class SlugGeneratorTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->contentVariantTypeRegistry = $this->getMock(ContentVariantTypeRegistry::class);
+        $this->contentVariantTypeRegistry = $this->createMock(ContentVariantTypeRegistry::class);
         $this->slugGenerator = new SlugGenerator($this->contentVariantTypeRegistry);
     }
 
@@ -41,7 +41,7 @@ class SlugGeneratorTest extends \PHPUnit_Framework_TestCase
         $routData = new RouteData($routeId, $routeParameters);
         $scope = new Scope();
 
-        $contentVariantType = $this->getMock(ContentVariantTypeInterface::class);
+        $contentVariantType = $this->createMock(ContentVariantTypeInterface::class);
         $contentVariantType->expects($this->once())
             ->method('getRouteData')
             ->willReturn($routData);
@@ -101,7 +101,7 @@ class SlugGeneratorTest extends \PHPUnit_Framework_TestCase
         $slugPrototype->setLocalization($localization);
         $slugPrototype->setString($slugUrl);
 
-        $contentVariantType = $this->getMock(ContentVariantTypeInterface::class);
+        $contentVariantType = $this->createMock(ContentVariantTypeInterface::class);
         $contentVariantType->expects($this->once())
             ->method('getRouteData')
             ->willReturn($routData);
@@ -166,7 +166,7 @@ class SlugGeneratorTest extends \PHPUnit_Framework_TestCase
         $slugPrototype->setLocalization($localization);
         $slugPrototype->setString($slugUrl);
 
-        $contentVariantType = $this->getMock(ContentVariantTypeInterface::class);
+        $contentVariantType = $this->createMock(ContentVariantTypeInterface::class);
         $contentVariantType->expects($this->once())
             ->method('getRouteData')
             ->willReturn($routData);
@@ -211,7 +211,7 @@ class SlugGeneratorTest extends \PHPUnit_Framework_TestCase
         $routData = new RouteData($routeId, $routeParameters);
         $scope = new Scope();
 
-        $contentVariantType = $this->getMock(ContentVariantTypeInterface::class);
+        $contentVariantType = $this->createMock(ContentVariantTypeInterface::class);
         $contentVariantType->expects($this->once())
             ->method('getRouteData')
             ->willReturn($routData);
@@ -282,7 +282,7 @@ class SlugGeneratorTest extends \PHPUnit_Framework_TestCase
         $contentNode->addContentVariant($contentVariant);
         $contentNode->addSlugPrototype($slugPrototype);
 
-        $contentVariantType = $this->getMock(ContentVariantTypeInterface::class);
+        $contentVariantType = $this->createMock(ContentVariantTypeInterface::class);
         $this->contentVariantTypeRegistry->expects($this->once())
             ->method('getContentVariantType')
             ->willReturn($contentVariantType);
@@ -317,7 +317,7 @@ class SlugGeneratorTest extends \PHPUnit_Framework_TestCase
         $slugPrototype = new LocalizedFallbackValue();
         $slugPrototype->setString($slugUrl);
 
-        $contentVariantType = $this->getMock(ContentVariantTypeInterface::class);
+        $contentVariantType = $this->createMock(ContentVariantTypeInterface::class);
         $contentVariantType->expects($this->once())
             ->method('getRouteData')
             ->willReturn($routData);

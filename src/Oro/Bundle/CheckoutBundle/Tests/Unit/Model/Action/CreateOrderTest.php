@@ -35,7 +35,7 @@ class CreateOrderTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->contextAccessor = new ContextAccessor();
-        $this->mapper = $this->getMock(MapperInterface::class);
+        $this->mapper = $this->createMock(MapperInterface::class);
 
         /** @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject $eventDispatcher */
         $eventDispatcher = $this
@@ -76,7 +76,8 @@ class CreateOrderTest extends \PHPUnit_Framework_TestCase
      */
     public function testInitializeException(array $options, $exception, $exceptionMessage)
     {
-        $this->setExpectedException($exception, $exceptionMessage);
+        $this->expectException($exception);
+        $this->expectExceptionMessage($exceptionMessage);
         $this->action->initialize($options);
     }
 

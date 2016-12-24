@@ -220,7 +220,7 @@ class FrontendAccountUserTypeTest extends AccountUserTypeTest
      */
     private function createTranslator()
     {
-        $translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+        $translator = $this->createMock('Symfony\Component\Translation\TranslatorInterface');
         $translator->expects($this->any())
             ->method('trans')
             ->willReturnCallback(

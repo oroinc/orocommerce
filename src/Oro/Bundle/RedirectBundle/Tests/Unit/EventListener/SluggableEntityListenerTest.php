@@ -38,8 +38,8 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->messageFactory = $this->getMock(MessageFactoryInterface::class);
-        $this->messageProducer = $this->getMock(MessageProducerInterface::class);
+        $this->messageFactory = $this->createMock(MessageFactoryInterface::class);
+        $this->messageProducer = $this->createMock(MessageProducerInterface::class);
         $this->configManager = $this->getMockBuilder(ConfigManager::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -57,7 +57,7 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         /** @var SluggableInterface $entity */
-        $entity = $this->getMock(SluggableInterface::class);
+        $entity = $this->createMock(SluggableInterface::class);
         $args->expects($this->once())
             ->method('getEntity')
             ->willReturn($entity);
@@ -109,7 +109,7 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
             ->willReturn(true);
 
         /** @var SluggableInterface $entity */
-        $entity = $this->getMock(SluggableInterface::class);
+        $entity = $this->createMock(SluggableInterface::class);
         $args->expects($this->once())
             ->method('getEntity')
             ->willReturn($entity);
@@ -144,7 +144,7 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
-        $em = $this->getMock(EntityManagerInterface::class);
+        $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->any())
             ->method('getUnitOfWork')
             ->willReturn($uow);
@@ -155,7 +155,7 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
         $prototype = new LocalizedFallbackValue();
 
         /** @var SluggableInterface|\PHPUnit_Framework_MockObject_MockObject $entity */
-        $entity = $this->getMock(SluggableInterface::class);
+        $entity = $this->createMock(SluggableInterface::class);
         $entity->expects($this->once())
             ->method('hasSlugPrototype')
             ->with($prototype)
@@ -197,7 +197,7 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
-        $em = $this->getMock(EntityManagerInterface::class);
+        $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->any())
             ->method('getUnitOfWork')
             ->willReturn($uow);
@@ -243,7 +243,7 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
-        $em = $this->getMock(EntityManagerInterface::class);
+        $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->any())
             ->method('getUnitOfWork')
             ->willReturn($uow);
@@ -252,7 +252,7 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
             ->willReturn($em);
 
         /** @var SluggableInterface $entity */
-        $entity = $this->getMock(SluggableInterface::class);
+        $entity = $this->createMock(SluggableInterface::class);
 
         $uow->expects($this->any())
             ->method('getScheduledEntityUpdates')
@@ -291,7 +291,7 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
-        $em = $this->getMock(EntityManagerInterface::class);
+        $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->any())
             ->method('getUnitOfWork')
             ->willReturn($uow);
@@ -302,7 +302,7 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
         $prototype = new LocalizedFallbackValue();
 
         /** @var SluggableInterface|\PHPUnit_Framework_MockObject_MockObject $entity */
-        $entity = $this->getMock(SluggableInterface::class);
+        $entity = $this->createMock(SluggableInterface::class);
         $entity->expects($this->once())
             ->method('hasSlugPrototype')
             ->with($prototype)
@@ -350,7 +350,7 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
-        $em = $this->getMock(EntityManagerInterface::class);
+        $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->any())
             ->method('getUnitOfWork')
             ->willReturn($uow);
@@ -361,7 +361,7 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
         $prototype = new LocalizedFallbackValue();
 
         /** @var SluggableInterface|\PHPUnit_Framework_MockObject_MockObject $entity */
-        $entity = $this->getMock(SluggableInterface::class);
+        $entity = $this->createMock(SluggableInterface::class);
         $entity->expects($this->once())
             ->method('hasSlugPrototype')
             ->with($prototype)

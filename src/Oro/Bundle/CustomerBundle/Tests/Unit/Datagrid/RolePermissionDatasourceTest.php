@@ -45,7 +45,7 @@ class RolePermissionDatasourceTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+        $this->translator = $this->createMock('Symfony\Component\Translation\TranslatorInterface');
         $this->translator->expects($this->any())
             ->method('trans')
             ->willReturnCallback(
@@ -195,7 +195,7 @@ class RolePermissionDatasourceTest extends \PHPUnit_Framework_TestCase
     protected function getDatagrid(Role $role)
     {
         /** @var DatagridInterface|\PHPUnit_Framework_MockObject_MockObject $datagrid */
-        $datagrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
+        $datagrid = $this->createMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
         $datagrid->expects($this->once())
             ->method('getParameters')
             ->willReturn(new ParameterBag(['role' => $role]));

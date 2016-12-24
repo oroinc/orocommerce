@@ -70,17 +70,17 @@ class AclAccessLevelSelectorExtensionTest extends \PHPUnit_Framework_TestCase
 
         $roleForm = null;
         if ($hasRoleForm) {
-            $type = $this->getMock('Symfony\Component\Form\ResolvedFormTypeInterface');
+            $type = $this->createMock('Symfony\Component\Form\ResolvedFormTypeInterface');
             $type->expects($this->once())
                 ->method('getName')
                 ->willReturn($roleFormName);
 
-            $formConfig = $this->getMock('Symfony\Component\Form\FormConfigInterface');
+            $formConfig = $this->createMock('Symfony\Component\Form\FormConfigInterface');
             $formConfig->expects($this->once())
                 ->method('getType')
                 ->willReturn($type);
 
-            $roleForm = $this->getMock('Symfony\Component\Form\FormInterface');
+            $roleForm = $this->createMock('Symfony\Component\Form\FormInterface');
             $roleForm->expects($this->once())
                 ->method('getConfig')
                 ->willReturn($formConfig);
@@ -88,7 +88,7 @@ class AclAccessLevelSelectorExtensionTest extends \PHPUnit_Framework_TestCase
 
         $privilegesForm = null;
         if ($hasPrivilegesForm) {
-            $privilegesForm = $this->getMock('Symfony\Component\Form\FormInterface');
+            $privilegesForm = $this->createMock('Symfony\Component\Form\FormInterface');
             $privilegesForm->expects($this->once())
                 ->method('getParent')
                 ->willReturn($roleForm);
@@ -96,7 +96,7 @@ class AclAccessLevelSelectorExtensionTest extends \PHPUnit_Framework_TestCase
 
         $privilegeForm = null;
         if ($hasPrivilegeForm) {
-            $privilegeForm = $this->getMock('Symfony\Component\Form\FormInterface');
+            $privilegeForm = $this->createMock('Symfony\Component\Form\FormInterface');
             $privilegeForm->expects($this->once())
                 ->method('getParent')
                 ->willReturn($privilegesForm);
@@ -104,7 +104,7 @@ class AclAccessLevelSelectorExtensionTest extends \PHPUnit_Framework_TestCase
 
         $permissionsForm = null;
         if ($hasPermissionsForm) {
-            $permissionsForm = $this->getMock('Symfony\Component\Form\FormInterface');
+            $permissionsForm = $this->createMock('Symfony\Component\Form\FormInterface');
             $permissionsForm->expects($this->once())
                 ->method('getParent')
                 ->willReturn($privilegeForm);
@@ -112,14 +112,14 @@ class AclAccessLevelSelectorExtensionTest extends \PHPUnit_Framework_TestCase
 
         $permissionForm = null;
         if ($hasPermissionForm) {
-            $permissionForm = $this->getMock('Symfony\Component\Form\FormInterface');
+            $permissionForm = $this->createMock('Symfony\Component\Form\FormInterface');
             $permissionForm->expects($this->once())
                 ->method('getParent')
                 ->willReturn($permissionsForm);
         }
 
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
         $form->expects($this->once())
             ->method('getParent')
             ->willReturn($permissionForm);

@@ -39,7 +39,7 @@ class LineItemValidationListenerTest extends \PHPUnit_Framework_TestCase
         $this->quantityValidator = $this->getMockBuilder(QuantityToOrderValidatorService::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->translator = $this->getMock(TranslatorInterface::class);
+        $this->translator = $this->createMock(TranslatorInterface::class);
         $this->lineItemValidationListener = new LineItemValidationListener($this->quantityValidator, $this->translator);
         $this->event = $this->getMockBuilder(LineItemValidateEvent::class)
             ->disableOriginalConstructor()

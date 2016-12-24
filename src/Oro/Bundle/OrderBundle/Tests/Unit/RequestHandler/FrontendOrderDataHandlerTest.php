@@ -49,15 +49,15 @@ class FrontendOrderDataHandlerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->objectManager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
+        $this->objectManager = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
 
-        $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $this->registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
         $this->registry->expects($this->any())
             ->method('getManagerForClass')
             ->with('OroUserBundle:User')
             ->willReturn($this->objectManager);
 
-        $this->requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
+        $this->requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
 
         $this->securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
             ->disableOriginalConstructor()
@@ -138,7 +138,7 @@ class FrontendOrderDataHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function testGetOwner()
     {
-        $repository = $this->getMock('Doctrine\Common\Persistence\ObjectRepository');
+        $repository = $this->createMock('Doctrine\Common\Persistence\ObjectRepository');
 
         $user = new User();
         $repository->expects($this->once())

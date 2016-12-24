@@ -57,9 +57,9 @@ abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit_Fram
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->request = $this->getMock('Symfony\Component\HttpFoundation\Request');
+        $this->request = $this->createMock('Symfony\Component\HttpFoundation\Request');
         /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
-        $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
+        $requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
         $requestStack->expects($this->any())->method('getCurrentRequest')->willReturn($this->request);
 
         $this->extension = new ProductDataStorageExtensionStub(
@@ -291,7 +291,7 @@ abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit_Fram
     protected function getBuilderMock($expectsAddEventListener = false)
     {
         /** @var  $builder */
-        $builder = $this->getMock('Symfony\Component\Form\FormBuilderInterface');
+        $builder = $this->createMock('Symfony\Component\Form\FormBuilderInterface');
         if ($expectsAddEventListener) {
             $builder->expects($this->once())->method('addEventListener')->with(
                 $this->isType('string'),

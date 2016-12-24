@@ -23,7 +23,7 @@ class LineItemErrorsProviderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->validator = $this->getMock(ValidatorInterface::class);
+        $this->validator = $this->createMock(ValidatorInterface::class);
         $this->lineItemErrorsProvider = new LineItemErrorsProvider($this->validator);
     }
 
@@ -53,7 +53,7 @@ class LineItemErrorsProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetLineItemErrorsReturnIndexedErrors()
     {
-        $constraintViolation = $this->getMock(ConstraintViolationInterface::class);
+        $constraintViolation = $this->createMock(ConstraintViolationInterface::class);
         $constraintViolation->expects($this->once())
             ->method('getPropertyPath')
             ->willReturn('testPath');

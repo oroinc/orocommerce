@@ -303,6 +303,7 @@ class RequestControllerTest extends WebTestCase
                     'data' => [
                         LoadRequestData::REQUEST5,
                         LoadRequestData::REQUEST6,
+                        LoadRequestData::REQUEST13
                     ],
                     'columns' => [
                         'id',
@@ -313,6 +314,7 @@ class RequestControllerTest extends WebTestCase
                         'update_link',
                         'view_link',
                         'action_configuration',
+                        'accountUserName'
                     ],
                     'action_configuration' => [
                         'view' => true,
@@ -338,6 +340,8 @@ class RequestControllerTest extends WebTestCase
                         LoadRequestData::REQUEST8,
                         LoadRequestData::REQUEST10,
                         LoadRequestData::REQUEST11,
+                        LoadRequestData::REQUEST12,
+                        LoadRequestData::REQUEST13
                     ]
                 ],
             ],
@@ -351,6 +355,7 @@ class RequestControllerTest extends WebTestCase
                     'data' => [
                         LoadRequestData::REQUEST10,
                         LoadRequestData::REQUEST11,
+                        LoadRequestData::REQUEST12
                     ],
                 ],
             ],

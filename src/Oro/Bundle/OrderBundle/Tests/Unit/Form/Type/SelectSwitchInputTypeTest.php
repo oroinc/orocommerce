@@ -45,7 +45,7 @@ class SelectSwitchInputTypeTest extends FormIntegrationTestCase
     public function testFinishView(array $options, $data, $expected)
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|FormInterface $form */
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
         $form->expects(static::once())
             ->method('getData')
             ->willReturn($data);

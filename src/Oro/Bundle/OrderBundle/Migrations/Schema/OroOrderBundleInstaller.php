@@ -6,8 +6,8 @@ use Doctrine\DBAL\Schema\Schema;
 
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
-use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtension;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
+use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\PaymentTermBundle\Migration\Extension\PaymentTermExtensionAwareInterface;
@@ -19,21 +19,11 @@ class OroOrderBundleInstaller implements
     ActivityExtensionAwareInterface,
     PaymentTermExtensionAwareInterface
 {
+    use AttachmentExtensionAwareTrait;
     use PaymentTermExtensionAwareTrait;
-
-    /** @var  AttachmentExtension */
-    protected $attachmentExtension;
 
     /** @var  ActivityExtension */
     protected $activityExtension;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setAttachmentExtension(AttachmentExtension $attachmentExtension)
-    {
-        $this->attachmentExtension = $attachmentExtension;
-    }
 
     /**
      * {@inheritdoc}
@@ -48,7 +38,7 @@ class OroOrderBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_8';
+        return 'v1_9';
     }
 
     /**
@@ -100,14 +90,34 @@ class OroOrderBundleInstaller implements
         $table->addColumn('shipping_method', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('shipping_method_type', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn(
-            'subtotal',
-            'money',
-            ['notnull' => false, 'precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']
+            'subtotal_value',
+            'money_value',
+            ['notnull' => false, 'precision' => 0, 'comment' => '(DC2Type:money_value)']
         );
         $table->addColumn(
-            'total',
+            'subtotal_currency',
+            'currency',
+            ['length' => 3, 'notnull' => false, 'comment' => '(DC2Type:currency)']
+        );
+        $table->addColumn(
+            'base_subtotal_value',
             'money',
-            ['notnull' => false, 'precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']
+            ['notnull' => false, 'comment' => '(DC2Type:money)']
+        );
+        $table->addColumn(
+            'total_value',
+            'money_value',
+            ['notnull' => false, 'precision' => 0, 'comment' => '(DC2Type:money_value)']
+        );
+        $table->addColumn(
+            'total_currency',
+            'currency',
+            ['length' => 3, 'notnull' => false, 'comment' => '(DC2Type:currency)']
+        );
+        $table->addColumn(
+            'base_total_value',
+            'money',
+            ['notnull' => false, 'comment' => '(DC2Type:money)']
         );
         $table->addColumn(
             'estimated_shipping_cost_amount',

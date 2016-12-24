@@ -28,7 +28,7 @@ abstract class AbstractFormViewListenerTest extends FormViewListenerTestCase
         parent::setUp();
 
         $this->request = $this->getRequest();
-        $this->requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
+        $this->requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
         $this->requestStack->expects($this->any())->method('getCurrentRequest')->willReturn($this->request);
     }
 
@@ -94,7 +94,7 @@ abstract class AbstractFormViewListenerTest extends FormViewListenerTestCase
 
     public function testEmptyRequest()
     {
-        $this->requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
+        $this->requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
         $this->requestStack->expects($this->any())->method('getCurrentRequest')->willReturn(null);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|BeforeListRenderEvent $event */
@@ -114,7 +114,7 @@ abstract class AbstractFormViewListenerTest extends FormViewListenerTestCase
     protected function getScrollData()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|ScrollData $scrollData */
-        $scrollData = $this->getMock('Oro\Bundle\UIBundle\View\ScrollData');
+        $scrollData = $this->createMock('Oro\Bundle\UIBundle\View\ScrollData');
 
         $scrollData->expects($this->once())
             ->method('addSubBlockData');

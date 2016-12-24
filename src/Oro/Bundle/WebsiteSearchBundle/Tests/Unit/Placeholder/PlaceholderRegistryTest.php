@@ -86,7 +86,7 @@ class PlaceholderRegistryTest extends \PHPUnit_Framework_TestCase
      */
     private function preparePlaceholder($placeholderName)
     {
-        $placeholder = $this->getMock(PlaceholderInterface::class);
+        $placeholder = $this->createMock(PlaceholderInterface::class);
 
         $placeholder->expects($this->any())
             ->method('getPlaceholder')

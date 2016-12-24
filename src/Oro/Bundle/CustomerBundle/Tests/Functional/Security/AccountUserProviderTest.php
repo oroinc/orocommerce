@@ -33,8 +33,8 @@ class AccountUserProviderTest extends WebTestCase
         $this->client->request('GET', $this->getUrl('oro_customer_frontend_account_user_profile'));
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
-        $this->assertRoleHasPermission(LoadAccountUserRoles::ADMINISTRATOR, [true, true, true, true, true]);
-        $this->assertRoleHasPermission(LoadAccountUserRoles::BUYER, [true, false, true, false, true]);
+        $this->assertRoleHasPermission(LoadAccountUserRoles::ADMINISTRATOR, [true, true, true, true, true, true, true]);
+        $this->assertRoleHasPermission(LoadAccountUserRoles::BUYER, [true, false, true, false, false, false, true]);
 
         $roleName = 'DENIED';
         $role = new AccountUserRole(AccountUserRole::PREFIX_ROLE . $roleName);
@@ -44,7 +44,7 @@ class AccountUserProviderTest extends WebTestCase
         $em->persist($role);
         $em->flush();
 
-        $this->assertRoleHasPermission($roleName, [false, false, false, false, false]);
+        $this->assertRoleHasPermission($roleName, [false, false, false, false, false, false, false]);
     }
 
     /**
@@ -76,6 +76,8 @@ class AccountUserProviderTest extends WebTestCase
             $isGrantedViewAccountUser,
             $isGrantedViewBasic,
             $isGrantedViewLocal,
+            $isGrantedViewDeep,
+            $isGrantedViewSystem,
             $isGrantedEditBasic,
             $isGrantedEditLocal
         ) = $expected;
@@ -94,6 +96,16 @@ class AccountUserProviderTest extends WebTestCase
             $isGrantedViewLocal,
             $securityProvider->isGrantedViewLocal($userClassName),
             'isGrantedViewLocal ' . $roleName
+        );
+        $this->assertEquals(
+            $isGrantedViewDeep,
+            $securityProvider->isGrantedViewDeep($userClassName),
+            'isGrantedViewDeep ' . $roleName
+        );
+        $this->assertEquals(
+            $isGrantedViewSystem,
+            $securityProvider->isGrantedViewSystem($userClassName),
+            'isGrantedViewSystem ' . $roleName
         );
         $this->assertEquals(
             $isGrantedEditBasic,

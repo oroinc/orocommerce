@@ -45,14 +45,14 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
                 ->disableOriginalConstructor()
                 ->getMock();
 
-        $this->priceManager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
+        $this->priceManager = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
         $this->priceManager->expects($this->any())
             ->method('getRepository')
             ->with('OroPricingBundle:ProductPrice')
             ->willReturn($this->priceRepository);
 
         /** @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject $registry */
-        $registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
         $registry->expects($this->any())
             ->method('getManagerForClass')
             ->with('OroPricingBundle:ProductPrice')
@@ -69,7 +69,7 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
     public function testBuildForm()
     {
         /** @var FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder */
-        $builder = $this->getMock('Symfony\Component\Form\FormBuilderInterface');
+        $builder = $this->createMock('Symfony\Component\Form\FormBuilderInterface');
         $builder->expects($this->once())
             ->method('add')
             ->with(
@@ -223,10 +223,10 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
      */
     protected function createEvent($data)
     {
-        $pricesForm = $this->getMock('Symfony\Component\Form\FormInterface');
+        $pricesForm = $this->createMock('Symfony\Component\Form\FormInterface');
 
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $mainForm */
-        $mainForm = $this->getMock('Symfony\Component\Form\FormInterface');
+        $mainForm = $this->createMock('Symfony\Component\Form\FormInterface');
         $mainForm->expects($this->any())
             ->method('get')
             ->with('prices')

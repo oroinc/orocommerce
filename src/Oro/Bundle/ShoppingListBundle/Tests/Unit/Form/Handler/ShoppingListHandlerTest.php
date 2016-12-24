@@ -38,7 +38,7 @@ class ShoppingListHandlerTest extends \PHPUnit_Framework_TestCase
         $this->registry = $this->getMockBuilder('Doctrine\Bundle\DoctrineBundle\Registry')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->shoppingList = $this->getMock('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList');
+        $this->shoppingList = $this->createMock('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList');
         $this->shoppingList->expects($this->any())
             ->method('getAccountUser')
             ->willReturn(new AccountUser());
@@ -87,7 +87,7 @@ class ShoppingListHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('isValid')
             ->will($this->returnValue(true));
 
-        $em = $this->getMock(EntityManagerInterface::class);
+        $em = $this->createMock(EntityManagerInterface::class);
         $this->registry->method('getManagerForClass')->willReturn($em);
 
         $handler = new ShoppingListHandler($this->form, $this->request, $this->manager, $this->registry);
@@ -112,7 +112,7 @@ class ShoppingListHandlerTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue(true));
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|ObjectManager $manager */
-        $manager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
+        $manager = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
 
         $manager->expects($this->once())
             ->method('persist');
