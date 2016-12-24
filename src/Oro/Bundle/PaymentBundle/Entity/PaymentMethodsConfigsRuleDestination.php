@@ -159,25 +159,6 @@ class PaymentMethodsConfigsRuleDestination extends ExtendPaymentMethodsConfigsRu
     }
 
     /**
-     * @return null|array
-     */
-    public function getPostalCodesNames()
-    {
-        if ($this->postalCodes !== null && $this->postalCodes->count() > 0) {
-            $postalCodes = array_map(
-                function (PaymentMethodsConfigsRuleDestinationPostalCode $postalCode) {
-                    return $postalCode->getName();
-                },
-                $this->postalCodes->getValues()
-            );
-
-            return implode(', ', $postalCodes);
-        }
-
-        return null;
-    }
-
-    /**
      * @param PaymentMethodsConfigsRuleDestinationPostalCode $postalCode
      * @return $this
      */
@@ -322,7 +303,9 @@ class PaymentMethodsConfigsRuleDestination extends ExtendPaymentMethodsConfigsRu
             ' ',
             array_filter([
                 $this->getCountry(),
-                $this->getPostalCodesNames()
+                implode(', ', array_map(function (PaymentMethodsConfigsRuleDestinationPostalCode $postalCode) {
+                    return (string)$postalCode;
+                }, $this->postalCodes->getValues())),
             ])
         );
 

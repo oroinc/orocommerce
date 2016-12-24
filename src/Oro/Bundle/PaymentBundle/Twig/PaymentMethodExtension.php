@@ -9,7 +9,6 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class PaymentMethodExtension extends \Twig_Extension
 {
-    const PAYMENT_METHOD_EXTENSION_NAME = 'oro_payment_method';
     const DEFAULT_METHOD_CONFIG_TEMPLATE =
         'OroPaymentBundle:PaymentMethodsConfigsRule:paymentMethodWithOptions.html.twig';
 
@@ -46,14 +45,6 @@ class PaymentMethodExtension extends \Twig_Extension
         $this->paymentTransactionProvider = $paymentTransactionProvider;
         $this->paymentMethodLabelFormatter = $paymentMethodLabelFormatter;
         $this->dispatcher = $dispatcher;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return static::PAYMENT_METHOD_EXTENSION_NAME;
     }
 
     /**

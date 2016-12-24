@@ -22,4 +22,11 @@ class PaymentMethodsConfigsRuleDestinationPostalCodeTest extends \PHPUnit_Framew
 
         $this->assertPropertyAccessors($entity, $properties);
     }
+
+    public function testToString()
+    {
+        $code = new PaymentMethodsConfigsRuleDestinationPostalCode();
+        $code->setName('123');
+        $this->assertEquals('123', (string)$code);
+    }
 }

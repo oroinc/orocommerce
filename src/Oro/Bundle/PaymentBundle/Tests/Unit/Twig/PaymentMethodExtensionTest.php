@@ -78,11 +78,6 @@ class PaymentMethodExtensionTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(PaymentMethodExtension::PAYMENT_METHOD_EXTENSION_NAME, $this->extension->getName());
-    }
-
     public function testGetPaymentMethods()
     {
         $entity = new \stdClass();
