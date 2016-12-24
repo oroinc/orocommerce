@@ -46,16 +46,15 @@ class ShippingMethodsConfigsRuleRepositoryTest extends WebTestCase
 
     /**
      * @dataProvider getByDestinationAndCurrencyDataProvider
-     *
-     * @param AddressInterface $shippingAddress
+     * @param array $shippingAddressData
      * @param string $currency
      * @param array|ShippingMethodsConfigsRule[] $expectedRules
      */
-    public function testGetByDestinationAndCurrency($shippingAddress, $currency, array $expectedRules)
+    public function testGetByDestinationAndCurrency(array $shippingAddressData, $currency, array $expectedRules)
     {
         $expectedRules = $this->getEntitiesByReferences($expectedRules);
         $actualRules = $this->repository->getByDestinationAndCurrency(
-            $shippingAddress,
+            $this->createShippingAddress($shippingAddressData),
             $currency
         );
 
@@ -74,14 +73,14 @@ class ShippingMethodsConfigsRuleRepositoryTest extends WebTestCase
     {
         return [
             [
-                'shippingAddress' => $this->getEntity(ShippingAddressStub::class, [
-                    'country' => new Country('US'),
-                    'region' => $this->getEntity(Region::class, [
+                'shippingAddress' => [
+                    'country' => 'US',
+                    'region' => [
                         'combinedCode' => 'US-NY',
                         'code' => 'NY',
-                    ]),
+                    ],
                     'postalCode' => '12345',
-                ]),
+                ],
                 'currency' => 'EUR',
                 'expectedRules' => [
                     'shipping_rule.1',
@@ -138,5 +137,21 @@ class ShippingMethodsConfigsRuleRepositoryTest extends WebTestCase
         return array_map(function ($ruleReference) {
             return $this->getReference($ruleReference);
         }, $rules);
+    }
+
+    /**
+     * @param array $data
+     * @return AddressInterface|object
+     */
+    protected function createShippingAddress(array $data)
+    {
+        return $this->getEntity(ShippingAddressStub::class, [
+            'country' => new Country($data['country']),
+            'region' => $this->getEntity(Region::class, [
+                'combinedCode' => $data['region']['combinedCode'],
+                'code' => $data['region']['code'],
+            ]),
+            'postalCode' => $data['postalCode'],
+        ]);
     }
 }
