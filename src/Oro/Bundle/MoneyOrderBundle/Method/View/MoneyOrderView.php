@@ -4,6 +4,7 @@ namespace Oro\Bundle\MoneyOrderBundle\Method\View;
 
 use Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfigInterface;
 use Oro\Bundle\MoneyOrderBundle\Method\MoneyOrder;
+use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
 
 class MoneyOrderView implements PaymentMethodViewInterface
@@ -24,7 +25,7 @@ class MoneyOrderView implements PaymentMethodViewInterface
     /**
      * {@inheritdoc}
      */
-    public function getOptions()
+    public function getOptions(PaymentContextInterface $context)
     {
         return [
             'pay_to' => $this->config->getPayTo(),

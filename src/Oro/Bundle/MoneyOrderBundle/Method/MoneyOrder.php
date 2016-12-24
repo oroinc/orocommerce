@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\MoneyOrderBundle\Method;
 
-use Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfigInterface;
+use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 
@@ -26,6 +26,14 @@ class MoneyOrder implements PaymentMethodInterface
     public function getType()
     {
         return self::TYPE;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isApplicable(PaymentContextInterface $context)
+    {
+        return true;
     }
 
     /**

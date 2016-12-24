@@ -8,6 +8,7 @@ use Oro\Bundle\MoneyOrderBundle\DependencyInjection\OroMoneyOrderExtension;
 use Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfig;
 use Oro\Bundle\MoneyOrderBundle\Method\MoneyOrder;
 use Oro\Bundle\MoneyOrderBundle\Method\View\MoneyOrderView;
+use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 
 class MoneyOrderViewTest extends \PHPUnit_Framework_TestCase
 {
@@ -37,7 +38,9 @@ class MoneyOrderViewTest extends \PHPUnit_Framework_TestCase
         $this->setConfig($this->at(0), Configuration::MONEY_ORDER_PAY_TO_KEY, $data['pay_to']);
         $this->setConfig($this->at(1), Configuration::MONEY_ORDER_SEND_TO_KEY, $data['send_to']);
 
-        $this->assertEquals($data, $this->methodView->getOptions());
+        /** @var PaymentContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
+        $context = $this->createMock(PaymentContextInterface::class);
+        $this->assertEquals($data, $this->methodView->getOptions($context));
     }
 
     public function testGetBlock()

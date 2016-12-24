@@ -5,6 +5,7 @@ namespace Oro\Bundle\MoneyOrderBundle\Tests\Unit\Method;
 use Oro\Bundle\MoneyOrderBundle\DependencyInjection\OroMoneyOrderExtension;
 use Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfig;
 use Oro\Bundle\MoneyOrderBundle\Method\MoneyOrder;
+use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Tests\Unit\Method\ConfigTestTrait;
 
@@ -62,6 +63,13 @@ class MoneyOrderTest extends \PHPUnit_Framework_TestCase
             [false, MoneyOrder::VALIDATE],
             [true, MoneyOrder::PURCHASE],
         ];
+    }
+
+    public function testIsApplicable()
+    {
+        /** @var PaymentContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
+        $context = $this->createMock(PaymentContextInterface::class);
+        $this->assertTrue($this->method->isApplicable($context));
     }
 
     /**

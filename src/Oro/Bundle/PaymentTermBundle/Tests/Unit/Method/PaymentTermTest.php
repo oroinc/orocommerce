@@ -2,17 +2,16 @@
 
 namespace Oro\Bundle\PaymentTermBundle\Tests\Unit\Method;
 
-use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
-
 use Doctrine\ORM\EntityManager;
-
+use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\PaymentTermBundle\Method\Config\PaymentTermConfigInterface;
-use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
+use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Method\PaymentTerm as PaymentTermMethod;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
+use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -216,5 +215,23 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
             [false, PaymentTermMethod::VALIDATE],
             [true, PaymentTermMethod::PURCHASE],
         ];
+    }
+
+    public function testIsApplicable()
+    {
+        $customer = $this->createMock(Account::class);
+
+        /** @var PaymentContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
+        $context = $this->createMock(PaymentContextInterface::class);
+        $context->expects(static::once())
+            ->method('getCustomer')
+            ->willReturn($customer);
+
+        $this->paymentTermProvider->expects($this->once())
+            ->method('getPaymentTerm')
+            ->with($customer)
+            ->willReturn(new PaymentTerm());
+
+        $this->assertTrue($this->method->isApplicable($context));
     }
 }

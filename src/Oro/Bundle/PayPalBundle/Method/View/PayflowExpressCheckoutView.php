@@ -2,12 +2,12 @@
 
 namespace Oro\Bundle\PayPalBundle\Method\View;
 
-use Symfony\Component\Form\FormFactoryInterface;
-
-use Oro\Bundle\PayPalBundle\Method\PayflowExpressCheckout;
-use Oro\Bundle\PayPalBundle\Method\Config\PayflowExpressCheckoutConfigInterface;
-use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
+use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
+use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
+use Oro\Bundle\PayPalBundle\Method\Config\PayflowExpressCheckoutConfigInterface;
+use Oro\Bundle\PayPalBundle\Method\PayflowExpressCheckout;
+use Symfony\Component\Form\FormFactoryInterface;
 
 class PayflowExpressCheckoutView implements PaymentMethodViewInterface
 {
@@ -27,7 +27,7 @@ class PayflowExpressCheckoutView implements PaymentMethodViewInterface
     }
 
     /** {@inheritdoc} */
-    public function getOptions()
+    public function getOptions(PaymentContextInterface $context)
     {
         return [];
     }

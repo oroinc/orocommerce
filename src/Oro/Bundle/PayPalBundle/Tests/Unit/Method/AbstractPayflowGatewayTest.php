@@ -2,22 +2,22 @@
 
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\Method;
 
-use Symfony\Component\Routing\RouterInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-
-use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
-use Oro\Bundle\PayPalBundle\DependencyInjection\OroPayPalExtension;
-use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\Response;
-use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway;
-use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
-use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\ResponseStatusMap;
-use Oro\Bundle\PayPalBundle\Method\PayflowGateway;
-use Oro\Bundle\PayPalBundle\Method\PayPalPaymentsPro;
-use Oro\Bundle\PayPalBundle\Method\Config\PayflowGatewayConfigInterface;
+use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PaymentBundle\Tests\Unit\Method\ConfigTestTrait;
+use Oro\Bundle\PayPalBundle\DependencyInjection\OroPayPalExtension;
+use Oro\Bundle\PayPalBundle\Method\Config\PayflowGatewayConfigInterface;
+use Oro\Bundle\PayPalBundle\Method\PayflowGateway;
+use Oro\Bundle\PayPalBundle\Method\PayPalPaymentsPro;
+use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway;
+use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
+use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\Response;
+use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\ResponseStatusMap;
+use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
+use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Routing\RouterInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -809,6 +809,13 @@ abstract class AbstractPayflowGatewayTest extends \PHPUnit_Framework_TestCase
      * @return string
      */
     abstract protected function getConfigPrefix();
+
+    public function testIsApplicable()
+    {
+        /** @var PaymentContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
+        $context = $this->createMock(PaymentContextInterface::class);
+        $this->assertTrue($this->method->isApplicable($context));
+    }
 
     public function testComplete()
     {

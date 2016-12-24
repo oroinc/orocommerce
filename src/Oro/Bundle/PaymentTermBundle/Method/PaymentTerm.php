@@ -2,13 +2,13 @@
 
 namespace Oro\Bundle\PaymentTermBundle\Method;
 
-use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
-
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
+use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 class PaymentTerm implements PaymentMethodInterface
 {
@@ -68,6 +68,14 @@ class PaymentTerm implements PaymentMethodInterface
             ->setActive(false);
 
         return [];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isApplicable(PaymentContextInterface $context)
+    {
+        return (bool)$this->paymentTermProvider->getPaymentTerm($context->getCustomer());
     }
 
     /** {@inheritdoc} */

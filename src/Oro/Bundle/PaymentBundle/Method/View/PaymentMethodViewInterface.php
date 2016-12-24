@@ -2,13 +2,15 @@
 
 namespace Oro\Bundle\PaymentBundle\Method\View;
 
+use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
+
 interface PaymentMethodViewInterface
 {
     /**
+     * @param PaymentContextInterface $context
      * @return array
-     * @internal param array $context
      */
-    public function getOptions();
+    public function getOptions(PaymentContextInterface $context);
 
     /**
      * @return string

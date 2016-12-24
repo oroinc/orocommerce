@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PaymentBundle\Method;
 
+use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 
 interface PaymentMethodInterface
@@ -27,6 +28,12 @@ interface PaymentMethodInterface
      * @return string
      */
     public function getType();
+
+    /**
+     * @param PaymentContextInterface $context
+     * @return bool
+     */
+    public function isApplicable(PaymentContextInterface $context);
 
     /**
      * @param string $actionName

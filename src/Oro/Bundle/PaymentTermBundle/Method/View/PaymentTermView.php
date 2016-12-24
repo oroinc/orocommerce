@@ -2,12 +2,12 @@
 
 namespace Oro\Bundle\PaymentTermBundle\Method\View;
 
-use Symfony\Component\Translation\TranslatorInterface;
-
+use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
 use Oro\Bundle\PaymentTermBundle\Method\Config\PaymentTermConfigInterface;
 use Oro\Bundle\PaymentTermBundle\Method\PaymentTerm as PaymentTermMethod;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class PaymentTermView implements PaymentMethodViewInterface
 {
@@ -36,9 +36,9 @@ class PaymentTermView implements PaymentMethodViewInterface
     }
 
     /** {@inheritdoc} */
-    public function getOptions()
+    public function getOptions(PaymentContextInterface $context)
     {
-        $paymentTerm = $this->paymentTermProvider->getCurrentPaymentTerm();
+        $paymentTerm = $this->paymentTermProvider->getPaymentTerm($context->getCustomer());
 
         if ($paymentTerm) {
             return [

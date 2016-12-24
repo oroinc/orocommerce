@@ -2,17 +2,17 @@
 
 namespace Oro\Bundle\PayPalBundle\Method;
 
+use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PayPalBundle\Method\Config\PayflowGatewayConfigInterface;
-use Symfony\Component\Routing\RouterInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-
-use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Option as GatewayOption;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\Response;
-use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Routing\RouterInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -315,6 +315,14 @@ class PayflowGateway implements PaymentMethodInterface
         }
 
         return $option;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isApplicable(PaymentContextInterface $context)
+    {
+        return true;
     }
 
     /**

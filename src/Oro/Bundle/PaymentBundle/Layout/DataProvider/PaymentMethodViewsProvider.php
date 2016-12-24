@@ -56,7 +56,7 @@ class PaymentMethodViewsProvider
             $paymentMethodViews[$view->getPaymentMethodType()] = [
                 'label' => $view->getLabel(),
                 'block' => $view->getBlock(),
-                'options' => $view->getOptions(),
+                'options' => $view->getOptions($context),
             ];
         }
 

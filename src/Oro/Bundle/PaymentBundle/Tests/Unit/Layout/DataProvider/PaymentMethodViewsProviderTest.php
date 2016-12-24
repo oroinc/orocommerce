@@ -100,6 +100,7 @@ class PaymentMethodViewsProviderTest extends \PHPUnit_Framework_TestCase
         $view->expects($this->once())->method('getBlock')->willReturn('block');
         $view->expects($this->once())
             ->method('getOptions')
+            ->with($context)
             ->willReturn([]);
         $view->expects($this->once())
             ->method('getPaymentMethodType')

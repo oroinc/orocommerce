@@ -2,24 +2,24 @@
 
 namespace Oro\Bundle\PayPalBundle\Method;
 
+use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use Oro\Bundle\PaymentBundle\Provider\ExtractOptionsProvider;
+use Oro\Bundle\PaymentBundle\Provider\SurchargeProvider;
+use Oro\Bundle\PayPalBundle\Method\Config\PayflowExpressCheckoutConfigInterface;
+use Oro\Bundle\PayPalBundle\PayPal\Payflow\ExpressCheckout\Option as ECOption;
+use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway;
+use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
+use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\ResponseInterface;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
-
-use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\PayPalBundle\Method\Config\PayflowExpressCheckoutConfigInterface;
-use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway;
-use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
-use Oro\Bundle\PayPalBundle\PayPal\Payflow\ExpressCheckout\Option as ECOption;
-use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\ResponseInterface;
-use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
-use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Oro\Bundle\PaymentBundle\Provider\ExtractOptionsProvider;
-use Oro\Bundle\PaymentBundle\Provider\SurchargeProvider;
 
 class PayflowExpressCheckout implements PaymentMethodInterface
 {
@@ -95,6 +95,14 @@ class PayflowExpressCheckout implements PaymentMethodInterface
     public function getType()
     {
         return static::TYPE;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isApplicable(PaymentContextInterface $context)
+    {
+        return true;
     }
 
     /**

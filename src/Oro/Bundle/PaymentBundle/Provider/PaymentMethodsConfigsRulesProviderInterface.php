@@ -10,7 +10,7 @@ interface PaymentMethodsConfigsRulesProviderInterface
     /**
      * @param PaymentContextInterface $context
      *
-     * @return array|PaymentMethodsConfigsRule[]
+     * @return PaymentMethodsConfigsRule[]
      */
     public function getFilteredPaymentMethodsConfigs(PaymentContextInterface $context);
 }
