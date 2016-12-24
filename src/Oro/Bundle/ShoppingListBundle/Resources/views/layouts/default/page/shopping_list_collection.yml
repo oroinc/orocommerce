@@ -1,0 +1,15 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'shopping_list_collection.html.twig'
+        - '@addTree':
+            items:
+                shoppinglist_collection:
+                    blockType: shopping_lists_awere_container
+                    options:
+                        shoppingLists: '=data["oro_shopping_list_account_user_shopping_lists"].getShoppingLists()'
+            tree:
+                wrapper:
+                    shoppinglist_collection: ~
+
+    conditions: 'context["is_logged_in"]'
