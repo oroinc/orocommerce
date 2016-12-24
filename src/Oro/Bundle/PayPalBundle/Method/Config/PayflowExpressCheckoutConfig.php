@@ -33,14 +33,6 @@ class PayflowExpressCheckoutConfig extends AbstractPaymentConfig implements Payf
     /**
      * {@inheritdoc}
      */
-    public function isEnabled()
-    {
-        return (bool)$this->getConfigValue(Configuration::PAYFLOW_EXPRESS_CHECKOUT_ENABLED_KEY);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getPurchaseAction()
     {
         return (string)$this->getConfigValue(Configuration::PAYFLOW_EXPRESS_CHECKOUT_PAYMENT_ACTION_KEY);
@@ -52,14 +44,6 @@ class PayflowExpressCheckoutConfig extends AbstractPaymentConfig implements Payf
     public function isTestMode()
     {
         return (bool)$this->getConfigValue(Configuration::PAYFLOW_GATEWAY_TEST_MODE_KEY);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getOrder()
-    {
-        return (int)$this->getConfigValue(Configuration::PAYFLOW_EXPRESS_CHECKOUT_SORT_ORDER_KEY);
     }
 
     /**

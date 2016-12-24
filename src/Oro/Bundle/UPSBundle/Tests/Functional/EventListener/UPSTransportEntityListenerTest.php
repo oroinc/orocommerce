@@ -16,7 +16,7 @@ class UPSTransportEntityListenerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], static::generateBasicAuthHeader());
-        $this->loadFixtures(['Oro\Bundle\UPSBundle\Tests\Functional\DataFixtures\LoadShippingRules']);
+        $this->loadFixtures(['Oro\Bundle\UPSBundle\Tests\Functional\DataFixtures\LoadShippingMethodsConfigsRules']);
     }
 
     public function testPostUpdate()
@@ -31,11 +31,11 @@ class UPSTransportEntityListenerTest extends WebTestCase
         $toBeDeletedService = $applShipServices->first();
 
         $configuredMethods = $em
-            ->getRepository('OroShippingBundle:ShippingRuleMethodConfig')
+            ->getRepository('OroShippingBundle:ShippingMethodConfig')
             ->findBy([
                 'method' => UPSShippingMethod::IDENTIFIER . '_' . $ups_channel->getId()]);
         $typesBefore = $em
-            ->getRepository('OroShippingBundle:ShippingRuleMethodTypeConfig')
+            ->getRepository('OroShippingBundle:ShippingMethodTypeConfig')
             ->findBy(['methodConfig' => $configuredMethods, 'type' => $toBeDeletedService->getCode()]);
 
         static::assertNotEmpty($typesBefore);
@@ -45,7 +45,7 @@ class UPSTransportEntityListenerTest extends WebTestCase
         $em->flush();
 
         $typesAfter = $em
-            ->getRepository('OroShippingBundle:ShippingRuleMethodTypeConfig')
+            ->getRepository('OroShippingBundle:ShippingMethodTypeConfig')
             ->findBy(['methodConfig' => $configuredMethods, 'type' => $toBeDeletedService->getCode()]);
 
         static::assertEmpty($typesAfter);

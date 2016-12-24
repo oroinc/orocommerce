@@ -34,11 +34,6 @@ services:
             - { name: kernel.event_listener, event: oro_config.get.oro_paypal.payflow_gateway_proxy_port, method: loadConfig }
             - { name: kernel.event_listener, event: oro_config.settings_before_save, method: beforeSave }
 
-    oro_paypal.event_listener.config.paypal_selected_countries:
-        class: 'Oro\Bundle\PayPalBundle\EventListener\Config\PayPalSelectedCountriesListener'
-        tags:
-            - { name: kernel.event_listener, event: oro_config.settings_before_save, method: beforeSave }
-
     oro_paypal.event_listener.payflow_require_payment_redirect:
         class: 'Oro\Bundle\PayPalBundle\EventListener\ZeroAmountAuthorizationRedirectListener'
         arguments:

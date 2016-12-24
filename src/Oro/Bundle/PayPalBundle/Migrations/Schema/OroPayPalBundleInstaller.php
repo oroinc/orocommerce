@@ -33,12 +33,8 @@ class OroPayPalBundleInstaller implements Installation
     protected function migratePayPalSettings(Schema $schema, QueryBag $queries)
     {
         // PayPal Payments Pro
-        $this->migrateSetting($queries, 'paypal_payments_pro_enabled');
         $this->migrateSetting($queries, 'paypal_payments_pro_label');
         $this->migrateSetting($queries, 'paypal_payments_pro_short_label');
-        $this->migrateSetting($queries, 'paypal_payments_pro_sort_order');
-        $this->migrateSetting($queries, 'paypal_payments_pro_allowed_countries');
-        $this->migrateSetting($queries, 'paypal_payments_pro_selected_countries');
         $this->migrateSetting($queries, 'paypal_payments_pro_allowed_cc_types');
         $this->migrateSetting($queries, 'paypal_payments_pro_partner');
         $this->migrateSetting($queries, 'paypal_payments_pro_user');
@@ -62,12 +58,8 @@ class OroPayPalBundleInstaller implements Installation
         $this->migrateSetting($queries, 'paypal_payments_pro_express_checkout_payment_action');
 
         // Payflow Gateway
-        $this->migrateSetting($queries, 'payflow_gateway_enabled');
         $this->migrateSetting($queries, 'payflow_gateway_label');
         $this->migrateSetting($queries, 'payflow_gateway_short_label');
-        $this->migrateSetting($queries, 'payflow_gateway_sort_order');
-        $this->migrateSetting($queries, 'payflow_gateway_allowed_countries');
-        $this->migrateSetting($queries, 'payflow_gateway_selected_countries');
         $this->migrateSetting($queries, 'payflow_gateway_allowed_cc_types');
         $this->migrateSetting($queries, 'payflow_gateway_partner');
         $this->migrateSetting($queries, 'payflow_gateway_user');
@@ -86,10 +78,8 @@ class OroPayPalBundleInstaller implements Installation
         $this->migrateSetting($queries, 'payflow_gateway_allowed_currencies');
 
         // Payflow Express Checkout
-        $this->migrateSetting($queries, 'payflow_express_checkout_enabled');
         $this->migrateSetting($queries, 'payflow_express_checkout_label');
         $this->migrateSetting($queries, 'payflow_express_checkout_short_label');
-        $this->migrateSetting($queries, 'payflow_express_checkout_sort_order');
         $this->migrateSetting($queries, 'payflow_express_checkout_payment_action');
     }
 

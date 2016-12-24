@@ -681,6 +681,11 @@ workflows:
                                 entity: $checkout
                                 state: $.result.currentCheckoutState
                                 token: $state_token
+                    - '@call_service_method':
+                        service: oro_checkout.factory.payment_context_factory
+                        method: create
+                        method_parameters: [$checkout]
+                        attribute: $.result.paymentContext
                 preconditions:
                     '@and':
                         - '@not_equal': [$payment_in_progress, true]
@@ -689,7 +694,7 @@ workflows:
                             parameters:
                                 entity: $checkout
                         - '@has_applicable_payment_methods':
-                            entity: $checkout
+                            context: $.result.paymentContext
                 conditions:
                     '@and':
                         - '@or':
@@ -705,9 +710,8 @@ workflows:
                             parameters: $checkout.paymentMethod
                         - '@payment_method_applicable':
                             message: oro.checkout.workflow.condition.payment_method_is_not_applicable.message
-                            parameters:
-                                payment_method: $checkout.paymentMethod
-                                entity: $checkout
+                            payment_method: $checkout.paymentMethod
+                            context: $.result.paymentContext
                         - '@check_request':
                             message: Invalid request
                             parameters:
@@ -816,7 +820,11 @@ workflows:
                                         entity: $checkout
                                         state: $.result.currentCheckoutState
                                         token: $state_token
-
+                            - '@call_service_method':
+                                service: oro_checkout.factory.payment_context_factory
+                                method: create
+                                method_parameters: [$checkout]
+                                attribute: $.result.paymentContext
                 preconditions:
                     '@and':
                         - '@not_equal':
@@ -824,9 +832,8 @@ workflows:
                             parameters: [$payment_in_progress, true]
                         - '@payment_method_applicable':
                             message: oro.checkout.workflow.condition.payment_method_is_not_applicable_please_return_to_payment_step.message
-                            parameters:
-                                payment_method: $checkout.paymentMethod
-                                entity: $checkout
+                            payment_method: $checkout.paymentMethod
+                            context: $.result.paymentContext
                 conditions:
                     '@and':
                         - '@or':
