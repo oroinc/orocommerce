@@ -4,8 +4,10 @@ oro:
             credit_card.label: 'Credit Card'
             whats_this: "What's this?"
             tooltip: |
-                The verification number is a 3-digit number printed on the back of your card.
-                The American Express security code is a 4-digit number printed on the front of your card.
+                The verification number is a 3-digit
+                number printed on the back of your card.
+                The American Express security code is a 4-digit
+                number printed on the front of your card.
         system_configuration:
             groups:
                 paypal_payments_pro.title: 'PayPal Payments Pro'

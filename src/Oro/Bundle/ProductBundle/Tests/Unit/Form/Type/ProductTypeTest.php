@@ -220,7 +220,7 @@ class ProductTypeTest extends FormIntegrationTestCase
                 'submittedData' => [
                     'sku' => 'test sku',
                     'primaryUnitPrecision' => ['unit' => 'each', 'precision' => 0],
-                    'inventoryStatus' => Product::INVENTORY_STATUS_IN_STOCK,
+                    'inventory_status' => Product::INVENTORY_STATUS_IN_STOCK,
                     'visible' => 1,
                     'status' => Product::STATUS_DISABLED,
                     'type' => Product::TYPE_SIMPLE,
@@ -244,7 +244,7 @@ class ProductTypeTest extends FormIntegrationTestCase
 
                         ],
                     ],
-                    'inventoryStatus' => Product::INVENTORY_STATUS_IN_STOCK,
+                    'inventory_status' => Product::INVENTORY_STATUS_IN_STOCK,
                     'visible' => 1,
                     'status' => Product::STATUS_DISABLED,
                     'type' => Product::TYPE_SIMPLE,
@@ -257,7 +257,7 @@ class ProductTypeTest extends FormIntegrationTestCase
                 'submittedData' => [
                     'sku' => 'test sku',
                     'primaryUnitPrecision' => ['unit' => 'each', 'precision' => 0],
-                    'inventoryStatus' => Product::INVENTORY_STATUS_IN_STOCK,
+                    'inventory_status' => Product::INVENTORY_STATUS_IN_STOCK,
                     'visible' => 1,
                     'status' => Product::STATUS_DISABLED,
                     'type' => Product::TYPE_SIMPLE,
@@ -282,7 +282,7 @@ class ProductTypeTest extends FormIntegrationTestCase
                 'submittedData' => [
                     'sku' => 'test sku',
                     'primaryUnitPrecision' => ['unit' => 'each', 'precision' => 0],
-                    'inventoryStatus' => Product::INVENTORY_STATUS_IN_STOCK,
+                    'inventory_status' => Product::INVENTORY_STATUS_IN_STOCK,
                     'visible' => 1,
                     'status' => Product::STATUS_DISABLED,
                     'type' => Product::TYPE_SIMPLE,
@@ -295,7 +295,7 @@ class ProductTypeTest extends FormIntegrationTestCase
                 'submittedData' => [
                     'sku' => 'test sku',
                     'primaryUnitPrecision' => ['unit' => 'each', 'precision' => 0],
-                    'inventoryStatus' => Product::INVENTORY_STATUS_IN_STOCK,
+                    'inventory_status' => Product::INVENTORY_STATUS_IN_STOCK,
                     'visible' => 1,
                     'status' => Product::STATUS_DISABLED,
                     'type' => Product::TYPE_SIMPLE,
@@ -309,7 +309,7 @@ class ProductTypeTest extends FormIntegrationTestCase
                 'submittedData' => [
                     'sku' => 'test sku',
                     'primaryUnitPrecision' => ['unit' => 'each', 'precision' => 0],
-                    'inventoryStatus' => Product::INVENTORY_STATUS_IN_STOCK,
+                    'inventory_status' => Product::INVENTORY_STATUS_IN_STOCK,
                     'visible' => 1,
                     'status' => Product::STATUS_DISABLED,
                     'type' => Product::TYPE_CONFIGURABLE,

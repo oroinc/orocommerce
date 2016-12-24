@@ -2,6 +2,7 @@ system_configuration:
     groups:
         payment_term:
             title: oro.paymentterm.system_configuration.groups.payment_terms.title
+            icon: fa-file-text-o
         payment_term_display:
             title: oro.payment.system_configuration.groups.display_options.title
 
