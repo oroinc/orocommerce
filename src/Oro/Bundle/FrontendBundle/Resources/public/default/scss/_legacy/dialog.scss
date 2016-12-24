@@ -1,4 +1,6 @@
 .ui-dialog {
+  z-index: z('popup');
+
   .ui-dialog-content {
     overflow: auto;
     height: calc(100% - 177px) !important;
@@ -9,4 +11,11 @@
       overflow: visible;
     }
   }
+}
+
+.modal-backdrop {
+  z-index: z('popup');
+}
+.oro-modal-normal {
+  z-index: z('popup') + 1;
 }

@@ -90,6 +90,7 @@
              options: {
                  buttonTemplate: '<%#' ~ buttons.buttonTemplate(options.current) ~ '#%>',
                  removeButtonTemplate: options.remove is defined ? '<%#' ~ buttons.buttonTemplate(options.remove) ~ '#%>',
+                 createNewButtonTemplate: '<%#' ~ buttons.buttonTemplate(options.new) ~ '#%>',
              }|merge(options.componentOptions|default({}))
          }) }}
         >
