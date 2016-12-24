@@ -89,7 +89,6 @@ class ShoppingListFrontendActionsTest extends FrontendActionTestCase
         $this->assertNotEmpty($link->attr('data-transition-url'));
         $this->client->request('GET', $link->attr('data-transition-url'));
 
-        $this->client->click($link);
         $this->assertJsonResponseStatusCodeEquals($this->client->getResponse(), 200);
 
         $data = json_decode($this->client->getResponse()->getContent(), true);
