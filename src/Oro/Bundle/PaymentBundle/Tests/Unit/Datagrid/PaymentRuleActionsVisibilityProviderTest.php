@@ -1,21 +1,21 @@
 <?php
 
-namespace Oro\Bundle\ShippingBundle\Tests\Unit\Datagrid;
+namespace Oro\Bundle\PaymentBundle\Tests\Unit\Datagrid;
 
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\RuleBundle\Entity\Rule;
-use Oro\Bundle\ShippingBundle\Datagrid\ShippingRuleActionsVisibilityProvider;
+use Oro\Bundle\PaymentBundle\Datagrid\PaymentRuleActionsVisibilityProvider;
 
-class ShippingRuleActionsVisibilityProviderTest extends \PHPUnit_Framework_TestCase
+class PaymentRuleActionsVisibilityProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var ShippingRuleActionsVisibilityProvider
+     * @var PaymentRuleActionsVisibilityProvider
      */
     protected $provider;
 
     protected function setUp()
     {
-        $this->provider = new ShippingRuleActionsVisibilityProvider();
+        $this->provider = new PaymentRuleActionsVisibilityProvider();
     }
 
     /**
