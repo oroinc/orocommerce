@@ -32,6 +32,7 @@ class LoadShippingRuleDemoData extends AbstractFixture
 
         $rule = new Rule();
         $rule->setName('Default')
+            ->setEnabled(true)
             ->setSortOrder(1);
 
         $shippingRule = new ShippingMethodsConfigsRule();
