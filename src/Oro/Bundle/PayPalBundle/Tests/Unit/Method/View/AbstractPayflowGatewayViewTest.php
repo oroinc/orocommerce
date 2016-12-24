@@ -208,6 +208,8 @@ abstract class AbstractPayflowGatewayViewTest extends \PHPUnit_Framework_TestCas
         $this->paymentTransactionProvider->expects($this->once())->method('getActiveValidatePaymentTransaction')
             ->willReturn($paymentTransaction);
 
+        /** @var PaymentContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
+        $context = $this->createMock(PaymentContextInterface::class);
         $this->assertEquals(
             [
                 'formView' => $formView,
@@ -218,7 +220,7 @@ abstract class AbstractPayflowGatewayViewTest extends \PHPUnit_Framework_TestCas
                     'allowedCreditCards' => $allowedCCTypes,
                 ],
             ],
-            $this->methodView->getOptions()
+            $this->methodView->getOptions($context)
         );
     }
 
@@ -263,6 +265,8 @@ abstract class AbstractPayflowGatewayViewTest extends \PHPUnit_Framework_TestCas
         $this->paymentTransactionProvider->expects($this->once())->method('getActiveValidatePaymentTransaction')
             ->willReturn($paymentTransaction);
 
+        /** @var PaymentContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
+        $context = $this->createMock(PaymentContextInterface::class);
         $this->assertEquals(
             [
                 'formView' => $formView,
@@ -273,7 +277,7 @@ abstract class AbstractPayflowGatewayViewTest extends \PHPUnit_Framework_TestCas
                     'allowedCreditCards' => $allowedCCTypes,
                 ],
             ],
-            $this->methodView->getOptions()
+            $this->methodView->getOptions($context)
         );
     }
 
@@ -317,6 +321,8 @@ abstract class AbstractPayflowGatewayViewTest extends \PHPUnit_Framework_TestCas
         $this->paymentTransactionProvider->expects($this->once())->method('getActiveValidatePaymentTransaction')
             ->willReturn($paymentTransaction);
 
+        /** @var PaymentContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
+        $context = $this->createMock(PaymentContextInterface::class);
         $this->assertEquals(
             [
                 'formView' => $formView,
@@ -327,7 +333,7 @@ abstract class AbstractPayflowGatewayViewTest extends \PHPUnit_Framework_TestCas
                     'allowedCreditCards' => $allowedCCTypes,
                 ],
             ],
-            $this->methodView->getOptions()
+            $this->methodView->getOptions($context)
         );
     }
 
