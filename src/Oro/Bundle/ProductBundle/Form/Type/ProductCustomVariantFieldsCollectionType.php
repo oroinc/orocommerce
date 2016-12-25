@@ -18,12 +18,12 @@ class ProductCustomVariantFieldsCollectionType extends AbstractType
     /**
      * @var CustomFieldProvider
      */
-    private $customFieldProvider;
+    protected $customFieldProvider;
 
     /**
      * @var string
      */
-    private $productClass;
+    protected $productClass;
 
     /**
      * @param CustomFieldProvider $customFieldProvider

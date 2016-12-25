@@ -7,6 +7,8 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class ProductVariantFieldType extends AbstractType
 {
+    const NAME = 'oro_product_variant_field';
+
     /**
      * {@inheritdoc}
      */
@@ -30,6 +32,6 @@ class ProductVariantFieldType extends AbstractType
      */
     public function getBlockPrefix()
     {
-        return 'oro_product_variant_field';
+        return self::NAME;
     }
 }

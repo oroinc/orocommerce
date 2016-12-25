@@ -20,7 +20,7 @@ class ProductVariantFieldsTransformer implements DataTransformerInterface
     public function reverseTransform($value)
     {
         if (!$value) {
-            return null;
+            return [];
         }
 
         uasort($value, function ($a, $b) {
