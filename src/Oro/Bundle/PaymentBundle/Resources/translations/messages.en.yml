@@ -56,7 +56,7 @@ oro:
             entity_plural_label: Payment Method Configs
             id.label: Id
             methods_configs_rule.label: Payment Methods Configs Rule
-            type.label: Type
+            type.label: Method
             options.label: Options
 
         paymentmethodsconfigsrule:
