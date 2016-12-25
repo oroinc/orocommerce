@@ -51,17 +51,6 @@ class PayPalPaymentsProViewTest extends AbstractPayflowGatewayViewTest
         return Configuration::PAYPAL_PAYMENTS_PRO_AUTHORIZATION_FOR_REQUIRED_AMOUNT_KEY;
     }
 
-    public function testGetOrder()
-    {
-        $order = '100';
-
-        $this->paymentConfig->expects($this->once())
-            ->method('getOrder')
-            ->willReturn((int)$order);
-
-        $this->assertSame((int)$order, $this->methodView->getOrder());
-    }
-
     public function testGetPaymentMethodType()
     {
         $this->assertEquals('paypal_payments_pro', $this->methodView->getPaymentMethodType());

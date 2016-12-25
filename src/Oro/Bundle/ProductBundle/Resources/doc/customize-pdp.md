@@ -5,6 +5,7 @@ In this example we consider how to customize product with different product type
 
 - [Simple Product](#simple-product)
 - [Configurable Product](#configurable-product)
+- [Change Product Page by Category](#change-product-page-by-category)
 
 ### Getting started
 
@@ -350,6 +351,90 @@ class ProductVariantsProvider
         return $variants;
     }
 }
+```
+
+### Change Product Page by Category
+
+Every product view page contains current **category_id** and **category_ids** in layout context.
+So you can use it in the your layout update **conditions**. When you customize any page don't forget to use **Symfony Profiler** and look into **Layout** section.
+You can find there current layout **context** data and actual layout **tree**. Please see [Debug Information](https://github.com/orocrm/platform/tree/master/src/Oro/Bundle/LayoutBundle/Resources/doc/debug_information.md) for more details.
+
+#### Example 1 (by category ID)
+
+We have a "Headlamps" category and we want to add some static html to all products in this category.
+Our condition will be look like **conditions: 'context["category_id"] == 4'**.
+
+Our result will be look like this:
+![Change Product Page by Category example 1](./images/change_product_by_category_example_1.png "Change Product Page by Category example 1")
+
+```yml
+# src/Acme/Bundle/ProductBundle/Resources/views/layouts/default/oro_product_frontend_product_view/headlamps.yml
+
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'headlamps.html.twig'
+
+        - '@add':
+            id: product_sale_banner
+            blockType: block
+            parentId: product_view_main_container
+            siblingId: ~
+            prepend: false
+
+    conditions: 'context["category_id"] == 4'
+```
+
+template:
+
+```twig
+{# src/Acme/Bundle/ProductBundle/Resources/views/layouts/default/oro_product_frontend_product_view/headlamps.html.twig #}
+
+{% block _product_sale_banner_widget %}
+    <div class="text-right">
+            <img src="{{ asset('/bundles/oroproduct/default/images/headlamps.jpg') }}"/>
+        </div>
+        <br />
+{% endblock %}
+```
+
+#### Example 2 (by parent category ID)
+
+Imagine that we want to add sale banner to all product in first level category and their children. For example we have category "Furniture" with **id = 6**.
+Our condition will be look like **conditions: '6 in context["category_ids"]'**.
+
+Our result will be look like this:
+![Change Product Page by Category example 2](./images/change_product_by_category_example_2.png "Change Product Page by Category example 2")
+
+```yml
+# src/Acme/Bundle/ProductBundle/Resources/views/layouts/default/oro_product_frontend_product_view/furniture.yml
+
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'furniture.html.twig'
+
+        - '@add':
+            id: product_sale_banner
+            blockType: block
+            parentId: page_content
+            siblingId: ~
+            prepend: true
+
+    conditions: '6 in context["category_ids"]'
+```
+
+template:
+
+```twig
+{# src/Acme/Bundle/ProductBundle/Resources/views/layouts/default/oro_product_frontend_product_view/furniture.html.twig #}
+
+{% block _product_sale_banner_widget %}
+    <div class="text-center">
+        <img src="{{ asset('/bundles/oroproduct/default/images/furniture_sale.jpg') }}"/>
+    </div>
+    <br />
+{% endblock %}
 ```
 
 ### Product Family

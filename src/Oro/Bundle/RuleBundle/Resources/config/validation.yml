@@ -1,0 +1,6 @@
+Oro\Bundle\RuleBundle\Entity\Rule:
+    properties:
+        name:
+            - NotBlank: ~
+        sortOrder:
+            - NotBlank: ~

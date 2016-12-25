@@ -8,8 +8,6 @@ services:
     oro_money_order.payment_method.money_order:
         class: 'Oro\Bundle\MoneyOrderBundle\Method\MoneyOrder'
         public: false
-        arguments:
-            - '@oro_money_order.payment_method.money_order.config'
         tags:
             - { name: oro_payment.payment_method }
 

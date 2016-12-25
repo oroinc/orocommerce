@@ -34,14 +34,6 @@ class PayPalPaymentsProExpressCheckoutConfig extends AbstractPaymentConfig imple
     /**
      * {@inheritdoc}
      */
-    public function isEnabled()
-    {
-        return (bool)$this->getConfigValue(Configuration::PAYPAL_PAYMENTS_PRO_EXPRESS_CHECKOUT_ENABLED_KEY);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getPurchaseAction()
     {
         return (string)$this->getConfigValue(Configuration::PAYPAL_PAYMENTS_PRO_EXPRESS_CHECKOUT_PAYMENT_ACTION_KEY);
@@ -53,14 +45,6 @@ class PayPalPaymentsProExpressCheckoutConfig extends AbstractPaymentConfig imple
     public function isTestMode()
     {
         return (bool)$this->getConfigValue(Configuration::PAYPAL_PAYMENTS_PRO_TEST_MODE_KEY);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getOrder()
-    {
-        return (int)$this->getConfigValue(Configuration::PAYPAL_PAYMENTS_PRO_EXPRESS_CHECKOUT_SORT_ORDER_KEY);
     }
 
     /**

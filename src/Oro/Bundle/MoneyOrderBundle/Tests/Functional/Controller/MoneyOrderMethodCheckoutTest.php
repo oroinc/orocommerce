@@ -8,6 +8,7 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend\CheckoutControllerTestCase;
 use Oro\Bundle\MoneyOrderBundle\DependencyInjection\Configuration;
 use Oro\Bundle\MoneyOrderBundle\Method\MoneyOrder;
+use Oro\Bundle\MoneyOrderBundle\Tests\Functional\DataFixtures\LoadPaymentMethodsConfigsRuleData;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 
@@ -30,7 +31,6 @@ class MoneyOrderMethodCheckoutTest extends CheckoutControllerTestCase
         parent::setUp();
 
         $this->configManager = $this->getContainer()->get('oro_config.global');
-        $this->configManager->set('oro_money_order.' . Configuration::MONEY_ORDER_ENABLED_KEY, true);
         $this->configManager->set(
             'oro_money_order.' . Configuration::MONEY_ORDER_PAY_TO_KEY,
             self::MONEY_ORDER_PAY_TO_VALUE
@@ -40,6 +40,14 @@ class MoneyOrderMethodCheckoutTest extends CheckoutControllerTestCase
             self::MONEY_ORDER_SEND_TO_VALUE
         );
         $this->configManager->flush();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getPaymentFixtures()
+    {
+        return LoadPaymentMethodsConfigsRuleData::class;
     }
 
     protected function tearDown()

@@ -27,7 +27,7 @@ define(function(require) {
         initialize: function() {
             ExpressionFieldSwitcher.__super__.initialize.apply(this, arguments);
             this.initLayout().done(_.bind(this.initSwitcher, this));
-            this.$form.on('submit', _.bind(function(e) {
+            this.$form.on('submit' + this.eventNamespace(), _.bind(function(e) {
                 this.onSubmit(e);
             }, this));
         },
@@ -84,6 +84,22 @@ define(function(require) {
                     this.getValue(this.expression) && this.expression.hasClass(this.visibleClass)
                 )
             );
+        },
+
+        /**
+         * @inheritDoc
+         */
+        dispose: function(options) {
+            if (this.disposed) {
+                return;
+            }
+
+            delete this.options;
+            delete this.visibleClass;
+
+            this.$form.off(this.eventNamespace());
+
+            AbstractSwitcher.__super__.dispose.apply(this, arguments);
         }
     });
 

@@ -174,4 +174,17 @@ class OrderShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
 
         $this->factory->create($order);
     }
+
+    public function testCreateNullBuilderFactory()
+    {
+        $this->factory = new OrderShippingContextFactory(
+            $this->doctrineHelper,
+            $this->shippingLineItemConverterMock
+        );
+        $this->shippingContextBuilderFactoryMock
+            ->expects(static::never())
+            ->method('createShippingContextBuilder');
+
+        $this->assertNull($this->factory->create(new Order()));
+    }
 }

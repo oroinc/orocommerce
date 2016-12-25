@@ -2,7 +2,8 @@
     {% import 'OroShoppingListBundle:ShoppingList/Frontend:buttons.html.twig' as buttons %}
     {% set buttonOptions = {
         dataUrl: 'oro_shopping_list_frontend_add_product',
-        dataAttributes: {}
+        dataAttributes: {},
+        'aCss': 'btn--info '
     } %}
     {% set removeOptions = buttonOptions|merge({
         dataUrl: 'oro_shopping_list_frontend_remove_product',

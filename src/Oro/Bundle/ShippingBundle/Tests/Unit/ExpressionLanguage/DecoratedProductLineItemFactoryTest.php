@@ -114,4 +114,32 @@ class DecoratedProductLineItemFactoryTest extends \PHPUnit_Framework_TestCase
 
         static::assertEquals($expectedLineItem, $actualLineItem);
     }
+
+    public function testCreateLineItemWithDecoratedProductWithNullProduct()
+    {
+        $product = null;
+        $lineItem = new ShippingLineItem([
+            ShippingLineItem::FIELD_PRODUCT => $product,
+        ]);
+        $lineItems = [$lineItem];
+
+        $actualLineItem = $this->factory->createLineItemWithDecoratedProductByLineItem(
+            $lineItems,
+            $lineItem
+        );
+
+        $expectedLineItem = new ShippingLineItem([
+            ShippingLineItem::FIELD_PRICE => $lineItem->getPrice(),
+            ShippingLineItem::FIELD_PRODUCT_UNIT => $lineItem->getProductUnit(),
+            ShippingLineItem::FIELD_PRODUCT_UNIT_CODE => $lineItem->getProductUnitCode(),
+            ShippingLineItem::FIELD_QUANTITY => $lineItem->getQuantity(),
+            ShippingLineItem::FIELD_PRODUCT_HOLDER => $lineItem->getProductHolder(),
+            ShippingLineItem::FIELD_PRODUCT_SKU => $lineItem->getProductSku(),
+            ShippingLineItem::FIELD_WEIGHT => $lineItem->getWeight(),
+            ShippingLineItem::FIELD_DIMENSIONS => $lineItem->getDimensions(),
+            ShippingLineItem::FIELD_PRODUCT => null,
+        ]);
+
+        static::assertEquals($expectedLineItem, $actualLineItem);
+    }
 }

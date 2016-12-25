@@ -83,7 +83,7 @@ class OroProductBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_7';
+        return 'v1_8';
     }
 
     /**
@@ -116,6 +116,7 @@ class OroProductBundleInstaller implements
         $this->addNoteAssociations($schema);
         $this->addAttachmentAssociations($schema);
         $this->addProductContentVariants($schema);
+        $this->addAttributeFamilyField($schema);
     }
 
     /**
@@ -545,5 +546,22 @@ class OroProductBundleInstaller implements
                 ]
             );
         }
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    public function addAttributeFamilyField(Schema $schema)
+    {
+        $table = $schema->getTable('oro_product');
+        $table->addColumn('attribute_family_id', 'integer', ['notnull' => false]);
+        $table->addIndex(['attribute_family_id']);
+
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_attribute_family'),
+            ['attribute_family_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'RESTRICT']
+        );
     }
 }
