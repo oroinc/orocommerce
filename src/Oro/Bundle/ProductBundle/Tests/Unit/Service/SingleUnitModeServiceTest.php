@@ -8,6 +8,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Service\SingleUnitModeService;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 
 class SingleUnitModeServiceTest extends \PHPUnit_Framework_TestCase
 {
@@ -141,7 +142,7 @@ class SingleUnitModeServiceTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testIsProductPrimaryUniteDefault()
+    public function testIsProductPrimaryUnitDefault()
     {
         $this->configManager->expects(static::once())
             ->method('get')
@@ -155,5 +156,16 @@ class SingleUnitModeServiceTest extends \PHPUnit_Framework_TestCase
         ]));
 
         static::assertTrue($this->unitModeProvider->isProductPrimaryUnitDefault($product));
+    }
+
+    public function testIsDefaultPrimaryUnit()
+    {
+        $this->configManager->expects($this->exactly(2))
+            ->method('get')
+            ->with('oro_product.default_unit')
+            ->willReturn('each');
+
+        static::assertTrue($this->unitModeProvider->isDefaultPrimaryUnit('each'));
+        static::assertFalse($this->unitModeProvider->isDefaultPrimaryUnit('otherUnit'));
     }
 }
