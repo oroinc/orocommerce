@@ -30,7 +30,7 @@ layout:
                     blockType: line_buttons
                     options:
                         visible: '=data["entity"]!=null'
-                        buttons: '=data["button_provider"].getAll(data["entity"])'
+                        buttons: '=data["buttons"].getAll(data["entity"])'
                 shopping_list_options:
                     blockType: shopping_list_awere_block
                     options:
@@ -78,7 +78,7 @@ layout:
                     blockType: combined_buttons
                     options:
                         visible: '=data["entity"]!=null'
-                        buttons: '=data["button_provider"].getAll(data["entity"])'
+                        buttons: '=data["buttons"].getAll(data["entity"])'
                 shopping_list_view_container_content:
                     blockType: container
             tree:

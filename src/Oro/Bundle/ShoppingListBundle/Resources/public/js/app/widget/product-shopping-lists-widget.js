@@ -7,10 +7,10 @@ define(function(require) {
     var ApiAccessor = require('oroui/js/tools/api-accessor');
     var mediator = require('oroui/js/mediator');
     var routing = require('routing');
-    var Error = require('oroui/js/error');
     var __ = require('orotranslation/js/translator');
     var _ = require('underscore');
     var $ = require('jquery');
+    var ShoppingListCollectionService = require('oroshoppinglist/js/shoppinglist-collection-service');
 
     ProductShoppingListsWidget = DialogWidget.extend(_.extend({}, ElementsHelper, {
         options: $.extend(true, {}, DialogWidget.prototype.options, {
@@ -63,18 +63,12 @@ define(function(require) {
             shopping_lists: []
         },
 
-        modelEvents: {
-            shopping_lists: ['change', 'render']
-        },
-
-        shoppingLists: [],
+        shoppingListCollection: null,
 
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, _.pick(options, [
                 'dialogOptions', 'template', 'quantityComponentOptions', 'singleUnitMode', 'singleUnitModeCodeVisible', 'configDefaultUnit'
             ]));
-
-            this.shoppingLists = options.shoppingLists || [];
 
             this.initModel(options);
             if (!this.model) {
@@ -89,7 +83,11 @@ define(function(require) {
             mediator.on('frontend:item:delete',  this.onLineItemDelete, this);
             mediator.on('product:quantity-unit:update', this.onLineItemUpdate, this);
 
-            ProductShoppingListsWidget.__super__.initialize.apply(this, arguments);
+            ShoppingListCollectionService.shoppingListCollection.done((function(collection) {
+                this.shoppingListCollection = collection;
+                this.listenTo(collection, 'change', this.render);
+                ProductShoppingListsWidget.__super__.initialize.apply(this, arguments);
+            }).bind(this));
         },
 
         initModel: function(options) {
@@ -107,6 +105,7 @@ define(function(require) {
 
         dispose: function() {
             this.disposeElements();
+            delete this.shoppingListCollection;
             mediator.off(null, null, this);
             ProductShoppingListsWidget.__super__.dispose.apply(this, arguments);
         },
@@ -124,16 +123,24 @@ define(function(require) {
         render: function() {
             this.clearElementsCache();
 
-            var shoppingLists = this.model.get('shopping_lists');
+            var shoppingLists = this.model.get('shopping_lists').map((function(item) {
+                var model = this.shoppingListCollection.get(item.id);
+                if (!model) {
+                    return false;
+                }
+                return _.extend({}, {line_items: item.line_items}, model.toJSON());
+            }).bind(this)).filter(function(item) {
+                return !!item;
+            });
 
-            if (_.isEmpty(shoppingLists)) {
+            if (_.isEmpty(shoppingLists) || !this.shoppingListCollection) {
                 this.dispose();
                 return;
             }
 
             this.setElement($(this.options.template({
                 shoppingLists: shoppingLists,
-                shoppingListsCollection: this.shoppingLists,
+                shoppingListsCollection: this.shoppingListCollection,
                 productUnits: this.model.get('product_units'),
                 unit: this.model.get('unit'),
                 singleUnitMode: this.options.singleUnitMode,
@@ -163,6 +170,9 @@ define(function(require) {
 
             this.model.set('shopping_lists', shoppingLists, {silent: true});
             this.model.trigger('change:shopping_lists');
+            this.shoppingListCollection.trigger('change', {
+                refresh: true
+            });
         },
 
         onLineItemUpdate: function(updateData) {
@@ -173,8 +183,11 @@ define(function(require) {
                 updateData.value
             );
 
-            this.model.set('shopping_lists', updatedShoppingLists);
+            this.model.set('shopping_lists', updatedShoppingLists, {silent: true});
             this.model.trigger('change:shopping_lists');
+            this.shoppingListCollection.trigger('change', {
+                refresh: true
+            });
 
             if (updateData.event) {
                 this.toggleEditMode(updateData.event, 'disable');
@@ -211,7 +224,7 @@ define(function(require) {
             if (selectedShoppingList && selectedShoppingList.line_items) {
                 var selectedLineItem = _.findWhere(selectedShoppingList.line_items, {unit: selectedUnit});
 
-                if(selectedLineItem && selectedLineItem.quantity) {
+                if (selectedLineItem && selectedLineItem.quantity) {
                     quantity = selectedLineItem.quantity;
                 }
             }
@@ -227,7 +240,7 @@ define(function(require) {
             if (!selectedShoppingList) {
                 return false;
             }
-            
+
             if (selectedShoppingList.line_items) {
                 var selectedLineItem = _.findWhere(selectedShoppingList.line_items, {unit: selectedUnit});
 
@@ -279,14 +292,15 @@ define(function(require) {
         },
 
         saveLineItem: function(shoppingListId, lineItemUnit, newQty) {
+            var self = this;
             var urlOptions = {};
             var formData = this.getElement('addForm').serialize();
-            
+
             if (this.model) {
                 urlOptions.productId = this.model.get('id');
             }
             urlOptions.shoppingListId = shoppingListId;
-            
+
             mediator.execute('showLoading');
             $.ajax({
                 type: 'POST',
@@ -300,11 +314,14 @@ define(function(require) {
                             response.message
                         );
                     }
-                    mediator.trigger('shopping-list:updated', response.shoppingList, response.product);
+                    self.model.set('shopping_lists', response.product.shopping_lists, {silent: true});
+                    self.model.trigger('change:shopping_lists');
+                    self.shoppingListCollection.trigger('change', {
+                        refresh: true
+                    });
                 },
                 error: function(xhr) {
                     mediator.execute('hideLoading');
-                    Error.handle({}, xhr, {enforce: true});
                 }
             });
         },
@@ -320,7 +337,7 @@ define(function(require) {
                 quantity: newQty,
                 unit: lineItem.unit
             };
-            
+
             var updatePromise = updateApiAccessor.send(modelData, {oro_product_frontend_line_item: modelData}, {}, {
                 processingMessage: this.messages.processingMessage,
                 preventWindowUnload: this.messages.preventWindowUnload
@@ -382,7 +399,8 @@ define(function(require) {
                 return;
             }
 
-            return _.findWhere(this.model.get('shopping_lists'), properties) || _.findWhere(this.shoppingLists, properties);
+            return _.findWhere(this.model.get('shopping_lists'), properties) ||
+                this.shoppingListCollection.find(properties);
         },
 
         getSelectedUnit: function() {

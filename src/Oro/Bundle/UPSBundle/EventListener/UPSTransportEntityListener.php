@@ -34,15 +34,15 @@ class UPSTransportEntityListener
             if (null !== $channel) {
                 $shippingMethodIdentifier = UPSShippingMethod::IDENTIFIER . '_' . $channel->getId();
                 $configuredMethods = $entityManager
-                    ->getRepository('OroShippingBundle:ShippingRuleMethodConfig')
+                    ->getRepository('OroShippingBundle:ShippingMethodConfig')
                     ->findBy(['method' => $shippingMethodIdentifier ]);
                 if (0 < count($configuredMethods)) {
                     $types = $entityManager
-                        ->getRepository('OroShippingBundle:ShippingRuleMethodTypeConfig')
+                        ->getRepository('OroShippingBundle:ShippingMethodTypeConfig')
                         ->findBy(['methodConfig' => $configuredMethods, 'type' => $deleted]);
 
                     foreach ($types as $type) {
-                        $entityManager->getRepository('OroShippingBundle:ShippingRuleMethodTypeConfig')
+                        $entityManager->getRepository('OroShippingBundle:ShippingMethodTypeConfig')
                             ->deleteByMethodAndType($type->getMethodConfig(), $type->getType());
                     }
                 }

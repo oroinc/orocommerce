@@ -2,13 +2,15 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Unit\EventListener;
 
-use Symfony\Component\Form\FormView;
+use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 
 use Doctrine\ORM\EntityRepository;
 
 use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
 use Oro\Bundle\TaxBundle\EventListener\ProductFormViewListener;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\UIBundle\View\ScrollData;
+use Symfony\Component\Form\FormView;
 
 class ProductFormViewListenerTest extends AbstractFormViewListenerTest
 {
@@ -32,27 +34,45 @@ class ProductFormViewListenerTest extends AbstractFormViewListenerTest
 
     public function testOnEdit()
     {
-        $event = $this->getBeforeListRenderEvent();
-
         /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $env */
         $env = $this->getMockBuilder('\Twig_Environment')
             ->disableOriginalConstructor()
             ->getMock();
 
+        $htmlTemplate = 'tax_code_update_template';
         $env->expects($this->once())
             ->method('render')
             ->with('OroTaxBundle:Product:tax_code_update.html.twig', ['form' => new FormView()])
-            ->willReturn('');
+            ->willReturn($htmlTemplate);
 
-        $event->expects($this->once())
-            ->method('getEnvironment')
-            ->willReturn($env);
+        $data = [
+            ScrollData::DATA_BLOCKS => [
+                'firstBlock' => [
+                    ScrollData::TITLE => 'first block',
+                    ScrollData::SUB_BLOCKS => [
+                        0 => [
+                            ScrollData::DATA => [
+                                'first subblock data',
+                            ]
+                        ],
+                    ]
+                ],
+                0 => [
+                    ScrollData::TITLE => 'first block',
+                    ScrollData::SUB_BLOCKS => []
+                ]
+            ]
+        ];
 
-        $event->expects($this->once())
-            ->method('getFormView')
-            ->willReturn(new FormView());
+        $scrollData = new ScrollData($data);
+        $event = new BeforeListRenderEvent($env, $scrollData, new FormView());
 
         $this->getListener()->onEdit($event);
+        $expectedData = $data;
+        $expectedData[ScrollData::DATA_BLOCKS]['firstBlock'][ScrollData::SUB_BLOCKS][0][ScrollData::DATA][] =
+            $htmlTemplate;
+
+        $this->assertEquals($expectedData, $scrollData->getData());
     }
 
     public function testOnProductView()

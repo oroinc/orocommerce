@@ -40,9 +40,10 @@
 
 {% block content_data %}
     {% set id = 'product-edit' %}
-    {% set generalData = [
-        form_row(form.sku),
-    ] %}
+    {%  set generalData = {
+        'sku': form_row(form.sku),
+        'names': form_row(form.names)
+    } %}
 
     {% if entity.isConfigurable %}
         {% set generalData = generalData|merge([
@@ -51,10 +52,8 @@
     {% endif %}
 
     {% set generalData = generalData|merge([
-        form_row(form.names),
         form_row(form.slugPrototypes),
-        form_row(form.status),
-        form_row(form.images)
+        form_row(form.status)
     ]) %}
 
     {% if ((not oro_is_product_primary_unit_single_and_default(entity)) and (oro_is_single_unit_mode())) or (not oro_is_single_unit_mode()) %}
@@ -73,22 +72,17 @@
         },
         {
             'title': '',
-            'data': [
-                form_row(form.descriptions),
-            ]
-        },
-        {
-            'title': '',
-            'data': [
-                form_row(form.shortDescriptions),
-            ],
+            'data': {
+                'descriptions': form_row(form.descriptions),
+                'shortDescriptions': form_row(form.shortDescriptions),
+            },
             'spanClass': 'responsive-cell'
-        }]
-    } %}
+        },
+    ]} %}
 
-    {% set dataBlocks = [
-        generalBlock
-    ] %}
+    {% set dataBlocks = {
+        'general': generalBlock
+    } %}
 
     {% set additionalData = [] %}
     {% for child in form.children if child.vars.extra_field is defined and child.vars.extra_field %}
@@ -107,14 +101,31 @@
         }] ) %}
     {% endif %}
 
-    {% set dataBlocks = dataBlocks|merge([{
-        'title': 'oro.product.sections.inventory'|trans,
-        'priority': 5,
-        'subblocks': [{
-            'title': '',
-            'data': [form_row(form.inventoryStatus)]
-        }]
-    }]) %}
+    {% set dataBlocks = dataBlocks|merge({
+        'inventory': {
+            'title': 'oro.product.sections.inventory'|trans,
+            'priority': 5,
+            'subblocks': [{
+                'title': '',
+                'data': {
+                    'inventory_status': form_row(form.inventory_status)
+                }
+            }]
+        }
+    }) %}
+
+    {% set dataBlocks = dataBlocks|merge({
+        'images': {
+            'title': 'oro.product.sections.images'|trans,
+            'priority': 0,
+            'subblocks': [{
+                'title': '',
+                'data': {
+                    'images': form_row(form.images)
+                }
+            }]
+        }
+    }) %}
 
     {% set productHasVariants = (entity.isConfigurable and form.variantFields.vars.choices|length != 0) %}
     {% if productHasVariants %}

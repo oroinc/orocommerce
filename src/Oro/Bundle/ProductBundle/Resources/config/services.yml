@@ -285,6 +285,14 @@ services:
         tags:
             - { name: kernel.event_listener, event: console.command, name: onConsoleCommand }
 
+    oro_product.event_listener.product_content_variant_reindex:
+        class: 'Oro\Bundle\ProductBundle\EventListener\ProductContentVariantReindexEventListener'
+        arguments:
+            - "@event_dispatcher"
+        tags:
+            - { name: doctrine.event_listener, event: onFlush }
+            - { name: kernel.event_listener, event: oro.form.update_handler.after_entity_flush, method: onFormAfterFlush }
+
     oro_product.model.product_visibility_query_builder_modifier:
         class: 'Oro\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier'
         public: false
@@ -535,6 +543,25 @@ services:
             - '@request_stack'
         tags:
             - { name: layout.data_provider, alias: oro_product_quick_add_collection }
+
+    oro_product.provider.product_content_variant_provider:
+        class: Oro\Bundle\ProductBundle\Provider\ProductContentVariantProvider
+        tags:
+            - { name: oro_web_catalog.content_variant_provider }
+
+    oro_product.event_listener.attribute_family_form_view:
+        parent: oro_entity_config.event_listener.attribute_family_form_view.abstract
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-create-step-one, method: onEdit }
+
+    oro_product.event_listener.attributes_form_view:
+        parent: oro_entity_config.event_listener.attributes_form_view.abstract
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onEdit, priority: -255 }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-create-step-two, method: onEdit, priority: -255 }
+            - { name: kernel.event_listener, event: entity_form.render.before, method: onFormRender, priority: -255 }
+            - { name: kernel.event_listener, event: entity_view.render.before, method: onViewRender, priority: -255 }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-view, method: onViewList, priority: -255 }
 
     oro_product.event_listener.single_unit_mode_datagrid_basic:
         class: 'Oro\Bundle\ProductBundle\EventListener\SingleUnitModeDataGridListener'
