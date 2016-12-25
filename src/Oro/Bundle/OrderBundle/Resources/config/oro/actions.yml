@@ -14,10 +14,18 @@ operations:
                 method: getActiveAuthorizePaymentTransaction
                 method_parameters: [$.data, $.data.total, $.data.currency]
                 attribute: $.authorizePaymentTransaction
+            - '@call_service_method':
+                service: oro_order.factory.payment_context
+                method: create
+                method_parameters: [$.data]
+                attribute: $.paymentContext
         preconditions:
             '@and':
                 - '@not_empty': [$.authorizePaymentTransaction]
-                - '@payment_method_enabled': $.authorizePaymentTransaction.paymentMethod
+                - '@payment_method_applicable':
+                    parameters:
+                        payment_method: $.authorizePaymentTransaction.paymentMethod
+                        context: $.paymentContext
         actions:
             - '@payment_capture':
                 attribute: $.result

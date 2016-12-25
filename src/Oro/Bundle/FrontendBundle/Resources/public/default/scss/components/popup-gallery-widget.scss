@@ -30,7 +30,6 @@
     background: rgba(0, 0, 0, 0.60);
 
     &:before, &:after {
-      font-family: "FontAwesome";
       color: #fff;
       font-size: 12px;
       display: block;
@@ -40,8 +39,9 @@
   .slick-prev {
     left: -45px;
 
+    @include fa-icon($fa-var-chevron-left, after);
+
     &:after {
-      content: "\f053";
       margin: 2px 0 0 -1px;
     }
   }
@@ -49,8 +49,9 @@
   .slick-next {
     right: -45px;
 
+    @include fa-icon($fa-var-chevron-right);
+
     &:before {
-      content: "\f054";
       margin: 2px 0 0 2px;
     }
   }
@@ -109,13 +110,13 @@
     background: get-color('additional', 'dark');
     font-size: 15px;
 
+    @include fa-icon($fa-var-close);
+
     &:before {
       position: absolute;
       font-weight: normal;
-      font-family: "FontAwesome";
       color: get-color('additional', 'ultra');
       font-size: 15px;
-      content: "\f00d";
       margin: 5px 2px 0 -6px;
     }
   }

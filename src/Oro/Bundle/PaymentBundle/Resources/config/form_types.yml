@@ -1,0 +1,40 @@
+services:
+    oro_paymant.form_event_subscriber.rule_method_config_collection_subscriber:
+        class: 'Oro\Bundle\PaymentBundle\Form\EventSubscriber\RuleMethodConfigCollectionSubscriber'
+        arguments:
+            - '@oro_payment.payment_method.registry'
+
+    oro_payment.form.type.method_config_collection:
+        class: Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodConfigCollectionType
+        arguments:
+            - '@oro_paymant.form_event_subscriber.rule_method_config_collection_subscriber'
+        tags:
+            - { name: form.type, alias: oro_payment_method_config_collection }
+
+    oro_payment.form.type.method_config:
+        class: Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodConfigType
+        arguments:
+            - '@oro_payment.payment_method.registry'
+            - '@translator'
+        tags:
+            - { name: form.type, alias: oro_payment_method_config }
+
+    oro_payment.form.type.methods_configs_rule_destination_collection:
+        class: Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodsConfigsRuleDestinationCollectionType
+        tags:
+            - { name: form.type, alias: oro_payment_methods_configs_rule_destination_collection }
+
+    oro_payment.form.type.methods_configs_rule_destination:
+        class: Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodsConfigsRuleDestinationType
+        arguments:
+            - '@oro_address.form.listener.address'
+        tags:
+            - { name: form.type, alias: oro_payment_methods_configs_rule_destination }
+
+    oro_payment.form.type.methods_configs_rule:
+        class: Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodsConfigsRuleType
+        arguments:
+            - '@oro_payment.payment_method.registry'
+            - '@translator'
+        tags:
+            - { name: form.type, alias: oro_payment_methods_configs_rule }

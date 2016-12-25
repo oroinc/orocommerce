@@ -172,3 +172,17 @@ services:
         class: Oro\Bundle\CatalogBundle\Provider\CategoryRoutingInformationProvider
         tags:
             - { name: oro_redirect.routing_information_provider }
+
+    oro_catalog.provider.products_content_variant_provider:
+        class: Oro\Bundle\CatalogBundle\Provider\ProductsContentVariantProvider
+        tags:
+            - { name: oro_web_catalog.content_variant_provider }
+
+    oro_catalog.event_listener.category_content_variant_index:
+        class: 'Oro\Bundle\CatalogBundle\EventListener\CategoryContentVariantIndexListener'
+        arguments:
+            - '@oro_catalog.manager.product_index_scheduler'
+            - '@property_accessor'
+        tags:
+            - { name: doctrine.event_listener, event: onFlush }
+            - { name: kernel.event_listener, event: oro.form.update_handler.after_entity_flush, method: onFormAfterFlush }

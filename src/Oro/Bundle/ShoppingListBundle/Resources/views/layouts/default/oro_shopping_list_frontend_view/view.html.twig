@@ -66,7 +66,7 @@
 
 {% block _shopping_list_top_actions_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ " cart__order__controls-list pull-right",
+        class: attr.class|default('') ~ " cart__order__controls-list",
         'data-name': "empty-items__hide"
     }) %}
     <div{{ block('block_attributes') }}>
@@ -228,14 +228,15 @@
                                         <a href="{{ path('oro_product_frontend_product_view', {'id': lineItem.product.id}) }}">{{ lineItem.product.names|localized_value }}</a>
                                     </h3>
                                     <div>{{ 'oro.frontend.shoppinglist.view.sku.label'|trans }} <span class="red">{{ lineItem.product.sku }}</span></div>
+                                    <div class="visible-xs">{{ lineItem.product.InventoryStatus }}</div>
                                 </div>
                             </div>
                         </td>
-                        <td class="va-t_md">
+                        <td class="va-t_md hidden-xs">
                             <div>{{ lineItem.product.InventoryStatus }}</div>
                         </td>
                         <td class="va-t_md">
-                            <form action="#">
+                            <form action="#" class="cart-table__form">
                                 <div class="product__qty-input product__qty-input_inline product__qty-input_more-info va-m_md">
                                     <div class="product__qty-input__count-option">
                                         <input type="number" value="{{ lineItem.quantity }}" name="product_qty" data-name="field__quantity"

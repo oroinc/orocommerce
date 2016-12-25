@@ -2,14 +2,13 @@
 
 namespace Oro\Bundle\PaymentTermBundle\Method;
 
-use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
-
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\PaymentTermBundle\Method\Config\PaymentTermConfigInterface;
+use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
+use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 class PaymentTerm implements PaymentMethodInterface
 {
@@ -24,23 +23,17 @@ class PaymentTerm implements PaymentMethodInterface
     /** @var DoctrineHelper */
     protected $doctrineHelper;
 
-    /** @var PaymentTermConfigInterface */
-    protected $config;
-
     /**
      * @param PaymentTermProvider $paymentTermProvider
-     * @param PaymentTermConfigInterface $config
      * @param PropertyAccessor $propertyAccessor
      * @param DoctrineHelper $doctrineHelper
      */
     public function __construct(
         PaymentTermProvider $paymentTermProvider,
-        PaymentTermConfigInterface $config,
         PropertyAccessor $propertyAccessor,
         DoctrineHelper $doctrineHelper
     ) {
         $this->paymentTermProvider = $paymentTermProvider;
-        $this->config = $config;
         $this->propertyAccessor = $propertyAccessor;
         $this->doctrineHelper = $doctrineHelper;
     }
@@ -77,24 +70,18 @@ class PaymentTerm implements PaymentMethodInterface
         return [];
     }
 
-    /** {@inheritdoc} */
-    public function isEnabled()
+    /**
+     * {@inheritdoc}
+     */
+    public function isApplicable(PaymentContextInterface $context)
     {
-        return $this->config->isEnabled();
+        return (bool)$this->paymentTermProvider->getPaymentTerm($context->getCustomer());
     }
 
     /** {@inheritdoc} */
     public function getType()
     {
         return self::TYPE;
-    }
-
-    /** {@inheritdoc} */
-    public function isApplicable(array $context = [])
-    {
-        return $this->config->isCountryApplicable($context)
-            && (bool)$this->paymentTermProvider->getCurrentPaymentTerm()
-            && $this->config->isCurrencyApplicable($context);
     }
 
     /** {@inheritdoc} */

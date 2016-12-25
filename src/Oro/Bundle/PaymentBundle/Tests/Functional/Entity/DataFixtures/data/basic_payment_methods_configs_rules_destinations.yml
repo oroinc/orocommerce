@@ -1,0 +1,30 @@
+payment.payment_methods_configs_rule_destination.1:
+    payment_methods_configs_rule_reference: 'payment.payment_methods_configs_rule.1'
+    iso2_country_code: 'AD'
+    region_code: '02'
+    postal_codes:
+        - {name: '12345'}
+        - {name: '43561'}
+
+payment.payment_methods_configs_rule_destination.2:
+    payment_methods_configs_rule_reference: 'payment.payment_methods_configs_rule.2'
+    iso2_country_code: 'AE'
+    region_code: 'AJ'
+    postal_codes:
+        - {name: '12345'}
+        - {name: '43561'}
+
+payment.payment_methods_configs_rule_destination.3:
+    payment_methods_configs_rule_reference: 'payment.payment_methods_configs_rule.3'
+    iso2_country_code: 'AF'
+    region_code: 'BAL'
+    postal_codes:
+        - {name: '12345'}
+        - {name: '43561'}
+
+payment.payment_methods_configs_rule_destination.4:
+    payment_methods_configs_rule_reference: 'payment.payment_methods_configs_rule.4'
+    iso2_country_code: 'AE'
+    region_code: 'AJ'
+    postal_codes:
+        - {name: '12345'}

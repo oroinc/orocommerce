@@ -44,8 +44,11 @@
             {% if entity.children.count() %}
                 {% set accountTree %}
                     <div class="account-children">
-                        <div data-page-component-module="oroui/js/app/components/basic-tree-component"
-                             data-page-component-options="{{ {'data' : treeData}|json_encode }}"></div>
+                        {{ UI.renderJsTree({
+                            'module': 'oroui/js/app/components/basic-tree-component',
+                            'disableSearch': true,
+                            'treeOptions': {data: treeData}
+                        }) }}
                     </div>
                 {% endset %}
                 {{ UI.renderHtmlProperty('oro.customer.account.children.label'|trans, accountTree) }}

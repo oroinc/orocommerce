@@ -2,7 +2,14 @@ oro:
     payment:
         menu:
             payments.label: Payments
-
+            paymentmethodsconfigsrule.description: Payment Rules
+            paymentmethodsconfigsrule.label: Payment Rules
+            shortcut_paymentmethodsconfigsrule.description: List of payment rules
+        datagrid:
+            action.enable: Enable
+            action.disable: Disable
+            status:
+                success_message: "{0} No entities status were changed|{1} One entity status was changed|]1,Inf[ %count% entities status were changed"
         methods:
             label: "Payment Method"
             select_method: 'Select a Payment Method'
@@ -43,3 +50,52 @@ oro:
             pending: Pending payment
             declined: Payment declined
             partially: Paid partially
+
+        paymentmethodconfig:
+            entity_label: Payment Method Config
+            entity_plural_label: Payment Method Configs
+            id.label: Id
+            methods_configs_rule.label: Payment Methods Configs Rule
+            type.label: Type
+            options.label: Options
+
+        paymentmethodsconfigsrule:
+            entity_short_label: Payment Rule
+            entity_short_plural_label: Payment Rules
+            entity_label: Payment Methods Configs Rule
+            entity_plural_label: Payment Methods Configs Rules
+            id.label: Id
+            method_configs.label: Payment Methods Configs
+            rule.label: Rule
+            destinations.label: Destinations
+            currency.label: Currency
+
+            notification:
+                enabled: Payment rule has been enabled successfully
+                disabled: Payment rule has been disabled successfully
+
+        paymentmethodsconfigsruledestination:
+            entity_label: Payment Methods Configs Rule Destination
+            entity_plural_label: Payment Methods Configs Rule Destinations
+            id.label: Id
+            methods_configs_rule.label: Payment Methods Configs Rule
+            postal_codes.label: Postal Codes
+            region.label: Region
+            region_text.label: Region Text
+            country.label: Country
+
+        paymentmethodsconfigsruledestinationpostalcode:
+            entity_label: Payment Methods Configs Rule Destination Postal Code
+            entity_plural_label: Payment Methods Configs Rule Destination Postal Codes
+            id.label: Id
+            name.label: Name
+            destination.label: Destination
+
+        sections:
+            general: 'General Information'
+            destination: 'Destinations'
+            expression: 'Expression'
+            configurations: 'Payment Method Configurations'
+
+        controller:
+            rule.saved.message: 'Payment rule has been saved'
