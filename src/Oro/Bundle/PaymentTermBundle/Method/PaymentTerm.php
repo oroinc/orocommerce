@@ -70,18 +70,21 @@ class PaymentTerm implements PaymentMethodInterface
         return [];
     }
 
+    /** {@inheritdoc} */
+    public function getType()
+    {
+        return self::TYPE;
+    }
+
     /**
      * {@inheritdoc}
      */
     public function isApplicable(PaymentContextInterface $context)
     {
-        return (bool)$this->paymentTermProvider->getPaymentTerm($context->getCustomer());
-    }
-
-    /** {@inheritdoc} */
-    public function getType()
-    {
-        return self::TYPE;
+        if ($context->getCustomer()) {
+            return (bool)$this->paymentTermProvider->getPaymentTerm($context->getCustomer());
+        }
+        return false;
     }
 
     /** {@inheritdoc} */

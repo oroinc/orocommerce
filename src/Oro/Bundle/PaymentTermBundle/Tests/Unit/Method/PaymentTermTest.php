@@ -223,7 +223,7 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
 
         /** @var PaymentContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
         $context = $this->createMock(PaymentContextInterface::class);
-        $context->expects(static::once())
+        $context->expects(static::any())
             ->method('getCustomer')
             ->willReturn($customer);
 
@@ -233,5 +233,37 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
             ->willReturn(new PaymentTerm());
 
         $this->assertTrue($this->method->isApplicable($context));
+    }
+
+    public function testIsApplicableFalse()
+    {
+        $customer = $this->createMock(Account::class);
+
+        /** @var PaymentContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
+        $context = $this->createMock(PaymentContextInterface::class);
+        $context->expects(static::any())
+            ->method('getCustomer')
+            ->willReturn($customer);
+
+        $this->paymentTermProvider->expects($this->once())
+            ->method('getPaymentTerm')
+            ->with($customer)
+            ->willReturn(null);
+
+        $this->assertFalse($this->method->isApplicable($context));
+    }
+
+    public function testIsApplicableNullCustomer()
+    {
+        /** @var PaymentContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
+        $context = $this->createMock(PaymentContextInterface::class);
+        $context->expects(static::any())
+            ->method('getCustomer')
+            ->willReturn(null);
+
+        $this->paymentTermProvider->expects($this->never())
+            ->method('getPaymentTerm');
+
+        $this->assertFalse($this->method->isApplicable($context));
     }
 }

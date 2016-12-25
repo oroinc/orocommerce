@@ -4,6 +4,8 @@ namespace Oro\Bundle\OrderBundle\Bundle\Tests\Unit\Factory;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 use Oro\Bundle\OrderBundle\Converter\OrderPaymentLineItemConverterInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
@@ -58,6 +60,8 @@ class OrderPaymentContextFactoryTest extends \PHPUnit_Framework_TestCase
         $currency = 'USD';
         $shippingMethod = 'SomeShippingMethod';
         $amount = 100;
+        $customer = $this->createMock(Account::class);
+        $customerUser = $this->createMock(AccountUser::class);
 
         $ordersLineItems = [
             (new OrderLineItem())
@@ -97,7 +101,9 @@ class OrderPaymentContextFactoryTest extends \PHPUnit_Framework_TestCase
             ->setCurrency($currency)
             ->setLineItems($orderLineItemsCollection)
             ->setSubtotal($amount)
-            ->setCurrency($currency);
+            ->setCurrency($currency)
+            ->setAccount($customer)
+            ->setAccountUser($customerUser);
 
         $this->contextBuilder
             ->method('setShippingAddress')
@@ -106,6 +112,14 @@ class OrderPaymentContextFactoryTest extends \PHPUnit_Framework_TestCase
         $this->contextBuilder
             ->method('setBillingAddress')
             ->with($address);
+
+        $this->contextBuilder
+            ->method('setCustomer')
+            ->with($customer);
+
+        $this->contextBuilder
+            ->method('setCustomerUser')
+            ->with($customerUser);
 
         $this->contextBuilder
             ->expects($this->once())
