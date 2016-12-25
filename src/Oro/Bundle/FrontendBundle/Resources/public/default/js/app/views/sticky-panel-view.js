@@ -231,7 +231,6 @@ define(function(require) {
 
         toggleElementState: function($element, state) {
             var options = $element.data('sticky');
-            //console.log(state);
 
             if (!options.alwaysInSticky) {
                 if (state) {
