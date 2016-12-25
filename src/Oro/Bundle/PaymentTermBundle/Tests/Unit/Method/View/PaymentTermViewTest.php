@@ -49,7 +49,7 @@ class PaymentTermViewTest extends \PHPUnit_Framework_TestCase
 
         /** @var PaymentContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
         $context = $this->createMock(PaymentContextInterface::class);
-        $context->expects(static::once())
+        $context->expects(static::any())
             ->method('getCustomer')
             ->willReturn($customer);
 
@@ -70,7 +70,7 @@ class PaymentTermViewTest extends \PHPUnit_Framework_TestCase
 
         /** @var PaymentContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
         $context = $this->createMock(PaymentContextInterface::class);
-        $context->expects(static::once())
+        $context->expects(static::any())
             ->method('getCustomer')
             ->willReturn($customer);
 
@@ -83,6 +83,20 @@ class PaymentTermViewTest extends \PHPUnit_Framework_TestCase
             ['value' => '[trans]oro.paymentterm.payment_terms.label[/trans]'],
             $this->methodView->getOptions($context)
         );
+    }
+
+    public function testGetOptionsNullCustomer()
+    {
+        /** @var PaymentContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
+        $context = $this->createMock(PaymentContextInterface::class);
+        $context->expects(static::once())
+            ->method('getCustomer')
+            ->willReturn(null);
+
+        $this->paymentTermProvider->expects($this->never())
+            ->method('getPaymentTerm');
+
+        $this->assertEmpty($this->methodView->getOptions($context));
     }
 
     public function testGetBlock()

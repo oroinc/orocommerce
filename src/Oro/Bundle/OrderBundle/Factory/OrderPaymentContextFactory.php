@@ -62,6 +62,14 @@ class OrderPaymentContextFactory
             $paymentContextBuilder->setBillingAddress($order->getBillingAddress());
         }
 
+        if (null !== $order->getAccount()) {
+            $paymentContextBuilder->setCustomer($order->getAccount());
+        }
+
+        if (null !== $order->getAccountUser()) {
+            $paymentContextBuilder->setCustomerUser($order->getAccountUser());
+        }
+
         if (!$order->getLineItems()->isEmpty()) {
             $paymentContextBuilder->setLineItems(
                 $this->paymentLineItemConverter->convertLineItems($order->getLineItems())
