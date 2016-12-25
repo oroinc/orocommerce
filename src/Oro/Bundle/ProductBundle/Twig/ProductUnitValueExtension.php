@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Twig;
 
-use Oro\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatterInterface;
 use Oro\Bundle\ProductBundle\Service\SingleUnitModeService;
 
 class ProductUnitValueExtension extends \Twig_Extension
@@ -10,7 +10,7 @@ class ProductUnitValueExtension extends \Twig_Extension
     const NAME = 'oro_product_unit_value';
 
     /**
-     * @var ProductUnitValueFormatter
+     * @var UnitValueFormatterInterface
      */
     protected $formatter;
 
@@ -20,10 +20,10 @@ class ProductUnitValueExtension extends \Twig_Extension
     protected $unitModeProvider;
 
     /**
-     * @param ProductUnitValueFormatter $formatter
+     * @param UnitValueFormatterInterface $formatter
      * @param SingleUnitModeService $unitModeProvider
      */
-    public function __construct(ProductUnitValueFormatter $formatter, SingleUnitModeService $unitModeProvider)
+    public function __construct(UnitValueFormatterInterface $formatter, SingleUnitModeService $unitModeProvider)
     {
         $this->formatter = $formatter;
         $this->unitModeProvider = $unitModeProvider;
@@ -49,7 +49,7 @@ class ProductUnitValueExtension extends \Twig_Extension
                 'oro_format_product_unit_code',
                 [$this->formatter, 'formatCode'],
                 ['is_safe' => ['html']]
-            )
+            ),
         ];
     }
 
@@ -72,18 +72,13 @@ class ProductUnitValueExtension extends \Twig_Extension
                 [$this->unitModeProvider, 'isProductPrimaryUnitSingleAndDefault']
             ),
             new \Twig_SimpleFunction(
+                'oro_is_default_primary_unit_code',
+                [$this->unitModeProvider, 'isDefaultPrimaryUnitCode']
+            ),
+            new \Twig_SimpleFunction(
                 'oro_is_default_primary_unit',
                 [$this->unitModeProvider, 'isDefaultPrimaryUnit']
-            )
+            ),
         ];
-    }
-
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return static::NAME;
     }
 }

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Layout\DataProvider;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Service\SingleUnitModeService;
 
 class SingleUnitModeProvider
@@ -44,7 +45,7 @@ class SingleUnitModeProvider
     }
 
     /**
-     * @return string
+     * @return ProductUnit|null
      */
     public function getConfigDefaultUnit()
     {

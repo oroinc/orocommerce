@@ -84,11 +84,20 @@ class SingleUnitModeService
     }
 
     /**
+     * @param ProductUnit $unit
+     * @return bool
+     */
+    public function isDefaultPrimaryUnit(ProductUnit $unit)
+    {
+        return $this->isDefaultPrimaryUnitCode($unit->getCode());
+    }
+
+    /**
      * @param string $unitCode
      *
      * @return bool
      */
-    public function isDefaultPrimaryUnit($unitCode)
+    public function isDefaultPrimaryUnitCode($unitCode)
     {
         $unit = $this->getConfigDefaultUnit();
         if ($unit) {
