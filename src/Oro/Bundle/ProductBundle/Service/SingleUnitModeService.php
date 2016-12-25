@@ -90,6 +90,10 @@ class SingleUnitModeService
      */
     public function isDefaultPrimaryUnit($unitCode)
     {
-        return $this->getConfigDefaultUnit() === $unitCode;
+        $unit = $this->getConfigDefaultUnit();
+        if ($unit) {
+            return $unit->getCode() === $unitCode;
+        }
+        return false;
     }
 }

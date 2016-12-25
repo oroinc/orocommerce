@@ -9,7 +9,6 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Provider\DefaultProductUnitProviderInterface;
 use Oro\Bundle\ProductBundle\Service\SingleUnitModeService;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 
 class SingleUnitModeServiceTest extends \PHPUnit_Framework_TestCase
 {
@@ -115,11 +114,7 @@ class SingleUnitModeServiceTest extends \PHPUnit_Framework_TestCase
             ->willReturn($unit);
 
         $product = $this->getProductWithPrimaryUnit($unit)
-            ->addAdditionalUnitPrecision($this->getEntity(ProductUnitPrecision::class, [
-                'unit' => $this->getEntity(ProductUnit::class, [
-                    'code' => 'item',
-                ]),
-            ]));
+            ->addAdditionalUnitPrecision($this->getProductUnitPrecision('item'));
 
         static::assertFalse($this->unitModeProvider->isProductPrimaryUnitSingleAndDefault($product));
     }
@@ -139,21 +134,6 @@ class SingleUnitModeServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($defaultUnit, $this->unitModeProvider->getConfigDefaultUnit());
     }
 
-    /**
-     * @param string $unitCode
-     * @return Product
-     */
-    private function getProductWithPrimaryUnit($unitCode)
-    {
-        return (new Product)->setPrimaryUnitPrecision(
-            $this->getEntity(ProductUnitPrecision::class, [
-                'unit' => $this->getEntity(ProductUnit::class, [
-                    'code' => $unitCode,
-                ]),
-            ])
-        );
-    }
-
     public function testIsProductPrimaryUnitDefault()
     {
         $this->configManager->expects(static::once())
@@ -161,23 +141,68 @@ class SingleUnitModeServiceTest extends \PHPUnit_Framework_TestCase
             ->with('oro_product.default_unit')
             ->willReturn('each');
 
-        $product = (new Product)->setPrimaryUnitPrecision($this->getEntity(ProductUnitPrecision::class, [
-            'unit' => $this->getEntity(ProductUnit::class, [
-                'code' => 'each',
-            ]),
-        ]));
+        $product = $this->getProductWithPrimaryUnit('each');
 
         static::assertTrue($this->unitModeProvider->isProductPrimaryUnitDefault($product));
     }
 
     public function testIsDefaultPrimaryUnit()
     {
-        $this->configManager->expects($this->exactly(2))
-            ->method('get')
-            ->with('oro_product.default_unit')
+        $unit = $this->createMock(ProductUnit::class);
+        $unit->expects(static::once())
+            ->method('getCode')
             ->willReturn('each');
 
+        $unitPrecision = $this->createMock(ProductUnitPrecision::class);
+        $unitPrecision->expects(static::once())
+            ->method('getUnit')
+            ->willReturn($unit);
+
+        $this->unitProvider->expects(static::once())
+            ->method('getDefaultProductUnitPrecision')
+            ->willReturn($unitPrecision);
+
         static::assertTrue($this->unitModeProvider->isDefaultPrimaryUnit('each'));
+    }
+
+    public function testIsDefaultPrimaryFalse()
+    {
+        $unit = $this->createMock(ProductUnit::class);
+        $unit->expects(static::once())
+            ->method('getCode')
+            ->willReturn('each');
+
+        $unitPrecision = $this->createMock(ProductUnitPrecision::class);
+        $unitPrecision->expects(static::once())
+            ->method('getUnit')
+            ->willReturn($unit);
+
+        $this->unitProvider->expects(static::once())
+            ->method('getDefaultProductUnitPrecision')
+            ->willReturn($unitPrecision);
+
         static::assertFalse($this->unitModeProvider->isDefaultPrimaryUnit('otherUnit'));
+    }
+
+    /**
+     * @param string $unitCode
+     * @return Product
+     */
+    private function getProductWithPrimaryUnit($unitCode)
+    {
+        return (new Product())->setPrimaryUnitPrecision($this->getProductUnitPrecision($unitCode));
+    }
+
+    /**
+     * @param string $unitCode
+     * @return ProductUnitPrecision|object
+     */
+    private function getProductUnitPrecision($unitCode)
+    {
+        return $this->getEntity(ProductUnitPrecision::class, [
+            'unit' => $this->getEntity(ProductUnit::class, [
+                'code' => $unitCode,
+            ]),
+        ]);
     }
 }

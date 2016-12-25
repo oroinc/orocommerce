@@ -1,10 +1,10 @@
 services:
-    oro_product.form.type.extension.single_unit_mode_unit_selection:
-        class: 'Oro\Bundle\ProductBundle\Form\Extension\SingleUnitModeProductUnitSelectionOwnerTypeExtension'
+    oro_product.form.type.extension.single_unit.default_and_primary_unit_selection:
+        class: 'Oro\Bundle\ProductBundle\Form\Extension\SingleUnit\DefaultAndPrimaryProductUnitSelectionOwnerTypeExtension'
         abstract: true
 
-    oro_product.form.type.extension.single_unit_mode_primary_unit:
-        parent: oro_product.form.type.extension.single_unit_mode_unit_selection
+    oro_product.form.type.extension.single_unit.product_primary_unit:
+        parent: oro_product.form.type.extension.single_unit.default_and_primary_unit_selection
         arguments:
             - 'unit'
             - '%oro_product.form.type.product_primary_unit_precision.class%'

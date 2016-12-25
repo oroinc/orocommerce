@@ -1,19 +1,20 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Form\Extension;
+namespace Oro\Bundle\ProductBundle\Form\Extension\SingleUnit;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
+use Oro\Bundle\ProductBundle\Form\Type\Traits\ProductAwareTrait;
 use Oro\Bundle\ProductBundle\Service\SingleUnitModeService;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\FormInterface;
 
-class SingleUnitModeProductUnitSelectionOwnerTypeExtension extends AbstractTypeExtension
+class DefaultAndPrimaryProductUnitSelectionOwnerTypeExtension extends AbstractTypeExtension
 {
+    use ProductAwareTrait;
+
     /**
      * @var SingleUnitModeService
      */
@@ -69,7 +70,7 @@ class SingleUnitModeProductUnitSelectionOwnerTypeExtension extends AbstractTypeE
         }
 
         $options = $child->getConfig()->getOptions();
-        $options['choices'] = $this->getSingleUnitModeProductUnits($product);
+        $options['choices'] = $this->getChoices($product);
         $options['choices_updated'] = true;
         $options['choice_loader'] = null;
         $options['choice_list'] = null;
@@ -81,7 +82,7 @@ class SingleUnitModeProductUnitSelectionOwnerTypeExtension extends AbstractTypeE
      * @param Product $product
      * @return ProductUnit[]
      */
-    protected function getSingleUnitModeProductUnits(Product $product)
+    protected function getChoices(Product $product)
     {
         $units = [];
         $primaryUnitPrecision = $product->getPrimaryUnitPrecision();
@@ -96,46 +97,6 @@ class SingleUnitModeProductUnitSelectionOwnerTypeExtension extends AbstractTypeE
         }
 
         return $units;
-    }
-
-    /**
-     * @param FormInterface $form
-     * @return null|Product
-     */
-    protected function getProduct(FormInterface $form)
-    {
-        $options = $form->getConfig()->getOptions();
-        $productField = $options['product_field'];
-
-        $parent = $form->getParent();
-        while ($parent && !$parent->has($productField)) {
-            $parent = $parent->getParent();
-        }
-
-        if ($parent && $parent->has($productField)) {
-            $productData = $parent->get($productField)->getData();
-            if ($productData instanceof Product) {
-                return $productData;
-            }
-
-            if ($productData instanceof ProductHolderInterface) {
-                return $productData->getProduct();
-            }
-        }
-
-        /** @var Product $product */
-        $product = $options['product'];
-        if ($product) {
-            return $product;
-        }
-
-        /** @var ProductHolderInterface $productHolder */
-        $productHolder = $options['product_holder'];
-        if ($productHolder) {
-            return $productHolder->getProduct();
-        }
-
-        return null;
     }
 
     /**

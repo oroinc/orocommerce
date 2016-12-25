@@ -1,5 +1,6 @@
 parameters:
     oro_product.form.type.product_primary_unit_precision.class: 'Oro\Bundle\ProductBundle\Form\Type\ProductPrimaryUnitPrecisionType'
+    oro_product.form.type.product_unit_selection.class: 'Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType'
 
 services:
     # Product form types
@@ -29,7 +30,7 @@ services:
             - { name: form.type, alias: oro_product_row_collection }
 
     oro_product.form.type.product_unit_selection:
-        class: 'Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType'
+        class: '%oro_product.form.type.product_unit_selection.class%'
         arguments:
             - "@oro_product.formatter.product_unit_label"
             - "@translator"
