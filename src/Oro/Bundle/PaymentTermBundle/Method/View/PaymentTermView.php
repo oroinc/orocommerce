@@ -38,7 +38,10 @@ class PaymentTermView implements PaymentMethodViewInterface
     /** {@inheritdoc} */
     public function getOptions(PaymentContextInterface $context)
     {
-        $paymentTerm = $this->paymentTermProvider->getPaymentTerm($context->getCustomer());
+        $paymentTerm = null;
+        if ($context->getCustomer()) {
+            $paymentTerm = $this->paymentTermProvider->getPaymentTerm($context->getCustomer());
+        }
 
         if ($paymentTerm) {
             return [
