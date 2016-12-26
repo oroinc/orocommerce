@@ -341,7 +341,11 @@
         width: calc(35% - 10px);
 
         + .product-item__secondary-half_no-image-view {
-          width: 100%;
+          width: 65%;
+
+          @media (max-width: $screen-sm) {
+            width: 100%;
+          }
         }
         
         .product-item--compact & {
