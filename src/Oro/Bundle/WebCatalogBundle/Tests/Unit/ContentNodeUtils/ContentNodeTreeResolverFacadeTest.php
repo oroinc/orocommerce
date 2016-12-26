@@ -30,8 +30,8 @@ class ContentNodeTreeResolverFacadeTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->defaultResolver = $this->getMock(ContentNodeTreeResolverInterface::class);
-        $this->cachedResolver = $this->getMock(ContentNodeTreeResolverInterface::class);
+        $this->defaultResolver = $this->createMock(ContentNodeTreeResolverInterface::class);
+        $this->cachedResolver = $this->createMock(ContentNodeTreeResolverInterface::class);
 
         $this->facade = new ContentNodeTreeResolverFacade(
             $this->defaultResolver,

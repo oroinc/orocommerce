@@ -53,15 +53,15 @@ class ContentNodeSlugsProcessorTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->registry = $this->getMock(ManagerRegistry::class);
+        $this->registry = $this->createMock(ManagerRegistry::class);
         $this->defaultVariantScopesResolver = $this->getMockBuilder(DefaultVariantScopesResolver::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->slugGenerator = $this->getMockBuilder(SlugGenerator::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->messageProducer = $this->getMock(MessageProducerInterface::class);
-        $this->logger = $this->getMock(LoggerInterface::class);
+        $this->messageProducer = $this->createMock(MessageProducerInterface::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
         $this->processor = new ContentNodeSlugsProcessor(
             $this->registry,
             $this->defaultVariantScopesResolver,
@@ -73,7 +73,7 @@ class ContentNodeSlugsProcessorTest extends \PHPUnit_Framework_TestCase
 
     public function testProcess()
     {
-        $em = $this->getMock(EntityManagerInterface::class);
+        $em = $this->createMock(EntityManagerInterface::class);
 
         $em->expects($this->once())
             ->method('beginTransaction');
@@ -97,13 +97,13 @@ class ContentNodeSlugsProcessorTest extends \PHPUnit_Framework_TestCase
         $contentNode = $this->getEntity(ContentNode::class, ['id' => $contentNodeId, 'webCatalog' => $webCatalog]);
 
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
-        $message = $this->getMock(MessageInterface::class);
+        $message = $this->createMock(MessageInterface::class);
         $message->expects($this->once())
             ->method('getBody')
             ->willReturn("{$contentNodeId}");
 
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
-        $session = $this->getMock(SessionInterface::class);
+        $session = $this->createMock(SessionInterface::class);
 
         $em->expects($this->once())
             ->method('find')
@@ -123,10 +123,10 @@ class ContentNodeSlugsProcessorTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(MessageProcessorInterface::ACK, $this->processor->process($message, $session));
     }
-    
+
     public function testProcessWithException()
     {
-        $em = $this->getMock(EntityManagerInterface::class);
+        $em = $this->createMock(EntityManagerInterface::class);
 
         $em->expects($this->once())
             ->method('beginTransaction');
@@ -149,13 +149,13 @@ class ContentNodeSlugsProcessorTest extends \PHPUnit_Framework_TestCase
         $contentNode = $this->getEntity(ContentNode::class, ['id' => $contentNodeId, 'webCatalog' => new WebCatalog()]);
 
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
-        $message = $this->getMock(MessageInterface::class);
+        $message = $this->createMock(MessageInterface::class);
         $message->expects($this->exactly(2))
             ->method('getBody')
             ->willReturn("{$contentNodeId}");
 
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
-        $session = $this->getMock(SessionInterface::class);
+        $session = $this->createMock(SessionInterface::class);
 
         $em->expects($this->once())
             ->method('find')

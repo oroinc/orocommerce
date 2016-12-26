@@ -27,7 +27,7 @@ class DefaultVariantScopesResolverTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->registry = $this->getMock(ManagerRegistry::class);
+        $this->registry = $this->createMock(ManagerRegistry::class);
         $this->defaultVariantScopesResolver = new DefaultVariantScopesResolver($this->registry);
     }
 
@@ -76,7 +76,7 @@ class DefaultVariantScopesResolverTest extends \PHPUnit_Framework_TestCase
             ->with($childNode)
             ->willReturn([]);
 
-        $em = $this->getMock(EntityManagerInterface::class);
+        $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->once())
             ->method('getRepository')
             ->with(ContentNode::class)

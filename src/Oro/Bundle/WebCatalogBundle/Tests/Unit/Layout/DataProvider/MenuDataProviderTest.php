@@ -60,12 +60,12 @@ class MenuDataProviderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->registry = $this->getMock(ManagerRegistry::class);
+        $this->registry = $this->createMock(ManagerRegistry::class);
         $this->webCatalogProvider = $this->getMockBuilder(WebCatalogProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->requestStack = $this->getMock(RequestStack::class);
-        $this->contentNodeTreeResolverFacade = $this->getMock(ContentNodeTreeResolverInterface::class);
+        $this->requestStack = $this->createMock(RequestStack::class);
+        $this->contentNodeTreeResolverFacade = $this->createMock(ContentNodeTreeResolverInterface::class);
         $this->localizationHelper = $this->getMockBuilder(LocalizationHelper::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -111,7 +111,7 @@ class MenuDataProviderTest extends \PHPUnit_Framework_TestCase
             ->with($webCatalog)
             ->willReturn($rootNode);
 
-        $em = $this->getMock(EntityManagerInterface::class);
+        $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->once())
             ->method('getRepository')
             ->with(ContentNode::class)

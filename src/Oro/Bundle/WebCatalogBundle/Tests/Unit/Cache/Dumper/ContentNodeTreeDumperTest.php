@@ -47,8 +47,8 @@ class ContentNodeTreeDumperTest extends \PHPUnit_Framework_TestCase
         $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->cache = $this->getMock(Cache::class);
-        $this->nodeTreeResolver = $this->getMock(ContentNodeTreeResolverInterface::class);
+        $this->cache = $this->createMock(Cache::class);
+        $this->nodeTreeResolver = $this->createMock(ContentNodeTreeResolverInterface::class);
 
         $this->dumper = new ContentNodeTreeDumper(
             $this->nodeTreeResolver,

@@ -35,7 +35,7 @@ class ScopeMatcherTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->registry = $this->getMock(ManagerRegistry::class);
+        $this->registry = $this->createMock(ManagerRegistry::class);
         $this->scopeManager = $this->getMockBuilder(ScopeManager::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -181,15 +181,15 @@ class ScopeMatcherTest extends \PHPUnit_Framework_TestCase
             ->with($webCatalog, $scopeCriteria)
             ->willReturn($scopes);
 
-        $entity1 = $this->getMock(ScopeCollectionAwareInterface::class);
+        $entity1 = $this->createMock(ScopeCollectionAwareInterface::class);
         $entity1->expects($this->any())
             ->method('getScopes')
             ->willReturn(new ArrayCollection([$scope1]));
-        $entity2 = $this->getMock(ScopeCollectionAwareInterface::class);
+        $entity2 = $this->createMock(ScopeCollectionAwareInterface::class);
         $entity2->expects($this->any())
             ->method('getScopes')
             ->willReturn(new ArrayCollection([$scope1, $scope2]));
-        $entity3 = $this->getMock(ScopeCollectionAwareInterface::class);
+        $entity3 = $this->createMock(ScopeCollectionAwareInterface::class);
         $entity3->expects($this->any())
             ->method('getScopes')
             ->willReturn(new ArrayCollection([$scope3]));
@@ -206,7 +206,7 @@ class ScopeMatcherTest extends \PHPUnit_Framework_TestCase
         $repository = $this->getMockBuilder(WebCatalogRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $em = $this->getMock(EntityManagerInterface::class);
+        $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->any())
             ->method('getRepository')
             ->willReturn($repository);

@@ -60,7 +60,7 @@ class ContentNodeListenerTest extends \PHPUnit_Framework_TestCase
         $generatorLink->expects($this->any())
             ->method('getService')
             ->willReturn($this->slugGenerator);
-        $this->messageProducer = $this->getMock(MessageProducerInterface::class);
+        $this->messageProducer = $this->createMock(MessageProducerInterface::class);
 
         $this->contentNodeListener = new ContentNodeListener(
             $this->modifier,

@@ -51,8 +51,8 @@ class ContentNodeTreeCacheProcessorTest extends \PHPUnit_Framework_TestCase
         $this->dumper = $this->getMockBuilder(ContentNodeTreeDumper::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->registry = $this->getMock(ManagerRegistry::class);
-        $this->logger = $this->getMock(LoggerInterface::class);
+        $this->registry = $this->createMock(ManagerRegistry::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
 
         $this->processor = new ContentNodeTreeCacheProcessor(
             $this->jobRunner,
@@ -73,7 +73,7 @@ class ContentNodeTreeCacheProcessorTest extends \PHPUnit_Framework_TestCase
     public function testShouldRejectMessageIfScopeIsEmpty()
     {
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message */
-        $message = $this->getMock(MessageInterface::class);
+        $message = $this->createMock(MessageInterface::class);
         $message->expects($this->any())
             ->method('getBody')
             ->willReturn(
@@ -83,7 +83,7 @@ class ContentNodeTreeCacheProcessorTest extends \PHPUnit_Framework_TestCase
                 ])
             );
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session */
-        $session = $this->getMock(SessionInterface::class);
+        $session = $this->createMock(SessionInterface::class);
 
         $this->logger
             ->expects($this->once())
@@ -107,7 +107,7 @@ class ContentNodeTreeCacheProcessorTest extends \PHPUnit_Framework_TestCase
     public function testShouldRejectMessageIfContentNodeIsEmpty()
     {
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message */
-        $message = $this->getMock(MessageInterface::class);
+        $message = $this->createMock(MessageInterface::class);
         $message->expects($this->any())
             ->method('getBody')
             ->willReturn(
@@ -117,7 +117,7 @@ class ContentNodeTreeCacheProcessorTest extends \PHPUnit_Framework_TestCase
                 ])
             );
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session */
-        $session = $this->getMock(SessionInterface::class);
+        $session = $this->createMock(SessionInterface::class);
 
         $this->logger
             ->expects($this->once())
@@ -137,7 +137,7 @@ class ContentNodeTreeCacheProcessorTest extends \PHPUnit_Framework_TestCase
 
         $scope = new Scope();
         /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
-        $em = $this->getMock(EntityManagerInterface::class);
+        $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->any())
             ->method('find')
             ->with(Scope::class, 12345)
@@ -153,7 +153,7 @@ class ContentNodeTreeCacheProcessorTest extends \PHPUnit_Framework_TestCase
     public function testShouldProcessMessageIfAllRequiredInfoAvailable()
     {
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message */
-        $message = $this->getMock(MessageInterface::class);
+        $message = $this->createMock(MessageInterface::class);
         $message->expects($this->any())
             ->method('getBody')
             ->willReturn(
@@ -164,7 +164,7 @@ class ContentNodeTreeCacheProcessorTest extends \PHPUnit_Framework_TestCase
                 ])
             );
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session */
-        $session = $this->getMock(SessionInterface::class);
+        $session = $this->createMock(SessionInterface::class);
 
         $this->logger
             ->expects($this->never())
@@ -180,7 +180,7 @@ class ContentNodeTreeCacheProcessorTest extends \PHPUnit_Framework_TestCase
 
         $scope = new Scope();
         /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $scopeObjectManager */
-        $scopeObjectManager = $this->getMock(EntityManagerInterface::class);
+        $scopeObjectManager = $this->createMock(EntityManagerInterface::class);
         $scopeObjectManager->expects($this->any())
             ->method('find')
             ->with(Scope::class, 12345)
@@ -188,7 +188,7 @@ class ContentNodeTreeCacheProcessorTest extends \PHPUnit_Framework_TestCase
 
         $node = new ContentNode();
         /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $nodeObjectManager */
-        $nodeObjectManager = $this->getMock(EntityManagerInterface::class);
+        $nodeObjectManager = $this->createMock(EntityManagerInterface::class);
         $nodeObjectManager->expects($this->any())
             ->method('find')
             ->with(ContentNode::class, 12345)
@@ -216,7 +216,7 @@ class ContentNodeTreeCacheProcessorTest extends \PHPUnit_Framework_TestCase
         $exception = new \Exception('Some error');
 
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message */
-        $message = $this->getMock(MessageInterface::class);
+        $message = $this->createMock(MessageInterface::class);
         $message->expects($this->any())
             ->method('getBody')
             ->willReturn(
@@ -227,7 +227,7 @@ class ContentNodeTreeCacheProcessorTest extends \PHPUnit_Framework_TestCase
                 ])
             );
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session */
-        $session = $this->getMock(SessionInterface::class);
+        $session = $this->createMock(SessionInterface::class);
 
         $this->logger
             ->expects($this->once())
@@ -250,7 +250,7 @@ class ContentNodeTreeCacheProcessorTest extends \PHPUnit_Framework_TestCase
             }));
 
         /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
-        $em = $this->getMock(EntityManagerInterface::class);
+        $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->any())
             ->method('find')
             ->will($this->throwException($exception));

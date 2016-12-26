@@ -55,12 +55,12 @@ class WebCatalogCacheProcessorTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->jobRunner = new JobRunner();
-        $this->producer = $this->getMock(MessageProducerInterface::class);
+        $this->producer = $this->createMock(MessageProducerInterface::class);
         $this->scopeMatcher = $this->getMockBuilder(ScopeMatcher::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->registry = $this->getMock(ManagerRegistry::class);
-        $this->logger = $this->getMock(LoggerInterface::class);
+        $this->registry = $this->createMock(ManagerRegistry::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
 
         $this->processor = new WebCatalogCacheProcessor(
             $this->jobRunner,
@@ -79,9 +79,9 @@ class WebCatalogCacheProcessorTest extends \PHPUnit_Framework_TestCase
     public function testProcessException()
     {
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message */
-        $message = $this->getMock(MessageInterface::class);
+        $message = $this->createMock(MessageInterface::class);
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session */
-        $session = $this->getMock(SessionInterface::class);
+        $session = $this->createMock(SessionInterface::class);
 
         $message->expects($this->any())
             ->method('getBody')
@@ -89,7 +89,7 @@ class WebCatalogCacheProcessorTest extends \PHPUnit_Framework_TestCase
 
         $e = new \Exception('Test exception');
 
-        $em = $this->getMock(EntityManagerInterface::class);
+        $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->any())
             ->method('find')
             ->willThrowException($e);
@@ -116,9 +116,9 @@ class WebCatalogCacheProcessorTest extends \PHPUnit_Framework_TestCase
     public function testProcess()
     {
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message */
-        $message = $this->getMock(MessageInterface::class);
+        $message = $this->createMock(MessageInterface::class);
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session */
-        $session = $this->getMock(SessionInterface::class);
+        $session = $this->createMock(SessionInterface::class);
 
         $message->expects($this->any())
             ->method('getBody')
@@ -136,7 +136,7 @@ class WebCatalogCacheProcessorTest extends \PHPUnit_Framework_TestCase
             ->with($webCatalog)
             ->willReturn($rootNode);
 
-        $em = $this->getMock(EntityManagerInterface::class);
+        $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->any())
             ->method('find')
             ->with(WebCatalog::class, 1)
