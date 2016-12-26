@@ -24,24 +24,30 @@ class LoadContentNodesData extends AbstractFixture implements DependentFixtureIn
     protected static $data = [
         LoadWebCatalogData::CATALOG_1 => [
             self::CATALOG_1_ROOT => [
-                'parent' => null
+                'parent' => null,
+                'parentScopeUsed' => false
             ],
             self::CATALOG_1_ROOT_SUBNODE_1 => [
-                'parent' => self::CATALOG_1_ROOT
+                'parent' => self::CATALOG_1_ROOT,
+                'parentScopeUsed' => true
             ],
             self::CATALOG_1_ROOT_SUBNODE_1_1 => [
-                'parent' => self::CATALOG_1_ROOT_SUBNODE_1
+                'parent' => self::CATALOG_1_ROOT_SUBNODE_1,
+                'parentScopeUsed' => true
             ],
             self::CATALOG_1_ROOT_SUBNODE_1_2 => [
-                'parent' => self::CATALOG_1_ROOT_SUBNODE_1
+                'parent' => self::CATALOG_1_ROOT_SUBNODE_1,
+                'parentScopeUsed' => false
             ],
             self::CATALOG_1_ROOT_SUBNODE_2 => [
-                'parent' => self::CATALOG_1_ROOT
+                'parent' => self::CATALOG_1_ROOT,
+                'parentScopeUsed' => false
             ]
         ],
         LoadWebCatalogData::CATALOG_2 => [
             self::CATALOG_2_ROOT => [
-                'parent' => null
+                'parent' => null,
+                'parentScopeUsed' => false
             ]
         ]
     ];
@@ -75,6 +81,8 @@ class LoadContentNodesData extends AbstractFixture implements DependentFixtureIn
                     $parentNode = $this->getReference($nodeData['parent']);
                     $node->setParentNode($parentNode);
                 }
+
+                $node->setParentScopeUsed($nodeData['parentScopeUsed']);
                 $manager->persist($node);
                 $this->setReference($nodeReference, $node);
             }

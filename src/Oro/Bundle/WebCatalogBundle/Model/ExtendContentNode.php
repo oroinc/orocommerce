@@ -11,7 +11,7 @@ use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
  * @method LocalizedFallbackValue getSlugPrototype(Localization $localization = null)
  * @method LocalizedFallbackValue getDefaultSlugPrototype()
  * @method setDefaultTitle($title)
- * @method setDefaultSlug($slug)
+ * @method setDefaultSlugPrototype($slug)
  */
 class ExtendContentNode
 {
