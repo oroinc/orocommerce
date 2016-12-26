@@ -10,7 +10,7 @@ parameters:
     oro_customer.entity.navigation_item.class: Oro\Bundle\CustomerBundle\Entity\NavigationItem
     oro_customer.entity.navigation_history_item.class: Oro\Bundle\CustomerBundle\Entity\NavigationHistoryItem
     oro_customer.entity.pinbar_tab.class: Oro\Bundle\CustomerBundle\Entity\PinbarTab
-    oro_customer.entity.sidebar_state.class: Oro\Bundle\CustomerBundle\Entity\AccountUserSidebarState
+    oro_customer.entity.sidebar_state.class: Oro\Bundle\CustomerBundle\Entity\CustomerUserSidebarState
     oro_customer.entity.widget.class: Oro\Bundle\CustomerBundle\Entity\CustomerUserSidebarWidget
     oro_customer.entity.page_state.class: Oro\Bundle\CustomerBundle\Entity\PageState
     oro_customer.entity.windows_state.class: Oro\Bundle\CustomerBundle\Entity\WindowsState

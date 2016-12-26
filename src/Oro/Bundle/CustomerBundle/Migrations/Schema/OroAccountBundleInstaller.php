@@ -497,12 +497,12 @@ class OroAccountBundleInstaller implements
      */
     protected function createOroAccountUserSdbarStTable(Schema $schema)
     {
-        $table = $schema->createTable('oro_account_user_sdbar_st');
+        $table = $schema->createTable('oro_customer_user_sdbar_st');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('account_user_id', 'integer', []);
+        $table->addColumn('customer_user_id', 'integer', []);
         $table->addColumn('position', 'string', ['length' => 13]);
         $table->addColumn('state', 'string', ['length' => 17]);
-        $table->addUniqueIndex(['account_user_id', 'position'], 'oro_acc_sdbar_st_unq_idx');
+        $table->addUniqueIndex(['customer_user_id', 'position'], 'oro_cus_sdbar_st_unq_idx');
         $table->setPrimaryKey(['id']);
     }
 
@@ -984,10 +984,10 @@ class OroAccountBundleInstaller implements
      */
     protected function addOroAccountUserSdbarStForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('oro_account_user_sdbar_st');
+        $table = $schema->getTable('oro_customer_user_sdbar_st');
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_account_user'),
-            ['account_user_id'],
+            ['customer_user_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );

@@ -25,6 +25,7 @@ class OroAccountBundle implements Migration, RenameExtensionAwareInterface, Orde
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->renameCustomerUserSidebarWidget($schema, $queries);
+        $this->renameAccountUserSidebarState($schema, $queries);
     }
 
     /**
@@ -48,6 +49,28 @@ class OroAccountBundle implements Migration, RenameExtensionAwareInterface, Orde
             $queries,
             "oro_account_user_sdbar_wdg",
             "oro_customer_user_sdbar_wdg"
+        );
+    }
+
+    /**
+     * @param Schema $schema
+     * @param QueryBag $queries
+     */
+    private function renameAccountUserSidebarState(Schema $schema, QueryBag $queries)
+    {
+        $table = $schema->getTable("oro_account_user_sdbar_st");
+
+        $table->dropIndex("oro_acc_sdbar_st_unq_idx");
+
+        $fk = $this->getConstraintName($table, 'account_user_id');
+        $table->removeForeignKey($fk);
+        $this->renameExtension->renameColumn($schema, $queries, $table, "account_user_id", "customer_user_id");
+
+        $this->renameExtension->renameTable(
+            $schema,
+            $queries,
+            "oro_account_user_sdbar_st",
+            "oro_customer_user_sdbar_st"
         );
     }
 
