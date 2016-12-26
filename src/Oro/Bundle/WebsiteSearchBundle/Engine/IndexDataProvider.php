@@ -81,7 +81,7 @@ class IndexDataProvider
     {
         $entityAlias = $this->entityAliasResolver->getAlias($entityClass);
 
-        $indexEntityEvent = new Event\IndexEntityEvent($restrictedEntities, $context);
+        $indexEntityEvent = new Event\IndexEntityEvent($entityClass, $restrictedEntities, $context);
         $this->eventDispatcher->dispatch(Event\IndexEntityEvent::NAME, $indexEntityEvent);
         $this->eventDispatcher->dispatch(
             sprintf('%s.%s', Event\IndexEntityEvent::NAME, $entityAlias),

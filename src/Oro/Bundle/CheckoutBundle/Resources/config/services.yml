@@ -73,6 +73,14 @@ services:
         tags:
             - { name: layout.data_provider, alias: checkout_shipping_context }
 
+    oro_checkout.layout.data_provider.payment_context:
+        class: 'Oro\Bundle\CheckoutBundle\Layout\DataProvider\CheckoutPaymentContextProvider'
+        arguments:
+            - '@oro_checkout.factory.payment_context_factory'
+        tags:
+            - { name: layout.data_provider, alias: checkout_payment_context }
+
+
     oro_checkout.expression.acl_granted:
         class: Oro\Bundle\CheckoutBundle\Expression\CheckRequest
         arguments:
@@ -339,6 +347,14 @@ services:
             - '@oro_pricing.subtotal_processor.total_processor_provider'
             - '@oro_order.shipping_line_item.converter_basic'
             - '@?oro_shipping.context.builder_factory_basic'
+
+    oro_checkout.factory.payment_context_factory:
+        class: 'Oro\Bundle\CheckoutBundle\Factory\CheckoutPaymentContextFactory'
+        arguments:
+            - '@oro_checkout.data_provider.manager.checkout_line_items'
+            - '@oro_pricing.subtotal_processor.total_processor_provider'
+            - '@oro_order.payment_line_item.converter_basic'
+            - '@?oro_payment.context.builder_factory_basic'
 
     oro_checkout.provider.privilege_category_provider:
         class: 'Oro\Bundle\CheckoutBundle\Provider\PrivilegeCategoryProvider'

@@ -28,7 +28,8 @@ class ShippingServiceRepositoryTest extends WebTestCase
             LoadShippingServices::class,
         ]);
 
-        $this->repository = static::getContainer()->get('doctrine')->getRepository('OroUPSBundle:ShippingService');
+        $this->repository = static::getContainer()->get('doctrine')
+            ->getManagerForClass('OroUPSBundle:ShippingService')->getRepository('OroUPSBundle:ShippingService');
     }
 
     /**

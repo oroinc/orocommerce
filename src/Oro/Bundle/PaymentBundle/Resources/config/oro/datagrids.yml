@@ -1,0 +1,141 @@
+datagrids:
+    payment-methods-configs-rule-grid:
+        acl_resource: oro_payment_methods_configs_rule_view
+        extended_entity_name: %oro_payment.entity.payment_methods_configs_rule.class%
+        options:
+            entityHint:        payment methods configs rule
+            entity_pagination: true
+        source:
+            type:         orm
+            query:
+                select:
+                    - payment_rule
+                    - payment_rule.id
+                    - rule.name
+                    - rule.enabled
+                    - rule.sortOrder
+                    - rule.expression
+                    - payment_rule.currency
+                from:
+                    - { table: %oro_payment.entity.payment_methods_configs_rule.class%, alias: payment_rule }
+                join:
+                    inner:
+                        - { join: payment_rule.rule, alias: rule }
+        columns:
+            id:
+                label:         oro.payment.paymentmethodsconfigsrule.id.label
+            name:
+                label:         oro.rule.name.label
+            enabled:
+                label:         oro.rule.enabled.label
+                frontend_type: boolean
+            sortOrder:
+                label:         oro.rule.sort_order.label
+            currency:
+                label:         oro.payment.paymentmethodsconfigsrule.currency.label
+            expression:
+                label:         oro.rule.expression.label
+            methodConfigs:
+                label:         oro.payment.paymentmethodsconfigsrule.method_configs.label
+                type:          twig
+                frontend_type: html
+                template:      OroPaymentBundle:PaymentMethodsConfigsRule:Datagrid/configurations.html.twig
+            destinations:
+                label:         oro.payment.paymentmethodsconfigsrule.destinations.label
+                type:          twig
+                frontend_type: html
+                template:      OroPaymentBundle:PaymentMethodsConfigsRule:Datagrid/destinations.html.twig
+        properties:
+            id: ~
+            view_link:
+                type:    url
+                route:   oro_payment_methods_configs_rule_view
+                params:  [ id ]
+            update_link:
+                type:    url
+                route:   oro_payment_methods_configs_rule_update
+                params:  [ id ]
+            enable_link:
+                type:       url
+                route:      oro_api_enable_paymentmethodsconfigsrules
+                params:     [ id ]
+            disable_link:
+                type:       url
+                route:      oro_api_disable_paymentmethodsconfigsrules
+                params:     [ id ]
+        sorters:
+            columns:
+                id:
+                    data_name: payment_rule.id
+                name:
+                    data_name: rule.nam
+                enabled:
+                   data_name: rule.enabled
+                sortOrder:
+                    data_name: rule.sortOrder
+                currency:
+                    data_name: payment_rule.currency
+            disable_default_sorting: true
+        filters:
+            columns:
+                id:
+                    type:      number
+                    data_name: payment_rule.id
+                name:
+                    type:      string
+                    data_name: rule.name
+                enabled:
+                    type:      boolean
+                    data_name: rule.enabled
+                sortOrder:
+                    type:      number
+                    data_name: rule.sortOrder
+                currency:
+                    type:      string
+                    data_name: payment_rule.currency
+                expression:
+                    type:      string
+                    data_name: rule.expression
+        actions:
+            view:
+                type:          navigate
+                link:          view_link
+                acl_resource:  oro_payment_methods_configs_rule_view
+                icon:          eye
+                label:         oro.grid.action.view
+                rowAction:     true
+            update:
+                type:         navigate
+                link:         update_link
+                acl_resource: oro_payment_methods_configs_rule_update
+                icon:         pencil-square-o
+                label:        oro.grid.action.update
+                rowAction:    true
+            enable:
+                type:         ajax
+                acl_resource: oro_payment_methods_configs_rule_update
+                label:        oro.payment.datagrid.action.enable
+                icon:         check
+                link:         enable_link
+            disable:
+                type:         ajax
+                acl_resource: oro_payment_methods_configs_rule_update
+                label:        oro.payment.datagrid.action.disable
+                icon:         close
+                link:         disable_link
+        action_configuration: ['@oro_payment.datagrid.payment_rule_actions_visibility_provider', getActionsVisibility]
+        mass_actions:
+            enable:
+                type:         paymentruleenable
+                acl_resource: oro_payment_methods_configs_rule_update
+                label:        oro.payment.datagrid.action.enable
+                icon:         check
+                entity_name:  %oro_payment.entity.payment_methods_configs_rule.class%
+                data_identifier: payment_rule.id
+            disable:
+                type:         paymentruledisable
+                acl_resource: oro_payment_methods_configs_rule_update
+                label:        oro.payment.datagrid.action.disable
+                icon:         close
+                entity_name:  %oro_payment.entity.payment_methods_configs_rule.class%
+                data_identifier: payment_rule.id

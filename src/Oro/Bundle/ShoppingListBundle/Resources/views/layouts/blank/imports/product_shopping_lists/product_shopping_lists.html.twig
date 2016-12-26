@@ -21,7 +21,7 @@
 {% endblock %}
 
 {% block __product_shopping_lists__shopping_lists_template_widget %}
-    <% if (!_.isEmpty(shoppingLists)) { %>
+    <% if (shoppingListsCount) { %>
         <div class="shopping-lists">
             <div class="shopping-lists__content">
                 {{ block_widget(block) }}
@@ -65,7 +65,7 @@
     <% } else { %>
     <div class="shopping-lists__text">
         <%= _.__('oro.shoppinglist.actions.in_shopping_lists', {
-        count: shoppingLists.length
+        count: shoppingListsCount
         }) %>
     </div>
     <% } %>
@@ -178,7 +178,7 @@
                                                                 },
                                                                 confirmMessage: 'oro.frontend.shoppinglist.messages.line_item_delete_confirm'|trans,
                                                                 sucsessMessage: 'oro.frontend.shoppinglist.messages.line_item_deleted'|trans,
-                                                                okButtonClass: 'btn btn--info btn--size-s',
+                                                                okButtonClass: 'btn ok btn--info btn--size-s',
                                                                 cancelButtonClass: 'btn cancel theme-btn_sm btn_gray'
                                                             }
                                                         })) }}>
@@ -246,8 +246,8 @@
                     <select class="oro-select2 oro-select2--size-s" name="list" data-role="add-form-shopping-list">
                         <option value="0">{{ 'oro.shoppinglist.actions.choose_list'|trans }}</option>
                         <% if (!_.isEmpty(shoppingListsCollection)) { %>
-                        <% _.each(shoppingListsCollection, function(list) { %>
-                        <option value="<%= list.id %>"><%= _.escape(list.label) %></option>
+                        <% shoppingListsCollection.each(function(list) { %>
+                        <option value="<%= list.get('id') %>"><%= _.escape(list.get('label')) %></option>
                         <% }); %>
                         <% } %>
                     </select>

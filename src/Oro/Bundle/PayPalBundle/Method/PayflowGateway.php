@@ -2,19 +2,20 @@
 
 namespace Oro\Bundle\PayPalBundle\Method;
 
-use Symfony\Component\Routing\RouterInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-
-use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
+use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PayPalBundle\Method\Config\PayflowGatewayConfigInterface;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Option as GatewayOption;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\Response;
-use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Routing\RouterInterface;
 
 /**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class PayflowGateway implements PaymentMethodInterface
@@ -319,17 +320,9 @@ class PayflowGateway implements PaymentMethodInterface
     /**
      * {@inheritdoc}
      */
-    public function isApplicable(array $context = [])
+    public function isApplicable(PaymentContextInterface $context)
     {
-        return $this->config->isCountryApplicable($context) && $this->config->isCurrencyApplicable($context);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isEnabled()
-    {
-        return $this->config->isEnabled();
+        return true;
     }
 
     /**
