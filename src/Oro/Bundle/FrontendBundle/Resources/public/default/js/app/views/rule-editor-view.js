@@ -54,7 +54,14 @@ define(function(require) {
                     return true;
                 },
                 updater: function(item) {
-                    return component.setUpdatedValue(this.query, item, _position);
+                    var valueHolder = '[]',
+                        hasEllipsis = item.indexOf('&hellip;') !== -1,
+                        clearItem = item.replace('&hellip;', ''),
+                        hasDataSource = component.getDataSource(clearItem),
+                        newItem = (hasDataSource ? clearItem + valueHolder : clearItem) + (hasEllipsis ? '.' : ' '),
+                        newPos = hasDataSource ? _position.start + newItem.length - 1 - valueHolder.length / 2 : null;
+
+                    return component.setUpdatedValue(this.query, newItem, _position, newPos);
                 },
                 focus: function() {
                     this.focused = true;
@@ -77,7 +84,6 @@ define(function(require) {
             $el.on('click', function() {
                 clickHandler.apply($el, arguments);
             });
-
         }
     });
 

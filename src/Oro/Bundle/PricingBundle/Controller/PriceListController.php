@@ -117,7 +117,7 @@ class PriceListController extends Controller
     protected function update(PriceList $priceList)
     {
         $form = $this->createForm(PriceListType::NAME, $priceList);
-        $formPricelist = $this->createForm(PriceListSelectType::NAME);
+        $formPricelist = $this->createForm(PriceListSelectType::NAME, null, ['create_enabled' => false]);
         $test = $this->get('oro_form.model.update_handler')->handleUpdate(
             $priceList,
             $form,

@@ -59,11 +59,9 @@
                     form_row(form.productAssignmentRule, {'attr': {
                         'data-page-component-module': 'orofrontend/default/js/app/components/rule-editor-component',
                         'data-page-component-options': {
-                            allowedOperations: ['math', 'bool', 'compare', 'inclusion'],
+                            allowedOperations: ['math', 'bool', 'equality', 'compare', 'inclusion'],
                             entities: entities,
                             data: {
-                                product: {},
-                                pricelist: {},
                             },
                             dataSource: {
                                 pricelist: form_widget(priceListSelect)

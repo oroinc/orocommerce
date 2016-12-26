@@ -16,11 +16,12 @@ define(function(require) {
         options: {
             operations: {
                 math: ['+', '-', '%', '*', '/'],
-                bool: ['and', 'or'],
-                compare: ['=', '!=', '>', '<', '<=', '>=', 'like'],
+                bool: ['AND', 'OR'],
+                equality: ['=', '!='],
+                compare: ['>', '<', '<=', '>=', 'like'],
                 inclusion: ['in', 'not in']
             },
-            allowedOperations: ['math', 'bool', 'compare', 'inclusion']
+            allowedOperations: ['math', 'bool', 'equality', 'compare', 'inclusion']
         },
 
         /**
@@ -33,20 +34,27 @@ define(function(require) {
             this.error = {}; // reserved for error messages
             this.opsRegEx = {}; // regexp for operations
             this.allowed = {}; // allowed operations based on current input options
+            this.entities = {}; // root entities
+            this.fields = {};  // fields data
 
             this.options = _.defaults(options || {}, this.options);
             this.options.view = this.options.view || this.view;
             this.options.component = this;
 
-            this.isEntities = this.options.entities && !_.isUndefined(this.options.entities.fields_data) && !_.isUndefined(this.options.entities.root_entities);
+            var entities = this.options.entities;
 
-            if (this.isEntities){
-                _.each(this.options.entities.root_entities, function(item, key) {
-                    this.options.entities.root_entities[item] = this.options.entities.fields_data[key];
-                    delete this.options.entities.root_entities[key];
+            this.isEntities = this.options.entities && !_.isEmpty(entities.fields_data) && !_.isEmpty(entities.root_entities);
+
+            if (this.isEntities) {
+                this.fields = entities.fields_data;
+
+                _.each(entities.root_entities, function(item, key) {
+                    this.entities[item] = {
+                        type: 'relation',
+                        relation_alias: key
+                    };
                 }, this);
             }
-
 
             _.each(this.options.allowedOperations, function(name) {
                 this.allowed[name] = true;
@@ -73,7 +81,7 @@ define(function(require) {
          * @param query {String}
          * @param item {String}
          * @param position {Object}
-         * @param newCaretPosition {Number}
+         * @param [newCaretPosition] {Number}
          * @returns {String}
          */
         setUpdatedValue: function(query, item, position, newCaretPosition) {
@@ -87,6 +95,8 @@ define(function(require) {
 
         /**
          * Initialize helper/additional control
+         *
+         * @param $viewEl {jQuery}
          */
         initHelper: function($viewEl) {
             var _this = this;
@@ -109,6 +119,8 @@ define(function(require) {
 
             /**
              * Adds selected value from helper to main input and sets correct cursor position
+             *
+             * @param $helperEl {jQuery}
              */
             function setValue($helperEl) {
                 var $queryEl = _this.view.$el,
@@ -127,6 +139,7 @@ define(function(require) {
         /**
          * Returns boolean of string validation.
          *
+         * @param value {String}
          * @returns {Boolean}
          */
         isValid: function(value) {
@@ -164,19 +177,31 @@ define(function(require) {
          *
          * @param string {String}
          * @param position {Number|Object}
-         * @returns {*|String}
+         * @param [re] {RegExp}
+         * @returns {Object}
          * @private
          */
-        _getWordUnderCaret: function(string, position) {
-            var wordPosition = _.isObject(position) ? position : this._getWordPosition(string, position),
+        _getWordUnderCaret: function(string, position, re) {
+            var _this = this,
+                wordPosition = _.isObject(position) ? position : this._getWordPosition(string, position, re),
                 currentWord = this._getStringPart(string, wordPosition.start, wordPosition.end),
-                prevWord = !_.isUndefined(wordPosition.spaces[wordPosition.index - 2]) ?
-                    this._getStringPart(string, wordPosition.spaces[wordPosition.index - 2], wordPosition.spaces[wordPosition.index - 1]) : undefined;
+                prevWord = getPrevWord(1);
+
+            if (!prevWord) {
+                prevWord = getPrevWord(2);
+            }
 
             return {
-                current: currentWord,
+                current: currentWord ? currentWord.trim() : currentWord,
                 previous: prevWord
             };
+
+            function getPrevWord(offset) {
+                var prevPos = wordPosition.spaces[wordPosition.index - offset - 1];
+
+                return !_.isUndefined(prevPos) ?
+                    _this._getStringPart(string, prevPos, wordPosition.spaces[wordPosition.index - offset]).trim() : undefined;
+            }
         },
 
         /**
@@ -187,9 +212,10 @@ define(function(require) {
          * @private
          */
         _validBrackets: function(value) {
-            var breakLoop = false;
-            var expected = [];
-            var bracketsOnly = value.replace(/[^\[\](){}]/g, '');
+            var breakLoop = false,
+                expected = [],
+                emptyBrackets = value.match(/(\[\])|(\(\))|(\{\})/gi),
+                bracketsOnly = value.replace(/[^\[\](){}]/g, '');
 
             _.each(bracketsOnly, function(char) {
                 if (!breakLoop) {
@@ -200,8 +226,8 @@ define(function(require) {
                 }
             });
 
-            if (breakLoop || !_.isEmpty(expected)) {
-                this.error.brackets = 'Wrong brackets balance in \'' + value + '\'';
+            if (breakLoop || !_.isEmpty(expected) || emptyBrackets) {
+                this.error.brackets = (emptyBrackets ? 'Has empty brackets ' : 'Wrong brackets balance') + ' in \'' + value + '\'';
                 return false;
             }
 
@@ -221,7 +247,7 @@ define(function(require) {
             }
 
             /**
-             * Check expected 'close' bracket and set 'unloop' if not.
+             * Check expected 'close' bracket and break looping if not.
              *
              * @param symbol {String}
              * @param char {String}
@@ -238,7 +264,7 @@ define(function(require) {
          *
          * @param query {String}
          * @param item {String}
-         * @param position {String}
+         * @param position {Object}
          * @returns {{value: String, position: Object}}
          * @private
          */
@@ -248,11 +274,9 @@ define(function(require) {
                 stringBefore = this._getStringPart(query, 0, cutBefore),
                 stringAfter = this._getStringPart(query, cutAfter);
 
-            var doSpaceOffset = _.isString(this._getValueByPath(this.options.data, item));
-
             return {
-                value: stringBefore + item + (doSpaceOffset ? ' ' + stringAfter : stringAfter),
-                position: cutBefore + item.length + (doSpaceOffset ? 1 : 0)
+                value: stringBefore + item + stringAfter,
+                position: cutBefore + item.length
             };
         },
 
@@ -260,7 +284,7 @@ define(function(require) {
          * Returns position for absolute positioned element (select2)
          *
          * @param $el {jQuery}
-         * @returns {{top: Number, left Number}}
+         * @returns {{top: Number, left: Number}}
          * @private
          */
         _getPosition: function($el) {
@@ -312,7 +336,7 @@ define(function(require) {
          */
         getDataSource: function(term, position) {
             _.each(this.options.dataSource, function(source) {
-                source.$el.hide();
+                (source.$holder || source.$el).hide();
             });
 
             if (_.isEmpty(term)) {
@@ -359,7 +383,7 @@ define(function(require) {
             if (source.$el && source.$el.length) {
                 elPosition = _.extend({position: 'absolute'}, this._getPosition($returnEl));
 
-                $el = source.$el;
+                $el = source.$holder || source.$el;
 
                 $el.css(elPosition);
                 $el.show();
@@ -371,31 +395,40 @@ define(function(require) {
          *
          * @param value {String}
          * @param caretPosition {Number}
-         * @returns {{list: array, position: ({start: number, end: number, index: number, spaces: array})}}
+         * @returns {{list: Array, position: ({start: Number, end: Number})}}
          */
         getSuggestData: function(value, caretPosition) {
-            var rootData = this.options.entities ? this.options.entities.root_entities : this.options.data,
-                rootTerms = _.keys(rootData);
+            var rootData = this.entities || this.options.data,
+                charUnderCaret = value[caretPosition - 1],
+                isSpaceUnderCaret = charUnderCaret === ' ',
+                isDotUnderCaret = charUnderCaret === '.';
 
             if (_.isEmpty(value.trim()) || caretPosition === 0) {
-                return {list: rootTerms, position: {start: caretPosition, end: caretPosition}};
+                return {
+                    list: this._getMarkedRelationItemsKeys(rootData),
+                    position: {start: caretPosition, end: caretPosition}
+                };
             }
 
-            var normalized = this._getNormalized(value, caretPosition),
+            var ops = this.options.operations,
+                normalized = this._getNormalized(value, caretPosition),
                 normWordPosition = this._getWordPosition(normalized.string, normalized.position),
-                processedWord = this._getWordUnderCaret(normalized.string, normWordPosition),
-                splitWord = this._splitTermAndExpr(processedWord.current),
-                term = splitWord.term,
-                inWordPosition = normalized.position - normWordPosition.start,
-                termPart = this._getStringPart(term, 0, inWordPosition),
-                charUnderCaret = value[caretPosition - 1],
-                lastCharIsSpace = charUnderCaret === ' ',
-                lastCharIsDot = charUnderCaret === '.';
+                wordUnderCaret = this._getWordUnderCaret(normalized.string, normWordPosition),
+
+                inWordSepRegex = _.assign({space:/\\s/gi}, this.opsRegEx),
+                termUnderCaretPosition = this._getWordPosition(normalized.string, normalized.position, inWordSepRegex),
+                termUnderCaret = this._getWordUnderCaret(normalized.string, termUnderCaretPosition),
+
+                splitWord = this._splitTermAndExpr(wordUnderCaret.current),
+
+                isWordsTerm = termUnderCaretPosition.start === normWordPosition.start,
+                prevWordIsWord = wordUnderCaret.previous && !this._contains(ops.bool, wordUnderCaret.previous) && !this._contains(ops.bool, wordUnderCaret.current),
+                term = isWordsTerm ? splitWord.term : termUnderCaret.current,
+                inWordPosition = normalized.position - (isWordsTerm ? normWordPosition.start : termUnderCaretPosition.start);
 
             var dataSource = this.getDataSource(term, inWordPosition);
 
-            if (!_.isEmpty(dataSource) && !lastCharIsDot && !lastCharIsSpace) {
-
+            if (!_.isEmpty(dataSource) && !isDotUnderCaret && !isSpaceUnderCaret) {
                 this.showHelper(dataSource, this.view.$el);
 
                 return {
@@ -404,51 +437,46 @@ define(function(require) {
                 };
             }
 
-            var pathValue = this._getValueByPath(rootData, term),
-                termParts = !lastCharIsSpace ? /^(.*)\.(.*)\W?/g.exec(termPart) : null;
+            var cases = [],
+                termPart = this._getStringPart(term, 0, inWordPosition),
+                pathValue = this._getValueByPath(termPart, rootData),
+                termParts = !isSpaceUnderCaret ? /^(.*)\.(.*)\W?/g.exec(termPart) : null,
+                word = (pathValue || this._contains(this.cases.bool, wordUnderCaret.current)) && !prevWordIsWord ? wordUnderCaret.current : wordUnderCaret.previous,
+                wordIs = this._getWordData(word),
+                searchPart = termParts ? (_.isUndefined(termParts[2]) ? termParts[1] : termParts[2]) : termPart,
+                isFullWord = wordIs && (wordIs.isInclusion || wordIs.isCompare),
+                isTermUnderCaret = /[a-z.]/gi.test(term);
 
-            if (!pathValue) {
-                pathValue = this._getValueByPath(rootData, termParts ? termParts[1] : '');
+            if (!prevWordIsWord && isTermUnderCaret && pathValue && !_.isString(pathValue.type) && !isSpaceUnderCaret) {
+                if (!wordIs.notOps) {
+                    cases = this._getMarkedRelationItemsKeys(this._getCasesByType(this._getValueByPath(splitWord.term, rootData), pathValue));
+                } else {
+                    cases = this._getMarkedRelationItemsKeys(pathValue || rootData);
+                }
+            } else if (wordIs) {
+                if (isFullWord) {
+                    cases = ops.bool;
+                } else if (wordIs.isInclusion || wordIs.isCompare || (pathValue && pathValue.type === 'standalone' && wordIs.notOps)) {
+                    cases = _.union(cases, ops.bool, this.allowed.math ? ops.math : []);
+                } else if (wordIs.isBool) {
+                    cases = this._getMarkedRelationItemsKeys(rootData);
+                } else if (wordIs.hasTerm && !wordIs.hasValue) {
+                    cases = _.union(cases, wordIs.notOps ? this._getOpsByType(pathValue.type) : this._getMarkedRelationItemsKeys(rootData));
+                } else if (wordIs.notOps) {
+                    cases = this._getMarkedRelationItemsKeys(pathValue || rootData);
+                } else if (pathValue && !_.isString(pathValue.type)) {
+                    cases = this._getMarkedRelationItemsKeys(pathValue);
+                }
             }
 
-            var cases = [],
-                word = this._contains(rootTerms, term) || this._contains(this.cases.bool, processedWord.current) ? processedWord.current : processedWord.previous,
+            cases = _.union(this._getPresetCases(splitWord.term, !wordIs.notOps && !wordIs.hasValue? this._getValueByPath(splitWord.term, rootData) : []), cases);
 
-                wordIs = this._getWordData(word),
-                searchPart = termParts ? (_.isUndefined(termParts[2]) ? termParts[1] : termParts[2]) : (wordIs && wordIs.hasTerm ? '' : termPart),
-                isFullWord = wordIs && (wordIs.isInclusion || wordIs.isCompare);
-
-            if (lastCharIsSpace && wordIs) {
-                if (isFullWord) {
-                    cases = this.options.operations.bool;
-                } else if (wordIs.isInclusion || wordIs.isCompare) {
-                    cases = this.options.operations.bool;
-
-                    if (this.allowed.math) {
-                        cases = _.union(cases, this.options.operations.math);
-                    }
-                } else if (wordIs.isBool) {
-                    cases = _.keys(rootData);
-
-                } else if (wordIs.hasTerm && !wordIs.hasValue && wordIs.notOps) {
-                    if (this.allowed.compare) {
-                        cases = _.union(cases, this.options.operations.compare);
-                    }
-                    if (this.allowed.inclusion) {
-                        cases = _.union(cases, this.options.operations.inclusion);
-                    }
-                    if (!this.allowed.inclusion && !this.allowed.compare) {
-                        cases = _.union(cases, this.options.operations.math);
-                    }
-                } else if (wordIs.notOps) {
-                    cases = _.keys(pathValue && pathValue !== 'any' ? pathValue : rootData);
-                }
-            } else {
-                cases = _.keys(pathValue);
+            if (isSpaceUnderCaret) {
+                searchPart = '';
             }
 
             return {
-                list: this._getSuggestList(cases, searchPart, lastCharIsSpace, lastCharIsDot),
+                list: this._getSuggestList(cases, searchPart, isSpaceUnderCaret, isDotUnderCaret),
                 position: {
                     start: caretPosition - searchPart.length,
                     end: caretPosition
@@ -457,36 +485,208 @@ define(function(require) {
         },
 
         /**
+         * Returns the cases that are predefined or obtained upon request for field or type
+         *
+         * @param name {String}
+         * @param data {Object}
+         * @returns {*}
+         * @private
+         */
+        _getPresetCases: function(name, data) {
+            if (!data){
+                return [];
+            }
+
+            switch (data.type) {
+                case 'boolean':
+                    return ['TRUE', 'FALSE'];
+                default:
+                    return [];
+            }
+        },
+
+        /**
+         * Adds '&hellip;' to key name if type is 'relation'
+         *
+         * @param obj {Object}
+         * @returns {Object}
+         * @private
+         */
+        _getMarkedRelationItemsKeys: function(obj) {
+            return  _.reduce(obj, function(result, item, key) {
+                return _.union(result, [this._markRelationItem(key, item.type)]);
+            }, [], this);
+        },
+
+        /**
+         * Adds &hellip; to key name if type is 'relation'
+         *
+         * @param key {String}
+         * @param type {String}
+         * @returns {string}
+         * @private
+         */
+        _markRelationItem: function(key, type) {
+            return key + (type === 'relation' ? '&hellip;' : '');
+        },
+
+        /**
+         * Returns cases for expression which are suitable to term's type
+         *
+         * @param termData {Object}
+         * @param data {Object}
+         * @returns {Object}
+         * @private
+         */
+        _getCasesByType: function(termData, data) {
+            if (_.isEmpty(data)) {
+                return [];
+            }
+
+            var allowedTypes = this._getAllowedTypes(termData.type);
+
+
+            if (!_.isArray(allowedTypes)) {
+                return [];
+            }
+
+            return _.isEmpty(allowedTypes) ? data : _.reduce(data, function(result, item, key) {
+                    if (!_.isString(item.type) || (_.isString(item.type) && this._contains(allowedTypes, item.type))) {
+                        result[key] = item;
+                    }
+                    return result;
+                }, {}, this);
+        },
+
+        /**
+         * Returns allowed expression which are suitable to term's type
+         *
+         * @param type {String}
+         * @returns {Array}
+         * @private
+         */
+        _getAllowedTypes: function(type) {
+            switch (type) {
+                case 'boolean':
+                    return ['boolean', 'relation'];
+                case 'integer':
+                    return ['integer', 'relation'];
+                case 'string':
+                    return ['string', 'relation'];
+                case 'float':
+                    return ['integer', 'float', 'relation'];
+                case 'standalone':
+                    return null;
+                default:
+                    return ['relation'];
+
+                /*
+                 case 'enum':
+                     break;
+                 case 'datetime':
+                     break;
+                 case 'collection':
+                     break;
+                 */
+            }
+        },
+
+        /**
+         * Returns operation basel on entity's type
+         *
+         * @param type {String}
+         * @returns {Array}
+         * @private
+         */
+        _getOpsByType: function(type) {
+            if (!_.isString(type)) {
+                return [];
+            }
+
+            var equality = this.allowed.equality ? this.options.operations.equality : [],
+                compare = this.allowed.compare ? this.options.operations.compare : [],
+                inclusion = this.allowed.inclusion ? this.options.operations.inclusion : [];
+
+            switch (type) {
+                case 'string':
+                case 'enum':
+                case 'boolean':
+                    return equality;
+                case 'integer':
+                case 'float':
+                case 'datetime':
+                    return _.union(equality, compare);
+                case 'collection':
+                    return inclusion;
+                case 'standalone':
+                    return [];
+            }
+        },
+
+        /**
          * Getting the word's start position.
          *
          * @param value {String}
          * @param position {Number}
-         * @returns {{start: (*|number), end: *, index: number, spaces: (Interval1d|Rectangle)}}
+         * @param [re] {RegExp}
+         * @returns {{start: (*|Number), end: (*|Number), index: Number, spaces: (*|Array)}}
          * @private
          */
-        _getWordPosition: function(value, position) {
-            var index = 0,
-                separatorsPositions = _.compact(value.split('').map(function(char, i) {
-                    return (/\s|\(|\)/.test(char)) ? i + 1 : null;
-                })),
-                separators = _.union([0], separatorsPositions, [value.length]);
+        _getWordPosition: function(value, position, re) {
+            var _matches = _.compact(_.uniq(re ? _.flatten(_.map(re, function(regex) {
+                        return value.match(regex);
+                    })) : value.match(/\s+|\(|\)/g))),
+                sepPos = _.union([0], getMatchIndex(value, _matches), [value.length]);
 
-            while (separators[index] < position) {
-                index++;
-            }
+            var index = _.reduce(sepPos, function(memo, item) {
+                return item < position ? ++memo : memo;
+            }, 0);
 
             return {
-                start: separators[index - 1] || 0,
-                end: separators[index],
+                start: sepPos[index - 1] || 0,
+                end: sepPos[index],
                 index: index,
-                spaces: separators
+                spaces: sepPos
             };
+
+            /**
+             * Returns matches positions recursively
+             *
+             * @param string {String}
+             * @param matches {Array}
+             * @returns {Array}
+             */
+            function getMatchIndex(string, matches) {
+                var arr = [];
+
+                if (!string.trim()) {
+                    return [];
+                }
+
+                _.each(matches, function(item) {
+                    var indexOf = string.indexOf(item),
+                        startPos = 0;
+
+                    while (indexOf !== -1) {
+                        var currPos = indexOf + startPos,
+                            nextPos = currPos + item.length;
+
+                        arr.push(currPos, nextPos);
+
+                        startPos = nextPos;
+
+                        indexOf = string.substr(startPos).indexOf(item);
+                    }
+                });
+
+                return _.sortBy(arr);
+            }
         },
 
         /**
          * Returns list of matching words.
          *
-         * @param pathKeys {Object}
+         * @param pathKeys {Array}
          * @param searchPart {String}
          * @param isSpace {Boolean}
          * @param isDot {Boolean}
@@ -504,7 +704,7 @@ define(function(require) {
                 return pathKeys;
             }
 
-            if (!isDot && !isSpace && searchPart){
+            if (!isDot && !isSpace && searchPart) {
                 return getCases(searchPart, pathKeys);
             }
 
@@ -514,7 +714,7 @@ define(function(require) {
              * Getting list of cases from all subcases.
              *
              * @param word {String}
-             * @returns {*|Array}
+             * @returns {Array}
              */
             function getCases(word) {
                 var base = Array.prototype.slice.call(arguments, 1),
@@ -528,7 +728,7 @@ define(function(require) {
          * Returns word's correspondences.
          *
          * @param word {String}
-         * @returns {*}
+         * @returns {Object}
          * @private
          */
         _getWordData: function(word) {
@@ -546,11 +746,11 @@ define(function(require) {
                 hasInclusion: checkIt.hasInclusion,
                 isCompare: checkIt.hasCompare && checkIt.isValid,
                 isInclusion: checkIt.hasInclusion && checkIt.isValid,
-                hasTerm: splitWord && !_.isEmpty(splitWord.term),
+                hasTerm: splitWord && !_.isEmpty(splitWord.term) && !_.isEmpty(this._getValueByPath(splitWord.term).type),
                 hasValue: splitWord && !_.isEmpty(splitWord.expr),
                 isBool: _.contains(operations.bool, word),
                 isMath: _.contains(operations.math, lastChar),
-                notOps: !_.some(this.opsRegEx, function(re){
+                notOps: !_.some(this.opsRegEx, function(re) {
                     return re.exec(word);
                 })
             };
@@ -560,14 +760,16 @@ define(function(require) {
          * Returns the word's state.
          *
          * @param string {String}
-         * @returns {*}
+         * @returns {Object}
          * @private
          */
         _checkWord: function(string) {
-            var isCompare, isInclusion, isExpression;
-            var operationType = this._getOperationType(string);
+            var isCompare, isInclusion, isExpression,
+                operationType = this._getOperationType(string),
+                hasCompare = operationType.compare || operationType.equality,
+                pathData = this._getValueByPath(string);
 
-            if (operationType.compare) {
+            if (hasCompare) {
                 isCompare = this._checkCompare(string, operationType.match);
             } else if (operationType.inclusion) {
                 isInclusion = this._checkInclusion(string, operationType.match);
@@ -575,7 +777,7 @@ define(function(require) {
                 isExpression = this._checkExpression(string);
             }
 
-            var isValid = isCompare || isInclusion || isExpression;
+            var isValid = isCompare || isInclusion || isExpression || (pathData && pathData.type === 'standalone');
 
             if (isValid) {
                 this.error = {};
@@ -585,7 +787,7 @@ define(function(require) {
 
             return {
                 isValid: isValid,
-                hasCompare: operationType.compare,
+                hasCompare: hasCompare,
                 hasInclusion: operationType.inclusion,
                 hasExpression: operationType.math
             };
@@ -594,17 +796,19 @@ define(function(require) {
         /**
          * Checking of accessory word to terms.
          *
-         * @param term {String}
-         * @param base {Array}
-         * @returns {*}
+         * @param string {String}
+         * @returns {Boolean}
          * @private
          */
-        _checkTerm: function(term, base) {
-            if (!term) {
+        _checkTerm: function(string) {
+            if (!string) {
                 return false;
             }
 
-            if (!this._contains(base, this._replaceWraps(term, '[]', 'wipe'))) {
+            var term = this._replaceWraps(string, '[]', 'wipe'),
+                hasData = !_.isEmpty(this._getValueByPath(term).type);
+
+            if (!hasData) {
                 this.error.term = 'Part \'' + term + '\'' + ' is wrong';
                 return false;
             }
@@ -619,13 +823,15 @@ define(function(require) {
         /**
          * Returns boolean whether string is a expression of comparison.
          *
+         * @param string {String}
+         * @param match {String}
+         * @returns {Boolean}
          * @private
          */
         _checkCompare: function(string, match) {
-            var matchSplit = this._splitTermAndExpr(string, match),
-                pathValue = this._getValueByPath(this.options.data, matchSplit.term);
+            var matchSplit = this._splitTermAndExpr(string, match);
 
-            return this._checkTerm(matchSplit.term, this.cases.data) && this._checkExpression(matchSplit.expr, pathValue);
+            return this._checkTerm(matchSplit.term) && this._checkExpression(matchSplit.expr, this._getValueByPath(matchSplit.term));
         },
 
         /**
@@ -640,21 +846,22 @@ define(function(require) {
             var matchSplit = this._splitTermAndExpr(string, match),
                 expr = this._replaceWraps(matchSplit.expr, '[]', 'trim');
 
-            return this._checkTerm(matchSplit.term, this.cases.data) && !_.isEmpty(matchSplit.expr) && (this._checkArray(matchSplit.expr) || this._checkTerm(expr, this.cases.data));
+            return this._checkTerm(matchSplit.term) && !_.isEmpty(matchSplit.expr) && (this._checkArray(matchSplit.expr) || this._checkTerm(expr));
         },
 
         /**
          * Returns boolean whether string is a array, non empty array, and has valid values.
          *
-         * @param array {Array}
-         * @returns {boolean}
+         * @param array {Array|String}
+         * @param [data] {Object}
+         * @returns {Boolean}
          * @private
          */
-        _checkArray: function(array) {
+        _checkArray: function(array, data) {
             var _this = this;
 
             if (_.isArray(array)) {
-                return checkValues(array);
+                return checkValues(array, data);
             } else {
                 var arrayMatch = getMatches(array, /^(\[(.*?)\])$/g);
 
@@ -663,7 +870,7 @@ define(function(require) {
                         this.error.array = 'Array \'' + array + '\' is wrong';
                         return false;
                     } else {
-                        return checkValues((arrayMatch[0] || '').split(','));
+                        return checkValues((arrayMatch[0] || '').split(','), data);
                     }
                 }
             }
@@ -690,16 +897,17 @@ define(function(require) {
              * Returns boolean whether several values are valid.
              *
              * @param array {Array}
+             * @param data {Object}
              * @returns {Boolean}
              */
-            function checkValues(array) {
+            function checkValues(array, data) {
                 return _.every(array, function(value) {
                     if (_.isEmpty(value)) {
                         _this.error.array = 'One of \'' + array + '\' array items is empty';
                         return false;
                     }
 
-                    return _this._checkValue(value);
+                    return _this._checkValue(value, data);
                 });
             }
         },
@@ -708,30 +916,70 @@ define(function(require) {
          * Returns boolean whether value is valid: is number, is not NaN, or is a term.
          *
          * @param value {String}
+         * @param data {Object}
          * @returns {Boolean}
          * @private
          */
-        _checkValue: function(value) {
+        _checkValue: function(value, data) {
             if (_.isEmpty(value)) {
                 return false;
             }
 
-            var num = Number(value),
-                isNumber = _.isNumber(num) && !_.isNaN(num),
-                isString = _.isString(value),
-                quotesMatch = value.match(/(\'|\")/g),
-                wrongQuotesMatch = value.match(/(\'|\"){2,}/g),
-                isValidString = isString && quotesMatch && quotesMatch.length % 2 === 0 && !wrongQuotesMatch;
+            return this._hasValidType(value, data.type) || this._checkTerm(value);
+        },
 
-            return isNumber || isValidString || this._checkTerm(value, this.cases.data);
+        /**
+         * Returns boolean how value corresponds to specified type
+         *
+         * @param value {String}
+         * @param type {String}
+         * @returns {Boolean}
+         * @private
+         */
+        _hasValidType: function(value, type) {
+            if (_.isEmpty(value) && type !== 'standalone') {
+                return false;
+            }
+
+            var quotesMatch = value.match(/(\'|\")/g),
+                quotesLength = quotesMatch ? quotesMatch.length : 0,
+                wrongQuotesMatch = value.match(/(\'|\"){2,}/g);
+
+            var number = Number(value),
+                isNumber = _.isNumber(number) && _.isFinite(number);
+
+            switch (type) {
+                case 'boolean':
+                    return !_.isEmpty(value.match(/^(true|false)$/gi));
+                case 'integer':
+                    return isNumber && number === Math.floor(number);
+                case 'float':
+                    return isNumber;
+                case 'standalone':
+                    return _.isEmpty(value);
+                default:
+                    return _.isString(value) && !_.isNumber(value) && quotesLength % 2 === 0 && !wrongQuotesMatch;
+
+// TODO add helpers for: enum, datetime, collection
+                /*
+                 case 'string':
+                 return _.isString(value) && !_.isNumber(value) && quotesLength % 2 === 0 && !wrongQuotesMatch;
+                 case 'enum':
+                 break;
+                 case 'datetime':
+                 break;
+                 case 'collection':
+                 break;
+                 */
+            }
         },
 
         /**
          * Returns pair of term and expression.
          *
          * @param string {String}
-         * @param splitter {String}
-         * @returns {{term: *, expr: *}}
+         * @param [splitter] {String}
+         * @returns {String|{term: (*|String), expr: (*|String), splitter: (*|String)}}
          * @private
          */
         _splitTermAndExpr: function(string, splitter) {
@@ -739,60 +987,64 @@ define(function(require) {
                 _this = this,
                 breakLoop = false;
 
-            if (_.isEmpty(string)){
+            if (_.isEmpty(string)) {
                 return string;
             }
 
-            if (_.isEmpty(splitter)) {
+            if (!_.isEmpty(splitter)) {
+                matchSplit = this._splitString(string, splitter);
+            } else {
                 _.map(this.opsRegEx, function(regex) {
-                    var regexMatch = string.match(regex);
+                    if (!breakLoop) {
+                        var match = string.match(regex);
 
-                    if (!breakLoop && regexMatch && regexMatch.length) {
-                        matchSplit = _this._splitString(string, regexMatch[0]);
-                        breakLoop = !!matchSplit[2];
+                        if (match && match.length) {
+                            matchSplit = _this._splitString(string, match[0]);
+                            splitter = match[0];
+                            breakLoop = !!matchSplit[2];
+                        }
                     }
                 });
-            } else {
-                matchSplit = this._splitString(string, splitter);
             }
 
             return {
                 term: matchSplit && !_.isEmpty(matchSplit[0]) ? matchSplit[0] : string,
-                expr: matchSplit && !_.isEmpty(matchSplit[1]) ? matchSplit[1] : null
+                expr: matchSplit && !_.isEmpty(matchSplit[1]) ? matchSplit[1] : null,
+                splitter: splitter
             };
         },
 
         /**
          * Returns boolean whether expression is: valid value, or valid array, or belongs to keyData array.
          *
-         * @param string {String}
-         * @param keyData {Array}
-         * @returns {*}
+         * @param expr {String}
+         * @param [keyData] {Array}
+         * @returns {Boolean}
          * @private
          */
-        _checkExpression: function(string, keyData) {
-            if (!string) {
+        _checkExpression: function(expr, keyData) {
+            if (!expr) {
                 return false;
             }
 
-            if (this._checkValue(string)) {
+            if (this._checkValue(expr, keyData)) {
                 return true;
             }
 
-            if (this._checkArray(string)) {
+            if (this._checkArray(expr, keyData)) {
                 return true;
             }
 
-            if (this._contains(keyData, string)) {
+            if (this._contains(keyData, expr)) {
                 return true;
             }
 
-            var mathMatch = string.match(this.opsRegEx.math);
+            var mathMatch = expr.match(this.opsRegEx.math);
 
             if (mathMatch) {
                 return this._checkArray(_.reduce(mathMatch, function(values, match) {
                     return values.replace(match, ' ');
-                }, string).split(' '));
+                }, expr).split(' '), keyData);
             }
         },
 
@@ -800,22 +1052,25 @@ define(function(require) {
          * Returns boolean for operations type used in string and the matched string.
          *
          * @param string {String}
-         * @returns {{compare: (*|boolean), inclusion: (*|boolean), math: (*|boolean), match: undefined}}
+         * @returns {{equality: Boolean, compare: Boolean, inclusion: Boolean, math: Boolean, match: *}}
          * @private
          */
         _getOperationType: function(string) {
             var compareMatch = string.match(this.opsRegEx.compare),
+                equalityMatch = string.match(this.opsRegEx.equality),
                 inclusionMatch = string.match(this.opsRegEx.inclusion),
                 mathMatch = string.match(this.opsRegEx.math),
+                doEquality = equalityMatch && equalityMatch.length === 1 && this.allowed.equality,
                 doCompare = compareMatch && compareMatch.length === 1 && this.allowed.compare,
                 doInclusion = inclusionMatch && inclusionMatch.length === 1 && this.allowed.inclusion,
                 doMath = this.allowed.math && !this.allowed.compare && !this.allowed.inclusion,
-                match = doCompare ? compareMatch : (doInclusion ? inclusionMatch : (doMath ? mathMatch : undefined));
+                match = equalityMatch || compareMatch || inclusionMatch || mathMatch;
 
             return {
-                compare: doCompare,
-                inclusion: doInclusion,
-                math: doMath,
+                equality: Boolean(doEquality),
+                compare: Boolean(doCompare),
+                inclusion: Boolean(doInclusion),
+                math: Boolean(doMath),
                 match: match
             };
         },
@@ -844,10 +1099,13 @@ define(function(require) {
 
             switch (name) {
                 case 'bool':
-                    reString = '\\s+(' + escapedOps.join('|') + ')\\s+';
+                    reString = '(\\s+(' + escapedOps.join('|') + ')\\s+)';
+                    break;
+                case 'inclusion':
+                    reString = '((\\s+|\\~)(' + escapedOps.join('|') + ')(\\~|\\s+))';
                     break;
                 default:
-                    reString = '(\\s*|\\~+)(' + escapedOps.join('|') + ')(\\~+|\\s*)';
+                    reString = '((\\s*|\\~)(' + escapedOps.join('|') + ')(\\~|\\s*))';
             }
 
             return new RegExp(reString, 'g');
@@ -857,8 +1115,8 @@ define(function(require) {
          * Returns normalized value data: string and corrected cursor position.
          *
          * @param value {String}
-         * @param caretPosition {Number}
-         * @returns {{string: string, position: number}}
+         * @param [caretPosition] {Number}
+         * @returns {{string: String, position: Number}}
          * @private
          */
         _getNormalized: function(value, caretPosition) {
@@ -952,8 +1210,8 @@ define(function(require) {
          * Returns list of cases based on options.date structure.
          *
          * @param object {Object}
-         * @param baseName {String}
-         * @param baseData {Object}
+         * @param [baseName] {String}
+         * @param [baseData] {Object}
          * @returns {Array}
          * @private
          */
@@ -991,7 +1249,7 @@ define(function(require) {
          *
          * @param string {String}
          * @param startPos {Number}
-         * @param endPos {Number}
+         * @param [endPos] {Number}
          * @returns {String}
          * @private
          */
@@ -1021,7 +1279,7 @@ define(function(require) {
          * Returns groups of expressions (even) and booleans (odd) from array of words.
          *
          * @param string {String}
-         * @returns {{expr: *, bool: *}}
+         * @returns {{expr: (*|Array), bool: (*|Array)}}
          * @private
          */
         _getGroups: function(string) {
@@ -1051,7 +1309,7 @@ define(function(require) {
                 return false;
             }
 
-            if ( _.isEmpty(string)) {
+            if (_.isEmpty(string)) {
                 return false;
             }
 
@@ -1063,32 +1321,45 @@ define(function(require) {
         /**
          * Returns value of object key requested by path.
          *
-         * @param obj {Object}
          * @param path {String}
+         * @param [obj] {Object}
          * @returns {undefined|Object}
          * @private
          */
-        _getValueByPath: function(obj, path) {
-            var result = obj,
-                pathWay = this._replaceWraps(path, '[]', 'wipe').split('.');
+        _getValueByPath: function(path, obj) {
+            path = path || '';
 
-            if (_.isEmpty(path)) {
-                return this.isEntities ? null : obj;
+            var _this = this,
+                pathValue = getValue(path, obj),
+                lastCharIsSpace = path[path.length - 1] === ' ',
+                termParts = !lastCharIsSpace ? /^(.*)\.(.*)\W?/g.exec(path) : null;
+
+            if (!pathValue) {
+                pathValue = getValue(termParts ? termParts[1] : '', obj);
             }
 
-            _.each(pathWay, function(node) {
-                var source = result || obj;
+            return pathValue;
 
-                if (source[node]) {
-                    if (source[node].type && source[node].type === 'relation') {
-                        result = this.options.entities.fields_data[source[node].relation_alias];
-                    } else if (!source[node].type) {
-                        result = source[node];
-                    }
+            function getValue(path, obj) {
+                var result = obj || _this.entities,
+                    pathWay = _this._replaceWraps(path, '[]', 'wipe').split('.');
+
+                if (_.isEmpty(path)) {
+                    return _this.isEntities ? null : obj;
                 }
-            }, this);
 
-            return result;
+                _.each(pathWay, function(node) {
+                    if (result[node]) {
+                        if (result[node].type && result[node].type === 'relation') {
+                            result = this.fields[result[node].relation_alias];
+                        } else {
+                            result = result[node];
+                        }
+                    }
+                }, _this);
+
+                return result;
+            }
         },
 
         /**
@@ -1096,8 +1367,8 @@ define(function(require) {
          *
          * @param string {String}
          * @param brackets {String}
-         * @param type {String}
-         * @param replace {String}
+         * @param [type] {String}
+         * @param [replace] {String}
          * @returns {String}
          * @private
          */
