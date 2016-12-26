@@ -1,21 +1,25 @@
 {% block _shopping_lists_menu_widget %}
+    {% set currentClass = 'shopping-list__item--current' %}
     {% set attr = layout_attr_defaults(attr, {
         'data-page-component-module': 'oroui/js/app/components/view-component',
         'data-page-component-options': {
             view: 'oroui/js/app/views/layout-subtree-view',
             blockId: id,
-            reloadEvents: ['shopping-list:created', 'shopping-list:updated', 'frontend:item:delete']
+            reloadEvents: ['shopping-list:refresh', 'frontend:item:delete']
         },
         'data-dropdown-trigger': true,
         '~class': ' shopping-list-navigation'
     }) %}
 
     <div {{ block('block_attributes') }}>
-        <ul class="shopping-list">
+        <ul class="shopping-list"
+            data-page-component-module="oroshoppinglist/js/app/views/shoppinglist-widget-view"
+            data-page-component-options="{{ {'currentClass': currentClass}|json_encode }}">
             {% for shoppingList in shoppingLists  %}
                 {% do block|merge_context({
                     shoppingList: shoppingList,
-                    selectedShoppingList: selectedShoppingList
+                    selectedShoppingList: selectedShoppingList,
+                    currentClass: currentClass
                 }) %}
                 {{ block('container_widget') }}
             {% endfor %}
@@ -25,7 +29,9 @@
 
 {% block _shopping_lists_menu_item_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' shopping-list__item' ~ (shoppingList.id == selectedShoppingList.id ? ' shopping-list__item--current')
+        '~class': ' shopping-list__item ' ~ (shoppingList.id == selectedShoppingList.id ? currentClass),
+        'data-shopping-list-id': shoppingList.id,
+        'data-role': 'shopping-list-current-label'
     }) %}
     <li {{ block('block_attributes') }}>
         <a href="{{ path('oro_shopping_list_frontend_view', {'id' : shoppingList.id}) }}"
@@ -37,7 +43,8 @@
                     <span class='shopping-list__item-indicator'>
                         <i class="fa-shopping-cart"></i>
                     </span>
-                    <span {% if shoppingList.id == selectedShoppingList.id %}class="current-title"{% endif %}>
+                    <span data-shopping-list-id="{{ shoppingList.id }}"
+                          data-role="shopping-list-title">
                         {{ shoppingList.label }}
                     </span>
                 </span>
