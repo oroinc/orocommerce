@@ -131,6 +131,13 @@
   color: #b84926;
 }
 
+.profile__form__no-autocomplete-fix {
+  height: 0;
+  padding: 0;
+  visibility: hidden;
+  border: none;
+}
+
 .account-profile-edit-page {
   .password {
     overflow: hidden;
