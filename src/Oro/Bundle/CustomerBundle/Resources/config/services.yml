@@ -16,6 +16,12 @@ parameters:
     oro_customer.entity.windows_state.class: Oro\Bundle\CustomerBundle\Entity\WindowsState
 
 services:
+    oro_customer.deprecated_rest_api_route_options_resolver:
+        class: Oro\Bundle\CustomerBundle\Routing\DeprecatedRestApiRouteOptionsResolver
+        public: false
+        tags:
+            - { name: routing.options_resolver }
+
     oro_customer.security.account_user_provider:
         class: 'Oro\Bundle\CustomerBundle\Security\AccountUserProvider'
         public: false
