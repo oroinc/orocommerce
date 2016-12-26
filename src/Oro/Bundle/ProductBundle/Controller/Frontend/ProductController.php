@@ -34,7 +34,7 @@ class ProductController extends Controller
      * View list of products
      *
      * @Route("/view/{id}", name="oro_product_frontend_product_view", requirements={"id"="\d+"})
-     * @Layout(vars={"product_type"})
+     * @Layout(vars={"product_type", "attribute_family"})
      * @Acl(
      *      id="oro_product_frontend_view",
      *      type="entity",
@@ -49,11 +49,15 @@ class ProductController extends Controller
      */
     public function viewAction(Product $product)
     {
+        $groupsWithAttributes = $this->get('oro_entity_config.manager.attribute_manager')->
+            getGroupsWithAttributesByFamily($product->getAttributeFamily()->getId());
+
         return [
             'data' => [
                 'product' => $product,
             ],
             'product_type' => $product->getType(),
+            'attribute_family' => $groupsWithAttributes
         ];
     }
 
