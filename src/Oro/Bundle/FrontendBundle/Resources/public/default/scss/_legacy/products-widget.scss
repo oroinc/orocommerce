@@ -29,24 +29,22 @@
 
       font-size: 0;
 
+      @media (min-width: 992px) {
+        margin-left: -15px;
+        margin-right: -15px;
+      }
+
       @media (max-width: $screen-md) {
-        margin: 20px -15px 0;
+        margin-top: 20px;
+      }
+
+      @media (max-width: $screen-sm) {
+        overflow: hidden;
       }
     }
 
     &_no-image-view {
       margin-top: 15px !important;
-    }
-
-    &_slider-view {
-      padding: 0 30px;
-
-      font-size: 0;
-
-      @media (max-width: $screen-md) {
-        margin: 0 -15px;
-        padding: 0;
-      }
     }
   }
 
@@ -768,21 +766,38 @@
 
     @media (min-width: 843px) and (max-width: $screen-md) {
       width: 25%;
+
+      &:nth-child(4n+1) {
+        padding-left: 0;
+      }
+
+      &:nth-child(4n+4) {
+        padding-right: 0;
+      }
     }
 
     @media (min-width: 560px) and (max-width: 842px) {
       width: 33.3333%;
+
+      &:nth-child(3n+1) {
+        padding-left: 0;
+      }
+
+      &:nth-child(3n+3) {
+        padding-right: 0;
+      }
     }
 
     @media (max-width: 559px) {
       width: 50%;
-      margin-bottom: 30px;
 
       &:nth-child(2n+1) {
-        padding-right: .5px;
+        padding-left: 0;
+        padding-right: 5px;
       }
 
       &:nth-child(2n+2) {
+        padding-right: 0;
         padding-left: 5px;
       }
     }
