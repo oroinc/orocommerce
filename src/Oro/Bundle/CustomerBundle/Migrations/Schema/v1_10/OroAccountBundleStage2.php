@@ -10,7 +10,7 @@ use Oro\Bundle\MigrationBundle\Migration\MigrationConstraintTrait;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class OroAccountBundle implements Migration, RenameExtensionAwareInterface, OrderedMigrationInterface
+class OroAccountBundleStage2 implements Migration, RenameExtensionAwareInterface, OrderedMigrationInterface
 {
     use MigrationConstraintTrait;
 
@@ -24,31 +24,25 @@ class OroAccountBundle implements Migration, RenameExtensionAwareInterface, Orde
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        $this->renameCustomerUserSidebarWidget($schema, $queries);
+        $this->renameCustomerUserSidebarWidget($schema);
     }
 
     /**
      * @param Schema $schema
-     * @param QueryBag $queries
      */
-    private function renameCustomerUserSidebarWidget(Schema $schema, QueryBag $queries)
+    private function renameCustomerUserSidebarWidget(Schema $schema)
     {
+        $table = $schema->getTable("oro_customer_user_sdbar_wdg");
 
-        $table = $schema->getTable("oro_account_user_sdbar_wdg");
-
-        $table->dropIndex("oro_acc_sdbr_wdgs_usr_place_idx");
-        $table->dropIndex("oro_acc_sdar_wdgs_pos_idx");
-
-        $fk = $this->getConstraintName($table, 'account_user_id');
-        $table->removeForeignKey($fk);
-        $this->renameExtension->renameColumn($schema, $queries, $table, "account_user_id", "customer_user_id");
-
-        $this->renameExtension->renameTable(
-            $schema,
-            $queries,
-            "oro_account_user_sdbar_wdg",
-            "oro_customer_user_sdbar_wdg"
+        $table->addForeignKeyConstraint(
+            $table,
+            ['customer_user_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
+
+        $table->addIndex(['position'], 'oro_cus_sdar_wdgs_pos_idx', []);
+        $table->addIndex(['customer_user_id', 'placement'], 'oro_cus_sdbr_wdgs_usr_place_idx', []);
     }
 
     /**
@@ -68,6 +62,6 @@ class OroAccountBundle implements Migration, RenameExtensionAwareInterface, Orde
      */
     public function getOrder()
     {
-        return 1;
+        return 2;
     }
 }
