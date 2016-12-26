@@ -11,7 +11,7 @@ oro_frontend_action_widget_buttons:
         frontend: true
 
 oro_frontend_action_operation_execute:
-    path: /actionajax/operation/execute/{operationName}
+    path: /ajax/operation/execute/{operationName}
     defaults: { _controller: OroActionBundle:Ajax:execute }
     options:
         frontend: true

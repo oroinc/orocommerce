@@ -20,12 +20,12 @@ class OrderShippingContextFactory
     /**
      * @var OrderShippingLineItemConverterInterface
      */
-    private $shippingLineItemConverter = null;
+    private $shippingLineItemConverter;
 
     /**
      * @var ShippingContextBuilderFactoryInterface|null
      */
-    private $shippingContextBuilderFactory = null;
+    private $shippingContextBuilderFactory;
 
     /**
      * @param DoctrineHelper $doctrineHelper
@@ -35,7 +35,7 @@ class OrderShippingContextFactory
     public function __construct(
         DoctrineHelper $doctrineHelper,
         OrderShippingLineItemConverterInterface $shippingLineItemConverter,
-        ShippingContextBuilderFactoryInterface $shippingContextBuilderFactory
+        ShippingContextBuilderFactoryInterface $shippingContextBuilderFactory = null
     ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->shippingLineItemConverter = $shippingLineItemConverter;
@@ -48,7 +48,7 @@ class OrderShippingContextFactory
      */
     public function create(Order $order)
     {
-        if (null === $this->shippingContextBuilderFactory || null === $this->shippingLineItemConverter) {
+        if (null === $this->shippingContextBuilderFactory) {
             return null;
         }
 
@@ -70,6 +70,14 @@ class OrderShippingContextFactory
 
         if (null !== $order->getBillingAddress()) {
             $shippingContextBuilder->setBillingAddress($order->getBillingAddress());
+        }
+
+        if (null !== $order->getAccount()) {
+            $shippingContextBuilder->setCustomer($order->getAccount());
+        }
+
+        if (null !== $order->getAccountUser()) {
+            $shippingContextBuilder->setCustomerUser($order->getAccountUser());
         }
 
         if (!$order->getLineItems()->isEmpty()) {

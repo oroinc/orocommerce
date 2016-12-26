@@ -57,7 +57,7 @@ define([
             var url = $form.attr('action');
             var value = $(this.el).find(this.options.methodSelectSelector).val();
             data.push({
-                'name': 'oro_shipping_rule[methodConfigs][' + this.methodCount + '][method]',
+                'name': 'oro_shipping_methods_configs_rule[methodConfigs][' + this.methodCount + '][method]',
                 'value': value
             });
             this.methodCount++;

@@ -5,6 +5,7 @@ namespace Oro\Bundle\SEOBundle\Tests\Unit\EventListener;
 use Oro\Bundle\SEOBundle\EventListener\BaseFormViewListener;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Component\Testing\Unit\FormViewListenerTestCase;
+use Oro\Bundle\UIBundle\View\ScrollData;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -122,5 +123,25 @@ class BaseFormViewListenerTestCase extends FormViewListenerTestCase
             ->willReturn(new FormView());
 
         return $event;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getScrollData()
+    {
+        /** @var \PHPUnit_Framework_MockObject_MockObject|ScrollData $scrollData */
+        $scrollData = $this->getMock('Oro\Bundle\UIBundle\View\ScrollData');
+
+        $scrollData->expects($this->once())
+            ->method('addNamedBlock');
+
+        $scrollData->expects($this->any())
+            ->method('addSubBlock');
+
+        $scrollData->expects($this->any())
+            ->method('addSubBlockData');
+
+        return $scrollData;
     }
 }

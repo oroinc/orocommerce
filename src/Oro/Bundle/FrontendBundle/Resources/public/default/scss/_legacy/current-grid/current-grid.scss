@@ -634,10 +634,7 @@
       top: 5px;
       right: 5px;
 
-      &:before {
-        font-family: 'FontAwesome';
-        content: "\f00d";
-      }
+      @include fa-icon($fa-var-close);
     }
 
     > span {

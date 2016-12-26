@@ -10,7 +10,6 @@ services:
         public: false
         arguments:
             - '@oro_payment_term.provider.payment_term'
-            - '@oro_payment_term.payment_method.payment_term.config'
             - '@property_accessor'
             - '@oro_entity.doctrine_helper'
         tags:

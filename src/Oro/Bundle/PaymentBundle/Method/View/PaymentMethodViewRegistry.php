@@ -2,27 +2,13 @@
 
 namespace Oro\Bundle\PaymentBundle\Method\View;
 
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
-
 class PaymentMethodViewRegistry
 {
-    /** @var PaymentMethodRegistry */
-    protected $paymentMethodRegistry;
-
     /** @var PaymentMethodViewInterface[] */
     protected $paymentMethodViews = [];
 
     /**
-     * @param PaymentMethodRegistry $paymentMethodRegistry
-     */
-    public function __construct(PaymentMethodRegistry $paymentMethodRegistry)
-    {
-        $this->paymentMethodRegistry = $paymentMethodRegistry;
-    }
-
-    /**
      * Add payment method type to the registry
-     *
      * @param PaymentMethodViewInterface $paymentType
      */
     public function addPaymentMethodView(PaymentMethodViewInterface $paymentType)
@@ -31,32 +17,14 @@ class PaymentMethodViewRegistry
     }
 
     /**
-     * @param array $context
+     * @param array $methodTypes
      * @return PaymentMethodViewInterface[]
      */
-    public function getPaymentMethodViews(array $context = [])
+    public function getPaymentMethodViews(array $methodTypes)
     {
-        $paymentMethodViews = [];
-
-        foreach ($this->paymentMethodViews as $paymentMethodView) {
-            $paymentMethod = $this->paymentMethodRegistry->getPaymentMethod($paymentMethodView->getPaymentMethodType());
-            if (!$paymentMethod->isEnabled()) {
-                continue;
-            }
-
-            if (!$paymentMethod->isApplicable($context)) {
-                continue;
-            }
-
-            $paymentMethodViews[$paymentMethodView->getOrder()][] = $paymentMethodView;
-        }
-
-        ksort($paymentMethodViews);
-        if ($paymentMethodViews) {
-            $paymentMethodViews = call_user_func_array('array_merge', $paymentMethodViews);
-        }
-
-        return $paymentMethodViews;
+        return array_map(function ($methodType) {
+            return $this->getPaymentMethodView($methodType);
+        }, $methodTypes);
     }
 
     /**

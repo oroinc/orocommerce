@@ -4,7 +4,7 @@ processes:
             label:   'Invalidate Shipping Prices Cache'
             enabled: true
             order:   10
-            entity:  Oro\Bundle\ShippingBundle\Entity\ShippingRule
+            entity:  Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule
             actions_configuration:
              - '@call_service_method':
                 service: 'oro_shipping.shipping_price.provider.cache'
