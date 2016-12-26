@@ -341,7 +341,7 @@
         width: calc(35% - 10px);
 
         + .product-item__secondary-half_no-image-view {
-          width: 65%;
+          width: 100%;
         }
         
         .product-item--compact & {
@@ -723,6 +723,19 @@
       ~ .add-to-compare-link {
         @media (min-width: 992px) {
           margin-top: 0;
+        }
+      }
+
+      @media (max-width: $screen-sm) {
+        .product-item__qty__current-grid {
+          float: none !important; //Will fix after creating blank theme for catalog list
+          width: 100% !important;//Will fix after creating blank theme for catalog list
+
+          + .add-product-from-view-component {
+            float: none !important;//Will fix after creating blank theme for catalog list
+            width: 100% !important;//Will fix after creating blank theme for catalog list
+            margin: 0 ;
+          }
         }
       }
     }
