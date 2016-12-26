@@ -39,7 +39,12 @@
     }
 
     &_no-image-view {
-      margin-top: 15px !important;
+      margin-top: 15px;
+
+      @media (max-width: $screen-md) {
+        overflow: hidden;
+      }
+
     }
   }
 
