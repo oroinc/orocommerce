@@ -2,22 +2,22 @@
 
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\Method;
 
-use Symfony\Component\Routing\RouterInterface;
-
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\PayPalBundle\Method\Config\PayflowExpressCheckoutConfigInterface;
-use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\Response;
-use Oro\Bundle\PayPalBundle\Method\PayflowExpressCheckout;
-use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway;
-use Oro\Bundle\PaymentBundle\Model\Surcharge;
-use Oro\Bundle\PaymentBundle\Model\AddressOptionModel;
-use Oro\Bundle\PaymentBundle\Model\LineItemOptionModel;
+use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use Oro\Bundle\PaymentBundle\Model\AddressOptionModel;
+use Oro\Bundle\PaymentBundle\Model\LineItemOptionModel;
+use Oro\Bundle\PaymentBundle\Model\Surcharge;
 use Oro\Bundle\PaymentBundle\Provider\ExtractOptionsProvider;
 use Oro\Bundle\PaymentBundle\Provider\SurchargeProvider;
 use Oro\Bundle\PaymentBundle\Tests\Unit\Method\EntityStub;
+use Oro\Bundle\PayPalBundle\Method\Config\PayflowExpressCheckoutConfigInterface;
+use Oro\Bundle\PayPalBundle\Method\PayflowExpressCheckout;
+use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway;
+use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\Response;
+use Symfony\Component\Routing\RouterInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -117,18 +117,11 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
         $this->assertSame('payflow_express_checkout', $this->expressCheckout->getType());
     }
 
-    public function testIsEnabled()
-    {
-        $this->paymentConfig->expects($this->once())
-            ->method('isEnabled')
-            ->willReturn(true);
-
-        $this->assertTrue($this->expressCheckout->isEnabled());
-    }
-
     public function testIsApplicable()
     {
-        $this->assertTrue($this->expressCheckout->isApplicable());
+        /** @var PaymentContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
+        $context = $this->createMock(PaymentContextInterface::class);
+        $this->assertTrue($this->expressCheckout->isApplicable($context));
     }
 
     /**

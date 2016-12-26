@@ -6,7 +6,6 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
-use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
 use Oro\Bundle\ShippingBundle\Model\Weight;
 use Oro\Bundle\ShippingBundle\Provider\MeasureUnitConversion;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;

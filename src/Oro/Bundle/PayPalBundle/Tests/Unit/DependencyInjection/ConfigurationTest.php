@@ -5,7 +5,6 @@ namespace Oro\Bundle\PayPalBundle\Tests\Unit\DependencyInjection;
 use Symfony\Component\Config\Definition\Processor;
 
 use Oro\Bundle\PayPalBundle\DependencyInjection\Configuration;
-use Oro\Bundle\CurrencyBundle\DependencyInjection\Configuration as CurrencyConfiguraton;
 
 /**
  * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
@@ -48,28 +47,12 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                 'expected' => [
                     'settings' => [
                         'resolved' => true,
-                        'paypal_payments_pro_enabled' => [
-                            'value' => false,
-                            'scope' => 'app'
-                        ],
                         'paypal_payments_pro_label' => [
                             'value' => 'Credit Card',
                             'scope' => 'app'
                         ],
                         'paypal_payments_pro_short_label' => [
                             'value' => 'Credit Card',
-                            'scope' => 'app'
-                        ],
-                        'paypal_payments_pro_sort_order' => [
-                            'value' => '10',
-                            'scope' => 'app'
-                        ],
-                        'paypal_payments_pro_allowed_countries' => [
-                            'value' => 'all',
-                            'scope' => 'app'
-                        ],
-                        'paypal_payments_pro_selected_countries' => [
-                            'value' => [],
                             'scope' => 'app'
                         ],
                         'paypal_payments_pro_allowed_cc_types' => [
@@ -135,32 +118,12 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                             'value' => false,
                             'scope' => 'app'
                         ],
-                        'paypal_payments_pro_allowed_currencies' => [
-                            'value' =>  CurrencyConfiguraton::$defaultCurrencies,
-                            'scope' => 'app'
-                        ],
-                        'payflow_gateway_enabled' => [
-                            'value' => false,
-                            'scope' => 'app'
-                        ],
                         'payflow_gateway_label' => [
                             'value' => 'Credit Card',
                             'scope' => 'app'
                         ],
                         'payflow_gateway_short_label' => [
                             'value' => 'Credit Card',
-                            'scope' => 'app'
-                        ],
-                        'payflow_gateway_sort_order' => [
-                            'value' => '20',
-                            'scope' => 'app'
-                        ],
-                        'payflow_gateway_allowed_countries' => [
-                            'value' => 'all',
-                            'scope' => 'app'
-                        ],
-                        'payflow_gateway_selected_countries' => [
-                            'value' => [],
                             'scope' => 'app'
                         ],
                         'payflow_gateway_allowed_cc_types' => [
@@ -226,14 +189,6 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                             'value' => false,
                             'scope' => 'app'
                         ],
-                        'payflow_gateway_allowed_currencies' => [
-                            'value' => CurrencyConfiguraton::$defaultCurrencies,
-                            'scope' => 'app'
-                        ],
-                        'payflow_express_checkout_enabled' => [
-                            'value' => false,
-                            'scope' => 'app'
-                        ],
                         'payflow_express_checkout_label' => [
                             'value' => 'Pay with PayPal',
                             'scope' => 'app'
@@ -242,16 +197,8 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                             'value' => 'PayPal',
                             'scope' => 'app'
                         ],
-                        'payflow_express_checkout_sort_order' => [
-                            'value' => '40',
-                            'scope' => 'app'
-                        ],
                         'payflow_express_checkout_payment_action' => [
                             'value' => 'authorize',
-                            'scope' => 'app'
-                        ],
-                        'paypal_payments_pro_express_checkout_enabled' => [
-                            'value' => false,
                             'scope' => 'app'
                         ],
                         'paypal_payments_pro_express_checkout_label' => [
@@ -260,10 +207,6 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                         ],
                         'paypal_payments_pro_express_checkout_short_label' => [
                             'value' => 'PayPal',
-                            'scope' => 'app'
-                        ],
-                        'paypal_payments_pro_express_checkout_sort_order' => [
-                            'value' => '30',
                             'scope' => 'app'
                         ],
                         'paypal_payments_pro_express_checkout_payment_action' => [

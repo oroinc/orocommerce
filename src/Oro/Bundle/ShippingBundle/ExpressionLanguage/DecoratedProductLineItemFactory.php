@@ -58,6 +58,8 @@ class DecoratedProductLineItemFactory
      */
     public function createLineItemWithDecoratedProductByLineItem(array $lineItems, ShippingLineItemInterface $lineItem)
     {
+        $product = $lineItem->getProduct();
+
         return new ShippingLineItem(
             [
                 ShippingLineItem::FIELD_PRICE => $lineItem->getPrice(),
@@ -68,7 +70,8 @@ class DecoratedProductLineItemFactory
                 ShippingLineItem::FIELD_PRODUCT_SKU => $lineItem->getProductSku(),
                 ShippingLineItem::FIELD_WEIGHT => $lineItem->getWeight(),
                 ShippingLineItem::FIELD_DIMENSIONS => $lineItem->getDimensions(),
-                ShippingLineItem::FIELD_PRODUCT => $this->createDecoratedProduct($lineItems, $lineItem->getProduct()),
+                ShippingLineItem::FIELD_PRODUCT
+                    => $product ? $this->createDecoratedProduct($lineItems, $product) : null,
             ]
         );
     }

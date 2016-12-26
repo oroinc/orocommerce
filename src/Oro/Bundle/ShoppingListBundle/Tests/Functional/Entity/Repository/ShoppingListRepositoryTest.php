@@ -38,11 +38,7 @@ class ShoppingListRepositoryTest extends WebTestCase
             ]
         );
 
-        $this->accountUser = $this->getContainer()
-            ->get('doctrine')
-            ->getRepository(AccountUser::class)
-            ->findOneBy(['username' => LoadAccountUserData::AUTH_USER]);
-
+        $this->accountUser = $this->getAccountUser();
         $this->aclHelper = $this->getContainer()->get('oro_security.acl_helper');
     }
 
@@ -53,8 +49,8 @@ class ShoppingListRepositoryTest extends WebTestCase
         $this->assertInstanceOf(ShoppingList::class, $availableShoppingList);
 
         // the latest shopping list for current user
-        $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_6);
-        $this->assertEquals($shoppingList, $availableShoppingList);
+        $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_7);
+        $this->assertSame($shoppingList, $availableShoppingList);
     }
 
     public function testFindByUser()
@@ -85,7 +81,7 @@ class ShoppingListRepositoryTest extends WebTestCase
      */
     public function getAccountUser()
     {
-        return $this->getContainer()->get('doctrine')->getRepository('OroCustomerBundle:AccountUser')
+        return $this->getContainer()->get('doctrine')->getRepository(AccountUser::class)
             ->findOneBy(['username' => LoadAccountUserData::AUTH_USER]);
     }
 
