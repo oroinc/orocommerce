@@ -127,16 +127,18 @@
 }
 
 @include breakpoint('mobile') {
-    .action-selectbox_custom_in-pager {
-        display: inline-block;
+  .catalog__filter-controls {
+      .action-selectbox_custom_in-pager {
+          display: inline-block;
 
-        .select2-container {
-            a.select2-choice {
-                max-width: 60px;
+          .select2-container {
+              a.select2-choice {
+                  max-width: 60px;
 
-                padding: 8px 4px !important;
-            }
-        }
+                  padding: 8px 4px !important;
+              }
+          }
+      }
     }
 }
 

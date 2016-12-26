@@ -13,11 +13,25 @@
 
             transition: all .2s;
         }
+
+        .grid-header-cell__link {
+
+        }
     }
     
     &.descending {
         .caret {
             transform: rotate(180deg);
+        }
+    }
+}
+
+@include breakpoint('tablet') {
+    .with-floating-header {
+        .grid-header-cell {
+            .caret {
+                margin-top: $offset-y-s;
+            }
         }
     }
 }
