@@ -35,8 +35,8 @@ class OroAccountBundle implements Migration, RenameExtensionAwareInterface
 
         $table = $schema->getTable("oro_account_user_sdbar_wdg");
 
-        $table->dropIndex("oro_cus_sdbr_wdgs_usr_place_idx");
-        $table->dropIndex("oro_cus_sdar_wdgs_pos_idx");
+        $table->dropIndex("oro_acc_sdbr_wdgs_usr_place_idx");
+        $table->dropIndex("oro_acc_sdar_wdgs_pos_idx");
 
         $fk = $this->getConstraintName($table, 'account_user_id');
         $table->removeForeignKey($fk);
