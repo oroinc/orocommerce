@@ -15,11 +15,9 @@ use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\EntityConfigBundle\Config\Config;
 use Oro\Bundle\EntityConfigBundle\Config\Id\ConfigIdInterface;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\CheckoutBundle\Datagrid\CheckoutGridHelper;
 use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository;
 use Oro\Bundle\SaleBundle\Entity\Quote;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\CheckoutBundle\Datagrid\CheckoutGridListener;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
@@ -63,84 +61,75 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
     protected $checkoutRepository;
 
     /**
-     * @var EntityNameResolver|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $entityNameResolver;
-
-    /**
-     * @var SecurityFacade|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $securityFacade;
-
-    /**
      * @var CheckoutGridListener
      */
     protected $listener;
+
+    /**
+     * @var EntityNameResolver|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $entityNameResolver;
 
     protected function setUp()
     {
         $this->em = $this->createMock(EntityManagerInterface::class);
 
-        $metadata = $this->getMockBuilder(ClassMetadata::class)
-                         ->disableOriginalConstructor()
-                         ->getMock();
+        $metadata = $this->getMockBuilder(ClassMetadata::class)->disableOriginalConstructor()->getMock();
 
         $metadata->method('hasField')
-                 ->will($this->returnValueMap(
-                     [
-                         ['currency', true],
-                         ['subtotal', true],
-                         ['total', true],
-                     ]
-                 ));
+            ->will($this->returnValueMap(
+                [
+                    ['currency', true],
+                    ['subtotal', true],
+                    ['total', true],
+                ]
+            ));
 
         $metadata->method('hasAssociation')
-                 ->will($this->returnValueMap(
-                     [
-                         ['totals', true]
-                     ]
-                 ));
+            ->will($this->returnValueMap(
+                [
+                    ['totals', true]
+                ]
+            ));
 
         $this->em->method('getClassMetadata')->willReturn($metadata);
 
         $this->currencyManager = $this->getMockBuilder(UserCurrencyManager::class)
-                                      ->disableOriginalConstructor()
-                                      ->getMock();
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->currencyManager->expects($this->any())->method('getUserCurrency')->willReturn('USD');
 
         $this->cache = $this->getMockBuilder(Cache::class)
-                              ->disableOriginalConstructor()
-                              ->getMock();
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        $this->cache->method('contains')
-                      ->willReturn(false);
+        $this->cache->method('contains')->willReturn(false);
 
-        $this->checkoutRepository = $this->getMockBuilder(
-            CheckoutRepository::class
-        )
-                                             ->setMethods(['find', 'countItemsPerCheckout', 'getSourcePerCheckout'])
-                                             ->disableOriginalConstructor()
-                                             ->getMock();
+        $this->checkoutRepository = $this->getMockBuilder(CheckoutRepository::class)
+            ->setMethods(['find', 'countItemsPerCheckout', 'getSourcePerCheckout'])
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->checkoutRepository->expects($this->any())
+            ->method('find')
+            ->willReturn(new Checkout());
 
         $this->totalProcessor = $this->getMockBuilder(TotalProcessorProvider::class)
-                                     ->disableOriginalConstructor()
-                                     ->getMock();
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->totalProcessor->expects($this->any())
-                             ->method('getTotal')
-                             ->willReturn((new Subtotal())->setAmount(10));
+            ->method('getTotal')
+            ->willReturn((new Subtotal())->setAmount(10));
 
         $this->entityNameResolver = $this->getMockBuilder(EntityNameResolver::class)
-                                         ->disableOriginalConstructor()
-                                         ->getMock();
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->checkoutGridHelper = $this->getMockBuilder(CheckoutGridHelper::class)
-                                         ->disableOriginalConstructor()
-                                         ->getMock();
-
-        $this->securityFacade = $this->getMockBuilder(SecurityFacade::class)
-            ->disableOriginalConstructor()->getMock();
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->listener = new CheckoutGridListener(
             $this->currencyManager,
@@ -148,51 +137,8 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
             $this->totalProcessor,
             $this->entityNameResolver,
             $this->cache,
-            $this->checkoutGridHelper,
-            $this->securityFacade
+            $this->checkoutGridHelper
         );
-    }
-
-    /**
-     * @param Checkout $checkout
-     * @param AccountUser $accountUser
-     * @param array $expectedResult
-     *
-     * @dataProvider getActionPermissionsProvider
-     */
-    public function testGetActionPermissions(Checkout $checkout, AccountUser $accountUser, array $expectedResult)
-    {
-        $this->checkoutRepository->expects($this->once())
-            ->method('find')->willReturn($checkout);
-
-        $this->securityFacade->expects($this->once())
-            ->method('getLoggedUser')->willReturn($accountUser);
-
-        $this->assertEquals(
-            $expectedResult,
-            $this->listener->getActionPermissions(new ResultRecord(['id' => 10]))
-        );
-    }
-
-    /**
-     * @return array
-     */
-    public function getActionPermissionsProvider()
-    {
-        $accountUser = new AccountUser();
-
-        return [
-            'own checkout' => [
-                'checkout' => (new Checkout())->setAccountUser($accountUser),
-                'user' => $accountUser,
-                'result' => ['view' => true],
-            ],
-            'other checkout' => [
-                'checkout' => (new Checkout())->setAccountUser($accountUser),
-                'user' => new AccountUser(),
-                'result' => ['view' => false],
-            ],
-        ];
     }
 
     public function testGetMetadataNoRelations()
@@ -302,7 +248,6 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
         /** @var OrmResultAfter|\PHPUnit_Framework_MockObject_MockObject $event */
         $event = $this->getMockBuilder(OrmResultAfter::class)->disableOriginalConstructor()->getMock();
         $event->expects($this->once())->method('getRecords')->will($this->returnValue([]));
-
         $this->listener->onResultAfter($event);
     }
 

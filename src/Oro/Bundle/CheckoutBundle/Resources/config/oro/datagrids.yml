@@ -131,4 +131,4 @@ datagrids:
                 acl_resource: oro_checkout_frontend_checkout
                 rowAction: true
 
-        action_configuration: ['@oro_checkout.datagrid.checkout_grid_listener', "getActionPermissions"]
+        action_configuration: ['@oro_checkout.datagrid.action_permission_provider', "getActionPermissions"]

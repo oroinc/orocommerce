@@ -13,7 +13,6 @@ use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 /**
@@ -54,18 +53,12 @@ class CheckoutGridListener
     private $entityNameResolver;
 
     /**
-     * @var SecurityFacade
-     */
-    protected $securityFacade;
-
-    /**
      * @param UserCurrencyManager $currencyManager
      * @param CheckoutRepository $checkoutRepository
      * @param TotalProcessorProvider $totalProcessor
      * @param EntityNameResolver $entityNameResolver
      * @param Cache $cache
      * @param CheckoutGridHelper $checkoutGridHelper
-     * @param SecurityFacade $securityFacade
      */
     public function __construct(
         UserCurrencyManager $currencyManager,
@@ -73,8 +66,7 @@ class CheckoutGridListener
         TotalProcessorProvider $totalProcessor,
         EntityNameResolver $entityNameResolver,
         Cache $cache,
-        CheckoutGridHelper $checkoutGridHelper,
-        SecurityFacade $securityFacade
+        CheckoutGridHelper $checkoutGridHelper
     ) {
         $this->currencyManager = $currencyManager;
         $this->checkoutRepository = $checkoutRepository;
@@ -82,20 +74,6 @@ class CheckoutGridListener
         $this->entityNameResolver = $entityNameResolver;
         $this->cache = $cache;
         $this->checkoutGridHelper = $checkoutGridHelper;
-        $this->securityFacade = $securityFacade;
-    }
-
-    /**
-     * @param ResultRecord $record
-     * @return array
-     */
-    public function getActionPermissions(ResultRecord $record)
-    {
-        $checkout = $this->checkoutRepository->find($record->getValue('id'));
-
-        return [
-            'view' => $checkout->getAccountUser() === $this->securityFacade->getLoggedUser(),
-        ];
     }
 
     /**
