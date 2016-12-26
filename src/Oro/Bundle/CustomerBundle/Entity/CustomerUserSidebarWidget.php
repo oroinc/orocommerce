@@ -11,7 +11,7 @@ use Oro\Bundle\SidebarBundle\Entity\AbstractWidget;
  * Widget
  *
  * @ORM\Table(
- *      name="oro_account_user_sdbar_wdg",
+ *      name="oro_customer_user_sdbar_wdg",
  *      indexes={
  *          @ORM\Index(name="oro_acc_sdbr_wdgs_usr_place_idx", columns={"account_user_id", "placement"}),
  *          @ORM\Index(name="oro_acc_sdar_wdgs_pos_idx", columns={"position"})
@@ -19,7 +19,7 @@ use Oro\Bundle\SidebarBundle\Entity\AbstractWidget;
  * )
  * @ORM\Entity(repositoryClass="Oro\Bundle\SidebarBundle\Entity\Repository\WidgetRepository")
  */
-class AccountUserSidebarWidget extends AbstractWidget
+class CustomerUserSidebarWidget extends AbstractWidget
 {
     /**
      * @var AccountUser
