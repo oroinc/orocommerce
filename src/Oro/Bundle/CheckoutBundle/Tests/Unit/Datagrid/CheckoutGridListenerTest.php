@@ -15,6 +15,7 @@ use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\EntityConfigBundle\Config\Config;
 use Oro\Bundle\EntityConfigBundle\Config\Id\ConfigIdInterface;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\CheckoutBundle\Datagrid\CheckoutGridHelper;
 use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository;
 use Oro\Bundle\SaleBundle\Entity\Quote;
@@ -122,10 +123,6 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
                                              ->disableOriginalConstructor()
                                              ->getMock();
 
-        $this->checkoutRepository->expects($this->any())
-                                     ->method('find')
-                                     ->willReturn(new Checkout());
-
         $this->totalProcessor = $this->getMockBuilder(TotalProcessorProvider::class)
                                      ->disableOriginalConstructor()
                                      ->getMock();
@@ -154,6 +151,48 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
             $this->checkoutGridHelper,
             $this->securityFacade
         );
+    }
+
+    /**
+     * @param Checkout $checkout
+     * @param AccountUser $accountUser
+     * @param array $expectedResult
+     *
+     * @dataProvider getActionPermissionsProvider
+     */
+    public function testGetActionPermissions(Checkout $checkout, AccountUser $accountUser, array $expectedResult)
+    {
+        $this->checkoutRepository->expects($this->once())
+            ->method('find')->willReturn($checkout);
+
+        $this->securityFacade->expects($this->once())
+            ->method('getLoggedUser')->willReturn($accountUser);
+
+        $this->assertEquals(
+            $expectedResult,
+            $this->listener->getActionPermissions(new ResultRecord(['id' => 10]))
+        );
+    }
+
+    /**
+     * @return array
+     */
+    public function getActionPermissionsProvider()
+    {
+        $accountUser = new AccountUser();
+
+        return [
+            'own checkout' => [
+                'checkout' => (new Checkout())->setAccountUser($accountUser),
+                'user' => $accountUser,
+                'result' => ['view' => true],
+            ],
+            'other checkout' => [
+                'checkout' => (new Checkout())->setAccountUser($accountUser),
+                'user' => new AccountUser(),
+                'result' => ['view' => false],
+            ],
+        ];
     }
 
     public function testGetMetadataNoRelations()
@@ -263,6 +302,7 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
         /** @var OrmResultAfter|\PHPUnit_Framework_MockObject_MockObject $event */
         $event = $this->getMockBuilder(OrmResultAfter::class)->disableOriginalConstructor()->getMock();
         $event->expects($this->once())->method('getRecords')->will($this->returnValue([]));
+
         $this->listener->onResultAfter($event);
     }
 
