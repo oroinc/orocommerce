@@ -709,6 +709,10 @@
       .shopping-lists {
         float: right;
         width: 94%;
+
+        @media (max-width: $screen-sm) {
+          width: 100%;
+        }
       }
 
       .btn {
@@ -734,7 +738,7 @@
           + .add-product-from-view-component {
             float: none !important;//Will fix after creating blank theme for catalog list
             width: 100% !important;//Will fix after creating blank theme for catalog list
-            margin: 0 ;
+            margin: 0 !important;//Will fix after creating blank theme for catalog list;
           }
         }
       }
