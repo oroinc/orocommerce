@@ -278,7 +278,6 @@ oro:
                 column_summary: 'Summary'
 
             btn:
-                accept_quote_create_order: 'Accept and Submit to Order'
                 widget_accept_quote_create_order: 'Submit to Order'
 
             message:

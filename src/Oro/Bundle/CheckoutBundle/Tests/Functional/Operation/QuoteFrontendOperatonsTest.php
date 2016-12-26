@@ -49,7 +49,7 @@ class QuoteFrontendOperationsTest extends FrontendActionTestCase
      */
     protected function startCheckout(Quote $quote)
     {
-        $this->executeOperation($quote, 'oro_sale_frontend_quote_change');
+        $this->executeOperation($quote, 'oro_checkout_frontend_quote_submit_to_order');
 
         $this->assertJsonResponseStatusCodeEquals($this->client->getResponse(), 200);
 
