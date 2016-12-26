@@ -16,10 +16,6 @@ class AttributeBlockTypeMapperPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        if (!$container->hasDefinition(self::REGISTRY_SERVICE)) {
-            return;
-        }
-
         $taggedServices = $container->findTaggedServiceIds(self::TAG);
         if (0 === count($taggedServices)) {
             return;

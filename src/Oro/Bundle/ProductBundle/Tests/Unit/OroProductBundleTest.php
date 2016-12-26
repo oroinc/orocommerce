@@ -6,6 +6,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 use Oro\Bundle\LocaleBundle\DependencyInjection\Compiler\DefaultFallbackExtensionPass;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\AttributeBlockTypeMapperPass;
 use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\ComponentProcessorPass;
 use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\DefaultProductUnitProvidersCompilerPass;
 use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\ProductDataStorageSessionBagPass;
@@ -26,12 +27,13 @@ class OroProductBundleTest extends \PHPUnit_Framework_TestCase
         $passes = $container->getCompiler()->getPassConfig()->getBeforeOptimizationPasses();
 
         $this->assertInternalType('array', $passes);
-        $this->assertCount(5, $passes);
+        $this->assertCount(6, $passes);
         $this->assertInstanceOf(ComponentProcessorPass::class, $passes[0]);
         $this->assertInstanceOf(ProductDataStorageSessionBagPass::class, $passes[1]);
         $this->assertInstanceOf(TwigSandboxConfigurationPass::class, $passes[2]);
         $this->assertInstanceOf(DefaultProductUnitProvidersCompilerPass::class, $passes[3]);
-        $this->assertInstanceOf(DefaultFallbackExtensionPass::class, $passes[4]);
+        $this->assertInstanceOf(AttributeBlockTypeMapperPass::class, $passes[4]);
+        $this->assertInstanceOf(DefaultFallbackExtensionPass::class, $passes[5]);
         $this->assertAttributeEquals(
             [
                 Product::class => [
@@ -42,7 +44,7 @@ class OroProductBundleTest extends \PHPUnit_Framework_TestCase
                 ]
             ],
             'classes',
-            $passes[4]
+            $passes[5]
         );
     }
 }
