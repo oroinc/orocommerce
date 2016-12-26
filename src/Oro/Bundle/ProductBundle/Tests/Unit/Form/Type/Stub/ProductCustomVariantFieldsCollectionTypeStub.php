@@ -13,11 +13,11 @@ class ProductCustomVariantFieldsCollectionTypeStub extends ProductCustomVariantF
     protected $exampleCustomFields = [];
 
     /**
-     * @param array $customFields
      * @param CustomFieldProvider $customFieldProvider
      * @param string $productClass
+     * @param array $customFields
      */
-    public function __construct(array $customFields = [], CustomFieldProvider $customFieldProvider, $productClass)
+    public function __construct(CustomFieldProvider $customFieldProvider, $productClass, array $customFields = [])
     {
         $this->exampleCustomFields = $customFields;
         $this->customFieldProvider = $customFieldProvider;

@@ -107,9 +107,9 @@ class ProductTypeTest extends FormIntegrationTestCase
      */
     protected function setUp()
     {
-        $this->roundingService = $this->createMock('Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface');
+        $this->roundingService = $this->createMock(RoundingServiceInterface::class);
         $this->defaultProductUnitProvider = $this
-            ->getMockBuilder('Oro\Bundle\ProductBundle\Provider\ChainDefaultProductUnitProvider')
+            ->getMockBuilder(ChainDefaultProductUnitProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -146,23 +146,23 @@ class ProductTypeTest extends FormIntegrationTestCase
     protected function getExtensions()
     {
         $productPrimaryUnitPrecision = new ProductPrimaryUnitPrecisionType();
-        $productPrimaryUnitPrecision->setDataClass('Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision');
+        $productPrimaryUnitPrecision->setDataClass(ProductUnitPrecision::class);
 
         $productUnitPrecision = new ProductUnitPrecisionType();
-        $productUnitPrecision->setDataClass('Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision');
+        $productUnitPrecision->setDataClass(ProductUnitPrecision::class);
 
         $stubEnumSelectType = new EnumSelectTypeStub();
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|ConfigProvider $configProvider */
-        $configProvider = $this->getMockBuilder('Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider')
+        $configProvider = $this->getMockBuilder(ConfigProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
         /** @var \PHPUnit_Framework_MockObject_MockObject|Translator $translator */
-        $translator = $this->getMockBuilder('Oro\Bundle\TranslationBundle\Translation\Translator')
+        $translator = $this->getMockBuilder(Translator::class)
             ->disableOriginalConstructor()
             ->getMock();
         /** @var \PHPUnit_Framework_MockObject_MockObject|ImageTypeProvider $imageTypeProvider*/
-        $imageTypeProvider = $this->getMockBuilder('Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider')
+        $imageTypeProvider = $this->getMockBuilder(ImageTypeProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
         $imageTypeProvider->expects($this->any())
@@ -194,9 +194,9 @@ class ProductTypeTest extends FormIntegrationTestCase
                     ),
                     LocalizedFallbackValueCollectionType::NAME => new LocalizedFallbackValueCollectionTypeStub(),
                     ProductCustomVariantFieldsCollectionType::NAME => new ProductCustomVariantFieldsCollectionTypeStub(
-                        $this->exampleCustomFields,
                         $customFieldProvider,
-                        $this->productClass
+                        $this->productClass,
+                        $this->exampleCustomFields
                     ),
                     EntityIdentifierType::NAME => new StubEntityIdentifierType([]),
                     ProductVariantLinksType::NAME => new ProductVariantLinksType(),
