@@ -52,7 +52,6 @@ class ProductController extends Controller
         return [
             'data' => [
                 'product' => $product,
-                'entity' => $product
             ],
             'product_type' => $product->getType(),
         ];
