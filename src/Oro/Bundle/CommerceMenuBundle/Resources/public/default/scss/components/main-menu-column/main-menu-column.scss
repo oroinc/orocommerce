@@ -26,8 +26,17 @@
         display: none;
     }
 
+    &:first-child {
+        padding-right: 34px;
+    }
+
     &:not(:first-child) {
         padding-left: 34px;
+        padding-right: 34px;
+    }
+
+    &:last-child {
+        padding-right: 0;
     }
 
     &--splited {
@@ -75,12 +84,11 @@
 
     &__link {
         display: block;
-        overflow: hidden;
 
         max-width: 300px;
 
-        white-space: nowrap;
-        text-overflow: ellipsis;
+        white-space: normal;
+        word-wrap: break-word;
     }
 }
 

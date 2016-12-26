@@ -194,13 +194,15 @@
 
 {% block _web_catalog_menu_second_level_column %}
     {% set collapseView =  layout_attr_defaults(attr, {
+        screenType: 'tablet',
+        component: 'oroui/js/app/components/jquery-widget-component',
         widgetModule: 'oroui/js/widget/collapse-widget',
         trigger: '[data-collapse-trigger-third]',
         container: '[data-collapse-container-third]',
         open: false
     }) %}
     <div class="main-menu-column collapse-view {{ addClass|default('') }}"
-         data-page-component-module="oroui/js/app/components/jquery-widget-component"
+         data-page-component-module="oroui/js/app/components/viewport-component"
          data-page-component-options="{{ collapseView|json_encode }}">
         <div class="main-menu-column__title" data-collapse-trigger-third>
             {{ label }} <i class="main-menu-column__icon fa-angle-down"></i>
