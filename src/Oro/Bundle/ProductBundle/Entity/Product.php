@@ -396,7 +396,7 @@ class Product extends ExtendProduct implements
      *      }
      * )
      */
-    protected $variantLink;
+    protected $parentVariantLink;
 
     /**
      * @var Collection|LocalizedFallbackValue[]
