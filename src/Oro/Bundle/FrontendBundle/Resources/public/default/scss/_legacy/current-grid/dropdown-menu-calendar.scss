@@ -23,7 +23,7 @@
         }
 
         .tab-content {
-            padding: 10px 8px 15px;
+            padding: 10px 8px 0;
         }
 
         .ui-datevariables-div {
@@ -35,6 +35,10 @@
         }
 
         .ui-datepicker {
+            padding: 0;
+
+            border-radius: 0;
+
             .ui-datepicker-buttonpane {
                 margin: 5px 0 0;
 
@@ -46,12 +50,14 @@
                         border: 0;
                         border-radius: 4px;
 
-                        background: get-color('additional', 'darker');
-                        color: get-color('additional', 'ultra');
                         font-size: 13px;
                         font-weight: 400;
                         line-height: 1.42857143;
                         text-align: center;
+
+                        background: get-color('additional', 'darker');
+                        color: get-color('additional', 'ultra');
+
                         white-space: nowrap;
                         text-shadow: none;
 
@@ -65,9 +71,10 @@
 
             .ui-datepicker-header {
                 display: flex;
-                align-items: center;
-                padding: 5px 5px 10px;
+                padding: 5px 5px 0;
                 border: 0;
+
+                align-items: center;
 
                 background: transparent;
 
@@ -101,7 +108,7 @@
                         vertical-align: middle;
                         border-top: 7px solid transparent;
                         border-bottom: 7px solid transparent;
-                        border-right: 7px solid get-color('additional', 'base');
+                        border-right: 7px solid get-color('additional', 'middle');
                     }
                 }
 
@@ -110,6 +117,7 @@
                     height: 29px;
                     order: 3;
                     border: 0;
+                    right: 27px;
 
                     font-size: 0;
                     line-height: 29px;
@@ -135,7 +143,7 @@
                         vertical-align: middle;
                         border-top: 7px solid transparent;
                         border-bottom: 7px solid transparent;
-                        border-left: 7px solid get-color('additional', 'base');
+                        border-left: 7px solid get-color('additional', 'middle');
                     }
                 }
 
@@ -147,6 +155,7 @@
 
                     select {
                         display: inline-block;
+                        height: auto;
                         padding: 8px 9px;
                         border: 1px solid get-color('additional', 'light');
                         border-radius: 5px;
@@ -170,7 +179,7 @@
                         span {
                             vertical-align: middle;
 
-                            color: get-color('additional', 'ultra');
+                            color: get-color('additional', 'middle');
                             font-weight: 400;
                             text-transform: none;
                         }
@@ -187,7 +196,7 @@
                                 border: 0;
 
                                 text-decoration: none;
-                                line-height: 29px;
+                                line-height: 20px;
 
                                 &:active, &:focus, :visited {
                                     text-decoration: none;

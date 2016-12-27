@@ -141,7 +141,9 @@
                 changeMonth: false,
                 changeYear: false,
                 yearRange: years|default('-80:+1'),
-                showButtonPanel: true
+                showButtonPanel: true,
+                maxDate: (attribute(datePickerOptions, 'maxDate') is defined ? datePickerOptions['maxDate'] : ''),
+                minDate: (attribute(datePickerOptions, 'minDate') is defined ? datePickerOptions['minDate'] : '')
             }
         } %}
 
