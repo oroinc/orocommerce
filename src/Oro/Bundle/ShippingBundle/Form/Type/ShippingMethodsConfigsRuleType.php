@@ -53,9 +53,10 @@ class ShippingMethodsConfigsRuleType extends AbstractType
                 'empty_value' => 'oro.currency.currency.form.choose',
             ])
             ->add('destinations', CollectionType::class, [
-                'required' => false,
-                'entry_type' => ShippingMethodsConfigsRuleDestinationType::class,
-                'label' => 'oro.shipping.shippingmethodsconfigsrule.destinations.label',
+                'required'             => false,
+                'entry_type'           => ShippingMethodsConfigsRuleDestinationType::class,
+                'label'                => 'oro.shipping.shippingmethodsconfigsrule.destinations.label',
+                'show_form_when_empty' => false,
             ])
             ->add('methodConfigs', ShippingMethodConfigCollectionType::class, [
                 'required' => false,
