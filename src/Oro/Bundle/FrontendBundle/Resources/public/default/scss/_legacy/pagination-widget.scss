@@ -17,6 +17,7 @@
     vertical-align: middle;
 
     font-size: 0;
+    text-align: center;
     
     + span {
       margin-left: 5px;
@@ -63,6 +64,7 @@
     &__input {
       display: inline-block;
       width: 30px;
+      height: 30px;
       vertical-align: middle;
       padding: 0;
       border-radius: 0;
