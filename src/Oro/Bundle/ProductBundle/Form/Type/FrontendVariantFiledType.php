@@ -109,10 +109,6 @@ class FrontendVariantFiledType extends AbstractType
         $resolver->setRequired([
             'product',
         ]);
-
-        $resolver->setDefaults([
-            'empty_data' => []
-        ]);
     }
 
     /**

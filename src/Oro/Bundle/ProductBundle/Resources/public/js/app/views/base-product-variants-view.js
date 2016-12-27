@@ -54,7 +54,7 @@ define(function(require) {
         },
 
         onVariantsLoaded: function(response) {
-            response = this.getResponseMock();
+            // response = this.getResponseMock();
             if (!response.data) {
                 return;
             }
@@ -75,33 +75,7 @@ define(function(require) {
         },
 
         updateVariants: function(fields) {
-            this.getElement('variantFields').each(function() {
-                var name = this.name.replace(/.*\[/, '').replace(/\].*/, '');
-                $(this).find('option').each(function() {
-                    this.disabled = !fields[name][this.value];
-                });
-            });
-        },
-
-        getResponseMock: function() {
-            var fields = {};
-            this.getElement('variantFields').each(function() {
-                var name = this.name.replace(/.*\[/, '').replace(/\].*/, '');
-                fields[name] = {};
-                $(this).find('option').each(function() {
-                    fields[name][this.value] = this.disabled;
-                });
-            });
-
-            var id = this.model.get('id')*1;
-            id++;
-
-            return {
-                data: {
-                    id: id,
-                    fields: fields
-                }
-            };
+            this.getElement('variantFields').replace(fields);
         },
 
         showLoading: function() {

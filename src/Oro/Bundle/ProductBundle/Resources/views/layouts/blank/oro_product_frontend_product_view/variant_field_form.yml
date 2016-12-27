@@ -9,18 +9,27 @@ layout:
                 variant_field_form_start:
                     blockType: form_start
                     options:
-                        form: '=data["oro_product_form"].getVariantFieldsView(data["product"])'
+                        form: '=data["oro_product_form"].getVariantFieldsFormView(data["product"])'
                 variant_field_form_fields:
                     blockType: form_fields
                     options:
-                        form: '=data["oro_product_form"].getVariantFieldsView(data["product"])'
+                        form: '=data["oro_product_form"].getVariantFieldsFormView(data["product"])'
                 variant_field_form_end:
                     blockType: form_end
                     options:
-                        form: '=data["oro_product_form"].getVariantFieldsView(data["product"])'
+                        form: '=data["oro_product_form"].getVariantFieldsFormView(data["product"])'
             tree:
                 product_view_variant_field_container:
                     variant_field_form:
                         variant_field_form_start: ~
                         variant_field_form_fields: ~
                         variant_field_form_end: ~
+#        - '@setOption':
+#            id: variant_field_form_start
+#            optionName: form_route_name
+#            optionValue: 'oro_product_frontend_ajax_product_variant_get_available'
+#        - '@setOption':
+#            id: variant_field_form_start
+#            optionName: form_route_parameters
+#            optionValue:
+#                id: '=data["product"].getId()'

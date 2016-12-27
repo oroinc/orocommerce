@@ -19,6 +19,7 @@ class ProductFormProvider extends AbstractFormProvider
     const PRODUCT_QUICK_ADD_ROUTE_NAME              = 'oro_product_frontend_quick_add';
     const PRODUCT_QUICK_ADD_COPY_PASTE_ROUTE_NAME   = 'oro_product_frontend_quick_add_copy_paste';
     const PRODUCT_QUICK_ADD_IMPORT_ROUTE_NAME       = 'oro_product_frontend_quick_add_import';
+    const PRODUCT_VARIANTS_GET_AVAILABLE_VARIANTS   = 'oro_product_frontend_ajax_product_variant_get_available';
 
     /**
      * @param null  $data
@@ -110,11 +111,36 @@ class ProductFormProvider extends AbstractFormProvider
 
     /**
      * @param Product $product
+     * @return FormInterface
+     */
+    public function getVariantFieldsForm(Product $product)
+    {
+        $options = [
+            'action' => $this->generateUrl(
+                self::PRODUCT_VARIANTS_GET_AVAILABLE_VARIANTS,
+                ['id' => $product->getId()]
+            ),
+            'product' => $product,
+        ];
+
+        return $this->getForm(FrontendVariantFiledType::NAME, [], $options);
+    }
+
+    /**
+     * @param Product $product
      * @return FormView
      */
-    public function getVariantFieldsView(Product $product)
+    public function getVariantFieldsFormView(Product $product)
     {
-        return $this->getFormView(FrontendVariantFiledType::NAME, [], ['product' => $product]);
+        $options = [
+            'action' => $this->generateUrl(
+                self::PRODUCT_VARIANTS_GET_AVAILABLE_VARIANTS,
+                ['id' => $product->getId()]
+            ),
+            'product' => $product,
+        ];
+
+        return $this->getFormView(FrontendVariantFiledType::NAME, [], $options);
     }
 
     /**
