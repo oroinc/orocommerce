@@ -2,16 +2,16 @@
 
 namespace Oro\Bundle\PayPalBundle\Method\View;
 
-use Symfony\Component\Form\FormFactoryInterface;
-
+use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
+use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
+use Oro\Bundle\PayPalBundle\Form\Type\CreditCardType;
 use Oro\Bundle\PayPalBundle\Method\Config\PayflowGatewayConfigInterface;
 use Oro\Bundle\PayPalBundle\Method\PayflowGateway;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Option as GatewayOption;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\Response;
-use Oro\Bundle\PayPalBundle\Form\Type\CreditCardType;
-use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
-use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
-use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
+use Symfony\Component\Form\FormFactoryInterface;
 
 class PayflowGatewayView implements PaymentMethodViewInterface
 {
@@ -40,7 +40,7 @@ class PayflowGatewayView implements PaymentMethodViewInterface
     }
 
     /** {@inheritdoc} */
-    public function getOptions(array $context = [])
+    public function getOptions(PaymentContextInterface $context)
     {
         $isZeroAmountAuthorizationEnabled = $this->config->isZeroAmountAuthorizationEnabled();
 
@@ -98,12 +98,6 @@ class PayflowGatewayView implements PaymentMethodViewInterface
     public function getBlock()
     {
         return '_payment_methods_credit_card_widget';
-    }
-
-    /** {@inheritdoc} */
-    public function getOrder()
-    {
-        return $this->config->getOrder();
     }
 
     /** {@inheritdoc} */

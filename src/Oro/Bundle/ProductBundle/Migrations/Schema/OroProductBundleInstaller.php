@@ -83,7 +83,7 @@ class OroProductBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_7';
+        return 'v1_8';
     }
 
     /**
@@ -519,30 +519,6 @@ class OroProductBundleInstaller implements
                     'view' => ['is_displayable' => false],
                     'merge' => ['display' => false],
                     'dataaudit' => ['auditable' => true]
-                ]
-            );
-
-            $table->addColumn(
-                'product_collection_page_rule',
-                'text',
-                [
-                    'oro_options' => [
-                        'extend' => [
-                            'is_extend' => true,
-                            'owner' => ExtendScope::OWNER_CUSTOM,
-                            'cascade' => ['persist'],
-                            'on_delete' => 'CASCADE',
-                        ],
-                        'datagrid' => [
-                            'is_visible' => false
-                        ],
-                        'form' => [
-                            'is_enabled' => false
-                        ],
-                        'view' => ['is_displayable' => false],
-                        'merge' => ['display' => false],
-                        'dataaudit' => ['auditable' => true]
-                    ]
                 ]
             );
         }

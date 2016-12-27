@@ -5,15 +5,10 @@ namespace Oro\Bundle\PayPalBundle\Method\Config;
 use Oro\Bundle\PayPalBundle\DependencyInjection\Configuration;
 use Oro\Bundle\PayPalBundle\DependencyInjection\OroPayPalExtension;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
-use Oro\Bundle\PaymentBundle\DependencyInjection\Configuration as PaymentConfiguration;
 use Oro\Bundle\PaymentBundle\Method\Config\AbstractPaymentConfig;
-use Oro\Bundle\PaymentBundle\Method\Config\CountryAwarePaymentConfigTrait;
-use Oro\Bundle\PaymentBundle\Method\Config\CurrencyAwarePaymentConfigTrait;
 
 class PayflowGatewayConfig extends AbstractPaymentConfig implements PayflowGatewayConfigInterface
 {
-    use CountryAwarePaymentConfigTrait, CurrencyAwarePaymentConfigTrait;
-
     /**
      * @return string
      */
@@ -54,31 +49,6 @@ class PayflowGatewayConfig extends AbstractPaymentConfig implements PayflowGatew
     /**
      * {@inheritdoc}
      */
-    public function getAllowedCountries()
-    {
-        return (array)$this->getConfigValue(Configuration::PAYFLOW_GATEWAY_SELECTED_COUNTRIES_KEY);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isAllCountriesAllowed()
-    {
-        return $this->getConfigValue(Configuration::PAYFLOW_GATEWAY_ALLOWED_COUNTRIES_KEY)
-            === PaymentConfiguration::ALLOWED_COUNTRIES_ALL;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isEnabled()
-    {
-        return (bool)$this->getConfigValue(Configuration::PAYFLOW_GATEWAY_ENABLED_KEY);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function isZeroAmountAuthorizationEnabled()
     {
         return (bool)$this->getConfigValue(Configuration::PAYFLOW_GATEWAY_ZERO_AMOUNT_AUTHORIZATION_KEY);
@@ -90,22 +60,6 @@ class PayflowGatewayConfig extends AbstractPaymentConfig implements PayflowGatew
     public function isAuthorizationForRequiredAmountEnabled()
     {
         return (bool)$this->getConfigValue(Configuration::PAYFLOW_GATEWAY_AUTHORIZATION_FOR_REQUIRED_AMOUNT_KEY);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getAllowedCurrencies()
-    {
-        return (array)$this->getConfigValue(Configuration::PAYFLOW_GATEWAY_ALLOWED_CURRENCIES_KEY);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getOrder()
-    {
-        return (int)$this->getConfigValue(Configuration::PAYFLOW_GATEWAY_SORT_ORDER_KEY);
     }
 
     /**

@@ -2,6 +2,7 @@ operations:
     UPDATE:
         exclude_datagrids:
             - frontend-checkouts-grid
+
     oro_checkout_delete_order:
         extends: DELETE
         applications: [commerce]
@@ -16,6 +17,49 @@ operations:
             - applications
             - preconditions
             - datagrids
+
+    oro_checkout_frontend_quote_submit_to_order:
+        label: oro.checkout.frontend.quote.submit_to_order
+        applications: [commerce]
+        routes:
+            - oro_sale_quote_frontend_view
+        order: 20
+        acl_resource: [CREATE, entity:commerce@Oro\Bundle\CheckoutBundle\Entity\Checkout]
+        button_options:
+            icon: fa-pencil-square-o
+            class:  quota-accept-btn
+        preconditions:
+            '@workflow_available_by_record_group':
+                group_name: b2b_checkout_flow
+                entity_class: Oro\Bundle\CheckoutBundle\Entity\Checkout
+        actions:
+            - '@get_active_user': $.currentUser
+            - '@find_entity':
+                class: Oro\Bundle\SaleBundle\Entity\QuoteDemand
+                attribute: $.quoteDemand
+                where:
+                    quote: $.data
+                    accountUser: $.currentUser
+            - '@tree':
+                conditions:
+                    '@empty': $.quoteDemand
+                actions:
+                    - '@create_entity':
+                        parameters:
+                            attribute: $.quoteDemand
+                            class: Oro\Bundle\SaleBundle\Entity\QuoteDemand
+                            data:
+                                quote: $.data
+                                accountUser: $.currentUser
+                    - '@call_service_method':
+                        service: oro_sale.manager.quote_demand_manager
+                        method: recalculateSubtotals
+                        method_parameters: [$.quoteDemand]
+                    - '@flush_entity': $.quoteDemand
+            - '@redirect':
+                 route: 'oro_sale_quote_frontend_choice'
+                 route_parameters: {id: $.quoteDemand.id}
+
 action_groups:
     oro_update_shipping_price:
         parameters:
@@ -114,33 +158,21 @@ action_groups:
                 default: false
         actions:
             # find or create checkout and checkout source
-            - '@assign_value': [$.sourceCriteria.deleted, false]
-            - '@find_entity':
-                attribute: $.source
-                class: 'Oro\Bundle\CheckoutBundle\Entity\CheckoutSource'
-                where: $.sourceCriteria
-            - '@create_entity':
-                conditions:
-                    '@empty': $.source
-                parameters:
-                    attribute: $.source
-                    class: 'Oro\Bundle\CheckoutBundle\Entity\CheckoutSource'
-                    data: $.sourceCriteria
             - '@get_active_user': $.currentUser
-            - '@find_entity':
-                conditions:
-                    '@not_empty': $.source.id
-                parameters:
-                    attribute: $.checkout
-                    class: 'Oro\Bundle\CheckoutBundle\Entity\Checkout'
-                    where:
-                        source: $.source
-                        accountUser: $.currentUser
-                        deleted: false
+            - '@call_service_method':
+                attribute: $.checkout
+                service: 'oro_checkout.repository.checkout'
+                method: findCheckoutByAccountUserAndSourceCriteria
+                method_parameters: [$.currentUser, $.sourceCriteria]
+
             - '@tree':
                 conditions:
                     '@empty': $.checkout.id
                 actions:
+                    - '@create_entity':
+                        attribute: $.source
+                        class: 'Oro\Bundle\CheckoutBundle\Entity\CheckoutSource'
+                        data: $.sourceCriteria
                     - '@create_entity':
                         attribute: $.checkout
                         class: 'Oro\Bundle\CheckoutBundle\Entity\Checkout'

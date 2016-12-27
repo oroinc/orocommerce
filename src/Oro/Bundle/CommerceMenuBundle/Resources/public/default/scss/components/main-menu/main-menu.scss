@@ -1,7 +1,11 @@
 .main-menu {
-    flex-grow: 1;
+    flex-grow: 0;
 
     &__link {
+        padding-right: 24px;
+        padding-left: 24px;
+
+        white-space: nowrap;
         text-transform: uppercase;
 
         &:hover,
@@ -27,16 +31,13 @@
 
 @include breakpoint('tablet') {
     .main-menu {
-
         font-weight: bold;
-
-        &__sublist_subnested {
-            display: none;
-        }
 
         &__categories {
             display: none;
+
             padding-top: 0;
+            padding-bottom: 0;
         }
 
         &__item {
@@ -45,40 +46,21 @@
             min-height: inherit;
         }
 
-        &__sublist__link {
-            display: block;
+        &__link {
+            padding: 8px 0 7px 8px;
 
-            line-height: 1.5;
-            text-transform: uppercase;
-
-            color: get-color('additional', 'dark');
-
-            &:hover,
-            &:focus {
-                text-decoration: none;
-
-                color: get-color('additional', 'dark');
-            }
-
-        }
-
-        &__link,
-        &__sublist__link {
             font-size: 14px;
             font-weight: bold;
-
-            padding: 8px 0 7px 8px;
         }
 
         &__item.expanded {
             .main-menu__link {
                 position: relative;
-                padding-left: 15px;
 
                 .fa-angle-down {
                     position: absolute;
-                    left: 0;
                     top: 50%;
+                    left: 0;
 
                     margin: 0;
                     margin-top: -7px;
@@ -86,18 +68,6 @@
                     transform: rotate(90deg);
                 }
             }
-        }
-
-        &__sublist__title {
-            display: none;
-        }
-
-        &__sublist--nested {
-            margin-top: 0;
-        }
-
-        &__sublist__item {
-            margin-top: 0;
         }
     }
 

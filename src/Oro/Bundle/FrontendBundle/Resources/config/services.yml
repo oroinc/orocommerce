@@ -1,4 +1,9 @@
 services:
+    oro_frontend.extension.transtation_packages_provider:
+        class: 'Oro\Bundle\FrontendBundle\Provider\TranslationPackagesProviderExtension'
+        tags:
+            - {name: oro_translation.extension.packages_provider}
+
     oro_frontend.listener.frontend_route_collection:
         class: 'Oro\Bundle\FrontendBundle\EventListener\FrontendRouteCollectionListener'
         arguments:
