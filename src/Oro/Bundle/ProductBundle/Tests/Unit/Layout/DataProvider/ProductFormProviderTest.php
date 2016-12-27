@@ -240,9 +240,9 @@ class ProductFormProviderTest extends \PHPUnit_Framework_TestCase
     public function testGetVariantFieldsView()
     {
         $product = new Product();
-        $formView = $this->getMock(FormView::class);
+        $formView = $this->createMock(FormView::class);
 
-        $expectedForm = $this->getMock(FormInterface::class);
+        $expectedForm = $this->createMock(FormInterface::class);
         $expectedForm->expects($this->once())
             ->method('createView')
             ->willReturn($formView);
