@@ -6,11 +6,6 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
-/**
- * Class DestinationCollectionTypeSubscriber
- *
- * @package Oro\Bundle\ShippingBundle\Form\EventSubscriber
- */
 class DestinationCollectionTypeSubscriber implements EventSubscriberInterface
 {
 
