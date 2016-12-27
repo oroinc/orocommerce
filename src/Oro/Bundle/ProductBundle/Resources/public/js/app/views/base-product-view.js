@@ -5,6 +5,8 @@ define(function(require) {
     var BaseView = require('oroui/js/app/views/base/view');
     var ElementsHelper = require('orofrontend/js/app/elements-helper');
     var BaseModel = require('oroui/js/app/models/base/model');
+    var mediator = require('oroui/js/mediator');
+    var routing = require('routing');
     var $ = require('jquery');
     var _ = require('underscore');
 
@@ -23,6 +25,10 @@ define(function(require) {
             id: 0,
             quantity: 0,
             unit: ''
+        },
+
+        modelEvents: {
+            'id': ['change', 'onProductChanged']
         },
 
         initialize: function(options) {
@@ -57,6 +63,12 @@ define(function(require) {
                     this.model.set(attribute, value);
                 }
             }, this);
+        },
+
+        onProductChanged: function() {
+            mediator.trigger('layout-subtree:update:product', {
+                layoutSubtreeUrl: routing.generate('oro_product_frontend_product_view', {id: this.model.get('id')})
+            });
         },
 
         dispose: function() {
