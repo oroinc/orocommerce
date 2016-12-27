@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Controller\Frontend\Api\Rest;
 
+use Symfony\Component\HttpFoundation\Response;
+
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
@@ -39,6 +41,6 @@ class LineItemControllerTest extends WebTestCase
         );
 
         $result = $this->client->getResponse();
-        $this->assertEmptyResponseStatusCodeEquals($result, 204);
+        $this->assertEmptyResponseStatusCodeEquals($result, Response::HTTP_NO_CONTENT);
     }
 }
