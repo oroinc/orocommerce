@@ -130,3 +130,5 @@ datagrids:
                 icon: shopping-cart
                 acl_resource: oro_checkout_frontend_checkout
                 rowAction: true
+
+        action_configuration: ['@oro_checkout.datagrid.action_permission_provider', "getActionPermissions"]

@@ -42,6 +42,8 @@ oro:
         menu:
             master_catalog.label:                  'Master Catalog'
             shortcut_master_catalog.description:   'Manage Master Catalog'
+            all.label:                             'All'
+            by_category.label:                     'By Category'
 
         product:
             section.catalog: 'Master Catalog'

@@ -200,18 +200,12 @@
       padding: 5px;
       vertical-align: middle;
 
-      font-size: 0;
-
       &:first-child {
         padding-right: 10px;
       }
 
       label {
-        display: inline-block;
         max-width: 95%;
-
-        font-size: $base-font-size;
-        font-weight: 400;
 
         @include ellipsis();
       }
@@ -222,41 +216,17 @@
 
           display: block;
           width: 20px;
-          height: 20px;
 
           color: get-color('additional', 'dark');
 
           cursor: move;
+        }
 
-          .ui-sortable-handle {
-
-            display: inline-block;
-            vertical-align: middle;
-            width: 1em;
-            height: 1em;
-            margin: 0;
-            padding: 0;
-
-            font-family: $base-font-icon;
-            font-weight: normal;
-            font-style: normal;
-            font-size: 2rem;
-            line-height: 1;
-            text-transform: none;
-            letter-spacing: normal;
-            word-wrap: normal;
-
-            -webkit-font-smoothing: antialiased;
-            text-rendering: optimizeLegibility;
-            -moz-osx-font-smoothing: grayscale;
-            -webkit-font-feature-settings: 'liga';
-            -moz-font-feature-settings: 'liga';
-            font-feature-settings: 'liga';
-
-            &:before {
-              content: "\e005";
-            }
-          }
+        .btn {
+          padding: 0;
+          background: none;
+          border: 0;
+          line-height: normal;
         }
       }
     }
@@ -671,10 +641,7 @@
       top: 5px;
       right: 5px;
 
-      &:before {
-        font-family: 'FontAwesome';
-        content: "\f00d";
-      }
+      @include fa-icon($fa-var-close);
     }
 
     > span {

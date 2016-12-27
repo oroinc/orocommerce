@@ -8,7 +8,7 @@
             placeholderId: 'sticky-header-row',
             screenType: 'tablet'
         },
-        '~class': ' header-row'
+        '~class': ' header-row' ~ (blocks.header_row.children|length > 2 ? ' header-row--from-left')
     }) %}
 
     <div {{ block('block_attributes') }}>

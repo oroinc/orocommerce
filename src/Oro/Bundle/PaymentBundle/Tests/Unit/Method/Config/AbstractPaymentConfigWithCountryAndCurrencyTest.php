@@ -3,8 +3,6 @@
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\Method\Config;
 
 use Oro\Bundle\PaymentBundle\DependencyInjection\Configuration;
-use Oro\Bundle\PaymentBundle\Method\Config\CountryConfigAwareInterface;
-use Oro\Bundle\PaymentBundle\Method\Config\CurrencyConfigAwareInterface;
 
 abstract class AbstractPaymentConfigWithCountryAndCurrencyTest extends AbstractPaymentConfigTestCase
 {

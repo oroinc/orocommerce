@@ -9,7 +9,7 @@ use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
 use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
-use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingRules;
+use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingMethodsConfigsRules;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems;
 
 /**
@@ -32,7 +32,7 @@ class AjaxCheckoutControllerTest extends FrontendWebTestCase
                 LoadShoppingListLineItems::class,
                 LoadCombinedProductPrices::class,
                 LoadPaymentTermData::class,
-                LoadShippingRules::class,
+                LoadShippingMethodsConfigsRules::class,
                 LoadShoppingListsCheckoutsData::class,
             ]
         );
