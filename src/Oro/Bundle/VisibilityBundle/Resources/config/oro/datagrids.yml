@@ -17,7 +17,7 @@ datagrids:
                 - target_entity_id
         columns:
             name:
-                label: oro.account.name.label
+                label: oro.customer.account.name.label
             visibility:
                 label: oro.visibility.accountcategoryvisibility.entity_label
                 frontend_type: select
@@ -68,7 +68,7 @@ datagrids:
                 - target_entity_id
         columns:
             name:
-                label: oro.account.name.label
+                label: oro.customer.account.name.label
             visibility:
                 label: oro.visibility.accountgroupcategoryvisibility.entity_label
                 frontend_type: select
@@ -120,7 +120,7 @@ datagrids:
                 - target_entity_id
         columns:
             name:
-                label: oro.account.name.label
+                label: oro.customer.account.name.label
             visibility:
                 label: oro.visibility.accountproductvisibility.entity_label
                 frontend_type: select
@@ -171,7 +171,7 @@ datagrids:
                 - target_entity_id
         columns:
             name:
-                label: oro.account.name.label
+                label: oro.customer.account.name.label
             visibility:
                 label: oro.visibility.accountgroupproductvisibility.entity_label
                 frontend_type: select

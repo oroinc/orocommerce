@@ -30,7 +30,19 @@
             </div>
             <div class="profile__form__col form__col_x6 col_last">
                 {{ form_row(form.email, {'attr': {'placeholder': 'oro.customer.form.placeholder.email'|trans}, 'parentClass': ''}) }}
-                {{ form_row(form.birthday, {'attr': {'placeholder': 'oro.customer.form.placeholder.birthday'|trans}, 'parentClass': ''}) }}
+                <div class="datepicker-box datepicker-box--form-mode">
+                    <span class="datepicker-box__icon"><i class="fa-calendar"></i></span>
+                    {{ form_row(form.birthday, {
+                        'attr': {
+                            'placeholder': 'oro.customer.form.placeholder.birthday'|trans,
+                            'class': 'datepicker-box__input input input--size-m'
+                        },
+                        'parentClass': '',
+                        'datePickerOptions': {
+                            'maxDate': 0
+                        }
+                    }) }}
+                </div>
             </div>
         </fieldset>
     </fieldset>

@@ -536,10 +536,6 @@
           }
         }
 
-        .datefilter {
-          display: block;
-        }
-
         input[type="text"] {
           @include base-ui-element(
                   $use-base-style: true,
@@ -560,6 +556,24 @@
             box-shadow: $input-box-shadow-focus-state;
           }
         }
+
+        .datefilter {
+          display: block;
+
+          input[type="text"] {
+            padding-left: 39px;
+          }
+
+          &:before {
+            position: absolute;
+            content: '\f073';
+            pointer-events: none;
+            margin: 8px 0 0 12px;
+            font: normal $base-font-size--m 'FontAwesome';
+            color: get-color('additional', 'middle');
+          }
+        }
+
       }
 
       .number-range-filter {
