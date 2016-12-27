@@ -30,7 +30,11 @@ class DestinationCollectionTypeSubscriberTest extends \PHPUnit_Framework_TestCas
         $event
             ->expects($this->once())
             ->method('setData')
-            ->with(['destinations' => []]);
+            ->with(['destinations' => [
+                [
+                    'country' => 0
+                ]
+            ]]);
 
         $subscriber = new DestinationCollectionTypeSubscriber();
         $subscriber->preSubmit($event);

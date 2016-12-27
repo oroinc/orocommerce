@@ -8,6 +8,8 @@ use Symfony\Component\Form\FormEvents;
 
 class DestinationCollectionTypeSubscriber implements EventSubscriberInterface
 {
+    const NOT_VALID_VALUE = 0;
+
     /**
      * {@inheritdoc}
      */
@@ -34,7 +36,7 @@ class DestinationCollectionTypeSubscriber implements EventSubscriberInterface
 
         foreach ($data['destinations'] as $index => $destination) {
             if ($destination && array_key_exists('country', $destination) && !$destination['country']) {
-                unset($data['destinations'][$index]);
+                $data['destinations'][$index]['country'] = self::NOT_VALID_VALUE;
             }
         }
 
