@@ -1,19 +1,15 @@
 {% block _header_row_widget %}
     {% set attr = layout_attr_defaults(attr, {
         'data-page-component-module': 'orocommercemenu/default/js/components/header-row',
+        '~data-sticky': {
+            isSticky: true,
+            autoWidth: true,
+            toggleClass: 'header-row--fixed',
+            placeholderId: 'sticky-header-row',
+            screenType: 'tablet'
+        },
         '~class': ' header-row' ~ (blocks.header_row.children|length > 2 ? ' header-row--from-left')
     }) %}
-
-    {% if isMobileVersion() %}
-        {% set attr = layout_attr_defaults(attr, {
-            '~data-sticky': {
-                isSticky: true,
-                autoWidth: true,
-                toggleClass: 'header-row--fixed',
-                placeholderId: 'sticky-header-row',
-            }
-        }) %}
-    {% endif %}
 
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
