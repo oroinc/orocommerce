@@ -7,7 +7,6 @@ use Symfony\Component\Form\FormEvent;
 
 class DestinationCollectionTypeSubscriberTest extends \PHPUnit_Framework_TestCase
 {
-
     /**
      * Test for DestinationCollectionTypeSubscriber.preSubmit
      */

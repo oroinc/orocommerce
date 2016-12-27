@@ -8,7 +8,6 @@ use Symfony\Component\Form\FormEvents;
 
 class DestinationCollectionTypeSubscriber implements EventSubscriberInterface
 {
-
     /**
      * {@inheritdoc}
      */
