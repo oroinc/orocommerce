@@ -32,6 +32,7 @@
         <fieldset class="profile__form__row">
             <legend>{{ 'oro.customer.accountuser.profile.form.sections.password.label'|trans }}</legend>
             <fieldset>
+                <input type="text" class="profile__form__no-autocomplete-fix" />
                 {{ form_row(form.changePassword.currentPassword, {'attr': {'placeholder': 'oro.customer.form.placeholder.current_password'|trans}, 'parentClass': 'field profile__form__col form__col_x6 col_first current_password'}) }}
             </fieldset>
             <fieldset>

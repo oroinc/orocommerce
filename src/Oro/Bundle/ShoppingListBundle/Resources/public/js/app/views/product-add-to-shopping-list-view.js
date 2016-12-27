@@ -191,6 +191,9 @@ define(function(require) {
         },
 
         findShoppingListById: function(shoppingList) {
+            if (!this.model) {
+                return null;
+            }
             return _.find(this.model.get('shopping_lists'), function(list) {
                 return list.id === shoppingList.id;
             }) || null;
@@ -199,7 +202,7 @@ define(function(require) {
         _onQuantityEnter: function(e) {
             var ENTER_KEY_CODE = 13;
 
-            if (e.keyCode === ENTER_KEY_CODE && this.dropdownWidget.main.data('intention') == 'update') {
+            if (e.keyCode === ENTER_KEY_CODE && this.dropdownWidget.main.data('intention') === 'update') {
                 if (!this.dropdownWidget.validateForm()) {
                     return;
                 }

@@ -23,7 +23,7 @@ class ContentVariantProviderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->providerRegistry = $this->getMock(ContentVariantProviderRegistry::class);
+        $this->providerRegistry = $this->createMock(ContentVariantProviderRegistry::class);
         $this->contentVariantProvider = new ContentVariantProvider($this->providerRegistry);
     }
 
@@ -93,7 +93,7 @@ class ContentVariantProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $provider1 = $this->getMock(ContentVariantProviderInterface::class);
+        $provider1 = $this->createMock(ContentVariantProviderInterface::class);
         $provider1->expects($this->once())
             ->method('isSupportedClass')
             ->with($entityClass)
@@ -102,7 +102,7 @@ class ContentVariantProviderTest extends \PHPUnit_Framework_TestCase
             ->method('modifyNodeQueryBuilderByEntities')
             ->with($queryBuilder, $entityClass, $entities);
 
-        $provider2 = $this->getMock(ContentVariantProviderInterface::class);
+        $provider2 = $this->createMock(ContentVariantProviderInterface::class);
         $provider2->expects($this->once())
             ->method('isSupportedClass')
             ->with($entityClass)
@@ -123,7 +123,7 @@ class ContentVariantProviderTest extends \PHPUnit_Framework_TestCase
     public function testGetValues()
     {
         /** @var ContentNodeInterface $node */
-        $node = $this->getMock(ContentNodeInterface::class);
+        $node = $this->createMock(ContentNodeInterface::class);
 
         $provider1 = $this->createMock(ContentVariantProviderInterface::class);
         $provider1->expects($this->once())
@@ -153,15 +153,15 @@ class ContentVariantProviderTest extends \PHPUnit_Framework_TestCase
     public function testGetLocalizedValues()
     {
         /** @var ContentNodeInterface $node */
-        $node = $this->getMock(ContentNodeInterface::class);
+        $node = $this->createMock(ContentNodeInterface::class);
 
-        $provider1 = $this->getMock(ContentVariantProviderInterface::class);
+        $provider1 = $this->createMock(ContentVariantProviderInterface::class);
         $provider1->expects($this->once())
             ->method('getLocalizedValues')
             ->with($node)
             ->willReturn(['first' => 1]);
 
-        $provider2 = $this->getMock(ContentVariantProviderInterface::class);
+        $provider2 = $this->createMock(ContentVariantProviderInterface::class);
         $provider2->expects($this->once())
             ->method('getLocalizedValues')
             ->with($node)
@@ -211,7 +211,7 @@ class ContentVariantProviderTest extends \PHPUnit_Framework_TestCase
     {
         $item = ['key' => 'value'];
 
-        $provider1 = $this->getMock(ContentVariantProviderInterface::class);
+        $provider1 = $this->createMock(ContentVariantProviderInterface::class);
         $provider1->expects($this->once())
             ->method('getRecordId')
             ->with($item)
