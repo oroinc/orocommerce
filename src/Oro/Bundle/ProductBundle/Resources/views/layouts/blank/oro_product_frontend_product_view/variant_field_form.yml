@@ -24,12 +24,3 @@ layout:
                         variant_field_form_start: ~
                         variant_field_form_fields: ~
                         variant_field_form_end: ~
-#        - '@setOption':
-#            id: variant_field_form_start
-#            optionName: form_route_name
-#            optionValue: 'oro_product_frontend_ajax_product_variant_get_available'
-#        - '@setOption':
-#            id: variant_field_form_start
-#            optionName: form_route_parameters
-#            optionValue:
-#                id: '=data["product"].getId()'
