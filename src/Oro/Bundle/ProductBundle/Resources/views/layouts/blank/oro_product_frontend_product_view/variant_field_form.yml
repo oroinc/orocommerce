@@ -1,7 +1,5 @@
 layout:
     actions:
-        - '@setFormTheme':
-            themes: 'variant_field_form.html.twig'
         - '@addTree':
             items:
                 variant_field_form:
@@ -9,15 +7,15 @@ layout:
                 variant_field_form_start:
                     blockType: form_start
                     options:
-                        form: '=data["oro_product_form"].getVariantFieldsView(data.offsetExists("product")?data["product"])'
+                        form: '=data["oro_product_form"].getVariantFieldsView(data["product"])'
                 variant_field_form_fields:
                     blockType: form_fields
                     options:
-                        form: '=data["oro_product_form"].getVariantFieldsView(data.offsetExists("product")?data["product"])'
+                        form: '=data["oro_product_form"].getVariantFieldsView(data["product"])'
                 variant_field_form_end:
                     blockType: form_end
                     options:
-                        form: '=data["oro_product_form"].getVariantFieldsView(data.offsetExists("product")?data["product"])'
+                        form: '=data["oro_product_form"].getVariantFieldsView(data["product"])'
             tree:
                 product_view_variant_field_container:
                     variant_field_form:

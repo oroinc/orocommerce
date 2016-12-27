@@ -19,6 +19,7 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
 {
     const FIELD_COLOR = 'testColor';
     const FIELD_NEW = 'testNew';
+    const PRODUCT_CLASS = Product::class;
 
     /** @var FrontendVariantFiledType */
     protected $type;
@@ -31,40 +32,14 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
      */
     protected function setUp()
     {
+        parent::setUp();
+
         /** @var CustomFieldProvider|\PHPUnit_Framework_MockObject_MockObject $customFieldProvider */
         $this->customFieldProvider = $this->getMockBuilder(CustomFieldProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->type = new FrontendVariantFiledType($this->customFieldProvider);
-
-        parent::setUp();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function tearDown()
-    {
-        unset($this->type, $this->customFieldProvider);
-    }
-
-    protected function getExtensions()
-    {
-        $choiceListInterface = $this->getMock(ChoiceListFactoryInterface::class);
-
-        $enumSelectStub = new EnumSelectTypeStub();
-        $choiceType = new ChoiceType($choiceListInterface);
-
-        return [
-            new PreloadedExtension(
-                [
-                    EnumSelectType::NAME => $enumSelectStub,
-                    $choiceType->getName() => $choiceType,
-                ],
-                []
-            )
-        ];
+        $this->type = new FrontendVariantFiledType($this->customFieldProvider, self::PRODUCT_CLASS);
     }
 
     public function testGetName()
@@ -84,7 +59,9 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
             ->setType(Product::TYPE_SIMPLE)
             ->setVariantFields([self::FIELD_COLOR, self::FIELD_NEW]);
 
-        $options['product'] = $product;
+        $options = [
+            'product' => $product,
+        ];
 
         $form = $this->factory->create($this->type, null, $options);
 
@@ -99,7 +76,9 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
             ->setType(Product::TYPE_CONFIGURABLE)
             ->setVariantFields([self::FIELD_COLOR, self::FIELD_NEW]);
 
-        $options['product'] = $product;
+        $options = [
+            'product' => $product,
+        ];
 
         $this->customFieldProvider->expects($this->once())
             ->method('getEntityCustomFields')
@@ -120,9 +99,14 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
         $this->assertTrue($form->has(self::FIELD_COLOR));
         $this->assertTrue($form->has(self::FIELD_NEW));
 
-        $colorConfig = $form->get(self::FIELD_COLOR)->getConfig();
-        $newConfig = $form->get(self::FIELD_NEW)->getConfig();
+        $colorField = $form->get(self::FIELD_COLOR);
+        $newField = $form->get(self::FIELD_NEW);
 
+        $colorConfig = $colorField->getConfig();
+        $newConfig = $newField->getConfig();
+
+        $this->assertTrue($colorConfig->getOption('required'));
+        $this->assertFalse($colorConfig->getOption('placeholder'));
         $this->assertEquals('oro_enum_select', $colorConfig->getType()->getName());
         $this->assertEquals(
             ExtendHelper::generateEnumCode(Product::class, self::FIELD_COLOR),
@@ -137,7 +121,7 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
 
     public function testConfigureOptions()
     {
-        $resolver = $this->getMock(OptionsResolver::class);
+        $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())
             ->method('setRequired')
             ->with(['product']);
@@ -156,7 +140,7 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
 
     /**
      * @expectedException \LogicException
-     * @expectedExceptionMessage Type can be "boolean" or "enum".
+     * @expectedExceptionMessage Incorrect type. Expected "boolean" or "enum", but "string" given
      */
     public function testBuildWithNonExpectedFiledType()
     {
@@ -178,5 +162,24 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
             ]);
 
         $this->factory->create($this->type, null, $options);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getExtensions()
+    {
+        $enumSelectStub = new EnumSelectTypeStub();
+        $choiceType = new ChoiceType();
+
+        return [
+            new PreloadedExtension(
+                [
+                    EnumSelectType::NAME => $enumSelectStub,
+                    $choiceType->getName() => $choiceType,
+                ],
+                []
+            )
+        ];
     }
 }
