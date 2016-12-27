@@ -16,24 +16,5 @@
         & .product-item__price span {
             font-size: 12px;
         }
-
-        & #add-to-shopping-list {
-            min-width: 0;
-            min-height: 42px;
-        }
-
-        & #add-to-shopping-list > a.direct-link,
-        & #add-to-shopping-list > span.direct-link {
-            overflow: hidden;
-
-            width: calc(100% - 22px);
-            height: 42px;
-            padding: 0 4px;
-
-            font-size: 12px !important;
-            line-height: 42px;
-
-            text-overflow: ellipsis;
-        }
     }
 }
