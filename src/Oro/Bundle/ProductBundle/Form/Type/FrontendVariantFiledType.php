@@ -4,15 +4,16 @@ namespace Oro\Bundle\ProductBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\Options;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Doctrine\Common\Util\ClassUtils;
 
-use Oro\Bundle\EntityExtendBundle\Form\Type\EnumSelectType;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Provider\CustomFieldProvider;
+use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 
 class FrontendVariantFiledType extends AbstractType
 {
@@ -21,16 +22,24 @@ class FrontendVariantFiledType extends AbstractType
     /** @var CustomFieldProvider */
     protected $customFieldProvider;
 
+    /** @var ProductVariantAvailabilityProvider */
+    protected $productVariantAvailabilityProvider;
+
     /** @var string */
     protected $productClass;
 
     /**
      * @param CustomFieldProvider $customFieldProvider
+     * @param ProductVariantAvailabilityProvider $productVariantAvailabilityProvider
      * @param string $productClass
      */
-    public function __construct(CustomFieldProvider $customFieldProvider, $productClass)
-    {
+    public function __construct(
+        CustomFieldProvider $customFieldProvider,
+        ProductVariantAvailabilityProvider $productVariantAvailabilityProvider,
+        $productClass
+    ) {
         $this->customFieldProvider = $customFieldProvider;
+        $this->productVariantAvailabilityProvider = $productVariantAvailabilityProvider;
         $this->productClass = (string)$productClass;
     }
 
@@ -39,8 +48,24 @@ class FrontendVariantFiledType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);
+    }
+
+    /**
+     * @param FormEvent $event
+     */
+    public function preSetData(FormEvent $event)
+    {
+        $data = $event->getData();
+
+        if ($data === null) {
+            return;
+        }
+
+        $form = $event->getForm();
+
         /** @var Product $product */
-        $product = $options['product'];
+        $product = $form->getConfig()->getOption('product');
 
         if (!is_a($product, $this->productClass)) {
             throw new \InvalidArgumentException(
@@ -60,16 +85,8 @@ class FrontendVariantFiledType extends AbstractType
 
         $variantFieldData = $this->customFieldProvider->getEntityCustomFields($class);
 
-        // FIXME: test workaround
-        $variantAvailability = [];
-        foreach ($product->getVariantFields() as $fieldName) {
-            $variantAvailability[$fieldName] = [
-                '1' => true,
-                '2' => false,
-                '3' => true,
-            ];
-        }
-        // FIXME: END
+        $variantAvailability = $this->productVariantAvailabilityProvider
+            ->getVariantFieldsWithAvailability($product, $data);
 
         foreach ($product->getVariantFields() as $fieldName) {
             list($type, $fieldOptions) = $this->prepareFieldByType(
@@ -80,7 +97,7 @@ class FrontendVariantFiledType extends AbstractType
             );
             $fieldOptions['label'] = $variantFieldData[$fieldName]['label'];
 
-            $builder->add($fieldName, $type, $fieldOptions);
+            $form->add($fieldName, $type, $fieldOptions);
         }
     }
 
@@ -91,6 +108,10 @@ class FrontendVariantFiledType extends AbstractType
     {
         $resolver->setRequired([
             'product',
+        ]);
+
+        $resolver->setDefaults([
+            'empty_data' => []
         ]);
     }
 

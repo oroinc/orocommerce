@@ -36,11 +36,17 @@ class FrontendVariantEnumSelectType extends AbstractType
 
             $choices = $choiceList->getChoices();
 
-            if (!$choices) {
+            // Select first available key as default
+            $choiceKeys = array_keys($choices);
+            $disabledChoiceKeys = $form->getConfig()->getOption('disabled_values');
+
+            $availableKeys = array_diff($choiceKeys, $disabledChoiceKeys);
+
+            if (!$availableKeys) {
                 return;
             }
 
-            $event->setData(reset($choices));
+            $event->setData($choices[reset($availableKeys)]);
         });
     }
 

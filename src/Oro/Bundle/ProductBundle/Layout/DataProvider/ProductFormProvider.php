@@ -114,7 +114,7 @@ class ProductFormProvider extends AbstractFormProvider
      */
     public function getVariantFieldsView(Product $product)
     {
-        return $this->getFormView(FrontendVariantFiledType::NAME, null, ['product' => $product]);
+        return $this->getFormView(FrontendVariantFiledType::NAME, [], ['product' => $product]);
     }
 
     /**
