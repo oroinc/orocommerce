@@ -90,7 +90,7 @@ class FrontendVariantFiledType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setRequired([
-            'product'
+            'product',
         ]);
     }
 
@@ -123,10 +123,12 @@ class FrontendVariantFiledType extends AbstractType
             case 'enum':
                 $options = $this->getEnumOptions($class, $fieldName);
                 $options['disabled_values'] = $this->getEnumDisabledValues($availability);
+
                 return [FrontendVariantEnumSelectType::NAME, $options];
             case 'boolean':
                 $options = $this->getBooleanOptions();
                 $options = $this->getBooleanDisabledValues($options, $availability);
+
                 return ['choice', $options];
             default:
                 throw new \LogicException(
@@ -176,6 +178,7 @@ class FrontendVariantFiledType extends AbstractType
      */
     private function getEnumDisabledValues(array $availability)
     {
+        // TODO: Possible we need to disable ALL variants which not present in $notAvailableVariants
         $notAvailableVariants = array_filter($availability, function ($item) {
             return $item === false;
         });
@@ -184,6 +187,8 @@ class FrontendVariantFiledType extends AbstractType
     }
 
     /**
+     * Returns name of fields which will be disabled
+     *
      * @param array $options
      * @param array $availability
      * @return array

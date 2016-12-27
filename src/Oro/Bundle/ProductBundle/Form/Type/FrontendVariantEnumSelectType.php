@@ -19,6 +19,7 @@ class FrontendVariantEnumSelectType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
+            // Set default (first) value of list
             $form = $event->getForm();
             $data = $event->getData();
 
@@ -35,10 +36,13 @@ class FrontendVariantEnumSelectType extends AbstractType
 
             $choices = $choiceList->getChoices();
 
+            if (!$choices) {
+                return;
+            }
+
             $event->setData(reset($choices));
         });
     }
-
 
     /**
      * {@inheritdoc}
