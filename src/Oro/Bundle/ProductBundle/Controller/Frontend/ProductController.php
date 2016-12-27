@@ -49,15 +49,12 @@ class ProductController extends Controller
      */
     public function viewAction(Product $product)
     {
-        $groupsWithAttributes = $this->get('oro_entity_config.manager.attribute_manager')->
-            getGroupsWithAttributesByFamily($product->getAttributeFamily()->getId());
-
         return [
             'data' => [
                 'product' => $product,
             ],
             'product_type' => $product->getType(),
-            'attribute_family' => $groupsWithAttributes
+            'attribute_family' => $product->getAttributeFamily()->getCode(),
         ];
     }
 
