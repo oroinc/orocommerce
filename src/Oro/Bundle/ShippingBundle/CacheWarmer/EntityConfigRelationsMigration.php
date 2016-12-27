@@ -63,7 +63,6 @@ class EntityConfigRelationsMigration
             return;
         }
 
-        var_dump('test');
         /** @var Connection $configConnection */
         $configConnection = $this->managerRegistry->getConnection('config');
         $tables = $configConnection->getSchemaManager()->listTableNames();
