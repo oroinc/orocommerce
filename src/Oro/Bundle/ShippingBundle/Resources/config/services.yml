@@ -326,3 +326,10 @@ services:
             - '@doctrine'
             - '@logger'
             - '%installed%'
+
+    oro_shipping.listener.shipping_method_type_config.post_update:
+        class: 'Oro\Bundle\ShippingBundle\EventListener\Cache\ShippingMethodTypeConfigChangeListener'
+        arguments:
+            - '@oro_shipping.shipping_price.provider.cache'
+        tags:
+            - { name: doctrine.event_listener, event: postUpdate }
