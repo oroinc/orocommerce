@@ -553,5 +553,6 @@ services:
         class: 'Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider'
         arguments:
             - '@oro_entity.doctrine_helper'
-            - '@oro_entity.entity_field_provider'
             - '@oro_entity_extend.enum_value_provider'
+            - '@oro_product.provider.custom_field_provider'
+            - '@property_accessor'

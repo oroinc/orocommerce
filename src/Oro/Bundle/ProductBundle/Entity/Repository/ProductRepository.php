@@ -272,7 +272,7 @@ class ProductRepository extends EntityRepository
      * Value is extended field id for select field and true or false for boolean field
      * @return Product[]
      */
-    public function findSimpleProductsByVariantFields(Product $configurableProduct, $variantParameters)
+    public function findSimpleProductsByVariantFields(Product $configurableProduct, array $variantParameters)
     {
         $qb = $this
             ->createQueryBuilder('p')

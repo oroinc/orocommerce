@@ -2,40 +2,44 @@
 
 namespace Oro\Bundle\ProductBundle\Provider;
 
-use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityExtendBundle\Provider\EnumValueProvider;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
-use Oro\Bundle\ProductBundle\Exception\InvalidArgumentException;
 
-use Symfony\Component\Serializer\NameConverter\CamelCaseToSnakeCaseNameConverter;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 class ProductVariantAvailabilityProvider
 {
     /** @var DoctrineHelper */
     protected $doctrineHelper;
 
-    /** @var EntityFieldProvider */
-    protected $entityFieldProvider;
-
     /** @var EnumValueProvider */
     protected $enumValueProvider;
 
+    /** @var CustomFieldProvider */
+    protected $customFieldProvider;
+
+    /** @var PropertyAccessor */
+    protected $propertyAccessor;
+
     /**
      * @param DoctrineHelper $doctrineHelper
-     * @param EntityFieldProvider $entityFieldProvider
      * @param EnumValueProvider $enumValueProvider
+     * @param CustomFieldProvider $customFieldProvider
+     * @param PropertyAccessor $propertyAccessor
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
-        EntityFieldProvider $entityFieldProvider,
-        EnumValueProvider $enumValueProvider
+        EnumValueProvider $enumValueProvider,
+        CustomFieldProvider $customFieldProvider,
+        PropertyAccessor $propertyAccessor
     ) {
         $this->doctrineHelper = $doctrineHelper;
-        $this->entityFieldProvider = $entityFieldProvider;
         $this->enumValueProvider = $enumValueProvider;
+        $this->customFieldProvider = $customFieldProvider;
+        $this->propertyAccessor = $propertyAccessor;
     }
 
     /**
@@ -43,36 +47,28 @@ class ProductVariantAvailabilityProvider
      * @param array $variantParameters
      * @return array
      */
-    public function getVariantFieldsWithAvailability(Product $configurableProduct, $variantParameters = [])
+    public function getVariantFieldsWithAvailability(Product $configurableProduct, array $variantParameters = [])
     {
         $variantFields = $configurableProduct->getVariantFields();
 
-        /** @var ProductRepository $repository */
-        $repository = $this->doctrineHelper->getEntityRepository(Product::class);
-
-        $availableSimpleProducts = $repository->findSimpleProductsByVariantFields(
+        $availableSimpleProducts = $this->getSimpleProductsByVariantFields(
             $configurableProduct,
             $variantParameters
         );
-
-        $converter = new CamelCaseToSnakeCaseNameConverter();
 
         $allVariants = [];
         foreach ($variantFields as $variantField) {
             // get array of all variants
             $allVariants[$variantField] = $this->getAllVariantsByVariantFieldName($variantField);
-
-            // update array of all variants with available variants
-            $getterSnakeCase = sprintf('get_%s', $variantField);
-            $getterMethod = $converter->denormalize($getterSnakeCase);
             $fieldType = $this->getFieldType($variantField);
 
             foreach ($availableSimpleProducts as $simpleProduct) {
-                $variantValue = $simpleProduct->$getterMethod();
+                $variantValue = $this->propertyAccessor->getValue($simpleProduct, $variantField);
 
                 switch ($fieldType) {
                     case 'enum':
-                        $allVariants[$variantField][$variantValue->getId()] = true;
+                        $id = $this->doctrineHelper->getSingleEntityIdentifier($variantValue);
+                        $allVariants[$variantField][$id] = true;
                         break;
 
                     case 'boolean':
@@ -93,43 +89,32 @@ class ProductVariantAvailabilityProvider
     {
         $type = $this->getFieldType($variantFieldName);
 
-        $allVariants = [];
+        $variants = [];
         switch ($type) {
             case 'enum':
                 $enumCode = ExtendHelper::generateEnumCode(Product::class, $variantFieldName);
-                $allVariants = $this->enumValueProvider->getEnumChoicesByCode($enumCode);
-                foreach ($allVariants as &$variant) {
-                    $variant = false;
-                }
+                $variants = $this->enumValueProvider->getEnumChoicesByCode($enumCode);
                 break;
 
             case 'boolean':
-                $allVariants = [
-                    false => false,
-                    true => false,
-                ];
+                // TODO: Is it possible to have this choice variants in one place?
+                $variants = ['No', 'Yes'];
                 break;
         }
 
-        return $allVariants;
+        return array_fill_keys(array_keys($variants), false);
     }
 
     /**
      * @param string $fieldName
-     * @return string
+     * @return string|null
      */
     protected function getFieldType($fieldName)
     {
-        $allFields = $this->entityFieldProvider->getFields(Product::class, true);
-        $type = '';
-        foreach ($allFields as $field) {
-            if ($field['name'] === $fieldName) {
-                $type = $field['type'];
-                break;
-            }
-        }
+        $customFields = $this->customFieldProvider->getEntityCustomFields(Product::class);
 
-        return $type;
+        // TODO: Add cache?
+        return array_key_exists($fieldName, $customFields) ? $customFields[$fieldName]['type'] : null;
     }
 
     /**
@@ -143,7 +128,7 @@ class ProductVariantAvailabilityProvider
      * Value is extended field id for select field and true or false for boolean field
      * @return Product[]
      */
-    public function getSimpleProductsByVariantFields(Product $configurableProduct, $variantParameters = [])
+    public function getSimpleProductsByVariantFields(Product $configurableProduct, array $variantParameters = [])
     {
         /** @var ProductRepository $repository */
         $repository = $this->doctrineHelper->getEntityRepository(Product::class);
@@ -155,14 +140,14 @@ class ProductVariantAvailabilityProvider
      * @param Product $configurableProduct
      * @param array $variantParameters
      * @return Product
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      */
-    public function getSimpleProductByVariantFields(Product $configurableProduct, $variantParameters)
+    public function getSimpleProductByVariantFields(Product $configurableProduct, array $variantParameters = [])
     {
         $simpleProducts = $this->getSimpleProductsByVariantFields($configurableProduct, $variantParameters);
 
         if (count($simpleProducts) !== 1) {
-            throw new InvalidArgumentException('Variant values provided don\'t match exactly one simple product');
+            throw new \InvalidArgumentException('Variant values provided don\'t match exactly one simple product');
         }
 
         return $simpleProducts[0];
