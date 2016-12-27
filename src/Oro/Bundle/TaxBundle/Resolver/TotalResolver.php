@@ -88,11 +88,11 @@ class TotalResolver implements ResolverInterface
     }
 
     /**
-     * @param ResultElement $data
+     * @param AbstractResultElement $data
      * @param $adjustment
-     * @return ResultElement
+     * @return AbstractResultElement
      */
-    protected function adjustAmounts(AbstractResultElement $data, $adjustment)
+    protected function adjustAmounts(AbstractResultElement $data, BigDecimal $adjustment)
     {
         $arrayCopy = $data->getArrayCopy();
         if ($data instanceof TaxResultElement) {
