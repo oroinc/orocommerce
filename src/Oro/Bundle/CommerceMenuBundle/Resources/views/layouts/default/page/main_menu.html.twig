@@ -1,7 +1,7 @@
 {% block _header_row_widget %}
     {% set attr = layout_attr_defaults(attr, {
         'data-page-component-module': 'orocommercemenu/default/js/components/header-row',
-        '~class': ' header-row'
+        '~class': ' header-row' ~ (blocks.header_row.children|length > 2 ? ' header-row--from-left')
     }) %}
 
     {% if isMobileVersion() %}
