@@ -49,6 +49,56 @@ class ProductVariantAvailabilityProvider
      */
     public function getVariantFieldsWithAvailability(Product $configurableProduct, array $variantParameters = [])
     {
+        $availableVariants = $this->getVariantFields($configurableProduct);
+
+        foreach ($variantParameters as $variantField => $variantValue) {
+            $this->filterVariants($availableVariants, $configurableProduct, $variantParameters, $variantField);
+        }
+
+        return $availableVariants;
+    }
+
+    /**
+     * @param array $availableVariants
+     * @param Product $configurableProduct
+     * @param array $variantParameters
+     * @param string $currentField
+     */
+    protected function filterVariants(
+        &$availableVariants,
+        Product $configurableProduct,
+        $variantParameters,
+        $currentField
+    ) {
+        $currentVariants = $this->getVariantFields(
+            $configurableProduct,
+            [
+                $currentField => $variantParameters[$currentField]
+            ]
+        );
+
+        foreach ($availableVariants as $variantField => &$variantValues) {
+            if ($variantField === $currentField) {
+                continue;
+            }
+
+            array_walk(
+                $variantValues,
+                function (&$item, $key, $currentValues) {
+                    $item = $item && $currentValues[$key];
+                },
+                $currentVariants[$variantField]
+            );
+        }
+    }
+
+    /**
+     * @param Product $configurableProduct
+     * @param array $variantParameters
+     * @return array
+     */
+    protected function getVariantFields(Product $configurableProduct, $variantParameters = [])
+    {
         $variantFields = $configurableProduct->getVariantFields();
 
         $availableSimpleProducts = $this->getSimpleProductsByVariantFields(
