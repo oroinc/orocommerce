@@ -1,9 +1,4 @@
 <?php
-/**
- * Date: 12/26/16
- *
- * @author Portey Vasil <portey@gmail.com>
- */
 
 namespace Oro\Bundle\ShippingBundle\Form\EventSubscriber;
 
@@ -44,6 +39,9 @@ class DestinationCollectionTypeSubscriber implements EventSubscriberInterface
         ];
     }
 
+    /**
+     * @param FormEvent $event
+     */
     public function preSubmit(FormEvent $event)
     {
         $data = $event->getData();
