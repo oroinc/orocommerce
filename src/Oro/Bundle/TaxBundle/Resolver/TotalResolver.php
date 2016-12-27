@@ -89,7 +89,7 @@ class TotalResolver implements ResolverInterface
 
     /**
      * @param AbstractResultElement $data
-     * @param $adjustment
+     * @param BigDecimal $adjustment
      * @return AbstractResultElement
      */
     protected function adjustAmounts(AbstractResultElement $data, BigDecimal $adjustment)
