@@ -102,8 +102,6 @@ class AjaxLineItemControllerAclTest extends WebTestCase
 
     public function testAddProductsToNewMassAction()
     {
-        $this->markTestSkipped('Enable in BB-5144');
-
         $this->client->request(
             'GET',
             $this->getUrl(
