@@ -29,13 +29,7 @@ class LineItemController extends RestController implements ClassResourceInterfac
      *      description="Delete Line Item",
      *      resource=true
      * )
-     * @Acl(
-     *      id="oro_shopping_list_line_item_frontend_delete",
-     *      type="entity",
-     *      class="OroShoppingListBundle:LineItem",
-     *      permission="DELETE",
-     *      group_name="commerce"
-     * )
+     * @AclAncestor("oro_shopping_list_frontend_update")
      *
      * @param int $id
      *
