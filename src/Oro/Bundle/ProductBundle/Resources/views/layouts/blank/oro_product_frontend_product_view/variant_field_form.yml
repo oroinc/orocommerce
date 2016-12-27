@@ -1,5 +1,7 @@
 layout:
     actions:
+        - '@setBlockTheme':
+            themes: 'variant_field_form.html.twig'
         - '@addTree':
             items:
                 variant_field_form:
