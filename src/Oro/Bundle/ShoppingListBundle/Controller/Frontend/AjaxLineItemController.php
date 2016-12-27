@@ -12,7 +12,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionDispatcher;
-use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
@@ -147,7 +146,7 @@ class AjaxLineItemController extends Controller
      * @param string $gridName
      * @param string $actionName
      *
-     * @return JsonResponse
+     * @return array
      */
     public function addProductsToNewMassAction(Request $request, $gridName, $actionName)
     {
