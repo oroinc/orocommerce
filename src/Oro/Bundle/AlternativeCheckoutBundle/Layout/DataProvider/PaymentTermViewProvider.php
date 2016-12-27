@@ -33,7 +33,7 @@ class PaymentTermViewProvider
 
     /**
      * @param PaymentContextInterface $context
-     * @return \array|null
+     * @return array|null
      */
     public function getView(PaymentContextInterface $context)
     {

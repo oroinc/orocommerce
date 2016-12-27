@@ -366,6 +366,7 @@ services:
         arguments:
             - '@oro_entity.entity_field_provider'
             - '@property_accessor'
+            - '@oro_payment_term.provider.payment_term_association'
 
     oro_checkout.model.action.create_order:
         class: 'Oro\Bundle\CheckoutBundle\Model\Action\CreateOrder'
