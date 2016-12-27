@@ -54,7 +54,7 @@ class ProductController extends Controller
                 'product' => $product,
             ],
             'product_type' => $product->getType(),
-            'attribute_family' => $product->getAttributeFamily()->getCode(),
+            'attribute_family' => $product->getAttributeFamily(),
         ];
     }
 
