@@ -49,6 +49,7 @@ class FrontendVariantFiledType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'preSetData']);
     }
 
     /**
@@ -81,12 +82,19 @@ class FrontendVariantFiledType extends AbstractType
             return;
         }
 
+        $fieldsToSearch = $data;// [];
+//        foreach ($data as $name => $value) {
+//            if ('' !== $value) {
+//                $fieldsToSearch[$name] = $value;
+//            }
+//        }
+
         $class = ClassUtils::getClass($product);
 
         $variantFieldData = $this->customFieldProvider->getEntityCustomFields($class);
 
         $variantAvailability = $this->productVariantAvailabilityProvider
-            ->getVariantFieldsWithAvailability($product, $data);
+            ->getVariantFieldsWithAvailability($product, $fieldsToSearch);
 
         foreach ($product->getVariantFields() as $fieldName) {
             list($type, $fieldOptions) = $this->prepareFieldByType(
@@ -140,13 +148,14 @@ class FrontendVariantFiledType extends AbstractType
             case 'enum':
                 $options = $this->getEnumOptions($class, $fieldName);
                 $options['disabled_values'] = $this->getEnumDisabledValues($availability);
+//                $options['non_default_options'] = $options['disabled_values'];
 
                 return [FrontendVariantEnumSelectType::NAME, $options];
             case 'boolean':
                 $options = $this->getBooleanOptions();
-                $options = $this->getBooleanDisabledValues($options, $availability);
+                $options['choice_attr'] = $this->getBooleanDisabledValues($availability);
 
-                return ['choice', $options];
+                return [FrontendVariantBooleanType::NAME, $options];
             default:
                 throw new \LogicException(
                     sprintf(
@@ -206,20 +215,17 @@ class FrontendVariantFiledType extends AbstractType
     /**
      * Returns name of fields which will be disabled
      *
-     * @param array $options
      * @param array $availability
-     * @return array
+     * @return \Closure
      */
-    private function getBooleanDisabledValues(array $options, array $availability)
+    private function getBooleanDisabledValues(array $availability)
     {
         $availableVariants = array_filter($availability);
 
-        $options['choice_attr'] = function ($val, $key, $index) use ($availableVariants) {
+        return function ($val, $key, $index) use ($availableVariants) {
             $disabled = !array_key_exists($key, $availableVariants);
 
             return $disabled ? ['disabled' => 'disabled'] : [];
         };
-
-        return $options;
     }
 }

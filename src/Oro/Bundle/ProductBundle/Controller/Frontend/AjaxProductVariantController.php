@@ -30,6 +30,8 @@ class AjaxProductVariantController extends Controller
         $productFormDataProvider = $this->get('oro_product.layout.data_provider.product_form');
         $productVariantForm = $productFormDataProvider->getVariantFieldsForm($product);
 
+        $productVariantForm->handleRequest($request);
+
         $content = $this->get('oro_layout.layout_manager')->render(
             [
                 'data' => ['product' => $product],
@@ -54,14 +56,15 @@ class AjaxProductVariantController extends Controller
 
         $fieldsToSearch = [];
         foreach ($variantFields as $name => $value) {
-            if ($productVariantForm->has($name)) {
+            if (/*'' !== $value && */$productVariantForm->has($name)) {
                 $fieldsToSearch[$name] = $value;
             }
         }
 
         try {
-            $variantProduct = $productVariantAvailabilityProvider->getSimpleProductByVariantFields($product, $fieldsToSearch);
-            $response['data']['id'] = $product->getId();
+            $variantProduct = $productVariantAvailabilityProvider
+                ->getSimpleProductByVariantFields($product, $fieldsToSearch);
+            $response['data']['id'] = $variantProduct->getId();
         } catch (\InvalidArgumentException $e) {
             //
         }

@@ -75,7 +75,8 @@ define(function(require) {
 
         updateVariantForm: function(formBlock) {
             var form = $(formBlock).find('form');
-            this.getElement('form').replaceWith(form);
+            this.getElement('variantForm').replaceWith(form);
+            this.$el.inputWidget('seekAndCreate');
             this.undelegateElementsEvents();
             this.clearElementsCache();
             this.delegateElementsEvents();
