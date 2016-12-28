@@ -22,7 +22,7 @@ Feature: Applying shipping rules
     And Admin User edited "Shipping Rule 1" with next data:
       | Enabled  | true    |
       | Currency | USD     |
-      | Country1 | Germany |
+      | Country | Germany |
     # specific for community edition
     And Currency is set to EUR
     When Buyer is again on Shipping Method Checkout step on "Shopping List 1"
@@ -33,7 +33,7 @@ Feature: Applying shipping rules
     And Admin User edited "Shipping Rule 1" with next data:
       | Enabled  | true    |
       | Currency | EUR     |
-      | Country1 | Ukraine |
+      | Country | Ukraine |
     When Buyer is again on Shipping Method Checkout step on "Shopping List 1"
     Then There is no shipping method available for this order
 
