@@ -36,7 +36,7 @@ class CheckoutGridListener
      * @var CheckoutRepository
      */
     protected $checkoutRepository;
-    
+
     /**
      * @var TotalProcessorProvider
      */

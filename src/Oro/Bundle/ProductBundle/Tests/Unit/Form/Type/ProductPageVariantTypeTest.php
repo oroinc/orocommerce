@@ -11,8 +11,7 @@ use Oro\Bundle\ProductBundle\Form\Type\ProductPageVariantType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Oro\Bundle\ProductBundle\Tests\Unit\ContentVariant\Stub\ContentVariantStub;
 use Oro\Bundle\ScopeBundle\Form\Type\ScopeCollectionType;
-use Oro\Bundle\WebCatalogBundle\Form\Type\SystemPageVariantType;
-use Oro\Bundle\WebCatalogBundle\Tests\Unit\Form\Type\Stub\ScopeCollectionTypeStub;
+use Oro\Bundle\ScopeBundle\Tests\Unit\Form\Type\Stub\ScopeCollectionTypeStub;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
@@ -25,7 +24,7 @@ class ProductPageVariantTypeTest extends FormIntegrationTestCase
     use EntityTrait;
 
     /**
-     * @var SystemPageVariantType
+     * @var ProductPageVariantType
      */
     protected $type;
 

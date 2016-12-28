@@ -477,6 +477,38 @@ class QuoteControllerTest extends WebTestCase
                     ],
                 ],
             ],
+            'account1 user3 (AccountUser:DEEP)' => [
+                'input' => [
+                    'qid' => LoadQuoteData::QUOTE9,
+                    'login' => LoadUserData::PARENT_ACCOUNT_USER1,
+                    'password' => LoadUserData::PARENT_ACCOUNT_USER1,
+                ],
+                'expected' => [
+                    'createOrderButton' => false,
+                    'columns' => [
+                        [
+                            'label' => 'oro.frontend.sale.quote.qid.label',
+                            'property' => 'qid',
+                        ],
+                        [
+                            'label' => 'oro.frontend.sale.quote.valid_until.label',
+                            'property' => 'valid_until',
+                        ],
+                        [
+                            'label' => 'oro.sale.quote.po_number.label',
+                            'property' => 'po_number',
+                        ],
+                        [
+                            'label' => 'oro.sale.quote.ship_until.label',
+                            'property' => 'ship_until',
+                        ],
+                        [
+                            'label' => 'oro.paymentterm.entity_label',
+                            'property' => 'payment_term_7c4f1e8e.label',
+                        ],
+                    ],
+                ],
+            ],
         ];
     }
 

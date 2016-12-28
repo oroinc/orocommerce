@@ -16,7 +16,7 @@ class PlaceholderFilterTest extends \PHPUnit_Framework_TestCase
 
         $securityFacade->expects($this->once())
             ->method('isGranted')
-            ->with('oro_shopping_list_line_item_frontend_add');
+            ->with('oro_shopping_list_frontend_update');
 
         $placeholderFilter = new PlaceholderFilter($securityFacade);
         $placeholderFilter->userCanCreateLineItem();

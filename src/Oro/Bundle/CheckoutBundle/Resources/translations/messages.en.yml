@@ -189,3 +189,7 @@ oro:
         method_type:
             sidebar:
                 label: '<div>%translatedMethodType%: <div><strong>%price%</strong></div></div>'
+
+        frontend:
+            quote:
+                submit_to_order: 'Accept and Submit to Order'

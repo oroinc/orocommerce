@@ -106,11 +106,6 @@ class ContentNodeType extends AbstractType
                     ]
                 );
             }
-
-            $defaultVariant = $data->getDefaultVariant();
-            if ($defaultVariant) {
-                $defaultVariant->resetScopes();
-            }
         }
     }
 

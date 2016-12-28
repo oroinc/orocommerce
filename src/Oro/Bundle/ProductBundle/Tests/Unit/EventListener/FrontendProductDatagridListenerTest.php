@@ -130,10 +130,16 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
                             'type' => LocalizedValueProperty::NAME,
                             'data_name' => 'shortDescriptions',
                         ],
+                        'type' => ['~']
                     ],
                     'columns' => [
                         'image' => ['label' => 'oro.product.image.label'],
                         'shortDescription' => ['label' => 'oro.product.short_descriptions.label'],
+                    ],
+                    'source' => [
+                        'query' => [
+                            'select' => ['text.type as type']
+                        ]
                     ]
                 ]
             ],

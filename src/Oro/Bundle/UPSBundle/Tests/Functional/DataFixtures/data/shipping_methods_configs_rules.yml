@@ -1,0 +1,118 @@
+ups.shipping_rule.1:
+    rule:
+        enabled: true
+        sortOrder: 0
+        expression: 'true'
+    currency: 'EUR'
+    destinations:
+        -
+            postalCodes:
+                -
+                    name: '12345'
+            country: 'US'
+            region: 'NY'
+ups.shipping_rule.2:
+    rule:
+        enabled: true
+        sortOrder: 1
+        expression: 'true'
+    currency: 'EUR'
+    destinations:
+        -
+            country: 'US'
+        -
+            country: 'FR'
+            region: 'FR-75'
+ups.shipping_rule.3:
+    rule:
+        enabled: false
+        sortOrder: 2
+        expression: 'true'
+    currency: 'EUR'
+    destinations:
+        -
+            country: 'US'
+            region: 'NY'
+        -
+            country: 'FR'
+ups.shipping_rule.4:
+    rule:
+        enabled: true
+        sortOrder: 2
+        expression: 'true'
+    currency: 'EUR'
+    destinations:
+        -
+            postalCodes:
+                -
+                    name: '12345'
+                -
+                    name: '12346'
+            country: 'US'
+            region: 'NY'
+ups.shipping_rule.5:
+    rule:
+        enabled: true
+        sortOrder: 2
+        expression: 'true'
+    currency: 'EUR'
+ups.shipping_rule.6:
+    rule:
+        enabled: true
+        sortOrder: 2
+        expression: 'true'
+    currency: 'EUR'
+    destinations:
+        -
+            country: 'FR'
+ups.shipping_rule.7:
+    rule:
+        enabled: true
+        sortOrder: 3
+        expression: 'true'
+    currency: 'EUR'
+    destinations:
+        -
+            postalCodes:
+                -
+                    name: '12346'
+            country: 'US'
+            region: 'NY'
+ups.shipping_rule.8:
+    rule:
+        enabled: true
+        sortOrder: 3
+        expression: 'true'
+    currency: 'EUR'
+    destinations:
+        -
+            country: 'US'
+            region: 'AL'
+ups.shipping_rule.9:
+    rule:
+        enabled: true
+        sortOrder: 0
+        expression: 'true'
+    currency: 'USD'
+ups.shipping_rule.10:
+    rule:
+        enabled: true
+        sortOrder: 0
+        expression: 'true'
+    currency: 'UAH'
+ups.shipping_rule.11:
+    rule:
+        enabled: false
+        sortOrder: 0
+        expression: 'true'
+    currency: 'UAH'
+ups.shipping_rule.12:
+    rule:
+        enabled: true
+        sortOrder: 0
+        expression: 'true'
+    currency: 'UAH'
+    destinations:
+        -
+            country: 'US'
+            region: 'NY'

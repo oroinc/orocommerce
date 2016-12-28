@@ -7,14 +7,15 @@
         {%- endif -%}
         <ul>
     {% endif %}
-            {%- for type in methodData.types -%}
+    {%- for type in methodData.types -%}
+        {%- if type.enabled -%}
             <li>{{ get_shipping_method_type_label(methodData.identifier, type.identifier)|trans }}
                 {%- if type.options.surcharge is not empty -%}
-                &nbsp;({{ 'oro.ups.form.shipping_method_config_options.surcharge.label'|trans}}: {{ type.options.surcharge|oro_format_currency({'currency': currency}) }})
+                    &nbsp;({{ 'oro.ups.form.shipping_method_config_options.surcharge.label'|trans}}: {{ type.options.surcharge|oro_format_currency({'currency': currency}) }})
                 {%- endif -%}
             </li>
-            {%- endfor -%}
-
+        {%- endif -%}
+    {%- endfor -%}
     {% if methodLabel|length > 0 %}
         </ul>
     </li>

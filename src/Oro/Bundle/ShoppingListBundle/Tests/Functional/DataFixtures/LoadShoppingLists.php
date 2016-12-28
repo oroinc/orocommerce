@@ -19,6 +19,7 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
     const SHOPPING_LIST_4 = 'shopping_list_4';
     const SHOPPING_LIST_5 = 'shopping_list_5';
     const SHOPPING_LIST_6 = 'shopping_list_6';
+    const SHOPPING_LIST_7 = 'shopping_list_7';
 
     /**
      * @var array
@@ -44,25 +45,15 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
      */
     public function load(ObjectManager $manager)
     {
-        $accountUser = $this->getAccountUser($manager);
-        $lists = $this->getData();
-        foreach ($lists as $listLabel) {
+        foreach ($this->getData() as $listLabel => $definition) {
             $isCurrent = $listLabel === self::SHOPPING_LIST_2;
             $this->createShoppingList(
                 $manager,
-                $accountUser,
+                $this->getAccountUser($manager, $definition['accountUser']),
                 $listLabel,
                 $isCurrent
             );
         }
-        $accountUser = $this->getReference(LoadAccountUserData::LEVEL_1_1_EMAIL);
-        $this->createShoppingList(
-            $manager,
-            $accountUser,
-            self::SHOPPING_LIST_6,
-            false
-        );
-
         $manager->flush();
     }
 
@@ -99,14 +90,15 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
 
     /**
      * @param ObjectManager $manager
+     * @param string $email
      *
      * @return AccountUser
      * @throws \LogicException
      */
-    protected function getAccountUser(ObjectManager $manager)
+    protected function getAccountUser(ObjectManager $manager, $email)
     {
         $accountUser = $manager->getRepository('OroCustomerBundle:AccountUser')
-            ->findOneBy(['username' => LoadBaseAccountUserData::AUTH_USER]);
+            ->findOneBy(['email' => $email]);
 
         if (!$accountUser) {
             throw new \LogicException('Test account user not loaded');
@@ -121,11 +113,27 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
     protected function getData()
     {
         return [
-            self::SHOPPING_LIST_1,
-            self::SHOPPING_LIST_2,
-            self::SHOPPING_LIST_3,
-            self::SHOPPING_LIST_4,
-            self::SHOPPING_LIST_5
+            self::SHOPPING_LIST_1 => [
+                'accountUser' => LoadBaseAccountUserData::AUTH_USER,
+            ],
+            self::SHOPPING_LIST_2 => [
+                'accountUser' => LoadBaseAccountUserData::AUTH_USER,
+            ],
+            self::SHOPPING_LIST_3 => [
+                'accountUser' => LoadBaseAccountUserData::AUTH_USER,
+            ],
+            self::SHOPPING_LIST_4 => [
+                'accountUser' => LoadBaseAccountUserData::AUTH_USER,
+            ],
+            self::SHOPPING_LIST_5 => [
+                'accountUser' => LoadBaseAccountUserData::AUTH_USER,
+            ],
+            self::SHOPPING_LIST_6 => [
+                'accountUser' => LoadAccountUserData::LEVEL_1_1_EMAIL,
+            ],
+            self::SHOPPING_LIST_7 => [
+                'accountUser' => LoadAccountUserData::LEVEL_1_EMAIL,
+            ],
         ];
     }
 

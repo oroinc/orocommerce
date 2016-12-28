@@ -9,7 +9,9 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\RedirectBundle\Entity\SlugAwareInterface;
 use Oro\Bundle\RedirectBundle\Entity\SlugAwareTrait;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
+use Oro\Bundle\ScopeBundle\Entity\ScopeCollectionAwareInterface;
 use Oro\Bundle\WebCatalogBundle\Model\ExtendContentVariant;
+use Oro\Component\WebCatalog\Entity\ContentNodeAwareInterface;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 
 /**
@@ -31,7 +33,11 @@ use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
  * @ORM\Table(name="oro_web_catalog_variant")
  * @Config
  */
-class ContentVariant extends ExtendContentVariant implements ContentVariantInterface, SlugAwareInterface
+class ContentVariant extends ExtendContentVariant implements
+    ContentVariantInterface,
+    ContentNodeAwareInterface,
+    SlugAwareInterface,
+    ScopeCollectionAwareInterface
 {
     use SlugAwareTrait;
 
