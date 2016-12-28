@@ -265,8 +265,8 @@
     }
 
     &__close {
-      right: 0;
-      margin-top: 0;
+      right: 10px;
+      margin-top: 10px;
     }
 
     &__images {
@@ -274,7 +274,6 @@
 
       .slick-list {
         max-width: 100vh;
-        border-radius: 0 16px 0 0;
         border: 0;
       }
 
@@ -289,7 +288,7 @@
 
     &__wrapper {
       max-width: 100vh;
-      max-height: 100vh;
+      max-height: 100%;
     }
   }
 }
