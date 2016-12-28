@@ -6,6 +6,8 @@ layout:
             items:
                 __variant_field_form:
                     blockType: container
+                    options:
+                        visible: '=data["product"].isSimple() || data["oro_product_variant"].hasProductAnyAvailableVariant(data["product"])'
                 __variant_field_form_start:
                     blockType: form_start
                     options:
