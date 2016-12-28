@@ -23,6 +23,7 @@ class ProductStepOneType extends AbstractType
             'data_class'           => Product::class,
             'validation_groups'    => ['product_create_step_one'],
             'enable_attribute_family' => true,
+            'ownership_disabled' => true,
         ]);
     }
 

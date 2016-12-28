@@ -385,6 +385,20 @@ class Product extends ExtendProduct implements
     protected $variantLinks;
 
     /**
+     * @var ProductVariantLink
+     *
+     * @ORM\OneToMany(targetEntity="ProductVariantLink", mappedBy="product", cascade={"ALL"}, orphanRemoval=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $parentVariantLink;
+
+    /**
      * @var Collection|LocalizedFallbackValue[]
      *
      * @ORM\ManyToMany(

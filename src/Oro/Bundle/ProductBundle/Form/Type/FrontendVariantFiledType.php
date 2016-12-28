@@ -4,15 +4,16 @@ namespace Oro\Bundle\ProductBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\Options;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Doctrine\Common\Util\ClassUtils;
 
-use Oro\Bundle\EntityExtendBundle\Form\Type\EnumSelectType;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Provider\CustomFieldProvider;
+use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 
 class FrontendVariantFiledType extends AbstractType
 {
@@ -21,16 +22,24 @@ class FrontendVariantFiledType extends AbstractType
     /** @var CustomFieldProvider */
     protected $customFieldProvider;
 
+    /** @var ProductVariantAvailabilityProvider */
+    protected $productVariantAvailabilityProvider;
+
     /** @var string */
     protected $productClass;
 
     /**
      * @param CustomFieldProvider $customFieldProvider
+     * @param ProductVariantAvailabilityProvider $productVariantAvailabilityProvider
      * @param string $productClass
      */
-    public function __construct(CustomFieldProvider $customFieldProvider, $productClass)
-    {
+    public function __construct(
+        CustomFieldProvider $customFieldProvider,
+        ProductVariantAvailabilityProvider $productVariantAvailabilityProvider,
+        $productClass
+    ) {
         $this->customFieldProvider = $customFieldProvider;
+        $this->productVariantAvailabilityProvider = $productVariantAvailabilityProvider;
         $this->productClass = (string)$productClass;
     }
 
@@ -39,8 +48,25 @@ class FrontendVariantFiledType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'preSetData']);
+    }
+
+    /**
+     * @param FormEvent $event
+     */
+    public function preSetData(FormEvent $event)
+    {
+        $data = $event->getData();
+
+        if ($data === null) {
+            return;
+        }
+
+        $form = $event->getForm();
+
         /** @var Product $product */
-        $product = $options['product'];
+        $product = $form->getConfig()->getOption('product');
 
         if (!is_a($product, $this->productClass)) {
             throw new \InvalidArgumentException(
@@ -56,20 +82,19 @@ class FrontendVariantFiledType extends AbstractType
             return;
         }
 
+        $fieldsToSearch = $data;// [];
+//        foreach ($data as $name => $value) {
+//            if ('' !== $value) {
+//                $fieldsToSearch[$name] = $value;
+//            }
+//        }
+
         $class = ClassUtils::getClass($product);
 
         $variantFieldData = $this->customFieldProvider->getEntityCustomFields($class);
 
-        // FIXME: test workaround
-        $variantAvailability = [];
-        foreach ($product->getVariantFields() as $fieldName) {
-            $variantAvailability[$fieldName] = [
-                '1' => true,
-                '2' => false,
-                '3' => true,
-            ];
-        }
-        // FIXME: END
+        $variantAvailability = $this->productVariantAvailabilityProvider
+            ->getVariantFieldsWithAvailability($product, $fieldsToSearch);
 
         foreach ($product->getVariantFields() as $fieldName) {
             list($type, $fieldOptions) = $this->prepareFieldByType(
@@ -80,7 +105,7 @@ class FrontendVariantFiledType extends AbstractType
             );
             $fieldOptions['label'] = $variantFieldData[$fieldName]['label'];
 
-            $builder->add($fieldName, $type, $fieldOptions);
+            $form->add($fieldName, $type, $fieldOptions);
         }
     }
 
@@ -123,13 +148,14 @@ class FrontendVariantFiledType extends AbstractType
             case 'enum':
                 $options = $this->getEnumOptions($class, $fieldName);
                 $options['disabled_values'] = $this->getEnumDisabledValues($availability);
+//                $options['non_default_options'] = $options['disabled_values'];
 
                 return [FrontendVariantEnumSelectType::NAME, $options];
             case 'boolean':
                 $options = $this->getBooleanOptions();
-                $options = $this->getBooleanDisabledValues($options, $availability);
+                $options['choice_attr'] = $this->getBooleanDisabledValues($availability);
 
-                return ['choice', $options];
+                return [FrontendVariantBooleanType::NAME, $options];
             default:
                 throw new \LogicException(
                     sprintf(
@@ -189,20 +215,17 @@ class FrontendVariantFiledType extends AbstractType
     /**
      * Returns name of fields which will be disabled
      *
-     * @param array $options
      * @param array $availability
-     * @return array
+     * @return \Closure
      */
-    private function getBooleanDisabledValues(array $options, array $availability)
+    private function getBooleanDisabledValues(array $availability)
     {
         $availableVariants = array_filter($availability);
 
-        $options['choice_attr'] = function ($val, $key, $index) use ($availableVariants) {
+        return function ($val, $key, $index) use ($availableVariants) {
             $disabled = !array_key_exists($key, $availableVariants);
 
             return $disabled ? ['disabled' => 'disabled'] : [];
         };
-
-        return $options;
     }
 }

@@ -54,7 +54,6 @@ define(function(require) {
         },
 
         onVariantsLoaded: function(response) {
-            response = this.getResponseMock();
             if (!response.data) {
                 return;
             }
@@ -63,8 +62,8 @@ define(function(require) {
                 this.updateProductInfo(response.data.id);
             }
 
-            if (response.data.fields) {
-                this.updateVariants(response.data.fields);
+            if (response.data.form) {
+                this.updateVariantForm(response.data.form);
             }
 
             this.hideLoading();
@@ -74,36 +73,13 @@ define(function(require) {
             this.model.set('id', id);
         },
 
-        updateVariants: function(fields) {
-            this.getElement('variantFields').each(function() {
-                var name = this.name.replace(/.*\[/, '').replace(/\].*/, '');
-                var $field = $(this);
-                $field.find('option').each(function() {
-                    this.disabled = !fields[name][this.value];
-                });
-                $field.inputWidget('refresh');
-            });
-        },
-
-        getResponseMock: function() {
-            var fields = {};
-            this.getElement('variantFields').each(function() {
-                var name = this.name.replace(/.*\[/, '').replace(/\].*/, '');
-                fields[name] = {};
-                $(this).find('option').each(function() {
-                    fields[name][this.value] = this.disabled;
-                });
-            });
-
-            var id = this.model.get('id')*1;
-            id++;
-
-            return {
-                data: {
-                    id: id,
-                    fields: fields
-                }
-            };
+        updateVariantForm: function(formBlock) {
+            var form = $(formBlock).find('form');
+            this.getElement('variantForm').replaceWith(form);
+            this.$el.inputWidget('seekAndCreate');
+            this.undelegateElementsEvents();
+            this.clearElementsCache();
+            this.delegateElementsEvents();
         },
 
         showLoading: function() {

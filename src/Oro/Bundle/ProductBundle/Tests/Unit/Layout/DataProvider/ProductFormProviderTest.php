@@ -237,12 +237,12 @@ class ProductFormProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(FormView::class, $data);
     }
 
-    public function testGetVariantFieldsView()
+    public function testgetVariantFieldsFormView()
     {
         $product = new Product();
-        $formView = $this->getMock(FormView::class);
+        $formView = $this->createMock(FormView::class);
 
-        $expectedForm = $this->getMock(FormInterface::class);
+        $expectedForm = $this->createMock(FormInterface::class);
         $expectedForm->expects($this->once())
             ->method('createView')
             ->willReturn($formView);
@@ -252,7 +252,7 @@ class ProductFormProviderTest extends \PHPUnit_Framework_TestCase
             ->with(FrontendVariantFiledType::NAME)
             ->willReturn($expectedForm);
 
-        $data = $this->provider->getVariantFieldsView($product);
+        $data = $this->provider->getVariantFieldsFormView($product);
         $this->assertInstanceOf(FormView::class, $data);
     }
 }
