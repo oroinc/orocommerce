@@ -392,6 +392,9 @@ class Product extends ExtendProduct implements
      *      defaultValues={
      *          "dataaudit"={
      *              "auditable"=true
+     *          },
+     *          "importexport"={
+     *               "excluded"=true
      *          }
      *      }
      * )
