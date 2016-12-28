@@ -3,20 +3,14 @@
 namespace Oro\Bundle\ProductBundle\Tests\Functional\ImportExport;
 
 use Akeneo\Bundle\BatchBundle\Job\DoctrineJobRepository as BatchJobRepository;
-
 use Doctrine\Common\Persistence\ObjectRepository;
-use Doctrine\ORM\EntityManager;
-
 use Doctrine\ORM\EntityRepository;
-use Symfony\Component\DomCrawler\Form;
-use Symfony\Component\Yaml\Yaml;
-
-use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ImportExportBundle\Job\JobExecutor;
 use Oro\Bundle\ImportExportBundle\Processor\ProcessorRegistry;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SecurityBundle\Authentication\Token\OrganizationToken;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\ProductBundle\Entity\Product;
+use Symfony\Component\DomCrawler\Form;
 
 abstract class AbstractImportExportTest extends WebTestCase
 {

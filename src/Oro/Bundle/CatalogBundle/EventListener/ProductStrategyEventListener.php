@@ -9,10 +9,19 @@ use Oro\Bundle\ProductBundle\ImportExport\Event\ProductStrategyEvent;
 
 class ProductStrategyEventListener extends AbstractProductImportEventListener
 {
-    /** @var array */
+    /**
+     * @var array
+     */
     private $productsToAdd = [];
 
-    /** @var bool */
+    /**
+     * @var array|Category[]
+     */
+    private $changedCategories = [];
+
+    /**
+     * @var bool
+     */
     private $flushInProgress = false;
 
     /**
@@ -25,20 +34,20 @@ class ProductStrategyEventListener extends AbstractProductImportEventListener
             return;
         }
 
-        $categoryDefaultTitle = $rawData[self::CATEGORY_KEY];
+        $newCategory = $this->getCategoryByDefaultTitle($rawData[self::CATEGORY_KEY]);
         $product = $event->getProduct();
 
         if ($product->getId()) {
             $category = $this->getCategoryByProduct($product);
-            if ($category) {
+            if ($category && (!$newCategory || $newCategory->getId() !== $category->getId())) {
                 $category->removeProduct($product);
+                $this->changedCategories[$category->getId()] = $category;
             }
         }
 
-        $category = $this->getCategoryByDefaultTitle($categoryDefaultTitle);
-        if ($category) {
+        if ($newCategory && !$newCategory->hasProduct($product)) {
             // We can't add product to category directly due to doctrine2 bug
-            $this->productsToAdd[] = [$category, $product];
+            $this->productsToAdd[] = [$newCategory, $product];
         }
     }
 
@@ -50,15 +59,18 @@ class ProductStrategyEventListener extends AbstractProductImportEventListener
      */
     public function preFlush(PreFlushEventArgs $event)
     {
-        if ($this->flushInProgress || !$this->productsToAdd) {
+        if ($this->flushInProgress) {
             return;
         }
 
         $em = $event->getEntityManager();
 
-        $this->flushInProgress = true;
-        $em->flush();
-        $this->flushInProgress = false;
+        if ($this->changedCategories) {
+            $this->flushInProgress = true;
+            $em->flush($this->changedCategories);
+            $this->changedCategories = [];
+            $this->flushInProgress = false;
+        }
 
         /**
          * @var Category $category
@@ -79,6 +91,8 @@ class ProductStrategyEventListener extends AbstractProductImportEventListener
     public function onClear()
     {
         $this->productsToAdd = [];
+        $this->changedCategories = [];
+
         parent::onClear();
     }
 }
