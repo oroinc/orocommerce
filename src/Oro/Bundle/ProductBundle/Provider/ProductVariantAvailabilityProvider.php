@@ -57,6 +57,8 @@ class ProductVariantAvailabilityProvider
      */
     public function getVariantFieldsWithAvailability(Product $configurableProduct, array $variantParameters = [])
     {
+        $this->ensureProductTypeIsConfigurable($configurableProduct);
+
         $availableVariants = $this->getVariantFields($configurableProduct);
 
         foreach ($variantParameters as $variantField => $variantValue) {
@@ -188,6 +190,8 @@ class ProductVariantAvailabilityProvider
      */
     public function getSimpleProductsByVariantFields(Product $configurableProduct, array $variantParameters = [])
     {
+        $this->ensureProductTypeIsConfigurable($configurableProduct);
+
         /** @var ProductRepository $repository */
         $repository = $this->doctrineHelper->getEntityRepository(Product::class);
 
@@ -210,6 +214,7 @@ class ProductVariantAvailabilityProvider
      */
     public function getSimpleProductByVariantFields(Product $configurableProduct, array $variantParameters = [])
     {
+        $this->ensureProductTypeIsConfigurable($configurableProduct);
         $simpleProducts = $this->getSimpleProductsByVariantFields($configurableProduct, $variantParameters);
 
         if (count($simpleProducts) !== 1) {
@@ -217,5 +222,17 @@ class ProductVariantAvailabilityProvider
         }
 
         return $simpleProducts[0];
+    }
+
+    /**
+     * @param Product $product
+     * @throws \InvalidArgumentException
+     */
+    private function ensureProductTypeIsConfigurable(Product $product) {
+        if (!$product->isConfigurable()) {
+            throw new \InvalidArgumentException(
+                sprintf('Product with type "%s" expected, "%s" given', Product::TYPE_CONFIGURABLE, $product->getType())
+            );
+        }
     }
 }
