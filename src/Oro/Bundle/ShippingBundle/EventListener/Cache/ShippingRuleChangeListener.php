@@ -11,7 +11,6 @@ use Oro\Bundle\ShippingBundle\Provider\Cache\ShippingPriceCache;
 
 class ShippingRuleChangeListener
 {
-
     /**
      * @var  ShippingPriceCache
      */
