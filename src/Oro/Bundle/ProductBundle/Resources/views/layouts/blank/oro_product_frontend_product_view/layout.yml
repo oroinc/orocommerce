@@ -72,3 +72,7 @@ layout:
                                     product_view_description_container:
                                         product_view_line_item_container: ~
                         product_view_additional_container: ~
+    imports:
+        -
+            id: oro_product_variant_form
+            root: product_view_variant_field_container

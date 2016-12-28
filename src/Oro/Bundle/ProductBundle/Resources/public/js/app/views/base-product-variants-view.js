@@ -54,7 +54,6 @@ define(function(require) {
         },
 
         onVariantsLoaded: function(response) {
-            // response = this.getResponseMock();
             if (!response.data) {
                 return;
             }
@@ -63,8 +62,8 @@ define(function(require) {
                 this.updateProductInfo(response.data.id);
             }
 
-            if (response.data.fields) {
-                this.updateVariants(response.data.fields);
+            if (response.data.form) {
+                this.updateVariantForm(response.data.form);
             }
 
             this.hideLoading();
@@ -74,8 +73,11 @@ define(function(require) {
             this.model.set('id', id);
         },
 
-        updateVariants: function(fields) {
-            this.getElement('variantFields').replace(fields);
+        updateVariantForm: function(form) {
+            this.getElement('form').replaceWith(form);
+            this.undelegateElementsEvents();
+            this.clearElementsCache();
+            this.delegateElementsEvents();
         },
 
         showLoading: function() {

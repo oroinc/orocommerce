@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Symfony\Component\HttpFoundation\Response;
 
 class AjaxProductVariantController extends Controller
 {
@@ -22,17 +23,27 @@ class AjaxProductVariantController extends Controller
      *
      * @param Request $request
      * @param Product $product
-     * @return JsonResponse
+     * @return Response
      */
     public function getAvailableAction(Request $request, Product $product)
     {
         $productFormDataProvider = $this->get('oro_product.layout.data_provider.product_form');
         $productVariantForm = $productFormDataProvider->getVariantFieldsForm($product);
 
-        $productVariantForm->handleRequest($request);
+        $content = $this->get('oro_layout.layout_manager')->render(
+            [
+                'data' => ['product' => $product],
+                'form' => $productVariantForm,
+                'action' => 'oro_product_frontend_product_variants',
+                'widget_container' => 'ajax'
+            ],
+            ['form']
+        );
 
-        return [
-            'fields' => $productVariantForm->createView()
-        ];
+        return new JsonResponse([
+            'data' => [
+                'form' => $content,
+            ]
+        ]);
     }
 }

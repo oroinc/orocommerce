@@ -1,0 +1,10 @@
+layout:
+    actions:
+        - '@add':
+            id: product_view_variant_field_container
+            blockType: container
+            parentId: root
+    imports:
+        -
+            id: oro_product_variant_form
+            root: product_view_variant_field_container
