@@ -70,7 +70,7 @@ class ShoppingListRepositoryTest extends WebTestCase
         $shoppingList = $this->getRepository()
             ->findByUserAndId($this->aclHelper, $shoppingListReference->getId());
         $this->assertInstanceOf(ShoppingList::class, $shoppingList);
-        $this->assertEquals($this->getAccountUser(), $shoppingList->getAccountUser());
+        $this->assertSame($this->getAccountUser(), $shoppingList->getAccountUser());
     }
 
     /**
