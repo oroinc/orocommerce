@@ -10,9 +10,9 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class FrontendVariantEnumSelectType extends AbstractType
+class FrontendVariantBooleanType extends AbstractType
 {
-    const NAME = 'oro_product_frontend_variant_enum_select';
+    const NAME = 'oro_product_frontend_variant_boolean';
 
     /**
      * @inheritDoc
@@ -90,6 +90,6 @@ class FrontendVariantEnumSelectType extends AbstractType
      */
     public function getParent()
     {
-        return EnumSelectType::NAME;
+        return 'choice';
     }
 }

@@ -15,7 +15,7 @@ define(function(require) {
 
         elements: {
             variantForm: '[data-name="form__oro-product-frontend-variant-field"]',
-            variantFields: ['variantForm', '[data-name^="field__"]']
+            variantFields: ['variantForm', ':input[data-name]']
         },
 
         elementsEvents: {
@@ -54,28 +54,17 @@ define(function(require) {
         },
 
         onVariantsLoaded: function(response) {
-            // response = this.getResponseMock();
             if (!response.data) {
                 return;
             }
 
-            if (response.data.id) {
-                this.updateProductInfo(response.data.id);
-            }
-
-            if (response.data.fields) {
-                this.updateVariants(response.data.fields);
-            }
+            this.updateProductInfo(response.data.id);
 
             this.hideLoading();
         },
 
         updateProductInfo: function(id) {
-            this.model.set('id', id);
-        },
-
-        updateVariants: function(fields) {
-            this.getElement('variantFields').replace(fields);
+            this.model.set('id', id ? parseInt(id, 10) : 0);
         },
 
         showLoading: function() {
