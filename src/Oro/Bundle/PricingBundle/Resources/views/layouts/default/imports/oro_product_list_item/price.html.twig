@@ -39,12 +39,14 @@
 {% block __oro_product_list_item__product_price_value_widget %}
     <div {{ block('block_attributes') }}
             data-name="price">
-        {{ 'oro.pricing.frontend.pricelist.index.your_price'|trans }}
-        {% set firstPrice = productPrices|first %}
-        <div class="product-item__price_block">
-            <span class="fs16 blue" data-name="price-value">{{ firstPrice ? firstPrice.formatted_price }}</span>
-            / <span data-name="unit">{{ firstPrice ? firstPrice.formatted_unit }}</span>
-        </div>
+        {% if not is_configurable_product_type(product.type) %}
+            {{ 'oro.pricing.frontend.pricelist.index.your_price'|trans }}
+            {% set firstPrice = productPrices|first %}
+            <div class="product-item__price_block">
+                <span class="fs16 blue" data-name="price-value">{{ firstPrice ? firstPrice.formatted_price }}</span>
+                / <span data-name="unit">{{ firstPrice ? firstPrice.formatted_unit }}</span>
+            </div>
+        {% endif %}
     </div>
 {% endblock %}
 
