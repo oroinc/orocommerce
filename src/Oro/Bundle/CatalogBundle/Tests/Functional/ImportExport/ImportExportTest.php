@@ -79,6 +79,8 @@ class ImportExportTest extends AbstractImportExportTest
         /** @var CategoryRepository $categoryRepository */
         $categoryRepository = $this->getRepository(Category::class);
         $category = $categoryRepository->findOneByProduct($sku1Product);
+        $this->assertNotEmpty($categoryFirst);
+        $this->assertNotEmpty($category);
         $this->assertEquals($categoryFirst->getId(), $category->getId());
 
         // Reimport after change category
