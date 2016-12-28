@@ -178,7 +178,12 @@
     {% set shippingInformation %}
 
         {% if entity.shippingMethod and entity.shippingMethodType and entity.estimatedShippingCost %}
-            {% set methodLabel = 'oro.shipping.method_type.backend.label'|transchoice(2, {
+            {% set methodLabel = get_shipping_method_label(entity.shippingMethod) %}
+            {% set choice = 2 %}
+            {% if methodLabel is empty %}
+                {% set choice = 1 %}
+            {% endif %}
+            {% set methodLabel = 'oro.shipping.method_type.backend.label'|transchoice(choice, {
                 '%translatedMethodType%': get_shipping_method_type_label(entity.shippingMethod, entity.shippingMethodType)|trans,
                 '%translatedMethod%': get_shipping_method_label(entity.shippingMethod)|trans,
                 '%price%': entity.estimatedShippingCost|oro_format_price
