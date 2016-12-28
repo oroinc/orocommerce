@@ -142,6 +142,13 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
     {
         $queryBuilder = $this->entityRepository->getSearchQueryBuilder($search, $firstResult, $maxResults);
         $this->productManager->restrictQueryBuilder($queryBuilder, $params);
+
+        // Configurable products require additional option selection is not implemented yet
+        // Thus we need to hide configurable products from the product drop-downs
+        // @TODO remove after configurable products require additional option selection implementation
+        $queryBuilder->andWhere($queryBuilder->expr()->neq('p.type', ':configurable_type'))
+            ->setParameter('configurable_type', Product::TYPE_CONFIGURABLE);
+
         $query = $this->aclHelper->apply($queryBuilder);
 
         return $query->getResult();
