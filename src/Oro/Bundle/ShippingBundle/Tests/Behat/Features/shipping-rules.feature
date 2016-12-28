@@ -22,7 +22,7 @@ Feature: Applying shipping rules
     And Admin User edited "Shipping Rule 1" with next data:
       | Enabled  | true    |
       | Currency | USD     |
-      | Country  | Germany |
+      | Country1 | Germany |
     # specific for community edition
     And Currency is set to EUR
     When Buyer is again on Shipping Method Checkout step on "Shopping List 1"
@@ -33,7 +33,7 @@ Feature: Applying shipping rules
     And Admin User edited "Shipping Rule 1" with next data:
       | Enabled  | true    |
       | Currency | EUR     |
-      | Country  | Ukraine |
+      | Country1 | Ukraine |
     When Buyer is again on Shipping Method Checkout step on "Shopping List 1"
     Then There is no shipping method available for this order
 
@@ -41,7 +41,7 @@ Feature: Applying shipping rules
     Given Admin User created "Shipping Rule 2" with next data:
       | Enabled       | true      |
       | Currency      | EUR       |
-      | Country       | Ukraine   |
+      | Country1      | Ukraine   |
       | Country2      | Germany   |
       | Price         | 2.5       |
       | Type          | Per Order |
@@ -53,7 +53,7 @@ Feature: Applying shipping rules
   Scenario: "Shipping 2F" > LIST OF ZIP CODES FOR SHIPPING RULE #3 CONTAINS ZIP CODE FOR ORDER. PRIORITY - MAJOR
     Given Admin User created "Shipping Rule 3" with next data:
       | Enabled       | true              |
-      | Country       | Ukraine           |
+      | Country1      | Ukraine           |
       | Country2      | Germany           |
       | Currency      | EUR               |
       | Sort Order    | 1                 |
@@ -80,7 +80,7 @@ Feature: Applying shipping rules
   Scenario: "Shipping 2H" > CHECK CORRECTNESS OF FLAT RATE TYPE = PER ITEM CALCULATION. PRIORITY - CRITICAL
     Given Admin User created "Shipping Rule 4" with next data:
       | Enabled       | true              |
-      | Country       | Ukraine           |
+      | Country1      | Ukraine           |
       | Country2      | Germany           |
       | Currency      | EUR               |
       | Sort Order    | 0                 |
@@ -103,7 +103,7 @@ Feature: Applying shipping rules
       | HandlingFee   | 1.5       |
     When Buyer is again on Shipping Method Checkout step on "Shopping List 1"
     And Buyer created order with next shipping address:
-      | Country         | Ukraine              |
+      | Country1        | Ukraine              |
       | City            | Kyiv                 |
       | State           | Kyïvs'ka mis'ka rada |
       | Zip/Postal Code | 01000                |
