@@ -177,10 +177,11 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
             $this->waitForAjax();
         }
 
-        if (in_array('Country2', $table->getColumn(0), true)) {
-            $form->fillField('Sort Order', '1');
-            $destinationAdd = $form->find('css', '.add-list-item');
-            $destinationAdd->click();
+        foreach ($table->getColumn(0) as $columnItem) {
+            if (false !== strpos($columnItem, 'Country')) {
+                $destinationAdd = $form->find('css', '.add-list-item');
+                $destinationAdd->click();
+            }
         }
 
         $form->fill($table);
