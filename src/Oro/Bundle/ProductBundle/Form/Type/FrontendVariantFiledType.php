@@ -11,6 +11,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Doctrine\Common\Util\ClassUtils;
 
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
+use Oro\Bundle\EntityExtendBundle\Form\Type\EnumSelectType;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Provider\CustomFieldProvider;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
@@ -49,13 +50,29 @@ class FrontendVariantFiledType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);
-        $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'preSetData']);
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'preSubmit']);
     }
 
     /**
      * @param FormEvent $event
      */
     public function preSetData(FormEvent $event)
+    {
+        $this->addVariantFields($event);
+    }
+
+    /**
+     * @param FormEvent $event
+     */
+    public function preSubmit(FormEvent $event)
+    {
+        $this->addVariantFields($event);
+    }
+
+    /**
+     * @param FormEvent $event
+     */
+    private function addVariantFields(FormEvent $event)
     {
         $data = $event->getData();
 
@@ -82,19 +99,12 @@ class FrontendVariantFiledType extends AbstractType
             return;
         }
 
-        $fieldsToSearch = $data;// [];
-//        foreach ($data as $name => $value) {
-//            if ('' !== $value) {
-//                $fieldsToSearch[$name] = $value;
-//            }
-//        }
-
         $class = ClassUtils::getClass($product);
 
         $variantFieldData = $this->customFieldProvider->getEntityCustomFields($class);
 
         $variantAvailability = $this->productVariantAvailabilityProvider
-            ->getVariantFieldsWithAvailability($product, $fieldsToSearch);
+            ->getVariantFieldsWithAvailability($product, $data);
 
         foreach ($product->getVariantFields() as $fieldName) {
             list($type, $fieldOptions) = $this->prepareFieldByType(
@@ -146,16 +156,13 @@ class FrontendVariantFiledType extends AbstractType
     {
         switch ($type) {
             case 'enum':
-                $options = $this->getEnumOptions($class, $fieldName);
-                $options['disabled_values'] = $this->getEnumDisabledValues($availability);
-//                $options['non_default_options'] = $options['disabled_values'];
+                $options = $this->getEnumOptions($class, $fieldName, $availability);
 
-                return [FrontendVariantEnumSelectType::NAME, $options];
+                return [EnumSelectType::NAME, $options];
             case 'boolean':
-                $options = $this->getBooleanOptions();
-                $options['choice_attr'] = $this->getBooleanDisabledValues($availability);
+                $options = $this->getBooleanOptions($availability);
 
-                return [FrontendVariantBooleanType::NAME, $options];
+                return ['choice', $options];
             default:
                 throw new \LogicException(
                     sprintf(
@@ -170,62 +177,47 @@ class FrontendVariantFiledType extends AbstractType
     /**
      * @param string $class
      * @param string $fieldName
+     * @param array $availability
      * @return array
      */
-    private function getEnumOptions($class, $fieldName)
+    private function getEnumOptions($class, $fieldName, array $availability)
     {
+        $notAvailableVariants = array_filter($availability, function ($item) {
+            return $item === false;
+        });
+
+        $disabledValues = array_keys($notAvailableVariants);
+
         return [
             'enum_code' => ExtendHelper::generateEnumCode($class, $fieldName),
             'configs' => ['allowClear' => false],
             // Next two lines required for selecting first element
             'required' => true,
             'placeholder' => false,
+            'disabled_values' => $disabledValues,
         ];
     }
 
     /**
+     * @param array $availability
      * @return array
      */
-    private function getBooleanOptions()
+    private function getBooleanOptions(array $availability)
     {
+        $availableVariants = array_filter($availability);
+
+        $choiceAttrCallback = function ($val, $key, $index) use ($availableVariants) {
+            $disabled = !array_key_exists($key, $availableVariants);
+
+            return $disabled ? ['disabled' => 'disabled'] : [];
+        };
+
         return [
             'choices' => ['No', 'Yes'],
             // Next two lines required for selecting first element
             'required' => true,
             'placeholder' => false,
+            'choice_attr' => $choiceAttrCallback
         ];
-    }
-
-    /**
-     * Returns name of fields which will be disabled
-     *
-     * @param array $availability
-     * @return array
-     */
-    private function getEnumDisabledValues(array $availability)
-    {
-        // TODO: Possible we need to disable ALL variants which not present in $notAvailableVariants
-        $notAvailableVariants = array_filter($availability, function ($item) {
-            return $item === false;
-        });
-
-        return array_keys($notAvailableVariants);
-    }
-
-    /**
-     * Returns name of fields which will be disabled
-     *
-     * @param array $availability
-     * @return \Closure
-     */
-    private function getBooleanDisabledValues(array $availability)
-    {
-        $availableVariants = array_filter($availability);
-
-        return function ($val, $key, $index) use ($availableVariants) {
-            $disabled = !array_key_exists($key, $availableVariants);
-
-            return $disabled ? ['disabled' => 'disabled'] : [];
-        };
     }
 }

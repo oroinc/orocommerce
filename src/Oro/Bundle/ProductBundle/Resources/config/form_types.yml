@@ -173,13 +173,3 @@ services:
             - '%oro_product.entity.product.class%'
         tags:
             - { name: form.type, alias: oro_product_frontend_variant_field }
-
-    oro_product.form.type.frontend_variant_enum_select:
-        class: 'Oro\Bundle\ProductBundle\Form\Type\FrontendVariantEnumSelectType'
-        tags:
-            - { name: form.type, alias: oro_product_frontend_variant_enum_select }
-
-    oro_product.form.type.frontend_variant_boolean:
-        class: 'Oro\Bundle\ProductBundle\Form\Type\FrontendVariantBooleanType'
-        tags:
-            - { name: form.type, alias: oro_product_frontend_variant_boolean }
