@@ -22,6 +22,9 @@ class EntityConfigRelationsMigration
      * @internal
      */
     const SHIPPING_RULE_CLASS_NAME = 'Oro\Bundle\ShippingBundle\Entity\ShippingRule';
+    const SHIPPING_RULE_METHOD_CONFIG_CLASS_NAME = 'Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodConfig';
+    const SHIPPING_RULE_METHOD_TYPE_CONFIG_CLASS_NAME = 'Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig';
+    const SHIPPING_RULE_DESTINATION_CLASS_NAME = 'Oro\Bundle\ShippingBundle\Entity\ShippingRuleDestination';
 
     /**
      * @var ManagerRegistry
@@ -72,7 +75,10 @@ class EntityConfigRelationsMigration
 
         $this->removeActivityListRelation($configConnection);
 
-        $this->removeShippingRuleFromEntityConfig($configConnection);
+        $this->removeEntityFromEntityConfig($configConnection, self::SHIPPING_RULE_CLASS_NAME);
+        $this->removeEntityFromEntityConfig($configConnection, self::SHIPPING_RULE_METHOD_CONFIG_CLASS_NAME);
+        $this->removeEntityFromEntityConfig($configConnection, self::SHIPPING_RULE_METHOD_TYPE_CONFIG_CLASS_NAME);
+        $this->removeEntityFromEntityConfig($configConnection, self::SHIPPING_RULE_DESTINATION_CLASS_NAME);
     }
 
     /**
@@ -119,13 +125,14 @@ class EntityConfigRelationsMigration
 
     /**
      * @param Connection $configConnection
+     * @param string $className
      */
-    private function removeShippingRuleFromEntityConfig(Connection $configConnection)
+    private function removeEntityFromEntityConfig(Connection $configConnection, $className)
     {
         $this->executeUpdateRelationsQuery(
             new ParametrizedSqlMigrationQuery(
                 'DELETE FROM oro_entity_config WHERE class_name = :class_name',
-                ['class_name' => static::SHIPPING_RULE_CLASS_NAME],
+                ['class_name' => $className],
                 ['class_name' => Type::STRING]
             ),
             $configConnection

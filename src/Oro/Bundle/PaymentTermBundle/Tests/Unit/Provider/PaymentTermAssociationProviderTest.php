@@ -11,6 +11,7 @@ use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
 use Oro\Bundle\PaymentTermBundle\Tests\Unit\PaymentTermAwareStub;
 
+use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class PaymentTermAssociationProviderTest extends \PHPUnit_Framework_TestCase
@@ -53,6 +54,7 @@ class PaymentTermAssociationProviderTest extends \PHPUnit_Framework_TestCase
     {
         $paymentTerm = new PaymentTerm();
         $aware = new PaymentTermAwareStub();
+        $this->expectException(NoSuchPropertyException::class);
         $this->paymentTermAssociationProvider->setPaymentTerm($aware, $paymentTerm);
         $this->assertNull($aware->getPaymentTerm());
     }

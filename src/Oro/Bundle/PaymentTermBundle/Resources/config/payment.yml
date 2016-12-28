@@ -10,10 +10,12 @@ services:
         public: false
         arguments:
             - '@oro_payment_term.provider.payment_term'
-            - '@property_accessor'
+            - '@oro_payment_term.provider.payment_term_association'
             - '@oro_entity.doctrine_helper'
         tags:
             - { name: oro_payment.payment_method }
+        calls:
+            - [setLogger,  ["@logger"]]
 
     oro_payment_term.payment_method.view.payment_term:
         class: 'Oro\Bundle\PaymentTermBundle\Method\View\PaymentTermView'
