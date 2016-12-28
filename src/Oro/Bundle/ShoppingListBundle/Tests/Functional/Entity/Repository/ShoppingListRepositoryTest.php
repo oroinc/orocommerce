@@ -18,15 +18,13 @@ use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 class ShoppingListRepositoryTest extends WebTestCase
 {
     /**
-     * @var AccountUser
-     */
-    protected $accountUser;
-
-    /**
      * @var AclHelper
      */
     protected $aclHelper;
 
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
@@ -38,7 +36,6 @@ class ShoppingListRepositoryTest extends WebTestCase
             ]
         );
 
-        $this->accountUser = $this->getAccountUser();
         $this->aclHelper = $this->getContainer()->get('oro_security.acl_helper');
     }
 
@@ -60,7 +57,7 @@ class ShoppingListRepositoryTest extends WebTestCase
         /** @var ShoppingList $secondShoppingList */
         $shoppingList = array_shift($shoppingLists);
         $this->assertInstanceOf(ShoppingList::class, $shoppingList);
-        $this->assertEquals($this->accountUser, $shoppingList->getAccountUser());
+        $this->assertSame($this->getAccountUser(), $shoppingList->getAccountUser());
         /** @var ShoppingList $secondShoppingList */
         $secondShoppingList = array_shift($shoppingLists);
         $this->assertTrue($shoppingList->getUpdatedAt() <= $secondShoppingList->getUpdatedAt());
@@ -73,7 +70,7 @@ class ShoppingListRepositoryTest extends WebTestCase
         $shoppingList = $this->getRepository()
             ->findByUserAndId($this->aclHelper, $shoppingListReference->getId());
         $this->assertInstanceOf(ShoppingList::class, $shoppingList);
-        $this->assertEquals($this->accountUser, $shoppingList->getAccountUser());
+        $this->assertEquals($this->getAccountUser(), $shoppingList->getAccountUser());
     }
 
     /**
