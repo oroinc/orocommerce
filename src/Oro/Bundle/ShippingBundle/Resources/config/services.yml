@@ -327,17 +327,20 @@ services:
             - '@logger'
             - '%installed%'
 
-    oro_shipping.listener.shipping_methods_configs_rule:
-        class: 'Oro\Bundle\ShippingBundle\EventListener\Cache\ShippingMethodsConfigsRuleChangeListener'
-        arguments:
-            - '@oro_shipping.shipping_price.provider.cache'
-        tags:
-            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule', event: postRemove }
-            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule', event: postPersist }
-
     oro_shipping.listener.shipping_rule:
         class: 'Oro\Bundle\ShippingBundle\EventListener\Cache\ShippingRuleChangeListener'
         arguments:
             - '@oro_shipping.shipping_price.provider.cache'
         tags:
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\RuleBundle\Entity\Rule', event: postPersist }
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\RuleBundle\Entity\Rule', event: postUpdate }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\RuleBundle\Entity\Rule', event: postRemove }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule', event: postPersist }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule', event: postUpdate }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule', event: postRemove }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig', event: postPersist }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig', event: postUpdate }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig', event: postRemove }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig', event: postPersist }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig', event: postUpdate }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig', event: postRemove }
