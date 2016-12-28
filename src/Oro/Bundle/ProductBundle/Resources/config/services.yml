@@ -549,21 +549,9 @@ services:
             - { name: kernel.event_listener, event: entity_view.render.before, method: onViewRender, priority: -255 }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-view, method: onViewList, priority: -255 }
 
-    oro_product.block_type.chain_attribute_block_type_mapper:
-        class: 'Oro\Bundle\ProductBundle\Layout\Mapper\AttributeBlockTypeMapper'
+    oro_product.layout.attribute_block_type_mapper:
+        parent: oro_entity_config.block_type.abstract_attribute_block_type_mapper
+        calls:
+            - [addBlockTypeUsingMetadata, ['%oro_product.entity.product_image.class%', 'attribute_product_images']]
         tags:
             - { name: oro_entity_config.block_type.attribute_block_type_mapper }
-
-    oro_entity_config.block_type.attribute_images:
-        parent: oro_layout.block_type.abstract_configurable
-        calls:
-            -
-                - setOptionsConfig
-                -
-                    -
-                        image: {default: '=data["product"].getImagesByType(main)'}
-                        image_additional: {default: '=data["product"].getImagesByType(addtional)'}
-            - [setName, ['attribute_images']]
-            - [setParent, ['attribute_text']]
-        tags:
-             - { name: layout.block_type, alias: attribute_images }
