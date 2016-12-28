@@ -303,6 +303,9 @@ define(function(require) {
         },
 
         _createNewShoppingList: function(url, urlOptions, formData) {
+            if (this.model && !this.model.get('line_item_form_enable')) {
+                return;
+            }
             var dialog = new ShoppingListCreateWidget({});
             dialog.on('formSave', _.bind(function(response) {
                 urlOptions.shoppingListId = response;
@@ -312,6 +315,9 @@ define(function(require) {
         },
 
         _addProductToShoppingList: function(url, urlOptions, formData) {
+            if (this.model && !this.model.get('line_item_form_enable')) {
+                return;
+            }
             var self = this;
             mediator.execute('showLoading');
             $.ajax({
@@ -357,6 +363,9 @@ define(function(require) {
         },
 
         _saveLineItem: function(urlOptions, formData) {
+            if (this.model && !this.model.get('line_item_form_enable')) {
+                return;
+            }
             mediator.execute('showLoading');
 
             var savePromise = this.saveApiAccessor.send({
