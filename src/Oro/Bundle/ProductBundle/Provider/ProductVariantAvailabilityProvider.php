@@ -228,7 +228,8 @@ class ProductVariantAvailabilityProvider
      * @param Product $product
      * @throws \InvalidArgumentException
      */
-    private function ensureProductTypeIsConfigurable(Product $product) {
+    private function ensureProductTypeIsConfigurable(Product $product)
+    {
         if (!$product->isConfigurable()) {
             throw new \InvalidArgumentException(
                 sprintf('Product with type "%s" expected, "%s" given', Product::TYPE_CONFIGURABLE, $product->getType())
