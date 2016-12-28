@@ -3,7 +3,9 @@
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Acl\Voter;
 
 use Oro\Bundle\CheckoutBundle\Acl\Voter\CheckoutVoter;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -46,7 +48,7 @@ class CheckoutVoterTest extends \PHPUnit_Framework_TestCase
         ];
 
         /* @var $container ContainerInterface|\PHPUnit_Framework_MockObject_MockObject */
-        $container = $this->getMock(ContainerInterface::class);
+        $container = $this->createMock(ContainerInterface::class);
         $container->expects($this->any())
             ->method('get')
             ->willReturnCallback(function ($id) use ($services) {
@@ -74,11 +76,11 @@ class CheckoutVoterTest extends \PHPUnit_Framework_TestCase
     public function supportsClassProvider()
     {
         return [
-            'supported class'  => [
-                $this->getMock(CheckoutSourceEntityInterface::class),
+            'supported class' => [
+                $this->createMock(CheckoutSourceEntityInterface::class),
                 true,
             ],
-            'not supported class'  => [
+            'not supported class' => [
                 'stdClass',
                 false,
             ],
@@ -102,12 +104,12 @@ class CheckoutVoterTest extends \PHPUnit_Framework_TestCase
     public function supportsAttributeProvider()
     {
         return [
-            'CHECKOUT_CREATE'  => ['CHECKOUT_CREATE', true],
-            'VIEW'          => ['VIEW', false],
-            'CREATE'        => ['CREATE', false],
-            'EDIT'          => ['EDIT', false],
-            'DELETE'        => ['DELETE', false],
-            'ASSIGN'        => ['ASSIGN', false]
+            'CHECKOUT_CREATE' => ['CHECKOUT_CREATE', true],
+            'VIEW' => ['VIEW', false],
+            'CREATE' => ['CREATE', false],
+            'EDIT' => ['EDIT', false],
+            'DELETE' => ['DELETE', false],
+            'ASSIGN' => ['ASSIGN', false]
         ];
     }
 
@@ -117,19 +119,12 @@ class CheckoutVoterTest extends \PHPUnit_Framework_TestCase
      */
     public function testWithoutContainer()
     {
-        $voter = new CheckoutVoter($this->doctrineHelper);
-        $object = $this->getObject(1);
-
-        $this->doctrineHelper->expects($this->any())
-            ->method('getSingleEntityIdentifier')
-            ->with($object, false)
-            ->willReturn(1);
-
-        $voter->setClassName(get_class($object));
+        $object = $this->createMock(CheckoutSourceEntityInterface::class);
 
         /* @var $token TokenInterface|\PHPUnit_Framework_MockObject_MockObject */
-        $token = $this->getMock(TokenInterface::class);
+        $token = $this->createMock(TokenInterface::class);
 
+        $voter = new CheckoutVoter($this->doctrineHelper);
         $voter->vote($token, $object, [CheckoutVoter::ATTRIBUTE_CREATE]);
     }
 
@@ -145,16 +140,21 @@ class CheckoutVoterTest extends \PHPUnit_Framework_TestCase
         $this->securityFacade->expects($this->any())
             ->method('isGranted')
             ->willReturnCallback(function ($attribute, $object) use ($inputData) {
-                if ($attribute == $inputData['isGrantedAttr']) {
+                if ($attribute === $inputData['isGrantedAttr']) {
                     return $inputData['isGranted'];
                 }
-                if ($attribute == $inputData['isGrantedAttrCheckout']) {
+                if ($attribute === $inputData['isGrantedAttrCheckout']) {
+                    if ($object instanceof Quote) {
+                        $this->assertInstanceOf(AccountUser::class, $object->getAccountUser());
+                    }
+
                     return $inputData['isGrantedCheckout'];
                 }
+                return null;
             });
 
         /* @var $token TokenInterface|\PHPUnit_Framework_MockObject_MockObject */
-        $token = $this->getMock(TokenInterface::class);
+        $token = $this->createMock(TokenInterface::class);
 
         $this->assertEquals(
             $expectedResult,
@@ -169,6 +169,9 @@ class CheckoutVoterTest extends \PHPUnit_Framework_TestCase
      */
     public function voteProvider()
     {
+        $object = $this->createMock(Quote::class);
+        $object->expects($this->once())->method('getAccountUser')->willReturn(new AccountUser());
+
         return [
             '!Entity' => [
                 'input' => [
@@ -203,9 +206,31 @@ class CheckoutVoterTest extends \PHPUnit_Framework_TestCase
                 ],
                 'expected' => CheckoutVoter::ACCESS_DENIED,
             ],
+            'isGranted on VIEW and !CREATE' => [
+                'input' => [
+                    'object' => $this->getIdentity(),
+                    'attributes' => ['CHECKOUT_CREATE'],
+                    'isGranted' => true,
+                    'isGrantedAttr' => BasicPermissionMap::PERMISSION_VIEW,
+                    'isGrantedCheckout' => false,
+                    'isGrantedAttrCheckout' => BasicPermissionMap::PERMISSION_CREATE,
+                ],
+                'expected' => CheckoutVoter::ACCESS_DENIED,
+            ],
             'isGranted on CREATE and VIEW' => [
                 'input' => [
                     'object' => $this->getIdentity(),
+                    'attributes' => ['CHECKOUT_CREATE'],
+                    'isGranted' => true,
+                    'isGrantedAttr' => BasicPermissionMap::PERMISSION_VIEW,
+                    'isGrantedCheckout' => true,
+                    'isGrantedAttrCheckout' => BasicPermissionMap::PERMISSION_CREATE,
+                ],
+                'expected' => CheckoutVoter::ACCESS_GRANTED,
+            ],
+            'isGranted on CREATE and VIEW for Entity instance' => [
+                'input' => [
+                    'object' => $object,
                     'attributes' => ['CHECKOUT_CREATE'],
                     'isGranted' => true,
                     'isGrantedAttr' => BasicPermissionMap::PERMISSION_VIEW,
@@ -223,41 +248,5 @@ class CheckoutVoterTest extends \PHPUnit_Framework_TestCase
     protected function getIdentity()
     {
         return new ObjectIdentity('entity', 'commerce@Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface');
-    }
-
-    /**
-     * @param int $id
-     * @return CheckoutSourceEntityInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function getObject($id)
-    {
-        /* @var $object CheckoutSourceEntityInterface|\PHPUnit_Framework_MockObject_MockObject */
-        $object = $this->getMockEntity(CheckoutSourceEntityInterface::class, $id);
-
-        return $object;
-    }
-
-    /**
-     * @param string $className
-     * @param int $id
-     * @return \PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function getMockEntity($className, $id)
-    {
-        static $entities = [];
-
-        if (!isset($entities[$className])) {
-            $entities[$className] = [];
-        }
-
-        if (!isset($entities[$className][$id])) {
-            $mock = $this->getMockBuilder($className)
-                ->disableOriginalConstructor()
-                ->getMock();
-
-            $entities[$className][$id] = $mock;
-        }
-
-        return $entities[$className][$id];
     }
 }

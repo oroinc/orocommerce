@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CheckoutBundle\Acl\Voter;
 
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
@@ -15,6 +16,8 @@ use Oro\Bundle\CustomerBundle\Entity\AccountOwnerAwareInterface;
 
 class CheckoutVoter extends AbstractEntityVoter implements ContainerAwareInterface
 {
+    use ContainerAwareTrait;
+
     const ATTRIBUTE_CREATE = 'CHECKOUT_CREATE';
 
     /**
@@ -23,11 +26,6 @@ class CheckoutVoter extends AbstractEntityVoter implements ContainerAwareInterfa
     protected $supportedAttributes = [
         self::ATTRIBUTE_CREATE
     ];
-
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
 
     /**
      * {@inheritdoc}
@@ -71,14 +69,6 @@ class CheckoutVoter extends AbstractEntityVoter implements ContainerAwareInterfa
     protected function getPermissionForAttribute($class, $identifier, $attribute)
     {
         return self::ACCESS_ABSTAIN;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
     }
 
     /**
