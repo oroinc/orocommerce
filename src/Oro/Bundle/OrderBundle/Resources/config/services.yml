@@ -315,3 +315,11 @@ services:
             - '@oro_pricing.subtotal_processor.total_processor_provider'
             - '@oro_currency.config.currency'
             - '@oro_currency.converter.rate'
+
+    oro_order.provider.order_currency_checker:
+        class: Oro\Bundle\OrderBundle\Provider\CurrencyCheckerProvider
+        public: false
+        arguments:
+            - '@doctrine'
+        tags:
+            - { name: oro_multi_currency.currency_checker_provider }

@@ -98,7 +98,6 @@
 
             margin-top: 3px;
 
-            font-family: 'FontAwesome';
             font-size: $base-font-size;
             font-weight: normal;
             font-style: normal;
@@ -106,17 +105,14 @@
 
         .slick-prev {
             left: -20px;
-            &:before {
-                content: '\f104';
-            }
+
+            @include fa-icon($fa-var-angle-left);
         }
 
         .slick-next {
             right: -21px;
 
-            &:before {
-                content: '\f105';
-            }
+            @include fa-icon($fa-var-angle-right);
         }
 
         //For correct maring of slider if we haven't arrows
