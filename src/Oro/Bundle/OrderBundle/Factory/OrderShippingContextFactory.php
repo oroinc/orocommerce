@@ -64,6 +64,8 @@ class OrderShippingContextFactory
             (string)$order->getId()
         );
 
+        $convertedLineItems = $this->shippingLineItemConverter->convertLineItems($order->getLineItems());
+
         if (null !== $order->getShippingAddress()) {
             $shippingContextBuilder->setShippingAddress($order->getShippingAddress());
         }
@@ -80,10 +82,8 @@ class OrderShippingContextFactory
             $shippingContextBuilder->setCustomerUser($order->getAccountUser());
         }
 
-        if (!$order->getLineItems()->isEmpty()) {
-            $shippingContextBuilder->setLineItems(
-                $this->shippingLineItemConverter->convertLineItems($order->getLineItems())
-            );
+        if (null !== $convertedLineItems && !$convertedLineItems->isEmpty()) {
+            $shippingContextBuilder->setLineItems($convertedLineItems);
         }
 
         $repository = $this->doctrineHelper->getEntityRepository(PaymentTransaction::class);
