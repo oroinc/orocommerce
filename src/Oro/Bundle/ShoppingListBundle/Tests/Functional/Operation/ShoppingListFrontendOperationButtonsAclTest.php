@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ShoppingListBundle\Tests\Functional;
 
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Entity\Repository\AccountUserRepository;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserACLData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\FrontendActionTestCase;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -28,12 +27,7 @@ class ShoppingListFrontendOperationButtonsAclTest extends FrontendActionTestCase
             LoadProductData::class,
         ]);
 
-        /* @var $userRepository AccountUserRepository */
-        $userRepository = $this->getContainer()->get('doctrine')->getManagerForClass(AccountUser::class)
-            ->getRepository(AccountUser::class);
-
-        /* @var $user AccountUser */
-        $user = $userRepository->findOneBy(['email' => LoadAccountUserACLData::USER_ACCOUNT_1_ROLE_LOCAL]);
+        $user = $this->getAccountUser();
 
         $token = new UsernamePasswordOrganizationToken($user, false, 'k', $user->getOrganization(), $user->getRoles());
         $this->client->getContainer()->get('security.token_storage')->setToken($token);
@@ -45,7 +39,7 @@ class ShoppingListFrontendOperationButtonsAclTest extends FrontendActionTestCase
      *
      * @dataProvider lineItemOperationButtonsProvider
      */
-    public function testLinteItemOperationButtons($operationName, array $params)
+    public function testLineItemOperationButtons($operationName, array $params)
     {
         $product = $this->getReference(LoadProductData::PRODUCT_1);
 
@@ -75,5 +69,16 @@ class ShoppingListFrontendOperationButtonsAclTest extends FrontendActionTestCase
                 ['datagrid' => 'frontend-product-search-grid'],
             ],
         ];
+    }
+
+    /**
+     * @return AccountUser
+     */
+    public function getAccountUser()
+    {
+        return $this->getContainer()
+            ->get('doctrine')
+            ->getRepository(AccountUser::class)
+            ->findOneBy(['email' => LoadAccountUserACLData::USER_ACCOUNT_1_ROLE_LOCAL]);
     }
 }

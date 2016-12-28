@@ -89,8 +89,8 @@ class AjaxLineItemControllerAclTest extends WebTestCase
                 'oro_shopping_list_add_products_massaction',
                 [
                     'gridName' => 'frontend-product-search-grid',
-                    'actionName' => 'oro_shoppinglist_frontend_addlineitemlist' . $shoppingList->getId(),
-                    'shoppingList' => $shoppingList->getId(),
+                    'actionName' => 'oro_shoppinglist_frontend_addlineitemlist' . $this->shoppingList->getId(),
+                    'shoppingList' => $this->shoppingList->getId(),
                     'inset' => 1,
                     'values' => $this->getReference('product.1')->getId(),
                 ]
