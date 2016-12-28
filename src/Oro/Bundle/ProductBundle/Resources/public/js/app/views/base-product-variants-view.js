@@ -77,9 +77,11 @@ define(function(require) {
         updateVariants: function(fields) {
             this.getElement('variantFields').each(function() {
                 var name = this.name.replace(/.*\[/, '').replace(/\].*/, '');
-                $(this).find('option').each(function() {
+                var $field = $(this);
+                $field.find('option').each(function() {
                     this.disabled = !fields[name][this.value];
                 });
+                $field.inputWidget('refresh');
             });
         },
 

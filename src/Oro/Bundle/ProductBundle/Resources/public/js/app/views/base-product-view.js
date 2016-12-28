@@ -16,6 +16,10 @@ define(function(require) {
             unit: '[data-name="field__unit"]'
         },
 
+        elementsEvents: {
+            '$el': ['options:set:productModel', 'optionsSetProductModel']
+        },
+
         modelElements: {
             quantity: 'quantity',
             unit: 'unit'
@@ -44,6 +48,12 @@ define(function(require) {
             }).done(_.bind(this.handleLayoutInit, this));
         },
 
+        optionsSetProductModel: function(e, options) {
+            options.productModel = this.model;
+            e.preventDefault();
+            e.stopPropagation();
+        },
+
         handleLayoutInit: function() {
             this._resolveDeferredRender();
         },
@@ -67,7 +77,13 @@ define(function(require) {
 
         onProductChanged: function() {
             mediator.trigger('layout-subtree:update:product', {
-                layoutSubtreeUrl: routing.generate('oro_product_frontend_product_view', {id: this.model.get('id')})
+                layoutSubtreeUrl: routing.generate('oro_product_frontend_product_view', {id: this.model.get('id')}),
+                layoutSubtreeCallback: _.bind(function() {
+                    this.undelegateElementsEvents();
+                    this.clearElementsCache();
+                    this.setModelValueFromElements();
+                    this.delegateElementsEvents();
+                }, this)
             });
         },
 
