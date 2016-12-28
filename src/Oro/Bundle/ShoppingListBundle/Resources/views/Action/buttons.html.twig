@@ -21,6 +21,7 @@
         {% import 'OroUIBundle::macros.html.twig' as UI %}
         {{ UI.pinnedDropdownButton({
             'html': buttons.getButtonsHtml(buttonsOptions),
+            'mobileEnabled': true,
             'dataAttributes': {
                 'layout': 'separate'
             },

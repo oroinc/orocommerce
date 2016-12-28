@@ -28,7 +28,7 @@ layout:
                         type: button
                         action: submit
                         text: oro.product.frontend.quick_add.continue.label
-                        style: 'btn'
+                        style: 'btn--action'
                 quick_add_copy_paste_title:
                     blockType: text
                     options:
