@@ -2,12 +2,12 @@
 
 namespace Oro\Bundle\ProductBundle\EventListener;
 
-use Oro\Bundle\ProductBundle\Event\RestrictFrontendVisibilityEvent;
+use Oro\Bundle\ProductBundle\Event\RestrictProductVariantEvent;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier;
 
-class RestrictFrontendVisibilityEventListener
+class RestrictProductVariantEventListener
 {
     /** @var ConfigManager */
     protected $configManager;
@@ -34,9 +34,9 @@ class RestrictFrontendVisibilityEventListener
     }
 
     /**
-     * @param RestrictFrontendVisibilityEvent $event
+     * @param RestrictProductVariantEvent $event
      */
-    public function onRestrictFrontendVisibilityEvent(RestrictFrontendVisibilityEvent $event)
+    public function onRestrictProductVariantEvent(RestrictProductVariantEvent $event)
     {
         $this->modifier->modifyByStatus($event->getQueryBuilder(), [Product::STATUS_ENABLED]);
         $inventoryStatuses = $this->configManager->get($this->configPath);

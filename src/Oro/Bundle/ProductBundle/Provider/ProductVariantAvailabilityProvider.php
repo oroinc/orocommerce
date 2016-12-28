@@ -7,7 +7,7 @@ use Oro\Bundle\EntityExtendBundle\Provider\EnumValueProvider;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
-use Oro\Bundle\ProductBundle\Event\RestrictFrontendVisibilityEvent;
+use Oro\Bundle\ProductBundle\Event\RestrictProductVariantEvent;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
@@ -193,10 +193,10 @@ class ProductVariantAvailabilityProvider
 
         $qb = $repository->getSimpleProductsByVariantFieldsQueryBuilder($configurableProduct, $variantParameters);
 
-        $restrictFrontendVisibilityEvent = new RestrictFrontendVisibilityEvent($qb);
-        $this->eventDispatcher->dispatch(RestrictFrontendVisibilityEvent::NAME, $restrictFrontendVisibilityEvent);
+        $restrictProductVariantEvent = new RestrictProductVariantEvent($qb);
+        $this->eventDispatcher->dispatch(RestrictProductVariantEvent::NAME, $restrictProductVariantEvent);
 
-        return $restrictFrontendVisibilityEvent
+        return $restrictProductVariantEvent
             ->getQueryBuilder()
             ->getQuery()
             ->getResult();

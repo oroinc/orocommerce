@@ -441,14 +441,14 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_website_search.event.restrict_index_entity.product, method: onRestrictIndexEntityEvent }
 
-    oro_product.event_listener.restrict_frontend_visibility:
-        class: 'Oro\Bundle\ProductBundle\EventListener\RestrictFrontendVisibilityEventListener'
+    oro_product.event_listener.restrict_product_variant_event:
+        class: 'Oro\Bundle\ProductBundle\EventListener\RestrictProductVariantEventListener'
         arguments:
             - '@oro_config.manager'
             - '@oro_product.model.product_visibility_query_builder_modifier'
             - 'oro_product.general_frontend_product_visibility'
         tags:
-            - { name: kernel.event_listener, event: oro_product.event.restrict_frontend_visibility, method: onRestrictFrontendVisibilityEvent }
+            - { name: kernel.event_listener, event: oro_product.event.restrict_product_variant_event, method: onRestrictProductVariantEvent }
 
     oro_product.layout.data_provider.featured_products:
         class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\FeaturedProductsProvider'

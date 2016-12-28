@@ -6,9 +6,9 @@ use Doctrine\ORM\QueryBuilder;
 
 use Symfony\Component\EventDispatcher\Event;
 
-class RestrictFrontendVisibilityEvent extends Event
+class RestrictProductVariantEvent extends Event
 {
-    const NAME = 'oro_product.event.restrict_frontend_visibility';
+    const NAME = 'oro_product.event.restrict_product_variant_event';
 
     /** @var QueryBuilder */
     protected $queryBuilder;
