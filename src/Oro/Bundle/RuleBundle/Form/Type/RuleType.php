@@ -35,7 +35,8 @@ class RuleType extends AbstractType
                 'label' => 'oro.rule.stop_processing.label',
             ])
             ->add('expression', TextareaType::class, [
-                'label' => 'oro.rule.expression.label'
+                'label'    => 'oro.rule.expression.label',
+                'required' => false,
             ])
         ;
     }

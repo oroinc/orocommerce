@@ -4,6 +4,7 @@
     {% set themeOptions = grid_render_parameters.themeOptions|default({}) %}
     {% set grid_render_parameters = grid_render_parameters|merge({'themeOptions': themeOptions|merge({
         'headerHide': true,
+        'disableStickedScrollbar': true,
         'currentRowView': current_row_view,
         'bodyClassName': 'grid-body products__list products__list_' ~ current_row_view,
         'rowClassName': 'grid-row product-item product-item_' ~ current_row_view ~ compact_view,

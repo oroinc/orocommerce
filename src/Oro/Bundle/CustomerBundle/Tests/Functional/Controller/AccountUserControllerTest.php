@@ -2,14 +2,12 @@
 
 namespace Oro\Bundle\CustomerBundle\Tests\Functional\Controller;
 
-use Symfony\Bundle\SwiftmailerBundle\DataCollector\MessageDataCollector;
-
-use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\CustomerBundle\Entity\AccountUserRole;
 use Oro\Bundle\CustomerBundle\Migrations\Data\ORM\LoadAccountUserRoles;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadUserData;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 
 /**
  * @dbIsolation
@@ -313,6 +311,24 @@ class AccountUserControllerTest extends AbstractUserControllerTest
 
         $this->assertHtmlResponseStatusCodeEquals($response, 200);
         $this->assertRoles($expectedRoles, $notExpectedRoles, $response->getContent(), $accountUser);
+
+
+        //with predefined error
+        $errorMessage = 'Test error message';
+        $this->client->request(
+            'GET',
+            $this->getUrl(
+                'oro_customer_account_user_roles',
+                [
+                    'accountUserId' => $accountUser->getId(),
+                    'error'         => $errorMessage
+                ]
+            ),
+            ['_widgetContainer' => 'widget']
+        );
+
+        $response = $this->client->getResponse();
+        $this->assertContains($errorMessage, $response->getContent());
     }
 
     /**

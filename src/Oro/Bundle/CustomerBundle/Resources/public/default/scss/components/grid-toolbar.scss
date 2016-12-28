@@ -12,10 +12,6 @@
         position: relative;
 
         flex-grow: 1;
-
-        @media (max-width: 1280px) {
-          flex-basis: 300px;
-        }
       }
 
       &:last-child {
@@ -47,8 +43,6 @@
 
   &:first-child {
     position: relative;
-
-    flex-basis: 320px;
   }
 
   &:last-child {
@@ -57,9 +51,17 @@
 
   &--specific-action {
     margin-left: 5px;
+  }
+}
 
-    @media (max-width: $screen-md) {
-      flex-basis: auto !important;
-    }
+@include breakpoint('mobile') {
+  .grid__tool {
+      .action-selectbox_custom_in-pager {
+          margin-right: $offset-x-s;
+      }
+
+      &--specific-action {
+        margin-left: 0;
+      }
   }
 }

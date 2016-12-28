@@ -101,7 +101,7 @@ define(function(require) {
             $priceOverridden.insertBefore(this.getElement('priceValue'))
                 .on('click', 'a', _.bind(this.useFoundPrice, this));
 
-            if (_.isEmpty(this.model.get('price')) && this.options.matchedPriceEnabled) {
+            if (_.isEmpty(this.getElement('priceValue').val()) && this.options.matchedPriceEnabled) {
                 this.getElement('priceValue').addClass('matched-price');
             }
         },
@@ -143,6 +143,7 @@ define(function(require) {
         },
 
         setPriceFromHint: function(e) {
+            this.getElement('priceValue').removeClass('matched-price');
             var $target = $(e.currentTarget);
             this.model.set('unit', $target.data('unit'));
             this.setPriceValue($target.data('price'));
@@ -152,7 +153,7 @@ define(function(require) {
             if (!this.options.matchedPriceEnabled) {
                 return;
             }
-            var priceValue = this.model.get('price');
+            var priceValue = this.getElement('priceValue').val();
             var price = this.findPriceValue();
 
             if (price !== null &&

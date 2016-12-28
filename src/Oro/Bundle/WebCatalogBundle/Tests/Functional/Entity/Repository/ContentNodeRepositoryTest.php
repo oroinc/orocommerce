@@ -78,4 +78,13 @@ class ContentNodeRepositoryTest extends WebTestCase
         $this->assertContains($secondNode, $nodes);
         $this->assertContains($thirdNode, $nodes);
     }
+
+    public function testGetDirectNodesWithParentScopeUsed()
+    {
+        $contentNode = $this->getReference(LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1);
+
+        $actual = $this->repository->getDirectNodesWithParentScopeUsed($contentNode);
+
+        $this->assertEquals([$this->getReference(LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1_1)], $actual);
+    }
 }

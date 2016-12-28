@@ -1,6 +1,4 @@
 .main-menu-outer {
-    position: relative;
-
     .main-menu-outer__trigger {
         display: none;
     }
@@ -14,12 +12,12 @@
         border-bottom: 1px solid get-color('additional', 'light');
 
         .main-menu-outer__trigger {
-            font-size: 14px;
-            font-weight: bold;
-
             display: block;
 
             padding: 10px 15px;
+
+            font-size: 14px;
+            font-weight: bold;
         }
 
         .main-menu-outer__container {
