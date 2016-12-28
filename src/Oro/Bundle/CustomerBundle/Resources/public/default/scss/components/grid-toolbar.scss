@@ -41,6 +41,10 @@
 .grid__tool {
   font-size: 0;
 
+  &:not(:last-child) {
+    margin-right: $offset-x-s;
+  }
+
   &:first-child {
     position: relative;
   }
@@ -48,20 +52,12 @@
   &:last-child {
     flex-grow: 0;
   }
-
-  &--specific-action {
-    margin-left: 5px;
-  }
 }
 
 @include breakpoint('mobile') {
   .grid__tool {
       .action-selectbox_custom_in-pager {
           margin-right: $offset-x-s;
-      }
-
-      &--specific-action {
-        margin-left: 0;
       }
   }
 }

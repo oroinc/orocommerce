@@ -64,7 +64,7 @@ define(function(require) {
             var form = $(e.target);
             form.find(this.selectors.calculateShipping).val(true);
             form.validate();
-            if (form.valid() && this.orderHasChanged) {
+            if (form.valid() && this.orderHasChanged && !this.getOverriddenShippingCostElement().val()) {
                 this.showConfirmation(form);
                 return false;
             }
