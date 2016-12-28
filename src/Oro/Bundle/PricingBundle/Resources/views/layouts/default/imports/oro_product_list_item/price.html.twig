@@ -49,13 +49,15 @@
 {% endblock %}
 
 {% block __oro_product_list_item__product_price_not_found_widget %}
-    <div data-name="price-not-found">
-        {% if productPrices %}
-            {{ 'oro.pricing.frontend.product_prices.price_not_found'|trans }}
-        {% else %}
-            {{ 'oro.pricing.frontend.product_prices.empty_prices'|trans }}
-        {% endif %}
-    </div>
+    {% if not is_configurable_product_type(product.type) %}
+        <div data-name="price-not-found">
+            {% if productPrices %}
+                {{ 'oro.pricing.frontend.product_prices.price_not_found'|trans }}
+            {% else %}
+                {{ 'oro.pricing.frontend.product_prices.empty_prices'|trans }}
+            {% endif %}
+        </div>
+    {% endif %}
 {% endblock %}
 
 {% block __oro_product_list_item__product_price_hint_widget %}

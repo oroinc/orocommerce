@@ -60,33 +60,21 @@ class BasicOrderPaymentLineItemConverterTest extends \PHPUnit_Framework_TestCase
     {
         $productUnitCode = 'someCode';
 
+        $orderCollection = new ArrayCollection([
+            (new OrderLineItem())->setQuantity(12)->setProductUnit($this->productUnitMock)->setPrice($this->priceMock),
+            (new OrderLineItem())->setQuantity(5)->setProductUnit($this->productUnitMock)->setPrice($this->priceMock),
+            (new OrderLineItem())->setQuantity(1)->setProductUnit($this->productUnitMock)->setPrice($this->priceMock),
+            (new OrderLineItem())->setQuantity(3)->setProductUnit($this->productUnitMock)->setPrice($this->priceMock),
+            (new OrderLineItem())->setQuantity(50)->setProductUnit($this->productUnitMock)->setPrice($this->priceMock),
+        ]);
+
         $this->productUnitMock
-            ->expects($this->exactly(5))
+            ->expects($this->exactly($orderCollection->count()))
             ->method('getCode')
             ->willReturn($productUnitCode);
 
-        $lineItemsData = [
-            ['quantity' => 12, 'productUnit' => $this->productUnitMock, 'price' => $this->priceMock],
-            ['quantity' => 5, 'productUnit' => $this->productUnitMock, 'price' => $this->priceMock ],
-            ['quantity' => 1, 'productUnit' => $this->productUnitMock, 'price' => $this->priceMock],
-            ['quantity' => 3, 'productUnit' => $this->productUnitMock, 'price' => $this->priceMock],
-            ['quantity' => 50, 'productUnit' => $this->productUnitMock, 'price' => $this->priceMock],
-        ];
-
-        $orderLineItems = [];
-        foreach ($lineItemsData as $lineItemData) {
-            $orderLineItems[] = (new OrderLineItem())
-                ->setQuantity($lineItemData['quantity'])
-                ->setProductUnit($lineItemData['productUnit'])
-                ->setPrice($this->priceMock);
-        }
-        $orderCollection = new ArrayCollection($orderLineItems);
-
-        $paymentLineItemCollection = $this->orderPaymentLineItemConverter->convertLineItems($orderCollection);
-
         $expectedPaymentLineItems = [];
-
-        foreach ($orderLineItems as $orderLineItem) {
+        foreach ($orderCollection as $orderLineItem) {
             $expectedPaymentLineItems[] = new PaymentLineItem([
                 PaymentLineItem::FIELD_QUANTITY => $orderLineItem->getQuantity(),
                 PaymentLineItem::FIELD_PRODUCT_HOLDER => $orderLineItem,
@@ -96,8 +84,30 @@ class BasicOrderPaymentLineItemConverterTest extends \PHPUnit_Framework_TestCase
                 PaymentLineItem::FIELD_ENTITY_IDENTIFIER => null,
             ]);
         }
-
         $expectedLineItemCollection = new DoctrinePaymentLineItemCollection($expectedPaymentLineItems);
+
+        $paymentLineItemCollection = $this->orderPaymentLineItemConverter->convertLineItems($orderCollection);
+
+        $this->assertEquals($expectedLineItemCollection, $paymentLineItemCollection);
+    }
+
+    public function testWithoutRequiredFieldsOnOrderLineItems()
+    {
+        $this->productUnitMock
+            ->expects($this->never())
+            ->method('getCode');
+
+        $orderCollection = new ArrayCollection([
+            (new OrderLineItem())->setQuantity(12),
+            (new OrderLineItem())->setQuantity(5),
+            (new OrderLineItem())->setQuantity(1),
+            (new OrderLineItem())->setQuantity(3),
+            (new OrderLineItem())->setQuantity(50),
+        ]);
+
+        $expectedLineItemCollection = new DoctrinePaymentLineItemCollection([]);
+
+        $paymentLineItemCollection = $this->orderPaymentLineItemConverter->convertLineItems($orderCollection);
 
         $this->assertEquals($expectedLineItemCollection, $paymentLineItemCollection);
     }

@@ -384,12 +384,6 @@ services:
         tags:
             - { name: oro_workflow.changes.listener, event: oro.workflow.deactivated, method: onDeactivationWorkflowDefinition }
 
-    oro_checkout.datagrid.action_permission_provider:
-        class: 'Oro\Bundle\CheckoutBundle\Datagrid\ActionPermissionProvider'
-        arguments:
-            - "@oro_security.security_facade"
-            - '@oro_checkout.repository.checkout'
-
     oro_checkout.acl.voter.checkout:
         class: 'Oro\Bundle\CheckoutBundle\Acl\Voter\CheckoutVoter'
         public: false
