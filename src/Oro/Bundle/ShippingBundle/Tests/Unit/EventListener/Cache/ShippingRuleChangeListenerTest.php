@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ShippingBundle\Bundle\Tests\Unit\EventListener\Cache;
 
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Oro\Bundle\RuleBundle\Entity\Rule;
@@ -47,7 +48,7 @@ class ShippingRuleChangeListenerTest extends \PHPUnit_Framework_TestCase
         $this->repository = $this->getMockBuilder(EntityRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
+        $em = $this->getMockBuilder(EntityManager::class)
             ->disableOriginalConstructor()
             ->getMock();
         $em->expects(static::once())
