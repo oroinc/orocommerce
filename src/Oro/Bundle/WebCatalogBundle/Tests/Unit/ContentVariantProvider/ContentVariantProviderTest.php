@@ -2,10 +2,12 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\ContentVariantProvider;
 
-use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
+use Doctrine\ORM\QueryBuilder;
+
 use Oro\Bundle\WebCatalogBundle\ContentVariantProvider\ContentVariantProviderRegistry;
 use Oro\Bundle\WebCatalogBundle\ContentVariantProvider\ContentVariantProvider;
 use Oro\Component\WebCatalog\ContentVariantProviderInterface;
+use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
 
 class ContentVariantProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -21,7 +23,7 @@ class ContentVariantProviderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->providerRegistry = $this->getMock(ContentVariantProviderRegistry::class);
+        $this->providerRegistry = $this->createMock(ContentVariantProviderRegistry::class);
         $this->contentVariantProvider = new ContentVariantProvider($this->providerRegistry);
     }
 
@@ -34,13 +36,13 @@ class ContentVariantProviderTest extends \PHPUnit_Framework_TestCase
     {
         $className = 'stdClass';
 
-        $provider1 = $this->getMock(ContentVariantProviderInterface::class);
+        $provider1 = $this->createMock(ContentVariantProviderInterface::class);
         $provider1->expects($this->once())
             ->method('isSupportedClass')
             ->with($className)
             ->willReturn(false);
 
-        $provider2 = $this->getMock(ContentVariantProviderInterface::class);
+        $provider2 = $this->createMock(ContentVariantProviderInterface::class);
         $provider2->expects($this->once())
             ->method('isSupportedClass')
             ->with($className)
@@ -60,13 +62,13 @@ class ContentVariantProviderTest extends \PHPUnit_Framework_TestCase
     {
         $className = 'stdClass';
 
-        $provider1 = $this->getMock(ContentVariantProviderInterface::class);
+        $provider1 = $this->createMock(ContentVariantProviderInterface::class);
         $provider1->expects($this->once())
             ->method('isSupportedClass')
             ->with($className)
             ->willReturn(false);
 
-        $provider2 = $this->getMock(ContentVariantProviderInterface::class);
+        $provider2 = $this->createMock(ContentVariantProviderInterface::class);
         $provider2->expects($this->once())
             ->method('isSupportedClass')
             ->with($className)
@@ -82,37 +84,31 @@ class ContentVariantProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($this->contentVariantProvider->isSupportedClass($className));
     }
 
-    public function testGetContentVariantsByEntity()
+    public function testModifyNodeQueryBuilderByEntities()
     {
-        $entity = new \stdClass();
+        $entities = [new \stdClass()];
+        $entityClass = \stdClass::class;
+        /** @var QueryBuilder $queryBuilder */
+        $queryBuilder = $this->getMockBuilder(QueryBuilder::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        $provider1ContentVariant1 = new ContentVariant();
-        $provider1ContentVariant2 = new ContentVariant();
-
-        $provider2ContentVariant1 = new ContentVariant();
-
-        $expectedVariants = [
-            $provider1ContentVariant1,
-            $provider1ContentVariant2,
-            $provider2ContentVariant1
-        ];
-
-        $provider1 = $this->getMock(ContentVariantProviderInterface::class);
+        $provider1 = $this->createMock(ContentVariantProviderInterface::class);
         $provider1->expects($this->once())
-            ->method('getContentVariantsByEntity')
-            ->with($entity)
-            ->willReturn([
-                $provider1ContentVariant1,
-                $provider1ContentVariant2
-            ]);
+            ->method('isSupportedClass')
+            ->with($entityClass)
+            ->willReturn(true);
+        $provider1->expects($this->once())
+            ->method('modifyNodeQueryBuilderByEntities')
+            ->with($queryBuilder, $entityClass, $entities);
 
-        $provider2 = $this->getMock(ContentVariantProviderInterface::class);
+        $provider2 = $this->createMock(ContentVariantProviderInterface::class);
         $provider2->expects($this->once())
-            ->method('getContentVariantsByEntity')
-            ->with($entity)
-            ->willReturn([
-                $provider2ContentVariant1
-            ]);
+            ->method('isSupportedClass')
+            ->with($entityClass)
+            ->willReturn(false);
+        $provider2->expects($this->never())
+            ->method('modifyNodeQueryBuilderByEntities');
 
         $this->providerRegistry->expects($this->once())
             ->method('getProviders')
@@ -121,66 +117,25 @@ class ContentVariantProviderTest extends \PHPUnit_Framework_TestCase
                 $provider2
             ]);
 
-        $actual = $this->contentVariantProvider->getContentVariantsByEntity($entity);
-
-        $this->assertCount(count($expectedVariants), $actual);
-
-        foreach ($expectedVariants as $expectedVariant) {
-            $this->assertContains($expectedVariant, $actual);
-        }
+        $this->contentVariantProvider->modifyNodeQueryBuilderByEntities($queryBuilder, $entityClass, $entities);
     }
 
-    public function testGetContentVariantsByEntities()
+    public function testGetValues()
     {
-        $firstEntityId = 123;
-        $secondEntityId = 42;
+        /** @var ContentNodeInterface $node */
+        $node = $this->createMock(ContentNodeInterface::class);
 
-        $firstEntity = new \stdClass();
-        $firstEntity->id = $firstEntityId;
-
-        $secondEntity = new \stdClass();
-        $secondEntity->id = $secondEntityId;
-
-        $contentVariant1 = new ContentVariant();
-        $contentVariant1->setType('page_type_1');
-
-        $contentVariant2 = new ContentVariant();
-        $contentVariant2->setType('page_type_2');
-
-        $contentVariant3 = new ContentVariant();
-        $contentVariant3->setType('page_type_3');
-
-        $entities = [
-            $firstEntity,
-            $secondEntity
-        ];
-
-        $expectedVariants = [
-            $firstEntityId => [
-                $contentVariant1,
-                $contentVariant3
-            ],
-            $secondEntityId => [
-                $contentVariant2
-            ]
-        ];
-
-        $provider1 = $this->getMock(ContentVariantProviderInterface::class);
+        $provider1 = $this->createMock(ContentVariantProviderInterface::class);
         $provider1->expects($this->once())
-            ->method('getContentVariantsByEntities')
-            ->with($entities)
-            ->willReturn([
-                $firstEntityId => [$contentVariant1],
-                $secondEntityId => [$contentVariant2]
-            ]);
+            ->method('getValues')
+            ->with($node)
+            ->willReturn(['first' => 1]);
 
-        $provider2 = $this->getMock(ContentVariantProviderInterface::class);
+        $provider2 = $this->createMock(ContentVariantProviderInterface::class);
         $provider2->expects($this->once())
-            ->method('getContentVariantsByEntities')
-            ->with($entities)
-            ->willReturn([
-                $firstEntityId => [$contentVariant3],
-            ]);
+            ->method('getValues')
+            ->with($node)
+            ->willReturn(['second' => 2]);
 
         $this->providerRegistry->expects($this->once())
             ->method('getProviders')
@@ -189,10 +144,83 @@ class ContentVariantProviderTest extends \PHPUnit_Framework_TestCase
                 $provider2
             ]);
 
-        $actual = $this->contentVariantProvider->getContentVariantsByEntities($entities);
+        $this->assertEquals(
+            ['first' => 1, 'second' => 2],
+            $this->contentVariantProvider->getValues($node)
+        );
+    }
 
-        foreach ($expectedVariants as $entityId => $contentVariants) {
-            $this->assertEquals($contentVariants, $actual[$entityId]);
-        }
+    public function testGetLocalizedValues()
+    {
+        /** @var ContentNodeInterface $node */
+        $node = $this->createMock(ContentNodeInterface::class);
+
+        $provider1 = $this->createMock(ContentVariantProviderInterface::class);
+        $provider1->expects($this->once())
+            ->method('getLocalizedValues')
+            ->with($node)
+            ->willReturn(['first' => 1]);
+
+        $provider2 = $this->createMock(ContentVariantProviderInterface::class);
+        $provider2->expects($this->once())
+            ->method('getLocalizedValues')
+            ->with($node)
+            ->willReturn(['second' => 2]);
+
+        $this->providerRegistry->expects($this->once())
+            ->method('getProviders')
+            ->willReturn([
+                $provider1,
+                $provider2
+            ]);
+
+        $this->assertEquals(
+            ['first' => 1, 'second' => 2],
+            $this->contentVariantProvider->getLocalizedValues($node)
+        );
+    }
+
+    public function testGetRecordId()
+    {
+        $id = 42;
+        $item = ['key' => 'value'];
+
+        $provider1 = $this->createMock(ContentVariantProviderInterface::class);
+        $provider1->expects($this->once())
+            ->method('getRecordId')
+            ->with($item)
+            ->willReturn(null);
+
+        $provider2 = $this->createMock(ContentVariantProviderInterface::class);
+        $provider2->expects($this->once())
+            ->method('getRecordId')
+            ->with($item)
+            ->willReturn($id);
+
+        $this->providerRegistry->expects($this->once())
+            ->method('getProviders')
+            ->willReturn([
+                $provider1,
+                $provider2
+            ]);
+
+        $this->assertEquals($id, $this->contentVariantProvider->getRecordId($item));
+    }
+
+    public function testGetRecordIdNoId()
+    {
+        $item = ['key' => 'value'];
+
+        $provider1 = $this->createMock(ContentVariantProviderInterface::class);
+        $provider1->expects($this->once())
+            ->method('getRecordId')
+            ->with($item)
+            ->willReturn(null);
+
+        $this->providerRegistry->expects($this->once())
+            ->method('getProviders')
+            ->willReturn([$provider1]);
+
+        $this->assertNull($this->contentVariantProvider->getRecordId($item));
     }
 }

@@ -65,7 +65,7 @@ class LoggedInExpressionLanguageProviderTest extends \PHPUnit_Framework_TestCase
 
         $loggedUser = null;
         if ($isLoggedUser) {
-            $loggedUser = $this->getMock(AccountUser::class);
+            $loggedUser = $this->createMock(AccountUser::class);
         }
 
         $this->securityFacade->expects($this->once())

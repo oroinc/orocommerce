@@ -73,7 +73,7 @@ class PriceRequestFactoryTest extends \PHPUnit_Framework_TestCase
         $this->registry = $this->getMockBuilder(ManagerRegistry::class)
             ->disableOriginalConstructor()->getMock();
 
-        $this->shippingService = $this->getMock(ShippingService::class);
+        $this->shippingService = $this->createMock(ShippingService::class);
 
         $this->transport = $this->getEntity(
             UPSTransport::class,
@@ -243,6 +243,13 @@ class PriceRequestFactoryTest extends \PHPUnit_Framework_TestCase
                 'expectedRequest' => null
             ],
         ];
+    }
+
+    public function testCreateWithNullShippingAddress()
+    {
+        $priceRequest = $this->priceRequestFactory->create($this->transport, new ShippingContext([]), '');
+
+        self::assertNull($priceRequest);
     }
 
     /**

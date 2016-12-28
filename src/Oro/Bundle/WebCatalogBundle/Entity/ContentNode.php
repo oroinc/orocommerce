@@ -14,6 +14,7 @@ use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\RedirectBundle\Entity\LocalizedSlugPrototypeAwareInterface;
 use Oro\Bundle\RedirectBundle\Entity\LocalizedSlugPrototypeAwareTrait;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
+use Oro\Bundle\ScopeBundle\Entity\ScopeCollectionAwareInterface;
 use Oro\Bundle\WebCatalogBundle\Model\ExtendContentNode;
 use Oro\Component\Tree\Entity\TreeTrait;
 use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
@@ -58,7 +59,8 @@ use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
 class ContentNode extends ExtendContentNode implements
     ContentNodeInterface,
     DatesAwareInterface,
-    LocalizedSlugPrototypeAwareInterface
+    LocalizedSlugPrototypeAwareInterface,
+    ScopeCollectionAwareInterface
 {
     use TreeTrait;
     use DatesAwareTrait;
@@ -486,7 +488,7 @@ class ContentNode extends ExtendContentNode implements
     }
 
     /**
-     * @return mixed
+     * @return Collection|Scope[]
      */
     public function getScopesConsideringParent()
     {
@@ -495,7 +497,7 @@ class ContentNode extends ExtendContentNode implements
 
     /**
      * @param ContentNode $contentNode
-     * @return ArrayCollection|Scope[]
+     * @return Collection|Scope[]
      */
     protected function getScopesWithFallback(ContentNode $contentNode)
     {

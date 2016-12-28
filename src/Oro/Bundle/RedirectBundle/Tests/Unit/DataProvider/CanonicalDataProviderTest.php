@@ -54,12 +54,12 @@ class CanonicalDataProviderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->router = $this->getMock(UrlGeneratorInterface::class);
+        $this->router = $this->createMock(UrlGeneratorInterface::class);
         $this->configManager = $this->getMockBuilder(ConfigManager::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->requestStack = $this->getMock(RequestStack::class);
-        $this->routingInformationProvider = $this->getMock(RoutingInformationProvider::class);
+        $this->requestStack = $this->createMock(RequestStack::class);
+        $this->routingInformationProvider = $this->createMock(RoutingInformationProvider::class);
         $this->localizationHelper = $this->getMockBuilder(LocalizationHelper::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -87,7 +87,7 @@ class CanonicalDataProviderTest extends \PHPUnit_Framework_TestCase
         $slugs = new ArrayCollection([$slug]);
 
         /** @var SluggableInterface|\PHPUnit_Framework_MockObject_MockObject $data **/
-        $data = $this->getMock(SluggableInterface::class);
+        $data = $this->createMock(SluggableInterface::class);
         $data->expects($this->any())
             ->method('getSlugs')
             ->willReturn($slugs);
@@ -102,7 +102,7 @@ class CanonicalDataProviderTest extends \PHPUnit_Framework_TestCase
             ->willReturn($localization);
 
         /** @var Request|\PHPUnit_Framework_MockObject_MockObject $request */
-        $request = $this->getMock(Request::class);
+        $request = $this->createMock(Request::class);
         $request->expects($this->once())
             ->method('getUriForPath')
             ->willReturn($expectedUrl);
@@ -135,7 +135,7 @@ class CanonicalDataProviderTest extends \PHPUnit_Framework_TestCase
         $slugs = new ArrayCollection([$slug]);
 
         /** @var SluggableInterface|\PHPUnit_Framework_MockObject_MockObject $data **/
-        $data = $this->getMock(SluggableInterface::class);
+        $data = $this->createMock(SluggableInterface::class);
         $data->expects($this->any())
             ->method('getSlugs')
             ->willReturn($slugs);
@@ -150,7 +150,7 @@ class CanonicalDataProviderTest extends \PHPUnit_Framework_TestCase
             ->willReturn($localization);
 
         /** @var Request|\PHPUnit_Framework_MockObject_MockObject $request */
-        $request = $this->getMock(Request::class);
+        $request = $this->createMock(Request::class);
         $request->expects($this->once())
             ->method('getUriForPath')
             ->willReturn($expectedUrl);
@@ -170,7 +170,7 @@ class CanonicalDataProviderTest extends \PHPUnit_Framework_TestCase
         $expectedUrl = 'http://example.com/canonical';
 
         /** @var SluggableInterface|\PHPUnit_Framework_MockObject_MockObject $data **/
-        $data = $this->getMock(SluggableInterface::class);
+        $data = $this->createMock(SluggableInterface::class);
 
         $route = 'route';
         $routeParameters = ['param' => 42];
@@ -202,7 +202,7 @@ class CanonicalDataProviderTest extends \PHPUnit_Framework_TestCase
         $localization->setParentLocalization($parentLocalization);
 
         /** @var SluggableInterface|\PHPUnit_Framework_MockObject_MockObject $data **/
-        $data = $this->getMock(SluggableInterface::class);
+        $data = $this->createMock(SluggableInterface::class);
         $data->expects($this->any())
             ->method('getSlugs')
             ->willReturn(new ArrayCollection([]));

@@ -42,6 +42,8 @@ oro:
         type:
             simple: Simple
             configurable: Configurable
+        attribute_family.label: Product Family
+        attribute_family.plural_label: Product Families
 
         status:
             enabled: Enabled
@@ -57,6 +59,7 @@ oro:
             as_defined_in_system_config.label: As Defined in System Configuration
 
         form:
+            no_images: No images
             choose: Choose Product...
             product_required: Please select a product first...
         form.add_row: Add More Rows
@@ -121,7 +124,8 @@ oro:
             shortcut_new_product.label: Create new product
             shortcut_new_product.description: Create new product item
             shortcut_product_list.description: Show list of existing products
-            product_attributes: Product attributes
+            product_attributes: Product Attributes
+            product_attribute_families: Product Families
 
         acl:
             view_products.label: View products
@@ -141,6 +145,7 @@ oro:
             additional: Additional
             productVariants: Product Variants
             inventory: Inventory
+            images: Images
 
         widgets:
             product_information: Product Information
@@ -162,7 +167,10 @@ oro:
                 default_product_unit.title: 'Primary Unit'
                 product_images.title: 'Product Images'
                 product_image_watermark.title: 'Product Image Watermark'
+                quick_order.title: Quick Order Form
+                quick_order_form.title: Quick Order Form
             fields:
+                enable_quick_order_form.title: Enable Quick Order Form
                 unit_rounding_type.label: 'Unit Rounding Type'
                 general_frontend_inventory_statuses_visibility.label: 'Visible Inventory Statuses'
                 default_unit.label: 'Default Primary Unit'
@@ -337,4 +345,9 @@ oro:
 
     webcatalog:
         contentvariant:
-            product_collection_page_rule.label: Product Collection Assignment Rule
+            product_page_product.label: Product
+
+    feature:
+        quick_order_form:
+            label: Quick Order Form
+            description: Quick Order Form functionality allows users to have a simpler and faster way of making orders or requests for quote

@@ -142,6 +142,7 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
             'account'   => self::ACCOUNT1,
             'roles'     => [
                 self::ROLE2,
+                self::ROLE7,
             ],
         ],
         [

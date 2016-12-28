@@ -12,6 +12,12 @@
   &__list {
     @include list-normalize();
 
+    &_list-view {
+      @media (max-width: $screen-sm) {
+        overflow: hidden;
+      }
+    }
+
     &_gallery-view {
       display: flex;
 
@@ -24,23 +30,21 @@
       font-size: 0;
 
       @media (max-width: $screen-md) {
-        margin: 20px -15px 0;
+        margin-top: 20px;
+      }
+
+      @media (max-width: $screen-sm) {
+        overflow: hidden;
       }
     }
 
     &_no-image-view {
-      margin-top: 15px !important;
-    }
-
-    &_slider-view {
-      padding: 0 30px;
-
-      font-size: 0;
+      margin-top: 15px;
 
       @media (max-width: $screen-md) {
-        margin: 0 -15px;
-        padding: 0;
+        overflow: hidden;
       }
+
     }
   }
 
@@ -152,11 +156,6 @@
       overflow: hidden;
       border: 1px solid get-color('additional', 'light');
 
-      /*@media (min-width: 768px) and (max-width: 991px) {
-        width: 31.2%;
-        max-width: 100%;
-      }*/
-
       @media (max-width: $screen-sm) {
         min-width: 110px;
       }
@@ -229,12 +228,12 @@
   &__primary-content {
     &_list-view {
       float: left;
-      width: 52.6%;
+      width: calc(100% - 23% - 25%);
       padding: 0 30px;
 
-      /*@media (min-width: 768px) and (max-width: 991px) {
-        width: 47.8%;
-      }*/
+      @media (max-width: $screen-md) {
+        width: calc(100% - 23% - 240px);
+      }
 
       @media (max-width: $screen-sm) {
         float: none;
@@ -295,7 +294,6 @@
 
       @media (max-width: $screen-sm) {
         padding-right: 0;
-        padding-left: calc(50%);
       }
     }
 
@@ -314,11 +312,11 @@
 
     &_list-view {
       float: left;
-      width: 24.4%;
+      width: 25%;
 
-      /*@media (min-width: 768px) and (max-width: 991px) {
-        width: 21%;
-      }*/
+      @media (max-width: $screen-md) {
+        width: 240px;
+      }
 
       @media (max-width: $screen-sm) {
         float: none;
@@ -343,6 +341,11 @@
 
         + .product-item__secondary-half_no-image-view {
           width: 65%;
+
+          @media (max-width: $screen-sm) {
+            width: 100%;
+            padding-left: 0;
+          }
         }
         
         .product-item--compact & {
@@ -415,6 +418,8 @@
 
 
         &:first-child {
+          width: 100%;
+
           padding: 0;
         }
       }
@@ -490,10 +495,6 @@
       font-size: 19px;
       line-height: 1.3;
 
-      /*@media (min-width: 768px) and (max-width: 991px) {
-        width: calc(100% - 31.2%);
-      }*/
-
       @media (max-width: $screen-sm) {
         float: none;
         width: 100%;
@@ -515,8 +516,10 @@
       line-height: 1.3;
 
       @media (max-width: $screen-sm) {
-        width: 50%;
-        padding: 0 15px 0 0;
+        padding: 0;
+        margin-bottom: $offset-x-s;
+
+        width: 100%;
       }
     }
 
@@ -613,16 +616,6 @@
 
     &_list-view {
       margin-top: 10px !important;
-
-      @media (max-width: $screen-sm) {
-        display: none;
-      }
-    }
-
-    &_no-image-view {
-      @media (max-width: $screen-sm) {
-        display: none;
-      }
     }
   }
 
@@ -714,6 +707,10 @@
       .shopping-lists {
         float: right;
         width: 94%;
+
+        @media (max-width: $screen-sm) {
+          width: 100%;
+        }
       }
 
       .btn {
@@ -728,6 +725,19 @@
       ~ .add-to-compare-link {
         @media (min-width: 992px) {
           margin-top: 0;
+        }
+      }
+
+      @media (max-width: $screen-sm) {
+        .product-item__qty__current-grid {
+          float: none !important; //Will fix after creating blank theme for catalog list
+          width: 100% !important;//Will fix after creating blank theme for catalog list
+
+          + .add-product-from-view-component {
+            float: none !important;//Will fix after creating blank theme for catalog list
+            width: 100% !important;//Will fix after creating blank theme for catalog list
+            margin: 0 !important;//Will fix after creating blank theme for catalog list;
+          }
         }
       }
     }
@@ -758,9 +768,10 @@
     display: inline-block;
     vertical-align: top;
 
-    width: 20%;
+    width: calc(20% - 16px);
 
-    padding: 0 $product-item-gallery-view-offset-x $product-item-gallery-view-offset-bottom;
+    margin-right: 20px;
+    padding: 0 0 $product-item-gallery-view-offset-bottom;
 
     font-size: $base-font-size;
 
@@ -769,24 +780,40 @@
       z-index: 1;
     }
 
+    @media (min-width: 992px) {
+      &:nth-child(5n+5) {
+        margin: 0;
+      }
+    }
+
     @media (min-width: 843px) and (max-width: $screen-md) {
-      width: 25%;
+      width: calc(25% - 15px);
+      margin-right: 20px;
+
+      &:nth-child(4n+4) {
+        margin: 0;
+      }
     }
 
     @media (min-width: 560px) and (max-width: 842px) {
-      width: 33.3333%;
+      width: calc(33.3333% - 16px);
+      margin-right: 24px;
+
+      &:nth-child(3n+3) {
+        margin: 0;
+      }
     }
 
     @media (max-width: 559px) {
-      width: 50%;
-      margin-bottom: 30px;
+      width: calc(50% - 5px);
 
       &:nth-child(2n+1) {
-        padding-right: .5px;
+        margin-right: 5px;
       }
 
       &:nth-child(2n+2) {
-        padding-left: 5px;
+        margin-right: 0;
+        margin-left: 5px;
       }
     }
   }
@@ -804,6 +831,10 @@
 
     @media (max-width: $screen-md) {
       padding: 20px 0;
+    }
+
+    @media (max-width: $screen-sm) {
+      display: block;
     }
   }
 

@@ -2,8 +2,10 @@
 
 namespace Oro\Bundle\WebCatalogBundle\ContentVariantProvider;
 
+use Doctrine\ORM\QueryBuilder;
+
 use Oro\Component\WebCatalog\ContentVariantProviderInterface;
-use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
+use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
 
 class ContentVariantProvider implements ContentVariantProviderInterface
 {
@@ -19,10 +21,9 @@ class ContentVariantProvider implements ContentVariantProviderInterface
     {
         $this->providerRegistry = $providerRegistry;
     }
-    
+
     /**
-     * @param string $className
-     * @return bool
+     * {@inheritdoc}
      */
     public function isSupportedClass($className)
     {
@@ -36,38 +37,61 @@ class ContentVariantProvider implements ContentVariantProviderInterface
     }
 
     /**
-     * @param object $entity
-     * @return ContentVariantInterface[]
+     * {@inheritdoc}
      */
-    public function getContentVariantsByEntity($entity)
+    public function modifyNodeQueryBuilderByEntities(QueryBuilder $queryBuilder, $entityClass, array $entities)
     {
-        $result = [];
         foreach ($this->providerRegistry->getProviders() as $provider) {
-            $pages = $provider->getContentVariantsByEntity($entity);
-            if ($pages) {
-                $result = array_merge($result, $pages);
+            if ($provider->isSupportedClass($entityClass)) {
+                $provider->modifyNodeQueryBuilderByEntities($queryBuilder, $entityClass, $entities);
             }
         }
-        
-        return $result;
     }
 
     /**
-     * @param object[] $entities
-     * @return ContentVariantInterface[]
+     * {@inheritdoc}
      */
-    public function getContentVariantsByEntities(array $entities)
+    public function getValues(ContentNodeInterface $node)
     {
-        $result = [];
+        $values = [];
         foreach ($this->providerRegistry->getProviders() as $provider) {
-            $contentVariantsByEntities = $provider->getContentVariantsByEntities($entities);
-            foreach ($contentVariantsByEntities as $entityId => $contentVariants) {
-                $result[$entityId] = isset($result[$entityId])
-                    ? array_merge($result[$entityId], $contentVariants)
-                    : $contentVariants;
+            $values = array_merge(
+                $values,
+                $provider->getValues($node)
+            );
+        }
+
+        return $values;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getLocalizedValues(ContentNodeInterface $node)
+    {
+        $values = [];
+        foreach ($this->providerRegistry->getProviders() as $provider) {
+            $values = array_merge(
+                $values,
+                $provider->getLocalizedValues($node)
+            );
+        }
+
+        return $values;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getRecordId(array $item)
+    {
+        foreach ($this->providerRegistry->getProviders() as $provider) {
+            $recordId = $provider->getRecordId($item);
+            if ($recordId) {
+                return $recordId;
             }
         }
 
-        return $result;
+        return null;
     }
 }

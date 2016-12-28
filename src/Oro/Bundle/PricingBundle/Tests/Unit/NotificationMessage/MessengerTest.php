@@ -29,15 +29,15 @@ class MessengerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->sender = $this->getMock(TransportInterface::class);
-        $this->eventDispatcher = $this->getMock(EventDispatcherInterface::class);
+        $this->sender = $this->createMock(TransportInterface::class);
+        $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
         $this->messenger = new Messenger($this->sender, $this->eventDispatcher);
     }
 
     public function testAddTransport()
     {
         /** @var TransportInterface|\PHPUnit_Framework_MockObject_MockObject $transport * */
-        $transport = $this->getMock(TransportInterface::class);
+        $transport = $this->createMock(TransportInterface::class);
         $this->assertAttributeCount(1, 'transports', $this->messenger);
         $this->assertAttributeContains($this->sender, 'transports', $this->messenger);
 
@@ -118,7 +118,7 @@ class MessengerTest extends \PHPUnit_Framework_TestCase
             ->willReturn([$message1]);
 
         /** @var TransportInterface|\PHPUnit_Framework_MockObject_MockObject $transport * */
-        $transport = $this->getMock(TransportInterface::class);
+        $transport = $this->createMock(TransportInterface::class);
         $transport->expects($this->once())
             ->method('receive')
             ->with($channel, $receiverEntityFQCN, $receiverEntityId, $topic)
@@ -169,7 +169,7 @@ class MessengerTest extends \PHPUnit_Framework_TestCase
             ->with($channel, $topic, $receiverEntityFQCN, $receiverEntityId);
 
         /** @var TransportInterface|\PHPUnit_Framework_MockObject_MockObject $transport * */
-        $transport = $this->getMock(TransportInterface::class);
+        $transport = $this->createMock(TransportInterface::class);
         $transport->expects($this->once())
             ->method('remove')
             ->with($channel, $topic, $receiverEntityFQCN, $receiverEntityId);

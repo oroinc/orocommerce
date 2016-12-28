@@ -16,7 +16,7 @@ class BinaryNodeConverterTest extends \PHPUnit_Framework_TestCase
         $expr = new Expr();
         $params = [];
 
-        $node = $this->getMock(NodeInterface::class);
+        $node = $this->createMock(NodeInterface::class);
         $converter = new BinaryNodeConverter();
         $this->assertNull($converter->convert($node, $expr, $params));
     }
@@ -33,10 +33,10 @@ class BinaryNodeConverterTest extends \PHPUnit_Framework_TestCase
         $params = [];
         $aliasMapping = [];
 
-        $mainConverter = $this->getMock(QueryExpressionConverterInterface::class);
+        $mainConverter = $this->createMock(QueryExpressionConverterInterface::class);
 
-        $left = $this->getMock(NodeInterface::class);
-        $right = $this->getMock(NodeInterface::class);
+        $left = $this->createMock(NodeInterface::class);
+        $right = $this->createMock(NodeInterface::class);
         $converter = new BinaryNodeConverter();
         $converter->setConverter($mainConverter);
 
@@ -84,9 +84,9 @@ class BinaryNodeConverterTest extends \PHPUnit_Framework_TestCase
         $params = [];
         $aliasMapping = [];
 
-        $mainConverter = $this->getMock(QueryExpressionConverterInterface::class);
+        $mainConverter = $this->createMock(QueryExpressionConverterInterface::class);
 
-        $left = $this->getMock(NodeInterface::class);
+        $left = $this->createMock(NodeInterface::class);
         $right = $this->getMockBuilder(ValueNode::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -112,11 +112,12 @@ class BinaryNodeConverterTest extends \PHPUnit_Framework_TestCase
         $params = [];
         $aliasMapping = [];
 
-        $this->setExpectedException(\InvalidArgumentException::class, 'Unsupported operation "unknown"');
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Unsupported operation "unknown"');
 
-        $mainConverter = $this->getMock(QueryExpressionConverterInterface::class);
+        $mainConverter = $this->createMock(QueryExpressionConverterInterface::class);
 
-        $left = $this->getMock(NodeInterface::class);
+        $left = $this->createMock(NodeInterface::class);
         $right = $this->getMockBuilder(ValueNode::class)
             ->disableOriginalConstructor()
             ->getMock();

@@ -45,13 +45,13 @@ class WebsiteSearchProductPriceIndexerListenerTest extends \PHPUnit_Framework_Te
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->doctrine = $this->getMock(RegistryInterface::class);
+        $this->doctrine = $this->createMock(RegistryInterface::class);
 
         $this->configManager = $this->getMockBuilder(ConfigManager::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->manager = $this->getMock(EntityManagerInterface::class);
+        $this->manager = $this->createMock(EntityManagerInterface::class);
         $this->doctrine->method('getManagerForClass')->willReturn($this->manager);
 
         $this->listener = new WebsiteSearchProductPriceIndexerListener(

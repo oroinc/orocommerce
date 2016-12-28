@@ -30,17 +30,17 @@ class ProductFormProviderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->formFactory = $this->getMock(FormFactoryInterface::class);
-        $this->router = $this->getMock('Symfony\Component\Routing\Generator\UrlGeneratorInterface');
+        $this->formFactory = $this->createMock(FormFactoryInterface::class);
+        $this->router = $this->createMock('Symfony\Component\Routing\Generator\UrlGeneratorInterface');
 
         $this->provider = new ProductFormProvider($this->formFactory, $this->router);
     }
 
     public function testGetQuickAddFormView()
     {
-        $formView = $this->getMock(FormView::class);
+        $formView = $this->createMock(FormView::class);
 
-        $expectedForm = $this->getMock(FormInterface::class);
+        $expectedForm = $this->createMock(FormInterface::class);
         $expectedForm->expects($this->once())
             ->method('createView')
             ->willReturn($formView);
@@ -61,7 +61,7 @@ class ProductFormProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetQuickAddForm()
     {
-        $expectedForm = $this->getMock(FormInterface::class);
+        $expectedForm = $this->createMock(FormInterface::class);
 
         $this->formFactory->expects($this->once())
             ->method('create')
@@ -79,9 +79,9 @@ class ProductFormProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetQuickAddCopyPasteFormView()
     {
-        $formView = $this->getMock(FormView::class);
+        $formView = $this->createMock(FormView::class);
 
-        $expectedForm = $this->getMock(FormInterface::class);
+        $expectedForm = $this->createMock(FormInterface::class);
         $expectedForm->expects($this->once())
             ->method('createView')
             ->willReturn($formView);
@@ -102,7 +102,7 @@ class ProductFormProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetQuickAddCopyPasteForm()
     {
-        $expectedForm = $this->getMock(FormInterface::class);
+        $expectedForm = $this->createMock(FormInterface::class);
 
         $this->formFactory->expects($this->once())
             ->method('create')
@@ -120,9 +120,9 @@ class ProductFormProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetQuickAddImportFormView()
     {
-        $formView = $this->getMock(FormView::class);
+        $formView = $this->createMock(FormView::class);
 
-        $expectedForm = $this->getMock(FormInterface::class);
+        $expectedForm = $this->createMock(FormInterface::class);
         $expectedForm->expects($this->once())
             ->method('createView')
             ->willReturn($formView);
@@ -143,7 +143,7 @@ class ProductFormProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetQuickAddImportForm()
     {
-        $expectedForm = $this->getMock(FormInterface::class);
+        $expectedForm = $this->createMock(FormInterface::class);
 
         $this->formFactory->expects($this->once())
             ->method('create')
@@ -161,9 +161,9 @@ class ProductFormProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetLineItemFormView()
     {
-        $formView = $this->getMock(FormView::class);
+        $formView = $this->createMock(FormView::class);
 
-        $expectedForm = $this->getMock(FormInterface::class);
+        $expectedForm = $this->createMock(FormInterface::class);
         $expectedForm->expects($this->once())
             ->method('createView')
             ->willReturn($formView);
@@ -184,9 +184,9 @@ class ProductFormProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetLineItemFormViewWithInstanceName()
     {
-        $formView = $this->getMock(FormView::class);
+        $formView = $this->createMock(FormView::class);
 
-        $expectedForm = $this->getMock(FormInterface::class);
+        $expectedForm = $this->createMock(FormInterface::class);
         $expectedForm->expects($this->exactly(2))
             ->method('createView')
             ->willReturn($formView);
@@ -211,9 +211,9 @@ class ProductFormProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetLineItemFormViewWithProduct()
     {
-        $formView = $this->getMock(FormView::class);
+        $formView = $this->createMock(FormView::class);
 
-        $expectedForm = $this->getMock(FormInterface::class);
+        $expectedForm = $this->createMock(FormInterface::class);
         $expectedForm->expects($this->once())
             ->method('createView')
             ->willReturn($formView);
@@ -223,7 +223,7 @@ class ProductFormProviderTest extends \PHPUnit_Framework_TestCase
             ->with(FrontendLineItemType::NAME)
             ->willReturn($expectedForm);
 
-        $product = $this->getMock(Product::class);
+        $product = $this->createMock(Product::class);
         $product->expects($this->any())
             ->method('getId')
             ->will($this->returnValue(1));

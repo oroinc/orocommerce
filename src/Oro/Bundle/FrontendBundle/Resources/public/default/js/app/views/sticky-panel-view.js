@@ -2,6 +2,7 @@ define(function(require) {
     'use strict';
 
     var StickyPanelView;
+    var viewportManager = require('oroui/js/viewport-manager');
     var BaseView = require('oroui/js/app/views/base/view');
     var mediator = require('oroui/js/mediator');
     var _ = require('underscore');
@@ -121,6 +122,7 @@ define(function(require) {
 
                 var options = _.defaults($element.data('sticky') || {}, {
                     $elementPlaceholder: $elementPlaceholder,
+                    screenType: 'any',
                     placeholderId: '',
                     toggleClass: '',
                     autoWidth: false,
@@ -177,6 +179,8 @@ define(function(require) {
         getNewElementState: function($element) {
             var options = $element.data('sticky');
             var isEmpty = $element.is(':empty');
+            var viewport = viewportManager.getViewport();
+            var screenTypeState = viewport.screenTypes[options.screenType];
 
             if (options.isSticky) {
                 if (options.currentState) {
@@ -185,8 +189,10 @@ define(function(require) {
                     } else if (!options.alwaysInSticky && this.inViewPort(options.$elementPlaceholder, $element)) {
                         return false;
                     }
-                } else if (!isEmpty && (options.alwaysInSticky || !this.inViewPort($element))) {
-                    return true;
+                } else if (!isEmpty) {
+                    if (options.alwaysInSticky || (screenTypeState && !this.inViewPort($element))) {
+                        return true;
+                    }
                 }
             }
 

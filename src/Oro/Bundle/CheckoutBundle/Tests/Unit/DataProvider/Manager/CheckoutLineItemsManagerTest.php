@@ -77,7 +77,7 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
     public function testAddProvider()
     {
         /** @var CheckoutDataProviderInterface|\PHPUnit_Framework_MockObject_MockObject $provider */
-        $provider = $this->getMock('Oro\Component\Checkout\DataProvider\CheckoutDataProviderInterface');
+        $provider = $this->createMock('Oro\Component\Checkout\DataProvider\CheckoutDataProviderInterface');
 
         $this->checkoutLineItemsManager->addProvider($provider);
 
@@ -231,7 +231,7 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
     protected function getProvider($entity, array $returnData, $isSupported = true)
     {
         /** @var CheckoutDataProviderInterface|\PHPUnit_Framework_MockObject_MockObject $provider */
-        $provider = $this->getMock('Oro\Component\Checkout\DataProvider\CheckoutDataProviderInterface');
+        $provider = $this->createMock('Oro\Component\Checkout\DataProvider\CheckoutDataProviderInterface');
 
         $provider->expects($this->once())
             ->method('isEntitySupported')
@@ -254,7 +254,7 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
     protected function getCheckout($entity)
     {
         /** @var CheckoutSource|\PHPUnit_Framework_MockObject_MockObject $checkoutSource */
-        $checkoutSource = $this->getMock('Oro\Bundle\CheckoutBundle\Entity\CheckoutSource');
+        $checkoutSource = $this->createMock('Oro\Bundle\CheckoutBundle\Entity\CheckoutSource');
         $checkoutSource->expects($this->once())
             ->method('getEntity')
             ->willReturn($entity);

@@ -28,7 +28,7 @@ class ProductPriceProviderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $this->registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
 
         $this->provider = new ProductPriceProvider($this->registry);
         $this->provider->setClassName('\stdClass');

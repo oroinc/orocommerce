@@ -27,7 +27,7 @@ class RFPActionDecider
     public function __construct(EventDispatcherInterface $eventDispatcher, RequestStack $requestStack)
     {
         $this->eventDispatcher = $eventDispatcher;
-        $this->request = $requestStack->getCurrentRequest();
+        $this->request = $requestStack->getMasterRequest();
     }
 
     /**

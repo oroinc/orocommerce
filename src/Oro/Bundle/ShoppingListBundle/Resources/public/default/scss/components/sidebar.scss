@@ -38,6 +38,8 @@
   }
 
   &__title {
+    overflow: hidden;
+
     font-size: $base-font-size;
     line-height: 1.3;
   }

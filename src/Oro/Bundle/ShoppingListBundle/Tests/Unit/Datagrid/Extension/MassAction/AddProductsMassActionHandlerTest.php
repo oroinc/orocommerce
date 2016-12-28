@@ -112,7 +112,7 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
     protected function getShoppingListItemHandler()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|ShoppingList $shoppingList */
-        $shoppingList = $this->getMock('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList');
+        $shoppingList = $this->createMock('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList');
         $shoppingList->expects($this->any())
             ->method('getId')
             ->willReturn(1);

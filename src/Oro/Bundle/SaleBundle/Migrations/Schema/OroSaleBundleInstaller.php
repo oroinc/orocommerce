@@ -6,8 +6,8 @@ use Doctrine\DBAL\Schema\Schema;
 
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
-use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtension;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
+use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareTrait;
 use Oro\Bundle\EntityBundle\EntityConfig\DatagridScope;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
@@ -27,17 +27,13 @@ class OroSaleBundleInstaller implements
     ExtendExtensionAwareInterface,
     PaymentTermExtensionAwareInterface
 {
+    use AttachmentExtensionAwareTrait;
     use PaymentTermExtensionAwareTrait;
 
     /**
      * @var ExtendExtension
      */
     protected $extendExtension;
-
-    /**
-     * @var AttachmentExtension
-     */
-    protected $attachmentExtension;
 
     /**
      * @var ActivityExtension
@@ -50,14 +46,6 @@ class OroSaleBundleInstaller implements
     public function setExtendExtension(ExtendExtension $extendExtension)
     {
         $this->extendExtension = $extendExtension;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setAttachmentExtension(AttachmentExtension $attachmentExtension)
-    {
-        $this->attachmentExtension = $attachmentExtension;
     }
 
     /**
@@ -565,6 +553,8 @@ class OroSaleBundleInstaller implements
     {
         $table = $schema->createTable('oro_quote_demand');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('account_id', 'integer', ['notnull' => false]);
+        $table->addColumn('account_user_id', 'integer', ['notnull' => false]);
         $table->addColumn('quote_id', 'integer', ['notnull' => false]);
         $table->addColumn(
             'subtotal',
@@ -625,6 +615,18 @@ class OroSaleBundleInstaller implements
     protected function addOroSaleQuoteDemandForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('oro_quote_demand');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_account'),
+            ['account_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_account_user'),
+            ['account_user_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_sale_quote'),
             ['quote_id'],

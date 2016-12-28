@@ -16,7 +16,7 @@ trait CheckoutAwareContextTrait
      */
     protected function prepareContext(Checkout $checkout, WorkflowItem $workflowItem)
     {
-        $context = $this->getMock('Oro\Component\Layout\ContextInterface');
+        $context = $this->createMock('Oro\Component\Layout\ContextInterface');
 
         $data = $this->getMockBuilder('Oro\Component\Layout\ContextDataCollection')
             ->disableOriginalConstructor()

@@ -22,7 +22,7 @@ class DefaultProviderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->fieldsProvider = $this->getMock(FieldsProviderInterface::class);
+        $this->fieldsProvider = $this->createMock(FieldsProviderInterface::class);
         $this->provider = new DefaultProvider($this->fieldsProvider);
     }
 
@@ -30,7 +30,7 @@ class DefaultProviderTest extends \PHPUnit_Framework_TestCase
     {
         $addedColumns = [];
         $definition = [];
-        $node = $this->getMock(NodeInterface::class);
+        $node = $this->createMock(NodeInterface::class);
 
         $this->assertFalse($this->provider->fillColumnInformation($node, $addedColumns, $definition));
         $this->assertEquals([], $definition);

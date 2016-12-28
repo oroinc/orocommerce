@@ -46,12 +46,14 @@ class ProductQuantityToOrderFormExtension extends AbstractTypeExtension
             EntityFieldFallbackValueType::NAME,
             [
                 'label' => 'oro.inventory.fields.product.minimum_quantity_to_order.label',
+                'required' => false,
             ]
         )->add(
             AddQuantityToOrderFields::FIELD_MAXIMUM_QUANTITY_TO_ORDER,
             EntityFieldFallbackValueType::NAME,
             [
                 'label' => 'oro.inventory.fields.product.maximum_quantity_to_order.label',
+                'required' => false,
             ]
         );
     }

@@ -8,8 +8,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Schema\Schema;
 
-use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtension;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
+use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
@@ -24,17 +24,14 @@ class OroProductBundle implements
     AttachmentExtensionAwareInterface,
     ContainerAwareInterface
 {
+    use AttachmentExtensionAwareTrait;
+
     const PRODUCT_TABLE_NAME = 'orob2b_product';
     const PRODUCT_UNIT_PRECISION_TABLE_NAME = 'orob2b_product_unit_precision';
     const PRODUCT_IMAGE_TABLE_NAME = 'orob2b_product_image';
     const PRODUCT_IMAGE_TYPE_TABLE_NAME = 'orob2b_product_image_type';
     const PRODUCT_IMAGE_FIELD_NAME = 'image_id';
     const MAX_PRODUCT_IMAGE_SIZE_IN_MB = 10;
-
-    /**
-     * @var AttachmentExtension
-     */
-    protected $attachmentExtension;
 
     /**
      * @var ContainerInterface
@@ -52,14 +49,6 @@ class OroProductBundle implements
     public function setRenameExtension(RenameExtension $renameExtension)
     {
         $this->renameExtension = $renameExtension;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setAttachmentExtension(AttachmentExtension $attachmentExtension)
-    {
-        $this->attachmentExtension = $attachmentExtension;
     }
 
     /**

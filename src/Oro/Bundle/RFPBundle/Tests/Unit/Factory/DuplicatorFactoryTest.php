@@ -17,11 +17,11 @@ class DuplicatorFactoryTest extends \PHPUnit_Framework_TestCase
         $filter = new SetNullFilter();
         $matcher = new PropertyNameMatcher('firstField');
         /** @var FilterFactory|\PHPUnit_Framework_MockObject_MockObject $filterFactory */
-        $filterFactory = $this->getMock('Oro\Component\Duplicator\Filter\FilterFactory');
+        $filterFactory = $this->createMock('Oro\Component\Duplicator\Filter\FilterFactory');
         $filterFactory->expects($this->once())->method('create')->with('setNull', [])->willReturn($filter);
 
         /** @var MatcherFactory|\PHPUnit_Framework_MockObject_MockObject $matcherFactory */
-        $matcherFactory = $this->getMock('Oro\Component\Duplicator\Matcher\MatcherFactory');
+        $matcherFactory = $this->createMock('Oro\Component\Duplicator\Matcher\MatcherFactory');
         $matcherFactory->expects($this->once())
             ->method('create')
             ->with('propertyName', ['firstField'])

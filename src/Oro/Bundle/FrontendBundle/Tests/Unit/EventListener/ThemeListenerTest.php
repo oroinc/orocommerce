@@ -48,7 +48,7 @@ class ThemeListenerTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $this->kernel = $this->getMock('Symfony\Component\HttpKernel\HttpKernelInterface');
+        $this->kernel = $this->createMock('Symfony\Component\HttpKernel\HttpKernelInterface');
 
         $this->configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
             ->disableOriginalConstructor()

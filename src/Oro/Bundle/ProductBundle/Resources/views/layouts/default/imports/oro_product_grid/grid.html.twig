@@ -1,74 +1,46 @@
-{% block _product_grid_widget %}
+{% block __oro_product_grid__datagrid_widget %}
     {% set compact_view = '' %}
     {% set buttonsId = 'datagrid_row_product_line_item_form_buttons' %}
-    {% if blocks[buttonsId] is not defined or blocks[buttonsId].children is empty %}
-        {% set compact_view = ' product-item--compact' %}
-    {% endif %}
     {% set themeOptions = grid_render_parameters.themeOptions|default({}) %}
     {% set grid_render_parameters = grid_render_parameters|merge({'themeOptions': themeOptions|merge({
-        'tagName': 'div',
         'headerHide': true,
-        'rowTemplateSelector': '#template-grid-row',
-        'rowActionSelector': '.view-product',
+        'disableStickedScrollbar': true,
         'currentRowView': current_row_view,
         'bodyClassName': 'grid-body products__list products__list_' ~ current_row_view,
         'rowClassName': 'grid-row product-item product-item_' ~ current_row_view ~ compact_view,
         'rowAttributes': {
-            'data-layout': 'separate',
             'data-layout-model': 'productModel'
         }
     })}) %}
-    {{ block('datagrid_widget') }}
+
+    {{ parent_block_widget(block) }}
 {% endblock %}
 
 {% block __oro_product_grid__datagrid_toolbar_sorting_widget %}
     {% set attr = attr|merge({
         class: attr.class|default('') ~ " catalog__filter-controls__item sorting form-horizontal action-selectbox_custom_in-pager",
-    'data-grid-sorting': ''
+        'data-grid-sorting': ''
     }) %}
 
     <div{{ block('block_attributes') }}></div>
 {% endblock %}
 
-{% block __oro_product_grid__datagrid_toolbar_mass_actions_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ " mass-actions-panel btn-group icons-holder"
-    }) %}
-    <div class="catalog__filter-controls__item">
-        <div{{ block('block_attributes') }}>{{ block(block_type_widget_id) }}</div>
-    </div>
-{% endblock %}
-
-{% block __oro_product_grid__datagrid_toolbar_extra_actions_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ " extra-actions-panel",
-        'data-grid-extra-actions-panel': ''
-    }) %}
-    <div class="catalog__filter-controls__item">
-        <div{{ block('block_attributes') }}>{{ block(block_type_widget_id) }}</div>
-    </div>
-{% endblock %}
-
 {% block __oro_product_grid__datagrid_toolbar_pagination_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ " catalog__filter-controls__item oro-pagination",
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' catalog__filter-controls__item oro-pagination',
         'data-grid-pagination': ''
     }) %}
 
-    <div{{ block('block_attributes') }}>
-        {{ block(block_type_widget_id) }}
-    </div>
+    {{ parent_block_widget(block) }}
 {% endblock %}
 
 {% block __oro_product_grid__datagrid_toolbar_page_size_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ " catalog__filter-controls__item page-size form-horizontal",
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' catalog__filter-controls__item page-size form-horizontal',
         'data-grid-pagesize': ''
     }) %}
 
-    <div{{ block('block_attributes') }}>
-        {{ block(block_type_widget_id) }}
-    </div>
+    {{ parent_block_widget(block) }}
 {% endblock %}
 
 {% block __oro_product_grid__datagrid_toolbar_actions_widget %}
@@ -77,12 +49,10 @@
         'data-grid-actions-panel': ''
     }) %}
 
-    <div{{ block('block_attributes') }}>
-        {{ block(block_type_widget_id) }}
-    </div>
+    {{ parent_block_widget(block) }}
 {% endblock %}
 
-{% block __oro_product_grid__datagrid_toolbar_display_options_widget %}
+{% block _product_datagrid_toolbar_display_options_widget %}
     {% set attr = layout_attr_defaults(attr, {
         'data-page-component-module': 'oroproduct/js/app/components/catalog-switch-component',
         'data-page-component-options': {

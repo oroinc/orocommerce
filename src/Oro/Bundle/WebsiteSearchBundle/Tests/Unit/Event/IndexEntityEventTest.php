@@ -8,10 +8,19 @@ use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderValue;
 
 class IndexEntityEventTest extends \PHPUnit_Framework_TestCase
 {
+    public function testGetEntityClass()
+    {
+        $className = 'testClass';
+
+        $event = new IndexEntityEvent($className, [], []);
+
+        $this->assertEquals($className, $event->getEntityClass());
+    }
+
     public function testGetEntityIds()
     {
         $entities = [new \stdClass(), new \stdClass()];
-        $event = new IndexEntityEvent($entities, []);
+        $event = new IndexEntityEvent(\stdClass::class, $entities, []);
 
         $this->assertEquals($entities, $event->getEntities());
     }
@@ -22,21 +31,21 @@ class IndexEntityEventTest extends \PHPUnit_Framework_TestCase
             'someKey' => 'someValue',
         ];
 
-        $event = new IndexEntityEvent([], $context);
+        $event = new IndexEntityEvent(\stdClass::class, [], $context);
 
         $this->assertEquals($context, $event->getContext());
     }
 
     public function testGetEntitiesDataWhenNothingWasAdded()
     {
-        $event = new IndexEntityEvent([], []);
+        $event = new IndexEntityEvent(\stdClass::class, [], []);
 
         $this->assertEquals([], $event->getEntitiesData());
     }
 
     public function testGetEntityDataWhenFieldsAreAdded()
     {
-        $event = new IndexEntityEvent([1, 2], []);
+        $event = new IndexEntityEvent(\stdClass::class, [1, 2], []);
 
         $event->addField(1, 'name', 'Product name', true);
         $event->addField(1, 'description', 'Product description', true);
@@ -68,7 +77,7 @@ class IndexEntityEventTest extends \PHPUnit_Framework_TestCase
      */
     public function testAddFieldObject()
     {
-        $event = new IndexEntityEvent([], []);
+        $event = new IndexEntityEvent(\stdClass::class, [], []);
         $event->addField(1, 'sku', new \stdClass());
     }
 
@@ -78,7 +87,7 @@ class IndexEntityEventTest extends \PHPUnit_Framework_TestCase
      */
     public function testAddFieldArray()
     {
-        $event = new IndexEntityEvent([], []);
+        $event = new IndexEntityEvent(\stdClass::class, [], []);
         $event->addField(1, 'sku', []);
     }
 
@@ -88,13 +97,13 @@ class IndexEntityEventTest extends \PHPUnit_Framework_TestCase
      */
     public function testAddPlaceholderFieldNotSupported()
     {
-        $event = new IndexEntityEvent([], []);
+        $event = new IndexEntityEvent(\stdClass::class, [], []);
         $event->addPlaceholderField(1, 'sku', new LocalizedFallbackValue(), []);
     }
 
     public function testSamePlaceholderValueDoestOverridePrevious()
     {
-        $event = new IndexEntityEvent([], []);
+        $event = new IndexEntityEvent(\stdClass::class, [], []);
         $event->addPlaceholderField(1, 'sku', 'value1', []);
         $event->addPlaceholderField(1, 'sku', 'value2', []);
 

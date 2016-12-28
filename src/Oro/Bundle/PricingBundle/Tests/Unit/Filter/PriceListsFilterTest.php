@@ -39,8 +39,8 @@ class PriceListsFilterTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->form = $this->getMock('Symfony\Component\Form\Test\FormInterface');
-        $this->formFactory = $this->getMock('Symfony\Component\Form\FormFactoryInterface');
+        $this->form = $this->createMock('Symfony\Component\Form\Test\FormInterface');
+        $this->formFactory = $this->createMock('Symfony\Component\Form\FormFactoryInterface');
         $this->formFactory->expects($this->any())
             ->method('create')
             ->will($this->returnValue($this->form));

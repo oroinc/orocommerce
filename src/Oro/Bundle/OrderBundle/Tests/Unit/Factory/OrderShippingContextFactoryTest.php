@@ -4,6 +4,8 @@ namespace Oro\Bundle\OrderBundle\Bundle\Tests\Unit\Factory;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 use Oro\Bundle\OrderBundle\Converter\OrderShippingLineItemConverterInterface;
@@ -59,9 +61,9 @@ class OrderShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->shippingLineItemConverterMock = $this->getMock(OrderShippingLineItemConverterInterface::class);
+        $this->shippingLineItemConverterMock = $this->createMock(OrderShippingLineItemConverterInterface::class);
 
-        $this->shippingContextBuilderFactoryMock = $this->getMock(ShippingContextBuilderFactoryInterface::class);
+        $this->shippingContextBuilderFactoryMock = $this->createMock(ShippingContextBuilderFactoryInterface::class);
 
         $this->repositoryMock = $this
             ->getMockBuilder(PaymentTransactionRepository::class)
@@ -72,7 +74,7 @@ class OrderShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->contextBuilder = $this->getMock(ShippingContextBuilderInterface::class);
+        $this->contextBuilder = $this->createMock(ShippingContextBuilderInterface::class);
 
         $this->factory = new OrderShippingContextFactory(
             $this->doctrineHelper,
@@ -81,13 +83,18 @@ class OrderShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     public function testCreate()
     {
         /** @var AddressInterface $address */
-        $address = $this->getMock(OrderAddress::class);
+        $address = $this->createMock(OrderAddress::class);
         $currency = 'USD';
         $paymentMethod = 'SomePaymentMethod';
         $amount = 100;
+        $customer = $this->createMock(Account::class);
+        $customerUser = $this->createMock(AccountUser::class);
 
         $this->paymentTransactionMock
             ->expects(static::once())
@@ -142,7 +149,9 @@ class OrderShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
             ->setCurrency($currency)
             ->setLineItems($orderLineItemsCollection)
             ->setSubtotal($amount)
-            ->setCurrency($currency);
+            ->setCurrency($currency)
+            ->setAccount($customer)
+            ->setAccountUser($customerUser);
 
         $this->contextBuilder
             ->method('setShippingAddress')
@@ -151,6 +160,14 @@ class OrderShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
         $this->contextBuilder
             ->method('setBillingAddress')
             ->with($address);
+
+        $this->contextBuilder
+            ->method('setCustomer')
+            ->with($customer);
+
+        $this->contextBuilder
+            ->method('setCustomerUser')
+            ->with($customerUser);
 
         $this->contextBuilder
             ->expects($this->once())
@@ -173,5 +190,18 @@ class OrderShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
             ->willReturn($this->contextBuilder);
 
         $this->factory->create($order);
+    }
+
+    public function testCreateNullBuilderFactory()
+    {
+        $this->factory = new OrderShippingContextFactory(
+            $this->doctrineHelper,
+            $this->shippingLineItemConverterMock
+        );
+        $this->shippingContextBuilderFactoryMock
+            ->expects(static::never())
+            ->method('createShippingContextBuilder');
+
+        $this->assertNull($this->factory->create(new Order()));
     }
 }

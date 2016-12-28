@@ -111,7 +111,7 @@ class PriceListVoterTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue(1));
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|TokenInterface $token */
-        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $token = $this->createMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
         $this->assertEquals(
             $expected,
             $this->voter->vote($token, $object, ['DELETE'])

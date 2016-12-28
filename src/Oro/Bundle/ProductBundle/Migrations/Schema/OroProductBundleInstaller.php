@@ -6,8 +6,8 @@ use Doctrine\DBAL\Schema\Schema;
 
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
-use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtension;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
+use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Entity\ConfigModel;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManager;
@@ -28,6 +28,8 @@ class OroProductBundleInstaller implements
     AttachmentExtensionAwareInterface,
     SlugExtensionAwareInterface
 {
+    use AttachmentExtensionAwareTrait;
+
     const PRODUCT_TABLE_NAME = 'oro_product';
     const PRODUCT_UNIT_TABLE_NAME = 'oro_product_unit';
     const PRODUCT_UNIT_PRECISION_TABLE_NAME = 'oro_product_unit_precision';
@@ -44,9 +46,6 @@ class OroProductBundleInstaller implements
     /** @var ExtendExtension */
     protected $extendExtension;
 
-    /** @var AttachmentExtension */
-    protected $attachmentExtension;
-
     /** @var  ActivityExtension */
     protected $activityExtension;
 
@@ -61,14 +60,6 @@ class OroProductBundleInstaller implements
     public function setSlugExtension(SlugExtension $extension)
     {
         $this->slugExtension = $extension;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setAttachmentExtension(AttachmentExtension $attachmentExtension)
-    {
-        $this->attachmentExtension = $attachmentExtension;
     }
 
     /**
@@ -92,7 +83,7 @@ class OroProductBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_7';
+        return 'v1_8';
     }
 
     /**
@@ -125,6 +116,7 @@ class OroProductBundleInstaller implements
         $this->addNoteAssociations($schema);
         $this->addAttachmentAssociations($schema);
         $this->addProductContentVariants($schema);
+        $this->addAttributeFamilyField($schema);
     }
 
     /**
@@ -529,30 +521,23 @@ class OroProductBundleInstaller implements
                     'dataaudit' => ['auditable' => true]
                 ]
             );
-
-            $table->addColumn(
-                'product_collection_page_rule',
-                'text',
-                [
-                    'oro_options' => [
-                        'extend' => [
-                            'is_extend' => true,
-                            'owner' => ExtendScope::OWNER_CUSTOM,
-                            'cascade' => ['persist'],
-                            'on_delete' => 'CASCADE',
-                        ],
-                        'datagrid' => [
-                            'is_visible' => false
-                        ],
-                        'form' => [
-                            'is_enabled' => false
-                        ],
-                        'view' => ['is_displayable' => false],
-                        'merge' => ['display' => false],
-                        'dataaudit' => ['auditable' => true]
-                    ]
-                ]
-            );
         }
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    public function addAttributeFamilyField(Schema $schema)
+    {
+        $table = $schema->getTable('oro_product');
+        $table->addColumn('attribute_family_id', 'integer', ['notnull' => false]);
+        $table->addIndex(['attribute_family_id']);
+
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_attribute_family'),
+            ['attribute_family_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'RESTRICT']
+        );
     }
 }

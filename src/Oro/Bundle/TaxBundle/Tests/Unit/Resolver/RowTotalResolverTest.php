@@ -148,7 +148,7 @@ class RowTotalResolverTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider testResolverRowTotalWithUnitPriceDataProvider
+     * @dataProvider resolverRowTotalWithUnitPriceDataProvider
      * @param BigDecimal[] $amount
      * @param array        $taxRules
      * @param array        $expected
@@ -187,7 +187,7 @@ class RowTotalResolverTest extends \PHPUnit_Framework_TestCase
     /**
      * @return array
      */
-    public function testResolverRowTotalWithUnitPriceDataProvider()
+    public function resolverRowTotalWithUnitPriceDataProvider()
     {
         return [
             [

@@ -18,7 +18,6 @@ use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowDefinition;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
-use Oro\Bundle\WorkflowBundle\Model\WorkflowResult;
 use Oro\Component\Action\Event\ExtendableConditionEvent;
 
 class QuantityToOrderConditionListenerTest extends \PHPUnit_Framework_TestCase
@@ -48,7 +47,7 @@ class QuantityToOrderConditionListenerTest extends \PHPUnit_Framework_TestCase
         $this->validatorService = $this->getMockBuilder(QuantityToOrderValidatorService::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->translator = $this->getMock(TranslatorInterface::class);
+        $this->translator = $this->createMock(TranslatorInterface::class);
         $this->quantityToOrderConditionListener = new QuantityToOrderConditionListener(
             $this->validatorService,
             $this->translator
@@ -143,7 +142,7 @@ class QuantityToOrderConditionListenerTest extends \PHPUnit_Framework_TestCase
         $workflowDefinition = new WorkflowDefinition();
         $workflowDefinition->setRelatedEntity(Checkout::class);
 
-        $shoppingList = $this->getMock(ShoppingList::class);
+        $shoppingList = $this->createMock(ShoppingList::class);
 
         $workflowItem = new WorkflowItem();
         $workflowItem->setWorkflowName('b2b_flow_checkout')
@@ -151,7 +150,7 @@ class QuantityToOrderConditionListenerTest extends \PHPUnit_Framework_TestCase
             ->getResult()
             ->set('shoppingList', $shoppingList);
 
-        $event = $this->getMock(ExtendableConditionEvent::class);
+        $event = $this->createMock(ExtendableConditionEvent::class);
         $event->expects($this->once())->method('getContext')->willReturn($workflowItem);
         $event->expects($this->once())->method('addError');
 
@@ -171,7 +170,7 @@ class QuantityToOrderConditionListenerTest extends \PHPUnit_Framework_TestCase
         $workflowItem->setEntity($checkout);
 
         /** @var ExtendableConditionEvent|\PHPUnit_Framework_MockObject_MockObject $event * */
-        $event = $this->getMock(ExtendableConditionEvent::class);
+        $event = $this->createMock(ExtendableConditionEvent::class);
         $event->expects($this->once())
             ->method('getContext')
             ->willReturn($workflowItem);

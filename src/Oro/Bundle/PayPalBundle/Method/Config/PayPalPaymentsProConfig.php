@@ -5,15 +5,10 @@ namespace Oro\Bundle\PayPalBundle\Method\Config;
 use Oro\Bundle\PayPalBundle\DependencyInjection\Configuration;
 use Oro\Bundle\PayPalBundle\DependencyInjection\OroPayPalExtension;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
-use Oro\Bundle\PaymentBundle\DependencyInjection\Configuration as PaymentConfiguration;
 use Oro\Bundle\PaymentBundle\Method\Config\AbstractPaymentConfig;
-use Oro\Bundle\PaymentBundle\Method\Config\CountryAwarePaymentConfigTrait;
-use Oro\Bundle\PaymentBundle\Method\Config\CurrencyAwarePaymentConfigTrait;
 
 class PayPalPaymentsProConfig extends AbstractPaymentConfig implements PayflowGatewayConfigInterface
 {
-    use CountryAwarePaymentConfigTrait, CurrencyAwarePaymentConfigTrait;
-
     /**
      * @return string
      */
@@ -46,25 +41,9 @@ class PayPalPaymentsProConfig extends AbstractPaymentConfig implements PayflowGa
     /**
      * {@inheritdoc}
      */
-    public function isEnabled()
-    {
-        return (bool)$this->getConfigValue(Configuration::PAYPAL_PAYMENTS_PRO_ENABLED_KEY);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getPurchaseAction()
     {
         return (string)$this->getConfigValue(Configuration::PAYPAL_PAYMENTS_PRO_PAYMENT_ACTION_KEY);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getAllowedCountries()
-    {
-        return (array)$this->getConfigValue(Configuration::PAYPAL_PAYMENTS_PRO_SELECTED_COUNTRIES_KEY);
     }
 
     /**
@@ -78,34 +57,9 @@ class PayPalPaymentsProConfig extends AbstractPaymentConfig implements PayflowGa
     /**
      * {@inheritdoc}
      */
-    public function isAllCountriesAllowed()
-    {
-        return $this->getConfigValue(Configuration::PAYPAL_PAYMENTS_PRO_ALLOWED_COUNTRIES_KEY)
-            === PaymentConfiguration::ALLOWED_COUNTRIES_ALL;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function isZeroAmountAuthorizationEnabled()
     {
         return (bool)$this->getConfigValue(Configuration::PAYPAL_PAYMENTS_PRO_ZERO_AMOUNT_AUTHORIZATION_KEY);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getAllowedCurrencies()
-    {
-        return (array)$this->getConfigValue(Configuration::PAYPAL_PAYMENTS_PRO_ALLOWED_CURRENCIES_KEY);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getOrder()
-    {
-        return (int)$this->getConfigValue(Configuration::PAYPAL_PAYMENTS_PRO_SORT_ORDER_KEY);
     }
 
     /**

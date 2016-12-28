@@ -58,7 +58,7 @@ class RequestProductTypeTest extends AbstractTest
     public function testConfigureOptions()
     {
         /* @var $resolver \PHPUnit_Framework_MockObject_MockObject|OptionsResolver */
-        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
+        $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with($this->callback(function (array $options) {
@@ -94,7 +94,7 @@ class RequestProductTypeTest extends AbstractTest
         $view->vars = $inputData['vars'];
 
         /* @var $form FormInterface|\PHPUnit_Framework_MockObject_MockObject */
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
         $this->formType->buildView($view, $form, $inputData['options']);
 
@@ -114,7 +114,7 @@ class RequestProductTypeTest extends AbstractTest
         $view->vars = $inputData['vars'];
 
         /* @var $form FormInterface|\PHPUnit_Framework_MockObject_MockObject */
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
         $this->formType->finishView($view, $form, $inputData['options']);
 

@@ -113,10 +113,10 @@ class ProductSearchIndexListenerTest extends \PHPUnit_Framework_TestCase
         $result = [];
 
         foreach ($entityIds as $id) {
-            $product = $this->getMock(
-                Product::class,
-                ['getId', 'getMetaDescription', 'getMetaKeyword']
-            );
+            $product = $this->getMockBuilder(Product::class)
+                ->disableOriginalConstructor()
+                ->setMethods(['getId', 'getMetaDescription', 'getMetaKeyword'])
+                ->getMock();
 
             $product->expects($this->any())
                 ->method('getId')
@@ -150,7 +150,7 @@ class ProductSearchIndexListenerTest extends \PHPUnit_Framework_TestCase
      */
     private function getLocalizations()
     {
-        $polishLocalization = $this->getMock(
+        $polishLocalization = $this->createMock(
             Localization::class,
             ['getId']
         );
@@ -158,7 +158,7 @@ class ProductSearchIndexListenerTest extends \PHPUnit_Framework_TestCase
         $polishLocalization->expects($this->atLeast(1))->method('getId')
             ->willReturn(1);
 
-        $englishLocalization = $this->getMock(
+        $englishLocalization = $this->createMock(
             Localization::class,
             ['getId']
         );

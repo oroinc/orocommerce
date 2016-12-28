@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\src\Oro\Bundle\OrderBundle\Tests\Unit\Twig;
+namespace Oro\Bundle\OrderBundle\Tests\Unit\Twig;
 
 use Oro\Bundle\OrderBundle\Formatter\ShippingTrackingFormatter;
 use Oro\Bundle\OrderBundle\Formatter\SourceDocumentFormatter;

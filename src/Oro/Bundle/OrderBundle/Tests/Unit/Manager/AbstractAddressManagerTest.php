@@ -47,10 +47,11 @@ abstract class AbstractAddressManagerTest extends \PHPUnit_Framework_TestCase
     {
         if ($exception) {
             list ($exception, $message) = $exception;
-            $this->setExpectedException($exception, $message);
+            $this->expectException($exception);
+            $this->expectExceptionMessage($message);
         }
 
-        $em = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
+        $em = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
         $em->expects($expectedId ? $this->atLeastOnce() : $this->never())->method('find')
             ->with($this->isType('string'), $this->equalTo($expectedId));
 
@@ -78,7 +79,7 @@ abstract class AbstractAddressManagerTest extends \PHPUnit_Framework_TestCase
     {
         $entity = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountUserAddress', 1);
 
-        $em = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
+        $em = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
         $em->expects($this->exactly(2))->method('find')
             ->with($this->isType('string'), $this->isType('integer'))
             ->will($this->onConsecutiveCalls($entity, null));
