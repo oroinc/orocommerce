@@ -270,9 +270,9 @@ class ProductRepository extends EntityRepository
      *     'slim_fit' => true
      * ]
      * Value is extended field id for select field and true or false for boolean field
-     * @return Product[]
+     * @return QueryBuilder
      */
-    public function findSimpleProductsByVariantFields(Product $configurableProduct, array $variantParameters)
+    public function getSimpleProductsByVariantFieldsQueryBuilder(Product $configurableProduct, array $variantParameters)
     {
         $qb = $this
             ->createQueryBuilder('p')
@@ -287,8 +287,6 @@ class ProductRepository extends EntityRepository
                 ->setParameter(sprintf('variantValue%s', $variantName), $variantValue);
         }
 
-        return $qb
-            ->getQuery()
-            ->getResult();
+        return $qb;
     }
 }
