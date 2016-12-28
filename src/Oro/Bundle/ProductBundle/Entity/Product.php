@@ -562,6 +562,14 @@ class Product extends ExtendProduct implements
     /**
      * @return bool
      */
+    public function isSimple()
+    {
+        return $this->getType() === self::TYPE_SIMPLE;
+    }
+
+    /**
+     * @return bool
+     */
     public function isConfigurable()
     {
         return $this->getType() === self::TYPE_CONFIGURABLE;
