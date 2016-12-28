@@ -905,6 +905,25 @@ class Product extends ExtendProduct implements
     }
 
     /**
+     * @return ProductVariantLink
+     */
+    public function getParentVariantLink()
+    {
+        return $this->parentVariantLink;
+    }
+
+    /**
+     * @param ProductVariantLink $variantLink
+     * @return $this
+     */
+    public function setParentVariantLink(ProductVariantLink $variantLink)
+    {
+        $this->parentVariantLink = $variantLink;
+
+        return $this;
+    }
+
+    /**
      * @return Collection|ProductImage[]
      */
     public function getImages()
