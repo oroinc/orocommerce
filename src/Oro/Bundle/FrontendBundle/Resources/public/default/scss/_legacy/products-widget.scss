@@ -623,24 +623,6 @@
     .product-item__price_block {
       display: inline-table;
     }
-
-    &_list-view {
-      @media (max-width: $screen-sm) {
-        display: none;
-      }
-    }
-
-    &_no-image-view {
-      @media (max-width: $screen-sm) {
-        display: none;
-      }
-    }
-
-    &_no-image-view2 {
-      @media (max-width: $screen-sm) {
-        display: none;
-      }
-    }
   }
 
   &__mspr {
@@ -831,10 +813,6 @@
 
     @media (max-width: $screen-md) {
       padding: 20px 0;
-    }
-
-    @media (max-width: $screen-sm) {
-      display: block;
     }
   }
 
