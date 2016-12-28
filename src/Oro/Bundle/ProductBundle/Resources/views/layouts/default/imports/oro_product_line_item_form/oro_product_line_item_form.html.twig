@@ -29,11 +29,25 @@
 {% endblock %}
 
 {% block __oro_product_line_item_form__line_item_form_widget %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' product-item__qty product-item__qty_{{ class_prefix }}'
     }) %}
+
     <div {{ block('block_attributes') }}>
-        {{ block_widget(block) }}
+        {% if is_configurable_product_type(product.type) %}
+            <div class="btn-group full" {{ block('block_attributes') }}>
+                {{ UI.addButton({
+                    'path': path('oro_product_frontend_product_view', {id: product.id}),
+                    'label': 'oro.product.frontend.index.view_details'|trans,
+                    'title': 'oro.product.frontend.index.view_details'|trans,
+                    'aCss': 'btn--info'
+                }) }}
+            </div>
+        {% else %}
+            {{ block_widget(block) }}
+        {% endif %}
     </div>
 {% endblock %}
 
