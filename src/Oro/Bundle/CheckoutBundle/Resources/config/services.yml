@@ -389,3 +389,13 @@ services:
         arguments:
             - "@oro_security.security_facade"
             - '@oro_checkout.repository.checkout'
+
+    oro_checkout.acl.voter.checkout:
+        class: 'Oro\Bundle\CheckoutBundle\Acl\Voter\CheckoutVoter'
+        public: false
+        arguments:
+            - '@oro_entity.doctrine_helper'
+        calls:
+            - [setContainer, ["@service_container"]]
+        tags:
+            - { name: security.voter }
