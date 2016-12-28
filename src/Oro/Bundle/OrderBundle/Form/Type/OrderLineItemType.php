@@ -79,6 +79,7 @@ class OrderLineItemType extends AbstractOrderLineItemType
                 'product',
                 ProductSelectType::NAME,
                 [
+                    'error_bubbling' => true,
                     'required' => true,
                     'label' => 'oro.product.entity_label',
                     'create_enabled' => false,
