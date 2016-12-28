@@ -1,5 +1,7 @@
 layout:
     actions:
+        - '@setBlockTheme':
+            themes: 'layout.html.twig'
         - '@add':
             id: product_view_variant_field_container
             blockType: container

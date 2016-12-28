@@ -5,12 +5,11 @@ namespace Oro\Bundle\ProductBundle\Controller\Frontend;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Symfony\Component\HttpFoundation\Response;
 
 class AjaxProductVariantController extends Controller
 {
@@ -27,6 +26,7 @@ class AjaxProductVariantController extends Controller
      */
     public function getAvailableAction(Request $request, Product $product)
     {
+
         $productFormDataProvider = $this->get('oro_product.layout.data_provider.product_form');
         $productVariantForm = $productFormDataProvider->getVariantFieldsForm($product);
 
@@ -40,10 +40,33 @@ class AjaxProductVariantController extends Controller
             ['form']
         );
 
-        return new JsonResponse([
+        $response = [
             'data' => [
                 'form' => $content,
             ]
-        ]);
+        ];
+
+        //
+
+        $productVariantAvailabilityProvider = $this->get('oro_product.provider.product_variant_availability_provider');
+
+        $variantFields = $request->get($productVariantForm->getName());
+
+        $fieldsToSearch = [];
+        foreach ($variantFields as $name => $value) {
+            if ($productVariantForm->has($name)) {
+                $fieldsToSearch[$name] = $value;
+            }
+        }
+
+        try {
+            $variantProduct = $productVariantAvailabilityProvider->getSimpleProductByVariantFields($product, $fieldsToSearch);
+            $response['data']['id'] = $product->getId();
+        } catch (\InvalidArgumentException $e) {
+            //
+        }
+        //
+
+        return new JsonResponse($response);
     }
 }

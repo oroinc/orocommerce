@@ -73,7 +73,8 @@ define(function(require) {
             this.model.set('id', id);
         },
 
-        updateVariantForm: function(form) {
+        updateVariantForm: function(formBlock) {
+            var form = $(formBlock).find('form');
             this.getElement('form').replaceWith(form);
             this.undelegateElementsEvents();
             this.clearElementsCache();
