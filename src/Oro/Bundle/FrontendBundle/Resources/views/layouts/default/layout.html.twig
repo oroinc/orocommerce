@@ -82,7 +82,8 @@
 
         {% if hasVariants %}
             {% set dropdownMenuOptions = {
-                'align': 'right'
+                'align': 'right',
+                'attachToParent': true
             } %}
 
             <div{{ block('block_attributes') }}>
