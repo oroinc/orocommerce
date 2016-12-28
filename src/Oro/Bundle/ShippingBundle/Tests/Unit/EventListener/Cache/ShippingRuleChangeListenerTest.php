@@ -96,7 +96,6 @@ class ShippingRuleChangeListenerTest extends \PHPUnit_Framework_TestCase
         $this->triggerAllMethods($entity);
     }
 
-
     public function testMethodsWithNotRuleInDifferentRequests()
     {
         /** @var ShippingMethodsConfigsRule $entity */
