@@ -48,7 +48,7 @@ class ShippingRuleChangeListenerTest extends \PHPUnit_Framework_TestCase
         $this->repository = $this->getMockBuilder(EntityRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
+        $this->em = $this->getMockBuilder(EntityManager::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->args = $this->getMockBuilder(LifecycleEventArgs::class)
@@ -92,7 +92,6 @@ class ShippingRuleChangeListenerTest extends \PHPUnit_Framework_TestCase
         /** @var ShippingMethodsConfigsRule $entity */
         $entity = $this->getEntity(ShippingMethodsConfigsRule::class, ['id' => 1]);
         $this->mockExpectedQuantity($entity, 0, 1);
-        $this->triggerAllMethods($entity);
         $this->triggerAllMethods($entity);
     }
 
