@@ -245,6 +245,13 @@ class PriceRequestFactoryTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
+    public function testCreateWithNullShippingAddress()
+    {
+        $priceRequest = $this->priceRequestFactory->create($this->transport, new ShippingContext([]), '');
+
+        self::assertNull($priceRequest);
+    }
+
     /**
      * @param int $length
      * @param int $width
