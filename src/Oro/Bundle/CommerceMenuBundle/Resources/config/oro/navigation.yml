@@ -81,6 +81,7 @@ navigation:
         tree:
             commerce_top_nav:
                 type: commerce_top_nav
+                scope_type: menu_frontend_visibility
                 children:
                     telephone: ~
                     live_chat: ~
@@ -88,6 +89,7 @@ navigation:
 
             commerce_quick_access:
                 type: commerce_quick_access
+                scope_type: menu_frontend_visibility
                 children:
                     orders: ~
                     quotes: ~
@@ -95,12 +97,14 @@ navigation:
 
             commerce_main_menu:
                 type: commerce_main_menu
+                scope_type: menu_frontend_visibility
                 children:
                     contact_us: ~
                     about: ~
 
             commerce_footer_links:
                 type: commerce_footer_links
+                scope_type: menu_frontend_visibility
                 children:
                     information:
                         children:

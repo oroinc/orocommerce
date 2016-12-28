@@ -18,6 +18,7 @@ use Symfony\Component\DomCrawler\Form;
  * @dbIsolation
  * @group CommunityEdition
  * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class OrderControllerTest extends WebTestCase
 {
@@ -491,6 +492,36 @@ class OrderControllerTest extends WebTestCase
 
         $html = $crawler->html();
         $this->assertContains(self::ORDER_PO_NUMBER_UPDATED, $html);
+    }
+
+    public function testSaveOrderWithEmptyProductErrorMessage()
+    {
+        $crawler = $this->client->request('GET', $this->getUrl('oro_order_create'));
+
+        $form = $crawler->selectButton('Save')->form();
+
+        $orderAccount = $this->getReference('account.level_1');
+        $lineItems = [
+            [
+                'product' => '',
+                'quantity' => 1,
+                'productUnit' => '',
+                'price' => [
+                    'value' => '',
+                    'currency' => 'USD'
+                ],
+                'priceType' => 10,
+                'shipBy' => ''
+            ],
+        ];
+        $discountItems = $this->getDiscountItems();
+
+        $submittedData = $this->getSubmittedData($form, $orderAccount, $lineItems, $discountItems);
+
+        $this->client->followRedirects(true);
+        $this->client->request($form->getMethod(), $form->getUri(), $submittedData);
+
+        $this->assertContains('Please choose Product', $this->client->getResponse()->getContent());
     }
 
     /**

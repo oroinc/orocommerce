@@ -49,3 +49,29 @@
     padding-right: 0;
   }
 }
+
+@include breakpoint('tablet') {
+  .product-item__qty_no-image-view input[type="text"] {
+    margin-bottom: 0;
+  }
+
+  .product-item__qty.product-item__qty_no-image-view {
+    .product-item__qty__current-grid {
+      width: 100%;
+    }
+
+    .line_item_form_fields__form__row + .line_item_form_fields__form__row {
+      max-width: inherit;
+    }
+
+    .product-item__qty__current-grid + .add-product-from-view-component {
+      width: 100%;
+
+      margin-left: 0;
+    }
+
+    .shopping-lists {
+      width: 100%;
+    }
+  }
+}
