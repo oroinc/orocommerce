@@ -77,10 +77,7 @@ class ShippingRuleChangeListener
     protected function invalidateCache($entity, LifecycleEventArgs $args)
     {
         if (!$this->executed) {
-            if (!$entity instanceof Rule) {
-                $this->priceCache->deleteAllPrices();
-                $this->executed = true;
-            } elseif ($this->isShippingRule($entity, $args)) {
+            if (!($entity instanceof Rule) || ($entity instanceof Rule && $this->isShippingRule($entity, $args))) {
                 $this->priceCache->deleteAllPrices();
                 $this->executed = true;
             }
