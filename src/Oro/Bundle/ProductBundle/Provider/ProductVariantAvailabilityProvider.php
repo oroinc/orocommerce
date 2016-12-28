@@ -7,7 +7,9 @@ use Oro\Bundle\EntityExtendBundle\Provider\EnumValueProvider;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\ProductBundle\Event\RestrictFrontendVisibilityEvent;
 
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 class ProductVariantAvailabilityProvider
@@ -24,22 +26,28 @@ class ProductVariantAvailabilityProvider
     /** @var PropertyAccessor */
     protected $propertyAccessor;
 
+    /** @var EventDispatcherInterface */
+    protected $eventDispatcher;
+
     /**
      * @param DoctrineHelper $doctrineHelper
      * @param EnumValueProvider $enumValueProvider
      * @param CustomFieldProvider $customFieldProvider
      * @param PropertyAccessor $propertyAccessor
+     * @param EventDispatcherInterface $eventDispatcher
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         EnumValueProvider $enumValueProvider,
         CustomFieldProvider $customFieldProvider,
-        PropertyAccessor $propertyAccessor
+        PropertyAccessor $propertyAccessor,
+        EventDispatcherInterface $eventDispatcher
     ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->enumValueProvider = $enumValueProvider;
         $this->customFieldProvider = $customFieldProvider;
         $this->propertyAccessor = $propertyAccessor;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -183,7 +191,15 @@ class ProductVariantAvailabilityProvider
         /** @var ProductRepository $repository */
         $repository = $this->doctrineHelper->getEntityRepository(Product::class);
 
-        return $repository->findSimpleProductsByVariantFields($configurableProduct, $variantParameters);
+        $qb = $repository->getSimpleProductsByVariantFieldsQueryBuilder($configurableProduct, $variantParameters);
+
+        $restrictFrontendVisibilityEvent = new RestrictFrontendVisibilityEvent($qb);
+        $this->eventDispatcher->dispatch(RestrictFrontendVisibilityEvent::NAME, $restrictFrontendVisibilityEvent);
+
+        return $restrictFrontendVisibilityEvent
+            ->getQueryBuilder()
+            ->getQuery()
+            ->getResult();
     }
 
     /**
