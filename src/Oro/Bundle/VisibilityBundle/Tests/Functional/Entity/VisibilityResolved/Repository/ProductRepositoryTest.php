@@ -362,6 +362,23 @@ class ProductRepositoryTest extends WebTestCase
         $this->assertCount(1, $visibilities, 'Not expected count of resolved visibilities');
     }
 
+    public function testInsertByProductWithoutCategory()
+    {
+        $product = $this->getReference(LoadProductData::PRODUCT_8);
+        /** @var $product Product */
+        $this->repository->deleteByProduct($product);
+        $this->repository->insertByProduct(
+            $this->insertExecutor,
+            $product,
+            ProductVisibilityResolved::VISIBILITY_VISIBLE,
+            $this->getScope(),
+            null
+        );
+        $visibilities = $this->repository->findBy(['product' => $product]);
+        $this->assertCount(1, $visibilities, 'Not expected count of resolved visibilities');
+        $visibilities[0];
+    }
+
     /**
      * @param Product $product
      * @return null|\Oro\Bundle\CatalogBundle\Entity\Category
