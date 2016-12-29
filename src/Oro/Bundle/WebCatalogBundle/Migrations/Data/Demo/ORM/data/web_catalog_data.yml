@@ -3,9 +3,9 @@
     defaultSlugPrototype: ""
     contentVariants:
         -
-            type: cms_page
+            type: system_page
             params:
-                title: "Bonum negas esse divitias"
+                route: "oro_frontend_root"
             isDefault: true
             scopes:
                 -

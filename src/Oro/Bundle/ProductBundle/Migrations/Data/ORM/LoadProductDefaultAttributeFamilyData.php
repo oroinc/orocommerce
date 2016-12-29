@@ -10,6 +10,7 @@ use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeGroup;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeGroupRelation;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadRolesData;
 
@@ -20,6 +21,8 @@ class LoadProductDefaultAttributeFamilyData extends AbstractFixture implements
     DependentFixtureInterface,
     ContainerAwareInterface
 {
+    use UserUtilityTrait;
+
     /**
      * @var string
      */
@@ -87,12 +90,16 @@ class LoadProductDefaultAttributeFamilyData extends AbstractFixture implements
      */
     public function load(ObjectManager $manager)
     {
+        $user = $this->getFirstUser($manager);
+        $organization = $user->getOrganization();
+
         $configManager = $this->container->get('oro_entity_config.config_manager');
         $attributeFamily = new AttributeFamily();
         $attributeFamily->setCode(self::DEFAULT_FAMILY_CODE);
         $attributeFamily->setEntityClass(Product::class);
         $attributeFamily->setOwner($this->getUser($manager));
         $attributeFamily->setDefaultLabel('Default');
+        $attributeFamily->setOrganization($organization);
 
         foreach (self::$groups as $groupData) {
             $attributeGroup = new AttributeGroup();

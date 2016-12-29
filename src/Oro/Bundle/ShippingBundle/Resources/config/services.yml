@@ -214,14 +214,6 @@ services:
             - '@oro_shipping.shipping_method.registry'
             - '@oro_shipping.shipping_price.provider.cache'
 
-    oro_shipping.shipping_rule.provider:
-        class: 'Oro\Bundle\ShippingBundle\Provider\ShippingRulesProvider'
-        public: false
-        arguments:
-            - '@oro_entity.doctrine_helper'
-            - '@oro_shipping.expression_language.decorated_product_line_item_factory'
-            - '@logger'
-
     oro_shipping.methods_configs_rules.provider:
         class: 'Oro\Bundle\ShippingBundle\Provider\ShippingMethodsConfigsRulesProvider'
         public: false

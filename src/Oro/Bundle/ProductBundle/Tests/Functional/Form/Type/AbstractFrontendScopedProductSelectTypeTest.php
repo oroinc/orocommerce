@@ -22,7 +22,7 @@ abstract class AbstractFrontendScopedProductSelectTypeTest extends AbstractScope
     /**
      * @return array
      */
-    public function restrictionDataProvider()
+    public function restrictionSelectDataProvider()
     {
         return [
             [
@@ -33,7 +33,6 @@ abstract class AbstractFrontendScopedProductSelectTypeTest extends AbstractScope
                     LoadProductData::PRODUCT_3,
                     LoadProductData::PRODUCT_6,
                     LoadProductData::PRODUCT_7,
-                    LoadProductData::PRODUCT_8,
                 ],
             ],
             [
@@ -43,7 +42,6 @@ abstract class AbstractFrontendScopedProductSelectTypeTest extends AbstractScope
                     LoadProductData::PRODUCT_2,
                     LoadProductData::PRODUCT_6,
                     LoadProductData::PRODUCT_7,
-                    LoadProductData::PRODUCT_8,
                 ],
             ],
             [
@@ -63,7 +61,56 @@ abstract class AbstractFrontendScopedProductSelectTypeTest extends AbstractScope
                     LoadProductData::PRODUCT_2,
                     LoadProductData::PRODUCT_6,
                     LoadProductData::PRODUCT_7,
-                    LoadProductData::PRODUCT_8,
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function restrictionGridDataProvider()
+    {
+        return [
+            [
+                ['availableInventoryStatuses' => ['in_stock', 'out_of_stock']],
+                'expectedProducts' => [
+                    LoadProductData::PRODUCT_1,
+                    LoadProductData::PRODUCT_2,
+                    LoadProductData::PRODUCT_3,
+                    LoadProductData::PRODUCT_6,
+                    LoadProductData::PRODUCT_7,
+                    LoadProductData::PRODUCT_8
+                ],
+            ],
+            [
+                ['availableInventoryStatuses' => ['in_stock']],
+                'expectedProducts' => [
+                    LoadProductData::PRODUCT_1,
+                    LoadProductData::PRODUCT_2,
+                    LoadProductData::PRODUCT_6,
+                    LoadProductData::PRODUCT_7,
+                    LoadProductData::PRODUCT_8
+                ],
+            ],
+            [
+                ['availableInventoryStatuses' => ['out_of_stock']],
+                'expectedProducts' => [
+                    LoadProductData::PRODUCT_3,
+                ],
+            ],
+            [
+                ['availableInventoryStatuses' => ['discontinued']],
+                'expectedProducts' => [],
+            ],
+            [
+                ['availableInventoryStatuses' => ['in_stock', 'discontinued']],
+                'expectedProducts' => [
+                    LoadProductData::PRODUCT_1,
+                    LoadProductData::PRODUCT_2,
+                    LoadProductData::PRODUCT_6,
+                    LoadProductData::PRODUCT_7,
+                    LoadProductData::PRODUCT_8
                 ],
             ],
         ];

@@ -52,13 +52,15 @@ define(function(require) {
         },
 
         initModel: function(options) {
-            this.modelAttr = $.extend(true, {}, this.modelAttr, options.modelAttr || {});
+            var modelAttr = options.modelAttr || {};
+            this.modelAttr = $.extend(true, {}, this.modelAttr, modelAttr);
+            this.$el.trigger('options:set:productModel', options);
             if (options.productModel) {
                 this.model = options.productModel;
             }
 
             _.each(this.modelAttr, function(value, attribute) {
-                if (!this.model.has(attribute)) {
+                if (!this.model.has(attribute) || modelAttr[attribute] !== undefined ) {
                     this.model.set(attribute, value);
                 }
             }, this);
