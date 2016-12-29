@@ -457,6 +457,6 @@ class ImportExportTest extends WebTestCase
      */
     private function createSessionInterfaceMock()
     {
-        return $this->getMock(SessionInterface::class);
+        return $this->createMock(SessionInterface::class);
     }
 }
