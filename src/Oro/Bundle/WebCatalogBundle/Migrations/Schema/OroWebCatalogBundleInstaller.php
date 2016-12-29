@@ -70,6 +70,7 @@ class OroWebCatalogBundleInstaller implements
         $this->createOroContentNodeTable($schema);
         $this->createOroContentNodeSlugPrototypeTable($schema);
         $this->createOroContentNodeTitleTable($schema);
+        $this->createOroContentNodeUrlTable($schema);
         $this->createOroWebCatalogVariantSlugTable($schema);
         $this->createOroWebCatalogNodeScopeTable($schema);
         $this->createOroWebCatalogVariantScopeTable($schema);
@@ -175,6 +176,20 @@ class OroWebCatalogBundleInstaller implements
     protected function createOroContentNodeTitleTable(Schema $schema)
     {
         $table = $schema->createTable('oro_web_catalog_node_title');
+        $table->addColumn('node_id', 'integer', []);
+        $table->addColumn('localized_value_id', 'integer', []);
+        $table->setPrimaryKey(['node_id', 'localized_value_id']);
+        $table->addUniqueIndex(['localized_value_id']);
+    }
+
+    /**
+     * Create oro_web_catalog_node_title table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroContentNodeUrlTable(Schema $schema)
+    {
+        $table = $schema->createTable('oro_web_catalog_node_url');
         $table->addColumn('node_id', 'integer', []);
         $table->addColumn('localized_value_id', 'integer', []);
         $table->setPrimaryKey(['node_id', 'localized_value_id']);

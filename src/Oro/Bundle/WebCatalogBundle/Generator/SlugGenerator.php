@@ -5,6 +5,7 @@ namespace Oro\Bundle\WebCatalogBundle\Generator;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Generator\DTO\SlugUrl;
 use Oro\Bundle\WebCatalogBundle\ContentVariantType\ContentVariantTypeRegistry;
@@ -39,6 +40,9 @@ class SlugGenerator
         } else {
             // Slug url for root content node
             $slugUrls = new ArrayCollection([new SlugUrl(self::ROOT_URL)]);
+            $localizedUrl = new LocalizedFallbackValue();
+            $localizedUrl->setText(self::ROOT_URL);
+            $contentNode->addLocalizedUrl($localizedUrl);
         }
 
         $this->bindSlugs($contentNode, $slugUrls);
@@ -158,17 +162,9 @@ class SlugGenerator
 
         $parentNodeSlugUrls = [];
         if ($parentNode) {
-            // We can use any parent content variant.
-            // Content variant slugs are generated based on the Node data
-            // and are identical for all node content variants.
-            /** @var ContentVariant $contentVariant */
-            $contentVariant = $parentNode->getContentVariants()->first();
-
-            if ($contentVariant) {
-                foreach ($contentVariant->getSlugs() as $parentNodeSlug) {
-                    $localeId = $this->getLocaleId($parentNodeSlug->getLocalization());
-                    $parentNodeSlugUrls[$localeId] = $parentNodeSlug->getUrl();
-                }
+            foreach ($parentNode->getLocalizedUrls() as $parentNodeSlug) {
+                $localeId = $this->getLocaleId($parentNodeSlug->getLocalization());
+                $parentNodeSlugUrls[$localeId] = $parentNodeSlug->getUrl();
             }
         }
 

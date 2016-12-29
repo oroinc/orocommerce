@@ -132,9 +132,8 @@ class ContentNodeTreeResolver implements ContentNodeTreeResolverInterface
      */
     protected function getIdentifier(ContentNode $node)
     {
-        $defaultVariant = $node->getDefaultVariant();
         /** @var Slug $slug */
-        $slug = $defaultVariant->getSlugs()
+        $slug = $node->getLocalizedUrls()
             ->filter(
                 function (Slug $slug) {
                     return $slug->getLocalization() === null;
@@ -143,7 +142,7 @@ class ContentNodeTreeResolver implements ContentNodeTreeResolverInterface
             ->first();
 
         if (!$slug) {
-            $slug = $defaultVariant->getSlugs()->first();
+            $slug = $node->getLocalizedUrls()->first();
         }
 
         $url = trim($slug->getUrl(), '/');
