@@ -410,18 +410,30 @@ datagrids:
                     - request.shipUntil
                     - CONCAT(requestAccountUser.firstName, ' ', requestAccountUser.lastName) as accountUserName
                     - requestStatus.label as statusLabel
+                    - customerStatus.name as customerStatusName
+                    - customerStatus.id as customerStatusId
                 from:
                     - { table: %oro_rfp.entity.request.class%, alias: request }
                 join:
                     left:
                         - { join: request.accountUser, alias: requestAccountUser }
                         - { join: request.status, alias: requestStatus }
+                        - { join: request.customer_status, alias: customerStatus }
+                where:
+                    and:
+                        - IDENTITY(request.internal_status) <> :internalStatus
+            bind_parameters:
+                -
+                    name: internalStatus
+                    default: deleted
 
         columns:
             id:
                 label:         oro.frontend.rfp.request.id.label
             statusLabel:
                 label:         oro.frontend.rfp.request.status.label
+            customerStatusName:
+                label:         oro.frontend.rfp.request.customer_status.label
             poNumber:
                 label:         oro.frontend.rfp.request.po_number.label
             shipUntil:
@@ -444,6 +456,8 @@ datagrids:
                 params: [ id ]
         sorters:
             columns:
+                customerStatusName:
+                    data_name: customerStatusName
                 accountUserName:
                     data_name: accountUserName
                 poNumber:
@@ -455,6 +469,10 @@ datagrids:
             disable_default_sorting: true
         filters:
             columns:
+                customerStatusName:
+                    type:      enum
+                    data_name: customerStatusId
+                    enum_code: rfp_customer_status
                 accountUserName:
                     type:      string
                     data_name: accountUserName
