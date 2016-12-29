@@ -9,6 +9,7 @@ use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 
 use Oro\Bundle\RFPBundle\Entity\Request;
+use Oro\Bundle\RFPBundle\Entity\RequestAdditionalNote;
 use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 use Oro\Bundle\RFPBundle\Entity\RequestStatus;
 
@@ -60,6 +61,7 @@ class RequestTest extends \PHPUnit_Framework_TestCase
                 ['requestProducts', new RequestProduct()],
                 ['assignedUsers', new User()],
                 ['assignedAccountUsers', new AccountUser()],
+                ['requestAdditionalNotes', new RequestAdditionalNote()],
             ]
         );
     }
