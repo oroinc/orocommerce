@@ -911,7 +911,7 @@ class Product extends ExtendProduct implements
      */
     public function getParentVariantLinks()
     {
-        return $this->variantLinks;
+        return $this->parentVariantLinks;
     }
 
     /**
