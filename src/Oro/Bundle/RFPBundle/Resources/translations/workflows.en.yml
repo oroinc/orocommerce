@@ -1,10 +1,8 @@
 oro:
     workflow:
         rfq_backoffice_default:
-            label: 'Backoffice RFQ'
+            label: 'RFQ Backoffice'
             step:
-                stub:
-                    label: 'stub'
                 open:
                     label: 'Open'
                 processed:
@@ -16,8 +14,8 @@ oro:
                 deleted:
                     label: 'Deleted'
             transition:
-                stub_transition:
-                    label: 'Stub trans'
+                __start__:
+                    label: 'Start transition'
                 process_transition:
                     label: 'Process'
                 request_more_information_transition:
@@ -34,19 +32,17 @@ oro:
                     label: 'Undelete'
 
         rfq_frontoffice_default:
-            label: 'Frontoffice RFQ'
+            label: 'RFQ Frontoffice'
             step:
-                stub:
-                    label: 'stub'
                 submitted:
                     label: 'Submitted'
                 requires_attention:
-                    label: 'Pequires attention'
+                    label: 'Requires attention'
                 cancelled:
                     label: 'Cancelled'
             transition:
-                stub_transition:
-                    label: 'stub trans'
+                __start__:
+                    label: 'Start transition'
                 more_information_requested_transition:
                     label: 'More information requested'
                 provide_more_information_transition:

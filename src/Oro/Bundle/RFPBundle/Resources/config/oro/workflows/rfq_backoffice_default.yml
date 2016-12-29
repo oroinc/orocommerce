@@ -2,20 +2,15 @@ workflows:
     rfq_backoffice_default:
         entity: Oro\Bundle\RFPBundle\Entity\Request
         entity_attribute: request
-        start_step: open
+
         applications: ['default']
+        defaults: {active: true}
+
+        exclusive_record_groups: ['b2b_rfq_backoffice_flow']
+
+        start_step: open
+        steps_display_ordered: true
         steps:
-            stub:
-                order: 0
-                allowed_transitions:
-                    - process_transition
-                    - request_more_information_transition
-                    - decline_transition
-                    - delete_transition
-                    - info_provided_transition
-                    - reprocess_transition
-                    - undelete_transition
-                    - stub_transition
             open:
                 order: 10
                 allowed_transitions:
@@ -23,33 +18,32 @@ workflows:
                     - request_more_information_transition
                     - decline_transition
                     - delete_transition
-                    - stub_transition
             processed:
                 order: 20
                 allowed_transitions:
                     - delete_transition
-                    - stub_transition
             more_info_requested:
                 order: 30
                 allowed_transitions:
                     - delete_transition
                     - info_provided_transition
-                    - stub_transition
             declined:
                 order: 40
                 allowed_transitions:
                     - delete_transition
                     - reprocess_transition
-                    - stub_transition
             deleted:
                 order: 50
                 allowed_transitions:
                     - undelete_transition
-                    - stub_transition
+
         transitions:
-            stub_transition:
-                step_to: stub
-                transition_definition: stub_tranition_definition
+            __start__:
+                is_start: true
+                is_hidden: true
+                is_unavailable_hidden: true
+                step_to: open
+                transition_definition: __start___definition
             process_transition:
                 step_to: processed
                 transition_definition: stub_tranition_definition
@@ -71,5 +65,7 @@ workflows:
             undelete_transition:
                 step_to: open
                 transition_definition: stub_tranition_definition
+
         transition_definitions:
+            __start___definition: ~
             stub_tranition_definition: ~
