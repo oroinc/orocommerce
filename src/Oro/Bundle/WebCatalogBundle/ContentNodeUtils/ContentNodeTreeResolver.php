@@ -64,7 +64,6 @@ class ContentNodeTreeResolver implements ContentNodeTreeResolverInterface
             return null;
         }
 
-        $identifier = $this->getIdentifier($node);
         $resolvedContentVariant = $this->getResolvedContentVariant($node->getContentVariants(), $scope);
         if (!$resolvedContentVariant) {
             return null;
@@ -72,7 +71,7 @@ class ContentNodeTreeResolver implements ContentNodeTreeResolverInterface
 
         $resolvedNode = new ResolvedContentNode(
             $node->getId(),
-            $identifier,
+            $this->getIdentifier($node),
             $node->getTitles(),
             $resolvedContentVariant
         );
@@ -140,6 +139,10 @@ class ContentNodeTreeResolver implements ContentNodeTreeResolverInterface
 
         if (!$localizedUrl) {
             $localizedUrl = $node->getLocalizedUrls()->first();
+        }
+
+        if (!$localizedUrl) {
+            return '';
         }
 
         $url = trim($localizedUrl->getText(), '/');
