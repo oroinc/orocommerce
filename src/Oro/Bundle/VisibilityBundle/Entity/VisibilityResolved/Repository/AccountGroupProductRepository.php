@@ -144,9 +144,7 @@ class AccountGroupProductRepository extends AbstractVisibilityRepository
     /**
      * @param InsertFromSelectQueryExecutor $insertExecutor
      * @param Product $product
-     * @param Category $category
-     * @internal param Product $product
-     * @internal param null|Category $category
+     * @param Category|null $category
      */
     public function insertByProduct(
         InsertFromSelectQueryExecutor $insertExecutor,
