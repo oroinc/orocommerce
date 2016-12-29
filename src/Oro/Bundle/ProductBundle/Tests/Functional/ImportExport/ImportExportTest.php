@@ -17,17 +17,15 @@ use Oro\Bundle\NotificationBundle\Async\Topics;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\SecurityBundle\Authentication\Token\OrganizationToken;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\MessageQueue\Transport\Null\NullMessage;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 
 /**
  * @dbIsolationPerTest
- * @SuppressWarnings(PHPMD.TooManyMethods)
  *
  * @covers \Oro\Bundle\ProductBundle\ImportExport\TemplateFixture\ProductFixture
  */
-class ImportExportTest extends WebTestCase
+class ImportExportTest extends AbstractImportExportTest
 {
     use MessageQueueExtension;
 
@@ -331,17 +329,6 @@ class ImportExportTest extends WebTestCase
         );
         $this->assertEquals($contextErrors, array_values($errors), implode(PHP_EOL, $errors));
         $this->getContainer()->get('security.token_storage')->setToken(null);
-    }
-
-    protected function cleanUpReader()
-    {
-        $reader = $this->getContainer()->get('oro_importexport.reader.csv');
-        $reflection = new \ReflectionProperty(get_class($reader), 'file');
-        $reflection->setAccessible(true);
-        $reflection->setValue($reader, null);
-        $reflection = new \ReflectionProperty(get_class($reader), 'header');
-        $reflection->setAccessible(true);
-        $reflection->setValue($reader, null);
     }
 
     /**

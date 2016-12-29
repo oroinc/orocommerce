@@ -7,14 +7,14 @@ parameters:
     oro_shipping.entity.freight_class.class: Oro\Bundle\ShippingBundle\Entity\FreightClass
     oro_shipping.entity.weight_unit.class: Oro\Bundle\ShippingBundle\Entity\WeightUnit
     oro_shipping.entity.product_shipping_options.class: Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions
-    oro_shipping.entity.shipping_rule.class: Oro\Bundle\ShippingBundle\Entity\ShippingRule
+    oro_shipping.entity.shipping_methods_configs_rule.class: Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule
 
 services:
     oro_shipping.shipping_rule.manager.api:
         class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
         parent: oro_soap.manager.entity_manager.abstract
         arguments:
-            - '%oro_shipping.entity.shipping_rule.class%'
+            - '%oro_shipping.entity.shipping_methods_configs_rule.class%'
             - "@doctrine.orm.entity_manager"
 
     oro_shipping.factory.shipping_origin_model_factory:
@@ -105,6 +105,12 @@ services:
             - '@oro_shipping.formatter.dimensions_unit_value'
         tags:
             - { name: twig.extension }
+
+    oro_shipping.repository.shipping_methods_configs_rule:
+        class: 'Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodsConfigsRuleRepository'
+        parent: oro_entity.abstract_repository
+        arguments:
+            - 'Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule'
 
     oro_shipping.repository.product_shipping_options:
         parent: oro_entity.abstract_repository
@@ -204,7 +210,7 @@ services:
     oro_shipping.shipping_price.provider:
         class: 'Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider'
         arguments:
-            - '@oro_shipping.shipping_rule.provider'
+            - '@oro_shipping.methods_configs_rules.provider'
             - '@oro_shipping.shipping_method.registry'
             - '@oro_shipping.shipping_price.provider.cache'
 
@@ -215,6 +221,14 @@ services:
             - '@oro_entity.doctrine_helper'
             - '@oro_shipping.expression_language.decorated_product_line_item_factory'
             - '@logger'
+
+    oro_shipping.methods_configs_rules.provider:
+        class: 'Oro\Bundle\ShippingBundle\Provider\ShippingMethodsConfigsRulesProvider'
+        public: false
+        arguments:
+            - '@oro_rule.rule_filtration.service'
+            - '@oro_shipping.converter.shipping_context_to_rule_values'
+            - '@oro_shipping.repository.shipping_methods_configs_rule'
 
     oro_shipping.shipping_price.provider.cache:
         class: 'Oro\Bundle\ShippingBundle\Provider\Cache\ShippingPriceCache'
@@ -228,8 +242,8 @@ services:
         calls:
             - [setNamespace, ['oro_shipping_price']]
 
-    oro_shipping.form.handler.shipping_rule:
-        class: 'Oro\Bundle\ShippingBundle\Form\Handler\ShippingRuleHandler'
+    oro_shipping.form.handler.shipping_methods_configs_rule:
+        class: 'Oro\Bundle\ShippingBundle\Form\Handler\ShippingMethodsConfigsRuleHandler'
         scope: request
         arguments:
             - '@request'
@@ -293,3 +307,40 @@ services:
 
     oro_shipping.datagrid.shipping_rule_actions_visibility_provider:
         class: 'Oro\Bundle\ShippingBundle\Datagrid\ShippingRuleActionsVisibilityProvider'
+
+    oro_shipping.converter.shipping_context_to_rule_values:
+        class: 'Oro\Bundle\ShippingBundle\Converter\ShippingContextToRuleValuesConverter'
+        arguments:
+            - '@oro_shipping.expression_language.decorated_product_line_item_factory'
+
+    oro_shipping.listener.update_entity_config_relations:
+        class: 'Oro\Bundle\ShippingBundle\CacheWarmer\UpdateEntityConfigRelationsWarmer'
+        arguments:
+            - '@oro_shipping.entity_config_relations_migration'
+        tags:
+            - { name: oro_entity_extend.warmer, priority: -500 }
+
+    oro_shipping.entity_config_relations_migration:
+        class: 'Oro\Bundle\ShippingBundle\CacheWarmer\EntityConfigRelationsMigration'
+        arguments:
+            - '@doctrine'
+            - '@logger'
+            - '%installed%'
+
+    oro_shipping.listener.shipping_rule:
+        class: 'Oro\Bundle\ShippingBundle\EventListener\Cache\ShippingRuleChangeListener'
+        arguments:
+            - '@oro_shipping.shipping_price.provider.cache'
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\RuleBundle\Entity\Rule', event: postPersist }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\RuleBundle\Entity\Rule', event: postUpdate }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\RuleBundle\Entity\Rule', event: postRemove }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule', event: postPersist }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule', event: postUpdate }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule', event: postRemove }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig', event: postPersist }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig', event: postUpdate }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig', event: postRemove }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig', event: postPersist }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig', event: postUpdate }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig', event: postRemove }

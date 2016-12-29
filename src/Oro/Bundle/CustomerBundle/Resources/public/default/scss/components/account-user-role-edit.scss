@@ -40,3 +40,9 @@
     margin-left: 120px;
   }
 }
+
+@include breakpoint('tablet') {
+  .account_user_role_edit_buttons_top {
+    margin-top: -63px;
+  }
+}

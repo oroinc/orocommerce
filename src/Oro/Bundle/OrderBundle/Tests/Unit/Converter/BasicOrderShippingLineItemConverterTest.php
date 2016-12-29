@@ -60,34 +60,22 @@ class BasicOrderShippingLineItemConverterTest extends \PHPUnit_Framework_TestCas
     {
         $productUnitCode = 'someCode';
 
+        $orderCollection = new ArrayCollection([
+            (new OrderLineItem())->setQuantity(12)->setProductUnit($this->productUnitMock)->setPrice($this->priceMock),
+            (new OrderLineItem())->setQuantity(5)->setProductUnit($this->productUnitMock)->setPrice($this->priceMock),
+            (new OrderLineItem())->setQuantity(1)->setProductUnit($this->productUnitMock)->setPrice($this->priceMock),
+            (new OrderLineItem())->setQuantity(3)->setProductUnit($this->productUnitMock)->setPrice($this->priceMock),
+            (new OrderLineItem())->setQuantity(50)->setProductUnit($this->productUnitMock)->setPrice($this->priceMock),
+        ]);
+
         $this->productUnitMock
-            ->expects($this->exactly(5))
+            ->expects($this->exactly($orderCollection->count()))
             ->method('getCode')
             ->willReturn($productUnitCode);
 
-        $lineItemsData = [
-            ['quantity' => 12, 'productUnit' => $this->productUnitMock, 'price' => $this->priceMock],
-            ['quantity' => 5, 'productUnit' => $this->productUnitMock, 'price' => $this->priceMock ],
-            ['quantity' => 1, 'productUnit' => $this->productUnitMock, 'price' => $this->priceMock],
-            ['quantity' => 3, 'productUnit' => $this->productUnitMock, 'price' => $this->priceMock],
-            ['quantity' => 50, 'productUnit' => $this->productUnitMock, 'price' => $this->priceMock],
-        ];
-
-        $orderLineItems = [];
-        foreach ($lineItemsData as $lineItemData) {
-            $orderLineItems[] = (new OrderLineItem())
-                ->setQuantity($lineItemData['quantity'])
-                ->setProductUnit($lineItemData['productUnit'])
-                ->setPrice($this->priceMock);
-        }
-        $orderCollection = new ArrayCollection($orderLineItems);
-
-        $shippingLineItemCollection = $this->orderShippingLineItemConverter->convertLineItems($orderCollection);
-
-        $expectedShippingLineItems = [];
-
-        foreach ($orderLineItems as $orderLineItem) {
-            $expectedShippingLineItems[] = new ShippingLineItem([
+        $expectedPaymentLineItems = [];
+        foreach ($orderCollection as $orderLineItem) {
+            $expectedPaymentLineItems[] = new ShippingLineItem([
                 ShippingLineItem::FIELD_QUANTITY => $orderLineItem->getQuantity(),
                 ShippingLineItem::FIELD_PRODUCT_HOLDER => $orderLineItem,
                 ShippingLineItem::FIELD_PRODUCT_UNIT => $orderLineItem->getProductUnit(),
@@ -96,8 +84,30 @@ class BasicOrderShippingLineItemConverterTest extends \PHPUnit_Framework_TestCas
                 ShippingLineItem::FIELD_ENTITY_IDENTIFIER => null,
             ]);
         }
+        $expectedLineItemCollection = new DoctrineShippingLineItemCollection($expectedPaymentLineItems);
 
-        $expectedLineItemCollection = new DoctrineShippingLineItemCollection($expectedShippingLineItems);
+        $paymentLineItemCollection = $this->orderShippingLineItemConverter->convertLineItems($orderCollection);
+
+        $this->assertEquals($expectedLineItemCollection, $paymentLineItemCollection);
+    }
+
+    public function testWithoutRequiredFieldsOnOrderLineItems()
+    {
+        $this->productUnitMock
+            ->expects($this->never())
+            ->method('getCode');
+
+        $orderCollection = new ArrayCollection([
+            (new OrderLineItem())->setQuantity(12),
+            (new OrderLineItem())->setQuantity(5),
+            (new OrderLineItem())->setQuantity(1),
+            (new OrderLineItem())->setQuantity(3),
+            (new OrderLineItem())->setQuantity(50),
+        ]);
+
+        $expectedLineItemCollection = new DoctrineShippingLineItemCollection([]);
+
+        $shippingLineItemCollection = $this->orderShippingLineItemConverter->convertLineItems($orderCollection);
 
         $this->assertEquals($expectedLineItemCollection, $shippingLineItemCollection);
     }

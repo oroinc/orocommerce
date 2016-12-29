@@ -93,6 +93,10 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
                 'class' => 'oro_customer.entity.account_user.class',
                 'acls'  => ['VIEW_DEEP'],
             ],
+            [
+                'class' => 'oro_checkout.entity.checkout.class',
+                'acls'  => ['VIEW_DEEP', 'CREATE_LOCAL'],
+            ],
         ],
         self::ROLE7 => [
             [
@@ -142,6 +146,7 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
             'account'   => self::ACCOUNT1,
             'roles'     => [
                 self::ROLE2,
+                self::ROLE7,
             ],
         ],
         [

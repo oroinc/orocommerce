@@ -109,9 +109,9 @@ class PaymentTermExtensionTest extends \PHPUnit_Framework_TestCase
      * @param array $expected
      */
     public function testBuildParentDataReplacePaymentTermAttributes(
-        PaymentTerm $accountPaymentTerm = null,
-        PaymentTerm $accountGroupPaymentTerm = null,
-        array $expected
+        $accountPaymentTerm,
+        $accountGroupPaymentTerm,
+        $expected
     ) {
         $this->paymentTermProvider->expects($this->once())->method('getAccountPaymentTermByOwner')
             ->willReturn($accountPaymentTerm);

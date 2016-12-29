@@ -1,0 +1,30 @@
+rule.1:
+    enabled: true
+    sort_order: 1
+    expression: ''
+    is_stop_processing: false
+
+rule.2:
+    enabled: true
+    sort_order: 2
+    expression: ''
+    is_stop_processing: false
+
+rule.3:
+    enabled: false
+    sort_order: 3
+    expression: ''
+    is_stop_processing: false
+
+rule.3:
+    enabled: true
+    sort_order: 4
+    expression: ''
+    is_stop_processing: false
+
+
+rule.3:
+    enabled: false
+    sort_order: 5
+    expression: ''
+    is_stop_processing: false

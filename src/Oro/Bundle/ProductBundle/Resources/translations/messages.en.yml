@@ -345,7 +345,7 @@ oro:
 
     webcatalog:
         contentvariant:
-            product_collection_page_rule.label: Product Collection Assignment Rule
+            product_page_product.label: Product
 
     feature:
         quick_order_form:

@@ -96,6 +96,7 @@ class FrontendProductDatagridListener
                 break;
             case DataGridThemeHelper::VIEW_GRID:
                 $this->addImageToConfig($config);
+                $this->addTypeToConfig($config);
                 $this->addShortDescriptionToConfig($config);
                 break;
             case DataGridThemeHelper::VIEW_TILES:
@@ -106,7 +107,6 @@ class FrontendProductDatagridListener
 
     /**
      * @param DatagridConfiguration $config
-     * @return array
      */
     protected function addImageToConfig(DatagridConfiguration $config)
     {
@@ -137,6 +137,22 @@ class FrontendProductDatagridListener
                     'data_name' => 'shortDescriptions',
                 ]
             ],
+        ];
+        $this->applyUpdatesToConfig($config, $updates);
+    }
+
+    /**
+     * @param DatagridConfiguration $config
+     */
+    protected function addTypeToConfig(DatagridConfiguration $config)
+    {
+        $updates = [
+            '[source][query][select]' => [
+                'text.type as type'
+            ],
+            'properties' => [
+                'type' => ['~']
+            ]
         ];
         $this->applyUpdatesToConfig($config, $updates);
     }

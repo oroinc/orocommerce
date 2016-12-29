@@ -1,0 +1,22 @@
+{% block oro_payment_method_config_widget %}
+    {% if form.type.vars.value %}
+        <div class="control-group control-group-choice">
+            <div class="control-label wrap">
+                {{ form_label(form.type) }}
+            </div>
+            <div class="controls">
+                <input type="text" disabled="disabled" value="{{ methods_labels[form.type.vars.value]|trans }}"/>
+                {{ form_widget(form.type) }}
+            </div>
+        </div>
+    {% endif %}
+    {{ form_widget(form.options) }}
+    {{ form_rest(form) }}
+{% endblock %}
+
+{% block oro_payment_methods_configs_rule_destination_widget %}
+    {{ form_row(form.country) }}
+    {{ form_row(form.region) }}
+    {{ form_row(form.postalCodes) }}
+    {{ form_rest(form) }}
+{% endblock %}

@@ -12,7 +12,7 @@ use Oro\Bundle\WebCatalogBundle\Model\ExtendWebCatalog;
 use Oro\Component\WebCatalog\Entity\WebCatalogInterface;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Oro\Bundle\WebCatalogBundle\Entity\Repository\WebCatalogRepository")
  * @ORM\Table(name="oro_web_catalog")
  * @Config(
  *      routeName="oro_web_catalog_index",

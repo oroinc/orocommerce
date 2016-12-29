@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\UPSBundle\Tests\Unit\Provider;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\IntegrationBundle\Provider\Rest\Client\RestClientFactoryInterface;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport as UPSTransportEntity;
@@ -15,11 +14,6 @@ use Psr\Log\LoggerInterface;
 class UPSTransportTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
-
-    /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $registry;
 
     /**
      * @var RestClientFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -43,7 +37,6 @@ class UPSTransportTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
         $this->client = $this->createMock('Oro\Bundle\IntegrationBundle\Provider\Rest\Client\RestClientInterface');
 
         $this->clientFactory = $this->createMock(
@@ -52,7 +45,7 @@ class UPSTransportTest extends \PHPUnit_Framework_TestCase
 
         $this->logger = $this->createMock(LoggerInterface::class);
 
-        $this->transport = new UPSTransport($this->registry, $this->logger);
+        $this->transport = new UPSTransport($this->logger);
         $this->transport->setRestClientFactory($this->clientFactory);
     }
 

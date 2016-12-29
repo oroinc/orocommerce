@@ -87,17 +87,15 @@ class PaymentTermAssociationProvider
     /**
      * @param object $entity
      * @param PaymentTerm $paymentTerm
+     * @param string|null $associationName
      */
     public function setPaymentTerm($entity, PaymentTerm $paymentTerm, $associationName = null)
     {
-        try {
-            $this->propertyAccessor->setValue(
-                $entity,
-                $associationName ?: $this->getDefaultAssociationName(),
-                $paymentTerm
-            );
-        } catch (NoSuchPropertyException $e) {
-        }
+        $this->propertyAccessor->setValue(
+            $entity,
+            $associationName ?: $this->getDefaultAssociationName(),
+            $paymentTerm
+        );
     }
 
     /**

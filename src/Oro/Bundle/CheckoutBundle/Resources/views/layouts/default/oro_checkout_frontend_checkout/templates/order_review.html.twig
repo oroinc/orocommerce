@@ -23,8 +23,18 @@
                         <span class="custom-checkbox__text">{{ "oro.checkout.order_review.shipping_date"|trans }}</span>
                     </label>
                     <div class="toggle-block__content mmt9-md mmt9-sm">
-                        <span class="datepicker-icon gray fs22"><i class="fa-calendar-o"></i></span>
-                        {{ form_widget(form.ship_until, {'attr': {'class': 'input input--size-s input--has-datepicker', 'placeholder': 'oro.checkout.order_review.shipping_date_placeholder'|trans }}) }}
+                        <div class="datepicker-box">
+                            <span class="datepicker-box__icon"><i class="fa-calendar"></i></span>
+                            {{ form_widget(form.ship_until, {
+                                'attr': {
+                                    'class': 'datepicker-box__input input',
+                                    'placeholder': 'oro.checkout.order_review.shipping_date_placeholder'|trans
+                                },
+                                'datePickerOptions': {
+                                    'minDate': 0
+                                }
+                            }) }}
+                        </div>
                     </div>
                 </div>
             </fieldset>
