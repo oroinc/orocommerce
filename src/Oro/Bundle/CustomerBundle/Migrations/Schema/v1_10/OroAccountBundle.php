@@ -3,17 +3,24 @@
 namespace Oro\Bundle\CustomerBundle\Migrations\Schema\v1_10;
 
 use Doctrine\DBAL\Schema\Schema;
+use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\MigrationConstraintTrait;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
-class OroAccountBundle implements Migration, RenameExtensionAwareInterface, OrderedMigrationInterface
+class OroAccountBundle implements
+    Migration,
+    RenameExtensionAwareInterface,
+    OrderedMigrationInterface,
+    ContainerAwareInterface
 {
-    use MigrationConstraintTrait;
-
+    use MigrationConstraintTrait,
+        ContainerAwareTrait;
     /**
      * @var RenameExtension
      */
@@ -26,6 +33,7 @@ class OroAccountBundle implements Migration, RenameExtensionAwareInterface, Orde
     {
         $this->renameCustomerUserSidebarWidget($schema, $queries);
         $this->renameAccountUserSidebarState($schema, $queries);
+        $this->renameCustomerSettings($schema, $queries);
     }
 
     /**
@@ -71,6 +79,38 @@ class OroAccountBundle implements Migration, RenameExtensionAwareInterface, Orde
             $queries,
             "oro_account_user_sdbar_st",
             "oro_customer_user_sdbar_st"
+        );
+    }
+
+    /**
+     * @param Schema $schema
+     * @param QueryBag $queries
+     */
+    private function renameCustomerSettings(Schema $schema, QueryBag $queries)
+    {
+        $table = $schema->getTable("oro_account_user_settings");
+
+        $table->dropIndex('unique_acc_user_website');
+
+        $fk = $this->getConstraintName($table, 'account_user_id');
+        $table->removeForeignKey($fk);
+        $this->renameExtension->renameColumn($schema, $queries, $table, 'account_user_id', 'customer_user_id');
+
+        $this->renameExtension->renameTable(
+            $schema,
+            $queries,
+            'oro_account_user_settings',
+            'oro_customer_user_settings'
+        );
+
+        /** @var ConfigManager $configManager */
+        $configManager = $this->container->get('oro_entity_config.config_manager');
+        $registry = $this->container->get('doctrine');
+        $migration = new ConfigMigration($registry, $configManager);
+        $migration->migrate(
+            'Oro\Bundle\CustomerBundle\Entity\CustomerUserSettings',
+            '.accountusersettings',
+            '.customerusersettings'
         );
     }
 

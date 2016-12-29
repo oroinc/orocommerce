@@ -261,12 +261,12 @@ oro.customer:
         region_name.label:       State name
         region_code.label:       State ISO code
 
-    accountusersettings:
+    customerusersettings:
         entity_label:           Customer User Settings
         entity_plural_label:    Customer User Settings
         currency.label:         Currency
         id.label:               ID
-        account_user.label:     Customer User
+        customer_user.label:     Customer User
         website.label:          Website
         localization.label:     Localization
 

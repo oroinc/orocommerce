@@ -26,6 +26,7 @@ class OroAccountBundleStage2 implements Migration, RenameExtensionAwareInterface
     {
         $this->renameAccountUserSidebarWidget($schema);
         $this->renameAccountUserSidebarState($schema);
+        $this->renameCustomerSettings($schema);
     }
 
     /**
@@ -39,9 +40,9 @@ class OroAccountBundleStage2 implements Migration, RenameExtensionAwareInterface
             $schema->getTable('oro_account_user'),
             ['customer_user_id'],
             ['id'],
-            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+            ['onDelete' => 'CASCADE'],
+            'fk_customer_user_id'
         );
-
         $table->addIndex(['position'], 'oro_cus_sdar_wdgs_pos_idx', []);
         $table->addIndex(['customer_user_id', 'placement'], 'oro_cus_sdbr_wdgs_usr_place_idx', []);
     }
@@ -60,6 +61,21 @@ class OroAccountBundleStage2 implements Migration, RenameExtensionAwareInterface
         );
 
         $table->addUniqueIndex(['customer_user_id', 'position'], 'oro_cus_sdbar_st_unq_idx');
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    private function renameCustomerSettings(Schema $schema)
+    {
+        $table = $schema->getTable('oro_customer_user_settings');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_account_user'),
+            ['customer_user_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+        $table->addUniqueIndex(['customer_user_id', 'website_id'], 'unique_acc_user_website');
     }
 
     /**

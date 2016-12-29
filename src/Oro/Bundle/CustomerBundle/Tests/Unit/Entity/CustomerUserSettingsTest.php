@@ -7,7 +7,7 @@ use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserSettings;
 
-class AccountUserSettingsTest extends \PHPUnit_Framework_TestCase
+class CustomerUserSettingsTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTestCaseTrait;
 
