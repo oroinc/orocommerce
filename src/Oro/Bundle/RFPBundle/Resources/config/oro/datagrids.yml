@@ -169,10 +169,16 @@ datagrids:
                     - request.phone
                     - request.company
                     - request.role
+                    - internalStatus.name as internalStatusName
+                    - internalStatus.id as internalStatusId
+                    - customerStatus.name as customerStatusName
+                    - customerStatus.id as customerStatusId
                 join:
                     left:
                         - { join: request.account, alias: requestAccount }
                         - { join: request.accountUser, alias: requestAccountUser }
+                        - { join: request.internal_status, alias: internalStatus }
+                        - { join: request.customer_status, alias: customerStatus }
             hints:
                 - { name: HINT_CUSTOM_OUTPUT_WALKER, value: %oro_translation.translation_walker.class%}
         columns:
@@ -200,6 +206,12 @@ datagrids:
             accountName:
                 label:         oro.rfp.request.account.label
                 order:         8
+            internalStatusName:
+                label:         oro.rfp.request.internal_status.label
+                order:         9
+            customerStatusName:
+                label:         oro.rfp.request.customer_status.label
+                order:         10
         sorters:
             columns:
                 firstName:
@@ -218,6 +230,10 @@ datagrids:
                     data_name: accountUserName
                 accountName:
                     data_name: accountName
+                internalStatusName:
+                    data_name: internalStatusName
+                customerStatusName:
+                    data_name: customerStatusName
         filters:
             columns:
                 id:
@@ -255,6 +271,14 @@ datagrids:
                         field_options:
                             class: %oro_rfp.entity.request.status.class%
                             property: label
+                internalStatusName:
+                    type:      enum
+                    data_name: internalStatusId
+                    enum_code: rfp_internal_status
+                customerStatusName:
+                    type:      enum
+                    data_name: customerStatusId
+                    enum_code: rfp_customer_status
                 poNumber:
                     type:      string
                     data_name: request.poNumber
