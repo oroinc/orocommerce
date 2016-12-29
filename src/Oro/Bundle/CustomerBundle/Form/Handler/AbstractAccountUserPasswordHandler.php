@@ -8,12 +8,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Entity\AccountUserManager;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserManager;
 
 abstract class AbstractAccountUserPasswordHandler
 {
     /**
-     * @var AccountUserManager
+     * @var CustomerUserManager
      */
     protected $userManager;
 
@@ -23,10 +23,10 @@ abstract class AbstractAccountUserPasswordHandler
     protected $translator;
 
     /**
-     * @param AccountUserManager $userManager
+     * @param CustomerUserManager $userManager
      * @param TranslatorInterface $translator
      */
-    public function __construct(AccountUserManager $userManager, TranslatorInterface $translator)
+    public function __construct(CustomerUserManager $userManager, TranslatorInterface $translator)
     {
         $this->userManager = $userManager;
         $this->translator = $translator;

@@ -175,7 +175,7 @@ services:
             - "@oro_email.direct_mailer"
 
     oro_account_user.manager:
-        class: 'Oro\Bundle\CustomerBundle\Entity\AccountUserManager'
+        class: 'Oro\Bundle\CustomerBundle\Entity\CustomerUserManager'
         arguments:
             - '%oro_customer.entity.account_user.class%'
             - "@doctrine"
