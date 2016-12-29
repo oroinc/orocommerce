@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\ImportExport\Strategy;
 
+use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\ImportExportBundle\Context\Context;
@@ -203,6 +204,12 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
     {
         $entityData = $this->convertArrayToEntities($entityData);
 
+        $entityData['attributeFamily'] = $this
+            ->getContainer()
+            ->get('doctrine')
+            ->getRepository(AttributeFamily::class)
+            ->findOneBy(['code' => $entityData['attributeFamily']]);
+
         $productClass = $this->getContainer()->getParameter('oro_product.entity.product.class');
 
         $this->strategy->setImportExportContext(new Context([]));
@@ -232,6 +239,7 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
             'new product, no fallback from another entity' => [
                 [
                     'sku' => 'new_sku',
+                    'attributeFamily' => 'default_family',
                     'primaryUnitPrecision' => [
                         'testEntity' => 'Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision',
                         'testProperties' => [
@@ -254,6 +262,7 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
             'existing product with, id not mapped for new fallback' => [
                 [
                     'sku' => 'product.4',
+                    'attributeFamily' => 'default_family',
                     'primaryUnitPrecision' => [
                         'testEntity' => 'Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision',
                         'testProperties' => [

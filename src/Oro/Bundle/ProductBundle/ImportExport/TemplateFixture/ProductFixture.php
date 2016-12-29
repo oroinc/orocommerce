@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\ImportExport\TemplateFixture;
 
+use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\ImportExportBundle\TemplateFixture\AbstractTemplateRepository;
 use Oro\Bundle\ImportExportBundle\TemplateFixture\TemplateFixtureInterface;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
@@ -96,7 +97,11 @@ class ProductFixture extends AbstractTemplateRepository implements TemplateFixtu
             ->setConversionRate(5)
             ->setSell(false);
 
+        $attributeFamily = new AttributeFamily();
+        $attributeFamily->setCode('default_family');
+
         $entity->setSku('sku_001')
+            ->setAttributeFamily($attributeFamily)
             ->setStatus('enabled')
             ->setType(Product::TYPE_SIMPLE)
             ->setInventoryStatus($inventoryStatus)
