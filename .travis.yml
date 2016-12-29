@@ -1,16 +1,30 @@
+sudo: false
+
 language: php
 
+branches:
+  only:
+    - master
+    - /^\d+\.\d+$/
+
 php:
-    - 5.5
     - 5.6
     - 7.0
 
-env:
-  - SYMFONY_VERSION=2.3.*
+cache:
+  directories:
+    - $HOME/.composer
+    - $TRAVIS_BUILD_DIR/vendor
 
 before_script:
-  - composer self-update
+  - phpenv config-rm xdebug.ini
   - phpenv config-add travis.php.ini
-  - composer require symfony/symfony:${SYMFONY_VERSION} --prefer-dist --update-no-dev
+  - composer self-update
+  - composer global show fxp/composer-asset-plugin 1.2.2 || composer global require fxp/composer-asset-plugin:1.2.2
+  - travis_wait composer update --prefer-dist --optimize-autoloader --no-interaction  --no-suggest --prefer-stable
+  - DIFF=$(git diff --name-only --diff-filter=ACMR $TRAVIS_COMMIT_RANGE | grep -e ".*\.php$")
 
-script: phpunit
+script:
+  - ./vendor/bin/phpunit
+  - ./vendor/bin/phpcs ./src -p --encoding=utf-8 --extensions=php --standard=./build_config/phpcs.xml
+  - if [[ $DIFF ]]; then ./vendor/bin/phpmd ${DIFF//$'\n'/,} text ./build_config/phpmd.xml --suffixes php; fi
