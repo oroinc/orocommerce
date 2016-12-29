@@ -7,15 +7,14 @@ use Behat\Gherkin\Node\TableNode;
 use Behat\Symfony2Extension\Context\KernelAwareContext;
 use Behat\Symfony2Extension\Context\KernelDictionary;
 use Doctrine\Common\Persistence\ObjectManager;
-use Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutStep;
 use Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid;
 use Oro\Bundle\NavigationBundle\Tests\Behat\Element\MainMenu;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\Form;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
-use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext;
+use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
 
 class FeatureContext extends OroFeatureContext implements OroPageObjectAware, KernelAwareContext
 {
@@ -182,7 +181,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
                 $destinationAdd = $form->find('css', '.add-list-item');
                 $destinationAdd->click();
 
-                if($columnItem === 'Country2'){
+                if ($columnItem === 'Country2') {
                     $form->fillField('Sort Order', '1');
                 }
             }
