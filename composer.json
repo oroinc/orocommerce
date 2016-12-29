@@ -10,9 +10,9 @@
         }
     ],
     "require": {
-        "oro/platform": "1.x-dev",
-        "oro/platform-serialised-fields": "1.x-dev",
-        "oro/calendar-bundle": "1.x-dev",
+        "oro/platform": "2.0.0-beta.1",
+        "oro/platform-serialised-fields": "2.0.0-beta.1",
+        "oro/calendar-bundle": "2.0.0-beta.1",
         "box/spout": "2.3.*",
         "brick/math": "0.5.*",
         "myclabs/deep-copy": "1.5.*",
