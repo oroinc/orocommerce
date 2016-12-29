@@ -1,17 +1,47 @@
-%direct-link {
-  padding: 0 10px;
-
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
-}
+// @theme: default;
 
 @mixin ellipsis() {
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+%direct-link {
+    padding: 0 10px;
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 @mixin direct-link() {
   @extend %direct-link;
+}
+
+@mixin badge(
+    $badge-size:        26px,
+    $badge-f-size:      14px,
+    $badge-bg:          get-color('primary', 'base'),
+    $badge-radius:      50%,
+    $badge-color:       get-color('additional', 'ultra'),
+    $badge-icon-align:  baseline,
+    $badge-icon-offset: 0
+) {
+    display: inline-block;
+    vertical-align: middle;
+    width: $badge-size;
+    height: $badge-size;
+
+    text-align: center;
+    font-size: $badge-f-size;
+    line-height: strip-units($badge-size/ $badge-f-size);
+
+    background-color: $badge-bg;
+    border-radius: $badge-radius;
+    color: $badge-color;
+
+    [class^="cf-"],
+    [class^="fa-"] {
+        margin: $badge-icon-offset;
+    }
 }

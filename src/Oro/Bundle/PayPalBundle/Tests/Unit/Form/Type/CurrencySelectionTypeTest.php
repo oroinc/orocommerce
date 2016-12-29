@@ -2,11 +2,13 @@
 
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\Form\Type;
 
+use Symfony\Component\Form\ChoiceList\View\ChoiceView;
+use Symfony\Component\Form\Test\FormIntegrationTestCase;
+use Symfony\Component\Intl\Intl;
+
 use Oro\Bundle\CurrencyBundle\Provider\CurrencyProviderInterface;
 use Oro\Bundle\CurrencyBundle\Tests\Unit\Utils\CurrencyNameHelperStub;
 use Oro\Bundle\PayPalBundle\Form\Type\CurrencySelectionType;
-use Symfony\Component\Form\ChoiceList\View\ChoiceView;
-use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 class CurrencySelectionTypeTest extends FormIntegrationTestCase
 {
@@ -100,6 +102,12 @@ class CurrencySelectionTypeTest extends FormIntegrationTestCase
      */
     public function submitDataProvider()
     {
+        $currencyBundle = Intl::getCurrencyBundle();
+        $usdName = $currencyBundle->getCurrencyName('USD');
+        $eurName = $currencyBundle->getCurrencyName('EUR');
+        $gbpName = $currencyBundle->getCurrencyName('GBP');
+        $rubName = $currencyBundle->getCurrencyName('RUB');
+
         return [
             'full currency name and data from system config' => [
                 'allowedCurrencies' => ['USD'],
@@ -107,7 +115,7 @@ class CurrencySelectionTypeTest extends FormIntegrationTestCase
                 'expectedOptions' => [
                     'compact' => false,
                     'choices' => [
-                        new ChoiceView('USD', 'USD', 'USD-full_name')
+                        new ChoiceView('USD', 'USD', $usdName)
                     ]
                 ],
                 'submittedData' => 'USD'
@@ -120,7 +128,7 @@ class CurrencySelectionTypeTest extends FormIntegrationTestCase
                 'expectedOptions' => [
                     'compact' => true,
                     'choices' => [
-                        new ChoiceView('USD', 'USD', 'USD-iso_code')
+                        new ChoiceView('USD', 'USD', 'USD')
                     ]
                 ],
                 'submittedData' => 'USD'
@@ -134,7 +142,7 @@ class CurrencySelectionTypeTest extends FormIntegrationTestCase
                 'expectedOptions' => [
                     'compact' => false,
                     'choices' => [
-                        new ChoiceView('EUR', 'EUR', 'EUR-full_name')
+                        new ChoiceView('EUR', 'EUR', $eurName)
                     ]
                 ],
                 'submittedData' => 'EUR'
@@ -148,7 +156,7 @@ class CurrencySelectionTypeTest extends FormIntegrationTestCase
                 'expectedOptions' => [
                     'compact' => false,
                     'choices' => [
-                        new ChoiceView('RUB', 'RUB', 'RUB-full_name'),
+                        new ChoiceView('RUB', 'RUB', $rubName),
                     ]
                 ],
                 'submittedData' => 'RUB'
@@ -161,8 +169,8 @@ class CurrencySelectionTypeTest extends FormIntegrationTestCase
                 'expectedOptions' => [
                     'compact' => false,
                     'choices' => [
-                        new ChoiceView('USD', 'USD', 'USD-full_name'),
-                        new ChoiceView('GBP', 'GBP', 'GBP-full_name')
+                        new ChoiceView('USD', 'USD', $usdName),
+                        new ChoiceView('GBP', 'GBP', $gbpName)
                     ]
                 ],
                 'submittedData' => 'GBP'
@@ -177,8 +185,8 @@ class CurrencySelectionTypeTest extends FormIntegrationTestCase
                 'expectedOptions' => [
                     'compact' => true,
                     'choices' => [
-                        new ChoiceView('RUB', 'RUB', 'RUB-iso_code'),
-                        new ChoiceView('GBP', 'GBP', 'GBP-iso_code')
+                        new ChoiceView('RUB', 'RUB', 'RUB'),
+                        new ChoiceView('GBP', 'GBP', 'GBP')
                     ]
                 ],
                 'submittedData' => 'GBP'

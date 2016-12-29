@@ -2,15 +2,28 @@
 
 namespace Oro\Bundle\ProductBundle\Validator\Constraints;
 
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
-use Oro\Component\PropertyAccess\PropertyAccessor;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
 class UniqueProductVariantLinksValidator extends ConstraintValidator
 {
     const ALIAS = 'oro_product_unique_variant_links';
+
+    /**
+     * @var PropertyAccessor
+     */
+    private $propertyAccessor;
+
+    /**
+     * @param PropertyAccessor $propertyAccessor
+     */
+    public function __construct(PropertyAccessor $propertyAccessor)
+    {
+        $this->propertyAccessor = $propertyAccessor;
+    }
 
     /**
      * @param Product $value
@@ -22,18 +35,19 @@ class UniqueProductVariantLinksValidator extends ConstraintValidator
             throw new \InvalidArgumentException(
                 sprintf(
                     'Entity must be instance of "%s", "%s" given',
-                    'Oro\Bundle\ProductBundle\Entity\Product',
+                    Product::class,
                     is_object($value) ? get_class($value) : gettype($value)
                 )
             );
         }
 
-        if (!$value->getHasVariants()) {
+        if (!$value->isConfigurable()) {
             return;
         }
 
         $this->validateLinksWithoutFields($value, $constraint);
-        $this->validateVariantLinks($value, $constraint);
+        $this->validateLinksHaveFilledFields($value, $constraint);
+        $this->validateUniqueVariantLinks($value, $constraint);
     }
 
     /**
@@ -53,7 +67,37 @@ class UniqueProductVariantLinksValidator extends ConstraintValidator
      * @param Product $value
      * @param UniqueProductVariantLinks $constraint
      */
-    private function validateVariantLinks(Product $value, UniqueProductVariantLinks $constraint)
+    private function validateLinksHaveFilledFields(Product $value, UniqueProductVariantLinks $constraint)
+    {
+        $variantFields = $value->getVariantFields();
+        $variantLinks = $value->getVariantLinks();
+
+        foreach ($variantLinks as $variantLink) {
+            $product = $variantLink->getProduct();
+            if (!$product) {
+                continue;
+            }
+
+            foreach ($variantFields as $variantField) {
+                if ($this->propertyAccessor->isReadable($product, $variantField)) {
+                    $value = $this->propertyAccessor->getValue($product, $variantField);
+
+                    if ($value === null) {
+                        $this->context->addViolation($constraint->variantLinkHasNoFilledFieldMessage, [
+                            '%variant_sku%' => $product->getSku(),
+                            '%field%' => $variantField
+                        ]);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * @param Product $value
+     * @param UniqueProductVariantLinks $constraint
+     */
+    private function validateUniqueVariantLinks(Product $value, UniqueProductVariantLinks $constraint)
     {
         $variantHashes = [];
         $variantFields = $value->getVariantFields();
@@ -78,12 +122,15 @@ class UniqueProductVariantLinksValidator extends ConstraintValidator
      */
     private function getVariantFieldsHash(array $variantFields, Product $product)
     {
-        $propertyAccessor = new PropertyAccessor();
-
         $fields = [];
         foreach ($variantFields as $fieldName) {
-            if ($propertyAccessor->isReadable($product, $fieldName)) {
-                $fields[$fieldName] = $propertyAccessor->getValue($product, $fieldName);
+            if ($this->propertyAccessor->isReadable($product, $fieldName)) {
+                $fieldValue = $this->propertyAccessor->getValue($product, $fieldName);
+                $fields[$fieldName] = $fieldValue;
+
+                if (is_object($fieldValue) && method_exists($fieldValue, '__toString')) {
+                    $fields[$fieldName] = (string) $fieldValue;
+                }
             }
         }
 

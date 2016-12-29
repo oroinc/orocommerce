@@ -19,15 +19,6 @@ services:
             - '@oro_catalog.repository.category'
             - '@event_dispatcher'
 
-    oro_catalog.provider.category_title_provider:
-        class: 'Oro\Bundle\CatalogBundle\Provider\CategoryTitleProvider'
-        public: false
-        arguments:
-            - '@property_accessor'
-            - '@oro_locale.helper.localization.link'
-        tags:
-            - { name: oro_web_catalog.content_variant_title_provider }
-
     oro_catalog.repository.category:
         class: 'Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository'
         parent: oro_entity.abstract_repository
@@ -84,6 +75,7 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_product.strategy.process_after, method: onProcessAfter }
             - { name: doctrine.event_listener, event: onClear, method: onClear }
+            - { name: doctrine.event_listener, event: preFlush, method: preFlush }
 
     oro_catalog.event_listener.product_data_converter:
         class: 'Oro\Bundle\CatalogBundle\EventListener\ProductDataConverterEventListener'
@@ -179,3 +171,17 @@ services:
         class: Oro\Bundle\CatalogBundle\Provider\CategoryRoutingInformationProvider
         tags:
             - { name: oro_redirect.routing_information_provider }
+
+    oro_catalog.provider.products_content_variant_provider:
+        class: Oro\Bundle\CatalogBundle\Provider\ProductsContentVariantProvider
+        tags:
+            - { name: oro_web_catalog.content_variant_provider }
+
+    oro_catalog.event_listener.category_content_variant_index:
+        class: 'Oro\Bundle\CatalogBundle\EventListener\CategoryContentVariantIndexListener'
+        arguments:
+            - '@oro_catalog.manager.product_index_scheduler'
+            - '@property_accessor'
+        tags:
+            - { name: doctrine.event_listener, event: onFlush }
+            - { name: kernel.event_listener, event: oro.form.update_handler.after_entity_flush, method: onFormAfterFlush }

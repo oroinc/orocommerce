@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\UPSBundle\Tests\Unit\Provider;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\IntegrationBundle\Provider\Rest\Client\RestClientFactoryInterface;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport as UPSTransportEntity;
@@ -15,11 +14,6 @@ use Psr\Log\LoggerInterface;
 class UPSTransportTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
-
-    /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $registry;
 
     /**
      * @var RestClientFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -43,16 +37,15 @@ class UPSTransportTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
-        $this->client = $this->getMock('Oro\Bundle\IntegrationBundle\Provider\Rest\Client\RestClientInterface');
+        $this->client = $this->createMock('Oro\Bundle\IntegrationBundle\Provider\Rest\Client\RestClientInterface');
 
-        $this->clientFactory = $this->getMock(
+        $this->clientFactory = $this->createMock(
             'Oro\Bundle\IntegrationBundle\Provider\Rest\Client\RestClientFactoryInterface'
         );
 
-        $this->logger = $this->getMock(LoggerInterface::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
 
-        $this->transport = new UPSTransport($this->registry, $this->logger);
+        $this->transport = new UPSTransport($this->logger);
         $this->transport->setRestClientFactory($this->clientFactory);
     }
 
@@ -74,7 +67,7 @@ class UPSTransportTest extends \PHPUnit_Framework_TestCase
     public function testGetPrices()
     {
         /** @var PriceRequest|\PHPUnit_Framework_MockObject_MockObject $rateRequest * */
-        $rateRequest = $this->getMock(PriceRequest::class);
+        $rateRequest = $this->createMock(PriceRequest::class);
 
         $integration = new Channel();
         $transportEntity = new UPSTransportEntity();
@@ -84,7 +77,7 @@ class UPSTransportTest extends \PHPUnit_Framework_TestCase
             ->method('createRestClient')
             ->willReturn($this->client);
 
-        $restResponse = $this->getMock('Oro\Bundle\IntegrationBundle\Provider\Rest\Client\RestResponseInterface');
+        $restResponse = $this->createMock('Oro\Bundle\IntegrationBundle\Provider\Rest\Client\RestResponseInterface');
 
         $json = '{
                    "RateResponse":{
@@ -114,7 +107,7 @@ class UPSTransportTest extends \PHPUnit_Framework_TestCase
     public function testGetPricesException()
     {
         /** @var PriceRequest|\PHPUnit_Framework_MockObject_MockObject $rateRequest * */
-        $rateRequest = $this->getMock(PriceRequest::class);
+        $rateRequest = $this->createMock(PriceRequest::class);
 
         $integration = new Channel();
         $transportEntity = $this->getEntity(UPSTransportEntity::class, ['id' => '123']);
@@ -124,7 +117,7 @@ class UPSTransportTest extends \PHPUnit_Framework_TestCase
             ->method('createRestClient')
             ->willReturn($this->client);
 
-        $restResponse = $this->getMock('Oro\Bundle\IntegrationBundle\Provider\Rest\Client\RestResponseInterface');
+        $restResponse = $this->createMock('Oro\Bundle\IntegrationBundle\Provider\Rest\Client\RestResponseInterface');
 
         $json = '{
             "Fault":{

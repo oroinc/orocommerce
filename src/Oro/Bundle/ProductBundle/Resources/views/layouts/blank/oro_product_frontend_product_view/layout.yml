@@ -1,0 +1,72 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'layout.html.twig'
+        - '@setOption':
+            id: title
+            optionName: params
+            optionValue:
+                '%name%': '=data["locale"].getLocalizedValue(data["product"].getNames())'
+        - '@addTree':
+            items:
+                product_view_container:
+                    blockType: product_view_container
+                    options:
+                        product: '=data["product"]'
+                product_view_primary_container:
+                    blockType: container
+                product_view_title:
+                    blockType: text
+                    options:
+                        text: '=data["locale"].getLocalizedValue(data["product"].getNames())'
+                product_view_aside_container:
+                    blockType: container
+                product_media:
+                    blockType: product_image
+                    options:
+                        product: '=data["product"]'
+                product_media_popup:
+                    blockType: product_image
+                    options:
+                        product: '=data["product"]'
+                product_view_main_container:
+                    blockType: container
+                product_view_content_container:
+                    blockType: container
+                product_view_specification_container:
+                    blockType: container
+                product_view_line_item_container:
+                    blockType: container
+                product_view_price_container:
+                    blockType: container
+                product_view_sku:
+                    blockType: text
+                    options:
+                        text: '=data["product"].getSku()'
+                product_view_description_container:
+                    blockType: container
+                product_view_description:
+                    blockType: text
+                    options:
+                        text: '=data["locale"].getLocalizedValue(data["product"].getDescriptions())'
+                        escape: false
+                product_view_additional_container:
+                    blockType: container
+            tree:
+                page_content:
+                    product_view_container:
+                        product_view_primary_container:
+                            product_view_title: ~
+                        product_view_aside_container:
+                            product_media_popup: ~
+                            product_media: ~
+                        product_view_main_container:
+                                product_view_sku: ~
+                                product_view_description: ~
+                                product_view_content_container:
+                                    product_view_specification_container:
+                                        product_view_price_container: ~
+                                    product_view_description_container:
+                                        product_view_line_item_container: ~
+                        product_view_additional_container: ~
+

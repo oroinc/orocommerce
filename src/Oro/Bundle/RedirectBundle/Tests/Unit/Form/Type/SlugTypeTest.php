@@ -34,7 +34,7 @@ class SlugTypeTest extends FormIntegrationTestCase
 
     public function testConfigureOptions()
     {
-        $resolver = $this->getMock(OptionsResolver::class);
+        $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())->method('setDefaults')->with(
             $this->callback(
                 function (array $options) {
@@ -55,7 +55,7 @@ class SlugTypeTest extends FormIntegrationTestCase
 
     public function testBuildView()
     {
-        $form = $this->getMock(FormInterface::class);
+        $form = $this->createMock(FormInterface::class);
 
         $viewParent = new FormView();
         $viewParent->vars['full_name'] = 'form-name';

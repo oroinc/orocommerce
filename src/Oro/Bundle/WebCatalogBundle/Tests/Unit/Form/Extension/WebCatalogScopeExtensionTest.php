@@ -57,7 +57,8 @@ class WebCatalogScopeExtensionTest extends FormIntegrationTestCase
 
     public function testBuildFormWithoutRequiredOption()
     {
-        $this->setExpectedException(InvalidConfigurationException::class, 'The option "web_catalog" must be set.');
+        $this->expectException(InvalidConfigurationException::class);
+        $this->expectExceptionMessage('The option "web_catalog" must be set.');
         $this->factory->create(
             ScopeType::NAME,
             null,

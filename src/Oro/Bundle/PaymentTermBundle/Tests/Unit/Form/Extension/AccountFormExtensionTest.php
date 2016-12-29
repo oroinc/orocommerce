@@ -55,7 +55,7 @@ class AccountFormExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testBuildFormWithoutData()
     {
-        $builder = $this->getMock(FormBuilderInterface::class);
+        $builder = $this->createMock(FormBuilderInterface::class);
         $builder->expects($this->once())->method('getData')->willReturn(null);
 
         $this->paymentTermAssociationProvider->expects($this->never())->method($this->anything());
@@ -66,7 +66,7 @@ class AccountFormExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testBuildFormWithoutGroup()
     {
-        $builder = $this->getMock(FormBuilderInterface::class);
+        $builder = $this->createMock(FormBuilderInterface::class);
         $builder->expects($this->once())
             ->method('getData')
             ->willReturn(new Account());
@@ -79,7 +79,7 @@ class AccountFormExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testBuildFormWithoutAssociationNames()
     {
-        $builder = $this->getMock(FormBuilderInterface::class);
+        $builder = $this->createMock(FormBuilderInterface::class);
         $builder->expects($this->once())
             ->method('getData')
             ->willReturn((new Account())->setGroup(new AccountGroup()));
@@ -92,7 +92,7 @@ class AccountFormExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testBuildFormPaymentTerm()
     {
-        $builder = $this->getMock(FormBuilderInterface::class);
+        $builder = $this->createMock(FormBuilderInterface::class);
         $builder->expects($this->once())
             ->method('getData')
             ->willReturn((new Account())->setGroup(new AccountGroup()));
@@ -107,7 +107,7 @@ class AccountFormExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testBuildFormWithoutField()
     {
-        $builder = $this->getMock(FormBuilderInterface::class);
+        $builder = $this->createMock(FormBuilderInterface::class);
         $builder->expects($this->once())
             ->method('getData')
             ->willReturn((new Account())->setGroup(new AccountGroup()));
@@ -125,7 +125,7 @@ class AccountFormExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testBuildFormWithField()
     {
-        $builder = $this->getMock(FormBuilderInterface::class);
+        $builder = $this->createMock(FormBuilderInterface::class);
         $builder->expects($this->once())
             ->method('getData')
             ->willReturn((new Account())->setGroup(new AccountGroup()));
@@ -138,11 +138,11 @@ class AccountFormExtensionTest extends \PHPUnit_Framework_TestCase
 
         $builder->expects($this->once())->method('has')->willReturn(true);
 
-        $field = $this->getMock(FormBuilderInterface::class);
+        $field = $this->createMock(FormBuilderInterface::class);
         $builder->expects($this->once())->method('get')->willReturn($field);
         $field->expects($this->once())->method('getOptions')->willReturn([]);
         $field->expects($this->once())->method('getName')->willReturn('name');
-        $type = $this->getMock(ResolvedFormTypeInterface::class);
+        $type = $this->createMock(ResolvedFormTypeInterface::class);
         $field->expects($this->once())->method('getType')->willReturn($type);
         $type->expects($this->once())->method('getName')->willReturn('type');
 

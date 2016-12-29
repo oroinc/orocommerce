@@ -12,7 +12,6 @@ use FOS\RestBundle\Controller\Annotations\NamePrefix;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
-use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
@@ -29,13 +28,7 @@ class LineItemController extends RestController implements ClassResourceInterfac
      *      description="Delete Line Item",
      *      resource=true
      * )
-     * @Acl(
-     *      id="oro_shopping_list_line_item_frontend_delete",
-     *      type="entity",
-     *      class="OroShoppingListBundle:LineItem",
-     *      permission="DELETE",
-     *      group_name="commerce"
-     * )
+     * @AclAncestor("oro_shopping_list_frontend_update")
      *
      * @param int $id
      *

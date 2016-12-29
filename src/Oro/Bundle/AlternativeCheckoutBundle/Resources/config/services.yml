@@ -7,14 +7,6 @@ services:
         tags:
             - { name: oro_action.condition, alias: less_order_total_limit }
 
-    oro_alternativecheckout.model.action.checkout_to_quote:
-        class: 'Oro\Bundle\AlternativeCheckoutBundle\Model\Action\AlternativeCheckoutByQuote'
-        arguments:
-            - '@oro_action.expression.context_accessor'
-            - '@doctrine'
-        tags:
-            - { name: oro_action.action, alias: alternative_checkout_to_quote }
-
     oro_alternativecheckout.block_type.extension.checkout_form_fields:
         parent: oro_layout.block_type.extension.abstract_configurable
         calls:
@@ -30,3 +22,11 @@ services:
             - '@logger'
         tags:
             - { name: oro_entity_extend.warmer, priority: -500 }
+
+    oro_alternativecheckout.provider.method_view_provider:
+        class: 'Oro\Bundle\AlternativeCheckoutBundle\Layout\DataProvider\PaymentTermViewProvider'
+        arguments:
+            - '@oro_payment.payment_method.view.registry'
+            - '@oro_payment.payment_method.registry'
+        tags:
+            - { name: layout.data_provider, alias: oro_alternativecheckout_payment_term_view_provider }

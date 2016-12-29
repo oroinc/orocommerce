@@ -5,11 +5,12 @@ define(function(require) {
     var ViewComponent = require('oroui/js/app/components/view-component');
     var mediator = require('oroui/js/mediator');
     var routing = require('routing');
-    var Error = require('oroui/js/error');
     var $ = require('jquery');
     var _ = require('underscore');
+    var ShoppingListCollectionService = require('oroshoppinglist/js/shoppinglist-collection-service');
 
     ShoppingListWidgetViewComponent = ViewComponent.extend({
+        shoppingListCollection: null,
 
         elements: {
             radio: '[data-role="set-default"]'
@@ -23,9 +24,11 @@ define(function(require) {
 
             ShoppingListWidgetViewComponent.__super__.initialize.apply(this, arguments);
 
-            mediator.on('shopping-list:change-current', this.setCurrentShoppingList, this);
-
             this.$el.on('change', this.elements.radio, _.bind(this._onCurrentShoppingListChange, this));
+
+            ShoppingListCollectionService.shoppingListCollection.done(_.bind(function(collection) {
+                this.shoppingListCollection = collection;
+            }, this));
         },
 
         /**
@@ -34,7 +37,8 @@ define(function(require) {
          * @param e
          */
         _onCurrentShoppingListChange: function(e) {
-            var shoppingListId = $(e.target).val();
+            var self = this;
+            var shoppingListId = parseInt($(e.target).val(), 10);
             var shoppingListLabel = $(e.target).data('label');
 
             $.ajax({
@@ -43,30 +47,26 @@ define(function(require) {
                     id: shoppingListId
                 }),
                 success: function() {
-                    mediator.trigger('shopping-list:change-current', shoppingListId);
+                    self.shoppingListCollection.each(function(model) {
+                        model.set('is_current', model.get('id') === shoppingListId, {silent: true});
+                    });
+                    self.shoppingListCollection.trigger('change');
+
                     var message = _.__('oro.shoppinglist.actions.shopping_list_set_as_default', {
                         shoppingList: shoppingListLabel
                     });
                     mediator.execute('showFlashMessage', 'success', message);
-                },
-                error: function(xhr) {
-                    mediator.trigger('shopping-list:updated');
-                    Error.handle({}, xhr, {enforce: true});
                 }
             });
         },
-
-        setCurrentShoppingList: function(shoppingListId) {
-            this.$el.find(this.elements.radio).filter('[value="' + shoppingListId + '"]').prop('checked', true);
-         },
 
         dispose: function() {
             if (this.disposed) {
                 return;
             }
 
+            delete this.shoppingListCollection;
             this.$el.off();
-            mediator.off(null, null, this);
 
             ShoppingListWidgetViewComponent.__super__.dispose.call(this);
         }

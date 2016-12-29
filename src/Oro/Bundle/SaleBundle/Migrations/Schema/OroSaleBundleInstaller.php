@@ -6,16 +6,14 @@ use Doctrine\DBAL\Schema\Schema;
 
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
-use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtension;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
+use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareTrait;
 use Oro\Bundle\EntityBundle\EntityConfig\DatagridScope;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
-use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
 use Oro\Bundle\PaymentTermBundle\Migration\Extension\PaymentTermExtensionAwareInterface;
 use Oro\Bundle\PaymentTermBundle\Migration\Extension\PaymentTermExtensionAwareTrait;
 
@@ -24,28 +22,18 @@ use Oro\Bundle\PaymentTermBundle\Migration\Extension\PaymentTermExtensionAwareTr
  */
 class OroSaleBundleInstaller implements
     Installation,
-    NoteExtensionAwareInterface,
     AttachmentExtensionAwareInterface,
     ActivityExtensionAwareInterface,
     ExtendExtensionAwareInterface,
     PaymentTermExtensionAwareInterface
 {
+    use AttachmentExtensionAwareTrait;
     use PaymentTermExtensionAwareTrait;
 
     /**
      * @var ExtendExtension
      */
     protected $extendExtension;
-
-    /**
-     * @var AttachmentExtension
-     */
-    protected $attachmentExtension;
-
-    /**
-     * @var NoteExtension
-     */
-    protected $noteExtension;
 
     /**
      * @var ActivityExtension
@@ -58,22 +46,6 @@ class OroSaleBundleInstaller implements
     public function setExtendExtension(ExtendExtension $extendExtension)
     {
         $this->extendExtension = $extendExtension;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setNoteExtension(NoteExtension $noteExtension)
-    {
-        $this->noteExtension = $noteExtension;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setAttachmentExtension(AttachmentExtension $attachmentExtension)
-    {
-        $this->attachmentExtension = $attachmentExtension;
     }
 
     /**
@@ -120,9 +92,8 @@ class OroSaleBundleInstaller implements
         $this->addOroSaleQuoteProductDemandForeignKeys($schema);
         $this->addOroSaleQuoteDemandForeignKeys($schema);
 
-        $this->addNoteAssociations($schema, $this->noteExtension);
-        $this->addAttachmentAssociations($schema, $this->attachmentExtension);
-        $this->addActivityAssociations($schema, $this->activityExtension);
+        $this->addAttachmentAssociations($schema);
+        $this->addActivityAssociations($schema);
 
         $this->addQuoteCheckoutSource($schema);
 
@@ -471,25 +442,13 @@ class OroSaleBundleInstaller implements
     }
 
     /**
-     * Enable notes for Quote entity
-     *
-     * @param Schema $schema
-     * @param NoteExtension $noteExtension
-     */
-    protected function addNoteAssociations(Schema $schema, NoteExtension $noteExtension)
-    {
-        $noteExtension->addNoteAssociation($schema, 'oro_sale_quote');
-    }
-
-    /**
      * Enable Attachment for Quote entity
      *
      * @param Schema $schema
-     * @param AttachmentExtension $attachmentExtension
      */
-    protected function addAttachmentAssociations(Schema $schema, AttachmentExtension $attachmentExtension)
+    protected function addAttachmentAssociations(Schema $schema)
     {
-        $attachmentExtension->addAttachmentAssociation(
+        $this->attachmentExtension->addAttachmentAssociation(
             $schema,
             'oro_sale_quote',
             [
@@ -512,11 +471,11 @@ class OroSaleBundleInstaller implements
      * Enable Events for Quote entity
      *
      * @param Schema $schema
-     * @param ActivityExtension $activityExtension
      */
-    protected function addActivityAssociations(Schema $schema, ActivityExtension $activityExtension)
+    protected function addActivityAssociations(Schema $schema)
     {
-        $activityExtension->addActivityAssociation($schema, 'oro_email', 'oro_sale_quote', true);
+        $this->activityExtension->addActivityAssociation($schema, 'oro_note', 'oro_sale_quote');
+        $this->activityExtension->addActivityAssociation($schema, 'oro_email', 'oro_sale_quote', true);
     }
 
     /**
@@ -594,6 +553,8 @@ class OroSaleBundleInstaller implements
     {
         $table = $schema->createTable('oro_quote_demand');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('account_id', 'integer', ['notnull' => false]);
+        $table->addColumn('account_user_id', 'integer', ['notnull' => false]);
         $table->addColumn('quote_id', 'integer', ['notnull' => false]);
         $table->addColumn(
             'subtotal',
@@ -654,6 +615,18 @@ class OroSaleBundleInstaller implements
     protected function addOroSaleQuoteDemandForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('oro_quote_demand');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_account'),
+            ['account_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_account_user'),
+            ['account_user_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_sale_quote'),
             ['quote_id'],

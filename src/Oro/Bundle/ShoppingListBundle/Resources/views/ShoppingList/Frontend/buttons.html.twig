@@ -60,7 +60,8 @@
 
     {% set buttonOptions = {
         'dataAttributes': dataAttributes,
-        'aCss': 'direct-link add-to-shopping-list-button ' ~ options.aCss,
+        'aCss': 'add-to-shopping-list-button ' ~ options.aCss,
+        'moreButtonExtraClass': 'btn--action',
         'dataId': shoppingListId,
         'label' : options.actionLabel|replace({
             '{{ shoppingList }}': shoppingListLabel
@@ -83,12 +84,13 @@
 {% macro getButtonsHtml(options) %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
     {% import _self as buttons %}
-    <div class="btn-group"
+    <div class="btn-group full"
          {{ UI.renderPageComponentAttributes({
              module: options.componentModule|default('oroshoppinglist/js/app/views/product-add-to-shopping-list-view'),
              options: {
                  buttonTemplate: '<%#' ~ buttons.buttonTemplate(options.current) ~ '#%>',
                  removeButtonTemplate: options.remove is defined ? '<%#' ~ buttons.buttonTemplate(options.remove) ~ '#%>',
+                 createNewButtonTemplate: '<%#' ~ buttons.buttonTemplate(options.new) ~ '#%>',
              }|merge(options.componentOptions|default({}))
          }) }}
         >

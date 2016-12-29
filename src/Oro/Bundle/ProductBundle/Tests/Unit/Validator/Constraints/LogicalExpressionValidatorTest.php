@@ -31,7 +31,7 @@ class LogicalExpressionValidatorTest extends \PHPUnit_Framework_TestCase
         $this->expressionParser = $this->getMockBuilder(ExpressionParser::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->preprocessor = $this->getMock(ExpressionPreprocessorInterface::class);
+        $this->preprocessor = $this->createMock(ExpressionPreprocessorInterface::class);
         $this->validator = new LogicalExpressionValidator($this->expressionParser, $this->preprocessor);
     }
 
@@ -40,13 +40,13 @@ class LogicalExpressionValidatorTest extends \PHPUnit_Framework_TestCase
         $constraint = new LogicalExpression();
         $constraint->logicalExpressionsAllowed = true;
         /** @var ExecutionContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
-        $context = $this->getMock(ExecutionContextInterface::class);
+        $context = $this->createMock(ExecutionContextInterface::class);
         $context->expects($this->never())
             ->method($this->anything());
         $this->validator->initialize($context);
 
         $value = 'test > 1';
-        $node = $this->getMock(NodeInterface::class);
+        $node = $this->createMock(NodeInterface::class);
         $node->expects($this->once())
             ->method('isBoolean')
             ->willReturn(true);
@@ -70,13 +70,13 @@ class LogicalExpressionValidatorTest extends \PHPUnit_Framework_TestCase
         $constraint = new LogicalExpression();
         $constraint->logicalExpressionsAllowed = false;
         /** @var ExecutionContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
-        $context = $this->getMock(ExecutionContextInterface::class);
+        $context = $this->createMock(ExecutionContextInterface::class);
         $context->expects($this->never())
             ->method($this->anything());
         $this->validator->initialize($context);
 
         $value = 'test === 1';
-        $node = $this->getMock(NodeInterface::class);
+        $node = $this->createMock(NodeInterface::class);
         $node->expects($this->once())
             ->method('isBoolean')
             ->willReturn(false);
@@ -100,13 +100,13 @@ class LogicalExpressionValidatorTest extends \PHPUnit_Framework_TestCase
         $constraint = new LogicalExpression();
         $constraint->logicalExpressionsAllowed = true;
         /** @var ExecutionContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
-        $context = $this->getMock(ExecutionContextInterface::class);
+        $context = $this->createMock(ExecutionContextInterface::class);
         $context->expects($this->once())
             ->method('addViolation');
         $this->validator->initialize($context);
 
         $value = 'test === 10';
-        $node = $this->getMock(NodeInterface::class);
+        $node = $this->createMock(NodeInterface::class);
         $node->expects($this->once())
             ->method('isBoolean')
             ->willReturn(false);
@@ -130,13 +130,13 @@ class LogicalExpressionValidatorTest extends \PHPUnit_Framework_TestCase
         $constraint = new LogicalExpression();
         $constraint->logicalExpressionsAllowed = false;
         /** @var ExecutionContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
-        $context = $this->getMock(ExecutionContextInterface::class);
+        $context = $this->createMock(ExecutionContextInterface::class);
         $context->expects($this->once())
             ->method('addViolation');
         $this->validator->initialize($context);
 
         $value = 'test > 10';
-        $node = $this->getMock(NodeInterface::class);
+        $node = $this->createMock(NodeInterface::class);
         $node->expects($this->once())
             ->method('isBoolean')
             ->willReturn(true);

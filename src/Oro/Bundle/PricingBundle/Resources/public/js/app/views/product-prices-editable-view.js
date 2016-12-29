@@ -10,11 +10,15 @@ define(function(require) {
 
     ProductPricesEditableView = BaseProductPricesView.extend({
         elements: _.extend({}, BaseProductPricesView.prototype.elements, {
-            pricesHint: null,
-            pricesHintContent: null,
+            pricesHint: ['$html', '#product-prices-tier-button-template'],
+            pricesHintContent: ['$html', '#product-prices-tier-table-template'],
             priceOverridden: null,
             priceValue: '[data-name="field__value"]'
         }),
+
+        modelAttr: {
+            found_price: null
+        },
 
         elementsEvents: _.extend({}, BaseProductPricesView.prototype.elementsEvents, {
             'priceValue onPriceSetManually': ['change', 'onPriceSetManually']
@@ -25,12 +29,11 @@ define(function(require) {
         }),
 
         options: {
+            matchedPriceEnabled: true,
             precision: 4
         },
 
         templates: {
-            pricesHint: '#product-prices-tier-button-template',
-            pricesHintContent: '#product-prices-tier-table-template',
             priceOverridden: '#product-prices-price-overridden-template'
         },
 
@@ -57,10 +60,20 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        setPrice: function() {
-            if (this.getElement('priceValue').hasClass('matched-price')) {
+        findPrice: function() {
+            var price = ProductPricesEditableView.__super__.findPrice.apply(this, arguments);
+            this.model.set('found_price', price);
+            this.getElement('priceValue').data('found_price', price);
+            return price;
+        },
+
+        /**
+         * @inheritDoc
+         */
+        setFoundPrice: function() {
+            this.findPrice();
+            if (this.options.matchedPriceEnabled && this.getElement('priceValue').hasClass('matched-price')) {
                 this.setPriceValue(this.findPriceValue());
-                this.getElement('priceValue').addClass('matched-price');
             }
 
             this.updateUI();
@@ -76,6 +89,9 @@ define(function(require) {
         },
 
         initPriceOverridden: function() {
+            if (!this.options.matchedPriceEnabled) {
+                return;
+            }
             var $priceOverridden = $(_.template(
                 $(this.templates.priceOverridden).text()
             )());
@@ -85,24 +101,22 @@ define(function(require) {
             $priceOverridden.insertBefore(this.getElement('priceValue'))
                 .on('click', 'a', _.bind(this.useFoundPrice, this));
 
-            if (_.isEmpty(this.model.get('price'))) {
+            if (_.isEmpty(this.getElement('priceValue').val()) && this.options.matchedPriceEnabled) {
                 this.getElement('priceValue').addClass('matched-price');
             }
         },
 
         initHint: function() {
-            this.templates.pricesHintContent = _.template($(this.templates.pricesHintContent).text());
+            this.templates.pricesHintContent = _.template(this.getElement('pricesHintContent').text());
 
-            var $pricesHint = $(_.template(
-                $(this.templates.pricesHint).text()
-            )());
+            var $pricesHint = $(_.template(this.getElement('pricesHint').text())());
+            this.$elements.pricesHint = $pricesHint;
             this.getElement('priceValue').after($pricesHint);
 
             var clickHandler = _.bind(this.setPriceFromHint, this);
-            var $pricesHintButton = $pricesHint.find('i');
-            this.getElement('pricesHint', $pricesHintButton)
+            $pricesHint
                 .on('shown', function() {
-                    $pricesHintButton.data('popover').tip()
+                    $pricesHint.data('popover').tip()
                         .find('a[data-price]')
                         .click(clickHandler);
                 });
@@ -114,26 +128,32 @@ define(function(require) {
             }
 
             return $(this.templates.pricesHintContent({
+                model: this.model.attributes,
                 prices: this.prices,
-                modelUnit: this.model.get('unit'),
-                modelPrice: this.model.get('price'),
+                matchedPrice: this.findPrice(),
                 clickable: true,
                 formatter: NumberFormatter
             }));
         },
 
-        onPriceSetManually: function() {
-            this.getElement('priceValue').removeClass('matched-price');
+        onPriceSetManually: function(e, options) {
+            if (options.manually && this.options.matchedPriceEnabled) {
+                this.getElement('priceValue').removeClass('matched-price');
+            }
         },
 
         setPriceFromHint: function(e) {
+            this.getElement('priceValue').removeClass('matched-price');
             var $target = $(e.currentTarget);
             this.model.set('unit', $target.data('unit'));
             this.setPriceValue($target.data('price'));
         },
 
         renderPriceOverridden: function() {
-            var priceValue = this.model.get('price');
+            if (!this.options.matchedPriceEnabled) {
+                return;
+            }
+            var priceValue = this.getElement('priceValue').val();
             var price = this.findPriceValue();
 
             if (price !== null &&
@@ -154,6 +174,9 @@ define(function(require) {
         },
 
         useFoundPrice: function() {
+            if (!this.options.matchedPriceEnabled) {
+                return;
+            }
             this.setPriceValue(this.findPriceValue());
             this.getElement('priceValue').addClass('matched-price');
         }

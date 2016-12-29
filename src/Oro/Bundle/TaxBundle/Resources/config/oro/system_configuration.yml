@@ -19,8 +19,15 @@ system_configuration:
             title: oro.tax.system_configuration.groups.tax_digital_products.title
         us_sales_tax:
             title: oro.tax.system_configuration.groups.us_sales_tax.title
+            icon: fa-usd
         eu_vat_tax:
             title: oro.tax.system_configuration.groups.eu_vat_tax.title
+            icon: fa-eur
+        shipping:
+            title: oro.tax.system_configuration.groups.shipping.title
+            icon: fa-truck
+        shipping_tax:
+            title: oro.tax.system_configuration.groups.shipping_tax.title
 
     fields:
         oro_tax.tax_enable:
@@ -118,6 +125,21 @@ system_configuration:
             options:
                 label: oro.tax.system_configuration.fields.origin_address.label
 
+        oro_tax.shipping_tax_code:
+            data_type: array
+            type: oro_tax_product_tax_code_multiselect
+            options:
+                label: oro.tax.system_configuration.fields.shipping_tax_code.label
+                tooltip: oro.tax.system_configuration.fields.shipping_tax_code.tooltip
+
+        oro_tax.shipping_rates_include_tax:
+            data_type: boolean
+            type: oro_config_checkbox
+            options:
+                label: oro.tax.system_configuration.fields.shipping_rates_include_tax.label
+                tooltip: oro.tax.system_configuration.fields.shipping_rates_include_tax.tooltip
+                required: false
+
     tree:
         system_configuration:
             commerce:
@@ -164,3 +186,11 @@ system_configuration:
                                     tax_digital_products:
                                         children:
                                             - oro_tax.digital_products_eu
+
+                            shipping:
+                                priority: 90
+                                children:
+                                    shipping_tax:
+                                        children:
+                                            - oro_tax.shipping_tax_code
+                                            - oro_tax.shipping_rates_include_tax

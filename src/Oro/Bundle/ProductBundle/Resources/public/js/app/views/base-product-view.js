@@ -28,14 +28,19 @@ define(function(require) {
         initialize: function(options) {
             BaseProductView.__super__.initialize.apply(this, arguments);
 
+            this.rowId = this.$el.parent().data('row-id');
             this.initModel(options);
             this.initializeElements(options);
+
+            this._deferredRender();
             this.initLayout({
                 productModel: this.model
             }).done(_.bind(this.handleLayoutInit, this));
         },
 
-        handleLayoutInit: function() {},
+        handleLayoutInit: function() {
+            this._resolveDeferredRender();
+        },
 
         initModel: function(options) {
             this.modelAttr = $.extend(true, {}, this.modelAttr, options.modelAttr || {});
@@ -43,7 +48,8 @@ define(function(require) {
                 this.model = options.productModel;
             }
             if (!this.model) {
-                this.model = new BaseModel();
+                this.model = (_.isObject(this.collection) && this.collection.get(this.rowId)) ?
+                                this.collection.get(this.rowId) : new BaseModel();
             }
 
             _.each(this.modelAttr, function(value, attribute) {
@@ -55,6 +61,7 @@ define(function(require) {
 
         dispose: function() {
             delete this.modelAttr;
+            delete this.rowId;
             this.disposeElements();
             BaseProductView.__super__.dispose.apply(this, arguments);
         }

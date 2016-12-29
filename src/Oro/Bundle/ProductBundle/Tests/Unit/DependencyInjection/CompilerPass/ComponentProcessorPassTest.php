@@ -78,7 +78,7 @@ class ComponentProcessorPassTest extends \PHPUnit_Framework_TestCase
             ->with($this->equalTo(ComponentProcessorPass::TAG))
             ->will($this->returnValue(['service' => ['class' => '\stdClass']]));
 
-        $definition = $this->getMock('Symfony\Component\DependencyInjection\Definition');
+        $definition = $this->createMock('Symfony\Component\DependencyInjection\Definition');
 
         $this->container->expects($this->once())
             ->method('getDefinition')

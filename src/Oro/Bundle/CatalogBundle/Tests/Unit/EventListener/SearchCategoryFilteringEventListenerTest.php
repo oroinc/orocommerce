@@ -175,7 +175,7 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit_Framework_TestCa
             ->method('addWhere')
             ->with($expr);
 
-        $dataGrid = $this->getMock(DatagridInterface::class);
+        $dataGrid = $this->createMock(DatagridInterface::class);
 
         $event->method('getDatagrid')
             ->willReturn($dataGrid);
@@ -243,7 +243,7 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit_Framework_TestCa
             ->method('addWhere')
             ->with($expr);
 
-        $dataGrid = $this->getMock(DatagridInterface::class);
+        $dataGrid = $this->createMock(DatagridInterface::class);
 
         $event->method('getDatagrid')
             ->willReturn($dataGrid);

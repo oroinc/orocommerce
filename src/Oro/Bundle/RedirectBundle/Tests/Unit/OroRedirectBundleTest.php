@@ -14,7 +14,7 @@ class OroRedirectBundleTest extends \PHPUnit_Framework_TestCase
     {
         $container = new ContainerBuilder();
 
-        $kernel = $this->getMock(KernelInterface::class);
+        $kernel = $this->createMock(KernelInterface::class);
 
         $bundle = new OroRedirectBundle($kernel);
         $bundle->build($container);

@@ -1,5 +1,15 @@
+// @theme: default
+
 .shipping-list-view-total-container {
   .order-checkout-widget__container {
-    width: 280px;
+    min-width: 280px;
+  }
+
+  .order-checkout-widget__table {
+    td {
+      &:first-child {
+        padding-right: 6px;
+      }
+    }
   }
 }

@@ -1,0 +1,8 @@
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+
+{% set decrementQuantity = oro_entity_fallback_value(entity, 'decrementQuantity') %}
+{% if decrementQuantity is not null %}
+    {% set decrementQuantity = (decrementQuantity == true) ? 'true' : 'false' %}
+{% endif %}
+{% set decrementQuantityValue = decrementQuantity is not null ? 'oro.inventory.manage_inventory.choice.' ~ decrementQuantity : null %}
+{{ UI.renderHtmlProperty('oro.inventory.decrement_inventory.label'|trans, decrementQuantityValue|trans) }}

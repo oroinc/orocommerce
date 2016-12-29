@@ -1,0 +1,228 @@
+{# Product view Layout START #}
+{% block _product_view_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'data-page-component-module': 'oroui/js/app/components/view-component',
+        '~data-page-component-options': {
+            view: 'oroproduct/js/app/views/base-product-view',
+            modelAttr: product.jsonSerialize()
+        },
+        'data-layout': 'separate',
+        '~class': ' product-view'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _product_view_primary_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-view__primary'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _product_view_aside_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-view__aside'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _product_view_main_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-view__main'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _product_view_content_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-view__content'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _product_view_specification_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-view__specification'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _product_view_description_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-view__description'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _product_view_additional_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-view__additional'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+{# Product view Layout START #}
+
+{% block _product_view_title_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' page-title'
+    }) %}
+
+    <h1 {{ block('block_attributes') }}>{{ text }}</h1>
+{% endblock %}
+
+{% block _product_view_sku_widget %}
+    <p class="sku">
+        {{ 'oro.product.frontend.index.item'|trans }} <span class="sku__code">{{ block_widget(block) }}</span>
+    </p>
+{% endblock %}
+
+{% block _product_media_widget %}
+    {% import 'OroProductBundle::image_macros.html.twig' as Image %}
+    <!-- START Product Gallery -->
+    <div class="product-gallery">
+        {% set zoomOptions = {
+            screenType: 'desktop',
+            component: 'oroui/js/app/components/jquery-widget-component',
+            widgetModule: 'oroproduct/js/widget/zoom-widget'
+        } %}
+
+        {% set imageListOptions = {
+        slidesToShow: 1,
+        slidesToScroll: 1,
+        fade: true,
+        arrows: false,
+        asNavFor: '.product-gallery__nav',
+        lazyLoad: 'ondemand',
+        infinite: false,
+        } %}
+
+        {% set navListOptions = {
+        slidesToShow: 4,
+        slidesToScroll: 1,
+        asNavFor: '.product-view-media__gallery',
+        focusOnSelect: true,
+        infinite: false,
+        arrows: true
+        } %}
+
+        {% if product.imagesByType('additional')|length == 1 %}
+            <div class="product-view-media__gallery">
+                <div class="product-gallery__image-item">
+                    {% set productImage = product.imagesByType('main')|length > 0 ? product.imagesByType('main').first.image : null %}
+                    <img class="product-gallery__image"
+                         src="{{ Image.url(productImage, 'product_extra_large') }}"
+                         alt="{{ product.names|localized_value }}"
+                         width="378"
+                         height="378"
+                         data-trigger-gallery-open
+                            {% if productImage %}
+                                data-zoom-image="{{ Image.url(productImage, 'product_original') }}"
+                                data-page-component-module="oroui/js/app/components/viewport-component"
+                                data-page-component-options="{{ zoomOptions|json_encode }}"
+                            {% endif %}
+                    />
+                </div>
+            </div>
+        {% else %}
+            <div class="product-view-media__gallery"
+                 data-page-component-module="orofrontend/js/app/components/list-slider-component"
+                 data-page-component-options="{{ imageListOptions|json_encode }}">
+                {% for productImage in product.imagesByType('additional') %}
+                    <div class="product-gallery__image-item">
+                        <img class="product-gallery__image"
+                             data-url-zoom="{{ Image.url(productImage.image, 'product_original') }}"
+                             data-trigger-gallery-open
+                                {% if loop.first %}
+                                    {% if productImage.image %}
+                                        src="{{ Image.url(productImage.image, 'product_extra_large') }}"
+                                        data-zoom-image="{{ Image.url(productImage.image, 'product_original') }}"
+                                        data-page-component-module="oroui/js/app/components/viewport-component"
+                                        data-page-component-options="{{ zoomOptions|json_encode }}"
+                                    {% endif %}
+                                {% else %}
+                                    data-lazy="{{ Image.url(productImage.image, 'product_extra_large') }}"
+                                {% endif %}
+                        />
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="product-gallery__nav"
+                 data-page-component-module="orofrontend/js/app/components/list-slider-component"
+                 data-page-component-options="{{ navListOptions|json_encode }}">
+                {% for productImage in product.imagesByType('additional') %}
+                    <div class="product-gallery__nav-item">
+                        <img class="product-gallery__image"
+                             src="{{ Image.url(productImage.image, 'product_small') }}"/>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+    <!-- END Product Gallery -->
+{% endblock %}
+
+{% block _product_media_popup_widget %}
+    {% import 'OroProductBundle::image_macros.html.twig' as Image %}
+
+    <div class="popup-gallery-widget"
+         data-gallery-content
+         data-product-gallery
+         data-page-component-module="orofrontend/js/app/components/popup-gallery-widget">
+        <div class="popup-gallery-widget__bg"
+             data-trigger-gallery-close>
+        </div>
+        <div class="popup-gallery-widget__wrapper">
+            <div class="popup-gallery-widget__close"
+                 data-trigger-gallery-close>
+            </div>
+            <div class="popup-gallery-widget__images"
+                 data-gallery-images>
+                {% for productImage in product.imagesByType('additional') %}
+                    <div class="popup-gallery-widget__image">
+                        <img src="{{ Image.url(productImage.image, 'product_gallery_popup') }}"
+                             width="100%"
+                             height="100%"/>
+                    </div>
+                {% endfor %}
+            </div>
+            {% if product.imagesByType('additional')|length > 1 %}
+                <div class="popup-gallery-widget__thumbnails"
+                     data-gallery-thumbnails>
+                    {% for productImage in product.imagesByType('additional') %}
+                        <div class="popup-gallery-widget__thumbnails-img">
+                            <img
+                                 src="{{ Image.url(productImage.image, 'product_small') }}"
+                                 width="80px"
+                                 height="80px"/>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

@@ -54,7 +54,7 @@ class AccountUserRoleUpdateHandlerTest extends AbstractAccountUserRoleUpdateHand
             ->with($this->isType('array'))
             ->willReturnCallback([$this, 'getPermissionNames']);
 
-        $expectedForm = $this->getMock('Symfony\Component\Form\FormInterface');
+        $expectedForm = $this->createMock('Symfony\Component\Form\FormInterface');
 
         $this->formFactory->expects($this->once())
             ->method('create')
@@ -98,7 +98,7 @@ class AccountUserRoleUpdateHandlerTest extends AbstractAccountUserRoleUpdateHand
         $request->setMethod('GET');
 
         /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
-        $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
+        $requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
         $requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
 
         $firstEntityPrivilege = $this->createPrivilege('entity', 'entity:' . $firstClass, 'VIEW', true);
@@ -111,11 +111,11 @@ class AccountUserRoleUpdateHandlerTest extends AbstractAccountUserRoleUpdateHand
 
         $actionPrivilege = $this->createPrivilege('action', 'action', 'random_action', true);
 
-        $privilegesForm = $this->getMock('Symfony\Component\Form\FormInterface');
+        $privilegesForm = $this->createMock('Symfony\Component\Form\FormInterface');
         $privilegesForm->expects($this->once())
             ->method('setData');
 
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
         $form->expects($this->any())
             ->method('get')
             ->willReturnMap(
@@ -180,7 +180,7 @@ class AccountUserRoleUpdateHandlerTest extends AbstractAccountUserRoleUpdateHand
         $request->setMethod('POST');
 
         /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
-        $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
+        $requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
         $requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
 
         $role = new AccountUserRole('TEST');
@@ -188,18 +188,18 @@ class AccountUserRoleUpdateHandlerTest extends AbstractAccountUserRoleUpdateHand
 
         $productObjectIdentity = new ObjectIdentity('entity', 'Oro\Bundle\ProductBundle\Entity\Product');
 
-        $appendForm = $this->getMock('Symfony\Component\Form\FormInterface');
+        $appendForm = $this->createMock('Symfony\Component\Form\FormInterface');
         $appendForm->expects($this->once())
             ->method('getData')
             ->willReturn([]);
 
-        $removeForm = $this->getMock('Symfony\Component\Form\FormInterface');
+        $removeForm = $this->createMock('Symfony\Component\Form\FormInterface');
         $removeForm->expects($this->once())
             ->method('getData')
             ->willReturn([]);
 
-        $entityForm = $this->getMock('Symfony\Component\Form\FormInterface');
-        $actionForm = $this->getMock('Symfony\Component\Form\FormInterface');
+        $entityForm = $this->createMock('Symfony\Component\Form\FormInterface');
+        $actionForm = $this->createMock('Symfony\Component\Form\FormInterface');
 
         $privilegesData = json_encode([
             'entity' => [
@@ -243,12 +243,12 @@ class AccountUserRoleUpdateHandlerTest extends AbstractAccountUserRoleUpdateHand
                 ],
             ],
         ]);
-        $privilegesForm = $this->getMock('Symfony\Component\Form\FormInterface');
+        $privilegesForm = $this->createMock('Symfony\Component\Form\FormInterface');
         $privilegesForm->expects($this->once())
             ->method('getData')
             ->willReturn($privilegesData);
 
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
         $form->expects($this->once())
             ->method('submit');
         $form->expects($this->once())
@@ -270,7 +270,7 @@ class AccountUserRoleUpdateHandlerTest extends AbstractAccountUserRoleUpdateHand
             ->method('create')
             ->willReturn($form);
 
-        $objectManager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
+        $objectManager = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
         $this->managerRegistry->expects($this->any())
             ->method('getManagerForClass')
             ->with(get_class($role))
@@ -309,7 +309,7 @@ class AccountUserRoleUpdateHandlerTest extends AbstractAccountUserRoleUpdateHand
             ->with($roleSecurityIdentity, $productObjectIdentity, 16);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|AclExtensionInterface $aclExtension */
-        $aclExtension = $this->getMock('Oro\Bundle\SecurityBundle\Acl\Extension\AclExtensionInterface');
+        $aclExtension = $this->createMock('Oro\Bundle\SecurityBundle\Acl\Extension\AclExtensionInterface');
         $aclExtension->expects($this->once())
             ->method('getMaskBuilder')
             ->with('VIEW')
@@ -372,7 +372,7 @@ class AccountUserRoleUpdateHandlerTest extends AbstractAccountUserRoleUpdateHand
         $request->setMethod('POST');
 
         /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
-        $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
+        $requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
         $requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
 
         $this->setUpMocksForProcessWithAccount(
@@ -389,7 +389,7 @@ class AccountUserRoleUpdateHandlerTest extends AbstractAccountUserRoleUpdateHand
         /** @var AccountUser[] $persistedUsers */
         $persistedUsers = [];
 
-        $objectManager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
+        $objectManager = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
 
         $objectManager->expects($this->any())
             ->method('persist')
@@ -537,7 +537,7 @@ class AccountUserRoleUpdateHandlerTest extends AbstractAccountUserRoleUpdateHand
      */
     protected function createClassConfigMock($hasFrontendOwner)
     {
-        $config = $this->getMock('Oro\Bundle\EntityConfigBundle\Config\ConfigInterface');
+        $config = $this->createMock('Oro\Bundle\EntityConfigBundle\Config\ConfigInterface');
         $config->expects($this->any())
             ->method('has')
             ->with('frontend_owner_type')
@@ -726,17 +726,17 @@ class AccountUserRoleUpdateHandlerTest extends AbstractAccountUserRoleUpdateHand
         $newAccount,
         $changeAccountProcessed
     ) {
-        $appendForm = $this->getMock('Symfony\Component\Form\FormInterface');
+        $appendForm = $this->createMock('Symfony\Component\Form\FormInterface');
         $appendForm->expects($this->once())
             ->method('getData')
             ->willReturn($appendUsers);
 
-        $removeForm = $this->getMock('Symfony\Component\Form\FormInterface');
+        $removeForm = $this->createMock('Symfony\Component\Form\FormInterface');
         $removeForm->expects($this->once())
             ->method('getData')
             ->willReturn($removedUsers);
 
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
         $form->expects($this->once())
             ->method('submit')
             ->willReturnCallback(

@@ -1,4 +1,4 @@
-@fixture-ShippingRule.yml
+@fixture-ShippingMethodsConfigsRule.yml
 Feature: Applying shipping rules
   In order to decrease shipping cost for buyers
   As administrator
@@ -102,7 +102,7 @@ Feature: Applying shipping rules
       | Price         | 5         |
       | HandlingFee   | 1.5       |
     When Buyer is again on Shipping Method Checkout step on "Shopping List 1"
-    Given Buyer created order with next shipping address:
+    And Buyer created order with next shipping address:
       | Country         | Ukraine              |
       | City            | Kyiv                 |
       | State           | Kyïvs'ka mis'ka rada |

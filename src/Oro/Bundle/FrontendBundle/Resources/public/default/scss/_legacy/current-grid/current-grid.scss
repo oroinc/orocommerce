@@ -79,20 +79,6 @@
     }
 
     &.open {
-      .dropdown-menu {
-        width: 100%;
-        min-width: 0;
-        margin: 0;
-        border-top-right-radius: 0;
-        border-top-left-radius: 0;
-
-        > li {
-          > a {
-            padding: 5px 10px;
-          }
-        }
-      }
-
       .btn {
         border-bottom-left-radius: 0;
         border-bottom-right-radius: 0;
@@ -117,11 +103,16 @@
     .action {
       display: inline-block;
       vertical-align: middle;
-      height: 32px;
-      margin: 0 0 0 5px;
-      padding: 7px 10px;
-      border: 1px solid get-color('additional', 'middle');
 
+      height: 32px;
+
+      padding: 7px 10px;
+
+      font-size: 0;
+
+      line-height: 1;
+
+      border: 1px solid get-color('additional', 'middle');
       background: get-color('additional', 'ultra');
       background: linear-gradient(
                       to bottom,
@@ -129,16 +120,22 @@
                       rgba(230,230,230,1) 100%);
 
       color: get-color('additional', 'dark');
-      font-size: 0;
+
+
+      &.pressed {
+        box-shadow: inset 0 3px 5px 0 rgba(0, 0, 0, .35);
+      }
 
       i, [class^="fa-"] {
         margin: 0 !important;
 
-        font-size: 17px !important;
-        line-height: 1.12 !important;
+        font-size: 0 !important;
+        line-height: 1 !important;
 
         &:before {
-          line-height: 1.12 !important;
+          font-size: 17px !important;
+
+          line-height: 1 !important;
         }
       }
     }
@@ -146,40 +143,6 @@
 
   //Columns manager
   .column-manager {
-    .dropdown-menu {
-      top: 3.1rem;
-      left: auto;
-      bottom: auto;
-      right: 0;
-
-      min-width: 240px;
-      margin: 0;
-      padding: 20px;
-      border-radius: 5px;
-
-      &:before, &:after {
-        display: none;
-      }
-
-      .column-manager-title {
-        text-transform: uppercase;
-        font-weight: 400;
-      }
-
-      .close {
-        position: absolute;
-        top: .5rem;
-        right: .5rem;
-        z-index: 1;
-
-        color: get-color('ui', 'normal');
-        font-size: 22px;
-        font-weight: 400;
-
-        opacity: 1;
-      }
-    }
-
     .column-manager-filter {
       .column-manager-search {
         input {
@@ -246,18 +209,12 @@
       padding: 5px;
       vertical-align: middle;
 
-      font-size: 0;
-
       &:first-child {
         padding-right: 10px;
       }
 
       label {
-        display: inline-block;
         max-width: 95%;
-
-        font-size: $base-font-size;
-        font-weight: 400;
 
         @include ellipsis();
       }
@@ -268,41 +225,17 @@
 
           display: block;
           width: 20px;
-          height: 20px;
 
           color: get-color('additional', 'dark');
 
           cursor: move;
+        }
 
-          .ui-sortable-handle {
-
-            display: inline-block;
-            vertical-align: middle;
-            width: 1em;
-            height: 1em;
-            margin: 0;
-            padding: 0;
-
-            font-family: $base-font-icon;
-            font-weight: normal;
-            font-style: normal;
-            font-size: 2rem;
-            line-height: 1;
-            text-transform: none;
-            letter-spacing: normal;
-            word-wrap: normal;
-
-            -webkit-font-smoothing: antialiased;
-            text-rendering: optimizeLegibility;
-            -moz-osx-font-smoothing: grayscale;
-            -webkit-font-feature-settings: 'liga';
-            -moz-font-feature-settings: 'liga';
-            font-feature-settings: 'liga';
-
-            &:before {
-              content: "\e005";
-            }
-          }
+        .btn {
+          padding: 0;
+          background: none;
+          border: 0;
+          line-height: normal;
         }
       }
     }
@@ -383,20 +316,6 @@
     }
   }
 
-  .filter-criteria-selector {
-    .caret {
-      position: absolute;
-      top: 50%;
-      right: 10px;
-
-      height: 0;
-      margin: -3px 0 0 -5px;
-      border-top: 6px solid get-color('additional', 'dark');
-      border-left: 5px solid transparent;
-      border-right: 5px solid transparent;
-    }
-  }
-
   .oro-drop {
     position: relative;
 
@@ -427,6 +346,21 @@
       cursor: pointer;
     }
 
+    .filter-criteria-selector {
+      .caret {
+        position: absolute;
+        top: 50%;
+        right: 10px;
+
+        height: 0;
+        margin: -3px 0 0 -5px;
+
+        border-top: 6px solid get-color('additional', 'dark');
+        border-left: 5px solid transparent;
+        border-right: 5px solid transparent;
+      }
+    }
+
     .filter-criteria {
       min-width: 340px !important;
       margin-top: 0;
@@ -438,14 +372,9 @@
         left: auto;
       }
 
-      &.dropdown-menu {
-        @media (max-width: $screen-md) {
-          left: -20px;
-
-          width: calc(100% + 66px); // 66px = negative left param + right gap because of fixed width of .filter-box .oro-drop element
-          min-width: 0 !important;
-          margin: 0 !important;
-        }
+      .btn-group,
+      .btn {
+        transition: none;
       }
 
       > div {
@@ -477,222 +406,6 @@
         font-size: $base-font-size;
       }
 
-      .dropdown-menu-calendar {
-        &.dropdown-menu {
-          min-width: 270px;
-          padding: 0;
-
-          background: get-color('additional', 'ultra');
-
-          @media (max-width: $screen-md) {
-            min-width: 260px;
-          }
-
-          .nav-tabs-oro {
-            > li {
-              &.active {
-                color: get-color('additional', 'dark');
-              }
-
-              > a {
-                color: get-color('additional', 'dark');
-              }
-            }
-          }
-
-          .tab-content {
-            padding: 10px 8px 15px;
-          }
-
-          .ui-datevariables-div {
-            .fa-info-circle {
-              margin-left: 5px;
-
-              vertical-align: middle;
-            }
-          }
-
-          .ui-datepicker {
-            .ui-datepicker-buttonpane {
-              margin: 5px 0 0;
-
-              button {
-                &.ui-datepicker-current {
-                  display: inline-block;
-                  vertical-align: middle;
-                  padding: 5px 12px;
-                  border: 0;
-                  border-radius: 4px;
-
-                  background: get-color('additional', 'darker');
-                  color: get-color('additional', 'ultra');
-                  font-size: 13px;
-                  font-weight: 400;
-                  line-height: 1.42857143;
-                  text-align: center;
-                  white-space: nowrap;
-                  text-shadow: none;
-
-                  &:active {
-                    color: get-color('additional', 'ultra');
-                    box-shadow: inset 0 3px 5px 0 rgba(0,0,0,.35);
-                  }
-                }
-              }
-            }
-
-            .ui-datepicker-header {
-              display: flex;
-              align-items: center;
-              padding: 5px 5px 10px;
-              border: 0;
-
-              background: transparent;
-
-              .ui-datepicker-prev {
-                flex-basis: 27px;
-                height: 29px;
-                order: 1;
-                border: 0;
-
-                font-size: 0;
-                line-height: 29px;
-                text-align: center;
-
-                cursor: pointer;
-
-                span {
-                  display: block;
-                  width: 0;
-                  height: 0;
-                }
-
-                &:hover {
-                  border: 0;
-
-                  background: get-color('additional', 'base');
-                }
-
-                &:before {
-                  content: "";
-                  display: inline-block;
-                  vertical-align: middle;
-                  border-top: 7px solid transparent;
-                  border-bottom: 7px solid transparent;
-                  border-right: 7px solid get-color('additional', 'base');
-                }
-              }
-
-              .ui-datepicker-next {
-                flex-basis: 27px;
-                height: 29px;
-                order: 3;
-                border: 0;
-
-                font-size: 0;
-                line-height: 29px;
-                text-align: center;
-
-                cursor: pointer;
-
-                span {
-                  display: block;
-                  height: 0;
-                  width: 0;
-                }
-
-                &:hover {
-                  border: 0;
-
-                  background: get-color('additional', 'base');
-                }
-
-                &:before {
-                  content: "";
-                  display: inline-block;
-                  vertical-align: middle;
-                  border-top: 7px solid transparent;
-                  border-bottom: 7px solid transparent;
-                  border-left: 7px solid get-color('additional', 'base');
-                }
-              }
-
-              .ui-datepicker-title {
-                order: 2;
-                flex-grow: 1;
-
-                text-align: center;
-
-                select {
-                  display: inline-block;
-                  padding: 8px 9px;
-                  border: 1px solid get-color('additional', 'light');
-                  border-radius: 5px;
-
-                  background: get-color('additional', 'ultra');
-                  font-size: $base-font-size;
-                  line-height: 1.36;
-                }
-              }
-            }
-
-            table.ui-datepicker-calendar {
-              width: 100%;
-              border-collapse: separate;
-              border-spacing: 5px;
-
-              thead {
-                th {
-                  text-align: center;
-
-                  span {
-                    vertical-align: middle;
-
-                    color: get-color('additional', 'ultra');
-                    font-weight: 400;
-                    text-transform: none;
-                  }
-                }
-              }
-
-              tbody {
-                tr {
-                  td {
-                    text-align: center;
-
-                    a.ui-state-default {
-                      display: block;
-                      border: 0;
-
-                      text-decoration: none;
-                      line-height: 29px;
-
-                      &:active, &:focus, :visited {
-                        text-decoration: none;
-                      }
-
-                      &.ui-state-active {
-                        background: get-color('primary', 'base');
-                        color: get-color('additional', 'ultra');
-
-                        &.ui-state-hover {
-                          background:get-color('primary', 'base');
-                          color: get-color('additional', 'ultra');
-                        }
-                      }
-
-                      &.ui-state-hover {
-                        background: get-color('additional', 'base');
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-
       .choice-filter {
         .btn-group {
           &.btn-block {
@@ -706,11 +419,6 @@
 
               background: none;
               color: get-color('primary', 'dark');
-
-              .caret {
-                margin: 0 0 0 5px;
-                border-top-color: get-color('primary', 'dark');
-              }
             }
           }
         }
@@ -756,6 +464,7 @@
             height: auto;
             padding: 0 26px;
             vertical-align: middle;
+            border-radius: $btn-border-radius;
 
             background: get-color('additional', 'darker');
             color: get-color('additional', 'ultra');
@@ -781,7 +490,7 @@
             vertical-align: middle;
             height: auto;
             padding: 0 26px;
-            border-radius: 4px !important;
+            border-radius: $btn-border-radius !important;
 
             background: get-color('additional', 'darker');
             color: get-color('additional', 'ultra');
@@ -836,10 +545,6 @@
           }
         }
 
-        .datefilter {
-          display: block;
-        }
-
         input[type="text"] {
           @include base-ui-element(
                   $use-base-style: true,
@@ -860,6 +565,24 @@
             box-shadow: $input-box-shadow-focus-state;
           }
         }
+
+        .datefilter {
+          display: block;
+
+          input[type="text"] {
+            padding-left: 39px;
+          }
+
+          &:before {
+            position: absolute;
+            content: '\f073';
+            pointer-events: none;
+            margin: 8px 0 0 12px;
+            font: normal $base-font-size--m 'FontAwesome';
+            color: get-color('additional', 'middle');
+          }
+        }
+
       }
 
       .number-range-filter {
@@ -941,10 +664,7 @@
       top: 5px;
       right: 5px;
 
-      &:before {
-        font-family: 'FontAwesome';
-        content: "\f00d";
-      }
+      @include fa-icon($fa-var-close);
     }
 
     > span {
@@ -1012,20 +732,9 @@
         color: get-color('primary', 'dark');
         font-weight: 400;
 
-        &:hover {
-          span.caret {
-            border-top-color: get-color('primary', 'dark');
-          }
-        }
-
         &:active, &:visited, &:focus {
           color: get-color('primary', 'dark');
         }
-      }
-
-      span.caret {
-        margin: 0 0 0 5px;
-        border-top-color: get-color('primary', 'dark');
       }
     }
   }
@@ -1197,6 +906,15 @@
 
 .more-bar-holder {
   position: relative;
+
+  .action {
+    &:hover {
+      text-decoration: none;
+
+      background-color: get-color('additional', 'light');
+      border-radius: 4px;
+    }
+  }
 }
 
 //Table
@@ -1232,23 +950,9 @@
             border-bottom: 0;
             border-radius: 0;
 
+            text-align: left;
+            
             background: get-color('additional', 'base');
-
-            span.caret {
-              margin-left: 10px;
-            }
-
-            &.ascending {
-              span.caret {
-                border-bottom-color: get-color('additional', 'dark');
-              }
-            }
-
-            &.descending {
-              span.caret {
-                border-top-color: get-color('additional', 'dark');
-              }
-            }
 
             > a,
             > span {

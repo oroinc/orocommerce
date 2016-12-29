@@ -61,7 +61,7 @@ class ProductVariantFieldValidatorTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->context = $this->getMock('Symfony\Component\Validator\Context\ExecutionContextInterface');
+        $this->context = $this->createMock('Symfony\Component\Validator\Context\ExecutionContextInterface');
 
         $this->customFieldProvider = $this->getMockBuilder('Oro\Bundle\ProductBundle\Provider\CustomFieldProvider')
             ->disableOriginalConstructor()
@@ -148,12 +148,12 @@ class ProductVariantFieldValidatorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param array $variantFields
-     * @return StubProduct
+     * @return Product
      */
     private function prepareProductWithVariantFields(array $variantFields)
     {
         $product = new Product();
-        $product->setHasVariants(true);
+        $product->setType(Product::TYPE_CONFIGURABLE);
         $product->setVariantFields($variantFields);
 
         return $product;

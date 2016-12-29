@@ -29,7 +29,7 @@ class LocalizedSlugTypeTest extends FormIntegrationTestCase
     {
         parent::setUp();
 
-        $registry = $this->getMock(ManagerRegistry::class);
+        $registry = $this->createMock(ManagerRegistry::class);
         $this->formType = new LocalizedSlugType($registry);
     }
 
@@ -120,7 +120,7 @@ class LocalizedSlugTypeTest extends FormIntegrationTestCase
 
     public function testConfigureOptions()
     {
-        $resolver = $this->getMock(OptionsResolver::class);
+        $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())->method('setDefaults')->with(
             $this->callback(
                 function (array $options) {
@@ -143,7 +143,7 @@ class LocalizedSlugTypeTest extends FormIntegrationTestCase
 
     public function testBuildViewForSlugifyComponent()
     {
-        $form = $this->getMock(FormInterface::class);
+        $form = $this->createMock(FormInterface::class);
 
         $viewParent = new FormView();
         $viewParent->vars['full_name'] = 'form-name';

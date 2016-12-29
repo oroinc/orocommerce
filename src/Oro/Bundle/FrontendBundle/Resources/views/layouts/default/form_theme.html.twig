@@ -2,7 +2,7 @@
 
 {%- block form_label -%}
     {% set label_attr = layout_attr_defaults(label_attr, {
-        '~class': ' label label--full'
+        '~class': ' label'
     }) %}
 
     {{ parent() }}
@@ -46,7 +46,7 @@
 {% block widget_attributes %}
     {% if errors|length > 0 %}
         {% set attr = attr|merge({
-            class: attr.class|default('') ~ ' input_error'
+            class: attr.class|default('') ~ ' error'
         }) %}
     {% endif %}
     {{ parent() }}
@@ -126,8 +126,9 @@
         {% endif %}
 
         {% set options = {
+            component: 'oroui/js/app/components/view-component',
             view: 'oroui/js/app/views/datepicker/datepicker-view',
-            nativeMode: isMobileVersion(),
+            screenType: 'desktop',
             dateInputAttrs: {
                 placeholder: 'oro.form.choose_date'|trans,
                 id: 'date_selector_' ~ id,
@@ -140,12 +141,14 @@
                 changeMonth: false,
                 changeYear: false,
                 yearRange: years|default('-80:+1'),
-                showButtonPanel: true
+                showButtonPanel: true,
+                maxDate: (attribute(datePickerOptions, 'maxDate') is defined ? datePickerOptions['maxDate'] : ''),
+                minDate: (attribute(datePickerOptions, 'minDate') is defined ? datePickerOptions['minDate'] : '')
             }
         } %}
 
         {% set attr = attr|merge({
-            'data-page-component-module': 'oroui/js/app/components/view-component',
+            'data-page-component-module': 'oroui/js/app/components/viewport-component',
             'data-page-component-options': options|json_encode(constant('JSON_FORCE_OBJECT'))
         }) %}
 

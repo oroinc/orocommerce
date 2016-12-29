@@ -27,7 +27,7 @@ trait QuantityTypeTrait
     public function getRoundingService()
     {
         if (!$this->roundingService) {
-            $this->roundingService = $this->getMock('Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface');
+            $this->roundingService = $this->createMock('Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface');
         }
 
         return $this->roundingService;

@@ -5,8 +5,8 @@ namespace Oro\Bundle\SEOBundle\Layout\DataProvider;
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
+use Oro\Component\WebCatalog\Entity\ContentNodeAwareInterface;
 use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
-use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
@@ -70,10 +70,11 @@ class SeoDataProvider
     {
         $request = $this->requestStack->getCurrentRequest();
         if ($request && $request->attributes->has('_content_variant')) {
-            /** @var ContentVariantInterface $contentVariant */
             $contentVariant = $request->attributes->get('_content_variant');
 
-            return $contentVariant->getNode();
+            if ($contentVariant instanceof ContentNodeAwareInterface) {
+                return $contentVariant->getNode();
+            }
         }
 
         return null;

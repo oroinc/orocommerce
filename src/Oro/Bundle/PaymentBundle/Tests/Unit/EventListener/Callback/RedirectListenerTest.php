@@ -102,7 +102,7 @@ class RedirectListenerTest extends \PHPUnit_Framework_TestCase
         $event->setPaymentTransaction($this->paymentTransaction);
 
         /** @var FlashBagInterface|\PHPUnit_Framework_MockObject_MockObject $flashBag */
-        $flashBag = $this->getMock('Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface');
+        $flashBag = $this->createMock('Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface');
 
         $flashBag->expects($this->once())
             ->method('has')

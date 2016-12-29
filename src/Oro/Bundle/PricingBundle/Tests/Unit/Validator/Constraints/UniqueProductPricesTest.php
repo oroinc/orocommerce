@@ -37,7 +37,7 @@ class UniqueProductPricesTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->constraint = new UniqueProductPrices();
-        $this->context = $this->getMock('Symfony\Component\Validator\ExecutionContextInterface');
+        $this->context = $this->createMock('Symfony\Component\Validator\ExecutionContextInterface');
 
         $this->validator = new UniqueProductPricesValidator();
         $this->validator->initialize($this->context);
@@ -103,12 +103,12 @@ class UniqueProductPricesTest extends \PHPUnit_Framework_TestCase
         $this->validator->validate($data, $this->constraint);
     }
 
+    /**
+     * @expectedException \Symfony\Component\Validator\Exception\UnexpectedTypeException
+     * @expectedExceptionMessage argument of type "Oro\Bundle\PricingBundle\Entity\ProductPrice", "stdClass" given
+     */
     public function testUnexpectedItem()
     {
-        $this->setExpectedException(
-            '\Symfony\Component\Validator\Exception\UnexpectedTypeException',
-            'Expected argument of type "Oro\Bundle\PricingBundle\Entity\ProductPrice", "stdClass" given'
-        );
         $data = new ArrayCollection([ new \stdClass()]);
         $this->validator->validate($data, $this->constraint);
     }

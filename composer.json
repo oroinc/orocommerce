@@ -9,19 +9,11 @@
             "homepage": "http://www.orocommerce.com"
         }
     ],
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/orocrm/platform.git"
-        },
-        {
-            "type": "composer",
-            "url": "https://packagist.orocrm.com"
-        }
-    ],
     "require": {
         "oro/platform": "1.x-dev",
+        "oro/platform-serialised-fields": "1.x-dev",
         "oro/calendar-bundle": "1.x-dev",
+        "oro/marketing": "1.x-dev",
         "box/spout": "2.3.*",
         "brick/math": "0.5.*",
         "myclabs/deep-copy": "1.5.*",
@@ -29,8 +21,6 @@
         "bower-asset/jquery-creditcardvalidator": "1.0",
         "bower-asset/jquery-validate": "1.11.1"
     },
-    "minimum-stability": "dev",
-    "prefer-stable": true,
     "extra": {
         "branch-alias": {
             "dev-master": "1.x-dev"

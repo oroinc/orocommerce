@@ -39,7 +39,7 @@ class PriceRuleLexemeTriggerHandlerTest extends \PHPUnit_Framework_TestCase
         $this->priceListTriggerHandler = $this->getMockBuilder(PriceListTriggerHandler::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->registry = $this->getMock(RegistryInterface::class);
+        $this->registry = $this->createMock(RegistryInterface::class);
 
         $this->handler = new PriceRuleLexemeTriggerHandler($this->priceListTriggerHandler, $this->registry);
     }
@@ -62,7 +62,7 @@ class PriceRuleLexemeTriggerHandlerTest extends \PHPUnit_Framework_TestCase
             ->with($className, $updatedFields, $relationId)
             ->willReturn($lexemes);
 
-        $em = $this->getMock(EntityManagerInterface::class);
+        $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->once())
             ->method('getRepository')
             ->with(PriceRuleLexeme::class)
@@ -122,7 +122,7 @@ class PriceRuleLexemeTriggerHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('updatePriceListsActuality')
             ->with($priceLists, false);
 
-        $em = $this->getMock(EntityManagerInterface::class);
+        $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->once())
             ->method('getRepository')
             ->with(PriceList::class)

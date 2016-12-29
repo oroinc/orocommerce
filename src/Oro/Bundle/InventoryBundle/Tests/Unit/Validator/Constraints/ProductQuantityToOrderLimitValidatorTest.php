@@ -39,7 +39,7 @@ class ProductQuantityToOrderLimitValidatorTest extends \PHPUnit_Framework_TestCa
             ->disableOriginalConstructor()
             ->getMock();
         $this->constraint = new ProductQuantityToOrderLimit();
-        $this->context = $this->getMock(ExecutionContextInterface::class);
+        $this->context = $this->createMock(ExecutionContextInterface::class);
         $this->validator = new ProductQuantityToOrderLimitValidator($this->validatorService);
         $this->validator->initialize($this->context);
     }
@@ -100,7 +100,7 @@ class ProductQuantityToOrderLimitValidatorTest extends \PHPUnit_Framework_TestCa
             ->willReturn($violationBuilder);
         $violationBuilder->expects($this->once())
             ->method('atPath')
-            ->willReturn($this->getMock(ConstraintViolationBuilderInterface::class));
+            ->willReturn($this->createMock(ConstraintViolationBuilderInterface::class));
         $this->validator->validate($product, $this->constraint);
     }
 }

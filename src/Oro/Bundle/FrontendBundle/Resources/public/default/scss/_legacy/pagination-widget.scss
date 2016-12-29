@@ -17,6 +17,7 @@
     vertical-align: middle;
 
     font-size: 0;
+    text-align: center;
     
     + span {
       margin-left: 5px;
@@ -27,6 +28,7 @@
       display: inline-block;
       width: 23px;
       vertical-align: middle;
+      text-align: center;
       padding: 0;
       border: 1px solid get-color('additional', 'light');
 
@@ -62,6 +64,7 @@
     &__input {
       display: inline-block;
       width: 30px;
+      height: 30px;
       vertical-align: middle;
       padding: 0;
       border-radius: 0;
@@ -74,6 +77,16 @@
       text-align: center;
 
       appearance: none;
+    }
+  }
+}
+
+@include breakpoint('tablet') {
+  .oro-pagination {
+    > span {
+      + .oro-pagination__pager {
+        margin: 0 0 0 5px;
+      }
     }
   }
 }

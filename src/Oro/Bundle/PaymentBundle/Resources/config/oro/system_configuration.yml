@@ -4,6 +4,7 @@ system_configuration:
             title: oro.payment.system_configuration.groups.payment.title
         payment_general:
             title: oro.payment.system_configuration.groups.general.title
+            icon: fa-cogs
         merchant_location:
             title: oro.payment.system_configuration.groups.merchant_location.title
 

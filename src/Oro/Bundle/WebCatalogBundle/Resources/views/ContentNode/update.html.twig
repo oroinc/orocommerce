@@ -63,18 +63,10 @@
 {% block content_data %}
     {% set id = 'web-catalog-tree-edit' %}
 
-    {% set nameField %}
-        {% if form.name.vars.required %}
-            {{ form_row(form.name) }}
-        {% else %}
-            <span data-validation-ignore="">{{ form_row(form.name) }}</span>
-        {% endif %}
-    {% endset %}
-
     {% set formRows = [
-        nameField,
         form_row(form.parentNode),
-        form_row(form.titles)
+        form_row(form.titles),
+        form_row(form.rewriteVariantTitle),
     ] %}
 
     {% if entity.parentNode is empty %}
@@ -151,11 +143,14 @@
                 'onMoveRoute' : 'oro_content_node_move',
                 'nodeId': nodeId
             } %}
-            <div
-                data-page-component-module="orowebcatalog/js/app/components/web-catalog-tree-component"
-                data-page-component-options="{{ treeOptions|json_encode }}"
-            >
-            </div>
+            {{ UI.renderJsTree(
+                {
+                    'module': 'orowebcatalog/js/app/components/web-catalog-tree-component',
+                    'label': 'oro.webcatalog.contentnode.entity_plural_label'|trans,
+                    'treeOptions': treeOptions
+                },
+                ['expand', 'collapse']
+            ) }}
         </div>
     </div>
     <div class="web-catalog-page-data">

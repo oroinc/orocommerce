@@ -14,6 +14,7 @@ use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\RedirectBundle\Entity\LocalizedSlugPrototypeAwareInterface;
 use Oro\Bundle\RedirectBundle\Entity\LocalizedSlugPrototypeAwareTrait;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
+use Oro\Bundle\ScopeBundle\Entity\ScopeCollectionAwareInterface;
 use Oro\Bundle\WebCatalogBundle\Model\ExtendContentNode;
 use Oro\Component\Tree\Entity\TreeTrait;
 use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
@@ -58,7 +59,8 @@ use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
 class ContentNode extends ExtendContentNode implements
     ContentNodeInterface,
     DatesAwareInterface,
-    LocalizedSlugPrototypeAwareInterface
+    LocalizedSlugPrototypeAwareInterface,
+    ScopeCollectionAwareInterface
 {
     use TreeTrait;
     use DatesAwareTrait;
@@ -105,18 +107,18 @@ class ContentNode extends ExtendContentNode implements
     protected $childNodes;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="name", type="string", length=255)
-     */
-    protected $name;
-
-    /**
      * @var boolean
      *
      * @ORM\Column(name="parent_scope_used", type="boolean", options={"default"=true})
      */
     protected $parentScopeUsed = true;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="rewrite_variant_title", type="boolean", options={"default"=true})
+     */
+    protected $rewriteVariantTitle = true;
 
     /**
      * @var Collection|LocalizedFallbackValue[]
@@ -218,25 +220,6 @@ class ContentNode extends ExtendContentNode implements
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     * @param string $name
-     * @return ContentNode
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-
-        return $this;
     }
 
     /**
@@ -486,7 +469,26 @@ class ContentNode extends ExtendContentNode implements
     }
 
     /**
-     * @return mixed
+     * @return boolean
+     */
+    public function isRewriteVariantTitle()
+    {
+        return $this->rewriteVariantTitle;
+    }
+
+    /**
+     * @param boolean $rewriteVariantTitle
+     * @return $this
+     */
+    public function setRewriteVariantTitle($rewriteVariantTitle)
+    {
+        $this->rewriteVariantTitle = $rewriteVariantTitle;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Scope[]
      */
     public function getScopesConsideringParent()
     {
@@ -495,7 +497,7 @@ class ContentNode extends ExtendContentNode implements
 
     /**
      * @param ContentNode $contentNode
-     * @return ArrayCollection|Scope[]
+     * @return Collection|Scope[]
      */
     protected function getScopesWithFallback(ContentNode $contentNode)
     {

@@ -3,50 +3,27 @@
 namespace Oro\Bundle\OrderBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
+
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
-use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtension;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
+use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
-use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
 use Oro\Bundle\PaymentTermBundle\Migration\Extension\PaymentTermExtensionAwareInterface;
 use Oro\Bundle\PaymentTermBundle\Migration\Extension\PaymentTermExtensionAwareTrait;
 
 class OroOrderBundleInstaller implements
     Installation,
-    NoteExtensionAwareInterface,
     AttachmentExtensionAwareInterface,
     ActivityExtensionAwareInterface,
     PaymentTermExtensionAwareInterface
 {
+    use AttachmentExtensionAwareTrait;
     use PaymentTermExtensionAwareTrait;
-
-    /** @var  NoteExtension */
-    protected $noteExtension;
-
-    /** @var  AttachmentExtension */
-    protected $attachmentExtension;
 
     /** @var  ActivityExtension */
     protected $activityExtension;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setNoteExtension(NoteExtension $noteExtension)
-    {
-        $this->noteExtension = $noteExtension;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setAttachmentExtension(AttachmentExtension $attachmentExtension)
-    {
-        $this->attachmentExtension = $attachmentExtension;
-    }
 
     /**
      * {@inheritdoc}
@@ -61,7 +38,7 @@ class OroOrderBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_8';
+        return 'v1_9';
     }
 
     /**
@@ -113,14 +90,34 @@ class OroOrderBundleInstaller implements
         $table->addColumn('shipping_method', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('shipping_method_type', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn(
-            'subtotal',
-            'money',
-            ['notnull' => false, 'precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']
+            'subtotal_value',
+            'money_value',
+            ['notnull' => false, 'precision' => 0, 'comment' => '(DC2Type:money_value)']
         );
         $table->addColumn(
-            'total',
+            'subtotal_currency',
+            'currency',
+            ['length' => 3, 'notnull' => false, 'comment' => '(DC2Type:currency)']
+        );
+        $table->addColumn(
+            'base_subtotal_value',
             'money',
-            ['notnull' => false, 'precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']
+            ['notnull' => false, 'comment' => '(DC2Type:money)']
+        );
+        $table->addColumn(
+            'total_value',
+            'money_value',
+            ['notnull' => false, 'precision' => 0, 'comment' => '(DC2Type:money_value)']
+        );
+        $table->addColumn(
+            'total_currency',
+            'currency',
+            ['length' => 3, 'notnull' => false, 'comment' => '(DC2Type:currency)']
+        );
+        $table->addColumn(
+            'base_total_value',
+            'money',
+            ['notnull' => false, 'comment' => '(DC2Type:money)']
         );
         $table->addColumn(
             'estimated_shipping_cost_amount',
@@ -148,7 +145,7 @@ class OroOrderBundleInstaller implements
         $table->addUniqueIndex(['shipping_address_id'], 'uniq_c036ff904d4cff2b');
         $table->addUniqueIndex(['billing_address_id'], 'uniq_c036ff9079d0c0e4');
 
-        $this->noteExtension->addNoteAssociation($schema, $table->getName());
+        $this->activityExtension->addActivityAssociation($schema, 'oro_note', $table->getName());
         $this->attachmentExtension->addAttachmentAssociation($schema, $table->getName());
         $this->activityExtension->addActivityAssociation($schema, 'oro_email', $table->getName());
     }

@@ -3,11 +3,9 @@
 namespace Oro\Bundle\UPSBundle\Factory;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
-use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
 use Oro\Bundle\ShippingBundle\Model\Weight;
 use Oro\Bundle\ShippingBundle\Provider\MeasureUnitConversion;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
@@ -67,6 +65,10 @@ class PriceRequestFactory
         $requestOption,
         ShippingService $shippingService = null
     ) {
+        if (!$context->getShippingAddress()) {
+            return null;
+        }
+
         $decryptedPassword = $this->symmetricCrypter->decryptData($transport->getApiPassword());
 
         $priceRequest = (new PriceRequest())
@@ -93,7 +95,7 @@ class PriceRequestFactory
             $weightLimit = self::MAX_PACKAGE_WEIGHT_LBS;
         }
 
-        $packages = $this->createPackages($context->getLineItems(), $unitOfWeight, $weightLimit);
+        $packages = $this->createPackages($context->getLineItems()->toArray(), $unitOfWeight, $weightLimit);
         if (count($packages) > 0) {
             $priceRequest->setPackages($packages);
             return $priceRequest;
@@ -184,6 +186,10 @@ class PriceRequestFactory
 
         $productsInfo =[];
         foreach ($lineItems as $lineItem) {
+            if (null === $lineItem->getProduct()) {
+                return [];
+            }
+
             $productsInfo[$lineItem->getProduct()->getId()] = [
                 'product' => $lineItem->getProduct(),
                 'productUnit' => $lineItem->getProductUnit(),

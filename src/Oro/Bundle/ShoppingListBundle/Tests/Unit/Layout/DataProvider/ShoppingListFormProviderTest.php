@@ -28,8 +28,8 @@ class ShoppingListFormProviderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->formFactory = $this->getMock(FormFactoryInterface::class);
-        $this->router = $this->getMock(UrlGeneratorInterface::class);
+        $this->formFactory = $this->createMock(FormFactoryInterface::class);
+        $this->router = $this->createMock(UrlGeneratorInterface::class);
 
         $this->dataProvider = new ShoppingListFormProvider($this->formFactory, $this->router);
     }
@@ -39,9 +39,9 @@ class ShoppingListFormProviderTest extends \PHPUnit_Framework_TestCase
         $shoppingList = $this->getEntity(ShoppingList::class);
         $action = 'form_action';
 
-        $formView = $this->getMock(FormView::class);
+        $formView = $this->createMock(FormView::class);
 
-        $form = $this->getMock(FormInterface::class);
+        $form = $this->createMock(FormInterface::class);
         $form->expects($this->once())
             ->method('createView')
             ->willReturn($formView);
@@ -72,9 +72,9 @@ class ShoppingListFormProviderTest extends \PHPUnit_Framework_TestCase
         $shoppingList = $this->getEntity(ShoppingList::class, ['id' => 2]);
         $action = 'form_action';
 
-        $formView = $this->getMock(FormView::class);
+        $formView = $this->createMock(FormView::class);
 
-        $form = $this->getMock(FormInterface::class);
+        $form = $this->createMock(FormInterface::class);
         $form->expects($this->once())
             ->method('createView')
             ->willReturn($formView);

@@ -42,9 +42,7 @@
 }
 
 .fa-bars {
-    &:before {
-        content: "\f03a";
-    }
+    @include fa-icon($fa-var-list);
 }
 
 [class^="cf-"],
@@ -76,9 +74,9 @@
 [class*=" cf-"],
 [class^="fa-"],
 [class*=" fa-"] {
-    vertical-align: middle;
-
     margin-right: 3px;
+
+    vertical-align: middle;
 
     line-height: 1;
 }

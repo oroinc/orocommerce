@@ -43,7 +43,7 @@ class PayflowExpressCheckoutRedirectListenerTest extends \PHPUnit_Framework_Test
         $event->setPaymentTransaction($this->paymentTransaction);
 
         /** @var FlashBagInterface|\PHPUnit_Framework_MockObject_MockObject $flashBag */
-        $flashBag = $this->getMock(FlashBagInterface::class);
+        $flashBag = $this->createMock(FlashBagInterface::class);
 
         $flashBag->expects($this->once())
             ->method('has')
@@ -74,7 +74,7 @@ class PayflowExpressCheckoutRedirectListenerTest extends \PHPUnit_Framework_Test
         $event->setPaymentTransaction($this->paymentTransaction);
 
         /** @var FlashBagInterface|\PHPUnit_Framework_MockObject_MockObject $flashBag */
-        $flashBag = $this->getMock(FlashBagInterface::class);
+        $flashBag = $this->createMock(FlashBagInterface::class);
 
         $flashBag->expects($this->once())
             ->method('has')

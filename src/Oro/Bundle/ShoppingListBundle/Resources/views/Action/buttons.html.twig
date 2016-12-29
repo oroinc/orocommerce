@@ -21,13 +21,15 @@
         {% import 'OroUIBundle::macros.html.twig' as UI %}
         {{ UI.pinnedDropdownButton({
             'html': buttons.getButtonsHtml(buttonsOptions),
+            'mobileEnabled': true,
             'dataAttributes': {
                 'layout': 'separate'
             },
             'options': {
                 'widgetModule': 'oroproduct/js/content-processor/product-add-to-dropdown-button',
                 'widgetName': 'productAddToDropdownButtonProcessor',
-                'truncateLength': 25
+                'truncateLength': 25,
+                'decoreClass': 'btn--info'
             }
         }) }}
     </div>

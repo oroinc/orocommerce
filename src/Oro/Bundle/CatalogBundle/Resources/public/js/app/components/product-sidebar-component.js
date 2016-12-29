@@ -62,6 +62,7 @@ define(function(require) {
          * @returns {Object}
          */
         customizeTreeConfig: function(options, config) {
+            ProductSidebarComponent.__super__.customizeTreeConfig.call(this, options, config);
             if (options.updateAllowed) {
                 config.plugins.push('dnd');
                 config.dnd = {
@@ -116,7 +117,6 @@ define(function(require) {
                 .off('ready.jstree');
 
             this.subcategoriesSelector.off('change');
-
             ProductSidebarComponent.__super__.dispose.call(this);
         }
     });

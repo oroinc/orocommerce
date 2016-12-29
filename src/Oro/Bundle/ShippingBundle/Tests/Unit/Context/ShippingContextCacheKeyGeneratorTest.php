@@ -7,7 +7,7 @@ use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
+use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\DoctrineShippingLineItemCollection;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextCacheKeyGenerator;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
@@ -33,54 +33,97 @@ class ShippingContextCacheKeyGeneratorTest extends \PHPUnit_Framework_TestCase
         $this->generator = new ShippingContextCacheKeyGenerator();
     }
 
+    /**
+     * @param $params
+     * @param ShippingContext|null $context
+     *
+     * @return ShippingContext
+     */
+    private function createContext($params, ShippingContext $context = null)
+    {
+        $actualParams = $params;
+
+        if (null === $context) {
+            $actualParams[ShippingContext::FIELD_LINE_ITEMS] = new DoctrineShippingLineItemCollection([]);
+        } else {
+            $actualParams = array_merge($context->all(), $actualParams);
+        }
+
+        return new ShippingContext($actualParams);
+    }
+
+    /**
+     * @param array $lineItemsParams
+     * @param ShippingContext|null $context
+     *
+     * @return ShippingContext
+     */
+    private function createContextWithLineItems(array $lineItemsParams, ShippingContext $context = null)
+    {
+        $lineItems = [];
+        foreach ($lineItemsParams as $params) {
+            $lineItems[] = new ShippingLineItem($params);
+        }
+
+        return $this->createContext(
+            [
+                ShippingContext::FIELD_LINE_ITEMS => new DoctrineShippingLineItemCollection($lineItems),
+            ],
+            $context
+        );
+    }
+
     public function testGenerateHashSimpleFields()
     {
-        $context1 = new ShippingContext();
-        $context2 = new ShippingContext();
+        $context1 = $this->createContext([]);
+        $context2 = $this->createContext([]);
 
         $this->assertEquals(crc32(''), $this->generator->generateKey($context1));
         $this->assertEquals(crc32(''), $this->generator->generateKey($context2));
 
-        $context1->setCurrency('USD');
+        $context1 = $this->createContext([ShippingContext::FIELD_CURRENCY => 'USD'], $context1);
         $this->assertHashNotEquals($context1, $context2);
-        $context2->setCurrency('EUR');
+        $context2 = $this->createContext([ShippingContext::FIELD_CURRENCY => 'EUR'], $context2);
         $this->assertHashNotEquals($context1, $context2);
-        $context2->setCurrency('USD');
+        $context2 = $this->createContext([ShippingContext::FIELD_CURRENCY => 'USD'], $context2);
         $this->assertHashEquals($context1, $context2);
 
-        $context1->setPaymentMethod('payment_method');
+        $context1 = $this->createContext([ShippingContext::FIELD_PAYMENT_METHOD => 'payment_method'], $context1);
         $this->assertHashNotEquals($context1, $context2);
-        $context2->setPaymentMethod('another_payment_method');
+        $context2 = $this->createContext(
+            [ShippingContext::FIELD_PAYMENT_METHOD => 'another_payment_method'],
+            $context2
+        );
         $this->assertHashNotEquals($context1, $context2);
-        $context2->setPaymentMethod('payment_method');
+        $context2 = $this->createContext([ShippingContext::FIELD_PAYMENT_METHOD => 'payment_method'], $context2);
         $this->assertHashEquals($context1, $context2);
 
-        $context1->setSubtotal(new Price());
+        $context1 = $this->createContext([ShippingContext::FIELD_SUBTOTAL => new Price()], $context1);
         $this->assertHashEquals($context1, $context2);
-        $context2->setSubtotal(new Price());
+        $context2 = $this->createContext([ShippingContext::FIELD_SUBTOTAL => new Price()], $context2);
         $this->assertHashEquals($context1, $context2);
 
-        $context1->setSubtotal(Price::create(10, 'USD'));
+        $context1 = $this->createContext([ShippingContext::FIELD_SUBTOTAL => Price::create(10, 'USD')], $context1);
         $this->assertHashNotEquals($context1, $context2);
-        $context2->setSubtotal(Price::create(11, 'USD'));
+        $context2 = $this->createContext([ShippingContext::FIELD_SUBTOTAL => Price::create(11, 'USD')], $context2);
         $this->assertHashNotEquals($context1, $context2);
-        $context1->setSubtotal(Price::create(10, 'USD'));
+        $context1 = $this->createContext([ShippingContext::FIELD_SUBTOTAL => Price::create(10, 'USD')], $context1);
         $this->assertHashNotEquals($context1, $context2);
-        $context2->setSubtotal(Price::create(10, 'USD'));
+        $context2 = $this->createContext([ShippingContext::FIELD_SUBTOTAL => Price::create(10, 'USD')], $context2);
         $this->assertHashEquals($context1, $context2);
     }
 
     public function testGenerateHashBillingAddress()
     {
-        $context1 = new ShippingContext();
-        $context2 = new ShippingContext();
+        $context1 = $this->createContext([]);
+        $context2 = $this->createContext([]);
 
         $address1 = new ShippingAddressStub();
         $address2 = new ShippingAddressStub();
 
-        $context1->setBillingAddress($address1);
+        $context1 = $this->createContext([ShippingContext::FIELD_BILLING_ADDRESS => $address1], $context1);
         $this->assertHashEquals($context1, $context2);
-        $context2->setBillingAddress($address2);
+        $context2 = $this->createContext([ShippingContext::FIELD_BILLING_ADDRESS => $address2], $context2);
         $this->assertHashEquals($context1, $context2);
 
         $this->assertAddressesFieldAffectsHash($context1, $context2, $address1, $address2);
@@ -88,15 +131,15 @@ class ShippingContextCacheKeyGeneratorTest extends \PHPUnit_Framework_TestCase
 
     public function testGenerateHashShippingAddress()
     {
-        $context1 = new ShippingContext();
-        $context2 = new ShippingContext();
+        $context1 = $this->createContext([]);
+        $context2 = $this->createContext([]);
 
         $address1 = new ShippingAddressStub();
         $address2 = new ShippingAddressStub();
 
-        $context1->setShippingAddress($address1);
+        $context1 = $this->createContext([ShippingContext::FIELD_SHIPPING_ADDRESS => $address1], $context1);
         $this->assertHashEquals($context1, $context2);
-        $context2->setShippingAddress($address2);
+        $context2 = $this->createContext([ShippingContext::FIELD_SHIPPING_ADDRESS => $address2], $context2);
         $this->assertHashEquals($context1, $context2);
 
         $this->assertAddressesFieldAffectsHash($context1, $context2, $address1, $address2);
@@ -104,15 +147,15 @@ class ShippingContextCacheKeyGeneratorTest extends \PHPUnit_Framework_TestCase
 
     public function testGenerateHashShippingOrigin()
     {
-        $context1 = new ShippingContext();
-        $context2 = new ShippingContext();
+        $context1 = $this->createContext([]);
+        $context2 = $this->createContext([]);
 
         $address1 = new ShippingAddressStub();
         $address2 = new ShippingAddressStub();
 
-        $context1->setShippingOrigin($address1);
+        $context1 = $this->createContext([ShippingContext::FIELD_SHIPPING_ORIGIN => $address1], $context1);
         $this->assertHashEquals($context1, $context2);
-        $context2->setShippingOrigin($address2);
+        $context2 = $this->createContext([ShippingContext::FIELD_SHIPPING_ORIGIN => $address2], $context2);
         $this->assertHashEquals($context1, $context2);
 
         $this->assertAddressesFieldAffectsHash($context1, $context2, $address1, $address2);
@@ -206,33 +249,39 @@ class ShippingContextCacheKeyGeneratorTest extends \PHPUnit_Framework_TestCase
 
     public function testGenerateHashLineItemsOrder()
     {
-        $context1 = new ShippingContext();
-        $context2 = new ShippingContext();
+        $context1 = $this->createContext([]);
+        $context2 = $this->createContext([]);
 
         $unit1 = new ProductUnit();
         $unit2 = new ProductUnit();
 
-        $item1 = new ShippingLineItem();
-        $item1->setProductUnit($unit1);
+        $item1 = new ShippingLineItem([ShippingLineItem::FIELD_PRODUCT_UNIT => $unit1]);
+        $item2 = new ShippingLineItem([ShippingLineItem::FIELD_PRODUCT_UNIT => $unit2]);
 
-        $item2 = new ShippingLineItem();
-        $item2->setProductUnit($unit2);
-
-        $context1->setLineItems([$item1, $item2]);
+        $lineItems = new DoctrineShippingLineItemCollection([$item1, $item2]);
+        $context1 = $this->createContext([ShippingContext::FIELD_LINE_ITEMS => $lineItems], $context1);
         $this->assertHashEquals($context1, $context2);
 
-        $context1->setLineItems([$item1]);
+        $lineItems = new DoctrineShippingLineItemCollection([$item1]);
+        $context1 = $this->createContext([ShippingContext::FIELD_LINE_ITEMS => $lineItems], $context1);
         $this->assertHashEquals($context1, $context2);
-        $context2->setLineItems([$item2]);
+        $lineItems = new DoctrineShippingLineItemCollection([$item2]);
+        $context2 = $this->createContext([ShippingContext::FIELD_LINE_ITEMS => $lineItems], $context2);
         $this->assertHashEquals($context1, $context2);
 
-        $item1->setQuantity(1);
-        $item2->setQuantity(2);
+        $item1 = new ShippingLineItem(
+            [ShippingLineItem::FIELD_PRODUCT_UNIT => $unit1, ShippingLineItem::FIELD_QUANTITY => 1]
+        );
+        $item2 = new ShippingLineItem(
+            [ShippingLineItem::FIELD_PRODUCT_UNIT => $unit2, ShippingLineItem::FIELD_QUANTITY => 2]
+        );
 
-        $context1->setLineItems([$item1, $item2]);
-        $context2->setLineItems([$item1, $item2]);
+        $lineItems = new DoctrineShippingLineItemCollection([$item1, $item2]);
+        $context1 = $this->createContext([ShippingContext::FIELD_LINE_ITEMS => $lineItems], $context1);
+        $context2 = $this->createContext([ShippingContext::FIELD_LINE_ITEMS => $lineItems], $context2);
         $this->assertHashEquals($context1, $context2);
-        $context2->setLineItems([$item2, $item1]);
+        $lineItems = new DoctrineShippingLineItemCollection([$item2, $item1]);
+        $context2 = $this->createContext([ShippingContext::FIELD_LINE_ITEMS => $lineItems], $context2);
         $this->assertHashEquals($context1, $context2);
     }
 
@@ -241,114 +290,169 @@ class ShippingContextCacheKeyGeneratorTest extends \PHPUnit_Framework_TestCase
      */
     public function testGenerateHashLineItems()
     {
-        $context1 = new ShippingContext();
-        $context2 = new ShippingContext();
+        $context1 = $this->createContext([]);
+        $context2 = $this->createContext([]);
 
         $unit1 = new ProductUnit();
         $unit2 = new ProductUnit();
 
-        $item1 = new ShippingLineItem();
-        $item1->setProductUnit($unit1);
-
-        $item2 = new ShippingLineItem();
-        $item2->setProductUnit($unit2);
-
-        $context1->setLineItems([$item1]);
-        $context2->setLineItems([$item2]);
-
-        $item1->setQuantity(1);
-        $context1->setLineItems([$item1]);
+        $context1 = $this->createContextWithLineItems(
+            [[ShippingLineItem::FIELD_PRODUCT_UNIT => $unit1, ShippingLineItem::FIELD_QUANTITY => 1]],
+            $context1
+        );
+        $context2 = $this->createContextWithLineItems(
+            [[ShippingLineItem::FIELD_PRODUCT_UNIT => $unit2]],
+            $context2
+        );
         $this->assertHashNotEquals($context1, $context2);
-        $item2->setQuantity(2);
-        $context2->setLineItems([$item2]);
+
+        $context2 = $this->createContextWithLineItems(
+            [[ShippingLineItem::FIELD_PRODUCT_UNIT => $unit2, ShippingLineItem::FIELD_QUANTITY => 2]],
+            $context2
+        );
         $this->assertHashNotEquals($context1, $context2);
-        $item2->setQuantity(1);
-        $context2->setLineItems([$item2]);
+
+        $context2 = $this->createContextWithLineItems(
+            [[ShippingLineItem::FIELD_PRODUCT_UNIT => $unit2, ShippingLineItem::FIELD_QUANTITY => 1]],
+            $context2
+        );
         $this->assertHashEquals($context1, $context2);
 
-        $item1->setPrice(Price::create(10, 'USD'));
-        $context1->setLineItems([$item1]);
+        $context1 = $this->createContextWithLineItems(
+            [[ShippingLineItem::FIELD_PRICE => Price::create(10, 'USD')]],
+            $context1
+        );
         $this->assertHashNotEquals($context1, $context2);
-        $item2->setPrice(Price::create(11, 'USD'));
-        $context2->setLineItems([$item2]);
+        $context2 = $this->createContextWithLineItems(
+            [[ShippingLineItem::FIELD_PRICE => Price::create(11, 'USD')]],
+            $context2
+        );
         $this->assertHashNotEquals($context1, $context2);
-        $item2->setPrice(Price::create(10, 'EUR'));
-        $context2->setLineItems([$item2]);
+        $context2 = $this->createContextWithLineItems(
+            [[ShippingLineItem::FIELD_PRICE => Price::create(10, 'EUR')]],
+            $context2
+        );
         $this->assertHashNotEquals($context1, $context2);
-        $item2->setPrice(Price::create(10, 'USD'));
-        $context2->setLineItems([$item2]);
+        $context2 = $this->createContextWithLineItems(
+            [[ShippingLineItem::FIELD_PRICE => Price::create(10, 'USD')]],
+            $context2
+        );
         $this->assertHashEquals($context1, $context2);
 
-        $item1->setProduct($this->getEntity(Product::class, ['id' => 1]));
-        $context1->setLineItems([$item1]);
+        $context1 = $this->createContextWithLineItems(
+            [[ShippingLineItem::FIELD_PRODUCT => $this->getEntity(Product::class, ['id' => 1])]],
+            $context1
+        );
         $this->assertHashNotEquals($context1, $context2);
-        $item2->setProduct($this->getEntity(Product::class, ['id' => 2]));
-        $context2->setLineItems([$item2]);
+        $context2 = $this->createContextWithLineItems(
+            [[ShippingLineItem::FIELD_PRODUCT => $this->getEntity(Product::class, ['id' => 2])]],
+            $context2
+        );
         $this->assertHashNotEquals($context1, $context2);
-        $item2->setProduct($this->getEntity(Product::class, ['id' => 1]));
-        $context2->setLineItems([$item2]);
+        $context2 = $this->createContextWithLineItems(
+            [[ShippingLineItem::FIELD_PRODUCT => $this->getEntity(Product::class, ['id' => 1])]],
+            $context2
+        );
         $this->assertHashEquals($context1, $context2);
 
-        $item1->setWeight(Weight::create(10, $this->getEntity(WeightUnit::class, ['code' => 'kg'])));
-        $context1->setLineItems([$item1]);
+        $weight = Weight::create(10, $this->getEntity(WeightUnit::class, ['code' => 'kg']));
+        $context1 = $this->createContextWithLineItems(
+            [[ShippingLineItem::FIELD_WEIGHT => $weight]],
+            $context1
+        );
         $this->assertHashNotEquals($context1, $context2);
-        $item2->setWeight(Weight::create(10, $this->getEntity(WeightUnit::class, ['code' => 'lbs'])));
-        $context2->setLineItems([$item2]);
+        $weight = Weight::create(10, $this->getEntity(WeightUnit::class, ['code' => 'lbs']));
+        $context2 = $this->createContextWithLineItems(
+            [[ShippingLineItem::FIELD_WEIGHT => $weight]],
+            $context2
+        );
         $this->assertHashNotEquals($context1, $context2);
-        $item2->setWeight(Weight::create(12, $this->getEntity(WeightUnit::class, ['code' => 'kg'])));
-        $context2->setLineItems([$item2]);
+        $weight = Weight::create(12, $this->getEntity(WeightUnit::class, ['code' => 'kg']));
+        $context2 = $this->createContextWithLineItems(
+            [[ShippingLineItem::FIELD_WEIGHT => $weight]],
+            $context2
+        );
         $this->assertHashNotEquals($context1, $context2);
-        $item2->setWeight(Weight::create(10, $this->getEntity(WeightUnit::class, ['code' => 'kg'])));
-        $context2->setLineItems([$item2]);
+        $weight = Weight::create(10, $this->getEntity(WeightUnit::class, ['code' => 'kg']));
+        $context2 = $this->createContextWithLineItems(
+            [[ShippingLineItem::FIELD_WEIGHT => $weight]],
+            $context2
+        );
         $this->assertHashEquals($context1, $context2);
 
-        $holder1 = $this->getMockForAbstractClass(ProductHolderInterface::class);
-        $holder1->expects($this->any())
-            ->method('getEntityIdentifier')
-            ->willReturn('id');
-
-        $holder2 = $this->getMockForAbstractClass(ProductHolderInterface::class);
-        $holder2->expects($this->any())
-            ->method('getEntityIdentifier')
-            ->willReturn('wrong_id');
-
-        $item1->setProductHolder($holder1);
-        $context1->setLineItems([$item1]);
+        $context1 = $this->createContextWithLineItems(
+            [[ShippingLineItem::FIELD_ENTITY_IDENTIFIER => 1]],
+            $context1
+        );
         $this->assertHashNotEquals($context1, $context2);
-        $item2->setProductHolder($holder2);
-        $context2->setLineItems([$item2]);
+        $context2 = $this->createContextWithLineItems(
+            [[ShippingLineItem::FIELD_ENTITY_IDENTIFIER => 2]],
+            $context2
+        );
         $this->assertHashNotEquals($context1, $context2);
-        $item2->setProductHolder($holder1);
-        $context2->setLineItems([$item2]);
+        $context2 = $this->createContextWithLineItems(
+            [[ShippingLineItem::FIELD_ENTITY_IDENTIFIER => 1]],
+            $context2
+        );
         $this->assertHashEquals($context1, $context2);
 
-        $item1->setProductUnit($this->getEntity(ProductUnit::class, ['code' => 'set']));
-        $context1->setLineItems([$item1]);
+        $context1 = $this->createContextWithLineItems(
+            [[ShippingLineItem::FIELD_PRODUCT_UNIT_CODE => 'set']],
+            $context1
+        );
         $this->assertHashNotEquals($context1, $context2);
-        $item2->setProductUnit($this->getEntity(ProductUnit::class, ['code' => 'item']));
-        $context2->setLineItems([$item2]);
+        $context2 = $this->createContextWithLineItems(
+            [[ShippingLineItem::FIELD_PRODUCT_UNIT_CODE => 'item']],
+            $context2
+        );
         $this->assertHashNotEquals($context1, $context2);
-        $item2->setProductUnit($this->getEntity(ProductUnit::class, ['code' => 'set']));
-        $context2->setLineItems([$item2]);
+        $context2 = $this->createContextWithLineItems(
+            [[ShippingLineItem::FIELD_PRODUCT_UNIT_CODE => 'set']],
+            $context2
+        );
         $this->assertHashEquals($context1, $context2);
 
-        $item1->setDimensions(Dimensions::create(1, 2, 3, $this->getEntity(LengthUnit::class, ['code' => 'cm'])));
-        $context1->setLineItems([$item1]);
+        $dimensions = Dimensions::create(1, 2, 3, $this->getEntity(LengthUnit::class, ['code' => 'cm']));
+        $context1 = $this->createContextWithLineItems(
+            [[ShippingLineItem::FIELD_DIMENSIONS => $dimensions]],
+            $context1
+        );
         $this->assertHashNotEquals($context1, $context2);
-        $item2->setDimensions(Dimensions::create(2, 2, 3, $this->getEntity(LengthUnit::class, ['code' => 'cm'])));
-        $context2->setLineItems([$item2]);
+
+        $dimensions = Dimensions::create(2, 2, 3, $this->getEntity(LengthUnit::class, ['code' => 'cm']));
+        $context2 = $this->createContextWithLineItems(
+            [[ShippingLineItem::FIELD_DIMENSIONS => $dimensions]],
+            $context2
+        );
         $this->assertHashNotEquals($context1, $context2);
-        $item2->setDimensions(Dimensions::create(1, 1, 3, $this->getEntity(LengthUnit::class, ['code' => 'cm'])));
-        $context2->setLineItems([$item2]);
+
+        $dimensions = Dimensions::create(1, 1, 3, $this->getEntity(LengthUnit::class, ['code' => 'cm']));
+        $context2 = $this->createContextWithLineItems(
+            [[ShippingLineItem::FIELD_DIMENSIONS => $dimensions]],
+            $context2
+        );
         $this->assertHashNotEquals($context1, $context2);
-        $item2->setDimensions(Dimensions::create(1, 2, 1, $this->getEntity(LengthUnit::class, ['code' => 'cm'])));
-        $context2->setLineItems([$item2]);
+
+        $dimensions = Dimensions::create(1, 2, 1, $this->getEntity(LengthUnit::class, ['code' => 'cm']));
+        $context2 = $this->createContextWithLineItems(
+            [[ShippingLineItem::FIELD_DIMENSIONS => $dimensions]],
+            $context2
+        );
         $this->assertHashNotEquals($context1, $context2);
-        $item2->setDimensions(Dimensions::create(1, 2, 3, $this->getEntity(LengthUnit::class, ['code' => 'inch'])));
-        $context2->setLineItems([$item2]);
+
+        $dimensions = Dimensions::create(1, 2, 3, $this->getEntity(LengthUnit::class, ['code' => 'inch']));
+        $context2 = $this->createContextWithLineItems(
+            [[ShippingLineItem::FIELD_DIMENSIONS => $dimensions]],
+            $context2
+        );
         $this->assertHashNotEquals($context1, $context2);
-        $item2->setDimensions(Dimensions::create(1, 2, 3, $this->getEntity(LengthUnit::class, ['code' => 'cm'])));
-        $context2->setLineItems([$item2]);
+
+        $dimensions = Dimensions::create(1, 2, 3, $this->getEntity(LengthUnit::class, ['code' => 'cm']));
+        $context2 = $this->createContextWithLineItems(
+            [[ShippingLineItem::FIELD_DIMENSIONS => $dimensions]],
+            $context2
+        );
+
         $this->assertHashEquals($context1, $context2);
     }
 

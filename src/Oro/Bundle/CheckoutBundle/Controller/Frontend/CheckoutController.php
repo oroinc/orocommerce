@@ -10,11 +10,10 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
+use Oro\Bundle\ActionBundle\Model\ActionData;
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface;
-use Oro\Bundle\CheckoutBundle\Event\CheckoutEntityEvent;
-use Oro\Bundle\CheckoutBundle\Event\CheckoutEvents;
 use Oro\Bundle\CheckoutBundle\Event\CheckoutValidateEvent;
 use Oro\Bundle\CheckoutBundle\Model\TransitionData;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
@@ -48,22 +47,12 @@ class CheckoutController extends Controller
      * )
      *
      * @param Request $request
-     * @param int $id
+     * @param Checkout $checkout
      * @return array|Response
      * @throws \Exception
      */
-    public function checkoutAction(Request $request, $id)
+    public function checkoutAction(Request $request, Checkout $checkout)
     {
-        $checkout = $this->getCheckout($id);
-        $isGranted = false;
-        if ($checkout) {
-            $isGranted = $this->get('oro_security.security_facade')->isGranted('EDIT', $checkout);
-        }
-
-        if (!$checkout || !$isGranted) {
-            throw new NotFoundHttpException(sprintf('Checkout not found'));
-        }
-
         $workflowItem = $this->handleTransition($checkout, $request);
         $currentStep = $this->validateStep($workflowItem);
         $this->validateOrderLineItems($workflowItem, $checkout, $request);
@@ -220,20 +209,6 @@ class CheckoutController extends Controller
     }
 
     /**
-     * @param int $id
-     * @return CheckoutInterface|null
-     */
-    protected function getCheckout($id)
-    {
-        $event = new CheckoutEntityEvent();
-        $event->setCheckoutId($id);
-
-        $this->get('event_dispatcher')->dispatch(CheckoutEvents::GET_CHECKOUT_ENTITY, $event);
-
-        return $event->getCheckoutEntity();
-    }
-
-    /**
      * @param CheckoutInterface $checkout
      * @return WorkflowItem
      */
@@ -280,9 +255,13 @@ class CheckoutController extends Controller
      */
     protected function restartCheckout(WorkflowItem $workflowItem, CheckoutInterface $checkout)
     {
-        $workflow = $this->getWorkflowManager()->getWorkflow($workflowItem->getWorkflowName());
-        $start = $workflow->getTransitionManager()->getStartTransitions()->first();
-        $this->getWorkflowManager()->transit($workflowItem, $start);
+        $shoppingList = $workflowItem->getEntity()->getSource()->getShoppingList();
+        $this->getWorkflowManager()->resetWorkflowItem($workflowItem);
+
+        $actionData = new ActionData(['shoppingList' => $shoppingList, 'forceStartCheckout' => true]);
+        $this->get('oro_action.action_group_registry')
+            ->findByName('start_shoppinglist_checkout')
+            ->execute($actionData);
 
         return $this->getWorkflowItem($checkout);
     }

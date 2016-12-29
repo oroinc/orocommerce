@@ -37,6 +37,8 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
     const REQUEST9 = 'rfp.request.9';
     const REQUEST10 = 'rfp.request.10';
     const REQUEST11 = 'rfp.request.11';
+    const REQUEST12 = 'rfp.request.12';
+    const REQUEST13 = 'rfp.request.13';
 
     /**
      * @var array
@@ -169,6 +171,26 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
             'note' => self::REQUEST11,
             'account' => LoadUserData::PARENT_ACCOUNT,
             'accountUser' => LoadUserData::PARENT_ACCOUNT_USER2
+        ],
+        self::REQUEST12 => [
+            'first_name' => 'PAWithoutUserFN',
+            'last_name' => 'PAWithoutUserLN',
+            'email' => 'test@example.com',
+            'phone' => '2-(999)111-1456',
+            'company' => 'Google',
+            'role' => 'CEO',
+            'note' => self::REQUEST12,
+            'account' => LoadUserData::PARENT_ACCOUNT
+        ],
+        self::REQUEST13 => [
+            'first_name' => 'AWithoutUserFN',
+            'last_name' => 'AWithoutUserLN',
+            'email' => 'test@example.com',
+            'phone' => '2-(999)111-4625',
+            'company' => 'Google',
+            'role' => 'CEO',
+            'note' => self::REQUEST13,
+            'account' => LoadUserData::ACCOUNT2
         ],
     ];
 

@@ -25,7 +25,7 @@ class UniqueProductUnitShippingOptionsTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->constraint = new UniqueProductUnitShippingOptions();
-        $this->context = $this->getMock('Symfony\Component\Validator\ExecutionContextInterface');
+        $this->context = $this->createMock('Symfony\Component\Validator\ExecutionContextInterface');
 
         $this->validator = new UniqueProductUnitShippingOptionsValidator();
         $this->validator->initialize($this->context);
@@ -83,10 +83,12 @@ class UniqueProductUnitShippingOptionsTest extends \PHPUnit_Framework_TestCase
         $this->validator->validate('test', $this->constraint);
     }
 
+    /**
+     * @expectedException \Symfony\Component\Validator\Exception\UnexpectedTypeException
+     */
     public function testUnexpectedItem()
     {
-        $this->setExpectedException(
-            '\Symfony\Component\Validator\Exception\UnexpectedTypeException',
+        $this->expectExceptionMessage(
             'Expected argument of type "Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface", "stdClass" given'
         );
         $data = new ArrayCollection([ new \stdClass()]);
