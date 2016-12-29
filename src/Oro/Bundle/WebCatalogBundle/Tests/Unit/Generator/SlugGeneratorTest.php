@@ -215,7 +215,6 @@ class SlugGeneratorTest extends \PHPUnit_Framework_TestCase
                 ->setLocalization($localization)
         ];
 
-
         $expectedUrls = [
             (new LocalizedFallbackValue())->setText('/parent/node/test-url')->setLocalization($localization)
         ];
@@ -277,59 +276,6 @@ class SlugGeneratorTest extends \PHPUnit_Framework_TestCase
         foreach ($actualSlugs as $slug) {
             $this->assertContains($slug, $expectedSlugs, '', false, false);
         }
-    }
-
-    public function testGenerateWithoutFallback()
-    {
-        $parentLocalization = $this->getEntity(Localization::class, ['id' => 123, 'name' => 'parent_localization']);
-        $localization = $this->getEntity(Localization::class, ['id' => 42, 'name' => 'test_localization']);
-
-        $parentNodeSlugUrl = '/parent/node';
-        $parentSlug = new Slug();
-        $parentSlug->setUrl($parentNodeSlugUrl);
-        $parentSlug->setLocalization($parentLocalization);
-
-        $parentContentVariant = new ContentVariant();
-        $parentContentVariant->addSlug($parentSlug);
-
-        $parentContentNode = new ContentNode();
-        $parentContentNode->addContentVariant($parentContentVariant);
-        $parentContentNode->addLocalizedUrl((new LocalizedFallbackValue())->setText($parentNodeSlugUrl));
-
-        $slugUrl = 'test-url';
-        $scope = new Scope();
-
-        $slugPrototype = new LocalizedFallbackValue();
-        $slugPrototype->setLocalization($localization);
-        $slugPrototype->setString($slugUrl);
-
-        $contentVariant = new ContentVariant();
-        $contentVariant->setType('test_type');
-        $contentVariant->addScope($scope);
-
-        $contentNode = new ContentNode();
-        $contentNode->setParentNode($parentContentNode);
-        $contentNode->addContentVariant($contentVariant);
-        $contentNode->addSlugPrototype($slugPrototype);
-
-        $routeData = new RouteData('some_route');
-
-        $contentVariantType = $this->createMock(ContentVariantTypeInterface::class);
-        $contentVariantType->expects($this->once())
-            ->method('getRouteData')
-            ->with($contentVariant)
-            ->willReturn($routeData);
-        $this->contentVariantTypeRegistry->expects($this->once())
-            ->method('getContentVariantType')
-            ->willReturn($contentVariantType);
-
-        $this->slugGenerator->generate($contentNode);
-
-        /** @var ContentVariant $actualContentVariant */
-        $actualContentVariant = $contentNode->getContentVariants()->first();
-        $actualSlugs = $actualContentVariant->getSlugs();
-
-        $this->assertCount(0, $actualSlugs);
     }
 
     public function testGenerateWithoutLocalization()
