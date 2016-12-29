@@ -57,7 +57,7 @@ Feature: Applying shipping rules
       | Country2      | Germany           |
       | Currency      | EUR               |
       | Sort Order    | 1                 |
-      | ZIP           | 10115,10116,10117 |
+      | ZIP1           | 10115,10116,10117 |
       | ZIP2          | 10115,10116,10117 |
       | Price         | 3                 |
       | Type          | Per Order         |
@@ -84,7 +84,7 @@ Feature: Applying shipping rules
       | Country2      | Germany           |
       | Currency      | EUR               |
       | Sort Order    | 0                 |
-      | ZIP           | 10115,10116,10117 |
+      | ZIP1          | 10115,10116,10117 |
       | ZIP2          | 10115,10116,10117 |
       | Type          | Per Item          |
       | Price         | 1.5               |
