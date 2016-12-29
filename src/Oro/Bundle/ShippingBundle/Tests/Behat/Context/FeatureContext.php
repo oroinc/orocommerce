@@ -182,6 +182,10 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
                 $destinationAdd = $form->find('css', '.add-list-item');
                 $destinationAdd->click();
             }
+
+            if($columnItem === 'Country2'){
+                $form->fillField('Sort Order', '1');
+            }
         }
 
         $form->fill($table);
