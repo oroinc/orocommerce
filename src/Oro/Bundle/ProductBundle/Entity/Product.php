@@ -483,6 +483,16 @@ class Product extends ExtendProduct implements
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily")
      * @ORM\JoinColumn(name="attribute_family_id", referencedColumnName="id", onDelete="RESTRICT")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=false
+     *          },
+     *          "importexport"={
+     *              "order"=70
+     *          }
+     *      }
+     *  )
      */
     protected $attributeFamily;
 
