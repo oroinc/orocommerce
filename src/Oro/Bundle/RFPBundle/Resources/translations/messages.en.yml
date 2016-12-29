@@ -17,6 +17,7 @@ oro:
             customer_status.label: 'Customer Status'
             internal_status.label: 'Internal Status'
             note.label: 'Notes'
+            request_additional_notes.label: 'Request Additional Notes'
             account_user.label: 'Submitted By'
             account.label: 'Account'
             organization.label: 'Organization'
@@ -72,6 +73,16 @@ oro:
             sort_order.label: 'Sort Order'
             deleted.label: 'Deleted'
             translations.label: 'Translations'
+
+        requestadditionalnote:
+            entity_label: 'Request Additional Note'
+            entity_plural_label: 'Request Additional Notes'
+            id.label: 'ID'
+            request.label: 'Request'
+            type.label: 'Type'
+            author.label: 'Author'
+            user_id.label: 'User Id'
+            text.label: 'Text'
 
         menu:
             request_list.description: 'List of Requests'

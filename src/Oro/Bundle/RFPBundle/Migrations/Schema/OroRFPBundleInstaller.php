@@ -59,6 +59,7 @@ class OroRFPBundleInstaller implements Installation, ActivityExtensionAwareInter
         $this->createOroRfpStatusTranslationTable($schema);
         $this->createOroRfpRequestProductTable($schema);
         $this->createOroRfpRequestProductItemTable($schema);
+        $this->createOroRfpRequestAddNoteTable($schema);
 
         /** Foreign keys generation **/
         $this->addOroRfpAssignedAccUsersForeignKeys($schema);
@@ -67,6 +68,7 @@ class OroRFPBundleInstaller implements Installation, ActivityExtensionAwareInter
         $this->addOroRfpStatusForeignKeys($schema);
         $this->addOroRfpRequestProductForeignKeys($schema);
         $this->addOroRfpRequestProductItemForeignKeys($schema);
+        $this->addOroRfpRequestAddNoteForeignKeys($schema);
 
         $this->addActivityAssociations($schema);
     }
@@ -224,6 +226,20 @@ class OroRFPBundleInstaller implements Installation, ActivityExtensionAwareInter
         $table->setPrimaryKey(['id']);
     }
 
+    protected function createOroRfpRequestAddNoteTable(Schema $schema)
+    {
+        $table = $schema->createTable('oro_rfp_request_add_note');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('request_id', 'integer', ['notnull' => false]);
+        $table->addColumn('type', 'string', ['length' => 100]);
+        $table->addColumn('author', 'string', ['length' => 100]);
+        $table->addColumn('user_id', 'integer', []);
+        $table->addColumn('text', 'text', []);
+        $table->addColumn('created_at', 'datetime', []);
+        $table->addColumn('updated_at', 'datetime', []);
+        $table->setPrimaryKey(['id']);
+    }
+
     /**
      * Add oro_rfp_assigned_acc_users foreign keys.
      *
@@ -363,6 +379,20 @@ class OroRFPBundleInstaller implements Installation, ActivityExtensionAwareInter
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_rfp_request_product'),
             ['request_product_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    protected function addOroRfpRequestAddNoteForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('oro_rfp_request_add_note');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_rfp_request'),
+            ['request_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
