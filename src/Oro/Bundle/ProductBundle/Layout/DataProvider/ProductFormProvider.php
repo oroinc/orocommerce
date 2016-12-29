@@ -5,9 +5,9 @@ namespace Oro\Bundle\ProductBundle\Layout\DataProvider;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
-use Oro\Bundle\ProductBundle\Form\Type\FrontendVariantFiledType;
 use Oro\Bundle\LayoutBundle\Layout\DataProvider\AbstractFormProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Form\Type\FrontendVariantFiledType;
 use Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
 use Oro\Bundle\ProductBundle\Form\Type\QuickAddCopyPasteType;
 use Oro\Bundle\ProductBundle\Form\Type\QuickAddImportFromFileType;
@@ -115,13 +115,7 @@ class ProductFormProvider extends AbstractFormProvider
      */
     public function getVariantFieldsForm(Product $product)
     {
-        $options = [
-            'action' => $this->generateUrl(
-                self::PRODUCT_VARIANTS_GET_AVAILABLE_VARIANTS,
-                ['id' => $product->getId()]
-            ),
-            'product' => $product,
-        ];
+        $options = $this->getVariantFieldsFormOptions($product);
 
         return $this->getForm(FrontendVariantFiledType::NAME, [], $options);
     }
@@ -132,13 +126,7 @@ class ProductFormProvider extends AbstractFormProvider
      */
     public function getVariantFieldsFormView(Product $product)
     {
-        $options = [
-            'action' => $this->generateUrl(
-                self::PRODUCT_VARIANTS_GET_AVAILABLE_VARIANTS,
-                ['id' => $product->getId()]
-            ),
-            'product' => $product,
-        ];
+        $options = $this->getVariantFieldsFormOptions($product);
 
         return $this->getFormView(FrontendVariantFiledType::NAME, [], $options);
     }
@@ -152,6 +140,21 @@ class ProductFormProvider extends AbstractFormProvider
             'products' => null,
             'validation_required' => null,
             'validation_groups' => null
+        ];
+    }
+
+    /**
+     * @param Product $product
+     * @return array
+     */
+    private function getVariantFieldsFormOptions(Product $product)
+    {
+        return [
+            'action' => $this->generateUrl(
+                self::PRODUCT_VARIANTS_GET_AVAILABLE_VARIANTS,
+                ['id' => $product->getId()]
+            ),
+            'product' => $product,
         ];
     }
 }

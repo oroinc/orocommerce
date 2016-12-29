@@ -32,7 +32,7 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
      */
     protected function setUp()
     {
-        $this->markTestIncomplete('Will be implemented and fixed later');
+        $this->markTestIncomplete('Will be fixed in BB-6736');
         parent::setUp();
 
         /** @var CustomFieldProvider|\PHPUnit_Framework_MockObject_MockObject $customFieldProvider */

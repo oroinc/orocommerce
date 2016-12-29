@@ -277,7 +277,7 @@ class ProductRepository extends EntityRepository
         $qb = $this
             ->createQueryBuilder('p')
             ->select('p')
-            ->leftJoin('p.parentVariantLink', 'l')
+            ->leftJoin('p.parentVariantLinks', 'l')
             ->andWhere('l.parentProduct = :parentProduct')
             ->setParameter('parentProduct', $configurableProduct);
 

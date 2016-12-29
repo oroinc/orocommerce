@@ -385,7 +385,7 @@ class Product extends ExtendProduct implements
     protected $variantLinks;
 
     /**
-     * @var ProductVariantLink
+     * @var Collection|ProductVariantLink[]
      *
      * @ORM\OneToMany(targetEntity="ProductVariantLink", mappedBy="product", cascade={"ALL"}, orphanRemoval=true)
      * @ConfigField(
@@ -399,7 +399,7 @@ class Product extends ExtendProduct implements
      *      }
      * )
      */
-    protected $parentVariantLink;
+    protected $parentVariantLinks;
 
     /**
      * @var Collection|LocalizedFallbackValue[]
@@ -498,6 +498,7 @@ class Product extends ExtendProduct implements
         $this->descriptions = new ArrayCollection();
         $this->shortDescriptions = new ArrayCollection();
         $this->variantLinks = new ArrayCollection();
+        $this->parentVariantLinks = new ArrayCollection();
         $this->images = new ArrayCollection();
         $this->slugPrototypes = new ArrayCollection();
         $this->slugs = new ArrayCollection();
@@ -904,21 +905,39 @@ class Product extends ExtendProduct implements
         return $this;
     }
 
+
     /**
-     * @return ProductVariantLink
+     * @return Collection|ProductVariantLink[]
      */
-    public function getParentVariantLink()
+    public function getParentVariantLinks()
     {
-        return $this->parentVariantLink;
+        return $this->variantLinks;
     }
 
     /**
-     * @param ProductVariantLink $variantLink
+     * @param ProductVariantLink $parentVariantLink
      * @return $this
      */
-    public function setParentVariantLink(ProductVariantLink $variantLink)
+    public function addParentVariantLink(ProductVariantLink $parentVariantLink)
     {
-        $this->parentVariantLink = $variantLink;
+        $parentVariantLink->setProduct($this);
+
+        if (!$this->parentVariantLinks->contains($parentVariantLink)) {
+            $this->parentVariantLinks->add($parentVariantLink);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param ProductVariantLink $parentVariantLink
+     * @return $this
+     */
+    public function removeParentVariantLink(ProductVariantLink $parentVariantLink)
+    {
+        if ($this->parentVariantLinks->contains($parentVariantLink)) {
+            $this->parentVariantLinks->removeElement($parentVariantLink);
+        }
 
         return $this;
     }
@@ -1062,6 +1081,7 @@ class Product extends ExtendProduct implements
             $this->shortDescriptions = new ArrayCollection();
             $this->images = new ArrayCollection();
             $this->variantLinks = new ArrayCollection();
+            $this->parentVariantLinks = new ArrayCollection();
             $this->variantFields = [];
         }
     }
