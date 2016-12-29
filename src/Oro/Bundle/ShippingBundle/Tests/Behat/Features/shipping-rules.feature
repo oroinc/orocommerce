@@ -103,7 +103,7 @@ Feature: Applying shipping rules
       | HandlingFee   | 1.5       |
     When Buyer is again on Shipping Method Checkout step on "Shopping List 1"
     And Buyer created order with next shipping address:
-      | Country1        | Ukraine              |
+      | Country         | Ukraine              |
       | City            | Kyiv                 |
       | State           | Kyïvs'ka mis'ka rada |
       | Zip/Postal Code | 01000                |
