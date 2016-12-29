@@ -1,0 +1,50 @@
+workflows:
+    rfq_frontoffice_default:
+        entity: Oro\Bundle\RFPBundle\Entity\Request
+        entity_attribute: request
+        applications: ['commerce']
+        start_step: submitted
+        steps:
+            stub:
+                order: 0
+                allowed_transitions:
+                    - cancel_transition
+                    - stub_transition
+            submitted:
+                order: 10
+                allowed_transitions:
+                    - cancel_transition
+                    - more_information_requested_transition
+                    - stub_transition
+            requires_attention:
+                order: 20
+                allowed_transitions:
+                    - provide_more_information_transition
+                    - stub_transition
+            cancelled:
+                order: 30
+                allowed_transitions:
+                    - resubmit_transition
+                    - reopen_transition
+                    - stub_transition
+        transitions:
+            stub_transition:
+                step_to: stub
+                transition_definition: stub_tranition_definition
+            more_information_requested_transition:
+                step_to: requires_attention
+                transition_definition: stub_tranition_definition
+            provide_more_information_transition:
+                step_to: submitted
+                transition_definition: stub_tranition_definition
+            cancel_transition:
+                step_to: cancelled
+                transition_definition: stub_tranition_definition
+            resubmit_transition:
+                step_to: submitted
+                transition_definition: stub_tranition_definition
+            reopen_transition:
+                step_to: submitted
+                transition_definition: stub_tranition_definition
+        transition_definitions:
+            stub_tranition_definition: ~
