@@ -40,11 +40,9 @@ class SlugGenerator
         } else {
             // Slug url for root content node
             $slugUrls = new ArrayCollection([new SlugUrl(self::ROOT_URL)]);
-            $localizedUrl = new LocalizedFallbackValue();
-            $localizedUrl->setText(self::ROOT_URL);
-            $contentNode->addLocalizedUrl($localizedUrl);
         }
 
+        $this->updateLocalizedUrls($contentNode, $slugUrls);
         $this->bindSlugs($contentNode, $slugUrls);
 
         if (!$contentNode->getChildNodes()->isEmpty()) {
@@ -154,7 +152,7 @@ class SlugGenerator
 
     /**
      * @param ContentNode $contentNode
-     * @return array
+     * @return array|SlugUrl[]
      */
     protected function getParentNodeSlugUrls(ContentNode $contentNode)
     {
@@ -164,7 +162,7 @@ class SlugGenerator
         if ($parentNode) {
             foreach ($parentNode->getLocalizedUrls() as $parentNodeSlug) {
                 $localeId = $this->getLocaleId($parentNodeSlug->getLocalization());
-                $parentNodeSlugUrls[$localeId] = $parentNodeSlug->getUrl();
+                $parentNodeSlugUrls[$localeId] = $parentNodeSlug->getText();
             }
         }
 
@@ -195,7 +193,7 @@ class SlugGenerator
 
     /**
      * @param Localization $localization
-     * @param array $parentNodeSlugUrls
+     * @param array|SlugUrl[] $parentNodeSlugUrls
      * @return string|null
      */
     protected function findFallbackSlug(Localization $localization, array $parentNodeSlugUrls)
@@ -238,6 +236,55 @@ class SlugGenerator
         $slug->setRouteParameters($routeData->getRouteParameters());
         foreach ($scopes as $scope) {
             $slug->addScope($scope);
+        }
+    }
+
+    /**
+     * @param SlugUrl $slugUrl
+     * @param ContentNode $contentNode
+     * @return LocalizedFallbackValue|null
+     */
+    protected function getExistingLocalizedUrl(SlugUrl $slugUrl, ContentNode $contentNode)
+    {
+        foreach ($contentNode->getLocalizedUrls() as $localizedUrl) {
+            if ($slugUrl->getUrl() === $localizedUrl->getText()
+                && $slugUrl->getLocalization() === $localizedUrl->getLocalization()
+            ) {
+                return $localizedUrl;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @param ContentNode $contentNode
+     * @param Collection $slugUrls
+     */
+    protected function updateLocalizedUrls(ContentNode $contentNode, Collection $slugUrls)
+    {
+        $toRemove = [];
+        foreach ($contentNode->getLocalizedUrls() as $localizedUrl) {
+            $localeId = (int)$this->getLocaleId($localizedUrl->getLocalization());
+            if ($slugUrls->containsKey($localeId)) {
+                /** @var SlugUrl $slugUrl */
+                $slugUrl = $slugUrls->get($localeId);
+                $localizedUrl->setText($slugUrl->getUrl());
+            } else {
+                $toRemove[] = $localizedUrl;
+            }
+        }
+        foreach ($toRemove as $removedLocalizedUrl) {
+            $contentNode->removeLocalizedUrl($removedLocalizedUrl);
+        }
+
+        foreach ($slugUrls as $slugUrl) {
+            if (!$this->getExistingLocalizedUrl($slugUrl, $contentNode)) {
+                $localizedUrl = new LocalizedFallbackValue();
+                $localizedUrl->setText($slugUrl->getUrl());
+                $localizedUrl->setLocalization($slugUrl->getLocalization());
+                $contentNode->addLocalizedUrl($localizedUrl);
+            }
         }
     }
 }

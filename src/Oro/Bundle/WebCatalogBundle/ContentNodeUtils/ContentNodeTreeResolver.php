@@ -105,10 +105,7 @@ class ContentNodeTreeResolver implements ContentNodeTreeResolverInterface
         foreach ($metadata->getFieldNames() as $fieldName) {
             $resolvedVariant->{$fieldName} = $metadata->getFieldValue($filteredVariant, $fieldName);
         }
-        /**
-         * @var string $associationName
-         * @var $associationMapping
-         */
+
         foreach ($metadata->getAssociationNames() as $associationName) {
             $associatedValue = $metadata->getFieldValue($filteredVariant, $associationName);
 
@@ -132,20 +129,20 @@ class ContentNodeTreeResolver implements ContentNodeTreeResolverInterface
      */
     protected function getIdentifier(ContentNode $node)
     {
-        /** @var Slug $slug */
-        $slug = $node->getLocalizedUrls()
+        /** @var LocalizedFallbackValue $localizedUrl */
+        $localizedUrl = $node->getLocalizedUrls()
             ->filter(
-                function (Slug $slug) {
-                    return $slug->getLocalization() === null;
+                function (LocalizedFallbackValue $localizedUrl) {
+                    return $localizedUrl->getLocalization() === null;
                 }
             )
             ->first();
 
-        if (!$slug) {
-            $slug = $node->getLocalizedUrls()->first();
+        if (!$localizedUrl) {
+            $localizedUrl = $node->getLocalizedUrls()->first();
         }
 
-        $url = trim($slug->getUrl(), '/');
+        $url = trim($localizedUrl->getText(), '/');
         $identifierParts = [self::ROOT_NODE_IDENTIFIER];
         if ($url) {
             if (strpos($url, '/') > 0) {

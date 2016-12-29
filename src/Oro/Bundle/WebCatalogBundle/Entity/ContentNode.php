@@ -550,8 +550,32 @@ class ContentNode extends ExtendContentNode implements
      */
     public function addLocalizedUrl(LocalizedFallbackValue $url)
     {
-        $this->localizedUrls->add($url);
+        if (!$this->hasLocalizedUrl($url)) {
+            $this->localizedUrls->add($url);
+        }
 
         return $this;
+    }
+
+    /**
+     * @param LocalizedFallbackValue $url
+     * @return $this
+     */
+    public function removeLocalizedUrl(LocalizedFallbackValue $url)
+    {
+        if ($this->hasLocalizedUrl($url)) {
+            $this->localizedUrls->removeElement($url);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param LocalizedFallbackValue $url
+     * @return bool
+     */
+    public function hasLocalizedUrl(LocalizedFallbackValue $url)
+    {
+        return $this->localizedUrls->contains($url);
     }
 }
