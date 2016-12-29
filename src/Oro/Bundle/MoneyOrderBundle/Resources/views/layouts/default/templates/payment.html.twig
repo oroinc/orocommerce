@@ -1,7 +1,5 @@
 {% block _payment_methods_money_order_widget %}
-    <div class="{{ class_prefix }}__form__payment-methods"
-         data-page-component-module="oropayment/js/app/components/payment-method-component"
-         data-page-component-options="{{ {paymentMethod: name}|json_encode }}">
+    <div class="{{ class_prefix }}__form__payment-methods">
         <table class="grid">
             <tr>
                 <td>{{ 'oro.money_order.pay_to'|trans }}: </td>
