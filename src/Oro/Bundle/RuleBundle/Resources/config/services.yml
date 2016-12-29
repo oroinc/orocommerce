@@ -2,6 +2,15 @@ parameters:
     oro_rule.entity.rule.class: Oro\Bundle\RuleBundle\Entity\Rule
 
 services:
+    oro_rule.expression_language:
+        class: 'Oro\Component\ExpressionLanguage\ExpressionLanguage'
+        public: false
+
+    oro_rule.expression_language.function_count:
+        class: Oro\Bundle\RuleBundle\ExpressionLanguage\CountExpressionLanguageFunction
+        tags:
+            - { name: oro_rule.expression_language.function }
+
     oro_rule.rule_filtration.service:
         class: 'Oro\Bundle\RuleBundle\RuleFiltration\BasicRuleFiltrationService'
         public: false
@@ -25,5 +34,7 @@ services:
         public: false
         decorates: oro_rule.rule_filtration.service
         arguments:
+            - '@oro_rule.expression_language'
             - '@oro_rule.rule_filtration.expression_language_decorator.inner'
             - '@logger'
+

@@ -29,6 +29,13 @@ oro_product_frontend_unit_ajax:
     options:
         frontend: true
 
+oro_product_frontend_variant_ajax:
+    resource:     "@OroProductBundle/Controller/Frontend/AjaxProductVariantController.php"
+    type:         annotation
+    prefix:       /product-variant
+    options:
+        frontend: true
+
 oro_product_frontend_quick_add:
     resource:     "@OroProductBundle/Controller/Frontend/QuickAddController.php"
     type:         annotation
