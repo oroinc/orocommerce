@@ -51,6 +51,8 @@ class ProductTest extends \PHPUnit_Framework_TestCase
             ['images', new ProductImage()],
             ['slugPrototypes', new LocalizedFallbackValue()],
             ['slugs', new Slug()],
+            ['variantLinks', new ProductVariantLink()],
+            ['parentVariantLinks', new ProductVariantLink()],
         ];
 
         $this->assertPropertyCollections(new Product(), $collections);

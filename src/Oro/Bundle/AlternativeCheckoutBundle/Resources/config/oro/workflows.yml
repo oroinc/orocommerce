@@ -135,6 +135,7 @@ workflows:
                     icon: fa-briefcase
                 init_routes:
                     - oro_shopping_list_frontend_view
+                acl_resource: [CHECKOUT_CREATE, $.result.shoppingList]
 
             start_from_quickorderform:
                 is_start: true
@@ -153,6 +154,7 @@ workflows:
                     - oro_product_frontend_quick_add
                     - oro_product_frontend_quick_add_copy_paste
                     - oro_product_frontend_quick_add_import
+                acl_resource: [CREATE, entity:commerce@Oro\Bundle\CheckoutBundle\Entity\Checkout]
 
             continue_to_shipping_address:
                 step_to: enter_shipping_address

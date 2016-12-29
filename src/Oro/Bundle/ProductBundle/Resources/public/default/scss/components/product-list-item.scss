@@ -11,11 +11,6 @@
                 display: inline-block;
             }
         }
-
-        &_no-image-view2 {
-            clear: left;
-            margin-left: 34%;
-        }
     }
 
     &__qty-input {
@@ -35,7 +30,7 @@
                     z-index: 6;
 
                     border: 1px solid $product-qty-active-border-color;
-                
+
                     .count-minus,
                     .count-plus {
                         display: block;
@@ -117,18 +112,6 @@
                 margin-bottom: 0 !important;
             }
         }
-
-        &_no-image-view2 {
-            float: left;
-            width: 34%;
-            max-width: 100%;
-            margin: 0;
-            padding-right: 30px;
-
-            &.product__specification_delivery {
-                display: none
-            }
-        }
     }
 
     &__description {
@@ -138,11 +121,6 @@
 
         &_no-image-view {
             display: none;
-        }
-
-        &_no-image-view2 {
-            float: left;
-            width: 66%;
         }
 
         p {
@@ -173,10 +151,6 @@
                     display: none;
                 }
             }
-
-            &_no-image-view2 {
-                display: none;
-            }
         }
 
         &__specification {
@@ -191,24 +165,12 @@
             &_no-image-view {
                 margin: 0 !important;
             }
-
-            &_no-image-view2 {
-                float: none;
-                width: 100%;
-                max-width: 205px;
-                margin: 0;
-                padding: 0;
-            }
         }
 
         &__description {
             &_list-view {
                 height: 40px;
                 overflow: hidden;
-            }
-
-            &_no-image-view2 {
-                display: none;
             }
         }
     }
