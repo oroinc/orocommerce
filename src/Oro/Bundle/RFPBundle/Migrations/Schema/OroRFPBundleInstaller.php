@@ -6,18 +6,21 @@ use Doctrine\DBAL\Schema\Schema;
 
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
-class OroRFPBundleInstaller implements Installation, ActivityExtensionAwareInterface
+class OroRFPBundleInstaller implements Installation, ActivityExtensionAwareInterface, ExtendExtensionAwareInterface
 {
-    /**
-     * @var ActivityExtension
-     */
+    /** @var ActivityExtension */
     protected $activityExtension;
+
+    /** @var ExtendExtension */
+    protected $extendExtension;
 
     /**
      * {@inheritdoc}
@@ -30,9 +33,17 @@ class OroRFPBundleInstaller implements Installation, ActivityExtensionAwareInter
     /**
      * {@inheritdoc}
      */
+    public function setExtendExtension(ExtendExtension $extendExtension)
+    {
+        $this->extendExtension = $extendExtension;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getMigrationVersion()
     {
-        return 'v1_7';
+        return 'v1_8';
     }
 
     /**
@@ -114,6 +125,26 @@ class OroRFPBundleInstaller implements Installation, ActivityExtensionAwareInter
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('deleted_at', 'datetime', ['notnull' => false, 'comment' => '(DC2Type:datetime)']);
         $table->setPrimaryKey(['id']);
+
+        $this->extendExtension->addEnumField(
+            $schema,
+            'oro_rfp_request',
+            'customer_status',
+            'rfp_customer_status',
+            false,
+            false,
+            ['dataaudit' => ['auditable' => true]]
+        );
+
+        $this->extendExtension->addEnumField(
+            $schema,
+            'oro_rfp_request',
+            'internal_status',
+            'rfp_internal_status',
+            false,
+            false,
+            ['dataaudit' => ['auditable' => true]]
+        );
     }
 
     /**

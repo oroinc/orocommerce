@@ -44,3 +44,19 @@ search:
                         name:           label
                         target_type:    text
                         target_fields:  [status]
+            -
+                name:                   customer_status
+                relation_type:          many-to-one
+                relation_fields:
+                    -
+                        name:           name
+                        target_type:    text
+                        target_fields:  [customerStatus]
+            -
+                name:                   internal_status
+                relation_type:          many-to-one
+                relation_fields:
+                    -
+                        name:           name
+                        target_type:    text
+                        target_fields:  [internalStatus]
