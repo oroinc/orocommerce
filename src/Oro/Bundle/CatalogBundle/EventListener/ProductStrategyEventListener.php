@@ -15,9 +15,9 @@ class ProductStrategyEventListener extends AbstractProductImportEventListener
     private $productsToAdd = [];
 
     /**
-     * @var array|Category[]
+     * @var bool
      */
-    private $changedCategories = [];
+    private $hasChangedCategories = false;
 
     /**
      * @var bool
@@ -41,7 +41,7 @@ class ProductStrategyEventListener extends AbstractProductImportEventListener
             $category = $this->getCategoryByProduct($product);
             if ($category && (!$newCategory || $newCategory->getId() !== $category->getId())) {
                 $category->removeProduct($product);
-                $this->changedCategories[$category->getId()] = $category;
+                $this->hasChangedCategories = true;
             }
         }
 
@@ -65,10 +65,10 @@ class ProductStrategyEventListener extends AbstractProductImportEventListener
 
         $em = $event->getEntityManager();
 
-        if ($this->changedCategories) {
+        if ($this->hasChangedCategories) {
             $this->flushInProgress = true;
-            $em->flush($this->changedCategories);
-            $this->changedCategories = [];
+            $em->flush();
+            $this->hasChangedCategories = false;
             $this->flushInProgress = false;
         }
 
@@ -91,7 +91,7 @@ class ProductStrategyEventListener extends AbstractProductImportEventListener
     public function onClear()
     {
         $this->productsToAdd = [];
-        $this->changedCategories = [];
+        $this->hasChangedCategories = false;
 
         parent::onClear();
     }
