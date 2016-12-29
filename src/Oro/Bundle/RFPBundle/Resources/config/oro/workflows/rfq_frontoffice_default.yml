@@ -10,6 +10,10 @@ workflows:
                 allowed_transitions:
                     - cancel_transition
                     - stub_transition
+                    - more_information_requested_transition
+                    - provide_more_information_transition
+                    - resubmit_transition
+                    - reopen_transition
             submitted:
                 order: 10
                 allowed_transitions:

@@ -12,6 +12,9 @@ workflows:
                     - request_more_information_transition
                     - decline_transition
                     - delete_transition
+                    - info_provided_transition
+                    - reprocess_transition
+                    - undelete_transition
                     - stub_transition
             open:
                 order: 10
