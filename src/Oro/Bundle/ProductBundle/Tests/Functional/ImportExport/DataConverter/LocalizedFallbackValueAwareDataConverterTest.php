@@ -183,6 +183,7 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
                     'slugPrototypes.Spanish.value' => '',
                     'slugPrototypes.English (Canada).fallback' => '',
                     'slugPrototypes.English (Canada).value' => '',
+                    'attributeFamily.code' => ''
                 ],
             ],
             'en localization' => [
@@ -258,6 +259,7 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
                     'slugPrototypes.Spanish.value' => '',
                     'slugPrototypes.English (Canada).fallback' => '',
                     'slugPrototypes.English (Canada).value' => '',
+                    'attributeFamily.code' => ''
                 ],
             ],
             'custom localization' => [
@@ -338,6 +340,7 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
                     'slugPrototypes.Spanish.value' => '',
                     'slugPrototypes.English (Canada).fallback' => '',
                     'slugPrototypes.English (Canada).value' => '',
+                    'attributeFamily.code' => ''
                 ],
             ],
         ];

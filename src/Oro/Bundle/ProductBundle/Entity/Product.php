@@ -489,7 +489,7 @@ class Product extends ExtendProduct implements
      *              "auditable"=false
      *          },
      *          "importexport"={
-     *              "order"=70
+     *              "order"=10
      *          }
      *      }
      *  )
