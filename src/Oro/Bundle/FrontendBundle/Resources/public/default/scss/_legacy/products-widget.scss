@@ -325,9 +325,9 @@
       float: left;
 
       .product-item__secondary-half_no-image-view {
-        width: calc(35% - 10px);
+        width: calc(35% );
 
-        + .product-item__secondary-half_no-image-view {
+        &:last-child {
           width: 65%;
 
           @media (max-width: $screen-sm) {
