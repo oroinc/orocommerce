@@ -3,8 +3,15 @@ layout:
         - '@setBlockTheme':
             themes: 'layout.html.twig'
         - '@add':
-            id: product_prices
+            id: product_prices_subtree_update
             parentId: product_view_price_container
+            blockType: layout_subtree_update
+            options:
+                reloadEvents: ['layout-subtree:update:product']
+
+        - '@add':
+            id: product_prices
+            parentId: product_prices_subtree_update
             blockType: product_prices
             options:
                 visible: '=data["product"].getUnitPrecisions()!=null'

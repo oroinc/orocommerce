@@ -82,7 +82,8 @@
 
         {% if hasVariants %}
             {% set dropdownMenuOptions = {
-                'align': 'right'
+                'align': 'right',
+                'attachToParent': true
             } %}
 
             <div{{ block('block_attributes') }}>
@@ -140,7 +141,8 @@
             {% endif %}
             {% set attr = attr|merge({ class: attr.class|default('') ~ additionalCss}) %}
             {% set dropdownMenuOptions = {
-                'align': 'right'
+                'align': 'right',
+                'attachToParent': true
             } %}
 
             <div{{ block('block_attributes') }}>

@@ -1,4 +1,4 @@
-// @theme: default;
+// @theme: blank;
 
 .product-gallery {
     position: relative;
@@ -49,23 +49,27 @@
 
     &__nav {
         position: relative;
-        transition: all .4s;
-        opacity: 0;
-        visibility: hidden;
 
         max-height: 77px;
         margin: 20px 20px 0;
 
+        opacity: 0;
+
+        transition: all .4s;
+
+        visibility: hidden;
+
+
         &.slick-initialized {
             opacity: 1;
+
             visibility: visible;
         }
 
         &-item {
             display: block;
-            float: left;
-
             width: 25%;
+            float: left;
 
             img {
                 border: 1px solid get-color('additional', 'light');
@@ -79,8 +83,8 @@
 
         .slick-arrow {
             position: absolute;
-            z-index: z('base') + 1;
             top: 0;
+            z-index: z('base') + 1;
 
             width: 20px;
             height: 100%;

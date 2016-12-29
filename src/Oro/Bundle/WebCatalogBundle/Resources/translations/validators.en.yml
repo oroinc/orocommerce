@@ -2,3 +2,6 @@ oro:
     webcatalog:
         scope:
             unique.message: 'Content Variants contains overlapping Restrictions rules'
+        contentnode:
+            content_variants:
+                blank: 'Please add one or more content variants.'

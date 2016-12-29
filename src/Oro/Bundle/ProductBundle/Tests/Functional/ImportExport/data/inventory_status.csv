@@ -1,6 +1,6 @@
-sku,status,primaryUnitPrecision:unit:code,primaryUnitPrecision:precision,inventory_status.id
-SKU001,enabled,kg,3,
-SKU002,enabled,kg,3,invalid_inventory
-SKU003,enabled,kg,3,in_stock
-SKU004,enabled,kg,3,out_of_stock
-SKU005,enabled,kg,3,discontinued
+sku,attributeFamily.code,status,primaryUnitPrecision:unit:code,primaryUnitPrecision:precision,inventory_status.id
+SKU001,default_family,enabled,kg,3,
+SKU002,default_family,enabled,kg,3,invalid_inventory
+SKU003,default_family,enabled,kg,3,in_stock
+SKU004,default_family,enabled,kg,3,out_of_stock
+SKU005,default_family,enabled,kg,3,discontinued

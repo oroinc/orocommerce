@@ -30,6 +30,7 @@ oro:
             rewrite_variant_title.label: Rewrite Variant Title
             web_catalog.label: Web catalog
             scopes.label: Restrictions
+            localized_urls.label: Localized URLs
 
         contentvariant:
             entity_label: Content Variant
