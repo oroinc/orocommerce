@@ -1,0 +1,3 @@
+imports:
+    - { resource: 'workflows/rfq_backoffice_default.yml' }
+    - { resource: 'workflows/rfq_frontoffice_default.yml' }

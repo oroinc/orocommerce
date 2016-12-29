@@ -216,6 +216,7 @@ operations:
                   - [[keep], [propertyName, [accountUser]]]
                   - [[keep], [propertyName, [account]]]
                   - [[keep], [propertyName, [organization]]]
+                  - [[keep], [propertyName, [owner]]]
                   - [[keep], [property, ["%oro_rfp.entity.request_product.class%", product]]]
                   - [[keep], [property, ["%oro_rfp.entity.request_product_item.class%", productUnit]]]
             - '@assign_value': [$.entityCopy.createdAt, $.currentDatetime]
