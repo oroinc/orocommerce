@@ -10,7 +10,8 @@ layout:
         - '@add':
             id: page_title
             parentId: page_title_container
-            blockType: text
+            blockType: page_title
             options:
-                text: ~
+                defaultValue: ~
+                value: '=defaultValue'
 

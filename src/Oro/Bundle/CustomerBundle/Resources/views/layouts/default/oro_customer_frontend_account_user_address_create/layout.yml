@@ -7,5 +7,5 @@ layout:
     actions:
         - '@setOption':
             id: page_title
-            optionName: text
+            optionName: defaultValue
             optionValue: oro.customer.frontend.address.page_title.create

@@ -7,7 +7,7 @@ layout:
                  '%step_label%': '=data["translator"].getTrans(data["workflowStep"].getLabel(),[],"workflows")'
         - '@setOption':
             id: page_title
-            optionName: text
+            optionName: defaultValue
             optionValue: 'oro.checkout.entity_label'
 
     imports:

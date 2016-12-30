@@ -11,7 +11,7 @@ layout:
                 '%entityName%': ''
         - '@setOption':
             id: page_title
-            optionName: text
+            optionName: defaultValue
             optionValue:
                 label: 'oro.customer.frontend.title.account_user.create'
 

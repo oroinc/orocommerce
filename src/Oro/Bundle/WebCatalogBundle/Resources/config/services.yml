@@ -281,3 +281,11 @@ services:
         class: Oro\Bundle\WebCatalogBundle\Resolver\DefaultVariantScopesResolver
         arguments:
             - '@doctrine'
+
+    oro_web_catalog.layout.data_provider.title_data:
+        class: Oro\Bundle\WebCatalogBundle\Layout\DataProvider\TitleDataProvider
+        arguments:
+            - '@request_stack'
+            - '@oro_locale.helper.localization'
+        tags:
+            - { name: layout.data_provider, alias: web_catalog_title }
