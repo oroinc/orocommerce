@@ -259,7 +259,16 @@
                         {{ form_errors(form.quantity) }}
                     </div>
                     <div class="price_rule__quantity price-rule-item-quantity-type-expression visible">
-                        {{ form_widget(form.quantityExpression) }}
+                        {{ form_widget(form.quantityExpression, {'attr': {
+                            'data-page-component-options': {
+                                allowedOperations: [],
+                                entities: oro_product_expression_autocomplete_data(),
+                                dataSource: {
+                                    pricelist: '<select><option value="1">Price list</select>'
+                                }
+                            }|json_encode,
+                            'data-page-component-module': 'orofrontend/default/js/app/components/rule-editor-component'
+                        }}) }}
                         {{ form_errors(form.quantityExpression) }}
                     </div>
                 </div>
@@ -284,7 +293,16 @@
                     </div>
                     <div class="price-rule-item-product-unit-type-expression" style="display: none;">
                         <div class="price_rule__unit">
-                            {{ form_widget(form.productUnitExpression) }}
+                            {{ form_widget(form.productUnitExpression, {'attr': {
+                                'data-page-component-options': {
+                                    allowedOperations: [],
+                                    entities: oro_product_expression_autocomplete_data(),
+                                    dataSource: {
+                                        pricelist: '<select><option value="1">Price list</select>'
+                                    }
+                                }|json_encode,
+                                'data-page-component-module': 'orofrontend/default/js/app/components/rule-editor-component'
+                            }}) }}
                         </div>
                         <a class="price-rule-item-product-unit-type-field input-type-switcher" href="javascript: void(0);">
                             {{ 'oro.pricing.pricerule.show_unit_fields.label'|trans }}
@@ -313,7 +331,16 @@
                     </div>
                     <div class="price-rule-item-currency-type-expression input-type-switcher" style="display: none;">
                         <div class="price_rule__currency">
-                            {{ form_widget(form.currencyExpression) }}
+                            {{ form_widget(form.currencyExpression, {'attr': {
+                                'data-page-component-options': {
+                                    allowedOperations: [],
+                                    entities: oro_product_expression_autocomplete_data(),
+                                    dataSource: {
+                                        pricelist: '<select><option value="1">Price list</select>'
+                                    }
+                                }|json_encode,
+                                'data-page-component-module': 'orofrontend/default/js/app/components/rule-editor-component'
+                            }}) }}
                         </div>
                         <a class="price-rule-item-currency-type-field" href="javascript: void(0);">
                             {{ 'oro.pricing.pricerule.show_currency_fields.label'|trans }}
@@ -336,10 +363,24 @@
                 {{ form_errors(form.currencyExpression) }}
             </div>
             <div>{{ form_row(form.rule, {'attr': {
-                'data-page-component-options': {allowedOperations: ['math']}|json_encode,
+                'data-page-component-options': {
+                    allowedOperations: ['math'],
+                    entities: oro_product_expression_autocomplete_data(true),
+                    dataSource: {
+                        pricelist: '<select><option value="1">Price list</select>'
+                    }
+                }|json_encode,
                 'data-page-component-module': 'orofrontend/default/js/app/components/rule-editor-component'
             }}) }}</div>
-            <div>{{ form_row(form.ruleCondition) }}</div>
+            <div>{{ form_row(form.ruleCondition, {'attr': {
+                    'data-page-component-options': {
+                        entities: oro_product_expression_autocomplete_data(),
+                        dataSource: {
+                            pricelist: '<select><option value="1">Price list</select>'
+                        }
+                    }|json_encode,
+                    'data-page-component-module': 'orofrontend/default/js/app/components/rule-editor-component'
+                }}) }}</div>
             <div class="price_rule__priority">{{ form_row(form.priority) }}</div>
         </div>
     {% endspaceless %}

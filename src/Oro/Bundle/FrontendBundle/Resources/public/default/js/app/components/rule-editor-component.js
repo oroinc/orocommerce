@@ -774,7 +774,7 @@ define(function(require) {
             } else if (operationType.inclusion) {
                 isInclusion = this._checkInclusion(string, operationType.match);
             } else if (operationType.math) {
-                isExpression = this._checkExpression(string);
+                isExpression = this._checkExpression(string, operationType.match);
             }
 
             var isValid = isCompare || isInclusion || isExpression || (pathData && pathData.type === 'standalone');
