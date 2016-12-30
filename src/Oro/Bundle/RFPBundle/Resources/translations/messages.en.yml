@@ -218,6 +218,7 @@ oro:
                 page_title.label: 'RFQ #%id%: %firstName% %lastName%'
                 title.label: 'Request For Quote #%id%'
                 cancellation_reason.label: 'Cancelation Reason'
+                note.label: 'Notes'
                 sections:
                     general: 'Information'
                     notes.label: 'Notes'

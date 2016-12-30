@@ -1,0 +1,29 @@
+// @theme: blank;
+
+.notes {
+  margin-bottom: 35px;
+
+  &__item {
+    padding: $offset-y 0;
+
+    border-bottom: 1px solid get-color('additional', 'middle');
+
+    &:first-of-type {
+      border-top: 1px solid get-color('additional', 'middle');
+    }
+  }
+
+  &__count {
+    font-size: $base-font-size--s;
+  }
+
+  &__date {
+    padding-left: $offset-y-m;
+
+    color: get-color('ui', 'normal');
+  }
+
+  &__info {
+    margin-bottom: $offset-y-m;
+  }
+}

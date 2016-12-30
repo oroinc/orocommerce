@@ -107,6 +107,12 @@
                                 <td class="account-oq__order-info__title">{{ 'oro.frontend.rfp.request.customer_status.label'|trans }}</td>
                                 <td>{{ request.customerStatus.name|default('') }}</td>
                             </tr>
+                            {% if request.note %}
+                                <tr class="account-oq__order-info__control">
+                                    <td class="account-oq__order-info__title">{{ 'oro.frontend.rfp.request.note.label'|trans }}</td>
+                                    <td>{{ request.note|nl2br }}</td>
+                                </tr>
+                            {% endif %}
                             {{ block_widget(block) }}
                         </tbody>
                     </table>
@@ -114,6 +120,46 @@
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block _rfp_request_view_additional_notes_widget %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% if block.vars.visible %}
+        {% set attr = attr|merge({
+            class: attr.class|default('') ~ " notes collapse-view expanded"
+        }) %}
+
+        <div {{ block('block_attributes') }}
+            data-page-component-module="oroui/js/app/components/jquery-widget-component"
+            data-page-component-options="{{ {
+                widgetModule: 'oroui/js/widget/collapse-widget',
+                storageKey: id
+            }|json_encode() }}"
+        >
+            <h3 class="section-title section-title--size-m">
+                {{ 'oro.frontend.rfp.request.sections.notes.label'|trans }}
+                <span class="notes__count">({{ requestAdditionalNotes|length }})</span>
+                <span class="collapse-view__trigger collapse-view__trigger--icon" data-collapse-trigger>
+                    <i class="collapse-view__trigger-icon fa-caret-right" data-toggle="collapse"></i>
+                </span>
+            </h3>
+            <div data-collapse-container>
+                {% for requestAdditionalNote in requestAdditionalNotes %}
+                    <article class="notes__item">
+                        <header class="notes__info">
+                            <p>
+                                <span class="bold">{{ requestAdditionalNote.author }}</span>
+                                <span class="notes__date">{{ requestAdditionalNote.createdAt|oro_format_datetime }}</span>
+                            </p>
+                        </header>
+                        <div>
+                            <p>{{ requestAdditionalNote.text|nl2br }}</p>
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
 {% endblock %}
 
 {% block _rfp_request_view_line_items_widget %}
@@ -278,24 +324,6 @@
         </div>
     </div>
     <!-- END ITEMS ORDERED MOBILE -->
-{% endblock %}
-
-{% block _rfp_request_view_notes_container_widget %}
-    {% if block.vars.visible %}
-        {% set attr = attr|merge({
-            class: attr.class|default('') ~ " mt4-md mbt-sm"
-        }) %}
-        <div {{ block('block_attributes') }}>
-            <h3 class="account-navigation-title mb2-md mb2-sm">
-                {{ 'oro.frontend.rfp.request.sections.notes.label'|trans }}
-            </h3>
-            {{ block_widget(block) }}
-        </div>
-    {% endif %}
-{% endblock %}
-
-{% block _rfp_request_view_notes_widget %}
-    {{ block_widget(block)|nl2br }}
 {% endblock %}
 
 {% block _rfp_request_view_bottom_widget %}
