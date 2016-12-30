@@ -83,7 +83,6 @@ workflows:
                         event: update
                         field: internal_status
                         require: "entity.getInternalStatus().getId() === 'open'"
-                        queued: false
             undelete_transition:
                 step_to: open
                 transition_definition: undelete_transition_definition
