@@ -8,6 +8,16 @@ workflows:
 
         exclusive_record_groups: ['b2b_rfq_backoffice_flow']
 
+        attributes:
+           internalStatus:
+               type: entity
+               options:
+                  class: 'Extend\Entity\EV_Rfp_Internal_Status'
+           customerStatus:
+               type: entity
+               options:
+                  class: 'Extend\Entity\EV_Rfp_Customer_Status'
+
         start_step: open
         steps_display_ordered: true
         steps:
@@ -52,10 +62,10 @@ workflows:
                 transition_definition: stub_tranition_definition
             decline_transition:
                 step_to: declined
-                transition_definition: stub_tranition_definition
+                transition_definition: decline_tranition_definition
             delete_transition:
                 step_to: deleted
-                transition_definition: stub_tranition_definition
+                transition_definition: delete_tranition_definition
             info_provided_transition:
                 step_to: open
                 transition_definition: stub_tranition_definition
@@ -64,8 +74,49 @@ workflows:
                 transition_definition: stub_tranition_definition
             undelete_transition:
                 step_to: open
-                transition_definition: stub_tranition_definition
+                transition_definition: undelete_tranition_definition
 
         transition_definitions:
-            __start___definition: ~
+            __start___definition:
+                actions:
+                    - '@find_entity':
+                        class: 'Extend\Entity\EV_Rfp_Internal_Status'
+                        attribute: $request.internalStatus
+                        identifier: 'open'
+                    - '@find_entity':
+                        class: 'Extend\Entity\EV_Rfp_Customer_Status'
+                        attribute: $request.customerStatus
+                        identifier: 'submitted'
+            delete_tranition_definition:
+                actions:
+                    - '@find_entity':
+                        class: 'Extend\Entity\EV_Rfp_Internal_Status'
+                        attribute: $request.internalStatus
+                        identifier: 'deleted'
+            decline_tranition_definition:
+                actions:
+                    - '@find_entity':
+                        class: 'Extend\Entity\EV_Rfp_Internal_Status'
+                        attribute: $request.internalStatus
+                        identifier: 'declined'
+                    - '@find_entity':
+                        class: 'Extend\Entity\EV_Rfp_Customer_Status'
+                        attribute: $request.customerStatus
+                        identifier: 'cancelled'
+            undelete_tranition_definition:
+                actions:
+                    - '@find_entity':
+                        conditions:
+                            '@equal': ['cancelled', $request.customerStatus]
+                        parameters:
+                            class: 'Extend\Entity\EV_Rfp_Internal_Status'
+                            attribute: $request.internalStatus
+                            identifier: 'cancelled_by_customer'
+                    - '@find_entity':
+                        conditions:
+                            '@not_equal': ['cancelled', $request.customerStatus]
+                        parameters:
+                            class: 'Extend\Entity\EV_Rfp_Internal_Status'
+                            attribute: $request.internalStatus
+                            identifier: 'open'
             stub_tranition_definition: ~
