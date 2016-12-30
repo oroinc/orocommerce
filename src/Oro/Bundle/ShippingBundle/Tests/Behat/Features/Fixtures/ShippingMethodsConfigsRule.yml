@@ -187,7 +187,7 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUserSettings:
         __construct: ['@website1']
         currency: 'EUR'
 
-Oro\Bundle\CustomerBundle\Entity\AccountUserAddressToAddressType:
+Oro\Bundle\CustomerBundle\Entity\CustomerUserAddressToAddressType:
     billing:
         address: '@address1'
         type: '@billingType'

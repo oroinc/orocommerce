@@ -60,10 +60,10 @@ class AccountAddress extends ExtendAccountAddress implements AddressPhoneAwareIn
     protected $frontendOwner;
 
     /**
-     * @var Collection|AccountUserAddressToAddressType[]
+     * @var Collection|CustomerUserAddressToAddressType[]
      *
      * @ORM\OneToMany(
-     *      targetEntity="AccountAddressToAddressType",
+     *      targetEntity="CustomerAddressToAddressType",
      *      mappedBy="address",
      *      cascade={"persist", "remove"},
      *      orphanRemoval=true
@@ -90,7 +90,7 @@ class AccountAddress extends ExtendAccountAddress implements AddressPhoneAwareIn
      */
     protected function createAddressToAddressTypeEntity()
     {
-        return new AccountAddressToAddressType();
+        return new CustomerAddressToAddressType();
     }
 
     /**

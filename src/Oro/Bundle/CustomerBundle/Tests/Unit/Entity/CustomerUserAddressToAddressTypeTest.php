@@ -3,12 +3,14 @@
 namespace Oro\Bundle\CustomerBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
-use Oro\Component\Testing\Unit\EntityTestCase;
-use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
-use Oro\Bundle\CustomerBundle\Entity\AccountAddressToAddressType;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
+use Oro\Bundle\CustomerBundle\Entity\AccountUserAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddressToAddressType;
 
-class AccountAddressToAddressTypeTest extends EntityTestCase
+class CustomerUserAddressToAddressTypeTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTestCaseTrait;
+
     /**
      * Test setters getters
      */
@@ -23,19 +25,19 @@ class AccountAddressToAddressTypeTest extends EntityTestCase
     }
 
     /**
-     * @return AccountAddressToAddressType
+     * @return CustomerUserAddressToAddressType
      */
     protected function createAddressToAddressTypeEntity()
     {
-        return new AccountAddressToAddressType();
+        return new CustomerUserAddressToAddressType();
     }
 
     /**
-     * @return AccountAddress
+     * @return AccountUserAddress
      */
     protected function createAddressEntity()
     {
-        return new AccountAddress();
+        return new AccountUserAddress();
     }
 
     /**
