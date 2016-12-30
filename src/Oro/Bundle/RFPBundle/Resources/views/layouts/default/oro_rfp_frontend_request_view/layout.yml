@@ -39,6 +39,11 @@ layout:
                     blockType: rfp_request_information
                     options:
                         request: '=data["entity"]'
+                rfp_request_view_additional_notes:
+                    blockType: rfp_additional_notes
+                    options:
+                        visible: '=data["entity"].getRequestAdditionalNotes().count()>0'
+                        requestAdditionalNotes: '=data["entity"].getRequestAdditionalNotes()'
                 rfp_request_view_line_items:
                     blockType: rfp_request_line_items
                     options:
@@ -47,15 +52,6 @@ layout:
                     blockType: rfp_request_line_items
                     options:
                         requestProducts: '=data["entity"].getRequestProducts()'
-                rfp_request_view_notes_container:
-                    blockType: container
-                    options:
-                        visible: '=data["entity"].getNote()!=null'
-                rfp_request_view_notes:
-                    blockType: text
-                    options:
-                        visible: '=data["entity"].getNote()!=null'
-                        text: '=data["entity"].getNote()'
                 rfp_request_view_bottom:
                     blockType: container
                 rfp_request_view_back_btn:
@@ -70,9 +66,8 @@ layout:
                             rfp_request_view_top_actions: ~
                         rfp_request_view_controls_list: ~
                         rfp_request_view_information: ~
+                        rfp_request_view_additional_notes: ~
                         rfp_request_view_line_items: ~
                         rfp_request_view_line_items_mobile: ~
-                        rfp_request_view_notes_container:
-                            rfp_request_view_notes: ~
                         rfp_request_view_bottom:
                             rfp_request_view_back_btn: ~
