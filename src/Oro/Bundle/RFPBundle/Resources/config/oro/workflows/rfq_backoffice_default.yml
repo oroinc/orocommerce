@@ -120,28 +120,13 @@ workflows:
                     - '@assign_constant_value':
                         attribute: $.result.note_type
                         value: Oro\Bundle\RFPBundle\Entity\RequestAdditionalNote::TYPE_SELLER_NOTE
-                    - '@create_datetime':
-                        attribute: $.result.current_date
-                    - '@assign_active_user':
-                        attribute: $.result.current_user
-                    - '@create_entity':
-                        class: Oro\Bundle\RFPBundle\Entity\RequestAdditionalNote
-                        attribute: $.result.request_more_information_note
-                        flush: true
-                        data:
-                            request: $.entity
-                            type: $.result.note_type
-                            text: $notes
-                            author: $.result.current_user.fullName
-                            createdAt: $.result.current_date
-                            updatedAt: $.result.current_date
-                            userId: $.result.current_user.id
+                    - '@run_action_group':
+                        action_group: oro_rfp_create_request_additional_note
+                        parameters_mapping:
+                            request: $request
+                            note_type: $.result.note_type
+                            notes: $notes
                     - '@unset_value': [$notes] # unset temporary property
-                    - '@call_method':
-                        parameters:
-                            object: $.result.request_more_information_note
-                            method: addRequestAdditionalNote
-                            method_parameters: [$.result.request_more_information_note]
             delete_transition_definition:
                 actions:
                     - '@request_enum_entity':

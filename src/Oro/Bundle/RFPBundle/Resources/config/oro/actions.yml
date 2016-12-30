@@ -375,3 +375,34 @@ action_groups:
             - '@create_datetime':
                 attribute: $.data.deletedAt
             - '@flush_entity': $.data
+
+    oro_rfp_create_request_additional_note:
+        parameters:
+            request:
+                type: Oro\Bundle\RFPBundle\Entity\Request
+            note_type:
+                type: string
+            notes:
+                type: string
+        actions:
+            - '@create_datetime':
+                attribute: $.current_date
+            - '@assign_active_user':
+                attribute: $.current_user
+            - '@create_entity':
+                class: Oro\Bundle\RFPBundle\Entity\RequestAdditionalNote
+                attribute: $.request_additional_note
+                flush: true
+                data:
+                    request: $.request
+                    type: $.note_type
+                    text: $.notes
+                    author: $.current_user.fullName
+                    createdAt: $.current_date
+                    updatedAt: $.current_date
+                    userId: $.current_user.id
+            - '@call_method':
+                parameters:
+                    object: $.request
+                    method: addRequestAdditionalNote
+                    method_parameters: [$.request_additional_note]

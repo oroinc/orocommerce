@@ -8,7 +8,7 @@ oro:
                 processed:
                     label: 'Processed'
                 more_info_requested:
-                    label: 'More info requested'
+                    label: 'More Information Requested'
                 declined:
                     label: 'Declined'
                 deleted:
@@ -18,17 +18,17 @@ oro:
                     label: 'Notes'
             transition:
                 __start__:
-                    label: 'Start transition'
+                    label: 'Start'
                 process_transition:
                     label: 'Process'
                 request_more_information_transition:
-                    label: 'Request more information'
+                    label: 'Request More Information'
                 decline_transition:
                     label: 'Decline'
                 delete_transition:
                     label: 'Delete'
                 info_provided_transition:
-                    label: 'Info provided'
+                    label: 'Information Provided'
                 reprocess_transition:
                     label: 'Reprocess'
                 undelete_transition:
@@ -40,16 +40,19 @@ oro:
                 submitted:
                     label: 'Submitted'
                 requires_attention:
-                    label: 'Requires attention'
+                    label: 'Requires Attention'
                 cancelled:
                     label: 'Cancelled'
+            attribute:
+                notes:
+                    label: 'Notes'
             transition:
                 __start__:
-                    label: 'Start transition'
+                    label: 'Start'
                 more_information_requested_transition:
-                    label: 'More information requested'
+                    label: 'More Information requested'
                 provide_more_information_transition:
-                    label: 'Provide more information'
+                    label: 'Provide More Information'
                 cancel_transition:
                     label: 'Cancel'
                 resubmit_transition:

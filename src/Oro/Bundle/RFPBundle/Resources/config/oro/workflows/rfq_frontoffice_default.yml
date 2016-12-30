@@ -26,6 +26,10 @@ workflows:
                     - resubmit_transition
                     - reopen_transition
 
+        attributes:
+            notes:
+                type: string
+
         transitions:
             __start__:
                 is_start: true
@@ -38,7 +42,15 @@ workflows:
                 transition_definition: stub_transition_definition
             provide_more_information_transition:
                 step_to: submitted
-                transition_definition: stub_transition_definition
+                transition_definition: provide_more_information_transition_definition
+                form_options:
+                    attribute_fields:
+                        notes:
+                            form_type: oro_rich_text
+                            options:
+                                required: true
+                                constraints:
+                                  - NotBlank: ~
             cancel_transition:
                 step_to: cancelled
                 transition_definition: cancel_transition_definition
@@ -70,4 +82,27 @@ workflows:
                         enum_code: 'rfp_customer_status'
                         attribute: $request.customerStatus
                         identifier: 'cancelled'
+            provide_more_information_transition_definition:
+                preconditions:
+                    '@equal': [$request.internalStatus.id, 'more_info_requested']
+                actions:
+                    - '@request_enum_entity':
+                        enum_code: 'rfp_internal_status'
+                        attribute: $request.internalStatus
+                        identifier: 'open'
+                    - '@request_enum_entity':
+                        enum_code: 'rfp_customer_status'
+                        attribute: $request.customerStatus
+                        identifier: 'submitted'
+
+                    - '@assign_constant_value':
+                        attribute: $.result.note_type
+                        value: Oro\Bundle\RFPBundle\Entity\RequestAdditionalNote::TYPE_CUSTOMER_NOTE
+                    - '@run_action_group':
+                        action_group: oro_rfp_create_request_additional_note
+                        parameters_mapping:
+                            request: $request
+                            note_type: $.result.note_type
+                            notes: $notes
+                    - '@unset_value': [$notes] # unset temporary property
             stub_transition_definition: ~
