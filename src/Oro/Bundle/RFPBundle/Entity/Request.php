@@ -68,6 +68,9 @@ class Request extends ExtendRequest implements
     use AuditableFrontendAccountUserAwareTrait;
     use AuditableUserAwareTrait;
 
+    const CUSTOMER_STATUS_CODE = 'rfp_customer_status';
+    const INTERNAL_STATUS_CODE = 'rfp_internal_status';
+
     /**
      * @var integer
      *
