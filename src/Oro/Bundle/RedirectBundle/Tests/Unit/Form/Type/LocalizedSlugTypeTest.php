@@ -45,7 +45,8 @@ class LocalizedSlugTypeTest extends FormIntegrationTestCase
 
     public function testBuildForm()
     {
-        $builder = $this->getMock(FormBuilderInterface::class);
+        /** @var FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder */
+        $builder = $this->createMock(FormBuilderInterface::class);
         $builder->expects($this->any())
                 ->method('addEventListener');
         $builder->expects($this->at(1))
@@ -57,12 +58,14 @@ class LocalizedSlugTypeTest extends FormIntegrationTestCase
 
     public function testOnPreSetDataForUpdate()
     {
-        $formConfig = $this->getMock(FormConfigInterface::class);
+        /** @var FormConfigInterface|\PHPUnit_Framework_MockObject_MockObject $formConfig */
+        $formConfig = $this->createMock(FormConfigInterface::class);
         $formConfig->expects($this->any())
             ->method('getOption')
             ->with('create_redirect_enabled')
             ->will($this->returnValue(true));
-        $form = $this->getMock(FormInterface::class);
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        $form = $this->createMock(FormInterface::class);
         $form->expects($this->any())
              ->method('getConfig')
              ->will($this->returnValue($formConfig));
@@ -77,6 +80,7 @@ class LocalizedSlugTypeTest extends FormIntegrationTestCase
                  ]
              );
 
+        /** @var FormEvent|\PHPUnit_Framework_MockObject_MockObject $event */
         $event = $this->getMockBuilder(FormEvent::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -93,18 +97,19 @@ class LocalizedSlugTypeTest extends FormIntegrationTestCase
 
     public function testOnPreSetDataForCreate()
     {
-        $formConfig = $this->getMock(FormConfigInterface::class);
+        $formConfig = $this->createMock(FormConfigInterface::class);
         $formConfig->expects($this->any())
                    ->method('getOption')
                    ->with('create_redirect_enabled')
                    ->will($this->returnValue(true));
-        $form = $this->getMock(FormInterface::class);
+        $form = $this->createMock(FormInterface::class);
         $form->expects($this->any())
              ->method('getConfig')
              ->will($this->returnValue($formConfig));
         $form->expects($this->never())
               ->method('add');
 
+        /** @var FormEvent|\PHPUnit_Framework_MockObject_MockObject $event */
         $event = $this->getMockBuilder(FormEvent::class)
                       ->disableOriginalConstructor()
                       ->getMock();
@@ -120,6 +125,7 @@ class LocalizedSlugTypeTest extends FormIntegrationTestCase
 
     public function testConfigureOptions()
     {
+        /** @var OptionsResolver|\PHPUnit_Framework_MockObject_MockObject $resolver */
         $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())->method('setDefaults')->with(
             $this->callback(
@@ -143,6 +149,7 @@ class LocalizedSlugTypeTest extends FormIntegrationTestCase
 
     public function testBuildViewForSlugifyComponent()
     {
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
         $form = $this->createMock(FormInterface::class);
 
         $viewParent = new FormView();
@@ -176,7 +183,8 @@ class LocalizedSlugTypeTest extends FormIntegrationTestCase
 
     public function testBuildViewForConfirmationComponent()
     {
-        $form = $this->getMock(FormInterface::class);
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        $form = $this->createMock(FormInterface::class);
         $data = $this->createPersistentCollection();
         $form->expects($this->any())
           ->method('getData')
@@ -205,7 +213,8 @@ class LocalizedSlugTypeTest extends FormIntegrationTestCase
 
     public function testBuildViewWithComponentsDisabled()
     {
-        $form = $this->getMock(FormInterface::class);
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        $form = $this->createMock(FormInterface::class);
 
         $view = new FormView();
         $view->vars['full_name'] = 'form-name[target-name]';
@@ -225,13 +234,12 @@ class LocalizedSlugTypeTest extends FormIntegrationTestCase
      */
     protected function createPersistentCollection()
     {
-        /** @var EntityManagerInterface $em */
-        $em = $this->getMock(EntityManagerInterface::class);
+        /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
+        $em = $this->createMock(EntityManagerInterface::class);
         /** @var ClassMetadata $classMetadata */
         $classMetadata = $this->getMockBuilder(ClassMetadata::class)->disableOriginalConstructor()->getMock();
         $collection = new ArrayCollection(['some-entry']);
-        $value = new PersistentCollection($em, $classMetadata, $collection);
 
-        return $value;
+        return new PersistentCollection($em, $classMetadata, $collection);
     }
 }

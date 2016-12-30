@@ -111,9 +111,10 @@ class SlugGenerator
 
     /**
      * @param ContentNode $contentNode
-     * @return SlugUrl[]|Collection
+     *
+     * @return Collection|SlugUrl[]
      */
-    protected function prepareSlugUrls(ContentNode $contentNode)
+    public function prepareSlugUrls(ContentNode $contentNode)
     {
         $filledSlugPrototypes = $this->getFilledSlugPrototypes($contentNode);
         $parentNodeSlugUrls = $this->getParentNodeSlugUrls($contentNode);

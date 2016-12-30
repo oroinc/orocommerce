@@ -12,6 +12,7 @@ define(function(require) {
     var BasicTreeManageComponent = require('oroui/js/app/components/basic-tree-manage-component');
 
     WebCatalogTreeComponent = BasicTreeManageComponent.extend({
+
         /**
          * @property {Object}
          */
@@ -78,7 +79,7 @@ define(function(require) {
 
             this._removeConfirmModal();
             this.confirmModal = new ConfirmSlugChangeModal({
-                'changedSlugs': this._getChangedSlugsList(),
+                'changedSlugs': this._getChangedUrlsList(),
                 'confirmState': this.confirmState
             })
                 .on('ok', _.bind(this.onConfirmModalOk, this))
@@ -91,42 +92,45 @@ define(function(require) {
          * @returns {string}
          * @private
          */
-        _getChangedSlugsList: function() {
+        _getChangedUrlsList: function() {
             var list = '';
             var newParentId = this.moveEventData.data.node.parent;
             var nodeId = this.moveEventData.data.node.id;
-            var slugs = this._getSlugs(nodeId, newParentId);
-            _.each(slugs, function(slug, localization){
-                list += '\n' + __(
-                        'oro.redirect.confirm_slug_change.changed_slug_item',
-                        {
-                            'old_slug': slug.oldSlug,
-                            'new_slug': slug.newSlug,
-                            'purpose': localization
-                        }
-                    );
-            });
-            for (var localization in slugs) {
-                if (slugs.hasOwnProperty(localization)) {
-
+            var urls = this._getChangedUrls(nodeId, newParentId);
+            for (var localization in urls) {
+                if (urls.hasOwnProperty(localization)) {
+                    list += '\n' + __(
+                            'oro.redirect.confirm_slug_change.changed_slug_item',
+                            {
+                                'old_slug': urls[localization].before,
+                                'new_slug': urls[localization].after,
+                                'purpose': localization
+                            }
+                        );
                 }
             }
             return list;
         },
 
-        _getSlugs: function(nodeId, newParentId) {
-            // @todo during BB-6052, this stub should be replaced with AJAX call
-            // @todo note, localization titles, like "English(uk)" should be localized
-            return {
-                'English': {
-                    oldSlug: 'old-en-slug',
-                    newSlug: 'new-en-slug'
-                },
-                'English(uk)': {
-                    oldSlug: 'old-en-uk-slug',
-                    newSlug: 'new-en-uk-slug'
-                }
-            };
+        _getChangedUrls: function(nodeId, newParentId) {
+            var urls;
+            $.ajax({
+                async: false,
+                url: routing.generate('oro_content_node_get_possible_urls',{id: nodeId, newParentId: newParentId}),
+                success: _.bind(function(result) {
+                    urls = result;
+                }, this)
+            });
+
+            if (typeof urls !== 'undefined') {
+                return urls;
+            } else {
+                messenger.notificationFlashMessage(
+                    'error',
+                    __('oro.ui.unexpected_error')
+                );
+                throw new TypeError('Can\'t get changed urls.');
+            }
         },
 
         /**
