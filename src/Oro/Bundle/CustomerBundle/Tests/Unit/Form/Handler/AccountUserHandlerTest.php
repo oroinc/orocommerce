@@ -15,7 +15,7 @@ use Symfony\Component\Translation\TranslatorInterface;
 class AccountUserHandlerTest extends FormHandlerTestCase
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|\Oro\Bundle\CustomerBundle\Entity\AccountUserManager
+     * @var \PHPUnit_Framework_MockObject_MockObject|\Oro\Bundle\CustomerBundle\Entity\CustomerUserManager
      */
     protected $userManager;
 
@@ -58,7 +58,7 @@ class AccountUserHandlerTest extends FormHandlerTestCase
 
         $this->entity = new AccountUser();
 
-        $this->userManager = $this->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\AccountUserManager')
+        $this->userManager = $this->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\CustomerUserManager')
             ->disableOriginalConstructor()
             ->getMock();
 

@@ -42,6 +42,8 @@ define([
                 _.each(this.modules, function(module) {
                     if (_.isFunction(module._afterRenderButtons)) {
                         module._afterRenderButtons();
+                    } else if (module.view && _.isFunction(module.view._afterRenderButtons)) {
+                        module.view._afterRenderButtons();
                     }
                 });
             },

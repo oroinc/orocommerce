@@ -1,0 +1,12 @@
+{% block __oro_product_variant_form__variant_field_form_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'data-page-component-module': 'oroui/js/app/components/view-component',
+        '~data-page-component-options': {
+            view: 'oroproduct/js/app/views/base-product-variants-view',
+        },
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}

@@ -28,8 +28,6 @@ define(function(require) {
             }
         },
 
-        $el: null,
-
         dropdownWidget: null,
 
         shoppingListCollection: null,
@@ -44,10 +42,10 @@ define(function(require) {
             ProductAddToShoppingListView.__super__.initialize.apply(this, arguments);
             this.options = $.extend(true, {}, this.options, _.pick(options, _.keys(this.options)));
 
-            this.initModel(options);
-
             this.dropdownWidget = options.dropdownWidget;
-            this.setElement(this.dropdownWidget.element);
+            this.$form = this.dropdownWidget.element.closest('form');
+
+            this.initModel(options);
 
             if (this.options.buttonTemplate) {
                 this.options.buttonTemplate = _.template(this.options.buttonTemplate);
@@ -66,7 +64,7 @@ define(function(require) {
                 this.model.on('editLineItem', this._onEditLineItem, this);
             }
 
-            this.$el.closest('form').find(this.options.quantityField).on('keydown', _.bind(this._onQuantityEnter, this));
+            this.$form.find(this.options.quantityField).on('keydown', _.bind(this._onQuantityEnter, this));
 
             ShoppingListCollectionService.shoppingListCollection.done(_.bind(function(collection) {
                 this.shoppingListCollection = collection;
@@ -76,7 +74,9 @@ define(function(require) {
         },
 
         initModel: function(options) {
-            this.modelAttr = $.extend(true, {}, this.modelAttr, options.modelAttr || {});
+            var modelAttr = options.modelAttr || {};
+            this.modelAttr = $.extend(true, {}, this.modelAttr, modelAttr);
+            this.$el.trigger('options:set:productModel', options);
             if (options.productModel) {
                 this.model = options.productModel;
             }
@@ -86,7 +86,7 @@ define(function(require) {
             }
 
             _.each(this.modelAttr, function(value, attribute) {
-                if (!this.model.has(attribute)) {
+                if (!this.model.has(attribute) || modelAttr[attribute] !== undefined ) {
                     this.model.set(attribute, value);
                 }
             }, this);
@@ -167,7 +167,7 @@ define(function(require) {
         },
 
         findDropdownButtons: function(filter) {
-            var $el = this.dropdownWidget.dropdown || this.$el;
+            var $el = this.dropdownWidget.dropdown || this.dropdownWidget.element;
             var $buttons = $el.find(this.options.buttonsSelector);
             if (filter) {
                 $buttons = $buttons.filter(filter);
@@ -224,7 +224,7 @@ define(function(require) {
             var $button = $(e.currentTarget);
             var url = $button.data('url');
             var intention = $button.data('intention');
-            var formData = this.$el.closest('form').serialize();
+            var formData = this.$form.serialize();
             var urlOptions = {};
 
             if (!this.dropdownWidget.validateForm()) {
@@ -303,6 +303,9 @@ define(function(require) {
         },
 
         _createNewShoppingList: function(url, urlOptions, formData) {
+            if (this.model && !this.model.get('line_item_form_enable')) {
+                return;
+            }
             var dialog = new ShoppingListCreateWidget({});
             dialog.on('formSave', _.bind(function(response) {
                 urlOptions.shoppingListId = response;
@@ -312,6 +315,9 @@ define(function(require) {
         },
 
         _addProductToShoppingList: function(url, urlOptions, formData) {
+            if (this.model && !this.model.get('line_item_form_enable')) {
+                return;
+            }
             var self = this;
             mediator.execute('showLoading');
             $.ajax({
@@ -357,6 +363,9 @@ define(function(require) {
         },
 
         _saveLineItem: function(urlOptions, formData) {
+            if (this.model && !this.model.get('line_item_form_enable')) {
+                return;
+            }
             mediator.execute('showLoading');
 
             var savePromise = this.saveApiAccessor.send({
@@ -385,6 +394,7 @@ define(function(require) {
             delete this.modelAttr;
             delete this.shoppingListCollection;
             delete this.editLineItem;
+            delete this.$form;
 
             mediator.off(null, null, this);
             if (this.model) {

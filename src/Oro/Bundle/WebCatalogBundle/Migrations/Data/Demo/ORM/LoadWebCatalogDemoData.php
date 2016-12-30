@@ -14,6 +14,7 @@ use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
+use Oro\Bundle\WebCatalogBundle\ContentVariantType\SystemPageContentVariantType;
 use Oro\Bundle\WebCatalogBundle\DependencyInjection\OroWebCatalogExtension;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
@@ -203,6 +204,8 @@ class LoadWebCatalogDemoData extends AbstractFixture implements ContainerAwareIn
                 ->getRepository(Page::class)
                 ->findOneByTitle($params['title']);
             $variant->setCmsPage($page);
+        } elseif ($type === SystemPageContentVariantType::TYPE) {
+            $variant->setSystemPageRoute($params['route']);
         }
         
         return $variant;

@@ -11,12 +11,13 @@ use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\CustomerBundle\Entity\AccountUserAddress;
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUserSettings;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserSettings;
 use Oro\Bundle\CustomerBundle\Tests\Unit\Traits\AddressEntityTestTrait;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class AccountUserTest extends AbstractUserTest
 {
@@ -251,10 +252,10 @@ class AccountUserTest extends AbstractUserTest
         $user = $this->getUser();
         $website = new Website();
 
-        $user->setWebsiteSettings(new AccountUserSettings(new Website()))
-            ->setWebsiteSettings(new AccountUserSettings($website))
-            ->setWebsiteSettings((new AccountUserSettings($website))->setCurrency('USD'))
-            ->setWebsiteSettings(new AccountUserSettings(new Website()));
+        $user->setWebsiteSettings(new CustomerUserSettings(new Website()))
+            ->setWebsiteSettings(new CustomerUserSettings($website))
+            ->setWebsiteSettings((new CustomerUserSettings($website))->setCurrency('USD'))
+            ->setWebsiteSettings(new CustomerUserSettings(new Website()));
 
         $this->assertSame('USD', $user->getWebsiteSettings($website)->getCurrency());
     }
