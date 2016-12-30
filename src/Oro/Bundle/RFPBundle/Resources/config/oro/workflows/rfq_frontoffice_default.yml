@@ -41,7 +41,7 @@ workflows:
                 transition_definition: stub_transition_definition
             cancel_transition:
                 step_to: cancelled
-                transition_definition: stub_transition_definition
+                transition_definition: cancel_transition_definition
             resubmit_transition:
                 step_to: submitted
                 transition_definition: stub_transition_definition
@@ -50,5 +50,24 @@ workflows:
                 transition_definition: stub_transition_definition
 
         transition_definitions:
-            __start___definition: ~
+            __start___definition:
+                actions:
+                    - '@request_enum_entity':
+                        enum_code: 'rfp_internal_status'
+                        attribute: $request.internalStatus
+                        identifier: 'open'
+                    - '@request_enum_entity':
+                        enum_code: 'rfp_customer_status'
+                        attribute: $request.customerStatus
+                        identifier: 'submitted'
+            cancel_transition_definition:
+                actions:
+                    - '@request_enum_entity':
+                        enum_code: 'rfp_internal_status'
+                        attribute: $request.internalStatus
+                        identifier: 'cancelled_by_customer'
+                    - '@request_enum_entity':
+                        enum_code: 'rfp_customer_status'
+                        attribute: $request.customerStatus
+                        identifier: 'cancelled'
             stub_transition_definition: ~
