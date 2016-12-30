@@ -215,14 +215,14 @@
 
 {% block __oro_checkout_content__checkout_button_continue_widget -%}
     {% if transitionData is defined and transitionData %}
-        <fieldset class="checkout__form__row">
-            <fieldset class="checkout__form__row">
+        <fieldset class="grid__row grid__row--offset-y">
+            <div class="grid__column">
+                {{ block_widget(block) }}
+            </div>
+            <div class="grid__column">
                 <div class="checkout__form__req-text {% if transitionData.isAllowed == false %}hidden{% endif %}"><sup>*</sup>
                     {{ 'oro.checkout.workflow.b2b_flow_checkout.form.required.label'|trans }}
                 </div>
-            </fieldset>
-            <div class="checkout__form__col form__col_x12">
-                {{ block_widget(block) }}
             </div>
         </fieldset>
     {% endif %}
