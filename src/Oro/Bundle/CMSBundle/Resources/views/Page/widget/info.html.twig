@@ -1,10 +1,12 @@
 {% import 'OroUIBundle::macros.html.twig' as UI %}
+{% import 'OroRedirectBundle::macros.html.twig' as Redirect %}
 
 <div class="widget-content">
     <div class="row-fluid form-horizontal">
         <div class="responsive-block">
             {{ UI.renderProperty('oro.cms.page.titles.singular_label'|trans, entity.defaultTitle) }}
             {{ UI.renderHtmlProperty('oro.cms.page.slug_prototypes.label'|trans, entity.defaultSlugPrototype) }}
+            {{ Redirect.renderGeneratedSlugs(entity.slugs) }}
         </div>
     </div>
 </div>
