@@ -8,6 +8,7 @@ use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Bundle\WebCatalogBundle\Form\Type\ContentNodeType;
 use Oro\Bundle\WebCatalogBundle\JsTree\ContentNodeTreeHandler;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -86,6 +87,48 @@ class ContentNodeController extends Controller
         return new JsonResponse(
             $this->getTreeHandler()->moveNode($nodeId, $parentId, $position)
         );
+    }
+
+    /**
+     * @Route(
+     *     "/get-possible-urls/{id}/{newParentId}",
+     *     name="oro_content_node_get_possible_urls",
+     *     requirements={"id"="\d+", "newParentId"="\d+"}
+     * )
+     *
+     * @ParamConverter("newParentContentNode", options={"id" = "newParentId"})
+     *
+     * @AclAncestor("oro_web_catalog_update")
+     *
+     * @param ContentNode $contentNode
+     * @param ContentNode $newParentContentNode
+     * @return JsonResponse
+     */
+    public function getPossibleUrlsAction(ContentNode $contentNode, ContentNode $newParentContentNode)
+    {
+        $slugGenerator = $this->get('oro_web_catalog.generator.slug_generator');
+        $localizationHelper = $this->get('oro_locale.helper.localization');
+        $defaultLocaleLabel = $this->get('translator')->trans('oro.locale.fallback.type.default');
+
+        $urlsBeforeMove = $slugGenerator->prepareSlugUrls($contentNode);
+        $contentNode->setParentNode($newParentContentNode);
+        $urlsAfterMove = $slugGenerator->prepareSlugUrls($contentNode);
+        $urlChanges = [];
+        foreach ($urlsBeforeMove as $urlBeforeMove) {
+            foreach ($urlsAfterMove as $urlAfterMove) {
+                $localization = $urlBeforeMove->getLocalization();
+                if (is_null($localization)) {
+                    $urlChanges[$defaultLocaleLabel]['before'] = $urlBeforeMove->getUrl();
+                    $urlChanges[$defaultLocaleLabel]['after'] = $urlAfterMove->getUrl();
+                } else {
+                    $localeLabel = (string)$localizationHelper->getLocalizedValue($localization->getTitles());
+                    $urlChanges[$localeLabel]['before'] = $urlBeforeMove->getUrl();
+                    $urlChanges[$localeLabel]['after'] = $urlAfterMove->getUrl();
+                }
+            }
+        }
+
+        return new JsonResponse($urlChanges);
     }
 
     /**

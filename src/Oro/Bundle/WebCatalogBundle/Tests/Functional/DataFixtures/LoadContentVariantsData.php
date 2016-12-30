@@ -13,6 +13,8 @@ class LoadContentVariantsData extends AbstractFixture implements DependentFixtur
 {
     const CUSTOMER_VARIANT = 'web_catalog.content_variant.customer';
     const ROOT_VARIANT = 'web_catalog.content_variant.root';
+    const CONTENT_VARIANT_SUBNODE_1 = 'web_catalog.content_variant.subnode_1';
+    const CONTENT_VARIANT_SUBNODE_2 = 'web_catalog.content_variant.subnode_2';
 
     /**
      * {@inheritdoc}
@@ -25,10 +27,27 @@ class LoadContentVariantsData extends AbstractFixture implements DependentFixtur
         $firstContentVariant = new ContentVariant();
         $firstContentVariant->setType(SystemPageContentVariantType::TYPE);
         $firstContentVariant->setSystemPageRoute('oro_customer_frontend_account_user_index');
-        $firstContentVariant->setNode($firstCatalogNode);
+        $firstCatalogNode->addContentVariant($firstContentVariant);
 
         $this->setReference(self::CUSTOMER_VARIANT, $firstContentVariant);
-        $manager->persist($firstContentVariant);
+
+        $subNode1 = $this->getReference(LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1);
+        $contentVariant = new ContentVariant();
+        $contentVariant->setType(SystemPageContentVariantType::TYPE);
+        $contentVariant->setSystemPageRoute('oro_customer_frontend_account_user_index');
+        $subNode1->addContentVariant($contentVariant);
+
+        $manager->persist($subNode1);
+        $this->setReference(self::CONTENT_VARIANT_SUBNODE_1, $contentVariant);
+
+        $subNode2 = $this->getReference(LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_2);
+        $contentVariant = new ContentVariant();
+        $contentVariant->setType(SystemPageContentVariantType::TYPE);
+        $contentVariant->setSystemPageRoute('oro_customer_frontend_account_user_index');
+        $subNode2->addContentVariant($contentVariant);
+
+        $manager->persist($subNode2);
+        $this->setReference(self::CONTENT_VARIANT_SUBNODE_2, $contentVariant);
 
         /** @var ContentNode $secondCatalogNode */
         $secondCatalogNode = $this->getReference(LoadContentNodesData::CATALOG_2_ROOT);

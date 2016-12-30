@@ -49,9 +49,9 @@ class ContentNodeRepositoryTest extends WebTestCase
     public function testGetContentVariantQueryBuilder()
     {
         /** @var WebCatalog $webCatalog */
-        $webCatalog = $this->getReference(LoadWebCatalogData::CATALOG_1);
+        $webCatalog = $this->getReference(LoadWebCatalogData::CATALOG_2);
         /** @var ContentNode $node */
-        $node = $this->getReference(LoadContentNodesData::CATALOG_1_ROOT);
+        $node = $this->getReference(LoadContentNodesData::CATALOG_2_ROOT);
 
         $queryBuilder = $this->repository->getContentVariantQueryBuilder($webCatalog);
         $this->assertEquals(
