@@ -6,8 +6,8 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodConfig;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
@@ -64,11 +64,11 @@ class RemoveUsedShippingServiceValidator extends ConstraintValidator
                 if (null !== $shippingMethod) {
                     $configuredMethods = $this
                         ->doctrine
-                        ->getManagerForClass('OroShippingBundle:ShippingRuleMethodConfig')
-                        ->getRepository('OroShippingBundle:ShippingRuleMethodConfig')
+                        ->getManagerForClass('OroShippingBundle:ShippingMethodConfig')
+                        ->getRepository('OroShippingBundle:ShippingMethodConfig')
                         ->findBy(['method' => $methodIdentifier]);
                     if (count($configuredMethods) > 0) {
-                        /** @var ShippingRuleMethodConfig $configuredMethod */
+                        /** @var ShippingMethodConfig $configuredMethod */
                         foreach ($configuredMethods as $configuredMethod) {
                             $configuredTypes = $configuredMethod->getTypeConfigs()->toArray();
                             $enabledTypes = $this->getEnabledTypes($configuredTypes);
@@ -111,7 +111,7 @@ class RemoveUsedShippingServiceValidator extends ConstraintValidator
     protected function getEnabledTypes($configuredTypes)
     {
         $enabledTypes = [];
-        /** @var ShippingRuleMethodTypeConfig $confType */
+        /** @var ShippingMethodTypeConfig $confType */
         foreach ($configuredTypes as $confType) {
             if ($confType->isEnabled()) {
                 $enabledTypes[] = $confType->getType();

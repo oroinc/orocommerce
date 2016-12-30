@@ -1,6 +1,10 @@
 body {
   .ui-datepicker {
-    padding: 10px 15px 10px;
+    padding: 4px 10px 7px;
+
+    font-family: $base-font !important; //Platform override
+
+    border-radius: 6px;
 
     .ui-datepicker-buttonpane {
       display: none;
@@ -8,19 +12,27 @@ body {
 
     .ui-datepicker-calendar {
       td {
+        vertical-align: middle;
+
         width: 20px;
         height: 20px;
-        padding: 2px;
-        border: none;
+        padding: 1.5px;
+
         text-align: center;
-        vertical-align: middle;
+
+        border: none;
       }
 
-      th span {
-        vertical-align: middle;
+      th {
+        padding: 4px;
 
-        color: get-color('additional', 'base');
-        font-weight: 400;
+        span {
+          vertical-align: middle;
+
+          color: get-color('additional', 'middle');
+
+          font-weight: 400;
+        }
       }
 
       tr:hover {
@@ -37,18 +49,26 @@ body {
         }
       }
 
+      .ui-state-disabled {
+        .ui-state-default {
+          color: get-color('additional', 'middle');
+        }
+      }
+
       a.ui-state-default {
         padding: 5px 6px;
-        border-radius: 4px;
+
+        font-size: $base-font-size;
 
         background: none;
         color: get-color('additional', 'dark');
-        font-size: $base-font-size;
+
+        border-radius: 4px;
 
         &.ui-state-active,
         &:hover {
-          border: none;
-          background: get-color('additional', 'base');
+          border-color: transparent;
+          background: get-color('additional', 'middle');
         }
 
         &.ui-state-active {
@@ -63,6 +83,7 @@ body {
 
     .ui-datepicker-header {
       padding: 5px 0;
+
       border: none;
 
       background: none;
@@ -73,9 +94,11 @@ body {
       .ui-datepicker-next,
       .ui-datepicker-prev {
         &:before {
-          content: '';
-          display: inline-block;
           vertical-align: middle;
+
+          content: '';
+
+          display: inline-block;
           width: 8px;
           margin-left: 8px;
           margin-top: 3px;
@@ -92,17 +115,17 @@ body {
 
           border-top: 7px solid transparent;
           border-bottom: 7px solid transparent;
-          border-left: 7px solid get-color('additional', 'base');
+          border-left: 7px solid get-color('additional', 'middle');
         }
       }
 
       .ui-datepicker-prev {
         &:before {
-          left: 4px;
+          margin-left: 0;
 
           border-top: 7px solid transparent;
           border-bottom: 7px solid transparent;
-          border-right: 7px solid get-color('additional', 'base');
+          border-right: 7px solid get-color('additional', 'middle');
         }
       }
 
@@ -112,6 +135,8 @@ body {
 
         background: get-color('additional', 'base');
         border-color: transparent;
+
+        border-radius: 4px;
       }
 
       .ui-datepicker-prev-hover {
@@ -123,7 +148,8 @@ body {
     }
     .ui-datepicker-title {
       color: get-color('additional', 'dark');
-      font-size: $base-font-size;
+
+      font-size: $base-font-size + 1;
       font-weight: 100;
     }
   }

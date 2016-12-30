@@ -1,7 +1,7 @@
 .main-menu-outer {
     display: flex;
 
-    position: relative;
+    justify-content: center;
 }
 
 @include breakpoint('tablet') {

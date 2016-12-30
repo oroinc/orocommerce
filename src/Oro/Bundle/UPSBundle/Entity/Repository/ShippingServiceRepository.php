@@ -2,15 +2,15 @@
 
 namespace Oro\Bundle\UPSBundle\Entity\Repository;
 
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\AddressBundle\Entity\Country;
+use Oro\Bundle\UPSBundle\Entity\ShippingService;
 
 class ShippingServiceRepository extends EntityRepository
 {
     /**
      * @param Country $country
-     * @return Collection
+     * @return ShippingService[]
      */
     public function getShippingServicesByCountry(Country $country)
     {

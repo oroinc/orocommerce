@@ -12,10 +12,6 @@
         position: relative;
 
         flex-grow: 1;
-
-        @media (max-width: 1280px) {
-          flex-basis: 300px;
-        }
       }
 
       &:last-child {
@@ -45,21 +41,23 @@
 .grid__tool {
   font-size: 0;
 
+  &:not(:last-child) {
+    margin-right: $offset-x-s;
+  }
+
   &:first-child {
     position: relative;
-
-    flex-basis: 320px;
   }
 
   &:last-child {
     flex-grow: 0;
   }
+}
 
-  &--specific-action {
-    margin-left: 5px;
-
-    @media (max-width: $screen-md) {
-      flex-basis: auto !important;
-    }
+@include breakpoint('mobile') {
+  .grid__tool {
+      .action-selectbox_custom_in-pager {
+          margin-right: $offset-x-s;
+      }
   }
 }

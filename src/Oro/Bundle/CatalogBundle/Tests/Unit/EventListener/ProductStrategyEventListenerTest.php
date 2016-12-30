@@ -2,10 +2,17 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\EventListener;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Event\PreFlushEventArgs;
+use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\EventListener\AbstractProductImportEventListener;
 use Oro\Bundle\CatalogBundle\EventListener\ProductStrategyEventListener;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\ImportExport\Event\ProductStrategyEvent;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class ProductStrategyEventListenerTest extends AbstractProductImportEventListenerTest
 {
     /**
@@ -45,10 +52,6 @@ class ProductStrategyEventListenerTest extends AbstractProductImportEventListene
         $this->listener->onProcessAfter($event);
 
         $this->assertArrayHasKey($title, $this->categoriesByTitle);
-        $category = $this->categoriesByTitle[$title];
-
-        $this->assertCount(1, $category->getProducts());
-        $this->assertEquals($product, $category->getProducts()->first());
 
         $this->listener->onProcessAfter($event);
         $this->assertEquals(1, $this->findByDefaultTitleCalls[$title]);
@@ -70,13 +73,308 @@ class ProductStrategyEventListenerTest extends AbstractProductImportEventListene
 
     public function testOnClear()
     {
-        $product = $this->getPreparedProduct();
-        $rawData = [AbstractProductImportEventListener::CATEGORY_KEY => 'some title'];
+        // Schedule deferred adding product to category
+        /** @var Product $product */
+        $sku = 'product1';
+        $product = $this->getEntity(Product::class, ['id' => 1, 'sku' => $sku]);
+
+        /** @var Category $oldCategory */
+        $oldCategory = $this->getEntity(Category::class, ['id' => 1]);
+        $this->findByProductSkuCalls[$sku] = 0;
+        $this->categoriesByProduct[$sku] = $oldCategory;
+        $oldCategory->addProduct($product);
+
+        /** @var Category $newCategory */
+        $newCategory = $this->getEntity(Category::class, ['id' => 2]);
+        $title = 'category1';
+        $this->findByDefaultTitleCalls[$title] = 0;
+        $this->categoriesByTitle[$title] = $newCategory;
+        $rawData = [AbstractProductImportEventListener::CATEGORY_KEY => $title];
 
         $event = new ProductStrategyEvent($product, $rawData);
         $this->listener->onProcessAfter($event);
         $this->listener->onClear();
+
+        /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->expects($this->never())
+            ->method('flush');
+
+        $preFlushEvent = new PreFlushEventArgs($em);
+        $this->listener->preFlush($preFlushEvent);
+        $this->assertEquals(1, $this->findByProductSkuCalls[$product->getSku()]);
+    }
+
+    public function testPreFlushWithEmptyProductToAdd()
+    {
+        /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
+        $em = $this->createMock(EntityManagerInterface::class);
+
+        $em->expects($this->never())
+            ->method('flush');
+
+        $event = new PreFlushEventArgs($em);
+        $this->listener->preFlush($event);
+    }
+
+    public function testPreFlush()
+    {
+        // Schedule deferred adding product to category
+        /** @var Product $product */
+        $sku = 'product1';
+        $product = $this->getEntity(Product::class, ['id' => 1, 'sku' => $sku]);
+
+        /** @var Category $oldCategory */
+        $oldCategory = $this->getEntity(Category::class, ['id' => 1]);
+        $this->findByProductSkuCalls[$sku] = 0;
+        $this->categoriesByProduct[$sku] = $oldCategory;
+        $oldCategory->addProduct($product);
+
+        /** @var Category $newCategory */
+        $newCategory = $this->getEntity(Category::class, ['id' => 2]);
+        $title = 'category1';
+        $this->findByDefaultTitleCalls[$title] = 0;
+        $this->categoriesByTitle[$title] = $newCategory;
+
+        $rawData = [AbstractProductImportEventListener::CATEGORY_KEY => $title];
+        $event = new ProductStrategyEvent($product, $rawData);
         $this->listener->onProcessAfter($event);
-        $this->assertEquals(2, $this->findByProductSkuCalls[$product->getSku()]);
+
+        // Product was not added by onProcessAfter event
+        $this->assertEmpty($newCategory->getProducts());
+        // Product was removed by onProcessAfter event
+        $this->assertEmpty($oldCategory->getProducts());
+
+        /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
+        $em = $this->createMock(EntityManagerInterface::class);
+
+        $em->expects($this->once())
+            ->method('flush');
+
+        $em->expects($this->exactly(2))
+            ->method('contains')
+            ->withConsecutive($newCategory, $product)
+            ->willReturnOnConsecutiveCalls(true, true);
+
+        $event = new PreFlushEventArgs($em);
+        $this->listener->preFlush($event);
+
+        $this->assertCount(1, $newCategory->getProducts());
+        $this->assertEquals($product, $newCategory->getProducts()->first());
+
+        // Repeated call should be skipped
+        $this->listener->preFlush($event);
+    }
+
+    public function testPreFlushNoNewCategory()
+    {
+        // Schedule deferred adding product to category
+        /** @var Product $product */
+        $sku = 'product1';
+        $product = $this->getEntity(Product::class, ['id' => 1, 'sku' => $sku]);
+
+        /** @var Category $oldCategory */
+        $oldCategory = $this->getEntity(Category::class, ['id' => 1]);
+        $this->findByProductSkuCalls[$sku] = 0;
+        $this->categoriesByProduct[$sku] = $oldCategory;
+        $oldCategory->addProduct($product);
+
+        /** @var Category $newCategory */
+        $newCategory = $this->getEntity(Category::class, ['id' => 2]);
+        $title = 'category1';
+        $this->findByDefaultTitleCalls[$title] = 0;
+        $this->categoriesByTitle[$title] = $newCategory;
+
+        $rawData = [AbstractProductImportEventListener::CATEGORY_KEY => $title];
+        $event = new ProductStrategyEvent($product, $rawData);
+        $this->listener->onProcessAfter($event);
+
+        // Product was removed by onProcessAfter event
+        $this->assertEmpty($oldCategory->getProducts());
+
+        /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
+        $em = $this->createMock(EntityManagerInterface::class);
+
+        $em->expects($this->once())
+            ->method('flush');
+
+        $event = new PreFlushEventArgs($em);
+        $this->listener->preFlush($event);
+    }
+
+    public function testPreFlushSameCategory()
+    {
+        // Schedule deferred adding product to category
+        /** @var Product $product */
+        $sku = 'product1';
+        $product = $this->getEntity(Product::class, ['id' => 1, 'sku' => $sku]);
+
+        /** @var Category $oldCategory */
+        $oldCategory = $this->getEntity(Category::class, ['id' => 1]);
+        $this->findByProductSkuCalls[$sku] = 0;
+        $this->categoriesByProduct[$sku] = $oldCategory;
+        $oldCategory->addProduct($product);
+
+        /** @var Category $newCategory */
+        $newCategory = $this->getEntity(Category::class, ['id' => 1]);
+        $title = 'category1';
+        $this->findByDefaultTitleCalls[$title] = 0;
+        $this->categoriesByTitle[$title] = $newCategory;
+
+        $rawData = [AbstractProductImportEventListener::CATEGORY_KEY => $title];
+        $event = new ProductStrategyEvent($product, $rawData);
+        $this->listener->onProcessAfter($event);
+
+        // Product was removed by onProcessAfter event
+        $this->assertNotEmpty($oldCategory->getProducts());
+        $this->assertEquals($product, $oldCategory->getProducts()->first());
+
+        /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
+        $em = $this->createMock(EntityManagerInterface::class);
+
+        $em->expects($this->never())
+            ->method('flush');
+
+        $event = new PreFlushEventArgs($em);
+        $this->listener->preFlush($event);
+    }
+
+    public function testPreFlushWithNotManagedCategory()
+    {
+        // Schedule deferred adding product to category
+        /** @var Product $product */
+        $sku = 'product1';
+        $product = $this->getEntity(Product::class, ['id' => 1, 'sku' => $sku]);
+
+        /** @var Category $oldCategory */
+        $oldCategory = $this->getEntity(Category::class, ['id' => 1]);
+        $this->findByProductSkuCalls[$sku] = 0;
+        $this->categoriesByProduct[$sku] = $oldCategory;
+        $oldCategory->addProduct($product);
+
+        /** @var Category $newCategory */
+        $newCategory = $this->getEntity(Category::class, ['id' => 2]);
+        $title = 'category1';
+        $this->findByDefaultTitleCalls[$title] = 0;
+        $this->categoriesByTitle[$title] = $newCategory;
+
+        $rawData = [AbstractProductImportEventListener::CATEGORY_KEY => $title];
+        $event = new ProductStrategyEvent($product, $rawData);
+        $this->listener->onProcessAfter($event);
+
+        // Product was not added by onProcessAfter event
+        $this->assertEmpty($newCategory->getProducts());
+        // Product was removed by onProcessAfter event
+        $this->assertEmpty($oldCategory->getProducts());
+
+        /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
+        $em = $this->createMock(EntityManagerInterface::class);
+
+        $em->expects($this->once())
+            ->method('flush');
+
+        $em->expects($this->exactly(1))
+            ->method('contains')
+            ->with($newCategory)
+            ->willReturn(false);
+
+        $event = new PreFlushEventArgs($em);
+        $this->listener->preFlush($event);
+
+        $this->assertEmpty($newCategory->getProducts());
+    }
+
+    public function testPreFlushWithNotManagedProduct()
+    {
+        // Schedule deferred adding product to category
+        /** @var Product $product */
+        $sku = 'product1';
+        $product = $this->getEntity(Product::class, ['id' => 1, 'sku' => $sku]);
+
+        /** @var Category $oldCategory */
+        $oldCategory = $this->getEntity(Category::class, ['id' => 1]);
+        $this->findByProductSkuCalls[$sku] = 0;
+        $this->categoriesByProduct[$sku] = $oldCategory;
+        $oldCategory->addProduct($product);
+
+        /** @var Category $newCategory */
+        $newCategory = $this->getEntity(Category::class, ['id' => 2]);
+        $title = 'category1';
+        $this->findByDefaultTitleCalls[$title] = 0;
+        $this->categoriesByTitle[$title] = $newCategory;
+
+        $rawData = [AbstractProductImportEventListener::CATEGORY_KEY => $title];
+        $event = new ProductStrategyEvent($product, $rawData);
+        $this->listener->onProcessAfter($event);
+
+        // Product was not added by onProcessAfter event
+        $this->assertEmpty($newCategory->getProducts());
+        // Product was removed by onProcessAfter event
+        $this->assertEmpty($oldCategory->getProducts());
+
+        /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
+        $em = $this->createMock(EntityManagerInterface::class);
+
+        $em->expects($this->once())
+            ->method('flush');
+
+        $em->expects($this->exactly(2))
+            ->method('contains')
+            ->withConsecutive($newCategory, $product)
+            ->willReturnOnConsecutiveCalls(true, false);
+
+        $event = new PreFlushEventArgs($em);
+        $this->listener->preFlush($event);
+
+        $this->assertEmpty($newCategory->getProducts());
+    }
+
+    public function testPreFlushCallingFlushInsideFlush()
+    {
+        // Schedule deferred adding product to category
+        /** @var Product $product */
+        $sku = 'product1';
+        $product = $this->getEntity(Product::class, ['id' => 1, 'sku' => $sku]);
+
+        /** @var Category $oldCategory */
+        $oldCategory = $this->getEntity(Category::class, ['id' => 1]);
+        $this->findByProductSkuCalls[$sku] = 0;
+        $this->categoriesByProduct[$sku] = $oldCategory;
+        $oldCategory->addProduct($product);
+
+        /** @var Category $newCategory */
+        $newCategory = $this->getEntity(Category::class, ['id' => 2]);
+        $title = 'category1';
+        $this->findByDefaultTitleCalls[$title] = 0;
+        $this->categoriesByTitle[$title] = $newCategory;
+
+        $rawData = [AbstractProductImportEventListener::CATEGORY_KEY => $title];
+        $event = new ProductStrategyEvent($product, $rawData);
+        $this->listener->onProcessAfter($event);
+
+        $this->assertArrayHasKey($title, $this->categoriesByTitle);
+
+        // Product was not added by onProcessAfter event
+        $this->assertEmpty($newCategory->getProducts());
+
+        /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
+        $em = $this->createMock(EntityManagerInterface::class);
+
+        $event = new PreFlushEventArgs($em);
+
+        $em->expects($this->once())
+            ->method('flush')
+            ->willReturnCallback(function () use ($event) {
+                $this->listener->preFlush($event);
+            });
+
+        $em->expects($this->exactly(2))
+            ->method('contains')
+            ->withConsecutive($newCategory, $product)
+            ->willReturnOnConsecutiveCalls(true, false);
+
+        $this->listener->preFlush($event);
+
+        $this->assertEmpty($newCategory->getProducts());
     }
 }

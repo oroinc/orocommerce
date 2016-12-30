@@ -131,7 +131,7 @@ class BaseFormViewListenerTestCase extends FormViewListenerTestCase
     protected function getScrollData()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|ScrollData $scrollData */
-        $scrollData = $this->getMock('Oro\Bundle\UIBundle\View\ScrollData');
+        $scrollData = $this->createMock('Oro\Bundle\UIBundle\View\ScrollData');
 
         $scrollData->expects($this->once())
             ->method('addNamedBlock');

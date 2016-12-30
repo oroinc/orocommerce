@@ -60,6 +60,9 @@ class ImportExportTest extends AbstractImportExportTestCase
      */
     public function testImportExport($strategy)
     {
+        $this->markTestSkipped(
+            'This test will be completely removed and replaced with a set of smaller functional tests (see BAP-13063)'
+        );
         $this->validateImportFile($strategy);
         $this->doImport($strategy);
     }
@@ -97,7 +100,6 @@ class ImportExportTest extends AbstractImportExportTestCase
             [
                 'success' => true,
                 'message' => 'File was successfully imported.',
-                'errorsUrl' => null,
                 'importInfo' => '0 inventory levels were added, 1 inventory levels were updated',
             ],
             $data
@@ -173,6 +175,9 @@ class ImportExportTest extends AbstractImportExportTestCase
 
     public function testExportInventoryStatusesOnly()
     {
+        $this->markTestSkipped(
+            'This test will be completely removed and replaced with a set of smaller functional tests (see BAP-13064)'
+        );
         $fileContent = $this->assertExportInfluencedByProcessorChoice(
             'oro_product.inventory_status_only',
             $this->inventoryStatusOnlyHeader
@@ -183,7 +188,6 @@ class ImportExportTest extends AbstractImportExportTestCase
                 ->getEntityRepository(Product::class)
                 ->findAll()
         );
-
         $this->assertFileContentConsistency(
             $fileContent,
             count($this->inventoryStatusOnlyHeader),
@@ -193,6 +197,9 @@ class ImportExportTest extends AbstractImportExportTestCase
 
     public function testExportDetailedInventoryLevel()
     {
+        $this->markTestSkipped(
+            'This test will be completely removed and replaced with a set of smaller functional tests (see BAP-13064)'
+        );
         $fileContent = $this->assertExportInfluencedByProcessorChoice(
             'oro_inventory.detailed_inventory_levels',
             $this->inventoryLevelHeader
@@ -268,6 +275,9 @@ class ImportExportTest extends AbstractImportExportTestCase
      */
     public function testExportTemplateInventoryStatusOnly($exportChoice, $expectedHeader)
     {
+        $this->markTestSkipped(
+            'This test will be completely removed and replaced with a set of smaller functional tests (see BAP-13064)'
+        );
         $this->client->useHashNavigation(false);
         $parameters = $this->getDefaultRequestParameters();
         $parameters['processorAlias'] = 'oro_inventory.detailed_inventory_levels_template';

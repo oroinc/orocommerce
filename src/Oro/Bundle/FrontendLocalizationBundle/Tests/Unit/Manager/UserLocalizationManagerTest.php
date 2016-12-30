@@ -17,7 +17,7 @@ use Oro\Bundle\UserBundle\Entity\BaseUserManager;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Entity\AccountUserSettings;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserSettings;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
@@ -176,7 +176,7 @@ class UserLocalizationManagerTest extends \PHPUnit_Framework_TestCase
         /** @var Website $website **/
         $website = $this->getEntity(Website::class, ['id' => 1]);
 
-        $userWebsiteSettings = new AccountUserSettings($website);
+        $userWebsiteSettings = new CustomerUserSettings($website);
         $userWebsiteSettings->setLocalization($localization1);
 
         $user = $this->getMockBuilder(AccountUser::class)

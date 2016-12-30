@@ -1,5 +1,5 @@
-oro_shipping_rule:
-    resource:     "@OroShippingBundle/Controller/ShippingRuleController.php"
+oro_shipping_methods_configs_rule:
+    resource:     "@OroShippingBundle/Controller/ShippingMethodsConfigsRuleController.php"
     type:         annotation
     prefix:       /shippingrule
 
@@ -9,7 +9,7 @@ oro_shipping_product_shipping_options_ajax:
     prefix:       /shipping/product-shipping
 
 oro_shipping_bundle_api:
-    resource: "@OroShippingBundle/Controller/Api/Rest/ShippingRuleController.php"
+    resource: "@OroShippingBundle/Controller/Api/Rest/ShippingMethodsConfigsRuleController.php"
     type:     rest
     prefix:   api/rest/{version}/
     requirements:

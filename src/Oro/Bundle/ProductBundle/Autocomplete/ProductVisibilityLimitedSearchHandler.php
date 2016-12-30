@@ -4,6 +4,8 @@ namespace Oro\Bundle\ProductBundle\Autocomplete;
 
 use Symfony\Component\HttpFoundation\RequestStack;
 
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Query\Result\Item;
 use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\FormBundle\Autocomplete\SearchHandler;
@@ -140,6 +142,13 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
     {
         $queryBuilder = $this->entityRepository->getSearchQueryBuilder($search, $firstResult, $maxResults);
         $this->productManager->restrictQueryBuilder($queryBuilder, $params);
+
+        // Configurable products require additional option selection is not implemented yet
+        // Thus we need to hide configurable products from the product drop-downs
+        // @TODO remove after configurable products require additional option selection implementation
+        $queryBuilder->andWhere($queryBuilder->expr()->neq('p.type', ':configurable_type'))
+            ->setParameter('configurable_type', Product::TYPE_CONFIGURABLE);
+
         $query = $this->aclHelper->apply($queryBuilder);
 
         return $query->getResult();
@@ -154,6 +163,15 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
     protected function searchEntitiesUsingIndex($search, $firstResult, $maxResults)
     {
         $searchQuery = $this->searchRepository->getSearchQuery($search, $firstResult, $maxResults);
+
+        // Configurable products require additional option selection is not implemented yet
+        // Thus we need to hide configurable products from the product drop-downs
+        // @TODO remove after configurable products require additional option selection implementation
+        $query = $searchQuery->getQuery();
+        $query->getCriteria()->andWhere(
+            Criteria::expr()->neq('type', Product::TYPE_CONFIGURABLE)
+        );
+
         $searchQuery->setFirstResult($firstResult);
         $searchQuery->setMaxResults($maxResults);
         $result = $searchQuery->getResult();

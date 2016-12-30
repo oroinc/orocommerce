@@ -1,0 +1,18 @@
+{% macro renderPaymentMethodsConfigs(methodConfigs, currency) %}
+    {%- spaceless -%}
+        <ol>
+            {%- for methodConfig in methodConfigs -%}
+                <li>
+                {%- set paymentMethodData = {
+                    'type': methodConfig.type,
+                    'options': methodConfig.options,
+                } -%}
+                {%- include oro_payment_method_config_template(methodConfig.type) with {
+                    'currency': currency,
+                    'methodData': paymentMethodData
+                } -%}
+                </li>
+            {%- endfor -%}
+        </ol>
+    {%- endspaceless -%}
+{% endmacro %}
