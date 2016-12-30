@@ -31,7 +31,7 @@
                     'indexLabel': web_catalog.name
                 }
             ],
-            'entityTitle': 'oro.webcatalog.contentnode.entity_plural_label'|trans
+            'entityTitle': entity.defaultTitle.string|default('N/A'|trans)
         } %}
         {{ parent() }}
     {% endif %}

@@ -6,7 +6,7 @@ navigation:
                 route: 'oro_web_catalog_index'
                 extras:
                     position: 100
-                    routes: ['/^oro_web_catalog/']
+                    routes: ['/^oro_web_catalog/', '/^oro_content_node/']
                     description: 'oro.webcatalog.entity_description'
 
             shortcut_new_web_catalog:
