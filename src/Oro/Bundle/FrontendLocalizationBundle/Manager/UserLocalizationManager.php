@@ -6,7 +6,7 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Entity\AccountUserSettings;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserSettings;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\LocaleBundle\DependencyInjection\Configuration;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
@@ -137,7 +137,7 @@ class UserLocalizationManager
         if ($user instanceof AccountUser) {
             $userWebsiteSettings = $user->getWebsiteSettings($website);
             if (!$userWebsiteSettings) {
-                $userWebsiteSettings = new AccountUserSettings($website);
+                $userWebsiteSettings = new CustomerUserSettings($website);
                 $user->setWebsiteSettings($userWebsiteSettings);
             }
             $userWebsiteSettings->setLocalization($localization);

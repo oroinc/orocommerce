@@ -77,12 +77,12 @@ class OrderAddressManager extends AbstractAddressManager
     {
         return array_merge(
             $this->getTypesMapping(
-                'OroCustomerBundle:AccountAddressToAddressType',
+                'OroCustomerBundle:CustomerAddressToAddressType',
                 self::ACCOUNT_LABEL,
                 $addresses
             ),
             $this->getTypesMapping(
-                'OroCustomerBundle:AccountUserAddressToAddressType',
+                'OroCustomerBundle:CustomerUserAddressToAddressType',
                 self::ACCOUNT_USER_LABEL,
                 $addresses
             )

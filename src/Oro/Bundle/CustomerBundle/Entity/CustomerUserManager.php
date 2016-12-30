@@ -9,7 +9,7 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\UserBundle\Entity\BaseUserManager;
 use Oro\Bundle\CustomerBundle\Mailer\Processor;
 
-class AccountUserManager extends BaseUserManager implements ContainerAwareInterface
+class CustomerUserManager extends BaseUserManager implements ContainerAwareInterface
 {
     /**
      * @var ConfigManager
