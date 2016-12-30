@@ -1,0 +1,55 @@
+oro:
+    workflow:
+        rfq_backoffice_default:
+            label: 'RFQ Backoffice'
+            step:
+                open:
+                    label: 'Open'
+                processed:
+                    label: 'Processed'
+                more_info_requested:
+                    label: 'More info requested'
+                declined:
+                    label: 'Declined'
+                deleted:
+                    label: 'Deleted'
+            transition:
+                __start__:
+                    label: 'Start transition'
+                process_transition:
+                    label: 'Process'
+                request_more_information_transition:
+                    label: 'Request more information'
+                decline_transition:
+                    label: 'Decline'
+                delete_transition:
+                    label: 'Delete'
+                info_provided_transition:
+                    label: 'Info provided'
+                reprocess_transition:
+                    label: 'Reprocess'
+                undelete_transition:
+                    label: 'Undelete'
+
+        rfq_frontoffice_default:
+            label: 'RFQ Frontoffice'
+            step:
+                submitted:
+                    label: 'Submitted'
+                requires_attention:
+                    label: 'Requires attention'
+                cancelled:
+                    label: 'Cancelled'
+            transition:
+                __start__:
+                    label: 'Start transition'
+                more_information_requested_transition:
+                    label: 'More information requested'
+                provide_more_information_transition:
+                    label: 'Provide more information'
+                cancel_transition:
+                    label: 'Cancel'
+                resubmit_transition:
+                    label: 'Resubmit'
+                reopen_transition:
+                    label: 'Reopen'
