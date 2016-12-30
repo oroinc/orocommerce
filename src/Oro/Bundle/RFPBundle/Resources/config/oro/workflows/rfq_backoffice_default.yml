@@ -8,16 +8,6 @@ workflows:
 
         exclusive_record_groups: ['b2b_rfq_backoffice_flow']
 
-        attributes:
-           internalStatus:
-               type: entity
-               options:
-                  class: 'Extend\Entity\EV_Rfp_Internal_Status'
-           customerStatus:
-               type: entity
-               options:
-                  class: 'Extend\Entity\EV_Rfp_Customer_Status'
-
         start_step: open
         steps_display_ordered: true
         steps:
@@ -79,44 +69,44 @@ workflows:
         transition_definitions:
             __start___definition:
                 actions:
-                    - '@find_entity':
-                        class: 'Extend\Entity\EV_Rfp_Internal_Status'
+                    - '@request_enum_entity':
+                        enum_code: 'rfp_internal_status'
                         attribute: $request.internalStatus
                         identifier: 'open'
-                    - '@find_entity':
-                        class: 'Extend\Entity\EV_Rfp_Customer_Status'
+                    - '@request_enum_entity':
+                        enum_code: 'rfp_customer_status'
                         attribute: $request.customerStatus
                         identifier: 'submitted'
             delete_tranition_definition:
                 actions:
-                    - '@find_entity':
-                        class: 'Extend\Entity\EV_Rfp_Internal_Status'
+                    - '@request_enum_entity':
+                        enum_code: 'rfp_internal_status'
                         attribute: $request.internalStatus
                         identifier: 'deleted'
             decline_tranition_definition:
                 actions:
-                    - '@find_entity':
-                        class: 'Extend\Entity\EV_Rfp_Internal_Status'
+                    - '@request_enum_entity':
+                        enum_code: 'rfp_internal_status'
                         attribute: $request.internalStatus
                         identifier: 'declined'
-                    - '@find_entity':
-                        class: 'Extend\Entity\EV_Rfp_Customer_Status'
+                    - '@request_enum_entity':
+                        enum_code: 'rfp_customer_status'
                         attribute: $request.customerStatus
                         identifier: 'cancelled'
             undelete_tranition_definition:
                 actions:
-                    - '@find_entity':
+                    - '@request_enum_entity':
                         conditions:
                             '@equal': ['cancelled', $request.customerStatus]
                         parameters:
-                            class: 'Extend\Entity\EV_Rfp_Internal_Status'
+                            enum_code: 'rfp_internal_status'
                             attribute: $request.internalStatus
                             identifier: 'cancelled_by_customer'
-                    - '@find_entity':
+                    - '@request_enum_entity':
                         conditions:
                             '@not_equal': ['cancelled', $request.customerStatus]
                         parameters:
-                            class: 'Extend\Entity\EV_Rfp_Internal_Status'
+                            enum_code: 'rfp_internal_status'
                             attribute: $request.internalStatus
                             identifier: 'open'
             stub_tranition_definition: ~
