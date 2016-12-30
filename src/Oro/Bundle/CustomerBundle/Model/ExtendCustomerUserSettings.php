@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CustomerBundle\Model;
 
-class ExtendAccountUserSettings
+class ExtendCustomerUserSettings
 {
     /**
      * Constructor

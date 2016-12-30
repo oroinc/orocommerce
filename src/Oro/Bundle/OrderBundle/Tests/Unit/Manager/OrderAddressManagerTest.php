@@ -286,8 +286,8 @@ class OrderAddressManagerTest extends AbstractAddressManagerTest
             ->method('getManagerForClass')
             ->willReturnMap(
                 [
-                    ['OroCustomerBundle:AccountAddressToAddressType', $accountManager],
-                    ['OroCustomerBundle:AccountUserAddressToAddressType', $accountUserManager]
+                    ['OroCustomerBundle:CustomerAddressToAddressType', $accountManager],
+                    ['OroCustomerBundle:CustomerUserAddressToAddressType', $accountUserManager]
                 ]
             );
 

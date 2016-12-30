@@ -181,13 +181,13 @@ Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite:
         pricelist: '@combinedPriceList'
         website: '@website1'
 
-Oro\Bundle\CustomerBundle\Entity\AccountUserSettings:
+Oro\Bundle\CustomerBundle\Entity\CustomerUserSettings:
     accountUserSetting1:
-        accountUser: '@amanda'
+        customerUser: '@amanda'
         __construct: ['@website1']
         currency: 'EUR'
 
-Oro\Bundle\CustomerBundle\Entity\AccountUserAddressToAddressType:
+Oro\Bundle\CustomerBundle\Entity\CustomerUserAddressToAddressType:
     billing:
         address: '@address1'
         type: '@billingType'

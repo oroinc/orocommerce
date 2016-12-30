@@ -138,6 +138,7 @@ class ContentNodeTreeResolverTest extends \PHPUnit_Framework_TestCase
         $defaultChildVariant->setDefault(true)
             ->addSlug($childSlug);
         $childNode->addContentVariant($defaultChildVariant);
+        $childNode->addLocalizedUrl((new LocalizedFallbackValue())->setText($childSlugUrl));
 
         /** @var ContentNode $node */
         $node = $this->getEntity(ContentNode::class, ['id' => 2]);
@@ -153,6 +154,7 @@ class ContentNodeTreeResolverTest extends \PHPUnit_Framework_TestCase
         $node->addContentVariant($defaultVariant);
         $node->addChildNode($childNode);
         $node->addTitle((new LocalizedFallbackValue())->setString('some-title')->setLocalization($localization));
+        $node->addLocalizedUrl((new LocalizedFallbackValue())->setText($slugUrl));
         $childNode->setParentNode($node);
 
         $this->scopeMatcher->expects($this->any())

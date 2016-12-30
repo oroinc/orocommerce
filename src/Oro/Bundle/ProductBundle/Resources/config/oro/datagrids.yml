@@ -309,6 +309,7 @@ datagrids:
                     - text.sku as sku
                     - text.name_LOCALIZATION_ID as name
                     - text.short_description_LOCALIZATION_ID as shortDescription
+                    - text.type as type
                 from:
                     - oro_product_WEBSITE_ID
         columns:
@@ -332,6 +333,7 @@ datagrids:
                     data_name: name_LOCALIZATION_ID
         properties:
             id: ~
+            type: ~
             view_link:
                 type:  url
                 route: oro_product_frontend_product_view
