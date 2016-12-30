@@ -35,20 +35,20 @@ workflows:
                 transition_definition: __start___definition
             more_information_requested_transition:
                 step_to: requires_attention
-                transition_definition: stub_tranition_definition
+                transition_definition: stub_transition_definition
             provide_more_information_transition:
                 step_to: submitted
-                transition_definition: stub_tranition_definition
+                transition_definition: stub_transition_definition
             cancel_transition:
                 step_to: cancelled
-                transition_definition: stub_tranition_definition
+                transition_definition: stub_transition_definition
             resubmit_transition:
                 step_to: submitted
-                transition_definition: stub_tranition_definition
+                transition_definition: stub_transition_definition
             reopen_transition:
                 step_to: submitted
-                transition_definition: stub_tranition_definition
+                transition_definition: stub_transition_definition
 
         transition_definitions:
             __start___definition: ~
-            stub_tranition_definition: ~
+            stub_transition_definition: ~

@@ -46,26 +46,67 @@ workflows:
                 transition_definition: __start___definition
             process_transition:
                 step_to: processed
-                transition_definition: stub_tranition_definition
+                transition_definition: stub_transition_definition
             request_more_information_transition:
                 step_to: more_info_requested
-                transition_definition: stub_tranition_definition
+                transition_definition: stub_transition_definition
             decline_transition:
                 step_to: declined
-                transition_definition: stub_tranition_definition
+                transition_definition: decline_transition_definition
             delete_transition:
                 step_to: deleted
-                transition_definition: stub_tranition_definition
+                transition_definition: delete_transition_definition
             info_provided_transition:
                 step_to: open
-                transition_definition: stub_tranition_definition
+                transition_definition: stub_transition_definition
             reprocess_transition:
                 step_to: open
-                transition_definition: stub_tranition_definition
+                transition_definition: stub_transition_definition
             undelete_transition:
                 step_to: open
-                transition_definition: stub_tranition_definition
+                transition_definition: undelete_transition_definition
 
         transition_definitions:
-            __start___definition: ~
-            stub_tranition_definition: ~
+            __start___definition:
+                actions:
+                    - '@request_enum_entity':
+                        enum_code: 'rfp_internal_status'
+                        attribute: $request.internalStatus
+                        identifier: 'open'
+                    - '@request_enum_entity':
+                        enum_code: 'rfp_customer_status'
+                        attribute: $request.customerStatus
+                        identifier: 'submitted'
+            delete_transition_definition:
+                actions:
+                    - '@request_enum_entity':
+                        enum_code: 'rfp_internal_status'
+                        attribute: $request.internalStatus
+                        identifier: 'deleted'
+            decline_transition_definition:
+                actions:
+                    - '@request_enum_entity':
+                        enum_code: 'rfp_internal_status'
+                        attribute: $request.internalStatus
+                        identifier: 'declined'
+                    - '@request_enum_entity':
+                        enum_code: 'rfp_customer_status'
+                        attribute: $request.customerStatus
+                        identifier: 'cancelled'
+            undelete_transition_definition:
+                actions:
+                    - '@request_enum_entity':
+                        conditions:
+                            '@equal': ['cancelled', $request.customerStatus.id]
+                        parameters:
+                            enum_code: 'rfp_internal_status'
+                            attribute: $request.internalStatus
+                            identifier: 'cancelled_by_customer'
+                    - '@request_enum_entity':
+                        conditions:
+                            '@not_equal': ['cancelled', $request.customerStatus.id]
+                        parameters:
+                            enum_code: 'rfp_internal_status'
+                            attribute: $request.internalStatus
+                            identifier: 'open'
+            stub_transition_definition: ~
