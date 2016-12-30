@@ -46,7 +46,14 @@ workflows:
                 transition_definition: __start___definition
             process_transition:
                 step_to: processed
-                transition_definition: stub_transition_definition
+                transition_definition: process_transition_definition
+                is_hidden: true
+                triggers:
+                    -
+                        entity_class: 'Oro\Bundle\RFPBundle\Entity\Request'
+                        event: update
+                        field: internal_status
+                        require: "entity.getInternalStatus().getId() === 'processed'"
             request_more_information_transition:
                 step_to: more_info_requested
                 transition_definition: stub_transition_definition
@@ -58,10 +65,24 @@ workflows:
                 transition_definition: delete_transition_definition
             info_provided_transition:
                 step_to: open
-                transition_definition: stub_transition_definition
+                transition_definition: info_provided_transition_definition
+                is_hidden: true
+                triggers:
+                    -
+                        entity_class: 'Oro\Bundle\RFPBundle\Entity\Request'
+                        event: update
+                        field: internal_status
+                        require: "entity.getInternalStatus().getId() === 'open'"
             reprocess_transition:
                 step_to: open
-                transition_definition: stub_transition_definition
+                transition_definition: reprocess_transition_definition
+                is_hidden: true
+                triggers:
+                    -
+                        entity_class: 'Oro\Bundle\RFPBundle\Entity\Request'
+                        event: update
+                        field: internal_status
+                        require: "entity.getInternalStatus().getId() === 'open'"
             undelete_transition:
                 step_to: open
                 transition_definition: undelete_transition_definition
@@ -109,4 +130,12 @@ workflows:
                             enum_code: 'rfp_internal_status'
                             attribute: $request.internalStatus
                             identifier: 'open'
+            process_transition_definition: ~
+            info_provided_transition_definition: ~
+            reprocess_transition_definition:
+                actions:
+                    - '@request_enum_entity':
+                        enum_code: 'rfp_customer_status'
+                        identifier: 'submitted'
+                        attribute: $request.customerStatus
             stub_transition_definition: ~
