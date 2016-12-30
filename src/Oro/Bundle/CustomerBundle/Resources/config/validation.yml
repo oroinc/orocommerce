@@ -4,7 +4,7 @@ Oro\Bundle\CustomerBundle\Entity\Account:
             - NotBlank: ~
         addresses:
             - Oro\Bundle\FormBundle\Validator\Constraints\ContainsPrimary:
-                message: One of addresses must be set as primary.
+                message: One of the addresses must be set as primary.
             - Oro\Bundle\CustomerBundle\Validator\Constraints\UniqueAddressDefaultTypes: ~
 
 Oro\Bundle\CustomerBundle\Entity\AccountAddress:
@@ -67,7 +67,7 @@ Oro\Bundle\CustomerBundle\Entity\AccountUser:
             - NotBlank: ~
         addresses:
             - Oro\Bundle\FormBundle\Validator\Constraints\ContainsPrimary:
-                message: One of addresses must be set as primary.
+                message: One of the addresses must be set as primary.
             - Oro\Bundle\CustomerBundle\Validator\Constraints\UniqueAddressDefaultTypes: ~
 
 Oro\Bundle\CustomerBundle\Entity\AccountUserAddress:

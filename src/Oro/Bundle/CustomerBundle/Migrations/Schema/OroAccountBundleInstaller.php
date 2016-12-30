@@ -55,7 +55,7 @@ class OroAccountBundleInstaller implements
     const ORO_USER_TABLE_NAME = 'oro_user';
     const ORO_ACCOUNT_SALES_REPRESENTATIVES_TABLE_NAME = 'oro_account_sales_reps';
     const ORO_ACCOUNT_USER_SALES_REPRESENTATIVES_TABLE_NAME = 'oro_account_user_sales_reps';
-    const ORO_ACCOUNT_USER_SETTINGS = 'oro_account_user_settings';
+    const ORO_CUSTOMER_USER_SETTINGS = 'oro_customer_user_settings';
 
     /** @var ExtendExtension */
     protected $extendExtension;
@@ -78,7 +78,7 @@ class OroAccountBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_9';
+        return 'v1_10';
     }
 
     /**
@@ -115,7 +115,7 @@ class OroAccountBundleInstaller implements
         $this->createOroAccountUserSdbarStTable($schema);
         $this->createOroAccountUserSdbarWdgTable($schema);
         $this->createOroAccNavigationPagestateTable($schema);
-        $this->createOroAccountUserSettingsTable($schema);
+        $this->createOroCustomerUserSettingsTable($schema);
 
         $this->createOroAccountWindowsStateTable($schema);
 
@@ -139,7 +139,7 @@ class OroAccountBundleInstaller implements
         $this->addOroAccountUserSdbarStForeignKeys($schema);
         $this->addOroAccountUserSdbarWdgForeignKeys($schema);
         $this->addOroAccNavigationPagestateForeignKeys($schema);
-        $this->addOroAccountUserSettingsForeignKeys($schema);
+        $this->addOroCustomerUserSettingsForeignKeys($schema);
 
         $this->addOroAccountWindowsStateForeignKeys($schema);
 
@@ -497,12 +497,12 @@ class OroAccountBundleInstaller implements
      */
     protected function createOroAccountUserSdbarStTable(Schema $schema)
     {
-        $table = $schema->createTable('oro_account_user_sdbar_st');
+        $table = $schema->createTable('oro_customer_user_sdbar_st');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('account_user_id', 'integer', []);
+        $table->addColumn('customer_user_id', 'integer', []);
         $table->addColumn('position', 'string', ['length' => 13]);
         $table->addColumn('state', 'string', ['length' => 17]);
-        $table->addUniqueIndex(['account_user_id', 'position'], 'oro_acc_sdbar_st_unq_idx');
+        $table->addUniqueIndex(['customer_user_id', 'position'], 'oro_cus_sdbar_st_unq_idx');
         $table->setPrimaryKey(['id']);
     }
 
@@ -513,18 +513,18 @@ class OroAccountBundleInstaller implements
      */
     protected function createOroAccountUserSdbarWdgTable(Schema $schema)
     {
-        $table = $schema->createTable('oro_account_user_sdbar_wdg');
+        $table = $schema->createTable('oro_customer_user_sdbar_wdg');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
-        $table->addColumn('account_user_id', 'integer', []);
+        $table->addColumn('customer_user_id', 'integer', []);
         $table->addColumn('placement', 'string', ['length' => 50]);
         $table->addColumn('position', 'smallint', []);
         $table->addColumn('widget_name', 'string', ['length' => 50]);
         $table->addColumn('settings', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
         $table->addColumn('state', 'string', ['length' => 22]);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['position'], 'oro_acc_sdar_wdgs_pos_idx', []);
-        $table->addIndex(['account_user_id', 'placement'], 'oro_acc_sdbr_wdgs_usr_place_idx', []);
+        $table->addIndex(['position'], 'oro_cus_sdar_wdgs_pos_idx', []);
+        $table->addIndex(['customer_user_id', 'placement'], 'oro_cus_sdbr_wdgs_usr_place_idx', []);
     }
 
     /**
@@ -575,12 +575,12 @@ class OroAccountBundleInstaller implements
     /**
      * @param Schema $schema
      */
-    protected function createOroAccountUserSettingsTable(Schema $schema)
+    protected function createOroCustomerUserSettingsTable(Schema $schema)
     {
-        $table = $schema->createTable(self::ORO_ACCOUNT_USER_SETTINGS);
+        $table = $schema->createTable(self::ORO_CUSTOMER_USER_SETTINGS);
 
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('account_user_id', 'integer');
+        $table->addColumn('customer_user_id', 'integer');
         $table->addColumn('website_id', 'integer');
         $table->addColumn('currency', 'string', ['length' => 3, 'notnull' => false]);
         $table->addColumn('localization_id', 'integer', ['notnull' => false]);
@@ -984,10 +984,10 @@ class OroAccountBundleInstaller implements
      */
     protected function addOroAccountUserSdbarStForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('oro_account_user_sdbar_st');
+        $table = $schema->getTable('oro_customer_user_sdbar_st');
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_account_user'),
-            ['account_user_id'],
+            ['customer_user_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
@@ -1000,7 +1000,7 @@ class OroAccountBundleInstaller implements
      */
     protected function addOroAccountUserSdbarWdgForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('oro_account_user_sdbar_wdg');
+        $table = $schema->getTable('oro_customer_user_sdbar_wdg');
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_organization'),
             ['organization_id'],
@@ -1009,7 +1009,7 @@ class OroAccountBundleInstaller implements
         );
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_account_user'),
-            ['account_user_id'],
+            ['customer_user_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
@@ -1111,16 +1111,16 @@ class OroAccountBundleInstaller implements
     /**
      * @param Schema $schema
      */
-    protected function addOroAccountUserSettingsForeignKeys(Schema $schema)
+    protected function addOroCustomerUserSettingsForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable(self::ORO_ACCOUNT_USER_SETTINGS);
+        $table = $schema->getTable(self::ORO_CUSTOMER_USER_SETTINGS);
 
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_account_user'),
-            ['account_user_id'],
+            ['customer_user_id'],
             ['id'],
             ['onDelete' => 'CASCADE'],
-            'fk_account_user_id'
+            'fk_customer_user_id'
         );
 
         $table->addForeignKeyConstraint(
@@ -1139,7 +1139,7 @@ class OroAccountBundleInstaller implements
             'fk_localization_id'
         );
 
-        $table->addUniqueIndex(['account_user_id', 'website_id'], 'unique_acc_user_website');
+        $table->addUniqueIndex(['customer_user_id', 'website_id'], 'unique_cus_user_website');
     }
 
     /**

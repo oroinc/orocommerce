@@ -11,7 +11,6 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class ShoppingListRepository extends EntityRepository
 {
-
     /**
      * @param AclHelper $aclHelper
      * @param bool $selectRelations
@@ -21,11 +20,9 @@ class ShoppingListRepository extends EntityRepository
     {
         /** @var ShoppingList $shoppingList */
         $qb = $this->getShoppingListQueryBuilder($selectRelations);
-        $qb->addOrderBy('list.id', 'DESC')
-            ->setMaxResults(1);
-        $shoppingList = $aclHelper->apply($qb)->getOneOrNullResult();
+        $qb->addOrderBy('list.id', 'DESC')->setMaxResults(1);
 
-        return $shoppingList;
+        return $aclHelper->apply($qb)->getOneOrNullResult();
     }
 
     /**

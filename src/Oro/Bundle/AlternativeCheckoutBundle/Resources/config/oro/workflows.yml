@@ -135,6 +135,7 @@ workflows:
                     icon: fa-briefcase
                 init_routes:
                     - oro_shopping_list_frontend_view
+                acl_resource: [CHECKOUT_CREATE, $.result.shoppingList]
 
             start_from_quickorderform:
                 is_start: true
@@ -153,6 +154,7 @@ workflows:
                     - oro_product_frontend_quick_add
                     - oro_product_frontend_quick_add_copy_paste
                     - oro_product_frontend_quick_add_import
+                acl_resource: [CREATE, entity:commerce@Oro\Bundle\CheckoutBundle\Entity\Checkout]
 
             continue_to_shipping_address:
                 step_to: enter_shipping_address
@@ -416,7 +418,6 @@ workflows:
                 preconditions:
                     '@and':
                         - '@not_empty': $init_context
-                        - '@payment_method_enabled': 'payment_term'
                         - '@equal': [true, $.result.isAllowed]
 
             start_from_shoppinglist_definition:
@@ -430,7 +431,6 @@ workflows:
                             attribute: $.result.shoppingList
                 preconditions:
                     '@and':
-                        - '@payment_method_enabled': 'payment_term'
                         - '@has_elements': $.result.shoppingList.lineItems
                         - '@has_price_in_shopping_line_items': $.result.shoppingList.lineItems
                         - '@extendable':
@@ -445,8 +445,6 @@ workflows:
                             result.redirectUrl: $.redirectUrl
 
             __start___definition:
-                preconditions:
-                    '@payment_method_enabled': 'payment_term'
                 actions:
                     - '@generate_checkout_state_snapshot':
                         entity: $checkout
@@ -802,40 +800,48 @@ workflows:
                     - '@get_class_name':
                         object: $checkout.sourceEntity.sourceDocument
                         attribute: $.result.sourceDocumentEntityClassName
+                    - '@duplicate':
+                        target: $checkout.billingAddress
+                        attribute: $.result.billingAddress
+                        settings:
+                          - [[setNull], [propertyName, [id]]]
+                          - [[keep], [propertyName, [accountAddress]]]
+                          - [[keep], [propertyName, [accountUserAddress]]]
+                          - [[keep], [propertyName, [city]]]
+                          - [[keep], [propertyName, [country]]]
+                          - [[keep], [propertyName, [region]]]
+                          - [[keep], [propertyName, [organization]]]
+                          - [[shallowCopy], [propertyType, ['\DateTime']]]
+                    - '@flush_entity': $.result.billingAddress
+                    - '@duplicate':
+                        target: $.result.shippingAddress
+                        attribute: $.result.shippingAddress
+                        settings:
+                          - [[setNull], [propertyName, [id]]]
+                          - [[keep], [propertyName, [accountAddress]]]
+                          - [[keep], [propertyName, [accountUserAddress]]]
+                          - [[keep], [propertyName, [city]]]
+                          - [[keep], [propertyName, [country]]]
+                          - [[keep], [propertyName, [region]]]
+                          - [[keep], [propertyName, [organization]]]
+                          - [[shallowCopy], [propertyType, ['\DateTime']]]
+                    - '@flush_entity': $.result.shippingAddress
                     - '@call_service_method':
                         service: oro_payment_term.provider.payment_term
                         method: getCurrentPaymentTerm
                         attribute: $.result.paymentTerm
-                    - '@create_entity':
-                        attribute: $.result.order
-                        class: Oro\Bundle\OrderBundle\Entity\Order
-                        data:
-                            website: $checkout.website
-                            currency: $checkout.currency
-                            owner: $checkout.owner
-                            organization: $checkout.organization
-                            account: $checkout.account
-                            accountUser: $checkout.accountUser
-                            billingAddress: $checkout.billingAddress
-                            shippingAddress: $.result.shippingAddress
-                            estimatedShippingCostAmount: $checkout.shippingCost.value
-                            poNumber: $checkout.poNumber
-                            customerNotes: $checkout.customerNotes
-                            shipUntil: $checkout.shipUntil
-                            sourceEntityClass: $.result.sourceDocumentEntityClassName
-                            sourceEntityId: $checkout.sourceEntity.sourceDocument.id
-                            sourceEntityIdentifier: $checkout.sourceEntity.sourceDocumentIdentifier
-                            paymentTerm: $.result.paymentTerm
-                            shippingMethod: $checkout.shippingMethod
-                            shippingMethodType: $checkout.shippingMethodType
                     - '@get_order_line_items':
                         attribute: $.result.lineItems
                         checkout: $checkout
-                    - '@call_method':
-                        object: $.result.order
-                        method: setLineItems
-                        method_parameters:
-                            - $.result.lineItems
+                    - '@create_order':
+                        attribute: $.result.order
+                        checkout: $checkout
+                        data:
+                            billingAddress: $.result.billingAddress
+                            shippingAddress: $.result.shippingAddress
+                            sourceEntityClass: $.result.sourceDocumentEntityClassName
+                            paymentTerm: $.result.paymentTerm
+                            lineItems: $.result.lineItems
                     - '@call_service_method':
                         service: oro_order.handler.order_totals_handler
                         method: fillSubtotals

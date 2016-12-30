@@ -69,7 +69,13 @@ define(function(require) {
                         this.getElement(elementKey).focus();
                     }, this)];
                 }
+            }, this);
 
+            this.setModelValueFromElements();
+        },
+
+        setModelValueFromElements: function() {
+            _.each(this.modelElements, function(elementKey, modelKey) {
                 this.setModelValueFromElement(null, modelKey, elementKey);
             }, this);
         },
@@ -104,10 +110,9 @@ define(function(require) {
             if (!_.isFunction(callback)) {
                 callback = _.bind(this[callback], this);
             }
-            this.getElement(key).on(event + this.elementEventNamespace + this.cid, function(e) {
-                var options = {
-                    manually: self.isChangedManually(this, e)
-                };
+            this.getElement(key).on(event + this.elementEventNamespace + this.cid, function(e, options) {
+                options = options || {};
+                options.manually = self.isChangedManually(this, e);
                 callback(e, options);
             });
         },

@@ -10,9 +10,12 @@ operations:
             icon: fa-clock-o
         acl_resource: oro_alternativecheckout_checkout_approve
         preactions:
-            - '@alternative_checkout_to_quote':
-                quote: $.data
-                checkout: $.checkout
+            - '@get_active_user': $.currentUser
+            - '@call_service_method':
+                attribute: $.checkout
+                service: 'oro_checkout.repository.checkout'
+                method: getCheckoutByQuote
+                method_parameters: [$.data, $.currentUser]
             - '@tree':
                 conditions:
                     '@not_empty': $.checkout

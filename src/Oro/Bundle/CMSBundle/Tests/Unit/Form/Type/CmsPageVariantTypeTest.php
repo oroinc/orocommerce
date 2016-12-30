@@ -11,7 +11,7 @@ use Oro\Bundle\CMSBundle\Form\Type\CmsPageVariantType;
 use Oro\Bundle\CMSBundle\Form\Type\PageSelectType;
 use Oro\Bundle\CMSBundle\Tests\Unit\ContentVariantType\Stub\ContentVariantStub;
 use Oro\Bundle\ScopeBundle\Form\Type\ScopeCollectionType;
-use Oro\Bundle\WebCatalogBundle\Tests\Unit\Form\Type\Stub\ScopeCollectionTypeStub;
+use Oro\Bundle\ScopeBundle\Tests\Unit\Form\Type\Stub\ScopeCollectionTypeStub;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;

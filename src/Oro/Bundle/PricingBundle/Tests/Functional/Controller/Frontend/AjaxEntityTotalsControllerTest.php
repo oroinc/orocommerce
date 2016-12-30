@@ -5,7 +5,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\Controller\Frontend;
 use Doctrine\Common\Util\ClassUtils;
 use Oro\Bundle\CurrencyBundle\DependencyInjection\Configuration as CurrencyConfig;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Entity\AccountUserSettings;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserSettings;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
@@ -43,7 +43,7 @@ class AjaxEntityTotalsControllerTest extends WebTestCase
         $manager->set(CurrencyConfig::getConfigKeyByName(CurrencyConfig::KEY_DEFAULT_CURRENCY), 'EUR');
         $user = $this->getCurrentUser();
         $website = $this->getCurrentWebsite();
-        $settings = new AccountUserSettings($website);
+        $settings = new CustomerUserSettings($website);
         $settings->setCurrency('EUR');
         $user->setWebsiteSettings($settings);
         $em = $this->getContainer()->get('doctrine')->getManager();

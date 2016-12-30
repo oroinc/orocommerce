@@ -192,6 +192,100 @@ class OrderShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
         $this->factory->create($order);
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
+    public function testWithNullLineItems()
+    {
+        /** @var AddressInterface $address */
+        $address = $this->createMock(OrderAddress::class);
+        $currency = 'USD';
+        $paymentMethod = 'SomePaymentMethod';
+        $amount = 100;
+        $customer = $this->createMock(Account::class);
+        $customerUser = $this->createMock(AccountUser::class);
+
+        $this->paymentTransactionMock
+            ->expects(static::once())
+            ->method('getPaymentMethod')
+            ->willReturn($paymentMethod);
+
+        $this->repositoryMock
+            ->expects(static::once())
+            ->method('findOneBy')
+            ->willReturn($this->paymentTransactionMock);
+
+        $this->doctrineHelper
+            ->expects(static::once())
+            ->method('getEntityRepository')
+            ->with(PaymentTransaction::class)
+            ->willReturn($this->repositoryMock);
+
+        $ordersLineItems = [
+            (new OrderLineItem())
+                ->setQuantity(10)
+                ->setPrice(Price::create($amount, $currency)),
+            (new OrderLineItem())
+                ->setQuantity(20)
+                ->setPrice(Price::create($amount, $currency))
+        ];
+
+        $orderLineItemsCollection = new ArrayCollection($ordersLineItems);
+
+        $this->shippingLineItemConverterMock
+            ->expects($this->once())
+            ->method('convertLineItems')
+            ->with($orderLineItemsCollection)
+            ->willReturn(null);
+
+        $order = (new Order())
+            ->setBillingAddress($address)
+            ->setShippingAddress($address)
+            ->setCurrency($currency)
+            ->setLineItems($orderLineItemsCollection)
+            ->setSubtotal($amount)
+            ->setCurrency($currency)
+            ->setAccount($customer)
+            ->setAccountUser($customerUser);
+
+        $this->contextBuilder
+            ->method('setShippingAddress')
+            ->with($address);
+
+        $this->contextBuilder
+            ->method('setBillingAddress')
+            ->with($address);
+
+        $this->contextBuilder
+            ->method('setCustomer')
+            ->with($customer);
+
+        $this->contextBuilder
+            ->method('setCustomerUser')
+            ->with($customerUser);
+
+        $this->contextBuilder
+            ->expects($this->never())
+            ->method('setLineItems');
+
+        $this->contextBuilder
+            ->expects($this->once())
+            ->method('setPaymentMethod')
+            ->with($paymentMethod);
+
+        $this->contextBuilder
+            ->expects($this->once())
+            ->method('getResult');
+
+        $this->shippingContextBuilderFactoryMock
+            ->expects($this->once())
+            ->method('createShippingContextBuilder')
+            ->with($currency, Price::create($amount, $currency), $order, (string) $order->getId())
+            ->willReturn($this->contextBuilder);
+
+        $this->factory->create($order);
+    }
+
     public function testCreateNullBuilderFactory()
     {
         $this->factory = new OrderShippingContextFactory(

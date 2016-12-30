@@ -310,11 +310,11 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
     protected $updatedAt;
 
     /**
-     * @var ArrayCollection|AccountUserSettings[]
+     * @var ArrayCollection|CustomerUserSettings[]
      *
      * @ORM\OneToMany(
-     *      targetEntity="Oro\Bundle\CustomerBundle\Entity\AccountUserSettings",
-     *      mappedBy="accountUser",
+     *      targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerUserSettings",
+     *      mappedBy="customerUser",
      *      cascade={"all"},
      *      orphanRemoval=true
      * )
@@ -823,7 +823,7 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
 
     /**
      * @param Website $website
-     * @return null|AccountUserSettings
+     * @return null|CustomerUserSettings
      */
     public function getWebsiteSettings(Website $website)
     {
@@ -837,17 +837,17 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
     }
 
     /**
-     * @param AccountUserSettings $websiteSettings
+     * @param CustomerUserSettings $websiteSettings
      * @return $this
      */
-    public function setWebsiteSettings(AccountUserSettings $websiteSettings)
+    public function setWebsiteSettings(CustomerUserSettings $websiteSettings)
     {
         $existing = $this->getWebsiteSettings($websiteSettings->getWebsite());
         if ($existing) {
             $this->settings->removeElement($existing);
         }
 
-        $websiteSettings->setAccountUser($this);
+        $websiteSettings->setCustomerUser($this);
         $this->settings->add($websiteSettings);
 
         return $this;
