@@ -4,6 +4,7 @@ namespace Oro\Bundle\ProductBundle\Expression\Autocomplete;
 
 use Oro\Component\Expression\ExpressionParser;
 use Oro\Component\Expression\FieldsProviderInterface;
+use Oro\Component\PhpUtils\ArrayUtil;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class AutocompleteFieldsProvider
@@ -96,7 +97,7 @@ class AutocompleteFieldsProvider
         $data = [
             self::ROOT_ENTITIES_KEY => $this->getRootEntities(),
             self::FIELDS_DATA_KEY => $this->translateLabels(
-                array_merge_recursive(
+                ArrayUtil::arrayMergeRecursiveDistinct(
                     $this->getFieldsData($numericalOnly, $withRelations),
                     $this->specialFieldsInformation
                 )
