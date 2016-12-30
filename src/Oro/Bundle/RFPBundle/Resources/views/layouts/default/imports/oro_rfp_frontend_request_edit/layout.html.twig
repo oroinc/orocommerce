@@ -58,7 +58,18 @@
                 {{ form_row(form.poNumber) }}
             </div>
             <div class="request-form-grid__column grid__column--6">
-                {{ form_row(form.shipUntil, { 'attr': {'class': 'input input--size-m'} }) }}
+                <div class="datepicker-box datepicker-box--form-mode">
+                    <span class="datepicker-box__icon"><i class="fa-calendar"></i></span>
+                    {{ form_row(form.shipUntil, {
+                        'attr': {
+                            'class': 'datepicker-box__input input'
+                        },
+                        'parentClass': '',
+                        'datePickerOptions': {
+                            'minDate': 0
+                        }
+                    }) }}
+                </div>
             </div>
         </div>
         <div class="request-form-grid__row">

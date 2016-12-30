@@ -11,13 +11,13 @@ use Oro\Bundle\NavigationBundle\Tests\Unit\Form\Type\Stub\RouteChoiceTypeStub;
 use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugType;
 use Oro\Bundle\RedirectBundle\Tests\Unit\Form\Type\Stub\LocalizedSlugTypeStub;
 use Oro\Bundle\ScopeBundle\Form\Type\ScopeCollectionType;
+use Oro\Bundle\ScopeBundle\Tests\Unit\Form\Type\Stub\ScopeCollectionTypeStub;
 use Oro\Bundle\WebCatalogBundle\ContentVariantType\ContentVariantTypeRegistry;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebCatalogBundle\Form\Type\ContentNodeType;
 use Oro\Bundle\WebCatalogBundle\Form\Type\ContentVariantCollectionType;
 use Oro\Bundle\WebCatalogBundle\Form\Type\SystemPageVariantType;
-use Oro\Bundle\WebCatalogBundle\Tests\Unit\Form\Type\Stub\ScopeCollectionTypeStub;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType as StubEntityIdentifierType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
@@ -180,12 +180,24 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
             'new root entity' => [
                 new ContentNode(),
                 [
-                    'titles' => [['string' => 'new_content_node_title']]
+                    'titles' => [['string' => 'new_content_node_title']],
+                    'contentVariants' => [
+                        [
+                            'type' => 'system_page',
+                            'systemPageRoute' => 'some_route',
+                            'scopes' => [],
+                        ]
+                    ],
                 ],
                 (new ContentNode())
                     ->addTitle((new LocalizedFallbackValue())->setString('new_content_node_title'))
                     ->setParentScopeUsed(false)
-                    ->setRewriteVariantTitle(false),
+                    ->setRewriteVariantTitle(false)
+                    ->addContentVariant(
+                        (new ContentVariant())
+                            ->setType('system_page')
+                            ->setSystemPageRoute('some_route')
+                    ),
             ],
             'existing entity' => [
                 (new ContentNode())
@@ -196,14 +208,26 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
                     'titles' => [['string' => 'content_node_title'], ['string' => 'another_node_title']],
                     'slugPrototypes' => [['string' => 'content_node_slug'], ['string' => 'another_node_slug']],
                     'parentScopeUsed' => false,
-                    'rewriteVariantTitle' => true
+                    'rewriteVariantTitle' => true,
+                    'contentVariants' => [
+                        [
+                            'type' => 'system_page',
+                            'systemPageRoute' => 'some_route',
+                            'scopes' => [],
+                        ]
+                    ],
                 ],
                 (new ContentNode())
                     ->addTitle((new LocalizedFallbackValue())->setString('content_node_title'))
                     ->addTitle((new LocalizedFallbackValue())->setString('another_node_title'))
                     ->addSlugPrototype((new LocalizedFallbackValue())->setString('content_node_slug'))
                     ->addSlugPrototype((new LocalizedFallbackValue())->setString('another_node_slug'))
-                    ->setParentScopeUsed(false),
+                    ->setParentScopeUsed(false)
+                    ->addContentVariant(
+                        (new ContentVariant())
+                            ->setType('system_page')
+                            ->setSystemPageRoute('some_route')
+                    ),
             ],
             'added variant' => [
                 (new ContentNode())

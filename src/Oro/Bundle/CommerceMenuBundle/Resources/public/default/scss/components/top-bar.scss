@@ -71,10 +71,18 @@
             color: $top-bar-promo-color;
         }
     }
+
+    &__item {
+        padding: $top-bar-menu-item-offset-inner;
+
+        line-height: 16px;
+    }
 }
 
 @include breakpoint('desktop') {
     .topbar-navigation {
+        padding: $top-bar-offset-inner;
+
         &__item {
             &.last {
                 font-size: $base-font-size;
@@ -84,6 +92,10 @@
 
                     cursor: default;
                 }                
+            }
+
+            &--user-name {
+                max-width: 250px;
             }
         }
     }

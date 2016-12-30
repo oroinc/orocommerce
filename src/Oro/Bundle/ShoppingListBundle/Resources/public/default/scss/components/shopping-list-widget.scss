@@ -121,6 +121,10 @@
     margin-right: 3px;
 
     @include badge(33px);
+
+    @include breakpoint('tablet') {
+      margin: 0;
+    }
   }
 }
 

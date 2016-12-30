@@ -1,7 +1,7 @@
 datagrids:
-    shipping-rule-grid:
-        acl_resource: oro_shipping_rule_view
-        extended_entity_name: %oro_shipping.entity.shipping_rule.class%
+    shipping-methods-configs-rule-grid:
+        acl_resource: oro_shipping_methods_configs_rule_view
+        extended_entity_name: %oro_shipping.entity.shipping_methods_configs_rule.class%
         options:
             entityHint:        shipping rule
             entity_pagination: true
@@ -9,49 +9,48 @@ datagrids:
             type:         orm
             query:
                 select:
-                    - shipping_rule
-                    - shipping_rule.id
-                    - shipping_rule.name
-                    - shipping_rule.enabled
-                    - shipping_rule.priority
-                    - shipping_rule.currency
-                    - shipping_rule.conditions
+                    - shipping_methods_configs_rule
+                    - shipping_methods_configs_rule.id
+                    - rule.name
+                    - rule.enabled
+                    - rule.sortOrder
+                    - shipping_methods_configs_rule.currency
+                    - rule.expression
                 from:
-                    - { table: %oro_shipping.entity.shipping_rule.class%, alias: shipping_rule }
+                    - { table: %oro_shipping.entity.shipping_methods_configs_rule.class%, alias: shipping_methods_configs_rule }
+                join:
+                    inner:
+                        - { join: shipping_methods_configs_rule.rule, alias: rule }
 
         columns:
             id:
-                label:         oro.shipping.shippingrule.id.label
+                label:         oro.shipping.shippingmethodsconfigsrule.id.label
             name:
-                label:         oro.shipping.shippingrule.name.label
+                label:         oro.rule.name.label
             enabled:
-                label:         oro.shipping.shippingrule.enabled.label
+                label:         oro.rule.enabled.label
                 frontend_type: boolean
-            priority:
-                label:         oro.shipping.shippingrule.priority.label
+            sortOrder:
+                label:         oro.rule.sort_order.label
             currency:
-                label:         oro.shipping.shippingrule.currency.label
-            conditions:
-                label:         oro.shipping.shippingrule.conditions.label
+                label:         oro.shipping.shippingmethodsconfigsrule.currency.label
+            expression:
+                label:         oro.rule.expression.label
             methodConfigs:
-                label:         oro.shipping.shippingrule.method_configs.label
+                label:         oro.shipping.shippingmethodsconfigsrule.method_configs.label
                 type:          twig
                 frontend_type: html
-                template:      OroShippingBundle:ShippingRule:Datagrid/configurations.html.twig
+                template:      OroShippingBundle:ShippingMethodsConfigsRule:Datagrid/configurations.html.twig
             destinations:
-                label:         oro.shipping.shippingrule.destinations.label
+                label:         oro.shipping.shippingmethodsconfigsrule.destinations.label
                 type:          twig
                 frontend_type: html
-                template:      OroShippingBundle:ShippingRule:Datagrid/destinations.html.twig
+                template:      OroShippingBundle:ShippingMethodsConfigsRule:Datagrid/destinations.html.twig
         properties:
             id: ~
             view_link:
                 type:    url
-                route:   oro_shipping_rule_view
-                params:  [ id ]
-            update_link:
-                type:    url
-                route:   oro_shipping_rule_update
+                route:   oro_shipping_methods_configs_rule_view
                 params:  [ id ]
             enable_link:
                 type:       url
@@ -61,94 +60,72 @@ datagrids:
                 type:       url
                 route:      oro_api_disable_shippingrules
                 params:     [ id ]
-            delete_link:
-                type:    url
-                route:   oro_api_delete_shippingrules
-                params:  [ id ]
         sorters:
             columns:
                 id:
-                    data_name: shipping_rule.id
+                    data_name: shipping_methods_configs_rule.id
                 name:
-                    data_name: shipping_rule.name
+                    data_name: rule.name
                 enabled:
-                    data_name: shipping_rule.enabled
-                priority:
-                    data_name: shipping_rule.priority
+                    data_name: rule.enabled
+                sortOrder:
+                    data_name: rule.sortOrder
                 currency:
-                    data_name: shipping_rule.currency
+                    data_name: shipping_methods_configs_rule.currency
             disable_default_sorting: true
         filters:
             columns:
                 id:
                     type:      number
-                    data_name: shipping_rule.id
+                    data_name: shipping_methods_configs_rule.id
                 name:
                     type:      string
-                    data_name: shipping_rule.name
+                    data_name: rule.name
                 enabled:
                     type:      boolean
-                    data_name: shipping_rule.enabled
-                priority:
+                    data_name: rule.enabled
+                sortOrder:
                     type:      number
-                    data_name: shipping_rule.priority
+                    data_name: rule.sortOrder
                 currency:
                     type:      string
-                    data_name: shipping_rule.currency
-                conditions:
+                    data_name: shipping_methods_configs_rule.currency
+                expression:
                     type:      string
-                    data_name: shipping_rule.conditions
+                    data_name: rule.expression
         actions:
             view:
                 type:          navigate
                 link:          view_link
-                acl_resource:  oro_shipping_rule_view
+                acl_resource:  oro_shipping_methods_configs_rule_view
                 icon:          eye
                 label:         oro.grid.action.view
                 rowAction:     true
-            update:
-                type:         navigate
-                link:         update_link
-                acl_resource: oro_shipping_rule_update
-                icon:         pencil-square-o
-                label:        oro.grid.action.update
-                rowAction:    true
             enable:
                 type:         ajax
-                acl_resource: oro_shipping_rule_update
+                acl_resource: oro_shipping_methods_configs_rule_update
                 label:        oro.shipping.datagrid.action.enable
                 icon:         check
                 link:         enable_link
             disable:
                 type:         ajax
-                acl_resource: oro_shipping_rule_update
+                acl_resource: oro_shipping_methods_configs_rule_update
                 label:        oro.shipping.datagrid.action.disable
                 icon:         close
                 link:         disable_link
-            delete:
-                type:         delete
-                link:         delete_link
-                acl_resource: oro_shipping_rule_delete
-                icon:         trash-o
-                label:        oro.grid.action.delete
-                defaultMessages:
-                    confirm_content: oro.shipping.delete_shipping_rule_window.content
-                    confirm_ok:      oro.shipping.delete_shipping_rule_window.button_ok
-                    confirm_title:   oro.shipping.delete_shipping_rule_window.title
-                    success:         oro.shipping.delete_shipping_rule_window.success
         action_configuration: ['@oro_shipping.datagrid.shipping_rule_actions_visibility_provider', getActionsVisibility]
         mass_actions:
             enable:
                 type:         shippingruleenable
-                acl_resource: oro_shipping_rule_update
+                acl_resource: oro_shipping_methods_configs_rule_update
                 label:        oro.shipping.datagrid.action.enable
                 icon:         check
-                entity_name:  %oro_shipping.entity.shipping_rule.class%
-                data_identifier: shipping_rule.id
+                entity_name:  %oro_shipping.entity.shipping_methods_configs_rule.class%
+                data_identifier: shipping_methods_configs_rule.id
             disable:
                 type:         shippingruledisable
-                acl_resource: oro_shipping_rule_update
+                acl_resource: oro_shipping_methods_configs_rule_update
                 label:        oro.shipping.datagrid.action.disable
                 icon:         close
-                entity_name:  %oro_shipping.entity.shipping_rule.class%
-                data_identifier: shipping_rule.id
+                entity_name:  %oro_shipping.entity.shipping_methods_configs_rule.class%
+                data_identifier: shipping_methods_configs_rule.id

@@ -194,6 +194,8 @@ oro:
             total.label: 'Total'
             subtotal.label: 'Subtotal'
             total_currency.label: 'Total Currency'
+            account.label: 'Customer'
+            account_user.label: 'Customer User'
 
         controller:
             quote:
@@ -276,7 +278,6 @@ oro:
                 column_summary: 'Summary'
 
             btn:
-                accept_quote_create_order: 'Accept and Submit to Order'
                 widget_accept_quote_create_order: 'Submit to Order'
 
             message:

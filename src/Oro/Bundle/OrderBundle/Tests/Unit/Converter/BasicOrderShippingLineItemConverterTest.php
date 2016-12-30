@@ -6,15 +6,18 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrderBundle\Converter\BasicOrderShippingLineItemConverter;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Builder\Basic\Factory\BasicShippingLineItemBuilderFactory;
-use Oro\Bundle\ShippingBundle\Context\LineItem\Builder\Factory\ShippingLineItemBuilderFactoryInterface;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\DoctrineShippingLineItemCollection;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\Factory\DoctrineShippingLineItemCollectionFactory;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class BasicOrderShippingLineItemConverterTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTrait;
+
     /**
      * @var DoctrineShippingLineItemCollectionFactory
      */
@@ -26,79 +29,150 @@ class BasicOrderShippingLineItemConverterTest extends \PHPUnit_Framework_TestCas
     private $orderShippingLineItemConverter;
 
     /**
-     * @var ShippingLineItemBuilderFactoryInterface|
+     * @var BasicShippingLineItemBuilderFactory
      */
     private $shippingLineItemBuilderFactory;
-
-    /**
-     * @var ProductUnit|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $productUnitMock;
-
-    /**
-     * @var Price|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $priceMock;
 
     public function setUp()
     {
         $this->shippingLineItemBuilderFactory = new BasicShippingLineItemBuilderFactory();
         $this->collectionFactory = new DoctrineShippingLineItemCollectionFactory();
+
         $this->orderShippingLineItemConverter = new BasicOrderShippingLineItemConverter(
             $this->collectionFactory,
             $this->shippingLineItemBuilderFactory
         );
-        $this->productUnitMock = $this->getMockBuilder(ProductUnit::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->priceMock = $this->getMockBuilder(Price::class)
-            ->disableOriginalConstructor()
-            ->getMock();
     }
 
-    public function testConvertLineItems()
+    /**
+     * @return array
+     */
+    public function missingDependenciesDataProvider()
     {
-        $productUnitCode = 'someCode';
+        return [
+            [
+                'collectionFactory' => $this->collectionFactory,
+                'shippingLineItemBuilderFactory' => null
+            ],
+            [
+                'collectionFactory' => null,
+                'shippingLineItemBuilderFactory' => $this->shippingLineItemBuilderFactory,
+            ],
+            [
+                'collectionFactory' => null,
+                'shippingLineItemBuilderFactory' => null
+            ],
+        ];
+    }
 
-        $this->productUnitMock
-            ->expects($this->exactly(5))
-            ->method('getCode')
-            ->willReturn($productUnitCode);
+    /**
+     * @dataProvider missingDependenciesDataProvider
+     * @param DoctrineShippingLineItemCollectionFactory|null $collectionFactory
+     * @param BasicShippingLineItemBuilderFactory|null $shippingLineItemBuilderFactory
+     */
+    public function testConvertLineItemsWhenSomeDependencyMissing(
+        DoctrineShippingLineItemCollectionFactory $collectionFactory = null,
+        BasicShippingLineItemBuilderFactory $shippingLineItemBuilderFactory = null
+    ) {
+        $this->orderShippingLineItemConverter = new BasicOrderShippingLineItemConverter(
+            $collectionFactory,
+            $shippingLineItemBuilderFactory
+        );
 
-        $lineItemsData = [
-            ['quantity' => 12, 'productUnit' => $this->productUnitMock, 'price' => $this->priceMock],
-            ['quantity' => 5, 'productUnit' => $this->productUnitMock, 'price' => $this->priceMock ],
-            ['quantity' => 1, 'productUnit' => $this->productUnitMock, 'price' => $this->priceMock],
-            ['quantity' => 3, 'productUnit' => $this->productUnitMock, 'price' => $this->priceMock],
-            ['quantity' => 50, 'productUnit' => $this->productUnitMock, 'price' => $this->priceMock],
+        $this->assertNull($this->orderShippingLineItemConverter->convertLineItems(new ArrayCollection([])));
+    }
+
+    /**
+     * @dataProvider lineItemsDataProvider
+     * @param array $lineItems
+     * @param array $expectetdShippingLineItems
+     */
+    public function testConvertLineItems(array $lineItems, array $expectetdShippingLineItems)
+    {
+        $this->assertEquals(
+            new DoctrineShippingLineItemCollection($expectetdShippingLineItems),
+            $this->orderShippingLineItemConverter->convertLineItems(new ArrayCollection($lineItems))
+        );
+    }
+
+    /**
+     * @return array
+     */
+    public function lineItemsDataProvider()
+    {
+        $product = $this->getEntity(Product::class, ['id' => 123]);
+        $unit1 = $this->getEntity(ProductUnit::class, ['code' => 'item']);
+        $unit2 = $this->getEntity(ProductUnit::class, ['code' => 'set']);
+
+        $lineItems = [
+            $this->getLineItem(
+                ['quantity' => 12, 'productUnit' => $unit1, 'price' => $this->getPrice(10.5), 'product' => null]
+            ),
+            $this->getLineItem(
+                ['quantity' => 5, 'productUnit' => $unit2, 'price' => $this->getPrice(30.7), 'product' => $product]
+            ),
+            $this->getLineItem(
+                ['quantity' => 7, 'productUnit' => $unit2, 'price' => $this->getPrice(99.9), 'product' => $product]
+            ),
         ];
 
-        $orderLineItems = [];
-        foreach ($lineItemsData as $lineItemData) {
-            $orderLineItems[] = (new OrderLineItem())
-                ->setQuantity($lineItemData['quantity'])
-                ->setProductUnit($lineItemData['productUnit'])
-                ->setPrice($this->priceMock);
-        }
-        $orderCollection = new ArrayCollection($orderLineItems);
+        return [
+            'all line items have required properties' => [
+                'lineItems' => $lineItems,
+                'expectedShippingLineItems' => [
+                    new ShippingLineItem($this->createExpected($lineItems[0])),
+                    new ShippingLineItem(array_merge($this->createExpected($lineItems[1]), ['product' => $product])),
+                    new ShippingLineItem(array_merge($this->createExpected($lineItems[2]), ['product' => $product]))
+                ],
+            ],
+            'some line items have no price' => [
+                'lineItems' => [
+                    $this->getLineItem(['quantity' => 12, 'productUnit' => $unit1, 'price' => $this->getPrice(10.5)]),
+                    $this->getLineItem(['quantity' => 1, 'productUnit' => $unit1, 'price' => null]),
+                ],
+                'expectedShippingLineItems' => [],
+            ],
+            'some line items have no product unit' => [
+                'lineItems' => [
+                    $this->getLineItem(['quantity' => 12, 'productUnit' => $unit1, 'price' => $this->getPrice(10.5)]),
+                    $this->getLineItem(['quantity' => 1, 'productUnit' => null, 'price' => $this->getPrice(1.3)]),
+                ],
+                'expectedShippingLineItems' => [],
+            ],
+        ];
+    }
 
-        $shippingLineItemCollection = $this->orderShippingLineItemConverter->convertLineItems($orderCollection);
+    /**
+     * @param OrderLineItem $lineItem
+     * @return array
+     */
+    private function createExpected(OrderLineItem $lineItem)
+    {
+        return [
+            'quantity' => $lineItem->getQuantity(),
+            'product_holder' => $lineItem,
+            'product_unit' => $lineItem->getProductUnit(),
+            'product_unit_code' => $lineItem->getProductUnit()->getCode(),
+            'price' => $lineItem->getPrice(),
+            'entity_id' => null
+        ];
+    }
 
-        $expectedShippingLineItems = [];
+    /**
+     * @param float $price
+     * @return Price
+     */
+    private function getPrice($price)
+    {
+        return $this->getEntity(Price::class, ['value' => $price]);
+    }
 
-        foreach ($orderLineItems as $orderLineItem) {
-            $expectedShippingLineItems[] = new ShippingLineItem([
-                ShippingLineItem::FIELD_QUANTITY => $orderLineItem->getQuantity(),
-                ShippingLineItem::FIELD_PRODUCT_HOLDER => $orderLineItem,
-                ShippingLineItem::FIELD_PRODUCT_UNIT => $orderLineItem->getProductUnit(),
-                ShippingLineItem::FIELD_PRODUCT_UNIT_CODE => $productUnitCode,
-                ShippingLineItem::FIELD_PRICE => $orderLineItem->getPrice(),
-                ShippingLineItem::FIELD_ENTITY_IDENTIFIER => null,
-            ]);
-        }
-
-        $expectedLineItemCollection = new DoctrineShippingLineItemCollection($expectedShippingLineItems);
-
-        $this->assertEquals($expectedLineItemCollection, $shippingLineItemCollection);
+    /**
+     * @param array $data
+     * @return OrderLineItem
+     */
+    private function getLineItem(array $data)
+    {
+        return $this->getEntity(OrderLineItem::class, $data);
     }
 }

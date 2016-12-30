@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend;
 
+use Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadPaymentMethodsConfigsRuleData;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountAddresses;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
 use Oro\Bundle\ActionBundle\Model\ActionData;
@@ -10,7 +11,7 @@ use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
 use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
-use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingRules;
+use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingMethodsConfigsRules;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
@@ -63,18 +64,27 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
             [],
             $this->generateBasicAuthHeader(TestAccountUserData::AUTH_USER, TestAccountUserData::AUTH_PW)
         );
-        $this->loadFixtures(
-            [
-                LoadAccountUserData::class,
-                LoadAccountAddresses::class,
-                LoadProductUnitPrecisions::class,
-                LoadShoppingListLineItems::class,
-                LoadCombinedProductPrices::class,
-                LoadPaymentTermData::class,
-                LoadShippingRules::class,
-            ]
-        );
+        $paymentFixtures = (array)$this->getPaymentFixtures();
+        $this->loadFixtures(array_merge([
+            LoadAccountUserData::class,
+            LoadAccountAddresses::class,
+            LoadProductUnitPrecisions::class,
+            LoadShoppingListLineItems::class,
+            LoadCombinedProductPrices::class,
+            LoadShippingMethodsConfigsRules::class,
+        ], $paymentFixtures));
         $this->registry = $this->getContainer()->get('doctrine');
+    }
+
+    /**
+     * @return array
+     */
+    protected function getPaymentFixtures()
+    {
+        return [
+            LoadPaymentTermData::class,
+            LoadPaymentMethodsConfigsRuleData::class
+        ];
     }
 
     /**

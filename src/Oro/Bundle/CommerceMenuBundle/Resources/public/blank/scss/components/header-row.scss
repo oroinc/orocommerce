@@ -1,6 +1,8 @@
 // @theme: blank
 
 .header-row {
+    position: relative;
+    
     margin-top: $offset-y;
 
     border: 1px solid get-color('additional', 'light');
