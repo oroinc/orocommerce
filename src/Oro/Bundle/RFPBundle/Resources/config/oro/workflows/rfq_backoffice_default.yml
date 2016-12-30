@@ -1,0 +1,71 @@
+workflows:
+    rfq_backoffice_default:
+        entity: Oro\Bundle\RFPBundle\Entity\Request
+        entity_attribute: request
+
+        applications: ['default']
+        defaults: {active: true}
+
+        exclusive_record_groups: ['b2b_rfq_backoffice_flow']
+
+        start_step: open
+        steps_display_ordered: true
+        steps:
+            open:
+                order: 10
+                allowed_transitions:
+                    - process_transition
+                    - request_more_information_transition
+                    - decline_transition
+                    - delete_transition
+            processed:
+                order: 20
+                allowed_transitions:
+                    - delete_transition
+            more_info_requested:
+                order: 30
+                allowed_transitions:
+                    - delete_transition
+                    - info_provided_transition
+            declined:
+                order: 40
+                allowed_transitions:
+                    - delete_transition
+                    - reprocess_transition
+            deleted:
+                order: 50
+                allowed_transitions:
+                    - undelete_transition
+
+        transitions:
+            __start__:
+                is_start: true
+                is_hidden: true
+                is_unavailable_hidden: true
+                step_to: open
+                transition_definition: __start___definition
+            process_transition:
+                step_to: processed
+                transition_definition: stub_tranition_definition
+            request_more_information_transition:
+                step_to: more_info_requested
+                transition_definition: stub_tranition_definition
+            decline_transition:
+                step_to: declined
+                transition_definition: stub_tranition_definition
+            delete_transition:
+                step_to: deleted
+                transition_definition: stub_tranition_definition
+            info_provided_transition:
+                step_to: open
+                transition_definition: stub_tranition_definition
+            reprocess_transition:
+                step_to: open
+                transition_definition: stub_tranition_definition
+            undelete_transition:
+                step_to: open
+                transition_definition: stub_tranition_definition
+
+        transition_definitions:
+            __start___definition: ~
+            stub_tranition_definition: ~

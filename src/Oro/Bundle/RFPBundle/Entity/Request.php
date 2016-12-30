@@ -281,6 +281,13 @@ class Request extends ExtendRequest implements
     protected $assignedAccountUsers;
 
     /**
+     * @var Collection|RequestAdditionalNote[]
+     *
+     * @ORM\OneToMany(targetEntity="RequestAdditionalNote", mappedBy="request", cascade={"ALL"}, orphanRemoval=true)
+     */
+    protected $requestAdditionalNotes;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -293,6 +300,7 @@ class Request extends ExtendRequest implements
         $this->requestProducts = new ArrayCollection();
         $this->assignedUsers = new ArrayCollection();
         $this->assignedAccountUsers = new ArrayCollection();
+        $this->requestAdditionalNotes = new ArrayCollection();
     }
 
     /**
@@ -657,6 +665,40 @@ class Request extends ExtendRequest implements
     {
         if ($this->assignedAccountUsers->contains($assignedAccountUser)) {
             $this->assignedAccountUsers->removeElement($assignedAccountUser);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|RequestAdditionalNote[]
+     */
+    public function getRequestAdditionalNotes()
+    {
+        return $this->requestAdditionalNotes;
+    }
+
+    /**
+     * @param RequestAdditionalNote $requestAdditionalNote
+     * @return $this
+     */
+    public function addRequestAdditionalNote(RequestAdditionalNote $requestAdditionalNote)
+    {
+        if (!$this->requestAdditionalNotes->contains($requestAdditionalNote)) {
+            $this->requestAdditionalNotes->add($requestAdditionalNote);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param RequestAdditionalNote $requestAdditionalNote
+     * @return $this
+     */
+    public function removeRequestAdditionalNote(RequestAdditionalNote $requestAdditionalNote)
+    {
+        if ($this->requestAdditionalNotes->contains($requestAdditionalNote)) {
+            $this->requestAdditionalNotes->removeElement($requestAdditionalNote);
         }
 
         return $this;
