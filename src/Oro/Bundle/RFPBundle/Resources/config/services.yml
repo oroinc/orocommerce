@@ -3,6 +3,7 @@ parameters:
     oro_rfp.entity.request_product.class: Oro\Bundle\RFPBundle\Entity\RequestProduct
     oro_rfp.entity.request_product_item.class: Oro\Bundle\RFPBundle\Entity\RequestProductItem
     oro_rfp.entity.request.status.class: Oro\Bundle\RFPBundle\Entity\RequestStatus
+    oro_rfp.entity.request.additional_note.class: Oro\Bundle\RFPBundle\Entity\RequestAdditionalNote
 
 services:
     oro_rfp.datagrid.action_permission_provider:

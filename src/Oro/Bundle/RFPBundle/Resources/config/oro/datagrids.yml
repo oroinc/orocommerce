@@ -460,3 +460,71 @@ datagrids:
                 rowAction:      true
                 acl_permission: EDIT
                 acl_class:      %oro_rfp.entity.request.class%
+
+    rfp-request-additional-notes-grid:
+        acl_resource: oro_rfp_request_view
+        extended_entity_name: %oro_rfp.entity.request.additional_note.class%
+        options:
+            entityHint: additional_note
+        source:
+            type: orm
+            query:
+                select:
+                    - additionalNote.type
+                    - additionalNote.author
+                    - additionalNote.text
+                    - additionalNote.createdAt
+                from:
+                    - { table: %oro_rfp.entity.request.additional_note.class%, alias: additionalNote }
+                where:
+                    and:
+                        - IDENTITY(additionalNote.request) = :request
+            bind_parameters:
+                - request
+        columns:
+            type:
+                label:         oro.rfp.requestadditionalnote.type.label
+                type:          twig
+                frontend_type: html
+                template:      OroRFPBundle:RequestAdditionalNote:Datagrid/type.html.twig
+            author:
+                label:         oro.rfp.requestadditionalnote.author.label
+            text:
+                label:         oro.rfp.requestadditionalnote.text.label
+                type:          twig
+                frontend_type: html
+                template:      OroRFPBundle:RequestAdditionalNote:Datagrid/text.html.twig
+            createdAt:
+                label:         oro.rfp.requestadditionalnote.created_at.label
+                frontend_type: datetime
+        sorters:
+            columns:
+                type:
+                    data_name: additionalNote.type
+                author:
+                    data_name: additionalNote.author
+                text:
+                    data_name: additionalNote.text
+                createdAt:
+                    data_name: additionalNote.createdAt
+            default:
+                createdAt: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+        filters:
+            columns:
+                type:
+                    type:      choice
+                    data_name: additionalNote.type
+                    options:
+                        field_options:
+                            choices:
+                                customer_note:  oro.rfp.requestadditionalnote.type.customer_note.label
+                                seller_note:  oro.rfp.requestadditionalnote.type.seller_note.label
+                author:
+                    type:      string
+                    data_name: additionalNote.author
+                text:
+                    type:      string
+                    data_name: additionalNote.text
+                createdAt:
+                    type:      datetime
+                    data_name: additionalNote.createdAt

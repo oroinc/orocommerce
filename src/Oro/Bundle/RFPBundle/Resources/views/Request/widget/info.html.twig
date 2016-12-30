@@ -29,6 +29,9 @@
             {% if entity.assignedAccountUsers | length %}
                 {{ UI.renderHtmlProperty('oro.rfp.request.assigned_account_users.label'|trans, UI.entityViewLinks(entity.assignedAccountUsers, 'fullName', 'oro_customer_account_user_view')) }}
             {% endif %}
+        </div>
+        <div class="responsive-block">
+            {{ UI.renderHtmlProperty('oro.rfp.request.note.label'|trans, entity.note|nl2br) }}
 
             {{ entityConfig.renderDynamicFields(entity) }}
         </div>
