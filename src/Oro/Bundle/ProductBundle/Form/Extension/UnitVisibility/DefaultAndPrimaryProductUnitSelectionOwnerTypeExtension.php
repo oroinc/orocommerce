@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Form\Extension\SingleUnit;
+namespace Oro\Bundle\ProductBundle\Form\Extension\UnitVisibility;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;

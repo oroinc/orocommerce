@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\SaleBundle\Form\Extension\SingleUnit;
+namespace Oro\Bundle\SaleBundle\Form\Extension\UnitVisibility;
 
 use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatterInterface;
 use Oro\Bundle\ProductBundle\Service\SingleUnitModeService;

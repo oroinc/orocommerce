@@ -4,11 +4,11 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
-use Oro\Bundle\ProductBundle\EventListener\SingleUnitModeDataGridListener;
+use Oro\Bundle\ProductBundle\EventListener\UnitVisibilityModeDataGridListener;
 use Oro\Bundle\ProductBundle\Service\SingleUnitModeService;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 
-class SingleUnitModeDataGridListenerTest extends \PHPUnit_Framework_TestCase
+class UnitVisibilityModeDataGridListenerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var SingleUnitModeService|\PHPUnit_Framework_MockObject_MockObject
@@ -25,6 +25,9 @@ class SingleUnitModeDataGridListenerTest extends \PHPUnit_Framework_TestCase
      */
     private $dataGridMock;
 
+    /**
+     * @var array
+     */
     private $basicOnBuildBeforeTestData = [
         'unitColumnName' => 'unit',
         'quantityColumnName' => 'quantity',
@@ -62,7 +65,7 @@ class SingleUnitModeDataGridListenerTest extends \PHPUnit_Framework_TestCase
                     ],
                     $this->basicOnBuildBeforeTestData['quantityTemplateContext']
                 ),
-                'type' => SingleUnitModeDataGridListener::TEMPLATE_TYPE,
+                'type' => UnitVisibilityModeDataGridListener::TEMPLATE_TYPE,
                 'template' => $this->basicOnBuildBeforeTestData['quantityTemplate'],
             ],
             $this->basicOnBuildBeforeTestData['initialQuantityColumnParams']
@@ -98,7 +101,7 @@ class SingleUnitModeDataGridListenerTest extends \PHPUnit_Framework_TestCase
             ->method('isSingleUnitMode')
             ->willReturn(true);
 
-        $listener = new SingleUnitModeDataGridListener(
+        $listener = new UnitVisibilityModeDataGridListener(
             $this->basicOnBuildBeforeTestData['unitColumnName'],
             $this->basicOnBuildBeforeTestData['quantityColumnName'],
             $this->basicOnBuildBeforeTestData['quantityTemplate'],
@@ -148,7 +151,7 @@ class SingleUnitModeDataGridListenerTest extends \PHPUnit_Framework_TestCase
             ->expects($this->never())
             ->method('isSingleUnitModeCodeVisible');
 
-        $listener = new SingleUnitModeDataGridListener(
+        $listener = new UnitVisibilityModeDataGridListener(
             $this->basicOnBuildBeforeTestData['unitColumnName'],
             $this->basicOnBuildBeforeTestData['quantityColumnName'],
             $this->basicOnBuildBeforeTestData['quantityTemplate'],

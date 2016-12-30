@@ -1,0 +1,9 @@
+services:
+    oro_sale.form.type.extension.single_unit.unit_label_quote_product_demand_offer_choice:
+        class: 'Oro\Bundle\SaleBundle\Form\Extension\UnitVisibility\UnitLabelQuoteProductDemandOfferChoiceTypeExtension'
+        arguments:
+            - '@oro_product.formatter.product_unit_value'
+            - '@oro_product.service.single_unit_mode'
+            - '@translator'
+        tags:
+            - { name: form.type_extension, extended_type: '%oro_sale.form.type.quote_product_demand_offer_choice.class%' }

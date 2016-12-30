@@ -6,7 +6,7 @@ use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\ProductBundle\Service\SingleUnitModeService;
 
-class SingleUnitModeDataGridListener
+class UnitVisibilityModeDataGridListener
 {
     const TEMPLATE_TYPE = 'twig';
 

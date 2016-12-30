@@ -172,11 +172,3 @@ services:
         tags:
             - { name: kernel.event_listener, event: rfp.form_submit_check.oro_product_frontend_quick_add_copy_paste, method: onCopyPasteRFPFormSubmitCheck }
             - { name: kernel.event_listener, event: rfp.form_submit_check.oro_product_frontend_quick_add_import, method: onQuickAddImportRFPFormSubmitCheck }
-
-    oro_inventory.event_listener.single_unit_mode_datagrid:
-        parent: oro_product.event_listener.single_unit_mode_datagrid_basic
-        arguments:
-            index_0: 'unit'
-            index_2: 'OroProductBundle:Product:Datagrid/decimalQuantitySingleMode.html.twig'
-        tags:
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.inventory-grid, method: onBuildBefore }
