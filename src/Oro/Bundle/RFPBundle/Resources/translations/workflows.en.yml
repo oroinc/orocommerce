@@ -13,6 +13,9 @@ oro:
                     label: 'Declined'
                 deleted:
                     label: 'Deleted'
+            attribute:
+                notes:
+                    label: 'Notes'
             transition:
                 __start__:
                     label: 'Start transition'

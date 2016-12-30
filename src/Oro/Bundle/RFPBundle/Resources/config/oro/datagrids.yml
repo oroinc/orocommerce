@@ -550,7 +550,7 @@ datagrids:
                 createdAt:
                     data_name: additionalNote.createdAt
             default:
-                createdAt: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+                createdAt: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
         filters:
             columns:
                 type:
