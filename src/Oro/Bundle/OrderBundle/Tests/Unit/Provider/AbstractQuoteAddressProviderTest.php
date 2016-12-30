@@ -5,7 +5,7 @@ namespace Oro\Bundle\OrderBundle\Tests\Unit\Provider;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 
 use Oro\Bundle\OrderBundle\Provider\AddressProviderInterface;
@@ -97,7 +97,7 @@ abstract class AbstractQuoteAddressProviderTest extends \PHPUnit_Framework_TestC
             ->will($this->returnValue($loggedUser));
 
         $account = new Account();
-        $addresses = [new AccountAddress()];
+        $addresses = [new CustomerAddress()];
 
         $this->securityFacade->expects($this->once())
             ->method('isGranted')
@@ -129,7 +129,7 @@ abstract class AbstractQuoteAddressProviderTest extends \PHPUnit_Framework_TestC
             ->will($this->returnValue($loggedUser));
 
         $account = new Account();
-        $addresses = [new AccountAddress()];
+        $addresses = [new CustomerAddress()];
 
         $this->securityFacade->expects($this->exactly(2))
             ->method('isGranted')
@@ -209,7 +209,7 @@ abstract class AbstractQuoteAddressProviderTest extends \PHPUnit_Framework_TestC
      */
     protected function assertAccountAddressRepositoryCall()
     {
-        $repository = $this->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\Repository\AccountAddressRepository')
+        $repository = $this->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\Repository\CustomerAddressRepository')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -233,7 +233,7 @@ abstract class AbstractQuoteAddressProviderTest extends \PHPUnit_Framework_TestC
     protected function assertAccountUserAddressRepositoryCall()
     {
         $repository = $this
-            ->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\Repository\AccountUserAddressRepository')
+            ->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\Repository\CustomerUserAddressRepository')
             ->disableOriginalConstructor()
             ->getMock();
 

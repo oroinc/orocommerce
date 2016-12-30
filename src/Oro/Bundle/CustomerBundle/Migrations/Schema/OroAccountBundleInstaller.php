@@ -40,13 +40,13 @@ class OroAccountBundleInstaller implements
     const ORO_ACCOUNT_ROLE_TO_WEBSITE_TABLE_NAME = 'oro_account_role_to_website';
     const ORO_WEBSITE_TABLE_NAME = 'oro_website';
     const ORO_ORGANIZATION_TABLE_NAME = 'oro_organization';
-    const ORO_ACCOUNT_ADDRESS_TABLE_NAME = 'oro_account_address';
+    const ORO_CUSTOMER_ADDRESS_TABLE_NAME = 'oro_customer_address';
     const ORO_CUSTOMER_ADDRESS_TO_ADDRESS_TABLE_NAME = 'oro_customer_adr_adr_type';
     const ORO_DICTIONARY_REGION_TABLE_NAME = 'oro_dictionary_region';
     const ORO_DICTIONARY_COUNTRY_TABLE_NAME = 'oro_dictionary_country';
     const ORO_ADDRESS_TYPE_TABLE_NAME = 'oro_address_type';
     const ORO_EMAIL_TABLE_NAME = 'oro_email';
-    const ORO_ACCOUNT_USER_ADDRESS_TABLE_NAME = 'oro_account_user_address';
+    const ORO_CUSTOMER_USER_ADDRESS_TABLE_NAME = 'oro_customer_user_address';
     const ORO_CUS_USR_ADR_TO_ADR_TYPE_TABLE_NAME = 'oro_cus_usr_adr_to_adr_type';
 
     const ORO_CATEGORY_TABLE_NAME = 'oro_catalog_category';
@@ -104,10 +104,10 @@ class OroAccountBundleInstaller implements
         $this->createOroAccountUserRoleToWebsiteTable($schema);
         $this->createOroAccountTable($schema);
         $this->createOroAccountGroupTable($schema);
-        $this->createOroAccountAddressTable($schema);
+        $this->createOroCustomerAddressTable($schema);
         $this->createOroCustomerAdrAdrTypeTable($schema);
         $this->updateOroAuditTable($schema);
-        $this->createOroAccountUserAddressTable($schema);
+        $this->createOroCustomerUserAddressTable($schema);
         $this->createOroCusUsrAdrToAdrTypeTable($schema);
         $this->createOroNavigationHistoryTable($schema);
         $this->createOroNavigationItemTable($schema);
@@ -129,7 +129,7 @@ class OroAccountBundleInstaller implements
         $this->addOroAccountUserRoleForeignKeys($schema);
         $this->addOroAccountUserRoleToWebsiteForeignKeys($schema);
         $this->addOroAccountForeignKeys($schema);
-        $this->addOroAccountAddressForeignKeys($schema);
+        $this->addOroCustomerAddressForeignKeys($schema);
         $this->addOroCustomerAdrAdrTypeForeignKeys($schema);
         $this->addOroAccountUserAddressForeignKeys($schema);
         $this->addOroCusUsrAdrToAdrTypeForeignKeys($schema);
@@ -383,13 +383,13 @@ class OroAccountBundleInstaller implements
     }
 
     /**
-     * Create oro_account_address table
+     * Create oro_customer_address table
      *
      * @param Schema $schema
      */
-    protected function createOroAccountAddressTable(Schema $schema)
+    protected function createOroCustomerAddressTable(Schema $schema)
     {
-        $table = $schema->createTable(static::ORO_ACCOUNT_ADDRESS_TABLE_NAME);
+        $table = $schema->createTable(static::ORO_CUSTOMER_ADDRESS_TABLE_NAME);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('system_org_id', 'integer', ['notnull' => false]);
@@ -745,13 +745,13 @@ class OroAccountBundleInstaller implements
     }
 
     /**
-     * Add oro_account_address foreign keys.
+     * Add oro_customer_address foreign keys.
      *
      * @param Schema $schema
      */
-    protected function addOroAccountAddressForeignKeys(Schema $schema)
+    protected function addOroCustomerAddressForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable(static::ORO_ACCOUNT_ADDRESS_TABLE_NAME);
+        $table = $schema->getTable(static::ORO_CUSTOMER_ADDRESS_TABLE_NAME);
         $table->addForeignKeyConstraint(
             $schema->getTable(static::ORO_ACCOUNT_TABLE_NAME),
             ['frontend_owner_id'],
@@ -799,7 +799,7 @@ class OroAccountBundleInstaller implements
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable(static::ORO_ACCOUNT_ADDRESS_TABLE_NAME),
+            $schema->getTable(static::ORO_CUSTOMER_ADDRESS_TABLE_NAME),
             ['customer_address_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -807,13 +807,13 @@ class OroAccountBundleInstaller implements
     }
 
     /**
-     * Create oro_account_user_address table
+     * Create oro_customer_user_address table
      *
      * @param Schema $schema
      */
-    protected function createOroAccountUserAddressTable(Schema $schema)
+    protected function createOroCustomerUserAddressTable(Schema $schema)
     {
-        $table = $schema->createTable(static::ORO_ACCOUNT_USER_ADDRESS_TABLE_NAME);
+        $table = $schema->createTable(static::ORO_CUSTOMER_USER_ADDRESS_TABLE_NAME);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('system_org_id', 'integer', ['notnull' => false]);
@@ -840,13 +840,13 @@ class OroAccountBundleInstaller implements
     }
 
     /**
-     * Add oro_account_user_address foreign keys.
+     * Add oro_customer_user_address foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroAccountUserAddressForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable(static::ORO_ACCOUNT_USER_ADDRESS_TABLE_NAME);
+        $table = $schema->getTable(static::ORO_CUSTOMER_USER_ADDRESS_TABLE_NAME);
         $table->addForeignKeyConstraint(
             $schema->getTable(static::ORO_DICTIONARY_REGION_TABLE_NAME),
             ['region_code'],
@@ -910,7 +910,7 @@ class OroAccountBundleInstaller implements
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable(static::ORO_ACCOUNT_USER_ADDRESS_TABLE_NAME),
+            $schema->getTable(static::ORO_CUSTOMER_USER_ADDRESS_TABLE_NAME),
             ['customer_user_address_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]

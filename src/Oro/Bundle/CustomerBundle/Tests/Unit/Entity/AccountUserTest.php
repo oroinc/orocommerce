@@ -7,9 +7,9 @@ use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Tests\Unit\Entity\AbstractUserTest;
-use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Entity\AccountUserAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserSettings;
 use Oro\Bundle\CustomerBundle\Tests\Unit\Traits\AddressEntityTestTrait;
@@ -32,11 +32,11 @@ class AccountUserTest extends AbstractUserTest
     }
 
     /**
-     * @return AccountUserAddress
+     * @return CustomerUserAddress
      */
     public function createAddressEntity()
     {
-        return new AccountUserAddress();
+        return new CustomerUserAddress();
     }
 
     /**
@@ -66,7 +66,7 @@ class AccountUserTest extends AbstractUserTest
             ->setLastName('Doe')
             ->setOwner(new User());
         $this->assertEmpty($user->getAccount());
-        $address = new AccountAddress();
+        $address = new CustomerAddress();
         $user->addAddress($address);
         $this->assertContains($address, $user->getAddresses());
         $backendUser = new User();

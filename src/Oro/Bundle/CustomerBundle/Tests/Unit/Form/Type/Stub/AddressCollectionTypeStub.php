@@ -16,7 +16,7 @@ class AddressCollectionTypeStub extends AddressCollectionType
     {
         $resolver->setDefaults([
             'type'     => AccountTypedAddressType::NAME,
-            'options'  => ['data_class' => 'Oro\Bundle\CustomerBundle\Entity\AccountAddress'],
+            'options'  => ['data_class' => 'Oro\Bundle\CustomerBundle\Entity\CustomerAddress'],
             'multiple' => true,
         ]);
 

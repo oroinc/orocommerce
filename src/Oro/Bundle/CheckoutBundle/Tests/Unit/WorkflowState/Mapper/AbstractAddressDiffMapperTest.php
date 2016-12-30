@@ -4,8 +4,8 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\WorkflowState\Mapper;
 
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\AddressBundle\Entity\Country;
-use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
-use Oro\Bundle\CustomerBundle\Entity\AccountUserAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 use Oro\Bundle\CustomerBundle\Entity\AddressPhoneAwareInterface;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 
@@ -13,7 +13,7 @@ abstract class AbstractAddressDiffMapperTest extends AbstractCheckoutDiffMapperT
 {
     public function testGetCurrentStateAccountUserAddress()
     {
-        $accountUserAddress = $this->fillAddress(new AccountUserAddress());
+        $accountUserAddress = $this->fillAddress(new CustomerUserAddress());
 
         $orderAddress = new OrderAddress();
         $orderAddress->setAccountUserAddress($accountUserAddress);
@@ -25,7 +25,7 @@ abstract class AbstractAddressDiffMapperTest extends AbstractCheckoutDiffMapperT
 
     public function testGetCurrentStateAccountAddress()
     {
-        $accountAddress = $this->fillAddress(new AccountAddress());
+        $accountAddress = $this->fillAddress(new CustomerAddress());
 
         $orderAddress = new OrderAddress();
         $orderAddress->setAccountAddress($accountAddress);
