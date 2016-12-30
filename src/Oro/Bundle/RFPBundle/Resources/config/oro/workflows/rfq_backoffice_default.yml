@@ -37,6 +37,10 @@ workflows:
                 allowed_transitions:
                     - undelete_transition
 
+        attributes:
+            notes:
+                type: string
+
         transitions:
             __start__:
                 is_start: true
@@ -49,7 +53,15 @@ workflows:
                 transition_definition: stub_transition_definition
             request_more_information_transition:
                 step_to: more_info_requested
-                transition_definition: stub_transition_definition
+                transition_definition: request_more_information_transition_definition
+                form_options:
+                    attribute_fields:
+                        notes:
+                            form_type: oro_rich_text
+                            options:
+                                required: true
+                                constraints:
+                                  - NotBlank: ~
             decline_transition:
                 step_to: declined
                 transition_definition: decline_transition_definition
@@ -77,6 +89,38 @@ workflows:
                         enum_code: 'rfp_customer_status'
                         attribute: $request.customerStatus
                         identifier: 'submitted'
+            request_more_information_transition_definition:
+                actions:
+                    - '@request_enum_entity':
+                        enum_code: 'rfp_internal_status'
+                        attribute: $request.internalStatus
+                        identifier: 'more_info_requested'
+
+                    - '@assign_constant_value':
+                        attribute: $.result.note_type
+                        value: Oro\Bundle\RFPBundle\Entity\RequestAdditionalNote::TYPE_SELLER_NOTE
+                    - '@create_datetime':
+                        attribute: $.result.current_date
+                    - '@assign_active_user':
+                        attribute: $.result.current_user
+                    - '@create_entity':
+                        class: Oro\Bundle\RFPBundle\Entity\RequestAdditionalNote
+                        attribute: $.result.request_more_information_note
+                        flush: true
+                        data:
+                            request: $.entity
+                            type: $.result.note_type
+                            text: $notes
+                            author: $.result.current_user.fullName
+                            createdAt: $.result.current_date
+                            updatedAt: $.result.current_date
+                            userId: $.result.current_user.id
+                    - '@unset_value': [$notes] # unset temporary property
+                    - '@call_method':
+                        parameters:
+                            object: $.result.request_more_information_note
+                            method: addRequestAdditionalNote
+                            method_parameters: [$.result.request_more_information_note]
             delete_transition_definition:
                 actions:
                     - '@request_enum_entity':
