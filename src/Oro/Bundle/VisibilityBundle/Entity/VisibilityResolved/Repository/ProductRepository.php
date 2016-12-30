@@ -138,26 +138,28 @@ class ProductRepository extends AbstractVisibilityRepository
      * @param Product $product
      * @param $visibility
      * @param Scope $scope
-     * @param Category $category
+     * @param Category|null $category
      */
     public function insertByProduct(
         InsertFromSelectQueryExecutor $insertExecutor,
         Product $product,
         $visibility,
         Scope $scope,
-        Category $category
+        Category $category = null
     ) {
         $this->insertStatic($insertExecutor, null, $product);
 
-        $qb = $this->getVisibilitiesByCategoryQb($visibility, [$category->getId()], $scope);
-        $qb->andWhere('product = :product')
-            ->setParameter('product', $product);
+        if ($category) {
+            $qb = $this->getVisibilitiesByCategoryQb($visibility, [$category->getId()], $scope);
+            $qb->andWhere('product = :product')
+                ->setParameter('product', $product);
 
-        $insertExecutor->execute(
-            $this->getClassName(),
-            ['scope', 'product', 'visibility', 'source', 'category'],
-            $qb
-        );
+            $insertExecutor->execute(
+                $this->getClassName(),
+                ['scope', 'product', 'visibility', 'source', 'category'],
+                $qb
+            );
+        }
     }
 
     /**

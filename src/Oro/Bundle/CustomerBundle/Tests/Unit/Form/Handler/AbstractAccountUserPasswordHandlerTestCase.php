@@ -36,7 +36,7 @@ abstract class AbstractAccountUserPasswordHandlerTestCase extends \PHPUnit_Frame
 
     protected function setUp()
     {
-        $this->userManager = $this->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\AccountUserManager')
+        $this->userManager = $this->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\CustomerUserManager')
             ->disableOriginalConstructor()
             ->getMock();
 

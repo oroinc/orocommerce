@@ -6,20 +6,20 @@ use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
-use Oro\Bundle\CustomerBundle\Model\ExtendAccountUserSettings;
+use Oro\Bundle\CustomerBundle\Model\ExtendCustomerUserSettings;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * @Config()
  * @ORM\Entity
  * @ORM\Table(
- *    name="oro_account_user_settings",
+ *    name="oro_customer_user_settings",
  *    uniqueConstraints={
- *        @ORM\UniqueConstraint(name="unique_acc_user_website", columns={"account_user_id", "website_id"})
+ *        @ORM\UniqueConstraint(name="unique_cus_user_website", columns={"customer_user_id", "website_id"})
  *    }
  * )
  */
-class AccountUserSettings extends ExtendAccountUserSettings
+class CustomerUserSettings extends ExtendCustomerUserSettings
 {
     /**
      * @var int
@@ -34,9 +34,9 @@ class AccountUserSettings extends ExtendAccountUserSettings
      * @var AccountUser
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\AccountUser", inversedBy="settings")
-     * @ORM\JoinColumn(name="account_user_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
+     * @ORM\JoinColumn(name="customer_user_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
      */
-    protected $accountUser;
+    protected $customerUser;
 
     /**
      * @var Website
@@ -81,18 +81,18 @@ class AccountUserSettings extends ExtendAccountUserSettings
     /**
      * @return AccountUser
      */
-    public function getAccountUser()
+    public function getCustomerUser()
     {
-        return $this->accountUser;
+        return $this->customerUser;
     }
 
     /**
-     * @param AccountUser $accountUser
+     * @param AccountUser $customerUser
      * @return $this
      */
-    public function setAccountUser(AccountUser $accountUser)
+    public function setCustomerUser(AccountUser $customerUser)
     {
-        $this->accountUser = $accountUser;
+        $this->customerUser = $customerUser;
 
         return $this;
     }

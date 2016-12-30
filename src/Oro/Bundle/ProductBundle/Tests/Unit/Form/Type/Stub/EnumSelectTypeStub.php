@@ -16,7 +16,8 @@ class EnumSelectTypeStub extends AbstractType
     {
         $resolver->setDefaults([
             'configs' => [],
-            'enum_code' => null
+            'enum_code' => null,
+            'placeholder' => null,
         ]);
     }
 

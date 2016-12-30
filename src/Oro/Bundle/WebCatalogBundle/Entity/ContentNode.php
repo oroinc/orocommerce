@@ -193,6 +193,32 @@ class ContentNode extends ExtendContentNode implements
     protected $webCatalog;
 
     /**
+     * @var Collection|LocalizedFallbackValue[]
+     * @ORM\ManyToMany(
+     *      targetEntity="Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue",
+     *      cascade={"ALL"},
+     *      orphanRemoval=true
+     * )
+     * @ORM\JoinTable(
+     *      name="oro_web_catalog_node_url",
+     *      joinColumns={
+     *          @ORM\JoinColumn(name="node_id", referencedColumnName="id", onDelete="CASCADE")
+     *      },
+     *      inverseJoinColumns={
+     *          @ORM\JoinColumn(name="localized_value_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
+     *      }
+     * )
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $localizedUrls;
+
+    /**
      * ContentNode Constructor
      */
     public function __construct()
@@ -204,6 +230,7 @@ class ContentNode extends ExtendContentNode implements
         $this->slugPrototypes = new ArrayCollection();
         $this->scopes = new ArrayCollection();
         $this->contentVariants = new ArrayCollection();
+        $this->localizedUrls = new ArrayCollection();
     }
 
     /**
@@ -507,5 +534,48 @@ class ContentNode extends ExtendContentNode implements
         } else {
             return $contentNode->getScopes();
         }
+    }
+
+    /**
+     * @return Collection|LocalizedFallbackValue[]
+     */
+    public function getLocalizedUrls()
+    {
+        return $this->localizedUrls;
+    }
+
+    /**
+     * @param LocalizedFallbackValue $url
+     * @return $this
+     */
+    public function addLocalizedUrl(LocalizedFallbackValue $url)
+    {
+        if (!$this->hasLocalizedUrl($url)) {
+            $this->localizedUrls->add($url);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param LocalizedFallbackValue $url
+     * @return $this
+     */
+    public function removeLocalizedUrl(LocalizedFallbackValue $url)
+    {
+        if ($this->hasLocalizedUrl($url)) {
+            $this->localizedUrls->removeElement($url);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param LocalizedFallbackValue $url
+     * @return bool
+     */
+    public function hasLocalizedUrl(LocalizedFallbackValue $url)
+    {
+        return $this->localizedUrls->contains($url);
     }
 }

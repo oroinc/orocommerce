@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Entity\AccountUserManager;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserManager;
 use Oro\Bundle\CustomerBundle\Form\Handler\AccountUserPasswordRequestHandler;
 use Oro\Bundle\CustomerBundle\Form\Handler\AccountUserPasswordResetHandler;
 
@@ -148,7 +148,7 @@ class ResetController extends Controller
     }
 
     /**
-     * @return AccountUserManager
+     * @return CustomerUserManager
      */
     protected function getUserManager()
     {

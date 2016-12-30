@@ -64,10 +64,10 @@ class AccountUserAddress extends ExtendAccountUserAddress implements AddressPhon
     protected $frontendOwner;
 
     /**
-     * @var Collection|AccountUserAddressToAddressType[]
+     * @var Collection|CustomerUserAddressToAddressType[]
      *
      * @ORM\OneToMany(
-     *      targetEntity="Oro\Bundle\CustomerBundle\Entity\AccountUserAddressToAddressType",
+     *      targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerUserAddressToAddressType",
      *      mappedBy="address",
      *      cascade={"persist", "remove"},
      *      orphanRemoval=true
@@ -94,7 +94,7 @@ class AccountUserAddress extends ExtendAccountUserAddress implements AddressPhon
      */
     protected function createAddressToAddressTypeEntity()
     {
-        return new AccountUserAddressToAddressType();
+        return new CustomerUserAddressToAddressType();
     }
 
     /**

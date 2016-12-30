@@ -385,6 +385,23 @@ class Product extends ExtendProduct implements
     protected $variantLinks;
 
     /**
+     * @var Collection|ProductVariantLink[]
+     *
+     * @ORM\OneToMany(targetEntity="ProductVariantLink", mappedBy="product", cascade={"ALL"}, orphanRemoval=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          },
+     *          "importexport"={
+     *               "excluded"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $parentVariantLinks;
+
+    /**
      * @var Collection|LocalizedFallbackValue[]
      *
      * @ORM\ManyToMany(
@@ -466,6 +483,16 @@ class Product extends ExtendProduct implements
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily")
      * @ORM\JoinColumn(name="attribute_family_id", referencedColumnName="id", onDelete="RESTRICT")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=false
+     *          },
+     *          "importexport"={
+     *              "order"=10
+     *          }
+     *      }
+     *  )
      */
     protected $attributeFamily;
 
@@ -481,6 +508,7 @@ class Product extends ExtendProduct implements
         $this->descriptions = new ArrayCollection();
         $this->shortDescriptions = new ArrayCollection();
         $this->variantLinks = new ArrayCollection();
+        $this->parentVariantLinks = new ArrayCollection();
         $this->images = new ArrayCollection();
         $this->slugPrototypes = new ArrayCollection();
         $this->slugs = new ArrayCollection();
@@ -543,6 +571,14 @@ class Product extends ExtendProduct implements
         $this->sku = $sku;
 
         return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSimple()
+    {
+        return $this->getType() === self::TYPE_SIMPLE;
     }
 
     /**
@@ -879,6 +915,43 @@ class Product extends ExtendProduct implements
         return $this;
     }
 
+
+    /**
+     * @return Collection|ProductVariantLink[]
+     */
+    public function getParentVariantLinks()
+    {
+        return $this->parentVariantLinks;
+    }
+
+    /**
+     * @param ProductVariantLink $parentVariantLink
+     * @return $this
+     */
+    public function addParentVariantLink(ProductVariantLink $parentVariantLink)
+    {
+        $parentVariantLink->setProduct($this);
+
+        if (!$this->parentVariantLinks->contains($parentVariantLink)) {
+            $this->parentVariantLinks->add($parentVariantLink);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param ProductVariantLink $parentVariantLink
+     * @return $this
+     */
+    public function removeParentVariantLink(ProductVariantLink $parentVariantLink)
+    {
+        if ($this->parentVariantLinks->contains($parentVariantLink)) {
+            $this->parentVariantLinks->removeElement($parentVariantLink);
+        }
+
+        return $this;
+    }
+
     /**
      * @return Collection|ProductImage[]
      */
@@ -1018,6 +1091,7 @@ class Product extends ExtendProduct implements
             $this->shortDescriptions = new ArrayCollection();
             $this->images = new ArrayCollection();
             $this->variantLinks = new ArrayCollection();
+            $this->parentVariantLinks = new ArrayCollection();
             $this->variantFields = [];
         }
     }

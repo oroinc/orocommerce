@@ -4,17 +4,25 @@ namespace Oro\Bundle\PaymentBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
 
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
+use Oro\Bundle\PaymentBundle\Migrations\Schema\v1_6\OroPaymentBundle;
 
-class OroPaymentBundleInstaller implements Installation
+class OroPaymentBundleInstaller implements Installation, ActivityExtensionAwareInterface
 {
+    /**
+     * @var ActivityExtension
+     */
+    protected $activityExtension;
+
     /**
      * {@inheritdoc}
      */
     public function getMigrationVersion()
     {
-        return 'v1_6';
+        return 'v1_7';
     }
 
     /**
@@ -93,12 +101,18 @@ class OroPaymentBundleInstaller implements Installation
      */
     protected function createOroPaymentMethodsConfigsRuleTable(Schema $schema)
     {
-        $table = $schema->createTable('oro_payment_mtds_cfgs_rl');
+        $table = $schema->createTable(OroPaymentBundle::PAYMENT_METHOD_CONFIG_RULE_TABLE);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('rule_id', 'integer', []);
         $table->addColumn('currency', 'string', ['notnull' => true, 'length' => 3]);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['rule_id'], 'idx_oro_payment_mtds_cfgs_rl_rule_id', []);
+
+        $this->activityExtension->addActivityAssociation(
+            $schema,
+            'oro_note',
+            OroPaymentBundle::PAYMENT_METHOD_CONFIG_RULE_TABLE
+        );
     }
 
     /**
@@ -178,7 +192,7 @@ class OroPaymentBundleInstaller implements Installation
     {
         $table = $schema->getTable('oro_payment_method_config');
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_payment_mtds_cfgs_rl'),
+            $schema->getTable(OroPaymentBundle::PAYMENT_METHOD_CONFIG_RULE_TABLE),
             ['configs_rule_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -192,7 +206,7 @@ class OroPaymentBundleInstaller implements Installation
      */
     protected function addOroPaymentMethodsConfigsRuleForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('oro_payment_mtds_cfgs_rl');
+        $table = $schema->getTable(OroPaymentBundle::PAYMENT_METHOD_CONFIG_RULE_TABLE);
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_rule'),
             ['rule_id'],
@@ -216,7 +230,7 @@ class OroPaymentBundleInstaller implements Installation
             ['onDelete' => null, 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_payment_mtds_cfgs_rl'),
+            $schema->getTable(OroPaymentBundle::PAYMENT_METHOD_CONFIG_RULE_TABLE),
             ['configs_rule_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -259,5 +273,15 @@ class OroPaymentBundleInstaller implements Installation
         $table->addColumn('payment_status', 'string', ['length' => 255]);
         $table->addUniqueIndex(['entity_class', 'entity_identifier'], 'oro_payment_status_unique');
         $table->setPrimaryKey(['id']);
+    }
+
+    /**
+     * Sets the ActivityExtension
+     *
+     * @param ActivityExtension $activityExtension
+     */
+    public function setActivityExtension(ActivityExtension $activityExtension)
+    {
+        $this->activityExtension = $activityExtension;
     }
 }

@@ -5,14 +5,14 @@ namespace Oro\Bundle\CustomerBundle\Tests\Unit\Entity;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Entity\AccountUserManager;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserManager;
 
-class AccountUserManagerTest extends \PHPUnit_Framework_TestCase
+class CustomerUserManagerTest extends \PHPUnit_Framework_TestCase
 {
     const USER_CLASS = 'Oro\Bundle\CustomerBundle\Entity\AccountUser';
 
     /**
-     * @var AccountUserManager
+     * @var CustomerUserManager
      */
     protected $userManager;
 
@@ -75,7 +75,7 @@ class AccountUserManagerTest extends \PHPUnit_Framework_TestCase
                 )
             );
 
-        $this->userManager = new AccountUserManager(static::USER_CLASS, $this->registry, $this->ef);
+        $this->userManager = new CustomerUserManager(static::USER_CLASS, $this->registry, $this->ef);
         $this->userManager->setContainer($container);
     }
 
