@@ -97,14 +97,14 @@ workflows:
                 actions:
                     - '@request_enum_entity':
                         conditions:
-                            '@equal': ['cancelled', $request.customerStatus]
+                            '@equal': ['cancelled', $request.customerStatus.id]
                         parameters:
                             enum_code: 'rfp_internal_status'
                             attribute: $request.internalStatus
                             identifier: 'cancelled_by_customer'
                     - '@request_enum_entity':
                         conditions:
-                            '@not_equal': ['cancelled', $request.customerStatus]
+                            '@not_equal': ['cancelled', $request.customerStatus.id]
                         parameters:
                             enum_code: 'rfp_internal_status'
                             attribute: $request.internalStatus
