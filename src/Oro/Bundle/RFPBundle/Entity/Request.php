@@ -71,6 +71,8 @@ class Request extends ExtendRequest implements
     const CUSTOMER_STATUS_CODE = 'rfp_customer_status';
     const INTERNAL_STATUS_CODE = 'rfp_internal_status';
 
+    const INTERNAL_STATUS_DELETED = 'deleted';
+
     /**
      * @var integer
      *

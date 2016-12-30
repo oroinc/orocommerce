@@ -37,6 +37,11 @@ class RequestController extends Controller
      */
     public function viewAction(RFPRequest $request)
     {
+        $status = $request->getInternalStatus();
+        if ($status && $status->getId() === RFPRequest::INTERNAL_STATUS_DELETED) {
+            throw $this->createNotFoundException();
+        }
+
         return [
             'data' => [
                 'entity' => $request

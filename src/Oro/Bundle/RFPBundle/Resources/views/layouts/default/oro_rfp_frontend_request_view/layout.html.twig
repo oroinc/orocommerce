@@ -103,6 +103,10 @@
                                     <td>{{ request.cancellationReason }}</td>
                                 </tr>
                             {% endif %}
+                            <tr class="account-oq__order-info__control">
+                                <td class="account-oq__order-info__title">{{ 'oro.frontend.rfp.request.customer_status.label'|trans }}</td>
+                                <td>{{ request.customerStatus.name|default('') }}</td>
+                            </tr>
                             {{ block_widget(block) }}
                         </tbody>
                     </table>
