@@ -1,5 +1,3 @@
-{% extends 'OroFrontendBundle:layouts/default:form_theme.html.twig' %}
-
 {% block oro_account_frontend_typed_address_widget %}
     {% spaceless %}
         <div class="grid">
@@ -64,7 +62,7 @@
                     {{ form_row(form.region) }}
                 </div>
                 <div class="grid__column grid__column--2 grid__column--offset-y">
-                    <div class="grid__row grid__row--offset-s">
+                    <div class="grid__row grid__row--offset-none">
                         {{- form_label(form.postalCode) -}}
                     </div>
                     {{- form_widget(form.postalCode, {'attr' : {'placeholder': 'oro.customer.frontend.address.form.placeholder.zip'|trans}}) -}}
@@ -111,46 +109,12 @@
 {% endblock %}
 
 {%- block form_row -%}
-    <div class="grid__row grid__row--offset-s">
+    <div class="grid__row grid__row--offset-none">
         {{- form_label(form, null) -}}
     </div>
     {{- form_widget(form) -}}
     {{- form_errors(form) -}}
 {%- endblock -%}
-
-{% block checkbox_row %}
-    {{- form_widget(form) -}}
-{% endblock %}
-
-{%- block checkbox_widget -%}
-    {%- if label is empty -%}
-        {% set label = id|humanize %}
-    {%- endif -%}
-
-    <label class="custom-checkbox" for="{{ id }}">
-        <input class="custom-checkbox__input" type="checkbox" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %}>
-        <span class="custom-checkbox__icon"></span>
-        <span class="custom-checkbox__text">{{ label|block_text(translation_domain) }} </span>
-    </label>
-
-    {{- form_errors(form) -}}
-{%- endblock checkbox_widget -%}
-
-{%- block form_label -%}
-    {% set label_attr = label_attr|merge({class: ""}) %}
-
-    {{ parent() }}
-{%- endblock -%}
-
-{%- block form_widget -%}
-    {% set attr = attr|merge({class: ""}) %}
-    {{ parent() }}
-{%- endblock -%}
-
-{% block form_widget_simple %}
-    {% set attr = attr|merge({class: "input input--full input--size-m"}) %}
-    {{ parent() }}
-{% endblock %}
 
 {% block oro_frontend_region_widget %}
     {{ block('oro_region_widget') }}
@@ -159,16 +123,3 @@
 {% block oro_frontend_country_widget %}
     {{ form_widget(form, {'class_prefix': 'checkout'}) }}
 {% endblock %}
-
-{# TODO: remove due BB-3540 #}
-{%- block form_errors -%}
-    {%- if errors|length > 0 -%}
-        <div class="notification--error">
-            <ul>
-                {%- for error in errors -%}
-                    <li><i class="fa-exclamation-triangle"></i><span class="notification__text">{{ error.message }}</span></li>
-                {%- endfor -%}
-            </ul>
-        </div>
-    {%- endif -%}
-{%- endblock form_errors -%}

@@ -1,9 +1,9 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'OroCustomerBundle:layouts:default/oro_customer_frontend_account_user_profile_update/layout.html.twig'
+            themes: 'layout.html.twig'
         - '@setFormTheme':
-            themes: 'OroCustomerBundle:layouts:default/oro_customer_frontend_account_user_profile_update/form_theme.html.twig'
+            themes: 'form_theme.html.twig'
 
         - '@setOption':
             id: page_title
