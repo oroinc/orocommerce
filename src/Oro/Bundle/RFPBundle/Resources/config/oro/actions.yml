@@ -402,7 +402,6 @@ action_groups:
                     updatedAt: $.current_date
                     userId: $.current_user.id
             - '@call_method':
-                parameters:
-                    object: $.request
-                    method: addRequestAdditionalNote
-                    method_parameters: [$.request_additional_note]
+                object: $.request
+                method: addRequestAdditionalNote
+                method_parameters: [$.request_additional_note]

@@ -40,6 +40,13 @@ workflows:
             more_information_requested_transition:
                 step_to: requires_attention
                 transition_definition: stub_transition_definition
+                is_hidden: true
+                triggers:
+                    -
+                        entity_class: 'Oro\Bundle\RFPBundle\Entity\Request'
+                        event: update
+                        field: internal_status
+                        require: "entity.getInternalStatus().getId() === 'more_info_requested'"
             provide_more_information_transition:
                 step_to: submitted
                 transition_definition: provide_more_information_transition_definition
