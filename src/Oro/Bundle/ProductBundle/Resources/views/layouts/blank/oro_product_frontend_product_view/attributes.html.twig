@@ -1,0 +1,15 @@
+{% block _product_view_attributes_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-view__attributes'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block attribute_product_images_widget %}
+    {% set product = entity %}
+
+    {{ block('_product_media_widget') }}
+{% endblock %}

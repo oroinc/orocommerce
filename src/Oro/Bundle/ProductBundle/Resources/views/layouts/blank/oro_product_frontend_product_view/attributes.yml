@@ -1,0 +1,19 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'attributes.html.twig'
+        - '@addTree':
+            items:
+                product_view_attributes_container:
+                    blockType: container
+                product_view_attributes_rest:
+                    blockType: attribute_group_rest
+                    options:
+                        entity: '=data["product"]'
+                        attribute_family: '=context["attribute_family"]'
+                        options:
+                            tabsOptions: '=data["attribute_group_rest"].getTabsOptions(context["attribute_family"])'
+            tree:
+                product_view_additional_container:
+                    product_view_attributes_container:
+                        product_view_attributes_rest: ~

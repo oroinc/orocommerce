@@ -40,8 +40,14 @@
                     </td>
                 </tr>
             {% endfor %}
-            {{ block_widget(block) }}
+            {{ block('container_widget') }}
             </tbody>
         </table>
     </div>
+{% endblock %}
+
+{% block attribute_prices_widget %}
+    {% set productPrices = value %}
+
+    {{ block('_product_prices_widget') }}
 {% endblock %}

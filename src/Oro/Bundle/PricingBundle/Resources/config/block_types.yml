@@ -44,5 +44,10 @@ services:
         calls:
             - [setName, ['attribute_prices']]
             - [setParent, ['attribute_text']]
+            -
+                - setOptionsConfig
+                -
+                    -
+                        value: {default: '=data["frontend_product_prices"].getByProduct(entity)'}
         tags:
              - { name: layout.block_type, alias: attribute_prices }
