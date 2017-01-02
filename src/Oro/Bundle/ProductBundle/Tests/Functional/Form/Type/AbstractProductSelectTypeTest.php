@@ -31,7 +31,7 @@ abstract class AbstractProductSelectTypeTest extends WebTestCase
     }
 
     /**
-     * @dataProvider restrictionDataProvider
+     * @dataProvider restrictionSelectDataProvider
      * @param array $restrictionParams
      * @param array $expectedProducts
      */
@@ -58,7 +58,7 @@ abstract class AbstractProductSelectTypeTest extends WebTestCase
     }
 
     /**
-     * @dataProvider restrictionDataProvider
+     * @dataProvider restrictionGridDataProvider
      * @param array $restrictionParams
      * @param array $expectedProducts
      */
@@ -87,7 +87,12 @@ abstract class AbstractProductSelectTypeTest extends WebTestCase
     /**
      * @return array
      */
-    abstract public function restrictionDataProvider();
+    abstract public function restrictionSelectDataProvider();
+
+    /**
+     * @return array
+     */
+    abstract public function restrictionGridDataProvider();
 
     /**
      * @expectedException \RuntimeException

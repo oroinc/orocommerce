@@ -14,7 +14,7 @@ use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 
 /**
  * @NamePrefix("oro_api_account_")
@@ -39,7 +39,7 @@ class AccountAddressController extends RestController implements ClassResourceIn
         /** @var Account $account */
         $account = $this->getAccountManager()->find($entityId);
 
-        /** @var AccountAddress $address */
+        /** @var CustomerAddress $address */
         $address = $this->getManager()->find($addressId);
 
         $addressData = null;
@@ -94,7 +94,7 @@ class AccountAddressController extends RestController implements ClassResourceIn
      */
     public function deleteAction($entityId, $addressId)
     {
-        /** @var AccountAddress $address */
+        /** @var CustomerAddress $address */
         $address = $this->getManager()->find($addressId);
         /** @var Account $account */
         $account = $this->getAccountManager()->find($entityId);

@@ -9,8 +9,8 @@ use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Entity\Repository\AccountAddressRepository;
-use Oro\Bundle\CustomerBundle\Entity\Repository\AccountUserAddressRepository;
+use Oro\Bundle\CustomerBundle\Entity\Repository\CustomerAddressRepository;
+use Oro\Bundle\CustomerBundle\Entity\Repository\CustomerUserAddressRepository;
 
 class OrderAddressProvider implements AddressProviderInterface
 {
@@ -168,7 +168,7 @@ class OrderAddressProvider implements AddressProviderInterface
     }
 
     /**
-     * @return AccountAddressRepository
+     * @return CustomerAddressRepository
      */
     protected function getAccountAddressRepository()
     {
@@ -177,7 +177,7 @@ class OrderAddressProvider implements AddressProviderInterface
     }
 
     /**
-     * @return AccountUserAddressRepository
+     * @return CustomerUserAddressRepository
      */
     protected function getAccountUserAddressRepository()
     {

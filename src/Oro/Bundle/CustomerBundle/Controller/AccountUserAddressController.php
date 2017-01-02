@@ -12,7 +12,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\AddressBundle\Form\Handler\AddressHandler;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Entity\AccountUserAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 use Oro\Bundle\CustomerBundle\Form\Type\AccountUserTypedAddressType;
 
 class AccountUserAddressController extends Controller
@@ -49,7 +49,7 @@ class AccountUserAddressController extends Controller
      */
     public function createAction(AccountUser $accountUser)
     {
-        return $this->update($accountUser, new AccountUserAddress());
+        return $this->update($accountUser, new CustomerUserAddress());
     }
 
     /**
@@ -63,21 +63,21 @@ class AccountUserAddressController extends Controller
      * @ParamConverter("accountUser", options={"id" = "entityId"})
      *
      * @param AccountUser        $accountUser
-     * @param AccountUserAddress $address
+     * @param CustomerUserAddress $address
      * @return array
      */
-    public function updateAction(AccountUser $accountUser, AccountUserAddress $address)
+    public function updateAction(AccountUser $accountUser, CustomerUserAddress $address)
     {
         return $this->update($accountUser, $address);
     }
 
     /**
      * @param AccountUser $accountUser
-     * @param AccountUserAddress $address
+     * @param CustomerUserAddress $address
      * @return array
      * @throws BadRequestHttpException
      */
-    protected function update(AccountUser $accountUser, AccountUserAddress $address)
+    protected function update(AccountUser $accountUser, CustomerUserAddress $address)
     {
         $responseData = [
             'saved' => false,

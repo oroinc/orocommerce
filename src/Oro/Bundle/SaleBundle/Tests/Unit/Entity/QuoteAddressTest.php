@@ -4,8 +4,8 @@ namespace Oro\Bundle\SaleBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
-use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
-use Oro\Bundle\CustomerBundle\Entity\AccountUserAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 use Oro\Bundle\SaleBundle\Entity\QuoteAddress;
 
 class QuoteAddressTest extends AbstractTest
@@ -15,8 +15,8 @@ class QuoteAddressTest extends AbstractTest
         $now = new \DateTime('now');
         $properties = [
             ['id', '123'],
-            ['accountAddress', new AccountAddress()],
-            ['accountUserAddress', new AccountUserAddress()],
+            ['accountAddress', new CustomerAddress()],
+            ['accountUserAddress', new CustomerUserAddress()],
             ['region', new Region('combineCode')],
             ['country', new Country('en-US')],
             ['label', 'QuoteAddress'],

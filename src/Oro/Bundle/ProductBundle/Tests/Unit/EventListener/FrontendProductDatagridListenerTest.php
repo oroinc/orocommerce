@@ -130,16 +130,10 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
                             'type' => LocalizedValueProperty::NAME,
                             'data_name' => 'shortDescriptions',
                         ],
-                        'type' => ['~']
                     ],
                     'columns' => [
                         'image' => ['label' => 'oro.product.image.label'],
                         'shortDescription' => ['label' => 'oro.product.short_descriptions.label'],
-                    ],
-                    'source' => [
-                        'query' => [
-                            'select' => ['text.type as type']
-                        ]
                     ]
                 ]
             ],
@@ -241,7 +235,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
 
         $images = [];
         foreach ($productWithImages as $index => $productId) {
-            $product = $this->createMock('Oro\Bundle\ProductBundle\Entity\Product', ['getId', 'getImages']);
+            $product = $this->createMock('Oro\Bundle\ProductBundle\Entity\Product');
             $product->expects($this->any())
                 ->method('getId')
                 ->willReturn($productId);

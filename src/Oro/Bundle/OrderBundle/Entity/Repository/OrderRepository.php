@@ -3,7 +3,6 @@
 namespace Oro\Bundle\OrderBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
-
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 
 class OrderRepository extends EntityRepository

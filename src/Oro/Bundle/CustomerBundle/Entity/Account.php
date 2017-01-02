@@ -114,9 +114,9 @@ class Account extends ExtendAccount
     protected $children;
 
     /**
-     * @var Collection|AccountAddress[]
+     * @var Collection|CustomerAddress[]
      *
-     * @ORM\OneToMany(targetEntity="Oro\Bundle\CustomerBundle\Entity\AccountAddress",
+     * @ORM\OneToMany(targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerAddress",
      *    mappedBy="frontendOwner", cascade={"all"}, orphanRemoval=true
      * )
      * @ORM\OrderBy({"primary" = "DESC"})
