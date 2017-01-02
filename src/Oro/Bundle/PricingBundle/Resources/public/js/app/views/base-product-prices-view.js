@@ -6,7 +6,6 @@ define(function(require) {
     var ElementsHelper = require('orofrontend/js/app/elements-helper');
     var layout = require('oroui/js/layout');
     var BaseModel = require('oroui/js/app/models/base/model');
-    var NumberFormatter = require('orolocale/js/formatter/number');
     var _ = require('underscore');
     var $ = require('jquery');
 
