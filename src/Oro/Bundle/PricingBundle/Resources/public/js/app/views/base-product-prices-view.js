@@ -44,6 +44,8 @@ define(function(require) {
 
         changeQuantity: false,
 
+        rendered: false,
+
         initialize: function(options) {
             BaseProductPricesView.__super__.initialize.apply(this, arguments);
 
@@ -128,7 +130,12 @@ define(function(require) {
                 this.prices[unit] = unitPrices;
             }, this);
 
-            this.setFoundPrice();
+            if (!this.rendered) {
+                this.rendered = true;
+                this.setFoundPrice(true);
+            } else {
+                this.setFoundPrice();
+            }
         },
 
         onQuantityChange: function(options) {
