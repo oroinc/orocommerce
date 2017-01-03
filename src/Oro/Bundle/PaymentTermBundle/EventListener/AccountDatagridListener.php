@@ -46,7 +46,7 @@ class AccountDatagridListener
 
         $aliases = [];
         foreach ($accountGroupAssociationNames as $accountGroupAssociationName) {
-            $alias = 'agpt_'.$accountGroupAssociationName;
+            $alias = 'agpt_' . $accountGroupAssociationName;
             $aliases[] = $alias;
             $query->addLeftJoin('account_group.' . $accountGroupAssociationName, $alias);
         }
@@ -57,7 +57,7 @@ class AccountDatagridListener
             $query->addSelect(
                 $this->getSelectPart(
                     $aliases,
-                    $associationName.'_resolved_id',
+                    $associationName . '_resolved_id',
                     'id',
                     [sprintf('IDENTITY(%s.%s)', $rootAlias, $associationName)]
                 )
@@ -67,18 +67,18 @@ class AccountDatagridListener
             $query->addSelect(
                 $this->getSelectPart(
                     $aliases,
-                    $associationName.'_resolved_value',
+                    $associationName . '_resolved_value',
                     $targetField,
-                    [$associationName.'.'.$targetField]
+                    [$query->getJoinAlias($rootAlias . '.' . $associationName) . '.' . $targetField]
                 )
             );
             $config->offsetSetByPath(
                 sprintf('[filters][columns][%s][data_name]', $associationName),
-                $associationName.'_resolved_id'
+                $associationName . '_resolved_id'
             );
             $config->offsetSetByPath(
                 sprintf('[sorters][columns][%s][data_name]', $associationName),
-                $associationName.'_resolved_value'
+                $associationName . '_resolved_value'
             );
             $config->offsetSetByPath(sprintf('[columns][%s][type]', $associationName), 'twig');
             $config->offsetSetByPath(sprintf('[columns][%s][frontend_type]', $associationName), 'html');
@@ -106,7 +106,7 @@ class AccountDatagridListener
                     $prepend,
                     array_map(
                         function ($alias) use ($fieldName) {
-                            return $alias.'.'.$fieldName;
+                            return $alias . '.' . $fieldName;
                         },
                         $aliases
                     )

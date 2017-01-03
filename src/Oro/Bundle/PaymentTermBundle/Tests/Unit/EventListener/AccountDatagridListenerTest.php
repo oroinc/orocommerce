@@ -144,7 +144,7 @@ class AccountDatagridListenerTest extends \PHPUnit_Framework_TestCase
                             'COALESCE(agpt_accountGroupPaymentTerm.label) as account_group_payment_term',
                             'COALESCE(IDENTITY(rootAlias.accountPaymentTerm),'.
                                 'agpt_accountGroupPaymentTerm.id) as accountPaymentTerm_resolved_id',
-                            'COALESCE(accountPaymentTerm.label,agpt_accountGroupPaymentTerm.label)'.
+                            'COALESCE(auto_rel_1.label,agpt_accountGroupPaymentTerm.label)'.
                                 ' as accountPaymentTerm_resolved_value',
                         ],
                     ],
@@ -216,11 +216,11 @@ class AccountDatagridListenerTest extends \PHPUnit_Framework_TestCase
                                 ' as account_group_payment_term',
                             'COALESCE(IDENTITY(rootAlias.accountPaymentTerm),agpt_accountGroupPaymentTerm.id,'.
                                 'agpt_accountGroupPaymentTerm2.id) as accountPaymentTerm_resolved_id',
-                            'COALESCE(accountPaymentTerm.label,agpt_accountGroupPaymentTerm.label,'.
+                            'COALESCE(auto_rel_1.label,agpt_accountGroupPaymentTerm.label,'.
                                 'agpt_accountGroupPaymentTerm2.label) as accountPaymentTerm_resolved_value',
                             'COALESCE(IDENTITY(rootAlias.accountPaymentTerm2),agpt_accountGroupPaymentTerm.id,'.
                                 'agpt_accountGroupPaymentTerm2.id) as accountPaymentTerm2_resolved_id',
-                            'COALESCE(accountPaymentTerm2.label,agpt_accountGroupPaymentTerm.label,'.
+                            'COALESCE(auto_rel_2.label,agpt_accountGroupPaymentTerm.label,'.
                                 'agpt_accountGroupPaymentTerm2.label) as accountPaymentTerm2_resolved_value',
                         ],
                     ],
