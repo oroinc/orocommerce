@@ -62,11 +62,12 @@
                     {{ form_row(form.region) }}
                 </div>
                 <div class="grid__column grid__column--2 grid__column--offset-y">
-                    <div class="grid__row grid__row--offset-none">
+                    {{ form_row(form.postalCode, {'attr' : {'placeholder': 'oro.customer.frontend.address.form.placeholder.zip'|trans}}) }}
+                    {# <div class="grid__row grid__row--offset-none">
                         {{- form_label(form.postalCode) -}}
                     </div>
                     {{- form_widget(form.postalCode, {'attr' : {'placeholder': 'oro.customer.frontend.address.form.placeholder.zip'|trans}}) -}}
-                    {{- form_errors(form.postalCode) -}}
+                    {{- form_errors(form.postalCode) -}} #}
                 </div>
             </div>
         </div>
@@ -109,9 +110,7 @@
 {% endblock %}
 
 {%- block form_row -%}
-    <div class="grid__row grid__row--offset-none">
-        {{- form_label(form, null) -}}
-    </div>
+    {{- form_label(form, null) -}}
     {{- form_widget(form) -}}
     {{- form_errors(form) -}}
 {%- endblock -%}
