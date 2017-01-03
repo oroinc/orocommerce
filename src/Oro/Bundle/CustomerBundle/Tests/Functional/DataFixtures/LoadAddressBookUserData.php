@@ -9,9 +9,9 @@ use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Entity\AccountUserManager;
 use Oro\Bundle\CustomerBundle\Entity\AccountUserRole;
 use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserManager;
 use Oro\Bundle\CustomerBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
 use Oro\Bundle\UserBundle\Entity\Repository\RoleRepository;
 use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadRolesData;
@@ -261,7 +261,7 @@ class LoadAddressBookUserData extends AbstractFixture implements ContainerAwareI
      */
     protected function loadAccountUsers(ObjectManager $manager)
     {
-        /* @var $userManager AccountUserManager */
+        /* @var $userManager CustomerUserManager */
         $userManager = $this->container->get('oro_account_user.manager');
 
         $defaultUser = $this->getUser($manager);
