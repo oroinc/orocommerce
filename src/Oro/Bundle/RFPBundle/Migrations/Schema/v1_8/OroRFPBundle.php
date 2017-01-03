@@ -30,6 +30,7 @@ class OroRFPBundle implements Migration, ExtendExtensionAwareInterface
         $this->updateOroRfpRequestTable($schema);
         $this->createOroRfpRequestAddNoteTable($schema);
         $this->addOroRfpRequestAddNoteForeignKeys($schema);
+        $queries->addQuery(new DeleteTranslationKeys());
     }
 
     /**
