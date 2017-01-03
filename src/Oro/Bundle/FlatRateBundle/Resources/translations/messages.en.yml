@@ -1,0 +1,5 @@
+oro:
+    flat_rate:
+        settings:
+            label: Flat Rate Transport Settings
+            labels.label: Label
