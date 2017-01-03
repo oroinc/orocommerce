@@ -192,3 +192,11 @@ services:
             - 'oro_frontend_workflow_transition_form'
             - 'oro_api_frontend_workflow_transit'
             - 'oro_frontend_workflow_widget_buttons'
+
+    oro_frontend.extension.transition_button_provider:
+        class: 'Oro\Bundle\FrontendBundle\Extension\FrontendTransitionButtonProviderExtension'
+        parent: oro_workflow.extension.transition_button_provider
+        calls:
+            - ['setApplicationProvider',['@oro_frontend.provider.current_application']]
+        tags:
+           - { name: oro.action.extension.button_provider, priority: 120 }
