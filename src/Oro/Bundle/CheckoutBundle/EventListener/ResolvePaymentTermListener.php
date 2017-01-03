@@ -2,14 +2,13 @@
 
 namespace Oro\Bundle\CheckoutBundle\EventListener;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
+use Doctrine\Common\Persistence\ManagerRegistry;
 
-use Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface;
-use Oro\Bundle\CheckoutBundle\Event\CheckoutEntityEvent;
-use Oro\Bundle\CheckoutBundle\Event\CheckoutEvents;
-use Oro\Bundle\PaymentBundle\Event\ResolvePaymentTermEvent;
-use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\PaymentTermBundle\Event\ResolvePaymentTermEvent;
+use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
+
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class ResolvePaymentTermListener
 {
@@ -18,17 +17,25 @@ class ResolvePaymentTermListener
     /** @var RequestStack */
     protected $requestStack;
 
-    /** @var  EventDispatcherInterface */
-    protected $eventDispatcher;
+    /** @var ManagerRegistry */
+    protected $registry;
+
+    /** @var PaymentTermProvider */
+    private $paymentTermProvider;
 
     /**
      * @param RequestStack $requestStack
-     * @param EventDispatcherInterface $eventDispatcher
+     * @param ManagerRegistry $registry
+     * @param PaymentTermProvider $paymentTermProvider
      */
-    public function __construct(RequestStack $requestStack, EventDispatcherInterface $eventDispatcher)
-    {
+    public function __construct(
+        RequestStack $requestStack,
+        ManagerRegistry $registry,
+        PaymentTermProvider $paymentTermProvider
+    ) {
         $this->requestStack = $requestStack;
-        $this->eventDispatcher = $eventDispatcher;
+        $this->registry = $registry;
+        $this->paymentTermProvider = $paymentTermProvider;
     }
 
     /**
@@ -42,13 +49,20 @@ class ResolvePaymentTermListener
         }
 
         $source = $checkout->getSourceEntity();
-        if ($source && $source instanceof QuoteDemand && $source->getQuote()->getPaymentTerm()) {
-            $event->setPaymentTerm($source->getQuote()->getPaymentTerm());
+        if (!$source) {
+            return;
         }
+
+        $paymentTerm = $this->paymentTermProvider->getObjectPaymentTerm($source);
+        if (!$paymentTerm) {
+            return;
+        }
+
+        $event->setPaymentTerm($paymentTerm);
     }
 
     /**
-     * @return null|CheckoutInterface
+     * @return null|Checkout
      */
     protected function getCurrentCheckout()
     {
@@ -57,10 +71,15 @@ class ResolvePaymentTermListener
             return null;
         }
 
-        $event = new CheckoutEntityEvent();
-        $event->setCheckoutId($request->attributes->get('id'));
-        $this->eventDispatcher->dispatch(CheckoutEvents::GET_CHECKOUT_ENTITY, $event);
+        return $this->getCheckoutEntity($request->attributes->get('id'));
+    }
 
-        return $event->getCheckoutEntity();
+    /**
+     * @param int $id
+     * @return Checkout
+     */
+    private function getCheckoutEntity($id)
+    {
+        return $this->registry->getManagerForClass(Checkout::class)->find(Checkout::class, $id);
     }
 }

@@ -32,7 +32,7 @@ class OrderLineItemGridListenerTest extends \PHPUnit_Framework_TestCase
         $gridConfig = DatagridConfiguration::create(['name' => 'order-line-items-grid']);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $dataGrid */
-        $dataGrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
+        $dataGrid = $this->createMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
         $event = new BuildBefore($dataGrid, $gridConfig);
 
         $this->listener->onBuildBefore($event);
@@ -45,7 +45,7 @@ class OrderLineItemGridListenerTest extends \PHPUnit_Framework_TestCase
         $gridConfig = DatagridConfiguration::create(['name' => 'order-line-items-grid']);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $dataGrid */
-        $dataGrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
+        $dataGrid = $this->createMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
         $event = new BuildBefore($dataGrid, $gridConfig);
 
         $this->settingsProvider->expects($this->once())->method('isEnabled')->willReturn(true);
@@ -62,7 +62,7 @@ class OrderLineItemGridListenerTest extends \PHPUnit_Framework_TestCase
         $gridConfig->offsetSetByPath('[source][query][from]', [$from]);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $dataGrid */
-        $dataGrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
+        $dataGrid = $this->createMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
         $event = new BuildBefore($dataGrid, $gridConfig);
 
         $this->settingsProvider->expects($this->once())->method('isEnabled')->willReturn(true);

@@ -1,0 +1,11 @@
+config:
+    shim:
+        'slick':
+            deps:
+                - 'jquery'
+
+    paths:
+        'slick': 'bundles/orofrontend/default/vendors/slick/slick.min.js'
+        'orofrontend/js/app/components/list-slider-component': 'bundles/orofrontend/js/app/components/list-slider-component.js'
+        'orofrontend/js/app/components/popup-gallery-widget': 'bundles/orofrontend/js/app/components/popup-gallery-widget.js'
+

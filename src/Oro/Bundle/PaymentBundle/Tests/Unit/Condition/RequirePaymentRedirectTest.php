@@ -27,8 +27,8 @@ class RequirePaymentRedirectTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->paymentMethodRegistry = $this->getMock(PaymentMethodRegistry::class);
-        $this->dispatcher = $this->getMock(EventDispatcherInterface::class);
+        $this->paymentMethodRegistry = $this->createMock(PaymentMethodRegistry::class);
+        $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
         $this->condition = new RequirePaymentRedirect($this->paymentMethodRegistry, $this->dispatcher);
     }
 
@@ -41,7 +41,7 @@ class RequirePaymentRedirectTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertInstanceOf(
             AbstractCondition::class,
-            $this->condition->initialize([self::PAYMENT_METHOD_KEY => 'payment_term'])
+            $this->condition->initialize([self::PAYMENT_METHOD_KEY => 'payment_method'])
         );
     }
 
@@ -57,11 +57,11 @@ class RequirePaymentRedirectTest extends \PHPUnit_Framework_TestCase
     {
         $context = new \stdClass();
         $errors = $this->getMockForAbstractClass(Collection::class);
-        $paymentMethod = $this->getMock(PaymentMethodInterface::class);
+        $paymentMethod = $this->createMock(PaymentMethodInterface::class);
 
         $this->paymentMethodRegistry->expects($this->once())
             ->method('getPaymentMethod')
-            ->with('payment_term')
+            ->with('payment_method')
             ->willReturn($paymentMethod);
 
         $event = new RequirePaymentRedirectEvent($paymentMethod);
@@ -70,30 +70,30 @@ class RequirePaymentRedirectTest extends \PHPUnit_Framework_TestCase
             ->method('dispatch')
             ->withConsecutive(
                 ['oro_payment.require_payment_redirect', $event],
-                ['oro_payment.require_payment_redirect.payment_term', $event]
+                ['oro_payment.require_payment_redirect.payment_method', $event]
             );
 
-        $this->condition->initialize([self::PAYMENT_METHOD_KEY => 'payment_term']);
+        $this->condition->initialize([self::PAYMENT_METHOD_KEY => 'payment_method']);
         $this->assertFalse($this->condition->evaluate($context, $errors));
     }
 
     public function testToArray()
     {
-        $this->condition->initialize([self::PAYMENT_METHOD_KEY => 'payment_term']);
+        $this->condition->initialize([self::PAYMENT_METHOD_KEY => 'payment_method']);
         $result = $this->condition->toArray();
         $this->assertInternalType('array', $result);
         $this->assertArrayHasKey('@' . RequirePaymentRedirect::NAME, $result);
         $resultSection = $result['@' . RequirePaymentRedirect::NAME];
         $this->assertInternalType('array', $resultSection);
         $this->assertArrayHasKey('parameters', $resultSection);
-        $this->assertContains('payment_term', $resultSection['parameters']);
+        $this->assertContains('payment_method', $resultSection['parameters']);
     }
 
     public function testCompile()
     {
-        $this->condition->initialize([self::PAYMENT_METHOD_KEY => 'payment_term']);
+        $this->condition->initialize([self::PAYMENT_METHOD_KEY => 'payment_method']);
         $result = $this->condition->compile('');
         $this->assertContains(RequirePaymentRedirect::NAME, $result);
-        $this->assertContains('payment_term', $result);
+        $this->assertContains('payment_method', $result);
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\src\Oro\Bundle\PaymentBundle\Tests\Unit\Twig;
+namespace Oro\Bundle\PaymentBundle\Tests\Unit\Twig;
 
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry;
@@ -33,7 +33,7 @@ class PaymentMethodLabelFormatterTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+        $this->translator = $this->createMock('Symfony\Component\Translation\TranslatorInterface');
         $this->paymentMethodViewRegistry = $this
             ->getMockBuilder('Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry')
             ->disableOriginalConstructor()
@@ -69,7 +69,7 @@ class PaymentMethodLabelFormatterTest extends \PHPUnit_Framework_TestCase
     public function testFormatPaymentMethodLabel()
     {
         $label = 'label';
-        $paymentMethodConstant = 'payment_term';
+        $paymentMethodConstant = 'payment_method';
         $paymentMethodNotExistsConstant = 'not_exists_method';
         $this->paymentMethodViewRegistry
             ->expects($this->at(0))
@@ -93,7 +93,7 @@ class PaymentMethodLabelFormatterTest extends \PHPUnit_Framework_TestCase
             ->willReturn($label);
 
         $this->paymentMethodView
-            ->expects($this->once(1))
+            ->expects($this->once())
             ->method('getShortLabel')
             ->willReturn($label);
 
@@ -118,7 +118,7 @@ class PaymentMethodLabelFormatterTest extends \PHPUnit_Framework_TestCase
         $this->translator
             ->expects($this->once())
             ->method('trans')
-            ->with('oro.payment.admin.' . $paymentMethod . '.label')
+            ->with(sprintf('oro.payment.admin.%s.label', $paymentMethod))
             ->willReturn($paymentMethodLabel);
 
         $this->paymentMethodLabelMock($paymentMethod, $paymentMethodShortLabel);

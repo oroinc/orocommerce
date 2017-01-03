@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\ImportExport\Strategy;
 
+use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\ImportExportBundle\Context\Context;
@@ -128,13 +129,13 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
                         [
                             'testEntity' => 'Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue',
                             'testProperties' => [
-                                'string' => 'product.1 Default Title'
+                                'string' => 'product.1 Default Name'
                             ],
                         ],
                         [
                             'testEntity' => 'Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue',
                             'testProperties' => [
-                                'string' => 'product.1 en_US Title',
+                                'string' => 'product.1 en_US Name',
                                 'fallback' => 'parent_localization',
                                 'localization' => [
                                     'testEntity' => Localization::class,
@@ -147,7 +148,7 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
                         [
                             'testEntity' => 'Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue',
                             'testProperties' => [
-                                'string' => 'product.1 en_CA Title',
+                                'string' => 'product.1 en_CA Name',
                                 'localization' => [
                                     'testEntity' => Localization::class,
                                     'testProperties' => [
@@ -161,19 +162,19 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
                 [
                     'default' => [
                         'reference' => 'product.1.names.default',
-                        'string' => 'product.1 Default Title',
+                        'string' => 'product.1 Default Name',
                         'text' => null,
                         'fallback' => null,
                     ],
                     'English (United States)' => [
                         'reference' => 'product.1.names.en_US',
-                        'string' => 'product.1 en_US Title',
+                        'string' => 'product.1 en_US Name',
                         'text' => null,
                         'fallback' => 'system',
                     ],
                     'English (Canada)' => [
                         'reference' => null,
-                        'string' => 'product.1 en_CA Title',
+                        'string' => 'product.1 en_CA Name',
                         'text' => null,
                         'fallback' => null,
                     ],
@@ -182,11 +183,11 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
                     'sku' => 'product.1',
                     'names' => [
                         'English (United States)' => [
-                            'string' => 'product.1 en_US Title',
+                            'string' => 'product.1 en_US Name',
                             'fallback' => 'parent_localization',
                         ],
                         'English (Canada)' => [
-                            'string' => 'product.1 en_CA Title',
+                            'string' => 'product.1 en_CA Name',
                         ],
                     ],
                 ],
@@ -202,6 +203,12 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
     public function testProcessSkipped(array $entityData, callable $resultCallback)
     {
         $entityData = $this->convertArrayToEntities($entityData);
+
+        $entityData['attributeFamily'] = $this
+            ->getContainer()
+            ->get('doctrine')
+            ->getRepository(AttributeFamily::class)
+            ->findOneBy(['code' => $entityData['attributeFamily']]);
 
         $productClass = $this->getContainer()->getParameter('oro_product.entity.product.class');
 
@@ -232,6 +239,7 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
             'new product, no fallback from another entity' => [
                 [
                     'sku' => 'new_sku',
+                    'attributeFamily' => 'default_family',
                     'primaryUnitPrecision' => [
                         'testEntity' => 'Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision',
                         'testProperties' => [
@@ -254,6 +262,7 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
             'existing product with, id not mapped for new fallback' => [
                 [
                     'sku' => 'product.4',
+                    'attributeFamily' => 'default_family',
                     'primaryUnitPrecision' => [
                         'testEntity' => 'Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision',
                         'testProperties' => [
@@ -267,12 +276,12 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
                     'names' => [
                         [
                             'testEntity' => 'Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue',
-                            'testProperties' => ['string' => 'product.4 Default Title']
+                            'testProperties' => ['string' => 'product.4 Default Name']
                         ],
                         [
                             'testEntity' => 'Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue',
                             'testProperties' => [
-                                'string' => 'product.4 en_US Title',
+                                'string' => 'product.4 en_US Name',
                                 'localization' => [
                                     'testEntity' => Localization::class,
                                     'testProperties' => [

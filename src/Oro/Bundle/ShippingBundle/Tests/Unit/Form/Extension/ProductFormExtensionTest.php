@@ -44,13 +44,13 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->manager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
+        $this->manager = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
         $this->manager->expects($this->any())
             ->method('getRepository')
             ->with('OroShippingBundle:ProductShippingOptions')
             ->willReturn($this->repo);
 
-        $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $this->registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
         $this->registry->expects($this->any())
             ->method('getManagerForClass')
             ->with('OroShippingBundle:ProductShippingOptions')
@@ -67,7 +67,7 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
     public function testBuildForm($product)
     {
         /** @var FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder */
-        $builder = $this->getMock('Symfony\Component\Form\FormBuilderInterface');
+        $builder = $this->createMock('Symfony\Component\Form\FormBuilderInterface');
         $builder->expects($this->once())
             ->method('add')
             ->with(
@@ -252,10 +252,10 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
      */
     protected function createEvent($data = null)
     {
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $mainForm */
-        $mainForm = $this->getMock('Symfony\Component\Form\FormInterface');
+        $mainForm = $this->createMock('Symfony\Component\Form\FormInterface');
         $mainForm->expects($this->any())
             ->method('get')
             ->with(ProductFormExtension::FORM_ELEMENT_NAME)

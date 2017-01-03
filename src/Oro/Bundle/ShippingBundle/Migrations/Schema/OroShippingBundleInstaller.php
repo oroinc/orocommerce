@@ -3,26 +3,28 @@
 namespace Oro\Bundle\ShippingBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
-use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  */
-class OroShippingBundleInstaller implements Installation, NoteExtensionAwareInterface
+class OroShippingBundleInstaller implements Installation, ActivityExtensionAwareInterface
 {
-    /** @var NoteExtension */
-    protected $noteExtension;
+    /**
+     * @var ActivityExtension
+     */
+    protected $activityExtension;
 
     /**
      * {@inheritdoc}
      */
     public function getMigrationVersion()
     {
-        return 'v1_2';
+        return 'v1_3';
     }
 
     /**
@@ -31,28 +33,88 @@ class OroShippingBundleInstaller implements Installation, NoteExtensionAwareInte
     public function up(Schema $schema, QueryBag $queries)
     {
         /** Tables generation **/
+        $this->createOroShipMethodConfigTable($schema);
+        $this->createOroShipMethodConfigsRuleTable($schema);
+        $this->createOroShipMethodPostalCodeTable($schema);
+        $this->createOroShipMethodTypeConfigTable($schema);
         $this->createOroShippingFreightClassTable($schema);
         $this->createOroShippingLengthUnitTable($schema);
         $this->createOroShippingProductOptsTable($schema);
-        $this->createOroShippingWeightUnitTable($schema);
-        $this->createOroShippingRuleTable($schema);
-        $this->createOroShippingRuleMthdConfigTable($schema);
-        $this->createOroShippingRuleMthdTpCnfgTable($schema);
         $this->createOroShippingRuleDestinationTable($schema);
+        $this->createOroShippingWeightUnitTable($schema);
 
         /** Foreign keys generation **/
+        $this->addOroShipMethodConfigForeignKeys($schema);
+        $this->addOroShipMethodConfigsRuleForeignKeys($schema);
+        $this->addOroShipMethodPostalCodeForeignKeys($schema);
+        $this->addOroShipMethodTypeConfigForeignKeys($schema);
         $this->addOroShippingProductOptsForeignKeys($schema);
-        $this->addOroShippingRuleMthdConfigForeignKeys($schema);
-        $this->addOroShippingRuleMthdTpCnfgForeignKeys($schema);
         $this->addOroShippingRuleDestinationForeignKeys($schema);
     }
 
     /**
-     * {@inheritdoc}
+     * Create oro_ship_method_config table
+     *
+     * @param Schema $schema
      */
-    public function setNoteExtension(NoteExtension $noteExtension)
+    protected function createOroShipMethodConfigTable(Schema $schema)
     {
-        $this->noteExtension = $noteExtension;
+        $table = $schema->createTable('oro_ship_method_config');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('rule_id', 'integer', ['notnull' => true]);
+        $table->addColumn('method', 'string', ['length' => 255]);
+        $table->addColumn('options', 'array', ['comment' => '(DC2Type:array)']);
+        $table->setPrimaryKey(['id']);
+        $table->addIndex(['rule_id'], 'IDX_838CE690744E0351', []);
+    }
+
+    /**
+     * Create oro_ship_method_configs_rule table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroShipMethodConfigsRuleTable(Schema $schema)
+    {
+        $table = $schema->createTable('oro_ship_method_configs_rule');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('rule_id', 'integer', ['notnull' => true]);
+        $table->addColumn('currency', 'string', ['notnull' => true, 'length' => 3]);
+        $table->setPrimaryKey(['id']);
+        $table->addIndex(['rule_id'], 'IDX_1FA57D60744E0351', []);
+
+        $this->activityExtension->addActivityAssociation($schema, 'oro_note', 'oro_ship_method_configs_rule');
+    }
+
+    /**
+     * Create oro_ship_method_postal_code table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroShipMethodPostalCodeTable(Schema $schema)
+    {
+        $table = $schema->createTable('oro_ship_method_postal_code');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('destination_id', 'integer', []);
+        $table->addColumn('name', 'string', ['length' => 255]);
+        $table->setPrimaryKey(['id']);
+        $table->addIndex(['destination_id'], 'IDX_FD8EDF05816C6140', []);
+    }
+
+    /**
+     * Create oro_ship_method_type_config table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroShipMethodTypeConfigTable(Schema $schema)
+    {
+        $table = $schema->createTable('oro_ship_method_type_config');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('method_config_id', 'integer', []);
+        $table->addColumn('type', 'string', ['length' => 255]);
+        $table->addColumn('options', 'array', ['comment' => '(DC2Type:array)']);
+        $table->addColumn('enabled', 'boolean', ['default' => '0']);
+        $table->setPrimaryKey(['id']);
+        $table->addIndex(['method_config_id'], 'IDX_E04B78373A3C93A5', []);
     }
 
     /**
@@ -90,7 +152,7 @@ class OroShippingBundleInstaller implements Installation, NoteExtensionAwareInte
         $table = $schema->createTable('oro_shipping_product_opts');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('freight_class_code', 'string', ['notnull' => false, 'length' => 255]);
-        $table->addColumn('product_id', 'integer');
+        $table->addColumn('product_id', 'integer', []);
         $table->addColumn('product_unit_code', 'string', ['length' => 255]);
         $table->addColumn('dimensions_unit_code', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('weight_unit_code', 'string', ['notnull' => false, 'length' => 255]);
@@ -99,10 +161,31 @@ class OroShippingBundleInstaller implements Installation, NoteExtensionAwareInte
         $table->addColumn('dimensions_width', 'float', ['notnull' => false]);
         $table->addColumn('dimensions_height', 'float', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(
-            ['product_id', 'product_unit_code'],
-            'oro_shipping_product_opts_uidx'
-        );
+        $table->addUniqueIndex(['product_id', 'product_unit_code'], 'oro_shipping_product_opts_uidx');
+        $table->addIndex(['product_id'], 'IDX_A7D10E3C4584665A', []);
+        $table->addIndex(['product_unit_code'], 'IDX_A7D10E3C9573674F', []);
+        $table->addIndex(['weight_unit_code'], 'IDX_A7D10E3CDBF67410', []);
+        $table->addIndex(['dimensions_unit_code'], 'IDX_A7D10E3CBE541CA7', []);
+        $table->addIndex(['freight_class_code'], 'IDX_A7D10E3C18783723', []);
+    }
+
+    /**
+     * Create oro_shipping_rule_destination table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroShippingRuleDestinationTable(Schema $schema)
+    {
+        $table = $schema->createTable('oro_shipping_rule_destination');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('rule_id', 'integer', ['notnull' => true]);
+        $table->addColumn('region_code', 'string', ['notnull' => false, 'length' => 16]);
+        $table->addColumn('country_code', 'string', ['length' => 2]);
+        $table->addColumn('region_text', 'string', ['notnull' => false, 'length' => 255]);
+        $table->setPrimaryKey(['id']);
+        $table->addIndex(['region_code'], 'IDX_BBAF16AAEB327AF', []);
+        $table->addIndex(['country_code'], 'IDX_BBAF16AF026BB7C', []);
+        $table->addIndex(['rule_id'], 'IDX_BBAF16A744E0351', []);
     }
 
     /**
@@ -119,76 +202,67 @@ class OroShippingBundleInstaller implements Installation, NoteExtensionAwareInte
     }
 
     /**
-     * Create oro_shipping_rule table
+     * Add oro_ship_method_config foreign keys.
      *
      * @param Schema $schema
      */
-    protected function createOroShippingRuleTable(Schema $schema)
+    protected function addOroShipMethodConfigForeignKeys(Schema $schema)
     {
-        $table = $schema->createTable('oro_shipping_rule');
-        $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('name', 'text', []);
-        $table->addColumn('enabled', 'boolean', ['default' => true]);
-        $table->addColumn('priority', 'integer', []);
-        $table->addColumn('conditions', 'text', ['notnull' => false]);
-        $table->addColumn('currency', 'string', ['notnull' => false, 'length' => 3]);
-        $table->addColumn('stop_processing', 'boolean', ['default' => false]);
-        $table->addColumn('created_at', 'datetime', []);
-        $table->addColumn('updated_at', 'datetime', []);
-        $table->setPrimaryKey(['id']);
-        $table->addIndex(['enabled', 'currency'], 'oro_shipping_rule_en_cur_idx', []);
-        $table->addIndex(['created_at'], 'idx_oro_shipping_rule_created_at', []);
-        $table->addIndex(['updated_at'], 'idx_oro_shipping_rule_updated_at', []);
-
-        $this->noteExtension->addNoteAssociation($schema, 'oro_shipping_rule');
+        $table = $schema->getTable('oro_ship_method_config');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_ship_method_configs_rule'),
+            ['rule_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
     }
 
     /**
-     * Create oro_shipping_rule_mthd_config table
+     * Add oro_ship_method_configs_rule foreign keys.
      *
      * @param Schema $schema
      */
-    protected function createOroShippingRuleMthdConfigTable(Schema $schema)
+    protected function addOroShipMethodConfigsRuleForeignKeys(Schema $schema)
     {
-        $table = $schema->createTable('oro_shipping_rule_mthd_config');
-        $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('rule_id', 'integer', []);
-        $table->addColumn('method', 'string', ['length' => 255]);
-        $table->addColumn('options', 'array', ['comment' => '(DC2Type:array)']);
-        $table->setPrimaryKey(['id']);
+        $table = $schema->getTable('oro_ship_method_configs_rule');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_rule'),
+            ['rule_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
     }
 
     /**
-     * Create oro_shipping_rule_mthd_tp_cnfg table
+     * Add oro_ship_method_postal_code foreign keys.
      *
      * @param Schema $schema
      */
-    protected function createOroShippingRuleMthdTpCnfgTable(Schema $schema)
+    protected function addOroShipMethodPostalCodeForeignKeys(Schema $schema)
     {
-        $table = $schema->createTable('oro_shipping_rule_mthd_tp_cnfg');
-        $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('method_config_id', 'integer', []);
-        $table->addColumn('type', 'string', ['length' => 255]);
-        $table->addColumn('options', 'array', ['comment' => '(DC2Type:array)']);
-        $table->addColumn('enabled', 'boolean', ['default' => false]);
-        $table->setPrimaryKey(['id']);
+        $table = $schema->getTable('oro_ship_method_postal_code');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_shipping_rule_destination'),
+            ['destination_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
     }
 
     /**
-     * Create oro_shipping_rule_destination table
+     * Add oro_ship_method_type_config foreign keys.
      *
      * @param Schema $schema
      */
-    protected function createOroShippingRuleDestinationTable(Schema $schema)
+    protected function addOroShipMethodTypeConfigForeignKeys(Schema $schema)
     {
-        $table = $schema->createTable('oro_shipping_rule_destination');
-        $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('rule_id', 'integer', []);
-        $table->addColumn('country_code', 'string', ['length' => 2]);
-        $table->addColumn('region_code', 'string', ['notnull' => false, 'length' => 16]);
-        $table->addColumn('postal_code', 'string', ['notnull' => false, 'length' => 255]);
-        $table->addColumn('region_text', 'string', ['notnull' => false, 'length' => 255]);
-        $table->setPrimaryKey(['id']);
+        $table = $schema->getTable('oro_ship_method_type_config');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_ship_method_config'),
+            ['method_config_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
     }
 
     /**
@@ -232,38 +306,6 @@ class OroShippingBundleInstaller implements Installation, NoteExtensionAwareInte
     }
 
     /**
-     * Add oro_shipping_rule_mthd_config foreign keys.
-     *
-     * @param Schema $schema
-     */
-    protected function addOroShippingRuleMthdConfigForeignKeys(Schema $schema)
-    {
-        $table = $schema->getTable('oro_shipping_rule_mthd_config');
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_shipping_rule'),
-            ['rule_id'],
-            ['id'],
-            ['onUpdate' => null, 'onDelete' => 'CASCADE']
-        );
-    }
-
-    /**
-     * Add oro_shipping_rule_mthd_tp_cnfg foreign keys.
-     *
-     * @param Schema $schema
-     */
-    protected function addOroShippingRuleMthdTpCnfgForeignKeys(Schema $schema)
-    {
-        $table = $schema->getTable('oro_shipping_rule_mthd_tp_cnfg');
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_shipping_rule_mthd_config'),
-            ['method_config_id'],
-            ['id'],
-            ['onUpdate' => null, 'onDelete' => 'CASCADE']
-        );
-    }
-
-    /**
      * Add oro_shipping_rule_destination foreign keys.
      *
      * @param Schema $schema
@@ -272,22 +314,30 @@ class OroShippingBundleInstaller implements Installation, NoteExtensionAwareInte
     {
         $table = $schema->getTable('oro_shipping_rule_destination');
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_shipping_rule'),
+            $schema->getTable('oro_ship_method_configs_rule'),
             ['rule_id'],
             ['id'],
-            ['onUpdate' => null, 'onDelete' => 'CASCADE']
-        );
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_dictionary_country'),
-            ['country_code'],
-            ['iso2_code'],
-            ['onUpdate' => null, 'onDelete' => null]
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_dictionary_region'),
             ['region_code'],
             ['combined_code'],
-            ['onUpdate' => null, 'onDelete' => null]
+            ['onDelete' => null, 'onUpdate' => null]
         );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_dictionary_country'),
+            ['country_code'],
+            ['iso2_code'],
+            ['onDelete' => null, 'onUpdate' => null]
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setActivityExtension(ActivityExtension $activityExtension)
+    {
+        $this->activityExtension = $activityExtension;
     }
 }

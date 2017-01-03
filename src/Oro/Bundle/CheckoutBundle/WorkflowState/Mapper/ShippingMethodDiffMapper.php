@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CheckoutBundle\WorkflowState\Mapper;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\Factory\ShippingContextProviderFactory;
+use Oro\Bundle\CheckoutBundle\Factory\CheckoutShippingContextFactory;
 use Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider;
 
 class ShippingMethodDiffMapper implements CheckoutStateDiffMapperInterface
@@ -16,20 +16,20 @@ class ShippingMethodDiffMapper implements CheckoutStateDiffMapperInterface
     protected $shippingPriceProvider;
 
     /**
-     * @var ShippingContextProviderFactory
+     * @var CheckoutShippingContextFactory
      */
-    protected $shippingContextProviderFactory;
+    protected $shippingContextFactory;
 
     /**
-     * @param ShippingPriceProvider $shippingPriceProvider
-     * @param ShippingContextProviderFactory $shippingContextProviderFactory
+     * @param ShippingPriceProvider          $shippingPriceProvider
+     * @param CheckoutShippingContextFactory $shippingContextFactory
      */
     public function __construct(
         ShippingPriceProvider $shippingPriceProvider,
-        ShippingContextProviderFactory $shippingContextProviderFactory
+        CheckoutShippingContextFactory $shippingContextFactory
     ) {
         $this->shippingPriceProvider = $shippingPriceProvider;
-        $this->shippingContextProviderFactory = $shippingContextProviderFactory;
+        $this->shippingContextFactory = $shippingContextFactory;
     }
 
     /**
@@ -58,7 +58,7 @@ class ShippingMethodDiffMapper implements CheckoutStateDiffMapperInterface
         if ($shippingMethod) {
             $shippingMethodType = $checkout->getShippingMethodType();
             $price = $this->shippingPriceProvider->getPrice(
-                $this->shippingContextProviderFactory->create($checkout),
+                $this->shippingContextFactory->create($checkout),
                 $shippingMethod,
                 $shippingMethodType
             );
@@ -77,7 +77,7 @@ class ShippingMethodDiffMapper implements CheckoutStateDiffMapperInterface
     /** {@inheritdoc} */
     public function isStatesEqual($entity, $state1, $state2)
     {
-        if (!$entity->getShippingMethod()) {
+        if (($state2 === '' && $state1 !== '') || !$entity->getShippingMethod()) {
             return true;
         }
 

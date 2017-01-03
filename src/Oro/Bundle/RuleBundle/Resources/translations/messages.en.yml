@@ -1,0 +1,13 @@
+oro:
+    rule:
+        entity_label: Rule
+        entity_plural_label: Rules
+        id.label: Id
+        name.label: Name
+        enabled.label: Enabled
+        enabled_yes.label: Yes
+        enabled_no.label: No
+        sort_order.label: Sort Order
+        stop_processing.label: Stop Further Rule Processing
+        expression.label: Expression
+        methods_configs_rule.label: Methods Configs Rule

@@ -6,7 +6,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Mapping as ORM;
-
 use Oro\Bundle\EmailBundle\Model\EmailHolderInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
@@ -16,7 +15,7 @@ use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity()
  * @ORM\Table(name="oro_account_user")
  * @ORM\HasLifecycleCallbacks()
  * @ORM\AssociationOverrides({
@@ -47,7 +46,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  *      routeUpdate="oro_customer_account_user_update",
  *      defaultValues={
  *          "entity"={
- *              "icon"="icon-briefcase"
+ *              "icon"="fa-briefcase"
  *          },
  *          "ownership"={
  *              "owner_type"="USER",
@@ -246,10 +245,10 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
     protected $birthday;
 
     /**
-     * @var Collection|AccountUserAddress[]
+     * @var Collection|CustomerUserAddress[]
      *
      * @ORM\OneToMany(
-     *      targetEntity="Oro\Bundle\CustomerBundle\Entity\AccountUserAddress",
+     *      targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress",
      *      mappedBy="frontendOwner",
      *      cascade={"all"},
      *      orphanRemoval=true
@@ -311,11 +310,11 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
     protected $updatedAt;
 
     /**
-     * @var ArrayCollection|AccountUserSettings[]
+     * @var ArrayCollection|CustomerUserSettings[]
      *
      * @ORM\OneToMany(
-     *      targetEntity="Oro\Bundle\CustomerBundle\Entity\AccountUserSettings",
-     *      mappedBy="accountUser",
+     *      targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerUserSettings",
+     *      mappedBy="customerUser",
      *      cascade={"all"},
      *      orphanRemoval=true
      * )
@@ -337,6 +336,9 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
      */
     protected $website;
 
+    /**
+     * {@inheritdoc}
+     */
     public function __construct()
     {
         $this->addresses = new ArrayCollection();
@@ -388,6 +390,7 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
     }
 
     /**
+     * @deprecated Use getCustomer()
      * @return Account|null
      */
     public function getAccount()
@@ -396,12 +399,32 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
     }
 
     /**
+     * @deprecated Use setCustomer()
      * @param Account $account
      * @return AccountUser
      */
     public function setAccount(Account $account = null)
     {
         $this->account = $account;
+
+        return $this;
+    }
+
+    /**
+     * @return Account|null
+     */
+    public function getCustomer()
+    {
+        return $this->account;
+    }
+
+    /**
+     * @param Account|null $customer
+     * @return $this
+     */
+    public function setCustomer(Account $customer = null)
+    {
+        $this->account = $customer;
 
         return $this;
     }
@@ -800,7 +823,7 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
 
     /**
      * @param Website $website
-     * @return null|AccountUserSettings
+     * @return null|CustomerUserSettings
      */
     public function getWebsiteSettings(Website $website)
     {
@@ -814,17 +837,17 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
     }
 
     /**
-     * @param AccountUserSettings $websiteSettings
+     * @param CustomerUserSettings $websiteSettings
      * @return $this
      */
-    public function setWebsiteSettings(AccountUserSettings $websiteSettings)
+    public function setWebsiteSettings(CustomerUserSettings $websiteSettings)
     {
         $existing = $this->getWebsiteSettings($websiteSettings->getWebsite());
         if ($existing) {
             $this->settings->removeElement($existing);
         }
 
-        $websiteSettings->setAccountUser($this);
+        $websiteSettings->setCustomerUser($this);
         $this->settings->add($websiteSettings);
 
         return $this;

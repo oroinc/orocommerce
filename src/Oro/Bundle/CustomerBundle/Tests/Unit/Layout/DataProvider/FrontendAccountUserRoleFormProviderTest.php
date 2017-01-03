@@ -37,7 +37,7 @@ class FrontendAccountUserRoleFormProviderTest extends \PHPUnit_Framework_TestCas
 
         /** @var FormFactory|\PHPUnit_Framework_MockObject_MockObject $formFactory */
         $formFactory = $this->getMockBuilder('Symfony\Component\Form\FormFactoryInterface')->getMock();
-        $this->router = $this->getMock('Symfony\Component\Routing\Generator\UrlGeneratorInterface');
+        $this->router = $this->createMock('Symfony\Component\Routing\Generator\UrlGeneratorInterface');
 
         $this->provider = new FrontendAccountUserRoleFormProvider($formFactory, $this->handler, $this->router);
     }
@@ -97,17 +97,17 @@ class FrontendAccountUserRoleFormProviderTest extends \PHPUnit_Framework_TestCas
     protected function assertAccountUserRoleFormHandlerCalled(AccountUserRole $role, $method = 'TEST')
     {
         /** @var FormConfigInterface|\PHPUnit_Framework_MockObject_MockObject $config */
-        $config = $this->getMock('Symfony\Component\Form\FormConfigInterface');
+        $config = $this->createMock('Symfony\Component\Form\FormConfigInterface');
         $config->expects($this->any())
             ->method('getMethod')
             ->willReturn($method);
 
         /** @var FormView|\PHPUnit_Framework_MockObject_MockObject $config */
-        $view = $this->getMock('Symfony\Component\Form\FormView');
+        $view = $this->createMock('Symfony\Component\Form\FormView');
         $view->vars = ['multipart' => null];
 
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
         $form->expects($this->any())
             ->method('getConfig')
             ->willReturn($config);

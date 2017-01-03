@@ -9,11 +9,6 @@
                     {% for name, method in methods if methods is defined and method is iterable %}
 
                         {% if method.types is defined and method.types|length > 0 %}
-                            <div class="fs13 method_title">
-                            {% if method.isGrouped %}
-                                <span class="checkbox_custom__text fs13">{{ method.label|trans }}</span>
-                            {% endif %}
-                            </div>
                             {% for type in method.types if method.types is defined and type is iterable %}
                                 {% if type.price %}
                                     {% set selected = currentShippingMethodType == type.identifier %}
@@ -22,7 +17,13 @@
                                             <input class="custom-radio__control"
                                                    type="radio" name="shippingMethodType" value="{{ type.identifier }}" {% if selected%}checked="checked"{% endif %}
                                                    data-shipping-method="{{ method.identifier }}" data-shipping-price="{{ type.price.value }}" data-choice="{{ type.identifier }}" />
-                                            <span class="custom-radio__text">{{ type.label|trans }}: <strong>{{ type.price|oro_format_price }}</strong></span>
+                                            <span class="custom-radio__text">
+                                                {{ 'oro.shipping.method_type.shipping_methods_widget.label'|trans({
+                                                    '%translatedMethodType%': type.label|trans,
+                                                    '%translatedMethod%': method.label|trans,
+                                                    '%price%': type.price|oro_format_price
+                                                })|raw }}
+                                            </span>
                                         </label>
                                     </div>
                                 {% endif %}
@@ -30,7 +31,7 @@
                         {% endif %}
                     {% endfor %}
                 {% else %}
-                    <div class="notification--xmd notification--alert">
+                    <div class="notification notification--alert">
                         <span class="notification__text">{{ 'oro.shipping.methods.no_method'|trans }}</span>
                     </div>
                 {% endif %}

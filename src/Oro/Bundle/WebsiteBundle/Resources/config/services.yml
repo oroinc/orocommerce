@@ -8,6 +8,8 @@ services:
         arguments:
             - "@doctrine"
             - "@oro_frontend.request.frontend_helper"
+        tags:
+            - { name: doctrine.event_listener, event: onClear }
 
     oro_website.twig.website_extension:
         class: 'Oro\Bundle\WebsiteBundle\Twig\OroWebsiteExtension'
@@ -54,13 +56,6 @@ services:
         tags:
             - { name: kernel.event_listener, event: kernel.request, method: onRequest, priority: -50 }
 
-    oro_website.event_listener.install_command:
-        class: 'Oro\Bundle\WebsiteBundle\EventListener\InstallCommandListener'
-        arguments:
-            - '@oro_config.global'
-        tags:
-            - { name: kernel.event_listener, event: console.terminate, method: onTerminate }
-
     oro_website.resolver.website_url_resolver:
         class: 'Oro\Bundle\WebsiteBundle\Resolver\WebsiteUrlResolver'
         arguments:
@@ -78,5 +73,20 @@ services:
     oro_website.entity_listener.website:
         class: 'Oro\Bundle\WebsiteBundle\Entity\EntityListener\WebsiteEntityListener'
         public: false
+        arguments:
+            - '@oro_scope.scope_manager'
         tags:
             - { name: doctrine.orm.entity_listener, entity: '%oro_website.entity.website.class%', event: prePersist }
+
+    oro_website.provider.website_localization:
+        class: 'Oro\Bundle\WebsiteBundle\Provider\WebsiteLocalizationProvider'
+        arguments:
+            - '@oro_config.manager'
+            - '@oro_locale.manager.localization'
+            - '@oro_entity.doctrine_helper'
+
+    oro_website.assetic_context:
+        class: 'Oro\Bundle\WebsiteBundle\Asset\AssetsContext'
+        decorates: assets.context
+        arguments:
+            - '@request_stack'

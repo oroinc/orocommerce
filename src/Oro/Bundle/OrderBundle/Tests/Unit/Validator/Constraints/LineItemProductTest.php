@@ -34,7 +34,7 @@ class LineItemProductTest extends \PHPUnit_Framework_TestCase
     public function testValidateException()
     {
         /** @var ExecutionContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
-        $context = $this->getMock('Symfony\Component\Validator\Context\ExecutionContextInterface');
+        $context = $this->createMock('Symfony\Component\Validator\Context\ExecutionContextInterface');
         $validator = $this->getValidator();
         $validator->initialize($context);
         $validator->validate(null, $this->constraint);
@@ -52,7 +52,7 @@ class LineItemProductTest extends \PHPUnit_Framework_TestCase
         }
 
         /** @var ExecutionContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
-        $context = $this->getMock('Symfony\Component\Validator\Context\ExecutionContextInterface');
+        $context = $this->createMock('Symfony\Component\Validator\Context\ExecutionContextInterface');
         $validator = $this->getValidator();
         $validator->initialize($context);
 
@@ -60,7 +60,7 @@ class LineItemProductTest extends \PHPUnit_Framework_TestCase
             $context->expects($this->never())
                 ->method($this->anything());
         } else {
-            $violation = $this->getMock('Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface');
+            $violation = $this->createMock('Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface');
             $violation->expects($this->any())
                 ->method('atPath')
                 ->with('product')

@@ -30,8 +30,7 @@ datagrids:
                     data_name: tax_code.createdAt
                 updatedAt:
                     data_name: tax_code.updatedAt
-            default:
-                id: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+            disable_default_sorting: true
         filters:
             columns:
                 code:
@@ -56,7 +55,7 @@ datagrids:
                 type:          navigate
                 label:         oro.grid.action.view
                 link:          view_link
-                icon:          eye-open
+                icon:          eye
                 rowAction:     true
 
     tax-product-tax-codes-grid:
@@ -153,8 +152,7 @@ datagrids:
                     data_name: tax.createdAt
                 updatedAt:
                     data_name: tax.updatedAt
-            default:
-                id: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+            disable_default_sorting: true
         filters:
             columns:
                 code:
@@ -183,7 +181,7 @@ datagrids:
                 type:          navigate
                 label:         oro.grid.action.view
                 link:          view_link
-                icon:          eye-open
+                icon:          eye
                 acl_resource:  oro_tax_view
                 rowAction:     true
 
@@ -249,8 +247,7 @@ datagrids:
                     data_name: tax_rule.createdAt
                 updatedAt:
                     data_name: tax_rule.updatedAt
-            default:
-                id: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+            disable_default_sorting: true
         filters:
             columns:
                 description:
@@ -285,7 +282,7 @@ datagrids:
                 type:          navigate
                 label:         oro.grid.action.view
                 link:          view_link
-                icon:          eye-open
+                icon:          eye
                 acl_resource:  oro_tax_rule_view
                 rowAction:     true
 
@@ -323,8 +320,7 @@ datagrids:
                     data_name: tax_code.createdAt
                 updatedAt:
                     data_name: tax_code.updatedAt
-            default:
-                id: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+            disable_default_sorting: true
         filters:
             columns:
                 code:
@@ -350,7 +346,7 @@ datagrids:
                 type:          navigate
                 label:         oro.grid.action.view
                 link:          view_link
-                icon:          eye-open
+                icon:          eye
                 acl_resource:  oro_tax_jurisdiction_view
                 rowAction:     true
 
@@ -381,7 +377,7 @@ datagrids:
                 type:          navigate
                 label:         oro.grid.action.view
                 link:          view_link
-                icon:          eye-open
+                icon:          eye
                 acl_resource:  oro_account_group_view
                 rowAction:     true
 
@@ -391,7 +387,7 @@ datagrids:
             query:
                 join:
                     left:
-                        - { join: %oro_tax.entity.account_tax_code.class%, alias: account_tax_code, conditionType: 'WITH', condition: 'account MEMBER OF account_tax_code.accounts' }
+                        - { join: %oro_tax.entity.account_tax_code.class%, alias: account_tax_code, conditionType: 'WITH', condition: 'customer MEMBER OF account_tax_code.accounts' }
                 where:
                     and:
                         - account_tax_code.id = :account_tax_code_id
@@ -407,7 +403,7 @@ datagrids:
                 type:          navigate
                 label:         oro.grid.action.view
                 link:          view_link
-                icon:          eye-open
+                icon:          eye
                 acl_resource:  oro_customer_account_view
                 rowAction:     true
 
@@ -433,6 +429,6 @@ datagrids:
                 type:          navigate
                 label:         oro.grid.action.view
                 link:          view_link
-                icon:          eye-open
+                icon:          eye
                 acl_resource:  oro_product_view
                 rowAction:     true

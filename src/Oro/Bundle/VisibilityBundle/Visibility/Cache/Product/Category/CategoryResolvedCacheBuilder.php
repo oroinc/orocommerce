@@ -95,6 +95,7 @@ class CategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder implemen
         $this->executeDbQuery($repository, $insert, $delete, $update, $where);
 
         $this->visibilityChangeCategorySubtreeCacheBuilder->resolveVisibilitySettings($category, $visibility);
+        $this->triggerCategoryReindexation($category);
     }
 
     /**
@@ -111,6 +112,7 @@ class CategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder implemen
     public function categoryPositionChanged(Category $category)
     {
         $this->positionChangeCategorySubtreeCacheBuilder->categoryPositionChanged($category);
+        $this->triggerCategoryReindexation($category);
     }
 
     /**
@@ -132,7 +134,7 @@ class CategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder implemen
         }
 
         // resolve static values
-        $resolvedRepository->insertStaticValues($scope);
+        $resolvedRepository->insertStaticValues($this->insertExecutor, $scope);
 
         // resolved parent category values
         $categoryVisibilities = $this->indexVisibilities($repository->getCategoriesVisibilities(), 'category_id');
@@ -151,6 +153,7 @@ class CategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder implemen
 
         foreach ($categoryIds as $visibility => $ids) {
             $resolvedRepository->insertParentCategoryValues(
+                $this->insertExecutor,
                 $ids,
                 $visibility,
                 $scope
@@ -184,7 +187,7 @@ class CategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder implemen
                     $categoryVisibilities[$parentCategoryId]
                 );
             }
-        // static value
+            // static value
         } elseif ($visibility !== CategoryVisibility::CONFIG) {
             $resolvedVisibility = $this->convertVisibility($visibility === CategoryVisibility::VISIBLE);
         }
@@ -214,7 +217,7 @@ class CategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder implemen
      */
     protected function getRepository()
     {
-        return $this->repositoryHolder->getRepository();
+        return $this->repository;
     }
 
     /**

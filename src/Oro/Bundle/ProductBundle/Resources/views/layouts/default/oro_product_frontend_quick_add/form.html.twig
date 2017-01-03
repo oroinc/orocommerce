@@ -8,14 +8,20 @@
             <div class="clearfix">
                 <div class="{{ class_prefix }}__form__col {{ class_prefix }}__form__col_item">
                     {{ form_widget(form.productSku, {attr: {
-                        placeholder: "oro.product.sku.placeholder"
+                        placeholder: "oro.product.sku.placeholder",
+                        'data-dropdown-classes':{
+                            holder: 'select2-drop oro-select2__dropdown',
+                            menu: 'select2-results',
+                            item: 'select2-result',
+                            link: 'select2-result-label'
+                        }|json_encode
                     }}) }}
                 </div>
                 <div class="{{ class_prefix }}__form__col {{ class_prefix }}__form__col_qty">
                     {{ form_widget(form.productQuantity, {attr: {placeholder: "oro.product.quantity.placeholder"}}) }}
                 </div>
                 {% if allow_delete %}
-                    <span class="{{ class_prefix }}__form__item-remove removeRow"><i class="icon-remove"></i></span>
+                    <span class="{{ class_prefix }}__form__item-remove removeRow"><i class="fa-close"></i></span>
                 {% endif %}
             </div>
             <div class="fields-row-error">{# Dinamic content #}</div>
@@ -25,7 +31,7 @@
                     <span class="validation-failed">SKU not found</span>
                 </div>
                 <div class="product-autocomplete-name validation-passed" style="display: none">
-                    <i class="cf-check_box cf--base-line"></i><span></span>
+                    <i class="fa-check-square"></i><span></span>
                 </div>
             </div>
         </fieldset>
@@ -71,7 +77,7 @@
                 <div class="{{ class_prefix }}__form__col {{ class_prefix }}__form__col_full">
                     <a href="#" class="add-more-rows-btn add-list-item" data-container=".js-item-collection"
                        href="javascript: void(0);">
-                        <i class="cf-add_circle fs18 blue"></i>
+                        <i class="fa-plus-circle fs18 blue"></i>
                         <span>{{ form.vars.add_label|default('oro.form.collection.add')|trans }}</span>
                     </a>
                 </div>

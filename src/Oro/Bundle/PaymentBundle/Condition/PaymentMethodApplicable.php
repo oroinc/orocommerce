@@ -2,19 +2,19 @@
 
 namespace Oro\Bundle\PaymentBundle\Condition;
 
+use Oro\Bundle\CheckoutBundle\Factory\CheckoutPaymentContextFactory;
+use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProvider;
 use Oro\Component\ConfigExpression\Condition\AbstractCondition;
 use Oro\Component\ConfigExpression\ContextAccessorAwareInterface;
 use Oro\Component\ConfigExpression\ContextAccessorAwareTrait;
 use Oro\Component\ConfigExpression\Exception\InvalidArgumentException;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
-use Oro\Bundle\PaymentBundle\Provider\PaymentContextProvider;
 
 /**
  * Check payment method enabled and applicable
  * Usage:
  * @payment_method_applicable:
- *      payment_method: 'payment_term'
- *      entity: ~
+ *      payment_method: 'payment_method_name'
+ *      context: ~
  */
 class PaymentMethodApplicable extends AbstractCondition implements ContextAccessorAwareInterface
 {
@@ -23,27 +23,23 @@ class PaymentMethodApplicable extends AbstractCondition implements ContextAccess
     const NAME = 'payment_method_applicable';
 
     /** @var object */
-    protected $entity;
-
-    /** @var PaymentMethodRegistry */
-    protected $paymentMethodRegistry;
-
-    /** @var PaymentContextProvider */
-    protected $paymentContextProvider;
+    protected $context;
 
     /** @var string */
     protected $paymentMethod;
 
+    /** @var CheckoutPaymentContextFactory */
+    protected $checkoutPaymentContextFactory;
+
+    /** @var PaymentMethodProvider */
+    protected $paymentMethodProvider;
+
     /**
-     * @param PaymentMethodRegistry $paymentMethodRegistry
-     * @param PaymentContextProvider $paymentContextProvider
+     * @param PaymentMethodProvider $methodProvider
      */
-    public function __construct(
-        PaymentMethodRegistry $paymentMethodRegistry,
-        PaymentContextProvider $paymentContextProvider
-    ) {
-        $this->paymentMethodRegistry = $paymentMethodRegistry;
-        $this->paymentContextProvider = $paymentContextProvider;
+    public function __construct(PaymentMethodProvider $methodProvider)
+    {
+        $this->paymentMethodProvider = $methodProvider;
     }
 
     /** {@inheritdoc} */
@@ -55,18 +51,18 @@ class PaymentMethodApplicable extends AbstractCondition implements ContextAccess
             $this->paymentMethod = $options[0];
         }
 
-        if (array_key_exists('entity', $options)) {
-            $this->entity = $options['entity'];
+        if (array_key_exists('context', $options)) {
+            $this->context = $options['context'];
         } elseif (array_key_exists(1, $options)) {
-            $this->entity = $options[1];
+            $this->context = $options[1];
         }
 
         if (!$this->paymentMethod) {
             throw new InvalidArgumentException('Missing "payment_method" option');
         }
 
-        if (!$this->entity) {
-            throw new InvalidArgumentException('Missing "entity" option');
+        if (!$this->context) {
+            throw new InvalidArgumentException('Missing "context" option');
         }
 
         return $this;
@@ -84,32 +80,25 @@ class PaymentMethodApplicable extends AbstractCondition implements ContextAccess
     protected function isConditionAllowed($context)
     {
         $paymentMethodName = $this->resolveValue($context, $this->paymentMethod, false);
-
-        try {
-            $paymentMethod = $this->paymentMethodRegistry->getPaymentMethod($paymentMethodName);
-        } catch (\InvalidArgumentException $e) {
-            return false;
+        $paymentContext = $this->resolveValue($context, $this->context, false);
+        $methods = $this->paymentMethodProvider->getApplicablePaymentMethods($paymentContext);
+        foreach ($methods as $method) {
+            if ($method->getType() === $paymentMethodName) {
+                return true;
+            }
         }
-
-        if (!$paymentMethod->isEnabled()) {
-            return false;
-        }
-
-        $entity = $this->resolveValue($context, $this->entity, false);
-        $paymentContext = $this->paymentContextProvider->processContext($entity);
-
-        return $paymentMethod->isApplicable($paymentContext);
+        return false;
     }
 
     /** {@inheritdoc} */
     public function toArray()
     {
-        return $this->convertToArray([$this->paymentMethod, $this->entity]);
+        return $this->convertToArray([$this->paymentMethod, $this->context]);
     }
 
     /** {@inheritdoc} */
     public function compile($factoryAccessor)
     {
-        return $this->convertToPhpCode([$this->paymentMethod, $this->entity], $factoryAccessor);
+        return $this->convertToPhpCode([$this->paymentMethod, $this->context], $factoryAccessor);
     }
 }

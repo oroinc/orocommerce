@@ -30,7 +30,7 @@ class ProductExpressionServicesPassTest extends \PHPUnit_Framework_TestCase
 
     public function testNoExtensionsAreAddedWhenDefinitionsAreAbsent()
     {
-        $this->container->expects($this->exactly(5))
+        $this->container->expects($this->exactly(7))
             ->method('hasDefinition')
             ->willReturn(false);
         $this->container->expects($this->never())
@@ -190,6 +190,87 @@ class ProductExpressionServicesPassTest extends \PHPUnit_Framework_TestCase
             ->willReturnMap(
                 [
                     [ProductExpressionServicesPass::QUERY_CONVERTER, $definition]
+                ]
+            );
+
+        $this->compilerPass->process($this->container);
+    }
+
+    public function testFieldsProvider()
+    {
+        $this->container->expects($this->any())
+            ->method('hasDefinition')
+            ->willReturnMap(
+                [
+                    [ProductExpressionServicesPass::FIELDS_PROVIDER, true]
+                ]
+            );
+
+        $definition = $this->getMockBuilder(Definition::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $definition->expects($this->once())
+            ->method('addMethodCall')
+            ->with(
+                'addFieldToWhiteList',
+                [PriceList::class, 'prices']
+            );
+
+        $this->container->expects($this->any())
+            ->method('getDefinition')
+            ->willReturnMap(
+                [
+                    [ProductExpressionServicesPass::FIELDS_PROVIDER, $definition]
+                ]
+            );
+
+        $this->compilerPass->process($this->container);
+    }
+
+    public function testAutocompleteFieldsProvider()
+    {
+        $this->container->expects($this->any())
+            ->method('hasDefinition')
+            ->willReturnMap(
+                [
+                    [ProductExpressionServicesPass::AUTOCOMPLETE_FIELDS_PROVIDER, true]
+                ]
+            );
+
+        $definition = $this->getMockBuilder(Definition::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $definition->expects($this->exactly(2))
+            ->method('addMethodCall')
+            ->withConsecutive(
+                [
+                    'addSpecialFieldInformation',
+                    [
+                        PriceList::class,
+                        'assignedProducts',
+                        [
+                            'label' => 'oro.pricing.pricelist.assigned_products.label',
+                            'type' => 'collection'
+                        ]
+                    ]
+                ],
+                [
+                    'addSpecialFieldInformation',
+                    [
+                        PriceList::class,
+                        'productAssignmentRule',
+                        [
+                            'type' => 'standalone'
+                        ]
+                    ]
+                ]
+            )->willReturnSelf();
+
+        $this->container->expects($this->any())
+            ->method('getDefinition')
+            ->willReturnMap(
+                [
+                    [ProductExpressionServicesPass::AUTOCOMPLETE_FIELDS_PROVIDER, $definition]
                 ]
             );
 

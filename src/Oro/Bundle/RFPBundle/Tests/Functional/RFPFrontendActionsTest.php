@@ -4,10 +4,12 @@ namespace Oro\Bundle\RFPBundle\Tests\Functional;
 
 use Symfony\Component\DomCrawler\Crawler;
 
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\ComponentProcessor\DataStorageAwareComponentProcessor;
+use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadFrontendProductVisibilityData;
 
 /**
  * @dbIsolation
@@ -26,7 +28,8 @@ class RFPFrontendActionsTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices',
+                LoadProductPrices::class,
+                LoadFrontendProductVisibilityData::class,
             ]
         );
     }
@@ -75,7 +78,7 @@ class RFPFrontendActionsTest extends WebTestCase
 
         $this->assertEquals($expectedQuickAddLineItems, $this->getActualLineItems($crawler, 1));
 
-        $form = $crawler->selectButton('Submit Request For Quote')->form();
+        $form = $crawler->selectButton('Submit Request')->form();
         $form['oro_rfp_frontend_request[firstName]'] = 'Firstname';
         $form['oro_rfp_frontend_request[lastName]'] = 'Lastname';
         $form['oro_rfp_frontend_request[email]'] = 'email@example.com';

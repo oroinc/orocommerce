@@ -2,7 +2,7 @@ system_configuration:
     groups:
         orders_history:
             title: oro.order.system_configuration.groups.orders_history.title
-            icon: icon-book
+            icon: fa-book
         orders_history_open_orders:
             title: oro.checkout.system_configuration.groups.open_orders.title
 

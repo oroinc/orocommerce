@@ -30,9 +30,9 @@ class CategoryProviderTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->requestProductHandler = $this->getMock(RequestProductHandler::class, [], [], '', false);
-        $this->categoryRepository = $this->getMock(CategoryRepository::class, [], [], '', false);
-        $this->categoryTreeProvider = $this->getMock(CategoryTreeProvider::class, [], [], '', false);
+        $this->requestProductHandler = $this->createMock(RequestProductHandler::class);
+        $this->categoryRepository = $this->createMock(CategoryRepository::class);
+        $this->categoryTreeProvider = $this->createMock(CategoryTreeProvider::class);
 
         $this->categoryProvider = new CategoryProvider(
             $this->requestProductHandler,
@@ -120,5 +120,37 @@ class CategoryProviderTest extends \PHPUnit_Framework_TestCase
         $actual = $this->categoryProvider->getCategoryTree($user);
 
         $this->assertEquals([$mainCategory], $actual);
+    }
+
+    public function testGetParentCategories()
+    {
+        $category = $this->createMock(Category::class);
+        $categoryId = 1;
+
+        $categoryParent = $this->createMock(Category::class);
+        $categoryParent2 = $this->createMock(Category::class);
+
+        $category->expects($this->once())
+            ->method('getParentCategory')
+            ->willReturn($categoryParent);
+
+        $categoryParent->expects($this->once())
+            ->method('getParentCategory')
+            ->willReturn($categoryParent2);
+
+        $this->requestProductHandler
+            ->expects($this->once())
+            ->method('getCategoryId')
+            ->willReturn($categoryId);
+
+        $this->categoryRepository
+            ->expects($this->once())
+            ->method('find')
+            ->with($categoryId)
+            ->willReturn($category);
+
+        $result = $this->categoryProvider->getParentCategories();
+        $this->assertCount(2, $result);
+        $this->assertSame([$categoryParent2, $categoryParent], $result);
     }
 }

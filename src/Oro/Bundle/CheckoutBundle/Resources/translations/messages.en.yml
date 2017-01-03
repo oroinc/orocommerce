@@ -35,6 +35,7 @@ oro:
         line_items_count.label: Items
         started_from.label: Started From
         order_history.label: Order History
+        deleted.label: Deleted
 
         basecheckout:
             entity_label: Base Checkout
@@ -66,6 +67,7 @@ oro:
             entity_label: Checkout Source
             entity_plural_label: Checkout Sources
             id.label: Id
+            deleted.label: Deleted
 
         billing_information: Billing Information
         shipping_information: Shipping Information
@@ -150,7 +152,9 @@ oro:
         form:
             address.manual: Enter other address
             address.select.billing.label: SELECT BILLING ADDRESS
+            address.enter.billing.label: ENTER BILLING ADDRESS
             address.select.shipping.label: SELECT SHIPPING ADDRESS
+            address.enter.shipping.label: ENTER SHIPPING ADDRESS
 
         grid:
             total.label: Total
@@ -160,6 +164,9 @@ oro:
 
         workflow.condition:
             order_line_item_has_count.message: No products can be added to this order. Please create an RFQ to request price.
+            payment_has_not_been_processed.message: |-
+                Payment has not been processed. If you have already submitted this order and believe it is a mistake,
+                please contact us for assistance. Otherwise, please click on "Submit" to proceed with the order submission.
             payment_method_is_not_applicable.message: |
                 Selected payment method is disabled or not applicable.
                 Please choose another payment method.
@@ -181,3 +188,11 @@ oro:
 
         privilege:
             category.checkout.label: 'Checkout'
+
+        method_type:
+            sidebar:
+                label: '<div>%translatedMethodType%: <div><strong>%price%</strong></div></div>'
+
+        frontend:
+            quote:
+                submit_to_order: 'Accept and Submit to Order'

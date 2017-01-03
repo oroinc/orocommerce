@@ -7,6 +7,14 @@ services:
         tags:
             - { name: layout.block_type, alias: category_list }
 
+    oro_catalog.layout.block_type.navigation:
+        parent: oro_layout.block_type.abstract_configurable_container
+        calls:
+            - [setOptionsConfig, [{parentCategories: {required: true}, currentCategory: {required: true}}]]
+            - [setName, ['category_breadcrumbs']]
+        tags:
+             - { name: layout.block_type, alias: category_breadcrumbs }
+
     oro_catalog.layout.data_provider.category:
         class: 'Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoryProvider'
         public: true
@@ -33,3 +41,12 @@ services:
             - "@oro_product.product.manager"
         tags:
             - { name: layout.data_provider, alias: categories_products }
+
+    oro_catalog.layout_context_configurator.product_categories:
+        class: Oro\Bundle\CatalogBundle\Layout\Extension\ProductCategoriesContextConfigurator
+        arguments:
+            - '@request_stack'
+            - '@doctrine'
+            - '@oro_catalog.layout.data_provider.category'
+        tags:
+            - { name: layout.context_configurator }

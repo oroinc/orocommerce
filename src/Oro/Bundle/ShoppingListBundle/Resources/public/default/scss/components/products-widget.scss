@@ -1,55 +1,36 @@
+// @theme: default
+
 .product-item__qty {
   //Override current grid
   &.product-item__qty_no-image-view {
     .product-item__qty__current-grid {
       float: left;
-      width: calc(50% - .5rem);
+      width: calc(50% - 5px);
+    }
 
-      + .add-product-from-view-component {
-        float: left;
-        width: calc(50% - .5rem);
-        margin-left: 1rem;
-
-        .btn-group,
-        .btn_has-dropdown {
-          margin-top: 0;
-          min-height: inherit;
-          height: 4.3rem;
-          min-width: inherit;
-
-          a {
-            line-height: 4.2rem;
-          }
-
-          .direct-link {
-            line-height: 4.2rem;
-            height: 100%;
-            padding: 0 1rem;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-            overflow: hidden;
-          }
-        }
-      }
+    .add-product-from-view-component {
+      float: right;
+      width: calc(50% - 5px);
+      margin-left: 10px;
     }
 
     .line_item_form_fields__form__row {
       width: 60%;
 
       + .line_item_form_fields__form__row {
-        width: calc(40% - 1rem);
-        margin-right: 1rem;
-        max-width: 5rem;
+        width: calc(40% - 10px);
+        margin-right: 10px;
+        max-width: 50px;
       }
     }
   }
 
   .line_item_form_fields__form__row {
     float: right;
-    width: calc(50% - .5rem);
+    width: calc(50% - 5px);
 
     + .line_item_form_fields__form__row {
-      margin-right: 1rem;
+      margin-right: 10px;
     }
 
     label {
@@ -58,21 +39,39 @@
   }
 
   .add-product-from-view-component {
-    .pull-right {
-      float: none !important;
+    font-size: $font-size-base;
 
-      .btn-group,
-      .btn_has-dropdown {
-        width: 100%;
-        a {
-          font-size: 1.4rem !important;
-        }
-      }
-    }
+    @include clearfix();
   }
 
   .form__col {
     padding-left: 0;
     padding-right: 0;
+  }
+}
+
+@include breakpoint('tablet') {
+  .product-item__qty_no-image-view input[type="text"] {
+    margin-bottom: 0;
+  }
+
+  .product-item__qty.product-item__qty_no-image-view {
+    .product-item__qty__current-grid {
+      width: 100%;
+    }
+
+    .line_item_form_fields__form__row + .line_item_form_fields__form__row {
+      max-width: inherit;
+    }
+
+    .add-product-from-view-component {
+      width: 100%;
+
+      margin-left: 0;
+    }
+
+    .shopping-lists {
+      width: 100%;
+    }
   }
 }

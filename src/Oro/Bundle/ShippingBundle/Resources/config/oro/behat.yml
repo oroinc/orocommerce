@@ -16,20 +16,20 @@ elements:
     class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
     options:
       mapping:
-        Enabled: 'oro_shipping_rule[enabled]'
-        Name: 'oro_shipping_rule[name]'
-        Sort Order: 'oro_shipping_rule[priority]'
-        Currency: 'oro_shipping_rule[currency]'
-        Country: 'oro_shipping_rule[destinations][0][country]'
-        Country1: 'oro_shipping_rule[destinations][1][country]'
-        Country2: 'oro_shipping_rule[destinations][2][country]'
-        ZIP: 'oro_shipping_rule[destinations][0][postalCode]'
-        ZIP1: 'oro_shipping_rule[destinations][1][postalCode]'
-        ZIP2: 'oro_shipping_rule[destinations][2][postalCode]'
-        Config Enable: 'oro_shipping_rule[methodConfigs][0][typeConfigs][0][enabled]'
-        Price: 'oro_shipping_rule[methodConfigs][0][typeConfigs][0][options][price]'
-        HandlingFee: 'oro_shipping_rule[methodConfigs][0][typeConfigs][0][options][handling_fee]'
-        Type:  'oro_shipping_rule[methodConfigs][0][typeConfigs][0][options][type]'
+        Enabled: 'oro_shipping_methods_configs_rule[rule][enabled]'
+        Name: 'oro_shipping_methods_configs_rule[rule][name]'
+        Sort Order: 'oro_shipping_methods_configs_rule[rule][sortOrder]'
+        Currency: 'oro_shipping_methods_configs_rule[currency]'
+        Country: 'oro_shipping_methods_configs_rule[destinations][0][country]'
+        Country1: 'oro_shipping_methods_configs_rule[destinations][1][country]'
+        Country2: 'oro_shipping_methods_configs_rule[destinations][2][country]'
+        ZIP: 'oro_shipping_methods_configs_rule[destinations][0][postalCodes]'
+        ZIP1: 'oro_shipping_methods_configs_rule[destinations][1][postalCodes]'
+        ZIP2: 'oro_shipping_methods_configs_rule[destinations][2][postalCodes]'
+        Config Enable: 'oro_shipping_methods_configs_rule[methodConfigs][0][typeConfigs][0][enabled]'
+        Price: 'oro_shipping_methods_configs_rule[methodConfigs][0][typeConfigs][0][options][price]'
+        HandlingFee: 'oro_shipping_methods_configs_rule[methodConfigs][0][typeConfigs][0][options][handling_fee]'
+        Type:  'oro_shipping_methods_configs_rule[methodConfigs][0][typeConfigs][0][options][type]'
 
   Address:
     selector: 'div#container'
@@ -37,3 +37,7 @@ elements:
     options:
       mapping:
         State: 'oro_workflow_transition[shipping_address][region]'
+
+  Notification Alert:
+    selector: '.notification--alert .notification__text'
+    class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element

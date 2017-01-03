@@ -101,15 +101,14 @@ class AccountUserControllerRegisterTest extends WebTestCase
         /** @var \Swift_Message $message */
         $message = reset($emailMessages);
 
+        $applicationUrl = $this->configManager->get('oro_ui.application_url');
+        $loginUrl = $applicationUrl . $this->getUrl('oro_customer_account_user_security_login');
+
         $this->assertInstanceOf('Swift_Message', $message);
         $this->assertEquals($email, key($message->getTo()));
         $this->assertContains($email, $message->getSubject());
         $this->assertContains($email, $message->getBody());
-        $this->assertContains(
-            trim($this->configManager->get('oro_ui.application_url'), '/')
-            . $this->getUrl('oro_customer_account_user_security_login'),
-            $message->getBody()
-        );
+        $this->assertContains($loginUrl, $message->getBody());
 
         if ($withPassword) {
             $this->assertContains(self::PASSWORD, $message->getBody());
@@ -168,8 +167,9 @@ class AccountUserControllerRegisterTest extends WebTestCase
 
         $user = $this->getAccountUser(['email' => self::EMAIL]);
 
+        $applicationUrl = $this->configManager->get('oro_ui.application_url');
         $confirmMessage = 'Please follow this link to confirm your email address: <a href="'
-            . trim($this->configManager->get('oro_ui.application_url'), '/')
+            . $applicationUrl
             . htmlspecialchars($this->getUrl(
                 'oro_customer_frontend_account_user_confirmation',
                 [
@@ -245,7 +245,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('This value is already used.', $crawler->filter('.notification--error')->html());
+        $this->assertContains('This value is already used.', $crawler->filter('.notification__text')->html());
     }
 
     /**
@@ -370,7 +370,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
         $crawler = $this->client->submit($form, $submittedData);
         $this->assertEquals('Forgot Your Password?', $crawler->filter('h2')->html());
         $this->assertContains(
-            'Email address "'. $unknownEmail .'" is not known',
+            'Email address "'. $unknownEmail .'" does not exist.',
             $crawler->html()
         );
     }
@@ -405,7 +405,9 @@ class AccountUserControllerRegisterTest extends WebTestCase
         $this->assertContains(self::EMAIL, $message->getBody());
 
         $user = $this->getAccountUser(['email' => self::EMAIL]);
-        $resetUrl = trim($this->configManager->get('oro_ui.application_url'), '/')
+        $applicationUrl = $this->configManager->get('oro_ui.application_url');
+
+        $resetUrl = $applicationUrl
             . htmlspecialchars($this->getUrl(
                 'oro_customer_frontend_account_user_password_reset',
                 [

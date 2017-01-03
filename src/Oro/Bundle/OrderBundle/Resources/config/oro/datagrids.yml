@@ -12,12 +12,11 @@ datagrids:
                     - order1.identifier
                     - order1.poNumber
                     - order1.currency
-                    - order1.subtotal
-                    - order1.total
+                    - order1.subtotalValue as subtotal
+                    - order1.totalValue as total
                     - order1.shipUntil
                     - order1.createdAt
                     - order1.updatedAt
-                    - paymentTerm.label as paymentTermLabel
                     - payment_status.paymentStatus
                     - order1.shippingMethod
                     - order1.shippingMethodType
@@ -25,7 +24,6 @@ datagrids:
                     - { table: %oro_order.entity.order.class%, alias: order1 }
                 join:
                     left:
-                        - { join: order1.paymentTerm, alias: paymentTerm }
                         - { join: '%oro_payment.entity.payment_status.class%', alias: payment_status, conditionType: WITH, condition: "payment_status.entityIdentifier = order1.id AND payment_status.entityClass = '%oro_order.entity.order.class%'" }
         properties:
             id: ~
@@ -38,7 +36,7 @@ datagrids:
                 type:          navigate
                 label:         oro.grid.action.view
                 link:          view_link
-                icon:          eye-open
+                icon:          eye
                 rowAction:     true
 
     frontend-orders-grid:
@@ -65,10 +63,13 @@ datagrids:
                 template: 'OroOrderBundle:Order:Datagrid/shippingAddress.html.twig'
                 frontend_type: html
             total:
-                label:         oro.order.total.label
-                type:          twig
-                frontend_type: html
-                template:      OroOrderBundle:Order:Datagrid/total.html.twig
+                label:  oro.order.total.label
+                frontend_type: multi-currency
+                type:          callback
+                callable:      ['@oro_currency.converter.currency_to_string', 'convert']
+                multicurrency_config:
+                    base_currency_label: oro.order.total.base.label
+                    currency_field: currency
             paymentMethods:
                 label: oro.order.payment_method.label
                 type: twig
@@ -91,14 +92,14 @@ datagrids:
                 label:         oro.order.currency.label
                 renderable:    false
             subtotal:
-                label:         oro.order.subtotal.label
-                type:          twig
-                frontend_type: html
-                template:      OroOrderBundle:Order:Datagrid/subtotal.html.twig
-                renderable:    false
-            paymentTermLabel:
-                label:         oro.order.payment_term.label
-                renderable:    false
+                label:  oro.order.subtotal.label
+                frontend_type: multi-currency
+                type:          callback
+                callable:      ['@oro_currency.converter.currency_to_string', 'convert']
+                multicurrency_config:
+                    base_currency_label: oro.order.subtotal.base.label
+                    currency_field: currency
+                renderable: false
             shippingMethod:
                 label:         oro.order.shipping_method.label
                 type:          twig
@@ -118,8 +119,6 @@ datagrids:
                 renderable:    false
         sorters:
             columns:
-                paymentTermLabel:
-                    data_name: paymentTermLabel
                 poNumber:
                     data_name: order1.poNumber
                 shipUntil:
@@ -137,16 +136,13 @@ datagrids:
                 currency:
                     data_name: order1.currency
                 subtotal:
-                    data_name: order1.subtotal
+                    data_name: subtotal
                 total:
-                    data_name: order1.total
+                    data_name: total
             default:
                 createdAt: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
         filters:
             columns:
-                paymentTermLabel:
-                    type:      string
-                    data_name: paymentTermLabel
                 poNumber:
                     type:      string
                     data_name: order1.poNumber
@@ -181,12 +177,12 @@ datagrids:
                         field_options:
                             choices: "@oro_pricing.provider.currency->getAvailableCurrencies"
                 subtotal:
-                    type:      number
-                    data_name: order1.subtotal
+                    type:      currency
+                    data_name: subtotal
                     enabled:   false
                 total:
-                    type:      number
-                    data_name: order1.total
+                    type:      currency
+                    data_name: total
         properties:
             id: ~
             view_link:
@@ -224,16 +220,22 @@ datagrids:
             currency:
                 label:         oro.order.currency.label
             subtotal:
-                label:         oro.order.subtotal.label
-                type:          twig
-                frontend_type: html
-                template:      OroOrderBundle:Order:Datagrid/subtotal.html.twig
-                renderable:    false
+                label:  oro.order.subtotal.label
+                frontend_type: multi-currency
+                type:          callback
+                callable:      ['@oro_currency.converter.currency_to_string', 'convert']
+                multicurrency_config:
+                    base_currency_label: oro.order.subtotal.base.label
+                    currency_field: currency
+                renderable: false
             total:
-                label:         oro.order.total.label
-                type:          twig
-                frontend_type: html
-                template:      OroOrderBundle:Order:Datagrid/total.html.twig
+                label:  oro.order.total.label
+                frontend_type: multi-currency
+                type:          callback
+                callable:      ['@oro_currency.converter.currency_to_string', 'convert']
+                multicurrency_config:
+                    base_currency_label: oro.order.total.base.label
+                    currency_field: currency
             accountName:
                 label:         oro.order.account.label
             accountUserName:
@@ -251,8 +253,6 @@ datagrids:
                 type: twig
                 template: 'OroOrderBundle:Order:Datagrid/paymentMethodAdmin.html.twig'
                 frontend_type: html
-            paymentTermLabel:
-                label:         oro.order.payment_term.label
             shippingMethod:
                 label:         oro.order.shipping_method.label
                 type:          twig
@@ -291,17 +291,15 @@ datagrids:
                 currency:
                     data_name: order1.currency
                 subtotal:
-                    data_name: order1.subtotal
+                    data_name: subtotal
                 total:
-                    data_name: order1.total
+                    data_name: total
                 accountName:
                     data_name: accountName
                 accountUserName:
                     data_name: accountUserName
                 owner:
                     data_name: owner
-                paymentTermLabel:
-                    data_name: paymentTermLabel
                 poNumber:
                     data_name: order1.poNumber
                 shipUntil:
@@ -332,12 +330,12 @@ datagrids:
                         field_options:
                             choices: "@oro_pricing.provider.currency->getAvailableCurrencies"
                 subtotal:
-                    type:      number
-                    data_name: order1.subtotal
+                    type:      currency
+                    data_name: subtotal
                     enabled:   false
                 total:
-                    type:      number
-                    data_name: order1.total
+                    type:      currency
+                    data_name: total
                 accountName:
                     type:      string
                     data_name: accountName
@@ -347,15 +345,6 @@ datagrids:
                 owner:
                     type:      string
                     data_name: owner
-                paymentTermLabel:
-                    type:      entity
-                    data_name: paymentTerm.id
-                    options:
-                        field_type: entity
-                        field_options:
-                            class:    %oro_payment.entity.payment_term.class%
-                            property: label
-                            multiple: true
                 paymentStatus:
                     type:      choice
                     data_name: payment_status.paymentStatus
@@ -398,8 +387,9 @@ datagrids:
                 select:
                     - order1.id
                     - order1.identifier
-                    - order1.subtotal
-                    - order1.total
+                    - order1.subtotalValue as subtotal
+                    - order1.totalValue as total
+                    - order1.currency
                     - order1.poNumber
                     - order1.shipUntil
                     - COUNT(lineItems.id) as lineItemsCount
@@ -414,16 +404,22 @@ datagrids:
             identifier:
                 label:         oro.order.identifier.label
             subtotal:
-                label:         oro.order.subtotal.label
-                type:          twig
-                frontend_type: html
-                template:      OroOrderBundle:Order:Datagrid/subtotal.html.twig
-                renderable:    false
+                label:  oro.order.subtotal.label
+                frontend_type: multi-currency
+                type:          callback
+                callable:      ['@oro_currency.converter.currency_to_string', 'convert']
+                multicurrency_config:
+                    base_currency_label: oro.order.subtotal.base.label
+                    currency_field: currency
+                renderable: false
             total:
-                label:         oro.order.total.label
-                type:          twig
-                frontend_type: html
-                template:      OroOrderBundle:Order:Datagrid/total.html.twig
+                label:  oro.order.total.label
+                frontend_type: multi-currency
+                type:          callback
+                callable:      ['@oro_currency.converter.currency_to_string', 'convert']
+                multicurrency_config:
+                    base_currency_label: oro.order.total.base.label
+                    currency_field: currency
             lineItemsCount:
                 label:         oro.order.line_items_count.label
                 type: field
@@ -444,9 +440,9 @@ datagrids:
                 identifier:
                     data_name: order1.identifier
                 subtotal:
-                    data_name: order1.subtotal
+                    data_name: subtotal
                 total:
-                    data_name: order1.total
+                    data_name: total
                 lineItemsCount:
                     data_name: lineItemsCount
                 poNumber:
@@ -465,12 +461,12 @@ datagrids:
                     type:      string
                     data_name: order1.identifier
                 subtotal:
-                    type:      number
-                    data_name: order1.subtotal
+                    type:      currency
+                    data_name: subtotal
                     enabled:   false
                 total:
-                    type:      number
-                    data_name: order1.total
+                    type:      currency
+                    data_name: total
                 lineItemsCount:
                     type:      number
                     data_name: lineItemsCount
@@ -499,7 +495,7 @@ datagrids:
                 type:          navigate
                 label:         oro.grid.action.view
                 link:          view_link
-                icon:          eye-open
+                icon:          eye
                 rowAction:     true
 
     account-user-orders-grid:
@@ -518,7 +514,6 @@ datagrids:
     account-orders-grid:
         extends: embed-orders-grid
         source:
-            query:
             query:
                 select:
                     - CONCAT(accountUser.firstName, ' ', accountUser.lastName) as accountUserName

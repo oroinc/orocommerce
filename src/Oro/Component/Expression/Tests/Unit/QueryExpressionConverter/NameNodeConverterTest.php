@@ -14,7 +14,7 @@ class NameNodeConverterTest extends \PHPUnit_Framework_TestCase
         $expr = new Expr();
         $params = [];
 
-        $node = $this->getMock(NodeInterface::class);
+        $node = $this->createMock(NodeInterface::class);
         $converter = new NameNodeConverter();
         $this->assertNull($converter->convert($node, $expr, $params));
     }
@@ -68,10 +68,8 @@ class NameNodeConverterTest extends \PHPUnit_Framework_TestCase
         $params = [];
         $aliasMapping = [];
 
-        $this->setExpectedException(
-            \InvalidArgumentException::class,
-            'No table alias found for "Product"'
-        );
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('No table alias found for "Product"');
 
         $node = new NameNode('Product', 'value');
         $converter = new NameNodeConverter();

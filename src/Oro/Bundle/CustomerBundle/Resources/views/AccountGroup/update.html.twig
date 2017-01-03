@@ -7,7 +7,11 @@
 
 {% oro_title_set({params : {"%accountGroupName%": entity.name|default('N/A'|trans), '%entityName%': 'oro.customer.accountgroup.entity_label'|trans} }) %}
 
-{% set gridName = 'account-group-accounts-grid-update' %}
+{% if entity.id %}
+    {% set gridName = 'account-group-accounts-grid-update' %}
+{% else %}
+    {% set gridName = 'account-group-accounts-grid-create' %}
+{% endif %}
 
 {% block navButtons %}
     {% if entity.id and resource_granted('DELETE', entity) %}
@@ -60,6 +64,21 @@
             ]
         }
     ] %}
+
+    {% set additionalData = [] %}
+    {% for child in form.children if child.vars.extra_field is defined and child.vars.extra_field %}
+        {% set additionalData = additionalData|merge([form_row(child)]) %}
+    {% endfor %}
+    {% if additionalData is not empty %}
+        {% set dataBlocks = dataBlocks|merge([{
+            'title': 'oro.order.sections.additional'|trans,
+            'subblocks': [{
+                'title': '',
+                'useSpan': false,
+                'data' : additionalData
+            }]
+        }] ) %}
+    {% endif %}
 
     {% set dataBlocks = dataBlocks|merge([{
         'title' : 'oro.customer.sections.accountgroup.accounts'|trans,

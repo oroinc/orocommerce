@@ -28,7 +28,7 @@ class AssignedProductsConverterTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->fieldsProvider = $this->getMock(FieldsProviderInterface::class);
+        $this->fieldsProvider = $this->createMock(FieldsProviderInterface::class);
         $this->converter = new AssignedProductsConverter($this->fieldsProvider);
     }
 
@@ -37,7 +37,7 @@ class AssignedProductsConverterTest extends \PHPUnit_Framework_TestCase
         $expr = new Expr();
         $params = [];
 
-        $node = $this->getMock(NodeInterface::class);
+        $node = $this->createMock(NodeInterface::class);
         $this->assertNull($this->converter->convert($node, $expr, $params));
     }
 
@@ -61,8 +61,8 @@ class AssignedProductsConverterTest extends \PHPUnit_Framework_TestCase
                 ]
             );
 
-        $this->setExpectedException(
-            \InvalidArgumentException::class,
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage(
             'Left operand of in operation for assigned products condition must be product identifier field'
         );
         $this->converter->convert($node, $expr, $params, $aliasMapping);
@@ -125,10 +125,9 @@ class AssignedProductsConverterTest extends \PHPUnit_Framework_TestCase
             'in'
         );
 
-        $this->setExpectedException(
-            \InvalidArgumentException::class,
-            'No table alias found for "Oro\Bundle\ProductBundle\Entity\Product"'
-        );
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('No table alias found for "Oro\Bundle\ProductBundle\Entity\Product"');
+
         $this->converter->convert($node, $expr, $params, $aliasMapping);
     }
 

@@ -5,9 +5,9 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Type;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
+use Oro\Bundle\CurrencyBundle\Provider\CurrencyProviderInterface;
 use Oro\Bundle\CurrencyBundle\Tests\Unit\Form\Type\PriceTypeGenerator;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListProductPriceType;
@@ -18,6 +18,7 @@ use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
@@ -76,12 +77,12 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
             ProductUnitSelectionType::NAME
         );
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|CurrencyConfigManager $configManager */
-        $configManager = $this->getMockBuilder('Oro\Bundle\CurrencyBundle\Config\CurrencyConfigManager')
+        /** @var \PHPUnit_Framework_MockObject_MockObject|CurrencyProviderInterface $currencyProvider */
+        $currencyProvider = $this->getMockBuilder(CurrencyProviderInterface::class)
             ->disableOriginalConstructor()
-            ->getMock();
+            ->getMockForAbstractClass();
 
-        $configManager->expects($this->any())
+        $currencyProvider->expects($this->any())
             ->method('getCurrencyList')
             ->will($this->returnValue(['USD', 'EUR']));
 
@@ -99,7 +100,7 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
 
         $productSelect = new ProductSelectTypeStub();
 
-        $priceType = PriceTypeGenerator::createPriceType();
+        $priceType = PriceTypeGenerator::createPriceType($this);
 
         return [
             new PreloadedExtension(
@@ -109,7 +110,7 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
                     ProductUnitSelectionType::NAME => $productUnitSelection,
                     PriceType::NAME => $priceType,
                     CurrencySelectionType::NAME => new CurrencySelectionType(
-                        $configManager,
+                        $currencyProvider,
                         $localeSettings,
                         $currencyNameHelper
                     ),

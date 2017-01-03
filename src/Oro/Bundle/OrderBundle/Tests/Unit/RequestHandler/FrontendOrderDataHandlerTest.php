@@ -12,8 +12,8 @@ use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\OrderBundle\RequestHandler\FrontendOrderDataHandler;
-use Oro\Bundle\PaymentBundle\Entity\PaymentTerm;
-use Oro\Bundle\PaymentBundle\Provider\PaymentTermProvider;
+use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
+use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
 
 class FrontendOrderDataHandlerTest extends \PHPUnit_Framework_TestCase
 {
@@ -49,21 +49,21 @@ class FrontendOrderDataHandlerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->objectManager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
+        $this->objectManager = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
 
-        $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $this->registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
         $this->registry->expects($this->any())
             ->method('getManagerForClass')
             ->with('OroUserBundle:User')
             ->willReturn($this->objectManager);
 
-        $this->requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
+        $this->requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
 
         $this->securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->paymentTermProvider = $this->getMockBuilder('Oro\Bundle\PaymentBundle\Provider\PaymentTermProvider')
+        $this->paymentTermProvider = $this->getMockBuilder('Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -138,7 +138,7 @@ class FrontendOrderDataHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function testGetOwner()
     {
-        $repository = $this->getMock('Doctrine\Common\Persistence\ObjectRepository');
+        $repository = $this->createMock('Doctrine\Common\Persistence\ObjectRepository');
 
         $user = new User();
         $repository->expects($this->once())

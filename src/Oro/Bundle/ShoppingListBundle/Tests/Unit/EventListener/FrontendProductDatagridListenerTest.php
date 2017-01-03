@@ -2,21 +2,27 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\EventListener;
 
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
-use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultAfter;
+use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
+use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\EventListener\FrontendProductDatagridListener;
+use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Bridge\Doctrine\RegistryInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -25,7 +31,17 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
     /**
      * @var SecurityFacade|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $securityFacade;
+    protected $tokenStorage;
+
+    /**
+     * @var AclHelper|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $aclHelper;
+
+    /**
+     * @var RegistryInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $registry;
 
     /**
      * @var FrontendProductDatagridListener
@@ -34,33 +50,41 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
+        $this->tokenStorage = $this->getMockBuilder(TokenStorage::class)
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->aclHelper = $this->getMockBuilder(AclHelper::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->registry = $this->createMock(RegistryInterface::class);
+
         $this->listener = new FrontendProductDatagridListener(
-            $this->securityFacade
+            $this->tokenStorage,
+            $this->aclHelper,
+            $this->registry
         );
     }
 
     protected function tearDown()
     {
-        unset($this->securityFacade, $this->listener);
+        unset($this->tokenStorage, $this->listener, $this->registry);
     }
 
     public function testOnPreBuild()
     {
         $config = DatagridConfiguration::createNamed('grid-name', []);
-        $event = new PreBuild($config, new ParameterBag());
+        $event  = new PreBuild($config, new ParameterBag());
 
         $this->listener->onPreBuild($event);
 
         $this->assertEquals(
             [
-                'name' => 'grid-name',
+                'name'       => 'grid-name',
                 'properties' => [
                     FrontendProductDatagridListener::COLUMN_LINE_ITEMS => [
-                        'type' => 'field',
+                        'type'          => 'field',
                         'frontend_type' => PropertyInterface::TYPE_ROW_ARRAY
                     ]
                 ],
@@ -75,14 +99,17 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
      */
     public function testOnResultAfterNoUser($user)
     {
-        /** @var OrmResultAfter|\PHPUnit_Framework_MockObject_MockObject $event */
-        $event = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Event\OrmResultAfter')
+        /** @var SearchResultAfter|\PHPUnit_Framework_MockObject_MockObject $event */
+        $event = $this->getMockBuilder(SearchResultAfter::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->securityFacade->expects($this->once())
-            ->method('getLoggedUser')
+        $token = $this->createMock(TokenInterface::class);
+        $token->expects($this->once())
+            ->method('getUser')
             ->willReturn($user);
+        $this->tokenStorage->method('getToken')->willReturn($token);
+
         $event->expects($this->never())
             ->method($this->anything());
 
@@ -105,39 +132,33 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $user = new AccountUser();
 
         /** @var DatagridInterface|\PHPUnit_Framework_MockObject_MockObject $datagrid */
-        $datagrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
+        $datagrid = $this->createMock(DatagridInterface::class);
 
         $records = [
-            $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface')
+            $this->createMock(DatagridInterface::class)
         ];
 
         $shoppingListRepository = $this
-            ->getMockBuilder('Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository')
+            ->getMockBuilder(ShoppingListRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
         $shoppingListRepository->expects($this->once())
             ->method('findAvailableForAccountUser')
-            ->with($user)
+            ->with($this->aclHelper)
             ->willReturn(null);
-        $em = $this->getMock('Doctrine\ORM\EntityManagerInterface');
-        $em->expects($this->once())
+        $this->registry->expects($this->once())
             ->method('getRepository')
             ->with('OroShoppingListBundle:ShoppingList')
             ->willReturn($shoppingListRepository);
-        $query = $this->getMockBuilder('Doctrine\ORM\AbstractQuery')
-            ->disableOriginalConstructor()
-            ->setMethods(['getEntityManager'])
-            ->getMockForAbstractClass();
-        $query->expects($this->once())
-            ->method('getEntityManager')
-            ->willReturn($em);
+        $query = $this->createMock(SearchQueryInterface::class);
 
-        /** @var OrmResultAfter|\PHPUnit_Framework_MockObject_MockObject $event */
-        $event = new OrmResultAfter($datagrid, $records, $query);
+        /** @var SearchResultAfter|\PHPUnit_Framework_MockObject_MockObject $event */
+        $event = new SearchResultAfter($datagrid, $query, $records);
 
-        $this->securityFacade->expects($this->once())
-            ->method('getLoggedUser')
+        $token = $this->createMock(TokenInterface::class);
+        $token->method('getUser')
             ->willReturn($user);
+        $this->tokenStorage->method('getToken')->willReturn($token);
 
         $this->listener->onResultAfter($event);
     }
@@ -147,37 +168,31 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $user = new AccountUser();
 
         /** @var DatagridInterface|\PHPUnit_Framework_MockObject_MockObject $datagrid */
-        $datagrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
+        $datagrid = $this->createMock(DatagridInterface::class);
 
         $records = [];
 
         $shoppingListRepository = $this
-            ->getMockBuilder('Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository')
+            ->getMockBuilder(ShoppingListRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
         $shoppingListRepository->expects($this->once())
             ->method('findAvailableForAccountUser')
-            ->with($user)
+            ->with($this->aclHelper)
             ->willReturn(new ShoppingList());
-        $em = $this->getMock('Doctrine\ORM\EntityManagerInterface');
-        $em->expects($this->once())
+        $this->registry->expects($this->once())
             ->method('getRepository')
             ->with('OroShoppingListBundle:ShoppingList')
             ->willReturn($shoppingListRepository);
-        $query = $this->getMockBuilder('Doctrine\ORM\AbstractQuery')
-            ->disableOriginalConstructor()
-            ->setMethods(['getEntityManager'])
-            ->getMockForAbstractClass();
-        $query->expects($this->once())
-            ->method('getEntityManager')
-            ->willReturn($em);
+        $query = $this->createMock(SearchQueryInterface::class);
 
-        /** @var OrmResultAfter|\PHPUnit_Framework_MockObject_MockObject $event */
-        $event = new OrmResultAfter($datagrid, $records, $query);
+        /** @var SearchResultAfter|\PHPUnit_Framework_MockObject_MockObject $event */
+        $event = new SearchResultAfter($datagrid, $query, $records);
 
-        $this->securityFacade->expects($this->once())
-            ->method('getLoggedUser')
+        $token = $this->createMock(TokenInterface::class);
+        $token->method('getUser')
             ->willReturn($user);
+        $this->tokenStorage->method('getToken')->willReturn($token);
 
         $this->listener->onResultAfter($event);
     }
@@ -187,27 +202,27 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $user = new AccountUser();
 
         /** @var DatagridInterface|\PHPUnit_Framework_MockObject_MockObject $datagrid */
-        $datagrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
+        $datagrid = $this->createMock(DatagridInterface::class);
 
         $recordOne = new ResultRecord(['id' => 1]);
         $recordTwo = new ResultRecord(['id' => 2]);
-        $records = [$recordOne, $recordTwo];
+        $records   = [$recordOne, $recordTwo];
 
         /** @var Product $productOne */
-        $productOne = $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', ['id' => 1]);
+        $productOne         = $this->getEntity(Product::class, ['id' => 1]);
         $lineItemRepository = $this->getMockBuilder('LineItemRepository')
-                                    ->setMethods(['getProductItemsWithShoppingListNames'])
-                                    ->getMock();
-        $shoppingList1 = $this->createShoppingList(1, 'Shopping List1');
-        $shoppingList2 = $this->createShoppingList(2, 'Shopping List2');
+            ->setMethods(['getProductItemsWithShoppingListNames'])
+            ->getMock();
+        $shoppingList1      = $this->createShoppingList(1, 'Shopping List1');
+        $shoppingList2      = $this->createShoppingList(2, 'Shopping List2');
 
         $shoppingListRepository = $this
-            ->getMockBuilder('Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository')
+            ->getMockBuilder(ShoppingListRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
         $shoppingListRepository->expects($this->once())
             ->method('findAvailableForAccountUser')
-            ->with($user)
+            ->with($this->aclHelper)
             ->willReturn($shoppingList1);
 
         $lineItemRepository->expects($this->once())
@@ -221,47 +236,42 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
                 ]
             );
 
-        $em = $this->getMock('Doctrine\ORM\EntityManagerInterface');
-        $em->expects($this->any())
+        $this->registry->expects($this->at(0))
             ->method('getRepository')
-            ->willReturnMap(
-                [
-                    ['OroShoppingListBundle:ShoppingList', $shoppingListRepository],
-                    ['OroShoppingListBundle:LineItem', $lineItemRepository],
-                ]
-            );
-        $query = $this->getMockBuilder('Doctrine\ORM\AbstractQuery')
-            ->disableOriginalConstructor()
-            ->setMethods(['getEntityManager'])
-            ->getMockForAbstractClass();
-        $query->expects($this->once())
-            ->method('getEntityManager')
-            ->willReturn($em);
+            ->with('OroShoppingListBundle:ShoppingList')
+            ->will($this->returnValue($shoppingListRepository));
 
-        /** @var OrmResultAfter|\PHPUnit_Framework_MockObject_MockObject $event */
-        $event = new OrmResultAfter($datagrid, $records, $query);
+        $this->registry->expects($this->at(1))
+            ->method('getRepository')
+            ->with('OroShoppingListBundle:LineItem')
+            ->will($this->returnValue($lineItemRepository));
 
-        $this->securityFacade->expects($this->once())
-            ->method('getLoggedUser')
+        $query = $this->createMock(SearchQueryInterface::class);
+
+        /** @var SearchResultAfter|\PHPUnit_Framework_MockObject_MockObject $event */
+        $event = new SearchResultAfter($datagrid, $query, $records);
+
+        $token = $this->createMock(TokenInterface::class);
+        $token->method('getUser')
             ->willReturn($user);
-
+        $this->tokenStorage->method('getToken')->willReturn($token);
         $this->listener->onResultAfter($event);
 
         $this->assertEquals(
             [
                 [
-                    'id' => 1,
-                    'label' => 'Shopping List1',
+                    'id'         => 1,
+                    'label'      => 'Shopping List1',
                     'is_current' => true,
-                    'line_items' => [['id' => 1, 'unit' => 'unt1','quantity' => 1]]
+                    'line_items' => [['id' => 1, 'unit' => 'unt1', 'quantity' => 1]]
                 ],
                 [
-                    'id' => 2,
-                    'label' => 'Shopping List2',
+                    'id'         => 2,
+                    'label'      => 'Shopping List2',
                     'is_current' => false,
                     'line_items' => [
-                        ['id' => 2, 'unit' => 'unt2','quantity' => 2],
-                        ['id' => 3, 'unit' => 'unt3','quantity' => 5],
+                        ['id' => 2, 'unit' => 'unt2', 'quantity' => 2],
+                        ['id' => 3, 'unit' => 'unt3', 'quantity' => 5],
                     ],
                 ],
             ],
@@ -271,52 +281,52 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param int $id
+     * @param int    $id
      * @param string $label
-     * @return  ShoppingList
+     * @return \PHPUnit_Framework_MockObject_MockObject
      */
     private function createShoppingList($id, $label)
     {
         $shoppingList = $this
-            ->getMockBuilder('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList')
+            ->getMockBuilder(ShoppingList::class)
             ->setMethods(['getId', 'getLabel'])
             ->getMock();
-        $shoppingList ->expects($this->any())
+        $shoppingList->expects($this->any())
             ->method('getId')
             ->will($this->returnValue($id));
-        $shoppingList ->expects($this->any())
+        $shoppingList->expects($this->any())
             ->method('getLabel')
             ->will($this->returnValue($label));
         return $shoppingList;
     }
 
     /**
-     * @param int $id
-     * @param string $unit
-     * @param int $quantity
+     * @param int          $id
+     * @param string       $unit
+     * @param int          $quantity
      * @param shoppingList $shoppingList
-     * @param product $product
-     * @return  LineItem
+     * @param product      $product
+     * @return \PHPUnit_Framework_MockObject_MockObject
      */
     private function createLineItem($id, $unit, $quantity, $shoppingList, $product)
     {
         $lineItem = $this
-            ->getMockBuilder('Oro\Bundle\ShoppingListBundle\Entity\LineItem')
+            ->getMockBuilder(LineItem::class)
             ->setMethods(['getId', 'getUnit', 'getQuantity', 'getShoppingList', 'getProduct'])
             ->getMock();
-        $lineItem ->expects($this->any())
+        $lineItem->expects($this->any())
             ->method('getId')
             ->will($this->returnValue($id));
-        $lineItem ->expects($this->any())
+        $lineItem->expects($this->any())
             ->method('getUnit')
             ->will($this->returnValue((new ProductUnit())->setCode($unit)));
-        $lineItem ->expects($this->any())
+        $lineItem->expects($this->any())
             ->method('getQuantity')
             ->will($this->returnValue($quantity));
-        $lineItem ->expects($this->any())
+        $lineItem->expects($this->any())
             ->method('getShoppingList')
             ->will($this->returnValue($shoppingList));
-        $lineItem ->expects($this->any())
+        $lineItem->expects($this->any())
             ->method('getProduct')
             ->will($this->returnValue($product));
 

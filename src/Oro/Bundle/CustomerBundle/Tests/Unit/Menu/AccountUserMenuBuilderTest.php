@@ -23,7 +23,7 @@ class AccountUserMenuBuilderTest extends \PHPUnit_Framework_TestCase
 
     public function testBuild()
     {
-        $child = $this->getMock('Knp\Menu\ItemInterface');
+        $child = $this->createMock('Knp\Menu\ItemInterface');
         $child->expects($this->once())
             ->method('setLabel')
             ->with('')
@@ -34,7 +34,7 @@ class AccountUserMenuBuilderTest extends \PHPUnit_Framework_TestCase
             ->willReturnSelf();
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|\Knp\Menu\ItemInterface $menu */
-        $menu = $this->getMock('Knp\Menu\ItemInterface');
+        $menu = $this->createMock('Knp\Menu\ItemInterface');
         $menu->expects($this->at(0))
             ->method('setExtra')
             ->with('type', 'dropdown');

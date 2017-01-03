@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\DependencyInjection\CompilerPass;
 
+use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
@@ -18,6 +19,8 @@ class ProductExpressionServicesPass implements CompilerPassInterface
     const ASSIGNMENT_RULE_PREPROCESSOR = 'oro_pricing.expression.preprocessor.product_assignment_rule';
     const PRICE_LIST_COLUMN_INFORMATION_PROVIDER = 'oro_pricing.expression.column_information.price_list_provider';
     const PRICE_LIST_QUERY_CONVERTER_EXTENSION = 'oro_pricing.expression.price_list_query_converter_extension';
+    const FIELDS_PROVIDER = 'oro_product.expression.fields_provider';
+    const AUTOCOMPLETE_FIELDS_PROVIDER = 'oro_product.autocomplete_fields_provider';
 
     /**
      * {@inheritdoc}
@@ -55,6 +58,39 @@ class ProductExpressionServicesPass implements CompilerPassInterface
                 ->addMethodCall(
                     'addExtension',
                     [new Reference(self::PRICE_LIST_QUERY_CONVERTER_EXTENSION)]
+                );
+        }
+
+        if ($container->hasDefinition(self::FIELDS_PROVIDER)) {
+            $container->getDefinition(self::FIELDS_PROVIDER)
+                ->addMethodCall(
+                    'addFieldToWhiteList',
+                    [PriceList::class, 'prices']
+                );
+        }
+
+        if ($container->hasDefinition(self::AUTOCOMPLETE_FIELDS_PROVIDER)) {
+            $container->getDefinition(self::AUTOCOMPLETE_FIELDS_PROVIDER)
+                ->addMethodCall(
+                    'addSpecialFieldInformation',
+                    [
+                        PriceList::class,
+                        'assignedProducts',
+                        [
+                            'label' => 'oro.pricing.pricelist.assigned_products.label',
+                            'type' => 'collection'
+                        ]
+                    ]
+                )
+                ->addMethodCall(
+                    'addSpecialFieldInformation',
+                    [
+                        PriceList::class,
+                        'productAssignmentRule',
+                        [
+                            'type' => 'standalone'
+                        ]
+                    ]
                 );
         }
     }

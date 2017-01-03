@@ -28,7 +28,7 @@ define(function(require) {
         initialize: function() {
             QuantitySwitcher.__super__.initialize.apply(this, arguments);
             this.initLayout().done(_.bind(this.initSwitcher, this));
-            this.$form.on('submit', _.bind(function(e) {
+            this.$form.on('submit' + this.eventNamespace(), _.bind(function(e) {
                 this.onSubmit(e);
             }, this));
         },
@@ -84,6 +84,23 @@ define(function(require) {
 
         isValid: function () {
             return !!(this.getValue(this.field) || this.getValue(this.expression));
+        },
+
+        /**
+         * @inheritDoc
+         */
+        dispose: function(options) {
+            if (this.disposed) {
+                return;
+            }
+
+            delete this.options;
+            delete this.visibleClass;
+            delete this.fieldInput;
+
+            this.$form.off(this.eventNamespace());
+
+            AbstractSwitcher.__super__.dispose.apply(this, arguments);
         }
     });
 

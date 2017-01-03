@@ -9,7 +9,7 @@ class OrderEventTest extends \PHPUnit_Framework_TestCase
 {
     public function testEvent()
     {
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
         $order = new Order();
         $event = new OrderEvent($form, $order, ['data']);
         $this->assertInternalType('array', $event->getSubmittedData());
@@ -17,5 +17,11 @@ class OrderEventTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($order, $event->getOrder());
         $this->assertSame($form, $event->getForm());
         $this->assertInstanceOf('\ArrayObject', $event->getData());
+    }
+
+    public function testEventNullSubmitted()
+    {
+        $event = new OrderEvent($this->createMock('Symfony\Component\Form\FormInterface'), new Order());
+        static::assertNull($event->getSubmittedData());
     }
 }

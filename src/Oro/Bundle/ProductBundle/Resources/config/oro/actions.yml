@@ -9,7 +9,7 @@ operations:
         acl_resource: oro_product_create
         order: 10
         button_options:
-            icon: icon-copy
+            icon: fa-files-o
         actions:
             - '@run_action_group':
                 results:
@@ -35,11 +35,11 @@ operations:
     UPDATE:
         exclude_datagrids:
             - products-select-grid
-            - frontend-products-grid
+            - frontend-product-search-grid
     DELETE:
         exclude_datagrids:
             - products-select-grid
-            - frontend-products-grid
+            - frontend-product-search-grid
 
 action_groups:
     oro_product_duplicate:

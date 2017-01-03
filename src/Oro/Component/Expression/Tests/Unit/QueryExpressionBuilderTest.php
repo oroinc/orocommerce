@@ -14,9 +14,9 @@ class QueryExpressionBuilderTest extends \PHPUnit_Framework_TestCase
     {
         $expr = new Expr();
         $params = [];
-        $node = $this->getMock(NodeInterface::class);
+        $node = $this->createMock(NodeInterface::class);
 
-        $this->setExpectedException(\InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
 
         $builder = new QueryExpressionBuilder();
         $builder->convert($node, $expr, $params);
@@ -27,9 +27,9 @@ class QueryExpressionBuilderTest extends \PHPUnit_Framework_TestCase
         $expr = new Expr();
         $params = [];
         $aliasMapping = [];
-        $node = $this->getMock(NodeInterface::class);
+        $node = $this->createMock(NodeInterface::class);
 
-        $converter = $this->getMock(QueryExpressionConverterInterface::class);
+        $converter = $this->createMock(QueryExpressionConverterInterface::class);
         $converter->expects($this->once())
             ->method('convert')
             ->with($node, $expr, $params, $aliasMapping)
@@ -45,9 +45,9 @@ class QueryExpressionBuilderTest extends \PHPUnit_Framework_TestCase
         $expr = new Expr();
         $params = [];
         $aliasMapping = [];
-        $node = $this->getMock(NodeInterface::class);
+        $node = $this->createMock(NodeInterface::class);
 
-        $converter = $this->getMock(QueryExpressionConverterInterface::class);
+        $converter = $this->createMock(QueryExpressionConverterInterface::class);
         $converter->expects($this->once())
             ->method('convert')
             ->with($node, $expr, $params, $aliasMapping)
@@ -63,15 +63,15 @@ class QueryExpressionBuilderTest extends \PHPUnit_Framework_TestCase
         $expr = new Expr();
         $params = [];
         $aliasMapping = [];
-        $node = $this->getMock(NodeInterface::class);
+        $node = $this->createMock(NodeInterface::class);
 
-        $priorityConverter = $this->getMock(QueryExpressionConverterInterface::class);
+        $priorityConverter = $this->createMock(QueryExpressionConverterInterface::class);
         $priorityConverter->expects($this->once())
             ->method('convert')
             ->with($node, $expr, $params, $aliasMapping)
             ->willReturn('converted_priority');
 
-        $converter = $this->getMock(QueryExpressionConverterInterface::class);
+        $converter = $this->createMock(QueryExpressionConverterInterface::class);
         $converter->expects($this->never())
             ->method('convert')
             ->with($node, $expr, $params, $aliasMapping);
@@ -86,7 +86,7 @@ class QueryExpressionBuilderTest extends \PHPUnit_Framework_TestCase
     {
         $builder = new QueryExpressionBuilder();
 
-        $converter = $this->getMock(QueryExpressionConverterConverterAwareInterface::class);
+        $converter = $this->createMock(QueryExpressionConverterConverterAwareInterface::class);
         $converter->expects($this->once())
             ->method('setConverter')
             ->with($builder);

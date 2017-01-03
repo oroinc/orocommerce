@@ -3,16 +3,16 @@
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Layout\DataProvider;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\Factory\ShippingContextProviderFactory;
+use Oro\Bundle\CheckoutBundle\Factory\CheckoutShippingContextFactory;
 use Oro\Bundle\CheckoutBundle\Layout\DataProvider\CheckoutShippingContextProvider;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
 
 class CheckoutShippingContextProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var ShippingContextProviderFactory| \PHPUnit_Framework_MockObject_MockObject
+     * @var CheckoutShippingContextFactory| \PHPUnit_Framework_MockObject_MockObject
      */
-    protected $shippingContextProviderFactory;
+    protected $shippingContextFactory;
 
     /**
      * @var Checkout| \PHPUnit_Framework_MockObject_MockObject
@@ -30,18 +30,18 @@ class CheckoutShippingContextProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->shippingContextProviderFactory = $this->getMockBuilder(ShippingContextProviderFactory::class)
+        $this->shippingContextFactory = $this->getMockBuilder(CheckoutShippingContextFactory::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->provider = new CheckoutShippingContextProvider($this->shippingContextProviderFactory);
+        $this->provider = new CheckoutShippingContextProvider($this->shippingContextFactory);
     }
 
     public function testGetPaymentStatus()
     {
-        $context = new ShippingContext();
+        $context = new ShippingContext([]);
 
-        $this->shippingContextProviderFactory->expects($this->once())
+        $this->shippingContextFactory->expects($this->once())
             ->method('create')
             ->with($this->checkout)
             ->willReturn($context);

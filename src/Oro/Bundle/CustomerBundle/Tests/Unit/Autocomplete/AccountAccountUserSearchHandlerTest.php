@@ -71,7 +71,7 @@ class AccountAccountUserSearchHandlerTest extends \PHPUnit_Framework_TestCase
             ->with(self::TEST_ENTITY_CLASS)
             ->willReturn($this->entityRepository);
 
-        $this->managerRegistry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $this->managerRegistry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
         $this->managerRegistry->expects($this->once())
             ->method('getManagerForClass')
             ->with(self::TEST_ENTITY_CLASS)

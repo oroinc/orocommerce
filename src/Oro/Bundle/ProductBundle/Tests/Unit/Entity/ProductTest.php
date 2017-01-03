@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Entity;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
@@ -34,7 +35,8 @@ class ProductTest extends \PHPUnit_Framework_TestCase
             ['primaryUnitPrecision',  null],
             ['createdAt', $now, false],
             ['updatedAt', $now, false],
-            ['status', Product::STATUS_ENABLED, Product::STATUS_DISABLED]
+            ['status', Product::STATUS_ENABLED, Product::STATUS_DISABLED],
+            ['type', Product::TYPE_CONFIGURABLE, Product::TYPE_SIMPLE]
         ];
 
         $this->assertPropertyAccessors(new Product(), $properties);
@@ -47,6 +49,10 @@ class ProductTest extends \PHPUnit_Framework_TestCase
             ['descriptions', new LocalizedFallbackValue()],
             ['shortDescriptions', new LocalizedFallbackValue()],
             ['images', new ProductImage()],
+            ['slugPrototypes', new LocalizedFallbackValue()],
+            ['slugs', new Slug()],
+            ['variantLinks', new ProductVariantLink()],
+            ['parentVariantLinks', new ProductVariantLink()],
         ];
 
         $this->assertPropertyCollections(new Product(), $collections);
@@ -93,7 +99,7 @@ class ProductTest extends \PHPUnit_Framework_TestCase
     public function testPreUpdate()
     {
         $product = new Product();
-        $product->setHasVariants(false);
+        $product->setType(Product::TYPE_SIMPLE);
         $product->setVariantFields(['field']);
         $product->addVariantLink(new ProductVariantLink(new Product(), new Product()));
 
@@ -405,5 +411,16 @@ class ProductTest extends \PHPUnit_Framework_TestCase
 
         $this->assertCount(2, $product->getImagesByType('main'));
         $this->assertCount(1, $product->getImagesByType('additional'));
+    }
+
+    public function testIsConfigurable()
+    {
+        $simpleProduct = new Product();
+
+        $configurableProduct = new Product();
+        $configurableProduct->setType(Product::TYPE_CONFIGURABLE);
+
+        $this->assertFalse($simpleProduct->isConfigurable());
+        $this->assertTrue($configurableProduct->isConfigurable());
     }
 }

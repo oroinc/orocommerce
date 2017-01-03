@@ -21,7 +21,7 @@ class DiscriminatorMapListenerTest extends \PHPUnit_Framework_TestCase
     public function testEmptyClasses()
     {
         /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
-        $em = $this->getMock('Doctrine\ORM\EntityManagerInterface');
+        $em = $this->createMock('Doctrine\ORM\EntityManagerInterface');
 
         $metadata = new ClassMetadata('\stdClass');
         $event = new LoadClassMetadataEventArgs($metadata, $em);
@@ -34,7 +34,7 @@ class DiscriminatorMapListenerTest extends \PHPUnit_Framework_TestCase
     public function testNotSingleTable()
     {
         /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
-        $em = $this->getMock('Doctrine\ORM\EntityManagerInterface');
+        $em = $this->createMock('Doctrine\ORM\EntityManagerInterface');
 
         $metadata = new ClassMetadata('\stdClass');
         $event = new LoadClassMetadataEventArgs($metadata, $em);
@@ -48,7 +48,7 @@ class DiscriminatorMapListenerTest extends \PHPUnit_Framework_TestCase
     public function testSingleTableNotRoot()
     {
         /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
-        $em = $this->getMock('Doctrine\ORM\EntityManagerInterface');
+        $em = $this->createMock('Doctrine\ORM\EntityManagerInterface');
 
         $metadata = new ClassMetadata('\stdClass');
         $metadata->inheritanceType = ClassMetadata::INHERITANCE_TYPE_SINGLE_TABLE;
@@ -64,7 +64,7 @@ class DiscriminatorMapListenerTest extends \PHPUnit_Framework_TestCase
     public function testSingleTableRoot()
     {
         /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
-        $em = $this->getMock('Doctrine\ORM\EntityManagerInterface');
+        $em = $this->createMock('Doctrine\ORM\EntityManagerInterface');
 
         $metadata = new ClassMetadata('\stdClass');
         $metadata->inheritanceType = ClassMetadata::INHERITANCE_TYPE_SINGLE_TABLE;
@@ -79,7 +79,7 @@ class DiscriminatorMapListenerTest extends \PHPUnit_Framework_TestCase
     public function testMapOverride()
     {
         /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
-        $em = $this->getMock('Doctrine\ORM\EntityManagerInterface');
+        $em = $this->createMock('Doctrine\ORM\EntityManagerInterface');
 
         $metadata = new ClassMetadata('\stdClass');
         $metadata->inheritanceType = ClassMetadata::INHERITANCE_TYPE_SINGLE_TABLE;

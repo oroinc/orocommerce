@@ -34,21 +34,141 @@ services:
         tags:
             - { name: oro.api.processor, action: create, group: normalize_input, priority: -45, class: '%oro_inventory.entity.inventory_level.class%' }
 
-    oro_warehouse.event_listener.product_manage_inventory_form_view_listener:
-        class: 'Oro\Bundle\InventoryBundle\EventListener\ProductManageInventoryFormViewListener'
+    oro_inventory.service.fallback_fields_form_view:
+        abstract: true
         arguments:
             - "@request_stack"
-            - "@oro_entity.doctrine_helper"
+            - "@doctrine"
+            - "@translator"
+
+    oro_inventory.event_listener.product_manage_inventory_form_view_listener:
+        class: 'Oro\Bundle\InventoryBundle\EventListener\ProductManageInventoryFormViewListener'
+        parent: oro_inventory.service.fallback_fields_form_view
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-view, method: onProductView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onProductEdit }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-create-step-two, method: onProductEdit }
 
-    oro_warehouse.event_listener.category_manage_inventory_form_view:
+    oro_inventory.event_listener.category_manage_inventory_form_view_listener:
         class: 'Oro\Bundle\InventoryBundle\EventListener\CategoryManageInventoryFormViewListener'
+        parent: oro_inventory.service.fallback_fields_form_view
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.category-edit, method: onCategoryEdit }
+
+    oro_inventory.event_listener.product_inventory_threshold_form_view_listener:
+        class: 'Oro\Bundle\InventoryBundle\EventListener\ProductInventoryThresholdFormViewListener'
+        parent: oro_inventory.service.fallback_fields_form_view
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-view, method: onProductView }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onProductEdit }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-create-step-two, method: onProductEdit }
+
+    oro_inventory.event_listener.category_inventory_threshold_form_view_listener:
+        class: 'Oro\Bundle\InventoryBundle\EventListener\CategoryInventoryThresholdFormViewListener'
+        parent: oro_inventory.service.fallback_fields_form_view
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.category-edit, method: onCategoryEdit }
+
+    oro_inventory.event_listener.product_back_order_form_view_listener:
+        class: 'Oro\Bundle\InventoryBundle\EventListener\ProductBackOrderFormViewListener'
+        parent: oro_inventory.service.fallback_fields_form_view
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-view, method: onProductView }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onProductEdit }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-create-step-two, method: onProductEdit }
+
+    oro_inventory.event_listener.product_decrement_quantity_form_view_listener:
+        class: 'Oro\Bundle\InventoryBundle\EventListener\ProductDecrementQuantityFormViewListener'
+        parent: oro_inventory.service.fallback_fields_form_view
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-view, method: onProductView }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onProductEdit }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-create-step-two, method: onProductEdit }
+
+    oro_inventory.event_listener.category_inventory_decrement_form_view_listener:
+        class: 'Oro\Bundle\InventoryBundle\EventListener\CategoryInventoryDecrementFormViewListener'
+        parent: oro_inventory.service.fallback_fields_form_view
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.category-edit, method: onCategoryEdit }
+
+    oro_inventory.event_listener.category_inventory_backorder_form_view_listener:
+        class: 'Oro\Bundle\InventoryBundle\EventListener\CategoryInventoryBackorderFormViewListener'
+        parent: oro_inventory.service.fallback_fields_form_view
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.category-edit, method: onCategoryEdit }
+
+    oro_inventory.listener.update_entity_config_relations:
+        class: 'Oro\Bundle\InventoryBundle\CacheWarmer\UpdateEntityConfigRelationsWarmer'
         arguments:
-            - "@request_stack"
+            - '@oro_inventory.entity_config_relations_migration'
+        tags:
+            - { name: oro_entity_extend.warmer, priority: -500 }
+
+    oro_inventory.entity_config_relations_migration:
+        class: 'Oro\Bundle\InventoryBundle\CacheWarmer\EntityConfigRelationsMigration'
+        arguments:
+            - '@doctrine'
+            - '@logger'
+            - '%installed%'
+
+    oro_inventory.event_listener.category_quantity_to_order_form_view_listener:
+        class: 'Oro\Bundle\InventoryBundle\EventListener\CategoryQuantityToOrderFormViewListener'
+        parent: oro_inventory.service.fallback_fields_form_view
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.category-edit, method: onCategoryEdit }
+
+    oro_inventory.event_listener.product_quantity_to_order_form_view_listener:
+        class: 'Oro\Bundle\InventoryBundle\EventListener\ProductQuantityToOrderFormViewListener'
+        parent: oro_inventory.service.fallback_fields_form_view
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-view, method: onProductView }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onProductEdit }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-create-step-two, method: onProductEdit }
+
+    oro_inventory.event_listener.quantity_to_order_condition_listener:
+        class: Oro\Bundle\InventoryBundle\EventListener\QuantityToOrderConditionListener
+        arguments:
+            - '@oro_inventory.validator.quantity_to_order_validator'
+        tags:
+            - { name: kernel.event_listener, event: checkout.checkout_validate, method: onCheckoutValidate }
+            - { name: kernel.event_listener, event: extendable_condition.start_checkout, method: onStartCheckoutConditionCheck }
+            - { name: kernel.event_listener, event: extendable_condition.checkout, method: onCheckoutConditionCheck }
+            - { name: kernel.event_listener, event: quick_add_row_collection.validate, method: onQuickAddRowCollectionValidate }
+
+    oro_inventory.validator.quantity_to_order_validator:
+        class: Oro\Bundle\InventoryBundle\Validator\QuantityToOrderValidatorService
+        arguments:
+            - '@oro_entity.fallback.resolver.entity_fallback_resolver'
+            - '@translator'
+
+    oro_inventory.event_listener.line_item_validation_listener:
+        class: Oro\Bundle\InventoryBundle\EventListener\LineItemValidationListener
+        arguments:
+            - '@oro_inventory.validator.quantity_to_order_validator'
+            - '@translator'
+        tags:
+            - { name: kernel.event_listener, event: line_item.validate, method: onLineItemValidate }
+
+    oro_inventory.validator.product_row_quantity_validator:
+        class: 'Oro\Bundle\InventoryBundle\Validator\Constraints\ProductRowQuantityValidator'
+        arguments:
+            - "@oro_inventory.validator.quantity_to_order_validator"
             - "@oro_entity.doctrine_helper"
             - "@translator"
         tags:
-            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.category-edit, method: onCategoryEdit }
+            - { name: validator.constraint_validator, alias: oro_warehouse_product_row_validator }
+
+    oro_inventory.validator.product_quantity_to_order_limit_validator:
+        class: 'Oro\Bundle\InventoryBundle\Validator\Constraints\ProductQuantityToOrderLimitValidator'
+        arguments:
+            - "@oro_inventory.validator.quantity_to_order_validator"
+        tags:
+            - { name: validator.constraint_validator, alias: oro_inventory_product_quantity_to_order_limit_validator }
+
+    oro_inventory.event_listener.on_rfp_form_error_submit_check_listener:
+        class: 'Oro\Bundle\InventoryBundle\EventListener\RFPOperationListener'
+        arguments:
+            - '@oro_product.layout.data_provider.quick_add_collection'
+        tags:
+            - { name: kernel.event_listener, event: rfp.form_submit_check.oro_product_frontend_quick_add_copy_paste, method: onCopyPasteRFPFormSubmitCheck }
+            - { name: kernel.event_listener, event: rfp.form_submit_check.oro_product_frontend_quick_add_import, method: onQuickAddImportRFPFormSubmitCheck }

@@ -4,8 +4,10 @@ oro:
             credit_card.label: 'Credit Card'
             whats_this: "What's this?"
             tooltip: |
-                The verification number is a 3-digit number printed on the back of your card.
-                The American Express security code is a 4-digit number printed on the front of your card.
+                The verification number is a 3-digit
+                number printed on the back of your card.
+                The American Express security code is a 4-digit
+                number printed on the front of your card.
         system_configuration:
             groups:
                 paypal_payments_pro.title: 'PayPal Payments Pro'
@@ -41,7 +43,7 @@ oro:
                     label: 'Zero Amount Authorization'
                     tooltip: |
                         If enabled it provides additional convenience to your customers, so that they do not need to re-enter credit card details every time they return back to checkout.
-                        Please note that zero dollar authorizations are subject to the transaction fees.
+                        Please note that zero amount authorizations are subject to the transaction fees.
                 authorization_for_required_amount.label: 'Authorization For Required Amount'
 
         result:
@@ -51,7 +53,7 @@ oro:
         credit_card:
             card_number.label: Credit Card Number
             expiration_date.label: Expiration Date
-            cvv2.label: Credit Card Verification Number
+            cvv2.label: CVV
             save_for_later.label: Save this card for later use
 
         payflow:

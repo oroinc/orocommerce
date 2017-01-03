@@ -5,15 +5,22 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
-
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class LoadCombinedProductPrices extends AbstractFixture implements DependentFixtureInterface
+class LoadCombinedProductPrices extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
 {
+    /**
+     * @var ContainerInterface
+     */
+    private $container;
+
     /**
      * @var array
      */
@@ -171,6 +178,69 @@ class LoadCombinedProductPrices extends AbstractFixture implements DependentFixt
             'currency' => 'USD',
             'reference' => 'product_price.17'
         ],
+        [
+            'product' => 'product.6',
+            'priceList' => '1f',
+            'qty' => 10,
+            'unit' => 'product_unit.bottle',
+            'price' => 200.5,
+            'currency' => 'USD',
+            'reference' => 'product_price.18'
+        ],
+        [
+            'product' => 'product.7',
+            'priceList' => '1f',
+            'qty' => 1,
+            'unit' => 'product_unit.bottle',
+            'price' => 0,
+            'currency' => 'USD',
+            'reference' => 'product_price.19'
+        ],
+        [
+            'product' => 'product.1',
+            'priceList' => '1f',
+            'qty' => 1,
+            'unit' => 'product_unit.milliliter',
+            'price' => 0,
+            'currency' => 'USD',
+            'reference' => 'product_price.20'
+        ],
+        [
+            'product' => 'product.2',
+            'priceList' => '1f',
+            'qty' => 1,
+            'unit' => 'product_unit.milliliter',
+            'price' => 0,
+            'currency' => 'USD',
+            'reference' => 'product_price.21'
+        ],
+        [
+            'product' => 'product.3',
+            'priceList' => '1f',
+            'qty' => 1,
+            'unit' => 'product_unit.milliliter',
+            'price' => 0,
+            'currency' => 'USD',
+            'reference' => 'product_price.22'
+        ],
+        [
+            'product' => 'product.4',
+            'priceList' => '1f',
+            'qty' => 1,
+            'unit' => 'product_unit.milliliter',
+            'price' => 0,
+            'currency' => 'USD',
+            'reference' => 'product_price.23'
+        ],
+        [
+            'product' => 'product.5',
+            'priceList' => '1f',
+            'qty' => 1,
+            'unit' => 'product_unit.milliliter',
+            'price' => 0,
+            'currency' => 'USD',
+            'reference' => 'product_price.24'
+        ],
     ];
 
     /**
@@ -202,6 +272,11 @@ class LoadCombinedProductPrices extends AbstractFixture implements DependentFixt
         }
 
         $manager->flush();
+
+        $this->container->get('event_dispatcher')->dispatch(
+            ReindexationRequestEvent::EVENT_NAME,
+            new ReindexationRequestEvent([Product::class], [], [], false)
+        );
     }
 
     /**
@@ -213,5 +288,13 @@ class LoadCombinedProductPrices extends AbstractFixture implements DependentFixt
             'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
             'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists'
         ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setContainer(ContainerInterface $container = null)
+    {
+        $this->container = $container;
     }
 }

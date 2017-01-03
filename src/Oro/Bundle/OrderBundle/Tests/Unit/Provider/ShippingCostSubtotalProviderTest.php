@@ -2,13 +2,11 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Provider;
 
-use Symfony\Component\Translation\TranslatorInterface;
-
-use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Provider\ShippingCostSubtotalProvider;
 use Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Provider\AbstractSubtotalProviderTest;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class ShippingCostSubtotalProviderTest extends AbstractSubtotalProviderTest
 {
@@ -30,9 +28,9 @@ class ShippingCostSubtotalProviderTest extends AbstractSubtotalProviderTest
     protected function setUp()
     {
         parent::setUp();
-        $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+        $this->translator = $this->createMock('Symfony\Component\Translation\TranslatorInterface');
 
-        $this->roundingService = $this->getMock('Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface');
+        $this->roundingService = $this->createMock('Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface');
         $this->roundingService->expects($this->any())
             ->method('round')
             ->will(
@@ -66,7 +64,7 @@ class ShippingCostSubtotalProviderTest extends AbstractSubtotalProviderTest
         $currency = 'USD';
         $costAmount = 142.12;
         $order->setCurrency($currency);
-        $order->setShippingCost(Price::create($costAmount, $order->getCurrency()));
+        $order->setEstimatedShippingCostAmount($costAmount);
 
         $subtotal = $this->provider->getSubtotal($order);
         $this->assertInstanceOf('Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal', $subtotal);

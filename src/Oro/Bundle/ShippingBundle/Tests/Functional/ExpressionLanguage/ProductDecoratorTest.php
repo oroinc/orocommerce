@@ -5,11 +5,11 @@ namespace Oro\Bundle\ShippingBundle\Tests\Functional\ExpressionLanguage;
 use Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures\LoadInventoryLevels;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits;
+use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\DoctrineShippingLineItemCollection;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
 use Oro\Component\ExpressionLanguage\ExpressionLanguage;
 
 /**
@@ -36,15 +36,19 @@ class ProductDecoratorTest extends WebTestCase
      */
     public function testEvaluate(array $lineItems, $expression, $expectedResult)
     {
-        $factory = $this->getContainer()->get('oro_shipping.expression_language.line_item_decorator_factory');
+        $factory = $this->getContainer()->get('oro_shipping.expression_language.decorated_product_line_item_factory');
 
-        $context = new ShippingContext();
-        $context->setLineItems($this->prepareLineItems($lineItems));
-        $lineItems = $context->getLineItems();
+        $context = new ShippingContext([
+            ShippingContext::FIELD_LINE_ITEMS => new DoctrineShippingLineItemCollection(
+                $this->prepareLineItems($lineItems)
+            ),
+            ShippingContext::FIELD_CURRENCY => 'USD'
+        ]);
+        $lineItems = $context->getLineItems()->toArray();
 
         $values = [
             'lineItems' => array_map(function (ShippingLineItemInterface $lineItem) use ($factory, $lineItems) {
-                return $factory->createOrderLineItemDecorator($lineItems, $lineItem);
+                return $factory->createLineItemWithDecoratedProductByLineItem($lineItems, $lineItem);
             }, $lineItems),
         ];
 
@@ -54,6 +58,7 @@ class ProductDecoratorTest extends WebTestCase
         }, function ($arguments, $field) {
             return count($field);
         });
+
         $this->assertEquals($expectedResult, $expressionLanguage->evaluate($expression, $values));
     }
 
@@ -119,10 +124,12 @@ EXPR;
     protected function prepareLineItems(array $data)
     {
         return array_map(function ($item) {
-            return (new ShippingLineItem())
-                ->setProduct($this->getReference($item['product']))
-                ->setQuantity($item['quantity'])
-                ->setProductUnit($this->getReference($item['unit']));
+            return new ShippingLineItem([
+                ShippingLineItem::FIELD_PRODUCT => $this->getReference($item['product']),
+                ShippingLineItem::FIELD_QUANTITY => $item['quantity'],
+                ShippingLineItem::FIELD_PRODUCT_UNIT => $this->getReference($item['unit']),
+                ShippingLineItem::FIELD_PRODUCT_UNIT_CODE => $this->getReference($item['unit'])->getCode(),
+            ]);
         }, $data);
     }
 }

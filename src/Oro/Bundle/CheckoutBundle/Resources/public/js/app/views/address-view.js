@@ -34,6 +34,7 @@ define(function(require) {
         },
 
         _handleShipToBillingAddressCheckbox: function(e) {
+            var isOneOption = this.$addressSelector[0].length === 1;
             var disabled = Boolean(this.$shipToBillingCheckbox.attr('checked'));
             if (!disabled && this._isFormVisible()) {
                 this._showForm();
@@ -41,7 +42,11 @@ define(function(require) {
                 this._hideForm(true);
                 this.$addressSelector.focus();
             }
-            this.$addressSelector.prop('disabled', disabled).inputWidget('refresh');
+            this.$addressSelector.prop('disabled', disabled || isOneOption).inputWidget('refresh');
+            if (isOneOption) {
+                this.$addressSelector.inputWidget('dispose');
+                this.$addressSelector.hide();
+            }
         },
 
         _onAddressChanged: function(e) {
@@ -53,7 +58,7 @@ define(function(require) {
         },
 
         _isFormVisible: function() {
-            return this.$addressSelector.val() === '0';
+            return this.$addressSelector[0].length === 1 || this.$addressSelector.val() === '0';
         },
 
         _showForm: function() {

@@ -8,8 +8,8 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
-use Oro\Bundle\CustomerBundle\Form\Type\AccountTypedAddressType;
+use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
+use Oro\Bundle\CustomerBundle\Form\Type\FrontendAccountTypedAddressType;
 use Oro\Bundle\CustomerBundle\Layout\DataProvider\FrontendAccountAddressFormProvider;
 
 class FrontendAccountAddressFormProviderTest extends \PHPUnit_Framework_TestCase
@@ -28,7 +28,7 @@ class FrontendAccountAddressFormProviderTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->mockFormFactory = $this->getMockBuilder('Symfony\Component\Form\FormFactoryInterface')->getMock();
-        $this->router = $this->getMock('Symfony\Component\Routing\Generator\UrlGeneratorInterface');
+        $this->router = $this->createMock('Symfony\Component\Routing\Generator\UrlGeneratorInterface');
 
         $this->provider = new FrontendAccountAddressFormProvider($this->mockFormFactory, $this->router);
     }
@@ -48,8 +48,8 @@ class FrontendAccountAddressFormProviderTest extends \PHPUnit_Framework_TestCase
      */
     private function actionTestWithId($id = null)
     {
-        /** @var AccountAddress|\PHPUnit_Framework_MockObject_MockObject $mockAccountUserAddress */
-        $mockAccountUserAddress = $this->getMockBuilder(AccountAddress::class)
+        /** @var CustomerAddress|\PHPUnit_Framework_MockObject_MockObject $mockAccountUserAddress */
+        $mockAccountUserAddress = $this->getMockBuilder(CustomerAddress::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -66,7 +66,7 @@ class FrontendAccountAddressFormProviderTest extends \PHPUnit_Framework_TestCase
             ->method('getId')
             ->willReturn(1);
 
-        $mockFormView = $this->getMock(FormView::class);
+        $mockFormView = $this->createMock(FormView::class);
 
         $mockForm = $this->getMockBuilder(FormInterface::class)->getMock();
         $mockForm->expects($this->once())
@@ -75,7 +75,7 @@ class FrontendAccountAddressFormProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->mockFormFactory->expects($this->once())
             ->method('create')
-            ->with(AccountTypedAddressType::NAME, $mockAccountUserAddress)
+            ->with(FrontendAccountTypedAddressType::NAME, $mockAccountUserAddress)
             ->willReturn($mockForm);
 
         $form = $this->provider->getAddressFormView($mockAccountUserAddress, $mockAccountUser);

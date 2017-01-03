@@ -35,7 +35,8 @@ abstract class AbstractOptionTest extends \PHPUnit_Framework_TestCase
     ) {
         if ($exceptionAndMessage) {
             list($exception, $message) = $exceptionAndMessage;
-            $this->setExpectedException($exception, $message);
+            $this->expectException($exception);
+            $this->expectExceptionMessage($message);
         }
 
         $resolver = new Option\OptionsResolver();

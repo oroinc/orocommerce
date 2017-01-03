@@ -1,3 +1,5 @@
+// @theme: default
+
 .shopping-list {
   margin: 10px 0 18px;
 
@@ -36,6 +38,8 @@
   }
 
   &__title {
+    overflow: hidden;
+
     font-size: $base-font-size;
     line-height: 1.3;
   }
@@ -45,10 +49,14 @@
   }
 
   &__item-indicator {
+    $icon-size: 26px !default;
+
     position: absolute;
     top: 50%;
     left: 6px;
 
-    margin-top: -13px;
+    margin-top: -$icon-size / 2;
+
+    @include badge($badge-size: $icon-size, $badge-f-size: 14px, $badge-radius: 3px);
   }
 }

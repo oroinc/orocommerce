@@ -39,7 +39,7 @@ class AccountUserRoleVoterTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->container = $this->getMock('Symfony\Component\DependencyInjection\ContainerInterface');
+        $this->container = $this->createMock('Symfony\Component\DependencyInjection\ContainerInterface');
 
         $this->voter = new AccountUserRoleVoter($this->doctrineHelper);
         $this->voter->setContainer($this->container);
@@ -132,7 +132,7 @@ class AccountUserRoleVoterTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($entityRepository));
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|TokenInterface $token */
-        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $token = $this->createMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
         $this->assertEquals(
             $expected,
             $this->voter->vote($token, $object, [AccountUserRoleVoter::ATTRIBUTE_DELETE])
@@ -148,7 +148,7 @@ class AccountUserRoleVoterTest extends \PHPUnit_Framework_TestCase
             'common role'          => [
                 'isDefaultWebsiteRole' => false,
                 'hasUsers'             => false,
-                'expected'             => VoterInterface::ACCESS_ABSTAIN,
+                'expected'             => VoterInterface::ACCESS_GRANTED,
             ],
             'default website role' => [
                 'isDefaultWebsiteRole' => true,
@@ -201,11 +201,11 @@ class AccountUserRoleVoterTest extends \PHPUnit_Framework_TestCase
         $this->getMocksForVote($accountUserRole);
 
         if (!$failAccountUserRole) {
-            $this->getMockForUpdateAndView($accountUser, $isGranted, 'EDIT');
+            $this->getMockForUpdateAndView($accountUser, $accountUserRole, $isGranted, 'EDIT');
         }
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|TokenInterface $token */
-        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $token = $this->createMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
 
         $this->assertEquals(
             $expected,
@@ -250,11 +250,11 @@ class AccountUserRoleVoterTest extends \PHPUnit_Framework_TestCase
         $this->getMocksForVote($accountUserRole);
 
         if (!$failAccountUserRole) {
-            $this->getMockForUpdateAndView($accountUser, $isGranted, 'VIEW');
+            $this->getMockForUpdateAndView($accountUser, $accountUserRole, $isGranted, 'VIEW');
         }
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|TokenInterface $token */
-        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $token = $this->createMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
 
         $this->assertEquals(
             $expected,
@@ -277,26 +277,19 @@ class AccountUserRoleVoterTest extends \PHPUnit_Framework_TestCase
                 'loggedUserAccountId' => 1,
                 'expected'            => VoterInterface::ACCESS_GRANTED,
             ],
-            'account with logged user different' => [
-                'accountUser'         => $accountUser,
-                'isGranted'           => true,
-                'accountId'           => 1,
-                'loggedUserAccountId' => 2,
-                'expected'            => VoterInterface::ACCESS_ABSTAIN,
-            ],
             'isGranted false'                    => [
                 'accountUser'         => $accountUser,
                 'isGranted'           => false,
                 'accountId'           => 1,
                 'loggedUserAccountId' => 1,
-                'expected'            => VoterInterface::ACCESS_ABSTAIN,
+                'expected'            => VoterInterface::ACCESS_DENIED,
             ],
             'without accountUser'                => [
                 'accountUser'         => null,
                 'isGranted'           => false,
                 'accountId'           => 1,
                 'loggedUserAccountId' => 1,
-                'expected'            => VoterInterface::ACCESS_ABSTAIN,
+                'expected'            => VoterInterface::ACCESS_DENIED,
             ],
             'without accountUserRole'            => [
                 'accountUser'         => null,
@@ -347,10 +340,11 @@ class AccountUserRoleVoterTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param AccountUser|null $accountUser
+     * @param AccountUserRole  $accountUserRole
      * @param bool             $isGranted
      * @param string           $attribute
      */
-    protected function getMockForUpdateAndView($accountUser, $isGranted, $attribute)
+    protected function getMockForUpdateAndView($accountUser, $accountUserRole, $isGranted, $attribute)
     {
         /** @var SecurityFacade|\PHPUnit_Framework_MockObject_MockObject $securityFacade */
         $securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
@@ -368,7 +362,7 @@ class AccountUserRoleVoterTest extends \PHPUnit_Framework_TestCase
 
         $securityFacade->expects($accountUser ? $this->once() : $this->never())
             ->method('isGranted')
-            ->with($attribute, 'entity:commerce@Oro\Bundle\CustomerBundle\Entity\AccountUserRole')
+            ->with($attribute, $accountUserRole)
             ->willReturn($isGranted);
     }
 }

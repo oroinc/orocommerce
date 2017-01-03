@@ -6,15 +6,26 @@
         {% set form = widget %}
         {% set name = widget.vars.full_name %}
     {% endif %}
-    <tr data-content="{{ name }}" data-validation-optional-group {{ block('widget_container_attributes') }}
-        class="rfp-lineitem-requested rfp-lineitem-requested-item">
+    <div data-content="{{ name }}"
+        data-validation-optional-group
+        data-role="lineitem" {{ block('widget_container_attributes') }}
+        class="request-form-lineitem fields-row"
+        data-page-component-module="oroui/js/app/components/view-component"
+        data-page-component-options="{{ {
+            view: 'ororfp/js/app/views/line-item-offer-view',
+            elements: {
+                unit: '[data-name="field__product-unit"]'
+            }
+        }|json_encode }}"
+        data-layout="separate"
+    >
         {{ form_widget(form) }}
-        <td class="rfp-lineitem-requested-remove">
-            <button type="button" class="removeRow item-remove button-icon gray fs20">
-                <i class="icon-trash"></i>
+        <div class="request-form-lineitem-unit--remove">
+            <button type="button" class="removeRow item-remove button-icon gray fs18">
+                <i class="fa-trash"></i>
             </button>
-        </td>
-    </tr>
+        </div>
+    </div>
 {% endmacro %}
 
 {% block oro_rfp_request_widget %}
@@ -27,35 +38,38 @@
     {% if prototype is defined %}
         {% set prototype_html = _self.oro_rfp_frontend_request_lineitem_prototype(form, prototype_name) %}
     {% endif %}
-    {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection grid-container' }) %}
+    {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'grid-container' }) %}
     {% set id = id ~ '_collection' %}
 
-    <div class="row-oro">
-        {% set prototype_name = form.vars.prototype_name %}
-        <div {{ block('widget_container_attributes') }}>
-            <table class="grid table-hover table table-bordered table-condensed" data-last-index="{{ form.children|length}}"
-            data-prototype-name="{{ prototype_name }}"
-            {% if prototype_html is defined %}
-                data-prototype="{{ prototype_html|escape }}"
-            {% endif %}>
-                <thead>
-                    <tr>
-                        <th><span>{{ 'oro.rfp.frontend.request.lineitem.product'|trans }}</span></th>
-                        <th><span>{{ 'oro.rfp.frontend.request.lineitem.requested.label'|trans }}</span></th>
-                        <th></th>
-                    </tr>
-                </thead>
+    <div class="request-form">
+        <h2 class="request-form__title">{{ 'oro.rfp.frontend.request.title.label'|trans }}</h2>
+        {% include "OroUIBundle::view_loading.html.twig" %}
+        <div class="request-form__content" style="display: none;">
+            <div class="row-oro">
+                {% set prototype_name = form.vars.prototype_name %}
+                <div {{ block('widget_container_attributes') }}
+                    data-last-index="{{ form.children|length}}"
+                    data-prototype-name="{{ prototype_name }}"
+                    {% if prototype_html is defined %}
+                        data-prototype="{{ prototype_html|escape }}"
+                    {% endif %}
+                    data-role="product-container">
 
-                {% if form.children|length %}
-                    {% for key, child in form.children %}
-                        {{ _self.oro_rfp_frontend_request_lineitem_prototype(child, prototype_name, key) }}
-                    {% endfor %}
-                {% elseif show_form_when_empty and prototype_html is defined %}
-                    {{ prototype_html|replace({(prototype_name): '0'})|raw }}
-                {% endif %}
-            </table>
+                    {% if form.children|length %}
+                        {% for key, child in form.children %}
+                            {{ _self.oro_rfp_frontend_request_lineitem_prototype(child, prototype_name, key) }}
+                        {% endfor %}
+                    {% elseif show_form_when_empty and prototype_html is defined %}
+                        {{ prototype_html|replace({(prototype_name): '0'})|raw }}
+                    {% endif %}
+
+                </div>
+
+                <div class="request-form-footer">
+                    <a class="add-list-item" data-container="[data-role='product-container']" href="javascript: void(0);"><i class="fa-plus-circle"></i>{{ 'oro.rfp.frontend.request.lineitem.add'|trans }}</a>
+                </div>
+            </div>
         </div>
-        <a class="btn add-list-item" data-container=".oro-item-collection table" href="javascript: void(0);"><i class="icon-plus"></i>{{ 'oro.rfp.frontend.request.lineitem.add'|trans }}</a>
     </div>
 {% endblock %}
 
@@ -76,62 +90,91 @@
         {% set prototype_name  = 'child-' ~key %}
     {% endif %}
 
+    <div data-page-component-module="oroui/js/app/components/view-component"
+         data-page-component-options="{{ {
+             view: 'ororfp/js/app/views/frontend-line-item-view',
+         }|json_encode }}"
+         data-layout="separate"
+         data-content=""
+         data-role="line-item"
+         class="request-form-line-container row-oro"
+        >
+
+        <div class="request-form-product hidden" data-role="line-item-view">
+            <div class="request-form-product__inner">
+                <div data-role="content"></div>
+                <div class="request-form-product__item request-form-product__item--actions">
+                    <ul class="actions-row">
+                        <li class="actions-row__item actions-row__item--edit">
+                            <button class="actions-row__button" title="Edit" data-role="edit">
+                                <i class="actions-row__icon fa-pencil"></i>
+                            </button>
+                        </li>
+                        <li class="actions-row__item actions-row__item--separate">|</li>
+                        <li class="actions-row__item actions-row__item--remove">
+                            <button class="actions-row__button removeRow" title="Delete">
+                                <i class="actions-row__icon fa-trash"></i>
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
     {% set page_component_options = form.vars.page_component_options|merge(form.vars.componentOptions|default({})) %}
-    <tbody class="line_item">
-        <tr data-content="{{ name }}" data-validation-optional-group {{ block('widget_container_attributes') }}
-            class="rfp-lineitem"
-            data-page-component-module="{{ form.vars.page_component }}"
-            data-page-component-options="{{ page_component_options|json_encode }}"
+    <div class="request-form-editline" data-role="line-item-edit">
+        <div data-content="{{ name }}" data-validation-optional-group {{ block('widget_container_attributes') }}
+             class="request-form-editline__inner"
+             data-page-component-module="{{ form.vars.page_component }}"
+             data-page-component-options="{{ page_component_options|json_encode }}"
+             data-layout="separate"
             >
             {{ form_widget(form) }}
             {{ form_errors(form) }}
-
-            <td class="rfp-lineitem-remove">
-                <button type="button" class="removeRow item-remove button-icon gray fs20" data-closest="tbody">
-                    <i class="icon-trash"></i>
-                </button>
-            </td>
-        </tr>
-
-        <tr class="borderless t_paddingless">
-            {% set notes = form.comment %}
-            <td colspan="5" class="comment">
-                <div class="editable">
-                    <div class="editable__trigger">
-                        <label for="{{ 'lineItem-'~prototype_name }}"
-                               data-checkbox
-                               class="custom-checkbox
-                           {% if notes is not empty %} checked {% endif %}"
+        </div>
+        <div class="request-form-editline__footer">
+            <div class="request-form-editline__note">
+                <div class="request-form-editnote">
+                    {% set notes = form.comment %}
+                    <label for="{{ 'lineItem-'~prototype_name }}" class="custom-checkbox">
+                        <input type="checkbox"
+                               name="{{ 'lineItem'~id }}"
+                               id="{{ 'lineItem-'~prototype_name }}"{% if notes is not empty %} checked="checked"{% endif %}
+                               class="custom-checkbox__input custom-checkbox__input"
                         >
-                            <input name="{{ 'lineItem'~id }}"
-                                   id="{{ 'lineItem-'~prototype_name }}"
-                                   type="checkbox"
-                                    {% if notes is not empty %} checked = "checked" {% endif %}
-                                   data-role="start-editing"
-                                   class="custom-checkbox__input"
-                            >
-                            <span class="custom-checkbox__icon"></span>
-                            <span class="custom-checkbox__text">{{ 'oro.frontend.shoppinglist.view.add_item_note.label'|trans }}</span>
-                        </label>
-                    </div>
-
-                    <div data-role="editor">
+                        <span class="custom-checkbox__icon"></span>
+                        <span class="custom-checkbox__text">{{ 'oro.frontend.shoppinglist.view.add_item_note.label'|trans }}</span>
+                    </label>
+                    <div class="request-form-editnote__body">
                         {{ form_widget(form.comment) }}
                         {{ form_errors(form.comment) }}
                     </div>
                 </div>
-            </td>
-        </tr>
-    </tbody>
+            </div>
+            <div class="request-form-editline__action">
+                <div class="request-form-group">
+                    <div class="request-form-group__item">
+                        <button type="button" class="btn" data-role="decline">{{ 'Cancel'|trans }}</button>
+                    </div>
+                    <div class="request-form-group__item">
+                        <button type="button" class="btn btn--info" data-role="update">{{ 'Update'|trans }}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
 {% endmacro %}
 
 {% block oro_rfp_request_product_collection_widget %}
-    <div class="rfp-lineitems"
-         data-page-component-module="oroui/js/app/components/view-component"
+    <div data-page-component-module="oroui/js/app/components/view-component"
          data-page-component-options="{{ {
              view: 'ororfp/js/app/views/line-items-view'
          }|json_encode }}"
-         data-layout="separate">
+         data-layout="separate"
+         data-layout-model="productModel"
+         class="rfp-lineitems"
+    >
         {{ block('oro_rfp_lineitem_collection_widget') }}
     </div>
 {% endblock %}
@@ -165,7 +208,7 @@
                 </tbody>
             </table>
         </div>
-        <a class="btn add-list-item" data-container=".oro-item-collection tbody" href="javascript: void(0);"><i class="icon-plus"></i>{{ 'oro.rfp.frontend.request.lineitem.add'|trans }}</a>
+        <a class="btn add-list-item" data-container=".oro-item-collection tbody" href="javascript: void(0);"><i class="fa-plus"></i>{{ 'oro.rfp.frontend.request.lineitem.add'|trans }}</a>
     </div>
 {% endblock %}
 
@@ -185,21 +228,24 @@
             >
         {{ form_widget(form) }}
         {{ form_errors(form) }}
-        <td class="rfp-lineitem-remove">
-            <button type="button" class="removeLineItem btn icons-holder"><i class="icon-remove"></i></button>
+        <td class="request-form-lineitem-unit--remove">
+            <button type="button" class="removeLineItem btn icons-holder"><i class="fa-close"></i></button>
         </td>
     </tr>
 {% endmacro %}
 
 {% block oro_rfp_frontend_request_product_widget %}
-    <td class="rfp-lineitem-product">
-        {{ form_widget(form.product) }}
+    {% set attr = layout_attr_defaults(form.product.vars.attr, {
+        'data-role': 'lineitem-product'
+    }) %}
+    <div class="request-form-editline__product">
+        {{ form_widget(form.product, {attr: attr}) }}
         {{ form_errors(form.product) }}
-    </td>
-    <td class="rfp-lineitem-requested">
+    </div>
+    <div class="request-form-editline__lines">
         {{ form_widget(form.requestProductItems) }}
         {{ form_errors(form.requestProductItems) }}
-    </td>
+    </div>
 {% endblock %}
 
 {% block oro_rfp_request_product_widget %}
@@ -247,7 +293,7 @@
                 </tbody>
             </table>
         </div>
-        <a class="btn add-list-item rfp-lineitem-requested-item-add" data-container=".oro-item-collection tbody" href="javascript: void(0);"><i class="icon-plus"></i>{{ 'oro.rfp.frontend.request.lineitem.requested.add'|trans }}</a>
+        <a class="btn add-list-item rfp-lineitem-requested-item-add" data-container=".oro-item-collection tbody" href="javascript: void(0);"><i class="fa-plus"></i>{{ 'oro.rfp.frontend.request.lineitem.requested.add'|trans }}</a>
     </div>
 {% endblock %}
 
@@ -255,39 +301,30 @@
     {% if prototype is defined %}
         {% set prototype_html = _self.oro_rfp_frontend_request_lineitem_requested_prototype(form) %}
     {% endif %}
-    {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection grid-container' }) %}
+    {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'grid-container' }) %}
     {% set id = id ~ '_collection' %}
-        <div class="row-oro">
-        {% set prototype_name = form.vars.prototype_name %}
-        <div {{ block('widget_container_attributes') }}>
-            <input type="hidden" name="validate_{{ full_name }}" data-collection-name="{{ full_name }}" data-name="collection-validation" disabled data-validate-element>
-            <table class="table-hover table table-bordered rfp-lineitem-requested">
-                <thead>
-                    <tr>
-                        <th colspan="2"><span>{{ 'oro.rfp.frontend.request.lineitem.requested.quantity'|trans }}</span></th>
-                        <th colspan="2"><span>{{ 'oro.rfp.frontend.request.lineitem.requested.price'|trans }}</span></th>
-                    <th></th>
-                    </tr>
-                </thead>
-                <tbody class="rfp-lineitem-requested-items"
-                data-last-index="{{ form.children|length}}"
-                data-prototype-name="{{ prototype_name }}"
-                {% if prototype_html is defined %}
-                    data-prototype="{{ prototype_html|escape }}"
-                {% endif %}
-                data-content>
-                {% if form.children|length %}
-                    {% for child in form.children %}
-                        {{ _self.oro_rfp_frontend_request_lineitem_requested_prototype(child) }}
-                    {% endfor %}
-                {% elseif show_form_when_empty and prototype_html is defined %}
-                    {{ prototype_html|replace({(prototype_name): '0'})|raw }}
-                {% endif %}
-                </tbody>
-            </table>
+    {% set prototype_name = form.vars.prototype_name %}
+    <div {{ block('widget_container_attributes') }}>
+        <input type="hidden" name="validate_{{ full_name }}" data-collection-name="{{ full_name }}" data-name="collection-validation" disabled data-validate-element>
+        <div class="request-form-lineitems">
+            <div data-last-index="{{ form.children|length}}"
+            data-prototype-name="{{ prototype_name }}"
+            {% if prototype_html is defined %}
+                data-prototype="{{ prototype_html|escape }}"
+            {% endif %}
+            data-content
+            data-role="lineitems">
+            {% if form.children|length %}
+                {% for child in form.children %}
+                    {{ _self.oro_rfp_frontend_request_lineitem_requested_prototype(child) }}
+                {% endfor %}
+            {% elseif show_form_when_empty and prototype_html is defined %}
+                {{ prototype_html|replace({(prototype_name): '0'})|raw }}
+            {% endif %}
+            </div>
         </div>
-        <a class="btn add-list-item rfp-lineitem-requested-item-add" data-container=".oro-item-collection tbody" href="javascript: void(0);"><i class="icon-plus"></i>{{ 'oro.rfp.frontend.request.lineitem.requested.add'|trans }}</a>
     </div>
+    <a class="request-form-lineitems__add add-list-item" data-role="lineitem-add" data-container="[data-role='lineitems']" href="javascript: void(0);"><i class="fa-plus-circle"></i>{{ 'oro.rfp.frontend.request.lineitem.requested.add'|trans }}</a>
 {% endblock %}
 
 {% block oro_rfp_request_product_item_collection_widget %}
@@ -319,7 +356,7 @@
                 </tbody>
             </table>
         </div>
-        <a class="btn add-list-item rfp-lineitem-requested-item-add" data-container=".oro-item-collection tbody" href="javascript: void(0);"><i class="icon-plus"></i>{{ 'oro.rfp.frontend.request.lineitem.requested.add'|trans }}</a>
+        <a class="btn add-list-item rfp-lineitem-requested-item-add" data-container=".oro-item-collection tbody" href="javascript: void(0);"><i class="fa-plus"></i>{{ 'oro.rfp.frontend.request.lineitem.requested.add'|trans }}</a>
     </div>
 {% endblock %}
 
@@ -335,10 +372,62 @@
         class="rfp-lineitem-requested rfp-lineitem-requested-item">
         {{ form_widget(form) }}
         <td class="rfp-lineitem-requested-remove">
-            <button type="button" class="removeRow btn icons-holder"><i class="icon-remove"></i></button>
+            <button type="button" class="removeRow btn icons-holder"><i class="fa-close"></i></button>
         </td>
     </tr>
 {% endmacro %}
+
+{% block _oro_rfp_frontend_request_requestProducts_entry_requestProductItems_entry_widget %}
+    {% use "OroPricingBundle:layouts/default:layout.html.twig" %}
+    <div class="request-form-lineitem-unit request-form-lineitem-unit--size-s">
+        {{ form_widget(form.quantity) }}
+        {{ form_errors(form.quantity) }}
+    </div>
+    {% set attr_unit = layout_attr_defaults(form.productUnit.vars.attr, {
+        '~class': 'select select--size-m select--full'
+    }) %}
+    <div class="request-form-lineitem-unit request-form-lineitem-unit--size-m">
+        {{ form_widget(form.productUnit, {attr: attr_unit}) }}
+        {{ form_errors(form.productUnit) }}
+    </div>
+    <div class="request-form-lineitem-unit"
+        data-page-component-module="oroui/js/app/components/view-component"
+        data-page-component-options="{{ {
+            view: 'oropricing/js/app/views/line-item-product-prices-view',
+            elements: {
+                pricesHint: '[data-name="prices-hint"]',
+                pricesHintContent: '[data-name="prices-hint-content"]'
+            },
+            matchedPriceEnabled: false
+        }|json_encode }}"
+        data-layout="separate"
+    >
+        {% set label = 'List prices' %}
+        <script type="text/template" data-name="prices-hint-content">
+            {{ block('product_price_hint_content_js_widget') }}
+        </script>
+        <script type="text/template" data-name="prices-hint">
+            {{ block('product_price_hint_js_widget') }}
+        </script>
+        {% set input_price = layout_attr_defaults(form.price.value.vars.attr, {
+            '~class': 'request-form-lineitem-unit__input'
+        }) %}
+
+        {{ 'oro.rfp.requestproductitem.price.label'|trans }}: {{ form_widget(form.price.value, {attr: input_price}) }}
+        <div class="hidden">{{ form_widget(form.price.currency) }}</div>
+        {{ form_errors(form.price) }}
+    </div>
+    {% set attr_price = layout_attr_defaults(attr, {
+        'data-role': 'lineitem-price'
+    }) %}
+    {% set attr_currency = layout_attr_defaults(attr, {
+        'data-role': 'lineitem-currency'
+    }) %}
+    <div class="request-form-lineitem-unit hide">
+        {{ form_widget(form.price.currency, {attr: attr_currency}) }}
+        {{ form_errors(form.price.currency) }}
+    </div>
+{% endblock %}
 
 {% block oro_rfp_request_product_item_widget %}
     <td class="rfp-lineitem-requested-quantity">
@@ -391,7 +480,7 @@
                 'data-quantity': offer.quantity|default,
                 'data-unit': offer.unit|default,
                 'data-price': offer.price|default,
-                'data-currenct': offer.currency|default
+                'data-currency': offer.currency|default
             }
         }) }}
     </td>

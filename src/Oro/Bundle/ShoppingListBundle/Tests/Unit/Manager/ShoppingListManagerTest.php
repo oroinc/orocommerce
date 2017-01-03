@@ -2,31 +2,30 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Manager;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Common\Cache\Cache;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
-
+use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Rounding\QuantityRoundingService;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
+use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
+use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
+use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListTotalManager;
+use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
+use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Translation\TranslatorInterface;
-
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\ProductBundle\Rounding\QuantityRoundingService;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListTotalManager;
-use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
-use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
-use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
-use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
-use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
-use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
-
-use Oro\Component\Testing\Unit\EntityTrait;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -37,28 +36,52 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
     const CURRENCY_EUR = 'EUR';
     use EntityTrait;
 
-    /** @var ShoppingList */
+    /**
+     * @var ShoppingList
+     */
     protected $shoppingListOne;
 
-    /** @var ShoppingList */
+    /**
+     * @var ShoppingList
+     */
     protected $shoppingListTwo;
 
-    /** @var ShoppingListManager */
+    /**
+     * @var ShoppingListManager
+     */
     protected $manager;
 
-    /** @var ShoppingList[] */
+    /**
+     * @var ShoppingList[]
+     */
     protected $shoppingLists = [];
 
-    /** @var LineItem[] */
+    /**
+     * @var LineItem[]
+     */
     protected $lineItems = [];
 
-    /** @var ManagerRegistry */
+    /**
+     * @var ManagerRegistry
+     */
     protected $registry = [];
+
+    /**
+     * @var  AclHelper
+     */
+    protected $aclHelper;
+
+    /**
+     * @var Cache
+     */
+    protected $cache;
 
     protected function setUp()
     {
         $this->shoppingListOne = $this->getShoppingList(1, true);
         $this->shoppingListTwo = $this->getShoppingList(2, false);
+
+        $this->aclHelper = $this->getAclHelperMock();
 
         $tokenStorage = $this->getTokenStorage(
             (new AccountUser())
@@ -68,7 +91,7 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->registry = $this->getManagerRegistry();
-
+        $this->cache = $this->createMock(Cache::class);
         $this->manager = new ShoppingListManager(
             $this->registry,
             $tokenStorage,
@@ -76,7 +99,9 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
             $this->getRoundingService(),
             $this->getUserCurrencyManager(),
             $this->getWebsiteManager(),
-            $this->getShoppingListTotalManager()
+            $this->getShoppingListTotalManager(),
+            $this->aclHelper,
+            $this->cache
         );
     }
 
@@ -97,7 +122,6 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
             $this->shoppingListTwo
         );
         $this->assertTrue($this->shoppingListTwo->isCurrent());
-        $this->assertFalse($this->shoppingListOne->isCurrent());
     }
 
     public function testSetCurrent()
@@ -294,7 +318,7 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         $repository->expects($this->once())
             ->method('findByUser')
-            ->with($user)
+            ->with($this->aclHelper)
             ->willReturn([$shoppingList3, $shoppingList1, $shoppingList2]);
 
         /* @var $entityManager EntityManager|\PHPUnit_Framework_MockObject_MockObject */
@@ -307,7 +331,7 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
             ->willReturn($repository);
 
         /* @var $registry ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject */
-        $registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
         $registry->expects($this->once())
             ->method('getManagerForClass')
             ->willReturn($entityManager);
@@ -319,7 +343,9 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
             $this->getRoundingService(),
             $this->getUserCurrencyManager(),
             $this->getWebsiteManager(),
-            $this->getShoppingListTotalManager()
+            $this->getShoppingListTotalManager(),
+            $this->aclHelper,
+            $this->cache
         );
 
         $this->assertEquals(
@@ -335,14 +361,14 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
     protected function getTokenStorage(AccountUser $accountUser)
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|TokenInterface $securityToken */
-        $securityToken = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $securityToken = $this->createMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
         $securityToken->expects($this->any())
             ->method('getUser')
             ->willReturn($accountUser);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|TokenStorageInterface $tokenStorage */
         $tokenStorage = $this
-            ->getMock('Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface');
+            ->createMock('Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface');
         $tokenStorage->expects($this->any())
             ->method('getToken')
             ->willReturn($securityToken);
@@ -355,7 +381,7 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
      */
     protected function getTranslator()
     {
-        return $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+        return $this->createMock('Symfony\Component\Translation\TranslatorInterface');
     }
 
     /**
@@ -391,16 +417,6 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
             ->getMockBuilder('Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository')
             ->disableOriginalConstructor()
             ->getMock();
-
-        $shoppingListRepository->expects($this->any())
-            ->method('findCurrentForAccountUser')
-            ->willReturnCallback(function (AccountUser $accountUser) {
-                if ($accountUser->getFirstName() === 'setCurrent') {
-                    return $this->shoppingListOne;
-                }
-
-                return null;
-            });
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|LineItemRepository $lineItemRepository */
         $lineItemRepository = $this
@@ -448,7 +464,7 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
             });
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry $managerRegistry */
-        $managerRegistry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $managerRegistry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
         $managerRegistry->expects($this->any())
             ->method('getManagerForClass')
             ->willReturn($entityManager);
@@ -513,5 +529,15 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
             'Oro\Bundle\ShoppingListBundle\Entity\ShoppingList',
             ['id' => $id, 'current' => $isCurrent]
         );
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|AclHelper
+     */
+    protected function getAclHelperMock()
+    {
+        return $this->getMockBuilder('Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper')
+            ->disableOriginalConstructor()
+            ->getMock();
     }
 }

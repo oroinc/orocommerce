@@ -4,27 +4,34 @@ namespace Oro\Bundle\WebsiteBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
 
-use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
-use Oro\Bundle\EntityExtendBundle\Extend\RelationType;
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
-use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
-use Oro\Bundle\ScopeBundle\Migrations\Schema\OroScopeBundleInstaller;
+use Oro\Bundle\ScopeBundle\Migration\Extension\ScopeExtensionAwareInterface;
+use Oro\Bundle\ScopeBundle\Migration\Extension\ScopeExtensionAwareTrait;
 
-class OroWebsiteBundleInstaller implements Installation, NoteExtensionAwareInterface, ExtendExtensionAwareInterface
+class OroWebsiteBundleInstaller implements
+    Installation,
+    ActivityExtensionAwareInterface,
+    ExtendExtensionAwareInterface,
+    ScopeExtensionAwareInterface
 {
+    use ScopeExtensionAwareTrait;
+
     const WEBSITE_TABLE_NAME = 'oro_website';
 
     /**
      * @var ExtendExtension
      */
-    private $extendExtension;
+    protected $extendExtension;
 
-    /** @var NoteExtension */
-    protected $noteExtension;
+    /**
+     * @var ActivityExtension
+     */
+    protected $activityExtension;
 
     /**
      * {@inheritdoc}
@@ -35,11 +42,11 @@ class OroWebsiteBundleInstaller implements Installation, NoteExtensionAwareInter
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
-    public function setNoteExtension(NoteExtension $noteExtension)
+    public function setActivityExtension(ActivityExtension $activityExtension)
     {
-        $this->noteExtension = $noteExtension;
+        $this->activityExtension = $activityExtension;
     }
 
     /**
@@ -47,7 +54,7 @@ class OroWebsiteBundleInstaller implements Installation, NoteExtensionAwareInter
      */
     public function getMigrationVersion()
     {
-        return 'v1_5';
+        return 'v1_6';
     }
 
     /**
@@ -152,7 +159,7 @@ class OroWebsiteBundleInstaller implements Installation, NoteExtensionAwareInter
      */
     protected function addNoteAssociations(Schema $schema)
     {
-        $this->noteExtension->addNoteAssociation($schema, self::WEBSITE_TABLE_NAME);
+        $this->activityExtension->addActivityAssociation($schema, 'oro_note', self::WEBSITE_TABLE_NAME);
     }
 
     /**
@@ -160,21 +167,11 @@ class OroWebsiteBundleInstaller implements Installation, NoteExtensionAwareInter
      */
     private function addRelationsToScope(Schema $schema)
     {
-        $this->extendExtension->addManyToOneRelation(
+        $this->scopeExtension->addScopeAssociation(
             $schema,
-            OroScopeBundleInstaller::ORO_SCOPE,
             'website',
             OroWebsiteBundleInstaller::WEBSITE_TABLE_NAME,
-            'id',
-            [
-                'extend' => [
-                    'owner' => ExtendScope::OWNER_CUSTOM,
-                    'cascade' => ['all'],
-                    'on_delete' => 'CASCADE',
-                    'nullable' => true
-                ]
-            ],
-            RelationType::MANY_TO_ONE
+            'name'
         );
     }
 }

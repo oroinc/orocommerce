@@ -22,11 +22,11 @@ class FrontendHelperTest extends \PHPUnit_Framework_TestCase
         $request = Request::create($path) ;
 
         /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
-        $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
+        $requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
         $requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
 
         /** @var ContainerInterface|\PHPUnit_Framework_MockObject_MockObject $container */
-        $container = $this->getMock(ContainerInterface::class);
+        $container = $this->createMock(ContainerInterface::class);
         $container->expects($this->any())
             ->method('get')
             ->with('request_stack')
@@ -69,11 +69,11 @@ class FrontendHelperTest extends \PHPUnit_Framework_TestCase
     public function testIsFrontendRequestWithoutPath()
     {
         /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
-        $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
+        $requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
         $requestStack->expects($this->once())->method('getCurrentRequest')->willReturn(null);
 
         /** @var ContainerInterface|\PHPUnit_Framework_MockObject_MockObject $container */
-        $container = $this->getMock(ContainerInterface::class);
+        $container = $this->createMock(ContainerInterface::class);
         $container->expects($this->any())
             ->method('get')
             ->with('request_stack')
@@ -84,18 +84,18 @@ class FrontendHelperTest extends \PHPUnit_Framework_TestCase
             ->with('installed');
 
         $helper = new FrontendHelper(self::BACKEND_PREFIX, $container);
-        $this->assertSame(false, $helper->isFrontendRequest());
+        $this->assertFalse($helper->isFrontendRequest());
     }
 
     public function testIsFrontendRequestNotInstalled()
     {
         /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
-        $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
+        $requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
         $requestStack->expects($this->never())
             ->method('getCurrentRequest');
 
         /** @var ContainerInterface|\PHPUnit_Framework_MockObject_MockObject $container */
-        $container = $this->getMock(ContainerInterface::class);
+        $container = $this->createMock(ContainerInterface::class);
         $container->expects($this->any())
             ->method('get')
             ->with('request_stack')
@@ -107,6 +107,48 @@ class FrontendHelperTest extends \PHPUnit_Framework_TestCase
             ->willReturn(false);
 
         $helper = new FrontendHelper(self::BACKEND_PREFIX, $container);
-        $this->assertSame(false, $helper->isFrontendRequest(new Request([], [], ['_route' => 'test'])));
+        $this->assertFalse($helper->isFrontendRequest(new Request([], [], ['_route' => 'test'])));
+    }
+
+    public function testIsFrontendUrlForNotInstalled()
+    {
+        /** @var ContainerInterface|\PHPUnit_Framework_MockObject_MockObject $container */
+        $container = $this->createMock(ContainerInterface::class);
+
+        $container->expects($this->once())
+            ->method('getParameter')
+            ->with('installed')
+            ->willReturn(false);
+
+        $helper = new FrontendHelper(self::BACKEND_PREFIX, $container);
+        $this->assertFalse($helper->isFrontendUrl('/test'));
+    }
+
+    public function testIsFrontendUrlForBackendUrl()
+    {
+        /** @var ContainerInterface|\PHPUnit_Framework_MockObject_MockObject $container */
+        $container = $this->createMock(ContainerInterface::class);
+
+        $container->expects($this->once())
+            ->method('getParameter')
+            ->with('installed')
+            ->willReturn(true);
+
+        $helper = new FrontendHelper(self::BACKEND_PREFIX, $container);
+        $this->assertFalse($helper->isFrontendUrl(self::BACKEND_PREFIX . '/test'));
+    }
+
+    public function testIsFrontendUrl()
+    {
+        /** @var ContainerInterface|\PHPUnit_Framework_MockObject_MockObject $container */
+        $container = $this->createMock(ContainerInterface::class);
+
+        $container->expects($this->once())
+            ->method('getParameter')
+            ->with('installed')
+            ->willReturn(true);
+
+        $helper = new FrontendHelper(self::BACKEND_PREFIX, $container);
+        $this->assertTrue($helper->isFrontendUrl('/test'));
     }
 }

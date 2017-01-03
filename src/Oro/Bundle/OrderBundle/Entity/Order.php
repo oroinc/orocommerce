@@ -5,7 +5,10 @@ namespace Oro\Bundle\OrderBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+
+use Oro\Bundle\CurrencyBundle\Entity\MultiCurrency;
 use Oro\Bundle\CurrencyBundle\Entity\CurrencyAwareInterface;
+use Oro\Bundle\CurrencyBundle\Entity\MultiCurrencyHolderInterface;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\AccountOwnerAwareInterface;
 use Oro\Bundle\CustomerBundle\Entity\Ownership\AuditableFrontendAccountUserAwareTrait;
@@ -17,7 +20,6 @@ use Oro\Bundle\OrderBundle\Model\DiscountAwareInterface;
 use Oro\Bundle\OrderBundle\Model\ExtendOrder;
 use Oro\Bundle\OrderBundle\Model\ShippingAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
-use Oro\Bundle\PaymentBundle\Entity\PaymentTerm;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
 use Oro\Bundle\UserBundle\Entity\Ownership\AuditableUserAwareTrait;
@@ -25,18 +27,16 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * @ORM\Table(name="oro_order",indexes={@ORM\Index(name="oro_order_created_at_index", columns={"created_at"})})
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Oro\Bundle\OrderBundle\Entity\Repository\OrderRepository")
  * @Config(
  *      routeName="oro_order_index",
  *      routeView="oro_order_view",
  *      routeCreate="oro_order_create",
  *      routeUpdate="oro_order_update",
- *      routeCommerceName="oro_order_frontend_index",
  *      routeCommerceView="oro_order_frontend_view",
- *      routeCommerceCreate="oro_order_frontend_create",
  *      defaultValues={
  *          "entity"={
- *              "icon"="icon-briefcase"
+ *              "icon"="fa-briefcase"
  *          },
  *          "ownership"={
  *              "owner_type"="USER",
@@ -75,7 +75,8 @@ class Order extends ExtendOrder implements
     ShippingAwareInterface,
     CurrencyAwareInterface,
     DiscountAwareInterface,
-    SubtotalAwareInterface
+    SubtotalAwareInterface,
+    MultiCurrencyHolderInterface
 {
     use AuditableUserAwareTrait;
     use AuditableFrontendAccountUserAwareTrait;
@@ -190,48 +191,127 @@ class Order extends ExtendOrder implements
      */
     protected $currency;
 
+
     /**
-     * @var float
+     * Changes to this value object wont affect entity change set
+     * To change persisted price value you should create and set new Multicurrency
      *
-     * @ORM\Column(name="subtotal", type="money", nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
+     * @var Multicurrency
      */
     protected $subtotal;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="subtotal_currency", type="currency", length=3, nullable=true)
+     * @ConfigField(
+     *  defaultValues={
+     *      "dataaudit"={
+     *          "auditable"=true
+     *     }
+     *  }
+     * )
+     */
+    protected $subtotalCurrency;
+
+    /**
+     * @var double
+     *
+     * @ORM\Column(name="subtotal_value", type="money_value", nullable=true)
+     * @ConfigField(
+     *  defaultValues={
+     *      "form"={
+     *          "form_type"="oro_money",
+     *          "form_options"={
+     *              "constraints"={{"Range":{"min":0}}},
+     *          }
+     *      },
+     *      "dataaudit"={
+     *          "auditable"=true
+     *      },
+     *     "multicurrency"={
+     *          "target" = "subtotal",
+     *          "virtual_field" = "subtotalBaseCurrency"
+     *      }
+     *  }
+     * )
+     */
+    protected $subtotalValue;
+
+    /**
      * @var float
      *
-     * @ORM\Column(name="total", type="money", nullable=true)
+     * @ORM\Column(name="base_subtotal_value", type="money", nullable=true)
      * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
+     *  defaultValues={
+     *      "dataaudit"={
+     *          "auditable"=true
      *      }
+     *  }
      * )
+     */
+    protected $baseSubtotalValue;
+
+    /**
+     * Changes to this value object wont affect entity change set
+     * To change persisted price value you should create and set new Multicurrency
+     *
+     * @var Multicurrency
      */
     protected $total;
 
+
     /**
-     * @var PaymentTerm
+     * @var string
      *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\PaymentBundle\Entity\PaymentTerm")
-     * @ORM\JoinColumn(name="payment_term_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ORM\Column(name="total_currency", type="currency", length=3, nullable=true)
      * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
+     *  defaultValues={
+     *      "dataaudit"={
+     *          "auditable"=true
+     *     }
+     *  }
      * )
      */
-    protected $paymentTerm;
+    protected $totalCurrency;
+
+    /**
+     * @var double
+     *
+     * @ORM\Column(name="total_value", type="money_value", nullable=true)
+     * @ConfigField(
+     *  defaultValues={
+     *      "form"={
+     *          "form_type"="oro_money",
+     *          "form_options"={
+     *              "constraints"={{"Range":{"min":0}}},
+     *          }
+     *      },
+     *      "dataaudit"={
+     *          "auditable"=true
+     *      },
+     *     "multicurrency"={
+     *          "target" = "total",
+     *          "virtual_field" = "totalBaseCurrency"
+     *      }
+     *  }
+     * )
+     */
+    protected $totalValue;
+
+    /**
+     * @var float
+     *
+     * @ORM\Column(name="base_total_value", type="money", nullable=true)
+     * @ConfigField(
+     *  defaultValues={
+     *      "dataaudit"={
+     *          "auditable"=true
+     *      }
+     *  }
+     * )
+     */
+    protected $baseTotalValue;
 
     /**
      * @var Website
@@ -281,14 +361,16 @@ class Order extends ExtendOrder implements
     /**
      * @var float
      *
-     * @ORM\Column(name="shipping_cost_amount", type="money", nullable=true)
+     * @ORM\Column(name="estimated_shipping_cost_amount", type="money", nullable=true)
      */
-    protected $shippingCostAmount;
+    protected $estimatedShippingCostAmount;
 
     /**
-     * @var Price
+     * @var float
+     *
+     * @ORM\Column(name="override_shipping_cost_amount", type="money", nullable=true)
      */
-    protected $shippingCost;
+    protected $overriddenShippingCostAmount;
 
     /**
      * @var string
@@ -365,6 +447,36 @@ class Order extends ExtendOrder implements
         $this->lineItems = new ArrayCollection();
         $this->discounts = new ArrayCollection();
         $this->shippingTrackings = new ArrayCollection();
+        $this->loadMultiCurrencyFields();
+    }
+
+    /**
+     * @ORM\PostLoad
+     */
+    public function loadMultiCurrencyFields()
+    {
+        $this->subtotal = MultiCurrency::create(
+            $this->subtotalValue,
+            $this->currency,
+            $this->baseSubtotalValue
+        );
+        $this->total = MultiCurrency::create(
+            $this->totalValue,
+            $this->currency,
+            $this->baseTotalValue
+        );
+    }
+
+    /**
+     * @ORM\PreFlush
+     *
+     * @return void
+     */
+    public function updateMultiCurrencyFields()
+    {
+        $this->fixCurrencyInMultiCurrencyFields();
+        $this->updateSubtotal();
+        $this->updateTotal();
     }
 
     /**
@@ -539,11 +651,13 @@ class Order extends ExtendOrder implements
      *
      * @param string $currency
      *
-     * @return Order
+     * @return $this
      */
     public function setCurrency($currency)
     {
         $this->currency = $currency;
+        $this->subtotal->setCurrency($currency);
+        $this->total->setCurrency($currency);
 
         return $this;
     }
@@ -559,15 +673,37 @@ class Order extends ExtendOrder implements
     }
 
     /**
+     * @return float
+     */
+    public function getBaseSubtotalValue()
+    {
+        return $this->baseSubtotalValue;
+    }
+
+    /**
+     * @param float $baseValue
+     *
+     * @return $this
+     */
+    public function setBaseSubtotalValue($baseValue)
+    {
+        $this->baseSubtotalValue = $baseValue;
+        $this->subtotal->setBaseCurrencyValue($baseValue);
+
+        return $this;
+    }
+
+    /**
      * Set subtotal
      *
-     * @param float $subtotal
+     * @param float $value
      *
-     * @return Order
+     * @return $this
      */
-    public function setSubtotal($subtotal)
+    public function setSubtotal($value)
     {
-        $this->subtotal = $subtotal;
+        $this->subtotalValue = $value;
+        $this->subtotal->setValue($value);
 
         return $this;
     }
@@ -577,19 +713,61 @@ class Order extends ExtendOrder implements
      */
     public function getSubtotal()
     {
+        return $this->subtotal->getValue();
+    }
+
+    /**
+     * @param MultiCurrency $subtotal
+     *
+     * @return $this
+     */
+    public function setSubtotalObject(MultiCurrency $subtotal)
+    {
+        $this->subtotal = $subtotal;
+
+        return $this;
+    }
+
+    /**
+     * @return MultiCurrency
+     */
+    public function getSubtotalObject()
+    {
         return $this->subtotal;
+    }
+
+    /**
+     * @return float
+     */
+    public function getBaseTotalValue()
+    {
+        return $this->baseTotalValue;
+    }
+
+    /**
+     * @param $baseValue
+     *
+     * @return $this
+     */
+    public function setBaseTotalValue($baseValue)
+    {
+        $this->baseTotalValue = $baseValue;
+        $this->total->setBaseCurrencyValue($baseValue);
+
+        return $this;
     }
 
     /**
      * Set total
      *
-     * @param float $total
+     * @param float $value
      *
-     * @return Order
+     * @return $this
      */
-    public function setTotal($total)
+    public function setTotal($value)
     {
-        $this->total = $total;
+        $this->totalValue = $value;
+        $this->total->setValue($value);
 
         return $this;
     }
@@ -601,31 +779,27 @@ class Order extends ExtendOrder implements
      */
     public function getTotal()
     {
+        return $this->total->getValue();
+    }
+
+    /**
+     * @return MultiCurrency
+     */
+    public function getTotalObject()
+    {
         return $this->total;
     }
 
     /**
-     * Set paymentTerm
+     * @param MultiCurrency $total
      *
-     * @param PaymentTerm|null $paymentTerm
-     *
-     * @return Order
+     * @return $this
      */
-    public function setPaymentTerm(PaymentTerm $paymentTerm = null)
+    public function setTotalObject(MultiCurrency $total)
     {
-        $this->paymentTerm = $paymentTerm;
+        $this->total = $total;
 
         return $this;
-    }
-
-    /**
-     * Get paymentTerm
-     *
-     * @return PaymentTerm|null
-     */
-    public function getPaymentTerm()
-    {
-        return $this->paymentTerm;
     }
 
     /**
@@ -725,26 +899,65 @@ class Order extends ExtendOrder implements
     }
 
     /**
-     * Get shipping cost
-     *
      * @return Price|null
      */
     public function getShippingCost()
     {
-        return $this->shippingCost;
+        $amount = $this->estimatedShippingCostAmount;
+        if ($this->overriddenShippingCostAmount) {
+            $amount = $this->overriddenShippingCostAmount;
+        }
+        if ($amount && $this->currency) {
+            return Price::create($amount, $this->currency);
+        }
+        return null;
     }
 
     /**
-     * Set shipping cost
-     *
-     * @param Price $shippingCost
+     * @return Price|null
+     */
+    public function getEstimatedShippingCost()
+    {
+        if ($this->estimatedShippingCostAmount && $this->currency) {
+            return Price::create($this->estimatedShippingCostAmount, $this->currency);
+        }
+        return null;
+    }
+
+    /**
+     * @return float|null
+     */
+    public function getEstimatedShippingCostAmount()
+    {
+        return $this->estimatedShippingCostAmount;
+    }
+
+    /**
+     * @param float $amount
      * @return Order
      */
-    public function setShippingCost(Price $shippingCost = null)
+    public function setEstimatedShippingCostAmount($amount)
     {
-        $this->shippingCost = $shippingCost;
+        $this->estimatedShippingCostAmount = $amount;
 
-        $this->updateShippingCost();
+        return $this;
+    }
+
+    /**
+     * @return float|null
+     */
+    public function getOverriddenShippingCostAmount()
+    {
+        return $this->overriddenShippingCostAmount;
+    }
+
+    /**
+     * @param float $amount
+     * @return Order
+     */
+    public function setOverriddenShippingCostAmount($amount)
+    {
+        $this->overriddenShippingCostAmount = $amount;
 
         return $this;
     }
@@ -754,22 +967,9 @@ class Order extends ExtendOrder implements
      */
     public function postLoad()
     {
-        if (null !== $this->shippingCostAmount && null !== $this->currency) {
-            $this->shippingCost = Price::create($this->shippingCostAmount, $this->currency);
-        }
-
         if (null !== $this->totalDiscountsAmount && null !== $this->currency) {
             $this->totalDiscounts = Price::create($this->totalDiscountsAmount, $this->currency);
         }
-    }
-
-    /**
-     * @ORM\PrePersist
-     * @ORM\PreUpdate
-     */
-    public function updateShippingCost()
-    {
-        $this->shippingCostAmount = $this->shippingCost ? $this->shippingCost->getValue() : null;
     }
 
     /**
@@ -1036,5 +1236,60 @@ class Order extends ExtendOrder implements
         }
 
         return $this;
+    }
+
+    protected function fixCurrencyInMultiCurrencyFields()
+    {
+        $multiCurrencyFields = [$this->total, $this->subtotal];
+        /**
+         * @var MultiCurrency $multiCurrencyField
+         */
+        foreach ($multiCurrencyFields as $multiCurrencyField) {
+            if ($multiCurrencyField->getCurrency() !== $this->currency) {
+                $multiCurrencyField->setCurrency($this->currency);
+            }
+        }
+    }
+
+    /**
+     * @param string $subtotalCurrency
+     */
+    protected function setSubtotalCurrency($subtotalCurrency)
+    {
+        $this->subtotalCurrency = $subtotalCurrency;
+        $this->subtotal->setCurrency($subtotalCurrency);
+    }
+
+    /**
+     * @param string $totalCurrency
+     */
+    protected function setTotalCurrency($totalCurrency)
+    {
+        $this->totalCurrency = $totalCurrency;
+        $this->total->setCurrency($totalCurrency);
+    }
+
+    protected function updateSubtotal()
+    {
+        $this->subtotalValue = $this->subtotal->getValue();
+        if (null !== $this->subtotalValue) {
+            $this->setSubtotalCurrency($this->subtotal->getCurrency());
+            $this->setBaseSubtotalValue($this->subtotal->getBaseCurrencyValue());
+            return;
+        }
+
+        $this->setBaseSubtotalValue(null);
+    }
+
+    protected function updateTotal()
+    {
+        $this->totalValue = $this->total->getValue();
+        if (null !== $this->totalValue) {
+            $this->setTotalCurrency($this->total->getCurrency());
+            $this->setBaseTotalValue($this->total->getBaseCurrencyValue());
+            return;
+        }
+
+        $this->setBaseTotalValue(null);
     }
 }

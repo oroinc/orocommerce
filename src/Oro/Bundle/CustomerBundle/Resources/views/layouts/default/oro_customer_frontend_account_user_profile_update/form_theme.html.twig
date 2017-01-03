@@ -2,7 +2,7 @@
 
 {%- block form_label -%}
     {% set label_attr = layout_attr_defaults(label_attr, {
-        '~class': ' label'
+        '~class': ' label label--full'
     }) %}
 
     {{ parent() }}
@@ -40,7 +40,7 @@
             <ul class="notification__list">
                 {%- for error in errors -%}
                     <li class="notification__item">
-                        <i class="cf-attention"></i>
+                        <i class="fa-exclamation-triangle"></i>
                         <span class="notification__text">{{ error.message|trans }}</span>
                     </li>
                 {%- endfor -%}

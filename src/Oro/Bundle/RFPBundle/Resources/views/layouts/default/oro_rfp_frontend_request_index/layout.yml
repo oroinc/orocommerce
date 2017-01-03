@@ -15,11 +15,6 @@ layout:
             optionValue: 'oro.frontend.rfp.request.entity_plural_label'
 
         - '@setOption':
-            id: page_content
-            optionName: class_prefix
-            optionValue: 'requests'
-
-        - '@setOption':
             id: datagrid_toolbar_button_container
             optionName: visible
             optionValue: true
@@ -27,9 +22,6 @@ layout:
         - '@add':
             id: create_request_button
             parentId: datagrid_toolbar_button_container
-            blockType: action_combined_buttons
+            blockType: combined_buttons
             options:
-                actions: '=data["actions"].getAll()'
-                entityClass: '=data["action_buttons"].getEntityClass("Oro\Bundle\RFPBundle\Entity\Request")'
-                dialogRoute: '=data["action_buttons"].getDialogRoute()'
-                executionRoute: '=data["action_buttons"].getExecutionRoute()'
+                buttons: '=data["buttons"].getAll()'

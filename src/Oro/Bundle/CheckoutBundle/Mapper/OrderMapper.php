@@ -3,9 +3,13 @@
 namespace Oro\Bundle\CheckoutBundle\Mapper;
 
 use Doctrine\Common\Util\ClassUtils;
+
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
 use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
+use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
+
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
@@ -17,14 +21,22 @@ class OrderMapper implements MapperInterface
     /** @var EntityFieldProvider */
     private $entityFieldProvider;
 
+    /** @var PaymentTermAssociationProvider */
+    private $paymentTermAssociationProvider;
+
     /**
      * @param EntityFieldProvider $entityFieldProvider
      * @param PropertyAccessorInterface $propertyAccessor
+     * @param PaymentTermAssociationProvider $paymentTermAssociationProvider
      */
-    public function __construct(EntityFieldProvider $entityFieldProvider, PropertyAccessorInterface $propertyAccessor)
-    {
+    public function __construct(
+        EntityFieldProvider $entityFieldProvider,
+        PropertyAccessorInterface $propertyAccessor,
+        PaymentTermAssociationProvider $paymentTermAssociationProvider
+    ) {
         $this->propertyAccessor = $propertyAccessor;
         $this->entityFieldProvider = $entityFieldProvider;
+        $this->paymentTermAssociationProvider = $paymentTermAssociationProvider;
     }
 
     /** {@inheritdoc} */
@@ -32,6 +44,9 @@ class OrderMapper implements MapperInterface
     {
         $order = new Order();
         $data = array_merge($this->getData($checkout), $data);
+        if ($checkout->getShippingCost()) {
+            $data = array_merge($data, ['estimatedShippingCostAmount' => $checkout->getShippingCost()->getValue()]);
+        }
 
         $sourceEntity = $checkout->getSourceEntity();
         if ($sourceEntity) {
@@ -46,6 +61,10 @@ class OrderMapper implements MapperInterface
         }
 
         $this->assignData($order, $data);
+
+        if (!empty($data['paymentTerm'])) {
+            $this->assignPaymentTerm($order, $data['paymentTerm']);
+        }
 
         return $order;
     }
@@ -101,5 +120,14 @@ class OrderMapper implements MapperInterface
         $staticFields = ['shippingCost'];
 
         return array_merge($fieldsNames, $staticFields);
+    }
+
+    /**
+     * @param Order $order
+     * @param PaymentTerm $paymentTerm
+     */
+    protected function assignPaymentTerm(Order $order, PaymentTerm $paymentTerm)
+    {
+        $this->paymentTermAssociationProvider->setPaymentTerm($order, $paymentTerm);
     }
 }

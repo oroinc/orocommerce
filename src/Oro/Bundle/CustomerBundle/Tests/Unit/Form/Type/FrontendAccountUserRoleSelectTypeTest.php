@@ -6,6 +6,7 @@ use Symfony\Bridge\Doctrine\Form\ChoiceList\ORMQueryBuilderLoader;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\QueryBuilder;
@@ -18,6 +19,7 @@ use Oro\Bundle\CustomerBundle\Entity\AccountUserRole;
 use Oro\Bundle\CustomerBundle\Entity\Repository\AccountUserRoleRepository;
 use Oro\Bundle\CustomerBundle\Form\Type\AccountUserRoleSelectType;
 use Oro\Bundle\CustomerBundle\Form\Type\FrontendAccountUserRoleSelectType;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
 class FrontendAccountUserRoleSelectTypeTest extends FormIntegrationTestCase
 {
@@ -36,11 +38,17 @@ class FrontendAccountUserRoleSelectTypeTest extends FormIntegrationTestCase
     /** @var QueryBuilder */
     protected $qb;
 
+    /**
+     * @var AclHelper $aclHelper
+     */
+    protected $aclHelper;
+
     protected function setUp()
     {
         $account = $this->createAccount(1, 'account');
         $organization = $this->createOrganization(1);
         $user = new AccountUser();
+        $criteria = new Criteria();
         $user->setAccount($account);
         $user->setOrganization($organization);
         $this->qb = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
@@ -58,17 +66,26 @@ class FrontendAccountUserRoleSelectTypeTest extends FormIntegrationTestCase
             ->disableOriginalConstructor()
             ->getMock();
         $repo->expects($this->any())
-            ->method('getAvailableSelfManagedRolesByAccountUserQueryBuilder')
-            ->with($organization, $account)
+            ->method('createQueryBuilder')
+            ->with('account')
             ->willReturn($this->qb);
         /** @var $em ObjectManager|\PHPUnit_Framework_MockObject_MockObject */
-        $em = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
+        $em = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
         $em->expects($this->any())
             ->method('getRepository')
             ->with('Oro\Bundle\CustomerBundle\Entity\AccountUserRole')
             ->willReturn($repo);
+        $this->qb->expects($this->any())
+            ->method('addCriteria')
+            ->with($criteria)
+            ->willReturn($this->qb);
+        $this->aclHelper = $this->createAclHelperMock();
         $this->registry->expects($this->any())->method('getManagerForClass')->willReturn($em);
-        $this->formType = new FrontendAccountUserRoleSelectType($this->securityFacade, $this->registry);
+        $this->formType = new FrontendAccountUserRoleSelectType(
+            $this->securityFacade,
+            $this->registry,
+            $this->aclHelper
+        );
         $this->formType->setRoleClass('Oro\Bundle\CustomerBundle\Entity\AccountUserRole');
 
         parent::setUp();
@@ -92,7 +109,7 @@ class FrontendAccountUserRoleSelectTypeTest extends FormIntegrationTestCase
     public function testConfigureOptions()
     {
         /** @var $resolver OptionsResolver|\PHPUnit_Framework_MockObject_MockObject */
-        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
+        $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
 
         $qb = new ORMQueryBuilderLoader($this->qb);
 
@@ -119,8 +136,8 @@ class FrontendAccountUserRoleSelectTypeTest extends FormIntegrationTestCase
             ->getMock();
         $securityFacade->expects($this->once())->method('getLoggedUser')->willReturn(null);
         /** @var $resolver OptionsResolver|\PHPUnit_Framework_MockObject_MockObject */
-        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
-        $roleFormType = new FrontendAccountUserRoleSelectType($securityFacade, $this->registry);
+        $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
+        $roleFormType = new FrontendAccountUserRoleSelectType($securityFacade, $this->registry, $this->aclHelper);
         $roleFormType->configureOptions($resolver);
     }
 
@@ -173,5 +190,15 @@ class FrontendAccountUserRoleSelectTypeTest extends FormIntegrationTestCase
         $role->setLabel($label);
 
         return $role;
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function createAclHelperMock()
+    {
+        return $this->getMockBuilder('Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper')
+            ->disableOriginalConstructor()
+            ->getMock();
     }
 }

@@ -1,5 +1,6 @@
 {% import 'OroUIBundle::macros.html.twig' as UI %}
 {% import 'OroEmailBundle::actions.html.twig' as EmailActions %}
+{% import 'OroEntityConfigBundle::macros.html.twig' as entityConfig %}
 
 <div class="widget-content">
     <div class="row-fluid form-horizontal">
@@ -43,8 +44,11 @@
             {% if entity.children.count() %}
                 {% set accountTree %}
                     <div class="account-children">
-                        <div data-page-component-module="oroui/js/app/components/basic-tree-component"
-                             data-page-component-options="{{ {'data' : treeData}|json_encode }}"></div>
+                        {{ UI.renderJsTree({
+                            'module': 'oroui/js/app/components/basic-tree-component',
+                            'disableSearch': true,
+                            'treeOptions': {data: treeData}
+                        }) }}
                     </div>
                 {% endset %}
                 {{ UI.renderHtmlProperty('oro.customer.account.children.label'|trans, accountTree) }}
@@ -53,6 +57,8 @@
             {% if entity.getInternalRating and is_granted('VIEW', entity.getInternalRating)%}
                 {{ UI.renderProperty('oro.customer.account.internal_rating.label'|trans, entity.getInternalRating.name) }}
             {% endif %}
+
+            {{ entityConfig.renderDynamicFields(entity) }}
         </div>
     </div>
 </div>

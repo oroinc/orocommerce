@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
+use Oro\Bundle\CustomerBundle\Model\ExtendAccountGroup;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
@@ -23,7 +24,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
  *      routeUpdate="oro_customer_account_group_update",
  *      defaultValues={
  *          "entity"={
- *              "icon"="icon-group"
+ *              "icon"="fa-users"
  *          },
  *          "form"={
  *              "form_type"="oro_customer_account_group_select",
@@ -35,7 +36,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
  *      }
  * )
  */
-class AccountGroup
+class AccountGroup extends ExtendAccountGroup
 {
     /**
      * @var integer

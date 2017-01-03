@@ -6,8 +6,6 @@ use Doctrine\Common\Cache\CacheProvider;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextCacheKeyGenerator;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 class ShippingPriceCache
 {
@@ -16,17 +14,10 @@ class ShippingPriceCache
      */
     const CACHE_LIFETIME = 3600;
 
-    const UPDATED_AT_KEY = 'oro_shipping_rule_updated_at';
-
     /**
      * @var CacheProvider
      */
     protected $cache;
-
-    /**
-     * @var ManagerRegistry
-     */
-    protected $doctrine;
 
     /**
      * @var ShippingContextCacheKeyGenerator
@@ -35,16 +26,13 @@ class ShippingPriceCache
 
     /**
      * @param CacheProvider $cacheProvider
-     * @param ManagerRegistry $doctrine
      * @param ShippingContextCacheKeyGenerator $cacheKeyGenerator
      */
     public function __construct(
         CacheProvider $cacheProvider,
-        ManagerRegistry $doctrine,
         ShippingContextCacheKeyGenerator $cacheKeyGenerator
     ) {
         $this->cache = $cacheProvider;
-        $this->doctrine = $doctrine;
         $this->cacheKeyGenerator = $cacheKeyGenerator;
     }
 
@@ -52,13 +40,13 @@ class ShippingPriceCache
      * @param ShippingContextInterface $context
      * @param string $methodId
      * @param string $typeId
-     * @return Price|bool
+     * @return Price|null
      */
     public function getPrice(ShippingContextInterface $context, $methodId, $typeId)
     {
         $key = $this->generateKey($context, $methodId, $typeId);
-        if ($this->isShippingRulesUpdated() || !$this->cache->contains($key)) {
-            return false;
+        if (!$this->cache->contains($key)) {
+            return null;
         }
         return $this->cache->fetch($key);
     }
@@ -71,8 +59,7 @@ class ShippingPriceCache
      */
     public function hasPrice(ShippingContextInterface $context, $methodId, $typeId)
     {
-        return !$this->isShippingRulesUpdated()
-            && $this->cache->contains($this->generateKey($context, $methodId, $typeId));
+        return $this->cache->contains($this->generateKey($context, $methodId, $typeId));
     }
 
     /**
@@ -99,21 +86,9 @@ class ShippingPriceCache
     {
         return $this->cacheKeyGenerator->generateKey($context).$methodId.$typeId;
     }
-
-    /**
-     * @return bool
-     */
-    protected function isShippingRulesUpdated()
+    
+    public function deleteAllPrices()
     {
-        $updatedAt = $this->doctrine->getManagerForClass('OroShippingBundle:ShippingRule')
-            ->getRepository('OroShippingBundle:ShippingRule')->getLastUpdateAt();
-        if (!$this->cache->contains(static::UPDATED_AT_KEY)
-            || $updatedAt->getTimestamp() > $this->cache->fetch(static::UPDATED_AT_KEY)
-        ) {
-            $this->cache->deleteAll();
-            $this->cache->save(static::UPDATED_AT_KEY, $updatedAt->getTimestamp());
-            return true;
-        }
-        return false;
+        $this->cache->deleteAll();
     }
 }

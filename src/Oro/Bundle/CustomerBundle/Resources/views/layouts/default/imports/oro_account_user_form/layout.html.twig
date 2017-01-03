@@ -21,7 +21,7 @@
                 {{ form_row(form.middleName, {'attr': {'placeholder': 'oro.customer.form.placeholder.middle_name'|trans}, 'parentClass': ''}) }}
                 {{ form_row(form.lastName, {'attr': {'placeholder': 'oro.customer.form.placeholder.last_name'|trans}, 'parentClass': ''}) }}
                 {{ form_row(form.nameSuffix, {'attr': {'placeholder': 'oro.customer.form.placeholder.name_suffix'|trans}, 'parentClass': ''}) }}
-
+                {{ form_row(form.account, {'attr': {'placeholder': 'oro.customer.form.placeholder.account'|trans}, 'parentClass': ''})}}
                 {{ form_row(form.enabled, {'attr': {'placeholder': ''|trans}, 'parentClass': 'profile__form__col form__col_x6'}) }}
 
                 {% if form.sendEmail is defined %}
@@ -30,7 +30,19 @@
             </div>
             <div class="profile__form__col form__col_x6 col_last">
                 {{ form_row(form.email, {'attr': {'placeholder': 'oro.customer.form.placeholder.email'|trans}, 'parentClass': ''}) }}
-                {{ form_row(form.birthday, {'attr': {'placeholder': 'oro.customer.form.placeholder.birthday'|trans}, 'parentClass': ''}) }}
+                <div class="datepicker-box datepicker-box--form-mode">
+                    <span class="datepicker-box__icon"><i class="fa-calendar"></i></span>
+                    {{ form_row(form.birthday, {
+                        'attr': {
+                            'placeholder': 'oro.customer.form.placeholder.birthday'|trans,
+                            'class': 'datepicker-box__input input input--size-m'
+                        },
+                        'parentClass': '',
+                        'datePickerOptions': {
+                            'maxDate': 0
+                        }
+                    }) }}
+                </div>
             </div>
         </fieldset>
     </fieldset>
@@ -39,6 +51,7 @@
         <legend>{{ 'oro.customer.accountuser.profile.form.sections.password.label'|trans }}</legend>
 
         <div class="password">
+            <input type="text" class="profile__form__no-autocomplete-fix" />
             {{ form_row(form.plainPassword.first, {'attr': {'placeholder': 'oro.customer.form.placeholder.new_password'|trans}, 'parentClass': 'profile__form__col form__col_x6 col_first'}) }}
             {{ form_row(form.plainPassword.second, {'attr': {'placeholder': 'oro.customer.form.placeholder.password_confirmation'|trans}, 'parentClass': 'profile__form__col form__col_x6 col_last'}) }}
         </div>
@@ -66,7 +79,6 @@
         {{ form_row(form.roles)}}
     </fieldset>
 
-    {{ form_row(form.account)}}
 {% endblock %}
 
 {% block __oro_account_user_form__account_user_form_actions_widget %}

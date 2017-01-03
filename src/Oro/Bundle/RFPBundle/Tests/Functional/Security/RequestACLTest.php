@@ -55,7 +55,7 @@ class RequestACLTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         /** @var Form $form */
-        $form = $crawler->selectButton('Submit Request For Quote')->form();
+        $form = $crawler->selectButton('Submit Request')->form();
         $form->remove('oro_rfp_frontend_request[requestProducts][0]');
         $form['oro_rfp_frontend_request[firstName]'] = LoadAccountUsersData::USER_NAME;
         $form['oro_rfp_frontend_request[lastName]']  = LoadAccountUsersData::USER_LAST_NAME;

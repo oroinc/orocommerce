@@ -3,12 +3,14 @@
 namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadFrontendProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
  * @dbIsolation
@@ -22,11 +24,10 @@ class ProductControllerTest extends WebTestCase
             $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)
         );
 
-        $this->loadFixtures(
-            [
-                'Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems',
-            ]
-        );
+        $this->loadFixtures([
+            LoadFrontendProductData::class,
+            LoadShoppingListLineItems::class,
+        ]);
     }
 
     public function testProductAddToShoppingListForm()
@@ -45,7 +46,7 @@ class ProductControllerTest extends WebTestCase
         $shoppingListClass = $this->getContainer()->getParameter('oro_shopping_list.entity.shopping_list.class');
 
         /** @var ShoppingList[] $shoppingLists */
-        $shoppingLists = $this->getContainer()->get('doctrine')->getRepository($shoppingListClass)->findAll();
+        $shoppingLists = $this->getContainer()->get('oro_shopping_list.shopping_list.manager')->getShoppingLists();
 
         foreach ($shoppingLists as $shoppingList) {
             $this->assertContains('Add to ' . $shoppingList->getLabel(), $content);
@@ -63,15 +64,15 @@ class ProductControllerTest extends WebTestCase
             $this->getUrl(
                 'oro_shopping_list_frontend_add_product',
                 [
-                    'productId' => $product->getId(),
+                    'productId'      => $product->getId(),
                     'shoppingListId' => $shoppingList->getId()
                 ]
             ),
             [
                 'oro_product_frontend_line_item' => [
                     'quantity' => 5,
-                    'unit' => 'liter',
-                    '_token' => $tokenManager->getToken('oro_product_frontend_line_item')->getValue()
+                    'unit'     => 'liter',
+                    '_token'   => $tokenManager->getToken('oro_product_frontend_line_item')->getValue()
                 ]
             ]
         );

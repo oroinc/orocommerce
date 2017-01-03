@@ -1,0 +1,17 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'product_index.html.twig'
+        - '@addTree':
+            items:
+                category_breadcrumbs:
+                    blockType: category_breadcrumbs
+                    options:
+                        currentCategory: '=data["category"].getCurrentCategory()'
+                        parentCategories: '=data["category"].getParentCategories()'
+                category_breadcrumbs_container:
+                    blockType: container
+            tree:
+                product_search_navigation:
+                    category_breadcrumbs_container:
+                        category_breadcrumbs:

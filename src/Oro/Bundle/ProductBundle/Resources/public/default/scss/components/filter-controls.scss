@@ -4,8 +4,8 @@
   flex-wrap: wrap;
   align-content: stretch;
   align-items: center;
-  margin: 0;
-  padding: 10px 0 !important;
+  margin: 0 !important; //override platform mobile styles
+  padding: 10px 0 !important; //override platform mobile styles
   border-bottom: 1px solid get-color('additional', 'light');
   border-top: 1px solid get-color('additional', 'light');
 
@@ -14,7 +14,7 @@
   &__item {
     -webkit-flex-grow: 1;
     flex-grow: 1;
-    margin-right: 5px;
+    margin-right: $offset-y-s;
 
     &.catalog__filter-controls__item_filter {
       flex-grow: 0;
@@ -31,19 +31,16 @@
       }
     }
 
-    &:nth-child(2) {
-      @media (max-width: $screen-md) {
-        order: 1;
-      }
+    &.sorting {
+      flex-grow: 0;
+      flex-basis: 315px;
     }
 
-    &:nth-child(3) {
-      @media (max-width: $screen-md) {
-        order: 2;
-      }
+    &.oro-pagination {
+      text-align: center;
     }
 
-    &.catalog__filter-controls__item_display-options {
+    &.display-options {
       flex-basis: 170px;
       flex-grow: 0;
       flex-shrink: 0;
@@ -51,22 +48,14 @@
       margin: 0;
 
       text-align: right;
+    }
 
-      @media (max-width: $screen-md) {
-        flex-basis: auto;
-        order: 2;
+    &.page-size {
+      .oro-select2,
+      .select {
+        min-width: 64px;
       }
     }
-  }
-}
-
-.catalog-view-option {
-  color: get-color('additional', 'middle');
-}
-
-.current {
-  .catalog-view-option {
-    color: get-color('primary', 'base');
   }
 }
 
@@ -95,4 +84,68 @@
     flex-basis: 125px;
     flex-shrink: 0;
   }
+}
+
+
+@include breakpoint('tablet') {
+  .catalog__filter-controls {
+    .pagination-container {
+      display: none;
+    }
+
+    &__item {
+      margin-right: $offset-y;
+
+      &.sorting {
+        flex-basis: auto;
+      }
+
+      &.display-options {
+        flex-basis: auto;
+        order: 2;
+      }
+
+      &.page-size {
+        order: 2;
+      }
+    }
+  }
+}
+
+@include breakpoint('mobile-landscape') {
+  .catalog__filter-controls {
+    &__item {
+      flex-grow: inherit;
+
+        margin-right: $offset-y-s;
+
+      &.oro-pagination {
+        text-align: left;
+      }
+    }
+  }
+}
+
+@include breakpoint('mobile') {
+  .catalog__filter-controls {
+      .action-selectbox_custom_in-pager {
+          display: inline-block;
+
+          .select2-container {
+              a.select2-choice {
+                  max-width: 60px;
+
+                  padding: 8px 4px !important;
+              }
+          }
+      }
+    }
+}
+
+@include breakpoint('mobile-landscape') {
+    .catalog__filter-controls {
+        &__item {
+            margin-right: 0;
+        }
+    }
 }

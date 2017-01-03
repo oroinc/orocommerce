@@ -1,3 +1,5 @@
+// @theme: default
+
 .shopping-lists {
     padding-bottom: 15px;
 
@@ -67,6 +69,7 @@
     }
 
     &__link {
+        display: block;
         margin-left: 25px;
 
         font-size: $base-font-size - 2px;

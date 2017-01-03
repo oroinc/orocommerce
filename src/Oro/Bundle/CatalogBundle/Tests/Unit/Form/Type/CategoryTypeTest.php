@@ -123,7 +123,7 @@ class CategoryTypeTest extends \PHPUnit_Framework_TestCase
     public function testConfigureOptions()
     {
         /** @var OptionsResolver|\PHPUnit_Framework_MockObject_MockObject $resolver */
-        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
+        $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with(
@@ -159,9 +159,6 @@ class CategoryTypeTest extends \PHPUnit_Framework_TestCase
                     'resize' => true,
                     'width' => 500,
                     'height' => 200,
-                    'plugins' => array_merge(OroRichTextType::$defaultPlugins, ['fullscreen']),
-                    'toolbar' =>
-                        [reset(OroRichTextType::$toolbars[OroRichTextType::TOOLBAR_DEFAULT]) . ' | fullscreen'],
                 ],
             ]
         ];

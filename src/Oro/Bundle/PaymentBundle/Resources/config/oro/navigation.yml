@@ -1,22 +1,32 @@
 navigation:
     menu_config:
         items:
-            payment_terms:
-                label: 'oro.payment.menu.payment_terms.label'
-                route: 'oro_payment_term_index'
+            payment_methods_configs_rule:
+                label:           'oro.payment.menu.paymentmethodsconfigsrule.label'
+                route:           'oro_payment_methods_configs_rule_index'
                 extras:
-                    position: 700
-                    routes:      ['oro_payment_term*']
-                    description: 'oro.payment.menu.payment_terms.description'
+                    position:    100
+                    routes:      ['/^oro_payment_methods_configs_rule/']
+                    description: 'oro.payment.menu.paymentmethodsconfigsrule.description'
+
+            shortcut_payment_methods_configs_rule:
+                label:           'oro.payment.menu.paymentmethodsconfigsrule.label'
+                route:           'oro_payment_methods_configs_rule_index'
+                extras:
+                    description: 'oro.payment.menu.shortcut_paymentmethodsconfigsrule.description'
 
         tree:
             application_menu:
                 children:
-                    sales_tab:
+                    system_tab:
                         children:
-                            payment_terms: ~
+                            payment_methods_configs_rule: ~
+            shortcuts:
+                children:
+                    shortcut_payment_methods_configs_rule: ~
 
     titles:
-        oro_payment_term_index: 'oro.payment.paymentterm.entity_plural_label'
-        oro_payment_term_view: '%%entityLabel%%'
-        oro_payment_term_update: '%%entityLabel%%'
+        oro_payment_methods_configs_rule_index: ~
+        oro_payment_methods_configs_rule_view:  '%%label%%'
+        oro_payment_methods_configs_rule_update: 'Payment Rule %%id%% - Edit'
+        oro_payment_methods_configs_rule_create: 'Create Payment Rule'

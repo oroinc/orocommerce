@@ -53,13 +53,13 @@ class FrontendProductListModifierTest extends WebTestCase
 
     protected function setupTokenStorage()
     {
-        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $token = $this->createMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
         $token->expects($this->any())
             ->method('getUser')
             ->will($this->returnValue(new AccountUser()));
 
         $this->tokenStorage = $this
-            ->getMock('Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface');
+            ->createMock('Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface');
         $this->tokenStorage->expects($this->any())
             ->method('getToken')
             ->will($this->returnValue($token));
@@ -133,6 +133,8 @@ class FrontendProductListModifierTest extends WebTestCase
                     LoadProductData::PRODUCT_3,
                     LoadProductData::PRODUCT_4,
                     LoadProductData::PRODUCT_5,
+                    LoadProductData::PRODUCT_6,
+                    LoadProductData::PRODUCT_7,
                 ],
                 'priceList' => '1f'
             ],

@@ -2,18 +2,17 @@
 
 namespace Oro\Bundle\CustomerBundle\Tests\Unit\Layout\DataProvider;
 
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Form\Type\AccountUserPasswordRequestType;
+use Oro\Bundle\CustomerBundle\Form\Type\AccountUserPasswordResetType;
+use Oro\Bundle\CustomerBundle\Form\Type\FrontendOwnerSelectType;
+use Oro\Bundle\CustomerBundle\Layout\DataProvider\FrontendAccountUserFormProvider;
+use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Form\FormConfigInterface;
 use Symfony\Component\Form\FormFactory;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-
-use Oro\Component\Testing\Unit\EntityTrait;
-
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Form\Type\AccountUserPasswordRequestType;
-use Oro\Bundle\CustomerBundle\Form\Type\AccountUserPasswordResetType;
-use Oro\Bundle\CustomerBundle\Layout\DataProvider\FrontendAccountUserFormProvider;
 
 class FrontendAccountUserFormProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -32,7 +31,7 @@ class FrontendAccountUserFormProviderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->router = $this->getMock('Symfony\Component\Routing\Generator\UrlGeneratorInterface');
+        $this->router = $this->createMock('Symfony\Component\Routing\Generator\UrlGeneratorInterface');
 
         $this->formFactory = $this
             ->getMockBuilder('Symfony\Component\Form\FormFactory')
@@ -96,9 +95,9 @@ class FrontendAccountUserFormProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetForgotPasswordFormView()
     {
-        $formView = $this->getMock(FormView::class);
+        $formView = $this->createMock(FormView::class);
 
-        $expectedForm = $this->getMock('Symfony\Component\Form\Test\FormInterface');
+        $expectedForm = $this->createMock('Symfony\Component\Form\Test\FormInterface');
         $expectedForm->expects($this->once())
             ->method('createView')
             ->willReturn($formView);
@@ -119,7 +118,7 @@ class FrontendAccountUserFormProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetForgotPasswordForm()
     {
-        $expectedForm = $this->getMock('Symfony\Component\Form\Test\FormInterface');
+        $expectedForm = $this->createMock('Symfony\Component\Form\Test\FormInterface');
 
         $this->formFactory->expects($this->once())
             ->method('create')
@@ -137,9 +136,9 @@ class FrontendAccountUserFormProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetResetPasswordFormView()
     {
-        $formView = $this->getMock(FormView::class);
+        $formView = $this->createMock(FormView::class);
 
-        $expectedForm = $this->getMock('Symfony\Component\Form\Test\FormInterface');
+        $expectedForm = $this->createMock('Symfony\Component\Form\Test\FormInterface');
         $expectedForm->expects($this->once())
             ->method('createView')
             ->willReturn($formView);
@@ -160,7 +159,7 @@ class FrontendAccountUserFormProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetResetPasswordForm()
     {
-        $expectedForm = $this->getMock('Symfony\Component\Form\Test\FormInterface');
+        $expectedForm = $this->createMock('Symfony\Component\Form\Test\FormInterface');
 
         $this->formFactory->expects($this->once())
             ->method('create')
@@ -174,6 +173,24 @@ class FrontendAccountUserFormProviderTest extends \PHPUnit_Framework_TestCase
         // Get form with existing data in locale cache
         $data = $this->provider->getResetPasswordForm();
         $this->assertInstanceOf(FormInterface::class, $data);
+    }
+
+    public function testGetAccountUserSelectFormView()
+    {
+        $form = $this->createMock(FormInterface::class);
+        $view = $this->createMock(FormView::class);
+
+        $form->expects($this->once())
+            ->method('createView')
+            ->willReturn($view);
+
+        $target = new \stdClass();
+        $selectedAccountUser = new AccountUser();
+        $this->formFactory->expects($this->once())
+            ->method('create')
+            ->with(FrontendOwnerSelectType::NAME, $selectedAccountUser, ['targetObject' => $target])
+            ->willReturn($form);
+        $this->assertSame($view, $this->provider->getAccountUserSelectFormView($selectedAccountUser, $target));
     }
 
     /**
@@ -261,16 +278,16 @@ class FrontendAccountUserFormProviderTest extends \PHPUnit_Framework_TestCase
     protected function assertAccountUserFormHandlerCalled($method = 'TEST')
     {
         /** @var FormConfigInterface|\PHPUnit_Framework_MockObject_MockObject $config */
-        $config = $this->getMock('Symfony\Component\Form\FormConfigInterface');
+        $config = $this->createMock('Symfony\Component\Form\FormConfigInterface');
         $config->expects($this->any())
             ->method('getMethod')
             ->willReturn($method);
 
         /** @var FormView|\PHPUnit_Framework_MockObject_MockObject $config */
-        $view = $this->getMock('Symfony\Component\Form\FormView');
+        $view = $this->createMock('Symfony\Component\Form\FormView');
         $view->vars = ['multipart' => null];
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
         $form->expects($this->any())
             ->method('getConfig')
@@ -293,16 +310,16 @@ class FrontendAccountUserFormProviderTest extends \PHPUnit_Framework_TestCase
     protected function assertAccountUserProfileFormHandlerCalled($method = 'TEST')
     {
         /** @var FormConfigInterface|\PHPUnit_Framework_MockObject_MockObject $config */
-        $config = $this->getMock('Symfony\Component\Form\FormConfigInterface');
+        $config = $this->createMock('Symfony\Component\Form\FormConfigInterface');
         $config->expects($this->any())
             ->method('getMethod')
             ->willReturn($method);
 
         /** @var FormView|\PHPUnit_Framework_MockObject_MockObject $config */
-        $view = $this->getMock('Symfony\Component\Form\FormView');
+        $view = $this->createMock('Symfony\Component\Form\FormView');
         $view->vars = ['multipart' => null];
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
         $form->expects($this->any())
             ->method('getConfig')

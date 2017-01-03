@@ -16,11 +16,11 @@ security:
 
         # override pattern
         wsse_secured:
-            pattern:                        ^%web_backend_prefix%/api/(rest|soap).*
+            pattern:                        ^%web_backend_prefix%/api/rest.*
 
         # override pattern
         api_wsse_secured:
-            pattern:                        ^%web_backend_prefix%/api/(?!(doc|rest|soap))($|.*)
+            pattern:                        ^%web_backend_prefix%/api/(?!(doc|rest))($|.*)
 
         # override pattern
         login:
@@ -33,10 +33,6 @@ security:
         # override pattern
         embedded_form:
             pattern:                        ^%web_backend_prefix%/embedded-form/(submit|success)
-
-        # override pattern
-        tracking_data:
-            pattern:                        ^%web_backend_prefix%/tracking/data/create
 
         # override pattern and config
         main:

@@ -5,6 +5,8 @@ namespace Oro\Component\Testing\Unit;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Translation\TranslatorInterface;
 
+use Doctrine\ORM\EntityManager;
+
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
@@ -21,9 +23,14 @@ class FormViewListenerTestCase extends \PHPUnit_Framework_TestCase
      */
     protected $doctrineHelper;
 
+    /**
+     * @var EntityManager|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $em;
+
     protected function setUp()
     {
-        $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+        $this->translator = $this->createMock('Symfony\Component\Translation\TranslatorInterface');
         $this->translator->expects($this->any())
             ->method('trans')
             ->willReturnCallback(
@@ -35,6 +42,7 @@ class FormViewListenerTestCase extends \PHPUnit_Framework_TestCase
         $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
             ->disableOriginalConstructor()
             ->getMock();
+        $this->em = $this->getMockBuilder(EntityManager::class)->disableOriginalConstructor()->getMock();
     }
 
     protected function tearDown()
@@ -72,15 +80,15 @@ class FormViewListenerTestCase extends \PHPUnit_Framework_TestCase
     protected function getScrollData()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|ScrollData $scrollData */
-        $scrollData = $this->getMock('Oro\Bundle\UIBundle\View\ScrollData');
+        $scrollData = $this->createMock('Oro\Bundle\UIBundle\View\ScrollData');
 
         $scrollData->expects($this->once())
             ->method('addBlock');
 
-        $scrollData->expects($this->once())
+        $scrollData->expects($this->any())
             ->method('addSubBlock');
 
-        $scrollData->expects($this->once())
+        $scrollData->expects($this->any())
             ->method('addSubBlockData');
 
         return $scrollData;

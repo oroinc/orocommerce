@@ -1,7 +1,25 @@
-Oro\Bundle\PaymentBundle\Entity\PaymentTerm:
+Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule:
     properties:
-        label:
+        destinations:
+            - Valid: ~
+        methodConfigs:
+            - Valid: ~
+            - Count:
+                min: 1
+                minMessage: oro.payment.paymentrule.method.config.count.message
+        currency:
+            - Currency: ~
             - NotBlank: ~
-            - Length:
-                min: 3
-                max: 255
+
+Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRuleDestination:
+    properties:
+        country:
+            - NotBlank: ~
+            - Valid: ~
+        region:
+            - Valid: ~
+
+Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig:
+    properties:
+        type:
+            - NotBlank: ~

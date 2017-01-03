@@ -4,27 +4,18 @@ namespace Oro\Bundle\CMSBundle\Migrations\Schema\v1_0;
 
 use Doctrine\DBAL\Schema\Schema;
 
-use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtension;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
+use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class OroCMSBundle implements Migration, AttachmentExtensionAwareInterface
 {
+    use AttachmentExtensionAwareTrait;
+
     const CMS_LOGIN_PAGE_TABLE = 'orob2b_cms_login_page';
     const MAX_LOGO_IMAGE_SIZE_IN_MB = 10;
     const MAX_BACKGROUND_IMAGE_SIZE_IN_MB = 10;
-
-    /** @var AttachmentExtension */
-    protected $attachmentExtension;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setAttachmentExtension(AttachmentExtension $attachmentExtension)
-    {
-        $this->attachmentExtension = $attachmentExtension;
-    }
 
     /**
      * {@inheritdoc}

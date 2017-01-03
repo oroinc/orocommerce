@@ -21,14 +21,14 @@ class AccountUserPasswordRequestHandlerTest extends AbstractAccountUserPasswordH
     public function testProcessInvalidUser()
     {
         $email = 'test@test.com';
-        $this->assertValidFormCall($email);
+        $emailSubform = $this->assertValidFormCall($email);
 
         $this->userManager->expects($this->once())
             ->method('findUserByUsernameOrEmail')
             ->with($email);
 
         $this->assertFormErrorAdded(
-            $this->form,
+            $emailSubform,
             'oro.customer.accountuser.profile.email_not_exists',
             ['%email%' => $email]
         );
@@ -130,7 +130,7 @@ class AccountUserPasswordRequestHandlerTest extends AbstractAccountUserPasswordH
             ->method('isValid')
             ->will($this->returnValue(true));
 
-        $emailSubform = $this->getMock('Symfony\Component\Form\FormInterface');
+        $emailSubform = $this->createMock('Symfony\Component\Form\FormInterface');
         $emailSubform->expects($this->once())
             ->method('getData')
             ->will($this->returnValue($email));
@@ -139,5 +139,7 @@ class AccountUserPasswordRequestHandlerTest extends AbstractAccountUserPasswordH
             ->method('get')
             ->with('email')
             ->will($this->returnValue($emailSubform));
+
+        return $emailSubform;
     }
 }

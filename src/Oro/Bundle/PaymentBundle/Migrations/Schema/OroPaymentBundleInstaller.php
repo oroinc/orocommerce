@@ -4,41 +4,25 @@ namespace Oro\Bundle\PaymentBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
 
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
-use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
+use Oro\Bundle\PaymentBundle\Migrations\Schema\v1_6\OroPaymentBundle;
 
-class OroPaymentBundleInstaller implements Installation, NoteExtensionAwareInterface
+class OroPaymentBundleInstaller implements Installation, ActivityExtensionAwareInterface
 {
     /**
-     * Table name for PaymentTerm
+     * @var ActivityExtension
      */
-    const TABLE_NAME                          = 'oro_payment_term';
-    const PAYMENT_TERM_TO_ACCOUNT_TABLE       = 'oro_payment_term_to_account';
-    const PAYMENT_TERM_TO_ACCOUNT_GROUP_TABLE = 'oro_payment_term_to_acc_grp';
-    const ACCOUNT_TABLE                       = 'oro_account';
-    const ACCOUNT_GROUP_TABLE                 = 'oro_account_group';
-
-    /**
-     * @var NoteExtension
-     */
-    protected $noteExtension;
+    protected $activityExtension;
 
     /**
      * {@inheritdoc}
      */
     public function getMigrationVersion()
     {
-        return 'v1_5';
-    }
-
-    /**
-     * @param NoteExtension $noteExtension
-     */
-    public function setNoteExtension(NoteExtension $noteExtension)
-    {
-        $this->noteExtension = $noteExtension;
+        return 'v1_7';
     }
 
     /**
@@ -46,56 +30,18 @@ class OroPaymentBundleInstaller implements Installation, NoteExtensionAwareInter
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        $this->createOroPaymentTermTable($schema);
-        $this->addNoteAssociations($schema);
-        $this->createOroPaymentIntersectionTables($schema);
         $this->createOroPaymentTransactionTable($schema);
         $this->createOroPaymentStatusTable($schema);
+        $this->createOroPaymentMethodConfigTable($schema);
+        $this->createOroPaymentMethodsConfigsRuleTable($schema);
+        $this->createOroPaymentMethodsConfigsRuleDestinationTable($schema);
+        $this->createOroPaymentMethodsConfigsRuleDestinationPostalCodeTable($schema);
 
-        $this->addOroPaymentTermToAccountGroupForeignKeys($schema);
-        $this->addOroPaymentTermToAccountForeignKeys($schema);
         $this->addOroPaymentTransactionForeignKeys($schema);
-    }
-
-    /**
-     * Create table for PaymentTerm entity
-     *
-     * @param Schema $schema
-     */
-    protected function createOroPaymentTermTable(Schema $schema)
-    {
-        $table = $schema->createTable(self::TABLE_NAME);
-        $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('label', 'string');
-        $table->setPrimaryKey(['id']);
-    }
-
-    /**
-     * Enable notes for PaymentTerm entity
-     *
-     * @param Schema $schema
-     */
-    protected function addNoteAssociations(Schema $schema)
-    {
-        $this->noteExtension->addNoteAssociation($schema, self::TABLE_NAME);
-    }
-
-    /**
-     * @param Schema $schema
-     */
-    protected function createOroPaymentIntersectionTables(Schema $schema)
-    {
-        $table = $schema->createTable(static::PAYMENT_TERM_TO_ACCOUNT_TABLE);
-        $table->addColumn('payment_term_id', 'integer', []);
-        $table->addColumn('account_id', 'integer', []);
-        $table->setPrimaryKey(['payment_term_id', 'account_id']);
-        $table->addUniqueIndex(['account_id']);
-
-        $table = $schema->createTable(static::PAYMENT_TERM_TO_ACCOUNT_GROUP_TABLE);
-        $table->addColumn('payment_term_id', 'integer', []);
-        $table->addColumn('account_group_id', 'integer', []);
-        $table->setPrimaryKey(['payment_term_id', 'account_group_id']);
-        $table->addUniqueIndex(['account_group_id']);
+        $this->addOroPaymentMethodConfigForeignKeys($schema);
+        $this->addOroPaymentMethodsConfigsRuleForeignKeys($schema);
+        $this->addOroPaymentMethodsConfigsRuleDestinationForeignKeys($schema);
+        $this->addOroPaymentMethodsConfigsRuleDestinationPostalCodeForeignKeys($schema);
     }
 
     /**
@@ -133,43 +79,74 @@ class OroPaymentBundleInstaller implements Installation, NoteExtensionAwareInter
     }
 
     /**
+     * Create oro_payment_method_config table
+     *
      * @param Schema $schema
      */
-    protected function addOroPaymentTermToAccountForeignKeys(Schema $schema)
+    protected function createOroPaymentMethodConfigTable(Schema $schema)
     {
-        $table = $schema->getTable(static::PAYMENT_TERM_TO_ACCOUNT_TABLE);
-        $table->addForeignKeyConstraint(
-            $schema->getTable(static::ACCOUNT_TABLE),
-            ['account_id'],
-            ['id'],
-            ['onUpdate' => null, 'onDelete' => 'CASCADE']
-        );
-        $table->addForeignKeyConstraint(
-            $schema->getTable(static::TABLE_NAME),
-            ['payment_term_id'],
-            ['id'],
-            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        $table = $schema->createTable('oro_payment_method_config');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('configs_rule_id', 'integer', []);
+        $table->addColumn('method', 'string', ['length' => 255]);
+        $table->addColumn('options', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
+        $table->setPrimaryKey(['id']);
+        $table->addIndex(['configs_rule_id'], 'idx_oro_payment_method_config_configs_rule_id', []);
+    }
+
+    /**
+     * Create oro_payment_mtds_cfgs_rl table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroPaymentMethodsConfigsRuleTable(Schema $schema)
+    {
+        $table = $schema->createTable(OroPaymentBundle::PAYMENT_METHOD_CONFIG_RULE_TABLE);
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('rule_id', 'integer', []);
+        $table->addColumn('currency', 'string', ['notnull' => true, 'length' => 3]);
+        $table->setPrimaryKey(['id']);
+        $table->addIndex(['rule_id'], 'idx_oro_payment_mtds_cfgs_rl_rule_id', []);
+
+        $this->activityExtension->addActivityAssociation(
+            $schema,
+            'oro_note',
+            OroPaymentBundle::PAYMENT_METHOD_CONFIG_RULE_TABLE
         );
     }
 
     /**
+     * Create oro_payment_mtds_cfgs_rl_d table
+     *
      * @param Schema $schema
      */
-    protected function addOroPaymentTermToAccountGroupForeignKeys(Schema $schema)
+    protected function createOroPaymentMethodsConfigsRuleDestinationTable(Schema $schema)
     {
-        $table = $schema->getTable(static::PAYMENT_TERM_TO_ACCOUNT_GROUP_TABLE);
-        $table->addForeignKeyConstraint(
-            $schema->getTable(static::ACCOUNT_GROUP_TABLE),
-            ['account_group_id'],
-            ['id'],
-            ['onUpdate' => null, 'onDelete' => 'CASCADE']
-        );
-        $table->addForeignKeyConstraint(
-            $schema->getTable(static::TABLE_NAME),
-            ['payment_term_id'],
-            ['id'],
-            ['onUpdate' => null, 'onDelete' => 'CASCADE']
-        );
+        $table = $schema->createTable('oro_payment_mtds_cfgs_rl_d');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('region_code', 'string', ['notnull' => false, 'length' => 16]);
+        $table->addColumn('configs_rule_id', 'integer', []);
+        $table->addColumn('country_code', 'string', ['length' => 2]);
+        $table->addColumn('region_text', 'string', ['notnull' => false, 'length' => 255]);
+        $table->setPrimaryKey(['id']);
+        $table->addIndex(['configs_rule_id'], 'idx_oro_payment_mtds_cfgs_rl_d_configs_rule_id', []);
+        $table->addIndex(['region_code'], 'idx_oro_payment_mtds_cfgs_rl_d_region_code', []);
+        $table->addIndex(['country_code'], 'idx_oro_payment_mtds_cfgs_rl_d_country_code', []);
+    }
+
+    /**
+     * Create oro_payment_mtdscfgsrl_dst_pc table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroPaymentMethodsConfigsRuleDestinationPostalCodeTable(Schema $schema)
+    {
+        $table = $schema->createTable('oro_payment_mtdscfgsrl_dst_pc');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('destination_id', 'integer', []);
+        $table->addColumn('name', 'text', []);
+        $table->setPrimaryKey(['id']);
+        $table->addIndex(['destination_id'], 'idx_oro_payment_mtdscfgsrl_dst_pc_destination_id', []);
     }
 
     /**
@@ -207,6 +184,82 @@ class OroPaymentBundleInstaller implements Installation, NoteExtensionAwareInter
     }
 
     /**
+     * Add oro_payment_method_config foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOroPaymentMethodConfigForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('oro_payment_method_config');
+        $table->addForeignKeyConstraint(
+            $schema->getTable(OroPaymentBundle::PAYMENT_METHOD_CONFIG_RULE_TABLE),
+            ['configs_rule_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+    }
+
+    /**
+     * Add oro_payment_mtds_cfgs_rl foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOroPaymentMethodsConfigsRuleForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable(OroPaymentBundle::PAYMENT_METHOD_CONFIG_RULE_TABLE);
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_rule'),
+            ['rule_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+    }
+
+    /**
+     * Add oro_payment_mtds_cfgs_rl_d foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOroPaymentMethodsConfigsRuleDestinationForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('oro_payment_mtds_cfgs_rl_d');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_dictionary_region'),
+            ['region_code'],
+            ['combined_code'],
+            ['onDelete' => null, 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable(OroPaymentBundle::PAYMENT_METHOD_CONFIG_RULE_TABLE),
+            ['configs_rule_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_dictionary_country'),
+            ['country_code'],
+            ['iso2_code'],
+            ['onDelete' => null, 'onUpdate' => null]
+        );
+    }
+
+    /**
+     * Add oro_payment_mtdscfgsrl_dst_pc foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOroPaymentMethodsConfigsRuleDestinationPostalCodeForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('oro_payment_mtdscfgsrl_dst_pc');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_payment_mtds_cfgs_rl_d'),
+            ['destination_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+    }
+
+    /**
      * Create oro_payment_status
      *
      * @param Schema $schema
@@ -220,5 +273,15 @@ class OroPaymentBundleInstaller implements Installation, NoteExtensionAwareInter
         $table->addColumn('payment_status', 'string', ['length' => 255]);
         $table->addUniqueIndex(['entity_class', 'entity_identifier'], 'oro_payment_status_unique');
         $table->setPrimaryKey(['id']);
+    }
+
+    /**
+     * Sets the ActivityExtension
+     *
+     * @param ActivityExtension $activityExtension
+     */
+    public function setActivityExtension(ActivityExtension $activityExtension)
+    {
+        $this->activityExtension = $activityExtension;
     }
 }

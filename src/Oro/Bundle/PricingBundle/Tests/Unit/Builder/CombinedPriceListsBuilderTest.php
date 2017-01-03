@@ -108,7 +108,7 @@ class CombinedPriceListsBuilderTest extends \PHPUnit_Framework_TestCase
     public function testBuild($configCPLId, $actualCPLId, $force = false)
     {
         $callExpects = 1;
-        $combinedPriceList = $this->getMock('Oro\Bundle\PricingBundle\Entity\CombinedPriceList');
+        $combinedPriceList = $this->createMock('Oro\Bundle\PricingBundle\Entity\CombinedPriceList');
         $combinedPriceList->expects($this->any())
             ->method('getId')
             ->will($this->returnValue($actualCPLId));

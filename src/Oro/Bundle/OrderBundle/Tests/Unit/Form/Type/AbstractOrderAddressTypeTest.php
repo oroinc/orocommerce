@@ -10,7 +10,7 @@ use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\ImportExportBundle\Serializer\Serializer;
 use Oro\Bundle\LocaleBundle\Formatter\AddressFormatter;
-use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Form\Type\AbstractOrderAddressType;
 use Oro\Bundle\OrderBundle\Manager\OrderAddressManager;
@@ -67,7 +67,7 @@ abstract class AbstractOrderAddressTypeTest extends AbstractAddressTypeTest
     public function testConfigureOptions()
     {
         /* @var $resolver \PHPUnit_Framework_MockObject_MockObject|OptionsResolver */
-        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
+        $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects($this->once())->method('setDefaults')->with($this->isType('array'))
             ->will($this->returnSelf());
         $resolver->expects($this->once())->method('setRequired')->with($this->isType('array'))
@@ -106,7 +106,7 @@ abstract class AbstractOrderAddressTypeTest extends AbstractAddressTypeTest
         $this->orderAddressManager->expects($this->any())->method('updateFromAbstract')
             ->will(
                 $this->returnCallback(
-                    function (AccountAddress $address = null, OrderAddress $orderAddress = null) {
+                    function (CustomerAddress $address = null, OrderAddress $orderAddress = null) {
                         if (!$orderAddress) {
                             $orderAddress = new OrderAddress();
                         }
@@ -243,7 +243,7 @@ abstract class AbstractOrderAddressTypeTest extends AbstractAddressTypeTest
         $this->orderAddressManager->expects($this->any())->method('updateFromAbstract')
             ->will(
                 $this->returnCallback(
-                    function (AccountAddress $address) {
+                    function (CustomerAddress $address) {
                         $orderAddress = new OrderAddress();
                         $orderAddress->setCountry($address->getCountry());
                         $orderAddress->setStreet($address->getStreet());
@@ -258,7 +258,7 @@ abstract class AbstractOrderAddressTypeTest extends AbstractAddressTypeTest
         $this->orderAddressManager->expects($this->any())->method('updateFromAbstract')
             ->will(
                 $this->returnCallback(
-                    function (AccountAddress $address = null, OrderAddress $orderAddress = null) {
+                    function (CustomerAddress $address = null, OrderAddress $orderAddress = null) {
                         if (!$orderAddress) {
                             $orderAddress = new OrderAddress();
                         }
@@ -313,7 +313,7 @@ abstract class AbstractOrderAddressTypeTest extends AbstractAddressTypeTest
                 'formErrors' => ['accountAddress' => 1],
                 'groupedAddresses' => [
                     'group_name' => [
-                        'a_1' => (new AccountAddress())
+                        'a_1' => (new CustomerAddress())
                             ->setCountry($country)
                             ->setStreet('Street'),
                     ],

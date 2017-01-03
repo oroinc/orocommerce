@@ -17,11 +17,10 @@ class OroSEOBundleTest extends \PHPUnit_Framework_TestCase
     {
         $container = new ContainerBuilder();
 
-        $bundle = new OroSEOBundle($this->getMock(KernelInterface::class));
+        $bundle = new OroSEOBundle($this->createMock(KernelInterface::class));
         $bundle->build($container);
 
         $fields = [
-            'metaTitle' => 'metaTitles',
             'metaDescription' => 'metaDescriptions',
             'metaKeyword' => 'metaKeywords'
         ];

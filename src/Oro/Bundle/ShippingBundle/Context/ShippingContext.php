@@ -2,266 +2,115 @@
 
 namespace Oro\Bundle\ShippingBundle\Context;
 
-use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\CurrencyBundle\Entity\PriceAwareInterface;
-use Oro\Bundle\LocaleBundle\Model\AddressInterface;
-use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
-use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
-use Oro\Bundle\ProductBundle\Model\QuantityAwareInterface;
-use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptionsInterface;
+use Symfony\Component\HttpFoundation\ParameterBag;
 
-class ShippingContext implements ShippingContextInterface
+class ShippingContext extends ParameterBag implements ShippingContextInterface
 {
-    /**
-     * @var object
-     */
-    private $sourceEntity;
+    const FIELD_CUSTOMER = 'customer';
+    const FIELD_CUSTOMER_USER = 'customer_user';
+    const FIELD_LINE_ITEMS = 'line_items';
+    const FIELD_BILLING_ADDRESS = 'billing_address';
+    const FIELD_SHIPPING_ADDRESS = 'shipping_address';
+    const FIELD_SHIPPING_ORIGIN = 'shipping_origin';
+    const FIELD_PAYMENT_METHOD = 'payment_method';
+    const FIELD_CURRENCY = 'currency';
+    const FIELD_SUBTOTAL = 'subtotal';
+    const FIELD_SOURCE_ENTITY = 'source_entity';
+    const FIELD_SOURCE_ENTITY_ID = 'source_entity_id';
 
     /**
-     * @var mixed
+     * @param array $params
      */
-    private $sourceEntityIdentifier;
-
-    /**
-     * @var ShippingLineItemInterface[]
-     */
-    private $lineItems = [];
-
-    /**
-     * @var AddressInterface
-     */
-    private $billingAddress;
-
-    /**
-     * @var AddressInterface
-     */
-    private $shippingAddress;
-
-    /**
-     * @var AddressInterface
-     */
-    private $shippingOrigin;
-
-    /**
-     * @var string
-     */
-    private $paymentMethod;
-
-    /**
-     * @var string
-     */
-    private $currency;
-
-    /**
-     * @var Price
-     */
-    private $subtotal;
-
-    /**
-     * @return object
-     */
-    public function getSourceEntity()
+    public function __construct(array $params)
     {
-        return $this->sourceEntity;
+        parent::__construct($params);
     }
 
     /**
-     * @param object $sourceEntity
-     * @return $this
+     * {@inheritDoc}
      */
-    public function setSourceEntity($sourceEntity)
+    public function getCustomer()
     {
-        $this->sourceEntity = $sourceEntity;
-        return $this;
+        return $this->get(self::FIELD_CUSTOMER);
     }
 
     /**
-     * @return mixed
+     * {@inheritDoc}
      */
-    public function getSourceEntityIdentifier()
+    public function getCustomerUser()
     {
-        return $this->sourceEntityIdentifier;
+        return $this->get(self::FIELD_CUSTOMER_USER);
     }
 
     /**
-     * @param mixed $sourceEntityIdentifier
-     * @return $this
-     */
-    public function setSourceEntityIdentifier($sourceEntityIdentifier)
-    {
-        $this->sourceEntityIdentifier = $sourceEntityIdentifier;
-        return $this;
-    }
-
-    /**
-     * @param array $items
-     * @return $this
-     */
-    public function setLineItems(array $items)
-    {
-        $this->lineItems = [];
-
-        foreach ($items as $item) {
-            $this->lineItems[] = $this->createLineItem($item);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param mixed $item
-     * @return ShippingLineItem
-     */
-    private function createLineItem($item)
-    {
-        $shippingLineItem = new ShippingLineItem();
-
-        if ($item instanceof ProductHolderInterface) {
-            $shippingLineItem->setProductHolder($item);
-            $shippingLineItem->setProduct($item->getProduct());
-        }
-
-        if ($item instanceof ProductUnitHolderInterface) {
-            $shippingLineItem->setProductUnit($item->getProductUnit());
-        }
-
-        if ($item instanceof ProductShippingOptionsInterface) {
-            $shippingLineItem->setProduct($item->getProduct());
-            $shippingLineItem->setProductUnit($item->getProductUnit());
-            $shippingLineItem->setWeight($item->getWeight());
-            $shippingLineItem->setDimensions($item->getDimensions());
-        }
-
-        if ($item instanceof QuantityAwareInterface) {
-            $shippingLineItem->setQuantity($item->getQuantity());
-        }
-
-        if ($item instanceof PriceAwareInterface) {
-            $shippingLineItem->setPrice($item->getPrice());
-        }
-
-        return $shippingLineItem;
-    }
-
-    /**
-     * @return ShippingLineItemInterface[]
+     * {@inheritDoc}
      */
     public function getLineItems()
     {
-        return $this->lineItems;
+        return $this->get(self::FIELD_LINE_ITEMS);
     }
 
     /**
-     * @param AddressInterface $address
-     * @return $this
-     */
-    public function setBillingAddress(AddressInterface $address)
-    {
-        $this->billingAddress = $address;
-
-        return $this;
-    }
-
-    /**
-     * @return AddressInterface
+     * {@inheritDoc}
      */
     public function getBillingAddress()
     {
-        return $this->billingAddress;
+        return $this->get(self::FIELD_BILLING_ADDRESS);
     }
 
     /**
-     * @param AddressInterface $address
-     * @return $this
-     */
-    public function setShippingAddress(AddressInterface $address)
-    {
-        $this->shippingAddress = $address;
-
-        return $this;
-    }
-
-    /**
-     * @return AddressInterface
+     * {@inheritDoc}
      */
     public function getShippingAddress()
     {
-        return $this->shippingAddress;
+        return $this->get(self::FIELD_SHIPPING_ADDRESS);
     }
 
     /**
-     * @param AddressInterface $address
-     * @return $this
-     */
-    public function setShippingOrigin(AddressInterface $address)
-    {
-        $this->shippingOrigin = $address;
-
-        return $this;
-    }
-
-    /**
-     * @return AddressInterface
+     * {@inheritDoc}
      */
     public function getShippingOrigin()
     {
-        return $this->shippingOrigin;
+        return $this->get(self::FIELD_SHIPPING_ORIGIN);
     }
 
     /**
-     * @param string $paymentMethod
-     * @return string
-     */
-    public function setPaymentMethod($paymentMethod)
-    {
-        $this->paymentMethod = $paymentMethod;
-
-        return $this;
-    }
-
-    /**
-     * @return String|null
+     * {@inheritDoc}
      */
     public function getPaymentMethod()
     {
-        return $this->paymentMethod;
+        return $this->get(self::FIELD_PAYMENT_METHOD);
     }
 
     /**
-     * @param string $currency
-     * @return $this
-     */
-    public function setCurrency($currency)
-    {
-        $this->currency = $currency;
-
-        return $this;
-    }
-
-    /**
-     * @return String
+     * {@inheritDoc}
      */
     public function getCurrency()
     {
-        return $this->currency;
+        return $this->get(self::FIELD_CURRENCY);
     }
 
     /**
-     * @param Price $subtotal
-     * @return $this
-     */
-    public function setSubtotal(Price $subtotal)
-    {
-        $this->subtotal = $subtotal;
-
-        return $this;
-    }
-
-    /**
-     * @return Price
+     * {@inheritDoc}
      */
     public function getSubtotal()
     {
-        return $this->subtotal;
+        return $this->get(self::FIELD_SUBTOTAL);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getSourceEntity()
+    {
+        return $this->get(self::FIELD_SOURCE_ENTITY);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getSourceEntityIdentifier()
+    {
+        return $this->get(self::FIELD_SOURCE_ENTITY_ID);
     }
 }

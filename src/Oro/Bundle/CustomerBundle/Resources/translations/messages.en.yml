@@ -16,7 +16,7 @@ oro.customer:
         has_group.label: 'Has group'
         users.label: 'Users'
         addresses.label: 'Addresses'
-        form.choose: 'Choose an customer...'
+        form.choose: 'Choose a customer...'
         form.choose_parent: 'Choose parent customer...'
         address_book.label: 'Address Book'
         owner.label: 'Owner'
@@ -53,7 +53,7 @@ oro.customer:
         name.label: 'Name'
         id.label: 'Id'
         accounts.label: 'Customers'
-        form.choose: 'Choose an customer group...'
+        form.choose: 'Choose a customer group...'
 
     accountuser:
         entity_label:                'Customer User'
@@ -89,7 +89,7 @@ oro.customer:
         organization.label:          'Organization'
         organizations.label:         'Organizations'
         has_role.label:              'Has Role'
-        form.choose:                 'Choose an customer user...'
+        form.choose:                 'Choose a customer user...'
         addresses.label:             'Addresses'
         address_book.label:          'Address Book'
         owner.label:                 'Owner'
@@ -112,7 +112,7 @@ oro.customer:
             return_to_login: 'Return to Login'
             password_reset.message: 'Password was created successfully.'
             request_password.label: 'Request'
-            email_not_exists: 'Email address "%email%" is not known'
+            email_not_exists: 'Email address "%email%" does not exist.'
             check_email:
                 title: 'Check Email'
                 message: 'An email has been sent to %email%. It contains a link you must click to reset your password.'
@@ -163,7 +163,7 @@ oro.customer:
             value.true.label:       'Yes'
             value.false.label:      'No'
 
-    accountuseraddress:
+    customeruseraddress:
         city.label:                 City
         country.label:              Country
         entity_description:         Represent customer user's address
@@ -225,7 +225,7 @@ oro.customer:
         roles:   'Frontend Capabilities'
         password: 'Password'
 
-    accountaddress:
+    customeraddress:
         entity_label:        Address
         entity_plural_label: Addresses
         city.label:          City
@@ -261,12 +261,12 @@ oro.customer:
         region_name.label:       State name
         region_code.label:       State ISO code
 
-    accountusersettings:
+    customerusersettings:
         entity_label:           Customer User Settings
         entity_plural_label:    Customer User Settings
         currency.label:         Currency
         id.label:               ID
-        account_user.label:     Customer User
+        customer_user.label:     Customer User
         website.label:          Website
         localization.label:     Localization
 
@@ -345,7 +345,7 @@ oro.customer:
         access-level:
             BASIC: 'Customer User'
             LOCAL: 'Customer'
-            DEEP: 'Not supported'
+            DEEP: 'Сorporate'
             GLOBAL: 'Not supported'
             SYSTEM: 'Full'
             NONE: 'None'
@@ -388,8 +388,8 @@ oro.customer:
         security:
             access-level:
                 BASIC: 'Individual'
-                LOCAL: 'All'
-                DEEP: 'Not supported'
+                LOCAL: 'Сorporate'
+                DEEP: 'All'
                 GLOBAL: 'Not supported'
                 SYSTEM: 'System'
                 NONE: 'None'

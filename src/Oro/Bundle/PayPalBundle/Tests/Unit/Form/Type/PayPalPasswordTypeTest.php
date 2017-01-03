@@ -80,7 +80,7 @@ class PayPalPasswordTypeTest extends FormIntegrationTestCase
     {
         $view = new FormView();
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
         $form->expects($this->once())->method('getData')->willReturn('password');
 
         $this->formType->buildView($view, $form, []);

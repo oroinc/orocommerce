@@ -131,6 +131,13 @@ class UPSTransport extends Transport
     protected $labels;
 
     /**
+     * @var \DateTime $invalidateCacheAt
+     *
+     * @ORM\Column(name="ups_invalidate_cache_at", type="datetime", nullable=true)
+     */
+    protected $invalidateCacheAt;
+
+    /**
      * @var ParameterBag
      */
     protected $settings;
@@ -428,6 +435,7 @@ class UPSTransport extends Transport
                     'pickup_type' => $this->getPickupType(),
                     'unit_of_weight' => $this->getUnitOfWeight(),
                     'country' => $this->getCountry(),
+                    'invalidate_cache_at' => $this->getInvalidateCacheAt(),
                     'applicable_shipping_services' => $this->getApplicableShippingServices()->toArray(),
                     'labels' => $this->getLabels()->toArray()
                 ]
@@ -435,5 +443,29 @@ class UPSTransport extends Transport
         }
 
         return $this->settings;
+    }
+
+    /**
+     * Set invalidateCacheAt
+     *
+     * @param \DateTime|null $invalidateCacheAt
+     *
+     * @return $this
+     */
+    public function setInvalidateCacheAt(\DateTime $invalidateCacheAt = null)
+    {
+        $this->invalidateCacheAt = $invalidateCacheAt;
+
+        return $this;
+    }
+
+    /**
+     * Get invalidateCacheAt
+     *
+     * @return \DateTime
+     */
+    public function getInvalidateCacheAt()
+    {
+        return $this->invalidateCacheAt;
     }
 }

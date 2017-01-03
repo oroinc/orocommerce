@@ -1,11 +1,16 @@
 {% extends 'OroFrontendBundle:layouts/default:form_theme.html.twig' %}
 
-{% block oro_account_typed_address_widget %}
+{% block oro_account_frontend_typed_address_widget %}
     {% spaceless %}
         <div class="grid">
             <div class="grid__row grid__row--offset-none">
                 <div class="grid__column grid__column--12 grid__column--offset-y">
                     {{ form_row(form.primary, {'label' : 'oro.customer.frontend.address.form.label.primary'|trans }) }}
+                </div>
+            </div>
+            <div class="grid__row grid__row--offset-none">
+                <div class="grid__column grid__column--12 grid__column--offset-y">
+                    {{ form_row(form.frontendOwner) }}
                 </div>
             </div>
             <div class="grid__row grid__row--offset-none">
@@ -85,7 +90,7 @@
         </div>
 
         <div class="pixels">
-            
+
         </div>
 
     {% endspaceless %}
@@ -155,26 +160,13 @@
     {{ form_widget(form, {'class_prefix': 'checkout'}) }}
 {% endblock %}
 
-{% block genemu_jqueryselect2_widget %}
-    {% set component_options = {
-        containerCssClass: 'oro-select2 oro-select2--size-m'
-    } %}
-
-    {{ form_widget(form, { 'attr': {
-        'class': 'select',
-        'data-input-widget-options': component_options|json_encode
-    } }) }}
-
-    {{ parent() }}
-{% endblock %}
-
 {# TODO: remove due BB-3540 #}
 {%- block form_errors -%}
     {%- if errors|length > 0 -%}
         <div class="notification--error">
             <ul>
                 {%- for error in errors -%}
-                    <li><i class="cf-attention"></i><span class="notification__text">{{ error.message }}</span></li>
+                    <li><i class="fa-exclamation-triangle"></i><span class="notification__text">{{ error.message }}</span></li>
                 {%- endfor -%}
             </ul>
         </div>

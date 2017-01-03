@@ -12,9 +12,9 @@ class PaymentMethodSupportsTest extends \PHPUnit_Framework_TestCase
     const ACTION_NAME_KEY = 'action';
 
     /** @var array */
-    protected $paymentTermData = [
-        self::PAYMENT_METHOD_KEY => 'payment_term',
-        self::ACTION_NAME_KEY => 'validate'
+    protected $paymentMethod = [
+        self::PAYMENT_METHOD_KEY => 'payment_method',
+        self::ACTION_NAME_KEY => 'authorize'
     ];
 
     /** @var array */
@@ -31,7 +31,7 @@ class PaymentMethodSupportsTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->paymentMethodRegistry = $this->getMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry');
+        $this->paymentMethodRegistry = $this->createMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry');
         $this->condition = new PaymentMethodSupports($this->paymentMethodRegistry);
     }
 
@@ -44,7 +44,7 @@ class PaymentMethodSupportsTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertInstanceOf(
             'Oro\Component\ConfigExpression\Condition\AbstractCondition',
-            $this->condition->initialize($this->paymentTermData)
+            $this->condition->initialize($this->paymentMethod)
         );
     }
 
@@ -68,7 +68,7 @@ class PaymentMethodSupportsTest extends \PHPUnit_Framework_TestCase
         $errors = $this->getMockForAbstractClass('Doctrine\Common\Collections\Collection');
 
         /** @var PaymentMethodInterface | \PHPUnit_Framework_MockObject_MockObject $paymentMethod */
-        $paymentMethod = $this->getMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface');
+        $paymentMethod = $this->createMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface');
         $paymentMethod->expects($this->once())
             ->method('supports')
             ->with($data[self::ACTION_NAME_KEY])
@@ -89,8 +89,8 @@ class PaymentMethodSupportsTest extends \PHPUnit_Framework_TestCase
     public function evaluateDataProvider()
     {
         return [
-            'payment_term' => [
-                'data' => $this->paymentTermData,
+            'payment_method' => [
+                'data' => $this->paymentMethod,
                 'supportsData' => false,
                 'expected' => false
             ],
@@ -111,29 +111,29 @@ class PaymentMethodSupportsTest extends \PHPUnit_Framework_TestCase
             ->method('getPaymentMethod')
             ->will($this->throwException(new \InvalidArgumentException));
 
-        $this->condition->initialize($this->paymentTermData);
+        $this->condition->initialize($this->paymentMethod);
         $this->assertFalse($this->condition->evaluate($context, $errors));
     }
 
     public function testToArray()
     {
-        $this->condition->initialize($this->paymentTermData);
+        $this->condition->initialize($this->paymentMethod);
         $result = $this->condition->toArray();
         $this->assertInternalType('array', $result);
         $this->assertArrayHasKey('@' . PaymentMethodSupports::NAME, $result);
         $resultSection = $result['@' . PaymentMethodSupports::NAME];
         $this->assertInternalType('array', $resultSection);
         $this->assertArrayHasKey('parameters', $resultSection);
-        $this->assertContains($this->paymentTermData[self::PAYMENT_METHOD_KEY], $resultSection['parameters']);
-        $this->assertContains($this->paymentTermData[self::ACTION_NAME_KEY], $resultSection['parameters']);
+        $this->assertContains($this->paymentMethod[self::PAYMENT_METHOD_KEY], $resultSection['parameters']);
+        $this->assertContains($this->paymentMethod[self::ACTION_NAME_KEY], $resultSection['parameters']);
     }
 
     public function testCompile()
     {
-        $this->condition->initialize($this->paymentTermData);
+        $this->condition->initialize($this->paymentMethod);
         $result = $this->condition->compile('');
         $this->assertContains(PaymentMethodSupports::NAME, $result);
-        $this->assertContains($this->paymentTermData[self::PAYMENT_METHOD_KEY], $result);
-        $this->assertContains($this->paymentTermData[self::ACTION_NAME_KEY], $result);
+        $this->assertContains($this->paymentMethod[self::PAYMENT_METHOD_KEY], $result);
+        $this->assertContains($this->paymentMethod[self::ACTION_NAME_KEY], $result);
     }
 }

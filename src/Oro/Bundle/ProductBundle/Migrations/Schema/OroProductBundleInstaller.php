@@ -4,14 +4,19 @@ namespace Oro\Bundle\ProductBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
 
-use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtension;
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
+use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareTrait;
+use Oro\Bundle\EntityConfigBundle\Entity\ConfigModel;
+use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
+use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManager;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
-use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
+use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtension;
+use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtensionAwareInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -19,9 +24,12 @@ use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
 class OroProductBundleInstaller implements
     Installation,
     ExtendExtensionAwareInterface,
-    NoteExtensionAwareInterface,
-    AttachmentExtensionAwareInterface
+    ActivityExtensionAwareInterface,
+    AttachmentExtensionAwareInterface,
+    SlugExtensionAwareInterface
 {
+    use AttachmentExtensionAwareTrait;
+
     const PRODUCT_TABLE_NAME = 'oro_product';
     const PRODUCT_UNIT_TABLE_NAME = 'oro_product_unit';
     const PRODUCT_UNIT_PRECISION_TABLE_NAME = 'oro_product_unit_precision';
@@ -38,18 +46,20 @@ class OroProductBundleInstaller implements
     /** @var ExtendExtension */
     protected $extendExtension;
 
-    /** @var NoteExtension */
-    protected $noteExtension;
+    /** @var  ActivityExtension */
+    protected $activityExtension;
 
-    /** @var AttachmentExtension */
-    protected $attachmentExtension;
+    /**
+     * @var SlugExtension
+     */
+    protected $slugExtension;
 
     /**
      * {@inheritdoc}
      */
-    public function setAttachmentExtension(AttachmentExtension $attachmentExtension)
+    public function setSlugExtension(SlugExtension $extension)
     {
-        $this->attachmentExtension = $attachmentExtension;
+        $this->slugExtension = $extension;
     }
 
     /**
@@ -63,9 +73,9 @@ class OroProductBundleInstaller implements
     /**
      * {@inheritdoc}
      */
-    public function setNoteExtension(NoteExtension $noteExtension)
+    public function setActivityExtension(ActivityExtension $activityExtension)
     {
-        $this->noteExtension = $noteExtension;
+        $this->activityExtension = $activityExtension;
     }
 
     /**
@@ -73,7 +83,7 @@ class OroProductBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_6';
+        return 'v1_8';
     }
 
     /**
@@ -90,6 +100,8 @@ class OroProductBundleInstaller implements
         $this->createOroProductShortDescriptionTable($schema);
         $this->createOroProductImageTable($schema);
         $this->createOroProductImageTypeTable($schema);
+        $this->createOroProductSlugTable($schema);
+        $this->createOroProductSlugPrototypeTable($schema);
 
         $this->addOroProductForeignKeys($schema);
         $this->addOroProductUnitPrecisionForeignKeys($schema);
@@ -103,6 +115,8 @@ class OroProductBundleInstaller implements
         $this->updateProductTable($schema);
         $this->addNoteAssociations($schema);
         $this->addAttachmentAssociations($schema);
+        $this->addProductContentVariants($schema);
+        $this->addAttributeFamilyField($schema);
     }
 
     /**
@@ -119,10 +133,10 @@ class OroProductBundleInstaller implements
         $table->addColumn('sku', 'string', ['length' => 255]);
         $table->addColumn('created_at', 'datetime', []);
         $table->addColumn('updated_at', 'datetime', []);
-        $table->addColumn('has_variants', 'boolean', ['default' => false]);
         $table->addColumn('variant_fields', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
         $table->addColumn('status', 'string', ['length' => 16]);
         $table->addColumn('primary_unit_precision_id', 'integer', ['notnull' => false]);
+        $table->addColumn('type', 'string', ['length' => 32]);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['sku']);
         $table->addIndex(['created_at'], 'idx_oro_product_created_at', []);
@@ -184,6 +198,36 @@ class OroProductBundleInstaller implements
         $table->addColumn('localized_value_id', 'integer', []);
         $table->setPrimaryKey(['description_id', 'localized_value_id']);
         $table->addUniqueIndex(['localized_value_id'], 'uniq_416a3679eb576e89');
+    }
+
+    /**
+     * Create oro_product_slug table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroProductSlugTable(Schema $schema)
+    {
+        $this->slugExtension->addSlugs(
+            $schema,
+            'oro_product_slug',
+            'oro_product',
+            'product_id'
+        );
+    }
+
+    /**
+     * Create oro_product_slug_prototype table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroProductSlugPrototypeTable(Schema $schema)
+    {
+        $this->slugExtension->addLocalizedSlugPrototypes(
+            $schema,
+            'oro_product_slug_prototype',
+            'oro_product',
+            'product_id'
+        );
     }
 
     /**
@@ -300,7 +344,7 @@ class OroProductBundleInstaller implements
      */
     protected function addNoteAssociations(Schema $schema)
     {
-        $this->noteExtension->addNoteAssociation($schema, self::PRODUCT_TABLE_NAME);
+        $this->activityExtension->addActivityAssociation($schema, 'oro_note', self::PRODUCT_TABLE_NAME);
     }
 
     /**
@@ -440,6 +484,60 @@ class OroProductBundleInstaller implements
             ['product_image_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    public function addProductContentVariants(Schema $schema)
+    {
+        if ($schema->hasTable('oro_web_catalog_variant')) {
+            $table = $schema->getTable('oro_web_catalog_variant');
+
+            $this->extendExtension->addManyToOneRelation(
+                $schema,
+                $table,
+                'product_page_product',
+                'oro_product',
+                'id',
+                [
+                    ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_READONLY,
+                    'entity' => ['label' => 'oro.product.entity_label'],
+                    'extend' => [
+                        'is_extend' => true,
+                        'owner' => ExtendScope::OWNER_CUSTOM,
+                        'cascade' => ['persist'],
+                        'on_delete' => 'CASCADE',
+                    ],
+                    'datagrid' => [
+                        'is_visible' => false
+                    ],
+                    'form' => [
+                        'is_enabled' => false
+                    ],
+                    'view' => ['is_displayable' => false],
+                    'merge' => ['display' => false],
+                    'dataaudit' => ['auditable' => true]
+                ]
+            );
+        }
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    public function addAttributeFamilyField(Schema $schema)
+    {
+        $table = $schema->getTable('oro_product');
+        $table->addColumn('attribute_family_id', 'integer', ['notnull' => false]);
+        $table->addIndex(['attribute_family_id']);
+
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_attribute_family'),
+            ['attribute_family_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'RESTRICT']
         );
     }
 }

@@ -1,34 +1,40 @@
 services:
-    oro_payment.form.type.payment_term:
-        class: 'Oro\Bundle\PaymentBundle\Form\Type\PaymentTermType'
-        arguments: ['%oro_payment.entity.payment_term.class%']
-        tags:
-            - { name: form.type, alias: oro_payment_term }
-        calls:
-            - [setAccountClass, ['%oro_customer.entity.account.class%']]
-            - [setAccountGroupClass, ['%oro_customer.entity.account_group.class%']]
-
-    oro_payment.form.type.payment_term_select:
-        class: 'Oro\Bundle\PaymentBundle\Form\Type\PaymentTermSelectType'
-        tags:
-            - { name: form.type, alias: oro_payment_term_select }
-
-    oro_payment.form.extension.abstract:
-        class: 'Oro\Bundle\PaymentBundle\Form\Extension\AbstractPaymentTermExtension'
+    oro_paymant.form_event_subscriber.rule_method_config_collection_subscriber:
+        class: 'Oro\Bundle\PaymentBundle\Form\EventSubscriber\RuleMethodConfigCollectionSubscriber'
         arguments:
-            - '@oro_entity.doctrine_helper'
+            - '@oro_payment.payment_method.registry'
+
+    oro_payment.form.type.method_config_collection:
+        class: Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodConfigCollectionType
+        arguments:
+            - '@oro_paymant.form_event_subscriber.rule_method_config_collection_subscriber'
+        tags:
+            - { name: form.type, alias: oro_payment_method_config_collection }
+
+    oro_payment.form.type.method_config:
+        class: Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodConfigType
+        arguments:
+            - '@oro_payment.payment_method.registry'
             - '@translator'
-            - '%oro_payment.entity.payment_term.class%'
-        abstract: true
-
-    oro_payment.form.extension.account_type:
-        class: 'Oro\Bundle\PaymentBundle\Form\Extension\AccountFormExtension'
-        parent: oro_payment.form.extension.abstract
         tags:
-            - { name: form.type_extension, alias: oro_account_type }
+            - { name: form.type, alias: oro_payment_method_config }
 
-    oro_payment.form.extension.account_group_type:
-        class: 'Oro\Bundle\PaymentBundle\Form\Extension\AccountGroupFormExtension'
-        parent: oro_payment.form.extension.abstract
+    oro_payment.form.type.methods_configs_rule_destination_collection:
+        class: Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodsConfigsRuleDestinationCollectionType
         tags:
-            - { name: form.type_extension, alias: oro_account_group_type }
+            - { name: form.type, alias: oro_payment_methods_configs_rule_destination_collection }
+
+    oro_payment.form.type.methods_configs_rule_destination:
+        class: Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodsConfigsRuleDestinationType
+        arguments:
+            - '@oro_address.form.listener.address'
+        tags:
+            - { name: form.type, alias: oro_payment_methods_configs_rule_destination }
+
+    oro_payment.form.type.methods_configs_rule:
+        class: Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodsConfigsRuleType
+        arguments:
+            - '@oro_payment.payment_method.registry'
+            - '@translator'
+        tags:
+            - { name: form.type, alias: oro_payment_methods_configs_rule }

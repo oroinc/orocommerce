@@ -92,7 +92,7 @@ class FrontendOwnershipMetadataProviderTest extends \PHPUnit_Framework_TestCase
             ->setMethods(['fetch', 'save'])
             ->getMockForAbstractClass();
 
-        $this->container = $this->getMock('Symfony\Component\DependencyInjection\ContainerInterface');
+        $this->container = $this->createMock('Symfony\Component\DependencyInjection\ContainerInterface');
         $this->container->expects($this->any())
             ->method('get')
             ->will(
@@ -164,7 +164,7 @@ class FrontendOwnershipMetadataProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetMetadataWithoutCache()
     {
-        $config = new Config(new EntityConfigId('ownership', 'SomeClass'));
+        $config = new Config(new EntityConfigId('ownership', \stdClass::class));
         $config
             ->set('frontend_owner_type', 'USER')
             ->set('frontend_owner_field_name', 'test_field')
@@ -172,18 +172,18 @@ class FrontendOwnershipMetadataProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->configProvider->expects($this->once())
             ->method('hasConfig')
-            ->with('SomeClass')
+            ->with(\stdClass::class)
             ->willReturn(true);
         $this->configProvider->expects($this->once())
             ->method('getConfig')
-            ->with('SomeClass')
+            ->with(\stdClass::class)
             ->willReturn($config);
 
         $this->cache = null;
 
         $this->assertEquals(
             new FrontendOwnershipMetadata('USER', 'test_field', 'test_column'),
-            $this->provider->getMetadata('SomeClass')
+            $this->provider->getMetadata(\stdClass::class)
         );
     }
 
@@ -219,15 +219,6 @@ class FrontendOwnershipMetadataProviderTest extends \PHPUnit_Framework_TestCase
 
         // cache
         $this->assertEquals($metadata, $providerWithCleanCache->getMetadata('UndefinedClass'));
-    }
-
-    /**
-     * @expectedException \BadMethodCallException
-     * @expectedExceptionMessage Method getSystemLevelClass() unsupported.
-     */
-    public function testGetSystemLevelClass()
-    {
-        $this->assertFalse($this->provider->getSystemLevelClass());
     }
 
     public function testGetGlobalLevelClass()
@@ -349,34 +340,39 @@ class FrontendOwnershipMetadataProviderTest extends \PHPUnit_Framework_TestCase
     {
         return [
             'without class' => [
-                'maxAccessLevel' => AccessLevel::SYSTEM_LEVEL,
+                'maxAccessLevel' => AccessLevel::DEEP_LEVEL,
                 'accessLevel' => AccessLevel::SYSTEM_LEVEL,
             ],
             'NONE default' => [
                 'maxAccessLevel' => AccessLevel::NONE_LEVEL,
                 'accessLevel' => AccessLevel::NONE_LEVEL,
-                'className' => 'SomeClass',
+                'className' => \stdClass::class,
             ],
             'BASIC default' => [
                 'maxAccessLevel' => AccessLevel::BASIC_LEVEL,
                 'accessLevel' => AccessLevel::BASIC_LEVEL,
-                'className' => 'SomeClass',
+                'className' => \stdClass::class,
             ],
             'LOCAL default' => [
                 'maxAccessLevel' => AccessLevel::LOCAL_LEVEL,
                 'accessLevel' => AccessLevel::LOCAL_LEVEL,
-                'className' => 'SomeClass',
+                'className' => \stdClass::class,
+            ],
+            'DEEP default' => [
+                'maxAccessLevel' => AccessLevel::DEEP_LEVEL,
+                'accessLevel' => AccessLevel::DEEP_LEVEL,
+                'className' => \stdClass::class,
             ],
             'not allowed with owner' => [
-                'maxAccessLevel' => AccessLevel::LOCAL_LEVEL,
+                'maxAccessLevel' => AccessLevel::DEEP_LEVEL,
                 'accessLevel' => AccessLevel::SYSTEM_LEVEL,
-                'className' => 'SomeClass',
+                'className' => \stdClass::class,
                 'hasOwner' => true,
             ],
             'not allowed without owner' => [
                 'maxAccessLevel' => AccessLevel::GLOBAL_LEVEL,
                 'accessLevel' => AccessLevel::GLOBAL_LEVEL,
-                'className' => 'SomeClass',
+                'className' => \stdClass::class,
                 'hasOwner' => false,
             ],
 
@@ -391,10 +387,10 @@ class FrontendOwnershipMetadataProviderTest extends \PHPUnit_Framework_TestCase
         $this->configProvider->expects($this->once())->method('getConfigs')->willReturn([$config1, $config2]);
         $this->securityConfigProvider->expects($this->atLeastOnce())->method('hasConfig')->willReturn(true);
 
-        $securityConfig1 = $this->getMock('Oro\Bundle\EntityConfigBundle\Config\ConfigInterface');
+        $securityConfig1 = $this->createMock('Oro\Bundle\EntityConfigBundle\Config\ConfigInterface');
         $securityConfig1->expects($this->once())->method('get')->with('group_name')->willReturn('');
 
-        $securityConfig2 = $this->getMock('Oro\Bundle\EntityConfigBundle\Config\ConfigInterface');
+        $securityConfig2 = $this->createMock('Oro\Bundle\EntityConfigBundle\Config\ConfigInterface');
         $securityConfig2->expects($this->once())->method('get')->with('group_name')->willReturn('commerce');
 
         $this->securityConfigProvider->expects($this->atLeastOnce())->method('getConfig')

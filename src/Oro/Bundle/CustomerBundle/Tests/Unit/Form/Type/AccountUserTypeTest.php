@@ -15,7 +15,7 @@ use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Entity\AccountUserAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 use Oro\Bundle\CustomerBundle\Entity\AccountUserRole;
 use Oro\Bundle\CustomerBundle\Form\Type\AccountSelectType;
 use Oro\Bundle\CustomerBundle\Form\Type\AccountUserRoleSelectType;
@@ -27,7 +27,7 @@ class AccountUserTypeTest extends FormIntegrationTestCase
 {
     const DATA_CLASS = 'Oro\Bundle\CustomerBundle\Entity\AccountUser';
     const ROLE_CLASS = 'Oro\Bundle\CustomerBundle\Entity\AccountUserRole';
-    const ADDRESS_CLASS = 'Oro\Bundle\CustomerBundle\Entity\AccountUserAddress';
+    const ADDRESS_CLASS = 'Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress';
 
     /**
      * @var AccountUserType
@@ -45,7 +45,7 @@ class AccountUserTypeTest extends FormIntegrationTestCase
     protected static $accounts = [];
 
     /**
-     * @var AccountUserAddress[]
+     * @var CustomerUserAddress[]
      */
     protected static $addresses = [];
 
@@ -260,14 +260,14 @@ class AccountUserTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @return AccountUserAddress[]
+     * @return CustomerUserAddress[]
      */
     protected function getAddresses()
     {
         if (!self::$addresses) {
             self::$addresses = [
-                1 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountUserAddress', 1),
-                2 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountUserAddress', 2)
+                1 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress', 1),
+                2 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress', 2)
             ];
         }
 
@@ -369,7 +369,7 @@ class AccountUserTypeTest extends FormIntegrationTestCase
      */
     private function createTranslator()
     {
-        $translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+        $translator = $this->createMock('Symfony\Component\Translation\TranslatorInterface');
         $translator->expects($this->any())
             ->method('trans')
             ->willReturnCallback(

@@ -125,7 +125,7 @@ class OrderShippingTrackingCollectionTypeTest extends FormIntegrationTestCase
     public function testFinishView(array $options)
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|FormInterface $form */
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
         $formView = new FormView();
         $this->type->finishView($formView, $form, $options);

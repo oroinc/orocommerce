@@ -17,9 +17,10 @@ use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
-use Oro\Bundle\PaymentBundle\Entity\PaymentTerm;
+use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\CurrencyBundle\Entity\MultiCurrency;
 
 class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
@@ -54,10 +55,10 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
         return [
             'Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadAccountDemoData',
             'Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadAccountUserDemoData',
-            'Oro\Bundle\PaymentBundle\Migrations\Data\Demo\ORM\LoadPaymentTermDemoData',
+            'Oro\Bundle\PaymentTermBundle\Migrations\Data\Demo\ORM\LoadPaymentTermDemoData',
             'Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM\LoadPriceListDemoData',
             'Oro\Bundle\ShoppingListBundle\Migrations\Data\Demo\ORM\LoadShoppingListDemoData',
-            'Oro\Bundle\TaxBundle\Migrations\Data\Demo\ORM\LoadTaxConfigurationDemoData'
+            'Oro\Bundle\TaxBundle\Migrations\Data\Demo\ORM\LoadTaxConfigurationDemoData',
         ];
     }
 
@@ -73,6 +74,8 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
             $filePath = current($filePath);
         }
 
+        $paymentTermAccessor = $this->container->get('oro_payment_term.provider.payment_term_association');
+
         /** @var ShoppingList $shoppingList */
         $shoppingList = $manager->getRepository('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList')->findOneBy([]);
 
@@ -86,6 +89,8 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
         $user = $userRepository->findOneBy([]);
 
         $accountUser = $this->getAccountUser($manager);
+
+        $rateConverter = $this->container->get('oro_currency.converter.rate');
 
         while (($data = fgetcsv($handler, 1000, ',')) !== false) {
             $row = array_combine($headers, array_values($data));
@@ -110,6 +115,14 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
                 'postalCode' => $row['shippingAddressPostalCode']
             ];
 
+            $total = MultiCurrency::create($row['total'], $row['currency']);
+            $baseTotal = $rateConverter->getBaseCurrencyAmount($total);
+            $total->setBaseCurrencyValue($baseTotal);
+
+            $subtotal = MultiCurrency::create($row['subtotal'], $row['currency']);
+            $baseSubtotal = $rateConverter->getBaseCurrencyAmount($subtotal);
+            $subtotal->setBaseCurrencyValue($baseSubtotal);
+
             $order
                 ->setOwner($user)
                 ->setAccount($accountUser->getAccount())
@@ -118,13 +131,14 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
                 ->setOrganization($user->getOrganization())
                 ->setBillingAddress($this->createOrderAddress($manager, $billingAddress))
                 ->setShippingAddress($this->createOrderAddress($manager, $shippingAddress))
-                ->setPaymentTerm($this->getPaymentTerm($manager, $row['paymentTerm']))
                 ->setWebsite($this->getWebsite($manager, $row['websiteName']))
                 ->setShipUntil(new \DateTime())
                 ->setCurrency($row['currency'])
                 ->setPoNumber($row['poNumber'])
-                ->setSubtotal($row['subtotal'])
-                ->setTotal($row['total']);
+                ->setTotalObject($total)
+                ->setSubtotalObject($subtotal);
+
+            $paymentTermAccessor->setPaymentTerm($order, $this->getPaymentTerm($manager, $row['paymentTerm']));
 
             if ($row['sourceEntityClass'] === 'Oro\Bundle\ShoppingListBundle\Entity\ShoppingList') {
                 $order->setSourceEntityClass($row['sourceEntityClass']);
@@ -210,7 +224,7 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
     protected function getPaymentTerm(EntityManager $manager, $label)
     {
         if (!array_key_exists($label, $this->paymentTerms)) {
-            $this->paymentTerms[$label] = $manager->getRepository('OroPaymentBundle:PaymentTerm')
+            $this->paymentTerms[$label] = $manager->getRepository('OroPaymentTermBundle:PaymentTerm')
                 ->findOneBy(['label' => $label]);
         }
 

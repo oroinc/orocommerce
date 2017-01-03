@@ -3,21 +3,20 @@
 namespace Oro\Bundle\CheckoutBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-
+use Oro\Bundle\CustomerBundle\Entity\AccountOwnerAwareInterface;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
-use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
+use Oro\Bundle\CustomerBundle\Entity\Ownership\FrontendAccountUserAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField; // required by DatesAwareTrait
+use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
+use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
+use Oro\Bundle\OrderBundle\Model\ShippingAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
-use Oro\Bundle\CustomerBundle\Entity\AccountOwnerAwareInterface;
-use Oro\Bundle\CustomerBundle\Entity\Ownership\FrontendAccountUserAwareTrait;
-use Oro\Bundle\OrderBundle\Model\ShippingAwareInterface;
+use Oro\Bundle\PaymentBundle\Entity\PaymentMethodAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedAwareInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Oro\Bundle\PaymentBundle\Entity\PaymentMethodAwareInterface;
 use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 
 /**
@@ -28,7 +27,7 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  * @Config(
  *      defaultValues={
  *          "entity"={
- *              "icon"="icon-shopping-cart"
+ *              "icon"="fa-shopping-cart"
  *          },
  *          "ownership"={
  *              "owner_type"="USER",
@@ -154,6 +153,13 @@ class Checkout implements
      * @ORM\JoinColumn(name="source_id", referencedColumnName="id", nullable=false)
      */
     protected $source;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="deleted", type="boolean", options={"default"=false})
+     */
+    protected $deleted = false;
 
     /**
      * @return int
@@ -343,7 +349,7 @@ class Checkout implements
      * @param Price $shippingCost
      * @return $this
      */
-    public function setShippingCost($shippingCost = null)
+    public function setShippingCost(Price $shippingCost = null)
     {
         $this->shippingCost = $shippingCost;
 
@@ -369,6 +375,26 @@ class Checkout implements
         $this->currency = $currency;
 
         return $this;
+    }
+
+    /**
+     * @param bool $deleted
+     *
+     * @return $this
+     */
+    public function setDeleted($deleted)
+    {
+        $this->deleted = (bool)$deleted;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDeleted()
+    {
+        return $this->deleted;
     }
 
     /**

@@ -38,15 +38,25 @@ services:
         tags:
             - { name: oro_product.quick_add_processor }
 
-    oro_rfp.event_listener.product_select_db_query:
-        class: '%oro_product.event_listener.scoped_product_select_db_query.common_class%'
-        parent: oro_product.event_listener.abstract_product_select_db_query
+    oro_rfp.event_listener.product_db_query_restriction:
+        class: '%oro_product.event_listener.scoped_product_db_query_restriction.common_class%'
+        parent: oro_product.event_listener.abstract_product_db_query_restriction
         calls:
             - [setScope, ['rfp']]
             - [setFrontendSystemConfigurationPath, ['oro_rfp.frontend_product_visibility']]
             - [setBackendSystemConfigurationPath, ['oro_rfp.backend_product_visibility']]
         tags:
-            - { name: kernel.event_listener, event: oro_product.product_select.db.query, method: onDBQuery }
+            - { name: kernel.event_listener, event: oro_product.product_db_query.restriction, method: onDBQuery }
+
+    oro_rfp.event_listener.product_search_query_restriction:
+        class: '%oro_product.event_listener.scoped_product_search_query_restriction.common_class%'
+        parent: oro_product.event_listener.abstract_product_search_query_restriction
+        calls:
+            - [setScope, ['rfp']]
+            - [setRequestStack, ['@request_stack']]
+            - [setFrontendSystemConfigurationPath, ['oro_rfp.frontend_product_visibility']]
+        tags:
+            - { name: kernel.event_listener, event: oro_product.product_search_query.restriction, method: onSearchQuery }
 
     oro_rfp.service.request_to_quote_data_storage:
         class: 'Oro\Bundle\RFPBundle\Storage\RequestToQuoteDataStorage'
@@ -160,6 +170,13 @@ services:
         tags:
             - { name: layout.data_provider, alias: oro_rfp_request_form }
 
+    oro_rfp.layout.data_provider.rfp_product_prices:
+        class: 'Oro\Bundle\RFPBundle\Layout\DataProvider\RfpProductPricesProvider'
+        arguments:
+            - '@oro_pricing.layout.data_provider.frontend_product_prices'
+        tags:
+            - { name: layout.data_provider, alias: oro_rfp_product_prices }
+
     oro_rfp.request.manager:
         class: 'Oro\Bundle\RFPBundle\Model\RequestManager'
         arguments:
@@ -177,3 +194,19 @@ services:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-view, method: onAccountView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-user-view, method: onAccountUserView }
             - { name: oro_featuretogle.feature, feature: 'rfp' }
+
+    oro_rfp.layout.decider.rfp_action_decider:
+        class: 'Oro\Bundle\RFPBundle\Layout\Decider\RFPActionDecider'
+        arguments:
+            - '@event_dispatcher'
+            - '@request_stack'
+        tags:
+            - { name: layout.data_provider, alias: oro_rfp_action_decider }
+
+    oro_rfp.provider.quote_currency_checker:
+       class: Oro\Bundle\RFPBundle\Provider\CurrencyCheckerProvider
+       public: false
+       arguments:
+           - '@doctrine'
+       tags:
+           - { name: oro_multi_currency.currency_checker_provider }

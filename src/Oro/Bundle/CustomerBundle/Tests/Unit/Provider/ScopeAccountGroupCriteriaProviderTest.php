@@ -46,7 +46,7 @@ class ScopeAccountGroupCriteriaProviderTest extends \PHPUnit_Framework_TestCase
         $accUser->setAccount($account);
         $account->setGroup($accGroup);
 
-        $token = $this->getMock(TokenInterface::class);
+        $token = $this->createMock(TokenInterface::class);
         $accUser->setAccount($account);
 
         $token->expects($this->once())
@@ -104,5 +104,10 @@ class ScopeAccountGroupCriteriaProviderTest extends \PHPUnit_Framework_TestCase
                 'criteria' => [],
             ],
         ];
+    }
+
+    public function testGetCriteriaValueType()
+    {
+        $this->assertEquals(AccountGroup::class, $this->provider->getCriteriaValueType());
     }
 }

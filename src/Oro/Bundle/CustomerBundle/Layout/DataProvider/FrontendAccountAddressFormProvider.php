@@ -6,8 +6,8 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
-use Oro\Bundle\CustomerBundle\Form\Type\AccountTypedAddressType;
+use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
+use Oro\Bundle\CustomerBundle\Form\Type\FrontendAccountTypedAddressType;
 use Oro\Bundle\LayoutBundle\Layout\DataProvider\AbstractFormProvider;
 
 class FrontendAccountAddressFormProvider extends AbstractFormProvider
@@ -18,40 +18,40 @@ class FrontendAccountAddressFormProvider extends AbstractFormProvider
     /**
      * Get account address form view
      *
-     * @param AccountAddress $accountAddress
+     * @param CustomerAddress $accountAddress
      * @param Account        $account
      *
      * @return FormView
      */
-    public function getAddressFormView(AccountAddress $accountAddress, Account $account)
+    public function getAddressFormView(CustomerAddress $accountAddress, Account $account)
     {
         $options = $this->getFormOptions($accountAddress, $account);
 
-        return $this->getFormView(AccountTypedAddressType::NAME, $accountAddress, $options);
+        return $this->getFormView(FrontendAccountTypedAddressType::NAME, $accountAddress, $options);
     }
 
     /**
      * Get account address form
      *
-     * @param AccountAddress $accountAddress
+     * @param CustomerAddress $accountAddress
      * @param Account        $account
      *
      * @return FormInterface
      */
-    public function getAddressForm(AccountAddress $accountAddress, Account $account)
+    public function getAddressForm(CustomerAddress $accountAddress, Account $account)
     {
         $options = $this->getFormOptions($accountAddress, $account);
 
-        return $this->getForm(AccountTypedAddressType::NAME, $accountAddress, $options);
+        return $this->getForm(FrontendAccountTypedAddressType::NAME, $accountAddress, $options);
     }
 
     /**
-     * @param AccountAddress $accountAddress
+     * @param CustomerAddress $accountAddress
      * @param Account        $account
      *
      * @return array
      */
-    private function getFormOptions(AccountAddress $accountAddress, Account $account)
+    private function getFormOptions(CustomerAddress $accountAddress, Account $account)
     {
         $options = [];
         if ($accountAddress->getId()) {

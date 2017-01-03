@@ -8,13 +8,6 @@ parameters:
     oro_payment.entity.payment_status.class: Oro\Bundle\PaymentBundle\Entity\PaymentStatus
 
 services:
-    oro_order.order.manager.api:
-        class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
-        parent: oro_soap.manager.entity_manager.abstract
-        arguments:
-            - '%oro_order.entity.order.class%'
-            - '@doctrine.orm.entity_manager'
-
     oro_order.order.entity.id_generator:
         class: 'Oro\Bundle\OrderBundle\Doctrine\ORM\Id\SimpleEntityAwareGenerator'
         public: false
@@ -92,18 +85,19 @@ services:
             - '@doctrine'
             - '@request_stack'
             - '@oro_security.security_facade'
-            - '@oro_payment.provider.payment_term'
+            - '@oro_payment_term.provider.payment_term'
 
     oro_order.handler.order_currency_handler:
         class: 'Oro\Bundle\OrderBundle\Handler\OrderCurrencyHandler'
         arguments:
-            - '@oro_locale.settings'
+            - '@oro_currency.config.currency'
 
     oro_order.handler.order_totals_handler:
         class: 'Oro\Bundle\OrderBundle\Handler\OrderTotalsHandler'
         arguments:
             - '@oro_pricing.subtotal_processor.total_processor_provider'
             - '@oro_pricing.subtotal_processor.provider.subtotal_line_item'
+            - '@oro_currency.converter.rate'
 
     oro_order.handler.order_shipping_tracking:
         class: 'Oro\Bundle\OrderBundle\Handler\OrderShippingTrackingHandler'
@@ -120,20 +114,30 @@ services:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-user-view, method: onAccountUserView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-view, method: onAccountView }
 
-    oro_order.event_listener.product_select_db_query:
-        class: '%oro_product.event_listener.scoped_product_select_db_query.common_class%'
-        parent: oro_product.event_listener.abstract_product_select_db_query
+    oro_order.event_listener.product_db_query_restriction:
+        class: '%oro_product.event_listener.scoped_product_db_query_restriction.common_class%'
+        parent: oro_product.event_listener.abstract_product_db_query_restriction
         calls:
             - [setScope, ['order']]
             - [setFrontendSystemConfigurationPath, ['oro_order.frontend_product_visibility']]
             - [setBackendSystemConfigurationPath, ['oro_order.backend_product_visibility']]
         tags:
-            - { name: kernel.event_listener, event: oro_product.product_select.db.query, method: onDBQuery }
+            - { name: kernel.event_listener, event: oro_product.product_db_query.restriction, method: onDBQuery }
+
+    oro_order.event_listener.product_search_query_restriction:
+        class: '%oro_product.event_listener.scoped_product_search_query_restriction.common_class%'
+        parent: oro_product.event_listener.abstract_product_search_query_restriction
+        calls:
+            - [setScope, ['order']]
+            - [setRequestStack, ['@request_stack']]
+            - [setFrontendSystemConfigurationPath, ['oro_order.frontend_product_visibility']]
+        tags:
+            - { name: kernel.event_listener, event: oro_product.product_search_query.restriction, method: onSearchQuery }
 
     oro_order.event_listener.order.total:
         class: 'Oro\Bundle\OrderBundle\EventListener\Order\OrderTotalEventListener'
         arguments:
-            - '@oro_pricing.subtotal_processor.total_processor_provider'
+            - '@oro_order.provider.total_processor'
         tags:
             - { name: kernel.event_listener, event: oro_order.order, method: onOrderEvent, priority: -255 }
 
@@ -148,7 +152,15 @@ services:
     oro_order.event_listener.order.payment_term:
         class: 'Oro\Bundle\OrderBundle\EventListener\Order\OrderPaymentTermEventListener'
         arguments:
-            - '@oro_payment.provider.payment_term'
+            - '@oro_payment_term.provider.payment_term'
+        tags:
+            - { name: kernel.event_listener, event: oro_order.order, method: onOrderEvent }
+
+    oro_order.event_listener.order.possible_shipping_methods:
+        class: 'Oro\Bundle\OrderBundle\EventListener\Order\OrderPossibleShippingMethodsEventListener'
+        arguments:
+            - '@oro_order.factory.shipping_context'
+            - '@?oro_shipping.shipping_price.provider'
         tags:
             - { name: kernel.event_listener, event: oro_order.order, method: onOrderEvent }
 
@@ -188,7 +200,6 @@ services:
         arguments:
             - '@oro_order.formatter.source_document'
             - '@oro_order.formatter.shipping_tracking'
-            - '@oro_order.formatter.shipping_method'
         tags:
             - { name: twig.extension }
 
@@ -203,16 +214,11 @@ services:
         arguments:
             - "@?oro_shipping.shipping_method.registry"
 
-    oro_order.formatter.shipping_method:
-        class: 'Oro\Bundle\OrderBundle\Formatter\ShippingMethodFormatter'
-        arguments:
-            - "@?oro_shipping.formatter.shipping_method_label"
-
     oro_order.order.listener.total_calculate_listener:
         class: 'Oro\Bundle\OrderBundle\EventListener\TotalCalculateListener'
         arguments:
             - '@form.factory'
-            - '@oro_action.helper.applications'
+            - '@oro_action.provider.current_application'
         tags:
             - { name: kernel.event_listener, event: oro_pricing.total_calculate_before_event, method: onBeforeTotalCalculate }
 
@@ -237,6 +243,7 @@ services:
             - '@oro_pricing.subtotal_processor.total_processor_provider'
             - '@oro_pricing.subtotal_processor.provider.subtotal_line_item'
             - '@oro_order.provider.discount_subtotal'
+            - '@oro_currency.converter.rate'
 
     oro_order.layout.provider.order_payment_status:
         class: 'Oro\Bundle\OrderBundle\Layout\DataProvider\OrderPaymentStatusProvider'
@@ -261,13 +268,6 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-orders-grid, method: onResultAfter }
 
-    oro_order.layout.provider.order_shipping_method:
-        class: 'Oro\Bundle\OrderBundle\Layout\DataProvider\OrderShippingMethodProvider'
-        arguments:
-            - '@oro_order.formatter.shipping_method'
-        tags:
-            - { name: layout.data_provider, alias: oro_order_frontend_shipping_method_provider }
-
     oro_order.provider.privilege_category_provider:
         class: 'Oro\Bundle\OrderBundle\Provider\PrivilegeCategoryProvider'
         tags:
@@ -287,3 +287,51 @@ services:
         class: 'Oro\Bundle\OrderBundle\EventListener\ExtractAddressOptionsListener'
         tags:
             - { name: kernel.event_listener, event: oro_payment.event.extract_address_options.orderaddress, method: onExtractShippingAddressOptions }
+
+    oro_order.factory.shipping_context:
+        class: 'Oro\Bundle\OrderBundle\Factory\OrderShippingContextFactory'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_order.shipping_line_item.converter_basic'
+            - '@?oro_shipping.context.builder_factory_basic'
+
+    oro_order.factory.payment_context:
+        class: 'Oro\Bundle\OrderBundle\Factory\OrderPaymentContextFactory'
+        arguments:
+            - '@oro_order.payment_line_item.converter_basic'
+            - '@?oro_payment.context.builder_factory_basic'
+
+    oro_order.shipping_line_item.converter_basic:
+        class: 'Oro\Bundle\OrderBundle\Converter\BasicOrderShippingLineItemConverter'
+        arguments:
+            - '@?oro_shipping.context.doctrine_line_item_collection_factory'
+            - '@?oro_shipping.line_item.factory_basic'
+
+    oro_order.payment_line_item.converter_basic:
+        class: 'Oro\Bundle\OrderBundle\Converter\BasicOrderPaymentLineItemConverter'
+        arguments:
+            - '@?oro_payment.context.doctrine_line_item_collection_factory'
+            - '@?oro_payment.line_item.builder_factory_basic'
+
+    oro_order.provider.order_currency_checker:
+        class: Oro\Bundle\OrderBundle\Provider\CurrencyCheckerProvider
+        public: false
+        arguments:
+            - '@doctrine'
+        tags:
+            - { name: oro_multi_currency.currency_checker_provider }
+
+    oro_order.provider.total_processor:
+        class: Oro\Bundle\OrderBundle\Provider\TotalProvider
+        arguments:
+            - '@oro_pricing.subtotal_processor.total_processor_provider'
+            - '@oro_currency.config.currency'
+            - '@oro_currency.converter.rate'
+
+    oro_order.provider.order_currency_checker:
+        class: Oro\Bundle\OrderBundle\Provider\CurrencyCheckerProvider
+        public: false
+        arguments:
+            - '@doctrine'
+        tags:
+            - { name: oro_multi_currency.currency_checker_provider }

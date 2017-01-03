@@ -46,14 +46,6 @@ abstract class AbstractAccountUserRoleType extends AbstractType
                 ]
             )
             ->add(
-                'selfManaged',
-                'checkbox',
-                [
-                    'required' => false,
-                    'label' => 'oro.customer.accountuserrole.self_managed.label'
-                ]
-            )
-            ->add(
                 'appendUsers',
                 'oro_entity_identifier',
                 [
@@ -73,6 +65,16 @@ abstract class AbstractAccountUserRoleType extends AbstractType
                     'multiple' => true
                 ]
             );
+        if (!$options['hide_self_managed']) {
+            $builder->add(
+                'selfManaged',
+                'checkbox',
+                [
+                    'required' => false,
+                    'label' => 'oro.customer.accountuserrole.self_managed.label'
+                ]
+            );
+        }
         $builder->add(
             'privileges',
             'hidden',
@@ -80,26 +82,6 @@ abstract class AbstractAccountUserRoleType extends AbstractType
                 'mapped' => false,
             ]
         );
-
-        foreach ($options['privilege_config'] as $fieldName => $config) {
-            $builder->add(
-                $fieldName,
-                PrivilegeCollectionType::NAME,
-                [
-                    'type' => AclPrivilegeType::NAME,
-                    'allow_add' => true,
-                    'prototype' => false,
-                    'allow_delete' => false,
-                    'mapped' => false,
-                    'options' => [
-                        'privileges_config' => $config,
-                    ],
-                    'page_component_options' => [
-                        'accessLevelRoute' => $options['access_level_route']
-                    ],
-                ]
-            );
-        }
 
         $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
             /** @var AccountUserRole|null $role */
@@ -124,6 +106,7 @@ abstract class AbstractAccountUserRoleType extends AbstractType
         $resolver->setDefaults([
             'data_class' => $this->dataClass,
             'access_level_route' => 'oro_account_acl_access_levels',
+            'hide_self_managed' => false
         ]);
     }
 

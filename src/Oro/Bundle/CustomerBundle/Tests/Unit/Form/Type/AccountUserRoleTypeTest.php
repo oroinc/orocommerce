@@ -15,17 +15,19 @@ class AccountUserRoleTypeTest extends AbstractAccountUserRoleTypeTest
         $defaultData,
         $viewData,
         array $submittedData,
-        $expectedData,
-        array $expectedFieldData = []
+        $expectedData
     ) {
         $form = $this->factory->create($this->formType, $defaultData, $options);
 
         $this->assertTrue($form->has('appendUsers'));
         $this->assertTrue($form->has('removeUsers'));
         $this->assertTrue($form->has('account'));
+        $this->assertTrue($form->has('selfManaged'));
 
         $formConfig = $form->getConfig();
         $this->assertEquals(self::DATA_CLASS, $formConfig->getOption('data_class'));
+
+        $this->assertFalse($formConfig->getOption('hide_self_managed'));
 
         $this->assertEquals($defaultData, $form->getData());
         $this->assertEquals($viewData, $form->getViewData());
@@ -40,12 +42,6 @@ class AccountUserRoleTypeTest extends AbstractAccountUserRoleTypeTest
             $this->assertEquals($expectedData->getRole(), $actualData->getRole());
         } else {
             $this->assertNotEmpty($actualData->getRole());
-        }
-
-        foreach ($expectedFieldData as $field => $data) {
-            $this->assertTrue($form->has($field));
-            $fieldForm = $form->get($field);
-            $this->assertEquals($data, $fieldForm->getData());
         }
     }
 

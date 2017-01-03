@@ -33,7 +33,7 @@
                 </tbody>
             </table>
         </div>
-        <a class="btn add-list-item" data-container=".oro-item-collection tbody" href="javascript: void(0);"><i class="icon-plus"></i>{{ 'oro.sale.quote.lineitem.add'|trans }}</a>
+        <a class="btn add-list-item" data-container=".oro-item-collection tbody" href="javascript: void(0);"><i class="fa-plus"></i>{{ 'oro.sale.quote.lineitem.add'|trans }}</a>
     </div>
 {% endblock %}
 
@@ -124,13 +124,12 @@
                 {{ form_widget(form.commentAccount) }}
             </div>
         {% endif %}
-        <a class="btn quote-lineitem-notes-add-btn" href="#">{{ 'oro.sale.btn.add_seller_notes'|trans }}</a>
-        <div class="quote-lineitem-notes quote-lineitem-notes-seller ">
+        <div class="quote-lineitem-notes-seller-active">
             {{ form_label(form.comment) }}
-            {{ form_widget(form.comment) }}
-            <a class="btn quote-lineitem-notes-remove-btn" href="#">
-                {{ 'oro.sale.btn.remove_seller_notes'|trans }}
-            </a>
+            <div data-page-component-module="oroorder/js/app/components/notes-component">
+                {{ form_widget(form.comment) }}
+                {{ form_errors(form.comment) }}
+            </div>
         </div>
     </td>
 {% endblock %}
@@ -194,7 +193,7 @@
                 </tbody>
             </table>
         </div>
-        <a class="btn add-list-item quote-lineitem-offers-item-add" data-container=".oro-item-collection tbody" href="javascript: void(0);"><i class="icon-plus"></i>{{ 'oro.sale.quote.lineitem.offers.add'|trans }}</a>
+        <a class="btn add-list-item quote-lineitem-offers-item-add" data-container=".oro-item-collection tbody" href="javascript: void(0);"><i class="fa-plus"></i>{{ 'oro.sale.quote.lineitem.offers.add'|trans }}</a>
     </div>
 {% endblock %}
 
@@ -226,7 +225,7 @@
         data-layout="separate">
         {{ form_widget(form, { 'prototype' : prototype}) }}
         <td class="quote-lineitem-offers-remove">
-            <button type="button" class="removeRow btn icons-holder"><i class="icon-remove"></i></button>
+            <button type="button" class="removeRow btn icons-holder"><i class="fa-close"></i></button>
         </td>
     </tr>
 {% endmacro %}

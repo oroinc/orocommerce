@@ -120,7 +120,7 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
             ->willReturn(true);
 
         $this->securityFacade->expects($this->at(1))->method('isGranted')
-            ->with('oro_shopping_list_line_item_frontend_add')
+            ->with('oro_shopping_list_frontend_update')
             ->willReturn($isGrantedAdd);
 
         if ($shoppingList && $isGrantedAdd) {
@@ -160,7 +160,7 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
         array $expectedLineItems = []
     ) {
         /** @var \PHPUnit_Framework_MockObject_MockObject|ShoppingList $shoppingList */
-        $shoppingList = $this->getMock('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList');
+        $shoppingList = $this->createMock('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList');
         $shoppingList->expects($this->any())
             ->method('getId')
             ->willReturn(1);
@@ -225,13 +225,13 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
     public function testPrepareLineItemWithProduct()
     {
         /** @var AccountUser $user */
-        $user = $this->getMock(AccountUser::class);
+        $user = $this->createMock(AccountUser::class);
 
         /** @var ShoppingList $shoppingList */
-        $shoppingList = $this->getMock(ShoppingList::class);
+        $shoppingList = $this->createMock(ShoppingList::class);
 
         /** @var Product $product */
-        $product = $this->getMock(Product::class);
+        $product = $this->createMock(Product::class);
 
         $this->shoppingListManager->expects($this->once())->method('getCurrent')->willReturn($shoppingList);
 

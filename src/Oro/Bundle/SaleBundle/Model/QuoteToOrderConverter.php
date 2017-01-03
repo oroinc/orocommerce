@@ -11,8 +11,7 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Handler\OrderCurrencyHandler;
-use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
-use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
+use Oro\Bundle\OrderBundle\Handler\OrderTotalsHandler;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteAddress;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
@@ -25,30 +24,24 @@ class QuoteToOrderConverter
     /** @var OrderCurrencyHandler */
     protected $orderCurrencyHandler;
 
-    /** @var LineItemSubtotalProvider */
-    protected $lineItemSubtotalProvider;
-
     /** @var ManagerRegistry */
     protected $registry;
 
-    /** @var TotalProcessorProvider */
-    protected $totalProvider;
+    /** @var OrderTotalsHandler */
+    protected $orderTotalsHandler;
 
     /**
      * @param OrderCurrencyHandler $orderCurrencyHandler
-     * @param LineItemSubtotalProvider $lineItemSubtotalProvider
-     * @param TotalProcessorProvider $totalProvider,
-     * @param ManagerRegistry $registry
+     * @param OrderTotalsHandler   $orderTotalsHandler
+     * @param ManagerRegistry      $registry
      */
     public function __construct(
         OrderCurrencyHandler $orderCurrencyHandler,
-        LineItemSubtotalProvider $lineItemSubtotalProvider,
-        TotalProcessorProvider $totalProvider,
+        OrderTotalsHandler $orderTotalsHandler,
         ManagerRegistry $registry
     ) {
         $this->orderCurrencyHandler = $orderCurrencyHandler;
-        $this->lineItemSubtotalProvider = $lineItemSubtotalProvider;
-        $this->totalProvider = $totalProvider;
+        $this->orderTotalsHandler = $orderTotalsHandler;
         $this->registry = $registry;
     }
 
@@ -85,12 +78,13 @@ class QuoteToOrderConverter
         if ($quote->getShippingEstimate() !== null) {
             $this->fillShippingCost($quote->getShippingEstimate(), $order);
         }
-        $this->fillSubtotals($order);
+
+        $this->orderTotalsHandler->fillSubtotals($order);
 
         if ($needFlush) {
             $manager = $this->registry->getManagerForClass('OroOrderBundle:Order');
             $manager->persist($order);
-            $manager->flush($order);
+            $manager->flush();
         }
 
         return $order;
@@ -198,31 +192,19 @@ class QuoteToOrderConverter
     }
 
     /**
-     * @param Order $order
-     */
-    protected function fillSubtotals(Order $order)
-    {
-        $subtotal = $this->lineItemSubtotalProvider->getSubtotal($order);
-        $total = $this->totalProvider->getTotal($order);
-
-        $order->setSubtotal($subtotal->getAmount());
-        $order->setTotal($total->getAmount());
-    }
-
-    /**
      * @param Price $shippingEstimate
      * @param Order $order
      */
     protected function fillShippingCost(Price $shippingEstimate, Order $order)
     {
-        $shippingCostAmount = $shippingEstimate->getValue();
+        $estimatedShippingCostAmount = $shippingEstimate->getValue();
         $shippingEstimateCurrency = $shippingEstimate->getCurrency();
         $orderCurrency = $order->getCurrency();
         if ($orderCurrency !== $shippingEstimateCurrency) {
-            $shippingCostAmount *= $this->getExchangeRate($shippingEstimateCurrency, $orderCurrency);
+            $estimatedShippingCostAmount *= $this->getExchangeRate($shippingEstimateCurrency, $orderCurrency);
         }
 
-        $order->setShippingCost(Price::create($shippingCostAmount, $orderCurrency));
+        $order->setEstimatedShippingCostAmount($estimatedShippingCostAmount);
     }
 
     /**

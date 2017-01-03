@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\UPSBundle\Provider;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\IntegrationBundle\Entity\Transport;
 use Oro\Bundle\IntegrationBundle\Exception\InvalidConfigurationException;
 use Oro\Bundle\IntegrationBundle\Provider\Rest\Exception\RestException;
@@ -18,22 +17,15 @@ class UPSTransport extends AbstractRestTransport
     const API_RATES_PREFIX = 'Rate';
 
     /**
-     * @var  ManagerRegistry
-     */
-    protected $registry;
-
-    /**
      * @var LoggerInterface
      */
     protected $logger;
 
     /**
-     * @param ManagerRegistry $registry
      * @param LoggerInterface $logger
      */
-    public function __construct(ManagerRegistry $registry, LoggerInterface $logger)
+    public function __construct(LoggerInterface $logger)
     {
-        $this->registry = $registry;
         $this->logger = $logger;
     }
 
@@ -87,7 +79,7 @@ class UPSTransport extends AbstractRestTransport
      * @throws \InvalidArgumentException
      * @return PriceResponse|null
      */
-    public function getPrices(PriceRequest $priceRequest, Transport $transportEntity)
+    public function getPriceResponse(PriceRequest $priceRequest, Transport $transportEntity)
     {
         try {
             $this->client = $this->createRestClient($transportEntity);
