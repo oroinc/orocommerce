@@ -128,6 +128,9 @@ class ProductVariantAvailabilityProvider
                 switch ($fieldType) {
                     case 'enum':
                         $id = $this->doctrineHelper->getSingleEntityIdentifier($variantValue);
+                        if ($id === null) {
+                            continue;
+                        }
                         $allVariants[$variantField][$id] = true;
                         break;
 
