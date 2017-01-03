@@ -3,3 +3,6 @@ oro:
         settings:
             label: Flat Rate Transport Settings
             labels.label: Label
+
+        channel_type:
+            label: Flat Rate

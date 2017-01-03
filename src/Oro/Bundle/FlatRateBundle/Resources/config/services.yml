@@ -1,0 +1,10 @@
+services:
+    oro_flat_rate.integration.channel:
+        class: 'Oro\Bundle\FlatRateBundle\Integration\FlatRateChannelType'
+        tags:
+            - { name: oro_integration.channel, type: flat_rate }
+
+    oro_flat_rate.integration.transport:
+        class: 'Oro\Bundle\FlatRateBundle\Integration\FlatRateTransport'
+        tags:
+            - { name: oro_integration.transport, type: flat_rate, channel_type: flat_rate }

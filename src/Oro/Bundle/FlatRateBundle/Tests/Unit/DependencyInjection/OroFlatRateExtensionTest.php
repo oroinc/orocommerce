@@ -20,6 +20,8 @@ class OroFlatRateExtensionTest extends ExtensionTestCase
         $this->loadExtension($this->extension);
 
         $expectedDefinitions = [
+            'oro_flat_rate.integration.channel',
+            'oro_flat_rate.integration.transport',
         ];
 
         $this->assertDefinitionsLoaded($expectedDefinitions);
