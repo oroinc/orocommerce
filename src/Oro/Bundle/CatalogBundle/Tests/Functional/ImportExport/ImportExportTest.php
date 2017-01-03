@@ -16,6 +16,9 @@ class ImportExportTest extends AbstractImportExportTest
 {
     public function testImportWithCategory()
     {
+        $this->markTestSkipped(
+            'This test will be completely removed and replaced with a set of smaller functional tests (see BAP-13064)'
+        );
         $strategy = 'oro_product_product.add_or_replace';
         $this->loadFixtures([LoadCategoryData::class]);
 
@@ -59,6 +62,9 @@ class ImportExportTest extends AbstractImportExportTest
 
     public function testImportWithSameCategory()
     {
+        $this->markTestSkipped(
+            'This test will be completely removed and replaced with a set of smaller functional tests (see BAP-13064)'
+        );
         $strategy = 'oro_product_product.add_or_replace';
         $this->loadFixtures([LoadCategoryData::class]);
 

@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\TaxBundle\Model;
 
-final class ResultElement extends AbstractResultElement
+final class ResultElement extends AbstractResultElement implements \JsonSerializable
 {
     const INCLUDING_TAX = 'includingTax';
     const EXCLUDING_TAX = 'excludingTax';
@@ -35,6 +35,14 @@ final class ResultElement extends AbstractResultElement
         }
 
         return $resultElement;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function jsonSerialize()
+    {
+        return $this->getArrayCopy();
     }
 
     /**

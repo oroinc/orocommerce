@@ -4,7 +4,7 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Bundle\CheckoutBundle\Event\CheckoutValidateEvent;
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
@@ -331,8 +331,8 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
      */
     protected function setCurrentAccountOnAddresses(Account $account)
     {
-        $addresses = $this->registry->getRepository('OroCustomerBundle:AccountAddress')->findAll();
-        /** @var AccountAddress $address */
+        $addresses = $this->registry->getRepository('OroCustomerBundle:CustomerAddress')->findAll();
+        /** @var CustomerAddress $address */
         foreach ($addresses as $address) {
             $address->setFrontendOwner($account);
         }

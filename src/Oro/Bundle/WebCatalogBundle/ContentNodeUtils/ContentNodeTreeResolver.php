@@ -64,7 +64,6 @@ class ContentNodeTreeResolver implements ContentNodeTreeResolverInterface
             return null;
         }
 
-        $identifier = $this->getIdentifier($node);
         $resolvedContentVariant = $this->getResolvedContentVariant($node->getContentVariants(), $scope);
         if (!$resolvedContentVariant) {
             return null;
@@ -72,7 +71,7 @@ class ContentNodeTreeResolver implements ContentNodeTreeResolverInterface
 
         $resolvedNode = new ResolvedContentNode(
             $node->getId(),
-            $identifier,
+            $this->getIdentifier($node),
             $node->getTitles(),
             $resolvedContentVariant
         );
@@ -105,10 +104,7 @@ class ContentNodeTreeResolver implements ContentNodeTreeResolverInterface
         foreach ($metadata->getFieldNames() as $fieldName) {
             $resolvedVariant->{$fieldName} = $metadata->getFieldValue($filteredVariant, $fieldName);
         }
-        /**
-         * @var string $associationName
-         * @var $associationMapping
-         */
+
         foreach ($metadata->getAssociationNames() as $associationName) {
             $associatedValue = $metadata->getFieldValue($filteredVariant, $associationName);
 
@@ -132,21 +128,24 @@ class ContentNodeTreeResolver implements ContentNodeTreeResolverInterface
      */
     protected function getIdentifier(ContentNode $node)
     {
-        $defaultVariant = $node->getDefaultVariant();
-        /** @var Slug $slug */
-        $slug = $defaultVariant->getSlugs()
+        /** @var LocalizedFallbackValue $localizedUrl */
+        $localizedUrl = $node->getLocalizedUrls()
             ->filter(
-                function (Slug $slug) {
-                    return $slug->getLocalization() === null;
+                function (LocalizedFallbackValue $localizedUrl) {
+                    return $localizedUrl->getLocalization() === null;
                 }
             )
             ->first();
 
-        if (!$slug) {
-            $slug = $defaultVariant->getSlugs()->first();
+        if (!$localizedUrl) {
+            $localizedUrl = $node->getLocalizedUrls()->first();
         }
 
-        $url = trim($slug->getUrl(), '/');
+        if (!$localizedUrl) {
+            return '';
+        }
+
+        $url = trim($localizedUrl->getText(), '/');
         $identifierParts = [self::ROOT_NODE_IDENTIFIER];
         if ($url) {
             if (strpos($url, '/') > 0) {

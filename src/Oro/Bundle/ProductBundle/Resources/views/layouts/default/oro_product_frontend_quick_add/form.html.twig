@@ -8,7 +8,13 @@
             <div class="clearfix">
                 <div class="{{ class_prefix }}__form__col {{ class_prefix }}__form__col_item">
                     {{ form_widget(form.productSku, {attr: {
-                        placeholder: "oro.product.sku.placeholder"
+                        placeholder: "oro.product.sku.placeholder",
+                        'data-dropdown-classes':{
+                            holder: 'select2-drop oro-select2__dropdown',
+                            menu: 'select2-results',
+                            item: 'select2-result',
+                            link: 'select2-result-label'
+                        }|json_encode
                     }}) }}
                 </div>
                 <div class="{{ class_prefix }}__form__col {{ class_prefix }}__form__col_qty">

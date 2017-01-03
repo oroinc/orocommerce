@@ -6,12 +6,12 @@
     .product-item__qty__current-grid {
       float: left;
       width: calc(50% - 5px);
+    }
 
-      + .add-product-from-view-component {
-        float: left;
-        width: calc(50% - 5px);
-        margin-left: 10px;
-      }
+    .add-product-from-view-component {
+      float: right;
+      width: calc(50% - 5px);
+      margin-left: 10px;
     }
 
     .line_item_form_fields__form__row {
@@ -64,7 +64,7 @@
       max-width: inherit;
     }
 
-    .product-item__qty__current-grid + .add-product-from-view-component {
+    .add-product-from-view-component {
       width: 100%;
 
       margin-left: 0;

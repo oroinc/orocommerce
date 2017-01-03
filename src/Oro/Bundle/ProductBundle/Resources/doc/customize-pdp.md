@@ -128,7 +128,7 @@ and template:
                                 {% if productImage and isDesktopVersion() %}
                                     data-zoom-image="{{ Image.url(productImage, 'product_original') }}"
                                     {% set options = {
-                                    widgetModule: 'oroproduct/js/vendors/elevatezoom/jquery-elevatezoom',
+                                    widgetModule: 'jquery-elevatezoom',
                                     widgetName: 'elevateZoom',
                                     scrollZoom: true,
                                     zoomWindowWidth: 630,

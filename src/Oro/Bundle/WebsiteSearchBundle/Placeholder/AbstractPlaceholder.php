@@ -33,5 +33,5 @@ abstract class AbstractPlaceholder implements PlaceholderInterface
     /**
      * @return string
      */
-    abstract protected function getDefaultValue();
+    abstract public function getDefaultValue();
 }

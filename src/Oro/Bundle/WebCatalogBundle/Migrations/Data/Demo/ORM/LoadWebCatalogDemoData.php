@@ -14,6 +14,8 @@ use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
+use Oro\Bundle\WebCatalogBundle\ContentVariantType\SystemPageContentVariantType;
+use Oro\Bundle\WebCatalogBundle\DependencyInjection\OroWebCatalogExtension;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
@@ -54,12 +56,35 @@ class LoadWebCatalogDemoData extends AbstractFixture implements ContainerAwareIn
      */
     public function load(ObjectManager $manager)
     {
+        $webCatalog = $this->loadWebCatalogData($manager);
+        $this->enableWebCatalog($webCatalog);
+    }
+
+    /**
+     * @param ObjectManager $manager
+     * @return WebCatalog
+     */
+    protected function loadWebCatalogData(ObjectManager $manager)
+    {
         $webCatalog = $this->createCatalog($manager);
 
         $contentNodes = $this->getWebCatalogData();
         $this->loadContentNodes($manager, $webCatalog, $contentNodes);
 
         $manager->flush();
+
+        return $webCatalog;
+    }
+
+    /**
+     * @param WebCatalog $webCatalog
+     */
+    protected function enableWebCatalog(WebCatalog $webCatalog)
+    {
+        $configManager = $this->container->get('oro_config.global');
+        $configManager->set(OroWebCatalogExtension::ALIAS . '.web_catalog', $webCatalog->getId());
+
+        $configManager->flush();
     }
 
     /**
@@ -179,6 +204,8 @@ class LoadWebCatalogDemoData extends AbstractFixture implements ContainerAwareIn
                 ->getRepository(Page::class)
                 ->findOneByTitle($params['title']);
             $variant->setCmsPage($page);
+        } elseif ($type === SystemPageContentVariantType::TYPE) {
+            $variant->setSystemPageRoute($params['route']);
         }
         
         return $variant;

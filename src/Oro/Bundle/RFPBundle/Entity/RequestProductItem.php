@@ -40,7 +40,7 @@ class RequestProductItem implements ProductUnitHolderInterface, ProductHolderInt
     /**
      * @var RequestProduct
      *
-     * @ORM\ManyToOne(targetEntity="requestProduct", inversedBy="requestProductItems")
+     * @ORM\ManyToOne(targetEntity="RequestProduct", inversedBy="requestProductItems")
      * @ORM\JoinColumn(name="request_product_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $requestProduct;
