@@ -1,21 +1,27 @@
 parameters:
     oro_customer.entity.account.class: Oro\Bundle\CustomerBundle\Entity\Account
-    oro_customer.entity.account_address.class: Oro\Bundle\CustomerBundle\Entity\AccountAddress
+    oro_customer.entity.account_address.class: Oro\Bundle\CustomerBundle\Entity\CustomerAddress
     oro_customer.entity.account_group.class: Oro\Bundle\CustomerBundle\Entity\AccountGroup
     oro_customer.entity.account_user.class: Oro\Bundle\CustomerBundle\Entity\AccountUser
-    oro_customer.entity.account_user_settings.class: Oro\Bundle\CustomerBundle\Entity\AccountUserSettings
-    oro_customer.entity.account_user_address.class: Oro\Bundle\CustomerBundle\Entity\AccountUserAddress
+    oro_customer.entity.customer_user_settings.class: Oro\Bundle\CustomerBundle\Entity\CustomerUserSettings
+    oro_customer.entity.account_user_address.class: Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress
     oro_customer.entity.account_user_role.class: Oro\Bundle\CustomerBundle\Entity\AccountUserRole
     oro_customer.entity.audit.class: Oro\Bundle\CustomerBundle\Entity\Audit
     oro_customer.entity.navigation_item.class: Oro\Bundle\CustomerBundle\Entity\NavigationItem
     oro_customer.entity.navigation_history_item.class: Oro\Bundle\CustomerBundle\Entity\NavigationHistoryItem
     oro_customer.entity.pinbar_tab.class: Oro\Bundle\CustomerBundle\Entity\PinbarTab
-    oro_customer.entity.sidebar_state.class: Oro\Bundle\CustomerBundle\Entity\AccountUserSidebarState
-    oro_customer.entity.widget.class: Oro\Bundle\CustomerBundle\Entity\AccountUserSidebarWidget
+    oro_customer.entity.sidebar_state.class: Oro\Bundle\CustomerBundle\Entity\CustomerUserSidebarState
+    oro_customer.entity.widget.class: Oro\Bundle\CustomerBundle\Entity\CustomerUserSidebarWidget
     oro_customer.entity.page_state.class: Oro\Bundle\CustomerBundle\Entity\PageState
     oro_customer.entity.windows_state.class: Oro\Bundle\CustomerBundle\Entity\WindowsState
 
 services:
+    oro_customer.deprecated_rest_api_route_options_resolver:
+        class: Oro\Bundle\CustomerBundle\Routing\DeprecatedRestApiRouteOptionsResolver
+        public: false
+        tags:
+            - { name: routing.options_resolver }
+
     oro_customer.security.account_user_provider:
         class: 'Oro\Bundle\CustomerBundle\Security\AccountUserProvider'
         public: false
@@ -51,6 +57,7 @@ services:
         class: 'Oro\Bundle\CustomerBundle\EventListener\Datagrid\AccountDatagridListener'
         arguments:
             - "@oro_customer.security.account_user_provider"
+            - "@oro_customer.repository.account"
             - ["@oro_customer.datagrid.account_action_permission_provider", "getActions"]
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before, method: onBuildBeforeFrontendItems }
@@ -130,13 +137,6 @@ services:
             - '%oro_customer.entity.account_user.class%'
             - "@doctrine.orm.entity_manager"
 
-    oro_customer.account_user_role.manager.api:
-        class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
-        parent: oro_soap.manager.entity_manager.abstract
-        arguments:
-            - '%oro_customer.entity.account_user_role.class%'
-            - "@doctrine.orm.entity_manager"
-
     oro_customer.datagrid.action_permission_provider:
         class: 'Oro\Bundle\CustomerBundle\Datagrid\ActionPermissionProvider'
         arguments:
@@ -175,7 +175,7 @@ services:
             - "@oro_email.direct_mailer"
 
     oro_account_user.manager:
-        class: 'Oro\Bundle\CustomerBundle\Entity\AccountUserManager'
+        class: 'Oro\Bundle\CustomerBundle\Entity\CustomerUserManager'
         arguments:
             - '%oro_customer.entity.account_user.class%'
             - "@doctrine"
@@ -649,3 +649,9 @@ services:
             - '@oro_customer.acl.resolver.role_translation_prefix'
         tags:
             - { name: oro_datagrid.datasource, type: account-user-workflow-permission-grid-provider }
+
+    oro_customer.repository.account:
+        class: 'Oro\Bundle\CustomerBundle\Entity\Repository\AccountRepository'
+        parent: oro_entity.abstract_repository
+        arguments:
+            - '%oro_customer.entity.account.class%'

@@ -29,7 +29,7 @@ class WebsiteSearchMappingProviderTest extends AbstractSearchMappingProviderTest
      */
     protected function getProvider()
     {
-        $this->mappingConfigurationLoader = $this->getMock(ConfigurationLoaderInterface::class);
+        $this->mappingConfigurationLoader = $this->createMock(ConfigurationLoaderInterface::class);
         $this->mappingConfigurationLoader
             ->expects($this->once())
             ->method('getConfiguration')

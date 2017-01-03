@@ -25,7 +25,7 @@ class PriceListReferenceCheckerTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->registry = $this->getMock(ManagerRegistry::class);
+        $this->registry = $this->createMock(ManagerRegistry::class);
         $this->priceListReferenceChecker = new PriceListReferenceChecker($this->registry);
     }
 

@@ -94,13 +94,13 @@ services:
         tags:
             - { name: form.type_extension, alias: integer }
 
-    oro_product.form.type.custom_entity_fields_choice:
-        class: 'Oro\Bundle\ProductBundle\Form\Type\ProductCustomFieldsChoiceType'
+    oro_product.form.type.custom_variant_fields_choice:
+        class: 'Oro\Bundle\ProductBundle\Form\Type\ProductCustomVariantFieldsChoiceType'
         arguments:
-            - "@oro_product.provider.custom_field_provider"
+            - '@oro_product.provider.custom_field_provider'
             - '%oro_product.entity.product.class%'
         tags:
-            - { name: form.type, alias: oro_product_custom_entity_fields_choice }
+            - { name: form.type, alias: oro_product_custom_variant_fields_choice }
 
     oro_product.form.type.product_variant_links:
         class: 'Oro\Bundle\ProductBundle\Form\Type\ProductVariantLinksType'
@@ -113,6 +113,13 @@ services:
             - "@oro_product.provider.product_status_provider"
         tags:
             - { name: form.type, alias: oro_product_status }
+
+    oro_product.form.type.product_type:
+        class: 'Oro\Bundle\ProductBundle\Form\Type\ProductTypeType'
+        arguments:
+            - '@oro_product.provider.product_type_provider'
+        tags:
+            - { name: form.type, alias: oro_product_type }
 
     oro_product.form.type.product_inventory_status_select:
         class: 'Oro\Bundle\ProductBundle\Form\Type\ProductInventoryStatusSelectType'
@@ -157,3 +164,12 @@ services:
             - '@doctrine'
         tags:
             - { name: form.type, alias: oro_product_page_variant }
+
+    oro_product.form.type.frontend_variant_field:
+        class: 'Oro\Bundle\ProductBundle\Form\Type\FrontendVariantFiledType'
+        arguments:
+            - '@oro_product.provider.custom_field_provider'
+            - '@oro_product.provider.product_variant_availability_provider'
+            - '%oro_product.entity.product.class%'
+        tags:
+            - { name: form.type, alias: oro_product_frontend_variant_field }

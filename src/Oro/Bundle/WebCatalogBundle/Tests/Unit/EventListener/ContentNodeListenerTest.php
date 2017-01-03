@@ -4,12 +4,14 @@ namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\EventListener;
 
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Oro\Bundle\CommerceEntityBundle\Storage\ExtraActionEntityStorageInterface;
-use Oro\Bundle\WebCatalogBundle\ContentNodeUtils\ContentNodeNameFiller;
+use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
+use Oro\Bundle\WebCatalogBundle\Async\Topics;
 use Oro\Bundle\WebCatalogBundle\Generator\SlugGenerator;
 use Oro\Bundle\WebCatalogBundle\Model\ContentNodeMaterializedPathModifier;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\EventListener\ContentNodeListener;
 use Oro\Component\DependencyInjection\ServiceLink;
+use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class ContentNodeListenerTest extends \PHPUnit_Framework_TestCase
@@ -27,11 +29,6 @@ class ContentNodeListenerTest extends \PHPUnit_Framework_TestCase
     protected $storage;
 
     /**
-     * @var ContentNodeNameFiller|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $contentNodeNameFiller;
-
-    /**
      * @var SlugGenerator|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $slugGenerator;
@@ -41,17 +38,19 @@ class ContentNodeListenerTest extends \PHPUnit_Framework_TestCase
      */
     protected $contentNodeListener;
 
+    /**
+     * @var MessageProducerInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $messageProducer;
+
     protected function setUp()
     {
         $this->modifier = $this->getMockBuilder(ContentNodeMaterializedPathModifier::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->storage = $this->getMock(ExtraActionEntityStorageInterface::class);
+        $this->storage = $this->createMock(ExtraActionEntityStorageInterface::class);
 
-        $this->contentNodeNameFiller = $this->getMockBuilder(ContentNodeNameFiller::class)
-            ->disableOriginalConstructor()
-            ->getMock();
         $this->slugGenerator = $this->getMockBuilder(SlugGenerator::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -61,24 +60,14 @@ class ContentNodeListenerTest extends \PHPUnit_Framework_TestCase
         $generatorLink->expects($this->any())
             ->method('getService')
             ->willReturn($this->slugGenerator);
+        $this->messageProducer = $this->createMock(MessageProducerInterface::class);
 
         $this->contentNodeListener = new ContentNodeListener(
             $this->modifier,
             $this->storage,
-            $this->contentNodeNameFiller,
-            $generatorLink
+            $generatorLink,
+            $this->messageProducer
         );
-    }
-
-    public function testPrePersist()
-    {
-        $contentNode = new ContentNode();
-
-        $this->contentNodeNameFiller->expects($this->once())
-            ->method('fillName')
-            ->with($contentNode);
-
-        $this->contentNodeListener->prePersist($contentNode);
     }
 
     public function testPostPersist()
@@ -137,5 +126,36 @@ class ContentNodeListenerTest extends \PHPUnit_Framework_TestCase
             ->with($contentNode);
 
         $this->contentNodeListener->preUpdate($contentNode, $args);
+    }
+
+    public function testOnFormAfterFlush()
+    {
+        $contentNode = $this->getEntity(ContentNode::class, ['id' => 1]);
+
+        $this->messageProducer->expects($this->once())
+            ->method('send')
+            ->with(Topics::RESOLVE_NODE_SLUGS, $contentNode->getId());
+
+        /** @var AfterFormProcessEvent|\PHPUnit_Framework_MockObject_MockObject $event */
+        $event = $this->getMockBuilder(AfterFormProcessEvent::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $event->expects($this->once())
+            ->method('getData')
+            ->willReturn($contentNode);
+
+        $this->contentNodeListener->onFormAfterFlush($event);
+    }
+
+    public function testPostRemove()
+    {
+        /** @var ContentNode $contentNode */
+        $contentNode = $this->getEntity(ContentNode::class, ['id' => 1]);
+
+        $this->messageProducer->expects($this->once())
+            ->method('send')
+            ->with(Topics::RESOLVE_NODE_SLUGS, $contentNode->getId());
+
+        $this->contentNodeListener->postRemove($contentNode);
     }
 }

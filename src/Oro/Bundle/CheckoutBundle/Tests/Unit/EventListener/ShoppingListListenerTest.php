@@ -39,22 +39,22 @@ class ShoppingListListenerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->checkoutRepository = $this->getMock(ObjectRepository::class);
-        $this->checkoutSourceRepository = $this->getMock(ObjectRepository::class);
+        $this->checkoutRepository = $this->createMock(ObjectRepository::class);
+        $this->checkoutSourceRepository = $this->createMock(ObjectRepository::class);
 
-        $this->checkoutEntityManager = $this->getMock(ObjectManager::class);
+        $this->checkoutEntityManager = $this->createMock(ObjectManager::class);
         $this->checkoutEntityManager->expects($this->any())
             ->method('getRepository')
             ->with(self::CHECKOUT_CLASS_NAME)
             ->willReturn($this->checkoutRepository);
 
-        $this->checkoutSourceEntityManager = $this->getMock(ObjectManager::class);
+        $this->checkoutSourceEntityManager = $this->createMock(ObjectManager::class);
         $this->checkoutSourceEntityManager->expects($this->any())
             ->method('getRepository')
             ->with(self::CHECKOUT_SOURCE_CLASS_NAME)
             ->willReturn($this->checkoutSourceRepository);
 
-        $this->registry = $this->getMock(ManagerRegistry::class);
+        $this->registry = $this->createMock(ManagerRegistry::class);
         $this->registry->expects($this->any())
             ->method('getManagerForClass')
             ->willReturnMap(

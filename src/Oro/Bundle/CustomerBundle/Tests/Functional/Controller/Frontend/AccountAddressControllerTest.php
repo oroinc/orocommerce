@@ -4,9 +4,9 @@ namespace Oro\Bundle\CustomerBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Entity\AccountUserAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountAddressACLData;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountAddressesACLData;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserAddressesACLData;
@@ -132,10 +132,10 @@ class AccountAddressControllerTest extends WebTestCase
         $user = $this->getReference(LoadAccountAddressACLData::USER_ACCOUNT_2_ROLE_LOCAL);
         /** @var Account $account */
         $account = $user->getAccount();
-        /** @var AccountAddress $address */
+        /** @var CustomerAddress $address */
         $address = $account->getAddresses()->first();
 
-        $this->assertInstanceOf('Oro\Bundle\CustomerBundle\Entity\AccountAddress', $address);
+        $this->assertInstanceOf('Oro\Bundle\CustomerBundle\Entity\CustomerAddress', $address);
 
         $addressId = $address->getId();
 
@@ -166,7 +166,7 @@ class AccountAddressControllerTest extends WebTestCase
 
         $address = $this->getAddressById($addressId);
 
-        $this->assertInstanceOf('Oro\Bundle\CustomerBundle\Entity\AccountAddress', $address);
+        $this->assertInstanceOf('Oro\Bundle\CustomerBundle\Entity\CustomerAddress', $address);
 
         $this->assertEquals('Changed Label', $address->getLabel());
     }
@@ -185,14 +185,14 @@ class AccountAddressControllerTest extends WebTestCase
 
     /**
      * @param $addressId
-     * @return AccountUserAddress
+     * @return CustomerUserAddress
      */
     protected function getAddressById($addressId)
     {
-        $this->getObjectManager()->clear('OroCustomerBundle:AccountAddress');
+        $this->getObjectManager()->clear('OroCustomerBundle:CustomerAddress');
 
         return $this->getObjectManager()
-            ->getRepository('OroCustomerBundle:AccountAddress')
+            ->getRepository('OroCustomerBundle:CustomerAddress')
             ->find($addressId);
     }
 
@@ -220,7 +220,7 @@ class AccountAddressControllerTest extends WebTestCase
         $resource = $this->getReference($resource);
         /** @var Account $account */
         $account = $resource->getAccount();
-        /** @var AccountAddress $address */
+        /** @var CustomerAddress $address */
         $address = $account->getAddresses()->first();
         $this->client->request(
             'GET',

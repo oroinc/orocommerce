@@ -2,20 +2,21 @@
 
 namespace Oro\Bundle\ProductBundle\Controller;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Event\ProductGridWidgetRenderEvent;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Request;
+use Oro\Bundle\ProductBundle\Form\Handler\ProductCreateStepOneHandler;
+use Oro\Bundle\ProductBundle\Form\Type\ProductStepOneType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductType;
 
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Event\ProductGridWidgetRenderEvent;
-use Oro\Bundle\ProductBundle\Form\Type\ProductType;
-use Oro\Bundle\ProductBundle\Form\Type\ProductStepOneType;
-use Oro\Bundle\ProductBundle\Form\Handler\ProductCreateStepOneHandler;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class ProductController extends Controller
 {
@@ -35,7 +36,8 @@ class ProductController extends Controller
     public function viewAction(Product $product)
     {
         return [
-            'entity' => $product
+            'entity' => $product,
+            'imageTypes' => $this->get('oro_layout.provider.image_type')->getImageTypes()
         ];
     }
 
@@ -169,7 +171,7 @@ class ProductController extends Controller
 
     /**
      * @param Request $request
-     * @return array|RedirectResponse
+     * @return array|Response
      */
     protected function createStepOne(Request $request)
     {
@@ -188,10 +190,10 @@ class ProductController extends Controller
      * @param Product $product
      * @return array|RedirectResponse
      */
-    protected function createStepTwo($request, Product $product)
+    protected function createStepTwo(Request $request, Product $product)
     {
-        if ($request->get('input_action') == 'oro_product_create') {
-            $form = $this->createForm(ProductStepOneType::NAME);
+        if ($request->get('input_action') === 'oro_product_create') {
+            $form = $this->createForm(ProductStepOneType::NAME, $product);
             $form->handleRequest($request);
             $formData = $form->all();
 

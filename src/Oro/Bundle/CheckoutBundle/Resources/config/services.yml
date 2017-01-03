@@ -73,23 +73,13 @@ services:
         tags:
             - { name: layout.data_provider, alias: checkout_shipping_context }
 
-    oro_checkout.model.action.start_checkout:
-        class: 'Oro\Bundle\CheckoutBundle\Model\Action\StartCheckout'
-        calls:
-            - [setCheckoutClass, ['%oro_checkout.entity.checkout.class%']]
-            - [setCheckoutRoute, ['oro_checkout_frontend_checkout']]
+    oro_checkout.layout.data_provider.payment_context:
+        class: 'Oro\Bundle\CheckoutBundle\Layout\DataProvider\CheckoutPaymentContextProvider'
         arguments:
-            - '@oro_action.expression.context_accessor'
-            - '@doctrine'
-            - '@oro_website.manager'
-            - '@oro_pricing.user_currency_manager'
-            - '@security.token_storage'
-            - '@property_accessor'
-            - '@oro_action.action.redirect'
-            - '@event_dispatcher'
-            - '@oro_workflow.manager'
+            - '@oro_checkout.factory.payment_context_factory'
         tags:
-            - { name: oro_action.action, alias: start_checkout }
+            - { name: layout.data_provider, alias: checkout_payment_context }
+
 
     oro_checkout.expression.acl_granted:
         class: Oro\Bundle\CheckoutBundle\Expression\CheckRequest
@@ -107,23 +97,11 @@ services:
         tags:
             - { name: twig.extension }
 
-    oro_checkout.event_listener.checkout_entity:
-        class: 'Oro\Bundle\CheckoutBundle\EventListener\CheckoutEntityListener'
-        lazy: true
-        arguments:
-            - '@doctrine'
-            - '@oro_pricing.user_currency_manager'
-        calls:
-            - [setCheckoutClassName, ['%oro_checkout.entity.checkout.class%']]
-        tags:
-            - {name: kernel.event_listener, event: oro_checkout.get_checkout_entity, method: onGetCheckoutEntity}
-            - {name: kernel.event_listener, event: oro_checkout.create_checkout_entity, method: onCreateCheckoutEntity}
-
     oro_checkout.event_listener.resolve_payment_term:
         class: 'Oro\Bundle\CheckoutBundle\EventListener\ResolvePaymentTermListener'
         arguments:
             - '@request_stack'
-            - '@event_dispatcher'
+            - '@doctrine'
             - '@oro_payment_term.provider.payment_term'
         tags:
             - { name: kernel.event_listener, event: oro_payment_term.resolve.payment_term, method: onResolvePaymentTerm }
@@ -366,7 +344,16 @@ services:
         arguments:
             - '@oro_checkout.data_provider.manager.checkout_line_items'
             - '@oro_pricing.subtotal_processor.total_processor_provider'
-            - '@oro_shipping.factory.shipping_context_factory'
+            - '@oro_order.shipping_line_item.converter_basic'
+            - '@?oro_shipping.context.builder_factory_basic'
+
+    oro_checkout.factory.payment_context_factory:
+        class: 'Oro\Bundle\CheckoutBundle\Factory\CheckoutPaymentContextFactory'
+        arguments:
+            - '@oro_checkout.data_provider.manager.checkout_line_items'
+            - '@oro_pricing.subtotal_processor.total_processor_provider'
+            - '@oro_order.payment_line_item.converter_basic'
+            - '@?oro_payment.context.builder_factory_basic'
 
     oro_checkout.provider.privilege_category_provider:
         class: 'Oro\Bundle\CheckoutBundle\Provider\PrivilegeCategoryProvider'
@@ -379,6 +366,7 @@ services:
         arguments:
             - '@oro_entity.entity_field_provider'
             - '@property_accessor'
+            - '@oro_payment_term.provider.payment_term_association'
 
     oro_checkout.model.action.create_order:
         class: 'Oro\Bundle\CheckoutBundle\Model\Action\CreateOrder'
@@ -395,3 +383,13 @@ services:
             - '%oro_checkout.entity.checkout.class%'
         tags:
             - { name: oro_workflow.changes.listener, event: oro.workflow.deactivated, method: onDeactivationWorkflowDefinition }
+
+    oro_checkout.acl.voter.checkout:
+        class: 'Oro\Bundle\CheckoutBundle\Acl\Voter\CheckoutVoter'
+        public: false
+        arguments:
+            - '@oro_entity.doctrine_helper'
+        calls:
+            - [setContainer, ["@service_container"]]
+        tags:
+            - { name: security.voter }

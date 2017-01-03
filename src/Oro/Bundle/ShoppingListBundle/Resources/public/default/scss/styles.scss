@@ -1,3 +1,5 @@
+// @theme: default
+
 @import 'components/products-widget';
 @import 'components/shopping-list-widget';
 
@@ -11,5 +13,6 @@
 @import 'components/sidebar';
 @import 'components/shopping-list-view';
 @import 'components/shopping-list-navigation';
+@import 'components/shopping-list-owner';
 
 @import './components/shopping-list-dropdown/shopping-list-dropdown';

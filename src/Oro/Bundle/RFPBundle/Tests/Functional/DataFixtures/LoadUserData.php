@@ -11,7 +11,7 @@ use Oro\Bundle\SecurityBundle\Owner\Metadata\ChainMetadataProvider;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Entity\UserManager;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Entity\AccountUserManager;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserManager;
 use Oro\Bundle\CustomerBundle\Entity\AccountUserRole;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
@@ -34,6 +34,7 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
     const ACCOUNT1_USER2    = 'rfp-account1-user2@example.com';
     const ACCOUNT1_USER3    = 'rfp-account1-user3@example.com';
     const ACCOUNT2_USER1    = 'rfp-account2-user1@example.com';
+    const ACCOUNT2_USER2    = 'rfp-account2-user2@example.com';
     const PARENT_ACCOUNT_USER1    = 'rfp-parent-account-user1@example.com';
     const PARENT_ACCOUNT_USER2    = 'rfp-parent-account-user2@example.com';
 
@@ -80,7 +81,7 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
                 'class' => 'oro_customer.entity.account_user.class',
                 'acls'  => ['VIEW_DEEP'],
             ],
-        ],
+        ]
     ];
 
     /**
@@ -135,6 +136,14 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
             'password'  => self::ACCOUNT2_USER1,
             'account'   => self::ACCOUNT2,
             'role'      => self::ROLE1,
+        ],
+        [
+            'email'     => self::ACCOUNT2_USER2,
+            'firstname' => 'User22FN',
+            'lastname'  => 'User22LN',
+            'password'  => self::ACCOUNT2_USER2,
+            'account'   => self::ACCOUNT2,
+            'role'      => self::ROLE4,
         ],
         [
             'email'     => self::PARENT_ACCOUNT_USER1,
@@ -276,7 +285,7 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
      */
     protected function loadAccountUsers(ObjectManager $manager)
     {
-        /* @var $userManager AccountUserManager */
+        /* @var $userManager CustomerUserManager */
         $userManager = $this->container->get('oro_account_user.manager');
 
         $defaultUser    = $this->getUser($manager);

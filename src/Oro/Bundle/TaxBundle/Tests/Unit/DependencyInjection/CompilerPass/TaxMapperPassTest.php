@@ -75,7 +75,7 @@ class TaxMapperPassTest extends \PHPUnit_Framework_TestCase
             ->with(TaxMapperPass::REGISTRY_SERVICE)
             ->willReturn(true);
 
-        $registryServiceDefinition = $this->getMock('Symfony\Component\DependencyInjection\Definition');
+        $registryServiceDefinition = $this->createMock('Symfony\Component\DependencyInjection\Definition');
 
         $this->containerBuilder
             ->expects($this->once())

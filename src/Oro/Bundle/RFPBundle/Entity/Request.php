@@ -24,7 +24,7 @@ use Oro\Bundle\RFPBundle\Model\ExtendRequest;
  * Request
  *
  * @ORM\Table("oro_rfp_request")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Oro\Bundle\RFPBundle\Entity\Repository\RequestRepository")
  * @Config(
  *      routeName="oro_rfp_request_index",
  *      routeView="oro_rfp_request_view",
@@ -285,7 +285,7 @@ class Request extends ExtendRequest implements
         parent::__construct();
 
         $this->createdAt = new \DateTime('now', new \DateTimeZone('UTC'));
-        $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
+        $this->updatedAt = clone $this->createdAt;
 
         $this->requestProducts = new ArrayCollection();
         $this->assignedUsers = new ArrayCollection();

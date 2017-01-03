@@ -45,7 +45,7 @@ class RequestProductItemTypeTest extends AbstractTest
     public function testConfigureOptions()
     {
         /* @var $resolver \PHPUnit_Framework_MockObject_MockObject|OptionsResolver */
-        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
+        $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with($this->callback(function (array $options) {
@@ -217,7 +217,7 @@ class RequestProductItemTypeTest extends AbstractTest
         }
 
         /* @var $item \PHPUnit_Framework_MockObject_MockObject|RequestProductItem */
-        $item = $this->getMock('Oro\Bundle\RFPBundle\Entity\RequestProductItem');
+        $item = $this->createMock('Oro\Bundle\RFPBundle\Entity\RequestProductItem');
         $item
             ->expects($this->any())
             ->method('getId')

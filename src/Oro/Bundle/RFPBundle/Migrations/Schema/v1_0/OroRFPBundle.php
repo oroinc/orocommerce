@@ -8,34 +8,16 @@ use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
-use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
-class OroRFPBundle implements
-    Migration,
-    NoteExtensionAwareInterface,
-    ActivityExtensionAwareInterface
+class OroRFPBundle implements Migration, ActivityExtensionAwareInterface
 {
     /**
      * @var ActivityExtension
      */
     protected $activityExtension;
-
-    /**
-     * @var NoteExtension
-     */
-    protected $noteExtension;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setNoteExtension(NoteExtension $noteExtension)
-    {
-        $this->noteExtension = $noteExtension;
-    }
 
     /**
      * {@inheritdoc}
@@ -63,8 +45,7 @@ class OroRFPBundle implements
         $this->addOrob2BRfpRequestProductForeignKeys($schema);
         $this->addOrob2BRfpRequestProductItemForeignKeys($schema);
 
-        $this->addNoteAssociations($schema, $this->noteExtension);
-        $this->addActivityAssociations($schema, $this->activityExtension);
+        $this->addActivityAssociations($schema);
     }
 
     /**
@@ -264,24 +245,13 @@ class OroRFPBundle implements
     }
 
     /**
-     * Enable notes for RFP entity
-     *
-     * @param Schema $schema
-     * @param NoteExtension $noteExtension
-     */
-    protected function addNoteAssociations(Schema $schema, NoteExtension $noteExtension)
-    {
-        $noteExtension->addNoteAssociation($schema, 'orob2b_rfp_request');
-    }
-
-    /**
      * Enables Email activity for RFP entity
      *
      * @param Schema $schema
-     * @param ActivityExtension $activityExtension
      */
-    protected function addActivityAssociations(Schema $schema, ActivityExtension $activityExtension)
+    protected function addActivityAssociations(Schema $schema)
     {
-        $activityExtension->addActivityAssociation($schema, 'oro_email', 'orob2b_rfp_request');
+        $this->activityExtension->addActivityAssociation($schema, 'oro_note', 'orob2b_rfp_request');
+        $this->activityExtension->addActivityAssociation($schema, 'oro_email', 'orob2b_rfp_request');
     }
 }

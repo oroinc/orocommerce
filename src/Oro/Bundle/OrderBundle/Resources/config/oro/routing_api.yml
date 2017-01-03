@@ -1,5 +1,0 @@
-oro_order_api_frontend:
-    resource: "@OroOrderBundle/Controller/Frontend/Api/Rest/OrderController.php"
-    type:     rest
-    options:
-        frontend: true

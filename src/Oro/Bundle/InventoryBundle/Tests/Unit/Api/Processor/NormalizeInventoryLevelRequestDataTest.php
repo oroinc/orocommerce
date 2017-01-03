@@ -38,7 +38,7 @@ class NormalizeInventoryLevelRequestDataTest extends \PHPUnit_Framework_TestCase
     public function testProcessNoRequestData()
     {
         /** @var FormContext|\PHPUnit_Framework_MockObject_MockObject $context **/
-        $context = $this->getMock(FormContext::class);
+        $context = $this->createMock(FormContext::class);
         $context->expects($this->once())->method('getRequestData')->willReturn(null);
         $context->expects($this->never())->method('setRequestData');
 
@@ -48,7 +48,7 @@ class NormalizeInventoryLevelRequestDataTest extends \PHPUnit_Framework_TestCase
     public function testProcessNoDataOnRequestData()
     {
         /** @var FormContext|\PHPUnit_Framework_MockObject_MockObject $context **/
-        $context = $this->getMock(FormContext::class);
+        $context = $this->createMock(FormContext::class);
         $context->expects($this->once())->method('getRequestData')->willReturn([]);
         $context->expects($this->never())->method('setRequestData');
 
@@ -58,7 +58,7 @@ class NormalizeInventoryLevelRequestDataTest extends \PHPUnit_Framework_TestCase
     public function testProcessNoRelationshipsOnRequestData()
     {
         /** @var FormContext|\PHPUnit_Framework_MockObject_MockObject $context **/
-        $context = $this->getMock(FormContext::class);
+        $context = $this->createMock(FormContext::class);
         $context->expects($this->once())->method('getRequestData')->willReturn(['data' => []]);
 
         $this->normalizeInventoryLevelRequestData->process($context);
@@ -69,7 +69,7 @@ class NormalizeInventoryLevelRequestDataTest extends \PHPUnit_Framework_TestCase
     public function testProcessNoProductOnRequestData()
     {
         /** @var FormContext|\PHPUnit_Framework_MockObject_MockObject $context **/
-        $context = $this->getMock(FormContext::class);
+        $context = $this->createMock(FormContext::class);
         $context->expects($this->once())->method('getRequestData')->willReturn(['data' => ['relationships' => []]]);
         $context->expects($this->never())->method('setRequestData');
 
@@ -79,7 +79,7 @@ class NormalizeInventoryLevelRequestDataTest extends \PHPUnit_Framework_TestCase
     public function testProcessProductNotFount()
     {
         /** @var FormContext|\PHPUnit_Framework_MockObject_MockObject $context **/
-        $context = $this->getMock(FormContext::class);
+        $context = $this->createMock(FormContext::class);
         $productRepository = $this->getMockBuilder(ProductRepository::class)->disableOriginalConstructor()->getMock();
         $data = [
             'data' => [
@@ -109,9 +109,9 @@ class NormalizeInventoryLevelRequestDataTest extends \PHPUnit_Framework_TestCase
     public function testProcessNoUnitOnRequestData()
     {
         /** @var FormContext|\PHPUnit_Framework_MockObject_MockObject $context **/
-        $context = $this->getMock(FormContext::class);
+        $context = $this->createMock(FormContext::class);
         $productRepository = $this->getMockBuilder(ProductRepository::class)->disableOriginalConstructor()->getMock();
-        $product = $this->getMock(Product::class);
+        $product = $this->createMock(Product::class);
         $data = [
             'data' => [
                 'relationships' => [
@@ -146,10 +146,10 @@ class NormalizeInventoryLevelRequestDataTest extends \PHPUnit_Framework_TestCase
     public function testProcessPrimaryUnitOnRequestData()
     {
         /** @var FormContext|\PHPUnit_Framework_MockObject_MockObject $context **/
-        $context = $this->getMock(FormContext::class);
+        $context = $this->createMock(FormContext::class);
         $productRepository = $this->getMockBuilder(ProductRepository::class)->disableOriginalConstructor()->getMock();
-        $product = $this->getMock(Product::class);
-        $unitPrecision = $this->getMock(ProductUnitPrecision::class);
+        $product = $this->createMock(Product::class);
+        $unitPrecision = $this->createMock(ProductUnitPrecision::class);
         $data = [
             'data' => [
                 'relationships' => [
@@ -194,10 +194,10 @@ class NormalizeInventoryLevelRequestDataTest extends \PHPUnit_Framework_TestCase
     public function testProcessUnitOnRequestData()
     {
         /** @var FormContext|\PHPUnit_Framework_MockObject_MockObject $context **/
-        $context = $this->getMock(FormContext::class);
+        $context = $this->createMock(FormContext::class);
         $productRepository = $this->getMockBuilder(ProductRepository::class)->disableOriginalConstructor()->getMock();
         $unitRepository = $this->getMockBuilder(EntityRepository::class)->disableOriginalConstructor()->getMock();
-        $unitPrecision = $this->getMock(ProductUnitPrecision::class);
+        $unitPrecision = $this->createMock(ProductUnitPrecision::class);
         $data = [
             'data' => [
                 'relationships' => [
@@ -247,10 +247,10 @@ class NormalizeInventoryLevelRequestDataTest extends \PHPUnit_Framework_TestCase
     public function testProcessWarehouseOnRequestData()
     {
         /** @var FormContext|\PHPUnit_Framework_MockObject_MockObject $context **/
-        $context = $this->getMock(FormContext::class);
+        $context = $this->createMock(FormContext::class);
         $productRepository = $this->getMockBuilder(ProductRepository::class)->disableOriginalConstructor()->getMock();
         $unitRepository = $this->getMockBuilder(EntityRepository::class)->disableOriginalConstructor()->getMock();
-        $unitPrecision = $this->getMock(ProductUnitPrecision::class);
+        $unitPrecision = $this->createMock(ProductUnitPrecision::class);
         $data = [
             'data' => [
                 'relationships' => [

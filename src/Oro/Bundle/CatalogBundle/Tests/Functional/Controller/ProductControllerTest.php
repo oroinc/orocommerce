@@ -10,6 +10,7 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
 use Oro\Bundle\CatalogBundle\Model\CategoryUnitPrecision;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 
 /**
@@ -96,7 +97,8 @@ class ProductControllerTest extends WebTestCase
             ),
             ['_widgetContainer' => 'widget']
         );
-        $json = $crawler->filterXPath('//*[@data-page-component-options]')->attr('data-page-component-options');
+        $json = $crawler->filterXPath('//*[@data-collapse-container][@data-page-component-options]')
+            ->attr('data-page-component-options');
         $this->assertJson($json);
         $arr = json_decode($json, true);
         $this->assertEquals($arr['defaultCategoryId'], $categoryId);
@@ -142,6 +144,7 @@ class ProductControllerTest extends WebTestCase
         $formValues['input_action'] = 'oro_product_create';
         if ($categoryReference) {
             $formValues['oro_product_step_one']['category'] = $categoryReference->getId();
+            $formValues['oro_product_step_one']['type'] = Product::TYPE_SIMPLE;
         }
 
         $this->client->followRedirects(true);

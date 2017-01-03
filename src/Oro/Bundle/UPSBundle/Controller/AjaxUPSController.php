@@ -26,6 +26,7 @@ class AjaxUPSController extends Controller
         /** @var ShippingServiceRepository $repository */
         $repository = $this->container
             ->get('doctrine')
+            ->getManagerForClass('OroUPSBundle:ShippingService')
             ->getRepository('OroUPSBundle:ShippingService');
         $services = $repository->getShippingServicesByCountry($country);
         $result = [];

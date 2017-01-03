@@ -5,6 +5,7 @@ namespace Oro\Bundle\WebCatalogBundle\Tests\Functional\DataFixtures;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 
@@ -23,24 +24,30 @@ class LoadContentNodesData extends AbstractFixture implements DependentFixtureIn
     protected static $data = [
         LoadWebCatalogData::CATALOG_1 => [
             self::CATALOG_1_ROOT => [
-                'parent' => null
+                'parent' => null,
+                'parentScopeUsed' => false
             ],
             self::CATALOG_1_ROOT_SUBNODE_1 => [
-                'parent' => self::CATALOG_1_ROOT
+                'parent' => self::CATALOG_1_ROOT,
+                'parentScopeUsed' => true
             ],
             self::CATALOG_1_ROOT_SUBNODE_1_1 => [
-                'parent' => self::CATALOG_1_ROOT_SUBNODE_1
+                'parent' => self::CATALOG_1_ROOT_SUBNODE_1,
+                'parentScopeUsed' => true
             ],
             self::CATALOG_1_ROOT_SUBNODE_1_2 => [
-                'parent' => self::CATALOG_1_ROOT_SUBNODE_1
+                'parent' => self::CATALOG_1_ROOT_SUBNODE_1,
+                'parentScopeUsed' => false
             ],
             self::CATALOG_1_ROOT_SUBNODE_2 => [
-                'parent' => self::CATALOG_1_ROOT
+                'parent' => self::CATALOG_1_ROOT,
+                'parentScopeUsed' => false
             ]
         ],
         LoadWebCatalogData::CATALOG_2 => [
             self::CATALOG_2_ROOT => [
-                'parent' => null
+                'parent' => null,
+                'parentScopeUsed' => false
             ]
         ]
     ];
@@ -66,12 +73,16 @@ class LoadContentNodesData extends AbstractFixture implements DependentFixtureIn
             foreach ($nodes as $nodeReference => $nodeData) {
                 $node = new ContentNode();
                 $node->setWebCatalog($webCatalog);
-                $node->setName($nodeReference);
+                $title = new LocalizedFallbackValue();
+                $title->setString($nodeReference);
+                $node->addTitle($title);
                 if (!empty($nodeData['parent'])) {
                     /** @var ContentNode $parentNode */
                     $parentNode = $this->getReference($nodeData['parent']);
                     $node->setParentNode($parentNode);
                 }
+
+                $node->setParentScopeUsed($nodeData['parentScopeUsed']);
                 $manager->persist($node);
                 $this->setReference($nodeReference, $node);
             }

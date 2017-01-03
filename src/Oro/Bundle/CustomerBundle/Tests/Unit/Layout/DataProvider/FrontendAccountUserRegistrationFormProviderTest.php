@@ -51,33 +51,33 @@ class FrontendAccountUserRegistrationFormProviderTest extends \PHPUnit_Framework
 
     protected function setUp()
     {
-        $this->formFactory = $this->getMock(FormFactoryInterface::class);
+        $this->formFactory = $this->createMock(FormFactoryInterface::class);
 
-        $this->roleRepository = $this->getMock(AccountUserRoleRepository::class, [], [], '', false);
+        $this->roleRepository = $this->createMock(AccountUserRoleRepository::class);
 
-        $objectManager = $this->getMock(ObjectManager::class);
+        $objectManager = $this->createMock(ObjectManager::class);
         $objectManager->expects($this->any())
             ->method('getRepository')
             ->with('OroCustomerBundle:AccountUserRole')
             ->willReturn($this->roleRepository);
 
-        $managerRegistry = $this->getMock(ManagerRegistry::class);
+        $managerRegistry = $this->createMock(ManagerRegistry::class);
         $managerRegistry->expects($this->any())
             ->method('getManagerForClass')
             ->with('OroCustomerBundle:AccountUserRole')
             ->willReturn($objectManager);
 
-        $this->configManager = $this->getMock(ConfigManager::class, [], [], '', false);
-        $this->websiteManager = $this->getMock(WebsiteManager::class, [], [], '', false);
+        $this->configManager = $this->createMock(ConfigManager::class);
+        $this->websiteManager = $this->createMock(WebsiteManager::class);
 
-        $this->userRepository = $this->getMock(ObjectRepository::class);
+        $this->userRepository = $this->createMock(ObjectRepository::class);
 
-        $userManager = $this->getMock(UserManager::class, [], [], '', false);
+        $userManager = $this->createMock(UserManager::class);
         $userManager->expects($this->any())
             ->method('getRepository')
             ->willReturn($this->userRepository);
 
-        $this->router = $this->getMock(UrlGeneratorInterface::class);
+        $this->router = $this->createMock(UrlGeneratorInterface::class);
 
         $this->dataProvider = new FrontendAccountUserRegistrationFormProvider(
             $this->formFactory,
@@ -94,7 +94,7 @@ class FrontendAccountUserRegistrationFormProviderTest extends \PHPUnit_Framework
         $action = 'form_action';
 
         $defaultOwnerId = 1;
-        $defaultRole = $this->getMock(RoleInterface::class);
+        $defaultRole = $this->createMock(RoleInterface::class);
 
         $organization = $this->getEntity(Organization::class);
         $website = $this->getEntity(Website::class, ['organization' => $organization]);
@@ -123,9 +123,9 @@ class FrontendAccountUserRegistrationFormProviderTest extends \PHPUnit_Framework
             ->with($defaultOwnerId)
             ->willReturn($owner);
 
-        $formView = $this->getMock(FormView::class);
+        $formView = $this->createMock(FormView::class);
 
-        $form = $this->getMock(FormInterface::class);
+        $form = $this->createMock(FormInterface::class);
         $form->expects($this->once())
             ->method('createView')
             ->willReturn($formView);
@@ -311,7 +311,7 @@ class FrontendAccountUserRegistrationFormProviderTest extends \PHPUnit_Framework
         $action = 'form_action';
 
         $defaultOwnerId = 1;
-        $defaultRole = $this->getMock(RoleInterface::class);
+        $defaultRole = $this->createMock(RoleInterface::class);
 
         $organization = $this->getEntity(Organization::class);
         $website = $this->getEntity(Website::class, ['organization' => $organization]);
@@ -340,7 +340,7 @@ class FrontendAccountUserRegistrationFormProviderTest extends \PHPUnit_Framework
             ->with($defaultOwnerId)
             ->willReturn($owner);
 
-        $form = $this->getMock(FormInterface::class);
+        $form = $this->createMock(FormInterface::class);
 
         $this->formFactory
             ->expects($this->once())

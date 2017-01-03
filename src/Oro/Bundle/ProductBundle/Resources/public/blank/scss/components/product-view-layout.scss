@@ -1,0 +1,89 @@
+// @theme: blank
+
+.product-view {
+    @include clearfix();
+
+    &__aside {
+        float: $product-view-aside-state;
+
+        width: $product-view-aside-width;
+        margin-bottom: $product-view-aside-offset-bottom;
+        padding: $product-view-aside-inner-offset;
+
+        box-sizing: border-box;
+    }
+
+    &__primary {
+        float: $product-view-primary-state;
+
+        width: $product-view-primary-width;
+        margin-bottom: $product-view-primary-offset-bottom;
+    }
+
+    &__main {
+        float: $product-view-main-state;
+
+        width: $product-view-main-width;
+        margin-bottom: $product-view-main-offset-bottom;
+    }
+
+    &__content {
+        display: flex;
+
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+
+    &__specification {
+        width: $product-view-specification-width;
+        padding: $product-view-specification-inner-offset;
+
+        box-sizing: border-box;
+    }
+
+    &__description {
+        width: $product-view-description-width;
+        padding: $product-view-description-inner-offset;
+
+        box-sizing: border-box;
+    }
+
+    &__additional {
+        float: $product-view-additional-state;
+        width: $product-view-additional-width;
+    }
+}
+
+@include breakpoint('tablet') {
+    .product-view {
+        &__aside {
+            width: $product-view-aside-tablet-width;
+            padding: $product-view-aside-tablet-inner-offset;
+        }
+
+        &__primary {
+            float: $product-view-primary-tablet-state;
+
+            width: $product-view-primary-tablet-width;
+        }
+
+        &__main {
+            width: $product-view-main-tablet-width;
+        }
+
+        &__content {
+            flex-direction: column;
+        }
+
+        &__specification {
+            width: $product-view-tablet-specification-width;
+            margin: $product-view-tablet-specification-offset;
+            padding: $product-view-specification-tablet-inner-offset;
+        }
+
+        &__description {
+            width: $product-view-description-tablet-width;
+            padding: $product-view-description-tablet-inner-offset;
+        }
+    }
+}

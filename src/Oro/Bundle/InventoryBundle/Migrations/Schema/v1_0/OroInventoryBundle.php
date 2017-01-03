@@ -4,6 +4,8 @@ namespace Oro\Bundle\InventoryBundle\Migrations\Schema\v1_0;
 
 use Doctrine\DBAL\Schema\Schema;
 
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Fallback\Provider\CategoryFallbackProvider;
 use Oro\Bundle\CatalogBundle\Fallback\Provider\ParentCategoryFallbackProvider;
@@ -21,7 +23,11 @@ use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
-class OroInventoryBundle implements Installation, ExtendExtensionAwareInterface, RenameExtensionAwareInterface
+class OroInventoryBundle implements
+    Installation,
+    ExtendExtensionAwareInterface,
+    RenameExtensionAwareInterface,
+    ActivityExtensionAwareInterface
 {
     use MigrationConstraintTrait;
     use AddFallbackRelationTrait;
@@ -41,6 +47,9 @@ class OroInventoryBundle implements Installation, ExtendExtensionAwareInterface,
     const ORDER_WAREHOUSE_ASSOCIATION = 'warehouse';
     const ORDER_WAREHOUSE_ASSOCIATION_COLUMN = 'warehouse_id';
 
+    /** @var  ActivityExtension */
+    protected $activityExtension;
+
     /** @var ExtendExtension */
     protected $extendExtension;
 
@@ -48,6 +57,22 @@ class OroInventoryBundle implements Installation, ExtendExtensionAwareInterface,
      * @var RenameExtension
      */
     private $renameExtension;
+
+    /**
+     * @inheritDoc
+     */
+    public function getMigrationVersion()
+    {
+        return 'v1_0';
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setActivityExtension(ActivityExtension $activityExtension)
+    {
+        $this->activityExtension = $activityExtension;
+    }
 
     /**
      * {@inheritdoc}
@@ -143,18 +168,15 @@ class OroInventoryBundle implements Installation, ExtendExtensionAwareInterface,
             return;
         }
 
-        $notes = $schema->getTable(self::NOTE_TABLE);
-        if ($notes->hasColumn(self::NOTE_WAREHOUSE_ASSOCIATION_COLUMN)) {
-            $this->dropForeignKeyAndColumn($schema, self::NOTE_TABLE, self::NOTE_WAREHOUSE_ASSOCIATION_COLUMN);
-        }
-        if ($notes->hasColumn(self::NOTE_WAREHOUSE_ASSOCIATION_COLUMN_BETA1)) {
-            $this->dropForeignKeyAndColumn($schema, self::NOTE_TABLE, self::NOTE_WAREHOUSE_ASSOCIATION_COLUMN_BETA1);
-        }
+        $this->removeWarehouseNotesAssociation($schema, $table);
 
         if ($schema->getTable(self::ORDER_TABLE)->hasColumn(self::NOTE_WAREHOUSE_ASSOCIATION_COLUMN_BETA1)) {
+            $this->dropForeignKeyAndColumn($schema, self::ORDER_TABLE, self::NOTE_WAREHOUSE_ASSOCIATION_COLUMN_BETA1);
+        }
+        if ($schema->getTable(self::ORDER_TABLE)->hasColumn(self::ORDER_WAREHOUSE_ASSOCIATION_COLUMN)) {
             $this->dropForeignKeyAndColumn($schema, self::ORDER_TABLE, self::ORDER_WAREHOUSE_ASSOCIATION_COLUMN);
         }
-        if ($schema->getTable(self::ORDER_TABLE)->hasColumn(self::ORDER_LINE_ITEM_TABLE)) {
+        if ($schema->getTable(self::ORDER_LINE_ITEM_TABLE)->hasColumn(self::ORDER_WAREHOUSE_ASSOCIATION_COLUMN)) {
             $this->dropForeignKeyAndColumn(
                 $schema,
                 self::ORDER_LINE_ITEM_TABLE,
@@ -163,6 +185,25 @@ class OroInventoryBundle implements Installation, ExtendExtensionAwareInterface,
         }
 
         $schema->dropTable($table);
+    }
+
+    /**
+     * @param Schema $schema
+     * @param string $table
+     */
+    protected function removeWarehouseNotesAssociation(Schema $schema, $table)
+    {
+        $notes = $schema->getTable(self::NOTE_TABLE);
+        if ($notes->hasColumn(self::NOTE_WAREHOUSE_ASSOCIATION_COLUMN)) {
+            $this->dropForeignKeyAndColumn($schema, self::NOTE_TABLE, self::NOTE_WAREHOUSE_ASSOCIATION_COLUMN);
+        }
+        if ($notes->hasColumn(self::NOTE_WAREHOUSE_ASSOCIATION_COLUMN_BETA1)) {
+            $this->dropForeignKeyAndColumn($schema, self::NOTE_TABLE, self::NOTE_WAREHOUSE_ASSOCIATION_COLUMN_BETA1);
+        }
+        $associationTableName = $this->activityExtension->getAssociationTableName('oro_note', $table);
+        if ($associationTableName) {
+            $schema->dropTable($associationTableName);
+        }
     }
 
     /**
@@ -345,13 +386,5 @@ class OroInventoryBundle implements Installation, ExtendExtensionAwareInterface,
                 $value
             ));
         }
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getMigrationVersion()
-    {
-        return 'v1_0';
     }
 }

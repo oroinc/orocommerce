@@ -2,19 +2,20 @@
 
 namespace Oro\Bundle\PaymentTermBundle\Tests\Unit\Method;
 
-use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
-
 use Doctrine\ORM\EntityManager;
-
+use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\PaymentTermBundle\Method\Config\PaymentTermConfigInterface;
-use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
+use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Method\PaymentTerm as PaymentTermMethod;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
+use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
 
 /**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class PaymentTermTest extends \PHPUnit_Framework_TestCase
@@ -22,8 +23,8 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
     /** @var PaymentTermProvider|\PHPUnit_Framework_MockObject_MockObject */
     protected $paymentTermProvider;
 
-    /** @var PropertyAccessor|\PHPUnit_Framework_MockObject_MockObject */
-    protected $propertyAccessor;
+    /** @var PaymentTermAssociationProvider|\PHPUnit_Framework_MockObject_MockObject */
+    protected $paymentTermAssociationProvider;
 
     /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
     protected $doctrineHelper;
@@ -31,11 +32,11 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
     /** @var PaymentTransaction */
     protected $paymentTransaction;
 
+    /** @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject  */
+    protected $logger;
+
     /** @var PaymentTermMethod */
     protected $method;
-
-    /** @var PaymentTermConfigInterface|\PHPUnit_Framework_MockObject_MockObject */
-    protected $config;
 
     protected function setUp()
     {
@@ -43,7 +44,8 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->propertyAccessor = $this->getMockBuilder('Symfony\Component\PropertyAccess\PropertyAccessor')
+        $this->paymentTermAssociationProvider = $this
+            ->getMockBuilder('Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -51,27 +53,18 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->config = $this->getMock(PaymentTermConfigInterface::class);
-
         $this->paymentTransaction = new PaymentTransaction();
         $this->paymentTransaction->setSuccessful(false);
 
+        $this->logger = $this->createMock(LoggerInterface::class);
+
         $this->method = new PaymentTermMethod(
             $this->paymentTermProvider,
-            $this->config,
-            $this->propertyAccessor,
+            $this->paymentTermAssociationProvider,
             $this->doctrineHelper
         );
-    }
 
-    protected function tearDown()
-    {
-        unset(
-            $this->method,
-            $this->paymentTermProvider,
-            $this->propertyAccessor,
-            $this->doctrineHelper
-        );
+        $this->method->setLogger($this->logger);
     }
 
     public function testExecuteNoEntity()
@@ -121,8 +114,8 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
             ->method('getCurrentPaymentTerm')
             ->willReturn(null);
 
-        $this->propertyAccessor->expects($this->never())
-            ->method('setValue');
+        $this->paymentTermAssociationProvider->expects($this->never())
+            ->method('setPaymentTerm');
 
         $this->assertEquals(
             [],
@@ -136,7 +129,7 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
         $entityClass = 'TestClass';
         $entityId = 10;
         $entity = new \stdClass();
-        $paymentTerm = new \stdClass();
+        $paymentTerm = new PaymentTerm();
 
         $this->paymentTransaction
             ->setEntityClass($entityClass)
@@ -153,9 +146,9 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
             ->method('getCurrentPaymentTerm')
             ->willReturn($paymentTerm);
 
-        $this->propertyAccessor->expects($this->once())
-            ->method('setValue')
-            ->with($entity, 'paymentTerm', $paymentTerm);
+        $this->paymentTermAssociationProvider->expects($this->once())
+            ->method('setPaymentTerm')
+            ->with($entity, $paymentTerm);
 
         /** @var EntityManager|\PHPUnit_Framework_MockObject_MockObject $entityManager */
         $entityManager = $this->getMockBuilder('Doctrine\ORM\EntityManager')
@@ -190,48 +183,20 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
 
         $this->paymentTermProvider->expects($this->once())
             ->method('getCurrentPaymentTerm')
-            ->willReturn(new \stdClass());
+            ->willReturn(new PaymentTerm());
 
-        $this->propertyAccessor->expects($this->once())
-            ->method('setValue')
+        $this->paymentTermAssociationProvider->expects($this->once())
+            ->method('setPaymentTerm')
             ->willThrowException(new NoSuchPropertyException());
+
+        $this->logger->expects($this->once())
+            ->method('error');
 
         $this->assertEquals(
             [],
             $this->method->execute($this->paymentTransaction->getAction(), $this->paymentTransaction)
         );
         $this->assertFalse($this->paymentTransaction->isSuccessful());
-    }
-
-    /**
-     * @dataProvider isEnabledProvider
-     * @param bool $configValue
-     * @param bool $expected
-     */
-    public function testIsEnabled($configValue, $expected)
-    {
-        $this->config->expects($this->once())
-            ->method('isEnabled')
-            ->willReturn($configValue);
-
-        $this->assertEquals($expected, $this->method->isEnabled());
-    }
-
-    /**
-     * @return array
-     */
-    public function isEnabledProvider()
-    {
-        return [
-            [
-                'configValue' => true,
-                'expected' => true,
-            ],
-            [
-                'configValue' => false,
-                'expected' => false,
-            ],
-        ];
     }
 
     public function testGetType()
@@ -266,48 +231,51 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
 
     public function testIsApplicable()
     {
-        $this->config->expects($this->once())
-            ->method('isCountryApplicable')
-            ->willReturn(true);
+        $customer = $this->createMock(Account::class);
 
-        $this->config->expects($this->once())
-            ->method('isCurrencyApplicable')
-            ->willReturn(true);
+        /** @var PaymentContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
+        $context = $this->createMock(PaymentContextInterface::class);
+        $context->expects(static::any())
+            ->method('getCustomer')
+            ->willReturn($customer);
 
         $this->paymentTermProvider->expects($this->once())
-            ->method('getCurrentPaymentTerm')
+            ->method('getPaymentTerm')
+            ->with($customer)
             ->willReturn(new PaymentTerm());
 
-        $this->assertTrue($this->method->isApplicable(['currency' => 'USD']));
+        $this->assertTrue($this->method->isApplicable($context));
     }
 
-    public function testIsApplicableWithoutCountry()
+    public function testIsApplicableFalse()
     {
-        $this->config->expects($this->once())
-            ->method('isCountryApplicable')
-            ->willReturn(false);
+        $customer = $this->createMock(Account::class);
 
-        $this->config->expects($this->never())
-            ->method('isCurrencyApplicable');
-
-        $this->paymentTermProvider->expects($this->never())->method('getCurrentPaymentTerm');
-
-        $this->assertFalse($this->method->isApplicable(['country' => 'US']));
-    }
-
-    public function testIsApplicableWithoutCurrentPaymentTerm()
-    {
-        $this->config->expects($this->once())
-            ->method('isCountryApplicable')
-            ->willReturn(true);
-
-        $this->config->expects($this->never())
-            ->method('isCurrencyApplicable');
+        /** @var PaymentContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
+        $context = $this->createMock(PaymentContextInterface::class);
+        $context->expects(static::any())
+            ->method('getCustomer')
+            ->willReturn($customer);
 
         $this->paymentTermProvider->expects($this->once())
-            ->method('getCurrentPaymentTerm')
+            ->method('getPaymentTerm')
+            ->with($customer)
             ->willReturn(null);
 
-        $this->assertFalse($this->method->isApplicable([]));
+        $this->assertFalse($this->method->isApplicable($context));
+    }
+
+    public function testIsApplicableNullCustomer()
+    {
+        /** @var PaymentContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
+        $context = $this->createMock(PaymentContextInterface::class);
+        $context->expects(static::any())
+            ->method('getCustomer')
+            ->willReturn(null);
+
+        $this->paymentTermProvider->expects($this->never())
+            ->method('getPaymentTerm');
+
+        $this->assertFalse($this->method->isApplicable($context));
     }
 }

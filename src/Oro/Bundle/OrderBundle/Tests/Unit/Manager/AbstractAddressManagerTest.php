@@ -17,20 +17,20 @@ abstract class AbstractAddressManagerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Entity with "Oro\Bundle\CustomerBundle\Entity\AccountAddress" not registered
+     * @expectedExceptionMessage Entity with "Oro\Bundle\CustomerBundle\Entity\CustomerAddress" not registered
      */
     public function testGetIdentifierFailed()
     {
-        $this->manager->getIdentifier($this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountAddress', 1));
+        $this->manager->getIdentifier($this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerAddress', 1));
     }
 
     public function testGetIdentifier()
     {
-        $this->manager->addEntity('a', 'Oro\Bundle\CustomerBundle\Entity\AccountAddress');
+        $this->manager->addEntity('a', 'Oro\Bundle\CustomerBundle\Entity\CustomerAddress');
 
         $this->assertEquals(
             'a_1',
-            $this->manager->getIdentifier($this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountAddress', 1))
+            $this->manager->getIdentifier($this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerAddress', 1))
         );
     }
 
@@ -47,16 +47,17 @@ abstract class AbstractAddressManagerTest extends \PHPUnit_Framework_TestCase
     {
         if ($exception) {
             list ($exception, $message) = $exception;
-            $this->setExpectedException($exception, $message);
+            $this->expectException($exception);
+            $this->expectExceptionMessage($message);
         }
 
-        $em = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
+        $em = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
         $em->expects($expectedId ? $this->atLeastOnce() : $this->never())->method('find')
             ->with($this->isType('string'), $this->equalTo($expectedId));
 
         $this->registry->expects($this->any())->method('getManagerForClass')->willReturn($em);
 
-        $this->manager->addEntity('au', 'Oro\Bundle\CustomerBundle\Entity\AccountUserAddress');
+        $this->manager->addEntity('au', 'Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress');
         $this->manager->getEntityByIdentifier($identifier);
     }
 
@@ -76,16 +77,16 @@ abstract class AbstractAddressManagerTest extends \PHPUnit_Framework_TestCase
 
     public function testGetEntityByIdentifier()
     {
-        $entity = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountUserAddress', 1);
+        $entity = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress', 1);
 
-        $em = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
+        $em = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
         $em->expects($this->exactly(2))->method('find')
             ->with($this->isType('string'), $this->isType('integer'))
             ->will($this->onConsecutiveCalls($entity, null));
 
         $this->registry->expects($this->any())->method('getManagerForClass')->willReturn($em);
 
-        $this->manager->addEntity('au', 'Oro\Bundle\CustomerBundle\Entity\AccountUserAddress');
+        $this->manager->addEntity('au', 'Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress');
         $this->assertEquals($entity, $this->manager->getEntityByIdentifier('au_1'));
         $this->assertNull($this->manager->getEntityByIdentifier('au_2'));
     }

@@ -22,7 +22,7 @@ class ContentVariantProviderCompilerPass implements CompilerPassInterface
             $container,
             self::CONTENT_VARIANT_PROVIDER_REGISTRY,
             self::CONTENT_VARIANT_PROVIDER_TAG,
-            'addContentVariantProvider'
+            'addProvider'
         );
     }
 }

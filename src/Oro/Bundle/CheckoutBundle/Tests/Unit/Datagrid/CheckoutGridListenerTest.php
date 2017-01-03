@@ -72,69 +72,64 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->em = $this->getMock(EntityManagerInterface::class);
+        $this->em = $this->createMock(EntityManagerInterface::class);
 
-        $metadata = $this->getMockBuilder(ClassMetadata::class)
-                         ->disableOriginalConstructor()
-                         ->getMock();
+        $metadata = $this->getMockBuilder(ClassMetadata::class)->disableOriginalConstructor()->getMock();
 
         $metadata->method('hasField')
-                 ->will($this->returnValueMap(
-                     [
-                         ['currency', true],
-                         ['subtotal', true],
-                         ['total', true],
-                     ]
-                 ));
+            ->will($this->returnValueMap(
+                [
+                    ['currency', true],
+                    ['subtotal', true],
+                    ['total', true],
+                ]
+            ));
 
         $metadata->method('hasAssociation')
-                 ->will($this->returnValueMap(
-                     [
-                         ['totals', true]
-                     ]
-                 ));
+            ->will($this->returnValueMap(
+                [
+                    ['totals', true]
+                ]
+            ));
 
         $this->em->method('getClassMetadata')->willReturn($metadata);
 
         $this->currencyManager = $this->getMockBuilder(UserCurrencyManager::class)
-                                      ->disableOriginalConstructor()
-                                      ->getMock();
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->currencyManager->expects($this->any())->method('getUserCurrency')->willReturn('USD');
 
         $this->cache = $this->getMockBuilder(Cache::class)
-                              ->disableOriginalConstructor()
-                              ->getMock();
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        $this->cache->method('contains')
-                      ->willReturn(false);
+        $this->cache->method('contains')->willReturn(false);
 
-        $this->checkoutRepository = $this->getMockBuilder(
-            CheckoutRepository::class
-        )
-                                             ->setMethods(['find', 'countItemsPerCheckout', 'getSourcePerCheckout'])
-                                             ->disableOriginalConstructor()
-                                             ->getMock();
+        $this->checkoutRepository = $this->getMockBuilder(CheckoutRepository::class)
+            ->setMethods(['find', 'countItemsPerCheckout', 'getSourcePerCheckout'])
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->checkoutRepository->expects($this->any())
-                                     ->method('find')
-                                     ->willReturn(new Checkout());
+            ->method('find')
+            ->willReturn(new Checkout());
 
         $this->totalProcessor = $this->getMockBuilder(TotalProcessorProvider::class)
-                                     ->disableOriginalConstructor()
-                                     ->getMock();
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->totalProcessor->expects($this->any())
-                             ->method('getTotal')
-                             ->willReturn((new Subtotal())->setAmount(10));
+            ->method('getTotal')
+            ->willReturn((new Subtotal())->setAmount(10));
 
         $this->entityNameResolver = $this->getMockBuilder(EntityNameResolver::class)
-                                         ->disableOriginalConstructor()
-                                         ->getMock();
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->checkoutGridHelper = $this->getMockBuilder(CheckoutGridHelper::class)
-                                         ->disableOriginalConstructor()
-                                         ->getMock();
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->listener = new CheckoutGridListener(
             $this->currencyManager,
@@ -150,7 +145,7 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
     {
         $configuration = $this->getGridConfiguration();
         /** @var DatagridInterface $datagrid */
-        $datagrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
+        $datagrid = $this->createMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
         $event    = new BuildBefore($datagrid, $configuration);
         $this->listener->onBuildBefore($event);
 
@@ -169,7 +164,7 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
     {
         $configuration = $this->getGridConfiguration();
         /** @var DatagridInterface $datagrid */
-        $datagrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
+        $datagrid = $this->createMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
         $event    = new BuildBefore($datagrid, $configuration);
         $this->listener->onBuildBefore($event);
 
@@ -270,7 +265,7 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
         $records = [];
 
         for ($i = 1; $i <= 10; $i++) {
-            $record = $this->getMock(
+            $record = $this->createMock(
                 'Oro\Bundle\DataGridBundle\Datasource\ResultRecord',
                 ['getValue', 'addData'],
                 [[]]
@@ -427,7 +422,7 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
     protected function getFieldConfig(array $parameters)
     {
         /** @var ConfigIdInterface $configId */
-        $configId = $this->getMock('Oro\Bundle\EntityConfigBundle\Config\Id\ConfigIdInterface');
+        $configId = $this->createMock('Oro\Bundle\EntityConfigBundle\Config\Id\ConfigIdInterface');
 
         return new Config($configId, $parameters);
     }

@@ -15,7 +15,7 @@ use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\ImportExportBundle\Serializer\Serializer;
 use Oro\Bundle\LocaleBundle\Formatter\AddressFormatter;
 use Oro\Bundle\CustomerBundle\Entity\AccountOwnerAwareInterface;
-use Oro\Bundle\CustomerBundle\Entity\AccountUserAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 use Oro\Bundle\CustomerBundle\Entity\AbstractDefaultTypedAddress;
 use Oro\Bundle\OrderBundle\Manager\OrderAddressManager;
 use Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
@@ -184,7 +184,7 @@ abstract class AbstractOrderAddressType extends AbstractType
         foreach ($addresses as $key => $address) {
             if ($address->hasDefault($type)) {
                 $addressKey = $key;
-                if ($address instanceof AccountUserAddress &&
+                if ($address instanceof CustomerUserAddress &&
                     $address->getFrontendOwner()->getId() === $accountUser->getId()
                 ) {
                     break;

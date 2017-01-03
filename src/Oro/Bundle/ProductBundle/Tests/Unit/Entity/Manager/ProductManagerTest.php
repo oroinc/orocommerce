@@ -22,7 +22,7 @@ class ProductManagerTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->eventDispatcher = $this->getMock(EventDispatcherInterface::class);
+        $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
         $this->productManager = new ProductManager($this->eventDispatcher);
     }
 
@@ -44,7 +44,7 @@ class ProductManagerTest extends \PHPUnit_Framework_TestCase
 
     public function testRestrictSearchQuery()
     {
-        $query = $this->getMock(Query::class);
+        $query = $this->createMock(Query::class);
 
         $this->eventDispatcher->expects($this->once())
             ->method('dispatch')

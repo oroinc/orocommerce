@@ -2,6 +2,7 @@ product1:
     productCode: product.1
     inventoryStatus: in_stock
     status: enabled
+    type: simple
     primaryUnitPrecision:
         code: milliliter
         precision: 0
@@ -18,6 +19,7 @@ product2:
     productCode: product.2
     inventoryStatus: in_stock
     status: enabled
+    type: simple
     primaryUnitPrecision:
         code: milliliter
         precision: 0
@@ -31,6 +33,7 @@ product3:
     productCode: product.3
     inventoryStatus: out_of_stock
     status: enabled
+    type: simple
     primaryUnitPrecision:
         code: milliliter
         precision: 0
@@ -44,6 +47,7 @@ product4:
     productCode: product.4
     inventoryStatus: discontinued
     status: enabled
+    type: simple
     primaryUnitPrecision:
         code: milliliter
         precision: 0
@@ -57,6 +61,7 @@ product5:
     productCode: product.5
     inventoryStatus: in_stock
     status: disabled
+    type: simple
     primaryUnitPrecision:
         code: milliliter
         precision: 0
@@ -70,6 +75,7 @@ product6:
     productCode: product.6
     inventoryStatus: in_stock
     status: enabled
+    type: simple
     primaryUnitPrecision:
         code: milliliter
         precision: 0
@@ -83,6 +89,7 @@ product7:
     productCode: product.7
     inventoryStatus: in_stock
     status: enabled
+    type: simple
     primaryUnitPrecision:
         code: milliliter
         precision: 0
@@ -96,6 +103,7 @@ product8:
     productCode: product.8
     inventoryStatus: in_stock
     status: enabled
+    type: configurable
     primaryUnitPrecision:
         code: milliliter
         precision: 0

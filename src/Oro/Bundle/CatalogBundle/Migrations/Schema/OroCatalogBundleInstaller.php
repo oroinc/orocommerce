@@ -3,6 +3,10 @@
 namespace Oro\Bundle\CatalogBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
+
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
+use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Entity\ConfigModel;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManager;
@@ -10,9 +14,6 @@ use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
-use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
-use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtension;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
 use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtension;
 use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtensionAwareInterface;
@@ -22,11 +23,13 @@ use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtensionAwareInterface;
  */
 class OroCatalogBundleInstaller implements
     Installation,
-    NoteExtensionAwareInterface,
+    ActivityExtensionAwareInterface,
     AttachmentExtensionAwareInterface,
     ExtendExtensionAwareInterface,
     SlugExtensionAwareInterface
 {
+    use AttachmentExtensionAwareTrait;
+
     const ORO_CATALOG_CATEGORY_SHORT_DESCRIPTION_TABLE_NAME = 'oro_catalog_cat_short_desc';
     const ORO_CATALOG_CATEGORY_LONG_DESCRIPTION_TABLE_NAME = 'oro_catalog_cat_long_desc';
     const ORO_CATALOG_CATEGORY_TABLE_NAME = 'oro_catalog_category';
@@ -37,15 +40,8 @@ class OroCatalogBundleInstaller implements
     const THUMBNAIL_WIDTH_SIZE_IN_PX = 100;
     const THUMBNAIL_HEIGHT_SIZE_IN_PX = 100;
 
-    /**
-     * @var NoteExtension
-     */
-    protected $noteExtension;
-
-    /**
-     * @var AttachmentExtension
-     */
-    protected $attachmentExtension;
+    /** @var ActivityExtension */
+    protected $activityExtension;
 
     /**
      * @var ExtendExtension
@@ -66,21 +62,11 @@ class OroCatalogBundleInstaller implements
     }
 
     /**
-     * Sets the NoteExtension
-     *
-     * @param NoteExtension $noteExtension
-     */
-    public function setNoteExtension(NoteExtension $noteExtension)
-    {
-        $this->noteExtension = $noteExtension;
-    }
-
-    /**
      * {@inheritdoc}
      */
-    public function setAttachmentExtension(AttachmentExtension $attachmentExtension)
+    public function setActivityExtension(ActivityExtension $activityExtension)
     {
-        $this->attachmentExtension = $attachmentExtension;
+        $this->activityExtension = $activityExtension;
     }
 
     /**
@@ -147,7 +133,8 @@ class OroCatalogBundleInstaller implements
         $table->addColumn('materialized_path', 'string', ['length' => 255, 'notnull' => false]);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['default_product_options_id']);
-        $this->noteExtension->addNoteAssociation($schema, 'oro_catalog_category');
+
+        $this->activityExtension->addActivityAssociation($schema, 'oro_note', 'oro_catalog_category');
     }
 
     /**

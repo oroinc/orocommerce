@@ -68,55 +68,119 @@
         {% set hasVariants = actionsCount > 1 %}
         {% set additionalCss = "btn" %}
         {% if block.parent.vars.class_prefix == 'datagrid_toolbar_button_container' %}
-            {% set additionalCss = additionalCss ~ " btn_xsm btn-dark btn-block oq-group-btn" %}
+            {% set additionalCss = additionalCss ~ " btn-info oq-group-btn" %}
         {% else %}
-            {% set additionalCss = additionalCss ~ " btn_xlg theme-btn theme-btn_xlg btn-orange" %}
+            {% set additionalCss = additionalCss ~ " btn" %}
         {% endif %}
         {% if hasVariants %}
-            {% set additionalCss = additionalCss ~ " btn_has-dropdown btn_has-dropdown_xlg" %}
+            {% set additionalCss = " btn-group full" %}
         {% endif %}
         {% set attr = attr|merge({ class: attr.class|default('') ~ additionalCss}) %}
-        <div{{ block('block_attributes') }}>
-            {% set action = actions|first %}
-            {% set primaryButtonCss = 'direct-link ' ~ action.buttonOptions.class|default('') ~ " "  ~ params.buttonOptions.aCss|default('') %}
+
+        {% set action = actions|first %}
+        {% set primaryButtonCss = ' btn btn--action btn--size-s direct-link ' ~ action.buttonOptions.class|default('') ~ " "  ~ params.buttonOptions.aCss|default('') %}
+
+        {% if hasVariants %}
+            {% set dropdownMenuOptions = {
+                'align': 'right',
+                'attachToParent': true
+            } %}
+
+            <div{{ block('block_attributes') }}>
+                <a class="btn btn--info btn--size-l" {{ _layout.get_action_attributes(action, entityClass, entityId, primaryButtonCss) }}>
+                    {{ action.label|trim }}
+                </a>
+                <a class="btn btn--info btn--size-l dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"></a>
+                <ul class="dropdown-menu" data-options={{ dropdownMenuOptions|json_encode }}>
+                    {% for action in actions|slice(1) %}
+                    <li>
+                        <a class="dropdown-item" {{ _layout.get_action_attributes(action, entityClass, entityId, '') }}>
+                            {{ action.label|trim }}
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% else %}
             <a {{ _layout.get_action_attributes(action, entityClass, entityId, primaryButtonCss) }}>
                 {{ action.label|trim }}
             </a>
+        {% endif %}
 
-            {% if hasVariants %}
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                <i class="fa-caret-down"></i>
-            </a>
+    {% endif %}
+{% endblock %}
 
-            <ul class="dropdown-menu">
-                {% for action in actions|slice(1) %}
-                <li>
-                    <a {{ _layout.get_action_attributes(action, entityClass, entityId, '') }}>
-                        {{ action.label|trim }}
-                    </a>
-                </li>
-                {% endfor %}
-            </ul>
+{#Buttons#}
+
+{% block line_buttons_widget %}
+    {% import 'OroActionBundle:layouts/base:layout.html.twig' as _layout %}
+    <ul{{ block('block_attributes') }}>
+        {% for button in buttons %}
+            <li>
+                {% include button.template with button.templateData|merge({onlyLink: true, noIconText: true}) %}
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
+
+{% block combined_buttons_widget %}
+    {% set buttonsCount = buttons|length %}
+    {% if buttonsCount > 0 %}
+        {% import 'OroActionBundle:layouts/base:layout.html.twig' as _layout %}
+        {% set hasVariants = buttonsCount > 1 %}
+
+        {% set button = buttons|first %}
+
+        {% if hasVariants %}
+            {% set additionalCss = "btn" %}
+            {% if block.parent.vars.class_prefix == 'datagrid_toolbar_button_container' %}
+                {% set additionalCss = additionalCss ~ " btn--info oq-group-btn " %}
             {% endif %}
-        </div>
+            {% if hasVariants %}
+                {% set additionalCss = " btn-group full " %}
+            {% endif %}
+            {% set attr = attr|merge({ class: attr.class|default('') ~ additionalCss}) %}
+            {% set dropdownMenuOptions = {
+                'align': 'right',
+                'attachToParent': true
+            } %}
+
+            <div{{ block('block_attributes') }}>
+
+
+                {% include button.template with button.templateData|merge({onlyLink: true, aClass: ' btn btn--info btn--size-l direct-link ', noIcon: true, noIconText: true}) %}
+
+                <a href="#" class="btn btn--info btn--size-l dropdown-toggle" data-toggle="dropdown" data-container="body" aria-haspopup="true" aria-expanded="true"></a>
+
+                <ul class="dropdown-menu" data-options={{ dropdownMenuOptions|json_encode }}>
+                    {% for button in buttons|slice(1) %}
+                        <li>
+                            {% include button.template with button.templateData|merge({onlyLink: true, aClass: ' dropdown-item ', noIcon: true, noIconText: true}) %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% else %}
+            {% include button.template with button.templateData|merge({onlyLink: true, aClass: '  btn btn--action btn--size-s direct-link ', noIcon: true, noIconText: true}) %}
+        {% endif %}
     {% endif %}
 {% endblock %}
 
 {% block button_widget %}
     {% if style|default('') == 'auto' %}
         {% if action == 'submit' %}
-            {% set style = 'orange' %}
+            {% set style = 'btn--info' %}
         {% else %}
-            {% set style = action == 'reset' ? 'dark' : 'gray' %}
+            {% set style = action == 'reset' ? 'btn--action' : '' %}
         {% endif %}
     {% endif %}
     {% if style is not defined %}
         {% set add_class = '' %}
     {% else %}
-        {% set add_class = ' btn theme-btn btn-' ~ style %}
+        {% set add_class = 'btn ' ~ style %}
     {% endif %}
     {% set attr = attr|merge({
-    class: attr.class|default('') ~ add_class
+        class: attr.class|default('') ~ add_class
     }) %}
     {{ parent() }}
 {% endblock %}

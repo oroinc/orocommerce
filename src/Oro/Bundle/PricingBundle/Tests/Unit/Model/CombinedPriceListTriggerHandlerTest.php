@@ -45,7 +45,7 @@ class CombinedPriceListTriggerHandlerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $manager = $this->getMock(EntityManagerInterface::class);
+        $manager = $this->createMock(EntityManagerInterface::class);
         $manager->method('getRepository')->with(MinimalProductPrice::class)->willReturn($this->repository);
 
         $this->registry = $this->getMockBuilder(Registry::class)->disableOriginalConstructor()->getMock();
@@ -129,11 +129,11 @@ class CombinedPriceListTriggerHandlerTest extends \PHPUnit_Framework_TestCase
         $combinedPriceList = new CombinedPriceList();
 
         /** @var Website|\PHPUnit_Framework_MockObject_MockObject $website */
-        $website = $this->getMock(Website::class);
+        $website = $this->createMock(Website::class);
         $website->method('getId')->willReturn(1);
 
         /** @var Product|\PHPUnit_Framework_MockObject_MockObject $product */
-        $product = $this->getMock(Product::class);
+        $product = $this->createMock(Product::class);
         $product->method('getId')->willReturn(1);
 
         return [

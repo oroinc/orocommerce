@@ -1,0 +1,8 @@
+// @theme: default
+
+$top-bar-font-size: 12px;
+$top-bar-background: get-color('additional', 'light') !default;
+$top-bar-link-color: get-color('additional', 'dark') !default;
+$top-bar-promo-color: get-color('primary', 'dark') !default;
+$top-bar-offset-inner: 0 $offset-x !default;
+$top-bar-menu-item-offset-inner: $offset-x-s 0 !default;

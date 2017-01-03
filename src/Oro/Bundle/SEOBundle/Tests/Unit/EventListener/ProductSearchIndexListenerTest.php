@@ -36,31 +36,55 @@ class ProductSearchIndexListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getLocalizationsByWebsiteId')
             ->willReturn($localizations);
 
-        $event->expects($this->exactly(4))
+        $event->expects($this->exactly(8))
             ->method('addPlaceholderField')
             ->withConsecutive(
                 [
                     1,
                     'all_text_LOCALIZATION_ID',
-                    'Polish meta description Polish meta keywords',
+                    'Polish meta description',
                     [LocalizationIdPlaceholder::NAME => 1],
                 ],
                 [
                     1,
                     'all_text_LOCALIZATION_ID',
-                    'English meta description English meta keywords',
+                    'Polish meta keywords',
+                    [LocalizationIdPlaceholder::NAME => 1],
+                ],
+                [
+                    1,
+                    'all_text_LOCALIZATION_ID',
+                    'English meta description',
+                    [LocalizationIdPlaceholder::NAME => 2],
+                ],
+                [
+                    1,
+                    'all_text_LOCALIZATION_ID',
+                    'English meta keywords',
                     [LocalizationIdPlaceholder::NAME => 2],
                 ],
                 [
                     2,
                     'all_text_LOCALIZATION_ID',
-                    'Polish meta description Polish meta keywords',
+                    'Polish meta description',
                     [LocalizationIdPlaceholder::NAME => 1],
                 ],
                 [
                     2,
                     'all_text_LOCALIZATION_ID',
-                    'English meta description English meta keywords',
+                    'Polish meta keywords',
+                    [LocalizationIdPlaceholder::NAME => 1],
+                ],
+                [
+                    2,
+                    'all_text_LOCALIZATION_ID',
+                    'English meta description',
+                    [LocalizationIdPlaceholder::NAME => 2],
+                ],
+                [
+                    2,
+                    'all_text_LOCALIZATION_ID',
+                    'English meta keywords',
                     [LocalizationIdPlaceholder::NAME => 2],
                 ]
             );
@@ -89,10 +113,10 @@ class ProductSearchIndexListenerTest extends \PHPUnit_Framework_TestCase
         $result = [];
 
         foreach ($entityIds as $id) {
-            $product = $this->getMock(
-                Product::class,
-                ['getId', 'getMetaDescription', 'getMetaKeyword']
-            );
+            $product = $this->getMockBuilder(Product::class)
+                ->disableOriginalConstructor()
+                ->setMethods(['getId', 'getMetaDescription', 'getMetaKeyword'])
+                ->getMock();
 
             $product->expects($this->any())
                 ->method('getId')
@@ -126,7 +150,7 @@ class ProductSearchIndexListenerTest extends \PHPUnit_Framework_TestCase
      */
     private function getLocalizations()
     {
-        $polishLocalization = $this->getMock(
+        $polishLocalization = $this->createMock(
             Localization::class,
             ['getId']
         );
@@ -134,7 +158,7 @@ class ProductSearchIndexListenerTest extends \PHPUnit_Framework_TestCase
         $polishLocalization->expects($this->atLeast(1))->method('getId')
             ->willReturn(1);
 
-        $englishLocalization = $this->getMock(
+        $englishLocalization = $this->createMock(
             Localization::class,
             ['getId']
         );

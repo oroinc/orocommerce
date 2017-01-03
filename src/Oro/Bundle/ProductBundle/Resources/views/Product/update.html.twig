@@ -40,21 +40,20 @@
 
 {% block content_data %}
     {% set id = 'product-edit' %}
+    {%  set generalData = {
+        'sku': form_row(form.sku),
+        'names': form_row(form.names)
+    } %}
 
-    {# Should be returned in scope of BB-2696 #}
-    {# set generalData = [
-        form_row(form.sku),
-        form_row(form.variantFields)
-    ] #}
-    {%  set generalData = [
-        form_row(form.sku)
-    ] %}
+    {% if entity.isConfigurable %}
+        {% set generalData = generalData|merge([
+            form_row(form.variantFields)
+        ]) %}
+    {% endif %}
 
     {% set generalData = generalData|merge([
-        form_row(form.names),
         form_row(form.slugPrototypes),
         form_row(form.status),
-        form_row(form.images),
         form_row(form.primaryUnitPrecision),
         form_row(form.additionalUnitPrecisions)
     ]) %}
@@ -68,26 +67,23 @@
         },
         {
             'title': '',
-            'data': [
-                form_row(form.descriptions),
-            ]
-        },
-        {
-            'title': '',
-            'data': [
-                form_row(form.shortDescriptions),
-            ],
+            'data': {
+                'descriptions': form_row(form.descriptions),
+                'shortDescriptions': form_row(form.shortDescriptions),
+            },
             'spanClass': 'responsive-cell'
-        }]
-    } %}
+        },
+    ]} %}
 
-    {% set dataBlocks = [
-        generalBlock
-    ] %}
+    {% set dataBlocks = {
+        'general': generalBlock
+    } %}
 
     {% set additionalData = [] %}
     {% for child in form.children if child.vars.extra_field is defined and child.vars.extra_field %}
-        {% set additionalData = additionalData|merge([form_row(child)]) %}
+        {% if child.vars.name not in entity.variantFields %}
+            {% set additionalData = additionalData|merge([form_row(child)]) %}
+        {% endif %}
     {% endfor %}
     {% if additionalData is not empty %}
         {% set dataBlocks = dataBlocks|merge([{
@@ -100,18 +96,33 @@
         }] ) %}
     {% endif %}
 
-    {% set dataBlocks = dataBlocks|merge([{
-        'title': 'oro.product.sections.inventory'|trans,
-        'priority': 5,
-        'subblocks': [{
-            'title': '',
-            'data': [form_row(form.inventoryStatus)]
-        }]
-    }]) %}
+    {% set dataBlocks = dataBlocks|merge({
+        'inventory': {
+            'title': 'oro.product.sections.inventory'|trans,
+            'priority': 5,
+            'subblocks': [{
+                'title': '',
+                'data': {
+                    'inventory_status': form_row(form.inventory_status)
+                }
+            }]
+        }
+    }) %}
 
-    {# Should be returned in scope of BB-2696 #}
-    {#
-    {% set productHasVariants = entity.hasVariants and form.variantFields.vars.choices|length != 0 %}
+    {% set dataBlocks = dataBlocks|merge({
+        'images': {
+            'title': 'oro.product.sections.images'|trans,
+            'priority': 0,
+            'subblocks': [{
+                'title': '',
+                'data': {
+                    'images': form_row(form.images)
+                }
+            }]
+        }
+    }) %}
+
+    {% set productHasVariants = (entity.isConfigurable and form.variantFields.vars.choices|length != 0) %}
     {% if productHasVariants %}
         {% set variantLinksForm = form.variantLinks %}
         {% set dataBlocks = dataBlocks|merge([{
@@ -122,12 +133,11 @@
                 'data' : [
                     form_widget(variantLinksForm.appendVariants, {'id': 'productAppendVariants'}),
                     form_widget(variantLinksForm.removeVariants, {'id': 'productRemoveVariants'}),
-                    dataGrid.renderGrid('oro_product-product_variants-product_edit', {'parentProduct': entity.id}, { cssClass: 'inner-grid' })
+                    dataGrid.renderGrid('product-product-variants-edit', {'parentProduct': entity.id}, { cssClass: 'inner-grid' })
                 ]
             }]
         }] ) %}
     {% endif %}
-    #}
     {% set data = {
         'formErrors': form_errors(form),
         'dataBlocks': dataBlocks

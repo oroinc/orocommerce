@@ -4,25 +4,17 @@ namespace Oro\Bundle\PricingBundle\Migrations\Schema\v1_0;
 
 use Doctrine\DBAL\Schema\Schema;
 
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
-use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
 
-class OroPricingBundle implements Migration, NoteExtensionAwareInterface
+class OroPricingBundle implements Migration, ActivityExtensionAwareInterface
 {
-    /** @var NoteExtension */
-    protected $noteExtension;
-
     /**
-     * Sets the NoteExtension
-     *
-     * @param NoteExtension $noteExtension
+     * @var ActivityExtension
      */
-    public function setNoteExtension(NoteExtension $noteExtension)
-    {
-        $this->noteExtension = $noteExtension;
-    }
+    protected $activityExtension;
 
     /**
      * {@inheritdoc}
@@ -68,7 +60,7 @@ class OroPricingBundle implements Migration, NoteExtensionAwareInterface
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->setPrimaryKey(['id']);
 
-        $this->noteExtension->addNoteAssociation($schema, 'orob2b_price_list');
+        $this->activityExtension->addActivityAssociation($schema, 'oro_note', 'orob2b_price_list');
     }
 
     /**
@@ -214,5 +206,13 @@ class OroPricingBundle implements Migration, NoteExtensionAwareInterface
             ['code'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setActivityExtension(ActivityExtension $activityExtension)
+    {
+        $this->activityExtension = $activityExtension;
     }
 }

@@ -39,13 +39,6 @@ abstract class AbstractPaymentConfigTestCase extends \PHPUnit_Framework_TestCase
      */
     abstract protected function getConfigPrefix();
 
-    public function testIsEnabled()
-    {
-        $returnValue = true;
-        $this->setConfig($this->once(), $this->getConfigPrefix() . 'enabled', $returnValue);
-        $this->assertSame($returnValue, $this->config->isEnabled());
-    }
-
     public function testGetLabel()
     {
         $returnValue = 'test label';
@@ -58,13 +51,6 @@ abstract class AbstractPaymentConfigTestCase extends \PHPUnit_Framework_TestCase
         $returnValue = 'test short label';
         $this->setConfig($this->once(), $this->getConfigPrefix() . 'short_label', $returnValue);
         $this->assertSame($returnValue, $this->config->getShortLabel());
-    }
-
-    public function testGetOrder()
-    {
-        $returnValue = 12;
-        $this->setConfig($this->once(), $this->getConfigPrefix() . 'sort_order', $returnValue);
-        $this->assertSame($returnValue, $this->config->getOrder());
     }
 
     /**
