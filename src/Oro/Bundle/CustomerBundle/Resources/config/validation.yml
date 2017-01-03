@@ -47,9 +47,9 @@ Oro\Bundle\CustomerBundle\Entity\AccountUser:
                 min: 6
                 max: 255
         plainPassword:
-            - NotBlank: { groups: [create] }
-            - Length:
-                min: 2
+            - NotBlank:
+                groups: [create]
+            - Oro\Bundle\UserBundle\Validator\Constraints\PasswordComplexity: ~
         username:
             - NotBlank: ~
             - Length:
