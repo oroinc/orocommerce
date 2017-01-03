@@ -8,6 +8,7 @@ use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
+use Oro\Bundle\TranslationBundle\Migration\DeleteTranslationKeysQuery;
 
 class OroRFPBundle implements Migration, ExtendExtensionAwareInterface
 {
@@ -30,7 +31,7 @@ class OroRFPBundle implements Migration, ExtendExtensionAwareInterface
         $this->updateOroRfpRequestTable($schema);
         $this->createOroRfpRequestAddNoteTable($schema);
         $this->addOroRfpRequestAddNoteForeignKeys($schema);
-        $queries->addQuery(new DeleteTranslationKeys());
+        $queries->addQuery(new DeleteTranslationKeysQuery('messages', $this->getTranslationKeysForRemove()));
     }
 
     /**
@@ -90,5 +91,32 @@ class OroRFPBundle implements Migration, ExtendExtensionAwareInterface
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
+    }
+
+    /**
+     * Get unused translation keys
+     *
+     * @return array
+     */
+    protected function getTranslationKeysForRemove()
+    {
+        return [
+            'oro.rfp.message.request_status_saved',
+            'oro.rfp.message.request_status_restored',
+            'oro.rfp.message.request_status_deleted',
+            'oro.rfp.message.request_status_not_found',
+            'oro.rfp.message.request_status_changed',
+            'oro.rfp.message.request_status_not_deletable',
+            'oro.rfp.requeststatus.entity_label',
+            'oro.rfp.requeststatus.entity_plural_label',
+            'oro.rfp.requeststatus.id.label',
+            'oro.rfp.requeststatus.name.label',
+            'oro.rfp.requeststatus.label.label',
+            'oro.rfp.requeststatus.sort_order.label',
+            'oro.rfp.requeststatus.deleted.label',
+            'oro.rfp.requeststatus.translations.label',
+            'oro.rfp.system_configuration.groups.requeststatus.title',
+            'oro.rfp.system_configuration.fields.requeststatus_default.title',
+        ];
     }
 }
