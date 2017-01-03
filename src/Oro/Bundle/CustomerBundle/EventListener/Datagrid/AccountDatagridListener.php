@@ -56,7 +56,6 @@ class AccountDatagridListener
 
     /**
      * @param BuildBefore $event
-     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     public function onBuildBeforeFrontendItems(BuildBefore $event)
     {
@@ -86,6 +85,14 @@ class AccountDatagridListener
         $this->entityClass = $entityClass;
         $this->entityAlias = $entityAlias;
 
+        $this->updateConfiguration($config);
+    }
+
+    /**
+     * @param DatagridConfiguration $config
+     */
+    protected function updateConfiguration(DatagridConfiguration $config)
+    {
         if ($this->permissionShowAllAccountItems()) {
             $this->showAllAccountItems($config);
         } elseif ($this->permissionShowAllAccountItemsForChild()) {
