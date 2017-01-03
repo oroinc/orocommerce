@@ -21,7 +21,7 @@
     &__item {
         display: block;
 
-        min-height: 49px;
+        min-height: $main-menu-item-height;
 
         flex-grow: 1;
 
@@ -48,6 +48,20 @@
             vertical-align: middle;
 
             background: get-color('additional', 'base');
+        }
+
+        &.open {
+            .main-menu__sublist-container {
+                display: block !important;
+            }
+
+            .messages-widget__dropdown-mode {
+                display: block;
+            }
+
+            .main-menu__link {
+                background: get-color('additional', 'base');
+            }
         }
     }
 
@@ -85,21 +99,54 @@
     &__sublist {
         display: none;
     }
+
+    &__button-arrow {
+        padding: 8px;
+
+        font-size: inherit;
+
+        background: none;
+        border: 0;
+
+        cursor: pointer;
+
+        .fa-angle-down {
+            margin-right: 0;
+        }
+    }
 }
 
 @include breakpoint('desktop') {
+    .main-menu {
+        max-height: $main-menu-item-height;
+
+        &__item {
+            min-height: $main-menu-item-height;
+
+            &--ancestor {
+                .main-menu__link {
+                    text-indent: 4px;
+                }
+            }
+        }
+
+        &__link {
+            margin-right: -35px;
+
+            min-height: $main-menu-item-height;
+
+            display: inline-block;
+
+            .fa-angle-down {
+                display: none;
+            }
+        }
+    }
+
     .desktop-version {
         .main-menu {
-            max-height: 49px;
-
             &__item {
-                min-height: 49px;
-
                 &--ancestor {
-                    .main-menu__link {
-                        text-indent: 4px;
-                    }
-
                     &:hover {
                         .main-menu__link {
                             background: get-color('additional', 'base');
@@ -118,10 +165,6 @@
                         }
                     }
                 }
-            }
-
-            &__link {
-                min-height: 49px;
             }
         }
     }
@@ -144,6 +187,10 @@
 
         &__sublist-container {
             box-shadow: none;
+        }
+
+        &__button-arrow {
+            display: none;
         }
     }
 }
