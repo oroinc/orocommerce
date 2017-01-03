@@ -94,7 +94,7 @@ class CheckoutGridListener
 
         if ($updates) {
             $query = $config->getOrmQuery();
-            $query->setSelect(array_merge($query->getSelect(), $updates['selects']));
+            $query->addSelect($updates['selects']);
             $query->setLeftJoins(array_merge($query->getLeftJoins(), $updates['joins']));
             $config->offsetAddToArrayByPath('[columns]', $updates['columns']);
             $config->offsetAddToArrayByPath('[filters][columns]', $updates['filters']);
