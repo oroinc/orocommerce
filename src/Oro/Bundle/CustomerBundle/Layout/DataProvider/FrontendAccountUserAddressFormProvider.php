@@ -6,7 +6,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Entity\AccountUserAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 use Oro\Bundle\CustomerBundle\Form\Type\FrontendAccountUserTypedAddressType;
 use Oro\Bundle\LayoutBundle\Layout\DataProvider\AbstractFormProvider;
 
@@ -18,12 +18,12 @@ class FrontendAccountUserAddressFormProvider extends AbstractFormProvider
     /**
      * Get account user address form view
      *
-     * @param AccountUserAddress $accountUserAddress
+     * @param CustomerUserAddress $accountUserAddress
      * @param AccountUser        $accountUser
      *
      * @return FormView
      */
-    public function getAddressFormView(AccountUserAddress $accountUserAddress, AccountUser $accountUser)
+    public function getAddressFormView(CustomerUserAddress $accountUserAddress, AccountUser $accountUser)
     {
         $options = $this->getFormOptions($accountUserAddress, $accountUser);
 
@@ -33,12 +33,12 @@ class FrontendAccountUserAddressFormProvider extends AbstractFormProvider
     /**
      * Get account user address form
      *
-     * @param AccountUserAddress $accountUserAddress
+     * @param CustomerUserAddress $accountUserAddress
      * @param AccountUser        $accountUser
      *
      * @return FormInterface
      */
-    public function getAddressForm(AccountUserAddress $accountUserAddress, AccountUser $accountUser)
+    public function getAddressForm(CustomerUserAddress $accountUserAddress, AccountUser $accountUser)
     {
         $options = $this->getFormOptions($accountUserAddress, $accountUser);
 
@@ -46,12 +46,12 @@ class FrontendAccountUserAddressFormProvider extends AbstractFormProvider
     }
 
     /**
-     * @param AccountUserAddress $accountUserAddress
+     * @param CustomerUserAddress $accountUserAddress
      * @param AccountUser        $accountUser
      *
      * @return array
      */
-    private function getFormOptions(AccountUserAddress $accountUserAddress, AccountUser $accountUser)
+    private function getFormOptions(CustomerUserAddress $accountUserAddress, AccountUser $accountUser)
     {
         $options = [];
         if ($accountUserAddress->getId()) {

@@ -3,10 +3,10 @@
 namespace Oro\Bundle\CustomerBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
-use Oro\Bundle\CustomerBundle\Entity\AccountAddressToAddressType;
+use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerAddressToAddressType;
 
-class AccountAddressTest extends AbstractAddressTest
+class CustomerAddressTest extends AbstractAddressTest
 {
     public function testProperties()
     {
@@ -18,18 +18,18 @@ class AccountAddressTest extends AbstractAddressTest
     }
 
     /**
-     * @return AccountAddress
+     * @return CustomerAddress
      */
     protected function createAddressEntity()
     {
-        return new AccountAddress();
+        return new CustomerAddress();
     }
 
     /**
-     * @return AccountAddressToAddressType
+     * @return CustomerAddressToAddressType
      */
     protected function createAddressToTypeEntity()
     {
-        return new AccountAddressToAddressType();
+        return new CustomerAddressToAddressType();
     }
 }

@@ -7,10 +7,10 @@ use Doctrine\Common\Collections\Collection;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
-use Oro\Bundle\CustomerBundle\Model\ExtendAccountUserAddress;
+use Oro\Bundle\CustomerBundle\Model\ExtendCustomerUserAddress;
 
 /**
- * @ORM\Table("oro_account_user_address")
+ * @ORM\Table("oro_customer_user_address")
  * @ORM\HasLifecycleCallbacks()
  * @Config(
  *       defaultValues={
@@ -42,9 +42,9 @@ use Oro\Bundle\CustomerBundle\Model\ExtendAccountUserAddress;
  *          }
  *      }
  * )
- * @ORM\Entity(repositoryClass="Oro\Bundle\CustomerBundle\Entity\Repository\AccountUserAddressRepository")
+ * @ORM\Entity(repositoryClass="Oro\Bundle\CustomerBundle\Entity\Repository\CustomerUserAddressRepository")
  */
-class AccountUserAddress extends ExtendAccountUserAddress implements AddressPhoneAwareInterface
+class CustomerUserAddress extends ExtendCustomerUserAddress implements AddressPhoneAwareInterface
 {
     /**
      * @ORM\ManyToOne(
@@ -64,10 +64,10 @@ class AccountUserAddress extends ExtendAccountUserAddress implements AddressPhon
     protected $frontendOwner;
 
     /**
-     * @var Collection|AccountUserAddressToAddressType[]
+     * @var Collection|CustomerUserAddressToAddressType[]
      *
      * @ORM\OneToMany(
-     *      targetEntity="Oro\Bundle\CustomerBundle\Entity\AccountUserAddressToAddressType",
+     *      targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerUserAddressToAddressType",
      *      mappedBy="address",
      *      cascade={"persist", "remove"},
      *      orphanRemoval=true
@@ -94,7 +94,7 @@ class AccountUserAddress extends ExtendAccountUserAddress implements AddressPhon
      */
     protected function createAddressToAddressTypeEntity()
     {
-        return new AccountUserAddressToAddressType();
+        return new CustomerUserAddressToAddressType();
     }
 
     /**
@@ -102,7 +102,7 @@ class AccountUserAddress extends ExtendAccountUserAddress implements AddressPhon
      *
      * @param string $phone
      *
-     * @return AccountUserAddress
+     * @return CustomerUserAddress
      */
     public function setPhone($phone)
     {

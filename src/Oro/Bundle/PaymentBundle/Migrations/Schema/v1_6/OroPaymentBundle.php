@@ -9,6 +9,8 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class OroPaymentBundle implements Migration
 {
+    const PAYMENT_METHOD_CONFIG_RULE_TABLE = 'oro_payment_mtds_cfgs_rl';
+
     /**
      * {@inheritdoc}
      */
@@ -48,7 +50,7 @@ class OroPaymentBundle implements Migration
      */
     protected function createOroPaymentMethodsConfigsRuleTable(Schema $schema)
     {
-        $table = $schema->createTable('oro_payment_mtds_cfgs_rl');
+        $table = $schema->createTable(self::PAYMENT_METHOD_CONFIG_RULE_TABLE);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('rule_id', 'integer', ['notnull' => true]);
         $table->addColumn('currency', 'string', ['notnull' => true, 'length' => 3]);
@@ -99,7 +101,7 @@ class OroPaymentBundle implements Migration
     {
         $table = $schema->getTable('oro_payment_method_config');
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_payment_mtds_cfgs_rl'),
+            $schema->getTable(self::PAYMENT_METHOD_CONFIG_RULE_TABLE),
             ['configs_rule_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -113,7 +115,7 @@ class OroPaymentBundle implements Migration
      */
     protected function addOroPaymentMethodsConfigsRuleForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('oro_payment_mtds_cfgs_rl');
+        $table = $schema->getTable(self::PAYMENT_METHOD_CONFIG_RULE_TABLE);
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_rule'),
             ['rule_id'],
@@ -137,7 +139,7 @@ class OroPaymentBundle implements Migration
             ['onDelete' => null, 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_payment_mtds_cfgs_rl'),
+            $schema->getTable(self::PAYMENT_METHOD_CONFIG_RULE_TABLE),
             ['configs_rule_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]

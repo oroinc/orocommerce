@@ -4,9 +4,9 @@ namespace Oro\Bundle\CustomerBundle\Tests\Unit\Fixtures;
 
 use Oro\Bundle\AddressBundle\Tests\Unit\Fixtures\TypedAddressOwner;
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 
-class AccountTypedAddress extends AccountAddress
+class CustomerTypedAddress extends CustomerAddress
 {
     /** @var TypedAddressOwner */
     protected $frontendOwner;
@@ -21,7 +21,7 @@ class AccountTypedAddress extends AccountAddress
 
     /**
      * @param Account $frontendOwner
-     * @return AccountTypedAddress
+     * @return CustomerTypedAddress
      */
     public function setFrontendOwner(Account $frontendOwner)
     {

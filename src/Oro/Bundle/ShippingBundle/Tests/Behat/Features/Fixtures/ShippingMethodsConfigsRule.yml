@@ -102,7 +102,7 @@ Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal:
         subtotalValue: '10.1'
         valid: true
 
-Oro\Bundle\CustomerBundle\Entity\AccountUserAddress:
+Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
     address1:
         country: '@germany'
         region: '@berlin'
@@ -187,7 +187,7 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUserSettings:
         __construct: ['@website1']
         currency: 'EUR'
 
-Oro\Bundle\CustomerBundle\Entity\AccountUserAddressToAddressType:
+Oro\Bundle\CustomerBundle\Entity\CustomerUserAddressToAddressType:
     billing:
         address: '@address1'
         type: '@billingType'

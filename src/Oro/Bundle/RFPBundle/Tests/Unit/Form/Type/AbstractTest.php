@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Unit\Form\Type;
 
+use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Form\FormTypeInterface;
 
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
@@ -30,10 +32,30 @@ use Oro\Bundle\RFPBundle\Form\Type\RequestProductItemType;
  */
 abstract class AbstractTest extends FormIntegrationTestCase
 {
+    protected $dateTimeFields = [
+        'updatedAt',
+        'createdAt'
+    ];
+
     /**
      * @var FormTypeInterface
      */
     protected $formType;
+
+    /**
+     * @var PropertyAccessor
+     */
+    protected $propertyAccessor;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
+    }
 
     /**
      * @param bool $isValid
@@ -53,7 +75,37 @@ abstract class AbstractTest extends FormIntegrationTestCase
 
         $this->assertEquals($isValid, $form->isValid());
 
+        $formData = $form->getData();
+
+        $this->checkDateTimeFields($expectedData, $formData);
+
+        $this->fixDateTimeFieldValues($expectedData, $formData);
+
         $this->assertEquals($expectedData, $form->getData());
+    }
+
+    protected function checkDateTimeFields($expectedData, $formData)
+    {
+        foreach ($this->dateTimeFields as $fieldName) {
+            if (method_exists($expectedData, sprintf('get%s', ucfirst($fieldName)))) {
+                $expectedDateTimeFieldValue = $this->propertyAccessor->getValue($expectedData, $fieldName);
+                $actualDateTimeFieldValue = $this->propertyAccessor->getValue($formData, $fieldName);
+                $this->assertGreaterThanOrEqual($expectedDateTimeFieldValue, $actualDateTimeFieldValue);
+            }
+        }
+    }
+
+    protected function fixDateTimeFieldValues($expectedData, $formData)
+    {
+        $reflectionObj = new \ReflectionObject($expectedData);
+        foreach ($this->dateTimeFields as $fieldName) {
+            if (method_exists($expectedData, sprintf('get%s', ucfirst($fieldName)))) {
+                $actualDateTimeFieldValue = $this->propertyAccessor->getValue($formData, $fieldName);
+                $reflectionProperty = $reflectionObj->getProperty($fieldName);
+                $reflectionProperty->setAccessible(true);
+                $reflectionProperty->setValue($expectedData, $actualDateTimeFieldValue);
+            }
+        }
     }
 
     /**

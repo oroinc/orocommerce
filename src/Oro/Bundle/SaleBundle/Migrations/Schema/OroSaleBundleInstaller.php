@@ -61,7 +61,7 @@ class OroSaleBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_11';
+        return 'v1_12';
     }
 
     /**
@@ -174,8 +174,8 @@ class OroSaleBundleInstaller implements
     {
         $table = $schema->createTable('oro_quote_address');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('account_address_id', 'integer', ['notnull' => false]);
-        $table->addColumn('account_user_address_id', 'integer', ['notnull' => false]);
+        $table->addColumn('customer_address_id', 'integer', ['notnull' => false]);
+        $table->addColumn('customer_user_address_id', 'integer', ['notnull' => false]);
         $table->addColumn('region_code', 'string', ['notnull' => false, 'length' => 16]);
         $table->addColumn('country_code', 'string', ['notnull' => false, 'length' => 2]);
         $table->addColumn('label', 'string', ['notnull' => false, 'length' => 255]);
@@ -487,14 +487,14 @@ class OroSaleBundleInstaller implements
     {
         $table = $schema->getTable('oro_quote_address');
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_account_address'),
-            ['account_address_id'],
+            $schema->getTable('oro_customer_address'),
+            ['customer_address_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_account_user_address'),
-            ['account_user_address_id'],
+            $schema->getTable('oro_customer_user_address'),
+            ['customer_user_address_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );

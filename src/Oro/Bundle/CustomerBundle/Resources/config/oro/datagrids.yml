@@ -997,17 +997,17 @@ datagrids:
             id: ~
         columns:
             street:
-                label: oro.customer.accountaddress.entity_label
+                label: oro.customer.customeraddress.entity_label
             city:
-                label: oro.customer.accountaddress.city.label
+                label: oro.customer.customeraddress.city.label
             state:
-                label: oro.customer.accountaddress.region.label
+                label: oro.customer.customeraddress.region.label
             zip:
-                label: oro.customer.accountuseraddress.postal_code.label
+                label: oro.customer.customeruseraddress.postal_code.label
             countryName:
-                label: oro.customer.accountaddress.country.label
+                label: oro.customer.customeraddress.country.label
             types:
-                label: oro.customer.accountaddress.types.singular_label
+                label: oro.customer.customeraddress.types.singular_label
                 type: twig
                 frontend_type: html
                 template: OroCustomerBundle:Address:Frontend/Datagrid/types.html.twig
