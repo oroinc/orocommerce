@@ -15,20 +15,8 @@ layout:
                         product: '=data["product"]'
                 product_view_primary_container:
                     blockType: container
-#                product_view_title:
-#                    blockType: text
-#                    options:
-#                        text: '=data["locale"].getLocalizedValue(data["product"].getNames())'
                 product_view_aside_container:
                     blockType: container
-#                product_media:
-#                    blockType: product_image
-#                    options:
-#                        product: '=data["product"]'
-#                product_media_popup:
-#                    blockType: product_image
-#                    options:
-#                        product: '=data["product"]'
                 product_view_main_container:
                     blockType: container
                 product_view_content_container:
@@ -41,17 +29,8 @@ layout:
                     blockType: container
                 product_view_price_container:
                     blockType: container
-#                product_view_sku:
-#                    blockType: text
-#                    options:
-#                        text: '=data["product"].getSku()'
                 product_view_description_container:
                     blockType: container
-#                product_view_description:
-#                    blockType: text
-#                    options:
-#                        text: '=data["locale"].getLocalizedValue(data["product"].getDescriptions())'
-#                        escape: false
                 product_view_additional_container:
                     blockType: container
                 product_view_attribute_group_general:
@@ -60,31 +39,43 @@ layout:
                         entity: '=data["product"]'
                         attribute_family: '=context["attribute_family"]'
                         group: 'general'
+                product_view_attribute_group_images:
+                    blockType: attribute_group
+                    options:
+                        entity: '=data["product"]'
+                        attribute_family: '=context["attribute_family"]'
+                        group: 'images'
+                product_view_main_attributes_container:
+                    blockType: container
             tree:
                 page_content:
                     product_view_container:
+                        product_view_attribute_group_images: ~
                         product_view_attribute_group_general: ~
                         product_view_primary_container:
-#                            product_view_title: ~
                         product_view_aside_container:
-#                            product_media_popup: ~
-#                            product_media: ~
                         product_view_main_container:
-#                                product_view_sku: ~
-#                                product_view_description: ~
-                                product_view_content_container:
-                                    product_view_specification_container:
-                                        product_view_price_container: ~
-                                        product_view_variant_field_container: ~
-                                    product_view_description_container:
-                                        product_view_line_item_container: ~
+                            product_view_content_container:
+                                product_view_main_attributes_container: ~
+                                product_view_specification_container:
+                                    product_view_price_container: ~
+                                    product_view_variant_field_container: ~
+                                product_view_description_container:
+                                    product_view_line_item_container: ~
                         product_view_additional_container: ~
         - '@move':
-            id: product_view_attribute_group_general_attribute_text_sku
-            parentId: product_view_main_container
+            id: product_view_attribute_group_general_attribute_localized_fallback_names
+            parentId: product_view_primary_container
             prepend: true
         - '@move':
-            id: product_view_attribute_group_general_attribute_localized_fallback_names
+            id: product_view_attribute_group_general_attribute_text_sku
+            parentId: product_view_main_attributes_container
+        - '@move':
+            id: product_view_attribute_group_general_attribute_localized_fallback_shortDescriptions
+            parentId: product_view_main_attributes_container
+#        - '@move':
+#            id: product_view_attribute_group_general_attribute_localized_fallback_descriptions
+#            parentId: product_view_main_attributes_container
 
     imports:
         -

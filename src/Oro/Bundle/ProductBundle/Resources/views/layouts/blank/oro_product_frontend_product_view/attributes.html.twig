@@ -13,3 +13,12 @@
 
     {{ block('_product_media_widget') }}
 {% endblock %}
+
+{% block _product_view_attribute_group_general_attribute_text_sku_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+    '~class': ' product-item__number product-item__number_{{ class_prefix }}'
+    }) %}
+    <div {{ block('block_attributes') }}>
+        Item #: <span class="red">{{ block_widget(block) }}</span>
+    </div>
+{% endblock %}
