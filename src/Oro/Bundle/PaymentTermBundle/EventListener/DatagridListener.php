@@ -6,7 +6,6 @@ use Oro\Bundle\CustomerBundle\Entity\AccountOwnerAwareInterface;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
-use Oro\Bundle\EntityExtendBundle\Grid\DynamicFieldsExtension;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
 
@@ -36,7 +35,7 @@ class DatagridListener
     public function onBuildBefore(BuildBefore $event)
     {
         $config = $event->getConfig();
-        $className = $config->offsetGetByPath(DynamicFieldsExtension::EXTEND_ENTITY_CONFIG_PATH);
+        $className = $config->getExtendedEntityClassName();
         if (!$className) {
             return;
         }
@@ -62,7 +61,7 @@ class DatagridListener
     public function onResultAfter(OrmResultAfter $event)
     {
         $config = $event->getDatagrid()->getConfig();
-        $className = $config->offsetGetByPath(DynamicFieldsExtension::EXTEND_ENTITY_CONFIG_PATH);
+        $className = $config->getExtendedEntityClassName();
         if (!$className) {
             return;
         }

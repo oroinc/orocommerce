@@ -5,7 +5,6 @@ namespace Oro\Bundle\PaymentTermBundle\EventListener;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
-use Oro\Bundle\EntityExtendBundle\Grid\DynamicFieldsExtension;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
 
 class AccountDatagridListener
@@ -27,7 +26,7 @@ class AccountDatagridListener
     public function onBuildBefore(BuildBefore $event)
     {
         $config = $event->getConfig();
-        $className = $config->offsetGetByPath(DynamicFieldsExtension::EXTEND_ENTITY_CONFIG_PATH);
+        $className = $config->getExtendedEntityClassName();
         if (!is_a(Account::class, $className, true)) {
             return;
         }
@@ -42,53 +41,36 @@ class AccountDatagridListener
             return;
         }
 
-        $from = $config->offsetGetByPath('[source][query][from]');
-        $root = reset($from);
+        $query = $config->getOrmQuery();
+        $rootAlias = $query->getRootAlias();
 
         $aliases = [];
         foreach ($accountGroupAssociationNames as $accountGroupAssociationName) {
             $alias = 'agpt_'.$accountGroupAssociationName;
             $aliases[] = $alias;
-            $config->offsetAddToArrayByPath(
-                '[source][query][join][left]',
-                [
-                    [
-                        'join' => 'account_group.'.$accountGroupAssociationName,
-                        'alias' => $alias,
-                    ],
-                ]
-            );
+            $query->addLeftJoin('account_group.' . $accountGroupAssociationName, $alias);
         }
 
-        $config->offsetAddToArrayByPath(
-            '[source][query][select]',
-            [$this->getSelectPart($aliases, 'account_group_payment_term', 'label')]
-        );
+        $query->addSelect($this->getSelectPart($aliases, 'account_group_payment_term', 'label'));
 
         foreach ($associationNames as $associationName) {
-            $config->offsetAddToArrayByPath(
-                '[source][query][select]',
-                [
-                    $this->getSelectPart(
-                        $aliases,
-                        $associationName.'_resolved_id',
-                        'id',
-                        [sprintf('IDENTITY(%s.%s)', $root['alias'], $associationName)]
-                    ),
-                ]
+            $query->addSelect(
+                $this->getSelectPart(
+                    $aliases,
+                    $associationName.'_resolved_id',
+                    'id',
+                    [sprintf('IDENTITY(%s.%s)', $rootAlias, $associationName)]
+                )
             );
 
             $targetField = $this->paymentTermAssociationProvider->getTargetField(Account::class, $associationName);
-            $config->offsetAddToArrayByPath(
-                '[source][query][select]',
-                [
-                    $this->getSelectPart(
-                        $aliases,
-                        $associationName.'_resolved_value',
-                        $targetField,
-                        [$associationName.'.'.$targetField]
-                    ),
-                ]
+            $query->addSelect(
+                $this->getSelectPart(
+                    $aliases,
+                    $associationName.'_resolved_value',
+                    $targetField,
+                    [$associationName.'.'.$targetField]
+                )
             );
             $config->offsetSetByPath(
                 sprintf('[filters][columns][%s][data_name]', $associationName),
