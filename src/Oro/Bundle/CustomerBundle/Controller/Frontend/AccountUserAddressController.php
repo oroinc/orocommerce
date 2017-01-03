@@ -24,7 +24,6 @@ class AccountUserAddressController extends Controller
     /**
      * @Route("/", name="oro_customer_frontend_account_user_address_index")
      * @Layout(vars={"entity_class", "account_address_count", "account_user_address_count"})
-     * @AclAncestor("oro_account_frontend_account_user_address_view")
      *
      * @return array
      */

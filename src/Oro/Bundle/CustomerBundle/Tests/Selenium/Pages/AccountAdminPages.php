@@ -62,9 +62,8 @@ class AccountAdminPages extends AbstractPage
             // select account
             $this->getElement($accountInputSelector)->click();
             $this->waitForAjax();
-            $this->getElement(
-                sprintf("//div[@class='select2-result-label'][text()='%s']", $user->accountName)
-            )->click();
+            $this->getElement(sprintf("//div[@class='select2-result-label'][text()='%s']", $user->accountName))
+                ->click();
             $this->waitForAjax();
             $this->getElement(sprintf($roleSelector, $user->role))->click();
             $this->waitForAjax();

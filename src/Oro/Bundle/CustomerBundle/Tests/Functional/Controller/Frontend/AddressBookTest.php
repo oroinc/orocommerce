@@ -28,14 +28,14 @@ class AddressBookTest extends WebTestCase
 
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('oro_account_frontend_account_user_profile')
+            $this->getUrl('oro_customer_frontend_account_user_profile')
         );
         $this->assertFalse($this->isAddressBookMenuVisible($crawler));
 
         $this->client->followRedirects();
         $this->client->request(
             'GET',
-            $this->getUrl('oro_account_frontend_account_user_address_index')
+            $this->getUrl('oro_customer_frontend_account_user_address_index')
         );
         $this->assertEquals($this->client->getResponse()->getStatusCode(), Response::HTTP_FORBIDDEN);
     }
@@ -49,7 +49,7 @@ class AddressBookTest extends WebTestCase
 
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('oro_account_frontend_account_user_address_index')
+            $this->getUrl('oro_customer_frontend_account_user_address_index')
         );
 
         $this->assertFalse($this->isAddUserAddressButtonVisible($crawler));
@@ -69,7 +69,7 @@ class AddressBookTest extends WebTestCase
 
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('oro_account_frontend_account_user_address_index')
+            $this->getUrl('oro_customer_frontend_account_user_address_index')
         );
         $this->assertFalse($this->isAddUserAddressButtonVisible($crawler));
         $this->assertFalse($this->isAddAccountAddressButtonVisible($crawler));
@@ -88,7 +88,7 @@ class AddressBookTest extends WebTestCase
 
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('oro_account_frontend_account_user_address_index')
+            $this->getUrl('oro_customer_frontend_account_user_address_index')
         );
 
         $this->assertFalse($this->isAddUserAddressButtonVisible($crawler));
@@ -108,7 +108,7 @@ class AddressBookTest extends WebTestCase
 
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('oro_account_frontend_account_user_address_index')
+            $this->getUrl('oro_customer_frontend_account_user_address_index')
         );
 
         $this->assertFalse($this->isAddUserAddressButtonVisible($crawler));
@@ -128,13 +128,12 @@ class AddressBookTest extends WebTestCase
 
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('oro_account_frontend_account_user_address_index')
+            $this->getUrl('oro_customer_frontend_account_user_address_index')
         );
 
         $this->assertFalse($this->isAccountAddressSectionVisible());
         $this->assertFalse($this->isAddAccountAddressButtonVisible($crawler));
 
-        $this->assertTrue($this->isAddUserAddressButtonVisible($crawler));
         $this->assertTrue($this->isAccountUserAddressSectionVisible());
         $this->assertTrue($this->isAddressBookMenuVisible($crawler));
     }

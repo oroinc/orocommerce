@@ -9,10 +9,8 @@ class AddressBookTestPage extends AbstractPage
 {
     use SeleniumTestHelper;
 
-    const ACCOUNT_ADDRESS_BLOCK_SELECTOR =
-        "//h1[contains(@class,'page-title')]/following-sibling::div[2]";
-    const USER_ADDRESS_BLOCK_SELECTOR =
-        "//h1[contains(@class,'page-title')]/following-sibling::div[4]";
+    const ACCOUNT_ADDRESS_BLOCK_SELECTOR = "//h1[contains(@class,'page-title')]/following-sibling::div[2]";
+    const USER_ADDRESS_BLOCK_SELECTOR = "//h1[contains(@class,'page-title')]/following-sibling::div[4]";
     const ADDRESS_BOOK_URL = '/account/user/address';
 
     /**

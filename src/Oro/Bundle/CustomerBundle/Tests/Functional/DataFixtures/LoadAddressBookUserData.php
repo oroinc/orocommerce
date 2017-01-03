@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures;
 
-use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\AbstractFixture;
+use Doctrine\Common\Persistence\ObjectManager;
 
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -71,46 +71,46 @@ class LoadAddressBookUserData extends AbstractFixture implements ContainerAwareI
     protected $roles = [
         self::ROLE1_V_AC_AD => [
             [
-                'class' => 'oro_account.entity.account_address.class',
+                'class' => 'oro_customer.entity.account_address.class',
                 'acls' => ['VIEW_LOCAL'],
             ],
         ],
         self::ROLE2_V_ACU_AD => [
             [
-                'class' => 'oro_account.entity.account_user_address.class',
+                'class' => 'oro_customer.entity.account_user_address.class',
                 'acls' => ['VIEW_BASIC'],
             ],
         ],
         self::ROLE3_V_AC_AD_V_ACU_AD => [
             [
-                'class' => 'oro_account.entity.account_user_address.class',
+                'class' => 'oro_customer.entity.account_user_address.class',
                 'acls' => ['VIEW_BASIC'],
             ],
             [
-                'class' => 'oro_account.entity.account_address.class',
+                'class' => 'oro_customer.entity.account_address.class',
                 'acls' => ['VIEW_LOCAL'],
             ],
         ],
         self::ROLE4_NONE => [],
         self::ROLE5_VCED_AC_AD_VCED_AU_AD => [
             [
-                'class' => 'oro_account.entity.account_user_address.class',
+                'class' => 'oro_customer.entity.account_user_address.class',
                 'acls' => ['VIEW_BASIC', 'EDIT_BASIC', 'CREATE_BASIC'],
             ],
             [
-                'class' => 'oro_account.entity.account_address.class',
+                'class' => 'oro_customer.entity.account_address.class',
                 'acls' => ['VIEW_LOCAL'],
             ],
         ],
         self::ROLE6_VC_AC_AD => [
             [
-                'class' => 'oro_account.entity.account_address.class',
+                'class' => 'oro_customer.entity.account_address.class',
                 'acls' => ['VIEW_LOCAL', 'CREATE_LOCAL'],
             ],
         ],
         self::ROLE7_VC_AU_AD => [
             [
-                'class' => 'oro_account.entity.account_user_address.class',
+                'class' => 'oro_customer.entity.account_user_address.class',
                 'acls' => ['VIEW_BASIC', 'CREATE_BASIC'],
             ],
         ]
@@ -192,9 +192,7 @@ class LoadAddressBookUserData extends AbstractFixture implements ContainerAwareI
      */
     public function getDependencies()
     {
-        return [
-            LoadAdminUserData::class,
-        ];
+        return [LoadAdminUserData::class];
     }
 
     /**
@@ -330,16 +328,15 @@ class LoadAddressBookUserData extends AbstractFixture implements ContainerAwareI
      */
     protected function getUser(ObjectManager $manager)
     {
+        /** @var RoleRepository $roleRepository */
+        $roleRepository = $manager->getRepository(Role::class);
         /** @var Role $role */
-        $role = $manager->getRepository('OroUserBundle:Role')
-            ->findOneBy(['role' => LoadRolesData::ROLE_ADMINISTRATOR]);
+        $role = $roleRepository->findOneBy(['role' => LoadRolesData::ROLE_ADMINISTRATOR]);
 
         if (!$role) {
             throw new \RuntimeException(sprintf('%s role should exist.', LoadRolesData::ROLE_ADMINISTRATOR));
         }
 
-        /** @var RoleRepository $roleRepository */
-        $roleRepository = $manager->getRepository('OroUserBundle:Role');
         $user = $roleRepository->getFirstMatchedUser($role);
 
         if (!$user) {
