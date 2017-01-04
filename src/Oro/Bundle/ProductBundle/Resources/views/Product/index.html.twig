@@ -25,9 +25,12 @@
 {% block content_datagrid %}
     <div class="product-container">
         {% set componentOptions = {
+            container: 'product-container',
+            sidebar: 'grid-sidebar',
             sidebarAlias: 'products-sidebar',
             widgetAlias: 'products-grid-widget',
             widgetContainer: '.product-index-content',
+            fixSidebarHeight: true,
             widgetRouteParameters: widgetRouteParameters
         } %}
         <div class="grid-sidebar"
