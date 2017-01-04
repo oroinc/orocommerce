@@ -55,8 +55,6 @@ class OroRFPBundleInstaller implements Installation, ActivityExtensionAwareInter
         $this->createOroRfpAssignedAccUsersTable($schema);
         $this->createOroRfpAssignedUsersTable($schema);
         $this->createOroRfpRequestTable($schema);
-        $this->createOroRfpStatusTable($schema);
-        $this->createOroRfpStatusTranslationTable($schema);
         $this->createOroRfpRequestProductTable($schema);
         $this->createOroRfpRequestProductItemTable($schema);
         $this->createOroRfpRequestAddNoteTable($schema);
@@ -65,7 +63,6 @@ class OroRFPBundleInstaller implements Installation, ActivityExtensionAwareInter
         $this->addOroRfpAssignedAccUsersForeignKeys($schema);
         $this->addOroRfpAssignedUsersForeignKeys($schema);
         $this->addOroRfpRequestForeignKeys($schema);
-        $this->addOroRfpStatusForeignKeys($schema);
         $this->addOroRfpRequestProductForeignKeys($schema);
         $this->addOroRfpRequestProductItemForeignKeys($schema);
         $this->addOroRfpRequestAddNoteForeignKeys($schema);
@@ -112,7 +109,6 @@ class OroRFPBundleInstaller implements Installation, ActivityExtensionAwareInter
         $table->addColumn('user_owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('account_user_id', 'integer', ['notnull' => false]);
         $table->addColumn('account_id', 'integer', ['notnull' => false]);
-        $table->addColumn('status_id', 'integer', ['notnull' => false]);
         $table->addColumn('cancellation_reason', 'text', ['notnull' => false]);
         $table->addColumn('first_name', 'string', ['length' => 255]);
         $table->addColumn('last_name', 'string', ['length' => 255]);
@@ -147,40 +143,6 @@ class OroRFPBundleInstaller implements Installation, ActivityExtensionAwareInter
             false,
             ['dataaudit' => ['auditable' => true]]
         );
-    }
-
-    /**
-     * Create oro_rfp_status table
-     *
-     * @param Schema $schema
-     */
-    protected function createOroRfpStatusTable(Schema $schema)
-    {
-        $table = $schema->createTable('oro_rfp_status');
-        $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('name', 'string', ['length' => 255]);
-        $table->addColumn('label', 'string', ['length' => 255, 'notnull' => false]);
-        $table->addColumn('sort_order', 'integer', ['notnull' => false]);
-        $table->addColumn('deleted', 'boolean', ['default' => false]);
-        $table->setPrimaryKey(['id']);
-        $table->addIndex(['name'], 'oro_rfp_status_name_idx', []);
-    }
-
-    /**
-     * Create oro_rfp_status_translation table
-     *
-     * @param Schema $schema
-     */
-    protected function createOroRfpStatusTranslationTable(Schema $schema)
-    {
-        $table = $schema->createTable('oro_rfp_status_translation');
-        $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('object_id', 'integer', ['notnull' => false]);
-        $table->addColumn('locale', 'string', ['length' => 8]);
-        $table->addColumn('field', 'string', ['length' => 32]);
-        $table->addColumn('content', 'text', ['notnull' => false]);
-        $table->setPrimaryKey(['id']);
-        $table->addIndex(['locale', 'object_id', 'field'], 'oro_rfp_status_trans_idx', []);
     }
 
     /**
@@ -315,28 +277,6 @@ class OroRFPBundleInstaller implements Installation, ActivityExtensionAwareInter
             ['account_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
-        );
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_rfp_status'),
-            ['status_id'],
-            ['id'],
-            ['onDelete' => 'SET NULL', 'onUpdate' => null]
-        );
-    }
-
-    /**
-     * Add oro_rfp_status_translation foreign keys.
-     *
-     * @param Schema $schema
-     */
-    protected function addOroRfpStatusForeignKeys(Schema $schema)
-    {
-        $table = $schema->getTable('oro_rfp_status_translation');
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_rfp_status'),
-            ['object_id'],
-            ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
     }
 

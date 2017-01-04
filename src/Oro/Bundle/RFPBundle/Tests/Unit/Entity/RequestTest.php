@@ -11,7 +11,6 @@ use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Entity\RequestAdditionalNote;
 use Oro\Bundle\RFPBundle\Entity\RequestProduct;
-use Oro\Bundle\RFPBundle\Entity\RequestStatus;
 
 class RequestTest extends \PHPUnit_Framework_TestCase
 {
@@ -46,7 +45,6 @@ class RequestTest extends \PHPUnit_Framework_TestCase
             ['company', 'JohnDow Inc.'],
             ['role', 'cto'],
             ['note', 'test_request_notes'],
-            ['status', new RequestStatus(), false],
             ['createdAt', $date, false],
             ['updatedAt', $date, false],
         ];
