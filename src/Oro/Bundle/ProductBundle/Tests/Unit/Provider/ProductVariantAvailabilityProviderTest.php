@@ -321,6 +321,87 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit_Framework_TestCase
                     ]
                 ],
             ],
+            1 => [
+                'variantsData' => [
+                    'color' => [
+                        'type' => 'enum',
+                        'values' => [
+                            'red' => 'Red',
+                            'green' => 'Green',
+                            'blue' => 'Blue',
+                        ]
+                    ],
+                    'size' => [
+                        'type' => 'enum',
+                        'values' => [
+                            's' => 'S',
+                            'm' => 'M',
+                            'l' => 'L',
+                            'xl' => 'XL',
+                        ]
+                    ],
+                    'slim_fit' => [
+                        'type' => 'boolean',
+                    ],
+                    'extended_field' => [
+                        'type' => 'string',
+                    ],
+                ],
+                'productData' => [
+                    'product1' => [
+                        'color' => 'red',
+                        'size' => 's',
+                        'slim_fit' => true,
+                    ],
+                    'product2' => [
+                        'color' => 'green',
+                        'size' => 's',
+                        'slim_fit' => true,
+                    ],
+                    'product3' => [
+                        'color' => 'green',
+                        'size' => 'm',
+                        'slim_fit' => true,
+                    ],
+                    'product4' => [
+                        'color' => 'green',
+                        'size' => 'm',
+                        'slim_fit' => false,
+                    ],
+                    'product5' => [
+                        'color' => 'red',
+                        'size' => 'xl',
+                        'slim_fit' => false,
+                    ],
+                ],
+                'variantParameters' => [
+                    'size' => 'm',
+                    'color' => 'green',
+                    'slim_fit' => false
+                ],
+                'variantFields' => [
+                    'color',
+                    'size',
+                    'slim_fit',
+                ],
+                'expected' => [
+                    'size' => [
+                        's' => false,
+                        'm' => true,
+                        'l' => false,
+                        'xl' => false,
+                    ],
+                    'color' => [
+                        'red' => false,
+                        'green' => true,
+                        'blue' => false,
+                    ],
+                    'slim_fit' => [
+                        0 => true,
+                        1 => true
+                    ]
+                ],
+            ],
         ];
     }
 
