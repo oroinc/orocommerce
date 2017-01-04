@@ -1,4 +1,5 @@
 <?php
+
 namespace Oro\Bundle\FrontendBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\FrontendBundle\Provider\ActionCurrentApplicationProvider;
