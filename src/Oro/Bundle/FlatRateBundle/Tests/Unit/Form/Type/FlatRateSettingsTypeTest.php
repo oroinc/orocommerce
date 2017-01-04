@@ -6,9 +6,13 @@ use Oro\Bundle\FlatRateBundle\Entity\FlatRateSettings;
 use Oro\Bundle\FlatRateBundle\Form\Type\FlatRateSettingsType;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
-use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueCollectionTypeStub;
+use Oro\Bundle\LocaleBundle\Form\Type\LocalizedPropertyType;
+use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizationCollectionTypeStub;
+use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Validation;
 
 class FlatRateSettingsTypeTest extends FormIntegrationTestCase
 {
@@ -26,13 +30,20 @@ class FlatRateSettingsTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
+        $registry = $this->getMockBuilder('Doctrine\Common\Persistence\ManagerRegistry')
+            ->disableOriginalConstructor()
+            ->getMock();
+
         return [
             new PreloadedExtension(
                 [
-                    LocalizedFallbackValueCollectionType::NAME => new LocalizedFallbackValueCollectionTypeStub(),
+                    new LocalizedPropertyType(),
+                    new LocalizationCollectionTypeStub(),
+                    new LocalizedFallbackValueCollectionType($registry),
                 ],
                 []
-            )
+            ),
+            new ValidatorExtension(Validation::createValidator())
         ];
     }
 
@@ -59,11 +70,13 @@ class FlatRateSettingsTypeTest extends FormIntegrationTestCase
      */
     public function submitDataProvider()
     {
-        $localization = new LocalizedFallbackValue();
-        $localization->setString('Flat rate');
         return [
             [
-                'submitData' => ['labels' => [['string' => 'Flat rate']]],
+                'submittedData' => [
+                    'labels' => [
+                        'values' => [ 'default' => 'first label'],
+                    ],
+                ],
                 'FlatRateSettings' => (new FlatRateSettings())
                     ->addLabel((new LocalizedFallbackValue())->setString('Flat rate'))
             ],
@@ -73,5 +86,18 @@ class FlatRateSettingsTypeTest extends FormIntegrationTestCase
     public function testGetBlockPrefixReturnsString()
     {
         static::assertTrue(is_string($this->formType->getBlockPrefix()));
+    }
+
+    public function testConfigureOptions()
+    {
+        /** @var OptionsResolver|\PHPUnit_Framework_MockObject_MockObject $resolver */
+        $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
+        $resolver->expects(static::once())
+            ->method('setDefaults')
+            ->with([
+                'data_class' => FlatRateSettings::class
+            ]);
+
+        $this->formType->configureOptions($resolver);
     }
 }

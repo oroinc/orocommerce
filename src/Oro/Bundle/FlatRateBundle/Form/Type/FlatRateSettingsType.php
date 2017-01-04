@@ -21,7 +21,7 @@ class FlatRateSettingsType extends AbstractType
         $builder
             ->add(
                 'labels',
-                LocalizedFallbackValueCollectionType::NAME,
+                LocalizedFallbackValueCollectionType::class,
                 [
                     'label'    => 'oro.flat_rate.settings.labels.label',
                     'required' => true,
