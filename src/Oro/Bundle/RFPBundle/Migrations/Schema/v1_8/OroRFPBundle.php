@@ -4,6 +4,8 @@ namespace Oro\Bundle\RFPBundle\Migrations\Schema\v1_8;
 
 use Doctrine\DBAL\Schema\Schema;
 
+use Oro\Bundle\EntityConfigBundle\Migration\RemoveFieldQuery;
+use Oro\Bundle\EntityConfigBundle\Migration\RemoveTableQuery;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
@@ -33,6 +35,9 @@ class OroRFPBundle implements Migration, ExtendExtensionAwareInterface
         $this->addOroRfpRequestAddNoteForeignKeys($schema);
         $this->dropRfpStatus($schema);
         $this->dropRfpStatusTranslation($schema);
+
+        $this->updateEntityConfigs($queries);
+
         foreach ($this->getTranslationKeysForRemove() as $domain => $keys) {
             $queries->addQuery(new DeleteTranslationKeysQuery($domain, $keys));
         }
@@ -114,6 +119,15 @@ class OroRFPBundle implements Migration, ExtendExtensionAwareInterface
     protected function dropRfpStatusTranslation(Schema $schema)
     {
         $schema->dropTable('oro_rfp_status_translation');
+    }
+
+    /**
+     * @param QueryBag $queries
+     */
+    protected function updateEntityConfigs(QueryBag $queries)
+    {
+        $queries->addPostQuery(new RemoveFieldQuery('Oro\Bundle\RFPBundle\Entity\Request', 'status'));
+        $queries->addPostQuery(new RemoveTableQuery('Oro\Bundle\RFPBundle\Entity\RequestStatus'));
     }
 
     /**
