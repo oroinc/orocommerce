@@ -12,6 +12,7 @@ class DestinationCollectionTypeSubscriberTest extends \PHPUnit_Framework_TestCas
      */
     public function testPreSubmitMethod()
     {
+        /** @var FormEvent|\PHPUnit_Framework_MockObject_MockObject $event */
         $event = $this->getMockBuilder(FormEvent::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -30,11 +31,7 @@ class DestinationCollectionTypeSubscriberTest extends \PHPUnit_Framework_TestCas
         $event
             ->expects($this->once())
             ->method('setData')
-            ->with(['destinations' => [
-                [
-                    'country' => 0
-                ]
-            ]]);
+            ->with();
 
         $subscriber = new DestinationCollectionTypeSubscriber();
         $subscriber->preSubmit($event);
@@ -47,6 +44,7 @@ class DestinationCollectionTypeSubscriberTest extends \PHPUnit_Framework_TestCas
      */
     public function testNotChangesInPreSubmitMethod($data)
     {
+        /** @var FormEvent|\PHPUnit_Framework_MockObject_MockObject $event */
         $event = $this->getMockBuilder(FormEvent::class)
             ->disableOriginalConstructor()
             ->getMock();
