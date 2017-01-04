@@ -85,23 +85,11 @@ class FrontendVariantFiledType extends AbstractType
         /** @var Product $product */
         $product = $form->getConfig()->getOption('product');
 
-        if (!is_a($product, $this->productClass)) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'Instance of class "%s" was expected, but "%s" given',
-                    $this->productClass,
-                    is_object($product) ? get_class($product) : gettype($product)
-                )
-            );
-        }
-
         if (!$product->isConfigurable() || count($product->getVariantFields()) === 0) {
             return;
         }
 
-        $class = ClassUtils::getClass($product);
-
-        $variantFieldData = $this->customFieldProvider->getEntityCustomFields($class);
+        $variantFieldData = $this->customFieldProvider->getEntityCustomFields($this->productClass);
 
         $variantAvailability = $this->productVariantAvailabilityProvider
             ->getVariantFieldsWithAvailability($product, $data);
@@ -110,7 +98,7 @@ class FrontendVariantFiledType extends AbstractType
             list($type, $fieldOptions) = $this->prepareFieldByType(
                 $variantFieldData[$fieldName]['type'],
                 $fieldName,
-                $class,
+                $this->productClass,
                 $variantAvailability[$fieldName]
             );
             $fieldOptions['label'] = $variantFieldData[$fieldName]['label'];
@@ -127,6 +115,8 @@ class FrontendVariantFiledType extends AbstractType
         $resolver->setRequired([
             'product',
         ]);
+
+        $resolver->addAllowedTypes('product', $this->productClass);
     }
 
     /**
