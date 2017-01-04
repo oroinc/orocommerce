@@ -73,7 +73,10 @@ workflows:
                         entity_class: 'Oro\Bundle\RFPBundle\Entity\Request'
                         event: update
                         field: customer_status
-                        require: "entity.getCustomerStatus().getId() === 'submitted' && prevEntity.getCustomerStatus().getId() === 'cancelled'"
+                        require: >
+                            prevEntity.getCustomerStatus() !== null &&
+                            entity.getCustomerStatus().getId() === 'submitted' &&
+                            prevEntity.getCustomerStatus().getId() === 'cancelled'
 
         transition_definitions:
             __start___definition:
