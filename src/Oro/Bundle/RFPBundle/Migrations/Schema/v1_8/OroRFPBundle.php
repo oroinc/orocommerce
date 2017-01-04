@@ -144,6 +144,8 @@ class OroRFPBundle implements Migration, ExtendExtensionAwareInterface
                 'oro.rfp.requeststatus.translations.label',
                 'oro.rfp.system_configuration.groups.requeststatus.title',
                 'oro.rfp.system_configuration.fields.requeststatus_default.title',
+                'oro.rfp.btn.change_status',
+                'oro.rfp.widget.change_status_title',
                 'oro.frontend.rfp.request.status.label',
             ],
             'entities' => [
