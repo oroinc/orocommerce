@@ -10,7 +10,6 @@ oro:
             oro_flat_rate_options_type:
                 label: Flat Rate
         method:
-            label: Flat Rate
             type.label: Flat Rate
             price.label: Price
             handling_fee.label: Handling Fee

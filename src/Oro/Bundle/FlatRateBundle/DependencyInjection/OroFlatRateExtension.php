@@ -24,6 +24,7 @@ class OroFlatRateExtension extends Extension
         $loader->load('services.yml');
         $loader->load('form_types.yml');
         $loader->load('event_listeners.yml');
+        $loader->load('builders.yml');
     }
 
     /**

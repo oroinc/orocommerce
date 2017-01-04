@@ -8,17 +8,18 @@ use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 
 class FlatRateMethodTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var FlatRateMethod
-     */
+    /** @internal */
+    const LABEL = 'test';
+
+    /** @var FlatRateMethod */
     protected $flatRate;
 
     protected function setUp()
     {
-        $this->flatRate = new FlatRateMethod();
+        $this->flatRate = new FlatRateMethod(self::LABEL);
     }
 
-    public function testGetName()
+    public function testGetIdentifier()
     {
         static::assertEquals(FlatRateMethod::IDENTIFIER, $this->flatRate->getIdentifier());
     }
@@ -30,7 +31,7 @@ class FlatRateMethodTest extends \PHPUnit_Framework_TestCase
 
     public function testGetLabel()
     {
-        static::assertEquals('oro.flat_rate.method.label', $this->flatRate->getLabel());
+        static::assertSame(self::LABEL, $this->flatRate->getLabel());
     }
 
     public function testGetTypes()

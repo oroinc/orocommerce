@@ -9,17 +9,19 @@ class FlatRateMethod implements ShippingMethodInterface
 {
     const IDENTIFIER = 'flat_rate';
 
-    /**
-     * @var FlatRateMethodType
-     */
+    /** @var FlatRateMethodType */
     protected $type;
 
+    /** @var string */
+    protected $label;
+
     /**
-     * Construct
+     * @param string $label
      */
-    public function __construct()
+    public function __construct($label)
     {
         $this->type = new FlatRateMethodType();
+        $this->label = $label;
     }
 
     /**
@@ -43,7 +45,7 @@ class FlatRateMethod implements ShippingMethodInterface
      */
     public function getLabel()
     {
-        return 'oro.flat_rate.method.label';
+        return $this->label;
     }
 
     /**
