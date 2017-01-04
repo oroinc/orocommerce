@@ -1,14 +1,14 @@
 <?php
 
-namespace Oro\Bundle\ShippingBundle\Method\FlatRate;
+namespace Oro\Bundle\FlatRateBundle\Method;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\FlatRateBundle\Form\Type\FlatRateOptionsType;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
-use Oro\Bundle\ShippingBundle\Form\Type\FlatRateShippingMethodTypeOptionsType;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
 
-class FlatRateShippingMethodType implements ShippingMethodTypeInterface
+class FlatRateMethodType implements ShippingMethodTypeInterface
 {
     const IDENTIFIER = 'primary';
 
@@ -32,7 +32,7 @@ class FlatRateShippingMethodType implements ShippingMethodTypeInterface
      */
     public function getLabel()
     {
-        return 'oro.shipping.method.flat_rate.type.label';
+        return 'oro.flat_rate.method.type.label';
     }
 
     /**
@@ -48,7 +48,7 @@ class FlatRateShippingMethodType implements ShippingMethodTypeInterface
      */
     public function getOptionsConfigurationFormType()
     {
-        return FlatRateShippingMethodTypeOptionsType::class;
+        return FlatRateOptionsType::class;
     }
 
     /**

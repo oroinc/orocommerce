@@ -85,16 +85,6 @@ oro:
                 length_unit.label: Select unit of length
                 weight_unit.label: Select unit of weight
                 freight_class.label: Select freight class
-        method:
-            flat_rate:
-                label: Flat Rate
-                type.label: Flat Rate
-                price.label: Price
-                handling_fee.label: Handling Fee
-                processing_type:
-                    label: Type
-                    per_item.label: Per Item
-                    per_order.label: Per Order
 
         method_type:
             shipping_methods_widget:

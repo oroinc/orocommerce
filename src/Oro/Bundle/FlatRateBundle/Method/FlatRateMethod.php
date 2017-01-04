@@ -1,16 +1,16 @@
 <?php
 
-namespace Oro\Bundle\ShippingBundle\Method\FlatRate;
+namespace Oro\Bundle\FlatRateBundle\Method;
 
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 
-class FlatRateShippingMethod implements ShippingMethodInterface
+class FlatRateMethod implements ShippingMethodInterface
 {
     const IDENTIFIER = 'flat_rate';
 
     /**
-     * @var FlatRateShippingMethodType
+     * @var FlatRateMethodType
      */
     protected $type;
 
@@ -19,7 +19,7 @@ class FlatRateShippingMethod implements ShippingMethodInterface
      */
     public function __construct()
     {
-        $this->type = new FlatRateShippingMethodType();
+        $this->type = new FlatRateMethodType();
     }
 
     /**
@@ -43,7 +43,7 @@ class FlatRateShippingMethod implements ShippingMethodInterface
      */
     public function getLabel()
     {
-        return 'oro.shipping.method.flat_rate.label';
+        return 'oro.flat_rate.method.label';
     }
 
     /**

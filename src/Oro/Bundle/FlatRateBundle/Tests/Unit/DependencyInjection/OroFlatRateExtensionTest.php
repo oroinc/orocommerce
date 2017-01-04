@@ -22,6 +22,9 @@ class OroFlatRateExtensionTest extends ExtensionTestCase
         $expectedDefinitions = [
             'oro_flat_rate.integration.channel',
             'oro_flat_rate.integration.transport',
+            'oro_flat_rate.event_listener.shipping_method_config_data',
+            'oro_flat_rate.form.type.flat_rate_options',
+            'oro_flat_rate.method.provider',
         ];
 
         $this->assertDefinitionsLoaded($expectedDefinitions);

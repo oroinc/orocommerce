@@ -1,43 +1,43 @@
 <?php
 
-namespace Oro\Bundle\ShippingBundle\Tests\Unit\Method\FlatRate;
+namespace Oro\Bundle\FlatRateBundle\Tests\Unit\Method;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\FlatRateBundle\Form\Type\FlatRateOptionsType;
+use Oro\Bundle\FlatRateBundle\Method\FlatRateMethodType;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\DoctrineShippingLineItemCollection;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
-use Oro\Bundle\ShippingBundle\Form\Type\FlatRateShippingMethodTypeOptionsType;
-use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethodType;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class FlatRateShippingMethodTypeTest extends \PHPUnit_Framework_TestCase
+class FlatRateMethodTypeTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
 
     /**
-     * @var FlatRateShippingMethodType
+     * @var FlatRateMethodType
      */
     protected $flatRateType;
 
     protected function setUp()
     {
-        $this->flatRateType = new FlatRateShippingMethodType();
+        $this->flatRateType = new FlatRateMethodType();
     }
 
     public function testGetIdentifier()
     {
-        static::assertEquals(FlatRateShippingMethodType::IDENTIFIER, $this->flatRateType->getIdentifier());
+        static::assertEquals(FlatRateMethodType::IDENTIFIER, $this->flatRateType->getIdentifier());
     }
 
     public function testGetLabel()
     {
-        static::assertEquals('oro.shipping.method.flat_rate.type.label', $this->flatRateType->getLabel());
+        static::assertEquals('oro.flat_rate.method.type.label', $this->flatRateType->getLabel());
     }
 
     public function testGetOptionsConfigurationFormType()
     {
         static::assertEquals(
-            FlatRateShippingMethodTypeOptionsType::class,
+            FlatRateOptionsType::class,
             $this->flatRateType->getOptionsConfigurationFormType()
         );
     }
@@ -82,18 +82,18 @@ class FlatRateShippingMethodTypeTest extends \PHPUnit_Framework_TestCase
             [
                 'currency' => 'USD',
                 'options' => [
-                    FlatRateShippingMethodType::PRICE_OPTION => 25,
-                    FlatRateShippingMethodType::TYPE_OPTION => FlatRateShippingMethodType::PER_ORDER_TYPE,
-                    FlatRateShippingMethodType::HANDLING_FEE_OPTION => 5,
+                    FlatRateMethodType::PRICE_OPTION => 25,
+                    FlatRateMethodType::TYPE_OPTION => FlatRateMethodType::PER_ORDER_TYPE,
+                    FlatRateMethodType::HANDLING_FEE_OPTION => 5,
                 ],
                 'expectedPrice' => 30
             ],
             [
                 'currency' => 'EUR',
                 'options' => [
-                    FlatRateShippingMethodType::PRICE_OPTION => 15,
-                    FlatRateShippingMethodType::TYPE_OPTION => FlatRateShippingMethodType::PER_ITEM_TYPE,
-                    FlatRateShippingMethodType::HANDLING_FEE_OPTION => 3,
+                    FlatRateMethodType::PRICE_OPTION => 15,
+                    FlatRateMethodType::TYPE_OPTION => FlatRateMethodType::PER_ITEM_TYPE,
+                    FlatRateMethodType::HANDLING_FEE_OPTION => 3,
                 ],
                 'expectedPrice' => 78
             ],

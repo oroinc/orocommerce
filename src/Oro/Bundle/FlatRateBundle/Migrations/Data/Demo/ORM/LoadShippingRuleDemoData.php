@@ -1,15 +1,15 @@
 <?php
 
-namespace Oro\Bundle\ShippingBundle\Migrations\Data\Demo\ORM;
+namespace Oro\Bundle\FlatRateBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
+use Oro\Bundle\FlatRateBundle\Method\FlatRateMethod;
+use Oro\Bundle\FlatRateBundle\Method\FlatRateMethodType;
 use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
-use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethod;
-use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethodType;
 
 class LoadShippingRuleDemoData extends AbstractFixture
 {
@@ -20,14 +20,14 @@ class LoadShippingRuleDemoData extends AbstractFixture
     {
         $typeConfig = new ShippingMethodTypeConfig();
         $typeConfig->setEnabled(true);
-        $typeConfig->setType(FlatRateShippingMethodType::IDENTIFIER)
+        $typeConfig->setType(FlatRateMethodType::IDENTIFIER)
             ->setOptions([
-                FlatRateShippingMethodType::PRICE_OPTION => 10,
-                FlatRateShippingMethodType::TYPE_OPTION => FlatRateShippingMethodType::PER_ORDER_TYPE,
+                FlatRateMethodType::PRICE_OPTION => 10,
+                FlatRateMethodType::TYPE_OPTION => FlatRateMethodType::PER_ORDER_TYPE,
             ]);
 
         $methodConfig = new ShippingMethodConfig();
-        $methodConfig->setMethod(FlatRateShippingMethod::IDENTIFIER)
+        $methodConfig->setMethod(FlatRateMethod::IDENTIFIER)
             ->addTypeConfig($typeConfig);
 
         $rule = new Rule();

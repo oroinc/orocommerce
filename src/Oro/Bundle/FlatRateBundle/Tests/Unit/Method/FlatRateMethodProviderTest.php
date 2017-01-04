@@ -1,37 +1,37 @@
 <?php
 
-namespace Oro\Bundle\ShippingBundle\Tests\Unit\Method\FlatRate;
+namespace Oro\Bundle\FlatRateBundle\Tests\Unit\Method;
 
-use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethod;
-use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethodProvider;
+use Oro\Bundle\FlatRateBundle\Method\FlatRateMethod;
+use Oro\Bundle\FlatRateBundle\Method\FlatRateMethodProvider;
 
-class FlatRateShippingMethodProviderTest extends \PHPUnit_Framework_TestCase
+class FlatRateMethodProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var FlatRateShippingMethodProvider
+     * @var FlatRateMethodProvider
      */
     protected $provider;
 
     public function setUp()
     {
-        $this->provider = new FlatRateShippingMethodProvider();
+        $this->provider = new FlatRateMethodProvider();
     }
 
     public function testGetShippingMethods()
     {
-        $flatRate = new FlatRateShippingMethod();
+        $flatRate = new FlatRateMethod();
         $this->assertEquals([$flatRate->getIdentifier() => $flatRate], $this->provider->getShippingMethods());
     }
 
     public function testGetShippingMethod()
     {
-        $flatRate = new FlatRateShippingMethod();
+        $flatRate = new FlatRateMethod();
         $this->assertEquals($flatRate, $this->provider->getShippingMethod($flatRate->getIdentifier()));
     }
 
     public function testHasShippingMethod()
     {
-        $flatRate = new FlatRateShippingMethod();
+        $flatRate = new FlatRateMethod();
         $this->assertTrue($this->provider->hasShippingMethod($flatRate->getIdentifier()));
     }
 

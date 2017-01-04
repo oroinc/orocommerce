@@ -1,17 +1,17 @@
 <?php
 
-namespace Oro\Bundle\ShippingBundle\Method\FlatRate;
+namespace Oro\Bundle\FlatRateBundle\Method;
 
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 
-class FlatRateShippingMethodProvider implements ShippingMethodProviderInterface
+class FlatRateMethodProvider implements ShippingMethodProviderInterface
 {
-    /** @var FlatRateShippingMethod */
+    /** @var FlatRateMethod */
     protected $method;
 
     public function __construct()
     {
-        $this->method = new FlatRateShippingMethod();
+        $this->method = new FlatRateMethod();
     }
 
     /**

@@ -1,26 +1,26 @@
 <?php
 
-namespace Oro\Bundle\ShippingBundle\Tests\Unit\Method\FlatRate;
+namespace Oro\Bundle\FlatRateBundle\Tests\Unit\Method;
 
-use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethod;
-use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethodType;
+use Oro\Bundle\FlatRateBundle\Method\FlatRateMethod;
+use Oro\Bundle\FlatRateBundle\Method\FlatRateMethodType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 
-class FlatRateShippingMethodTest extends \PHPUnit_Framework_TestCase
+class FlatRateMethodTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var FlatRateShippingMethod
+     * @var FlatRateMethod
      */
     protected $flatRate;
 
     protected function setUp()
     {
-        $this->flatRate = new FlatRateShippingMethod();
+        $this->flatRate = new FlatRateMethod();
     }
 
     public function testGetName()
     {
-        static::assertEquals(FlatRateShippingMethod::IDENTIFIER, $this->flatRate->getIdentifier());
+        static::assertEquals(FlatRateMethod::IDENTIFIER, $this->flatRate->getIdentifier());
     }
 
     public function testIsGrouped()
@@ -30,14 +30,14 @@ class FlatRateShippingMethodTest extends \PHPUnit_Framework_TestCase
 
     public function testGetLabel()
     {
-        static::assertEquals('oro.shipping.method.flat_rate.label', $this->flatRate->getLabel());
+        static::assertEquals('oro.flat_rate.method.label', $this->flatRate->getLabel());
     }
 
     public function testGetTypes()
     {
         $types = $this->flatRate->getTypes();
         static::assertCount(1, $types);
-        static::assertInstanceOf(FlatRateShippingMethodType::class, $types[0]);
+        static::assertInstanceOf(FlatRateMethodType::class, $types[0]);
     }
 
     public function testGetTypeNull()
@@ -47,8 +47,8 @@ class FlatRateShippingMethodTest extends \PHPUnit_Framework_TestCase
 
     public function testGetType()
     {
-        $type = $this->flatRate->getType(FlatRateShippingMethodType::IDENTIFIER);
-        static::assertInstanceOf(FlatRateShippingMethodType::class, $type);
+        $type = $this->flatRate->getType(FlatRateMethodType::IDENTIFIER);
+        static::assertInstanceOf(FlatRateMethodType::class, $type);
     }
 
     public function testGetOptionsConfigurationFormType()
