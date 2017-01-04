@@ -55,8 +55,8 @@ class AccountUserOperationsTest extends WebTestCase
         $this->assertContains($user->getEmail(), $message->getBody());
 
         $configManager = $this->getContainer()->get('oro_config.manager');
-        $loginUrl = trim($configManager->get('oro_ui.application_url'), '/')
-            . $this->getUrl('oro_customer_account_user_security_login');
+        $applicationUrl = $configManager->get('oro_ui.application_url');
+        $loginUrl = $applicationUrl . $this->getUrl('oro_customer_account_user_security_login');
 
         $this->assertContains($loginUrl, $message->getBody());
 

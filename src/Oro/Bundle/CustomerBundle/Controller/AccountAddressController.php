@@ -13,7 +13,7 @@ use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\AddressBundle\Form\Handler\AddressHandler;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Form\Type\AccountTypedAddressType;
-use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 
 class AccountAddressController extends Controller
 {
@@ -49,7 +49,7 @@ class AccountAddressController extends Controller
      */
     public function createAction(Account $account)
     {
-        return $this->update($account, new AccountAddress());
+        return $this->update($account, new CustomerAddress());
     }
 
     /**
@@ -63,21 +63,21 @@ class AccountAddressController extends Controller
      * @ParamConverter("account", options={"id" = "entityId"})
      *
      * @param Account        $account
-     * @param AccountAddress $address
+     * @param CustomerAddress $address
      * @return array
      */
-    public function updateAction(Account $account, AccountAddress $address)
+    public function updateAction(Account $account, CustomerAddress $address)
     {
         return $this->update($account, $address);
     }
 
     /**
      * @param Account $account
-     * @param AccountAddress $address
+     * @param CustomerAddress $address
      * @return array
      * @throws BadRequestHttpException
      */
-    protected function update(Account $account, AccountAddress $address)
+    protected function update(Account $account, CustomerAddress $address)
     {
         $responseData = [
             'saved' => false,

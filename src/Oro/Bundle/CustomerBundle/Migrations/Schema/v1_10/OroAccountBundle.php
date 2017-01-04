@@ -36,6 +36,8 @@ class OroAccountBundle implements
         $this->renameCustomerSettings($schema, $queries);
         $this->renameAccountUserAddressToAddressType($schema, $queries);
         $this->renameAccountAdrAdrTypeTable($schema, $queries);
+        $this->renameAccountUserAddressTable($schema, $queries);
+        $this->renameAccountAddressTable($schema, $queries);
     }
 
     /**
@@ -169,6 +171,52 @@ class OroAccountBundle implements
             $queries,
             "oro_account_adr_adr_type",
             "oro_customer_adr_adr_type"
+        );
+    }
+
+    /**
+     * @param Schema $schema
+     * @param QueryBag $queries
+     */
+    private function renameAccountUserAddressTable(Schema $schema, QueryBag $queries)
+    {
+        $this->renameExtension->renameTable(
+            $schema,
+            $queries,
+            "oro_account_user_address",
+            "oro_customer_user_address"
+        );
+        /** @var ConfigManager $configManager */
+        $configManager = $this->container->get('oro_entity_config.config_manager');
+        $registry = $this->container->get('doctrine');
+        $migration = new ConfigMigration($registry, $configManager);
+        $migration->migrate(
+            'Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress',
+            '.accountuseraddress',
+            '.customeruseraddress'
+        );
+    }
+
+    /**
+     * @param Schema $schema
+     * @param QueryBag $queries
+     */
+    private function renameAccountAddressTable(Schema $schema, QueryBag $queries)
+    {
+        $this->renameExtension->renameTable(
+            $schema,
+            $queries,
+            "oro_account_address",
+            "oro_customer_address"
+        );
+        /** @var ConfigManager $configManager */
+        $configManager = $this->container->get('oro_entity_config.config_manager');
+        $registry = $this->container->get('doctrine');
+        $migration = new ConfigMigration($registry, $configManager);
+        $migration->migrate(
+            'Oro\Bundle\CustomerBundle\Entity\CustomerAddress',
+            '.accountaddress',
+            '.customeraddress'
         );
     }
 

@@ -5,7 +5,7 @@ namespace Oro\Bundle\CustomerBundle\Entity\Repository;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 
-class AccountUserAddressRepository extends AbstractDefaultTypedAddressRepository
+class CustomerUserAddressRepository extends AbstractDefaultTypedAddressRepository
 {
     /**
      * @param AccountUser $accountUser
