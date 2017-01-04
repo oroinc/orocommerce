@@ -69,6 +69,8 @@ define(function(require) {
                 return;
             }
 
+            this.$el.find('.header-row__toggle').off('click');
+
             delete this.$el;
 
             HeaderRowComponent.__super__.dispose.call(this);
