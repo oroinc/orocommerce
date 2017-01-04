@@ -202,31 +202,13 @@ operations:
             template: OroRFPBundle:Action:rfpResubmitForm.html.twig
             show_dialog: false
         form_init:
-            - '@assign_constant_value':
-                attribute: $.openStatusName
-                value: Oro\Bundle\RFPBundle\Entity\RequestStatus::OPEN
-            - '@create_datetime':
-                attribute: $.currentDatetime
-            - '@duplicate':
-                attribute: $.entityCopy
-                settings:
-                  - [[setNull], [propertyName, [id]]]
-                  - [[collection], [propertyType, ['Doctrine\Common\Collections\Collection']]]
-                  - [[setNull], [propertyName, [status]]]
-                  - [[keep], [propertyName, [accountUser]]]
-                  - [[keep], [propertyName, [account]]]
-                  - [[keep], [propertyName, [organization]]]
-                  - [[keep], [propertyName, [owner]]]
-                  - [[keep], [property, ["%oro_rfp.entity.request_product.class%", product]]]
-                  - [[keep], [property, ["%oro_rfp.entity.request_product_item.class%", productUnit]]]
-            - '@assign_value': [$.entityCopy.createdAt, $.currentDatetime]
-            - '@assign_value': [$.entityCopy.updatedAt, $.currentDatetime]
-            - '@find_entity':
-                class: Oro\Bundle\RFPBundle\Entity\RequestStatus
-                attribute: $.entityCopy.status
-                where:
-                    name: $.openStatusName
-            - '@assign_value': [$.data, $.entityCopy]
+            - '@run_action_group':
+                action_group: oro_rfp_duplicate
+                parameters_mapping:
+                    request: $.data
+                    flush: false
+                results:
+                    data: $.requestCopy
         actions:
             - '@flush_entity': $.data
             - '@flash_message':
@@ -331,6 +313,46 @@ action_groups:
                 method_parameters:
                     - $.data
             - '@flush_entity': $.note
+
+    oro_rfp_duplicate:
+        parameters:
+            request:
+                type: Oro\Bundle\RFPBundle\Entity\Request
+            flush:
+                type: bool
+                default: true
+        actions:
+            - '@create_datetime':
+                attribute: $.currentDatetime
+            - '@duplicate':
+                target: $.request
+                attribute: $.requestCopy
+                settings:
+                  - [[setNull], [propertyName, [id]]]
+                  - [[collection], [propertyType, ['Doctrine\Common\Collections\Collection']]]
+                  - [[setNull], [propertyName, [status]]]
+                  - [[keep], [propertyName, [accountUser]]]
+                  - [[keep], [propertyName, [account]]]
+                  - [[keep], [propertyName, [organization]]]
+                  - [[keep], [propertyName, [owner]]]
+                  - [[keep], [propertyName, [internal_status]]]
+                  - [[keep], [propertyName, [customer_status]]]
+                  - [[keep], [property, ["%oro_rfp.entity.request_product.class%", product]]]
+                  - [[keep], [property, ["%oro_rfp.entity.request_product_item.class%", productUnit]]]
+            - '@assign_value': [$.entityCopy.createdAt, $.currentDatetime]
+            - '@assign_value': [$.entityCopy.updatedAt, $.currentDatetime]
+            - '@assign_constant_value':
+                attribute: $.openStatusName
+                value: Oro\Bundle\RFPBundle\Entity\RequestStatus::OPEN
+            - '@find_entity':
+                class: Oro\Bundle\RFPBundle\Entity\RequestStatus
+                attribute: $.requestCopy.status
+                where:
+                    name: $.openStatusName
+            - '@flush_entity':
+                conditions:
+                    '@equal': [true, $.flush]
+                parameters: [$.requestCopy]
 
     oro_rfp_cancel:
         parameters:
