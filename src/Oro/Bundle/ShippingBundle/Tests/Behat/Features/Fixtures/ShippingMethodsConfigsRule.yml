@@ -102,7 +102,7 @@ Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal:
         subtotalValue: '10.1'
         valid: true
 
-Oro\Bundle\CustomerBundle\Entity\AccountUserAddress:
+Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
     address1:
         country: '@germany'
         region: '@berlin'

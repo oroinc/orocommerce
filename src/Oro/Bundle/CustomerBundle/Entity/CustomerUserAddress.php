@@ -7,10 +7,10 @@ use Doctrine\Common\Collections\Collection;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
-use Oro\Bundle\CustomerBundle\Model\ExtendAccountAddress;
+use Oro\Bundle\CustomerBundle\Model\ExtendCustomerUserAddress;
 
 /**
- * @ORM\Table("oro_account_address")
+ * @ORM\Table("oro_customer_user_address")
  * @ORM\HasLifecycleCallbacks()
  * @Config(
  *       defaultValues={
@@ -30,7 +30,7 @@ use Oro\Bundle\CustomerBundle\Model\ExtendAccountAddress;
  *              "owner_type"="USER",
  *              "owner_field_name"="owner",
  *              "owner_column_name"="owner_id",
- *              "frontend_owner_type"="FRONTEND_ACCOUNT",
+ *              "frontend_owner_type"="FRONTEND_USER",
  *              "frontend_owner_field_name"="frontendOwner",
  *              "frontend_owner_column_name"="frontend_owner_id",
  *              "organization_field_name"="systemOrganization",
@@ -42,12 +42,16 @@ use Oro\Bundle\CustomerBundle\Model\ExtendAccountAddress;
  *          }
  *      }
  * )
- * @ORM\Entity(repositoryClass="Oro\Bundle\CustomerBundle\Entity\Repository\AccountAddressRepository")
+ * @ORM\Entity(repositoryClass="Oro\Bundle\CustomerBundle\Entity\Repository\CustomerUserAddressRepository")
  */
-class AccountAddress extends ExtendAccountAddress implements AddressPhoneAwareInterface
+class CustomerUserAddress extends ExtendCustomerUserAddress implements AddressPhoneAwareInterface
 {
     /**
-     * @ORM\ManyToOne(targetEntity="Account", inversedBy="addresses", cascade={"persist"})
+     * @ORM\ManyToOne(
+     *      targetEntity="Oro\Bundle\CustomerBundle\Entity\AccountUser",
+     *      inversedBy="addresses",
+     *      cascade={"persist"}
+     * )
      * @ORM\JoinColumn(name="frontend_owner_id", referencedColumnName="id", onDelete="CASCADE")
      * @ConfigField(
      *      defaultValues={
@@ -63,12 +67,12 @@ class AccountAddress extends ExtendAccountAddress implements AddressPhoneAwareIn
      * @var Collection|CustomerUserAddressToAddressType[]
      *
      * @ORM\OneToMany(
-     *      targetEntity="CustomerAddressToAddressType",
+     *      targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerUserAddressToAddressType",
      *      mappedBy="address",
      *      cascade={"persist", "remove"},
      *      orphanRemoval=true
      * )
-     */
+     **/
     protected $types;
 
     /**
@@ -90,7 +94,7 @@ class AccountAddress extends ExtendAccountAddress implements AddressPhoneAwareIn
      */
     protected function createAddressToAddressTypeEntity()
     {
-        return new CustomerAddressToAddressType();
+        return new CustomerUserAddressToAddressType();
     }
 
     /**
@@ -98,7 +102,7 @@ class AccountAddress extends ExtendAccountAddress implements AddressPhoneAwareIn
      *
      * @param string $phone
      *
-     * @return AccountAddress
+     * @return CustomerUserAddress
      */
     public function setPhone($phone)
     {

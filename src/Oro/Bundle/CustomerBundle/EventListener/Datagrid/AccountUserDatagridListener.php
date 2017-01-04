@@ -5,7 +5,6 @@ namespace Oro\Bundle\CustomerBundle\EventListener\Datagrid;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
-use Oro\Bundle\DataGridBundle\EventListener\DatasourceBindParametersListener;
 
 class AccountUserDatagridListener
 {
@@ -35,21 +34,19 @@ class AccountUserDatagridListener
      */
     protected function applyAccountFilters(DatagridConfiguration $config, ParameterBag $parameters)
     {
-        $selectPath = '[source][query][select]';
+        $query = $config->getOrmQuery();
+
         $condition = self::USER_SELECT_PART;
         $role = $parameters->get(self::ROLE_KEY);
         if ($role) {
             $condition = self::ROLE_SELECT_PART;
             $config->offsetAddToArrayByPath(
-                DatasourceBindParametersListener::DATASOURCE_BIND_PARAMETERS_PATH,
+                DatagridConfiguration::DATASOURCE_BIND_PARAMETERS_PATH,
                 [self::ROLE_KEY]
             );
         }
 
-        $config->offsetAddToArrayByPath(
-            $selectPath,
-            [sprintf(self::HAS_ROLE_SELECT, $condition)]
-        );
+        $query->addSelect(sprintf(self::HAS_ROLE_SELECT, $condition));
 
         $additionalParameters = $parameters->get(ParameterBag::ADDITIONAL_PARAMETERS, []);
         if (!is_array($additionalParameters)) {
@@ -62,18 +59,16 @@ class AccountUserDatagridListener
         $account = $parameters->get(self::ACCOUNT_KEY);
         $newAccount = $additionalParameters->get(self::NEW_ACCOUNT_KEY);
 
-        $path = '[source][query][where][or]';
-
         if (!$changeAccountAction && $account) {
-            $config->offsetAddToArrayByPath($path, [self::ACCOUNT_CONDITION]);
+            $query->addOrWhere(self::ACCOUNT_CONDITION);
             $config->offsetAddToArrayByPath(
-                DatasourceBindParametersListener::DATASOURCE_BIND_PARAMETERS_PATH,
+                DatagridConfiguration::DATASOURCE_BIND_PARAMETERS_PATH,
                 ['account']
             );
         } elseif ($changeAccountAction && $newAccount) {
-            $config->offsetAddToArrayByPath($path, [self::NEW_ACCOUNT_CONDITION]);
+            $query->addOrWhere(self::NEW_ACCOUNT_CONDITION);
             $config->offsetAddToArrayByPath(
-                DatasourceBindParametersListener::DATASOURCE_BIND_PARAMETERS_PATH,
+                DatagridConfiguration::DATASOURCE_BIND_PARAMETERS_PATH,
                 [
                     [
                         'name' => self::NEW_ACCOUNT_KEY,

@@ -87,7 +87,7 @@ class OroAccountBundleStage2 implements Migration, RenameExtensionAwareInterface
     {
         $table = $schema->getTable('oro_cus_usr_adr_to_adr_type');
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_account_user_address'),
+            $schema->getTable('oro_customer_user_address'),
             ['customer_user_address_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
@@ -102,7 +102,7 @@ class OroAccountBundleStage2 implements Migration, RenameExtensionAwareInterface
     {
         $table = $schema->getTable('oro_customer_adr_adr_type');
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_account_address'),
+            $schema->getTable('oro_customer_address'),
             ['customer_address_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
