@@ -5,6 +5,7 @@ namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Engine\ORM\Driver;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\TestFrameworkBundle\Test\DateTime\TrimMicrosecondsTrait;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadItemData;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Traits\DefaultWebsiteIdTestTrait;
@@ -15,6 +16,7 @@ use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Traits\DefaultWebsiteIdTestT
 class DriverDecoratorTest extends WebTestCase
 {
     use DefaultWebsiteIdTestTrait;
+    use TrimMicrosecondsTrait;
 
     protected function setUp()
     {
@@ -75,8 +77,8 @@ class DriverDecoratorTest extends WebTestCase
             'recordId' => $item->getRecordId(),
             'title' => $item->getTitle(),
             'changed' => $item->getChanged(),
-            'createdAt' => $item->getCreatedAt(),
-            'updatedAt' => $item->getUpdatedAt(),
+            'createdAt' => $this->trimMicrosecondsFromDateTimeObject($item->getCreatedAt()),
+            'updatedAt' => $this->trimMicrosecondsFromDateTimeObject($item->getUpdatedAt())
         ];
     }
 

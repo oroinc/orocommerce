@@ -145,7 +145,7 @@ class ProductPriceDatagridListener
             $selectPattern = '%s.value as %s';
         }
 
-        $config->offsetAddToArrayByPath('[source][query][select]', [sprintf($selectPattern, $joinAlias, $columnName)]);
+        $config->getOrmQuery()->addSelect(sprintf($selectPattern, $joinAlias, $columnName));
 
         $this->addConfigProductPriceJoin($config, $currency, $unit);
 
@@ -284,16 +284,11 @@ class ProductPriceDatagridListener
             $joinExpr->add($expr->eq(sprintf('%s.unit', $joinAlias), $expr->literal($unit)));
         }
 
-        $config->offsetAddToArrayByPath(
-            '[source][query][join][left]',
-            [
-                [
-                    'join' => 'OroPricingBundle:ProductPrice',
-                    'alias' => $joinAlias,
-                    'conditionType' => Expr\Join::WITH,
-                    'condition' => (string)$joinExpr
-                ]
-            ]
+        $config->getOrmQuery()->addLeftJoin(
+            'OroPricingBundle:ProductPrice',
+            $joinAlias,
+            Expr\Join::WITH,
+            (string)$joinExpr
         );
     }
 

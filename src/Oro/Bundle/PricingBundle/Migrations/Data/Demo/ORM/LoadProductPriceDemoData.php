@@ -52,7 +52,7 @@ class LoadProductPriceDemoData extends AbstractLoadProductPriceDemoData
                 $priceList = $this->getPriceList($manager, $listName);
                 foreach ($listOptions['currencies'] as $currency) {
                     $amount = round(
-                        $row['price'] * (1 - $listOptions['discount']),
+                        (float)$row['price'] * (1 - (float)$listOptions['discount']),
                         2
                     );
                     $price = Price::create($amount, $currency);

@@ -17,7 +17,7 @@ use Oro\Bundle\LocaleBundle\Formatter\AddressFormatter;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Model\QuoteAddressManager;
 use Oro\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider;
-use Oro\Bundle\CustomerBundle\Entity\AccountUserAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 use Oro\Bundle\CustomerBundle\Entity\AbstractDefaultTypedAddress;
 
 class QuoteAddressType extends AbstractType
@@ -237,7 +237,7 @@ class QuoteAddressType extends AbstractType
         foreach ($addresses as $key => $address) {
             if ($address->hasDefault($type)) {
                 $addressKey = $key;
-                if ($address instanceof AccountUserAddress &&
+                if ($address instanceof CustomerUserAddress &&
                     $address->getFrontendOwner()->getId() === $accountUser->getId()
                 ) {
                     break;

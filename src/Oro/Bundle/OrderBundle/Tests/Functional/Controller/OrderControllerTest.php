@@ -289,7 +289,7 @@ class OrderControllerTest extends WebTestCase
         $actualLineItems = $this->getActualLineItems($crawler, count($lineItems));
 
         usort($actualLineItems, function ($a, $b) {
-            return $a['product'] - $b['product'];
+            return (int)$a['product'] - (int)$b['product'];
         });
 
         $expectedLineItems = $this->getExpectedLineItemsAfterUpdate($date);

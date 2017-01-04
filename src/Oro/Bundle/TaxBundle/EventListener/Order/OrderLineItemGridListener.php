@@ -63,8 +63,8 @@ class OrderLineItemGridListener
             return false;
         }
 
-        $fromParts = $configuration->offsetGetByPath('[source][query][from]', []);
-        $this->fromPart = reset($fromParts);
+        $fromPart = $configuration->getOrmQuery()->getFrom();
+        $this->fromPart = reset($fromPart);
 
         if (!isset($this->fromPart['table'], $this->fromPart['alias'])) {
             return false;
@@ -78,25 +78,20 @@ class OrderLineItemGridListener
      */
     protected function addJoin(DatagridConfiguration $configuration)
     {
-        $configuration->offsetAddToArrayByPath(
-            '[source][query][join][left]',
-            [
-                [
-                    'join' => $this->taxValueClass,
-                    'alias' => self::ALIAS,
-                    'conditionType' => Expr\Join::WITH,
-                    'condition' => (string)$this->expressionBuilder->andX(
-                        $this->expressionBuilder->eq(
-                            sprintf('%s.entityClass', self::ALIAS),
-                            $this->expressionBuilder->literal($this->fromPart['table'])
-                        ),
-                        $this->expressionBuilder->eq(
-                            sprintf('%s.entityId', self::ALIAS),
-                            sprintf('%s.id', $this->fromPart['alias'])
-                        )
-                    ),
-                ],
-            ]
+        $configuration->getOrmQuery()->addLeftJoin(
+            $this->taxValueClass,
+            self::ALIAS,
+            Expr\Join::WITH,
+            (string)$this->expressionBuilder->andX(
+                $this->expressionBuilder->eq(
+                    sprintf('%s.entityClass', self::ALIAS),
+                    $this->expressionBuilder->literal($this->fromPart['table'])
+                ),
+                $this->expressionBuilder->eq(
+                    sprintf('%s.entityId', self::ALIAS),
+                    sprintf('%s.id', $this->fromPart['alias'])
+                )
+            )
         );
     }
 
@@ -105,7 +100,9 @@ class OrderLineItemGridListener
      */
     protected function addSelect(DatagridConfiguration $configuration)
     {
-        $configuration->offsetAddToArrayByPath('[source][query][select]', [sprintf('%s.result', self::ALIAS)]);
+        $configuration->getOrmQuery()->addSelect(
+            sprintf('%s.result', self::ALIAS)
+        );
     }
 
     /**
