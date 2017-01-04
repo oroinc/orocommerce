@@ -30,6 +30,8 @@ class OroRFPBundle implements Migration, ExtendExtensionAwareInterface
         $this->updateOroRfpRequestTable($schema);
         $this->createOroRfpRequestAddNoteTable($schema);
         $this->addOroRfpRequestAddNoteForeignKeys($schema);
+        $this->dropRfpStatus($schema);
+        $this->dropRfpStatusTranslation($schema);
     }
 
     /**
@@ -58,6 +60,9 @@ class OroRFPBundle implements Migration, ExtendExtensionAwareInterface
             false,
             ['dataaudit' => ['auditable' => true]]
         );
+
+        $table = $schema->getTable('oro_rfp_request');
+        $table->dropColumn('status_id');
     }
 
     /**
@@ -89,5 +94,21 @@ class OroRFPBundle implements Migration, ExtendExtensionAwareInterface
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    protected function dropRfpStatus(Schema $schema)
+    {
+        $schema->dropTable('oro_rfp_status');
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    protected function dropRfpStatusTranslation(Schema $schema)
+    {
+        $schema->dropTable('oro_rfp_status_translation');
     }
 }
