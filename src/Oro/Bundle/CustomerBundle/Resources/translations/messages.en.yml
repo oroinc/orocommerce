@@ -163,7 +163,7 @@ oro.customer:
             value.true.label:       'Yes'
             value.false.label:      'No'
 
-    accountuseraddress:
+    customeruseraddress:
         city.label:                 City
         country.label:              Country
         entity_description:         Represent customer user's address
@@ -225,7 +225,7 @@ oro.customer:
         roles:   'Frontend Capabilities'
         password: 'Password'
 
-    accountaddress:
+    customeraddress:
         entity_label:        Address
         entity_plural_label: Addresses
         city.label:          City

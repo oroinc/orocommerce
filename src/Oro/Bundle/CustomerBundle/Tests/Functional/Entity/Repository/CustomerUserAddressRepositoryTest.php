@@ -4,16 +4,16 @@ namespace Oro\Bundle\CustomerBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Entity\AccountUserAddress;
-use Oro\Bundle\CustomerBundle\Entity\Repository\AccountUserAddressRepository;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
+use Oro\Bundle\CustomerBundle\Entity\Repository\CustomerUserAddressRepository;
 
 /**
  * @dbIsolation
  */
-class AccountUserAddressRepositoryTest extends WebTestCase
+class CustomerUserAddressRepositoryTest extends WebTestCase
 {
     /**
-     * @var AccountUserAddressRepository
+     * @var CustomerUserAddressRepository
      */
     protected $repository;
 
@@ -23,7 +23,7 @@ class AccountUserAddressRepositoryTest extends WebTestCase
         $this->client->useHashNavigation(true);
         $this->repository = $this->getContainer()
             ->get('doctrine')
-            ->getRepository('OroCustomerBundle:AccountUserAddress');
+            ->getRepository('OroCustomerBundle:CustomerUserAddress');
 
         $this->loadFixtures(
             [
@@ -43,7 +43,7 @@ class AccountUserAddressRepositoryTest extends WebTestCase
         /** @var AccountUser $user */
         $user = $this->getReference($userReference);
 
-        /** @var AccountUserAddress[] $actual */
+        /** @var CustomerUserAddress[] $actual */
         $actual = $this->repository->getAddressesByType(
             $user,
             $type,
@@ -96,7 +96,7 @@ class AccountUserAddressRepositoryTest extends WebTestCase
         /** @var AccountUser $user */
         $user = $this->getReference($accountUserReference);
 
-        /** @var AccountUserAddress[] $actual */
+        /** @var CustomerUserAddress[] $actual */
         $actual = $this->repository->getDefaultAddressesByType(
             $user,
             $type,

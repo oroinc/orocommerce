@@ -10,8 +10,8 @@ use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\OrderBundle\Manager\AbstractAddressManager;
 use Oro\Bundle\SaleBundle\Entity\QuoteAddress;
 use Oro\Bundle\SaleBundle\Provider\QuoteAddressProvider;
-use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
-use Oro\Bundle\CustomerBundle\Entity\AccountUserAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 
 class QuoteAddressManager extends AbstractAddressManager
 {
@@ -64,9 +64,9 @@ class QuoteAddressManager extends AbstractAddressManager
         $quoteAddress->setAccountAddress(null);
         $quoteAddress->setAccountUserAddress(null);
 
-        if ($address instanceof AccountAddress) {
+        if ($address instanceof CustomerAddress) {
             $quoteAddress->setAccountAddress($address);
-        } elseif ($address instanceof AccountUserAddress) {
+        } elseif ($address instanceof CustomerUserAddress) {
             $quoteAddress->setAccountUserAddress($address);
         }
 

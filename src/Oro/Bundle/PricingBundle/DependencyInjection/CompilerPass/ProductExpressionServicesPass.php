@@ -78,6 +78,16 @@ class ProductExpressionServicesPass implements CompilerPassInterface
                         'assignedProducts',
                         [
                             'label' => 'oro.pricing.pricelist.assigned_products.label',
+                            'type' => 'collection'
+                        ]
+                    ]
+                )
+                ->addMethodCall(
+                    'addSpecialFieldInformation',
+                    [
+                        PriceList::class,
+                        'productAssignmentRule',
+                        [
                             'type' => 'standalone'
                         ]
                     ]

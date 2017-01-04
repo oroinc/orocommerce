@@ -41,12 +41,12 @@ acls:
 
     oro_account_frontend_account_address_view:
         type: entity
-        class: OroCustomerBundle:AccountAddress
+        class: OroCustomerBundle:CustomerAddress
         permission: VIEW
         group_name: "commerce"
 
     oro_account_frontend_account_user_address_view:
         type: entity
-        class: OroCustomerBundle:AccountUserAddress
+        class: OroCustomerBundle:CustomerUserAddress
         permission: VIEW
         group_name: "commerce"

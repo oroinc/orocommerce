@@ -21,9 +21,9 @@
 {% endblock %}
 
 {% block oro_account_typed_address_widget %}
-    {{ form_row(form.types, {label: 'oro.customer.accountaddress.types.label'}) }}
-    {{ form_row(form.defaults, {label: 'oro.customer.accountaddress.defaults.label'}) }}
-    {{ form_row(form.primary, {label: 'oro.customer.accountaddress.primary.label'}) }}
+    {{ form_row(form.types, {label: 'oro.customer.customeraddress.types.label'}) }}
+    {{ form_row(form.defaults, {label: 'oro.customer.customeraddress.defaults.label'}) }}
+    {{ form_row(form.primary, {label: 'oro.customer.customeraddress.primary.label'}) }}
     {{ block('oro_address_rows') }}
 {%  endblock %}
 
@@ -33,20 +33,20 @@
 
 {% block oro_address_rows %}
     {{ form_row(form.id) }}
-    {{ form_row(form.label, {label: 'oro.customer.accountaddress.label.label'}) }}
-    {{ form_row(form.namePrefix, {label: 'oro.customer.accountaddress.name_prefix.label'}) }}
-    {{ form_row(form.firstName, {label: 'oro.customer.accountaddress.first_name.label'}) }}
-    {{ form_row(form.middleName, {label: 'oro.customer.accountaddress.middle_name.label'}) }}
-    {{ form_row(form.lastName, {label: 'oro.customer.accountaddress.last_name.label'}) }}
-    {{ form_row(form.nameSuffix, {label: 'oro.customer.accountaddress.name_suffix.label'}) }}
-    {{ form_row(form.organization, {label: 'oro.customer.accountaddress.organization.label'}) }}
-    {{ form_row(form.country, {label: 'oro.customer.accountaddress.country.label'}) }}
-    {{ form_row(form.street, {label: 'oro.customer.accountaddress.street.label'}) }}
-    {{ form_row(form.street2, {label: 'oro.customer.accountaddress.street2.label'}) }}
-    {{ form_row(form.city, {label: 'oro.customer.accountaddress.city.label'}) }}
-    {{ form_row(form.region_text, {label: 'oro.customer.accountaddress.region_text.label'}) }}
-    {{ form_row(form.region, {label: 'oro.customer.accountaddress.region.label'}) }}
-    {{ form_row(form.postalCode, {label: 'oro.customer.accountaddress.postal_code.label'}) }}
+    {{ form_row(form.label, {label: 'oro.customer.customeraddress.label.label'}) }}
+    {{ form_row(form.namePrefix, {label: 'oro.customer.customeraddress.name_prefix.label'}) }}
+    {{ form_row(form.firstName, {label: 'oro.customer.customeraddress.first_name.label'}) }}
+    {{ form_row(form.middleName, {label: 'oro.customer.customeraddress.middle_name.label'}) }}
+    {{ form_row(form.lastName, {label: 'oro.customer.customeraddress.last_name.label'}) }}
+    {{ form_row(form.nameSuffix, {label: 'oro.customer.customeraddress.name_suffix.label'}) }}
+    {{ form_row(form.organization, {label: 'oro.customer.customeraddress.organization.label'}) }}
+    {{ form_row(form.country, {label: 'oro.customer.customeraddress.country.label'}) }}
+    {{ form_row(form.street, {label: 'oro.customer.customeraddress.street.label'}) }}
+    {{ form_row(form.street2, {label: 'oro.customer.customeraddress.street2.label'}) }}
+    {{ form_row(form.city, {label: 'oro.customer.customeraddress.city.label'}) }}
+    {{ form_row(form.region_text, {label: 'oro.customer.customeraddress.region_text.label'}) }}
+    {{ form_row(form.region, {label: 'oro.customer.customeraddress.region.label'}) }}
+    {{ form_row(form.postalCode, {label: 'oro.customer.customeraddress.postal_code.label'}) }}
     {{ form_rest(form) }}
 {%  endblock %}
 

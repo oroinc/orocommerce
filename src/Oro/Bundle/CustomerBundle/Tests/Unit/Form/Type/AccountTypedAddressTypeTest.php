@@ -9,7 +9,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 use Oro\Bundle\CustomerBundle\Form\Type\AccountTypedAddressType;
 use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\AddressTypeStub;
 use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\AccountTypedAddressWithDefaultTypeStub;
@@ -68,7 +68,7 @@ class AccountTypedAddressTypeTest extends FormIntegrationTestCase
 
         $this->formType = new AccountTypedAddressType();
         $this->formType->setAddressTypeDataClass('Oro\Bundle\AddressBundle\Entity\AddressType');
-        $this->formType->setDataClass('Oro\Bundle\CustomerBundle\Entity\AccountAddress');
+        $this->formType->setDataClass('Oro\Bundle\CustomerBundle\Entity\CustomerAddress');
     }
 
     /**
@@ -146,7 +146,7 @@ class AccountTypedAddressTypeTest extends FormIntegrationTestCase
      */
     public function submitDataProvider()
     {
-        $accountAddressWithAllDefaultTypes = new AccountAddress();
+        $accountAddressWithAllDefaultTypes = new CustomerAddress();
         $accountAddressWithAllDefaultTypes
             ->setPrimary(true)
             ->setTypes(new ArrayCollection([$this->billingType, $this->shippingType]))
@@ -189,7 +189,7 @@ class AccountTypedAddressTypeTest extends FormIntegrationTestCase
     ) {
         $this->testSubmit($options, $defaultData, $viewData, $submittedData, $expectedData, $updateOwner);
 
-        /** @var AccountAddress $otherAddress */
+        /** @var CustomerAddress $otherAddress */
         foreach ($otherAddresses as $otherAddress) {
             /** @var AddressType $otherDefaultType */
             foreach ($otherAddress->getDefaults() as $otherDefaultType) {
@@ -203,16 +203,16 @@ class AccountTypedAddressTypeTest extends FormIntegrationTestCase
      */
     public function submitWithFormSubscribersProvider()
     {
-        $accountAddress1 = new AccountAddress();
+        $accountAddress1 = new CustomerAddress();
         $accountAddress1
             ->setTypes(new ArrayCollection([$this->billingType, $this->shippingType]));
 
-        $accountAddress2 = new AccountAddress();
+        $accountAddress2 = new CustomerAddress();
         $accountAddress2
             ->setTypes(new ArrayCollection([$this->billingType, $this->shippingType]))
             ->setDefaults(new ArrayCollection([$this->billingType, $this->shippingType]));
 
-        $accountAddressExpected = new AccountAddress();
+        $accountAddressExpected = new CustomerAddress();
         $accountAddressExpected
             ->setPrimary(true)
             ->addType($this->billingType)

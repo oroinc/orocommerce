@@ -134,7 +134,7 @@ class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit_Framework_
 
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage [source][query][from] is missing for grid "Datagrid name"
+     * @expectedExceptionMessage A root entity is missing for grid "Datagrid name"
      */
     public function testOnBuildBeforeHideUnsuitableWithoutFrom()
     {
@@ -152,12 +152,10 @@ class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit_Framework_
         $this->listener->onBuildBeforeHideUnsuitable($this->prepareBuildBeforeEvent($this->config));
     }
 
-    // @codingStandardsIgnoreStart
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage "productVariantLinkClass" is missing in [source][query][join][left] for grid "Datagrid name"
+     * @expectedExceptionMessage A left join with "productVariantLinkClass" is missing for grid "Datagrid name"
      */
-    // @codingStandardsIgnoreEnd
     public function testOnBuildBeforeHideUnsuitableWithoutCorrectVariantLinkJoin()
     {
         $product = new Product();
