@@ -19,7 +19,6 @@
             {% if entity.accountUser %}
                 {{ UI.renderHtmlProperty('oro.rfp.request.account_user.label'|trans, UI.entityViewLink(entity.accountUser, entity.accountUser.fullName, 'oro_customer_account_user_view')) }}
             {% endif %}
-            {{ UI.renderProperty('oro.rfp.request.status.label'|trans, entity.status.label) }}
             {{ UI.renderProperty('oro.rfp.request.internal_status.label'|trans, entity.internalStatus.name|default('')) }}
             {{ UI.renderProperty('oro.rfp.request.customer_status.label'|trans, entity.customerStatus.name|default('')) }}
             {% if entity.status.name =='canceled' %}

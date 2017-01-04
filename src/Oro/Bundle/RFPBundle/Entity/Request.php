@@ -195,20 +195,6 @@ class Request extends ExtendRequest implements
     protected $cancellationReason;
 
     /**
-     * @var RequestStatus
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\RFPBundle\Entity\RequestStatus")
-     * @ORM\JoinColumn(name="status_id", referencedColumnName="id", onDelete="SET NULL")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $status;
-
-    /**
      * @var Collection|RequestProduct[]
      *
      * @ORM\OneToMany(targetEntity="RequestProduct", mappedBy="request", cascade={"ALL"}, orphanRemoval=true)
@@ -515,29 +501,6 @@ class Request extends ExtendRequest implements
     public function getNote()
     {
         return $this->note;
-    }
-
-    /**
-     * Set status
-     *
-     * @param RequestStatus $status
-     * @return $this
-     */
-    public function setStatus(RequestStatus $status)
-    {
-        $this->status = $status;
-
-        return $this;
-    }
-
-    /**
-     * Get status
-     *
-     * @return RequestStatus
-     */
-    public function getStatus()
-    {
-        return $this->status;
     }
 
     /**
