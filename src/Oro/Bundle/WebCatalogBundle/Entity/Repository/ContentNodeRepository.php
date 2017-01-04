@@ -70,4 +70,19 @@ class ContentNodeRepository extends NestedTreeRepository
 
         return $qb->getQuery()->getResult();
     }
+
+    /**
+     * @param ContentNode $contentNode
+     * @return ContentNode[]
+     */
+    public function getDirectNodesWithParentScopeUsed(ContentNode $contentNode)
+    {
+        $qb = $this->getChildrenQueryBuilder($contentNode, true);
+        $qb->andWhere(
+            $qb->expr()->eq('node.parentScopeUsed', ':parentScopeUsed')
+        )
+        ->setParameter('parentScopeUsed', true);
+
+        return $qb->getQuery()->getResult();
+    }
 }

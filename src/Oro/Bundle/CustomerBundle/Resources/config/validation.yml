@@ -4,10 +4,10 @@ Oro\Bundle\CustomerBundle\Entity\Account:
             - NotBlank: ~
         addresses:
             - Oro\Bundle\FormBundle\Validator\Constraints\ContainsPrimary:
-                message: One of addresses must be set as primary.
+                message: One of the addresses must be set as primary.
             - Oro\Bundle\CustomerBundle\Validator\Constraints\UniqueAddressDefaultTypes: ~
 
-Oro\Bundle\CustomerBundle\Entity\AccountAddress:
+Oro\Bundle\CustomerBundle\Entity\CustomerAddress:
     properties:
         street:
             - NotBlank: ~
@@ -47,9 +47,9 @@ Oro\Bundle\CustomerBundle\Entity\AccountUser:
                 min: 6
                 max: 255
         plainPassword:
-            - NotBlank: { groups: [create] }
-            - Length:
-                min: 2
+            - NotBlank:
+                groups: [create]
+            - Oro\Bundle\UserBundle\Validator\Constraints\PasswordComplexity: ~
         username:
             - NotBlank: ~
             - Length:
@@ -67,10 +67,10 @@ Oro\Bundle\CustomerBundle\Entity\AccountUser:
             - NotBlank: ~
         addresses:
             - Oro\Bundle\FormBundle\Validator\Constraints\ContainsPrimary:
-                message: One of addresses must be set as primary.
+                message: One of the addresses must be set as primary.
             - Oro\Bundle\CustomerBundle\Validator\Constraints\UniqueAddressDefaultTypes: ~
 
-Oro\Bundle\CustomerBundle\Entity\AccountUserAddress:
+Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
     properties:
         street:
             - NotBlank: ~

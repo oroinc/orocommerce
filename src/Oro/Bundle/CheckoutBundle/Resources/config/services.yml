@@ -366,6 +366,7 @@ services:
         arguments:
             - '@oro_entity.entity_field_provider'
             - '@property_accessor'
+            - '@oro_payment_term.provider.payment_term_association'
 
     oro_checkout.model.action.create_order:
         class: 'Oro\Bundle\CheckoutBundle\Model\Action\CreateOrder'
@@ -383,8 +384,12 @@ services:
         tags:
             - { name: oro_workflow.changes.listener, event: oro.workflow.deactivated, method: onDeactivationWorkflowDefinition }
 
-    oro_checkout.datagrid.action_permission_provider:
-        class: 'Oro\Bundle\CheckoutBundle\Datagrid\ActionPermissionProvider'
+    oro_checkout.acl.voter.checkout:
+        class: 'Oro\Bundle\CheckoutBundle\Acl\Voter\CheckoutVoter'
+        public: false
         arguments:
-            - "@oro_security.security_facade"
-            - '@oro_checkout.repository.checkout'
+            - '@oro_entity.doctrine_helper'
+        calls:
+            - [setContainer, ["@service_container"]]
+        tags:
+            - { name: security.voter }

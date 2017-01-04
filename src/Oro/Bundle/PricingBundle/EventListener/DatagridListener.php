@@ -59,14 +59,13 @@ class DatagridListener
      */
     protected function addPriceListRelation(DatagridConfiguration $config, $leftJoins)
     {
+        $query = $config->getOrmQuery();
+
         // select
-        $select = 'priceList.name as ' . self::PRICE_COLUMN;
-        $this->addConfigElement($config, '[source][query][select]', $select);
+        $query->addSelect('priceList.name as ' . self::PRICE_COLUMN);
 
         // left join
-        foreach ($leftJoins as $leftJoin) {
-            $this->addConfigElement($config, '[source][query][join][left]', $leftJoin);
-        }
+        $query->setLeftJoins(array_merge($query->getLeftJoins(), $leftJoins));
 
         // column
         $column = ['label' => 'oro.pricing.pricelist.entity_label'];

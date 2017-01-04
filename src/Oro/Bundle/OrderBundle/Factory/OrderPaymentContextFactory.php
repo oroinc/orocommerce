@@ -54,6 +54,8 @@ class OrderPaymentContextFactory
             (string)$order->getId()
         );
 
+        $convertedLineItems = $this->paymentLineItemConverter->convertLineItems($order->getLineItems());
+
         if (null !== $order->getBillingAddress()) {
             $paymentContextBuilder->setBillingAddress($order->getBillingAddress());
         }
@@ -70,10 +72,8 @@ class OrderPaymentContextFactory
             $paymentContextBuilder->setCustomerUser($order->getAccountUser());
         }
 
-        if (!$order->getLineItems()->isEmpty()) {
-            $paymentContextBuilder->setLineItems(
-                $this->paymentLineItemConverter->convertLineItems($order->getLineItems())
-            );
+        if (null !== $convertedLineItems && !$convertedLineItems->isEmpty()) {
+            $paymentContextBuilder->setLineItems($convertedLineItems);
         }
 
         if (null !== $order->getShippingMethod()) {

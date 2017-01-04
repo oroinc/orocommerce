@@ -106,7 +106,6 @@ class FrontendProductDatagridListener
 
     /**
      * @param DatagridConfiguration $config
-     * @return array
      */
     protected function addImageToConfig(DatagridConfiguration $config)
     {

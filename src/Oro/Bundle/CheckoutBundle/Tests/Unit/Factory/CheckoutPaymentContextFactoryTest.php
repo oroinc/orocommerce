@@ -166,4 +166,90 @@ class CheckoutPaymentContextFactoryTest extends \PHPUnit_Framework_TestCase
 
         $this->factory->create($checkout);
     }
+
+    public function testWithNullLineItems()
+    {
+        /** @var AddressInterface $address */
+        $address = $this->createMock(OrderAddress::class);
+        $currency = 'USD';
+        $shippingMethod = 'SomeShippingMethod';
+        $amount = 100;
+        $customer = new Account();
+        $customerUser = new AccountUser();
+        $checkoutLineItems = new ArrayCollection([
+            new OrderLineItem()
+        ]);
+
+        $subtotal = (new Subtotal())
+            ->setAmount($amount)
+            ->setCurrency($currency);
+
+        $checkout = (new Checkout())
+            ->setBillingAddress($address)
+            ->setShippingAddress($address)
+            ->setCurrency($currency)
+            ->setShippingMethod($shippingMethod)
+            ->setAccount($customer)
+            ->setAccountUser($customerUser);
+
+        $this->contextBuilderMock
+            ->method('setShippingAddress')
+            ->with($address);
+
+        $this->contextBuilderMock
+            ->method('setBillingAddress')
+            ->with($address);
+
+        $this->contextBuilderMock
+            ->expects($this->never())
+            ->method('setLineItems');
+
+        $this->contextBuilderMock
+            ->expects($this->once())
+            ->method('setShippingMethod')
+            ->with($shippingMethod);
+
+        $this->contextBuilderMock
+            ->expects($this->once())
+            ->method('setCustomer')
+            ->with($customer);
+
+        $this->contextBuilderMock
+            ->expects($this->once())
+            ->method('setCustomerUser')
+            ->with($customerUser);
+
+        $this->contextBuilderMock
+            ->expects($this->once())
+            ->method('getResult');
+
+        $this->paymentContextBuilderFactoryMock
+            ->expects($this->once())
+            ->method('createPaymentContextBuilder')
+            ->with(
+                $checkout->getCurrency(),
+                Price::create($subtotal->getAmount(), $subtotal->getCurrency()),
+                $checkout,
+                (string)$checkout->getId()
+            )
+            ->willReturn($this->contextBuilderMock);
+
+        $this->checkoutLineItemsManager
+            ->expects(static::once())
+            ->method('getData')
+            ->willReturn($checkoutLineItems);
+
+        $this->paymentLineItemConverter
+            ->expects($this->once())
+            ->method('convertLineItems')
+            ->willReturn(null);
+
+        $this->totalProcessorProvider
+            ->expects(static::once())
+            ->method('getTotal')
+            ->with($checkout)
+            ->willReturn($subtotal);
+
+        $this->factory->create($checkout);
+    }
 }

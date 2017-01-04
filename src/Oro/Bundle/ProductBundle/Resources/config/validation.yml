@@ -41,6 +41,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         images:
             - Valid: ~
             - Oro\Bundle\ProductBundle\Validator\Constraints\ProductImageCollection: ~
+        attributeFamily:
+            - NotBlank: ~
 
 Oro\Bundle\ProductBundle\Entity\ProductUnit:
     properties:

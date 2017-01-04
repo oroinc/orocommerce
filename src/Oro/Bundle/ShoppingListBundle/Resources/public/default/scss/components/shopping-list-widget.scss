@@ -36,7 +36,7 @@
       @include breakpoint('tablet') {
         width: 100%;
 
-        overflow-y: visible;
+        overflow-y: scroll;
       }
     }
   }
@@ -121,6 +121,10 @@
     margin-right: 3px;
 
     @include badge(33px);
+
+    @include breakpoint('tablet') {
+      margin: 0;
+    }
   }
 }
 

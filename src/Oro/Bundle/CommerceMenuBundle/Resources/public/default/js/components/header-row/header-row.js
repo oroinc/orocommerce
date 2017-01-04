@@ -33,7 +33,7 @@ define(function(require) {
         },
 
         addScroll: function() {
-            var windowHeight = $(window).height();
+            var windowHeight = $(window).innerHeight();
             var headerRowHeight = this.$el.height();
             var middleBarHeight = this.$el.prev().outerHeight();
             var menuHeight = windowHeight - headerRowHeight;
@@ -43,7 +43,7 @@ define(function(require) {
             if (!isSticky) {
                 menuHeight = windowHeight - headerRowHeight - middleBarHeight;
             }
-            
+
             $.each($dropdowns, function(index, dropdown) {
                 $(dropdown).parent().removeAttr('style');
 

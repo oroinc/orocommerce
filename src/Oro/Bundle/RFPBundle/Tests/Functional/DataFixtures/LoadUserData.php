@@ -11,7 +11,7 @@ use Oro\Bundle\SecurityBundle\Owner\Metadata\ChainMetadataProvider;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Entity\UserManager;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Entity\AccountUserManager;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserManager;
 use Oro\Bundle\CustomerBundle\Entity\AccountUserRole;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
@@ -285,7 +285,7 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
      */
     protected function loadAccountUsers(ObjectManager $manager)
     {
-        /* @var $userManager AccountUserManager */
+        /* @var $userManager CustomerUserManager */
         $userManager = $this->container->get('oro_account_user.manager');
 
         $defaultUser    = $this->getUser($manager);

@@ -32,49 +32,6 @@ abstract class AbstractEngineTest extends WebTestCase
      */
     protected $engine;
 
-    /**
-     * @var array
-     */
-    protected $mappingConfig = [
-        TestEntity::class => [
-            'alias' => 'oro_test_item_WEBSITE_ID',
-            'fields' => [
-                [
-                    'name' => 'title_LOCALIZATION_ID',
-                    'type' => 'text'
-                ],
-                [
-                    'name' => 'stringValue',
-                    'type' => 'text',
-                ],
-                [
-                    'name' => 'integerValue',
-                    'type' => 'integer',
-                ],
-                [
-                    'name' => 'decimalValue',
-                    'type' => 'decimal',
-                ],
-                [
-                    'name' => 'floatValue',
-                    'type' => 'decimal'
-                ],
-                [
-                    'name' => 'datetimeValue',
-                    'type' => 'datetime'
-                ],
-                [
-                    'name' => 'blobValue',
-                    'type' => 'text'
-                ],
-                [
-                    'name' => 'phone',
-                    'type' => 'text'
-                ]
-            ],
-        ]
-    ];
-
     protected function setUp()
     {
         $this->getContainer()->get('request_stack')->push(Request::create(''));

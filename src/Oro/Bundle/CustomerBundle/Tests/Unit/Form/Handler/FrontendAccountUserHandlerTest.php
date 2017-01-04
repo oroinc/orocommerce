@@ -3,14 +3,14 @@
 namespace Oro\Bundle\CustomerBundle\Tests\Unit\Form\Handler;
 
 use Oro\Component\Testing\Unit\FormHandlerTestCase;
-use Oro\Bundle\CustomerBundle\Entity\AccountUserManager;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserManager;
 use Oro\Bundle\CustomerBundle\Form\Handler\FrontendAccountUserHandler;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class FrontendAccountUserHandlerTest extends FormHandlerTestCase
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|AccountUserManager
+     * @var \PHPUnit_Framework_MockObject_MockObject|CustomerUserManager
      */
     protected $userManager;
 
@@ -25,7 +25,7 @@ class FrontendAccountUserHandlerTest extends FormHandlerTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->userManager = $this->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\AccountUserManager')
+        $this->userManager = $this->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\CustomerUserManager')
             ->disableOriginalConstructor()
             ->getMock();
 

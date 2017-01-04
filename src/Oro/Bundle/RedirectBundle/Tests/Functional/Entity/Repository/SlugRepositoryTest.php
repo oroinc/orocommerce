@@ -10,6 +10,7 @@ use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Tests\Functional\DataFixtures\LoadSlugScopesData;
 use Oro\Bundle\RedirectBundle\Tests\Functional\DataFixtures\LoadSlugsData;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
+use Oro\Bundle\SecurityBundle\Authentication\Token\UsernamePasswordOrganizationToken;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
@@ -39,6 +40,17 @@ class SlugRepositoryTest extends WebTestCase
             ->get('doctrine')
             ->getRepository(Slug::class);
         $this->scopeManager = $this->getContainer()->get('oro_scope.scope_manager');
+
+        $organization = $this->getContainer()->get('doctrine')
+            ->getRepository('OroOrganizationBundle:Organization')
+            ->getFirst();
+        $token = new UsernamePasswordOrganizationToken(
+            LoadAccountUserData::AUTH_USER,
+            'admin',
+            'key',
+            $organization
+        );
+        $this->client->getContainer()->get('security.token_storage')->setToken($token);
 
         $this->loadFixtures(
             [

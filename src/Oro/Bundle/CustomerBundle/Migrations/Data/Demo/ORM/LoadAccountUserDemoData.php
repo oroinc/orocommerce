@@ -45,7 +45,7 @@ class LoadAccountUserDemoData extends AbstractFixture implements ContainerAwareI
         /** @var Website $website */
         $website = $manager->getRepository(Website::class)->findOneBy(['default' => true]);
 
-        /** @var \Oro\Bundle\CustomerBundle\Entity\AccountUserManager $userManager */
+        /** @var \Oro\Bundle\CustomerBundle\Entity\CustomerUserManager $userManager */
         $userManager = $this->container->get('oro_account_user.manager');
 
         $locator = $this->container->get('file_locator');
