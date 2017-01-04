@@ -5,6 +5,7 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\Layout\DataProvider;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
 use Oro\Bundle\ShippingBundle\Layout\DataProvider\ShippingMethodsProvider;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewCollection;
 use Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
 
@@ -49,11 +50,10 @@ class ShippingMethodsProviderTest extends \PHPUnit_Framework_TestCase
             'currency' => 'USD'
         ]);
 
-
         $this->shippingPriceProvider->expects(static::once())
             ->method('getApplicableMethodsWithTypesData')
             ->with($context)
-            ->willReturn([]);
+            ->willReturn(new ShippingMethodViewCollection());
 
         $this->assertEquals([], $this->provider->getMethods($context));
     }

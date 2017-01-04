@@ -56,9 +56,11 @@ class QuotePossibleShippingMethodsEventListener
         ) {
             $data = [];
             if ($this->priceProvider) {
-                $data = $this->priceProvider
-                    ->getApplicableMethodsWithTypesData($this->factory->create($event->getQuote()));
-                $data = $this->priceConverter->convertPricesToArray($data);
+                $shippingContext = $this->factory->create($event->getQuote());
+                $shippingMethodViews = $this->priceProvider
+                    ->getApplicableMethodsWithTypesData($shippingContext)
+                    ->toArray();
+                $data = $this->priceConverter->convertPricesToArray($shippingMethodViews);
             }
             $event->getData()->offsetSet(self::POSSIBLE_SHIPPING_METHODS_KEY, $data);
         }

@@ -39,7 +39,7 @@ class DefaultShippingMethodSetter
             return;
         }
         $context = $this->contextProviderFactory->create($checkout);
-        $methodsData = $this->priceProvider->getApplicableMethodsWithTypesData($context);
+        $methodsData = $this->priceProvider->getApplicableMethodsWithTypesData($context)->toArray();
         if (count($methodsData) === 0) {
             return;
         }

@@ -9,6 +9,7 @@ use Oro\Bundle\SaleBundle\Event\QuoteEvent;
 use Oro\Bundle\SaleBundle\EventListener\Quote\QuotePossibleShippingMethodsEventListener;
 use Oro\Bundle\SaleBundle\Factory\QuoteShippingContextFactory;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewCollection;
 use Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider;
 use Symfony\Component\Form\FormInterface;
 
@@ -91,11 +92,11 @@ class QuotePossibleShippingMethodsEventListenerTest extends \PHPUnit_Framework_T
     /**
      * @dataProvider onOrderEventDataProvider
      *
-     * @param array $methods
+     * @param ShippingMethodViewCollection $methods
      * @param array|null $submittedData
      * @param array $expectedMethods
      */
-    public function testOnOrderEvent(array $methods, $submittedData, array $expectedMethods)
+    public function testOnOrderEvent(ShippingMethodViewCollection $methods, $submittedData, array $expectedMethods)
     {
         $quote = new Quote();
         $context = $this->getMock(ShippingContextInterface::class);
@@ -106,7 +107,7 @@ class QuotePossibleShippingMethodsEventListenerTest extends \PHPUnit_Framework_T
 
         $this->priceConverter->expects(static::any())
             ->method('convertPricesToArray')
-            ->with($methods)
+            ->with($methods->toArray())
             ->willReturn($expectedMethods);
 
         $this->priceProvider->expects(static::any())
@@ -133,49 +134,56 @@ class QuotePossibleShippingMethodsEventListenerTest extends \PHPUnit_Framework_T
     {
         return [
             'null submitted data' => [
-                'methods' => [
-                    [
-                        'types' => [
-                            ['price' => Price::create(10, 'USD')],
-                            ['price' => Price::create(11, 'USD')],
-                        ]
-                    ],
-                    [
-                        'types' => [
-                            ['price' => Price::create(12, 'USD')],
-                        ]
-                    ]
-                ],
+                'methods' =>
+                    (new ShippingMethodViewCollection())
+                        ->addMethodView('someMethodId', ['sortOrder' => 1])
+                        ->addMethodTypeView(
+                            'someMethodId',
+                            'someTypeId',
+                            ['price' => Price::create(10, 'USD')]
+                        )
+                        ->addMethodTypeView(
+                            'someMethodId',
+                            'someTypeId2',
+                            ['price' => Price::create(11, 'USD')]
+                        )
+                        ->addMethodView('someMethodId2', ['sortOrder' => 2])
+                        ->addMethodTypeView(
+                            'someMethodId2',
+                            'someTypeId',
+                            ['price' => Price::create(12, 'USD')]
+                        ),
                 'submittedData' => null,
                 'expectedMethods' => [
-                    [
+                    'someMethodId' => [
                         'types' => [
-                            ['price' => ['value' => 10, 'currency' => 'USD']],
-                            ['price' => ['value' => 11, 'currency' => 'USD']],
-                        ]
+                            'someTypeId' => ['price' => ['value' => 10, 'currency' => 'USD']],
+                            'someTypeId2' => ['price' => ['value' => 11, 'currency' => 'USD']],
+                        ],
                     ],
-                    [
+                    'someMethodId2' => [
                         'types' => [
-                            ['price' => ['value' => 12, 'currency' => 'USD']],
-                        ]
-                    ]
+                            'someTypeId' => ['price' => ['value' => 12, 'currency' => 'USD']],
+                        ],
+                    ],
                 ],
             ],
             'key' => [
-                'methods' => [
-                    [
-                        'types' => [
-                            ['price' => Price::create(1, 'USD')],
-                        ]
-                    ]
-                ],
+                'methods' =>
+                    (new ShippingMethodViewCollection())
+                        ->addMethodView('someMethodId', ['sortOrder' => 1])
+                        ->addMethodTypeView(
+                            'someMethodId',
+                            'someTypeId',
+                            ['price' => Price::create(1, 'USD')]
+                        ),
                 'submittedData' => [QuotePossibleShippingMethodsEventListener::CALCULATE_SHIPPING_KEY => 'false'],
                 'expectedMethods' => [
-                    [
+                    'someMethodId' => [
                         'types' => [
-                            ['price' => ['value' => 1, 'currency' => 'USD']],
-                        ]
-                    ]
+                            'someTypeId' => ['price' => ['value' => 1, 'currency' => 'USD']],
+                        ],
+                    ],
                 ],
             ],
         ];

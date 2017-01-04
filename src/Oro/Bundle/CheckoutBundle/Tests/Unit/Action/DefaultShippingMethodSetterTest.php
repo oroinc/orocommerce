@@ -7,6 +7,7 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Factory\ShippingContextProviderFactory;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewCollection;
 use Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
 
@@ -46,9 +47,12 @@ class DefaultShippingMethodSetterTest extends \PHPUnit_Framework_TestCase
 
     public function testSetDefaultShippingMethodAlreadySet()
     {
-        $checkout = $this->getEntity(Checkout::class, [
-            'shippingMethod' => 'custom_shipping_method'
-        ]);
+        $checkout = $this->getEntity(
+            Checkout::class,
+            [
+                'shippingMethod' => 'custom_shipping_method',
+            ]
+        );
         $this->contextProviderFactory->expects($this->never())
             ->method('create');
         $this->priceProvider->expects($this->never())
@@ -69,7 +73,7 @@ class DefaultShippingMethodSetterTest extends \PHPUnit_Framework_TestCase
         $this->priceProvider->expects($this->once())
             ->method('getApplicableMethodsWithTypesData')
             ->with($context)
-            ->willReturn([]);
+            ->willReturn(new ShippingMethodViewCollection());
         $this->priceProvider->expects($this->never())
             ->method('getPrice');
         $this->setter->setDefaultShippingMethod($checkout);
@@ -88,21 +92,20 @@ class DefaultShippingMethodSetterTest extends \PHPUnit_Framework_TestCase
         $method = 'custom_method';
         $methodType = 'custom_method_type';
 
+
         $price = Price::create(10, 'USD');
         $this->priceProvider->expects($this->once())
             ->method('getApplicableMethodsWithTypesData')
             ->with($context)
-            ->willReturn([
-                [
-                    'identifier' => $method,
-                    'types' => [
-                        [
-                            'identifier' => $methodType,
-                            'price' => $price,
-                        ]
-                    ],
-                ]
-            ]);
+            ->willReturn(
+                (new ShippingMethodViewCollection())
+                    ->addMethodView($method, ['identifier' => $method])
+                    ->addMethodTypeView(
+                        $method,
+                        $methodType,
+                        ['identifier' => $methodType, 'price' => $price]
+                    )
+            );
 
         $this->setter->setDefaultShippingMethod($checkout);
         $this->assertEquals($method, $checkout->getShippingMethod());

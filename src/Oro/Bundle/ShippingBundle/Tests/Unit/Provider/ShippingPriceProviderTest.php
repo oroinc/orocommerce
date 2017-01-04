@@ -9,6 +9,7 @@ use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodConfig;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewFactory;
 use Oro\Bundle\ShippingBundle\Provider\Cache\ShippingPriceCache;
 use Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider;
 use Oro\Bundle\ShippingBundle\Provider\ShippingRulesProvider;
@@ -84,10 +85,13 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
         $this->priceCache = $this->getMockBuilder(ShippingPriceCache::class)
             ->disableOriginalConstructor()->getMock();
 
+        $viewFactory = new ShippingMethodViewFactory($this->registry);
+
         $this->shippingPriceProvider = new ShippingPriceProvider(
             $this->shippingRulesProvider,
             $this->registry,
-            $this->priceCache
+            $this->priceCache,
+            $viewFactory
         );
     }
 
@@ -108,7 +112,12 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
             ->with($context)
             ->willReturn($shippingRules);
 
-        $this->assertEquals($expectedData, $this->shippingPriceProvider->getApplicableMethodsWithTypesData($context));
+        $this->assertEquals(
+            $expectedData,
+            $this->shippingPriceProvider
+                ->getApplicableMethodsWithTypesData($context)
+                ->toArray()
+        );
     }
 
     /**
@@ -171,9 +180,7 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
                                 'identifier' => 'primary',
                                 'label' => 'primary.label',
                                 'sortOrder' => 1,
-                                'price' => Price::create(12, 'USD'),
-                                'options' => ['price' => Price::create(12, 'USD')],
-                                'methodOptions' => [],
+                                'price' => Price::create(12, 'USD')
                             ]
                         ]
                     ]
@@ -261,8 +268,6 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
                                 'label' => 'primary.label',
                                 'sortOrder' => 1,
                                 'price' => Price::create(1, 'USD'),
-                                'options' => ['price' => Price::create(1, 'USD')],
-                                'methodOptions' => [],
                             ]
                         ]
                     ],
@@ -277,16 +282,12 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
                                 'label' => 'ground.label',
                                 'sortOrder' => 1,
                                 'price' => Price::create(2, 'USD'),
-                                'options' => ['aware_price' => Price::create(2, 'USD')],
-                                'methodOptions' => [],
                             ],
                             'air' => [
                                 'identifier' => 'air',
                                 'label' => 'air.label',
                                 'sortOrder' => 2,
                                 'price' => Price::create(4, 'USD'),
-                                'options' => ['aware_price' => Price::create(4, 'USD')],
-                                'methodOptions' => [],
                             ]
                         ]
                     ]
@@ -335,9 +336,7 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
                         'identifier' => 'primary',
                         'label' => 'primary.label',
                         'sortOrder' => 1,
-                        'price' => $price,
-                        'options' => ['price' => Price::create(1, 'USD')],
-                        'methodOptions' => [],
+                        'price' => $price
                     ]
                 ]
             ]
@@ -363,9 +362,15 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
             ->with($context, 'flat_rate', 'primary')
             ->willReturn(Price::create(2, 'USD'));
 
-        $this->assertEquals($expectedData, $this->shippingPriceProvider->getApplicableMethodsWithTypesData($context));
+        $this->assertEquals(
+            $expectedData,
+            $this->shippingPriceProvider->getApplicableMethodsWithTypesData($context)->toArray()
+        );
         $price->setValue(2);
-        $this->assertEquals($expectedData, $this->shippingPriceProvider->getApplicableMethodsWithTypesData($context));
+        $this->assertEquals(
+            $expectedData,
+            $this->shippingPriceProvider->getApplicableMethodsWithTypesData($context)->toArray()
+        );
     }
 
     /**

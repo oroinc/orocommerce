@@ -212,6 +212,7 @@ services:
             - '@oro_shipping.shipping_rule.provider'
             - '@oro_shipping.shipping_method.registry'
             - '@oro_shipping.shipping_price.provider.cache'
+            - '@oro_shipping.method.view_factory'
 
     oro_shipping.shipping_rule.provider:
         class: 'Oro\Bundle\ShippingBundle\Provider\ShippingRulesProvider'
@@ -285,3 +286,8 @@ services:
     oro_shipping.shipping_context.cache_key_generator:
         class: 'Oro\Bundle\ShippingBundle\Context\ShippingContextCacheKeyGenerator'
         public: false
+
+    oro_shipping.method.view_factory:
+        class: Oro\Bundle\ShippingBundle\Method\ShippingMethodViewFactory
+        arguments:
+            - '@oro_shipping.shipping_method.registry'
