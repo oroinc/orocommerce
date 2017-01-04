@@ -240,19 +240,31 @@ class ProductExpressionServicesPassTest extends \PHPUnit_Framework_TestCase
         $definition = $this->getMockBuilder(Definition::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $definition->expects($this->once())
+        $definition->expects($this->exactly(2))
             ->method('addMethodCall')
-            ->with(
-                'addSpecialFieldInformation',
+            ->withConsecutive(
                 [
-                    PriceList::class,
-                    'assignedProducts',
+                    'addSpecialFieldInformation',
                     [
-                        'label' => 'oro.pricing.pricelist.assigned_products.label',
-                        'type' => 'standalone'
+                        PriceList::class,
+                        'assignedProducts',
+                        [
+                            'label' => 'oro.pricing.pricelist.assigned_products.label',
+                            'type' => 'collection'
+                        ]
+                    ]
+                ],
+                [
+                    'addSpecialFieldInformation',
+                    [
+                        PriceList::class,
+                        'productAssignmentRule',
+                        [
+                            'type' => 'standalone'
+                        ]
                     ]
                 ]
-            );
+            )->willReturnSelf();
 
         $this->container->expects($this->any())
             ->method('getDefinition')

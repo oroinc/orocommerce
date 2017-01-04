@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\TaxBundle\Model;
 
-final class Result extends AbstractResult
+final class Result extends AbstractResult implements \JsonSerializable
 {
     const TOTAL = 'total';
     const SHIPPING = 'shipping';
@@ -17,6 +17,37 @@ final class Result extends AbstractResult
      * @var bool
      */
     protected $resultLocked = false;
+
+    /**
+     * Creates new Result object from serialized data
+     * @param array|null $serialized
+     * @return Result
+     * @throws \InvalidArgumentException
+     */
+    public static function jsonDeserialize($serialized)
+    {
+        if ($serialized === null) {
+            return new self();
+        } elseif (!is_array($serialized)) {
+            throw new \InvalidArgumentException('You cannot deserialize Result from anything, except array or null');
+        }
+
+        $result = new self($serialized);
+        $result->deserializeAsResultElement(self::TOTAL, $serialized);
+        $result->deserializeAsResultElement(self::SHIPPING, $serialized);
+        $result->deserializeAsResultElement(self::UNIT, $serialized);
+        $result->deserializeAsResultElement(self::ROW, $serialized);
+        return $result;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function jsonSerialize()
+    {
+        $this->prepareToSerialization();
+        return $this->getArrayCopy();
+    }
 
     /**
      * @return ResultElement
@@ -69,12 +100,7 @@ final class Result extends AbstractResult
     /** {@inheritdoc} */
     public function serialize()
     {
-        if ($this->offsetExists(self::ITEMS)) {
-            $this->unsetOffset(self::ITEMS);
-        }
-
-        $this->unlockResult();
-
+        $this->prepareToSerialization();
         return parent::serialize();
     }
 
@@ -94,5 +120,24 @@ final class Result extends AbstractResult
     public function isResultLocked()
     {
         return $this->resultLocked;
+    }
+
+    /**
+     * @param string $key
+     * @param array $serialized
+     */
+    protected function deserializeAsResultElement($key, array $serialized)
+    {
+        if (!empty($serialized[$key]) && is_array($serialized[$key])) {
+            $this->offsetSet($key, new ResultElement($serialized[$key]));
+        }
+    }
+
+    protected function prepareToSerialization()
+    {
+        if ($this->offsetExists(self::ITEMS)) {
+            $this->unsetOffset(self::ITEMS);
+        }
+        $this->unlockResult();
     }
 }

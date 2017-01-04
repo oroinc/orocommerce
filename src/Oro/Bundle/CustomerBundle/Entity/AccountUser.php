@@ -245,10 +245,10 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
     protected $birthday;
 
     /**
-     * @var Collection|AccountUserAddress[]
+     * @var Collection|CustomerUserAddress[]
      *
      * @ORM\OneToMany(
-     *      targetEntity="Oro\Bundle\CustomerBundle\Entity\AccountUserAddress",
+     *      targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress",
      *      mappedBy="frontendOwner",
      *      cascade={"all"},
      *      orphanRemoval=true

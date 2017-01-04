@@ -7,9 +7,9 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\CurrencyBundle\Entity\MultiCurrency;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Entity\AccountUserAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
@@ -425,8 +425,8 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
         if ($entity instanceof Quote) {
             if (!$emptyShippingAddress) {
                 $shippingAddress = new QuoteAddress();
-                $shippingAddress->setAccountAddress(new AccountAddress());
-                $shippingAddress->setAccountUserAddress(new AccountUserAddress());
+                $shippingAddress->setAccountAddress(new CustomerAddress());
+                $shippingAddress->setAccountUserAddress(new CustomerUserAddress());
                 $shippingAddress->setLabel('Label');
                 $shippingAddress->setStreet('Street');
                 $shippingAddress->setStreet2('Street');
@@ -562,8 +562,8 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
     {
         $shippingAddress = new OrderAddress();
 
-        $shippingAddress->setAccountAddress(new AccountAddress());
-        $shippingAddress->setAccountUserAddress(new AccountUserAddress());
+        $shippingAddress->setAccountAddress(new CustomerAddress());
+        $shippingAddress->setAccountUserAddress(new CustomerUserAddress());
         $shippingAddress->setLabel('Label');
         $shippingAddress->setStreet('Street');
         $shippingAddress->setStreet2('Street');

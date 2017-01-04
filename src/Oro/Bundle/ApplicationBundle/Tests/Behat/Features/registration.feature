@@ -12,7 +12,7 @@ Feature: New user registration
       | First Name       | Charlie             |
       | Last Name        | SHeen               |
       | Email Address    | charlie@example.com |
-      | Password         | charlie             |
-      | Confirm Password | charlie             |
+      | Password         | Charlie001          |
+      | Confirm Password | Charlie001          |
     When I press "Create An Account"
     Then I should see "Please check your email to complete registration"

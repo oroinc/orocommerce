@@ -4,7 +4,7 @@ namespace Oro\Bundle\CustomerBundle\Model;
 
 use Oro\Bundle\CustomerBundle\Entity\AbstractDefaultTypedAddress;
 
-abstract class ExtendAccountAddress extends AbstractDefaultTypedAddress
+abstract class ExtendCustomerUserAddress extends AbstractDefaultTypedAddress
 {
     /**
      * Constructor

@@ -1,10 +1,10 @@
 parameters:
     oro_customer.entity.account.class: Oro\Bundle\CustomerBundle\Entity\Account
-    oro_customer.entity.account_address.class: Oro\Bundle\CustomerBundle\Entity\AccountAddress
+    oro_customer.entity.account_address.class: Oro\Bundle\CustomerBundle\Entity\CustomerAddress
     oro_customer.entity.account_group.class: Oro\Bundle\CustomerBundle\Entity\AccountGroup
     oro_customer.entity.account_user.class: Oro\Bundle\CustomerBundle\Entity\AccountUser
     oro_customer.entity.customer_user_settings.class: Oro\Bundle\CustomerBundle\Entity\CustomerUserSettings
-    oro_customer.entity.account_user_address.class: Oro\Bundle\CustomerBundle\Entity\AccountUserAddress
+    oro_customer.entity.account_user_address.class: Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress
     oro_customer.entity.account_user_role.class: Oro\Bundle\CustomerBundle\Entity\AccountUserRole
     oro_customer.entity.audit.class: Oro\Bundle\CustomerBundle\Entity\Audit
     oro_customer.entity.navigation_item.class: Oro\Bundle\CustomerBundle\Entity\NavigationItem

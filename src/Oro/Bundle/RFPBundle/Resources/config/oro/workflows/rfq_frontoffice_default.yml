@@ -39,7 +39,7 @@ workflows:
                 transition_definition: __start___definition
             more_information_requested_transition:
                 step_to: requires_attention
-                transition_definition: stub_transition_definition
+                transition_definition: more_information_requested_transition_definition
                 is_hidden: true
                 triggers:
                     -
@@ -62,11 +62,18 @@ workflows:
                 step_to: cancelled
                 transition_definition: cancel_transition_definition
             resubmit_transition:
-                step_to: submitted
-                transition_definition: stub_transition_definition
+                step_to: cancelled
+                transition_definition: resubmit_transition_definition
             reopen_transition:
                 step_to: submitted
-                transition_definition: stub_transition_definition
+                transition_definition: reopen_transition_definition
+                is_hidden: true
+                triggers:
+                    -
+                        entity_class: 'Oro\Bundle\RFPBundle\Entity\Request'
+                        event: update
+                        field: customer_status
+                        require: "entity.getCustomerStatus().getId() === 'submitted' && prevEntity.getCustomerStatus().getId() === 'cancelled'"
 
         transition_definitions:
             __start___definition:
@@ -89,6 +96,31 @@ workflows:
                         enum_code: 'rfp_customer_status'
                         attribute: $request.customerStatus
                         identifier: 'cancelled'
+            resubmit_transition_definition:
+                actions:
+                    - '@run_action_group':
+                        action_group: oro_rfp_duplicate
+                        parameters_mapping:
+                            request: $request
+                        results:
+                            result.requestCopy: $.requestCopy
+                    - '@assign_url':
+                        attribute: $.result.viewLink
+                        route: oro_rfp_frontend_request_view
+                        route_parameters:
+                            id: $.result.requestCopy.id
+                    - '@flash_message':
+                        message: 'oro.frontend.rfp.request.resubmited.message'
+                        type: 'success'
+                        message_parameters:
+                            viewLink: $.result.viewLink
+            reopen_transition_definition: ~
+            more_information_requested_transition_definition:
+                actions:
+                    - '@request_enum_entity':
+                        enum_code: 'rfp_customer_status'
+                        attribute: $request.customerStatus
+                        identifier: 'requires_attention'
             provide_more_information_transition_definition:
                 preconditions:
                     '@equal': [$request.internalStatus.id, 'more_info_requested']
