@@ -11,9 +11,8 @@ define(function(require) {
             var urlOptions = {
                 productId: options.productId
             };
-            this.options.url = options.url = routing.generate('oro_shopping_list_frontend_matrix_grid_order', urlOptions);
 
-            // this.options.title = _.__('oro.shoppinglist.widget.matrix_grid_order');
+            this.options.url = options.url = routing.generate('oro_shopping_list_frontend_matrix_grid_order', urlOptions);
             this.options.regionEnabled = false;
             this.options.incrementalPosition = false;
 
