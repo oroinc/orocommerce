@@ -41,7 +41,7 @@ define(function(require) {
         },
 
         addScroll: function() {
-            var windowHeight = $(window).height();
+            var windowHeight = $(window).innerHeight();
             var headerRowHeight = this.$el.height();
             var middleBarHeight = this.$el.prev().outerHeight();
             var menuHeight = windowHeight - headerRowHeight;

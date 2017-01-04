@@ -8,7 +8,7 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 use Oro\Bundle\CustomerBundle\Form\Type\FrontendAccountTypedAddressType;
 use Oro\Bundle\CustomerBundle\Layout\DataProvider\FrontendAccountAddressFormProvider;
 
@@ -48,8 +48,8 @@ class FrontendAccountAddressFormProviderTest extends \PHPUnit_Framework_TestCase
      */
     private function actionTestWithId($id = null)
     {
-        /** @var AccountAddress|\PHPUnit_Framework_MockObject_MockObject $mockAccountUserAddress */
-        $mockAccountUserAddress = $this->getMockBuilder(AccountAddress::class)
+        /** @var CustomerAddress|\PHPUnit_Framework_MockObject_MockObject $mockAccountUserAddress */
+        $mockAccountUserAddress = $this->getMockBuilder(CustomerAddress::class)
             ->disableOriginalConstructor()
             ->getMock();
 

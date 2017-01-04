@@ -17,6 +17,7 @@ use Oro\Bundle\TaxBundle\Model\Result;
  *         @ORM\Index(name="oro_tax_value_class_id_idx", columns={"entity_class", "entity_id"})
  *     }
  * )
+ * @ORM\HasLifecycleCallbacks()
  */
 class TaxValue implements DatesAwareInterface
 {
@@ -32,7 +33,7 @@ class TaxValue implements DatesAwareInterface
     /**
      * @var Result
      *
-     * @ORM\Column(name="result", type="object")
+     * @ORM\Column(name="result", type="json_array")
      */
     protected $result;
 
@@ -159,5 +160,15 @@ class TaxValue implements DatesAwareInterface
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * @ORM\PostLoad()
+     */
+    public function postLoad()
+    {
+        if (!$this->result instanceof Result) {
+            $this->result = Result::jsonDeserialize($this->result);
+        }
     }
 }

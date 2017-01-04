@@ -17,7 +17,7 @@ class OroTaxBundleInstaller implements Installation
      */
     public function getMigrationVersion()
     {
-        return 'v1_2';
+        return 'v1_3';
     }
 
     /**
@@ -206,7 +206,7 @@ class OroTaxBundleInstaller implements Installation
     {
         $table = $schema->createTable('oro_tax_value');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('result', 'object', ['comment' => '(DC2Type:object)']);
+        $table->addColumn('result', 'json_array');
         $table->addColumn('entity_class', 'string', ['length' => 255]);
         $table->addColumn('entity_id', 'integer', ['notnull' => false]);
         $table->addColumn('address', 'text', []);

@@ -6,7 +6,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Entity\AccountUserAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 
 class LoadAccountUserAddressDemoData extends AbstractLoadAddressDemoData implements DependentFixtureInterface
 {
@@ -62,6 +62,6 @@ class LoadAccountUserAddressDemoData extends AbstractLoadAddressDemoData impleme
      */
     protected function getNewAddressEntity()
     {
-        return new AccountUserAddress();
+        return new CustomerUserAddress();
     }
 }

@@ -18,9 +18,9 @@ use Doctrine\ORM\Mapping as ORM;
 class CustomerAddressToAddressType extends AbstractAddressToAddressType
 {
     /**
-     * @var AccountAddress
+     * @var CustomerAddress
      *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\AccountAddress", inversedBy="types")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerAddress", inversedBy="types")
      * @ORM\JoinColumn(name="customer_address_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $address;
