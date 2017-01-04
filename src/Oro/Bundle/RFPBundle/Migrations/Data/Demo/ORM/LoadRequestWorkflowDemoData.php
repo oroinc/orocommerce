@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\RFPBundle\Migrations\Data\Demo\ORM;
 
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\ORM\EntityManager;
@@ -19,7 +20,9 @@ use Oro\Bundle\WorkflowBundle\Model\Transition;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowStartArguments;
 
-class LoadRequestWorkflowDemoData extends AbstractFixture implements ContainerAwareInterface
+class LoadRequestWorkflowDemoData extends AbstractFixture implements
+    ContainerAwareInterface,
+    DependentFixtureInterface
 {
     use ContainerAwareTrait;
 
