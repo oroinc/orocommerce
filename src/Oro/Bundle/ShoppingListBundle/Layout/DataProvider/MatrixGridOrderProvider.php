@@ -35,9 +35,7 @@ class MatrixGridOrderProvider
         }
 
         reset($variants);
-        $firstFieldVariants = array_filter(current($variants));
-
-        if (count($variants) > 2 || count($firstFieldVariants) > 5) {
+        if (count($variants) > 2 || count(current($variants)) > 5) {
             return false;
         }
 
