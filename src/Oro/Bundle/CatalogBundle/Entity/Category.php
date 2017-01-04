@@ -450,7 +450,7 @@ class Category extends ExtendCategory implements SluggableInterface
      */
     public function addProduct(Product $product)
     {
-        if (!$this->products->contains($product)) {
+        if (!$this->hasProduct($product)) {
             $this->products->add($product);
         }
 
@@ -464,11 +464,20 @@ class Category extends ExtendCategory implements SluggableInterface
      */
     public function removeProduct(Product $product)
     {
-        if ($this->products->contains($product)) {
+        if ($this->hasProduct($product)) {
             $this->products->removeElement($product);
         }
 
         return $this;
+    }
+
+    /**
+     * @param Product $product
+     * @return bool
+     */
+    public function hasProduct(Product $product)
+    {
+        return $this->products->contains($product);
     }
 
     /**

@@ -121,7 +121,7 @@ class ProductUpdateHandlerTest extends \PHPUnit_Framework_TestCase
      */
     protected function getProductMock($getIdCalls = 1)
     {
-        $product = $this->getMock('Oro\Bundle\ProductBundle\Entity\Product');
+        $product = $this->createMock('Oro\Bundle\ProductBundle\Entity\Product');
         $product->expects($this->exactly($getIdCalls))
             ->method('getId')
             ->will($this->returnValue(self::PRODUCT_ID));

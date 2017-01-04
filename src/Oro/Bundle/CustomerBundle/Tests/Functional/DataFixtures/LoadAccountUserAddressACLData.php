@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountUserAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 
 class LoadAccountUserAddressACLData extends AbstractLoadACLData
 {
@@ -17,7 +17,7 @@ class LoadAccountUserAddressACLData extends AbstractLoadACLData
      */
     protected function getAclResourceClassName()
     {
-        return AccountUserAddress::class;
+        return CustomerUserAddress::class;
     }
 
     /**

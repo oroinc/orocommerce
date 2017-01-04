@@ -27,7 +27,7 @@ class ScopedProductSearchQueryRestrictionEventListenerTest extends AbstractProdu
      */
     protected function createListener()
     {
-        $this->requestStack = $this->getMock(RequestStack::class);
+        $this->requestStack = $this->createMock(RequestStack::class);
 
         $listener = new ScopedProductSearchQueryRestrictionEventListener(
             $this->configManager,
@@ -44,7 +44,7 @@ class ScopedProductSearchQueryRestrictionEventListenerTest extends AbstractProdu
 
     public function testOnQueryWithGoodScope()
     {
-        $request = $this->getMock(Request::class);
+        $request = $this->createMock(Request::class);
         $request->expects($this->once())
             ->method('get')
             ->with(ProductSelectType::DATA_PARAMETERS)
@@ -67,7 +67,7 @@ class ScopedProductSearchQueryRestrictionEventListenerTest extends AbstractProdu
         $this->listener->setScope(self::SCOPE);
         $this->listener->setFrontendSystemConfigurationPath('path');
 
-        $request = $this->getMock(Request::class);
+        $request = $this->createMock(Request::class);
         $request->expects($this->once())
             ->method('get')
             ->with(ProductSelectType::DATA_PARAMETERS)

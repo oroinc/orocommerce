@@ -41,7 +41,7 @@ class CategoryInventoryThresholdFormViewListenerTest extends FormViewListenerTes
     protected function setUp()
     {
         parent::setUp();
-        $this->requestStack = $this->getMock(RequestStack::class);
+        $this->requestStack = $this->createMock(RequestStack::class);
 
         $this->request = $this->getMockBuilder(Request::class)
             ->disableOriginalConstructor()
@@ -113,7 +113,7 @@ class CategoryInventoryThresholdFormViewListenerTest extends FormViewListenerTes
             ->method('getEnvironment')
             ->willReturn($env);
 
-        $scrollData = $this->getMock(ScrollData::class);
+        $scrollData = $this->createMock(ScrollData::class);
 
         $this->event->expects($this->once())
             ->method('getScrollData')

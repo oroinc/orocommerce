@@ -10,6 +10,7 @@ use Doctrine\ORM\EntityManager;
 use Symfony\Component\Yaml\Yaml;
 
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
@@ -17,6 +18,7 @@ use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\Migrations\Data\ORM\LoadProductDefaultAttributeFamilyData;
 
 class LoadProductData extends AbstractFixture implements DependentFixtureInterface
 {
@@ -64,6 +66,7 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
         $filePath = __DIR__ . DIRECTORY_SEPARATOR . 'product_fixture.yml';
 
         $data = Yaml::parse(file_get_contents($filePath));
+        $defaultAttributeFamily = $this->getDefaultAttributeFamily($manager);
 
         foreach ($data as $item) {
             $unit = $this->getReference('product_unit.milliliter');
@@ -79,9 +82,11 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
                 ->setSku($item['productCode'])
                 ->setOwner($businessUnit)
                 ->setOrganization($organization)
+                ->setAttributeFamily($defaultAttributeFamily)
                 ->setInventoryStatus($inventoryStatuses[$item['inventoryStatus']])
                 ->setStatus($item['status'])
-                ->setPrimaryUnitPrecision($unitPrecision);
+                ->setPrimaryUnitPrecision($unitPrecision)
+                ->setType($item['type']);
 
             if (!empty($item['names'])) {
                 foreach ($item['names'] as $name) {
@@ -157,5 +162,16 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
         }
 
         return $user;
+    }
+
+    /**
+     * @param ObjectManager $manager
+     * @return AttributeFamily|null
+     */
+    protected function getDefaultAttributeFamily(ObjectManager $manager)
+    {
+        $familyRepository = $manager->getRepository(AttributeFamily::class);
+
+        return $familyRepository->findOneBy(['code' => LoadProductDefaultAttributeFamilyData::DEFAULT_FAMILY_CODE]);
     }
 }

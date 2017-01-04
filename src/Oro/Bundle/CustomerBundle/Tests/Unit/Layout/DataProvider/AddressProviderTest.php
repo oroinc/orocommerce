@@ -27,7 +27,7 @@ class AddressProviderTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->router = $this->getMock('Symfony\Component\Routing\Generator\UrlGeneratorInterface');
+        $this->router = $this->createMock('Symfony\Component\Routing\Generator\UrlGeneratorInterface');
         $this->fragmentHandler = $this->getMockBuilder('Symfony\Component\HttpKernel\Fragment\FragmentHandler')
             ->disableOriginalConstructor()
             ->getMock();

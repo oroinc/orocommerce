@@ -1,0 +1,51 @@
+// @theme: blank;
+
+.product-view-media {
+    &__main-image-container {
+        position: relative;
+
+        // ElevantZoom Loader
+        > div {
+            top: 0;
+
+            // Rewriting inline styles
+            background-color: get-color('additional', 'ultra') !important;
+
+            opacity: 0.8;
+        }
+    }
+
+    &__main-image {
+        margin-bottom: $product-view-main-image-offset-bottom;
+    }
+
+    &__gallery {
+        font-size: 0;
+    }
+
+    &__gallery__item {
+        display: inline-block;
+        vertical-align: top;
+
+        padding: $product-view-gallery-item-offset-inner;
+
+        text-decoration: none;
+
+        border: $product-view-gallery-item-active-border-width solid transparent;
+
+        &--active {
+            border: $product-view-gallery-item-active-border-width solid $product-view-gallery-item-active-border-color;
+        }
+    }
+}
+
+@include breakpoint('tablet') {
+    .product-view-media {
+        text-align: center;
+
+        &__main-image {
+            max-width: 100%;
+            height: auto;
+        }
+    }
+}

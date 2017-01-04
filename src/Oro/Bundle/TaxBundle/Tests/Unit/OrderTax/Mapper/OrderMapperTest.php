@@ -98,9 +98,9 @@ class OrderMapperTest extends \PHPUnit_Framework_TestCase
 
         $this->assertInstanceOf('Oro\Bundle\TaxBundle\Model\Taxable', $taxable);
         $this->assertEquals(self::ORDER_ID, $taxable->getIdentifier());
-        $this->assertEquals(1, $taxable->getQuantity());
-        $this->assertEquals(0, $taxable->getPrice());
-        $this->assertEquals(self::ORDER_SUBTOTAL, $taxable->getAmount());
+        $this->assertEquals('1', $taxable->getQuantity());
+        $this->assertEquals('0', $taxable->getPrice());
+        $this->assertEquals('234.34', $taxable->getAmount());
         $this->assertEquals($order->getShippingAddress(), $taxable->getTaxationAddress());
         $this->assertEquals($order->getBillingAddress(), $taxable->getDestination());
         $this->assertNull($taxable->getOrigin());
@@ -108,6 +108,7 @@ class OrderMapperTest extends \PHPUnit_Framework_TestCase
         $this->assertNotEmpty($taxable->getItems());
         $this->assertCount(1, $taxable->getItems());
         $this->assertInstanceOf('Oro\Bundle\TaxBundle\Model\Taxable', $taxable->getItems()->current());
+        $this->assertEquals('20', $taxable->getShippingCost());
     }
 
     /**
@@ -134,7 +135,10 @@ class OrderMapperTest extends \PHPUnit_Framework_TestCase
             ->setSubtotal($subtotal)
             ->addLineItem(new OrderLineItem())
             ->setShippingAddress($shippingAddress)
-            ->setBillingAddress($billingAddress);
+            ->setBillingAddress($billingAddress)
+            ->setCurrency('$')
+            ->setEstimatedShippingCostAmount(10)
+            ->setOverriddenShippingCostAmount(20);
 
         return $order;
     }

@@ -45,8 +45,8 @@ class SlugUrlMatcherTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->router = $this->getMock(RouterInterface::class);
-        $this->registry = $this->getMock(ManagerRegistry::class);
+        $this->router = $this->createMock(RouterInterface::class);
+        $this->registry = $this->createMock(ManagerRegistry::class);
         $this->scopeManager = $this->getMockBuilder(ScopeManager::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -61,7 +61,7 @@ class SlugUrlMatcherTest extends \PHPUnit_Framework_TestCase
         $attributes = ['_route' => 'test', '_route_params' => [], '_controller' => 'Some::action'];
 
         /** @var UrlMatcherInterface|\PHPUnit_Framework_MockObject_MockObject $baseMatcher */
-        $baseMatcher = $this->getMock(UrlMatcherInterface::class);
+        $baseMatcher = $this->createMock(UrlMatcherInterface::class);
         $this->matchedUrlDecisionMaker->expects($this->any())
             ->method('matches')
             ->willReturn(true);
@@ -87,7 +87,7 @@ class SlugUrlMatcherTest extends \PHPUnit_Framework_TestCase
         $url = '/test';
 
         /** @var UrlMatcherInterface|\PHPUnit_Framework_MockObject_MockObject $baseMatcher */
-        $baseMatcher = $this->getMock(UrlMatcherInterface::class);
+        $baseMatcher = $this->createMock(UrlMatcherInterface::class);
         $this->matchedUrlDecisionMaker->expects($this->any())
             ->method('matches')
             ->willReturn(false);
@@ -105,10 +105,8 @@ class SlugUrlMatcherTest extends \PHPUnit_Framework_TestCase
             ->with($url)
             ->willThrowException(new ResourceNotFoundException());
 
-        $this->setExpectedException(
-            ResourceNotFoundException::class,
-            'No routes found for "/test"'
-        );
+        $this->expectException(ResourceNotFoundException::class);
+        $this->expectExceptionMessage('No routes found for "/test"');
 
         $matcher->match($url);
     }
@@ -118,7 +116,7 @@ class SlugUrlMatcherTest extends \PHPUnit_Framework_TestCase
         $url = '/test';
 
         /** @var UrlMatcherInterface|\PHPUnit_Framework_MockObject_MockObject $baseMatcher */
-        $baseMatcher = $this->getMock(UrlMatcherInterface::class);
+        $baseMatcher = $this->createMock(UrlMatcherInterface::class);
         $this->matchedUrlDecisionMaker->expects($this->any())
             ->method('matches')
             ->willReturn(false);
@@ -136,10 +134,8 @@ class SlugUrlMatcherTest extends \PHPUnit_Framework_TestCase
             ->with($url)
             ->willThrowException(new ResourceNotFoundException());
 
-        $this->setExpectedException(
-            ResourceNotFoundException::class,
-            'No routes found for "/test"'
-        );
+        $this->expectException(ResourceNotFoundException::class);
+        $this->expectExceptionMessage('No routes found for "/test"');
 
         $matcher->match($url);
     }
@@ -149,7 +145,7 @@ class SlugUrlMatcherTest extends \PHPUnit_Framework_TestCase
         $url = '/test';
 
         /** @var UrlMatcherInterface|\PHPUnit_Framework_MockObject_MockObject $baseMatcher */
-        $baseMatcher = $this->getMock(UrlMatcherInterface::class);
+        $baseMatcher = $this->createMock(UrlMatcherInterface::class);
         $this->matchedUrlDecisionMaker->expects($this->any())
             ->method('matches')
             ->willReturn(true);
@@ -180,10 +176,8 @@ class SlugUrlMatcherTest extends \PHPUnit_Framework_TestCase
             ->method('getSlugByUrlAndScopeCriteria')
             ->willReturn(null);
 
-        $this->setExpectedException(
-            ResourceNotFoundException::class,
-            'No routes found for "/test"'
-        );
+        $this->expectException(ResourceNotFoundException::class);
+        $this->expectExceptionMessage('No routes found for "/test"');
 
         $matcher->match($url);
     }
@@ -193,7 +187,7 @@ class SlugUrlMatcherTest extends \PHPUnit_Framework_TestCase
         $url = '/test';
 
         /** @var UrlMatcherInterface|\PHPUnit_Framework_MockObject_MockObject $baseMatcher */
-        $baseMatcher = $this->getMock(UrlMatcherInterface::class);
+        $baseMatcher = $this->createMock(UrlMatcherInterface::class);
         $this->matchedUrlDecisionMaker->expects($this->any())
             ->method('matches')
             ->willReturn(true);
@@ -256,7 +250,7 @@ class SlugUrlMatcherTest extends \PHPUnit_Framework_TestCase
         $url = '/test';
 
         /** @var UrlMatcherInterface|\PHPUnit_Framework_MockObject_MockObject $baseMatcher */
-        $baseMatcher = $this->getMock(UrlMatcherInterface::class);
+        $baseMatcher = $this->createMock(UrlMatcherInterface::class);
         $this->matchedUrlDecisionMaker->expects($this->any())
             ->method('matches')
             ->willReturn(true);
@@ -321,7 +315,7 @@ class SlugUrlMatcherTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         /** @var UrlMatcherInterface|\PHPUnit_Framework_MockObject_MockObject $baseMatcher */
-        $baseMatcher = $this->getMock(UrlMatcherInterface::class);
+        $baseMatcher = $this->createMock(UrlMatcherInterface::class);
         $baseMatcher->expects($this->once())
             ->method('setContext')
             ->with($context);
@@ -344,7 +338,7 @@ class SlugUrlMatcherTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         /** @var UrlMatcherInterface|\PHPUnit_Framework_MockObject_MockObject $baseMatcher */
-        $baseMatcher = $this->getMock(UrlMatcherInterface::class);
+        $baseMatcher = $this->createMock(UrlMatcherInterface::class);
         $baseMatcher->expects($this->once())
             ->method('getContext')
             ->willReturn($context);
@@ -364,7 +358,7 @@ class SlugUrlMatcherTest extends \PHPUnit_Framework_TestCase
         $attributes = ['_route' => 'test', '_route_params' => [], '_controller' => 'Some::action'];
 
         /** @var UrlMatcherInterface|\PHPUnit_Framework_MockObject_MockObject $baseMatcher */
-        $baseMatcher = $this->getMock(RequestMatcherInterface::class);
+        $baseMatcher = $this->createMock(RequestMatcherInterface::class);
         $this->matchedUrlDecisionMaker->expects($this->any())
             ->method('matches')
             ->willReturn(true);
@@ -395,7 +389,7 @@ class SlugUrlMatcherTest extends \PHPUnit_Framework_TestCase
         $url = '/test';
 
         /** @var RequestMatcherInterface|\PHPUnit_Framework_MockObject_MockObject $baseMatcher */
-        $baseMatcher = $this->getMock(RequestMatcherInterface::class);
+        $baseMatcher = $this->createMock(RequestMatcherInterface::class);
         $this->matchedUrlDecisionMaker->expects($this->any())
             ->method('matches')
             ->willReturn(true);
@@ -434,10 +428,8 @@ class SlugUrlMatcherTest extends \PHPUnit_Framework_TestCase
             ->method('getSlugByUrlAndScopeCriteria')
             ->willReturn(null);
 
-        $this->setExpectedException(
-            ResourceNotFoundException::class,
-            'No routes found for "/test"'
-        );
+        $this->expectException(ResourceNotFoundException::class);
+        $this->expectExceptionMessage('No routes found for "/test"');
 
         $matcher->matchRequest($request);
     }
@@ -455,7 +447,7 @@ class SlugUrlMatcherTest extends \PHPUnit_Framework_TestCase
             ->willReturn($url);
 
         /** @var RequestMatcherInterface|\PHPUnit_Framework_MockObject_MockObject $baseMatcher */
-        $baseMatcher = $this->getMock(RequestMatcherInterface::class);
+        $baseMatcher = $this->createMock(RequestMatcherInterface::class);
         $this->matchedUrlDecisionMaker->expects($this->any())
             ->method('matches')
             ->willReturn(true);
@@ -526,7 +518,7 @@ class SlugUrlMatcherTest extends \PHPUnit_Framework_TestCase
             ->willReturn($url);
 
         /** @var RequestMatcherInterface|\PHPUnit_Framework_MockObject_MockObject $baseMatcher */
-        $baseMatcher = $this->getMock(RequestMatcherInterface::class);
+        $baseMatcher = $this->createMock(RequestMatcherInterface::class);
         $this->matchedUrlDecisionMaker->expects($this->any())
             ->method('matches')
             ->willReturn(true);
@@ -592,7 +584,7 @@ class SlugUrlMatcherTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $em = $this->getMock(EntityManagerInterface::class);
+        $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->once())
             ->method('getRepository')
             ->willReturn($repository);

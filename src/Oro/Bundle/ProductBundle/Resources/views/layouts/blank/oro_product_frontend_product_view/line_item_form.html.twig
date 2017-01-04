@@ -1,0 +1,45 @@
+{% block _line_item_form_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' line-item-form',
+        'data-role': 'line-item-form-container'
+    }) %}
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+        <div class="disabled-overlay"></div>
+    </div>
+{% endblock %}
+
+{% block _line_item_buttons_widget %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% if block.children is not empty %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': " form__col"
+        }) %}
+
+        <div {{ block('block_attributes') }}>
+            {{ UI.pinnedDropdownButton({
+                'html': block_widget(block),
+                'mobileEnabled': true,
+                'dataAttributes': {
+                    'layout': 'separate'
+                },
+                'options': {
+                    'widgetModule': 'oroproduct/js/content-processor/product-add-to-dropdown-button',
+                    'widgetName': 'productAddToDropdownButtonProcessor',
+                    'truncateLength': 15,
+                    'groupContainer': '<div class="btn-group full"></div>',
+                    'decoreClass': 'btn--info'
+                }
+            }) }}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block _line_item_form_shopping_lists_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " form__col"
+    }) %}
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}

@@ -120,6 +120,10 @@
                 {% set widgetOptions = widgetOptions|merge({accountId: entity.account.id}) %}
             {% endif %}
 
+            {% if form.roles.vars.errors|length %}
+                {% set widgetOptions = widgetOptions|merge({ error: (form.roles.vars.errors|first).message }) %}
+            {% endif %}
+
             {{ oro_widget_render({
                 'widgetType': 'block',
                 'url': path(widgetUrl, widgetOptions),

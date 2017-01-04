@@ -3,9 +3,9 @@
 namespace Oro\Bundle\OrderBundle\Provider;
 
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Entity\AccountUserAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 
 interface AddressProviderInterface
 {
@@ -13,7 +13,7 @@ interface AddressProviderInterface
      * @param Account $account
      * @param string $type
      *
-     * @return AccountAddress[]
+     * @return CustomerAddress[]
      * @throws \InvalidArgumentException
      */
     public function getAccountAddresses(Account $account, $type);
@@ -22,7 +22,7 @@ interface AddressProviderInterface
      * @param AccountUser $accountUser
      * @param string $type
      *
-     * @return AccountUserAddress[]
+     * @return CustomerUserAddress[]
      * @throws \InvalidArgumentException
      */
     public function getAccountUserAddresses(AccountUser $accountUser, $type);

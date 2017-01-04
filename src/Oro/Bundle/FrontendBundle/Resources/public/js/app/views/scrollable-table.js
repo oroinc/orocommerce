@@ -27,8 +27,8 @@ define(function(require) {
             this.$tableHeadItems = this.$el.find(this.defaults.head).children();
             this.$tableBodyItems = this.$el.find(this.defaults.body).children();
 
-            this.alignCell();
             this.hasScroll();
+            this.alignCell();
 
             mediator.on('scrollable-table:reload', _.bind(function() {
                 this.hasScroll();
@@ -53,18 +53,18 @@ define(function(require) {
         hasScroll: function() {
             var self = this;
             var $scrollableContent = this.$el.find(this.defaults.content);
-            var $scrollableInnerContentt = this.$el.find(this.defaults.innerContent);
+            var $scrollableInnerContent = this.$el.find(this.defaults.innerContent);
             var $itemHasOffset = this.$el.find(this.defaults.itemHasOffset);
 
             // The browser settings should the inner scroll
-            if ($scrollableInnerContentt.width() < $scrollableContent.width()) {
+            if ($scrollableInnerContent.width() < $scrollableContent.width()) {
                 // Has scroll
-                if ($scrollableInnerContentt.width() > $scrollableContent.height()) {
-                    var scrollWidth = $scrollableContent.width() - $scrollableInnerContentt.width();
+                if ($scrollableInnerContent.width() > $scrollableContent.height()) {
+                    var scrollWidth = $scrollableContent.width() - $scrollableInnerContent.width();
 
                     $itemHasOffset.each(function(index) {
                         $(this).css({
-                            'padding-right': index === 0 ? scrollWidth + self.defaults.offset : self.defaults.offset
+                            'padding-right': index === 0 ? scrollWidth : self.defaults.offset
                         });
                     });
                 }

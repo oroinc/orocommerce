@@ -1,0 +1,35 @@
+.main-menu-outer {
+    .main-menu-outer__trigger {
+        display: none;
+    }
+}
+
+@include breakpoint('tablet') {
+    .main-menu-outer {
+        margin-bottom: 10px;
+        padding: 12px 0 10px 0;
+
+        border-bottom: 1px solid get-color('additional', 'light');
+
+        .main-menu-outer__trigger {
+            display: block;
+
+            padding: 10px 15px;
+
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .main-menu-outer__container {
+            margin-top: 10px;
+
+            border-top: 1px solid get-color('additional', 'light');
+        }
+
+        &.expanded {
+            .main-menu__categories {
+                display: block;
+            }
+        }
+    }
+}

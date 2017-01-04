@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Manager;
 
 use Oro\Bundle\CurrencyBundle\Provider\CurrencyProviderInterface;
-use Oro\Bundle\CustomerBundle\Entity\AccountUserSettings;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserSettings;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\UserBundle\Entity\BaseUserManager;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
@@ -52,7 +52,7 @@ class UserCurrencyManagerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->tokenStorage = $this
-            ->getMock('Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface');
+            ->createMock('Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface');
         $this->currencyProvider = $this->getMockBuilder(CurrencyProviderInterface::class)
             ->setMethods(['getDefaultCurrency', 'getCurrencyList'])
             ->disableOriginalConstructor()
@@ -93,7 +93,7 @@ class UserCurrencyManagerTest extends \PHPUnit_Framework_TestCase
         /** @var Website $website */
         $website = $this->getEntity('Oro\Bundle\WebsiteBundle\Entity\Website', ['id' => 1]);
 
-        $userWebsiteSettings = new AccountUserSettings($website);
+        $userWebsiteSettings = new CustomerUserSettings($website);
         $userWebsiteSettings->setCurrency('EUR');
 
         $user = $this->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\AccountUser')
@@ -102,7 +102,7 @@ class UserCurrencyManagerTest extends \PHPUnit_Framework_TestCase
 
         $this->websiteManager->expects($this->never())
             ->method('getCurrentWebsite');
-        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $token = $this->createMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
         $token->expects($this->once())
             ->method('getUser')
             ->willReturn($user);
@@ -131,7 +131,7 @@ class UserCurrencyManagerTest extends \PHPUnit_Framework_TestCase
         $this->websiteManager->expects($this->once())
             ->method('getCurrentWebsite')
             ->willReturn($website);
-        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $token = $this->createMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
         $token->expects($this->once())
             ->method('getUser')
             ->willReturn($user);
@@ -139,7 +139,7 @@ class UserCurrencyManagerTest extends \PHPUnit_Framework_TestCase
             ->method('getToken')
             ->willReturn($token);
 
-        $userWebsiteSettings = new AccountUserSettings($website);
+        $userWebsiteSettings = new CustomerUserSettings($website);
         $userWebsiteSettings->setCurrency('UAH');
 
         $user->expects($this->once())
@@ -224,7 +224,7 @@ class UserCurrencyManagerTest extends \PHPUnit_Framework_TestCase
     {
         $currency = 'USD';
         /** @var Website|\PHPUnit_Framework_MockObject_MockObject $website */
-        $website = $this->getMock('Oro\Bundle\WebsiteBundle\Entity\Website');
+        $website = $this->createMock('Oro\Bundle\WebsiteBundle\Entity\Website');
 
         $user = $this->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\AccountUser')
             ->disableOriginalConstructor()
@@ -232,7 +232,7 @@ class UserCurrencyManagerTest extends \PHPUnit_Framework_TestCase
 
         $this->websiteManager->expects($this->never())
             ->method('getCurrentWebsite');
-        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $token = $this->createMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
         $token->expects($this->once())
             ->method('getUser')
             ->willReturn($user);
@@ -241,7 +241,7 @@ class UserCurrencyManagerTest extends \PHPUnit_Framework_TestCase
             ->willReturn($token);
         $user->expects($this->once())
             ->method('setWebsiteSettings');
-        $em = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
+        $em = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
         $em->expects($this->once())
             ->method('flush');
         $this->userManager->expects($this->once())

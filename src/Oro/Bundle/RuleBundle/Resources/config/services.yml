@@ -1,0 +1,40 @@
+parameters:
+    oro_rule.entity.rule.class: Oro\Bundle\RuleBundle\Entity\Rule
+
+services:
+    oro_rule.expression_language:
+        class: 'Oro\Component\ExpressionLanguage\ExpressionLanguage'
+        public: false
+
+    oro_rule.expression_language.function_count:
+        class: Oro\Bundle\RuleBundle\ExpressionLanguage\CountExpressionLanguageFunction
+        tags:
+            - { name: oro_rule.expression_language.function }
+
+    oro_rule.rule_filtration.service:
+        class: 'Oro\Bundle\RuleBundle\RuleFiltration\BasicRuleFiltrationService'
+        public: false
+
+    oro_rule.rule_filtration.enabled_decorator:
+        class: 'Oro\Bundle\RuleBundle\RuleFiltration\EnabledRuleFiltrationServiceDecorator'
+        public: false
+        decorates: oro_rule.rule_filtration.service
+        arguments:
+            - '@oro_rule.rule_filtration.enabled_decorator.inner'
+
+    oro_rule.rule_filtration.stop_processing_decorator:
+        class: 'Oro\Bundle\RuleBundle\RuleFiltration\StopProcessingRuleFiltrationServiceDecorator'
+        public: false
+        decorates: oro_rule.rule_filtration.service
+        arguments:
+            - '@oro_rule.rule_filtration.stop_processing_decorator.inner'
+
+    oro_rule.rule_filtration.expression_language_decorator:
+        class: 'Oro\Bundle\RuleBundle\RuleFiltration\ExpressionLanguageRuleFiltrationServiceDecorator'
+        public: false
+        decorates: oro_rule.rule_filtration.service
+        arguments:
+            - '@oro_rule.expression_language'
+            - '@oro_rule.rule_filtration.expression_language_decorator.inner'
+            - '@logger'
+

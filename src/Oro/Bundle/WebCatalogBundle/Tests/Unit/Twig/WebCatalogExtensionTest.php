@@ -75,7 +75,7 @@ class WebCatalogExtensionTest extends \PHPUnit_Framework_TestCase
         $typeName = 'type';
         $title = 'Title';
 
-        $type = $this->getMock(ContentVariantTypeInterface::class);
+        $type = $this->createMock(ContentVariantTypeInterface::class);
         $type->expects($this->once())
             ->method('getTitle')
             ->willReturn($title);

@@ -2,9 +2,8 @@
 
 namespace Oro\Bundle\ProductBundle\Form\Type;
 
-use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugType;
-use Oro\Bundle\ValidationBundle\Validator\Constraints\UrlSafe;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -12,6 +11,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
+use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugType;
+use Oro\Bundle\ValidationBundle\Validator\Constraints\UrlSafe;
 use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
@@ -59,7 +60,7 @@ class ProductType extends AbstractType
             ->add('sku', 'text', ['required' => true, 'label' => 'oro.product.sku.label'])
             ->add('status', ProductStatusType::NAME, ['label' => 'oro.product.status.label'])
             ->add(
-                'inventoryStatus',
+                'inventory_status',
                 'oro_enum_select',
                 [
                     'label'     => 'oro.product.inventory_status.label',
@@ -136,12 +137,18 @@ class ProductType extends AbstractType
             )
             ->add(
                 'variantFields',
-                ProductCustomFieldsChoiceType::NAME,
-                ['label' => 'oro.product.variant_fields.label']
-            )->add(
-                'images',
-                ProductImageCollectionType::NAME
+                ProductCustomVariantFieldsChoiceType::NAME,
+                [
+                    'label' => 'oro.product.variant_fields.label',
+                    'tooltip' => 'oro.product.form.tooltip.variant_fields',
+                ]
             )
+            ->add(
+                'images',
+                ProductImageCollectionType::NAME,
+                ['required' => false]
+            )
+            ->add('type', HiddenType::class)
             ->add(
                 'slugPrototypes',
                 LocalizedSlugType::NAME,
@@ -180,7 +187,8 @@ class ProductType extends AbstractType
                 ]
             );
         }
-        if ($product instanceof Product && $product->getHasVariants()) {
+
+        if ($product instanceof Product && $product->getId() && $product->isConfigurable()) {
             $form
                 ->add(
                     'variantLinks',
@@ -240,13 +248,13 @@ class ProductType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(
-            [
-                'data_class' => $this->dataClass,
-                'intention' => 'product',
-                'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"'
-            ]
-        );
+        $resolver->setDefaults([
+            'data_class' => $this->dataClass,
+            'intention' => 'product',
+            'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"',
+            'enable_attributes' => true,
+            'enable_attribute_family' => true,
+        ]);
     }
 
     /**

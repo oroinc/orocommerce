@@ -75,7 +75,7 @@ class FrontendShoppingListProductsUnitsProviderTest extends \PHPUnit_Framework_T
                 ->method('getProductsUnits')
                 ->willReturn($expected);
 
-            $em = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+            $em = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
             $em->expects($this->once())
                 ->method('getRepository')
                 ->with('OroProductBundle:ProductUnit')

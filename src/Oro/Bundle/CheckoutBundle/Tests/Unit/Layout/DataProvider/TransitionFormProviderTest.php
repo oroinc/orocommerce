@@ -38,9 +38,9 @@ class TransitionFormProviderTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->transitionProvider =
-            $this->getMock('Oro\Bundle\CheckoutBundle\Layout\DataProvider\TransitionProvider', [], [], '', false);
-        $this->formFactory = $this->getMock('Symfony\Component\Form\FormFactoryInterface');
-        $this->router = $this->getMock('Symfony\Component\Routing\Generator\UrlGeneratorInterface');
+            $this->createMock('Oro\Bundle\CheckoutBundle\Layout\DataProvider\TransitionProvider');
+        $this->formFactory = $this->createMock('Symfony\Component\Form\FormFactoryInterface');
+        $this->router = $this->createMock('Symfony\Component\Routing\Generator\UrlGeneratorInterface');
 
         $this->provider = new TransitionFormProvider($this->formFactory, $this->router);
         $this->provider->setTransitionProvider($this->transitionProvider);
@@ -63,8 +63,8 @@ class TransitionFormProviderTest extends \PHPUnit_Framework_TestCase
             ->with($workflowItem)
             ->will($this->returnValue($transitionData));
 
-        $formView = $this->getMock('Symfony\Component\Form\FormView');
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $formView = $this->createMock('Symfony\Component\Form\FormView');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
         $form->expects($this->once())
             ->method('createView')
             ->will($this->returnValue($formView));

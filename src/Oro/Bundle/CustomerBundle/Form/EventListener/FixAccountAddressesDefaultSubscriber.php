@@ -12,7 +12,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\CustomerBundle\Entity\AbstractDefaultTypedAddress;
-use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 
 /**
  * When address is created/updated from single form, it will ensure the rules of one address has default mark per type
@@ -67,10 +67,10 @@ class FixAccountAddressesDefaultSubscriber implements EventSubscriberInterface
      */
     public function postSubmit(FormEvent $event)
     {
-        /** @var AccountAddress $address */
+        /** @var CustomerAddress $address */
         $address = $event->getData();
 
-        /** @var AccountAddress[] $allAddresses */
+        /** @var CustomerAddress[] $allAddresses */
         $allAddresses = $this->getAddressesAccess()->getValue($address, $this->addressesProperty);
 
         $this->handleDefaultType($address, $allAddresses);

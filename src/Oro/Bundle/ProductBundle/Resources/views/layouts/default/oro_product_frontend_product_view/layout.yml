@@ -1,0 +1,13 @@
+layout:
+    actions:
+        - '@move':
+            id: product_view_sku
+            parentId: product_view_specification_container
+            siblingId: product_view_price_container
+            prepend: true
+        - '@move':
+            id: product_view_description
+            parentId: product_view_description_container
+        - '@move':
+            id: product_view_line_item_container
+            parentId: product_view_specification_container

@@ -100,7 +100,7 @@ class ItemRepositoryTest extends WebTestCase
 
     public function testRemoveEntitiesForNonExistentEntities()
     {
-        $this->getItemRepository()->removeEntities([91, 92], 'SomeClass');
+        $this->getItemRepository()->removeEntities([91, 92], \stdClass::class);
 
         $this->assertEntityCount(8, Item::class);
         $this->assertEntityCount(2, IndexInteger::class);

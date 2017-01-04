@@ -5,6 +5,7 @@ namespace Oro\Bundle\TaxBundle\Resolver;
 use Brick\Math\BigDecimal;
 use Brick\Math\Exception\NumberFormatException;
 
+use Oro\Bundle\TaxBundle\Model\AbstractResultElement;
 use Oro\Bundle\TaxBundle\Model\Result;
 use Oro\Bundle\TaxBundle\Model\ResultElement;
 use Oro\Bundle\TaxBundle\Model\Taxable;
@@ -64,12 +65,21 @@ class TotalResolver implements ResolverInterface
 
         if ($this->settingsProvider->isStartCalculationOnTotal()) {
             try {
-                $adjustedAmounts = $this->adjustAmounts($data);
+                $adjustment = BigDecimal::of($data[ResultElement::ADJUSTMENT]);
+                $adjustedAmounts = $this->adjustAmounts($data, $adjustment);
+
+                $adjustTaxResults = [];
+                foreach ($taxResults as $key => $taxData) {
+                    $adjustTaxResults[$key] = $this->adjustAmounts($taxData, $adjustment);
+                }
             } catch (NumberFormatException $e) {
                 return;
             }
             $data = $adjustedAmounts;
+            $taxResults = $adjustTaxResults;
         }
+
+        $data = $this->mergeShippingData($taxable, $data);
 
         $result = $taxable->getResult();
         $result->offsetSet(Result::TOTAL, $data);
@@ -78,16 +88,19 @@ class TotalResolver implements ResolverInterface
     }
 
     /**
-     * @param ResultElement $data
-     * @return ResultElement
+     * @param AbstractResultElement $data
+     * @param BigDecimal $adjustment
+     * @return AbstractResultElement
      */
-    protected function adjustAmounts(ResultElement $data)
+    protected function adjustAmounts(AbstractResultElement $data, BigDecimal $adjustment)
     {
-        $currentData = new ResultElement($data->getArrayCopy());
-        if (!array_key_exists(ResultElement::ADJUSTMENT, $data)) {
-            return $currentData;
+        $arrayCopy = $data->getArrayCopy();
+        if ($data instanceof TaxResultElement) {
+            $currentData = new TaxResultElement($arrayCopy);
+        } else {
+            $currentData = new ResultElement($arrayCopy);
         }
-        $adjustment = BigDecimal::of($currentData[ResultElement::ADJUSTMENT]);
+
         $keysToAdjust = [ResultElement::TAX_AMOUNT => $adjustment];
 
         if ($this->settingsProvider->isProductPricesIncludeTax()) {
@@ -143,11 +156,29 @@ class TotalResolver implements ResolverInterface
         $currentData = new ResultElement($target->getArrayCopy());
 
         foreach ($source as $key => $value) {
-            $currentValue = BigDecimal::of($currentData->offsetGet($key));
-            $currentValue = $currentValue->plus($value);
-            $currentData->offsetSet($key, (string)$currentValue);
+            if ($currentData->offsetExists($key)) {
+                $currentValue = BigDecimal::of($currentData->offsetGet($key));
+                $currentValue = $currentValue->plus($value);
+                $currentData->offsetSet($key, (string)$currentValue);
+            }
         }
 
         return $currentData;
+    }
+
+    /**
+     * @param Taxable $taxable
+     * @param ResultElement $target
+     * @return ResultElement
+     */
+    protected function mergeShippingData(Taxable $taxable, ResultElement $target)
+    {
+        if (!$taxable->getResult()->offsetExists(Result::SHIPPING)) {
+            return $target;
+        }
+
+        $resultElement = $taxable->getResult()->offsetGet(Result::SHIPPING);
+
+        return $this->mergeData($target, $resultElement);
     }
 }

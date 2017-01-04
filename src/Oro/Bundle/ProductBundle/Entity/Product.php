@@ -5,8 +5,11 @@ namespace Oro\Bundle\ProductBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+
+use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamilyAwareInterface;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
@@ -82,6 +85,9 @@ use Oro\Bundle\RedirectBundle\Entity\SluggableTrait;
  *          "form"={
  *              "form_type"="oro_product_select",
  *              "grid_name"="products-select-grid"
+ *          },
+ *          "attribute"={
+ *              "has_attributes"=true
  *          }
  *      }
  * )
@@ -97,6 +103,7 @@ use Oro\Bundle\RedirectBundle\Entity\SluggableTrait;
 class Product extends ExtendProduct implements
     OrganizationAwareInterface,
     \JsonSerializable,
+    AttributeFamilyAwareInterface,
     SluggableInterface
 {
     use SluggableTrait;
@@ -107,6 +114,9 @@ class Product extends ExtendProduct implements
     const INVENTORY_STATUS_IN_STOCK = 'in_stock';
     const INVENTORY_STATUS_OUT_OF_STOCK = 'out_of_stock';
     const INVENTORY_STATUS_DISCONTINUED = 'discontinued';
+
+    const TYPE_SIMPLE = 'simple';
+    const TYPE_CONFIGURABLE = 'configurable';
 
     /**
      * @ORM\Id
@@ -134,6 +144,9 @@ class Product extends ExtendProduct implements
      *          "importexport"={
      *              "identity"=true,
      *              "order"=10
+     *          },
+     *          "attribute"={
+     *              "is_attribute"=true
      *          }
      *      }
      * )
@@ -141,24 +154,7 @@ class Product extends ExtendProduct implements
     protected $sku;
 
     /**
-     * @var bool
-     *
-     * @ORM\Column(name="has_variants", type="boolean", nullable=false, options={"default"=false})
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          },
-     *          "importexport"={
-     *              "order"=70
-     *          }
-     *      }
-     * )
-     */
-    protected $hasVariants = false;
-
-    /**
-     * @var bool
+     * @var string
      *
      * @ORM\Column(name="status", type="string", length=16, nullable=false)
      * @ConfigField(
@@ -326,6 +322,9 @@ class Product extends ExtendProduct implements
      *              "order"=40,
      *              "full"=true,
      *              "fallback_field"="string"
+     *          },
+     *          "attribute"={
+     *              "is_attribute"=true
      *          }
      *      }
      * )
@@ -358,6 +357,9 @@ class Product extends ExtendProduct implements
      *              "order"=60,
      *              "full"=true,
      *              "fallback_field"="text"
+     *          },
+     *          "attribute"={
+     *              "is_attribute"=true
      *          }
      *      }
      * )
@@ -381,6 +383,23 @@ class Product extends ExtendProduct implements
      * )
      */
     protected $variantLinks;
+
+    /**
+     * @var Collection|ProductVariantLink[]
+     *
+     * @ORM\OneToMany(targetEntity="ProductVariantLink", mappedBy="product", cascade={"ALL"}, orphanRemoval=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          },
+     *          "importexport"={
+     *               "excluded"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $parentVariantLinks;
 
     /**
      * @var Collection|LocalizedFallbackValue[]
@@ -408,6 +427,9 @@ class Product extends ExtendProduct implements
      *              "order"=50,
      *              "full"=true,
      *              "fallback_field"="text"
+     *          },
+     *          "attribute"={
+     *              "is_attribute"=true
      *          }
      *      }
      * )
@@ -430,11 +452,49 @@ class Product extends ExtendProduct implements
      *          },
      *          "importexport"={
      *               "excluded"=true
+     *          },
+     *          "attribute"={
+     *              "is_attribute"=true
      *          }
      *      }
      * )
      */
     protected $images;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="type", type="string", length=32, nullable=false)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          },
+     *          "importexport"={
+     *              "order"=20
+     *          }
+     *      }
+     *  )
+     */
+    protected $type = self::TYPE_SIMPLE;
+
+    /**
+     * @var AttributeFamily
+     *
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily")
+     * @ORM\JoinColumn(name="attribute_family_id", referencedColumnName="id", onDelete="RESTRICT")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=false
+     *          },
+     *          "importexport"={
+     *              "order"=10
+     *          }
+     *      }
+     *  )
+     */
+    protected $attributeFamily;
 
     /**
      * {@inheritdoc}
@@ -448,6 +508,7 @@ class Product extends ExtendProduct implements
         $this->descriptions = new ArrayCollection();
         $this->shortDescriptions = new ArrayCollection();
         $this->variantLinks = new ArrayCollection();
+        $this->parentVariantLinks = new ArrayCollection();
         $this->images = new ArrayCollection();
         $this->slugPrototypes = new ArrayCollection();
         $this->slugs = new ArrayCollection();
@@ -459,6 +520,14 @@ class Product extends ExtendProduct implements
     public static function getStatuses()
     {
         return [self::STATUS_ENABLED, self::STATUS_DISABLED];
+    }
+
+    /**
+     * @return array
+     */
+    public static function getTypes()
+    {
+        return [self::TYPE_SIMPLE, self::TYPE_CONFIGURABLE];
     }
 
     /**
@@ -507,20 +576,17 @@ class Product extends ExtendProduct implements
     /**
      * @return bool
      */
-    public function getHasVariants()
+    public function isSimple()
     {
-        return $this->hasVariants;
+        return $this->getType() === self::TYPE_SIMPLE;
     }
 
     /**
-     * @param bool $hasVariants
-     * @return Product
+     * @return bool
      */
-    public function setHasVariants($hasVariants)
+    public function isConfigurable()
     {
-        $this->hasVariants = $hasVariants;
-
-        return $this;
+        return $this->getType() === self::TYPE_CONFIGURABLE;
     }
 
     /**
@@ -528,7 +594,7 @@ class Product extends ExtendProduct implements
      */
     public function getVariantFields()
     {
-        return $this->variantFields !== null ? $this->variantFields : [];
+        return (array)$this->variantFields;
     }
 
     /**
@@ -849,6 +915,43 @@ class Product extends ExtendProduct implements
         return $this;
     }
 
+
+    /**
+     * @return Collection|ProductVariantLink[]
+     */
+    public function getParentVariantLinks()
+    {
+        return $this->parentVariantLinks;
+    }
+
+    /**
+     * @param ProductVariantLink $parentVariantLink
+     * @return $this
+     */
+    public function addParentVariantLink(ProductVariantLink $parentVariantLink)
+    {
+        $parentVariantLink->setProduct($this);
+
+        if (!$this->parentVariantLinks->contains($parentVariantLink)) {
+            $this->parentVariantLinks->add($parentVariantLink);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param ProductVariantLink $parentVariantLink
+     * @return $this
+     */
+    public function removeParentVariantLink(ProductVariantLink $parentVariantLink)
+    {
+        if ($this->parentVariantLinks->contains($parentVariantLink)) {
+            $this->parentVariantLinks->removeElement($parentVariantLink);
+        }
+
+        return $this;
+    }
+
     /**
      * @return Collection|ProductImage[]
      */
@@ -933,6 +1036,26 @@ class Product extends ExtendProduct implements
     }
 
     /**
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * @param string $type
+     *
+     * @return $this
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    /**
      * Pre persist event handler
      *
      * @ORM\PrePersist
@@ -952,7 +1075,7 @@ class Product extends ExtendProduct implements
     {
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
 
-        if (false === $this->hasVariants) {
+        if (!$this->isConfigurable()) {
             // Clear variantLinks in Oro\Bundle\ProductBundle\EventListener\ProductHandlerListener
             $this->variantFields = [];
         }
@@ -968,6 +1091,7 @@ class Product extends ExtendProduct implements
             $this->shortDescriptions = new ArrayCollection();
             $this->images = new ArrayCollection();
             $this->variantLinks = new ArrayCollection();
+            $this->parentVariantLinks = new ArrayCollection();
             $this->variantFields = [];
         }
     }
@@ -1063,5 +1187,24 @@ class Product extends ExtendProduct implements
         $additionalPrecisionsSorted = new ArrayCollection(array_values($additionalPrecisions->toArray()));
 
         return $additionalPrecisionsSorted;
+    }
+
+    /**
+     * @param AttributeFamily $attributeFamily
+     * @return $this
+     */
+    public function setAttributeFamily(AttributeFamily $attributeFamily)
+    {
+        $this->attributeFamily = $attributeFamily;
+
+        return $this;
+    }
+
+    /**
+     * @return AttributeFamily
+     */
+    public function getAttributeFamily()
+    {
+        return $this->attributeFamily;
     }
 }

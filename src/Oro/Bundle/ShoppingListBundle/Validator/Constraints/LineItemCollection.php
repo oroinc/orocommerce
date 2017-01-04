@@ -7,7 +7,7 @@ use Symfony\Component\Validator\Constraint;
 class LineItemCollection extends Constraint
 {
     /**
-     * @var mixed Context
+     * @var mixed
      */
     protected $additionalContext;
 

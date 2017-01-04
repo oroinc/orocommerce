@@ -14,7 +14,9 @@ use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\ProductRepository;
 use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
@@ -360,6 +362,34 @@ class ProductRepositoryTest extends WebTestCase
         );
         $visibilities = $this->repository->findBy(['product' => $product]);
         $this->assertCount(1, $visibilities, 'Not expected count of resolved visibilities');
+    }
+
+    public function testInsertByProductWithoutCategory()
+    {
+        $product = $this->getReference(LoadProductData::PRODUCT_2);
+
+        $visibility = new ProductVisibility();
+        $visibility->setProduct($product);
+        $visibility->setScope($this->getScope());
+        $visibility->setVisibility(VisibilityInterface::HIDDEN);
+        $em = $this->getContainer()->get('doctrine')->getManagerForClass(ProductVisibility::class);
+        $em->persist($visibility);
+        $em->flush();
+
+        /** @var $product Product */
+        $this->repository->deleteByProduct($product);
+        $this->repository->insertByProduct(
+            $this->insertExecutor,
+            $product,
+            ProductVisibilityResolved::VISIBILITY_VISIBLE,
+            $this->getScope(),
+            null
+        );
+        $visibilities = $this->repository->findBy(['product' => $product]);
+        $this->assertCount(1, $visibilities, 'Not expected count of resolved visibilities');
+        /** @var ProductVisibilityResolved $actualVisibility */
+        $actualVisibility = $visibilities[0];
+        $this->assertEquals(BaseVisibilityResolved::VISIBILITY_HIDDEN, $actualVisibility->getVisibility());
     }
 
     /**

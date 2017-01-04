@@ -48,7 +48,7 @@ class CheckoutTotalsProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()->getMock();
         $this->totalsProvider = $this->getMockBuilder(TotalProcessorProvider::class)
             ->disableOriginalConstructor()->getMock();
-        $this->mapper = $this->getMock(MapperInterface::class);
+        $this->mapper = $this->createMock(MapperInterface::class);
 
         $this->provider = new CheckoutTotalsProvider(
             $this->checkoutLineItemsManager,

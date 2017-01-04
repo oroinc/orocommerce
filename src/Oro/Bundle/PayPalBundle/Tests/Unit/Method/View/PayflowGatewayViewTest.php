@@ -47,17 +47,6 @@ class PayflowGatewayViewTest extends AbstractPayflowGatewayViewTest
         return Configuration::PAYFLOW_GATEWAY_AUTHORIZATION_FOR_REQUIRED_AMOUNT_KEY;
     }
 
-    public function testGetOrder()
-    {
-        $order = '100';
-
-        $this->paymentConfig->expects($this->once())
-            ->method('getOrder')
-            ->willReturn((int)$order);
-
-        $this->assertSame((int)$order, $this->methodView->getOrder());
-    }
-
     public function testGetPaymentMethodType()
     {
         $this->assertEquals('payflow_gateway', $this->methodView->getPaymentMethodType());

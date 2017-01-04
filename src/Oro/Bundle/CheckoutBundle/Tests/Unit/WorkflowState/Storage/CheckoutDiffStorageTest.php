@@ -55,7 +55,7 @@ class CheckoutDiffStorageTest extends \PHPUnit_Framework_TestCase
         $this->prepareEntityClass('stdClass');
 
         /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
-        $em = $this->getMock(EntityManagerInterface::class);
+        $em = $this->createMock(EntityManagerInterface::class);
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityManager')
@@ -86,7 +86,7 @@ class CheckoutDiffStorageTest extends \PHPUnit_Framework_TestCase
         $this->prepareEntityClass('stdClass');
 
         /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
-        $em = $this->getMock(EntityManagerInterface::class);
+        $em = $this->createMock(EntityManagerInterface::class);
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityManager')

@@ -2,18 +2,18 @@
 
 namespace Oro\Bundle\PaymentBundle\Condition;
 
+use Oro\Bundle\CheckoutBundle\Factory\CheckoutPaymentContextFactory;
+use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProvider;
 use Oro\Component\ConfigExpression\Condition\AbstractCondition;
 use Oro\Component\ConfigExpression\ContextAccessorAwareInterface;
 use Oro\Component\ConfigExpression\ContextAccessorAwareTrait;
 use Oro\Component\ConfigExpression\Exception\InvalidArgumentException;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
-use Oro\Bundle\PaymentBundle\Provider\PaymentContextProvider;
 
 /**
  * Check applicable payment methods
  * Usage:
  * @has_applicable_payment_methods:
- *      entity: ~
+ *      context: ~
  */
 class HasApplicablePaymentMethods extends AbstractCondition implements ContextAccessorAwareInterface
 {
@@ -21,38 +21,34 @@ class HasApplicablePaymentMethods extends AbstractCondition implements ContextAc
 
     const NAME = 'has_applicable_payment_methods';
 
-    /** @var PaymentMethodRegistry */
-    protected $paymentMethodRegistry;
+    /** @var CheckoutPaymentContextFactory */
+    protected $checkoutPaymentContextFactory;
 
-    /** @var PaymentContextProvider */
-    protected $paymentContextProvider;
+    /** @var PaymentMethodProvider */
+    protected $paymentMethodProvider;
 
     /** @var object */
-    protected $entity;
+    protected $context;
 
     /**
-     * @param PaymentMethodRegistry $paymentMethodRegistry
-     * @param PaymentContextProvider $paymentContextProvider
+     * @param PaymentMethodProvider $methodProvider
      */
-    public function __construct(
-        PaymentMethodRegistry $paymentMethodRegistry,
-        PaymentContextProvider $paymentContextProvider
-    ) {
-        $this->paymentMethodRegistry = $paymentMethodRegistry;
-        $this->paymentContextProvider = $paymentContextProvider;
+    public function __construct(PaymentMethodProvider $methodProvider)
+    {
+        $this->paymentMethodProvider = $methodProvider;
     }
 
     /** {@inheritdoc} */
     public function initialize(array $options)
     {
-        if (array_key_exists('entity', $options)) {
-            $this->entity = $options['entity'];
+        if (array_key_exists('context', $options)) {
+            $this->context = $options['context'];
         } elseif (array_key_exists(0, $options)) {
-            $this->entity = $options[0];
+            $this->context = $options[0];
         }
 
-        if (!$this->entity) {
-            throw new InvalidArgumentException('Missing "entity" option');
+        if (!$this->context) {
+            throw new InvalidArgumentException('Missing "context" option');
         }
 
         return $this;
@@ -69,34 +65,20 @@ class HasApplicablePaymentMethods extends AbstractCondition implements ContextAc
     /** {@inheritdoc} */
     protected function isConditionAllowed($context)
     {
-        $entity = $this->resolveValue($context, $this->entity, false);
-        $paymentContext = $this->paymentContextProvider->processContext($entity);
-
-        $paymentMethods = $this->paymentMethodRegistry->getPaymentMethods();
-        foreach ($paymentMethods as $paymentMethod) {
-            if (!$paymentMethod->isEnabled()) {
-                continue;
-            }
-
-            if (!$paymentMethod->isApplicable($paymentContext)) {
-                continue;
-            }
-
-            return true;
-        }
-
-        return false;
+        $paymentContext = $this->resolveValue($context, $this->context, false);
+        $methods = $this->paymentMethodProvider->getApplicablePaymentMethods($paymentContext);
+        return count($methods) > 0;
     }
 
     /** {@inheritdoc} */
     public function toArray()
     {
-        return $this->convertToArray([$this->entity]);
+        return $this->convertToArray([$this->context]);
     }
 
     /** {@inheritdoc} */
     public function compile($factoryAccessor)
     {
-        return $this->convertToPhpCode([$this->entity], $factoryAccessor);
+        return $this->convertToPhpCode([$this->context], $factoryAccessor);
     }
 }

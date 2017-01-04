@@ -5,8 +5,14 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
+
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserACLData;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
+use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class LoadShoppingListACLData extends AbstractFixture implements
@@ -23,6 +29,8 @@ class LoadShoppingListACLData extends AbstractFixture implements
 
     const SHOPPING_LIST_ACC_1_1_USER_LOCAL = 'shopping_list_account1.1_user_local';
     const SHOPPING_LIST_ACC_1_2_USER_LOCAL = 'shopping_list_account1.2_user_local';
+
+    const LIST_LINE_ITEM_1 = 'shopping_list_line_item_1';
 
     /**
      * @var array
@@ -61,6 +69,7 @@ class LoadShoppingListACLData extends AbstractFixture implements
     {
         return [
             LoadShoppingListUserACLData::class,
+            LoadProductUnitPrecisions::class,
         ];
     }
 
@@ -75,6 +84,7 @@ class LoadShoppingListACLData extends AbstractFixture implements
             $this->createShoppingList($manager, $name, $order);
         }
 
+        $this->createLineItem($manager);
         $manager->flush();
     }
 
@@ -96,5 +106,28 @@ class LoadShoppingListACLData extends AbstractFixture implements
             ->setAccountUser($accountUser);
         $manager->persist($shoppingList);
         $this->addReference($name, $shoppingList);
+    }
+
+    /**
+     * @param ObjectManager $manager
+     */
+    protected function createLineItem(ObjectManager $manager)
+    {
+        /** @var ShoppingList $shoppingList */
+        $shoppingList = $this->getReference(self::SHOPPING_LIST_ACC_1_1_USER_LOCAL);
+        /** @var ProductUnit $unit */
+        $unit = $this->getReference('product_unit.bottle');
+        /** @var Product $product */
+        $product = $this->getReference(LoadProductData::PRODUCT_1);
+        $item = new LineItem();
+        $item->setNotes('Test Notes')
+            ->setAccountUser($shoppingList->getAccountUser())
+            ->setOrganization($shoppingList->getOrganization())
+            ->setShoppingList($shoppingList)
+            ->setUnit($unit)
+            ->setProduct($product)
+            ->setQuantity('23.15');
+        $manager->persist($item);
+        $this->addReference(self::LIST_LINE_ITEM_1, $item);
     }
 }

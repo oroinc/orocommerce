@@ -16,7 +16,7 @@ class PlaceholderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->registry = $this->getMock(PlaceholderRegistry::class);
+        $this->registry = $this->createMock(PlaceholderRegistry::class);
 
         $this->placeholder = new PlaceholderDecorator($this->registry);
     }
@@ -31,7 +31,7 @@ class PlaceholderTest extends \PHPUnit_Framework_TestCase
 
     public function testReplace()
     {
-        $placeholder1 = $this->getMock(PlaceholderInterface::class);
+        $placeholder1 = $this->createMock(PlaceholderInterface::class);
         $placeholder1->expects($this->once())->method('replace')
             ->with(
                 'string_PLACEHOLDER1_PLACEHOLDER2',
@@ -39,7 +39,7 @@ class PlaceholderTest extends \PHPUnit_Framework_TestCase
             )
             ->willReturn('string_value1_PLACEHOLDER2');
 
-        $placeholder2 = $this->getMock(PlaceholderInterface::class);
+        $placeholder2 = $this->createMock(PlaceholderInterface::class);
         $placeholder2->expects($this->once())->method('replace')
             ->with(
                 'string_value1_PLACEHOLDER2',
@@ -60,12 +60,12 @@ class PlaceholderTest extends \PHPUnit_Framework_TestCase
 
     public function testReplaceDefault()
     {
-        $placeholder1 = $this->getMock(PlaceholderInterface::class);
+        $placeholder1 = $this->createMock(PlaceholderInterface::class);
         $placeholder1->expects($this->once())->method('replaceDefault')
             ->with('string_PLACEHOLDER1_PLACEHOLDER2')
             ->willReturn('string_value1_PLACEHOLDER2');
 
-        $placeholder2 = $this->getMock(PlaceholderInterface::class);
+        $placeholder2 = $this->createMock(PlaceholderInterface::class);
         $placeholder2->expects($this->once())->method('replaceDefault')
             ->with('string_value1_PLACEHOLDER2')
             ->willReturn('string_value1_value2');

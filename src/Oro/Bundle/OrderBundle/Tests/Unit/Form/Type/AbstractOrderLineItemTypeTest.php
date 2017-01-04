@@ -39,7 +39,7 @@ abstract class AbstractOrderLineItemTypeTest extends FormIntegrationTestCase
     {
         parent::setUp();
 
-        $this->sectionProvider = $this->getMock('Oro\Bundle\OrderBundle\Form\Section\SectionProvider');
+        $this->sectionProvider = $this->createMock('Oro\Bundle\OrderBundle\Form\Section\SectionProvider');
     }
 
     /**
@@ -55,7 +55,7 @@ abstract class AbstractOrderLineItemTypeTest extends FormIntegrationTestCase
             ProductUnitSelectionType::NAME
         );
 
-        $priceType = PriceTypeGenerator::createPriceType();
+        $priceType = PriceTypeGenerator::createPriceType($this);
 
         $orderPriceType = new PriceTypeSelectorType();
         $dateType = new OroDateType();
@@ -84,7 +84,7 @@ abstract class AbstractOrderLineItemTypeTest extends FormIntegrationTestCase
 
         $view = new FormView();
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
         $formType->finishView($view, $form, []);
     }
 
@@ -135,7 +135,7 @@ abstract class AbstractOrderLineItemTypeTest extends FormIntegrationTestCase
     {
         $view = new FormView();
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
         $possibleOptions = [
             [
@@ -172,7 +172,7 @@ abstract class AbstractOrderLineItemTypeTest extends FormIntegrationTestCase
 
         $view = new FormView();
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
         $this->formType->finishView($view, $form, []);
 
         $this->assertEquals($this->getExpectedSections(), $view->vars['sections']);

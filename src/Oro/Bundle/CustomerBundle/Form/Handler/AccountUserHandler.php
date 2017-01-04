@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Oro\Bundle\SecurityBundle\Authentication\Token\OrganizationContextTokenInterface;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Entity\AccountUserManager;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserManager;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -22,7 +22,7 @@ class AccountUserHandler
     /** @var Request */
     protected $request;
 
-    /** @var AccountUserManager */
+    /** @var CustomerUserManager */
     protected $userManager;
 
     /** @var SecurityFacade */
@@ -37,7 +37,7 @@ class AccountUserHandler
     /**
      * @param FormInterface $form
      * @param Request $request
-     * @param AccountUserManager $userManager
+     * @param CustomerUserManager $userManager
      * @param SecurityFacade $securityFacade
      * @param TranslatorInterface $translator
      * @param LoggerInterface $logger
@@ -45,7 +45,7 @@ class AccountUserHandler
     public function __construct(
         FormInterface $form,
         Request $request,
-        AccountUserManager $userManager,
+        CustomerUserManager $userManager,
         SecurityFacade $securityFacade,
         TranslatorInterface $translator,
         LoggerInterface $logger

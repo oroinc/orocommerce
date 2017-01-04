@@ -4,7 +4,7 @@ namespace Oro\Bundle\PricingBundle\Manager;
 
 use Oro\Bundle\CurrencyBundle\Provider\CurrencyProviderInterface;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Entity\AccountUserSettings;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserSettings;
 use Oro\Bundle\UserBundle\Entity\BaseUserManager;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
@@ -108,7 +108,7 @@ class UserCurrencyManager
         if ($user instanceof AccountUser) {
             $userWebsiteSettings = $user->getWebsiteSettings($website);
             if (!$userWebsiteSettings) {
-                $userWebsiteSettings = new AccountUserSettings($website);
+                $userWebsiteSettings = new CustomerUserSettings($website);
                 $user->setWebsiteSettings($userWebsiteSettings);
             }
             $userWebsiteSettings->setCurrency($currency);

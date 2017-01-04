@@ -49,7 +49,7 @@ class ShoppingListLineItemsDataProviderTest extends \PHPUnit_Framework_TestCase
             ->with($shoppingList)
             ->willReturn($lineItems);
 
-        $em = $this->getMock('\Doctrine\Common\Persistence\ObjectManager');
+        $em = $this->createMock('\Doctrine\Common\Persistence\ObjectManager');
         $em->expects($this->once())
             ->method('getRepository')
             ->willReturn($repo);

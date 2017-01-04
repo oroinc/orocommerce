@@ -86,7 +86,7 @@ class VisibilityChoicesProviderTest extends \PHPUnit_Framework_TestCase
             ->method('findOneByProduct')
             ->willReturn($productCategory);
 
-        $em = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
+        $em = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
         $em->expects($this->any())
             ->method('getRepository')
             ->willReturn($repository);

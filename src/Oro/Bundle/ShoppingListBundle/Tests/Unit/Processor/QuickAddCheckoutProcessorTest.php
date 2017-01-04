@@ -8,7 +8,8 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\ActionBundle\Model\ActionData;
-use Oro\Bundle\ActionBundle\Model\OperationManager;
+use Oro\Bundle\ActionBundle\Model\ActionGroup;
+use Oro\Bundle\ActionBundle\Model\ActionGroupRegistry;
 use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatter;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Processor\QuickAddCheckoutProcessor;
@@ -23,9 +24,14 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
     protected $shoppingListManager;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|OperationManager
+     * @var \PHPUnit_Framework_MockObject_MockObject|ActionGroupRegistry
      */
-    protected $operationManager;
+    protected $actionGroupRegistry;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|ActionGroup
+     */
+    protected $actionGroup;
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface
@@ -38,9 +44,9 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
     protected $dateFormatter;
 
     /**
-     * @var string
+     * @var QuickAddCheckoutProcessor
      */
-    protected $operationName;
+    protected $processor;
 
     /**
      * @return string
@@ -57,31 +63,25 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
     {
         parent::setUp();
 
-        $this->shoppingListManager =  $this
-            ->getMockBuilder('Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->operationManager =  $this
-            ->getMockBuilder('Oro\Bundle\ActionBundle\Model\OperationManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->translator = $this
-            ->getMockBuilder('Symfony\Component\Translation\TranslatorInterface')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->dateFormatter =  $this
-            ->getMockBuilder('Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatter')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->shoppingListManager = $this->getMockBuilder(ShoppingListManager::class)
+            ->disableOriginalConstructor()->getMock();
+        $this->actionGroupRegistry = $this->getMockBuilder(ActionGroupRegistry::class)
+            ->disableOriginalConstructor()->getMock();
+        $this->actionGroup = $this->getMockBuilder(ActionGroup::class)
+            ->disableOriginalConstructor()->getMock();
+        $this->translator = $this->getMockBuilder(TranslatorInterface::class)
+            ->disableOriginalConstructor()->getMock();
+        $this->dateFormatter = $this->getMockBuilder(DateTimeFormatter::class)
+            ->disableOriginalConstructor()->getMock();
 
         $this->processor = new QuickAddCheckoutProcessor($this->handler, $this->registry, $this->messageGenerator);
 
         $this->processor->setProductClass('Oro\Bundle\ProductBundle\Entity\Product');
         $this->processor->setShoppingListManager($this->shoppingListManager);
-        $this->processor->setOperationManager($this->operationManager);
+        $this->processor->setActionGroupRegistry($this->actionGroupRegistry);
         $this->processor->setTranslator($this->translator);
         $this->processor->setDateFormatter($this->dateFormatter);
-        $this->processor->setOperationName('oro_shoppinglist_frontend_createorder');
+        $this->processor->setActionGroupName('start_shoppinglist_checkout');
     }
 
     /**
@@ -93,16 +93,29 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
 
         unset(
             $this->shoppingListManager,
-            $this->operationManager,
+            $this->actionGroupRegistry,
+            $this->actionGroup,
             $this->translator,
             $this->dateFormatter
         );
     }
 
-    public function testGetName()
+    public function testIsAllowed()
     {
-        $this->assertInternalType('string', $this->processor->getName());
-        $this->assertEquals(QuickAddCheckoutProcessor::NAME, $this->processor->getName());
+        $this->handler->expects($this->once())->method('isAllowed')->willReturn(true);
+        $this->actionGroupRegistry->expects($this->once())->method('findByName')
+            ->with('start_shoppinglist_checkout')->willReturn($this->actionGroup);
+
+        $this->assertTrue($this->processor->isAllowed());
+    }
+
+    public function testIsAllowedAndNoActionGroup()
+    {
+        $this->handler->expects($this->once())->method('isAllowed')->willReturn(true);
+        $this->actionGroupRegistry->expects($this->once())->method('findByName')
+            ->with('start_shoppinglist_checkout')->willReturn(null);
+
+        $this->assertFalse($this->processor->isAllowed());
     }
 
     /**
@@ -139,7 +152,7 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
                 ->willReturn('Quick Order (Mar 28, 2016, 2:50 PM)');
 
             $actionData = new ActionData([
-                'data' => $shoppingList,
+                'shoppingList' => $shoppingList,
                 'redirectUrl' => $isSetRedirectUrl ? '/account/shoppingList/123' : null,
             ]);
 
@@ -162,7 +175,12 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
                     $this->assertFailedFlashMessage($request);
                 }
 
-                $this->operationManager->expects($this->once())
+                $this->actionGroupRegistry->expects($this->once())
+                    ->method('findByName')
+                    ->with('start_shoppinglist_checkout')
+                    ->willReturn($this->actionGroup);
+
+                $this->actionGroup->expects($this->once())
                     ->method('execute')
                     ->willReturn($actionData);
 
@@ -191,7 +209,7 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
             ->method('getFailedMessage')
             ->willReturn($message);
 
-        $flashBag = $this->getMock('Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface');
+        $flashBag = $this->createMock('Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface');
         $flashBag->expects($this->once())
             ->method('add')
             ->with('error')

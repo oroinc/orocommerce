@@ -60,7 +60,7 @@ class LexemeCircularReferenceValidatorTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->context = $this->getMock(ExecutionContextInterface::class);
+        $this->context = $this->createMock(ExecutionContextInterface::class);
         $this->parser = $this->getMockBuilder(ExpressionParser::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -461,7 +461,7 @@ class LexemeCircularReferenceValidatorTest extends \PHPUnit_Framework_TestCase
         $constraint = new LexemeCircularReference();
         $constraint->fields = ['productAssignmentRule'];
 
-        $builder = $this->getMock(ConstraintViolationBuilderInterface::class);
+        $builder = $this->createMock(ConstraintViolationBuilderInterface::class);
         $builder->expects($this->at(0))->method('atPath')->with('productAssignmentRule')->willReturn($builder);
         $builder->expects($this->at(1))->method('addViolation');
 
@@ -543,7 +543,7 @@ class LexemeCircularReferenceValidatorTest extends \PHPUnit_Framework_TestCase
         $constraint = new LexemeCircularReference();
         $constraint->fields = ['productAssignmentRule'];
 
-        $builder = $this->getMock(ConstraintViolationBuilderInterface::class);
+        $builder = $this->createMock(ConstraintViolationBuilderInterface::class);
         $builder->expects($this->at(0))->method('atPath')->with('productAssignmentRule')->willReturn($builder);
         $builder->expects($this->at(1))->method('addViolation');
 
@@ -644,7 +644,7 @@ class LexemeCircularReferenceValidatorTest extends \PHPUnit_Framework_TestCase
 
         $constraint = new LexemeCircularReference();
         $constraint->fields = ['rule'];
-        $builder = $this->getMock(ConstraintViolationBuilderInterface::class);
+        $builder = $this->createMock(ConstraintViolationBuilderInterface::class);
         $builder->expects($this->at(0))->method('atPath')->with('rule')->willReturn($builder);
         $builder->expects($this->at(1))->method('addViolation');
         $this->context->expects($this->any())

@@ -60,8 +60,6 @@ class ProductAttributePriceCollectionType extends AbstractType
                 if ($v->getPrice() && $v->getPrice()->getValue()) {
                     $unitsLabels[$unitCode] = $this->translator
                         ->trans('oro.product.productunit.removed', ['{title}' => $unitCode]);
-                } else {
-                    $v->setUnit($units[$unitCode]);
                 }
             }
         }

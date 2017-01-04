@@ -4,3 +4,18 @@ oro_payment_callback:
     prefix:       /payment/callback
     options:
         frontend: true
+
+oro_payment_methods_configs_rule:
+    resource:     "@OroPaymentBundle/Controller/PaymentMethodsConfigsRuleController.php"
+    type:         annotation
+    prefix:       /paymentrule
+
+oro_payment_methods_configs_rule_api:
+    resource: "@OroPaymentBundle/Controller/Api/Rest/PaymentMethodsConfigsRuleController.php"
+    type:     rest
+    prefix:   api/rest/{version}/
+    requirements:
+        version:  latest|v1
+        _format:  json
+    defaults:
+        version: latest

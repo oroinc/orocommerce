@@ -17,7 +17,7 @@ use Oro\Bundle\UserBundle\Entity\BaseUserManager;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Entity\AccountUserSettings;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserSettings;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
@@ -54,7 +54,7 @@ class UserLocalizationManagerTest extends \PHPUnit_Framework_TestCase
         $this->session = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->tokenStorage = $this->getMock(TokenStorageInterface::class);
+        $this->tokenStorage = $this->createMock(TokenStorageInterface::class);
         $this->configManager = $this->getMockBuilder(ConfigManager::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -89,7 +89,7 @@ class UserLocalizationManagerTest extends \PHPUnit_Framework_TestCase
 
         $this->websiteManager->expects($this->once())->method('getCurrentWebsite')->willReturn($website);
 
-        $token = $this->getMock(TokenInterface::class);
+        $token = $this->createMock(TokenInterface::class);
         $token->expects($this->once())->method('getUser')->willReturn(new AccountUser());
 
         $this->tokenStorage->expects($this->once())->method('getToken')->willReturn($token);
@@ -122,7 +122,7 @@ class UserLocalizationManagerTest extends \PHPUnit_Framework_TestCase
 
         $this->websiteManager->expects($this->once())->method('getCurrentWebsite')->willReturn($website);
 
-        $token = $this->getMock(TokenInterface::class);
+        $token = $this->createMock(TokenInterface::class);
         $token->expects($this->once())->method('getUser')->willReturn(new AccountUser());
 
         $this->tokenStorage->expects($this->once())->method('getToken')->willReturn($token);
@@ -176,7 +176,7 @@ class UserLocalizationManagerTest extends \PHPUnit_Framework_TestCase
         /** @var Website $website **/
         $website = $this->getEntity(Website::class, ['id' => 1]);
 
-        $userWebsiteSettings = new AccountUserSettings($website);
+        $userWebsiteSettings = new CustomerUserSettings($website);
         $userWebsiteSettings->setLocalization($localization1);
 
         $user = $this->getMockBuilder(AccountUser::class)
@@ -185,7 +185,7 @@ class UserLocalizationManagerTest extends \PHPUnit_Framework_TestCase
 
         $this->websiteManager->expects($this->never())
             ->method('getCurrentWebsite');
-        $token = $this->getMock(TokenInterface::class);
+        $token = $this->createMock(TokenInterface::class);
         $token->expects($this->once())
             ->method('getUser')
             ->willReturn($user);
@@ -264,7 +264,7 @@ class UserLocalizationManagerTest extends \PHPUnit_Framework_TestCase
 
         $this->websiteManager->expects($this->never())
             ->method('getCurrentWebsite');
-        $token = $this->getMock(TokenInterface::class);
+        $token = $this->createMock(TokenInterface::class);
         $token->expects($this->once())
             ->method('getUser')
             ->willReturn($user);
@@ -273,7 +273,7 @@ class UserLocalizationManagerTest extends \PHPUnit_Framework_TestCase
             ->willReturn($token);
         $user->expects($this->once())
             ->method('setWebsiteSettings');
-        $em = $this->getMock(ObjectManager::class);
+        $em = $this->createMock(ObjectManager::class);
         $em->expects($this->once())
             ->method('flush');
         $this->userManager->expects($this->once())

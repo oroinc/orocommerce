@@ -57,7 +57,7 @@ class CategoryTreeHandlerListenerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->categoryVisibilityResolver = $this->getMock(CategoryVisibilityResolverInterface::class);
+        $this->categoryVisibilityResolver = $this->createMock(CategoryVisibilityResolverInterface::class);
 
         $this->accountUserRelationsProvider = $this
             ->getMockBuilder(AccountUserRelationsProvider::class)

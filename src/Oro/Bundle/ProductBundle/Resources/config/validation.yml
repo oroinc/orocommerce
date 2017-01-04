@@ -23,6 +23,9 @@ Oro\Bundle\ProductBundle\Entity\Product:
         status:
             - NotBlank: ~
             - Choice: { callback: getStatuses }
+        type:
+            - NotBlank: ~
+            - Choice: { callback: getTypes }
         names:
             - Valid: ~
         shortDescriptions:
@@ -38,8 +41,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         images:
             - Valid: ~
             - Oro\Bundle\ProductBundle\Validator\Constraints\ProductImageCollection: ~
-        hasVariants:
-            - NotNull: ~
+        attributeFamily:
+            - NotBlank: ~
 
 Oro\Bundle\ProductBundle\Entity\ProductUnit:
     properties:

@@ -6,43 +6,20 @@ use Doctrine\DBAL\Schema\Schema;
 
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
-use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtension;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
+use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
-use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
 
 class OroOrderBundle implements
     Migration,
-    NoteExtensionAwareInterface,
     AttachmentExtensionAwareInterface,
     ActivityExtensionAwareInterface
 {
-    /** @var  NoteExtension */
-    protected $noteExtension;
-
-    /** @var  AttachmentExtension */
-    protected $attachmentExtension;
+    use AttachmentExtensionAwareTrait;
 
     /** @var  ActivityExtension */
     protected $activityExtension;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setNoteExtension(NoteExtension $noteExtension)
-    {
-        $this->noteExtension = $noteExtension;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setAttachmentExtension(AttachmentExtension $attachmentExtension)
-    {
-        $this->attachmentExtension = $attachmentExtension;
-    }
 
     /**
      * {@inheritdoc}
@@ -103,7 +80,7 @@ class OroOrderBundle implements
         $table->addUniqueIndex(['shipping_address_id'], 'uniq_c036ff904d4cff2b');
         $table->addUniqueIndex(['billing_address_id'], 'uniq_c036ff9079d0c0e4');
 
-        $this->noteExtension->addNoteAssociation($schema, $table->getName());
+        $this->activityExtension->addActivityAssociation($schema, 'oro_note', $table->getName());
         $this->attachmentExtension->addAttachmentAssociation($schema, $table->getName());
         $this->activityExtension->addActivityAssociation($schema, 'oro_email', $table->getName());
     }

@@ -10,7 +10,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Entity\AccountUserAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 use Oro\Bundle\CustomerBundle\Form\Type\FrontendAccountUserTypedAddressType;
 use Oro\Bundle\CustomerBundle\Layout\DataProvider\FrontendAccountUserAddressFormProvider;
 
@@ -30,7 +30,7 @@ class FrontendAccountUserAddressFormProviderTest extends \PHPUnit_Framework_Test
     protected function setUp()
     {
         $this->mockFormFactory = $this->getMockBuilder('Symfony\Component\Form\FormFactoryInterface')->getMock();
-        $this->router = $this->getMock('Symfony\Component\Routing\Generator\UrlGeneratorInterface');
+        $this->router = $this->createMock('Symfony\Component\Routing\Generator\UrlGeneratorInterface');
 
         $this->provider = new FrontendAccountUserAddressFormProvider($this->mockFormFactory, $this->router);
     }
@@ -40,11 +40,11 @@ class FrontendAccountUserAddressFormProviderTest extends \PHPUnit_Framework_Test
         $action = 'form_action';
 
         $accountUser = $this->getEntity(AccountUser::class, ['id' => 1]);
-        $accountUserAddress = $this->getEntity(AccountUserAddress::class, ['id' => 2]);
+        $accountUserAddress = $this->getEntity(CustomerUserAddress::class, ['id' => 2]);
 
-        $formView = $this->getMock(FormView::class);
+        $formView = $this->createMock(FormView::class);
 
-        $form = $this->getMock(FormInterface::class);
+        $form = $this->createMock(FormInterface::class);
         $form->expects($this->once())
             ->method('createView')
             ->willReturn($formView);
@@ -77,9 +77,9 @@ class FrontendAccountUserAddressFormProviderTest extends \PHPUnit_Framework_Test
         $action = 'form_action';
 
         $accountUser = $this->getEntity(AccountUser::class, ['id' => 1]);
-        $accountUserAddress = $this->getEntity(AccountUserAddress::class, ['id' => 2]);
+        $accountUserAddress = $this->getEntity(CustomerUserAddress::class, ['id' => 2]);
 
-        $form = $this->getMock(FormInterface::class);
+        $form = $this->createMock(FormInterface::class);
 
         $this->mockFormFactory
             ->expects($this->once())
@@ -109,11 +109,11 @@ class FrontendAccountUserAddressFormProviderTest extends \PHPUnit_Framework_Test
         $action = 'form_action';
 
         $accountUser = $this->getEntity(AccountUser::class, ['id' => 1]);
-        $accountUserAddress = $this->getEntity(AccountUserAddress::class);
+        $accountUserAddress = $this->getEntity(CustomerUserAddress::class);
 
-        $formView = $this->getMock(FormView::class);
+        $formView = $this->createMock(FormView::class);
 
-        $form = $this->getMock(FormInterface::class);
+        $form = $this->createMock(FormInterface::class);
         $form->expects($this->once())
             ->method('createView')
             ->willReturn($formView);
@@ -146,9 +146,9 @@ class FrontendAccountUserAddressFormProviderTest extends \PHPUnit_Framework_Test
         $action = 'form_action';
 
         $accountUser = $this->getEntity(AccountUser::class, ['id' => 1]);
-        $accountUserAddress = $this->getEntity(AccountUserAddress::class);
+        $accountUserAddress = $this->getEntity(CustomerUserAddress::class);
 
-        $form = $this->getMock(FormInterface::class);
+        $form = $this->createMock(FormInterface::class);
 
         $this->mockFormFactory
             ->expects($this->once())

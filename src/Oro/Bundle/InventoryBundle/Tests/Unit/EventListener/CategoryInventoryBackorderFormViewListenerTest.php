@@ -110,7 +110,7 @@ class CategoryInventoryBackorderFormViewListenerTest extends FormViewListenerTes
             ->method('getEnvironment')
             ->willReturn($env);
 
-        $scrollData = $this->getMock(ScrollData::class);
+        $scrollData = $this->createMock(ScrollData::class);
 
         $this->event->expects($this->once())
             ->method('getScrollData')

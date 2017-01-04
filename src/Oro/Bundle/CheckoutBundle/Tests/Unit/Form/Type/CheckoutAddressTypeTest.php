@@ -4,7 +4,7 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\PreloadedExtension;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 use Oro\Bundle\AddressBundle\Entity\AddressType as AddressTypeEntity;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
@@ -65,7 +65,7 @@ class CheckoutAddressTypeTest extends AbstractOrderAddressTypeTest
     /**
      * @param array $submittedData
      * @param mixed $expectedData
-     * @param AccountAddress $savedAddress
+     * @param CustomerAddress $savedAddress
      * @param string $addressType
      * @dataProvider submitWithPermissionAndCustomFieldsAndAccountAddressProvider
      */
@@ -88,7 +88,7 @@ class CheckoutAddressTypeTest extends AbstractOrderAddressTypeTest
         $this->orderAddressManager->expects($this->once())->method('updateFromAbstract')
             ->will(
                 $this->returnCallback(
-                    function (AccountAddress $address = null, OrderAddress $orderAddress = null) {
+                    function (CustomerAddress $address = null, OrderAddress $orderAddress = null) {
                         $orderAddress
                             ->setAccountAddress($address)
                             ->setLabel($address->getLabel())
@@ -134,7 +134,7 @@ class CheckoutAddressTypeTest extends AbstractOrderAddressTypeTest
         $country = new Country('US');
         $region = (new Region('US-AL'))->setCountry($country);
 
-        $savedAccountAddress = (new AccountAddress())
+        $savedAccountAddress = (new CustomerAddress())
             ->setLabel('Label')
             ->setCountry($country)
             ->setRegion($region)

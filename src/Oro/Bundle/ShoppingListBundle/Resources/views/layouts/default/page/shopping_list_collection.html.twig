@@ -1,0 +1,7 @@
+{% block _shoppinglist_collection_widget %}
+    <div data-page-component-module="oroshoppinglist/js/app/components/shoppinglist-collection-component"
+         data-page-component-options="{{ {
+             shoppingLists: shoppingLists
+         }|json_encode }}">
+    </div>
+{% endblock %}

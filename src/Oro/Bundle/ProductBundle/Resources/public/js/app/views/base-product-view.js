@@ -5,13 +5,21 @@ define(function(require) {
     var BaseView = require('oroui/js/app/views/base/view');
     var ElementsHelper = require('orofrontend/js/app/elements-helper');
     var BaseModel = require('oroui/js/app/models/base/model');
+    var mediator = require('oroui/js/mediator');
+    var routing = require('routing');
     var $ = require('jquery');
     var _ = require('underscore');
 
     BaseProductView = BaseView.extend(_.extend({}, ElementsHelper, {
         elements: {
             quantity: '[data-name="field__quantity"]',
-            unit: '[data-name="field__unit"]'
+            unit: '[data-name="field__unit"]',
+            lineItem: '[data-role="line-item-form-container"]',
+            lineItemFields: ['lineItem', ':input[data-name]']
+        },
+
+        elementsEvents: {
+            '$el': ['options:set:productModel', 'optionsSetProductModel']
         },
 
         modelElements: {
@@ -22,20 +30,41 @@ define(function(require) {
         modelAttr: {
             id: 0,
             quantity: 0,
-            unit: ''
+            unit: '',
+            line_item_form_enable: true
         },
+
+        modelEvents: {
+            'id': ['change', 'onProductChanged'],
+            'line_item_form_enable': ['change', 'onLineItemFormEnableChanged']
+        },
+
+        originalProductId: null,
 
         initialize: function(options) {
             BaseProductView.__super__.initialize.apply(this, arguments);
 
+            this.rowId = this.$el.parent().data('row-id');
             this.initModel(options);
             this.initializeElements(options);
+
+            this.originalProductId = this.model.get('id');
+
+            this._deferredRender();
             this.initLayout({
                 productModel: this.model
             }).done(_.bind(this.handleLayoutInit, this));
         },
 
-        handleLayoutInit: function() {},
+        optionsSetProductModel: function(e, options) {
+            options.productModel = this.model;
+            e.preventDefault();
+            e.stopPropagation();
+        },
+
+        handleLayoutInit: function() {
+            this._resolveDeferredRender();
+        },
 
         initModel: function(options) {
             this.modelAttr = $.extend(true, {}, this.modelAttr, options.modelAttr || {});
@@ -43,7 +72,8 @@ define(function(require) {
                 this.model = options.productModel;
             }
             if (!this.model) {
-                this.model = new BaseModel();
+                this.model = (_.isObject(this.collection) && this.collection.get(this.rowId)) ?
+                                this.collection.get(this.rowId) : new BaseModel();
             }
 
             _.each(this.modelAttr, function(value, attribute) {
@@ -53,8 +83,47 @@ define(function(require) {
             }, this);
         },
 
+        onProductChanged: function() {
+            var modelProductId = this.model.get('id');
+            this.model.set('line_item_form_enable', Boolean(modelProductId));
+
+            var productId = modelProductId || this.originalProductId;
+            mediator.trigger('layout-subtree:update:product', {
+                layoutSubtreeUrl: routing.generate('oro_product_frontend_product_view', {id: productId}),
+                layoutSubtreeCallback: _.bind(this.afterProductChanged, this)
+            });
+        },
+
+        afterProductChanged: function() {
+            this.undelegateElementsEvents();
+            this.clearElementsCache();
+            this.setModelValueFromElements();
+            this.delegateElementsEvents();
+
+            this.onLineItemFormEnableChanged();
+        },
+
+        onLineItemFormEnableChanged: function() {
+            if (this.model.get('line_item_form_enable')) {
+                this.enableLineItemForm();
+            } else {
+                this.disableLineItemForm();
+            }
+        },
+
+        enableLineItemForm: function() {
+            this.getElement('lineItemFields').prop('disabled', false).inputWidget('refresh');
+            this.getElement('lineItem').removeClass('disabled');
+        },
+
+        disableLineItemForm: function() {
+            this.getElement('lineItemFields').prop('disabled', true).inputWidget('refresh');
+            this.getElement('lineItem').addClass('disabled');
+        },
+
         dispose: function() {
             delete this.modelAttr;
+            delete this.rowId;
             this.disposeElements();
             BaseProductView.__super__.dispose.apply(this, arguments);
         }

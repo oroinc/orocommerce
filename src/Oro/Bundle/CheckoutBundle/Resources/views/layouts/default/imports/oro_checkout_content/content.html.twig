@@ -15,7 +15,7 @@
     <div{{ block('block_attributes') }}>
         <div class="checkout__head">
             <h2 class="checkout__title">
-                <span class="badge badge_md badge_circle badge_orange">{{ stepOrder }}</span>
+                <span class="checkout__title-icon">{{ stepOrder }}</span>
                 {{ workflowStep.label|trans({},'workflows') }}
             </h2>
         </div>
@@ -65,11 +65,11 @@
             <div class="checkout-order-summary__header">
                 <div data-collapse-trigger>
                     <div class="checkout-order-summary__icon-group">
-                        <span class="badge badge_sm badge_orange badge_circled-corners mmr7-md mmr7-sm">
+                        <span class="badge-square">
                           <i class="fa-shopping-cart"></i>
                         </span>
                         <span class="collapse-view__trigger">
-                            <i class="collapse-view__trigger-icon fa-play cf--gray checkout-order-summary__icon-play"></i>
+                            <i class="collapse-view__trigger-icon fa-caret-right"></i>
                         </span>
                     </div>
                     <h3 class="checkout-order-summary__title">{{ 'oro.checkout.order_summary.label'|trans }}</h3>
@@ -113,11 +113,11 @@
 
     <table {{ block('block_attributes') }}>
         <thead class="checkout-order-summary__grid-head">
-        <tr data-scrollable-content-head>
-            <th>{{ 'oro.checkout.order_summary.item'|trans }}</th>
-            <th class="text-center">{{ 'oro.checkout.order_summary.quantity'|trans }}</th>
-            <th class="text-right" data-scrollable-item-has-offset>{{ 'oro.checkout.order_summary.price'|trans }}</th>
-        </tr>
+            <tr data-scrollable-content-head>
+                <th class="checkout-order-summary__grid-th">{{ 'oro.checkout.order_summary.item'|trans }}</th>
+                <th class="checkout-order-summary__grid-th">{{ 'oro.checkout.order_summary.quantity'|trans }}</th>
+                <th class="checkout-order-summary__grid-th" data-scrollable-item-has-offset>{{ 'oro.checkout.order_summary.price'|trans }}</th>
+            </tr>
         </thead>
         <tbody>
         <tr>

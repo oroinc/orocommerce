@@ -8,7 +8,6 @@ services:
     oro_ups.provider.transport:
         class: 'Oro\Bundle\UPSBundle\Provider\UPSTransport'
         arguments:
-            - '@doctrine'
             - '@logger'
         calls:
             - [setRestClientFactory, ['@oro_integration.transport.rest.client_factory']]
@@ -71,7 +70,9 @@ services:
         class: 'Oro\Bundle\UPSBundle\Handler\InvalidateCacheAtHandler'
         arguments:
             - "@doctrine"
-            - '@oro_ups.shipping_price_cache'
+            - "@oro_ups.shipping_price_cache"
+            - "@oro_shipping.shipping_price.provider.cache"
+            - "@oro_cron.deferred_scheduler"
 
     oro_ups.shipping_price_cache:
         class: 'Oro\Bundle\UPSBundle\Cache\ShippingPriceCache'
@@ -82,5 +83,3 @@ services:
     oro_ups.cache.shipping_price:
         public: false
         parent: oro.cache.abstract
-        calls:
-            - [setNamespace, ['oro_ups_shipping_price']]
