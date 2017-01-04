@@ -1,0 +1,14 @@
+{% block __matrix_grid_order_button__line_item_form_buttons_matrix_grid_order_widget %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {{ UI.clientLink({
+        'aCss': 'matrix-grid-order-widget__btn',
+        'iCss': 'fa-plus-circle',
+        'label' : 'oro.frontend.shoppinglist.btn.matrix_grid_order'|trans,
+        'widget' : {
+            'type' : 'matrix-grid-order',
+            'options': {
+                'productId': 1
+            }
+        }
+    }) }}
+{% endblock %}

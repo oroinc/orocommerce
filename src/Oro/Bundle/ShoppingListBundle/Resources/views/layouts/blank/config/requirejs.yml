@@ -2,3 +2,4 @@ config:
     paths:
         'oroshoppinglist/js/app/views/product-add-to-shopping-list-view': 'bundles/oroshoppinglist/js/app/views/product-add-to-shopping-list-view.js'
         'oro/shopping-list-create-widget': 'bundles/oroshoppinglist/js/app/widget/shopping-list-create-widget.js'
+        'oro/matrix-grid-order-widget': 'bundles/oroshoppinglist/js/app/widget/matrix-grid-order-widget.js'

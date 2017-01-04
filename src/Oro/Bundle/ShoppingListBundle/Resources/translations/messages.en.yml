@@ -156,6 +156,7 @@ oro:
                 request_quote_create_rfp: 'Request Quote'
                 create_order: 'Create Order'
                 delete: 'Delete'
+                matrix_grid_order: 'Order with Matrix Grid'
             workflow:
                 remove_source.label: Delete the shopping list
             lineitem:
