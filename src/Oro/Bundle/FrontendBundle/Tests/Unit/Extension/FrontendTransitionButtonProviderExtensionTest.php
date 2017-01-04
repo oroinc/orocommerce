@@ -1,8 +1,6 @@
 <?php
 namespace Oro\Bundle\FrontendBundle\Tests\Unit\EventListener;
 
-use Oro\Bundle\ActionBundle\Provider\CurrentApplicationProviderInterface;
-
 use Oro\Bundle\FrontendBundle\Provider\ActionCurrentApplicationProvider;
 use Oro\Bundle\FrontendBundle\Extension\FrontendTransitionButtonProviderExtension;
 
@@ -10,53 +8,19 @@ use Oro\Bundle\WorkflowBundle\Tests\Unit\Extension\TransitionButtonProviderExten
 
 class FrontendTransitionButtonProviderExtensionTest extends TransitionButtonProviderExtensionTest
 {
-    /** @var FrontendTransitionButtonProviderExtension */
-    protected $extension;
-
-    /** @var CurrentApplicationProviderInterface|\PHPUnit_Framework_MockObject_MockObject */
-    protected $applicationProvider;
-
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function getApplication()
     {
-        parent::setUp();
-
-        $this->applicationProvider = $this->getMockBuilder(CurrentApplicationProviderInterface::class)
-            ->disableOriginalConstructor()->getMock();
-
-        $this->extension = new FrontendTransitionButtonProviderExtension(
-            $this->workflowRegistry,
-            $this->routeProvider
-        );
-
-        $this->extension->setApplicationProvider($this->applicationProvider);
+        return ActionCurrentApplicationProvider::COMMERCE_APPLICATION;
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function tearDown()
+    protected function createExtension()
     {
-        parent::tearDown();
-        unset($this->applicationProvider);
-    }
-
-    /**
-     * @dataProvider findDataProvider
-     *
-     * @param bool $expected
-     * @param null $entityClass
-     * @param null $datagrid
-     */
-    public function testFind($expected, $entityClass = null, $datagrid = null)
-    {
-        if ($expected) {
-            $this->applicationProvider->expects($this->atLeastOnce())
-                ->method('getCurrentApplication')
-                ->willReturn(ActionCurrentApplicationProvider::COMMERCE_APPLICATION);
-        }
-        parent::testFind($expected, $entityClass, $datagrid);
+        return new FrontendTransitionButtonProviderExtension($this->workflowRegistry, $this->routeProvider);
     }
 }
