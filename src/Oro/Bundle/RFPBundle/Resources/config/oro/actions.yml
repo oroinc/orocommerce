@@ -9,8 +9,10 @@ actions:
         button_options:
             icon: fa-file-text
             class: icons-holder-text no-hash btn
-        preconditions:
-            '@equal': [$status.draft, false]
+
+#        ToDo: how we should change this condition ?
+#        preconditions:
+#            '@equal': [$status.draft, false]
         actions:
             - '@call_service_method':
                 service: oro_rfp.service.request_to_quote_data_storage
@@ -159,3 +161,43 @@ action_groups:
                 object: $.request
                 method: addRequestAdditionalNote
                 method_parameters: [$.request_additional_note]
+
+    oro_rfp_duplicate:
+        parameters:
+            request:
+                type: Oro\Bundle\RFPBundle\Entity\Request
+            flush:
+                type: bool
+                default: true
+        actions:
+            - '@create_datetime':
+                attribute: $.currentDatetime
+            - '@duplicate':
+                target: $.request
+                attribute: $.requestCopy
+                settings:
+                  - [[setNull], [propertyName, [id]]]
+                  - [[collection], [propertyType, ['Doctrine\Common\Collections\Collection']]]
+                  - [[setNull], [propertyName, [status]]]
+                  - [[keep], [propertyName, [accountUser]]]
+                  - [[keep], [propertyName, [account]]]
+                  - [[keep], [propertyName, [organization]]]
+                  - [[keep], [propertyName, [owner]]]
+                  - [[keep], [propertyName, [internal_status]]]
+                  - [[keep], [propertyName, [customer_status]]]
+                  - [[keep], [property, ["%oro_rfp.entity.request_product.class%", product]]]
+                  - [[keep], [property, ["%oro_rfp.entity.request_product_item.class%", productUnit]]]
+            - '@assign_value': [$.entityCopy.createdAt, $.currentDatetime]
+            - '@assign_value': [$.entityCopy.updatedAt, $.currentDatetime]
+            - '@assign_constant_value':
+                attribute: $.openStatusName
+                value: Oro\Bundle\RFPBundle\Entity\RequestStatus::OPEN
+            - '@find_entity':
+                class: Oro\Bundle\RFPBundle\Entity\RequestStatus
+                attribute: $.requestCopy.status
+                where:
+                    name: $.openStatusName
+            - '@flush_entity':
+                conditions:
+                    '@equal': [true, $.flush]
+                parameters: [$.requestCopy]
