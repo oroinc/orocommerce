@@ -13,7 +13,6 @@ oro:
             phone.label: 'Phone Number'
             company.label: 'Company'
             role.label: 'Role'
-            status.label: 'Status'
             customer_status.label: 'Customer Status'
             internal_status.label: 'Internal Status'
             note.label: 'Notes'
