@@ -79,8 +79,6 @@ oro:
             section:
                 shipping_options: Shipping Options
         form:
-            oro_shipping_flat_rate_type_options:
-                label: Flat Rate
             placeholder:
                 length_unit.label: Select unit of length
                 weight_unit.label: Select unit of weight

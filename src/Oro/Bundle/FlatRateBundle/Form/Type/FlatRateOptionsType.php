@@ -44,22 +44,22 @@ class FlatRateOptionsType extends AbstractType
         $builder
             ->add(FlatRateMethodType::PRICE_OPTION, NumberType::class, array_merge([
                 'required' => true,
-                'label' => 'oro.shipping.method.flat_rate.price.label',
+                'label' => 'oro.flat_rate.method.price.label',
                 'constraints' => [new NotBlank(), new Type(['type' => 'numeric'])]
             ], $priceOptions))
             ->add(FlatRateMethodType::HANDLING_FEE_OPTION, NumberType::class, array_merge([
-                'label' => 'oro.shipping.method.flat_rate.handling_fee.label',
+                'label' => 'oro.flat_rate.method.handling_fee.label',
                 'constraints' => [new Type(['type' => 'numeric'])]
             ], $priceOptions))
             ->add(FlatRateMethodType::TYPE_OPTION, ChoiceType::class, [
                 'required' => true,
                 'choices' => [
                     FlatRateMethodType::PER_ITEM_TYPE
-                    => 'oro.shipping.method.flat_rate.processing_type.per_item.label',
+                    => 'oro.flat_rate.method.processing_type.per_item.label',
                     FlatRateMethodType::PER_ORDER_TYPE
-                    => 'oro.shipping.method.flat_rate.processing_type.per_order.label',
+                    => 'oro.flat_rate.method.processing_type.per_order.label',
                 ],
-                'label' => 'oro.shipping.method.flat_rate.processing_type.label',
+                'label' => 'oro.flat_rate.method.processing_type.label',
             ]);
     }
 
@@ -71,7 +71,7 @@ class FlatRateOptionsType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'label' => 'oro.shipping.form.oro_shipping_flat_rate_type_options.label',
+            'label' => 'oro.flat_rate.form.oro_flat_rate_options_type.label',
         ]);
     }
 

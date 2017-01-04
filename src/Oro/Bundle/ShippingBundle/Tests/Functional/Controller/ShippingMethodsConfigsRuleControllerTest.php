@@ -166,16 +166,16 @@ class ShippingMethodsConfigsRuleControllerTest extends WebTestCase
         ];
         $formValues['oro_shipping_methods_configs_rule']['methodConfigs'] = [
             [
-                'method' => FlatRateShippingMethod::IDENTIFIER,
+                'method' => 'flat_rate',
                 'options' => [],
                 'typeConfigs' => [
                     [
                         'enabled' => '1',
-                        'type' => FlatRateShippingMethodType::IDENTIFIER,
+                        'type' => 'primary',
                         'options' => [
-                            FlatRateShippingMethodType::PRICE_OPTION => 12,
-                            FlatRateShippingMethodType::HANDLING_FEE_OPTION => null,
-                            FlatRateShippingMethodType::TYPE_OPTION => FlatRateShippingMethodType::PER_ITEM_TYPE,
+                            'price' => 12,
+                            'handling_fee' => null,
+                            'type' => 'per_item',
                         ],
                     ]
                 ]
@@ -272,16 +272,16 @@ class ShippingMethodsConfigsRuleControllerTest extends WebTestCase
         ];
         $formValues['oro_shipping_methods_configs_rule']['methodConfigs'] = [
             [
-                'method' => FlatRateShippingMethod::IDENTIFIER,
+                'method' => 'flat_rate',
                 'options' => [],
                 'typeConfigs' => [
                     [
                         'enabled' => '1',
-                        'type' => FlatRateShippingMethodType::IDENTIFIER,
+                        'type' => 'primary',
                         'options' => [
-                            FlatRateShippingMethodType::PRICE_OPTION => 24,
-                            FlatRateShippingMethodType::HANDLING_FEE_OPTION => null,
-                            FlatRateShippingMethodType::TYPE_OPTION => FlatRateShippingMethodType::PER_ORDER_TYPE,
+                            'price' => 24,
+                            'handling_fee' => null,
+                            'type' => 'per_order',
                         ],
                     ]
                 ]
@@ -304,10 +304,10 @@ class ShippingMethodsConfigsRuleControllerTest extends WebTestCase
         static::assertEquals('TH-83', $destination[0]->getRegion()->getCombinedCode());
         static::assertEquals('54321', $destination[0]->getPostalCodes()->current()->getName());
         $methodConfigs = $shippingRule->getMethodConfigs();
-        static::assertEquals(FlatRateShippingMethod::IDENTIFIER, $methodConfigs[0]->getMethod());
+        static::assertEquals('flat_rate', $methodConfigs[0]->getMethod());
         static::assertEquals(
             24,
-            $methodConfigs[0]->getTypeConfigs()[0]->getOptions()[FlatRateShippingMethodType::PRICE_OPTION]
+            $methodConfigs[0]->getTypeConfigs()[0]->getOptions()['price']
         );
         static::assertFalse($shippingRule->getRule()->isEnabled());
 

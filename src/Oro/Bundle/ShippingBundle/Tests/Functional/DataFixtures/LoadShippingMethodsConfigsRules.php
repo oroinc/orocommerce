@@ -12,8 +12,6 @@ use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestinationPostalCode;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
-use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethod;
-use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethodType;
 use Symfony\Component\Yaml\Yaml;
 
 class LoadShippingMethodsConfigsRules extends AbstractFixture
@@ -46,15 +44,15 @@ class LoadShippingMethodsConfigsRules extends AbstractFixture
 
                     $methodConfig
                         ->setMethodConfigsRule($entity)
-                        ->setMethod(FlatRateShippingMethod::IDENTIFIER);
+                        ->setMethod('flat_rate');
 
                     foreach ($methodConfigData['typeConfigs'] as $typeConfigData) {
                         $typeConfig = new ShippingMethodTypeConfig();
-                        $typeConfig->setType(FlatRateShippingMethodType::IDENTIFIER)
+                        $typeConfig->setType('primary')
                             ->setOptions([
-                                FlatRateShippingMethodType::PRICE_OPTION => $typeConfigData['options']['price'],
-                                FlatRateShippingMethodType::HANDLING_FEE_OPTION => null,
-                                FlatRateShippingMethodType::TYPE_OPTION => $typeConfigData['options']['type'],
+                                'price' => $typeConfigData['options']['price'],
+                                'handling_fee' => null,
+                                'type' => $typeConfigData['options']['type'],
                             ]);
                         $typeConfig->setEnabled(true);
                         $methodConfig->addTypeConfig($typeConfig);

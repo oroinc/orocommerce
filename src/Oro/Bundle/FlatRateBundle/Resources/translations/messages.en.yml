@@ -6,6 +6,9 @@ oro:
 
         channel_type:
             label: Flat Rate
+        form:
+            oro_flat_rate_options_type:
+                label: Flat Rate
         method:
             label: Flat Rate
             type.label: Flat Rate

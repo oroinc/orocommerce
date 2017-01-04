@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ShippingBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodConfigRepository;
-use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethod;
 use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingMethodsConfigsRules;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
@@ -33,17 +32,17 @@ class ShippingMethodConfigRepositoryTest extends WebTestCase
         static::assertNotEmpty(
             $this->repository->findBy(
                 [
-                    'method' => FlatRateShippingMethod::IDENTIFIER,
+                    'method' => 'flat_rate',
                 ]
             )
         );
 
-        $this->repository->deleteByMethod(FlatRateShippingMethod::IDENTIFIER);
+        $this->repository->deleteByMethod('flat_rate');
 
         static::assertEmpty(
             $this->repository->findBy(
                 [
-                    'method' => FlatRateShippingMethod::IDENTIFIER,
+                    'method' => 'flat_rate',
                 ]
             )
         );
