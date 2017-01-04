@@ -9,5 +9,5 @@ layout:
             siblingId: ~
             prepend: true
             options:
-                visible: '=data["acl"].isGranted("oro_shopping_list_frontend_update")'
+                visible: '=data["oro_shopping_list_matrix_grid_order"].isAvailable(data["product"])'
     conditions: 'context["is_logged_in"]'

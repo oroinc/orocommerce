@@ -144,6 +144,13 @@ services:
         tags:
             - { name: layout.data_provider, alias: oro_shopping_list_products }
 
+    oro_shopping_list.layout.data_provider.matrix_grid_order:
+          class: 'Oro\Bundle\ShoppingListBundle\Layout\DataProvider\MatrixGridOrderProvider'
+          arguments:
+              - '@oro_product.provider.product_variant_availability_provider'
+          tags:
+              - { name: layout.data_provider, alias: oro_shopping_list_matrix_grid_order }
+
     oro_shopping_list.data_provider.frontend_product_prices:
         class: 'Oro\Bundle\ShoppingListBundle\DataProvider\FrontendProductPricesDataProvider'
         public: false
