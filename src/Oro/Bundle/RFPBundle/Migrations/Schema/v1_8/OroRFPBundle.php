@@ -8,6 +8,7 @@ use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
+use Oro\Bundle\TranslationBundle\Migration\DeleteTranslationKeysQuery;
 
 class OroRFPBundle implements Migration, ExtendExtensionAwareInterface
 {
@@ -32,6 +33,9 @@ class OroRFPBundle implements Migration, ExtendExtensionAwareInterface
         $this->addOroRfpRequestAddNoteForeignKeys($schema);
         $this->dropRfpStatus($schema);
         $this->dropRfpStatusTranslation($schema);
+        foreach ($this->getTranslationKeysForRemove() as $domain => $keys) {
+            $queries->addQuery(new DeleteTranslationKeysQuery($domain, $keys));
+        }
     }
 
     /**
@@ -110,5 +114,45 @@ class OroRFPBundle implements Migration, ExtendExtensionAwareInterface
     protected function dropRfpStatusTranslation(Schema $schema)
     {
         $schema->dropTable('oro_rfp_status_translation');
+    }
+
+    /**
+     * Get unused translation keys
+     *
+     * @return array
+     */
+    protected function getTranslationKeysForRemove()
+    {
+        return [
+            'messages' => [
+                'oro.rfp.menu.request_status_list.description',
+                'oro.rfp.menu.shortcut_request_status_list.description',
+                'oro.rfp.message.request_status_saved',
+                'oro.rfp.message.request_status_restored',
+                'oro.rfp.message.request_status_deleted',
+                'oro.rfp.message.request_status_not_found',
+                'oro.rfp.message.request_status_changed',
+                'oro.rfp.message.request_status_not_deletable',
+                'oro.rfp.request.status.label',
+                'oro.rfp.requeststatus.entity_label',
+                'oro.rfp.requeststatus.entity_plural_label',
+                'oro.rfp.requeststatus.id.label',
+                'oro.rfp.requeststatus.name.label',
+                'oro.rfp.requeststatus.label.label',
+                'oro.rfp.requeststatus.sort_order.label',
+                'oro.rfp.requeststatus.deleted.label',
+                'oro.rfp.requeststatus.translations.label',
+                'oro.rfp.system_configuration.groups.requeststatus.title',
+                'oro.rfp.system_configuration.fields.requeststatus_default.title',
+                'oro.frontend.rfp.request.status.label',
+            ],
+            'entities' => [
+                'request_status.open',
+                'request_status.closed',
+                'request_status.draft',
+                'request_status.canceled',
+                'request_status.deleted',
+            ],
+        ];
     }
 }
