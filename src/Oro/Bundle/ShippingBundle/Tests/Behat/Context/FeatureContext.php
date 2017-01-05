@@ -126,10 +126,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
 
         /** @var Form $form */
         $form = $this->createElement('Shipping Rule');
-        if (in_array('Country2', $table->getColumn(0), true)) {
-            $destinationAdd = $form->find('css', '.add-list-item');
-            $destinationAdd->click();
-        }
         $form->fill($table);
         $form->saveAndClose();
         $this->waitForAjax();
