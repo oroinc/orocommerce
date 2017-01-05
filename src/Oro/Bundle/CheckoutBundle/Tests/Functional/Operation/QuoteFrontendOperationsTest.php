@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\CheckoutBundle\Tests\Functional;
+namespace Oro\Bundle\CheckoutBundle\Tests\Functional\Operation;
 
 use Symfony\Component\DomCrawler\Form;
 

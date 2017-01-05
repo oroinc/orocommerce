@@ -655,3 +655,12 @@ services:
         parent: oro_entity.abstract_repository
         arguments:
             - '%oro_customer.entity.account.class%'
+
+    oro_customer.authentication.listener.anonymous:
+        class: Oro\Bundle\CustomerBundle\Security\Http\Firewall\AnonymousAuthenticationListener
+        decorates: security.authentication.listener.anonymous.frontend
+        arguments:
+            - '@oro_customer.authentication.listener.anonymous.inner'
+            - '@security.token_storage'
+            - '@logger'
+            - '@security.authentication.manager'
