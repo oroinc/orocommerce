@@ -42,7 +42,7 @@ class DestinationCollectionTypeSubscriberTest extends \PHPUnit_Framework_TestCas
      *
      * @param array $data
      */
-    public function testNotChangesInPreSubmitMethod($data)
+    public function testNoChangesInPreSubmitMethod($data)
     {
         /** @var FormEvent|\PHPUnit_Framework_MockObject_MockObject $event */
         $event = $this->getMockBuilder(FormEvent::class)
