@@ -72,7 +72,7 @@ class FlatRateSettingsTypeTest extends FormIntegrationTestCase
     {
         return [
             [
-                'submittedData' => [
+                'submitData' => [
                     'labels' => [
                         'values' => [ 'default' => 'first label'],
                     ],
