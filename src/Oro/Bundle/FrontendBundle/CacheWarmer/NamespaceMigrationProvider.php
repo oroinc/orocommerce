@@ -35,6 +35,7 @@ class NamespaceMigrationProvider implements NamespaceMigrationProviderInterface
                 => 'Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress',
             'Oro\Bundle\CustomerBundle\Entity\AccountAddress'
                 => 'Oro\Bundle\CustomerBundle\Entity\CustomerAddress',
+            'Oro\Bundle\CustomerBundle\Entity\AccountGroup' => 'Oro\Bundle\CustomerBundle\Entity\CustomerGroup',
         ];
 
     /**

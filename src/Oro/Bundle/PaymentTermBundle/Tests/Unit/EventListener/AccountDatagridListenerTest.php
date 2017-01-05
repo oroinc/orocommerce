@@ -3,11 +3,10 @@
 namespace Oro\Bundle\PaymentTermBundle\Tests\Unit\Datagrid;
 
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
-use Oro\Bundle\EntityExtendBundle\Grid\DynamicFieldsExtension;
 use Oro\Bundle\PaymentTermBundle\EventListener\AccountDatagridListener;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
 
@@ -46,7 +45,7 @@ class AccountDatagridListenerTest extends \PHPUnit_Framework_TestCase
         /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
         $datagrid = $this->createMock(DatagridInterface::class);
         $config = DatagridConfiguration::create(
-            [DynamicFieldsExtension::EXTEND_ENTITY_CONFIG_PATH => \stdClass::class]
+            ['extended_entity_name' => \stdClass::class]
         );
 
         $this->associationProvider->expects($this->never())->method($this->anything());
@@ -55,7 +54,7 @@ class AccountDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener->onBuildBefore($event);
 
         $this->assertEquals(
-            [DynamicFieldsExtension::EXTEND_ENTITY_CONFIG_PATH => \stdClass::class],
+            ['extended_entity_name' => \stdClass::class],
             $config->toArray()
         );
     }
@@ -65,7 +64,7 @@ class AccountDatagridListenerTest extends \PHPUnit_Framework_TestCase
         /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
         $datagrid = $this->createMock(DatagridInterface::class);
         $config = DatagridConfiguration::create(
-            [DynamicFieldsExtension::EXTEND_ENTITY_CONFIG_PATH => Account::class]
+            ['extended_entity_name' => Account::class]
         );
 
         $this->associationProvider->expects($this->once())->method('getAssociationNames')->willReturn([]);
@@ -74,7 +73,7 @@ class AccountDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener->onBuildBefore($event);
 
         $this->assertEquals(
-            [DynamicFieldsExtension::EXTEND_ENTITY_CONFIG_PATH => Account::class],
+            ['extended_entity_name' => Account::class],
             $config->toArray()
         );
     }
@@ -84,13 +83,13 @@ class AccountDatagridListenerTest extends \PHPUnit_Framework_TestCase
         /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
         $datagrid = $this->createMock(DatagridInterface::class);
         $config = DatagridConfiguration::create(
-            [DynamicFieldsExtension::EXTEND_ENTITY_CONFIG_PATH => Account::class]
+            ['extended_entity_name' => Account::class]
         );
 
         $this->associationProvider->expects($this->exactly(2))->method('getAssociationNames')
             ->withConsecutive(
                 [Account::class],
-                [AccountGroup::class]
+                [CustomerGroup::class]
             )
             ->willReturnOnConsecutiveCalls(['accountPaymentTerm'], []);
 
@@ -98,7 +97,7 @@ class AccountDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener->onBuildBefore($event);
 
         $this->assertEquals(
-            [DynamicFieldsExtension::EXTEND_ENTITY_CONFIG_PATH => Account::class],
+            ['extended_entity_name' => Account::class],
             $config->toArray()
         );
     }
@@ -109,7 +108,7 @@ class AccountDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $datagrid = $this->createMock(DatagridInterface::class);
         $config = DatagridConfiguration::create(
             [
-                DynamicFieldsExtension::EXTEND_ENTITY_CONFIG_PATH => Account::class,
+                'extended_entity_name' => Account::class,
                 'source' => ['query' => ['from' => [['alias' => 'rootAlias']]]],
             ]
         );
@@ -117,7 +116,7 @@ class AccountDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $this->associationProvider->expects($this->exactly(2))->method('getAssociationNames')
             ->withConsecutive(
                 [Account::class],
-                [AccountGroup::class]
+                [CustomerGroup::class]
             )
             ->willReturnOnConsecutiveCalls(['accountPaymentTerm'], ['accountGroupPaymentTerm']);
 
@@ -129,7 +128,7 @@ class AccountDatagridListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             [
-                DynamicFieldsExtension::EXTEND_ENTITY_CONFIG_PATH => Account::class,
+                'extended_entity_name' => Account::class,
                 'source' => [
                     'query' => [
                         'from' => [['alias' => 'rootAlias']],
@@ -145,7 +144,7 @@ class AccountDatagridListenerTest extends \PHPUnit_Framework_TestCase
                             'COALESCE(agpt_accountGroupPaymentTerm.label) as account_group_payment_term',
                             'COALESCE(IDENTITY(rootAlias.accountPaymentTerm),'.
                                 'agpt_accountGroupPaymentTerm.id) as accountPaymentTerm_resolved_id',
-                            'COALESCE(accountPaymentTerm.label,agpt_accountGroupPaymentTerm.label)'.
+                            'COALESCE(auto_rel_1.label,agpt_accountGroupPaymentTerm.label)'.
                                 ' as accountPaymentTerm_resolved_value',
                         ],
                     ],
@@ -174,7 +173,7 @@ class AccountDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $datagrid = $this->createMock(DatagridInterface::class);
         $config = DatagridConfiguration::create(
             [
-                DynamicFieldsExtension::EXTEND_ENTITY_CONFIG_PATH => Account::class,
+                'extended_entity_name' => Account::class,
                 'source' => ['query' => ['from' => [['alias' => 'rootAlias']]]],
             ]
         );
@@ -182,7 +181,7 @@ class AccountDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $this->associationProvider->expects($this->exactly(2))->method('getAssociationNames')
             ->withConsecutive(
                 [Account::class],
-                [AccountGroup::class]
+                [CustomerGroup::class]
             )
             ->willReturnOnConsecutiveCalls(
                 ['accountPaymentTerm', 'accountPaymentTerm2'],
@@ -196,7 +195,7 @@ class AccountDatagridListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             [
-                DynamicFieldsExtension::EXTEND_ENTITY_CONFIG_PATH => Account::class,
+                'extended_entity_name' => Account::class,
                 'source' => [
                     'query' => [
                         'from' => [['alias' => 'rootAlias']],
@@ -217,11 +216,11 @@ class AccountDatagridListenerTest extends \PHPUnit_Framework_TestCase
                                 ' as account_group_payment_term',
                             'COALESCE(IDENTITY(rootAlias.accountPaymentTerm),agpt_accountGroupPaymentTerm.id,'.
                                 'agpt_accountGroupPaymentTerm2.id) as accountPaymentTerm_resolved_id',
-                            'COALESCE(accountPaymentTerm.label,agpt_accountGroupPaymentTerm.label,'.
+                            'COALESCE(auto_rel_1.label,agpt_accountGroupPaymentTerm.label,'.
                                 'agpt_accountGroupPaymentTerm2.label) as accountPaymentTerm_resolved_value',
                             'COALESCE(IDENTITY(rootAlias.accountPaymentTerm2),agpt_accountGroupPaymentTerm.id,'.
                                 'agpt_accountGroupPaymentTerm2.id) as accountPaymentTerm2_resolved_id',
-                            'COALESCE(accountPaymentTerm2.label,agpt_accountGroupPaymentTerm.label,'.
+                            'COALESCE(auto_rel_2.label,agpt_accountGroupPaymentTerm.label,'.
                                 'agpt_accountGroupPaymentTerm2.label) as accountPaymentTerm2_resolved_value',
                         ],
                     ],

@@ -302,7 +302,7 @@ operations:
             - account-user-by-account-grid
     DELETE:
         exclude_entities:
-            - Oro\Bundle\CustomerBundle\Entity\AccountGroup
+            - Oro\Bundle\CustomerBundle\Entity\CustomerGroup
         exclude_datagrids:
             - account-account-user-select-grid
             - account-account-users-grid-view

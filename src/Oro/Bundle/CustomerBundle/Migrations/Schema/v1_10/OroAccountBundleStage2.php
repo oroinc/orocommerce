@@ -3,6 +3,8 @@
 namespace Oro\Bundle\CustomerBundle\Migrations\Schema\v1_10;
 
 use Doctrine\DBAL\Schema\Schema;
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
@@ -10,7 +12,11 @@ use Oro\Bundle\MigrationBundle\Migration\MigrationConstraintTrait;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class OroAccountBundleStage2 implements Migration, RenameExtensionAwareInterface, OrderedMigrationInterface
+class OroAccountBundleStage2 implements
+    Migration,
+    RenameExtensionAwareInterface,
+    OrderedMigrationInterface,
+    ActivityExtensionAwareInterface
 {
     use MigrationConstraintTrait;
 
@@ -18,6 +24,11 @@ class OroAccountBundleStage2 implements Migration, RenameExtensionAwareInterface
      * @var RenameExtension
      */
     private $renameExtension;
+
+    /**
+     * @var ActivityExtension
+     */
+    private $activityExtension;
 
     /**
      * {@inheritdoc}
@@ -29,6 +40,13 @@ class OroAccountBundleStage2 implements Migration, RenameExtensionAwareInterface
         $this->renameCustomerSettings($schema);
         $this->renameAccountUserAddressToAddressType($schema);
         $this->renameAccountAddressToAddressType($schema);
+        $this->renameCustomerGroup($schema);
+
+        $this->activityExtension->addActivityAssociation(
+            $schema,
+            'oro_note',
+            'oro_customer_group'
+        );
     }
 
     /**
@@ -109,7 +127,30 @@ class OroAccountBundleStage2 implements Migration, RenameExtensionAwareInterface
         );
         $table->addUniqueIndex(['customer_address_id', 'type_name'], 'oro_customer_adr_id_type_name_idx');
     }
-    
+
+    /**
+     * @param Schema $schema
+     */
+    private function renameCustomerGroup(Schema $schema)
+    {
+        $table = $schema->getTable('oro_rel_c3990ba616cbf45899499b');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_customer_group'),
+            ['customergroup_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+        if ($schema->hasTable('oro_rel_6f8f552a16cbf458eebf8a')) {
+            $table = $schema->getTable('oro_rel_6f8f552a16cbf458eebf8a');
+            $table->addForeignKeyConstraint(
+                $schema->getTable('oro_customer_group'),
+                ['customergroup_id'],
+                ['id'],
+                ['onUpdate' => null, 'onDelete' => 'CASCADE']
+            );
+        }
+    }
+
     /**
      * Sets the RenameExtension
      *
@@ -128,5 +169,15 @@ class OroAccountBundleStage2 implements Migration, RenameExtensionAwareInterface
     public function getOrder()
     {
         return 2;
+    }
+
+    /**
+     * Sets the ActivityExtension
+     *
+     * @param ActivityExtension $activityExtension
+     */
+    public function setActivityExtension(ActivityExtension $activityExtension)
+    {
+        $this->activityExtension = $activityExtension;
     }
 }

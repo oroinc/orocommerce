@@ -77,22 +77,21 @@ class TaxCodeGridListener
     /**
      * @param DatagridConfiguration $configuration
      * @return string
-     * @throws \InvalidArgumentException when path [source][query][from] not found in the grid
+     * @throws \InvalidArgumentException when a root entity not found in the grid
      */
     protected function getAlias(DatagridConfiguration $configuration)
     {
-        $from = $configuration->offsetGetByPath('[source][query][from]');
-
-        if (!$from) {
+        $rootAlias = $configuration->getOrmQuery()->getRootAlias();
+        if (!$rootAlias) {
             throw new \InvalidArgumentException(
                 sprintf(
-                    '[source][query][from] is missing for grid "%s"',
+                    'A root entity is missing for grid "%s"',
                     $configuration->getName()
                 )
             );
         }
 
-        return (string)$from[0]['alias'];
+        return $rootAlias;
     }
 
     /**
@@ -124,9 +123,8 @@ class TaxCodeGridListener
      */
     protected function addSelect(DatagridConfiguration $config)
     {
-        $config->offsetAddToArrayByPath(
-            '[source][query][select]',
-            [sprintf('%s.code AS %s', $this->getJoinAlias(), $this->getDataName())]
+        $config->getOrmQuery()->addSelect(
+            sprintf('%s.code AS %s', $this->getJoinAlias(), $this->getDataName())
         );
     }
 
@@ -135,19 +133,14 @@ class TaxCodeGridListener
      */
     protected function addJoin(DatagridConfiguration $config)
     {
-        $config->offsetAddToArrayByPath(
-            '[source][query][join][left]',
-            [
-                [
-                    'join' => $this->taxCodeClass,
-                    'alias' => $this->getJoinAlias(),
-                    'conditionType' => Expr\Join::WITH,
-                    'condition' => (string)$this->expressionBuilder->isMemberOf(
-                        $this->getAlias($config),
-                        sprintf('%s.%s', $this->getJoinAlias(), $this->getFieldName($this->relatedEntityClass))
-                    ),
-                ],
-            ]
+        $config->getOrmQuery()->addLeftJoin(
+            $this->taxCodeClass,
+            $this->getJoinAlias(),
+            Expr\Join::WITH,
+            (string)$this->expressionBuilder->isMemberOf(
+                $this->getAlias($config),
+                sprintf('%s.%s', $this->getJoinAlias(), $this->getFieldName($this->relatedEntityClass))
+            )
         );
     }
 

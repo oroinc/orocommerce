@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Builder;
 
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\PriceListAccountFallback;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToAccountRepository;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
@@ -29,10 +29,10 @@ class AccountCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
 
     /**
      * @param Website $website
-     * @param AccountGroup $accountGroup
+     * @param CustomerGroup $accountGroup
      * @param bool|false $force
      */
-    public function buildByAccountGroup(Website $website, AccountGroup $accountGroup, $force = false)
+    public function buildByAccountGroup(Website $website, CustomerGroup $accountGroup, $force = false)
     {
         if (!$this->isBuiltForAccountGroup($website, $accountGroup)) {
             $fallback = $force ? null : PriceListAccountFallback::ACCOUNT_GROUP;
@@ -91,19 +91,19 @@ class AccountCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
 
     /**
      * @param Website $website
-     * @param AccountGroup $accountGroup
+     * @param CustomerGroup $accountGroup
      * @return bool
      */
-    protected function isBuiltForAccountGroup(Website $website, AccountGroup $accountGroup)
+    protected function isBuiltForAccountGroup(Website $website, CustomerGroup $accountGroup)
     {
         return !empty($this->builtList['group'][$website->getId()][$accountGroup->getId()]);
     }
 
     /**
      * @param Website $website
-     * @param AccountGroup $accountGroup
+     * @param CustomerGroup $accountGroup
      */
-    protected function setBuiltForAccountGroup(Website $website, AccountGroup $accountGroup)
+    protected function setBuiltForAccountGroup(Website $website, CustomerGroup $accountGroup)
     {
         $this->builtList['group'][$website->getId()][$accountGroup->getId()] = true;
     }

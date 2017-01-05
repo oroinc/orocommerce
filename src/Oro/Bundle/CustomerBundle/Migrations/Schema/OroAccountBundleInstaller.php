@@ -34,7 +34,7 @@ class OroAccountBundleInstaller implements
     const ORO_ACCOUNT_TABLE_NAME = 'oro_account';
     const ORO_ACCOUNT_USER_TABLE_NAME = 'oro_account_user';
     const ORO_ACC_USER_ACCESS_ROLE_TABLE_NAME = 'oro_acc_user_access_role';
-    const ORO_ACCOUNT_GROUP_TABLE_NAME = 'oro_account_group';
+    const ORO_CUSTOMER_GROUP_TABLE_NAME = 'oro_customer_group';
     const ORO_ACCOUNT_USER_ORG_TABLE_NAME = 'oro_account_user_org';
     const ORO_ACCOUNT_USER_ROLE_TABLE_NAME = 'oro_account_user_role';
     const ORO_ACCOUNT_ROLE_TO_WEBSITE_TABLE_NAME = 'oro_account_role_to_website';
@@ -287,25 +287,25 @@ class OroAccountBundleInstaller implements
     }
 
     /**
-     * Create oro_account_group table
+     * Create oro_customer_group table
      *
      * @param Schema $schema
      */
     protected function createOroAccountGroupTable(Schema $schema)
     {
-        $table = $schema->createTable(static::ORO_ACCOUNT_GROUP_TABLE_NAME);
+        $table = $schema->createTable(static::ORO_CUSTOMER_GROUP_TABLE_NAME);
 
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('name', 'string', ['length' => 255]);
 
         $table->setPrimaryKey(['id']);
 
-        $table->addIndex(['name'], 'oro_account_group_name_idx', []);
+        $table->addIndex(['name'], 'oro_customer_group_name_idx', []);
 
         $this->activityExtension->addActivityAssociation(
             $schema,
             'oro_note',
-            static::ORO_ACCOUNT_GROUP_TABLE_NAME
+            static::ORO_CUSTOMER_GROUP_TABLE_NAME
         );
     }
 
@@ -653,7 +653,7 @@ class OroAccountBundleInstaller implements
     {
         $table = $schema->getTable(static::ORO_ACCOUNT_TABLE_NAME);
         $table->addForeignKeyConstraint(
-            $schema->getTable(static::ORO_ACCOUNT_GROUP_TABLE_NAME),
+            $schema->getTable(static::ORO_CUSTOMER_GROUP_TABLE_NAME),
             ['group_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
@@ -1150,7 +1150,7 @@ class OroAccountBundleInstaller implements
         $this->scopeExtension->addScopeAssociation(
             $schema,
             'accountGroup',
-            OroAccountBundleInstaller::ORO_ACCOUNT_GROUP_TABLE_NAME,
+            OroAccountBundleInstaller::ORO_CUSTOMER_GROUP_TABLE_NAME,
             'name'
         );
 

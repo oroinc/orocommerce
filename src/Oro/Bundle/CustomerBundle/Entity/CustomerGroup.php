@@ -6,16 +6,16 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-use Oro\Bundle\CustomerBundle\Model\ExtendAccountGroup;
+use Oro\Bundle\CustomerBundle\Model\ExtendCustomerGroup;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 /**
- * @ORM\Entity(repositoryClass="Oro\Bundle\CustomerBundle\Entity\Repository\AccountGroupRepository")
+ * @ORM\Entity(repositoryClass="Oro\Bundle\CustomerBundle\Entity\Repository\CustomerGroupRepository")
  * @ORM\Table(
- *      name="oro_account_group",
+ *      name="oro_customer_group",
  *      indexes={
- *          @ORM\Index(name="oro_account_group_name_idx", columns={"name"})
+ *          @ORM\Index(name="oro_customer_group_name_idx", columns={"name"})
  *      }
  * )
  * @Config(
@@ -36,7 +36,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
  *      }
  * )
  */
-class AccountGroup extends ExtendAccountGroup
+class CustomerGroup extends ExtendCustomerGroup
 {
     /**
      * @var integer
@@ -73,14 +73,14 @@ class AccountGroup extends ExtendAccountGroup
      *      }
      * )
      **/
-    protected $accounts;
+    protected $customers;
 
     /**
      * Constructor
      */
     public function __construct()
     {
-        $this->accounts = new ArrayCollection();
+        $this->customers = new ArrayCollection();
     }
 
     /**
@@ -97,7 +97,7 @@ class AccountGroup extends ExtendAccountGroup
      * Set name
      *
      * @param string $name
-     * @return AccountGroup
+     * @return CustomerGroup
      */
     public function setName($name)
     {
@@ -117,40 +117,40 @@ class AccountGroup extends ExtendAccountGroup
     }
 
     /**
-     * Add account
+     * Add customer
      *
-     * @param Account $account
-     * @return AccountGroup
+     * @param Account $customer
+     * @return CustomerGroup
      */
-    public function addAccount(Account $account)
+    public function addCustomer(Account $customer)
     {
-        if (!$this->accounts->contains($account)) {
-            $this->accounts->add($account);
+        if (!$this->customers->contains($customer)) {
+            $this->customers->add($customer);
         }
 
         return $this;
     }
 
     /**
-     * Remove account
+     * Remove customer
      *
-     * @param Account $account
+     * @param Account $customer
      */
-    public function removeAccount(Account $account)
+    public function removeCustomer(Account $customer)
     {
-        if ($this->accounts->contains($account)) {
-            $this->accounts->removeElement($account);
+        if ($this->customers->contains($customer)) {
+            $this->customers->removeElement($customer);
         }
     }
 
     /**
-     * Get accounts
+     * Get customers
      *
      * @return Collection|Account[]
      */
-    public function getAccounts()
+    public function getCustomers()
     {
-        return $this->accounts;
+        return $this->customers;
     }
 
     /**

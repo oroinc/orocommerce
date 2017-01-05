@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Model;
 
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
 use Oro\Bundle\PricingBundle\Async\Topics;
@@ -102,7 +102,7 @@ class PriceListRelationTriggerHandlerTest extends WebTestCase
     {
         /** @var Website $website */
         $website = $this->getReference(LoadWebsiteData::WEBSITE1);
-        /** @var AccountGroup $accountGroup */
+        /** @var CustomerGroup $accountGroup */
         $accountGroup = $this->getReference(LoadGroups::GROUP1);
         $this->handler->handleAccountGroupChange($accountGroup, $website);
         $this->handler->sendScheduledTriggers();
@@ -162,7 +162,7 @@ class PriceListRelationTriggerHandlerTest extends WebTestCase
 
     public function testHandleAccountGroupRemove()
     {
-        /** @var AccountGroup $accountGroup */
+        /** @var CustomerGroup $accountGroup */
         $accountGroup = $this->getReference(LoadGroups::GROUP1);
         $this->handler->handleAccountGroupRemove($accountGroup);
         $this->handler->sendScheduledTriggers();

@@ -7,7 +7,7 @@ use Doctrine\Common\Util\ClassUtils;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccounts;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -41,7 +41,7 @@ class DefaultVisibilityListenerTest extends WebTestCase
     protected $account;
 
     /**
-     * @var AccountGroup
+     * @var CustomerGroup
      */
     protected $accountGroup;
 

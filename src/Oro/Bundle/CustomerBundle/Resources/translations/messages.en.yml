@@ -47,12 +47,12 @@ oro.customer:
         cancel: 'Cancel'
         save: 'Save'
 
-    accountgroup:
+    customergroup:
         entity_label: 'Customer Group'
         entity_plural_label: 'Customer Groups'
         name.label: 'Name'
         id.label: 'Id'
-        accounts.label: 'Customers'
+        customers.label: 'Customers'
         form.choose: 'Choose a customer group...'
 
     accountuser:
@@ -217,7 +217,7 @@ oro.customer:
     sections:
         general: 'General Information'
         addresses: 'Addresses'
-        accountgroup:
+        customergroup:
             accounts: 'Customers'
         accountuserrole:
             users: 'Users'
@@ -244,7 +244,7 @@ oro.customer:
         system_organization.label: System Organization
         frontend_owner.label: Owner
         owner.label:         Owner
-        postal_code.label:   Zip/postal code
+        postal_code.label:   Zip/Postal Code
         primary.label:       Primary
         region.label:        State
         region_text.label:   State

@@ -10,7 +10,7 @@ use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 
 class LoadAnonymousAccountGroup extends AbstractFixture implements ContainerAwareInterface
 {
@@ -37,7 +37,7 @@ class LoadAnonymousAccountGroup extends AbstractFixture implements ContainerAwar
      */
     public function load(ObjectManager $manager)
     {
-        $accountGroup = new AccountGroup();
+        $accountGroup = new CustomerGroup();
         $accountGroup->setName(self::GROUP_NAME_NON_AUTHENTICATED);
 
         /** @var EntityManager $manager */

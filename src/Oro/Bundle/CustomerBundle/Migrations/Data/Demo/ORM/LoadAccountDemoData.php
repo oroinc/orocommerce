@@ -5,7 +5,7 @@ namespace Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\MigrationBundle\Fixture\AbstractEntityReferenceFixture;
 use Oro\Bundle\CustomerBundle\Entity\Account;
@@ -64,7 +64,7 @@ class LoadAccountDemoData extends AbstractEntityReferenceFixture implements Depe
         $accountOwner = $manager->getRepository('OroUserBundle:User')->findOneBy([]);
 
         foreach ($this->accounts as $accountName => $accountData) {
-            /** @var AccountGroup $accountGroup */
+            /** @var CustomerGroup $accountGroup */
             $accountGroup = $this->getReference(
                 LoadAccountGroupDemoData::ACCOUNT_GROUP_REFERENCE_PREFIX . $accountData['group']
             );
@@ -83,7 +83,7 @@ class LoadAccountDemoData extends AbstractEntityReferenceFixture implements Depe
 
             if (isset($accountData['subsidiaries'])) {
                 foreach ($accountData['subsidiaries'] as $subsidiaryName => $subsidiaryData) {
-                    /** @var AccountGroup $subsidiaryGroup */
+                    /** @var CustomerGroup $subsidiaryGroup */
                     $subsidiaryGroup = $this->getReference(
                         LoadAccountGroupDemoData::ACCOUNT_GROUP_REFERENCE_PREFIX . $subsidiaryData['group']
                     );
