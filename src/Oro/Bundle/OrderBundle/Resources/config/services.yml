@@ -343,3 +343,13 @@ services:
             - '@doctrine'
         tags:
             - { name: oro_multi_currency.currency_checker_provider }
+
+    oro_order.event_listener.unit_visibility.datagrid:
+        parent: oro_product.event_listener.unit_visibility.datagrid_basic
+        arguments:
+            index_0: 'productUnitCode'
+            index_3: {isShortUnitCode: false}
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.order-line-items-grid, method: onBuildBefore }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.order-line-items-grid-frontend, method: onBuildBefore }
+
