@@ -68,7 +68,6 @@ define(function(require) {
             if (isChecked) {
                 this.$dependedEl.closest(this.options.selectors.row_container).show();
             } else {
-                this.$dependedEl.prop('checked', true);
                 this.$dependedEl.closest(this.options.selectors.row_container).hide();
             }
         }

@@ -6,13 +6,12 @@ use Oro\Bundle\CatalogBundle\Entity\CategoryDefaultProductOptions;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryDefaultProductOptionsType;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryUnitPrecisionType;
 use Oro\Bundle\CatalogBundle\Model\CategoryUnitPrecision;
+use Oro\Bundle\CatalogBundle\Visibility\CategoryDefaultProductUnitOptionsVisibilityInterface;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Form\Extension\IntegerExtension;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use Oro\Bundle\ProductBundle\Service\SingleUnitModeService;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
-use Symfony\Component\Form\FormConfigInterface;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Validator\Validation;
@@ -27,20 +26,21 @@ class CategoryDefaultProductOptionsTypeTest extends FormIntegrationTestCase
     protected $formType;
 
     /**
-     * @var SingleUnitModeService|\PHPUnit_Framework_MockObject_MockObject
+     * @var CategoryDefaultProductUnitOptionsVisibilityInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $singleUnitModeService;
+    protected $defaultProductOptionsVisibility;
 
     /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
-        $this->singleUnitModeService = $this->getMockBuilder(SingleUnitModeService::class)
+        $this->defaultProductOptionsVisibility = $this
+            ->getMockBuilder(CategoryDefaultProductUnitOptionsVisibilityInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->formType = new CategoryDefaultProductOptionsType($this->singleUnitModeService);
+        $this->formType = new CategoryDefaultProductOptionsType($this->defaultProductOptionsVisibility);
         $this->formType->setDataClass(self::DATA_CLASS);
         parent::setUp();
     }
@@ -72,30 +72,26 @@ class CategoryDefaultProductOptionsTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @param boolean $isSingleUnitMode
-     * @param boolean $isValid
      * @param CategoryDefaultProductOptions $defaultData
      * @param array|CategoryUnitPrecision $submittedData
      * @param CategoryDefaultProductOptions $expectedData
      * @dataProvider submitProvider
      */
     public function testSubmit(
-        $isSingleUnitMode,
-        $isValid,
         CategoryDefaultProductOptions $defaultData,
         $submittedData,
         CategoryDefaultProductOptions $expectedData
     ) {
-        $this->singleUnitModeService->expects(static::any())
-            ->method('isSingleUnitMode')
-            ->willReturn($isSingleUnitMode);
+        $this->defaultProductOptionsVisibility->expects(static::any())
+            ->method('isDefaultUnitPrecisionSelectionAvailable')
+            ->willReturn(true);
 
         $form = $this->factory->create($this->formType, $defaultData, []);
 
         $this->assertEquals($defaultData, $form->getData());
 
         $form->submit($submittedData);
-        $this->assertEquals($isValid, $form->isValid());
+        $this->assertTrue($form->isValid());
         $this->assertEquals($expectedData, $form->getData());
     }
 
@@ -105,16 +101,12 @@ class CategoryDefaultProductOptionsTypeTest extends FormIntegrationTestCase
     public function submitProvider()
     {
         return [
-            'UnitPrecisionWithoutValueNoSingleMode' => [
-                'isSingleUnitMode' => false,
-                'isValid' => true,
+            'UnitPrecisionWithoutValue' => [
                 'defaultData'   => new CategoryDefaultProductOptions(),
                 'submittedData' => [],
                 'expectedData'  => new CategoryDefaultProductOptions(),
             ],
-            'UnitPrecisionWitValueNoSingleMode' => [
-                'isSingleUnitMode' => false,
-                'isValid' => true,
+            'UnitPrecisionWitValue' => [
                 'defaultData'   => new CategoryDefaultProductOptions(),
                 'submittedData' => [
                     'unitPrecision' => [
@@ -127,26 +119,23 @@ class CategoryDefaultProductOptionsTypeTest extends FormIntegrationTestCase
                         ->setUnit((new ProductUnit())->setCode('kg'))
                         ->setPrecision(5))
             ],
-            'UnitPrecisionWithoutValueWithSingleMode' => [
-                'isSingleUnitMode' => true,
-                'isValid' => true,
-                'defaultData'   => new CategoryDefaultProductOptions(),
-                'submittedData' => [],
-                'expectedData'  => new CategoryDefaultProductOptions(),
-            ],
-            'UnitPrecisionWitValueWithSingleMode' => [
-                'isSingleUnitMode' => true,
-                'isValid' => false,
-                'defaultData'   => new CategoryDefaultProductOptions(),
-                'submittedData' => [
-                    'unitPrecision' => [
-                        'unit' => 'kg',
-                        'precision' => 5,
-                    ]
-                ],
-                'expectedData'  => new CategoryDefaultProductOptions(),
-            ]
         ];
+    }
+
+    public function testSubmitNotAvailableUnitPrecisionOptions()
+    {
+        $this->defaultProductOptionsVisibility->expects(static::any())
+            ->method('isDefaultUnitPrecisionSelectionAvailable')
+            ->willReturn(false);
+        $defaultData = new CategoryDefaultProductOptions();
+
+        $form = $this->factory->create($this->formType, $defaultData, []);
+
+        $this->assertEquals($defaultData, $form->getData());
+
+        $form->submit([]);
+        $this->assertEquals(true, $form->isValid());
+        $this->assertEquals(new CategoryDefaultProductOptions(), $form->getData());
     }
 
     public function testGetName()

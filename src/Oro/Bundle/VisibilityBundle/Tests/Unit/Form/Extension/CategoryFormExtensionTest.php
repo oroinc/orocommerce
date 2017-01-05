@@ -8,6 +8,7 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryDefaultProductOptionsType;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryType;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryUnitPrecisionType;
+use Oro\Bundle\CatalogBundle\Visibility\CategoryDefaultProductUnitOptionsVisibilityInterface;
 use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Extension\Stub\ImageTypeStub;
 use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Extension\Stub\OroRichTextTypeStub;
 use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\DataChangesetTypeStub;
@@ -23,7 +24,6 @@ use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizationCollectionType
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Form\Extension\IntegerExtension;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use Oro\Bundle\ProductBundle\Service\SingleUnitModeService;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugType;
 use Oro\Bundle\RedirectBundle\Tests\Unit\Form\Type\Stub\LocalizedSlugTypeStub;
@@ -71,11 +71,13 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $singleUnitModeService = $this->getMockBuilder(SingleUnitModeService::class)
+        /** @var CategoryDefaultProductUnitOptionsVisibilityInterface $defaultProductOptionsVisibility */
+        $defaultProductOptionsVisibility = $this
+            ->getMockBuilder(CategoryDefaultProductUnitOptionsVisibilityInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $defaultProductOptions = new CategoryDefaultProductOptionsType($singleUnitModeService);
+        $defaultProductOptions = new CategoryDefaultProductOptionsType($defaultProductOptionsVisibility);
         $defaultProductOptions->setDataClass('Oro\Bundle\CatalogBundle\Entity\CategoryDefaultProductOptions');
 
         $categoryUnitPrecision = new CategoryUnitPrecisionType();

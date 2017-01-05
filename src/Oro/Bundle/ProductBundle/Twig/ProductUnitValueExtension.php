@@ -6,8 +6,6 @@ use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatterInterface;
 
 class ProductUnitValueExtension extends \Twig_Extension
 {
-    const NAME = 'oro_product_unit_value';
-
     /**
      * @var UnitValueFormatterInterface
      */

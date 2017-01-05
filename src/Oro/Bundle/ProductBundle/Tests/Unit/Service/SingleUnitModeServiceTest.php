@@ -3,9 +3,6 @@
 namespace Oro\Bundle\ProductBundle\Tests\Service;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Provider\DefaultProductUnitProviderInterface;
 use Oro\Bundle\ProductBundle\Service\SingleUnitModeService;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -36,9 +33,6 @@ class SingleUnitModeServiceTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->configManager = $this->getMockBuilder(ConfigManager::class)
-            ->disableOriginalConstructor()->getMock();
-
-        $this->unitProvider = $this->getMockBuilder(DefaultProductUnitProviderInterface::class)
             ->disableOriginalConstructor()->getMock();
 
         $this->unitModeProvider = new SingleUnitModeService($this->configManager, $this->unitProvider);
@@ -83,178 +77,14 @@ class SingleUnitModeServiceTest extends \PHPUnit_Framework_TestCase
         static::assertTrue($this->unitModeProvider->isSingleUnitModeCodeVisible());
     }
 
-    public function testIsProductPrimaryUnitSingleAndDefault()
-    {
-        $unit = 'each';
-
-        $this->configManager->expects(static::once())
-            ->method('get')
-            ->with('oro_product.default_unit')
-            ->willReturn($unit);
-
-        $product = $this->getProductWithPrimaryUnit($unit);
-
-        static::assertTrue($this->unitModeProvider->isProductPrimaryUnitSingleAndDefault($product));
-    }
-
-    public function testIsProductPrimaryUnitSingleAndDefaultDiffUnit()
-    {
-        $this->configManager->expects(static::once())
-            ->method('get')
-            ->with('oro_product.default_unit')
-            ->willReturn('each');
-
-        $product = $this->getProductWithPrimaryUnit('item');
-
-        static::assertFalse($this->unitModeProvider->isProductPrimaryUnitSingleAndDefault($product));
-    }
-
-    public function testIsProductPrimaryUnitSingleAndDefaultAdditionalUnits()
-    {
-        $unit = 'each';
-        $this->configManager->expects(static::once())
-            ->method('get')
-            ->with('oro_product.default_unit')
-            ->willReturn($unit);
-
-        $product = $this->getProductWithPrimaryUnit($unit)
-            ->addAdditionalUnitPrecision($this->getProductUnitPrecision('item'));
-
-        static::assertFalse($this->unitModeProvider->isProductPrimaryUnitSingleAndDefault($product));
-    }
-
     public function testGetConfigDefaultUnit()
     {
-        $defaultUnit = $this->createMock(ProductUnit::class);
-        $defaultUnitPrecision = $this->createMock(ProductUnitPrecision::class);
-        $defaultUnitPrecision->expects(static::once())
-            ->method('getUnit')
-            ->willReturn($defaultUnit);
-
-        $this->unitProvider->expects(static::once())
-            ->method('getDefaultProductUnitPrecision')
-            ->willReturn($defaultUnitPrecision);
-
-        $this->assertEquals($defaultUnit, $this->unitModeProvider->getConfigDefaultUnit());
-    }
-
-    public function testIsProductPrimaryUnitDefault()
-    {
+        $defaultUnit = 'each';
         $this->configManager->expects(static::once())
             ->method('get')
             ->with('oro_product.default_unit')
-            ->willReturn('each');
+            ->willReturn($defaultUnit);
 
-        $product = $this->getProductWithPrimaryUnit('each');
-
-        static::assertTrue($this->unitModeProvider->isProductPrimaryUnitDefault($product));
-    }
-
-    public function testIsDefaultPrimaryUnit()
-    {
-        $unit = $this->createMock(ProductUnit::class);
-        $unit->expects(static::once())
-            ->method('getCode')
-            ->willReturn('each');
-
-        $unitPrecision = $this->createMock(ProductUnitPrecision::class);
-        $unitPrecision->expects(static::once())
-            ->method('getUnit')
-            ->willReturn($unit);
-
-        $this->unitProvider->expects(static::once())
-            ->method('getDefaultProductUnitPrecision')
-            ->willReturn($unitPrecision);
-
-        static::assertTrue($this->unitModeProvider->isDefaultPrimaryUnitCode('each'));
-    }
-
-    public function testIsDefaultPrimaryFalse()
-    {
-        $unit = $this->createMock(ProductUnit::class);
-        $unit->expects(static::once())
-            ->method('getCode')
-            ->willReturn('each');
-
-        $unitPrecision = $this->createMock(ProductUnitPrecision::class);
-        $unitPrecision->expects(static::once())
-            ->method('getUnit')
-            ->willReturn($unit);
-
-        $this->unitProvider->expects(static::once())
-            ->method('getDefaultProductUnitPrecision')
-            ->willReturn($unitPrecision);
-
-        static::assertFalse($this->unitModeProvider->isDefaultPrimaryUnitCode('otherUnit'));
-    }
-
-    public function testIsDefaultPrimaryUnitCode()
-    {
-        $unit = $this->createMock(ProductUnit::class);
-        $unit->expects(static::once())
-            ->method('getCode')
-            ->willReturn('each');
-
-        $unitPrecision = $this->createMock(ProductUnitPrecision::class);
-        $unitPrecision->expects(static::once())
-            ->method('getUnit')
-            ->willReturn($unit);
-
-        $this->unitProvider->expects(static::once())
-            ->method('getDefaultProductUnitPrecision')
-            ->willReturn($unitPrecision);
-
-        $unit = $this->createMock(ProductUnit::class);
-        $unit->expects(static::once())
-            ->method('getCode')
-            ->willReturn('each');
-
-        static::assertTrue($this->unitModeProvider->isDefaultPrimaryUnit($unit));
-    }
-
-    public function testIsDefaultPrimaryCodeFalse()
-    {
-        $unit = $this->createMock(ProductUnit::class);
-        $unit->expects(static::once())
-            ->method('getCode')
-            ->willReturn('each');
-
-        $unitPrecision = $this->createMock(ProductUnitPrecision::class);
-        $unitPrecision->expects(static::once())
-            ->method('getUnit')
-            ->willReturn($unit);
-
-        $this->unitProvider->expects(static::once())
-            ->method('getDefaultProductUnitPrecision')
-            ->willReturn($unitPrecision);
-
-        $unit = $this->createMock(ProductUnit::class);
-        $unit->expects(static::once())
-            ->method('getCode')
-            ->willReturn('otherUnit');
-
-        static::assertFalse($this->unitModeProvider->isDefaultPrimaryUnit($unit));
-    }
-
-    /**
-     * @param string $unitCode
-     * @return Product
-     */
-    private function getProductWithPrimaryUnit($unitCode)
-    {
-        return (new Product())->setPrimaryUnitPrecision($this->getProductUnitPrecision($unitCode));
-    }
-
-    /**
-     * @param string $unitCode
-     * @return ProductUnitPrecision|object
-     */
-    private function getProductUnitPrecision($unitCode)
-    {
-        return $this->getEntity(ProductUnitPrecision::class, [
-            'unit' => $this->getEntity(ProductUnit::class, [
-                'code' => $unitCode,
-            ]),
-        ]);
+        $this->assertEquals($defaultUnit, $this->unitModeProvider->getDefaultUnitCode());
     }
 }

@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Layout\DataProvider;
 
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Layout\DataProvider\SingleUnitModeProvider;
 use Oro\Bundle\ProductBundle\Service\SingleUnitModeService;
 
@@ -13,9 +12,6 @@ class SingleUnitModeProviderTest extends \PHPUnit_Framework_TestCase
 
     /** @internal */
     const CODE_VISIBLE = false;
-
-    /** @internal */
-    const PRODUCT_PRIMARY_UNIT = true;
 
     /** @internal */
     const CONFIG_DEFAULT_UNIT = 'item';
@@ -53,27 +49,15 @@ class SingleUnitModeProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(self::CODE_VISIBLE, $this->provider->isSingleUnitModeCodeVisible());
     }
 
-    public function testIsProductPrimaryUnitSingleAndDefault()
-    {
-        $this->singleUnitService->expects($this->once())
-            ->method('isProductPrimaryUnitSingleAndDefault')
-            ->willReturn(self::PRODUCT_PRIMARY_UNIT);
-
-        $this->assertSame(
-            self::PRODUCT_PRIMARY_UNIT,
-            $this->provider->isProductPrimaryUnitSingleAndDefault(new Product())
-        );
-    }
-
     public function testGetConfigDefaultUnit()
     {
         $this->singleUnitService->expects($this->once())
-            ->method('getConfigDefaultUnit')
+            ->method('getDefaultUnitCode')
             ->willReturn(self::CONFIG_DEFAULT_UNIT);
 
         $this->assertSame(
             self::CONFIG_DEFAULT_UNIT,
-            $this->provider->getConfigDefaultUnit()
+            $this->provider->getDefaultUnitCode()
         );
     }
 }
