@@ -7,7 +7,7 @@ use Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig;
 use Oro\Bundle\PaymentBundle\Form\EventSubscriber\RuleMethodConfigCollectionSubscriber;
 use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodConfigCollectionType;
 use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodConfigType;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodProvidersRegistry;
 use Oro\Bundle\PaymentBundle\Tests\Unit\Form\EventListener\Stub\RuleMethodConfigCollectionSubscriberStub;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
@@ -98,8 +98,11 @@ class PaymentMethodConfigCollectionTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        /** @var PaymentMethodRegistry|\PHPUnit_Framework_MockObject_MockObject $methodRegistry */
-        $methodRegistry = $this->getMockBuilder(PaymentMethodRegistry::class)->disableOriginalConstructor()->getMock();
+        /** @var PaymentMethodProvidersRegistry|\PHPUnit_Framework_MockObject_MockObject $methodRegistry */
+        $methodRegistry = $this
+            ->getMockBuilder(PaymentMethodProvidersRegistry::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         /** @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject $translator */
         $translator = $this->getMockBuilder(TranslatorInterface::class)->disableOriginalConstructor()->getMock();
 

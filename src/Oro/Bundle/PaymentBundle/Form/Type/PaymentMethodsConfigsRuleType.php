@@ -5,7 +5,7 @@ namespace Oro\Bundle\PaymentBundle\Form\Type;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodProvidersRegistry;
 use Oro\Bundle\RuleBundle\Form\Type\RuleType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -20,7 +20,7 @@ class PaymentMethodsConfigsRuleType extends AbstractType
     const BLOCK_PREFIX = 'oro_payment_methods_configs_rule';
 
     /**
-     * @var PaymentMethodRegistry
+     * @var PaymentMethodProvidersRegistry
      */
     protected $methodRegistry;
 
@@ -30,10 +30,10 @@ class PaymentMethodsConfigsRuleType extends AbstractType
     protected $translator;
 
     /**
-     * @param PaymentMethodRegistry $methodRegistry
+     * @param PaymentMethodProvidersRegistry $methodRegistry
      * @param TranslatorInterface $translator
      */
-    public function __construct(PaymentMethodRegistry $methodRegistry, TranslatorInterface $translator)
+    public function __construct(PaymentMethodProvidersRegistry $methodRegistry, TranslatorInterface $translator)
     {
         $this->methodRegistry = $methodRegistry;
         $this->translator = $translator;

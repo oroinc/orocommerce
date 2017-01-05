@@ -47,7 +47,7 @@ class PaymentMethodViewsProvider
         }
 
         $methodTypes = array_map(function (PaymentMethodInterface $method) {
-            return $method->getType();
+            return $method->getIdentifier();
         }, $methods);
 
         $paymentMethodViews = [];

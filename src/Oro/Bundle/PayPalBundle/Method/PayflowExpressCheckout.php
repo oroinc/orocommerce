@@ -92,7 +92,7 @@ class PayflowExpressCheckout implements PaymentMethodInterface
     /**
      * {@inheritdoc}
      */
-    public function getType()
+    public function getIdentifier()
     {
         return static::TYPE;
     }

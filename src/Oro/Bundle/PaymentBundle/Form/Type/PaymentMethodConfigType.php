@@ -4,7 +4,7 @@ namespace Oro\Bundle\PaymentBundle\Form\Type;
 
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodProvidersRegistry;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -18,7 +18,7 @@ class PaymentMethodConfigType extends AbstractType
     const NAME = 'oro_payment_method_config';
 
     /**
-     * @var PaymentMethodRegistry
+     * @var PaymentMethodProvidersRegistry
      */
     protected $methodRegistry;
 
@@ -28,11 +28,11 @@ class PaymentMethodConfigType extends AbstractType
     protected $translator;
 
     /**
-     * @param PaymentMethodRegistry $methodRegistry
+     * @param PaymentMethodProvidersRegistry $methodRegistry
      * @param TranslatorInterface $translator
      */
     public function __construct(
-        PaymentMethodRegistry $methodRegistry,
+        PaymentMethodProvidersRegistry $methodRegistry,
         TranslatorInterface $translator
     ) {
         $this->methodRegistry = $methodRegistry;

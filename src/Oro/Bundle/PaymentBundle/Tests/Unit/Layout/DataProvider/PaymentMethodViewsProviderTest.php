@@ -87,7 +87,7 @@ class PaymentMethodViewsProviderTest extends \PHPUnit_Framework_TestCase
 
         $paymentMethod = $this->createMock(PaymentMethodInterface::class);
         $paymentMethod->expects(static::once())
-            ->method('getType')
+            ->method('getIdentifier')
             ->willReturn($methodType);
 
         $this->paymentMethodProvider->expects(static::once())

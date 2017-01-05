@@ -51,7 +51,7 @@ services:
     oro_payment.method.provider.method_provider:
         class: 'Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProvider'
         arguments:
-            - '@oro_payment.payment_method.registry'
+            - '@oro_payment.payment_method_provider.registry'
             - '@oro_payment.payment_methods_configs.rules_provider_basic'
 
     oro_payment.provider.methods_provider:
@@ -95,7 +95,7 @@ services:
         abstract: true
         arguments:
             - '@oro_action.expression.context_accessor'
-            - '@oro_payment.payment_method.registry'
+            - '@oro_payment.payment_method_provider.registry'
             - '@oro_payment.provider.payment_transaction'
             - '@router'
         calls:
@@ -158,7 +158,7 @@ services:
     oro_payment.condition.payment_method_supports:
         class: 'Oro\Bundle\PaymentBundle\Condition\PaymentMethodSupports'
         arguments:
-            - '@oro_payment.payment_method.registry'
+            - '@oro_payment.payment_method_provider.registry'
         tags:
             - { name: oro_action.condition, alias: 'payment_method_supports' }
 
@@ -192,20 +192,20 @@ services:
     oro_payment.condition.require_payment_redirect:
         class: 'Oro\Bundle\PaymentBundle\Condition\RequirePaymentRedirect'
         arguments:
-            - '@oro_payment.payment_method.registry'
+            - '@oro_payment.payment_method_provider.registry'
             - '@event_dispatcher'
         tags:
             - { name: oro_action.condition, alias: 'require_payment_redirect' }
 
-    oro_payment.payment_method.registry:
-        class: 'Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry'
+    oro_payment.payment_method_provider.registry:
+        class: 'Oro\Bundle\PaymentBundle\Method\PaymentMethodProvidersRegistry'
         public: false
 
     oro_payment.payment_method.view.registry:
         class: 'Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry'
         public: false
         arguments:
-            - '@oro_payment.payment_method.registry'
+            - '@oro_payment.payment_method_provider.registry'
 
     oro_payment.provider.extract_options:
         class: 'Oro\Bundle\PaymentBundle\Provider\ExtractOptionsProvider'

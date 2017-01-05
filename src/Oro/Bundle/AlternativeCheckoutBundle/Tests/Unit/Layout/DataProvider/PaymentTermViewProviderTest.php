@@ -5,7 +5,7 @@ namespace Oro\Bundle\AlternativeBundle\Tests\Unit\Layout\DataProvider;
 use Oro\Bundle\AlternativeCheckoutBundle\Layout\DataProvider\PaymentTermViewProvider;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodProvidersRegistry;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry;
 use Oro\Bundle\PaymentTermBundle\Method\PaymentTerm;
@@ -23,7 +23,7 @@ class PaymentTermViewProviderTest extends \PHPUnit_Framework_TestCase
     protected $paymentMethodViewRegistry;
 
     /**
-     * @var PaymentMethodRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var PaymentMethodProvidersRegistry|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $paymentMethodRegistry;
 

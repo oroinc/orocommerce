@@ -219,7 +219,7 @@ services:
     oro_checkout.workflow_state.mapper.payment_method_diff:
         class: 'Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\PaymentMethodDiffMapper'
         arguments:
-            - '@oro_payment.payment_method.registry'
+            - '@oro_payment.payment_method_provider.registry'
         public: false
         tags:
             - { name: checkout.workflow_state.mapper }

@@ -2,12 +2,12 @@
 
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\Action;
 
+use Oro\Bundle\PaymentBundle\Action\ValidateAction;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
+
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Symfony\Component\PropertyAccess\PropertyPath;
 use Symfony\Component\Routing\RouterInterface;
-
-use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Oro\Bundle\PaymentBundle\Action\ValidateAction;
 
 class ValidateActionTest extends AbstractActionTest
 {
@@ -56,7 +56,7 @@ class ValidateActionTest extends AbstractActionTest
             ->with($options['paymentMethod'], PaymentMethodInterface::VALIDATE, $options['object'])
             ->willReturn($paymentTransaction);
 
-        $this->paymentMethodRegistry
+        $this->paymentMethodProvidersRegistry
             ->expects($this->once())
             ->method('getPaymentMethod')
             ->with($options['paymentMethod'])
@@ -177,7 +177,7 @@ class ValidateActionTest extends AbstractActionTest
     {
         return new ValidateAction(
             $this->contextAccessor,
-            $this->paymentMethodRegistry,
+            $this->paymentMethodProvidersRegistry,
             $this->paymentTransactionProvider,
             $this->router
         );

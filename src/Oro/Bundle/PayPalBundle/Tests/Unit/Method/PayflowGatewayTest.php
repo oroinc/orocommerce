@@ -16,7 +16,7 @@ class PayflowGatewayTest extends AbstractPayflowGatewayTest
 
     public function testGetType()
     {
-        $this->assertEquals('payflow_gateway', $this->method->getType());
+        $this->assertEquals('payflow_gateway', $this->method->getIdentifier());
     }
 
     /** {@inheritdoc} */

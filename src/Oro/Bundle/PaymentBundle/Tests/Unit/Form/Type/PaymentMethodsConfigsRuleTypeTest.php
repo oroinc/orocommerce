@@ -22,7 +22,7 @@ use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodConfigType;
 use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodsConfigsRuleDestinationType;
 use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodsConfigsRuleType;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodProvidersRegistry;
 use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Bundle\RuleBundle\Form\Type\RuleType;
 use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
@@ -44,9 +44,9 @@ class PaymentMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
     protected $formType;
 
     /**
-     * @var PaymentMethodRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var PaymentMethodProvidersRegistry|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $paymentMethodRegistry;
+    protected $paymentMethodProvidersRegistry;
 
     /**
      * @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -66,18 +66,18 @@ class PaymentMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
         parent::setUp();
 
         $this->translator = $this->getMockBuilder(TranslatorInterface::class)->getMock();
-        $this->paymentMethodRegistry = $this->getMockBuilder(PaymentMethodRegistry::class)
+        $this->paymentMethodProvidersRegistry = $this->getMockBuilder(PaymentMethodProvidersRegistry::class)
             ->disableOriginalConstructor()
             ->getMock();
         /** @var PaymentMethodInterface|\PHPUnit_Framework_MockObject_MockObject $paymentMethod */
         $this->paymentMethod = $this->getMockBuilder(PaymentMethodInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->paymentMethod->expects(static::any())->method('getType')->willReturn(self::PAYMENT_TYPE);
-        $this->paymentMethodRegistry->expects(static::any())
+        $this->paymentMethod->expects(static::any())->method('getIdentifier')->willReturn(self::PAYMENT_TYPE);
+        $this->paymentMethodProvidersRegistry->expects(static::any())
             ->method('getPaymentMethods')
             ->willReturn([$this->paymentMethod]);
-        $this->formType = new PaymentMethodsConfigsRuleType($this->paymentMethodRegistry, $this->translator);
+        $this->formType = new PaymentMethodsConfigsRuleType($this->paymentMethodProvidersRegistry, $this->translator);
     }
 
     public function testGetBlockPrefix()
@@ -192,8 +192,11 @@ class PaymentMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
         );
 
 
-        /** @var PaymentMethodRegistry|\PHPUnit_Framework_MockObject_MockObject $methodRegistry */
-        $methodRegistry = $this->getMockBuilder(PaymentMethodRegistry::class)->disableOriginalConstructor()->getMock();
+        /** @var PaymentMethodProvidersRegistry|\PHPUnit_Framework_MockObject_MockObject $methodRegistry */
+        $methodRegistry = $this
+            ->getMockBuilder(PaymentMethodProvidersRegistry::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         /** @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject $translator */
         $translator = $this->getMockBuilder(TranslatorInterface::class)->disableOriginalConstructor()->getMock();
         $methodRegistry->expects(static::any())

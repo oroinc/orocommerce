@@ -2,14 +2,14 @@
 
 namespace Oro\Bundle\PaymentBundle;
 
+use Oro\Bundle\PaymentBundle\DBAL\Types\SecureArrayType;
+use Oro\Bundle\PaymentBundle\DependencyInjection\Compiler\PaymentMethodProviderPass;
+
+use Oro\Bundle\PaymentBundle\DependencyInjection\Compiler\PaymentMethodViewPass;
+use Oro\Bundle\PaymentBundle\DependencyInjection\Compiler\TwigSandboxConfigurationPass;
+use Oro\Bundle\PaymentBundle\DependencyInjection\OroPaymentExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
-
-use Oro\Bundle\PaymentBundle\DependencyInjection\Compiler\TwigSandboxConfigurationPass;
-use Oro\Bundle\PaymentBundle\DependencyInjection\Compiler\PaymentMethodPass;
-use Oro\Bundle\PaymentBundle\DependencyInjection\Compiler\PaymentMethodViewPass;
-use Oro\Bundle\PaymentBundle\DependencyInjection\OroPaymentExtension;
-use Oro\Bundle\PaymentBundle\DBAL\Types\SecureArrayType;
 
 class OroPaymentBundle extends Bundle
 {
@@ -25,7 +25,7 @@ class OroPaymentBundle extends Bundle
     public function build(ContainerBuilder $container)
     {
         $container->addCompilerPass(new TwigSandboxConfigurationPass());
-        $container->addCompilerPass(new PaymentMethodPass());
+        $container->addCompilerPass(new PaymentMethodProviderPass());
         $container->addCompilerPass(new PaymentMethodViewPass());
         parent::build($container);
     }

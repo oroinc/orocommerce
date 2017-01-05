@@ -4,7 +4,7 @@ namespace Oro\Bundle\PaymentBundle\Form\EventSubscriber;
 
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodProvidersRegistry;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -12,7 +12,7 @@ use Symfony\Component\Form\FormEvents;
 class RuleMethodConfigCollectionSubscriber implements EventSubscriberInterface
 {
     /**
-     * @var PaymentMethodRegistry
+     * @var PaymentMethodProvidersRegistry
      */
     protected $methodRegistry;
 

@@ -114,7 +114,7 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
 
     public function testGetType()
     {
-        $this->assertSame('payflow_express_checkout', $this->expressCheckout->getType());
+        $this->assertSame('payflow_express_checkout', $this->expressCheckout->getIdentifier());
     }
 
     public function testIsApplicable()

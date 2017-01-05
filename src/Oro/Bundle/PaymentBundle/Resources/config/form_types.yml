@@ -2,7 +2,7 @@ services:
     oro_paymant.form_event_subscriber.rule_method_config_collection_subscriber:
         class: 'Oro\Bundle\PaymentBundle\Form\EventSubscriber\RuleMethodConfigCollectionSubscriber'
         arguments:
-            - '@oro_payment.payment_method.registry'
+            - '@oro_payment.payment_method_provider.registry'
 
     oro_payment.form.type.method_config_collection:
         class: Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodConfigCollectionType
@@ -14,7 +14,7 @@ services:
     oro_payment.form.type.method_config:
         class: Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodConfigType
         arguments:
-            - '@oro_payment.payment_method.registry'
+            - '@oro_payment.payment_method_provider.registry'
             - '@translator'
         tags:
             - { name: form.type, alias: oro_payment_method_config }
@@ -34,7 +34,7 @@ services:
     oro_payment.form.type.methods_configs_rule:
         class: Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodsConfigsRuleType
         arguments:
-            - '@oro_payment.payment_method.registry'
+            - '@oro_payment.payment_method_provider.registry'
             - '@translator'
         tags:
             - { name: form.type, alias: oro_payment_methods_configs_rule }

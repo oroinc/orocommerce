@@ -2,23 +2,23 @@
 
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\Action;
 
-use Psr\Log\LoggerInterface;
-
-use Symfony\Component\Routing\RouterInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
-use Oro\Component\ConfigExpression\ContextAccessor;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
-use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 use Oro\Bundle\PaymentBundle\Action\AbstractPaymentMethodAction;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodProvidersRegistry;
+
+use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
+use Oro\Component\ConfigExpression\ContextAccessor;
+
+use Psr\Log\LoggerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Routing\RouterInterface;
 
 abstract class AbstractActionTest extends \PHPUnit_Framework_TestCase
 {
     /** @var ContextAccessor|\PHPUnit_Framework_MockObject_MockObject */
     protected $contextAccessor;
 
-    /** @var PaymentMethodRegistry|\PHPUnit_Framework_MockObject_MockObject */
-    protected $paymentMethodRegistry;
+    /** @var PaymentMethodProvidersRegistry|\PHPUnit_Framework_MockObject_MockObject */
+    protected $paymentMethodProvidersRegistry;
 
     /** @var PaymentTransactionProvider|\PHPUnit_Framework_MockObject_MockObject */
     protected $paymentTransactionProvider;
@@ -39,7 +39,7 @@ abstract class AbstractActionTest extends \PHPUnit_Framework_TestCase
     {
         $this->contextAccessor = $this->createMock('Oro\Component\ConfigExpression\ContextAccessor');
 
-        $this->paymentMethodRegistry = $this->createMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry');
+        $this->paymentMethodProvidersRegistry = $this->createMock(PaymentMethodProvidersRegistry::class);
 
         $this->paymentTransactionProvider = $this
             ->getMockBuilder('Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider')
@@ -66,7 +66,7 @@ abstract class AbstractActionTest extends \PHPUnit_Framework_TestCase
             $this->action,
             $this->dispatcher,
             $this->contextAccessor,
-            $this->paymentMethodRegistry,
+            $this->paymentMethodProvidersRegistry,
             $this->paymentTransactionProvider,
             $this->router
         );

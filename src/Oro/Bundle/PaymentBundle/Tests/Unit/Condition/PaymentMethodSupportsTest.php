@@ -4,7 +4,7 @@ namespace Oro\Bundle\PaymentBundle\Tests\Unit\Condition;
 
 use Oro\Bundle\PaymentBundle\Condition\PaymentMethodSupports;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodProvidersRegistry;
 
 class PaymentMethodSupportsTest extends \PHPUnit_Framework_TestCase
 {
@@ -26,13 +26,13 @@ class PaymentMethodSupportsTest extends \PHPUnit_Framework_TestCase
     /** @var PaymentMethodSupports */
     protected $condition;
 
-    /** @var PaymentMethodRegistry | \PHPUnit_Framework_MockObject_MockObject */
-    protected $paymentMethodRegistry;
+    /** @var PaymentMethodProvidersRegistry | \PHPUnit_Framework_MockObject_MockObject */
+    protected $paymentMethodProvidersRegistry;
 
     public function setUp()
     {
-        $this->paymentMethodRegistry = $this->createMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry');
-        $this->condition = new PaymentMethodSupports($this->paymentMethodRegistry);
+        $this->paymentMethodProvidersRegistry = $this->createMock(PaymentMethodProvidersRegistry::class);
+        $this->condition = new PaymentMethodSupports($this->paymentMethodProvidersRegistry);
     }
 
     public function testGetName()
@@ -74,7 +74,7 @@ class PaymentMethodSupportsTest extends \PHPUnit_Framework_TestCase
             ->with($data[self::ACTION_NAME_KEY])
             ->willReturn($supportsData);
 
-        $this->paymentMethodRegistry->expects($this->once())
+        $this->paymentMethodProvidersRegistry->expects($this->once())
             ->method('getPaymentMethod')
             ->with($data[self::PAYMENT_METHOD_KEY])
             ->willReturn($paymentMethod);
@@ -107,7 +107,7 @@ class PaymentMethodSupportsTest extends \PHPUnit_Framework_TestCase
         $context = new \stdClass();
         $errors = $this->getMockForAbstractClass('Doctrine\Common\Collections\Collection');
 
-        $this->paymentMethodRegistry->expects($this->once())
+        $this->paymentMethodProvidersRegistry->expects($this->once())
             ->method('getPaymentMethod')
             ->will($this->throwException(new \InvalidArgumentException));
 

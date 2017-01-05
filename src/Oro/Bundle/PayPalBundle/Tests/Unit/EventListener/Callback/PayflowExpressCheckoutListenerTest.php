@@ -2,22 +2,22 @@
 
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\EventListener\Callback;
 
-use Psr\Log\LoggerInterface;
-
-use Symfony\Component\HttpFoundation\Response;
-
-use Oro\Bundle\PayPalBundle\EventListener\Callback\PayflowExpressCheckoutListener;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
+
 use Oro\Bundle\PaymentBundle\Event\CallbackErrorEvent;
+
 use Oro\Bundle\PaymentBundle\Event\CallbackReturnEvent;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodProvidersRegistry;
+use Oro\Bundle\PayPalBundle\EventListener\Callback\PayflowExpressCheckoutListener;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpFoundation\Response;
 
 class PayflowExpressCheckoutListenerTest extends \PHPUnit_Framework_TestCase
 {
     /** @var PayflowExpressCheckoutListener */
     protected $listener;
 
-    /** @var PaymentMethodRegistry|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PaymentMethodProvidersRegistry|\PHPUnit_Framework_MockObject_MockObject */
     protected $paymentMethodRegistry;
 
     /** @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject $dispatcher */
@@ -25,7 +25,7 @@ class PayflowExpressCheckoutListenerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->paymentMethodRegistry = $this->getMockBuilder('Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry')
+        $this->paymentMethodRegistry = $this->getMockBuilder(PaymentMethodProvidersRegistry::class)
             ->disableOriginalConstructor()
             ->getMock();
 

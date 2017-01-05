@@ -22,6 +22,6 @@ class PayPalPaymentsProTest extends AbstractPayflowGatewayTest
 
     public function testGetType()
     {
-        $this->assertEquals('paypal_payments_pro', $this->method->getType());
+        $this->assertEquals('paypal_payments_pro', $this->method->getIdentifier());
     }
 }

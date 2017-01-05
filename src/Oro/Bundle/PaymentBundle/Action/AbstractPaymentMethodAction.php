@@ -11,14 +11,14 @@ use Symfony\Component\Routing\RouterInterface;
 use Oro\Component\Action\Action\AbstractAction;
 use Oro\Component\ConfigExpression\ContextAccessor;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodProvidersRegistry;
 use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 
 abstract class AbstractPaymentMethodAction extends AbstractAction
 {
     use LoggerAwareTrait;
 
-    /** @var PaymentMethodRegistry */
+    /** @var PaymentMethodProvidersRegistry */
     protected $paymentMethodRegistry;
 
     /** @var PaymentTransactionProvider */
@@ -41,13 +41,13 @@ abstract class AbstractPaymentMethodAction extends AbstractAction
 
     /**
      * @param ContextAccessor $contextAccessor
-     * @param PaymentMethodRegistry $paymentMethodRegistry
+     * @param PaymentMethodProvidersRegistry $paymentMethodRegistry
      * @param PaymentTransactionProvider $paymentTransactionProvider
      * @param RouterInterface $router
      */
     public function __construct(
         ContextAccessor $contextAccessor,
-        PaymentMethodRegistry $paymentMethodRegistry,
+        PaymentMethodProvidersRegistry $paymentMethodRegistry,
         PaymentTransactionProvider $paymentTransactionProvider,
         RouterInterface $router
     ) {

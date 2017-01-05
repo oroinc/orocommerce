@@ -2,13 +2,13 @@
 
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\Action;
 
+use Oro\Bundle\PaymentBundle\Action\PurchaseAction;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyPath;
 use Symfony\Component\Routing\RouterInterface;
-
-use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
-use Oro\Bundle\PaymentBundle\Action\PurchaseAction;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 
 class PurchaseActionTest extends AbstractActionTest
 {
@@ -55,7 +55,7 @@ class PurchaseActionTest extends AbstractActionTest
             ->with($options['paymentMethod'], PaymentMethodInterface::PURCHASE, $options['object'])
             ->willReturn($paymentTransaction);
 
-        $this->paymentMethodRegistry
+        $this->paymentMethodProvidersRegistry
             ->expects($this->atLeastOnce())
             ->method('getPaymentMethod')
             ->with($options['paymentMethod'])
@@ -187,7 +187,7 @@ class PurchaseActionTest extends AbstractActionTest
     {
         return new PurchaseAction(
             $this->contextAccessor,
-            $this->paymentMethodRegistry,
+            $this->paymentMethodProvidersRegistry,
             $this->paymentTransactionProvider,
             $this->router
         );
@@ -280,7 +280,7 @@ class PurchaseActionTest extends AbstractActionTest
             ->with($paymentTransaction->getAction(), $paymentTransaction)
             ->willReturn([]);
 
-        $this->paymentMethodRegistry->expects($this->atLeastOnce())->method('getPaymentMethod')
+        $this->paymentMethodProvidersRegistry->expects($this->atLeastOnce())->method('getPaymentMethod')
             ->with($options['paymentMethod'])->willReturn($paymentMethod);
 
         $this->contextAccessor
@@ -381,7 +381,7 @@ class PurchaseActionTest extends AbstractActionTest
         $paymentMethod = $this->createMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface');
         $paymentMethod->expects($this->once())->method('execute')->willThrowException(new \Exception());
 
-        $this->paymentMethodRegistry
+        $this->paymentMethodProvidersRegistry
             ->expects($this->atLeastOnce())
             ->method('getPaymentMethod')
             ->willReturn($paymentMethod);

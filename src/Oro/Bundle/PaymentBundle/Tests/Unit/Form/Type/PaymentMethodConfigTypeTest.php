@@ -4,7 +4,7 @@ namespace Oro\Bundle\PaymentBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig;
 use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodConfigType;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodProvidersRegistry;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -15,21 +15,21 @@ class PaymentMethodConfigTypeTest extends FormIntegrationTestCase
      */
     protected $formType;
 
-    /** @var PaymentMethodRegistry|\PHPUnit_Framework_MockObject_MockObject */
-    protected $paymentMethodRegistry;
+    /** @var PaymentMethodProvidersRegistry|\PHPUnit_Framework_MockObject_MockObject */
+    protected $paymentMethodProvidersRegistry;
 
     /** @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $translator;
 
     protected function setUp()
     {
-        $this->paymentMethodRegistry = $this->getMockBuilder('Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry')
+        $this->paymentMethodProvidersRegistry = $this->getMockBuilder(PaymentMethodProvidersRegistry::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->translator = $translator = $this->getMockBuilder(TranslatorInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->formType = new PaymentMethodConfigType($this->paymentMethodRegistry, $this->translator);
+        $this->formType = new PaymentMethodConfigType($this->paymentMethodProvidersRegistry, $this->translator);
 
         parent::setUp();
     }

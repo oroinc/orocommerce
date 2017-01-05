@@ -4,13 +4,13 @@ namespace Oro\Bundle\PaymentBundle\Method\Provider;
 
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodProvidersRegistry;
 use Oro\Bundle\PaymentBundle\Provider\PaymentMethodsConfigsRulesProviderInterface;
 
 class PaymentMethodProvider
 {
     /**
-     * @var PaymentMethodRegistry
+     * @var PaymentMethodProvidersRegistry
      */
     private $paymentMethodRegistry;
 
@@ -20,11 +20,11 @@ class PaymentMethodProvider
     private $paymentMethodsConfigsRulesProvider;
 
     /**
-     * @param PaymentMethodRegistry $paymentMethodRegistry
+     * @param PaymentMethodProvidersRegistry $paymentMethodRegistry
      * @param PaymentMethodsConfigsRulesProviderInterface $paymentMethodsConfigsRulesProvider
      */
     public function __construct(
-        PaymentMethodRegistry $paymentMethodRegistry,
+        PaymentMethodProvidersRegistry $paymentMethodRegistry,
         PaymentMethodsConfigsRulesProviderInterface $paymentMethodsConfigsRulesProvider
     ) {
         $this->paymentMethodRegistry = $paymentMethodRegistry;
