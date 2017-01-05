@@ -3,7 +3,7 @@
 namespace Oro\Bundle\VisibilityBundle\EventListener;
 
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Provider\AccountUserRelationsProvider;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Event\CategoryTreeCreateAfterEvent;
@@ -53,10 +53,10 @@ class CategoryTreeHandlerListener
     /**
      * @param Category[] $categories
      * @param Account|null $account
-     * @param AccountGroup|null $accountGroup
+     * @param CustomerGroup|null $accountGroup
      * @return array
      */
-    protected function filterCategories(array $categories, Account $account = null, AccountGroup $accountGroup = null)
+    protected function filterCategories(array $categories, Account $account = null, CustomerGroup $accountGroup = null)
     {
         if ($account) {
             $hiddenCategoryIds = $this->categoryVisibilityResolver->getHiddenCategoryIdsForAccount($account);

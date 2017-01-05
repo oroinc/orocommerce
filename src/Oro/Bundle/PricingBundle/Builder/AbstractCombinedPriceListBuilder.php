@@ -6,7 +6,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityRepository;
 
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
 use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
@@ -247,7 +247,7 @@ abstract class AbstractCombinedPriceListBuilder
     /**
      * @param CombinedPriceList $cpl
      * @param Website $website
-     * @param Account|AccountGroup $targetEntity
+     * @param Account|CustomerGroup $targetEntity
      * @param bool|false $force
      */
     protected function updateRelationsAndPrices(

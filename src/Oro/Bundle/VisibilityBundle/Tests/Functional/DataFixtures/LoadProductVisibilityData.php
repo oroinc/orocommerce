@@ -7,7 +7,7 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccounts;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\CustomerBundle\Migrations\Data\ORM\LoadAnonymousAccountGroup;
@@ -94,18 +94,18 @@ class LoadProductVisibilityData extends AbstractFixture implements DependentFixt
 
     /**
      * @param string $groupReference
-     * @return AccountGroup
+     * @return CustomerGroup
      */
     private function getAccountGroup($groupReference)
     {
         if ($groupReference === 'account_group.anonymous') {
             $accountGroup = $this->container
                 ->get('doctrine')
-                ->getManagerForClass('OroCustomerBundle:AccountGroup')
-                ->getRepository('OroCustomerBundle:AccountGroup')
+                ->getManagerForClass('OroCustomerBundle:CustomerGroup')
+                ->getRepository('OroCustomerBundle:CustomerGroup')
                 ->findOneBy(['name' => LoadAnonymousAccountGroup::GROUP_NAME_NON_AUTHENTICATED]);
         } else {
-            /** @var AccountGroup $accountGroup */
+            /** @var CustomerGroup $accountGroup */
             $accountGroup = $this->getReference($groupReference);
         }
 
@@ -123,7 +123,7 @@ class LoadProductVisibilityData extends AbstractFixture implements DependentFixt
         array $accountGroupsData
     ) {
         foreach ($accountGroupsData as $groupReference => $accountGroupData) {
-            /** @var AccountGroup $accountGroup */
+            /** @var CustomerGroup $accountGroup */
             $accountGroup = $this->getAccountGroup($groupReference);
 
             $accountGroupProductVisibility = new AccountGroupProductVisibility();

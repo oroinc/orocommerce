@@ -22,7 +22,7 @@ Oro\Bundle\CustomerBundle\Entity\CustomerAddress:
         - Callback:
             methods: [isRegionValid]
 
-Oro\Bundle\CustomerBundle\Entity\AccountGroup:
+Oro\Bundle\CustomerBundle\Entity\CustomerGroup:
     properties:
         name:
             - NotBlank: ~
@@ -47,9 +47,9 @@ Oro\Bundle\CustomerBundle\Entity\AccountUser:
                 min: 6
                 max: 255
         plainPassword:
-            - NotBlank: { groups: [create] }
-            - Length:
-                min: 2
+            - NotBlank:
+                groups: [create]
+            - Oro\Bundle\UserBundle\Validator\Constraints\PasswordComplexity: ~
         username:
             - NotBlank: ~
             - Length:
@@ -85,7 +85,7 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
         - Callback:
             methods: [isRegionValid]
 
-Oro\Bundle\CustomerBundle\Entity\AccountUserRole:
+Oro\Bundle\CustomerBundle\Entity\CustomerUserRole:
     constraints:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
             fields: [label, account]

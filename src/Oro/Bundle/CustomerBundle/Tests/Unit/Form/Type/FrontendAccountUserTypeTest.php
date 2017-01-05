@@ -15,9 +15,9 @@ use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Form\Type\AccountUserRoleSelectType;
+use Oro\Bundle\CustomerBundle\Form\Type\CustomerUserRoleSelectType;
 use Oro\Bundle\CustomerBundle\Form\Type\AccountUserType;
-use Oro\Bundle\CustomerBundle\Form\Type\FrontendAccountUserRoleSelectType;
+use Oro\Bundle\CustomerBundle\Form\Type\FrontendCustomerUserRoleSelectType;
 use Oro\Bundle\CustomerBundle\Form\Type\FrontendAccountUserType;
 use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\EntitySelectTypeStub;
 use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\EntityType;
@@ -64,8 +64,8 @@ class FrontendAccountUserTypeTest extends AccountUserTypeTest
 
         $frontendUserRoleSelectType = new EntitySelectTypeStub(
             $this->getRoles(),
-            FrontendAccountUserRoleSelectType::NAME,
-            new AccountUserRoleSelectType($this->createTranslator())
+            FrontendCustomerUserRoleSelectType::NAME,
+            new CustomerUserRoleSelectType($this->createTranslator())
         );
         $addressEntityType = new EntityType($this->getAddresses(), 'test_address_entity');
         $accountSelectType = new AccountSelectTypeStub($this->getAccounts(), 'oro_customer_account_select');
@@ -79,7 +79,7 @@ class FrontendAccountUserTypeTest extends AccountUserTypeTest
                 [
                     OroDateType::NAME => new OroDateType(),
                     AccountUserType::NAME => $accountUserType,
-                    FrontendAccountUserRoleSelectType::NAME => $frontendUserRoleSelectType,
+                    FrontendCustomerUserRoleSelectType::NAME => $frontendUserRoleSelectType,
                     $accountSelectType->getName() => $accountSelectType,
                     FrontendOwnerSelectTypeStub::NAME => new FrontendOwnerSelectTypeStub(),
                     AddressCollectionTypeStub::NAME => new AddressCollectionTypeStub(),

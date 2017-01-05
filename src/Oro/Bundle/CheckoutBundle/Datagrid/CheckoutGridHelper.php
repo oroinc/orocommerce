@@ -66,9 +66,10 @@ class CheckoutGridHelper
         ];
 
         if ($totalMetadata) {
-            $from               = $config->offsetGetByPath('[source][query][from]');
-            $firstFrom          = current($from);
-            $updates['joins'][] = ['join' => $firstFrom['alias'] . '.source', 'alias' => '_source'];
+            $updates['joins'][] = [
+                'join' => $config->getOrmQuery()->getRootAlias() . '.source',
+                'alias' => '_source'
+            ];
 
             list(
                 $totalFields,

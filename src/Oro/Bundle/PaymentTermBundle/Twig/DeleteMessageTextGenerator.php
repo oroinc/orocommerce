@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PaymentTermBundle\Twig;
 
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\FilterBundle\Grid\Extension\OrmFilterExtension;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Manager\PaymentTermManager;
@@ -81,7 +81,7 @@ class DeleteMessageTextGenerator
      */
     protected function generateAccountGroupFilterUrl(PaymentTerm $paymentTerm)
     {
-        if (!$this->paymentTermManager->hasAssignedPaymentTerm(AccountGroup::class, $paymentTerm)) {
+        if (!$this->paymentTermManager->hasAssignedPaymentTerm(CustomerGroup::class, $paymentTerm)) {
             return null;
         }
 
@@ -89,7 +89,7 @@ class DeleteMessageTextGenerator
             $paymentTerm->getId(),
             static::ACCOUNT_GROUP_GRID_NAME,
             static::ACCOUNT_GROUP_GRID_ROUTE,
-            'oro.customer.accountgroup.entity_label'
+            'oro.customer.customergroup.entity_label'
         );
     }
 

@@ -5,7 +5,6 @@ namespace Oro\Bundle\CatalogBundle\EventListener;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
-use Oro\Bundle\DataGridBundle\EventListener\DatasourceBindParametersListener;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\LocaleBundle\Datagrid\Formatter\Property\LocalizedValueProperty;
@@ -83,19 +82,18 @@ class DatagridListener
      */
     protected function addCategoryJoin(DatagridConfiguration $config)
     {
-        $path = '[source][query][join][left]';
-        // join
         $joinCategory = [
             'join' => 'OroCatalogBundle:Category',
             'alias' => 'productCategory',
             'conditionType' => 'WITH',
             'condition' => 'product MEMBER OF productCategory.products',
         ];
-        $joins = $config->offsetGetByPath($path, []);
-        if (in_array($joinCategory, $joins, true)) {
-            return;
+        $query = $config->getOrmQuery();
+        $leftJoins = $query->getLeftJoins();
+        if (!in_array($joinCategory, $leftJoins, true)) {
+            $leftJoins[] = $joinCategory;
+            $query->setLeftJoins($leftJoins);
         }
-        $this->addConfigElement($config, $path, $joinCategory);
     }
 
     /**
@@ -130,10 +128,10 @@ class DatagridListener
             $productCategoryIds = array_merge($repo->getChildrenIds($category), $productCategoryIds);
         }
 
-        $config->offsetSetByPath('[source][query][where][and]', ['productCategory.id IN (:productCategoryIds)']);
+        $config->getOrmQuery()->addAndWhere('productCategory.id IN (:productCategoryIds)');
 
         $config->offsetSetByPath(
-            DatasourceBindParametersListener::DATASOURCE_BIND_PARAMETERS_PATH,
+            DatagridConfiguration::DATASOURCE_BIND_PARAMETERS_PATH,
             ['productCategoryIds']
         );
         $event->getParameters()->set('productCategoryIds', $productCategoryIds);

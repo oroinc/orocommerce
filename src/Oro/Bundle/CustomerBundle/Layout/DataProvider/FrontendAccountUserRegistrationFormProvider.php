@@ -108,9 +108,9 @@ class FrontendAccountUserRegistrationFormProvider extends AbstractFormProvider
         }
 
         $defaultRole = $this->managerRegistry
-            ->getManagerForClass('OroCustomerBundle:AccountUserRole')
-            ->getRepository('OroCustomerBundle:AccountUserRole')
-            ->getDefaultAccountUserRoleByWebsite($website);
+            ->getManagerForClass('OroCustomerBundle:CustomerUserRole')
+            ->getRepository('OroCustomerBundle:CustomerUserRole')
+            ->getDefaultCustomerUserRoleByWebsite($website);
 
         if (!$defaultRole) {
             throw new \RuntimeException(sprintf('Role "%s" was not found', AccountUser::ROLE_DEFAULT));

@@ -8,7 +8,7 @@ use Symfony\Component\DomCrawler\Crawler;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 
 /**
  * @dbIsolation
@@ -30,7 +30,7 @@ class AccountGroupControllerTest extends WebTestCase
         $this->client->useHashNavigation(true);
         $this->entityManager = $this->getContainer()
             ->get('doctrine')
-            ->getManagerForClass('OroCustomerBundle:AccountGroup');
+            ->getManagerForClass('OroCustomerBundle:CustomerGroup');
 
         $this->loadFixtures(
             [
@@ -174,10 +174,10 @@ class AccountGroupControllerTest extends WebTestCase
      */
     protected function getGroupId($name)
     {
-        /** @var AccountGroup $accountGroup */
+        /** @var CustomerGroup $accountGroup */
         $accountGroup = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroCustomerBundle:AccountGroup')
-            ->getRepository('OroCustomerBundle:AccountGroup')
+            ->getManagerForClass('OroCustomerBundle:CustomerGroup')
+            ->getRepository('OroCustomerBundle:CustomerGroup')
             ->findOneBy(['name' => $name]);
 
         return $accountGroup->getId();

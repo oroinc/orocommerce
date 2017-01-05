@@ -9,7 +9,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\TaxBundle\Entity\AccountTaxCode;
 use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadAccountTaxCodes;
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 
 /**
  * @dbIsolation
@@ -36,7 +36,7 @@ class AccountControllerTest extends WebTestCase
 
         /** @var Account $parent */
         $parent = $this->getReference('account.level_1');
-        /** @var AccountGroup $group */
+        /** @var CustomerGroup $group */
         $group = $this->getReference('account_group.group1');
         /** @var AbstractEnumValue $internalRating */
         $internalRating = $this->getReference('internal_rating.1 of 5');
@@ -184,7 +184,7 @@ class AccountControllerTest extends WebTestCase
      * @param Crawler           $crawler
      * @param string            $name
      * @param Account           $parent
-     * @param AccountGroup      $group
+     * @param CustomerGroup      $group
      * @param AbstractEnumValue $internalRating
      * @param AccountTaxCode    $accountTaxCode
      */
@@ -192,7 +192,7 @@ class AccountControllerTest extends WebTestCase
         Crawler $crawler,
         $name,
         Account $parent,
-        AccountGroup $group,
+        CustomerGroup $group,
         AbstractEnumValue $internalRating,
         AccountTaxCode $accountTaxCode
     ) {
@@ -215,7 +215,7 @@ class AccountControllerTest extends WebTestCase
      * @param string            $html
      * @param string            $name
      * @param Account           $parent
-     * @param AccountGroup      $group
+     * @param CustomerGroup      $group
      * @param AbstractEnumValue $internalRating
      * @param AccountTaxCode    $accountTaxCode
      */
@@ -223,7 +223,7 @@ class AccountControllerTest extends WebTestCase
         $html,
         $name,
         Account $parent,
-        AccountGroup $group,
+        CustomerGroup $group,
         AbstractEnumValue $internalRating,
         AccountTaxCode $accountTaxCode
     ) {
@@ -238,7 +238,7 @@ class AccountControllerTest extends WebTestCase
     /**
      * @param string $name
      * @param Account $parent
-     * @param AccountGroup $group
+     * @param CustomerGroup $group
      * @param AbstractEnumValue $internalRating
      * @param AccountTaxCode $accountTaxCode
      *
@@ -247,7 +247,7 @@ class AccountControllerTest extends WebTestCase
     protected function getFormValues(
         $name,
         Account $parent,
-        AccountGroup $group,
+        CustomerGroup $group,
         AbstractEnumValue $internalRating,
         AccountTaxCode $accountTaxCode
     ) {

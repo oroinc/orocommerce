@@ -53,6 +53,10 @@ class ShippingMethodExtensionTest extends \PHPUnit_Framework_TestCase
                     [$this->shippingMethodLabelFormatter, 'formatShippingMethodTypeLabel']
                 ),
                 new \Twig_SimpleFunction(
+                    'oro_shipping_method_with_type_label',
+                    [$this->shippingMethodLabelFormatter, 'formatShippingMethodWithTypeLabel']
+                ),
+                new \Twig_SimpleFunction(
                     'oro_shipping_method_config_template',
                     [$this->extension, 'getShippingMethodConfigRenderData']
                 )

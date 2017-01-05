@@ -4,7 +4,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\Controller;
 
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccounts;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
@@ -415,7 +415,7 @@ class PriceListControllerTest extends WebTestCase
     /**
      * @param string $reference
      *
-     * @return AccountGroup
+     * @return CustomerGroup
      */
     protected function getAccountGroup($reference)
     {

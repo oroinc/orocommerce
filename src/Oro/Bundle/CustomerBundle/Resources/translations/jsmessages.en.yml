@@ -5,7 +5,7 @@ oro.customer:
         primary: 'Primary'
         default_type: 'Default {{ type_name }}'
 
-    account_user_role:
+    customer_user_role:
         change_account_confirmation_title: 'Account changed'
         continue: 'Continue'
         cancel: 'Cancel'
