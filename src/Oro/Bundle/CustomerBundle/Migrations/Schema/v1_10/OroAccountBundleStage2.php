@@ -15,8 +15,8 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 class OroAccountBundleStage2 implements
     Migration,
     RenameExtensionAwareInterface,
-    OrderedMigrationInterface,
-    ActivityExtensionAwareInterface
+    ActivityExtensionAwareInterface,
+    OrderedMigrationInterface
 {
     use MigrationConstraintTrait;
 
@@ -27,7 +27,7 @@ class OroAccountBundleStage2 implements
 
     /**
      * @var ActivityExtension
-     */
+     **/
     private $activityExtension;
 
     /**
@@ -40,6 +40,7 @@ class OroAccountBundleStage2 implements
         $this->renameCustomerSettings($schema);
         $this->renameAccountUserAddressToAddressType($schema);
         $this->renameAccountAddressToAddressType($schema);
+        $this->renameAccountUserRole($schema);
         $this->renameCustomerGroup($schema);
 
         $this->activityExtension->addActivityAssociation(
@@ -47,6 +48,42 @@ class OroAccountBundleStage2 implements
             'oro_note',
             'oro_customer_group'
         );
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    private function renameAccountUserRole(Schema $schema)
+    {
+        $this->activityExtension->addActivityAssociation(
+            $schema,
+            'oro_note',
+            'oro_customer_user_role'
+        );
+        $table = $schema->getTable("oro_acc_user_access_role");
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_customer_user_role'),
+            ['customer_user_role_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+
+        $table = $schema->getTable("oro_account_role_to_website");
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_customer_user_role'),
+            ['customer_user_role_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+
+        $table = $schema->getTable("oro_rel_c3990ba6d7fa01cd30d950");
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_customer_user_role'),
+            ['customeruserrole_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addIndex(['customeruserrole_id'], 'idx_7ef0304fd5b2dcce', []);
     }
 
     /**
@@ -162,16 +199,6 @@ class OroAccountBundleStage2 implements
     }
 
     /**
-     * Get the order of this migration
-     *
-     * @return integer
-     */
-    public function getOrder()
-    {
-        return 2;
-    }
-
-    /**
      * Sets the ActivityExtension
      *
      * @param ActivityExtension $activityExtension
@@ -179,5 +206,15 @@ class OroAccountBundleStage2 implements
     public function setActivityExtension(ActivityExtension $activityExtension)
     {
         $this->activityExtension = $activityExtension;
+    }
+
+    /**
+     * Get the order of this migration
+     *
+     * @return integer
+     */
+    public function getOrder()
+    {
+        return 2;
     }
 }

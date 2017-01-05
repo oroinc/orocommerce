@@ -58,15 +58,15 @@ search:
                 target_type: text
                 target_fields: [lastName]
 
-    Oro\Bundle\CustomerBundle\Entity\AccountUserRole:
-        alias: oro_customer_account_user_role
-        label: oro.customer.accountuserrole.entity_plural_label
+    Oro\Bundle\CustomerBundle\Entity\CustomerUserRole:
+        alias: oro_customer_customer_user_role
+        label: oro.customer.customeruserrole.entity_plural_label
         title_fields: [label]
         route:
-            name: oro_customer_account_user_role_update
+            name: oro_customer_customer_user_role_update
             parameters:
                 id: id
-        search_template: OroCustomerBundle:AccountUserRole:searchResult.html.twig
+        search_template: OroCustomerBundle:CustomerUserRole:searchResult.html.twig
         fields:
             -
                 name: role

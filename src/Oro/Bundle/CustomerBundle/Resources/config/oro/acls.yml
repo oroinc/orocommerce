@@ -18,23 +18,23 @@ acls:
         group_name: "commerce"
         category: 'account_management'
 
-    oro_account_frontend_account_user_role_view:
+    oro_account_frontend_customer_user_role_view:
         type: entity
         permission: VIEW
-        class: OroCustomerBundle:AccountUserRole
+        class: OroCustomerBundle:CustomerUserRole
         group_name: "commerce"
         category: 'account_management'
 
-    oro_account_frontend_account_user_role_update:
+    oro_account_frontend_customer_user_role_update:
         type: entity
-        class: OroCustomerBundle:AccountUserRole
+        class: OroCustomerBundle:CustomerUserRole
         permission: EDIT
         group_name: "commerce"
         category: 'account_management'
 
-    oro_account_frontend_account_user_role_delete:
+    oro_account_frontend_customer_user_role_delete:
         type: entity
-        class: OroCustomerBundle:AccountUserRole
+        class: OroCustomerBundle:CustomerUserRole
         permission: DELETE
         group_name: "commerce"
         category: 'account_management'

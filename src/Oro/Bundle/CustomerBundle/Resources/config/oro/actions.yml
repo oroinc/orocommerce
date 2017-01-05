@@ -178,16 +178,16 @@ operations:
                    route: oro_customer_frontend_account_user_create
 
     oro_account_frontend_create_role:
-        label: oro.customer.action.account_user_role.create
+        label: oro.customer.action.customer_user_role.create
         applications: [commerce]
         routes:
-            - oro_customer_frontend_account_user_role_index
-        acl_resource: [CREATE, entity:commerce@Oro\Bundle\CustomerBundle\Entity\AccountUserRole]
+            - oro_customer_frontend_customer_user_role_index
+        acl_resource: [CREATE, entity:commerce@Oro\Bundle\CustomerBundle\Entity\CustomerUserRole]
         order: 10
         actions:
             - '@redirect':
                 parameters:
-                    route: oro_customer_frontend_account_user_role_create
+                    route: oro_customer_frontend_customer_user_role_create
 
     oro_account_frontend_delete_user:
         label: oro.customer.action.account_user.delete
@@ -251,29 +251,29 @@ operations:
                     route: oro_customer_frontend_account_user_profile_update
 
     oro_account_frontend_edit_role:
-        label: oro.customer.frontend.action.account_user_role.edit
+        label: oro.customer.frontend.action.customer_user_role.edit
         applications: [commerce]
         routes:
-            - oro_customer_frontend_account_user_role_view
-        acl_resource: [EDIT, entity:commerce@Oro\Bundle\CustomerBundle\Entity\AccountUserRole]
+            - oro_customer_frontend_customer_user_role_view
+        acl_resource: [EDIT, entity:commerce@Oro\Bundle\CustomerBundle\Entity\CustomerUserRole]
         order: 10
         button_options:
             icon: fa-pencil
         actions:
             - '@redirect':
                 parameters:
-                    route: oro_customer_frontend_account_user_role_update
+                    route: oro_customer_frontend_customer_user_role_update
                     route_parameters:
                         id: $id
 
     oro_account_frontend_delete_role:
-        label: oro.customer.action.account_user_role.delete
+        label: oro.customer.action.customer_user_role.delete
         applications: [commerce]
         routes:
-            - oro_customer_frontend_account_user_role_view
-            - oro_customer_frontend_account_user_role_update
+            - oro_customer_frontend_customer_user_role_view
+            - oro_customer_frontend_customer_user_role_update
         datagrids:
-            - frontend-account-account-user-roles-grid
+            - frontend-account-customer-user-roles-grid
         acl_resource: [FRONTEND_ACCOUNT_ROLE_DELETE, $.data]
         order: 30
         button_options:
@@ -284,14 +284,14 @@ operations:
                 parameters_mapping:
                     data: $.data
             - '@trans':
-                id: oro.customer.accountuserrole.entity_label
+                id: oro.customer.customeruserrole.entity_label
                 attribute: $.entityLabel
             - '@flash_message':
                 message: oro.action.delete_message
                 type: 'success'
                 message_parameters:
                     entityLabel: $.entityLabel
-            - '@redirect': {route: oro_customer_frontend_account_user_role_index}
+            - '@redirect': {route: oro_customer_frontend_customer_user_role_index}
     UPDATE:
         exclude_datagrids:
             - account-account-user-select-grid
