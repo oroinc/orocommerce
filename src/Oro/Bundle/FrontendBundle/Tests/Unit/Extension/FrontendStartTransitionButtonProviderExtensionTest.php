@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\FrontendBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\FrontendBundle\Tests\Unit\Form\Extension;
 
 use Oro\Bundle\FrontendBundle\Extension\FrontendStartTransitionButtonProviderExtension;
 use Oro\Bundle\FrontendBundle\Provider\ActionCurrentApplicationProvider;

@@ -38,6 +38,7 @@ class LoadRequestWorkflowDemoData extends AbstractFixture implements
     /** @var WorkflowManager */
     protected $workflowManager;
 
+    /** @var array */
     protected $transitionsWithNotes = ['provide_more_information_transition', 'request_more_information_transition'];
 
     /**
@@ -73,8 +74,8 @@ class LoadRequestWorkflowDemoData extends AbstractFixture implements
         $this->startWorkflows(self::WORKFLOW_FRONTOFFICE, $this->requests);
 
         $user = $manager->getRepository('OroUserBundle:User')->findOneBy([]);
-        $this->generateTransitionsHistory(self::WORKFLOW_FRONTOFFICE, $this->requests);
         $this->generateTransitionsHistory(self::WORKFLOW_BACKOFFICE, $this->requests, $user);
+        $this->generateTransitionsHistory(self::WORKFLOW_FRONTOFFICE, $this->requests);
     }
 
     /**
