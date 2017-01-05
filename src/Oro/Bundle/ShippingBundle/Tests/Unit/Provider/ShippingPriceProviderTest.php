@@ -101,7 +101,7 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
      * @param array $shippingRules
      * @param array $expectedData
      */
-    public function testGetApplicableMethodsWithTypesData(array $shippingRules, array $expectedData)
+    public function testGetApplicableMethodsViews(array $shippingRules, array $expectedData)
     {
         $context = $this->getEntity(ShippingContext::class, [
             'currency' => 'USD',
@@ -115,7 +115,7 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(
             $expectedData,
             $this->shippingPriceProvider
-                ->getApplicableMethodsWithTypesData($context)
+                ->getApplicableMethodsViews($context)
                 ->toArray()
         );
     }
@@ -296,7 +296,7 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-    public function testGetApplicableMethodsWithTypesDataCache()
+    public function testGetApplicableMethodsViewsCache()
     {
         $context = $this->getEntity(ShippingContext::class, [
             'currency' => 'USD',
@@ -364,12 +364,12 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             $expectedData,
-            $this->shippingPriceProvider->getApplicableMethodsWithTypesData($context)->toArray()
+            $this->shippingPriceProvider->getApplicableMethodsViews($context)->toArray()
         );
         $price->setValue(2);
         $this->assertEquals(
             $expectedData,
-            $this->shippingPriceProvider->getApplicableMethodsWithTypesData($context)->toArray()
+            $this->shippingPriceProvider->getApplicableMethodsViews($context)->toArray()
         );
     }
 

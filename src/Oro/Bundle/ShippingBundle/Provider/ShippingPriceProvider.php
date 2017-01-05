@@ -49,7 +49,7 @@ class ShippingPriceProvider
      *
      * @return ShippingMethodViewCollection
      */
-    public function getApplicableMethodsWithTypesData(ShippingContextInterface $context)
+    public function getApplicableMethodsViews(ShippingContextInterface $context)
     {
         $methodCollection = new ShippingMethodViewCollection();
 

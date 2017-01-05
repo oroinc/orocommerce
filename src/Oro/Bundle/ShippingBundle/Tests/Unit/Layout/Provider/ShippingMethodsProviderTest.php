@@ -51,7 +51,7 @@ class ShippingMethodsProviderTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $this->shippingPriceProvider->expects(static::once())
-            ->method('getApplicableMethodsWithTypesData')
+            ->method('getApplicableMethodsViews')
             ->with($context)
             ->willReturn(new ShippingMethodViewCollection());
 

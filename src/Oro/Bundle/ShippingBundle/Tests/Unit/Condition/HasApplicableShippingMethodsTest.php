@@ -80,7 +80,7 @@ class HasApplicableShippingMethodsTest extends \PHPUnit_Framework_TestCase
         $this->shippingMethodRegistry->expects($this->any())->method('getShippingMethod')->willReturn($method);
 
         $this->shippingPriceProvider->expects($this->once())
-            ->method('getApplicableMethodsWithTypesData')
+            ->method('getApplicableMethodsViews')
             ->willReturn($methods);
 
         $this->condition->initialize(['shippingContext' => new ShippingContext([])]);

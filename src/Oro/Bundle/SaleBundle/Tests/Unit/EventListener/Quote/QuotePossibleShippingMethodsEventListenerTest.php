@@ -64,7 +64,7 @@ class QuotePossibleShippingMethodsEventListenerTest extends \PHPUnit_Framework_T
             ->method('create');
 
         $this->priceProvider->expects(static::never())
-            ->method('getApplicableMethodsWithTypesData');
+            ->method('getApplicableMethodsViews');
 
         $event = new QuoteEvent($this->getMock(FormInterface::class), $quote, $submittedData);
 
@@ -111,7 +111,7 @@ class QuotePossibleShippingMethodsEventListenerTest extends \PHPUnit_Framework_T
             ->willReturn($expectedMethods);
 
         $this->priceProvider->expects(static::any())
-            ->method('getApplicableMethodsWithTypesData')
+            ->method('getApplicableMethodsViews')
             ->with($context)
             ->willReturn($methods);
 
@@ -197,7 +197,7 @@ class QuotePossibleShippingMethodsEventListenerTest extends \PHPUnit_Framework_T
             ->method('create');
 
         $this->priceProvider->expects(static::never())
-            ->method('getApplicableMethodsWithTypesData');
+            ->method('getApplicableMethodsViews');
 
         $methods = ['field' => 'value'];
         $event = new QuoteEvent($this->getMock(FormInterface::class), $quote, $methods);

@@ -58,7 +58,7 @@ class QuotePossibleShippingMethodsEventListener
             if ($this->priceProvider) {
                 $shippingContext = $this->factory->create($event->getQuote());
                 $shippingMethodViews = $this->priceProvider
-                    ->getApplicableMethodsWithTypesData($shippingContext)
+                    ->getApplicableMethodsViews($shippingContext)
                     ->toArray();
                 $data = $this->priceConverter->convertPricesToArray($shippingMethodViews);
             }

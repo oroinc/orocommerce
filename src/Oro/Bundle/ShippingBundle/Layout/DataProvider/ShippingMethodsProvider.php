@@ -32,6 +32,6 @@ class ShippingMethodsProvider
      */
     public function getMethods(ShippingContextInterface $context)
     {
-        return $this->shippingPriceProvider->getApplicableMethodsWithTypesData($context)->toArray();
+        return $this->shippingPriceProvider->getApplicableMethodsViews($context)->toArray();
     }
 }
