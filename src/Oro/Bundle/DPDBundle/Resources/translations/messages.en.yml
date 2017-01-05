@@ -34,12 +34,5 @@ oro:
                     tooltip: 'A fee applied to the shipping costs'
         actions:
             set_order:
-                flash.success: 'Order set succesfully. Check attachments to get shipping labels.'
-                widgets.set_order.label: 'Set Order'
-                frontend_options:
-                    title: 'Set Order'
-                    confirmation:
-                        title: 'Set Order'
-                        ok_text: 'Yes, Send'
-                        message: 'Send order shipping information to DPD?'
-
+                flash.success: 'Order set successfully. Check attachments to get shipping labels.'
+                widgets.set_order.label: 'Request DPD shipping label'

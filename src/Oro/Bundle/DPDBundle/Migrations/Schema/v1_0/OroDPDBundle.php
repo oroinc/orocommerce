@@ -23,7 +23,7 @@ class OroDPDBundle implements Migration
         $this->createOroDpdTransportShipServiceTable($schema);
         //$this->createOroDpdShippingTransactionTable($schema); TODO
 
-        /** foreing keys */
+        /** foreign keys */
         $this->addOroDPDTransportLabelForeignKeys($schema);
         $this->addOroDpdTransportShipServiceForeignKeys($schema);
     }
