@@ -312,7 +312,7 @@ class DPDTransport extends Transport
                     'cloud_user_id' => $this->getCloudUserId(),
                     'cloud_user_token' => $this->getCloudUserToken(),
                     'invalidate_cache_at' => $this->getInvalidateCacheAt(),
-                    'applicable_shipping_services' => $this->getApplicableShippingServices(),
+                    'applicable_shipping_services' => $this->getApplicableShippingServices()->toArray(),
                     'label_size' => $this->getLabelSize(),
                     'label_start_position' => $this->getLabelStartPosition(),
                     'labels' => $this->getLabels()->toArray()

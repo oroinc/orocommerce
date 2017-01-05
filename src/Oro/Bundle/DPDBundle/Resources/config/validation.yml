@@ -1,0 +1,17 @@
+Oro\Bundle\DPDBundle\Entity\DPDTransport:
+    properties:
+        cloudUserId:
+            - NotBlank: ~
+        cloudUserToken:
+            - NotBlank: ~
+        applicableShippingServices:
+            - NotBlank:
+                message: 'oro.dpd.transport.shipping_service.blank'
+            - Oro\Bundle\DPDBundle\Validator\Constraints\RemoveUsedShippingService: ~
+        labelSize:
+            - NotBlank: ~
+        labelStartPosition:
+            - NotBlank: ~
+        labels:
+            - NotBlank: ~
+            - Valid: ~
