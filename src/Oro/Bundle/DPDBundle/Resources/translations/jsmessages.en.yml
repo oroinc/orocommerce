@@ -1,0 +1,10 @@
+oro:
+    dpd:
+        actions:
+            set_order:
+                frontend_options:
+                    title: 'Send order to DPD'
+                    confirmation:
+                        title: 'Confirm DPD shipping label request'
+                        ok_text: 'Confirm'
+                        message: 'Send order shipping information to DPD?'
