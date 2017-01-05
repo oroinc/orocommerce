@@ -81,7 +81,38 @@ class PayPalSettingsType extends AbstractType
                 'label'    => 'oro.pay_pal.settings.?.label',
                 'required' => true,
             ])
-
+            ->add('debugMode', CheckboxType::class, [
+                'label'    => 'oro.pay_pal.settings.?.label',
+                'required' => false,
+            ])
+            ->add('requireCVV', CheckboxType::class, [
+                'label'    => 'oro.pay_pal.settings.?.label',
+                'required' => false,
+            ])
+            ->add('zeroAmountAuthorization', CheckboxType::class, [
+                'label'    => 'oro.pay_pal.settings.?.label',
+                'required' => false,
+            ])
+            ->add('requiredAuthorization', CheckboxType::class, [
+                'label'    => 'oro.pay_pal.settings.?.label',
+                'required' => false,
+            ])
+            ->add('useProxy', CheckboxType::class, [
+                'label'    => 'oro.pay_pal.settings.?.label',
+                'required' => false,
+            ])
+            ->add('proxyHost', TextType::class, [
+                'label'    => 'oro.pay_pal.settings.?.label',
+                'required' => true,
+            ])
+            ->add('proxyPort', TextType::class, [
+                'label'    => 'oro.pay_pal.settings.?.label',
+                'required' => true,
+            ])
+            ->add('enableSSL', CheckboxType::class, [
+                'label'    => 'oro.pay_pal.settings.?.label',
+                'required' => false,
+            ])
         ;
     }
 
@@ -93,7 +124,7 @@ class PayPalSettingsType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => '',
+            'data_class' => PayPalSettings::class,
         ]);
     }
 

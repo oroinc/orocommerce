@@ -2,13 +2,14 @@
 
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\Form\Type;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedPropertyType;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizationCollectionTypeStub;
 use Oro\Bundle\PayPalBundle\Form\Type\PayPalSettingsType;
-use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\PreloadedExtension;
+use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Validation;
 
@@ -29,9 +30,7 @@ class PayPalSettingsTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        $registry = $this->getMockBuilder('Doctrine\Common\Persistence\ManagerRegistry')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $registry = $this->createMock(ManagerRegistry::class);
 
         return [
             new PreloadedExtension(
@@ -58,15 +57,20 @@ class PayPalSettingsTypeTest extends FormIntegrationTestCase
             'creditCardShortLabels' => '',
             'expressCheckoutLabels' => '',
             'expressCheckoutShortLabels' => '',
-            'expressCheckoutName' => '',
-            'creditCardPaymentAction' => '',
-            'expressCheckoutPaymentAction' => '',
-            'allowedCreditCardTypes' => '',
-            'partner' => '',
-            'vendor' => '',
-            'user' => '',
-            'password' => '',
+            'expressCheckoutName' => 'checkoutName',
+            'creditCardPaymentAction' => 'Authorize',
+            'expressCheckoutPaymentAction' => 'Authorize',
+            'allowedCreditCardTypes' => ['Visa'],
+            'partner' => 'partner',
+            'vendor' => 'vendor',
+            'user' => 'user',
+            'password' => 'pass',
             'testMode' => true,
+            'debugMode' => false,
+            'requireCVV' => true,
+            'zeroAmountAuthorization' => false,
+            'requiredAuthorization' => false,
+            'useProxy' => false,
         ];
 
         $payPalSettings = new \StdClass();
@@ -84,12 +88,13 @@ class PayPalSettingsTypeTest extends FormIntegrationTestCase
     public function testConfigureOptions()
     {
         /** @var OptionsResolver|\PHPUnit_Framework_MockObject_MockObject $resolver */
-        $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
+        $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects(static::once())
             ->method('setDefaults')
             ->with([
-                'data_class' => ''
+                'data_class' => PayPalSettings::class
             ]);
+
         $this->formType->configureOptions($resolver);
     }
 }
