@@ -16,7 +16,9 @@ class LoadFlatRateIntegration extends AbstractFixture implements
     DependentFixtureInterface,
     ContainerAwareInterface
 {
-    /** @var ContainerInterface */
+    /**
+     * @var ContainerInterface
+     */
     protected $container;
 
     /**
