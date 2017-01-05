@@ -5,7 +5,7 @@ namespace Oro\Bundle\CustomerBundle\Event;
 use Symfony\Component\Form\FormInterface;
 
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 
 class AccountGroupEvent extends AfterFormProcessEvent
 {
@@ -13,17 +13,17 @@ class AccountGroupEvent extends AfterFormProcessEvent
     const BEFORE_FLUSH = 'oro_customer.account_group.before_flush';
 
     /**
-     * @param AccountGroup $accountGroup
+     * @param CustomerGroup $accountGroup
      * @param FormInterface $form
      */
-    public function __construct(AccountGroup $accountGroup, FormInterface $form = null)
+    public function __construct(CustomerGroup $accountGroup, FormInterface $form = null)
     {
         $this->data = $accountGroup;
         $this->form = $form;
     }
 
     /**
-     * @return AccountGroup
+     * @return CustomerGroup
      */
     public function getData()
     {

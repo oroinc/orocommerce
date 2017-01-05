@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\EventListener;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
 use Oro\Bundle\PricingBundle\Async\Topics;
@@ -31,9 +31,9 @@ class AccountGroupChangesListenerTest extends WebTestCase
     }
 
     /**
-     * @param AccountGroup $group
+     * @param CustomerGroup $group
      */
-    protected function sendDeleteAccountGroupRequest(AccountGroup $group)
+    protected function sendDeleteAccountGroupRequest(CustomerGroup $group)
     {
         $this->client->request(
             'DELETE',

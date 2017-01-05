@@ -12,7 +12,7 @@ use Oro\Bundle\AddressBundle\Form\Type\AddressCollectionType;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Entity\Repository\AccountUserRoleRepository;
+use Oro\Bundle\CustomerBundle\Entity\Repository\CustomerUserRoleRepository;
 
 class AccountUserType extends AbstractType
 {
@@ -184,7 +184,7 @@ class AccountUserType extends AbstractType
                 ]
             );
 
-        if ($this->securityFacade->isGranted('oro_account_account_user_role_view')) {
+        if ($this->securityFacade->isGranted('oro_account_customer_user_role_view')) {
             $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);
             $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'preSubmit']);
         }
@@ -229,9 +229,9 @@ class AccountUserType extends AbstractType
 
         $form->add(
             'roles',
-            AccountUserRoleSelectType::NAME,
+            CustomerUserRoleSelectType::NAME,
             [
-                'query_builder' => function (AccountUserRoleRepository $repository) use ($data) {
+                'query_builder' => function (CustomerUserRoleRepository $repository) use ($data) {
                     return $repository->getAvailableRolesByAccountUserQueryBuilder(
                         $data->getOrganization(),
                         $data->getAccount()
@@ -251,9 +251,9 @@ class AccountUserType extends AbstractType
 
         $form->add(
             'roles',
-            AccountUserRoleSelectType::NAME,
+            CustomerUserRoleSelectType::NAME,
             [
-                'query_builder' => function (AccountUserRoleRepository $repository) use ($data) {
+                'query_builder' => function (CustomerUserRoleRepository $repository) use ($data) {
                     $account = null;
                     if (array_key_exists('account', $data)) {
                         $account = $data['account'];

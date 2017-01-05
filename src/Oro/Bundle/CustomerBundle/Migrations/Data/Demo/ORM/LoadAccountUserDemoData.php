@@ -11,7 +11,7 @@ use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Entity\AccountUserRole;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 
 class LoadAccountUserDemoData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
@@ -74,7 +74,7 @@ class LoadAccountUserDemoData extends AbstractFixture implements ContainerAwareI
             // create/get account user role
             $roleLabel = $row['role'];
             if (!array_key_exists($roleLabel, $roles)) {
-                $roles[$roleLabel] = $this->getAccountUserRole($roleLabel);
+                $roles[$roleLabel] = $this->getCustomerUserRole($roleLabel);
             }
             $role = $roles[$roleLabel];
 
@@ -109,13 +109,13 @@ class LoadAccountUserDemoData extends AbstractFixture implements ContainerAwareI
 
     /**
      * @param string $roleLabel
-     * @return AccountUserRole
+     * @return CustomerUserRole
      */
-    protected function getAccountUserRole($roleLabel)
+    protected function getCustomerUserRole($roleLabel)
     {
         return $this->container->get('doctrine')
-            ->getManagerForClass('OroCustomerBundle:AccountUserRole')
-            ->getRepository('OroCustomerBundle:AccountUserRole')
+            ->getManagerForClass('OroCustomerBundle:CustomerUserRole')
+            ->getRepository('OroCustomerBundle:CustomerUserRole')
             ->findOneBy(['label' => $roleLabel]);
     }
 }

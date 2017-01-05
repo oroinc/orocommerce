@@ -8,7 +8,7 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
@@ -55,12 +55,12 @@ class PriceListToAccountRepository extends EntityRepository implements PriceList
     }
 
     /**
-     * @param AccountGroup $accountGroup
+     * @param CustomerGroup $accountGroup
      * @param Website $website
      * @param int|null $fallback
      * @return BufferedQueryResultIterator|Account[]
      */
-    public function getAccountIteratorByDefaultFallback(AccountGroup $accountGroup, Website $website, $fallback = null)
+    public function getAccountIteratorByDefaultFallback(CustomerGroup $accountGroup, Website $website, $fallback = null)
     {
         $qb = $this->getEntityManager()->createQueryBuilder()
             ->select('distinct account')
@@ -104,10 +104,10 @@ class PriceListToAccountRepository extends EntityRepository implements PriceList
     }
 
     /**
-     * @param AccountGroup $accountGroup
+     * @param CustomerGroup $accountGroup
      * @return BufferedQueryResultIterator
      */
-    public function getAccountWebsitePairsByAccountGroupIterator(AccountGroup $accountGroup)
+    public function getAccountWebsitePairsByAccountGroupIterator(CustomerGroup $accountGroup)
     {
         $qb = $this->createQueryBuilder('PriceListToAccount');
 

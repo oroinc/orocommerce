@@ -49,14 +49,13 @@ class DatagridFieldsListenerTest extends FrontendDatagridListenerTestCase
         $this->frontendHelper->expects($this->once())
             ->method('isFrontendRequest')
             ->willReturn(true);
-        $this->datagridConfig->expects($this->at(0))
+        $this->datagridConfig->expects($this->once())
             ->method('offsetSetByPath')
             ->with(AdditionalFieldsExtension::ADDITIONAL_FIELDS_CONFIG_PATH, [])
             ->willReturn(null);
-        $this->datagridConfig->expects($this->at(1))
-            ->method('offsetSetByPath')
-            ->with(DynamicFieldsExtension::EXTEND_ENTITY_CONFIG_PATH, false)
-            ->willReturn(null);
+        $this->datagridConfig->expects($this->once())
+            ->method('setExtendedEntityClassName')
+            ->with(null);
         $this->listener->onBuildBefore($this->event);
     }
 }

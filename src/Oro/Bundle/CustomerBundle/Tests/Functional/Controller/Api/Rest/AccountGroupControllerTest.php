@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CustomerBundle\Tests\Functional\Controller\Api\Rest;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\DependencyInjection\Configuration;
 
 /**
@@ -24,7 +24,7 @@ class AccountGroupControllerTest extends WebTestCase
 
     public function testDelete()
     {
-        /** @var AccountGroup $entity */
+        /** @var CustomerGroup $entity */
         $entity = $this->getReference('account_group.group1');
         $id = $entity->getId();
         $this->client->request(
