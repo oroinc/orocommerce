@@ -9,9 +9,9 @@ use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Entity\AccountUserRole;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserManager;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 use Oro\Bundle\CustomerBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
 use Oro\Bundle\UserBundle\Entity\Repository\RoleRepository;
 use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadRolesData;
@@ -236,7 +236,7 @@ class LoadAddressBookUserData extends AbstractFixture implements ContainerAwareI
         $aclManager = $this->container->get('oro_security.acl.manager');
 
         foreach ($this->roles as $key => $items) {
-            $role = new AccountUserRole(AccountUserRole::PREFIX_ROLE . $key);
+            $role = new CustomerUserRole(CustomerUserRole::PREFIX_ROLE . $key);
             $role->setLabel($key);
 
             foreach ($items as $acls) {
@@ -291,11 +291,11 @@ class LoadAddressBookUserData extends AbstractFixture implements ContainerAwareI
 
     /**
      * @param AclManager $aclManager
-     * @param AccountUserRole $role
+     * @param CustomerUserRole $role
      * @param string $className
      * @param array $allowedAcls
      */
-    protected function setRolePermissions(AclManager $aclManager, AccountUserRole $role, $className, array $allowedAcls)
+    protected function setRolePermissions(AclManager $aclManager, CustomerUserRole $role, $className, array $allowedAcls)
     {
         /* @var $chainMetadataProvider ChainMetadataProvider */
         $chainMetadataProvider = $this->container->get('oro_security.owner.metadata_provider.chain');
