@@ -41,8 +41,9 @@ Feature: Applying shipping rules
     Given Admin User created "Shipping Rule 2" with next data:
       | Enabled       | true      |
       | Currency      | EUR       |
-      | Country       | Ukraine   |
+      | Country1      | Ukraine   |
       | Country2      | Germany   |
+      | Sort Order    | 1         |
       | Price         | 2.5       |
       | Type          | Per Order |
       | HandlingFee   | 1.5       |
@@ -53,11 +54,11 @@ Feature: Applying shipping rules
   Scenario: "Shipping 2F" > LIST OF ZIP CODES FOR SHIPPING RULE #3 CONTAINS ZIP CODE FOR ORDER. PRIORITY - MAJOR
     Given Admin User created "Shipping Rule 3" with next data:
       | Enabled       | true              |
-      | Country       | Ukraine           |
+      | Country1      | Ukraine           |
       | Country2      | Germany           |
       | Currency      | EUR               |
       | Sort Order    | 1                 |
-      | ZIP           | 10115,10116,10117 |
+      | ZIP1          | 10115,10116,10117 |
       | ZIP2          | 10115,10116,10117 |
       | Price         | 3                 |
       | Type          | Per Order         |
@@ -80,11 +81,11 @@ Feature: Applying shipping rules
   Scenario: "Shipping 2H" > CHECK CORRECTNESS OF FLAT RATE TYPE = PER ITEM CALCULATION. PRIORITY - CRITICAL
     Given Admin User created "Shipping Rule 4" with next data:
       | Enabled       | true              |
-      | Country       | Ukraine           |
+      | Country1      | Ukraine           |
       | Country2      | Germany           |
       | Currency      | EUR               |
       | Sort Order    | 0                 |
-      | ZIP           | 10115,10116,10117 |
+      | ZIP1          | 10115,10116,10117 |
       | ZIP2          | 10115,10116,10117 |
       | Type          | Per Item          |
       | Price         | 1.5               |
