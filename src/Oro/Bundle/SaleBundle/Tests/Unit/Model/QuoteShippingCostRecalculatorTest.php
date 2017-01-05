@@ -184,4 +184,50 @@ class QuoteShippingCostRecalculatorTest extends \PHPUnit_Framework_TestCase
 
         $recalculator->recalculateQuoteShippingCost($this->quoteMock);
     }
+
+    public function testWithNullPrice()
+    {
+        $shippingMethod = 'someShippingMethod';
+        $shippingMethodType = 'someShippingMethodType';
+
+        $this->quoteMock
+            ->expects($this->once())
+            ->method('getOverriddenShippingCostAmount')
+            ->willReturn(null);
+
+        $this->quoteMock
+            ->expects($this->once())
+            ->method('getShippingMethod')
+            ->willReturn($shippingMethod);
+
+        $this->quoteMock
+            ->expects($this->once())
+            ->method('getShippingMethodType')
+            ->willReturn($shippingMethodType);
+
+        $this->shippingContextFactoryMock
+            ->expects($this->once())
+            ->method('create')
+            ->with($this->quoteMock)
+            ->willReturn($this->shippingContextMock);
+
+        $this->priceMock
+            ->expects($this->never())
+            ->method('getValue');
+
+        $this->shippingPriceProvider
+            ->expects($this->once())
+            ->method('getPrice')
+            ->with($this->shippingContextMock, $shippingMethod, $shippingMethodType)
+            ->willReturn(null);
+
+        $this->quoteMock
+            ->expects($this->never())
+            ->method('setEstimatedShippingCostAmount');
+
+        $recalculator = new QuoteShippingCostRecalculator($this->shippingContextFactoryMock);
+        $recalculator->setShippingPriceProvider($this->shippingPriceProvider);
+
+        $recalculator->recalculateQuoteShippingCost($this->quoteMock);
+    }
 }

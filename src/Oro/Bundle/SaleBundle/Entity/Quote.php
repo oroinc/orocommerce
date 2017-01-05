@@ -267,6 +267,20 @@ class Quote extends ExtendQuote implements
     protected $shippingMethodType;
 
     /**
+     * @ORM\Column(name="shipping_method_locked", type="boolean")
+     *
+     * @var bool
+     */
+    private $shippingMethodLocked = false;
+
+    /**
+     * @ORM\Column(name="allow_unlisted_shipping_method", type="boolean")
+     *
+     * @var bool
+     */
+    private $allowUnlistedShippingMethod = false;
+
+    /**
      * @var float
      *
      * @ORM\Column(name="estimated_shipping_cost_amount", type="money", nullable=true)
@@ -826,5 +840,45 @@ class Quote extends ExtendQuote implements
     public function getDemands()
     {
         return $this->demands;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAllowUnlistedShippingMethod()
+    {
+        return $this->allowUnlistedShippingMethod;
+    }
+
+    /**
+     * @param bool $allowUnlistedShippingMethod
+     *
+     * @return $this
+     */
+    public function setAllowUnlistedShippingMethod($allowUnlistedShippingMethod)
+    {
+        $this->allowUnlistedShippingMethod = $allowUnlistedShippingMethod;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isShippingMethodLocked()
+    {
+        return $this->shippingMethodLocked;
+    }
+
+    /**
+     * @param bool $shippingMethodLocked
+     *
+     * @return $this
+     */
+    public function setShippingMethodLocked($shippingMethodLocked)
+    {
+        $this->shippingMethodLocked = $shippingMethodLocked;
+
+        return $this;
     }
 }

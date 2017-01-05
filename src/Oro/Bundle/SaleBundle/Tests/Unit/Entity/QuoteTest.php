@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Entity;
 
-use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
@@ -37,6 +36,8 @@ class QuoteTest extends AbstractTest
             ['shipUntil', $now, false],
             ['expired', true],
             ['locked', true],
+            ['shippingMethodLocked', true],
+            ['allowUnlistedShippingMethod', true],
             ['request', new Request()],
             ['website', new Website()],
             ['currency', 'UAH'],

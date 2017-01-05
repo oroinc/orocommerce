@@ -203,6 +203,8 @@ define(function(require) {
                     '</span>';
                 this.getPossibleShippingMethodForm().html(str);
             }
+
+            this.allowUnlistedAndLockFlags();
         },
 
         /**
@@ -247,6 +249,21 @@ define(function(require) {
                 }
                 this.$el.closest('.responsive-cell').prepend($div);
             }
+        },
+
+        allowUnlistedAndLockFlags: function()
+        {
+            var $shippingMethodLockedFlag = $('[name$="[shippingMethodLocked]"]');
+            var $allowUnlistedShippingMethodFlag = $('[name$="[allowUnlistedShippingMethod]"]');
+
+            if ($shippingMethodLockedFlag.length <= 0 || $allowUnlistedShippingMethodFlag.length <= 0) {
+                return;
+            }
+
+            var disableFlags = $('[name$="[estimatedShippingCostAmount]"]').val() <= 0;
+
+            $shippingMethodLockedFlag.prop('disabled', disableFlags);
+            $allowUnlistedShippingMethodFlag.prop('disabled', disableFlags);
         },
 
         /**
@@ -294,6 +311,7 @@ define(function(require) {
             var method = method_type.data('shipping-method');
             var estimated_cost = method_type.data('shipping-price');
             this.updateElementsValue(method_type.val(), method, estimated_cost, false);
+            this.allowUnlistedAndLockFlags();
         },
 
         /**

@@ -4,10 +4,8 @@ namespace Oro\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\CurrencyBundle\DependencyInjection\Configuration as CurrencyConfig;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\CustomerBundle\Form\Type\AccountSelectType;
 use Oro\Bundle\CustomerBundle\Form\Type\AccountUserSelectType;
@@ -108,6 +106,8 @@ class QuoteTypeTest extends AbstractTest
      * @param bool $locked
      * @param string $poNumber
      * @param string $shipUntil
+     * @param bool $shippingMethodLocked
+     * @param bool $allowedUnlistedShippingMethod
      * @return Quote
      */
     protected function getQuote(
@@ -117,9 +117,14 @@ class QuoteTypeTest extends AbstractTest
         array $items = [],
         $locked = false,
         $poNumber = null,
-        $shipUntil = null
+        $shipUntil = null,
+        $shippingMethodLocked = false,
+        $allowedUnlistedShippingMethod = false
     ) {
         $quote = new Quote();
+
+        $quote->setShippingMethodLocked($shippingMethodLocked);
+        $quote->setAllowUnlistedShippingMethod($allowedUnlistedShippingMethod);
 
         $organization = $this->getMockBuilder('Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface')->getMock();
 
@@ -222,6 +227,8 @@ class QuoteTypeTest extends AbstractTest
                             ],
                         ],
                     ],
+                    'shippingMethodLocked' => true,
+                    'allowUnlistedShippingMethod' => true
                 ],
                 'expectedData'  => $this->getQuote(
                     1,
@@ -230,7 +237,9 @@ class QuoteTypeTest extends AbstractTest
                     [$quoteProduct],
                     false,
                     null,
-                    null
+                    null,
+                    true,
+                    true
                 )->setCurrency('USD'),
                 'defaultData'   => $this->getQuote(
                     1,

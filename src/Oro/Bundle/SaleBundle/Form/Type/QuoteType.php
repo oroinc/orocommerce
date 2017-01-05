@@ -93,6 +93,14 @@ class QuoteType extends AbstractType
                 'label' => 'oro.sale.quote.locked.label',
                 'required'  => false
             ])
+            ->add('shippingMethodLocked', CheckboxType::class, [
+                'label' => 'oro.sale.quote.shipping_method_locked.label',
+                'required'  => false
+            ])
+            ->add('allowUnlistedShippingMethod', CheckboxType::class, [
+                'label' => 'oro.sale.quote.allow_unlisted_shipping_method.label',
+                'required'  => false
+            ])
             ->add('poNumber', TextType::class, [
                 'required' => false,
                 'label' => 'oro.sale.quote.po_number.label'

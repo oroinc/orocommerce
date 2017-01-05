@@ -181,6 +181,8 @@
             {{ form_row(form.overriddenShippingCostAmount) }}
         </div>
 
+        {{ form_row(form.shippingMethodLocked) }}
+        {{ form_row(form.allowUnlistedShippingMethod) }}
     {% endset %}
 
     {% set dataBlocks = dataBlocks|merge([{

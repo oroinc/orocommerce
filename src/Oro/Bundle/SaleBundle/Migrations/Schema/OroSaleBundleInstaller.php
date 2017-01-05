@@ -90,7 +90,7 @@ class OroSaleBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_12';
+        return 'v1_13';
     }
 
     /**
@@ -132,6 +132,18 @@ class OroSaleBundleInstaller implements
             'oro_sale_quote',
             ['datagrid' => ['is_visible' => DatagridScope::IS_VISIBLE_HIDDEN]]
         );
+
+        $this->addAllowUnlistedAndLockMethodFlagsToQuoteTable($schema);
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    protected function addAllowUnlistedAndLockMethodFlagsToQuoteTable(Schema $schema)
+    {
+        $table = $schema->getTable('oro_sale_quote');
+        $table->addColumn('shipping_method_locked', 'boolean');
+        $table->addColumn('allow_unlisted_shipping_method', 'boolean');
     }
 
     /**

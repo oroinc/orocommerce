@@ -57,6 +57,10 @@ class QuoteShippingCostRecalculator
             $quote->getShippingMethodType()
         );
 
+        if (null === $price) {
+            return;
+        }
+
         $quote->setEstimatedShippingCostAmount($price->getValue());
     }
 }
