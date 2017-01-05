@@ -295,8 +295,12 @@ class LoadAddressBookUserData extends AbstractFixture implements ContainerAwareI
      * @param string $className
      * @param array $allowedAcls
      */
-    protected function setRolePermissions(AclManager $aclManager, CustomerUserRole $role, $className, array $allowedAcls)
-    {
+    protected function setRolePermissions(
+        AclManager $aclManager,
+        CustomerUserRole $role,
+        $className,
+        array $allowedAcls
+    ) {
         /* @var $chainMetadataProvider ChainMetadataProvider */
         $chainMetadataProvider = $this->container->get('oro_security.owner.metadata_provider.chain');
 
