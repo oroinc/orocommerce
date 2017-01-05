@@ -128,7 +128,8 @@ services:
     oro_shopping_list.layout.data_provider.single_unit_mode:
         class: 'Oro\Bundle\ShoppingListBundle\Layout\DataProvider\SingleUnitModeProvider'
         arguments:
-            - "@oro_product.service.single_unit_mode"
+            - "@oro_product.visibility.product_unit_fields_settings"
+            - "@oro_product.visibility.unit"
         tags:
             - { name: layout.data_provider, alias: oro_shopping_list_single_unit_mode }
 

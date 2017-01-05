@@ -47,7 +47,22 @@ services:
         public: false
         arguments:
             - "@oro_product.formatter.product_unit_value"
-            - "@oro_product.service.single_unit_mode"
+        tags:
+            - { name: twig.extension }
+
+    oro_product.twig.product_form_unit_fields_settings:
+        class: 'Oro\Bundle\ProductBundle\Twig\ProductUnitFieldsSettingsExtension'
+        public: false
+        arguments:
+            - "@oro_product.visibility.product_unit_fields_settings"
+        tags:
+            - { name: twig.extension }
+
+    oro_product.twig.unit_visibility:
+        class: 'Oro\Bundle\ProductBundle\Twig\UnitVisibilityExtension'
+        public: false
+        arguments:
+            - "@oro_product.visibility.unit"
         tags:
             - { name: twig.extension }
 
@@ -222,7 +237,6 @@ services:
         public: false
         arguments:
             - "@oro_config.manager"
-            - "@oro_product.provider.default_product_unit_provider.system"
 
     oro_product.layout.data_provider.single_unit_mode:
         class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\SingleUnitModeProvider'
@@ -230,6 +244,20 @@ services:
             - "@oro_product.service.single_unit_mode"
         tags:
             - { name: layout.data_provider, alias: oro_product_single_unit_mode }
+
+    oro_product.layout.data_provider.unit_visibility:
+        class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\UnitVisibilityProvider'
+        arguments:
+            - "@oro_product.visibility.unit"
+        tags:
+            - { name: layout.data_provider, alias: oro_unit_visibility }
+
+    oro_product.layout.data_provider.product_unit_fields_settings:
+        class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\ProductUnitFieldsSettingsProvider'
+        arguments:
+            - "@oro_product.visibility.product_unit_fields_settings"
+        tags:
+            - { name: layout.data_provider, alias: oro_product_unit_fields_settings }
 
     oro_product.provider.default_product_unit_provider.chain:
         class: 'Oro\Bundle\ProductBundle\Provider\ChainDefaultProductUnitProvider'
@@ -563,3 +591,42 @@ services:
             - { name: kernel.event_listener, event: entity_form.render.before, method: onFormRender, priority: -255 }
             - { name: kernel.event_listener, event: entity_view.render.before, method: onViewRender, priority: -255 }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-view, method: onViewList, priority: -255 }
+
+    oro_product.visibility.product_unit_fields_settings:
+        class: 'Oro\Bundle\ProductBundle\Visibility\BasicProductUnitFieldsSettings'
+        public: false
+        arguments:
+            - "@oro_entity.doctrine_helper"
+
+    oro_product.visibility.single_unit_mode_product_unit_fields_settings_decorator:
+        class: 'Oro\Bundle\ProductBundle\Visibility\SingleUnitModeProductUnitFieldsSettingsDecorator'
+        public: false
+        decorates: oro_product.visibility.product_unit_fields_settings
+        decoration_priority: 10
+        arguments:
+            - "@oro_product.visibility.single_unit_mode_product_unit_fields_settings_decorator.inner"
+            - "@oro_product.service.single_unit_mode"
+            - "@oro_entity.doctrine_helper"
+
+    oro_product.visibility.unit:
+        class: 'Oro\Bundle\ProductBundle\Visibility\BasicUnitVisibility'
+        public: false
+
+    oro_product.visibility.single_unit_mode_unit:
+        class: 'Oro\Bundle\ProductBundle\Visibility\SingleUnitModeUnitVisibilityDecorator'
+        public: false
+        decorates: oro_product.visibility.unit
+        decoration_priority: 10
+        arguments:
+            - "@oro_product.visibility.single_unit_mode_unit.inner"
+            - "@oro_product.service.single_unit_mode"
+
+    oro_product.event_listener.unit_visibility.datagrid_basic:
+        class: 'Oro\Bundle\ProductBundle\EventListener\UnitVisibilityModeDataGridListener'
+        abstract: true
+        arguments:
+            - 'unitCode'
+            - 'quantity'
+            - 'OroProductBundle:Product:Datagrid/quantitySingleMode.html.twig'
+            - {isShortUnitCode: true}
+            - '@oro_product.service.single_unit_mode'

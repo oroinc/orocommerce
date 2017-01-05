@@ -17,7 +17,7 @@ layout:
                     options:
                         vars:
                             shoppingLists: '=data["oro_shopping_list_account_user_shopping_lists"].getShoppingLists()'
-                            configDefaultUnit: '=data["oro_product_single_unit_mode"].getConfigDefaultUnit()'
+                            defaultUnitCode: '=data["oro_product_single_unit_mode"].getDefaultUnitCode()'
                             singleUnitMode: '=data["oro_product_single_unit_mode"].isSingleUnitMode()'
                             singleUnitModeCodeVisible: '=data["oro_product_single_unit_mode"].isSingleUnitModeCodeVisible()'
                 __shopping_lists_popup_template:

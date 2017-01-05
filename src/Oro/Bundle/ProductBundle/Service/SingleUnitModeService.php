@@ -4,11 +4,8 @@ namespace Oro\Bundle\ProductBundle\Service;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\ProductBundle\Provider\DefaultProductUnitProviderInterface;
 
-class SingleUnitModeService
+class SingleUnitModeService implements SingleUnitModeServiceInterface
 {
     /**
      * @var ConfigManager
@@ -16,24 +13,15 @@ class SingleUnitModeService
     private $configManager;
 
     /**
-     * @var DefaultProductUnitProviderInterface
-     */
-    private $defaultProductUnitProvider;
-
-    /**
      * @param ConfigManager $configManager
-     * @param DefaultProductUnitProviderInterface $defaultProductUnitProvider
      */
-    public function __construct(
-        ConfigManager $configManager,
-        DefaultProductUnitProviderInterface $defaultProductUnitProvider
-    ) {
+    public function __construct(ConfigManager $configManager)
+    {
         $this->configManager = $configManager;
-        $this->defaultProductUnitProvider = $defaultProductUnitProvider;
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function isSingleUnitMode()
     {
@@ -41,7 +29,7 @@ class SingleUnitModeService
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function isSingleUnitModeCodeVisible()
     {
@@ -52,57 +40,10 @@ class SingleUnitModeService
     }
 
     /**
-     * @param Product $product
-     * @return bool
+     * {@inheritdoc}
      */
-    public function isProductPrimaryUnitDefault(Product $product)
+    public function getDefaultUnitCode()
     {
-        $defaultUnit = $this->configManager->get(Configuration::getConfigKeyByName(Configuration::DEFAULT_UNIT));
-        return $product->getPrimaryUnitPrecision()->getUnit()->getCode() === $defaultUnit;
-    }
-
-    /**
-     * @param Product $product
-     * @return bool
-     */
-    public function isProductPrimaryUnitSingleAndDefault(Product $product)
-    {
-        return $this->isProductPrimaryUnitDefault($product)
-            && $product->getAdditionalUnitPrecisions()->isEmpty();
-    }
-
-    /**
-     * @return null|ProductUnit
-     */
-    public function getConfigDefaultUnit()
-    {
-        $defaultUnitPrecision = $this->defaultProductUnitProvider->getDefaultProductUnitPrecision();
-        if ($defaultUnitPrecision) {
-            return $defaultUnitPrecision->getUnit();
-        }
-        return null;
-    }
-
-    /**
-     * @param ProductUnit $unit
-     * @return bool
-     */
-    public function isDefaultPrimaryUnit(ProductUnit $unit)
-    {
-        return $this->isDefaultPrimaryUnitCode($unit->getCode());
-    }
-
-    /**
-     * @param string $unitCode
-     *
-     * @return bool
-     */
-    public function isDefaultPrimaryUnitCode($unitCode)
-    {
-        $unit = $this->getConfigDefaultUnit();
-        if ($unit) {
-            return $unit->getCode() === $unitCode;
-        }
-        return false;
+        return $this->configManager->get(Configuration::getConfigKeyByName(Configuration::DEFAULT_UNIT));
     }
 }

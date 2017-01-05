@@ -118,7 +118,7 @@
                                     </td>
                                 {% endif %}
                                 <td>
-                                    {% if oro_is_single_unit_mode_code_visible() or not oro_is_default_primary_unit(productOffer.productUnit) %}
+                                    {% if oro_is_unit_code_visible(productOffer.productUnit.code) %}
                                         {{ productOffer.quantity|oro_format_short_product_unit_value(productOffer.productUnit) }}
                                     {% else %}
                                         {{ productOffer.quantity }}
@@ -221,11 +221,13 @@
                                         </tr>
                                         {% for productOffer in quoteProduct.quoteProductOffers %}
                                             <tr>
-                                                {% if oro_is_single_unit_mode_code_visible() or not oro_is_default_primary_unit(productOffer.productUnit) %}
-                                                    <td class="text-left">{{ productOffer.quantity|oro_format_product_unit_code(productOffer.productUnit) }}</td>
-                                                {% else %}
-                                                    <td class="text-left">{{ productOffer.quantity }}</td>
-                                                {% endif %}
+                                                <td class="text-left">
+                                                    {% if oro_is_unit_code_visible(productOffer.productUnit) %}
+                                                        {{ productOffer.quantity|oro_format_product_unit_code(productOffer.productUnit) }}
+                                                    {% else %}
+                                                        {{ productOffer.quantity }}
+                                                    {% endif %}
+                                                </td>
                                                 <td class="text-left">{{ productOffer.price|oro_format_price }}</td>
                                             </tr>
                                         {% endfor %}

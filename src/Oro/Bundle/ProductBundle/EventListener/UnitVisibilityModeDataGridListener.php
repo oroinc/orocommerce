@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\EventListener;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\ProductBundle\Service\SingleUnitModeService;
+use Oro\Bundle\ProductBundle\Service\SingleUnitModeServiceInterface;
 
 class UnitVisibilityModeDataGridListener
 {
@@ -42,14 +43,14 @@ class UnitVisibilityModeDataGridListener
      * @param string $quantityColumnName
      * @param string $quantityTemplate
      * @param array $quantityTemplateContext
-     * @param SingleUnitModeService $singleUnitModeService
+     * @param SingleUnitModeServiceInterface $singleUnitModeService
      */
     public function __construct(
         $unitColumnName,
         $quantityColumnName,
         $quantityTemplate,
         array $quantityTemplateContext,
-        SingleUnitModeService $singleUnitModeService
+        SingleUnitModeServiceInterface $singleUnitModeService
     ) {
         $this->unitColumnName = $unitColumnName;
         $this->quantityColumnName = $quantityColumnName;

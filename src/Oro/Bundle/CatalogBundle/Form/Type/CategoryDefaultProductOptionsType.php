@@ -2,8 +2,9 @@
 
 namespace Oro\Bundle\CatalogBundle\Form\Type;
 
-use Oro\Bundle\ProductBundle\Service\SingleUnitModeService;
+use Oro\Bundle\CatalogBundle\Visibility\CategoryDefaultProductOptionsVisibilityInterface;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -17,16 +18,16 @@ class CategoryDefaultProductOptionsType extends AbstractType
     protected $dataClass;
 
     /**
-     * @var SingleUnitModeService
+     * @var CategoryDefaultProductOptionsVisibilityInterface
      */
-    protected $singleUnitModeService;
+    protected $defaultProductOptionsVisibility;
 
     /**
-     * @param SingleUnitModeService $singleUnitModeService
+     * @param CategoryDefaultProductOptionsVisibilityInterface $defaultProductOptionsVisibility
      */
-    public function __construct(SingleUnitModeService $singleUnitModeService)
+    public function __construct(CategoryDefaultProductOptionsVisibilityInterface $defaultProductOptionsVisibility)
     {
-        $this->singleUnitModeService = $singleUnitModeService;
+        $this->defaultProductOptionsVisibility = $defaultProductOptionsVisibility;
     }
 
     /**
@@ -43,16 +44,24 @@ class CategoryDefaultProductOptionsType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        if ($this->singleUnitModeService->isSingleUnitMode() === false) {
-            $builder
-                ->add(
-                    'unitPrecision',
-                    CategoryUnitPrecisionType::NAME,
-                    [
-                        'label' => 'oro.catalog.category.unit.label',
-                        'required' => false
-                    ]
-                );
+        if ($this->defaultProductOptionsVisibility->isDefaultUnitPrecisionSelectionAvailable()) {
+            $builder->add(
+                'unitPrecision',
+                CategoryUnitPrecisionType::class,
+                [
+                    'label' => 'oro.catalog.category.unit.label',
+                    'required' => false,
+                ]
+            );
+        } else {
+            $builder->add(
+                'unitPrecision',
+                HiddenType::class,
+                [
+                    'label' => 'oro.catalog.category.unit.label',
+                    'required' => false,
+                ]
+            );
         }
     }
 

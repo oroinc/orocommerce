@@ -3,38 +3,67 @@
 namespace Oro\Bundle\ShoppingListBundle\Layout\DataProvider;
 
 use Oro\Bundle\ProductBundle\Service\SingleUnitModeService;
+use Oro\Bundle\ProductBundle\Visibility\ProductUnitFieldsSettingsInterface;
+use Oro\Bundle\ProductBundle\Visibility\UnitVisibilityInterface;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class SingleUnitModeProvider
 {
     /** @var SingleUnitModeService */
-    private $singleUnitService;
+    private $productUnitFieldsSettings;
+
+    /** @var UnitVisibilityInterface */
+    private $unitVisibility;
 
     /**
-     * @param SingleUnitModeService $singleUnitService
+     * @param ProductUnitFieldsSettingsInterface $productUnitFieldsSettings
+     * @param UnitVisibilityInterface $unitVisibility
      */
-    public function __construct(SingleUnitModeService $singleUnitService)
-    {
-        $this->singleUnitService = $singleUnitService;
+    public function __construct(
+        ProductUnitFieldsSettingsInterface $productUnitFieldsSettings,
+        UnitVisibilityInterface $unitVisibility
+    ) {
+        $this->productUnitFieldsSettings = $productUnitFieldsSettings;
+        $this->unitVisibility = $unitVisibility;
     }
 
     /**
      * @param ShoppingList|null $shoppingList
      * @return array
      */
-    public function getProductStates(ShoppingList $shoppingList = null)
+    public function getProductsUnitSelectionVisibilities(ShoppingList $shoppingList = null)
     {
         if (!$shoppingList) {
             return [];
         }
 
-        $states = [];
+        $visibilities = [];
         foreach ($shoppingList->getLineItems() as $lineItem) {
             $product = $lineItem->getProduct();
 
-            $states[$product->getId()] = $this->singleUnitService->isProductPrimaryUnitSingleAndDefault($product);
+            $visibilities[$product->getId()] = $this->productUnitFieldsSettings
+                ->isProductUnitSelectionVisible($product);
         }
 
-        return $states;
+        return $visibilities;
+    }
+
+    /**
+     * @param ShoppingList|null $shoppingList
+     * @return array
+     */
+    public function getLineItemsUnitVisibilities(ShoppingList $shoppingList = null)
+    {
+        if (!$shoppingList) {
+            return [];
+        }
+
+        $visibilities = [];
+        foreach ($shoppingList->getLineItems() as $lineItem) {
+            $visibilities[$lineItem->getId()] = $this->unitVisibility
+                ->isUnitCodeVisible($lineItem->getProductUnitCode());
+        }
+
+        return $visibilities;
     }
 }

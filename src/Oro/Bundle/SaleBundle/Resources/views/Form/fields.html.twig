@@ -150,10 +150,8 @@
                             {{ child.quantity }}
                         </td>
 
-                        {% set hideProductUnit = oro_is_single_unit_mode() and not oro_is_single_unit_mode_code_visible() and oro_is_default_primary_unit(child.productUnit) %}
-
                         <td class="quote-lineitem-requested-unit">
-                            {% if not hideProductUnit %}
+                            {% if oro_is_unit_code_visible(child.productUnit.code) %}
                                 {{ child.productUnit }}
                             {% endif %}
                         </td>

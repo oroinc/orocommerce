@@ -62,7 +62,7 @@
         form_row(form.status)
     ]) %}
 
-    {% if not oro_is_single_unit_mode() %}
+    {% if oro_is_product_primary_unit_visible() %}
         {% set generalData = generalData|merge([
         form_row(form.primaryUnitPrecision),
         form_row(form.additionalUnitPrecisions)

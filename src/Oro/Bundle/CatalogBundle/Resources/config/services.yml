@@ -95,9 +95,7 @@ services:
 
     oro_catalog.provider.default_product_unit_provider.category:
         class: 'Oro\Bundle\CatalogBundle\Provider\CategoryDefaultProductUnitProvider'
-        public: true
-        arguments:
-            - "@oro_product.service.single_unit_mode"
+        public: false
         tags:
             - {name: oro_product.default_product_unit_provider, priority: 10}
 
@@ -186,3 +184,15 @@ services:
         tags:
             - { name: doctrine.event_listener, event: onFlush }
             - { name: kernel.event_listener, event: oro.form.update_handler.after_entity_flush, method: onFormAfterFlush }
+
+    oro_catalog.visibility.default_product_options:
+        class: 'Oro\Bundle\CatalogBundle\Visibility\BasicCategoryDefaultProductOptionsVisibility'
+        public: false
+
+    oro_catalog.visibility.single_unit_default_product_options_decorator:
+        class: 'Oro\Bundle\CatalogBundle\Visibility\SingleUnitCategoryDefaultProductOptionsVisibilityDecorator'
+        decorates: oro_catalog.visibility.default_product_options
+        decoration_priority: 10
+        arguments:
+            - '@oro_catalog.visibility.single_unit_default_product_options_decorator.inner'
+            - '@oro_product.service.single_unit_mode'

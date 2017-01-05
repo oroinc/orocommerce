@@ -185,7 +185,8 @@
                 {% set productAllPrices = productsAllPrices[lineItem.product.id]|default({}) is not empty ? productsAllPrices[lineItem.product.id] : null %}
                 {% set productMatchedPrice = productsMatchedPrice[lineItem.product.id][lineItem.unit.code] is not empty ? productsMatchedPrice[lineItem.product.id][lineItem.unit.code] : null %}
                 {% set currency = productMatchedPrice ? productMatchedPrice.currency : defaultCurrency %}
-                {% set productApplySingleUnitMode = singleUnitModeProductStates[lineItem.product.id]|default({}) is not empty ? singleUnitModeProductStates[lineItem.product.id] : null %}
+                {% set isProductUnitSelectionVisible = productsUnitSelectionVisibilities[lineItem.product.id]|default({}) is not empty ? productsUnitSelectionVisibilities[lineItem.product.id] : null %}
+                {% set isLineItemUnitVisible = lineItemsUnitVisibilities[lineItem.id]|default({}) is not empty ? lineItemsUnitVisibilities  [lineItem.id] : null %}
                 <tbody class="line_item">
                     <tr class="line_item_view" {{ UI.renderPageComponentAttributes({
                         module: 'oroui/js/app/components/view-component',
@@ -246,12 +247,7 @@
                                     </div>
                                 </div>
                                 <div class="product__select inline va-m_md">
-                                    {% if singleUnitMode and productApplySingleUnitMode %}
-                                        <input type="hidden" name="product_unit" value="{{ lineItem.unit.code }}" />
-                                        {% if singleUnitModeCodeVisible %}
-                                            / {{ lineItem.unit.code|oro_format_product_unit_label}}
-                                        {% endif %}
-                                    {% else %}
+                                    {% if isProductUnitSelectionVisible %}
                                         <select class="select select--full" name="product_unit" data-name="field__unit" required>
                                             {% if productsUnits[lineItem.product.id] is defined %}
                                                 {% for unit in productsUnits[lineItem.product.id] %}
@@ -262,6 +258,11 @@
                                                 {% endif %}
                                             {% endif %}
                                         </select>
+                                    {% else %}
+                                        <input type="hidden" name="product_unit" value="{{ lineItem.unit.code }}" />
+                                        {% if isLineItemUnitVisible %}
+                                            {{ lineItem.unit.code|oro_format_product_unit_label}}
+                                        {% endif %}
                                     {% endif %}
                                 </div>
                             </form>

@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\ProductBundle\Layout\DataProvider;
 
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Service\SingleUnitModeService;
+use Oro\Bundle\ProductBundle\Service\SingleUnitModeServiceInterface;
 
 class SingleUnitModeProvider
 {
@@ -12,9 +12,9 @@ class SingleUnitModeProvider
     private $singleUnitService;
 
     /**
-     * @param SingleUnitModeService $singleUnitService
+     * @param SingleUnitModeServiceInterface $singleUnitService
      */
-    public function __construct(SingleUnitModeService $singleUnitService)
+    public function __construct(SingleUnitModeServiceInterface $singleUnitService)
     {
         $this->singleUnitService = $singleUnitService;
     }
@@ -36,19 +36,10 @@ class SingleUnitModeProvider
     }
 
     /**
-     * @param Product $product
-     * @return bool
-     */
-    public function isProductPrimaryUnitSingleAndDefault(Product $product)
-    {
-        return $this->singleUnitService->isProductPrimaryUnitSingleAndDefault($product);
-    }
-
-    /**
      * @return ProductUnit|null
      */
-    public function getConfigDefaultUnit()
+    public function getDefaultUnitCode()
     {
-        return $this->singleUnitService->getConfigDefaultUnit();
+        return $this->singleUnitService->getDefaultUnitCode();
     }
 }

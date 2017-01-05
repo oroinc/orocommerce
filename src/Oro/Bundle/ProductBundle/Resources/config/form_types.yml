@@ -168,3 +168,12 @@ services:
             - '@doctrine'
         tags:
             - { name: form.type, alias: oro_product_page_variant }
+
+    oro_product.form.type.extension.choices_primary_unit_selection:
+        class: 'Oro\Bundle\ProductBundle\Form\Extension\ChoicesProductPrimaryUnitSelectionOwnerTypeExtension'
+        arguments:
+            - 'unit'
+            - '%oro_product.form.type.product_primary_unit_precision.class%'
+            - "@oro_product.visibility.product_unit_fields_settings"
+        tags:
+            - { name: form.type_extension, extended_type: '%oro_product.form.type.product_primary_unit_precision.class%' }
