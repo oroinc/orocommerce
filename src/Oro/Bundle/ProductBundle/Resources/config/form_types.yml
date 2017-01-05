@@ -152,6 +152,8 @@ services:
 
     oro_product.form.type.frontend_line_item:
         class: 'Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType'
+        arguments:
+            - '@oro_product.visibility.product_unit_fields_settings'
         tags:
             - { name: form.type, alias: oro_product_frontend_line_item }
 

@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CatalogBundle\Visibility;
 
-interface CategoryDefaultProductOptionsVisibilityInterface
+interface CategoryDefaultProductUnitOptionsVisibilityInterface
 {
     /**
      * @return bool

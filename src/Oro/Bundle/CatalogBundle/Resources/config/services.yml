@@ -186,11 +186,11 @@ services:
             - { name: kernel.event_listener, event: oro.form.update_handler.after_entity_flush, method: onFormAfterFlush }
 
     oro_catalog.visibility.default_product_options:
-        class: 'Oro\Bundle\CatalogBundle\Visibility\BasicCategoryDefaultProductOptionsVisibility'
+        class: 'Oro\Bundle\CatalogBundle\Visibility\BasicCategoryDefaultProductUnitOptionsVisibility'
         public: false
 
     oro_catalog.visibility.single_unit_default_product_options_decorator:
-        class: 'Oro\Bundle\CatalogBundle\Visibility\SingleUnitCategoryDefaultProductOptionsVisibilityDecorator'
+        class: 'Oro\Bundle\CatalogBundle\Visibility\SingleUnitCategoryDefaultProductUnitOptionsVisibilityDecorator'
         decorates: oro_catalog.visibility.default_product_options
         decoration_priority: 10
         arguments:

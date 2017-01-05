@@ -48,7 +48,7 @@ class BasicProductUnitFieldsSettings implements ProductUnitFieldsSettingsInterfa
     /**
      * {@inheritdoc}
      */
-    public function getAvailableUnitsForPrimaryUnit(Product $product = null)
+    public function getAvailablePrimaryUnitChoices(Product $product = null)
     {
         return $this->doctrineHelper->getEntityRepository(ProductUnit::class)->findAll();
     }

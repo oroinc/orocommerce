@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CatalogBundle\Visibility;
 
-class BasicCategoryDefaultProductOptionsVisibility implements CategoryDefaultProductOptionsVisibilityInterface
+class BasicCategoryDefaultProductUnitOptionsVisibility implements CategoryDefaultProductUnitOptionsVisibilityInterface
 {
     /**
      * {@inheritdoc}

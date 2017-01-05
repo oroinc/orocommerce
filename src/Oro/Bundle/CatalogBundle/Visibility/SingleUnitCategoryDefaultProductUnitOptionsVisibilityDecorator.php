@@ -3,12 +3,13 @@
 namespace Oro\Bundle\CatalogBundle\Visibility;
 
 use Oro\Bundle\ProductBundle\Service\SingleUnitModeService;
+use Oro\Bundle\ProductBundle\Service\SingleUnitModeServiceInterface;
 
-class SingleUnitCategoryDefaultProductOptionsVisibilityDecorator implements
-    CategoryDefaultProductOptionsVisibilityInterface
+class SingleUnitCategoryDefaultProductUnitOptionsVisibilityDecorator implements
+    CategoryDefaultProductUnitOptionsVisibilityInterface
 {
     /**
-     * @var CategoryDefaultProductOptionsVisibilityInterface
+     * @var CategoryDefaultProductUnitOptionsVisibilityInterface
      */
     private $optionsVisibility;
 
@@ -18,12 +19,12 @@ class SingleUnitCategoryDefaultProductOptionsVisibilityDecorator implements
     private $singleUnitModeService;
 
     /**
-     * @param CategoryDefaultProductOptionsVisibilityInterface $optionsVisibility
-     * @param SingleUnitModeService $singleUnitModeService
+     * @param CategoryDefaultProductUnitOptionsVisibilityInterface $optionsVisibility
+     * @param SingleUnitModeServiceInterface $singleUnitModeService
      */
     public function __construct(
-        CategoryDefaultProductOptionsVisibilityInterface $optionsVisibility,
-        SingleUnitModeService $singleUnitModeService
+        CategoryDefaultProductUnitOptionsVisibilityInterface $optionsVisibility,
+        SingleUnitModeServiceInterface $singleUnitModeService
     ) {
         $this->optionsVisibility = $optionsVisibility;
         $this->singleUnitModeService = $singleUnitModeService;

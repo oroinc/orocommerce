@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CatalogBundle\Form\Type;
 
-use Oro\Bundle\CatalogBundle\Visibility\CategoryDefaultProductOptionsVisibilityInterface;
+use Oro\Bundle\CatalogBundle\Visibility\CategoryDefaultProductUnitOptionsVisibilityInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -18,14 +18,14 @@ class CategoryDefaultProductOptionsType extends AbstractType
     protected $dataClass;
 
     /**
-     * @var CategoryDefaultProductOptionsVisibilityInterface
+     * @var CategoryDefaultProductUnitOptionsVisibilityInterface
      */
     protected $defaultProductOptionsVisibility;
 
     /**
-     * @param CategoryDefaultProductOptionsVisibilityInterface $defaultProductOptionsVisibility
+     * @param CategoryDefaultProductUnitOptionsVisibilityInterface $defaultProductOptionsVisibility
      */
-    public function __construct(CategoryDefaultProductOptionsVisibilityInterface $defaultProductOptionsVisibility)
+    public function __construct(CategoryDefaultProductUnitOptionsVisibilityInterface $defaultProductOptionsVisibility)
     {
         $this->defaultProductOptionsVisibility = $defaultProductOptionsVisibility;
     }
@@ -44,25 +44,7 @@ class CategoryDefaultProductOptionsType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        if ($this->defaultProductOptionsVisibility->isDefaultUnitPrecisionSelectionAvailable()) {
-            $builder->add(
-                'unitPrecision',
-                CategoryUnitPrecisionType::class,
-                [
-                    'label' => 'oro.catalog.category.unit.label',
-                    'required' => false,
-                ]
-            );
-        } else {
-            $builder->add(
-                'unitPrecision',
-                HiddenType::class,
-                [
-                    'label' => 'oro.catalog.category.unit.label',
-                    'required' => false,
-                ]
-            );
-        }
+        $this->addUnitPrecisionField($builder);
     }
 
     /**
@@ -89,5 +71,22 @@ class CategoryDefaultProductOptionsType extends AbstractType
     public function getBlockPrefix()
     {
         return self::NAME;
+    }
+
+    /**
+     * @param FormBuilderInterface $builder
+     */
+    private function addUnitPrecisionField(FormBuilderInterface $builder)
+    {
+        $type = HiddenType::class;
+
+        if ($this->defaultProductOptionsVisibility->isDefaultUnitPrecisionSelectionAvailable()) {
+            $type = CategoryUnitPrecisionType::class;
+        }
+
+        $builder->add('unitPrecision', $type, [
+            'label' => 'oro.catalog.category.unit.label',
+            'required' => false,
+        ]);
     }
 }

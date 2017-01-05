@@ -20,14 +20,16 @@
             </tr>
             </thead>
             <tbody class="product-prices__tbody">
-            {% set shownUnit = '' %}
+            {% set currenctUnit = '' %}
             {% for price in productPrices %}
-                {% if shownUnit != price.formatted_unit %}
-                    {% set shownUnit = price.formatted_unit %}
+                {% if currenctUnit != price.formatted_unit %}
+                    {% set currenctUnit = price.formatted_unit %}
                     <tr class="product-prices__tr">
                         <td colspan="2" class="product-prices__td">
                             {% if loop.index > 1 %}<br/>{% endif %}
-                            <strong>{{ shownUnit|capitalize }}</strong>
+                            {% if productUnitSelectionVisible %}
+                                <strong>{{ currenctUnit|capitalize }}</strong>
+                            {% endif %}
                         </td>
                     </tr>
                 {% endif %}

@@ -49,15 +49,15 @@ define(function(require) {
                 if (this.isProductApplySingleUnitMode(productUnits)) {
                     select.select2("container").hide();
                     if (this.options.singleUnitModeCodeVisible) {
-                        select.parent().append('<span class="unit-label">/ ' + productUnits[0] + '</span>');
+                        select.parent().append('<span class="unit-label">' + productUnits[0] + '</span>');
                     }
                 }
             }
         },
 
         isProductApplySingleUnitMode: function(productUnits) {
-            if (this.options.singleUnitMode && productUnits.length == 1) {
-                return productUnits[0] == this.options.configDefaultUnit;
+            if (this.options.singleUnitMode && productUnits.length === 1) {
+                return productUnits[0] === this.options.configDefaultUnit;
             }
 
             return false;

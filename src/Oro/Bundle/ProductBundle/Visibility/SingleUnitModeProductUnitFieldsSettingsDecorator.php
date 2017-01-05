@@ -75,10 +75,10 @@ class SingleUnitModeProductUnitFieldsSettingsDecorator implements ProductUnitFie
     /**
      * {@inheritdoc}
      */
-    public function getAvailableUnitsForPrimaryUnit(Product $product = null)
+    public function getAvailablePrimaryUnitChoices(Product $product = null)
     {
         if (!$this->singleUnitModeService->isSingleUnitMode()) {
-            return $this->settings->getAvailableUnitsForPrimaryUnit($product);
+            return $this->settings->getAvailablePrimaryUnitChoices($product);
         }
         $units = [];
         if (!$product) {
@@ -104,7 +104,7 @@ class SingleUnitModeProductUnitFieldsSettingsDecorator implements ProductUnitFie
     private function isProductPrimaryUnitSingleAndDefault(Product $product)
     {
         $defaultUnitCode = $this->singleUnitModeService->getDefaultUnitCode();
-        return $defaultUnitCode !== $product->getPrimaryUnitPrecision()->getUnit()->getCode()
-            || !$product->getAdditionalUnitPrecisions()->isEmpty();
+        return $defaultUnitCode === $product->getPrimaryUnitPrecision()->getUnit()->getCode()
+            && $product->getAdditionalUnitPrecisions()->isEmpty();
     }
 }

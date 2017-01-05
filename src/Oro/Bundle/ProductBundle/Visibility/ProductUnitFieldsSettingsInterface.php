@@ -29,5 +29,5 @@ interface ProductUnitFieldsSettingsInterface
      * @param Product $product
      * @return ProductUnit[]
      */
-    public function getAvailableUnitsForPrimaryUnit(Product $product = null);
+    public function getAvailablePrimaryUnitChoices(Product $product = null);
 }
