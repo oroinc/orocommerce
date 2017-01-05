@@ -81,16 +81,16 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
     const SECURITY_GROUP = 'commerce';
 
     /**
-     * @var AccountUserRole[]|Collection
+     * @var CustomerUserRole[]|Collection
      *
-     * @ORM\ManyToMany(targetEntity="Oro\Bundle\CustomerBundle\Entity\AccountUserRole", inversedBy="accountUsers")
+     * @ORM\ManyToMany(targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerUserRole", inversedBy="accountUsers")
      * @ORM\JoinTable(
      *      name="oro_acc_user_access_role",
      *      joinColumns={
      *          @ORM\JoinColumn(name="account_user_id", referencedColumnName="id", onDelete="CASCADE")
      *      },
      *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="account_user_role_id", referencedColumnName="id", onDelete="CASCADE")
+     *          @ORM\JoinColumn(name="customer_user_role_id", referencedColumnName="id", onDelete="CASCADE")
      *      }
      * )
      * @ConfigField(

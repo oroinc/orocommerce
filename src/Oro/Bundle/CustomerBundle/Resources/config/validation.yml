@@ -85,7 +85,7 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
         - Callback:
             methods: [isRegionValid]
 
-Oro\Bundle\CustomerBundle\Entity\AccountUserRole:
+Oro\Bundle\CustomerBundle\Entity\CustomerUserRole:
     constraints:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
             fields: [label, account]

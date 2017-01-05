@@ -1,17 +1,17 @@
 datagrids:
-    account-user-role-permission-grid:
+    customer-user-role-permission-grid:
         extends: role-permission-grid
         source:
             type: account-role-permission-provider
-        acl_resource: oro_account_account_user_role_update
+        acl_resource: oro_account_customer_user_role_update
         options:
             access_level_route: oro_account_acl_access_levels
 
-    frontend-account-user-role-permission-grid:
+    frontend-customer-user-role-permission-grid:
         extends: role-permission-grid
         source:
             type: account-role-frontend-permission-provider
-        acl_resource: oro_account_frontend_account_user_role_update
+        acl_resource: oro_account_frontend_customer_user_role_update
         options:
             access_level_route: oro_customer_frontend_acl_access_levels
 
@@ -19,7 +19,7 @@ datagrids:
         extends: workflow-permission-grid
         source:
             type: account-user-workflow-permission-grid-provider
-        acl_resource: oro_account_account_user_role_update
+        acl_resource: oro_account_customer_user_role_update
         options:
             access_level_route: oro_account_acl_access_levels
 
@@ -468,7 +468,7 @@ datagrids:
                     type:      boolean
                     data_name: accountUser.confirmed
 
-    basic-account-account-user-roles-grid:
+    basic-account-customer-user-roles-grid:
         options:
             entityHint: role
             entity_pagination: true
@@ -483,7 +483,7 @@ datagrids:
                     - role.public
                     - (CASE WHEN role.account IS NOT NULL THEN false ELSE true END) as isRolePredefined
                 from:
-                    - { table: %oro_customer.entity.account_user_role.class%, alias: role }
+                    - { table: %oro_customer.entity.customer_user_role.class%, alias: role }
         properties:
             id: ~
             view_link:
@@ -492,13 +492,13 @@ datagrids:
                     - id
         columns:
             label:
-                label: oro.customer.accountuserrole.role.label
+                label: oro.customer.customeruserrole.role.label
             isRolePredefined:
                 type: twig
-                label: oro.customer.accountuserrole.type.label
+                label: oro.customer.customeruserrole.type.label
                 frontend_type: html
                 data_name: isRolePredefined
-                template: OroCustomerBundle:AccountUserRole:Datagrid/Property/isRolePredifined.html.twig
+                template: OroCustomerBundle:CustomerUserRole:Datagrid/Property/isRolePredifined.html.twig
         sorters:
             columns:
                 label:
@@ -518,8 +518,8 @@ datagrids:
                     options:
                         field_options:
                             choices:
-                                true:  oro.customer.accountuserrole.type.predefined.label
-                                false: oro.customer.accountuserrole.type.customizable.label
+                                true:  oro.customer.customeruserrole.type.predefined.label
+                                false: oro.customer.customeruserrole.type.customizable.label
         actions:
             view:
                 type:          navigate
@@ -528,9 +528,9 @@ datagrids:
                 icon:          eye
                 rowAction:     true
 
-    account-account-user-roles-grid:
-        acl_resource: oro_account_account_user_role_view
-        extends: basic-account-account-user-roles-grid
+    account-customer-user-roles-grid:
+        acl_resource: oro_account_customer_user_role_view
+        extends: basic-account-customer-user-roles-grid
         source:
             query:
                 select:
@@ -540,9 +540,9 @@ datagrids:
                         - { join: role.account, alias: role_account }
         columns:
             account_name:
-                label: oro.customer.accountuserrole.account.label
+                label: oro.customer.customeruserrole.account.label
             self_managed:
-                label: oro.customer.accountuserrole.self_managed.label
+                label: oro.customer.customeruserrole.self_managed.label
                 frontend_type: boolean
                 data_name: self_managed
         sorters:
@@ -561,31 +561,31 @@ datagrids:
                     data_name: self_managed
         properties:
             view_link:
-                route: oro_customer_account_user_role_view
+                route: oro_customer_customer_user_role_view
         actions:
             view:
-                acl_resource:  oro_account_account_user_role_view
+                acl_resource:  oro_account_customer_user_role_view
 
-    frontend-account-account-user-roles-grid:
-        acl_resource: oro_account_frontend_account_user_role_index
-        extends: basic-account-account-user-roles-grid
+    frontend-account-customer-user-roles-grid:
+        acl_resource: oro_account_frontend_customer_user_role_index
+        extends: basic-account-customer-user-roles-grid
         source:
             skip_acl_apply: true
         properties:
             id: ~
             view_link:
                 type: url
-                route:  oro_customer_frontend_account_user_role_view
+                route:  oro_customer_frontend_customer_user_role_view
                 params:
                     - id
             update_link:
                 type: url
-                route: oro_customer_frontend_account_user_role_update
+                route: oro_customer_frontend_customer_user_role_update
                 params:
                     - id
         actions:
             view:
-                acl_resource:  oro_account_frontend_account_user_role_view
+                acl_resource:  oro_account_frontend_customer_user_role_view
                 type:          navigate
                 label:         oro.grid.action.view
                 link:          view_link
@@ -598,8 +598,8 @@ datagrids:
                 link:          update_link
                 icon:          pencil-square-o
                 order:         20
-                acl_resource:  oro_account_frontend_account_user_role_update
-        action_configuration: ['@oro_customer.datagrid.action_permission_provider', "getAccountUserRolePermission"]
+                acl_resource:  oro_account_frontend_customer_user_role_update
+        action_configuration: ['@oro_customer.datagrid.action_permission_provider', "getCustomerUserRolePermission"]
 
     account-account-users-grid-update-basic:
         extends: account-account-users-grid-basic
@@ -819,7 +819,7 @@ datagrids:
                     data_name: accountName
         properties:
             update_link:
-                route: oro_customer_account_user_role_update
+                route: oro_customer_customer_user_role_update
 
     frontend-account-account-users-grid-update:
         extends: frontend-account-account-users-grid-basic

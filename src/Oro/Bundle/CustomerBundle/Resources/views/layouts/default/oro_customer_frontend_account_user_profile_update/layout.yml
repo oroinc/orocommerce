@@ -1,9 +1,9 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'OroCustomerBundle:layouts:default/oro_customer_frontend_account_user_profile_update/layout.html.twig'
+            themes: 'layout.html.twig'
         - '@setFormTheme':
-            themes: 'OroCustomerBundle:layouts:default/oro_customer_frontend_account_user_profile_update/form_theme.html.twig'
+            themes: 'form_theme.html.twig'
 
         - '@setOption':
             id: page_title
@@ -35,14 +35,14 @@ layout:
                     blockType: link
                     options:
                         route_name: oro_customer_frontend_account_user_profile
-                        text: oro.customer.action.account_user_role.cancel_label
+                        text: oro.customer.action.customer_user_role.cancel_label
                         attr:
                             'class': 'btn '
                 account_profile_edit_form_actions_create:
                     blockType: button
                     options:
                         action: submit
-                        text: oro.customer.action.account_user_role.save_label
+                        text: oro.customer.action.customer_user_role.save_label
                         style: auto
                         attr:
                             'class': 'role-submit '

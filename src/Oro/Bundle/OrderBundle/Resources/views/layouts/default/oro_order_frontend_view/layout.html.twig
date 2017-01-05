@@ -32,11 +32,8 @@
 {% endblock %}
 
 {% block address_widget %}
-    {% if address %}
-        {{ address|oro_format_address|escape|nl2br }}
-    {% else %}
-        {{ 'oro.ui.empty'|trans }}
-    {% endif %}
+    {% from 'OroAddressBundle::macros.html.twig' import renderAddress %}
+    {{ renderAddress(address) }}
 {% endblock %}
 
 {% block order_total_widget %}

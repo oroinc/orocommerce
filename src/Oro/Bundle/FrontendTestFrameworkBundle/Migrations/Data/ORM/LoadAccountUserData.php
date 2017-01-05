@@ -12,7 +12,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use Oro\Bundle\UserBundle\Entity\BaseUserManager;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Entity\AccountUserRole;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 
 class LoadAccountUserData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
@@ -57,9 +57,9 @@ class LoadAccountUserData extends AbstractFixture implements ContainerAwareInter
 
         $role = $this->container
             ->get('doctrine')
-            ->getManagerForClass('OroCustomerBundle:AccountUserRole')
-            ->getRepository('OroCustomerBundle:AccountUserRole')
-            ->findOneBy([], ['id' => Criteria::ASC]);
+            ->getManagerForClass('OroCustomerBundle:CustomerUserRole')
+            ->getRepository('OroCustomerBundle:CustomerUserRole')
+            ->findOneBy(['role' => 'ROLE_FRONTEND_ADMINISTRATOR']);
 
         $entity
             ->setFirstName('AccountUser')
