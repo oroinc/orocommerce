@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 use Oro\Bundle\AddressBundle\Form\Handler\AddressHandler;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
@@ -23,12 +24,18 @@ class AccountUserAddressController extends Controller
     /**
      * @Route("/", name="oro_customer_frontend_account_user_address_index")
      * @Layout(vars={"entity_class", "account_address_count", "account_user_address_count"})
-     * @AclAncestor("oro_account_frontend_account_user_address_view")
      *
      * @return array
      */
     public function indexAction()
     {
+        $securityFacade = $this->get('oro_security.security_facade');
+        if (!$securityFacade->isGranted('oro_account_frontend_account_address_view')
+            && !$securityFacade->isGranted('oro_account_frontend_account_user_address_view')
+        ) {
+            throw new AccessDeniedException();
+        }
+
         return [
             'entity_class' => $this->container->getParameter('oro_customer.entity.account_user_address.class'),
             'account_user_address_count' => $this->getUser()->getAddresses()->count(),
