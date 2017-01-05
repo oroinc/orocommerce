@@ -22,7 +22,7 @@ Oro\Bundle\CustomerBundle\Entity\CustomerAddress:
         - Callback:
             methods: [isRegionValid]
 
-Oro\Bundle\CustomerBundle\Entity\AccountGroup:
+Oro\Bundle\CustomerBundle\Entity\CustomerGroup:
     properties:
         name:
             - NotBlank: ~

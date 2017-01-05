@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CustomerBundle\Model;
 
-class ExtendAccountGroup
+class ExtendCustomerGroup
 {
     /**
      * The real implementation of this method is auto generated.

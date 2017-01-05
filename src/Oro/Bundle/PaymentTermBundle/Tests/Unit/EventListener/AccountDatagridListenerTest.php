@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PaymentTermBundle\Tests\Unit\Datagrid;
 
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
@@ -89,7 +89,7 @@ class AccountDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $this->associationProvider->expects($this->exactly(2))->method('getAssociationNames')
             ->withConsecutive(
                 [Account::class],
-                [AccountGroup::class]
+                [CustomerGroup::class]
             )
             ->willReturnOnConsecutiveCalls(['accountPaymentTerm'], []);
 
@@ -116,7 +116,7 @@ class AccountDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $this->associationProvider->expects($this->exactly(2))->method('getAssociationNames')
             ->withConsecutive(
                 [Account::class],
-                [AccountGroup::class]
+                [CustomerGroup::class]
             )
             ->willReturnOnConsecutiveCalls(['accountPaymentTerm'], ['accountGroupPaymentTerm']);
 
@@ -181,7 +181,7 @@ class AccountDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $this->associationProvider->expects($this->exactly(2))->method('getAssociationNames')
             ->withConsecutive(
                 [Account::class],
-                [AccountGroup::class]
+                [CustomerGroup::class]
             )
             ->willReturnOnConsecutiveCalls(
                 ['accountPaymentTerm', 'accountPaymentTerm2'],

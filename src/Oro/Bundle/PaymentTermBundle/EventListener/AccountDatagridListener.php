@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PaymentTermBundle\EventListener;
 
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
 
@@ -36,7 +36,9 @@ class AccountDatagridListener
             return;
         }
 
-        $accountGroupAssociationNames = $this->paymentTermAssociationProvider->getAssociationNames(AccountGroup::class);
+        $accountGroupAssociationNames = $this->paymentTermAssociationProvider
+            ->getAssociationNames(CustomerGroup::class);
+
         if (!$accountGroupAssociationNames) {
             return;
         }

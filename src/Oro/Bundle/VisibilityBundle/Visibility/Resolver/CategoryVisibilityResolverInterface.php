@@ -3,7 +3,7 @@
 namespace Oro\Bundle\VisibilityBundle\Visibility\Resolver;
 
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 
 interface CategoryVisibilityResolverInterface
@@ -26,22 +26,22 @@ interface CategoryVisibilityResolverInterface
 
     /**
      * @param Category $category
-     * @param AccountGroup $accountGroup
+     * @param CustomerGroup $accountGroup
      * @return bool
      */
-    public function isCategoryVisibleForAccountGroup(Category $category, AccountGroup $accountGroup);
+    public function isCategoryVisibleForAccountGroup(Category $category, CustomerGroup $accountGroup);
 
     /**
-     * @param AccountGroup $accountGroup
+     * @param CustomerGroup $accountGroup
      * @return array
      */
-    public function getVisibleCategoryIdsForAccountGroup(AccountGroup $accountGroup);
+    public function getVisibleCategoryIdsForAccountGroup(CustomerGroup $accountGroup);
 
     /**
-     * @param AccountGroup $accountGroup
+     * @param CustomerGroup $accountGroup
      * @return array
      */
-    public function getHiddenCategoryIdsForAccountGroup(AccountGroup $accountGroup);
+    public function getHiddenCategoryIdsForAccountGroup(CustomerGroup $accountGroup);
 
     /**
      * @param Category $category

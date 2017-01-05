@@ -3,10 +3,10 @@
 namespace Oro\Bundle\CustomerBundle\Tests\Unit\Entity;
 
 use Oro\Component\Testing\Unit\EntityTestCase;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 
-class AccountGroupTest extends EntityTestCase
+class CustomerGroupTest extends EntityTestCase
 {
     /**
      * Test setters getters
@@ -26,33 +26,33 @@ class AccountGroupTest extends EntityTestCase
     {
         $accountGroup = $this->createAccountGroupEntity();
 
-        $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $accountGroup->getAccounts());
-        $this->assertCount(0, $accountGroup->getAccounts());
+        $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $accountGroup->getCustomers());
+        $this->assertCount(0, $accountGroup->getCustomers());
 
         $account = $this->createAccountEntity();
 
         $this->assertInstanceOf(
-            'Oro\Bundle\CustomerBundle\Entity\AccountGroup',
-            $accountGroup->addAccount($account)
+            'Oro\Bundle\CustomerBundle\Entity\CustomerGroup',
+            $accountGroup->addCustomer($account)
         );
 
-        $this->assertCount(1, $accountGroup->getAccounts());
+        $this->assertCount(1, $accountGroup->getCustomers());
 
-        $accountGroup->addAccount($account);
+        $accountGroup->addCustomer($account);
 
-        $this->assertCount(1, $accountGroup->getAccounts());
+        $this->assertCount(1, $accountGroup->getCustomers());
 
-        $accountGroup->removeAccount($account);
+        $accountGroup->removeCustomer($account);
 
-        $this->assertCount(0, $accountGroup->getAccounts());
+        $this->assertCount(0, $accountGroup->getCustomers());
     }
 
     /**
-     * @return AccountGroup
+     * @return CustomerGroup
      */
     protected function createAccountGroupEntity()
     {
-        return new AccountGroup();
+        return new CustomerGroup();
     }
 
     /**

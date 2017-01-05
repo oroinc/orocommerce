@@ -29,14 +29,14 @@ class OroAccountBundleScopeRelations implements Migration, ScopeExtensionAwareIn
         $this->scopeExtension->addScopeAssociation(
             $schema,
             'account',
-            OroAccountBundleInstaller::ORO_ACCOUNT_TABLE_NAME,
+            'oro_account',
             'name'
         );
 
         $this->scopeExtension->addScopeAssociation(
             $schema,
             'accountGroup',
-            OroAccountBundleInstaller::ORO_ACCOUNT_GROUP_TABLE_NAME,
+            'oro_account_group',
             'name'
         );
     }

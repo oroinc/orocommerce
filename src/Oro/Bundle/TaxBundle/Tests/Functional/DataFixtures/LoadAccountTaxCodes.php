@@ -7,7 +7,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccounts;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\TaxBundle\Entity\AccountTaxCode;
@@ -72,7 +72,7 @@ class LoadAccountTaxCodes extends AbstractFixture implements DependentFixtureInt
         }
 
         foreach ($accountGroupsRefs as $accountGroupRef) {
-            /** @var AccountGroup $account */
+            /** @var CustomerGroup $account */
             $account = $this->getReference($accountGroupRef);
             $accountTaxCode->addAccountGroup($account);
         }

@@ -4,6 +4,8 @@ namespace Oro\Bundle\CustomerBundle\Migrations\Schema\v1_10;
 
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
+use Oro\Bundle\EntityExtendBundle\Extend\RelationType;
+use Oro\Bundle\FrontendBundle\Migration\UpdateExtendRelationTrait;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
@@ -20,6 +22,7 @@ class OroAccountBundle implements
     ContainerAwareInterface
 {
     use MigrationConstraintTrait,
+        UpdateExtendRelationTrait,
         ContainerAwareTrait;
     /**
      * @var RenameExtension
@@ -38,6 +41,7 @@ class OroAccountBundle implements
         $this->renameAccountAdrAdrTypeTable($schema, $queries);
         $this->renameAccountUserAddressTable($schema, $queries);
         $this->renameAccountAddressTable($schema, $queries);
+        $this->renameCustomerGroup($schema, $queries);
     }
 
     /**
@@ -217,6 +221,102 @@ class OroAccountBundle implements
             'Oro\Bundle\CustomerBundle\Entity\CustomerAddress',
             '.accountaddress',
             '.customeraddress'
+        );
+    }
+
+    /**
+     * @param Schema $schema
+     * @param QueryBag $queries
+     */
+    public function renameCustomerGroup(Schema $schema, QueryBag $queries)
+    {
+        $extension = $this->renameExtension;
+        $schema->getTable('oro_account_group')->dropIndex('oro_account_group_name_idx');
+        $extension->addIndex($schema, $queries, 'oro_account_group', ['name'], 'oro_customer_group_name_idx');
+        $extension->renameTable(
+            $schema,
+            $queries,
+            'oro_account_group',
+            'oro_customer_group'
+        );
+        /** @var ConfigManager $configManager */
+        $configManager = $this->container->get('oro_entity_config.config_manager');
+        $registry = $this->container->get('doctrine');
+        $migration = new ConfigMigration($registry, $configManager);
+        $migration->migrate(
+            'Oro\Bundle\CustomerBundle\Entity\CustomerUserSettings',
+            '.accountgroup',
+            '.customergroup'
+        );
+        $possibleNoteRelation = [
+            'account_group_4a32a76a',
+            'account_group_2aa0f32f',
+            'account_group_8ca1514c',
+            'account_group_87ec8cf4',
+        ];
+        foreach ($possibleNoteRelation as $relation) {
+            if ($schema->getTable('oro_note')->hasColumn($relation.'_id')) {
+                $schema->getTable('oro_note')->dropColumn($relation.'_id');
+                $query = new UpdateNoteAssociationQuery($schema);
+                $query->setFieldName($relation);
+                $queries->addPostQuery($query);
+            }
+
+            $this->migrateConfig(
+                $configManager,
+                'Oro\Bundle\ActivityListBundle\Entity\ActivityList',
+                'Oro\Bundle\CustomerBundle\Entity\CustomerGroup',
+                $relation,
+                'customer_group_58e0c3ec',
+                RelationType::MANY_TO_MANY
+            );
+        }
+        $tables = [
+            'oro_rel_c3990ba665864788c78443',
+            'oro_rel_c3990ba665864788b74044',
+            'oro_rel_c3990ba6658647885abb70',
+        ];
+        foreach ($tables as $tableName) {
+            if ($schema->hasTable($tableName)) {
+                $table = $schema->getTable($tableName);
+                $fk = $this->getConstraintName($table, 'accountgroup_id');
+                $table->removeForeignKey($fk);
+                $extension->renameColumn($schema, $queries, $table, 'accountgroup_id', 'customergroup_id');
+                $extension->renameTable(
+                    $schema,
+                    $queries,
+                    $tableName,
+                    'oro_rel_c3990ba616cbf45899499b'
+                );
+            }
+        }
+        if ($schema->hasTable('oro_rel_6f8f552a65864788eebf8a')) {
+            $table = $schema->getTable('oro_rel_6f8f552a65864788eebf8a');
+            $fk = $this->getConstraintName($table, 'accountgroup_id');
+            $table->removeForeignKey($fk);
+            $extension->renameColumn($schema, $queries, $table, 'accountgroup_id', 'customergroup_id');
+            $extension->renameTable(
+                $schema,
+                $queries,
+                'oro_rel_6f8f552a65864788eebf8a',
+                'oro_rel_6f8f552a16cbf458eebf8a'
+            );
+        }
+        $migration = new ConfigMigration($registry, $configManager);
+        $migration->migrate(
+            'Oro\Bundle\CustomerBundle\Entity\CustomerGroup',
+            '.accountgroup',
+            '.customergroup'
+        );
+        $migration->migrate(
+            'Oro\Bundle\NoteBundle\Entity\Note',
+            '.accountgroup',
+            '.customergroup'
+        );
+        $migration->migrate(
+            'Oro\Bundle\ActivityListBundle\Entity\ActivityList',
+            '.accountgroup',
+            '.customergroup'
         );
     }
 

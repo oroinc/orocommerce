@@ -126,7 +126,7 @@ datagrids:
                     - { table: %oro_customer.entity.account_group.class%, alias: account_group }
         columns:
             name:
-                label: oro.customer.accountgroup.name.label
+                label: oro.customer.customergroup.name.label
         properties:
             id: ~
         sorters:
