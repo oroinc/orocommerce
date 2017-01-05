@@ -47,7 +47,7 @@ class LoadRequestWorkflowDemoData extends AbstractFixture implements
     public function getDependencies()
     {
         return [
-            'Oro\Bundle\RFPBundle\Migrations\Data\Demo\ORM\LoadRequestDemoData'
+            LoadRequestDemoData::class
         ];
     }
 
