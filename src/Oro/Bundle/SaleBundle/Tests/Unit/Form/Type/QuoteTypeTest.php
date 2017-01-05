@@ -10,7 +10,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\CustomerBundle\Form\Type\AccountUserSelectType;
 use Oro\Bundle\CustomerBundle\Form\Type\AccountSelectType;
@@ -311,7 +311,7 @@ class QuoteTypeTest extends AbstractTest
         /** @var FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder */
         $builder = $this->createMock(FormBuilderInterface::class);
         $quote = new Quote();
-        $accountGroup = new AccountGroup();
+        $accountGroup = new CustomerGroup();
         $account = new Account();
         $account->setGroup($accountGroup);
         $quote->setAccount($account);

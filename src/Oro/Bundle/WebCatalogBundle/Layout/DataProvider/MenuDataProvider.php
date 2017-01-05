@@ -69,7 +69,7 @@ class MenuDataProvider
      */
     public function getItems()
     {
-        $request = $this->requestStack->getMasterRequest();
+        $request = $this->requestStack->getCurrentRequest();
 
         $rootItem = [];
         if ($request && $scope = $request->attributes->get('_web_content_scope')) {

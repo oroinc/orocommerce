@@ -4,7 +4,6 @@ namespace Oro\Bundle\FrontendBundle\EventListener;
 
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\EntityExtendBundle\Grid\AdditionalFieldsExtension;
-use Oro\Bundle\EntityExtendBundle\Grid\DynamicFieldsExtension;
 use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\FrontendBundle\Request\FrontendHelperTrait;
 
@@ -31,6 +30,6 @@ class DatagridFieldsListener
         }
 
         $config->offsetSetByPath(AdditionalFieldsExtension::ADDITIONAL_FIELDS_CONFIG_PATH, []);
-        $config->offsetSetByPath(DynamicFieldsExtension::EXTEND_ENTITY_CONFIG_PATH, false);
+        $config->setExtendedEntityClassName(null);
     }
 }

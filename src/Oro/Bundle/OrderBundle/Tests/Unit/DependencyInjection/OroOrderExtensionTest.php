@@ -26,6 +26,7 @@ class OroOrderExtensionTest extends ExtensionTestCase
             'oro_order.form.type.order_shipping_tracking_collection',
             'oro_order.form.type.select_switch_input',
             'oro_order.handler.order_shipping_tracking',
+            'oro_order.twig.order_shipping',
             'oro_order.formatter.shipping_tracking',
             'oro_order.factory.shipping_context',
             'oro_order.event_listener.order.possible_shipping_methods'

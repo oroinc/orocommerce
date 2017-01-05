@@ -15,10 +15,10 @@ use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Entity\AccountUserAddress;
-use Oro\Bundle\CustomerBundle\Entity\AccountUserRole;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 use Oro\Bundle\CustomerBundle\Form\Type\AccountSelectType;
-use Oro\Bundle\CustomerBundle\Form\Type\AccountUserRoleSelectType;
+use Oro\Bundle\CustomerBundle\Form\Type\CustomerUserRoleSelectType;
 use Oro\Bundle\CustomerBundle\Form\Type\AccountUserType;
 use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\AddressCollectionTypeStub;
 use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\EntitySelectTypeStub;
@@ -26,8 +26,8 @@ use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\EntitySelectTypeStub;
 class AccountUserTypeTest extends FormIntegrationTestCase
 {
     const DATA_CLASS = 'Oro\Bundle\CustomerBundle\Entity\AccountUser';
-    const ROLE_CLASS = 'Oro\Bundle\CustomerBundle\Entity\AccountUserRole';
-    const ADDRESS_CLASS = 'Oro\Bundle\CustomerBundle\Entity\AccountUserAddress';
+    const ROLE_CLASS = 'Oro\Bundle\CustomerBundle\Entity\CustomerUserRole';
+    const ADDRESS_CLASS = 'Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress';
 
     /**
      * @var AccountUserType
@@ -45,7 +45,7 @@ class AccountUserTypeTest extends FormIntegrationTestCase
     protected static $accounts = [];
 
     /**
-     * @var AccountUserAddress[]
+     * @var CustomerUserAddress[]
      */
     protected static $addresses = [];
 
@@ -69,10 +69,10 @@ class AccountUserTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        $accountUserRoleSelectType = new EntitySelectTypeStub(
+        $customerUserRoleSelectType = new EntitySelectTypeStub(
             $this->getRoles(),
-            AccountUserRoleSelectType::NAME,
-            new AccountUserRoleSelectType($this->createTranslator())
+            CustomerUserRoleSelectType::NAME,
+            new CustomerUserRoleSelectType($this->createTranslator())
         );
         $addressEntityType = new EntityType($this->getAddresses(), 'test_address_entity');
         $accountSelectType = new EntityType($this->getAccounts(), AccountSelectType::NAME);
@@ -92,7 +92,7 @@ class AccountUserTypeTest extends FormIntegrationTestCase
             new PreloadedExtension(
                 [
                     OroDateType::NAME => new OroDateType(),
-                    AccountUserRoleSelectType::NAME => $accountUserRoleSelectType,
+                    CustomerUserRoleSelectType::NAME => $customerUserRoleSelectType,
                     $accountSelectType->getName() => $accountSelectType,
                     AddressCollectionTypeStub::NAME => new AddressCollectionTypeStub(),
                     $addressEntityType->getName() => $addressEntityType,
@@ -121,7 +121,7 @@ class AccountUserTypeTest extends FormIntegrationTestCase
         if ($rolesGranted) {
             $this->securityFacade->expects($this->once())
                 ->method('isGranted')
-                ->with('oro_account_account_user_role_view')
+                ->with('oro_account_customer_user_role_view')
                 ->will($this->returnValue(true));
         }
         $this->securityFacade->expects($this->exactly(2))->method('getOrganization')->willReturn(new Organization());
@@ -243,7 +243,7 @@ class AccountUserTypeTest extends FormIntegrationTestCase
     {
         $this->assertInternalType('callable', $callable);
 
-        $repository = $this->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\Repository\AccountUserRoleRepository')
+        $repository = $this->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\Repository\CustomerUserRoleRepository')
             ->disableOriginalConstructor()
             ->getMock();
         $repository->expects($this->once())->method('getAvailableRolesByAccountUserQueryBuilder');
@@ -260,14 +260,14 @@ class AccountUserTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @return AccountUserAddress[]
+     * @return CustomerUserAddress[]
      */
     protected function getAddresses()
     {
         if (!self::$addresses) {
             self::$addresses = [
-                1 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountUserAddress', 1),
-                2 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountUserAddress', 2)
+                1 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress', 1),
+                2 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress', 2)
             ];
         }
 
@@ -275,7 +275,7 @@ class AccountUserTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @return AccountUserRole[]
+     * @return CustomerUserRole[]
      */
     protected function getRoles()
     {
@@ -332,11 +332,11 @@ class AccountUserTypeTest extends FormIntegrationTestCase
     /**
      * @param int $id
      * @param string $label
-     * @return AccountUserRole
+     * @return CustomerUserRole
      */
     protected function getRole($id, $label)
     {
-        $role = new AccountUserRole($label);
+        $role = new CustomerUserRole($label);
 
         $reflection = new \ReflectionProperty(get_class($role), 'id');
         $reflection->setAccessible(true);

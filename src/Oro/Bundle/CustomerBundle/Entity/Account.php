@@ -114,9 +114,9 @@ class Account extends ExtendAccount
     protected $children;
 
     /**
-     * @var Collection|AccountAddress[]
+     * @var Collection|CustomerAddress[]
      *
-     * @ORM\OneToMany(targetEntity="Oro\Bundle\CustomerBundle\Entity\AccountAddress",
+     * @ORM\OneToMany(targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerAddress",
      *    mappedBy="frontendOwner", cascade={"all"}, orphanRemoval=true
      * )
      * @ORM\OrderBy({"primary" = "DESC"})
@@ -131,9 +131,9 @@ class Account extends ExtendAccount
     protected $addresses;
 
     /**
-     * @var AccountGroup
+     * @var CustomerGroup
      *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\AccountGroup", inversedBy="accounts")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerGroup", inversedBy="customers")
      * @ORM\JoinColumn(name="group_id", referencedColumnName="id", onDelete="SET NULL")
      * @ConfigField(
      *      defaultValues={
@@ -368,11 +368,11 @@ class Account extends ExtendAccount
     }
 
     /**
-     * @param AccountGroup $group
+     * @param CustomerGroup $group
      *
      * @return $this
      */
-    public function setGroup(AccountGroup $group = null)
+    public function setGroup(CustomerGroup $group = null)
     {
         $this->group = $group;
 
@@ -380,7 +380,7 @@ class Account extends ExtendAccount
     }
 
     /**
-     * @return AccountGroup
+     * @return CustomerGroup
      */
     public function getGroup()
     {

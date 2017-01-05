@@ -1,19 +1,11 @@
 // @theme: default
 
 .product-prices {
-    max-width: $product-prices-max-width;
-
     background: $product-prices-background;
     border-radius: $product-prices-border-radius;
 
     &__th {
         font-size: $product-prices-head-font-size;
         font-weight: $product-prices-head-font-weight;
-    }
-}
-
-@include breakpoint('tablet-small') {
-    .product-prices {
-        max-width: $product-prices-tablet-max-width;
     }
 }

@@ -10,25 +10,32 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 use Oro\Bundle\AddressBundle\Form\Handler\AddressHandler;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Entity\AccountUserAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 
 class AccountUserAddressController extends Controller
 {
     /**
      * @Route("/", name="oro_customer_frontend_account_user_address_index")
      * @Layout(vars={"entity_class", "account_address_count", "account_user_address_count"})
-     * @AclAncestor("oro_account_frontend_account_user_address_view")
      *
      * @return array
      */
     public function indexAction()
     {
+        $securityFacade = $this->get('oro_security.security_facade');
+        if (!$securityFacade->isGranted('oro_account_frontend_account_address_view')
+            && !$securityFacade->isGranted('oro_account_frontend_account_user_address_view')
+        ) {
+            throw new AccessDeniedException();
+        }
+
         return [
             'entity_class' => $this->container->getParameter('oro_customer.entity.account_user_address.class'),
             'account_user_address_count' => $this->getUser()->getAddresses()->count(),
@@ -48,7 +55,7 @@ class AccountUserAddressController extends Controller
      * @Acl(
      *      id="oro_account_frontend_account_user_address_create",
      *      type="entity",
-     *      class="OroCustomerBundle:AccountUserAddress",
+     *      class="OroCustomerBundle:CustomerUserAddress",
      *      permission="CREATE",
      *      group_name="commerce"
      * )
@@ -62,7 +69,7 @@ class AccountUserAddressController extends Controller
      */
     public function createAction(AccountUser $accountUser, Request $request)
     {
-        return $this->update($accountUser, new AccountUserAddress(), $request);
+        return $this->update($accountUser, new CustomerUserAddress(), $request);
     }
 
     /**
@@ -74,7 +81,7 @@ class AccountUserAddressController extends Controller
      * @Acl(
      *      id="oro_account_frontend_account_user_address_update",
      *      type="entity",
-     *      class="OroCustomerBundle:AccountUserAddress",
+     *      class="OroCustomerBundle:CustomerUserAddress",
      *      permission="EDIT",
      *      group_name="commerce"
      * )
@@ -83,22 +90,22 @@ class AccountUserAddressController extends Controller
      * @ParamConverter("accountUser", options={"id" = "entityId"})
      *
      * @param AccountUser $accountUser
-     * @param AccountUserAddress $accountAddress
+     * @param CustomerUserAddress $accountAddress
      * @param Request $request
      * @return array
      */
-    public function updateAction(AccountUser $accountUser, AccountUserAddress $accountAddress, Request $request)
+    public function updateAction(AccountUser $accountUser, CustomerUserAddress $accountAddress, Request $request)
     {
         return $this->update($accountUser, $accountAddress, $request);
     }
 
     /**
      * @param AccountUser $accountUser
-     * @param AccountUserAddress $accountAddress
+     * @param CustomerUserAddress $accountAddress
      * @param Request $request
      * @return array
      */
-    private function update(AccountUser $accountUser, AccountUserAddress $accountAddress, Request $request)
+    private function update(AccountUser $accountUser, CustomerUserAddress $accountAddress, Request $request)
     {
         $this->prepareEntities($accountUser, $accountAddress, $request);
 
@@ -116,13 +123,13 @@ class AccountUserAddressController extends Controller
         $result = $this->get('oro_form.model.update_handler')->handleUpdate(
             $form->getData(),
             $form,
-            function (AccountUserAddress $accountAddress) use ($accountUser) {
+            function (CustomerUserAddress $accountAddress) use ($accountUser) {
                 return [
                     'route' => 'oro_customer_frontend_account_user_address_update',
                     'parameters' => ['id' => $accountAddress->getId(), 'entityId' => $accountUser->getId()],
                 ];
             },
-            function (AccountUserAddress $accountAddress) use ($accountUser, $currentUser) {
+            function (CustomerUserAddress $accountAddress) use ($accountUser, $currentUser) {
                 if ($currentUser instanceof AccountUser && $currentUser->getId() === $accountUser->getId()) {
                     return ['route' => 'oro_customer_frontend_account_user_address_index'];
                 } else {
@@ -134,7 +141,7 @@ class AccountUserAddressController extends Controller
             },
             $this->get('translator')->trans('oro.customer.controller.accountuseraddress.saved.message'),
             $handler,
-            function (AccountUserAddress $accountAddress, FormInterface $form, Request $request) {
+            function (CustomerUserAddress $accountAddress, FormInterface $form, Request $request) {
                 $url = $request->getUri();
                 if ($request->headers->get('referer')) {
                     $url = $request->headers->get('referer');
@@ -157,10 +164,10 @@ class AccountUserAddressController extends Controller
 
     /**
      * @param AccountUser $accountUser
-     * @param AccountUserAddress $accountAddress
+     * @param CustomerUserAddress $accountAddress
      * @param Request $request
      */
-    private function prepareEntities(AccountUser $accountUser, AccountUserAddress $accountAddress, Request $request)
+    private function prepareEntities(AccountUser $accountUser, CustomerUserAddress $accountAddress, Request $request)
     {
         if ($request->getMethod() === 'GET' && !$accountAddress->getId()) {
             $accountAddress->setFirstName($accountUser->getFirstName());

@@ -1,8 +1,8 @@
-{% extends 'form_div_layout.html.twig' %}
+{% extends 'OroFormBundle:layouts/blank:form_theme.html.twig' %}
 
 {%- block form_label -%}
     {% set label_attr = layout_attr_defaults(label_attr, {
-        '~class': ' label'
+        '~class': ' label label--full'
     }) %}
 
     {{ parent() }}
@@ -45,10 +45,11 @@
 
 {% block widget_attributes %}
     {% if errors|length > 0 %}
-        {% set attr = attr|merge({
-            class: attr.class|default('') ~ ' error'
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': ' error'
         }) %}
     {% endif %}
+
     {{ parent() }}
 {% endblock widget_attributes %}
 
@@ -67,32 +68,43 @@
     {%- endif -%}
 {%- endblock form_errors -%}
 
-{%- block choice_widget %}
+{%- block choice_widget_expanded -%}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' select select--size-m select--full'
+        '~class': ' input-widget-select'
+    }) %}
+    <div {{ block('widget_container_attributes') }}>
+        {%- for child in form %}
+            {{- form_widget(child) -}}
+        {% endfor -%}
+    </div>
+{%- endblock choice_widget_expanded -%}
+
+{%- block choice_widget_collapsed %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' select select--full'
     }) %}
 
     {{ parent() }}
 {% endblock %}
 
+{% block checkbox_row %}
+    {{- form_widget(form) -}}
+    {{- form_errors(form) -}}
+{% endblock %}
+
 {%- block checkbox_widget -%}
-    {% set class_prefix = form.vars.class_prefix|default(class_prefix|default('checkbox')) %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' custom-checkbox__input'
     }) %}
     {%- if label is empty -%}
         {% set label = id|humanize %}
     {%- endif -%}
-    <label for="{{ id }}"
-           data-checkbox
-           tabindex="0"
-           class="custom-checkbox {% if form.vars.checked %}checked{% endif %}"
-    >
+
+    <label for="{{ id }}" class="custom-checkbox">
         {{- parent() -}}
         <span class="custom-checkbox__icon"></span>
         <span class="custom-checkbox__text">{{ label|block_text(translation_domain) }}</span>
     </label>
-    {{- form_errors(form, {'class_prefix': class_prefix}) -}}
 {%- endblock checkbox_widget -%}
 
 {%- block radio_widget -%}
@@ -110,7 +122,6 @@
     </label>
     {{- form_errors(form, {'class_prefix': class_prefix}) -}}
 {%- endblock radio_widget -%}
-
 
 {%- block oro_date_widget -%}
         {% if attribute(attr, 'data-validation') is defined %}

@@ -1,0 +1,12 @@
+layout:
+    imports:
+        -
+            id: oro_customer_user_role_grid
+            root: page_content
+            namespace: customer_user_roles
+
+    actions:
+        - '@setOption':
+            id: page_title
+            optionName: text
+            optionValue: 'oro.customer.frontend.account_user.role.entity_plural_label'

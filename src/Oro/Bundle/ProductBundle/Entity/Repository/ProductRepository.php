@@ -260,4 +260,33 @@ class ProductRepository extends EntityRepository
 
         return $this;
     }
+
+    /**
+     * @param Product $configurableProduct
+     * @param array $variantParameters
+     * $variantParameters = [
+     *     'size' => 'm',
+     *     'color' => 'red',
+     *     'slim_fit' => true
+     * ]
+     * Value is extended field id for select field and true or false for boolean field
+     * @return QueryBuilder
+     */
+    public function getSimpleProductsByVariantFieldsQueryBuilder(Product $configurableProduct, array $variantParameters)
+    {
+        $qb = $this
+            ->createQueryBuilder('p')
+            ->select('p')
+            ->leftJoin('p.parentVariantLinks', 'l')
+            ->andWhere('l.parentProduct = :parentProduct')
+            ->setParameter('parentProduct', $configurableProduct);
+
+        foreach ($variantParameters as $variantName => $variantValue) {
+            $qb
+                ->andWhere(sprintf('p.%s = :variantValue%s', $variantName, $variantName))
+                ->setParameter(sprintf('variantValue%s', $variantName), $variantValue);
+        }
+
+        return $qb;
+    }
 }

@@ -18,12 +18,16 @@ class ExpressionLanguageRuleFiltrationServiceDecorator implements RuleFiltration
     private $filtrationService;
 
     /**
+     * @param ExpressionLanguage $expressionLanguage
      * @param RuleFiltrationServiceInterface $filtrationService
      * @param LoggerInterface $logger
      */
-    public function __construct(RuleFiltrationServiceInterface $filtrationService, LoggerInterface $logger)
-    {
-        $this->expressionLanguage = new ExpressionLanguage();
+    public function __construct(
+        ExpressionLanguage $expressionLanguage,
+        RuleFiltrationServiceInterface $filtrationService,
+        LoggerInterface $logger
+    ) {
+        $this->expressionLanguage = $expressionLanguage;
         $this->filtrationService = $filtrationService;
         $this->logger = $logger;
     }

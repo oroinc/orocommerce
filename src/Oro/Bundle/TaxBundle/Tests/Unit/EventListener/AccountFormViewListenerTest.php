@@ -7,7 +7,7 @@ use Symfony\Component\Form\FormView;
 use Doctrine\ORM\EntityRepository;
 
 use Oro\Bundle\TaxBundle\EventListener\AccountFormViewListener;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\TaxBundle\Entity\AccountTaxCode;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 
@@ -136,7 +136,7 @@ class AccountFormViewListenerTest extends AbstractFormViewListenerTest
         $this->doctrineHelper
             ->expects($this->once())
             ->method('getEntityReference')
-            ->willReturn((new Account())->setGroup(new AccountGroup()));
+            ->willReturn((new Account())->setGroup(new CustomerGroup()));
 
         $this->doctrineHelper->expects($this->once())->method('getEntityRepository')->willReturn($repository);
 
@@ -190,7 +190,7 @@ class AccountFormViewListenerTest extends AbstractFormViewListenerTest
         $this->doctrineHelper
             ->expects($this->once())
             ->method('getEntityReference')
-            ->willReturn((new Account())->setGroup(new AccountGroup()));
+            ->willReturn((new Account())->setGroup(new CustomerGroup()));
 
         $this->doctrineHelper->expects($this->once())->method('getEntityRepository')->willReturn($repository);
 

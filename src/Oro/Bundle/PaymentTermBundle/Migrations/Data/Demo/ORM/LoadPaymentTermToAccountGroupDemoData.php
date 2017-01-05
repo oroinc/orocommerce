@@ -9,7 +9,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-use Oro\Bundle\CustomerBundle\Entity\Repository\AccountGroupRepository;
+use Oro\Bundle\CustomerBundle\Entity\Repository\CustomerGroupRepository;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 
 class LoadPaymentTermToAccountGroupDemoData extends AbstractFixture implements
@@ -48,7 +48,7 @@ class LoadPaymentTermToAccountGroupDemoData extends AbstractFixture implements
         $doctrine = $this->container->get('doctrine');
         $accessor = $this->container->get('oro_payment_term.provider.payment_term_association');
 
-        $accountGroupRepository = $doctrine->getRepository('OroCustomerBundle:AccountGroup');
+        $accountGroupRepository = $doctrine->getRepository('OroCustomerBundle:CustomerGroup');
 
         $paymentTermsAll = $this->getLoadedPaymentTerms();
         $accountGroupsIterator = $accountGroupRepository->getBatchIterator();

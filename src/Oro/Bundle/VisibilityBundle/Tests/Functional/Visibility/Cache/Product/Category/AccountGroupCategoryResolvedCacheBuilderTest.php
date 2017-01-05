@@ -7,7 +7,7 @@ use Doctrine\ORM\EntityManager;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
@@ -27,7 +27,7 @@ class AccountGroupCategoryResolvedCacheBuilderTest extends AbstractProductResolv
     /** @var Category */
     protected $category;
 
-    /** @var AccountGroup */
+    /** @var CustomerGroup */
     protected $accountGroup;
 
     /** @var AccountGroupCategoryResolvedCacheBuilder */
@@ -370,7 +370,7 @@ class AccountGroupCategoryResolvedCacheBuilderTest extends AbstractProductResolv
 
             $visibilities[$key]['category'] = $category->getId();
 
-            /** @var AccountGroup $category */
+            /** @var CustomerGroup $category */
             $accountGroup = $this->getReference($row['accountGroup']);
             $visibilities[$key]['accountGroup'] = $accountGroup->getId();
         }

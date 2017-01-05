@@ -5,7 +5,7 @@ namespace Oro\Bundle\TaxBundle\Tests\Unit\OrderTax\ContextHandler;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
@@ -188,7 +188,7 @@ class OrderLineItemHandlerTest extends \PHPUnit_Framework_TestCase
         }
 
         if ($hasAccount && $hasAccountGroup) {
-            $this->order->getAccount()->setGroup(new AccountGroup());
+            $this->order->getAccount()->setGroup(new CustomerGroup());
         }
 
         $orderLineItem->setOrder($this->order);

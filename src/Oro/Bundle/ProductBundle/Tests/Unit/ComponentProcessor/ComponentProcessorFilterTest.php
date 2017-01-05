@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\ComponentProcessor;
 
-use Doctrine\Common\Persistence\ObjectManager;
-
 use Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorFilter;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Search\ProductRepository;
@@ -76,12 +74,9 @@ class ComponentProcessorFilterTest extends \PHPUnit_Framework_TestCase
             ->method('toArray')
             ->willReturnCallback(function () use ($skus) {
                 $filteredSkus = [];
-                $objectManager = $this->getMockBuilder(ObjectManager::class)
-                    ->disableOriginalConstructor()->getMock();
                 foreach ($skus as $index => $sku) {
                     if (strpos($sku, 'invisibleSku') === false) {
                         $filteredSkus[] = new Item(
-                            $objectManager,
                             Product::class,
                             $index,
                             null,

@@ -70,7 +70,7 @@ class AccountUserController extends Controller
 
     /**
      * @Route("/get-roles/{accountUserId}/{accountId}",
-     *      name="oro_customer_account_user_roles",
+     *      name="oro_customer_customer_user_roles",
      *      requirements={"accountId"="\d+", "accountUserId"="\d+"},
      *      defaults={"accountId"=0, "accountUserId"=0}
      * )

@@ -12,7 +12,7 @@ use Oro\Component\Testing\Unit\FormViewListenerTestCase;
 use Oro\Bundle\PricingBundle\Entity\PriceListAccountFallback;
 use Oro\Bundle\PricingBundle\Entity\PriceListAccountGroupFallback;
 use Oro\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\PricingBundle\EventListener\AccountGroupFormViewListener;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
@@ -64,7 +64,7 @@ class AccountGroupFormViewListenerTest extends FormViewListenerTestCase
     public function testOnAccountGroupView()
     {
         $accountGroupId = 1;
-        $accountGroup = new AccountGroup();
+        $accountGroup = new CustomerGroup();
 
         $priceListToAccountGroup1 = new PriceListToAccountGroup();
         $priceListToAccountGroup1->setAccountGroup($accountGroup);
@@ -201,13 +201,13 @@ class AccountGroupFormViewListenerTest extends FormViewListenerTestCase
     }
     
     /**
-     * @param AccountGroup $accountGroup
+     * @param CustomerGroup $accountGroup
      * @param PriceListToAccountGroup[] $priceListsToAccountGroup
      * @param PriceListAccountGroupFallback $fallbackEntity
      * @param Website[] $websites
      */
     protected function setRepositoryExpectationsForAccountGroup(
-        AccountGroup $accountGroup,
+        CustomerGroup $accountGroup,
         $priceListsToAccountGroup,
         PriceListAccountGroupFallback $fallbackEntity,
         array $websites

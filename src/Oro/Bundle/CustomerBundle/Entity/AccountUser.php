@@ -81,16 +81,16 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
     const SECURITY_GROUP = 'commerce';
 
     /**
-     * @var AccountUserRole[]|Collection
+     * @var CustomerUserRole[]|Collection
      *
-     * @ORM\ManyToMany(targetEntity="Oro\Bundle\CustomerBundle\Entity\AccountUserRole", inversedBy="accountUsers")
+     * @ORM\ManyToMany(targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerUserRole", inversedBy="accountUsers")
      * @ORM\JoinTable(
      *      name="oro_acc_user_access_role",
      *      joinColumns={
      *          @ORM\JoinColumn(name="account_user_id", referencedColumnName="id", onDelete="CASCADE")
      *      },
      *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="account_user_role_id", referencedColumnName="id", onDelete="CASCADE")
+     *          @ORM\JoinColumn(name="customer_user_role_id", referencedColumnName="id", onDelete="CASCADE")
      *      }
      * )
      * @ConfigField(
@@ -245,10 +245,10 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
     protected $birthday;
 
     /**
-     * @var Collection|AccountUserAddress[]
+     * @var Collection|CustomerUserAddress[]
      *
      * @ORM\OneToMany(
-     *      targetEntity="Oro\Bundle\CustomerBundle\Entity\AccountUserAddress",
+     *      targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress",
      *      mappedBy="frontendOwner",
      *      cascade={"all"},
      *      orphanRemoval=true
@@ -310,11 +310,11 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
     protected $updatedAt;
 
     /**
-     * @var ArrayCollection|AccountUserSettings[]
+     * @var ArrayCollection|CustomerUserSettings[]
      *
      * @ORM\OneToMany(
-     *      targetEntity="Oro\Bundle\CustomerBundle\Entity\AccountUserSettings",
-     *      mappedBy="accountUser",
+     *      targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerUserSettings",
+     *      mappedBy="customerUser",
      *      cascade={"all"},
      *      orphanRemoval=true
      * )
@@ -823,7 +823,7 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
 
     /**
      * @param Website $website
-     * @return null|AccountUserSettings
+     * @return null|CustomerUserSettings
      */
     public function getWebsiteSettings(Website $website)
     {
@@ -837,17 +837,17 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
     }
 
     /**
-     * @param AccountUserSettings $websiteSettings
+     * @param CustomerUserSettings $websiteSettings
      * @return $this
      */
-    public function setWebsiteSettings(AccountUserSettings $websiteSettings)
+    public function setWebsiteSettings(CustomerUserSettings $websiteSettings)
     {
         $existing = $this->getWebsiteSettings($websiteSettings->getWebsite());
         if ($existing) {
             $this->settings->removeElement($existing);
         }
 
-        $websiteSettings->setAccountUser($this);
+        $websiteSettings->setCustomerUser($this);
         $this->settings->add($websiteSettings);
 
         return $this;

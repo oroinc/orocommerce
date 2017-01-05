@@ -34,6 +34,7 @@ class ContentNodeTest extends \PHPUnit_Framework_TestCase
             ['slugPrototypes', new LocalizedFallbackValue()],
             ['scopes', new Scope()],
             ['contentVariants', new ContentVariant()],
+            ['localizedUrls', new LocalizedFallbackValue()]
         ]);
     }
 

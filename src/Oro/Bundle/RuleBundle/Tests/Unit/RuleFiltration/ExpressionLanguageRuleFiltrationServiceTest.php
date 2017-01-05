@@ -6,6 +6,7 @@ use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
 use Oro\Bundle\RuleBundle\RuleFiltration\ExpressionLanguageRuleFiltrationServiceDecorator;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
+use Oro\Component\ExpressionLanguage\ExpressionLanguage;
 use Psr\Log\LoggerInterface;
 
 class ExpressionLanguageRuleFiltrationServiceTest extends \PHPUnit_Framework_TestCase
@@ -41,7 +42,11 @@ class ExpressionLanguageRuleFiltrationServiceTest extends \PHPUnit_Framework_Tes
             ->setMethods(['getFilteredRuleOwners'])->getMockForAbstractClass();
         $this->logger = $this->getMockBuilder(LoggerInterface::class)
             ->setMethods(['error'])->getMockForAbstractClass();
-        $this->serviceDecorator = new ExpressionLanguageRuleFiltrationServiceDecorator($this->service, $this->logger);
+        $this->serviceDecorator = new ExpressionLanguageRuleFiltrationServiceDecorator(
+            new ExpressionLanguage(),
+            $this->service,
+            $this->logger
+        );
     }
 
     /**

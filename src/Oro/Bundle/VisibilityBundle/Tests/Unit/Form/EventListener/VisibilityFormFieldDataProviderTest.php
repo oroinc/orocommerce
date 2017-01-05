@@ -5,7 +5,7 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Form\EventListener;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Form\FormScopeCriteriaResolver;
@@ -145,7 +145,7 @@ class VisibilityFormFieldDataProviderTest extends \PHPUnit_Framework_TestCase
                 'id' => 1,
                 'visibility' => 'visible',
                 'scope' => new StubScope(
-                    ['accountGroup' => $this->getEntity(AccountGroup::class, ['id' => 2]), 'account' => null]
+                    ['accountGroup' => $this->getEntity(CustomerGroup::class, ['id' => 2]), 'account' => null]
                 ),
             ]
         );
@@ -155,7 +155,7 @@ class VisibilityFormFieldDataProviderTest extends \PHPUnit_Framework_TestCase
                 'id' => 2,
                 'visibility' => 'hidden',
                 'scope' => new StubScope(
-                    ['accountGroup' => $this->getEntity(AccountGroup::class, ['id' => 4]), 'account' => null]
+                    ['accountGroup' => $this->getEntity(CustomerGroup::class, ['id' => 4]), 'account' => null]
                 ),
             ]
         );
