@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\CustomerBundle\Entity;
 
+use Psr\Log\LoggerInterface;
+use Psr\Log\LoggerAwareInterface;
+
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -9,7 +12,7 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\UserBundle\Entity\BaseUserManager;
 use Oro\Bundle\CustomerBundle\Mailer\Processor;
 
-class AccountUserManager extends BaseUserManager implements ContainerAwareInterface
+class AccountUserManager extends BaseUserManager implements ContainerAwareInterface, LoggerAwareInterface
 {
     /**
      * @var ConfigManager
@@ -21,10 +24,20 @@ class AccountUserManager extends BaseUserManager implements ContainerAwareInterf
      */
     protected $emailProcessor;
 
+    /** @var LoggerInterface */
+    protected $logger;
     /**
      * @var ContainerInterface
      */
     protected $container;
+
+    /**
+     * @param LoggerInterface $logger
+     */
+    public function setLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
 
     /**
      * @param AccountUser $user
@@ -53,10 +66,16 @@ class AccountUserManager extends BaseUserManager implements ContainerAwareInterf
      */
     public function sendWelcomeEmail(AccountUser $user)
     {
-        $this->getEmailProcessor()->sendWelcomeNotification(
-            $user,
-            $this->isSendPasswordInWelcomeEmail() ? $user->getPlainPassword() : null
-        );
+        try {
+            $this->getEmailProcessor()->sendWelcomeNotification(
+                $user,
+                $this->isSendPasswordInWelcomeEmail() ? $user->getPlainPassword() : null
+            );
+        } catch (\Swift_SwiftException $exception) {
+            if (null !== $this->logger) {
+                $this->logger->error('Unable to send welcome notification email', ['exception' => $exception]);
+            }
+        }
     }
 
     /**
@@ -66,7 +85,13 @@ class AccountUserManager extends BaseUserManager implements ContainerAwareInterf
     {
         $user->setConfirmed(false)
             ->setConfirmationToken($user->generateToken());
-        $this->getEmailProcessor()->sendConfirmationEmail($user);
+        try {
+            $this->getEmailProcessor()->sendConfirmationEmail($user);
+        } catch (\Swift_SwiftException $exception) {
+            if (null !== $this->logger) {
+                $this->logger->error('Unable to send confirmation email', ['exception' => $exception]);
+            }
+        }
     }
 
     /**
