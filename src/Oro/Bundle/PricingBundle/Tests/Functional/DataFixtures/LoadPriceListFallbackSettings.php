@@ -7,7 +7,7 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccounts;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\PricingBundle\Entity\PriceListAccountFallback;
@@ -87,7 +87,7 @@ class LoadPriceListFallbackSettings extends AbstractFixture implements Dependent
             /** @var Website $website */
             $website = $this->getReference($websiteReference);
             foreach ($fallbackSettings as $accountGroupReference => $fallbackValue) {
-                /** @var AccountGroup $accountGroup */
+                /** @var CustomerGroup $accountGroup */
                 $accountGroup = $this->getReference($accountGroupReference);
 
                 $priceListAccountGroupFallback = new PriceListAccountGroupFallback();

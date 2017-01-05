@@ -72,36 +72,28 @@ class ProductVariantCustomFieldsDatagridListener
             return;
         }
 
-        $andWherePath = '[source][query][where][and]';
-        $orWherePath = '[source][query][where][or]';
         $config = $event->getConfig();
+        $query = $config->getOrmQuery();
         $variantFields = $parentProduct->getVariantFields();
 
         // Don't show any product variants if there are no variant fields specified in the configurable product
         if (!$variantFields) {
-            $config->offsetAddToArrayByPath($andWherePath, ['1 = 0']);
+            $query->addAndWhere('1 = 0');
 
             return;
         }
 
-        $from = $this->getFrom($config);
-        $rootEntityAlias = $from['alias'];
+        $rootEntityAlias = $this->getRootAlias($config);
 
         $variantAndWherePart = [];
         foreach ($variantFields as $variantFieldName) {
             $variantAndWherePart[] = sprintf('%s.%s IS NOT NULL', $rootEntityAlias, $variantFieldName);
         }
-
-        $config->offsetAddToArrayByPath($andWherePath, $variantAndWherePart);
+        $query->addAndWhere($variantAndWherePart);
 
         // Show all linked variants
         $variantLinkLeftJoin = $this->getVariantLinkLeftJoin($config);
-        $variantLinkAlias = $variantLinkLeftJoin['alias'];
-
-        $variantOrWherePart = [
-            sprintf('%s.id IS NOT NULL', $variantLinkAlias)
-        ];
-        $config->offsetAddToArrayByPath($orWherePath, $variantOrWherePart);
+        $query->addOrWhere(sprintf('%s.id IS NOT NULL', $variantLinkLeftJoin['alias']));
     }
 
     /**
@@ -140,21 +132,19 @@ class ProductVariantCustomFieldsDatagridListener
      * @param DatagridConfiguration $config
      * @return array
      */
-    private function getFrom(DatagridConfiguration $config)
+    private function getRootAlias(DatagridConfiguration $config)
     {
-        $from = $config->offsetGetByPath('[source][query][from]', []);
-        $from = reset($from);
-
-        if (false === $from) {
+        $rootAlias = $config->getOrmQuery()->getRootAlias();
+        if (!$rootAlias) {
             throw new \InvalidArgumentException(
                 sprintf(
-                    '[source][query][from] is missing for grid "%s"',
+                    'A root entity is missing for grid "%s"',
                     $config->getName()
                 )
             );
         }
 
-        return $from;
+        return $rootAlias;
     }
 
     /**
@@ -163,10 +153,10 @@ class ProductVariantCustomFieldsDatagridListener
      */
     private function getVariantLinkLeftJoin(DatagridConfiguration $config)
     {
-        $leftJoinArray = $config->offsetGetByPath('[source][query][join][left]', []);
-
         $result = null;
-        foreach ($leftJoinArray as $leftJoin) {
+
+        $leftJoins = $config->getOrmQuery()->getLeftJoins();
+        foreach ($leftJoins as $leftJoin) {
             if ($leftJoin['join'] === $this->productVariantLinkClass) {
                 $result = $leftJoin;
             }
@@ -175,7 +165,7 @@ class ProductVariantCustomFieldsDatagridListener
         if (null === $result) {
             throw new \InvalidArgumentException(
                 sprintf(
-                    '"%s" is missing in [source][query][join][left] for grid "%s"',
+                    'A left join with "%s" is missing for grid "%s"',
                     $this->productVariantLinkClass,
                     $config->getName()
                 )

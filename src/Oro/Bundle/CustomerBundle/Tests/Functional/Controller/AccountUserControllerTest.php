@@ -2,13 +2,11 @@
 
 namespace Oro\Bundle\CustomerBundle\Tests\Functional\Controller;
 
-use Symfony\Bundle\SwiftmailerBundle\DataCollector\MessageDataCollector;
-
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Entity\AccountUserRole;
-use Oro\Bundle\CustomerBundle\Migrations\Data\ORM\LoadAccountUserRoles;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
+use Oro\Bundle\CustomerBundle\Migrations\Data\ORM\LoadCustomerUserRoles;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadUserData;
 
 /**
@@ -41,7 +39,7 @@ class AccountUserControllerTest extends AbstractUserControllerTest
         $this->loadFixtures(
             [
                 'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccounts',
-                'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserRoleData',
+                'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserRoleData',
                 'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadUserData'
             ]
         );
@@ -63,9 +61,9 @@ class AccountUserControllerTest extends AbstractUserControllerTest
         /** @var \Oro\Bundle\CustomerBundle\Entity\Account $account */
         $account = $this->getAccountRepository()->findOneBy([]);
 
-        /** @var \Oro\Bundle\CustomerBundle\Entity\AccountUserRole $role */
+        /** @var \Oro\Bundle\CustomerBundle\Entity\CustomerUserRole $role */
         $role = $this->getUserRoleRepository()->findOneBy(
-            ['role' => AccountUserRole::PREFIX_ROLE . LoadAccountUserRoles::ADMINISTRATOR]
+            ['role' => CustomerUserRole::PREFIX_ROLE . LoadCustomerUserRoles::ADMINISTRATOR]
         );
 
         $this->assertNotNull($account);
@@ -204,7 +202,7 @@ class AccountUserControllerTest extends AbstractUserControllerTest
         $user = $this->getUserRepository()->find($id);
         $this->assertNotNull($user);
 
-        /** @var \Oro\Bundle\CustomerBundle\Entity\AccountUserRole $role */
+        /** @var \Oro\Bundle\CustomerBundle\Entity\CustomerUserRole $role */
         $roles = $user->getRoles();
         $role = reset($roles);
         $this->assertNotNull($role);
@@ -224,16 +222,16 @@ class AccountUserControllerTest extends AbstractUserControllerTest
         $manager = $this->getObjectManager();
 
         $foreignAccount = $this->createAccount('Foreign account');
-        $foreignRole = $this->createAccountUserRole('Custom foreign role');
+        $foreignRole = $this->createCustomerUserRole('Custom foreign role');
         $foreignRole->setAccount($foreignAccount);
 
-        $expectedRoles[] = $this->createAccountUserRole('Predefined test role');
+        $expectedRoles[] = $this->createCustomerUserRole('Predefined test role');
         $notExpectedRoles[] = $foreignRole;
         $manager->flush();
 
         $this->client->request(
             'GET',
-            $this->getUrl('oro_customer_account_user_roles'),
+            $this->getUrl('oro_customer_customer_user_roles'),
             ['_widgetContainer' => 'widget']
         );
         $response = $this->client->getResponse();
@@ -247,7 +245,7 @@ class AccountUserControllerTest extends AbstractUserControllerTest
 
         $this->client->request(
             'GET',
-            $this->getUrl('oro_customer_account_user_roles', ['accountId' => $foreignAccount->getId()])
+            $this->getUrl('oro_customer_customer_user_roles', ['accountId' => $foreignAccount->getId()])
         );
 
         $response = $this->client->getResponse();
@@ -260,18 +258,18 @@ class AccountUserControllerTest extends AbstractUserControllerTest
         $manager = $this->getObjectManager();
 
         $foreignAccount = $this->createAccount('User foreign account');
-        $notExpectedRoles[] = $foreignRole = $this->createAccountUserRole('Custom user foreign role');
+        $notExpectedRoles[] = $foreignRole = $this->createCustomerUserRole('Custom user foreign role');
         $foreignRole->setAccount($foreignAccount);
 
         $userAccount = $this->createAccount('User account');
-        $expectedRoles[] = $userRole = $this->createAccountUserRole('Custom user role');
+        $expectedRoles[] = $userRole = $this->createCustomerUserRole('Custom user role');
         $userRole->setAccount($userAccount);
 
         $accountUser = $this->createAccountUser('test@example.com');
         $accountUser->setAccount($userAccount);
         $accountUser->addRole($userRole);
 
-        $expectedRoles[] = $predefinedRole = $this->createAccountUserRole('User predefined role');
+        $expectedRoles[] = $predefinedRole = $this->createCustomerUserRole('User predefined role');
         $accountUser->addRole($predefinedRole);
 
         $manager->flush();
@@ -279,7 +277,7 @@ class AccountUserControllerTest extends AbstractUserControllerTest
         $this->client->request(
             'GET',
             $this->getUrl(
-                'oro_customer_account_user_roles',
+                'oro_customer_customer_user_roles',
                 [
                     'accountUserId' => $accountUser->getId(),
                     'accountId'     => $userAccount->getId(),
@@ -301,7 +299,7 @@ class AccountUserControllerTest extends AbstractUserControllerTest
         $this->client->request(
             'GET',
             $this->getUrl(
-                'oro_customer_account_user_roles',
+                'oro_customer_customer_user_roles',
                 [
                     'accountUserId' => $accountUser->getId(),
                 ]
@@ -313,6 +311,24 @@ class AccountUserControllerTest extends AbstractUserControllerTest
 
         $this->assertHtmlResponseStatusCodeEquals($response, 200);
         $this->assertRoles($expectedRoles, $notExpectedRoles, $response->getContent(), $accountUser);
+
+
+        //with predefined error
+        $errorMessage = 'Test error message';
+        $this->client->request(
+            'GET',
+            $this->getUrl(
+                'oro_customer_customer_user_roles',
+                [
+                    'accountUserId' => $accountUser->getId(),
+                    'error'         => $errorMessage
+                ]
+            ),
+            ['_widgetContainer' => 'widget']
+        );
+
+        $response = $this->client->getResponse();
+        $this->assertContains($errorMessage, $response->getContent());
     }
 
     /**
@@ -331,11 +347,11 @@ class AccountUserControllerTest extends AbstractUserControllerTest
 
     /**
      * @param string $name
-     * @return AccountUserRole
+     * @return CustomerUserRole
      */
-    protected function createAccountUserRole($name)
+    protected function createCustomerUserRole($name)
     {
-        $role = new AccountUserRole($name);
+        $role = new CustomerUserRole($name);
         $role->setLabel($name);
         $role->setOrganization($this->getDefaultOrganization());
         $this->getObjectManager()->persist($role);
@@ -367,8 +383,8 @@ class AccountUserControllerTest extends AbstractUserControllerTest
     }
 
     /**
-     * @param AccountUserRole[] $expectedRoles
-     * @param AccountUserRole[] $notExpectedRoles
+     * @param CustomerUserRole[] $expectedRoles
+     * @param CustomerUserRole[] $notExpectedRoles
      * @param string            $content
      * @param AccountUser|null  $accountUser
      */
@@ -379,7 +395,7 @@ class AccountUserControllerTest extends AbstractUserControllerTest
         AccountUser $accountUser = null
     ) {
         $shouldBeChecked = 0;
-        /** @var AccountUserRole $expectedRole */
+        /** @var CustomerUserRole $expectedRole */
         foreach ($expectedRoles as $expectedRole) {
             $this->assertContains($expectedRole->getLabel(), $content);
             if ($accountUser && $accountUser->hasRole($expectedRole)) {
@@ -388,7 +404,7 @@ class AccountUserControllerTest extends AbstractUserControllerTest
         }
         $this->assertEquals($shouldBeChecked, substr_count($content, 'checked="checked"'));
 
-        /** @var AccountUserRole $notExpectedRole */
+        /** @var CustomerUserRole $notExpectedRole */
         foreach ($notExpectedRoles as $notExpectedRole) {
             $this->assertNotContains($notExpectedRole->getLabel(), $content);
         }

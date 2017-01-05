@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Builder;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\PricingBundle\Builder\AccountCombinedPriceListsBuilder;
 use Oro\Bundle\PricingBundle\Builder\AccountGroupCombinedPriceListsBuilder;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
@@ -68,7 +68,7 @@ class AccountGroupCombinedPriceListsBuilderTest extends AbstractCombinedPriceLis
     {
         $callExpects = 1;
         $website = new Website();
-        $accountGroup = new AccountGroup();
+        $accountGroup = new CustomerGroup();
         $this->priceListToEntityRepository
             ->expects($this->any())
             ->method('findOneBy')
@@ -136,7 +136,7 @@ class AccountGroupCombinedPriceListsBuilderTest extends AbstractCombinedPriceLis
     {
         $callExpects = 1;
         $website = new Website();
-        $accountGroup = new AccountGroup();
+        $accountGroup = new CustomerGroup();
         $this->priceListToEntityRepository
             ->expects($this->any())
             ->method('findOneBy')
@@ -165,10 +165,10 @@ class AccountGroupCombinedPriceListsBuilderTest extends AbstractCombinedPriceLis
 
     /**
      * @param Website $website
-     * @param AccountGroup $accountGroup
+     * @param CustomerGroup $accountGroup
      * @param bool $force
      */
-    protected function assertRebuild(Website $website, AccountGroup $accountGroup, $force)
+    protected function assertRebuild(Website $website, CustomerGroup $accountGroup, $force)
     {
         $callExpects = 1;
         $priceListCollection = [$this->getPriceListSequenceMember()];

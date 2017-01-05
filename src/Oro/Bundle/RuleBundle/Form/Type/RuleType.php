@@ -5,7 +5,7 @@ namespace Oro\Bundle\RuleBundle\Form\Type;
 use Oro\Bundle\RuleBundle\Entity\Rule;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\Exception\AccessException;
@@ -27,7 +27,7 @@ class RuleType extends AbstractType
             ->add('enabled', CheckboxType::class, [
                 'label' => 'oro.rule.enabled.label'
             ])
-            ->add('sortOrder', NumberType::class, [
+            ->add('sortOrder', IntegerType::class, [
                 'label' => 'oro.rule.sort_order.label'
             ])
             ->add('stopProcessing', CheckboxType::class, [
@@ -35,7 +35,8 @@ class RuleType extends AbstractType
                 'label' => 'oro.rule.stop_processing.label',
             ])
             ->add('expression', TextareaType::class, [
-                'label' => 'oro.rule.expression.label'
+                'label'    => 'oro.rule.expression.label',
+                'required' => false,
             ])
         ;
     }

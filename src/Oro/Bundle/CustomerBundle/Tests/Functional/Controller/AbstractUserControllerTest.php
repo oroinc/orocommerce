@@ -6,7 +6,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\CustomerBundle\Entity\Repository\AccountUserRoleRepository;
+use Oro\Bundle\CustomerBundle\Entity\Repository\CustomerUserRoleRepository;
 
 abstract class AbstractUserControllerTest extends WebTestCase
 {
@@ -85,11 +85,11 @@ abstract class AbstractUserControllerTest extends WebTestCase
     }
 
     /**
-     * @return AccountUserRoleRepository
+     * @return CustomerUserRoleRepository
      */
     protected function getUserRoleRepository()
     {
-        return $this->getObjectManager()->getRepository('OroCustomerBundle:AccountUserRole');
+        return $this->getObjectManager()->getRepository('OroCustomerBundle:CustomerUserRole');
     }
 
     /**

@@ -10,7 +10,7 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\CustomerBundle\Acl\Voter\AccountGroupVoter;
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 
 class AccountGroupVoterTest extends \PHPUnit_Framework_TestCase
 {
@@ -38,7 +38,7 @@ class AccountGroupVoterTest extends \PHPUnit_Framework_TestCase
         $doctrineHelper->expects($this->any())
             ->method('getSingleEntityIdentifier')
             ->willReturnCallback(function ($group) {
-                return $group instanceof AccountGroup ? $group->getId() : null;
+                return $group instanceof CustomerGroup ? $group->getId() : null;
             });
 
         $doctrineHelper->expects($this->any())
@@ -58,7 +58,7 @@ class AccountGroupVoterTest extends \PHPUnit_Framework_TestCase
             ->willReturn(self::DEFAULT_GROUP_ID);
 
         $this->voter = new AccountGroupVoter($doctrineHelper);
-        $this->voter->setClassName('Oro\Bundle\CustomerBundle\Entity\AccountGroup');
+        $this->voter->setClassName('Oro\Bundle\CustomerBundle\Entity\CustomerGroup');
         $this->voter->setConfigManager($configManager);
     }
 
@@ -114,10 +114,10 @@ class AccountGroupVoterTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param int $id
-     * @return AccountGroup
+     * @return CustomerGroup
      */
     protected function getGroup($id)
     {
-        return $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountGroup', ['id' => $id]);
+        return $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerGroup', ['id' => $id]);
     }
 }

@@ -5,7 +5,7 @@ namespace Oro\Bundle\CustomerBundle\Provider;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 
 class AccountUserRelationsProvider
@@ -45,7 +45,7 @@ class AccountUserRelationsProvider
 
     /**
      * @param AccountUser|null $accountUser
-     * @return null|AccountGroup
+     * @return null|CustomerGroup
      */
     public function getAccountGroup(AccountUser $accountUser = null)
     {
@@ -59,7 +59,7 @@ class AccountUserRelationsProvider
 
             if ($anonymousGroupId) {
                 return $this->doctrineHelper->getEntityReference(
-                    'OroCustomerBundle:AccountGroup',
+                    'OroCustomerBundle:CustomerGroup',
                     $anonymousGroupId
                 );
             }

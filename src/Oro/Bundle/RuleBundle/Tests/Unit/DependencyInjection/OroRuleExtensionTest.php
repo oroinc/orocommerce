@@ -22,6 +22,8 @@ class OroRuleExtensionTest extends ExtensionTestCase
         $this->loadExtension($this->extension);
 
         $expectedDefinitions = [
+            'oro_rule.expression_language',
+            'oro_rule.expression_language.function_count',
             'oro_rule.rule_filtration.service',
             'oro_rule.rule_filtration.enabled_decorator',
             'oro_rule.rule_filtration.stop_processing_decorator',

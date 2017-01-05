@@ -59,7 +59,8 @@
     {% endif %}
 
     {% set generalData = generalData|merge([
-        form_row(form.status)
+        form_row(form.status),
+        form_row(form.slugPrototypes)
     ]) %}
 
     {% if not oro_is_single_unit_mode() %}

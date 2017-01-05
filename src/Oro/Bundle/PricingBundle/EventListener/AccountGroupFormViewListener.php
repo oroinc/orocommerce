@@ -6,7 +6,7 @@ use Doctrine\Common\Collections\Criteria;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\PricingBundle\Entity\PriceListAccountGroupFallback;
 use Oro\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 
 class AccountGroupFormViewListener extends AbstractAccountFormViewListener
 {
@@ -30,9 +30,9 @@ class AccountGroupFormViewListener extends AbstractAccountFormViewListener
             return;
         }
 
-        /** @var AccountGroup $accountGroup */
+        /** @var CustomerGroup $accountGroup */
         $accountGroup = $this->doctrineHelper->getEntityReference(
-            'OroCustomerBundle:AccountGroup',
+            'OroCustomerBundle:CustomerGroup',
             (int)$request->get('id')
         );
         

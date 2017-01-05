@@ -47,12 +47,12 @@ oro.customer:
         cancel: 'Cancel'
         save: 'Save'
 
-    accountgroup:
+    customergroup:
         entity_label: 'Customer Group'
         entity_plural_label: 'Customer Groups'
         name.label: 'Name'
         id.label: 'Id'
-        accounts.label: 'Customers'
+        customers.label: 'Customers'
         form.choose: 'Choose a customer group...'
 
     accountuser:
@@ -140,7 +140,7 @@ oro.customer:
             password_confirmation: 'Reenter your password'
 
 
-    accountuserrole:
+    customeruserrole:
         entity_label:                    'Customer User Role'
         entity_plural_label:             'Customer User Roles'
         id.label:                        'ID'
@@ -163,7 +163,7 @@ oro.customer:
             value.true.label:       'Yes'
             value.false.label:      'No'
 
-    accountuseraddress:
+    customeruseraddress:
         city.label:                 City
         country.label:              Country
         entity_description:         Represent customer user's address
@@ -206,7 +206,7 @@ oro.customer:
             edit: 'Edit'
             delete: 'Delete'
 
-        account_user_role:
+        customer_user_role:
             create: 'Create Customer User Role'
             edit: 'Edit'
             delete: 'Delete'
@@ -217,15 +217,15 @@ oro.customer:
     sections:
         general: 'General Information'
         addresses: 'Addresses'
-        accountgroup:
+        customergroup:
             accounts: 'Customers'
-        accountuserrole:
+        customeruserrole:
             users: 'Users'
             entity: 'Entity'
         roles:   'Frontend Capabilities'
         password: 'Password'
 
-    accountaddress:
+    customeraddress:
         entity_label:        Address
         entity_plural_label: Addresses
         city.label:          City
@@ -244,7 +244,7 @@ oro.customer:
         system_organization.label: System Organization
         frontend_owner.label: Owner
         owner.label:         Owner
-        postal_code.label:   Zip/postal code
+        postal_code.label:   Zip/Postal Code
         primary.label:       Primary
         region.label:        State
         region_text.label:   State
@@ -261,12 +261,12 @@ oro.customer:
         region_name.label:       State name
         region_code.label:       State ISO code
 
-    accountusersettings:
+    customerusersettings:
         entity_label:           Customer User Settings
         entity_plural_label:    Customer User Settings
         currency.label:         Currency
         id.label:               ID
-        account_user.label:     Customer User
+        customer_user.label:     Customer User
         website.label:          Website
         localization.label:     Localization
 
@@ -281,11 +281,11 @@ oro.customer:
         shortcut_new_account_user.description: 'Create new customer user instance'
         shortcut_list_account_users.label: 'Show customer users'
         shortcut_list_account_users.description: 'View list of customer users'
-        account_user_roles.description: 'List of customer user roles'
-        shortcut_new_account_user_role.label: 'Create new customer user role'
-        shortcut_new_account_user_role.description: 'Create new customer user role instance'
-        shortcut_list_account_user_roles.label: 'Show customer user roles'
-        shortcut_list_account_user_roles.description: 'View list of customer user roles'
+        customer_user_roles.description: 'List of customer user roles'
+        shortcut_new_customer_user_role.label: 'Create new customer user role'
+        shortcut_new_customer_user_role.description: 'Create new customer user role instance'
+        shortcut_list_customer_user_roles.label: 'Show customer user roles'
+        shortcut_list_customer_user_roles.description: 'View list of customer user roles'
 
         account_user.label: My Account
         account_user_profile.label: My Profile
@@ -293,7 +293,7 @@ oro.customer:
         account_user_logout.label: Logout
 
         frontend_configuration_tab: Configuration
-        frontend_account_user_roles.label: Roles
+        frontend_customer_user_roles.label: Roles
 
         how_to_use_pinbar: 'Learn how to use this space'
 
@@ -321,7 +321,7 @@ oro.customer:
             saved.message: 'Customer User Address has been saved'
         accountaddress:
             saved.message: 'Customer Address has been saved'
-        accountuserrole:
+        customeruserrole:
             saved.message:     'Customer User Role has been saved'
 
     message:
@@ -408,8 +408,8 @@ oro.customer:
             account_user_addresses: 'My Addresses'
             create.label: 'Add Company Address'
         title:
-            account_user_role.create: 'Create Customer User Role'
-            account_user_role.edit: 'Edit Customer User Role'
+            customer_user_role.create: 'Create Customer User Role'
+            customer_user_role.edit: 'Edit Customer User Role'
             account_user.index: 'Users'
             account_user.view: 'Customer User - %identifier%'
             account_user.edit: 'Edit Customer User'
@@ -417,11 +417,11 @@ oro.customer:
             account_user.profile: 'Profile'
 
             page:
-                account_user_role.create: Create Role
-                account_user_role.edit: Edit Role
+                customer_user_role.create: Create Role
+                customer_user_role.edit: Edit Role
                 account_user.edit: 'Edit Customer User - %identifier%'
         sections:
-            account_user_role:
+            customer_user_role:
                 label: Role Title
                 users.label: Users
 
@@ -433,7 +433,7 @@ oro.customer:
         action:
             back.label: "< Back"
             back_to_login.label: "Already have an account? Log in >"
-            account_user_role.edit: "Edit Role"
+            customer_user_role.edit: "Edit Role"
         table:
             entity:
                 section.label: Section

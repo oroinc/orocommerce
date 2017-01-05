@@ -35,8 +35,6 @@
     &__title {
         display: flex;
         justify-content: space-between;
-
-        white-space: nowrap;
     }
 
     &__name,
@@ -44,6 +42,8 @@
         display: inline-block;
 
         vertical-align: middle;
+
+        word-break: break-all;
     }
 
     &__name {

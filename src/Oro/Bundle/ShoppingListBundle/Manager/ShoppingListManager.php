@@ -159,6 +159,7 @@ class ShoppingListManager
      */
     public function addLineItem(LineItem $lineItem, ShoppingList $shoppingList, $flush = true, $concatNotes = false)
     {
+        $this->ensureProductTypeAllowed($lineItem);
         $em = $this->managerRegistry->getManagerForClass('OroShoppingListBundle:LineItem');
         $lineItem->setShoppingList($shoppingList);
         /** @var LineItemRepository $repository */
@@ -356,5 +357,17 @@ class ShoppingListManager
         }
 
         return $this->accountUser;
+    }
+
+    /**
+     * @param LineItem $lineItem
+     */
+    private function ensureProductTypeAllowed(LineItem $lineItem)
+    {
+        $product = $lineItem->getProduct();
+
+        if ($product && !$product->isSimple()) {
+            throw new \InvalidArgumentException('Can not save not simple product');
+        }
     }
 }

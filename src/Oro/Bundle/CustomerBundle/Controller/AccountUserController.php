@@ -5,6 +5,7 @@ namespace Oro\Bundle\CustomerBundle\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -69,18 +70,19 @@ class AccountUserController extends Controller
 
     /**
      * @Route("/get-roles/{accountUserId}/{accountId}",
-     *      name="oro_customer_account_user_roles",
+     *      name="oro_customer_customer_user_roles",
      *      requirements={"accountId"="\d+", "accountUserId"="\d+"},
      *      defaults={"accountId"=0, "accountUserId"=0}
      * )
      * @Template("OroCustomerBundle:AccountUser:widget/roles.html.twig")
      * @AclAncestor("oro_account_account_user_view")
      *
+     * @param Request $request
      * @param string $accountUserId
      * @param string $accountId
      * @return array
      */
-    public function getRolesAction($accountUserId, $accountId)
+    public function getRolesAction(Request $request, $accountUserId, $accountId)
     {
         /** @var DoctrineHelper $doctrineHelper */
         $doctrineHelper = $this->get('oro_entity.doctrine_helper');
@@ -104,6 +106,12 @@ class AccountUserController extends Controller
         $accountUser->setAccount($account);
 
         $form = $this->createForm(AccountUserType::NAME, $accountUser);
+
+        if (($error = $request->get('error', false)) && $form->has('roles')) {
+            $form
+                ->get('roles')
+                ->addError(new FormError($error));
+        }
 
         return ['form' => $form->createView()];
     }

@@ -241,7 +241,7 @@ class OroPricingBundle implements
             $schema,
             $queries,
             'orob2b_cmb_plist_to_acc_gr',
-            'oro_account_group',
+            'oro_customer_group',
             ['account_group_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']

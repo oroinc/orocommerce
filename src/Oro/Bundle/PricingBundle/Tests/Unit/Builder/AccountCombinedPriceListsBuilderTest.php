@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Builder;
 
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\PricingBundle\Builder\AccountCombinedPriceListsBuilder;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToAccount;
@@ -113,7 +113,7 @@ class AccountCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
     {
         $callExpects = 1;
         $website = new Website();
-        $accountGroup = new AccountGroup();
+        $accountGroup = new CustomerGroup();
         $account = new Account();
         $this->priceListToEntityRepository
             ->expects($this->any())

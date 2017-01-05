@@ -5,7 +5,7 @@ namespace Oro\Bundle\CustomerBundle\Tests\Unit\Provider;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\CustomerBundle\Provider\AccountUserRelationsProvider;
 
@@ -76,9 +76,9 @@ class AccountUserRelationsProviderTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider accountGroupDataProvider
      * @param AccountUser|null $accountUser
-     * @param AccountGroup $expectedAccountGroup
+     * @param CustomerGroup $expectedAccountGroup
      */
-    public function testGetAccountGroup(AccountUser $accountUser = null, AccountGroup $expectedAccountGroup = null)
+    public function testGetAccountGroup(AccountUser $accountUser = null, CustomerGroup $expectedAccountGroup = null)
     {
         $this->assertEquals($expectedAccountGroup, $this->provider->getAccountGroup($accountUser));
     }
@@ -90,7 +90,7 @@ class AccountUserRelationsProviderTest extends \PHPUnit_Framework_TestCase
     {
         $accountUser = new AccountUser();
         $account = new Account();
-        $accountGroup = new AccountGroup();
+        $accountGroup = new CustomerGroup();
         $account->setGroup($accountGroup);
         $accountUser->setAccount($account);
 
@@ -108,7 +108,7 @@ class AccountUserRelationsProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetAccountGroupConfig()
     {
-        $accountGroup = new AccountGroup();
+        $accountGroup = new CustomerGroup();
         $this->assertAccountGroupConfigCall($accountGroup);
 
         $this->assertEquals($accountGroup, $this->provider->getAccountGroup(null));
@@ -117,7 +117,7 @@ class AccountUserRelationsProviderTest extends \PHPUnit_Framework_TestCase
     public function testGetAccountIncludingEmptyAnonymous()
     {
         $account = new Account();
-        $accountGroup = new AccountGroup();
+        $accountGroup = new CustomerGroup();
         $accountGroup->setName('test');
         $account->setGroup($accountGroup);
 
@@ -129,7 +129,7 @@ class AccountUserRelationsProviderTest extends \PHPUnit_Framework_TestCase
     {
         $account = new Account();
         $account->setName('test2');
-        $accountGroup = new AccountGroup();
+        $accountGroup = new CustomerGroup();
         $accountGroup->setName('test2');
         $account->setGroup($accountGroup);
         $accountUser = new AccountUser();
@@ -142,9 +142,9 @@ class AccountUserRelationsProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param AccountGroup $accountGroup
+     * @param CustomerGroup $accountGroup
      */
-    protected function assertAccountGroupConfigCall(AccountGroup $accountGroup)
+    protected function assertAccountGroupConfigCall(CustomerGroup $accountGroup)
     {
         $this->configManager->expects($this->once())
             ->method('get')
@@ -152,7 +152,7 @@ class AccountUserRelationsProviderTest extends \PHPUnit_Framework_TestCase
             ->willReturn(10);
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityReference')
-            ->with('OroCustomerBundle:AccountGroup', 10)
+            ->with('OroCustomerBundle:CustomerGroup', 10)
             ->willReturn($accountGroup);
     }
 }

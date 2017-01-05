@@ -26,6 +26,7 @@ oro:
         removed: '{title} - removed'
         is_variant.label: Is Variant
         variant_links.label: Product Variant Links
+        parent_variant_links.label: Parent Product Variant Links
         images.label: Images
         anything.label: Any Text
         featured_products.label: Featured Products
@@ -348,7 +349,7 @@ oro:
 
     webcatalog:
         contentvariant:
-            product_collection_page_rule.label: Product Collection Assignment Rule
+            product_page_product.label: Product
 
     feature:
         quick_order_form:

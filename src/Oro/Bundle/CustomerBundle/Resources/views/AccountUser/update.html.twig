@@ -44,7 +44,7 @@
 
 {% block content_data %}
     {% set id = 'account-user-edit' %}
-    {% set roleWidgetAlias = 'oro_customer_account_user_role' %}
+    {% set roleWidgetAlias = 'oro_customer_customer_user_role' %}
 
     {% set accountFormOptions = {
         accountUserId: entity.id|default(null),
@@ -112,12 +112,16 @@
     {% if hasRoles %}
         {% set userRoles %}
             {% set widgetOptions = {} %}
-            {% set widgetUrl = 'oro_customer_account_user_roles' %}
+            {% set widgetUrl = 'oro_customer_customer_user_roles' %}
             {% if entity.id %}
                 {% set widgetOptions = widgetOptions|merge({accountUserId: entity.id}) %}
             {% endif %}
             {% if entity.account and entity.account.id %}
                 {% set widgetOptions = widgetOptions|merge({accountId: entity.account.id}) %}
+            {% endif %}
+
+            {% if form.roles.vars.errors|length %}
+                {% set widgetOptions = widgetOptions|merge({ error: (form.roles.vars.errors|first).message }) %}
             {% endif %}
 
             {{ oro_widget_render({

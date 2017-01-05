@@ -3,7 +3,7 @@
 namespace Oro\Bundle\VisibilityBundle\Provider;
 
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Provider\ScopeAccountCriteriaProvider;
 use Oro\Bundle\CustomerBundle\Provider\ScopeAccountGroupCriteriaProvider;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
@@ -49,11 +49,11 @@ class VisibilityScopeProvider
     }
 
     /**
-     * @param AccountGroup $accountGroup
+     * @param CustomerGroup $accountGroup
      * @param Website $website
      * @return \Oro\Bundle\ScopeBundle\Entity\Scope
      */
-    public function getAccountGroupProductVisibilityScope(AccountGroup $accountGroup, Website $website)
+    public function getAccountGroupProductVisibilityScope(CustomerGroup $accountGroup, Website $website)
     {
         return $this->scopeManager->findOrCreate(
             AccountGroupProductVisibility::getScopeType(),

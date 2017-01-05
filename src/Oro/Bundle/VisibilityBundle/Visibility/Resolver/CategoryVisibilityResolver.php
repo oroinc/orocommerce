@@ -6,7 +6,7 @@ use Doctrine\Bundle\DoctrineBundle\Registry;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupCategoryVisibility;
@@ -85,10 +85,10 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
 
     /**
      * @param Category $category
-     * @param AccountGroup $accountGroup
+     * @param CustomerGroup $accountGroup
      * @return bool
      */
-    public function isCategoryVisibleForAccountGroup(Category $category, AccountGroup $accountGroup)
+    public function isCategoryVisibleForAccountGroup(Category $category, CustomerGroup $accountGroup)
     {
         $scope = $this->scopeManager->findOrCreate(
             AccountGroupCategoryVisibility::VISIBILITY_TYPE,
@@ -106,10 +106,10 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
     }
 
     /**
-     * @param AccountGroup $accountGroup
+     * @param CustomerGroup $accountGroup
      * @return array
      */
-    public function getVisibleCategoryIdsForAccountGroup(AccountGroup $accountGroup)
+    public function getVisibleCategoryIdsForAccountGroup(CustomerGroup $accountGroup)
     {
         $scope = $this->scopeManager->findOrCreate(
             AccountGroupCategoryVisibility::VISIBILITY_TYPE,
@@ -127,10 +127,10 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
     }
 
     /**
-     * @param AccountGroup $accountGroup
+     * @param CustomerGroup $accountGroup
      * @return array
      */
-    public function getHiddenCategoryIdsForAccountGroup(AccountGroup $accountGroup)
+    public function getHiddenCategoryIdsForAccountGroup(CustomerGroup $accountGroup)
     {
         $scope = $this->scopeManager->findOrCreate(
             AccountGroupCategoryVisibility::VISIBILITY_TYPE,

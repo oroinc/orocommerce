@@ -3,7 +3,7 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Form\EventListener;
 
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ScopeBundle\Tests\Unit\Stub\StubScope;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility;
@@ -52,8 +52,8 @@ class VisibilityPostSetDataListenerTest extends \PHPUnit_Framework_TestCase
 
         $account1 = $this->getEntity(Account::class, ['id' => 2]);
         $account2 = $this->getEntity(Account::class, ['id' => 4]);
-        $accountGroup1 = $this->getEntity(AccountGroup::class, ['id' => 3]);
-        $accountGroup2 = $this->getEntity(AccountGroup::class, ['id' => 5]);
+        $accountGroup1 = $this->getEntity(CustomerGroup::class, ['id' => 3]);
+        $accountGroup2 = $this->getEntity(CustomerGroup::class, ['id' => 5]);
         $this->fieldDataProvider->expects($this->exactly(3))
             ->method('findFormFieldData')
             ->willReturnMap(

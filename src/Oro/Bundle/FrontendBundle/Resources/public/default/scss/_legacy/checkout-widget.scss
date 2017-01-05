@@ -130,6 +130,12 @@
   &__col {
     float: right;
 
-    width: 280px;
+    min-width: 280px;
+  }
+
+  &__quote {
+    float: right;
+
+    width: 320px;
   }
 }

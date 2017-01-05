@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
@@ -189,7 +189,7 @@ class PriceListToAccountRepositoryTest extends WebTestCase
      */
     public function testGetAccountIteratorByFallback($accountGroup, $website, $expectedAccounts, $fallback = null)
     {
-        /** @var $accountGroup  AccountGroup */
+        /** @var $accountGroup  CustomerGroup */
         $accountGroup = $this->getReference($accountGroup);
         /** @var $website Website */
         $website = $this->getReference($website);
@@ -237,7 +237,7 @@ class PriceListToAccountRepositoryTest extends WebTestCase
 
     public function testGetAccountWebsitePairsByAccountGroupIterator()
     {
-        /** @var AccountGroup $accountGroup */
+        /** @var CustomerGroup $accountGroup */
         $accountGroup = $this->getReference('account_group.group1');
         /** @var Account $account */
         $account = $this->getReference('account.level_1.3');
