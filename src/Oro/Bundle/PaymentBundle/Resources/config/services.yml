@@ -23,7 +23,7 @@ services:
     oro_payment.formatter.payment_method_label:
         class: 'Oro\Bundle\PaymentBundle\Formatter\PaymentMethodLabelFormatter'
         arguments:
-            - "@oro_payment.payment_method.view.registry"
+            - "@oro_payment.payment_method_view_provider.registry"
             - "@translator"
 
     oro_payment.twig.payment_method_extension:
@@ -57,7 +57,7 @@ services:
     oro_payment.provider.methods_provider:
         class: 'Oro\Bundle\PaymentBundle\Layout\DataProvider\PaymentMethodViewsProvider'
         arguments:
-            - '@oro_payment.payment_method.view.registry'
+            - '@oro_payment.payment_method_view_provider.registry'
             - '@oro_payment.method.provider.method_provider'
             - '@oro_payment.provider.payment_transaction'
         tags:
@@ -201,11 +201,9 @@ services:
         class: 'Oro\Bundle\PaymentBundle\Method\PaymentMethodProvidersRegistry'
         public: false
 
-    oro_payment.payment_method.view.registry:
-        class: 'Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry'
+    oro_payment.payment_method_view_provider.registry:
+        class: 'Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProvidersRegistry'
         public: false
-        arguments:
-            - '@oro_payment.payment_method_provider.registry'
 
     oro_payment.provider.extract_options:
         class: 'Oro\Bundle\PaymentBundle\Provider\ExtractOptionsProvider'

@@ -5,12 +5,12 @@ namespace Oro\Bundle\PaymentBundle\Layout\DataProvider;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProvider;
-use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry;
+use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProvidersRegistry;
 use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 
 class PaymentMethodViewsProvider
 {
-    /** @var PaymentMethodViewRegistry */
+    /** @var PaymentMethodViewProvidersRegistry */
     protected $paymentMethodViewRegistry;
 
     /** @var PaymentMethodProvider */
@@ -20,12 +20,12 @@ class PaymentMethodViewsProvider
     protected $paymentTransactionProvider;
 
     /**
-     * @param PaymentMethodViewRegistry $paymentMethodViewRegistry
+     * @param PaymentMethodViewProvidersRegistry $paymentMethodViewRegistry
      * @param PaymentMethodProvider $paymentMethodProvider
      * @param PaymentTransactionProvider $transactionProvider
      */
     public function __construct(
-        PaymentMethodViewRegistry $paymentMethodViewRegistry,
+        PaymentMethodViewProvidersRegistry $paymentMethodViewRegistry,
         PaymentMethodProvider $paymentMethodProvider,
         PaymentTransactionProvider $transactionProvider
     ) {

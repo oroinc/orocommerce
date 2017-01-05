@@ -64,4 +64,10 @@ class MoneyOrderView implements PaymentMethodViewInterface
     {
         return MoneyOrder::TYPE;
     }
+
+    /** {@inheritdoc} */
+    public function getPaymentMethodIdentifier()
+    {
+        return $this->getPaymentMethodType();
+    }
 }

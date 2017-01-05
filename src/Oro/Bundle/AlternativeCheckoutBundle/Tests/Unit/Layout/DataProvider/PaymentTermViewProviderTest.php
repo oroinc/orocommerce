@@ -7,7 +7,7 @@ use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodProvidersRegistry;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
-use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry;
+use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProvidersRegistry;
 use Oro\Bundle\PaymentTermBundle\Method\PaymentTerm;
 use Oro\Component\Testing\Unit\EntityTrait;
 
@@ -18,7 +18,7 @@ class PaymentTermViewProviderTest extends \PHPUnit_Framework_TestCase
     const METHOD = PaymentTerm::TYPE;
 
     /**
-     * @var PaymentMethodViewRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var PaymentMethodViewProvidersRegistry|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $paymentMethodViewRegistry;
 
@@ -35,7 +35,7 @@ class PaymentTermViewProviderTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->paymentMethodViewRegistry = $this
-            ->getMockBuilder(PaymentMethodViewRegistry::class)
+            ->getMockBuilder(PaymentMethodViewProvidersRegistry::class)
             ->disableOriginalConstructor()
             ->getMock();
 

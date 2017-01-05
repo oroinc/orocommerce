@@ -2,14 +2,14 @@
 
 namespace Oro\Bundle\PaymentBundle\Formatter;
 
-use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry;
+use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProvidersRegistry;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
 class PaymentMethodLabelFormatter
 {
     /**
-     * @var PaymentMethodViewRegistry
+     * @var PaymentMethodViewProvidersRegistry
      */
     protected $paymentMethodViewRegistry;
 
@@ -19,11 +19,11 @@ class PaymentMethodLabelFormatter
     protected $translator;
 
     /**
-     * @param PaymentMethodViewRegistry $paymentMethodViewRegistry
+     * @param PaymentMethodViewProvidersRegistry $paymentMethodViewRegistry
      * @param TranslatorInterface $translator
      */
     public function __construct(
-        PaymentMethodViewRegistry $paymentMethodViewRegistry,
+        PaymentMethodViewProvidersRegistry $paymentMethodViewRegistry,
         TranslatorInterface $translator
     ) {
         $this->paymentMethodViewRegistry = $paymentMethodViewRegistry;

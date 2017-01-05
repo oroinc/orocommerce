@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\Twig;
 
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
-use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry;
+use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProvidersRegistry;
 use Oro\Bundle\PaymentBundle\Formatter\PaymentMethodLabelFormatter;
 
 use Symfony\Component\Translation\TranslatorInterface;
@@ -11,7 +11,7 @@ use Symfony\Component\Translation\TranslatorInterface;
 class PaymentMethodLabelFormatterTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var PaymentMethodViewRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var PaymentMethodViewProvidersRegistry|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $paymentMethodViewRegistry;
 
@@ -35,7 +35,7 @@ class PaymentMethodLabelFormatterTest extends \PHPUnit_Framework_TestCase
     {
         $this->translator = $this->createMock('Symfony\Component\Translation\TranslatorInterface');
         $this->paymentMethodViewRegistry = $this
-            ->getMockBuilder('Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry')
+            ->getMockBuilder('Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProvidersRegistry')
             ->disableOriginalConstructor()
             ->getMock();
         $this->paymentMethodView = $this

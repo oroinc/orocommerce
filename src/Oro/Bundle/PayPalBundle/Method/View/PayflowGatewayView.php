@@ -125,4 +125,10 @@ class PayflowGatewayView implements PaymentMethodViewInterface
     {
         return $this->config->getAllowedCreditCards();
     }
+
+    /** {@inheritdoc} */
+    public function getPaymentMethodIdentifier()
+    {
+        return $this->getPaymentMethodType();
+    }
 }

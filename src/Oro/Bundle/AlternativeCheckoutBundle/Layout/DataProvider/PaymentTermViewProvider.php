@@ -4,31 +4,31 @@ namespace Oro\Bundle\AlternativeCheckoutBundle\Layout\DataProvider;
 
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodProvidersRegistry;
-use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry;
+use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProvidersRegistry;
 use Oro\Bundle\PaymentTermBundle\Method\PaymentTerm;
 
 class PaymentTermViewProvider
 {
     /**
-     * @var PaymentMethodViewRegistry
+     * @var PaymentMethodViewProvidersRegistry
      */
     protected $paymentMethodViewRegistry;
 
     /**
      * @var PaymentMethodProvidersRegistry
      */
-    private $paymentMethodProvidersRegistry;
+    private $paymentMethodRegistry;
 
     /**
-     * @param PaymentMethodViewRegistry $paymentMethodViewRegistry
-     * @param PaymentMethodProvidersRegistry $paymentMethodProvidersRegistry
+     * @param PaymentMethodViewProvidersRegistry $paymentMethodViewRegistry
+     * @param PaymentMethodProvidersRegistry $paymentMethodRegistry
      */
     public function __construct(
-        PaymentMethodViewRegistry $paymentMethodViewRegistry,
-        PaymentMethodProvidersRegistry $paymentMethodProvidersRegistry
+        PaymentMethodViewProvidersRegistry $paymentMethodViewRegistry,
+        PaymentMethodProvidersRegistry $paymentMethodRegistry
     ) {
         $this->paymentMethodViewRegistry = $paymentMethodViewRegistry;
-        $this->paymentMethodProvidersRegistry = $paymentMethodProvidersRegistry;
+        $this->paymentMethodRegistry = $paymentMethodRegistry;
     }
 
     /**
