@@ -48,6 +48,8 @@ class QuoteDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
         );
         $this->extension->setDataClass('Oro\Bundle\SaleBundle\Entity\Quote');
 
+        $this->setUpLoggerMock($this->extension);
+
         $this->initEntityMetadata([
             'Oro\Bundle\ProductBundle\Entity\ProductUnit' => [
                 'identifier' => ['code'],

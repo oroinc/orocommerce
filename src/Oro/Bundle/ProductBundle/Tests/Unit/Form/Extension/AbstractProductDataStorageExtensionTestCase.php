@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Extension;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\Mapping\ClassMetadata;
 
+use Oro\Bundle\TestFrameworkBundle\Test\Logger\LoggerAwareInterfaceTestTrait;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -21,6 +22,8 @@ use Oro\Bundle\ProductBundle\Tests\Unit\Form\Extension\Stub\ProductDataStorageEx
  */
 abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit_Framework_TestCase
 {
+    use LoggerAwareInterfaceTestTrait;
+
     /** @var \PHPUnit_Framework_MockObject_MockObject|ProductDataStorage */
     protected $storage;
 
@@ -69,6 +72,8 @@ abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit_Fram
             $this->productClass
         );
 
+        $this->setUpLoggerMock($this->extension);
+
         $this->extension->setDataClass($this->dataClass);
 
         $this->entity = new \stdClass();
@@ -107,6 +112,25 @@ abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit_Fram
 
         $this->assertRequestGetCalled();
         $this->assertStorageCalled([], true);
+
+        $this->extension->buildForm($this->getBuilderMock(true), []);
+    }
+
+    public function testBuildFormWithWrongPropertiesInData()
+    {
+        $this->entity->product = null;
+        $this->entity->anotherProperty = null;
+
+        $sku = 'TEST';
+        $product = $this->getProductEntity($sku);
+        $data = [
+            ProductDataStorage::ENTITY_DATA_KEY => ['product' => 1, 'notExistsProperty' => 'some_string'],
+        ];
+
+        $this->assertMetadataCalled(['product' => ['targetClass' => 'Oro\Bundle\ProductBundle\Entity\Product']]);
+        $this->assertRequestGetCalled();
+        $this->assertStorageCalled($data);
+        $this->assertLoggerErrorMethodCalled();
 
         $this->extension->buildForm($this->getBuilderMock(true), []);
     }

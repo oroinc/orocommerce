@@ -39,14 +39,18 @@ class RequestToQuoteDataStorageTest extends \PHPUnit_Framework_TestCase
 
     public function testSaveToStorage()
     {
-        $accountId = 10;
-        $accountUserId = 42;
-        $productSku = 'testSku';
-        $quantity = 100;
-        $comment = 'Test Comment';
-        $unitCode = 'kg';
+        $rfpRequestData = [
+            'accountId' => 10,
+            'accountUserId' => 42,
+            'productSku' => 'testSku',
+            'quantity' => 100,
+            'comment' => 'Test Comment',
+            'unitCode' => 'kg',
+            'assignedUsers' => [1, 3, 7],
+            'assignedAccountUsers' => [2, 5],
+        ];
 
-        $rfpRequest = $this->createRFPRequest($accountId, $accountUserId, $productSku, $unitCode, $quantity, $comment);
+        $rfpRequest = $this->createRFPRequest($rfpRequestData);
 
         /** @var RequestProduct $requestProduct */
         $requestProduct = $rfpRequest->getRequestProducts()->first();
@@ -58,23 +62,25 @@ class RequestToQuoteDataStorageTest extends \PHPUnit_Framework_TestCase
             ->method('set')
             ->with([
                 ProductDataStorage::ENTITY_DATA_KEY => [
-                    'account' => $accountId,
-                    'accountUser' => $accountUserId,
+                    'account' => $rfpRequestData['accountId'],
+                    'accountUser' => $rfpRequestData['accountUserId'],
                     'request' => null,
                     'poNumber' => null,
-                    'shipUntil' => null
+                    'shipUntil' => null,
+                    'assignedUsers' => [1, 3, 7],
+                    'assignedAccountUsers' => [2, 5],
                 ],
                 ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
                     [
-                        ProductDataStorage::PRODUCT_SKU_KEY => $productSku,
+                        ProductDataStorage::PRODUCT_SKU_KEY => $rfpRequestData['productSku'],
                         ProductDataStorage::PRODUCT_QUANTITY_KEY => null,
-                        'commentAccount' => $comment,
+                        'commentAccount' => $rfpRequestData['comment'],
                         'requestProductItems' => [
                             [
-                                'productUnit' => $unitCode,
-                                'productUnitCode' => $unitCode,
+                                'productUnit' => $rfpRequestData['unitCode'],
+                                'productUnitCode' => $rfpRequestData['unitCode'],
                                 'requestProductItem' => $requestProductItem->getId(),
-                                'quantity' => $quantity,
+                                'quantity' => $rfpRequestData['quantity'],
                                 'price' => null,
                             ],
                         ]
@@ -86,34 +92,32 @@ class RequestToQuoteDataStorageTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param int $accountId
-     * @param int $accountUserId
-     * @param string $productSku
-     * @param string $unitCode
-     * @param float $quantity
-     * @param string $comment
+     * @param array $rfpRequestData
      * @return RFPRequest
      */
-    protected function createRFPRequest($accountId, $accountUserId, $productSku, $unitCode, $quantity, $comment)
+    protected function createRFPRequest($rfpRequestData)
     {
         /** @var Account $account */
-        $account = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account', ['id' => $accountId]);
+        $account = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account', ['id' => $rfpRequestData['accountId']]);
 
         /** @var AccountUser $accountUser */
-        $accountUser = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountUser', ['id' => $accountUserId]);
+        $accountUser = $this->getEntity(
+            'Oro\Bundle\CustomerBundle\Entity\AccountUser',
+            ['id' => $rfpRequestData['accountUserId']]
+        );
 
         $product = new Product();
-        $product->setSku($productSku);
+        $product->setSku($rfpRequestData['productSku']);
 
         $productUnit = new ProductUnit();
-        $productUnit->setCode($unitCode);
+        $productUnit->setCode($rfpRequestData['unitCode']);
 
         /** @var RequestProductItem $requestProductItem */
         $requestProductItem = $this->getEntity(
             'Oro\Bundle\RFPBundle\Entity\RequestProductItem',
             [
                 'id' => rand(1, 1000),
-                'quantity' => $quantity,
+                'quantity' => $rfpRequestData['quantity'],
                 'productUnit' => $productUnit
             ]
         );
@@ -121,7 +125,7 @@ class RequestToQuoteDataStorageTest extends \PHPUnit_Framework_TestCase
         $requestProduct = new RequestProduct();
         $requestProduct
             ->setProduct($product)
-            ->setComment($comment)
+            ->setComment($rfpRequestData['comment'])
             ->addRequestProductItem($requestProductItem);
 
         $rfpRequest = new RFPRequest();
@@ -129,6 +133,24 @@ class RequestToQuoteDataStorageTest extends \PHPUnit_Framework_TestCase
             ->setAccount($account)
             ->setAccountUser($accountUser)
             ->addRequestProduct($requestProduct);
+
+        foreach ($rfpRequestData['assignedUsers'] as $assignedUserId) {
+            /** @var \Oro\Bundle\UserBundle\Entity\User $assignedUser */
+            $assignedUser = $this->getEntity(
+                'Oro\Bundle\UserBundle\Entity\User',
+                ['id' => $assignedUserId]
+            );
+            $rfpRequest->addAssignedUser($assignedUser);
+        }
+
+        foreach ($rfpRequestData['assignedAccountUsers'] as $assignedAccountUserId) {
+            /** @var \Oro\Bundle\CustomerBundle\Entity\AccountUser $assignedAccountUser */
+            $assignedAccountUser = $this->getEntity(
+                'Oro\Bundle\CustomerBundle\Entity\AccountUser',
+                ['id' => $assignedAccountUserId]
+            );
+            $rfpRequest->addAssignedAccountUser($assignedAccountUser);
+        }
 
         return $rfpRequest;
     }

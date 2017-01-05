@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\ProductBundle\Form\Extension;
 
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -16,8 +18,10 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 
-abstract class AbstractProductDataStorageExtension extends AbstractTypeExtension
+abstract class AbstractProductDataStorageExtension extends AbstractTypeExtension implements LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
     /** @var RequestStack */
     protected $requestStack;
 
@@ -157,14 +161,38 @@ abstract class AbstractProductDataStorageExtension extends AbstractTypeExtension
         foreach ($data as $property => $value) {
             try {
                 if ($metadata->hasAssociation($property)) {
-                    $value = $this->doctrineHelper->getEntityReference(
-                        $metadata->getAssociationTargetClass($property),
-                        $value
-                    );
+                    // For collections (ManyToMany, OneToMany) associations support
+                    if (is_array($value)) {
+                        $value = array_map(
+                            function ($value) use ($property, $metadata) {
+                                return $this->doctrineHelper->getEntityReference(
+                                    $metadata->getAssociationTargetClass($property),
+                                    $value
+                                );
+                            },
+                            $value
+                        );
+                    } else {
+                        $value = $this->doctrineHelper->getEntityReference(
+                            $metadata->getAssociationTargetClass($property),
+                            $value
+                        );
+                    }
                 }
 
                 $this->propertyAccessor->setValue($entity, $property, $value);
+
             } catch (NoSuchPropertyException $e) {
+                if (null !== $this->logger) {
+                    $this->logger->error(
+                        'No such property {property} in the entity {entity}',
+                        [
+                            'property' => $property,
+                            'entity' => get_class($entity),
+                            'exception' => $e,
+                        ]
+                    );
+                }
             }
         }
     }

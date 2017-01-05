@@ -88,6 +88,8 @@ services:
             - "@oro_product.storage.product_data_storage"
             - "@oro_entity.doctrine_helper"
             - '%oro_product.entity.product.class%'
+        calls:
+            - [setLogger,  ["@logger"]]
 
     oro_product.form.type.extension.integer:
         class: 'Oro\Bundle\ProductBundle\Form\Extension\IntegerExtension'

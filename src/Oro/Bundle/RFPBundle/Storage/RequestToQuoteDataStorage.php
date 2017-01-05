@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\RFPBundle\Storage;
 
+use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\RFPBundle\Entity\Request as RFPRequest;
 
@@ -30,6 +31,8 @@ class RequestToQuoteDataStorage
                 'request' => $rfpRequest->getId(),
                 'poNumber' => $rfpRequest->getPoNumber(),
                 'shipUntil' => $rfpRequest->getShipUntil(),
+                'assignedUsers' => $this->getEntitiesIds($rfpRequest->getAssignedUsers()),
+                'assignedAccountUsers' => $this->getEntitiesIds($rfpRequest->getAssignedAccountUsers()),
             ],
         ];
 
@@ -58,5 +61,16 @@ class RequestToQuoteDataStorage
         }
 
         $this->storage->set($data);
+    }
+
+    protected function getEntitiesIds(Collection $collection)
+    {
+        $ids = [];
+
+        foreach ($collection as $item) {
+            $ids[] = $item->getId();
+        }
+
+        return $ids;
     }
 }
