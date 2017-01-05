@@ -10,8 +10,9 @@ use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Method\PaymentTerm as PaymentTermMethod;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
+use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -22,14 +23,17 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
     /** @var PaymentTermProvider|\PHPUnit_Framework_MockObject_MockObject */
     protected $paymentTermProvider;
 
-    /** @var PropertyAccessor|\PHPUnit_Framework_MockObject_MockObject */
-    protected $propertyAccessor;
+    /** @var PaymentTermAssociationProvider|\PHPUnit_Framework_MockObject_MockObject */
+    protected $paymentTermAssociationProvider;
 
     /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
     protected $doctrineHelper;
 
     /** @var PaymentTransaction */
     protected $paymentTransaction;
+
+    /** @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject  */
+    protected $logger;
 
     /** @var PaymentTermMethod */
     protected $method;
@@ -40,7 +44,8 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->propertyAccessor = $this->getMockBuilder('Symfony\Component\PropertyAccess\PropertyAccessor')
+        $this->paymentTermAssociationProvider = $this
+            ->getMockBuilder('Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -51,11 +56,15 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
         $this->paymentTransaction = new PaymentTransaction();
         $this->paymentTransaction->setSuccessful(false);
 
+        $this->logger = $this->createMock(LoggerInterface::class);
+
         $this->method = new PaymentTermMethod(
             $this->paymentTermProvider,
-            $this->propertyAccessor,
+            $this->paymentTermAssociationProvider,
             $this->doctrineHelper
         );
+
+        $this->method->setLogger($this->logger);
     }
 
     public function testExecuteNoEntity()
@@ -105,8 +114,8 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
             ->method('getCurrentPaymentTerm')
             ->willReturn(null);
 
-        $this->propertyAccessor->expects($this->never())
-            ->method('setValue');
+        $this->paymentTermAssociationProvider->expects($this->never())
+            ->method('setPaymentTerm');
 
         $this->assertEquals(
             [],
@@ -120,7 +129,7 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
         $entityClass = 'TestClass';
         $entityId = 10;
         $entity = new \stdClass();
-        $paymentTerm = new \stdClass();
+        $paymentTerm = new PaymentTerm();
 
         $this->paymentTransaction
             ->setEntityClass($entityClass)
@@ -137,9 +146,9 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
             ->method('getCurrentPaymentTerm')
             ->willReturn($paymentTerm);
 
-        $this->propertyAccessor->expects($this->once())
-            ->method('setValue')
-            ->with($entity, 'paymentTerm', $paymentTerm);
+        $this->paymentTermAssociationProvider->expects($this->once())
+            ->method('setPaymentTerm')
+            ->with($entity, $paymentTerm);
 
         /** @var EntityManager|\PHPUnit_Framework_MockObject_MockObject $entityManager */
         $entityManager = $this->getMockBuilder('Doctrine\ORM\EntityManager')
@@ -174,11 +183,14 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
 
         $this->paymentTermProvider->expects($this->once())
             ->method('getCurrentPaymentTerm')
-            ->willReturn(new \stdClass());
+            ->willReturn(new PaymentTerm());
 
-        $this->propertyAccessor->expects($this->once())
-            ->method('setValue')
+        $this->paymentTermAssociationProvider->expects($this->once())
+            ->method('setPaymentTerm')
             ->willThrowException(new NoSuchPropertyException());
+
+        $this->logger->expects($this->once())
+            ->method('error');
 
         $this->assertEquals(
             [],

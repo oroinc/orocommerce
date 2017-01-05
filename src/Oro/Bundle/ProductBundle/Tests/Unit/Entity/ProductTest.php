@@ -51,6 +51,8 @@ class ProductTest extends \PHPUnit_Framework_TestCase
             ['images', new ProductImage()],
             ['slugPrototypes', new LocalizedFallbackValue()],
             ['slugs', new Slug()],
+            ['variantLinks', new ProductVariantLink()],
+            ['parentVariantLinks', new ProductVariantLink()],
         ];
 
         $this->assertPropertyCollections(new Product(), $collections);
@@ -233,6 +235,8 @@ class ProductTest extends \PHPUnit_Framework_TestCase
         $product->addVariantLink(new ProductVariantLink(new Product(), new Product()));
         $product->setVariantFields(['field']);
         $product->addImage(new ProductImage());
+        $product->addSlugPrototype(new LocalizedFallbackValue());
+        $product->addSlug(new Slug());
 
         $refProduct = new \ReflectionObject($product);
         $refId = $refProduct->getProperty('id');
@@ -247,17 +251,21 @@ class ProductTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(1, $product->getImages());
         $this->assertCount(1, $product->getVariantLinks());
         $this->assertCount(1, $product->getVariantFields());
+        $this->assertCount(1, $product->getSlugPrototypes());
+        $this->assertCount(1, $product->getSlugs());
 
         $productCopy = clone $product;
 
         $this->assertNull($productCopy->getId());
-        $this->assertCount(0, $productCopy->getUnitPrecisions());
-        $this->assertCount(0, $productCopy->getNames());
-        $this->assertCount(0, $productCopy->getDescriptions());
-        $this->assertCount(0, $productCopy->getShortDescriptions());
-        $this->assertCount(0, $productCopy->getImages());
-        $this->assertCount(0, $productCopy->getVariantLinks());
-        $this->assertCount(0, $productCopy->getVariantFields());
+        $this->assertEmpty($productCopy->getUnitPrecisions());
+        $this->assertEmpty($productCopy->getNames());
+        $this->assertEmpty($productCopy->getDescriptions());
+        $this->assertEmpty($productCopy->getShortDescriptions());
+        $this->assertEmpty($productCopy->getImages());
+        $this->assertEmpty($productCopy->getVariantLinks());
+        $this->assertEmpty($productCopy->getVariantFields());
+        $this->assertEmpty($productCopy->getSlugPrototypes());
+        $this->assertEmpty($productCopy->getSlugs());
     }
 
     public function testGetDefaultName()

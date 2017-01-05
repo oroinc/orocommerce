@@ -2,7 +2,7 @@ define(function(require) {
     'use strict';
 
     var $ = require('jquery');
-    require('oroproduct/js/vendors/elevatezoom/jquery-elevatezoom');
+    require('jquery-elevatezoom');
 
     $.widget('oroproduct.zoomWidget', {
         options: {

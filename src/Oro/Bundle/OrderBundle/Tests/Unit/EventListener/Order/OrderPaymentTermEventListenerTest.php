@@ -7,7 +7,7 @@ use Symfony\Component\Form\FormInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Event\OrderEvent;
 use Oro\Bundle\OrderBundle\EventListener\Order\OrderPaymentTermEventListener;
@@ -197,7 +197,7 @@ class OrderPaymentTermEventListenerTest extends \PHPUnit_Framework_TestCase
     public function onOrderEventProvider()
     {
         $accountWithGroup = new Account();
-        $accountWithGroup->setGroup(new AccountGroup());
+        $accountWithGroup->setGroup(new CustomerGroup());
 
         $accountWithoutGroup = new Account();
 

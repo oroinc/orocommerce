@@ -3,7 +3,7 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Visibility\Provider;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Migrations\Data\ORM\LoadAnonymousAccountGroup;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -71,10 +71,10 @@ class ProductVisibilityProviderTest extends WebTestCase
     {
         $accountGroupRepository = $this->getContainer()
             ->get('doctrine')
-            ->getManagerForClass('OroCustomerBundle:AccountGroup')
-            ->getRepository('OroCustomerBundle:AccountGroup');
+            ->getManagerForClass('OroCustomerBundle:CustomerGroup')
+            ->getRepository('OroCustomerBundle:CustomerGroup');
 
-        /** @var AccountGroup $accountGroup */
+        /** @var CustomerGroup $accountGroup */
         $accountGroup = $accountGroupRepository
             ->findOneBy(['name' => LoadAnonymousAccountGroup::GROUP_NAME_NON_AUTHENTICATED]);
 

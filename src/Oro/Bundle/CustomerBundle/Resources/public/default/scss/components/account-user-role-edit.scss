@@ -1,4 +1,4 @@
-.account_user_role_edit_buttons_top {
+.customer_user_role_edit_buttons_top {
   position:relative;
   top: 128px;
   margin-top: -48px;
@@ -38,5 +38,11 @@
   }
   .action-permissions {
     margin-left: 120px;
+  }
+}
+
+@include breakpoint('tablet') {
+  .account_user_role_edit_buttons_top {
+    margin-top: -63px;
   }
 }

@@ -7,15 +7,14 @@ use Behat\Gherkin\Node\TableNode;
 use Behat\Symfony2Extension\Context\KernelAwareContext;
 use Behat\Symfony2Extension\Context\KernelDictionary;
 use Doctrine\Common\Persistence\ObjectManager;
-use Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutStep;
 use Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid;
 use Oro\Bundle\NavigationBundle\Tests\Behat\Element\MainMenu;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\Form;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
-use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext;
+use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
 
 class FeatureContext extends OroFeatureContext implements OroPageObjectAware, KernelAwareContext
 {
@@ -127,10 +126,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
 
         /** @var Form $form */
         $form = $this->createElement('Shipping Rule');
-        if (in_array('Country2', $table->getColumn(0), true)) {
-            $destinationAdd = $form->find('css', '.add-list-item');
-            $destinationAdd->click();
-        }
         $form->fill($table);
         $form->saveAndClose();
         $this->waitForAjax();
@@ -177,10 +172,11 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
             $this->waitForAjax();
         }
 
-        if (in_array('Country2', $table->getColumn(0), true)) {
-            $form->fillField('Sort Order', '1');
-            $destinationAdd = $form->find('css', '.add-list-item');
-            $destinationAdd->click();
+        foreach ($table->getColumn(0) as $columnItem) {
+            if (false !== strpos($columnItem, 'Country')) {
+                $destinationAdd = $form->find('css', '.add-list-item');
+                $destinationAdd->click();
+            }
         }
 
         $form->fill($table);

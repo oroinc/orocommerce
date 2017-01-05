@@ -4,14 +4,14 @@ namespace Oro\Bundle\PricingBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 
 /**
  * @ORM\Table(
- *      name="oro_cmb_plist_to_acc_gr",
+ *      name="oro_cmb_plist_to_cus_gr",
  *      uniqueConstraints={
- *          @ORM\UniqueConstraint(name="oro_cpl_to_acc_gr_ws_unq", columns={
- *              "account_group_id",
+ *          @ORM\UniqueConstraint(name="oro_cpl_to_cus_gr_ws_unq", columns={
+ *              "customer_group_id",
  *              "website_id"
  *          })
  *      }
@@ -23,15 +23,15 @@ use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 class CombinedPriceListToAccountGroup extends BaseCombinedPriceListRelation
 {
     /**
-     * @var AccountGroup
+     * @var CustomerGroup
      *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\AccountGroup")
-     * @ORM\JoinColumn(name="account_group_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerGroup")
+     * @ORM\JoinColumn(name="customer_group_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
      */
     protected $accountGroup;
 
     /**
-     * @return AccountGroup
+     * @return CustomerGroup
      */
     public function getAccountGroup()
     {
@@ -39,10 +39,10 @@ class CombinedPriceListToAccountGroup extends BaseCombinedPriceListRelation
     }
 
     /**
-     * @param AccountGroup $accountGroup
+     * @param CustomerGroup $accountGroup
      * @return $this
      */
-    public function setAccountGroup(AccountGroup $accountGroup)
+    public function setAccountGroup(CustomerGroup $accountGroup)
     {
         $this->accountGroup = $accountGroup;
 

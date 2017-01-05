@@ -58,15 +58,15 @@
                     {{ UI.renderHtmlProperty('oro.customer.accountuser.email.label'|trans, Email.email_address_simple(accountUser.email)) }}
 
                     {% if accountUser.account %}
-                        {{ UI.renderHtmlProperty('oro.customer.accountuser.profile.company_name'|trans, accountUser.account.name) }}
+                        {{ UI.renderProperty('oro.customer.accountuser.profile.company_name'|trans, accountUser.account.name) }}
                     {% endif %}
 
-                    {% if resource_granted('oro_customer_account_user_role_view') %}
+                    {% if resource_granted('oro_customer_customer_user_role_view') %}
                         {% set roles = [] %}
-                        {% for accountUserRole in accountUser.roles %}
-                            {% set roles = roles|merge([accountUserRole.label]) %}
+                        {% for customerUserRole in accountUser.roles %}
+                            {% set roles = roles|merge([customerUserRole.label]) %}
                         {% endfor %}
-                        {{ UI.renderHtmlProperty('oro.customer.accountuser.roles.label'|trans, roles|join('<br />')) }}
+                        {{ UI.renderProperty('oro.customer.accountuser.roles.label'|trans, roles|join('<br />')) }}
                     {% endif %}
 
                     {% if accountUser.salesRepresentatives | length %}

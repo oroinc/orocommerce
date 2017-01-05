@@ -3,16 +3,16 @@
 namespace Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 
 class AccountGroupCategoryVisibilityRepository extends AbstractCategoryVisibilityRepository
 {
     /**
-     * @param AccountGroup $accountGroup
+     * @param CustomerGroup $accountGroup
      * @param Category $category
      * @return string|null
      */
-    public function getAccountGroupCategoryVisibility(AccountGroup $accountGroup, Category $category)
+    public function getAccountGroupCategoryVisibility(CustomerGroup $accountGroup, Category $category)
     {
         $result = $this->createQueryBuilder('accountGroupCategoryVisibility')
             ->select('accountGroupCategoryVisibility.visibility')

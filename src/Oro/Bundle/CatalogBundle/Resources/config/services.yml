@@ -75,6 +75,7 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_product.strategy.process_after, method: onProcessAfter }
             - { name: doctrine.event_listener, event: onClear, method: onClear }
+            - { name: doctrine.event_listener, event: preFlush, method: preFlush }
 
     oro_catalog.event_listener.product_data_converter:
         class: 'Oro\Bundle\CatalogBundle\EventListener\ProductDataConverterEventListener'

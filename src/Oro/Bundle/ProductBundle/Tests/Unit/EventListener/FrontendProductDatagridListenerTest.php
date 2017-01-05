@@ -235,7 +235,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
 
         $images = [];
         foreach ($productWithImages as $index => $productId) {
-            $product = $this->createMock('Oro\Bundle\ProductBundle\Entity\Product', ['getId', 'getImages']);
+            $product = $this->createMock('Oro\Bundle\ProductBundle\Entity\Product');
             $product->expects($this->any())
                 ->method('getId')
                 ->willReturn($productId);

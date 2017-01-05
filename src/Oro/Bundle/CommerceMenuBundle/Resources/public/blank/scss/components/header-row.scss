@@ -1,6 +1,8 @@
 // @theme: blank
 
 .header-row {
+    position: relative;
+
     margin-top: $offset-y;
 
     border: 1px solid get-color('additional', 'light');
@@ -15,7 +17,7 @@
         background-color: get-color('additional', 'base');
     }
 
-    &__togle {
+    &__toggle {
         background-color: get-color('additionl', 'ultra');
     }
 }

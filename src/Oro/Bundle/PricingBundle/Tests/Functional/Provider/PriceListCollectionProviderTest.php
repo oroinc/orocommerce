@@ -8,7 +8,7 @@ use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListFallback
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\PricingBundle\Provider\PriceListCollectionProvider;
 use Oro\Bundle\PricingBundle\Provider\PriceListSequenceMember;
 use Oro\Bundle\PricingBundle\SystemConfig\PriceListConfig;
@@ -131,7 +131,7 @@ class PriceListCollectionProviderTest extends WebTestCase
     ) {
         $expectedPriceLists = $this->resolveExpectedPriceLists($expectedPriceLists);
 
-        /** @var AccountGroup $accountGroup */
+        /** @var CustomerGroup $accountGroup */
         $accountGroup = $this->getReference($accountGroupReference);
         /** @var Website $website */
         $website = $this->getReference($websiteReference);

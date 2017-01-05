@@ -10,9 +10,9 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionDispatcher;
-use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
@@ -31,13 +31,7 @@ class AjaxLineItemController extends Controller
      *      name="oro_shopping_list_frontend_add_product",
      *      requirements={"productId"="\d+"}
      * )
-     * @Acl(
-     *      id="oro_shopping_list_line_item_frontend_add",
-     *      type="entity",
-     *      class="OroShoppingListBundle:LineItem",
-     *      permission="CREATE",
-     *      group_name="commerce"
-     * )
+     * @AclAncestor("oro_shopping_list_frontend_update")
      * @ParamConverter("product", class="OroProductBundle:Product", options={"id" = "productId"})
      *
      * @param Request $request
@@ -83,13 +77,7 @@ class AjaxLineItemController extends Controller
      *      name="oro_shopping_list_frontend_remove_product",
      *      requirements={"productId"="\d+"}
      * )
-     * @Acl(
-     *      id="oro_shopping_list_line_item_frontend_remove",
-     *      type="entity",
-     *      class="OroShoppingListBundle:LineItem",
-     *      permission="DELETE",
-     *      group_name="commerce"
-     * )
+     * @AclAncestor("oro_shopping_list_frontend_update")
      * @ParamConverter("product", class="OroProductBundle:Product", options={"id" = "productId"})
      * @Method("POST")
      *
@@ -127,7 +115,7 @@ class AjaxLineItemController extends Controller
 
     /**
      * @Route("/{gridName}/massAction/{actionName}", name="oro_shopping_list_add_products_massaction")
-     * @AclAncestor("oro_shopping_list_line_item_frontend_add")
+     * @AclAncestor("oro_shopping_list_frontend_update")
      *
      * @param Request $request
      * @param string $gridName
@@ -153,13 +141,13 @@ class AjaxLineItemController extends Controller
     /**
      * @Route("/{gridName}/massAction/{actionName}/create", name="oro_shopping_list_add_products_to_new_massaction")
      * @Template("OroShoppingListBundle:ShoppingList/Frontend:update.html.twig")
-     * @AclAncestor("oro_shopping_list_line_item_frontend_add")
+     * @AclAncestor("oro_shopping_list_frontend_update")
      *
      * @param Request $request
      * @param string $gridName
      * @param string $actionName
      *
-     * @return JsonResponse
+     * @return array
      */
     public function addProductsToNewMassAction(Request $request, $gridName, $actionName)
     {

@@ -9,7 +9,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountUserRole;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 use Oro\Bundle\WorkflowBundle\Acl\Extension\WorkflowAclExtension;
 use Oro\Bundle\WorkflowBundle\Acl\Extension\WorkflowMaskBuilder;
 use Oro\Bundle\SecurityBundle\Acl\Persistence\AclManager;
@@ -30,7 +30,7 @@ class LoadWorkflowAcl extends AbstractFixture implements DependentFixtureInterfa
     public function getDependencies()
     {
         return [
-            'Oro\Bundle\CustomerBundle\Migrations\Data\ORM\LoadAccountUserRoles'
+            'Oro\Bundle\CustomerBundle\Migrations\Data\ORM\LoadCustomerUserRoles'
         ];
     }
 
@@ -67,10 +67,10 @@ class LoadWorkflowAcl extends AbstractFixture implements DependentFixtureInterfa
     /**
      * @param ObjectManager $manager
      *
-     * @return AccountUserRole[]
+     * @return CustomerUserRole[]
      */
     protected function getRoles(ObjectManager $manager)
     {
-        return $manager->getRepository('OroCustomerBundle:AccountUserRole')->findAll();
+        return $manager->getRepository('OroCustomerBundle:CustomerUserRole')->findAll();
     }
 }

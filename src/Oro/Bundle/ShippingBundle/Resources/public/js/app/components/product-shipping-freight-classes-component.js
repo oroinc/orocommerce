@@ -23,7 +23,7 @@ define(function(require) {
          */
         options: {
             routeFreightClassUpdate: 'oro_shipping_freight_classes',
-            errorMessage: 'Sorry, unexpected error was occurred',
+            errorMessage: 'Sorry, an unexpected error has occurred.',
             triggerTimeout: 1500,
             activeUnitCodeParam: 'activeUnitCode',
             excludeFields: ['descriptions', 'shortDescriptions', 'prices'],

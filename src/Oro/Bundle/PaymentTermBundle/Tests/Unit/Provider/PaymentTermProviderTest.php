@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PaymentTermBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Event\ResolvePaymentTermEvent;
@@ -79,7 +79,7 @@ class PaymentTermProviderTest extends \PHPUnit_Framework_TestCase
     public function testPaymentTermFromAccountGroup()
     {
         $account = new Account();
-        $group = new AccountGroup();
+        $group = new CustomerGroup();
         $account->setGroup($group);
         $paymentTerm = new PaymentTerm();
 
@@ -194,7 +194,7 @@ class PaymentTermProviderTest extends \PHPUnit_Framework_TestCase
     {
         $paymentTerm = new PaymentTerm();
         $account = new Account();
-        $group = new AccountGroup();
+        $group = new CustomerGroup();
         $account->setGroup($group);
         $owner = PaymentTermAwareStub::create($account);
 

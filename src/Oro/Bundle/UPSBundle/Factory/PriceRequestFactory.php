@@ -65,6 +65,10 @@ class PriceRequestFactory
         $requestOption,
         ShippingService $shippingService = null
     ) {
+        if (!$context->getShippingAddress()) {
+            return null;
+        }
+
         $decryptedPassword = $this->symmetricCrypter->decryptData($transport->getApiPassword());
 
         $priceRequest = (new PriceRequest())

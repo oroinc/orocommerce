@@ -137,8 +137,8 @@ class RequestACLTest extends WebTestCase
 
         $role = $this->getContainer()
             ->get('doctrine')
-            ->getManagerForClass('OroCustomerBundle:AccountUserRole')
-            ->getRepository('OroCustomerBundle:AccountUserRole')
+            ->getManagerForClass('OroCustomerBundle:CustomerUserRole')
+            ->getRepository('OroCustomerBundle:CustomerUserRole')
             ->findOneBy(['role' => LoadAccountUsersData::BUYER]);
 
         $aclPrivilege = new AclPrivilege();

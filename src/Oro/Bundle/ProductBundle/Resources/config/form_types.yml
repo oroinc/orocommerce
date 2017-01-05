@@ -171,6 +171,15 @@ services:
         tags:
             - { name: form.type, alias: oro_product_page_variant }
 
+    oro_product.form.type.frontend_variant_field:
+        class: 'Oro\Bundle\ProductBundle\Form\Type\FrontendVariantFiledType'
+        arguments:
+            - '@oro_product.provider.custom_field_provider'
+            - '@oro_product.provider.product_variant_availability_provider'
+            - '%oro_product.entity.product.class%'
+        tags:
+            - { name: form.type, alias: oro_product_frontend_variant_field }
+
     oro_product.form.type.extension.choices_primary_unit_selection:
         class: 'Oro\Bundle\ProductBundle\Form\Extension\ChoicesProductPrimaryUnitSelectionOwnerTypeExtension'
         arguments:

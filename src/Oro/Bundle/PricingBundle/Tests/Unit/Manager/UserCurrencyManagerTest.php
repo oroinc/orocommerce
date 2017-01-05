@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Manager;
 
 use Oro\Bundle\CurrencyBundle\Provider\CurrencyProviderInterface;
-use Oro\Bundle\CustomerBundle\Entity\AccountUserSettings;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserSettings;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\UserBundle\Entity\BaseUserManager;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
@@ -93,7 +93,7 @@ class UserCurrencyManagerTest extends \PHPUnit_Framework_TestCase
         /** @var Website $website */
         $website = $this->getEntity('Oro\Bundle\WebsiteBundle\Entity\Website', ['id' => 1]);
 
-        $userWebsiteSettings = new AccountUserSettings($website);
+        $userWebsiteSettings = new CustomerUserSettings($website);
         $userWebsiteSettings->setCurrency('EUR');
 
         $user = $this->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\AccountUser')
@@ -139,7 +139,7 @@ class UserCurrencyManagerTest extends \PHPUnit_Framework_TestCase
             ->method('getToken')
             ->willReturn($token);
 
-        $userWebsiteSettings = new AccountUserSettings($website);
+        $userWebsiteSettings = new CustomerUserSettings($website);
         $userWebsiteSettings->setCurrency('UAH');
 
         $user->expects($this->once())

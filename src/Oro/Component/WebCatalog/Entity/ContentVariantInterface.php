@@ -13,9 +13,4 @@ interface ContentVariantInterface
      * @return string
      */
     public function getType();
-
-    /**
-     * @return ContentNodeInterface
-     */
-    public function getNode();
 }

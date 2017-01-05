@@ -70,6 +70,7 @@ class OroWebCatalogBundleInstaller implements
         $this->createOroContentNodeTable($schema);
         $this->createOroContentNodeSlugPrototypeTable($schema);
         $this->createOroContentNodeTitleTable($schema);
+        $this->createOroContentNodeUrlTable($schema);
         $this->createOroWebCatalogVariantSlugTable($schema);
         $this->createOroWebCatalogNodeScopeTable($schema);
         $this->createOroWebCatalogVariantScopeTable($schema);
@@ -78,6 +79,7 @@ class OroWebCatalogBundleInstaller implements
         $this->addOroWebCatalogForeignKeys($schema);
         $this->addOroContentNodeForeignKeys($schema);
         $this->addOroContentNodeTitleForeignKeys($schema);
+        $this->addOroContentNodeUrlForeignKeys($schema);
         $this->addOroContentVariantForeignKeys($schema);
         $this->addOroWebCatalogNodeScopeForeignKeys($schema);
         $this->addOroWebCatalogVariantScopeForeignKeys($schema);
@@ -182,6 +184,20 @@ class OroWebCatalogBundleInstaller implements
     }
 
     /**
+     * Create oro_web_catalog_node_title table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroContentNodeUrlTable(Schema $schema)
+    {
+        $table = $schema->createTable('oro_web_catalog_node_url');
+        $table->addColumn('node_id', 'integer', []);
+        $table->addColumn('localized_value_id', 'integer', []);
+        $table->setPrimaryKey(['node_id', 'localized_value_id']);
+        $table->addUniqueIndex(['localized_value_id']);
+    }
+
+    /**
      * Create oro_web_catalog_variant_slug table
      *
      * @param Schema $schema
@@ -274,6 +290,28 @@ class OroWebCatalogBundleInstaller implements
     protected function addOroContentNodeTitleForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('oro_web_catalog_node_title');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_web_catalog_content_node'),
+            ['node_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_fallback_localization_val'),
+            ['localized_value_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+    }
+
+    /**
+     * Add oro_web_catalog_node_title foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOroContentNodeUrlForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('oro_web_catalog_node_url');
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_web_catalog_content_node'),
             ['node_id'],

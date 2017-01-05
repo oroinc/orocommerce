@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PricingBundle\EventListener;
 
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 use Oro\Bundle\PricingBundle\Entity\PriceListFallback;
@@ -67,7 +67,7 @@ abstract class AbstractPriceListCollectionAwareListener
      */
     public function onPostSetData(FormEvent $event)
     {
-        /** @var AccountGroup|Account $targetEntity */
+        /** @var CustomerGroup|Account $targetEntity */
         $targetEntity = $event->getForm()->getData();
         if (!$targetEntity || !$targetEntity->getId()) {
             return;
@@ -120,7 +120,7 @@ abstract class AbstractPriceListCollectionAwareListener
     }
 
     /**
-     * @param AccountGroup|Account $targetEntity
+     * @param CustomerGroup|Account $targetEntity
      * @param Website $website
      * @return array|PriceListToAccountGroup[]|PriceListToAccount[]
      */
@@ -155,7 +155,7 @@ abstract class AbstractPriceListCollectionAwareListener
 
     /**
      * @param Website $website
-     * @param AccountGroup|Account $targetEntity
+     * @param CustomerGroup|Account $targetEntity
      * @return PriceListFallback
      */
     protected function getFallback(Website $website, $targetEntity)
@@ -179,13 +179,13 @@ abstract class AbstractPriceListCollectionAwareListener
     }
 
     /**
-     * @param AccountGroup|Account $targetEntity
+     * @param CustomerGroup|Account $targetEntity
      * @return PriceListFallback[]
      */
     abstract protected function getFallbacks($targetEntity);
 
     /**
-     * @param AccountGroup|Account $targetEntity
+     * @param CustomerGroup|Account $targetEntity
      * @param Website $website
      * @return PriceListFallback
      */
@@ -202,7 +202,7 @@ abstract class AbstractPriceListCollectionAwareListener
     abstract protected function getRelationClass();
 
     /**
-     * @param Account|AccountGroup $targetEntity
+     * @param Account|CustomerGroup $targetEntity
      * @param Website $website
      */
     abstract protected function handleCollectionChanges($targetEntity, Website $website);

@@ -59,7 +59,8 @@
     {% endif %}
 
     {% set generalData = generalData|merge([
-        form_row(form.status)
+        form_row(form.status),
+        form_row(form.slugPrototypes)
     ]) %}
 
     {% if oro_is_product_primary_unit_visible() %}

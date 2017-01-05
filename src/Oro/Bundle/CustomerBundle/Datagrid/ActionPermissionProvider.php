@@ -49,11 +49,11 @@ class ActionPermissionProvider
      *
      * @return array
      */
-    public function getAccountUserRolePermission(ResultRecordInterface $record)
+    public function getCustomerUserRolePermission(ResultRecordInterface $record)
     {
         $isGranted = true;
         if ($record->getValue('isRolePredefined')) {
-            $isGranted = $this->securityFacade->isGranted('oro_account_frontend_account_user_role_create');
+            $isGranted = $this->securityFacade->isGranted('oro_account_frontend_customer_user_role_create');
         }
 
         return [

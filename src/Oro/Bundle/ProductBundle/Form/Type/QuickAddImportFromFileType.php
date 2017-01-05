@@ -27,7 +27,11 @@ class QuickAddImportFromFileType extends AbstractType
                     'constraints' => [
                         new File(
                             [
-                                'mimeTypes' => ['text/plain', 'application/zip'],
+                                'mimeTypes' => [
+                                    'text/plain',
+                                    'application/zip',
+                                    'application/vnd.oasis.opendocument.spreadsheet'
+                                ],
                                 'mimeTypesMessage' => 'oro.product.frontend.quick_add.invalid_file_type'
                             ]
                         ),

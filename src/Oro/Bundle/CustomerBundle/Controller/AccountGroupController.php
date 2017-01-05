@@ -12,7 +12,7 @@ use Doctrine\Common\Util\ClassUtils;
 
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Form\Type\AccountGroupType;
 use Oro\Bundle\CustomerBundle\Form\Handler\AccountGroupHandler;
 
@@ -38,15 +38,15 @@ class AccountGroupController extends Controller
      * @Acl(
      *      id="oro_customer_account_group_view",
      *      type="entity",
-     *      class="OroCustomerBundle:AccountGroup",
+     *      class="OroCustomerBundle:CustomerGroup",
      *      permission="VIEW"
      * )
      * @Template()
      *
-     * @param AccountGroup $group
+     * @param CustomerGroup $group
      * @return array
      */
-    public function viewAction(AccountGroup $group)
+    public function viewAction(CustomerGroup $group)
     {
         return [
             'entity' => $group
@@ -59,7 +59,7 @@ class AccountGroupController extends Controller
      * @Acl(
      *      id="oro_customer_account_group_create",
      *      type="entity",
-     *      class="OroCustomerBundle:AccountGroup",
+     *      class="OroCustomerBundle:CustomerGroup",
      *      permission="CREATE"
      * )
      *
@@ -67,7 +67,7 @@ class AccountGroupController extends Controller
      */
     public function createAction()
     {
-        return $this->update(new AccountGroup());
+        return $this->update(new CustomerGroup());
     }
 
     /**
@@ -76,23 +76,23 @@ class AccountGroupController extends Controller
      * @Acl(
      *      id="oro_customer_account_group_update",
      *      type="entity",
-     *      class="OroCustomerBundle:AccountGroup",
+     *      class="OroCustomerBundle:CustomerGroup",
      *      permission="EDIT"
      * )
      *
-     * @param AccountGroup $group
+     * @param CustomerGroup $group
      * @return array
      */
-    public function updateAction(AccountGroup $group)
+    public function updateAction(CustomerGroup $group)
     {
         return $this->update($group);
     }
 
     /**
-     * @param AccountGroup $group
+     * @param CustomerGroup $group
      * @return array|RedirectResponse
      */
-    protected function update(AccountGroup $group)
+    protected function update(CustomerGroup $group)
     {
         $form = $this->createForm(AccountGroupType::NAME, $group);
         $handler = new AccountGroupHandler(
@@ -105,13 +105,13 @@ class AccountGroupController extends Controller
         return $this->get('oro_form.model.update_handler')->handleUpdate(
             $group,
             $form,
-            function (AccountGroup $group) {
+            function (CustomerGroup $group) {
                 return [
                     'route' => 'oro_customer_account_group_update',
                     'parameters' => ['id' => $group->getId()]
                 ];
             },
-            function (AccountGroup $group) {
+            function (CustomerGroup $group) {
                 return [
                     'route' => 'oro_customer_account_group_view',
                     'parameters' => ['id' => $group->getId()]
@@ -127,10 +127,10 @@ class AccountGroupController extends Controller
      * @Template("OroCustomerBundle:AccountGroup/widget:info.html.twig")
      * @AclAncestor("oro_customer_account_group_view")
      *
-     * @param AccountGroup $group
+     * @param CustomerGroup $group
      * @return array
      */
-    public function infoAction(AccountGroup $group)
+    public function infoAction(CustomerGroup $group)
     {
         return [
             'entity' => $group
