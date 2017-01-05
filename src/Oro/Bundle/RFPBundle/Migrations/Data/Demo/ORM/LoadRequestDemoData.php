@@ -45,7 +45,6 @@ class LoadRequestDemoData extends AbstractEntityReferenceFixture implements
     {
         return [
             'Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadAccountUserDemoData',
-            'Oro\Bundle\RFPBundle\Migrations\Data\Demo\ORM\LoadRequestStatusDemoData',
             'Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductUnitPrecisionDemoData',
         ];
     }
@@ -56,7 +55,6 @@ class LoadRequestDemoData extends AbstractEntityReferenceFixture implements
      */
     public function load(ObjectManager $manager)
     {
-        $statuses     = $this->getObjectReferences($manager, 'OroRFPBundle:RequestStatus');
         $organization = $manager->getRepository('OroOrganizationBundle:Organization')->getFirst();
 
         $accountUsers = $this->getAccountUsers($manager);
@@ -94,8 +92,6 @@ class LoadRequestDemoData extends AbstractEntityReferenceFixture implements
                 ->setAccount($accountUser ? $accountUser->getAccount() : null)
             ;
 
-            $status = $statuses[rand(0, count($statuses) - 1)];
-            $request->setStatus($status);
             $request->setOwner($owner);
             $request->setOrganization($organization);
 

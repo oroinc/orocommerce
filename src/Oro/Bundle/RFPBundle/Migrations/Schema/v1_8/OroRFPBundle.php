@@ -4,6 +4,8 @@ namespace Oro\Bundle\RFPBundle\Migrations\Schema\v1_8;
 
 use Doctrine\DBAL\Schema\Schema;
 
+use Oro\Bundle\EntityConfigBundle\Migration\RemoveFieldQuery;
+use Oro\Bundle\EntityConfigBundle\Migration\RemoveTableQuery;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
@@ -31,6 +33,10 @@ class OroRFPBundle implements Migration, ExtendExtensionAwareInterface
         $this->updateOroRfpRequestTable($schema);
         $this->createOroRfpRequestAddNoteTable($schema);
         $this->addOroRfpRequestAddNoteForeignKeys($schema);
+        $this->dropRfpStatus($schema);
+        $this->dropRfpStatusTranslation($schema);
+
+        $this->updateEntityConfigs($queries);
 
         foreach ($this->getTranslationKeysForRemove() as $domain => $keys) {
             $queries->addQuery(new DeleteTranslationKeysQuery($domain, $keys));
@@ -63,6 +69,9 @@ class OroRFPBundle implements Migration, ExtendExtensionAwareInterface
             false,
             ['dataaudit' => ['auditable' => true]]
         );
+
+        $table = $schema->getTable('oro_rfp_request');
+        $table->dropColumn('status_id');
     }
 
     /**
@@ -97,6 +106,31 @@ class OroRFPBundle implements Migration, ExtendExtensionAwareInterface
     }
 
     /**
+     * @param Schema $schema
+     */
+    protected function dropRfpStatus(Schema $schema)
+    {
+        $schema->dropTable('oro_rfp_status');
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    protected function dropRfpStatusTranslation(Schema $schema)
+    {
+        $schema->dropTable('oro_rfp_status_translation');
+    }
+
+    /**
+     * @param QueryBag $queries
+     */
+    protected function updateEntityConfigs(QueryBag $queries)
+    {
+        $queries->addPostQuery(new RemoveFieldQuery('Oro\Bundle\RFPBundle\Entity\Request', 'status'));
+        $queries->addPostQuery(new RemoveTableQuery('Oro\Bundle\RFPBundle\Entity\RequestStatus'));
+    }
+
+    /**
      * Get unused translation keys
      *
      * @return array
@@ -124,6 +158,8 @@ class OroRFPBundle implements Migration, ExtendExtensionAwareInterface
                 'oro.rfp.requeststatus.translations.label',
                 'oro.rfp.system_configuration.groups.requeststatus.title',
                 'oro.rfp.system_configuration.fields.requeststatus_default.title',
+                'oro.rfp.btn.change_status',
+                'oro.rfp.widget.change_status_title',
                 'oro.frontend.rfp.request.status.label',
             ],
             'entities' => [

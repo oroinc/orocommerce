@@ -13,7 +13,6 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecis
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
-use Oro\Bundle\RFPBundle\Entity\RequestStatus;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 
 class LoadRequestData extends AbstractFixture implements DependentFixtureInterface
@@ -213,7 +212,6 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
     {
         return [
             LoadUserData::class,
-            LoadRequestStatusData::class,
             LoadProductUnitPrecisions::class,
         ];
     }
@@ -223,16 +221,7 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
      */
     public function load(ObjectManager $manager)
     {
-        $statuses = [
-            LoadRequestStatusData::NAME_CLOSED,
-            LoadRequestStatusData::NAME_IN_PROGRESS,
-            LoadRequestStatusData::NAME_DELETED,
-            LoadRequestStatusData::NAME_NOT_DELETED,
-        ];
         $owner = $this->getFirstUser($manager);
-
-        /** @var RequestStatus $status */
-        $status = $this->getReference(LoadRequestStatusData::PREFIX . $statuses[array_rand($statuses)]);
 
         /** @var Organization $organization */
         $organization = $this->getUser($manager)->getOrganization();
@@ -247,7 +236,6 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
                 ->setCompany($rawRequest['company'])
                 ->setRole($rawRequest['role'])
                 ->setNote($rawRequest['note'])
-                ->setStatus($status)
                 ->setOwner($owner)
                 ->setOrganization($organization);
 

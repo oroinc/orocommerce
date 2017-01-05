@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\FrontendBundle\Provider\Tests\Unit;
+namespace Oro\Bundle\FrontendBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\FrontendBundle\Provider\TranslationPackagesProviderExtension;
 

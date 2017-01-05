@@ -55,30 +55,6 @@ class ActionPermissionProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param boolean $isRecordEnabled
-     * @param array $expected
-     * @param $user
-     * @dataProvider recordConditions
-     */
-    public function testGetRequestStatusDefinitionPermissions($isRecordEnabled, array $expected, $user)
-    {
-        $this->record->expects($this->any())
-            ->method('getValue')
-            ->with($this->isType('string'))
-            ->willReturn($isRecordEnabled);
-
-        $this->securityFacade->expects($this->once())->method('getLoggedUser')->willReturn($user);
-        $result = $this->actionPermissionProvider->getUserPermissions($this->record);
-
-        $this->assertCount(count($this->actionsList), $result);
-        foreach ($this->actionsList as $action) {
-            $this->assertArrayHasKey($action, $result);
-        }
-
-        $this->assertEquals($expected, $result);
-    }
-
-    /**
      * @return array
      */
     public function recordConditions()

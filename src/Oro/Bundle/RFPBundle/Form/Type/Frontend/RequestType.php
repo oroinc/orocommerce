@@ -4,8 +4,6 @@ namespace Oro\Bundle\RFPBundle\Form\Type\Frontend;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
@@ -13,9 +11,6 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Bundle\CustomerBundle\Form\Type\Frontend\AccountUserMultiSelectType;
-
-use Oro\Bundle\RFPBundle\Entity\Request;
-use Oro\Bundle\RFPBundle\Entity\RequestStatus;
 
 class RequestType extends AbstractType
 {
@@ -37,11 +32,6 @@ class RequestType extends AbstractType
     protected $dataClass;
 
     /**
-     * @var string
-     */
-    protected $requestStatusClass;
-
-    /**
      * @param ConfigManager $configManager
      * @param ManagerRegistry $registry
      */
@@ -57,14 +47,6 @@ class RequestType extends AbstractType
     public function setDataClass($dataClass)
     {
         $this->dataClass = $dataClass;
-    }
-
-    /**
-     * @param string $requestStatusClass
-     */
-    public function setRequestStatusClass($requestStatusClass)
-    {
-        $this->requestStatusClass = $requestStatusClass;
     }
 
     /**
@@ -114,34 +96,6 @@ class RequestType extends AbstractType
                 'label' => 'oro.frontend.rfp.request.assigned_account_users.label',
             ])
         ;
-
-        $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'postSubmit']);
-    }
-
-    /**
-     * @param FormEvent $event
-     */
-    public function postSubmit(FormEvent $event)
-    {
-        /** @var Request $request */
-        $request = $event->getData();
-        $defaultStatus = $this->getDefaultRequestStatus();
-        if ($defaultStatus && !$request->getStatus()) {
-            $request->setStatus($defaultStatus);
-        }
-    }
-
-    /**
-     * @return RequestStatus
-     */
-    protected function getDefaultRequestStatus()
-    {
-        return $this->registry
-            ->getManagerForClass($this->requestStatusClass)
-            ->getRepository($this->requestStatusClass)
-            ->findOneBy([
-                'name' => $this->configManager->get('oro_rfp.default_request_status')
-            ]);
     }
 
     /**

@@ -37,14 +37,6 @@ search:
                 target_type:            text
                 target_fields:          [note]
             -
-                name:                   status
-                relation_type:          many-to-one
-                relation_fields:
-                    -
-                        name:           label
-                        target_type:    text
-                        target_fields:  [status]
-            -
                 name:                   customer_status
                 relation_type:          many-to-one
                 relation_fields:

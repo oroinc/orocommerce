@@ -94,16 +94,6 @@
                                 </tr>
                             {% endif %}
                             <tr class="account-oq__order-info__control">
-                                <td class="account-oq__order-info__title">{{ 'oro.frontend.rfp.request.status.label'|trans }}</td>
-                                <td>{{ request.status.label }}</td>
-                            </tr>
-                            {% if request.status.name =='canceled' %}
-                                <tr class="account-oq__order-info__control">
-                                    <td class="account-oq__order-info__title">{{ 'oro.frontend.rfp.request.cancellation_reason.label'|trans }}</td>
-                                    <td>{{ request.cancellationReason }}</td>
-                                </tr>
-                            {% endif %}
-                            <tr class="account-oq__order-info__control">
                                 <td class="account-oq__order-info__title">{{ 'oro.frontend.rfp.request.customer_status.label'|trans }}</td>
                                 <td>{{ request.customerStatus.name|default('') }}</td>
                             </tr>
