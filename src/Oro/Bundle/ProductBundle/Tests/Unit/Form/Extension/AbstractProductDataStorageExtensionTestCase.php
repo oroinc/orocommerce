@@ -5,7 +5,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Extension;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\Mapping\ClassMetadata;
 
-use Oro\Bundle\TestFrameworkBundle\Test\Logger\LoggerAwareInterfaceTestTrait;
+use Oro\Bundle\TestFrameworkBundle\Test\Logger\LoggerAwareTraitTestTrait;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -22,7 +22,7 @@ use Oro\Bundle\ProductBundle\Tests\Unit\Form\Extension\Stub\ProductDataStorageEx
  */
 abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit_Framework_TestCase
 {
-    use LoggerAwareInterfaceTestTrait;
+    use LoggerAwareTraitTestTrait;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject|ProductDataStorage */
     protected $storage;

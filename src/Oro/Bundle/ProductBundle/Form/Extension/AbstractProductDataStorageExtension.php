@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Form\Extension;
 
+use Doctrine\Common\Util\ClassUtils;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\Form\AbstractTypeExtension;
@@ -161,12 +162,13 @@ abstract class AbstractProductDataStorageExtension extends AbstractTypeExtension
         foreach ($data as $property => $value) {
             try {
                 if ($metadata->hasAssociation($property)) {
+                    $associationTargetClass = $metadata->getAssociationTargetClass($property);
                     // For collections (ManyToMany, OneToMany) associations support
                     if (is_array($value)) {
                         $value = array_map(
-                            function ($value) use ($property, $metadata) {
+                            function ($value) use ($associationTargetClass) {
                                 return $this->doctrineHelper->getEntityReference(
-                                    $metadata->getAssociationTargetClass($property),
+                                    $associationTargetClass,
                                     $value
                                 );
                             },
@@ -174,21 +176,20 @@ abstract class AbstractProductDataStorageExtension extends AbstractTypeExtension
                         );
                     } else {
                         $value = $this->doctrineHelper->getEntityReference(
-                            $metadata->getAssociationTargetClass($property),
+                            $associationTargetClass,
                             $value
                         );
                     }
                 }
 
                 $this->propertyAccessor->setValue($entity, $property, $value);
-
             } catch (NoSuchPropertyException $e) {
                 if (null !== $this->logger) {
                     $this->logger->error(
                         'No such property {property} in the entity {entity}',
                         [
                             'property' => $property,
-                            'entity' => get_class($entity),
+                            'entity' => ClassUtils::getClass($entity),
                             'exception' => $e,
                         ]
                     );

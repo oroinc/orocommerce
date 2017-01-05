@@ -63,12 +63,18 @@ class RequestToQuoteDataStorage
         $this->storage->set($data);
     }
 
+    /**
+     * @param Collection $collection
+     * @return array
+     */
     protected function getEntitiesIds(Collection $collection)
     {
         $ids = [];
 
         foreach ($collection as $item) {
-            $ids[] = $item->getId();
+            if (method_exists($item, 'getId') && $item->getId()) {
+                $ids[] = $item->getId();
+            }
         }
 
         return $ids;
