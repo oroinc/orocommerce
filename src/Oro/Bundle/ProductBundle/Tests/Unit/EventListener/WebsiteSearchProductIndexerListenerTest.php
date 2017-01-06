@@ -148,7 +148,7 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
 
         $product = $this->prepareProduct($firstLocale, $secondLocale);
 
-        $event = new IndexEntityEvent([$product], []);
+        $event = new IndexEntityEvent(Product::class, [$product], []);
 
         $this->websiteContextManager
             ->expects($this->once())

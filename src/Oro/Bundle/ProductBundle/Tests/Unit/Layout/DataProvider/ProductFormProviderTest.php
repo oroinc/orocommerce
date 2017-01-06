@@ -8,12 +8,16 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Form\Type\FrontendVariantFiledType;
 use Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
 use Oro\Bundle\ProductBundle\Form\Type\QuickAddCopyPasteType;
 use Oro\Bundle\ProductBundle\Form\Type\QuickAddImportFromFileType;
 use Oro\Bundle\ProductBundle\Form\Type\QuickAddType;
 use Oro\Bundle\ProductBundle\Layout\DataProvider\ProductFormProvider;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class ProductFormProviderTest extends \PHPUnit_Framework_TestCase
 {
     /** @var ProductFormProvider */
@@ -234,5 +238,36 @@ class ProductFormProviderTest extends \PHPUnit_Framework_TestCase
         // Get form with existing data in locale cache
         $data = $this->provider->getLineItemFormView($product);
         $this->assertInstanceOf(FormView::class, $data);
+    }
+
+    public function testGetVariantFieldsFormView()
+    {
+        $formView = $this->createMock(FormView::class);
+
+        $expectedForm = $this->createMock(FormInterface::class);
+        $expectedForm->expects($this->once())
+            ->method('createView')
+            ->willReturn($formView);
+
+        $this->formFactory->expects($this->once())
+            ->method('create')
+            ->with(FrontendVariantFiledType::NAME)
+            ->willReturn($expectedForm);
+
+        $data = $this->provider->getVariantFieldsFormView(new Product());
+        $this->assertInstanceOf(FormView::class, $data);
+    }
+
+    public function testGetVariantFieldsForm()
+    {
+        $expectedForm = $this->createMock(FormInterface::class);
+
+        $this->formFactory->expects($this->once())
+            ->method('create')
+            ->with(FrontendVariantFiledType::NAME)
+            ->willReturn($expectedForm);
+
+        $data = $this->provider->getVariantFieldsForm(new Product());
+        $this->assertInstanceOf(FormInterface::class, $data);
     }
 }

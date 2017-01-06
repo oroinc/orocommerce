@@ -4,6 +4,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\Autocomplete;
 
 use Symfony\Component\EventDispatcher\Event;
 
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadFrontendProductData;
 use Oro\Bundle\ProductBundle\Event\ProductDBQueryRestrictionEvent;
 use Oro\Bundle\ProductBundle\Event\ProductSearchQueryRestrictionEvent;
@@ -59,6 +60,15 @@ class ProductVisibilityLimitedSearchHandlerTest extends WebTestCase
         foreach ($data['results'] as $result) {
             $this->assertArrayHasKey('sku', $result);
             $this->assertArrayHasKey('defaultName.string', $result);
+
+            // Assert there are not configurable products in result data
+            /** @var product $product */
+            $product = $this->getReference($result['sku']);
+            $this->assertNotEquals(
+                Product::TYPE_CONFIGURABLE,
+                $product->getType(),
+                sprintf('Unexpected product SKU:%s with type %s', $product->getSku(), Product::TYPE_CONFIGURABLE)
+            );
         }
         $this->assertNotNull($this->firedEvent, 'Restriction event has not been fired');
         $this->assertInstanceOf(
@@ -103,6 +113,15 @@ class ProductVisibilityLimitedSearchHandlerTest extends WebTestCase
         foreach ($data['results'] as $result) {
             $this->assertArrayHasKey('sku', $result);
             $this->assertArrayHasKey('defaultName.string', $result);
+
+            // Assert there are not configurable products in result data
+            /** @var product $product */
+            $product = $this->getReference($result['sku']);
+            $this->assertNotEquals(
+                Product::TYPE_CONFIGURABLE,
+                $product->getType(),
+                sprintf('Unexpected product SKU:%s with type %s', $product->getSku(), Product::TYPE_CONFIGURABLE)
+            );
         }
         $this->assertNotNull($this->firedEvent, 'Restriction event has not been fired');
         $this->assertInstanceOf(

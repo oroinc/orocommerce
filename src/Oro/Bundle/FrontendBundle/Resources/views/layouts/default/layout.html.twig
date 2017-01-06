@@ -81,12 +81,17 @@
         {% set primaryButtonCss = ' btn btn--action btn--size-s direct-link ' ~ action.buttonOptions.class|default('') ~ " "  ~ params.buttonOptions.aCss|default('') %}
 
         {% if hasVariants %}
+            {% set dropdownMenuOptions = {
+                'align': 'right',
+                'attachToParent': true
+            } %}
+
             <div{{ block('block_attributes') }}>
                 <a class="btn btn--info btn--size-l" {{ _layout.get_action_attributes(action, entityClass, entityId, primaryButtonCss) }}>
                     {{ action.label|trim }}
                 </a>
                 <a class="btn btn--info btn--size-l dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"></a>
-                <ul class="dropdown-menu">
+                <ul class="dropdown-menu" data-options={{ dropdownMenuOptions|json_encode }}>
                     {% for action in actions|slice(1) %}
                     <li>
                         <a class="dropdown-item" {{ _layout.get_action_attributes(action, entityClass, entityId, '') }}>
@@ -135,14 +140,19 @@
                 {% set additionalCss = " btn-group full " %}
             {% endif %}
             {% set attr = attr|merge({ class: attr.class|default('') ~ additionalCss}) %}
+            {% set dropdownMenuOptions = {
+                'align': 'right',
+                'attachToParent': true
+            } %}
 
             <div{{ block('block_attributes') }}>
 
+
                 {% include button.template with button.templateData|merge({onlyLink: true, aClass: ' btn btn--info btn--size-l direct-link ', noIcon: true, noIconText: true}) %}
 
-                <a href="#" class="btn btn--info btn--size-l dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"></a>
+                <a href="#" class="btn btn--info btn--size-l dropdown-toggle" data-toggle="dropdown" data-container="body" aria-haspopup="true" aria-expanded="true"></a>
 
-                <ul class="dropdown-menu">
+                <ul class="dropdown-menu" data-options={{ dropdownMenuOptions|json_encode }}>
                     {% for button in buttons|slice(1) %}
                         <li>
                             {% include button.template with button.templateData|merge({onlyLink: true, aClass: ' dropdown-item ', noIcon: true, noIconText: true}) %}
@@ -151,7 +161,7 @@
                 </ul>
             </div>
         {% else %}
-            {% include button.template with button.templateData|merge({onlyLink: true, aClass: ' btn btn--info btn--size-l btn--full direct-link ', noIcon: true, noIconText: true}) %}
+            {% include button.template with button.templateData|merge({onlyLink: true, aClass: '  btn btn--action btn--size-s direct-link ', noIcon: true, noIconText: true}) %}
         {% endif %}
     {% endif %}
 {% endblock %}

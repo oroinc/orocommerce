@@ -13,7 +13,7 @@ use Oro\Bundle\LocaleBundle\Formatter\AddressFormatter;
 use Oro\Bundle\OrderBundle\Tests\Unit\Form\Type\AbstractAddressTypeTest;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteAddress;
-use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteAddressType;
 use Oro\Bundle\SaleBundle\Model\QuoteAddressManager;
 use Oro\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider;
@@ -120,7 +120,7 @@ class QuoteAddressTypeTest extends AbstractAddressTypeTest
         $this->quoteAddressManager->expects($this->any())->method('updateFromAbstract')
             ->will(
                 $this->returnCallback(
-                    function (AccountAddress $address = null, QuoteAddress $orderAddress = null) {
+                    function (CustomerAddress $address = null, QuoteAddress $orderAddress = null) {
                         if (!$orderAddress) {
                             $orderAddress = new QuoteAddress();
                         }
@@ -253,7 +253,7 @@ class QuoteAddressTypeTest extends AbstractAddressTypeTest
         $this->quoteAddressManager->expects($this->any())->method('updateFromAbstract')
             ->will(
                 $this->returnCallback(
-                    function (AccountAddress $address) {
+                    function (CustomerAddress $address) {
                         $quoteAddress = new QuoteAddress();
                         $quoteAddress->setCountry($address->getCountry());
                         $quoteAddress->setStreet($address->getStreet());
@@ -268,7 +268,7 @@ class QuoteAddressTypeTest extends AbstractAddressTypeTest
         $this->quoteAddressManager->expects($this->any())->method('updateFromAbstract')
             ->will(
                 $this->returnCallback(
-                    function (AccountAddress $address = null, QuoteAddress $orderAddress = null) {
+                    function (CustomerAddress $address = null, QuoteAddress $orderAddress = null) {
                         if (!$orderAddress) {
                             $orderAddress = new QuoteAddress();
                         }
@@ -319,7 +319,7 @@ class QuoteAddressTypeTest extends AbstractAddressTypeTest
                 'formErrors' => ['accountAddress' => 1],
                 'groupedAddresses' => [
                     'group_name' => [
-                        'a_1' => (new AccountAddress())
+                        'a_1' => (new CustomerAddress())
                             ->setCountry($country)
                             ->setStreet('Street'),
                     ],

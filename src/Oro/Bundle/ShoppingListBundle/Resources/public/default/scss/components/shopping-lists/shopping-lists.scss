@@ -69,6 +69,7 @@
     }
 
     &__link {
+        display: block;
         margin-left: 25px;
 
         font-size: $base-font-size - 2px;

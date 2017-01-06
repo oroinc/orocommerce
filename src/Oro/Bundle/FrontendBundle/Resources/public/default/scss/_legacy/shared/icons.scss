@@ -42,9 +42,7 @@
 }
 
 .fa-bars {
-    &:before {
-        content: "\f03a";
-    }
+    @include fa-icon($fa-var-list);
 }
 
 [class^="cf-"],

@@ -4,6 +4,12 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository;
+use Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadQuoteCheckoutsData;
+use Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadShoppingListsCheckoutsData;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
+use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
+use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteProductDemandData;
+use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 
 /**
@@ -20,8 +26,9 @@ class CheckoutRepositoryTest extends WebTestCase
         $this->client->useHashNavigation(true);
         $this->loadFixtures(
             [
-                'Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadQuoteCheckoutsData',
-                'Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadShoppingListsCheckoutsData',
+                LoadQuoteCheckoutsData::class,
+                LoadShoppingListsCheckoutsData::class,
+                LoadAccountUserData::class,
             ]
         );
     }
@@ -90,6 +97,39 @@ class CheckoutRepositoryTest extends WebTestCase
         }
 
         $this->assertEquals($withSource, $found);
+    }
+
+    public function testGetCheckoutByQuote()
+    {
+        $quote = $this->getReference(LoadQuoteData::QUOTE1);
+        $accountUser = $this->getReference(LoadAccountUserData::EMAIL);
+
+        $this->assertSame(
+            $this->getReference(LoadQuoteCheckoutsData::CHECKOUT_1),
+            $this->getRepository()->getCheckoutByQuote($quote, $accountUser)
+        );
+    }
+
+    public function testFindCheckoutByAccountUserAndSourceCriteriaByQuoteDemand()
+    {
+        $accountUser = $this->getReference(LoadAccountUserData::EMAIL);
+        $criteria = ['quoteDemand' => $this->getReference(LoadQuoteProductDemandData::QUOTE_DEMAND_1)];
+
+        $this->assertSame(
+            $this->getReference(LoadQuoteCheckoutsData::CHECKOUT_1),
+            $this->getRepository()->findCheckoutByAccountUserAndSourceCriteria($accountUser, $criteria)
+        );
+    }
+
+    public function testFindCheckoutByAccountUserAndSourceCriteriaByShoppingList()
+    {
+        $accountUser = $this->getReference(LoadAccountUserData::LEVEL_1_EMAIL);
+        $criteria = ['shoppingList' => $this->getReference(LoadShoppingLists::SHOPPING_LIST_7)];
+
+        $this->assertSame(
+            $this->getReference(LoadShoppingListsCheckoutsData::CHECKOUT_7),
+            $this->getRepository()->findCheckoutByAccountUserAndSourceCriteria($accountUser, $criteria)
+        );
     }
 
     public function testDeleteWithoutWorkflowItem()

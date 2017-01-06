@@ -6,7 +6,7 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountUserAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 
 class LoadAccountUserAddresses extends AbstractAddressesFixture implements DependentFixtureInterface
 {
@@ -89,7 +89,7 @@ class LoadAccountUserAddresses extends AbstractAddressesFixture implements Depen
     public function load(ObjectManager $manager)
     {
         foreach ($this->addresses as $addressData) {
-            $address = new AccountUserAddress();
+            $address = new CustomerUserAddress();
             $address->setSystemOrganization($this->getOrganization($manager));
             $address->setFrontendOwner($this->getReference($addressData['account_user']));
             $this->addAddress($manager, $addressData, $address);

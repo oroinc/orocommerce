@@ -6,7 +6,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Entity\AccountUserManager;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserManager;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class FrontendAccountUserHandler
@@ -17,18 +17,18 @@ class FrontendAccountUserHandler
     /** @var Request */
     protected $request;
 
-    /** @var AccountUserManager */
+    /** @var CustomerUserManager */
     protected $userManager;
 
     /**
      * @param FormInterface $form
      * @param Request $request
-     * @param AccountUserManager $userManager
+     * @param CustomerUserManager $userManager
      */
     public function __construct(
         FormInterface $form,
         Request $request,
-        AccountUserManager $userManager
+        CustomerUserManager $userManager
     ) {
         $this->form = $form;
         $this->request = $request;

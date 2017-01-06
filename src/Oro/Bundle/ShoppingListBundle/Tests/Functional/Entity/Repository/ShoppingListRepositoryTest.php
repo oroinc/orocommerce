@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\Criteria;
 
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
+use Oro\Bundle\SecurityBundle\Authentication\Token\UsernamePasswordOrganizationToken;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
@@ -27,21 +28,21 @@ class ShoppingListRepositoryTest extends WebTestCase
      */
     protected $aclHelper;
 
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
 
-        $this->loadFixtures(
-            [
-                LoadShoppingLists::class,
-            ]
-        );
+        $this->loadFixtures([LoadShoppingLists::class]);
 
-        $this->accountUser = $this->getContainer()
-            ->get('doctrine')
-            ->getRepository(AccountUser::class)
-            ->findOneBy(['username' => LoadAccountUserData::AUTH_USER]);
+        $this->accountUser = $this->getAccountUser();
+
+        $token = $this->createToken($this->accountUser);
+
+        $this->client->getContainer()->get('security.token_storage')->setToken($token);
 
         $this->aclHelper = $this->getContainer()->get('oro_security.acl_helper');
     }
@@ -53,31 +54,38 @@ class ShoppingListRepositoryTest extends WebTestCase
         $this->assertInstanceOf(ShoppingList::class, $availableShoppingList);
 
         // the latest shopping list for current user
-        $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_6);
-        $this->assertEquals($shoppingList, $availableShoppingList);
+        $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_5);
+        $this->assertSame($shoppingList, $availableShoppingList);
     }
 
     public function testFindByUser()
     {
+        /** @var ShoppingList[] $shoppingLists */
         $shoppingLists = $this->getRepository()->findByUser($this->aclHelper, ['list.updatedAt' => Criteria::ASC]);
         $this->assertTrue(count($shoppingLists) > 0);
-        /** @var ShoppingList $secondShoppingList */
-        $shoppingList = array_shift($shoppingLists);
-        $this->assertInstanceOf(ShoppingList::class, $shoppingList);
-        $this->assertEquals($this->accountUser, $shoppingList->getAccountUser());
-        /** @var ShoppingList $secondShoppingList */
-        $secondShoppingList = array_shift($shoppingLists);
-        $this->assertTrue($shoppingList->getUpdatedAt() <= $secondShoppingList->getUpdatedAt());
+
+        $updatedAt = null;
+
+        foreach ($shoppingLists as $shoppingList) {
+            $this->assertInstanceOf(ShoppingList::class, $shoppingList);
+            $this->assertSame($this->accountUser, $shoppingList->getAccountUser());
+
+            if ($updatedAt) {
+                $this->assertTrue($updatedAt <= $shoppingList->getUpdatedAt());
+            }
+
+            $updatedAt = $shoppingList->getUpdatedAt();
+        }
     }
 
     public function testFindByUserAndId()
     {
         /** @var ShoppingList $shoppingList */
         $shoppingListReference = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
-        $shoppingList = $this->getRepository()
-            ->findByUserAndId($this->aclHelper, $shoppingListReference->getId());
+        $shoppingList = $this->getRepository()->findByUserAndId($this->aclHelper, $shoppingListReference->getId());
+
         $this->assertInstanceOf(ShoppingList::class, $shoppingList);
-        $this->assertEquals($this->accountUser, $shoppingList->getAccountUser());
+        $this->assertSame($this->accountUser, $shoppingList->getAccountUser());
     }
 
     /**
@@ -85,7 +93,7 @@ class ShoppingListRepositoryTest extends WebTestCase
      */
     public function getAccountUser()
     {
-        return $this->getContainer()->get('doctrine')->getRepository('OroCustomerBundle:AccountUser')
+        return $this->getContainer()->get('doctrine')->getRepository(AccountUser::class)
             ->findOneBy(['username' => LoadAccountUserData::AUTH_USER]);
     }
 
@@ -95,5 +103,20 @@ class ShoppingListRepositoryTest extends WebTestCase
     protected function getRepository()
     {
         return $this->getContainer()->get('doctrine')->getRepository(ShoppingList::class);
+    }
+
+    /**
+     * @param AccountUser $accountUser
+     * @return UsernamePasswordOrganizationToken
+     */
+    protected function createToken(AccountUser $accountUser)
+    {
+        return new UsernamePasswordOrganizationToken(
+            $accountUser,
+            false,
+            'k',
+            $accountUser->getOrganization(),
+            $accountUser->getRoles()
+        );
     }
 }

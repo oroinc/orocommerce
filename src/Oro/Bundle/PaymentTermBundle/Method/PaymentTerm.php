@@ -2,46 +2,43 @@
 
 namespace Oro\Bundle\PaymentTermBundle\Method;
 
-use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
-
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\PaymentTermBundle\Method\Config\PaymentTermConfigInterface;
+use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
+use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
+use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 
-class PaymentTerm implements PaymentMethodInterface
+class PaymentTerm implements PaymentMethodInterface, LoggerAwareInterface
 {
     const TYPE = 'payment_term';
 
     /** @var PaymentTermProvider */
     protected $paymentTermProvider;
 
-    /** @var PropertyAccessor */
-    protected $propertyAccessor;
+    /** @var PaymentTermAssociationProvider */
+    protected $paymentTermAssociationProvider;
 
     /** @var DoctrineHelper */
     protected $doctrineHelper;
 
-    /** @var PaymentTermConfigInterface */
-    protected $config;
+    use LoggerAwareTrait;
 
     /**
      * @param PaymentTermProvider $paymentTermProvider
-     * @param PaymentTermConfigInterface $config
-     * @param PropertyAccessor $propertyAccessor
+     * @param PaymentTermAssociationProvider $paymentTermAssociationProvider
      * @param DoctrineHelper $doctrineHelper
      */
     public function __construct(
         PaymentTermProvider $paymentTermProvider,
-        PaymentTermConfigInterface $config,
-        PropertyAccessor $propertyAccessor,
+        PaymentTermAssociationProvider $paymentTermAssociationProvider,
         DoctrineHelper $doctrineHelper
     ) {
         $this->paymentTermProvider = $paymentTermProvider;
-        $this->config = $config;
-        $this->propertyAccessor = $propertyAccessor;
+        $this->paymentTermAssociationProvider = $paymentTermAssociationProvider;
         $this->doctrineHelper = $doctrineHelper;
     }
 
@@ -64,9 +61,20 @@ class PaymentTerm implements PaymentMethodInterface
         }
 
         try {
-            $this->propertyAccessor->setValue($entity, 'paymentTerm', $paymentTerm);
+            $this->paymentTermAssociationProvider->setPaymentTerm($entity, $paymentTerm);
             $this->doctrineHelper->getEntityManager($entity)->flush($entity);
         } catch (NoSuchPropertyException $e) {
+            if (null !== $this->logger) {
+                $this->logger->error(
+                    'Property association {paymentTermClass} not found for entity {entityClass}',
+                    [
+                        'exception' => $e,
+                        'paymentTermClass' => get_class($paymentTerm),
+                        'entityClass' => get_class($entity),
+                    ]
+                );
+            }
+
             return [];
         }
 
@@ -78,23 +86,20 @@ class PaymentTerm implements PaymentMethodInterface
     }
 
     /** {@inheritdoc} */
-    public function isEnabled()
-    {
-        return $this->config->isEnabled();
-    }
-
-    /** {@inheritdoc} */
     public function getType()
     {
         return self::TYPE;
     }
 
-    /** {@inheritdoc} */
-    public function isApplicable(array $context = [])
+    /**
+     * {@inheritdoc}
+     */
+    public function isApplicable(PaymentContextInterface $context)
     {
-        return $this->config->isCountryApplicable($context)
-            && (bool)$this->paymentTermProvider->getCurrentPaymentTerm()
-            && $this->config->isCurrencyApplicable($context);
+        if ($context->getCustomer()) {
+            return (bool)$this->paymentTermProvider->getPaymentTerm($context->getCustomer());
+        }
+        return false;
     }
 
     /** {@inheritdoc} */

@@ -84,3 +84,9 @@ services:
             - '@oro_config.manager'
             - '@oro_locale.manager.localization'
             - '@oro_entity.doctrine_helper'
+
+    oro_website.assetic_context:
+        class: 'Oro\Bundle\WebsiteBundle\Asset\AssetsContext'
+        decorates: assets.context
+        arguments:
+            - '@request_stack'

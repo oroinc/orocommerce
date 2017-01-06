@@ -7,7 +7,7 @@ use Oro\Bundle\SearchBundle\Query\Result;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractEngine;
 use Oro\Bundle\WebsiteSearchBundle\Engine\Mapper;
 use Oro\Bundle\WebsiteSearchBundle\Engine\ORM\Driver\DriverAwareTrait;
-use Oro\Bundle\WebsiteSearchBundle\Query\Result\Item;
+use Oro\Bundle\SearchBundle\Query\Result\Item;
 
 class OrmEngine extends AbstractEngine
 {

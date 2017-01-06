@@ -7,6 +7,7 @@ define(function(require) {
     var _ = require('underscore');
     var $ = require('jquery');
     var mediator = require('oroui/js/mediator');
+    var ShoppingListCollectionService = require('oroshoppinglist/js/shoppinglist-collection-service');
 
     ProductShoppingListsView = BaseView.extend(_.extend({}, ElementsHelper, {
         options: {
@@ -29,6 +30,8 @@ define(function(require) {
             shopping_lists: ['change', 'render']
         },
 
+        shoppingListCollection: null,
+
         initialize: function(options) {
             ProductShoppingListsView.__super__.initialize.apply(this, arguments);
 
@@ -41,19 +44,23 @@ define(function(require) {
             }
             this.initializeElements(options);
 
-            this.model.on('change:shopping_lists', this.render, this);
-
-            this.render();
+            ShoppingListCollectionService.shoppingListCollection.done((function(collection) {
+                this.shoppingListCollection = collection;
+                this.listenTo(collection, 'change', this.render);
+                this.render();
+            }).bind(this));
         },
 
         initModel: function(options) {
-            this.modelAttr = $.extend(true, {}, this.modelAttr, options.modelAttr || {});
+            var modelAttr = options.modelAttr || {};
+            this.modelAttr = $.extend(true, {}, this.modelAttr, modelAttr);
+            this.$el.trigger('options:set:productModel', options);
             if (options.productModel) {
                 this.model = options.productModel;
             }
 
             _.each(this.modelAttr, function(value, attribute) {
-                if (!this.model.has(attribute)) {
+                if (!this.model.has(attribute) || modelAttr[attribute] !== undefined ) {
                     this.model.set(attribute, value);
                 }
             }, this);
@@ -61,6 +68,7 @@ define(function(require) {
 
         dispose: function() {
             this.disposeElements();
+            delete this.shoppingListCollection;
             ProductShoppingListsView.__super__.dispose.apply(this, arguments);
         },
 
@@ -86,19 +94,29 @@ define(function(require) {
         },
 
         updateShoppingLists: function() {
+            var modelShoppingLists = this.model.get('shopping_lists');
             var $el = $(this.options.template({
-                currentShoppingList: this.findCurrentShoppingList(),
-                shoppingLists: this.model.get('shopping_lists')
+                currentShoppingList: this.findCurrentShoppingList(modelShoppingLists),
+                shoppingListsCount: modelShoppingLists && modelShoppingLists.length || 0
             }));
 
             this.$el.html($el);
             this.delegateEvents();
         },
 
-        findCurrentShoppingList: function() {
-            return _.find(this.model.get('shopping_lists'), function(list) {
-                return list.is_current;
-            }) || null;
+        findCurrentShoppingList: function(modelShoppingLists) {
+            var current = _.find(modelShoppingLists, function(list) {
+                var model = this.shoppingListCollection.get(list.id);
+                return model && model.get('is_current');
+            }, this) || null;
+            if (!current) {
+                return null;
+            }
+            return _.extend(
+                {},
+                {line_items: current.line_items},
+                this.shoppingListCollection.get(current.id).toJSON()
+            );
         },
 
         editLineItem: function(event) {

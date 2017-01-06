@@ -5,8 +5,8 @@ namespace Oro\Bundle\OrderBundle\Tests\Unit\Validator\Constraints;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
-use Oro\Bundle\CustomerBundle\Entity\AccountUserAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 use Oro\Bundle\OrderBundle\Validator\Constraints\OrderAddressValidator;
 use Oro\Bundle\OrderBundle\Validator\Constraints\OrderAddress;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress as OrderAddressEntity;
@@ -85,12 +85,12 @@ class OrderAddressTest extends \PHPUnit_Framework_TestCase
     public function testValidateAccountAddress()
     {
         $value = new OrderAddressEntity();
-        $value->setAccountAddress(new AccountAddress());
+        $value->setAccountAddress(new CustomerAddress());
         $this->validator->expects($this->never())->method('validate');
 
         $this->orderAddressValidator->validate($value, $this->constraint);
         $value->setAccountAddress(null);
-        $value->setAccountUserAddress(new AccountUserAddress());
+        $value->setAccountUserAddress(new CustomerUserAddress());
         $this->orderAddressValidator->validate($value, $this->constraint);
     }
 }

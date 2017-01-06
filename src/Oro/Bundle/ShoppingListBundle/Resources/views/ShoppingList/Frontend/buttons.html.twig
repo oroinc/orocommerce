@@ -86,10 +86,12 @@
     {% import _self as buttons %}
     <div class="btn-group full"
          {{ UI.renderPageComponentAttributes({
-             module: options.componentModule|default('oroshoppinglist/js/app/views/product-add-to-shopping-list-view'),
+             module: 'oroui/js/app/components/view-component',
              options: {
+                 view: options.componentModule|default('oroshoppinglist/js/app/views/product-add-to-shopping-list-view'),
                  buttonTemplate: '<%#' ~ buttons.buttonTemplate(options.current) ~ '#%>',
                  removeButtonTemplate: options.remove is defined ? '<%#' ~ buttons.buttonTemplate(options.remove) ~ '#%>',
+                 createNewButtonTemplate: '<%#' ~ buttons.buttonTemplate(options.new) ~ '#%>',
              }|merge(options.componentOptions|default({}))
          }) }}
         >
