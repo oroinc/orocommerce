@@ -75,10 +75,10 @@
 
     {% set shippingInformation %}
         {% if entity.shippingEstimate is not null %}
-            {{ UI.renderHtmlProperty('oro.sale.quote.shipping_estimate.label'|trans,
+            {{ UI.renderProperty('oro.sale.quote.shipping_estimate.label'|trans,
             entity.shippingEstimate.value|oro_format_currency({'currency': entity.shippingEstimate.currency})) }}
         {% else %}
-            {{ UI.renderHtmlProperty('oro.sale.quote.shipping_estimate.label'|trans, 'N/A'|trans) }}
+            {{ UI.renderProperty('oro.sale.quote.shipping_estimate.label'|trans, 'N/A'|trans) }}
         {% endif %}
     {% endset %}
 

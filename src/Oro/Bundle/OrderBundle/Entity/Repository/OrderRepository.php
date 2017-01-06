@@ -19,7 +19,7 @@ class OrderRepository extends EntityRepository
     ) {
         $qb = $this->createQueryBuilder('orders');
         $qb
-            ->select('count(orders.id)')
+            ->select('COUNT(orders.id)')
             ->where($qb->expr()->in('orders.currency', $removingCurrencies));
         if ($organization instanceof Organization) {
             $qb->andWhere('orders.organization = :organization');

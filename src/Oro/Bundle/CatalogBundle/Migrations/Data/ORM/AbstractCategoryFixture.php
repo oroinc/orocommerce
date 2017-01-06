@@ -98,7 +98,7 @@ abstract class AbstractCategoryFixture extends AbstractFixture implements Contai
         $locator = $this->container->get('file_locator');
 
         try {
-            $imagePath = $locator->locate(sprintf('@OroProductBundle/Migrations/Data/Demo/ORM/images/%s.jpg', $sku));
+            $imagePath = $locator->locate(sprintf('@OroCatalogBundle/Migrations/Data/Demo/ORM/images/%s.jpg', $sku));
 
             if (is_array($imagePath)) {
                 $imagePath = current($imagePath);
