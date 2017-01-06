@@ -92,7 +92,7 @@ define(function(require) {
 
             var filtersString = '[' + filtersStrings.join(', ') + ']';
 
-            $('.filters-info', this.$element).html(filtersString);
+            $('.filters-info', this.$element).text(filtersString);
         },
 
         /**

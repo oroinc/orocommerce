@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
-use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Join;
 
 use Doctrine\ORM\Query\Expr\Orx;
+use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
@@ -337,6 +337,33 @@ class CombinedPriceListRepository extends BasePriceListRepository
      */
     public function getCPLsForPriceCollectByTimeOffset($offsetHours)
     {
+        $qb = $this->getCPLsForPriceCollectByTimeOffsetQueryBuilder($offsetHours);
+
+        $iterator = new BufferedQueryResultIterator($qb);
+        $iterator->setBufferSize(self::CPL_BATCH_SIZE);
+
+        return $iterator;
+    }
+
+    /**
+     * @param int $offsetHours
+     *
+     * @return int
+     */
+    public function getCPLsForPriceCollectByTimeOffsetCount($offsetHours)
+    {
+        $qb = $this->getCPLsForPriceCollectByTimeOffsetQueryBuilder($offsetHours);
+
+        return $qb->select('COUNT(cpl.id)')->getQuery()->getSingleScalarResult();
+    }
+
+    /**
+     * @param int $offsetHours
+     *
+     * @return QueryBuilder
+     */
+    protected function getCPLsForPriceCollectByTimeOffsetQueryBuilder($offsetHours)
+    {
         $activateDate = new \DateTime('now', new \DateTimeZone('UTC'));
         $activateDate->add(new \DateInterval(sprintf('PT%dM', $offsetHours * 60)));
 
@@ -360,9 +387,6 @@ class CombinedPriceListRepository extends BasePriceListRepository
                 'activateData' => $activateDate
             ]);
 
-        $iterator = new BufferedQueryResultIterator($qb);
-        $iterator->setBufferSize(self::CPL_BATCH_SIZE);
-
-        return $iterator;
+        return $qb;
     }
 }

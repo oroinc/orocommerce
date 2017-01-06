@@ -343,9 +343,9 @@ oro.customer:
         permission:
             register_account_user: 'Register Customer User'
         access-level:
-            BASIC: 'Customer User'
-            LOCAL: 'Customer'
-            DEEP: 'Сorporate'
+            BASIC: 'User (Own)'
+            LOCAL: 'Department (Same Level)'
+            DEEP: 'Сorporate (All Levels)'
             GLOBAL: 'Not supported'
             SYSTEM: 'Full'
             NONE: 'None'
@@ -387,11 +387,11 @@ oro.customer:
                 save: Save
         security:
             access-level:
-                BASIC: 'Individual'
-                LOCAL: 'Сorporate'
-                DEEP: 'All'
+                BASIC: 'User (Own)'
+                LOCAL: 'Department (Same Level)'
+                DEEP: 'Сorporate (All Levels)'
                 GLOBAL: 'Not supported'
-                SYSTEM: 'System'
+                SYSTEM: 'Full'
                 NONE: 'None'
         account_user:
             role.entity_plural_label: Roles

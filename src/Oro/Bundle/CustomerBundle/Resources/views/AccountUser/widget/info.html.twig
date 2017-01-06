@@ -35,7 +35,7 @@
                 {% for entityRole in entity.roles %}
                     {% set roles = roles|merge([entityRole.label]) %}
                 {% endfor %}
-                {{ UI.renderHtmlProperty('oro.customer.accountuser.roles.label'|trans, roles|join('<br />')) }}
+                {{ UI.renderHTMLProperty('oro.customer.accountuser.roles.label'|trans, roles|join('\n')|escape|nl2br) }}
             {% endif %}
 
             {% if entity.salesRepresentatives | length %}
