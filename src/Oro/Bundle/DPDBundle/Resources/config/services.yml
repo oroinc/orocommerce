@@ -7,7 +7,6 @@ services:
     oro_dpd.provider.transport:
           class: 'Oro\Bundle\DPDBundle\Provider\DPDTransport'
           arguments:
-              - '@doctrine'
               - '@logger'
               - '@oro_security.encoder.mcrypt'
           calls:
@@ -26,9 +25,8 @@ services:
         class: 'Oro\Bundle\DPDBundle\Factory\DPDRequestFactory'
         public: false
         arguments:
-            - '@doctrine'
+            - '@oro_order.factory.shipping_context'
             - '@oro_dpd.provider.package'
-            - '@oro_shipping.provider.measure_units.conversion'
 
     oro_dpd.shipping_method_provider.dpd:
         class: 'Oro\Bundle\DPDBundle\Method\DPDShippingMethodProvider'

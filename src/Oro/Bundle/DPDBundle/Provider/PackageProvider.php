@@ -4,10 +4,8 @@ namespace Oro\Bundle\DPDBundle\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\DPDBundle\Model\Package;
-use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\ShippingLineItemCollectionInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
-use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
 use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
 use Oro\Bundle\ShippingBundle\Model\Weight;
 use Oro\Bundle\ShippingBundle\Provider\MeasureUnitConversion;
@@ -32,42 +30,23 @@ class PackageProvider
     }
 
     /**
-     * @param Order $order
-     * @return \Oro\Bundle\DPDBundle\Model\Package[]
-     */
-    public function createFromOrder(Order $order)
-    {
-        return $this->createPackages($order->getLineItems());
-    }
-
-    /**
      * @param ShippingContextInterface $context
-     * @return \Oro\Bundle\DPDBundle\Model\Package[]
+     * @return \Oro\Bundle\DPDBundle\Model\Package[]|null
      */
-    public function createFromShippingContext(ShippingContextInterface $context)
+    public function createPackages(ShippingContextInterface $context)
     {
-        return $this->createPackages($context->getLineItems());
-    }
-
-    /**
-     * @param ShippingLineItemInterface[]|OrderLineItem[] $lineItems
-     * @return Package[]
-     */
-    protected function createPackages($lineItems)
-    {
-        $packages = [];
-
-        if (count($lineItems) === 0) {
-            return $packages;
+        if ($context->getLineItems()->isEmpty()) {
+            return null;
         }
 
-        $productsWeightByUnit = $this->getProductWeightByUnit($lineItems);
+        $packages = [];
+        $productsWeightByUnit = $this->getProductWeightByUnit($context->getLineItems());
         if (count($productsWeightByUnit) > 0) {
             $weight = 0;
             /** @var array $weightParams */
             foreach ($productsWeightByUnit as $unit) {
                 if ($unit['weight'] > static::MAX_PACKAGE_WEIGHT_KGS) {
-                    return [];
+                    return null;
                 }
                 if (($weight + $unit['weight']) > static::MAX_PACKAGE_WEIGHT_KGS) {
                     $packages[] = (new Package)
@@ -85,12 +64,11 @@ class PackageProvider
             }
         }
 
-
         return $packages;
     }
 
     /**
-     * @param ShippingLineItemInterface[]|OrderLineItem[] $lineItems
+     * @param ShippingLineItemCollectionInterface $lineItems
      * @return array
      * @throws \UnexpectedValueException
      */
