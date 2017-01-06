@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\ProductBundle\Form\Type;
 
-use Oro\Bundle\ProductBundle\Form\DataTransformer\ProductVariantFieldsTransformer;
-use Oro\Bundle\ProductBundle\Form\EventSubscriber\ProductVariantFieldsSubscriber;
-
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+use Oro\Bundle\ProductBundle\Form\DataTransformer\ProductVariantFieldsTransformer;
+use Oro\Bundle\ProductBundle\Form\EventSubscriber\ProductVariantFieldsSubscriber;
 use Oro\Bundle\ProductBundle\Provider\CustomFieldProvider;
 
 class ProductCustomVariantFieldsCollectionType extends AbstractType

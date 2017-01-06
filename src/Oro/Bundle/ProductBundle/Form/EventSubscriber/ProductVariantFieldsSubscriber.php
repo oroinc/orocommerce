@@ -2,12 +2,12 @@
 
 namespace Oro\Bundle\ProductBundle\Form\EventSubscriber;
 
-use Oro\Bundle\ProductBundle\Provider\CustomFieldProvider;
-
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+
+use Oro\Bundle\ProductBundle\Provider\CustomFieldProvider;
 
 class ProductVariantFieldsSubscriber implements EventSubscriberInterface
 {
@@ -63,9 +63,11 @@ class ProductVariantFieldsSubscriber implements EventSubscriberInterface
         $form = $event->getForm();
 
         $eventData = $event->getData();
+
         if (null === $eventData) {
             $eventData = array();
         }
+
         if (!is_array($eventData) && !($eventData instanceof \ArrayAccess)) {
             throw new UnexpectedTypeException($eventData, 'array or \ArrayAccess');
         }
