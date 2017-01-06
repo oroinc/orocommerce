@@ -24,7 +24,6 @@ services:
         class: 'Oro\Bundle\PaymentBundle\Formatter\PaymentMethodLabelFormatter'
         arguments:
             - "@oro_payment.payment_method_view_provider.registry"
-            - "@translator"
 
     oro_payment.twig.payment_method_extension:
         class: 'Oro\Bundle\PaymentBundle\Twig\PaymentMethodExtension'
