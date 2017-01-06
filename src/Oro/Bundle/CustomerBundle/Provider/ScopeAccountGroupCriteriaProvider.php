@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CustomerBundle\Provider;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\ScopeBundle\Manager\AbstractScopeCriteriaProvider;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
@@ -70,6 +70,6 @@ class ScopeAccountGroupCriteriaProvider extends AbstractScopeCriteriaProvider
      */
     public function getCriteriaValueType()
     {
-        return AccountGroup::class;
+        return CustomerGroup::class;
     }
 }

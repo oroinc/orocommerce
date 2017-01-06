@@ -27,11 +27,11 @@ layout:
                           visible: '=data["acl"].isGranted("oro_account_frontend_account_user_view")'
                           route_name: oro_customer_frontend_account_user_index
                           text: oro.customer.frontend.account_user.entity_plural_label
-                __account_user_role:
+                __customer_user_role:
                       blockType: link
                       options:
-                          visible: '=data["acl"].isGranted("oro_account_frontend_account_user_role_index")'
-                          route_name: oro_customer_frontend_account_user_role_index
+                          visible: '=data["acl"].isGranted("oro_account_frontend_customer_user_role_index")'
+                          route_name: oro_customer_frontend_customer_user_role_index
                           text: oro.customer.frontend.account_user.role.entity_plural_label
             tree:
                 __root:
@@ -40,5 +40,5 @@ layout:
                             __account_user_profile: ~
                             __account_user_address: ~
                             __account_user: ~
-                            __account_user_role: ~
+                            __customer_user_role: ~
 

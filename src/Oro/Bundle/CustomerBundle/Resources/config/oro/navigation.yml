@@ -73,7 +73,7 @@ navigation:
                     description: 'oro.customer.menu.account_list.description'
 
             account_group_list:
-                label:           'oro.customer.accountgroup.entity_plural_label'
+                label:           'oro.customer.customergroup.entity_plural_label'
                 route:           'oro_customer_account_group_index'
                 extras:
                     position:    20
@@ -91,7 +91,7 @@ navigation:
                     description: 'oro.customer.menu.shortcut_account_list.description'
 
             shortcut_account_group_list:
-                label:           'oro.customer.accountgroup.entity_plural_label'
+                label:           'oro.customer.customergroup.entity_plural_label'
                 route:           'oro_customer_account_group_index'
                 extras:
                     description: 'oro.customer.menu.shortcut_account_list.description'
@@ -122,29 +122,29 @@ navigation:
                 extras:
                     description: 'oro.customer.menu.shortcut_list_account_users.description'
 
-            account_user_roles:
-                label: 'oro.customer.accountuserrole.entity_plural_label'
-                route: 'oro_customer_account_user_role_index'
+            customer_user_roles:
+                label: 'oro.customer.customeruserrole.entity_plural_label'
+                route: 'oro_customer_customer_user_role_index'
                 extras:
                     position: 40
                     routes:
-                        - 'oro_customer_account_user_role_index'
-                        - 'oro_customer_account_user_role_view'
-                        - 'oro_customer_account_user_role_update'
-                        - 'oro_customer_account_user_role_create'
-                    description: 'oro.customer.menu.account_user_roles.description'
+                        - 'oro_customer_customer_user_role_index'
+                        - 'oro_customer_customer_user_role_view'
+                        - 'oro_customer_customer_user_role_update'
+                        - 'oro_customer_customer_user_role_create'
+                    description: 'oro.customer.menu.customer_user_roles.description'
 
-            shortcut_new_account_user_role:
-                label: 'oro.customer.menu.shortcut_new_account_user_role.label'
-                route: 'oro_customer_account_user_role_create'
+            shortcut_new_customer_user_role:
+                label: 'oro.customer.menu.shortcut_new_customer_user_role.label'
+                route: 'oro_customer_customer_user_role_create'
                 extras:
-                    description: 'oro.customer.menu.shortcut_new_account_user_role.description'
+                    description: 'oro.customer.menu.shortcut_new_customer_user_role.description'
 
             shortcut_list_account_user_groups:
-                label: 'oro.customer.menu.shortcut_list_account_user_roles.label'
-                route: 'oro_customer_account_user_role_index'
+                label: 'oro.customer.menu.shortcut_list_customer_user_roles.label'
+                route: 'oro_customer_customer_user_role_index'
                 extras:
-                    description: 'oro.customer.menu.shortcut_list_account_user_roles.description'
+                    description: 'oro.customer.menu.shortcut_list_customer_user_roles.description'
 
             oro_account_frontend_account_user_profile:
                 label: 'oro.customer.menu.account_user_profile.label'
@@ -160,12 +160,12 @@ navigation:
                     routes: ['/^oro_customer_frontend_account_user/']
                     description: 'oro.customer.menu.account_users.description'
 
-            frontend_account_user_roles:
-                 label: 'oro.customer.menu.frontend_account_user_roles.label'
-                 route: 'oro_customer_frontend_account_user_role_index'
+            frontend_customer_user_roles:
+                 label: 'oro.customer.menu.frontend_customer_user_roles.label'
+                 route: 'oro_customer_frontend_customer_user_role_index'
                  extras:
                      position: 200
-                     routes: ['/^oro_customer_frontend_account_user_role/']
+                     routes: ['/^oro_customer_frontend_customer_user_role/']
 
         tree:
             application_menu:
@@ -175,13 +175,13 @@ navigation:
                             customer_list: ~
                             account_group_list: ~
                             account_users: ~
-                            account_user_roles: ~
+                            customer_user_roles: ~
             frontend_menu:
                 type: application_menu
                 scope_type: menu_frontend_visibility
                 children:
                     frontend_account_users: ~
-                    frontend_account_user_roles: ~
+                    frontend_customer_user_roles: ~
 
             frontend_dots_menu:
                 type: dots_menu
@@ -203,7 +203,7 @@ navigation:
                     shortcut_account_group_list: ~
                     shortcut_new_account_user: ~
                     shortcut_list_account_users: ~
-                    shortcut_new_account_user_role: ~
+                    shortcut_new_customer_user_role: ~
                     shortcut_list_account_user_groups: ~
 
     titles:
@@ -229,10 +229,10 @@ navigation:
         oro_customer_frontend_account_user_update:  %%user%% - oro.ui.edit
         oro_customer_frontend_account_user_create:  'oro.customer.frontend.title.account_user.create'
 
-        oro_customer_account_user_role_index:     ~
-        oro_customer_account_user_role_view:      '%%label%% - oro.ui.view'
-        oro_customer_account_user_role_update:    '%%label%% - oro.ui.edit'
-        oro_customer_account_user_role_create:    oro.ui.create_entity
+        oro_customer_customer_user_role_index:     ~
+        oro_customer_customer_user_role_view:      '%%label%% - oro.ui.view'
+        oro_customer_customer_user_role_update:    '%%label%% - oro.ui.edit'
+        oro_customer_customer_user_role_create:    oro.ui.create_entity
 
         oro_customer_frontend_account_user_profile: 'oro.customer.frontend.account_user.profile.label'
         oro_customer_frontend_account_user_profile_update: oro.customer.accountuser.profile.edit
@@ -243,10 +243,10 @@ navigation:
         oro_customer_frontend_account_user_reset_check_email: oro.customer.accountuser.profile.check_email.title
         oro_customer_frontend_account_user_password_reset: oro.customer.accountuser.profile.reset_password.title
 
-        oro_customer_frontend_account_user_role_index:  'oro.customer.frontend.account_user.role.entity_plural_label'
-        oro_customer_frontend_account_user_role_view:   'oro.customer.frontend.account_user.role.entity_plural_label - oro.ui.view'
-        oro_customer_frontend_account_user_role_update: 'oro.customer.frontend.account_user.role.entity_plural_label - oro.ui.edit'
-        oro_customer_frontend_account_user_role_create: 'oro.customer.frontend.account_user.role.entity_plural_label - oro.ui.create'
+        oro_customer_frontend_customer_user_role_index:  'oro.customer.frontend.account_user.role.entity_plural_label'
+        oro_customer_frontend_customer_user_role_view:   'oro.customer.frontend.account_user.role.entity_plural_label - oro.ui.view'
+        oro_customer_frontend_customer_user_role_update: 'oro.customer.frontend.account_user.role.entity_plural_label - oro.ui.edit'
+        oro_customer_frontend_customer_user_role_create: 'oro.customer.frontend.account_user.role.entity_plural_label - oro.ui.create'
 
         oro_customer_frontend_account_address_create: 'oro.customer.frontend.address.title.company - oro.customer.frontend.address.title.create'
         oro_customer_frontend_account_address_update: 'oro.customer.frontend.address.title.company - oro.customer.frontend.address.title.edit'

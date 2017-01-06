@@ -58,7 +58,7 @@ class TaxCodeGridListenerTest extends AbstractTaxCodeGridListenerTest
 
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage [source][query][from] is missing for grid "std-grid"
+     * @expectedExceptionMessage A root entity is missing for grid "std-grid"
      */
     public function testOnBuildBeforeWithoutFromPart()
     {

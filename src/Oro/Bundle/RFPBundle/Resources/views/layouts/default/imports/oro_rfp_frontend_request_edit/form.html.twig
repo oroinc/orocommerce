@@ -1,16 +1,5 @@
-{% extends 'OroFrontendBundle:layouts/default:form_theme.html.twig' %}
-
 {%- block form_row -%}
-    <div class="grid__row grid__row--offset-s">
-        {{- form_label(form, null) -}}
-    </div>
+    {{- form_label(form, null) -}}
     {{- form_widget(form) -}}
     {{- form_errors(form) -}}
 {%- endblock -%}
-
-{% block form_widget_simple %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': ' input--size-m'
-    }) %}
-    {{ parent() }}
-{% endblock %}

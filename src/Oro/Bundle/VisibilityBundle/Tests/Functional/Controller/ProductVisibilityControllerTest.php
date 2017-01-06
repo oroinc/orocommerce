@@ -187,8 +187,8 @@ class ProductVisibilityControllerTest extends WebTestCase
     {
         return $this->getContainer()
             ->get('doctrine')
-            ->getManagerForClass('OroCustomerBundle:AccountGroup')
-            ->getRepository('OroCustomerBundle:AccountGroup')
+            ->getManagerForClass('OroCustomerBundle:CustomerGroup')
+            ->getRepository('OroCustomerBundle:CustomerGroup')
             ->findOneBy(['name' => LoadAnonymousAccountGroup::GROUP_NAME_NON_AUTHENTICATED])
             ->getId();
     }

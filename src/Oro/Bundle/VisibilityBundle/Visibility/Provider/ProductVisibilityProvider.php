@@ -6,7 +6,7 @@ use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Query\Expr\Join;
 
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\VisibilityBundle\Visibility\ProductVisibilityTrait;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
@@ -246,14 +246,14 @@ class ProductVisibilityProvider
     }
 
     /**
-     * @return AccountGroup
+     * @return CustomerGroup
      */
     private function getAnonymousAccountGroup()
     {
         $anonymousGroupId = $this->configManager->get('oro_customer.anonymous_account_group');
 
         return $this->doctrineHelper
-            ->getEntityRepository(AccountGroup::class)
+            ->getEntityRepository(CustomerGroup::class)
             ->find($anonymousGroupId);
     }
 

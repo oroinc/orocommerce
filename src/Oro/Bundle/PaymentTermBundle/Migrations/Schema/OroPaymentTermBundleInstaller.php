@@ -64,7 +64,7 @@ class OroPaymentTermBundleInstaller implements
     const PAYMENT_TERM_TO_ACCOUNT_TABLE = 'oro_payment_term_to_account';
     const PAYMENT_TERM_TO_ACCOUNT_GROUP_TABLE = 'oro_payment_term_to_acc_grp';
     const ACCOUNT_TABLE = 'oro_account';
-    const ACCOUNT_GROUP_TABLE = 'oro_account_group';
+    const CUSTOMER_GROUP_TABLE = 'oro_customer_group';
 
     /**
      * {@inheritdoc}
@@ -106,7 +106,7 @@ class OroPaymentTermBundleInstaller implements
         $this->activityExtension->addActivityAssociation($schema, 'oro_note', self::TABLE_NAME);
 
         $this->paymentTermExtension->addPaymentTermAssociation($schema, 'oro_account');
-        $this->paymentTermExtension->addPaymentTermAssociation($schema, 'oro_account_group');
+        $this->paymentTermExtension->addPaymentTermAssociation($schema, 'oro_customer_group');
     }
 
     /**
@@ -128,7 +128,7 @@ class OroPaymentTermBundleInstaller implements
     public function migrate(Schema $schema, QueryBag $queries)
     {
         $this->paymentTermExtension->addPaymentTermAssociation($schema, 'oro_account');
-        $this->paymentTermExtension->addPaymentTermAssociation($schema, 'oro_account_group');
+        $this->paymentTermExtension->addPaymentTermAssociation($schema, 'oro_customer_group');
 
         $associationTableName = $this->activityExtension->getAssociationTableName('oro_note', self::TABLE_NAME);
         if (!$schema->hasTable($associationTableName)) {
@@ -159,8 +159,8 @@ JOIN oro_payment_term_to_account pta ON pta.account_id = a.id
 SET a.payment_term_7c4f1e8e_id = pta.payment_term_id;
 QUERY;
             $queryGroup = <<<QUERY
-UPDATE oro_account_group ag
-JOIN oro_payment_term_to_acc_grp ptag ON ptag.account_group_id = ag.id
+UPDATE oro_customer_group ag
+JOIN oro_payment_term_to_acc_grp ptag ON ptag.customer_group_id = ag.id
 SET ag.payment_term_7c4f1e8e_id = ptag.payment_term_id;
 QUERY;
         } elseif ($this->platform instanceof PostgreSqlPlatform) {
@@ -171,10 +171,10 @@ FROM oro_payment_term_to_account pta
 WHERE pta.account_id = a.id;
 QUERY;
             $queryGroup = <<<QUERY
-UPDATE oro_account_group ag
+UPDATE oro_customer_group ag
 SET payment_term_7c4f1e8e_id = ptag.payment_term_id
 FROM oro_payment_term_to_acc_grp ptag
-WHERE ptag.account_group_id = ag.id;
+WHERE ptag.customer_group_id = ag.id;
 QUERY;
         } else {
             throw new \RuntimeException('Unsupported platform ');

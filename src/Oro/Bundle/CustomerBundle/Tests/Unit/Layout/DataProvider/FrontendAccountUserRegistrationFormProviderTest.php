@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Role\RoleInterface;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\CustomerBundle\Entity\Repository\AccountUserRoleRepository;
+use Oro\Bundle\CustomerBundle\Entity\Repository\CustomerUserRoleRepository;
 use Oro\Bundle\CustomerBundle\Form\Type\FrontendAccountUserRegistrationType;
 use Oro\Bundle\CustomerBundle\Layout\DataProvider\FrontendAccountUserRegistrationFormProvider;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
@@ -34,7 +34,7 @@ class FrontendAccountUserRegistrationFormProviderTest extends \PHPUnit_Framework
     /** @var FormFactoryInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $formFactory;
 
-    /** @var AccountUserRoleRepository|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var CustomerUserRoleRepository|\PHPUnit_Framework_MockObject_MockObject */
     protected $roleRepository;
 
     /** @var ObjectRepository|\PHPUnit_Framework_MockObject_MockObject */
@@ -53,18 +53,18 @@ class FrontendAccountUserRegistrationFormProviderTest extends \PHPUnit_Framework
     {
         $this->formFactory = $this->createMock(FormFactoryInterface::class);
 
-        $this->roleRepository = $this->createMock(AccountUserRoleRepository::class);
+        $this->roleRepository = $this->createMock(CustomerUserRoleRepository::class);
 
         $objectManager = $this->createMock(ObjectManager::class);
         $objectManager->expects($this->any())
             ->method('getRepository')
-            ->with('OroCustomerBundle:AccountUserRole')
+            ->with('OroCustomerBundle:CustomerUserRole')
             ->willReturn($this->roleRepository);
 
         $managerRegistry = $this->createMock(ManagerRegistry::class);
         $managerRegistry->expects($this->any())
             ->method('getManagerForClass')
-            ->with('OroCustomerBundle:AccountUserRole')
+            ->with('OroCustomerBundle:CustomerUserRole')
             ->willReturn($objectManager);
 
         $this->configManager = $this->createMock(ConfigManager::class);
@@ -113,7 +113,7 @@ class FrontendAccountUserRegistrationFormProviderTest extends \PHPUnit_Framework
 
         $this->roleRepository
             ->expects($this->once())
-            ->method('getDefaultAccountUserRoleByWebsite')
+            ->method('getDefaultCustomerUserRoleByWebsite')
             ->with($website)
             ->willReturn($defaultRole);
 
@@ -167,7 +167,7 @@ class FrontendAccountUserRegistrationFormProviderTest extends \PHPUnit_Framework
 
         $this->roleRepository
             ->expects($this->never())
-            ->method('getDefaultAccountUserRoleByWebsite');
+            ->method('getDefaultCustomerUserRoleByWebsite');
 
         $this->userRepository
             ->expects($this->never())
@@ -206,7 +206,7 @@ class FrontendAccountUserRegistrationFormProviderTest extends \PHPUnit_Framework
 
         $this->roleRepository
             ->expects($this->never())
-            ->method('getDefaultAccountUserRoleByWebsite');
+            ->method('getDefaultCustomerUserRoleByWebsite');
 
         $this->userRepository
             ->expects($this->never())
@@ -246,7 +246,7 @@ class FrontendAccountUserRegistrationFormProviderTest extends \PHPUnit_Framework
 
         $this->roleRepository
             ->expects($this->never())
-            ->method('getDefaultAccountUserRoleByWebsite');
+            ->method('getDefaultCustomerUserRoleByWebsite');
 
         $this->userRepository
             ->expects($this->never())
@@ -287,7 +287,7 @@ class FrontendAccountUserRegistrationFormProviderTest extends \PHPUnit_Framework
 
         $this->roleRepository
             ->expects($this->once())
-            ->method('getDefaultAccountUserRoleByWebsite')
+            ->method('getDefaultCustomerUserRoleByWebsite')
             ->with($website)
             ->willReturn($defaultRole);
 
@@ -330,7 +330,7 @@ class FrontendAccountUserRegistrationFormProviderTest extends \PHPUnit_Framework
 
         $this->roleRepository
             ->expects($this->once())
-            ->method('getDefaultAccountUserRoleByWebsite')
+            ->method('getDefaultCustomerUserRoleByWebsite')
             ->with($website)
             ->willReturn($defaultRole);
 
@@ -379,7 +379,7 @@ class FrontendAccountUserRegistrationFormProviderTest extends \PHPUnit_Framework
 
         $this->roleRepository
             ->expects($this->never())
-            ->method('getDefaultAccountUserRoleByWebsite');
+            ->method('getDefaultCustomerUserRoleByWebsite');
 
         $this->userRepository
             ->expects($this->never())
@@ -418,7 +418,7 @@ class FrontendAccountUserRegistrationFormProviderTest extends \PHPUnit_Framework
 
         $this->roleRepository
             ->expects($this->never())
-            ->method('getDefaultAccountUserRoleByWebsite');
+            ->method('getDefaultCustomerUserRoleByWebsite');
 
         $this->userRepository
             ->expects($this->never())
@@ -458,7 +458,7 @@ class FrontendAccountUserRegistrationFormProviderTest extends \PHPUnit_Framework
 
         $this->roleRepository
             ->expects($this->never())
-            ->method('getDefaultAccountUserRoleByWebsite');
+            ->method('getDefaultCustomerUserRoleByWebsite');
 
         $this->userRepository
             ->expects($this->never())
@@ -499,7 +499,7 @@ class FrontendAccountUserRegistrationFormProviderTest extends \PHPUnit_Framework
 
         $this->roleRepository
             ->expects($this->once())
-            ->method('getDefaultAccountUserRoleByWebsite')
+            ->method('getDefaultCustomerUserRoleByWebsite')
             ->with($website)
             ->willReturn($defaultRole);
 

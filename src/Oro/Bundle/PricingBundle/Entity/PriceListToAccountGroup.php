@@ -4,25 +4,25 @@ namespace Oro\Bundle\PricingBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 
 /**
- * @ORM\Table(name="oro_price_list_to_acc_group")
+ * @ORM\Table(name="oro_price_list_to_cus_group")
  * @ORM\Entity(repositoryClass="Oro\Bundle\PricingBundle\Entity\Repository\PriceListToAccountGroupRepository")
  */
 class PriceListToAccountGroup extends BasePriceListRelation
 {
     /**
-     * @var AccountGroup
+     * @var CustomerGroup
      *
      * @ORM\Id
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\AccountGroup")
-     * @ORM\JoinColumn(name="account_group_id", referencedColumnName="id", onDelete="CASCADE")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerGroup")
+     * @ORM\JoinColumn(name="customer_group_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $accountGroup;
 
     /**
-     * @return AccountGroup
+     * @return CustomerGroup
      */
     public function getAccountGroup()
     {
@@ -30,10 +30,10 @@ class PriceListToAccountGroup extends BasePriceListRelation
     }
 
     /**
-     * @param AccountGroup $accountGroup
+     * @param CustomerGroup $accountGroup
      * @return $this
      */
-    public function setAccountGroup(AccountGroup $accountGroup)
+    public function setAccountGroup(CustomerGroup $accountGroup)
     {
         $this->accountGroup = $accountGroup;
 

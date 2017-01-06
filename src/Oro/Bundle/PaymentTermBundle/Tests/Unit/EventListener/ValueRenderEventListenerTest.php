@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PaymentTermBundle\Tests\Unit\Datagrid;
 
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\EntityExtendBundle\Event\ValueRenderEvent;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
@@ -107,7 +107,7 @@ class ValueRenderEventListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testBeforeValueRenderFieldAccountHasNotDefaultPaymentTermAndEmptyWithGroupAssociations()
     {
-        $entity = (new Account())->setGroup(new AccountGroup());
+        $entity = (new Account())->setGroup(new CustomerGroup());
         $event = new ValueRenderEvent(
             $entity,
             null,
@@ -125,7 +125,7 @@ class ValueRenderEventListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testBeforeValueRenderFieldAccountHasNotDefaultPaymentTermAndWithGroupAssociationsWithoutGroupPT()
     {
-        $entity = (new Account())->setGroup(new AccountGroup());
+        $entity = (new Account())->setGroup(new CustomerGroup());
         $event = new ValueRenderEvent(
             $entity,
             null,
@@ -143,7 +143,7 @@ class ValueRenderEventListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testBeforeValueRenderFieldAccountHasNotDefaultPaymentTermAndWithGroupAssociations()
     {
-        $entity = (new Account())->setGroup(new AccountGroup());
+        $entity = (new Account())->setGroup(new CustomerGroup());
         $event = new ValueRenderEvent(
             $entity,
             null,
