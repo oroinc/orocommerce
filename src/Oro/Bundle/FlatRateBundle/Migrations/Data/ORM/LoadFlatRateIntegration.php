@@ -9,6 +9,8 @@ use Oro\Bundle\FlatRateBundle\Entity\FlatRateSettings;
 use Oro\Bundle\FlatRateBundle\Integration\FlatRateChannelType;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\OrganizationBundle\Migrations\Data\ORM\LoadOrganizationAndBusinessUnitData;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -61,10 +63,26 @@ class LoadFlatRateIntegration extends AbstractFixture implements
         $channel->setType(FlatRateChannelType::TYPE)
             ->setName('Flat Rate')
             ->setEnabled(true)
-            ->setOrganization($this->getReference('default_organization'))
+            ->setOrganization($this->getOrganization($manager))
             ->setTransport($transport);
 
         $manager->persist($channel);
         $manager->flush();
+    }
+
+    /**
+     * @param ObjectManager $manager
+     *
+     * @return Organization|object
+     */
+    private function getOrganization(ObjectManager $manager)
+    {
+        if ($this->hasReference(LoadOrganizationAndBusinessUnitData::REFERENCE_DEFAULT_ORGANIZATION)) {
+            return $this->getReference(LoadOrganizationAndBusinessUnitData::REFERENCE_DEFAULT_ORGANIZATION);
+        } else {
+            return $manager
+                ->getRepository('OroOrganizationBundle:Organization')
+                ->getOrganizationByName(LoadOrganizationAndBusinessUnitData::MAIN_ORGANIZATION);
+        }
     }
 }
