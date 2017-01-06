@@ -35,15 +35,9 @@ class PaymentTermViewProviderTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->paymentMethodViewRegistry = $this
-            ->getMockBuilder(PaymentMethodViewProvidersRegistry::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->paymentMethodViewRegistry = $this->createMock(PaymentMethodViewProvidersRegistry::class);
 
-        $this->paymentMethodRegistry = $this
-            ->getMockBuilder(PaymentMethodProvidersRegistry::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->paymentMethodRegistry = $this->createMock(PaymentMethodProvidersRegistry::class);
 
         $this->provider = new PaymentTermViewProvider(
             $this->paymentMethodViewRegistry,
@@ -54,11 +48,11 @@ class PaymentTermViewProviderTest extends \PHPUnit_Framework_TestCase
     public function testGetViewNotApplicable()
     {
         /** @var PaymentContextInterface $context */
-        $context = $this->getMockBuilder(PaymentContextInterface::class)->getMock();
+        $context = $this->createMock(PaymentContextInterface::class);
 
-        $paymentMethod = $this->getMockBuilder(PaymentMethodInterface::class)->getMock();
+        $paymentMethod = $this->createMock(PaymentMethodInterface::class);
 
-        $paymentMethodProvider = $this->getMockBuilder(PaymentMethodProviderInterface::class)->getMock();
+        $paymentMethodProvider = $this->createMock(PaymentMethodProviderInterface::class);
 
         $paymentMethodProvider
             ->expects($this->once())
@@ -80,9 +74,9 @@ class PaymentTermViewProviderTest extends \PHPUnit_Framework_TestCase
     public function testGetViewException()
     {
         /** @var PaymentContextInterface $context */
-        $context = $this->getMockBuilder(PaymentContextInterface::class)->getMock();
+        $context = $this->createMock(PaymentContextInterface::class);
 
-        $paymentMethodProvider = $this->getMockBuilder(PaymentMethodProviderInterface::class)->getMock();
+        $paymentMethodProvider = $this->createMock(PaymentMethodProviderInterface::class);
 
         $paymentMethodProvider
             ->expects($this->once())
@@ -100,11 +94,11 @@ class PaymentTermViewProviderTest extends \PHPUnit_Framework_TestCase
     public function testGetView()
     {
         /** @var PaymentContextInterface $context */
-        $context = $this->getMockBuilder(PaymentContextInterface::class)->getMock();
+        $context = $this->createMock(PaymentContextInterface::class);
 
-        $paymentMethod = $this->getMockBuilder(PaymentMethodInterface::class)->getMock();
+        $paymentMethod = $this->createMock(PaymentMethodInterface::class);
 
-        $paymentMethodProvider = $this->getMockBuilder(PaymentMethodProviderInterface::class)->getMock();
+        $paymentMethodProvider = $this->createMock(PaymentMethodProviderInterface::class);
 
         $paymentMethodProvider
             ->expects($this->once())

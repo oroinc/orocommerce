@@ -4,6 +4,7 @@ namespace Oro\Bundle\AlternativeCheckoutBundle\Layout\DataProvider;
 
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodProvidersRegistry;
+use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProvidersRegistry;
 use Oro\Bundle\PaymentTermBundle\Method\PaymentTerm;
 
@@ -53,6 +54,21 @@ class PaymentTermViewProvider
         } catch (\InvalidArgumentException $e) {
             return null;
         }
+
+        if (0 === count($views)) {
+            return null;
+        }
+
+        return $this->formatPaymentViews($views, $context);
+    }
+
+    /**
+     * @param PaymentMethodViewInterface[] $views
+     * @param PaymentContextInterface $context
+     * @return array
+     */
+    protected function formatPaymentViews($views, PaymentContextInterface $context)
+    {
 
         $paymentMethodViews = [];
         foreach ($views as $view) {
