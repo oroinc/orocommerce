@@ -3,10 +3,15 @@
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\Form\Type;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Genemu\Bundle\FormBundle\Form\JQuery\Type\Select2Type;
+use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
+use Oro\Bundle\EntityExtendBundle\Form\Type\EnumSelectType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedPropertyType;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizationCollectionTypeStub;
+use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
 use Oro\Bundle\PayPalBundle\Form\Type\PayPalSettingsType;
+use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
@@ -20,9 +25,9 @@ class PayPalSettingsTypeTest extends FormIntegrationTestCase
 
     public function setUp()
     {
-        $this->formType = new PayPalSettingsType();
-
         parent::setUp();
+
+        $this->formType = new PayPalSettingsType();
     }
 
     /**
@@ -31,6 +36,7 @@ class PayPalSettingsTypeTest extends FormIntegrationTestCase
     protected function getExtensions()
     {
         $registry = $this->createMock(ManagerRegistry::class);
+        $configManager = $this->createMock(ConfigManager::class);
 
         return [
             new PreloadedExtension(
@@ -38,6 +44,9 @@ class PayPalSettingsTypeTest extends FormIntegrationTestCase
                     new LocalizedPropertyType(),
                     new LocalizationCollectionTypeStub(),
                     new LocalizedFallbackValueCollectionType($registry),
+                    new EnumSelectType($configManager, $registry),
+                    new Select2Type('translatable_entity'),
+                    new TranslatableEntityType($registry),
                 ],
                 []
             ),
@@ -53,10 +62,10 @@ class PayPalSettingsTypeTest extends FormIntegrationTestCase
     public function testSubmit()
     {
         $submitData = [
-            'creditCardLabels' => '',
-            'creditCardShortLabels' => '',
-            'expressCheckoutLabels' => '',
-            'expressCheckoutShortLabels' => '',
+            'creditCardLabels' => ['values' => ['default' => 'creditCard']],
+            'creditCardShortLabels' => ['values' => ['default' => 'creditCardShort']],
+            'expressCheckoutLabels' => ['values' => ['default' => 'expressCheckout']],
+            'expressCheckoutShortLabels' => ['values' => ['default' => 'expressCheckoutShort']],
             'expressCheckoutName' => 'checkoutName',
             'creditCardPaymentAction' => 'Authorize',
             'expressCheckoutPaymentAction' => 'Authorize',
@@ -67,13 +76,16 @@ class PayPalSettingsTypeTest extends FormIntegrationTestCase
             'password' => 'pass',
             'testMode' => true,
             'debugMode' => false,
-            'requireCVV' => true,
+            'requireCVVEntry' => true,
             'zeroAmountAuthorization' => false,
-            'requiredAuthorization' => false,
+            'authorizationForRequiredAmount' => false,
             'useProxy' => false,
+            'proxyHost' => 'host',
+            'proxyPort' => 'port',
+            'enableSSLVerification' => false,
         ];
 
-        $payPalSettings = new \StdClass();
+        $payPalSettings = new PayPalSettings();
 
         $form = $this->factory->create($this->formType, $payPalSettings);
 
