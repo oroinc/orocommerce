@@ -2,44 +2,34 @@
 
 namespace Oro\Bundle\DPDBundle\Factory;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\DPDBundle\Entity\DPDTransport;
 use Oro\Bundle\DPDBundle\Entity\ShippingService;
-use Oro\Bundle\DPDBundle\Model\DPDRequest;
 use Oro\Bundle\DPDBundle\Model\GetZipCodeRulesRequest;
 use Oro\Bundle\DPDBundle\Model\OrderData;
 use Oro\Bundle\DPDBundle\Model\SetOrderRequest;
 use Oro\Bundle\DPDBundle\Provider\PackageProvider;
 use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
-use Oro\Bundle\ShippingBundle\Provider\MeasureUnitConversion;
-
+use Oro\Bundle\OrderBundle\Factory\OrderShippingContextFactory;
 
 class DPDRequestFactory
 {
-    /** @var ManagerRegistry */
-    protected $registry;
-
     /** @var  PackageProvider */
     protected $packageProvider;
 
-    /** @var MeasureUnitConversion */
-    protected $measureUnitConversion;
+    /** @var  OrderShippingContextFactory */
+    protected $shippingContextFactory;
 
     /**
      * DPDRequestFactory constructor.
-     *
-     * @param ManagerRegistry           $registry
-     * @param MeasureUnitConversion     $measureUnitConversion
+     * @param OrderShippingContextFactory $shippingContextFactory
+     * @param PackageProvider $packageProvider
      */
     public function __construct(
-        ManagerRegistry $registry,
-        PackageProvider $packageProvider,
-        MeasureUnitConversion $measureUnitConversion
+        OrderShippingContextFactory $shippingContextFactory,
+        PackageProvider $packageProvider
     ) {
-        $this->registry = $registry;
         $this->packageProvider = $packageProvider;
-        $this->measureUnitConversion = $measureUnitConversion;
+        $this->shippingContextFactory = $shippingContextFactory;
     }
 
     /**
@@ -57,7 +47,12 @@ class DPDRequestFactory
         ShippingService $shippingService,
         \DateTime $shipDate
     ) {
-        $packages = $this->packageProvider->createFromOrder($order);
+        //FIXME: could we just use shipping context to get all required info: address, email, phone
+        $packages = $this->packageProvider->createPackages($this->shippingContextFactory->create($order));
+        if (!$packages) {
+            return null;
+        }
+
         if (count($packages) !== 1) { //TODO: implement multi package support
             return null;
         }

@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\DPDBundle\Tests\Unit\Entity;
 
-use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\DPDBundle\Entity\ShippingService;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
