@@ -233,6 +233,9 @@ define(function(require) {
 
             if (this.model) {
                 urlOptions.productId = this.model.get('id');
+                if (this.model.has('parentProduct')) {
+                    urlOptions.parentProductId = this.model.get('parentProduct');
+                }
             }
 
             if (intention === 'new') {

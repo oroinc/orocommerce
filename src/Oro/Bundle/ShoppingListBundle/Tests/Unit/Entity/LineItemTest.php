@@ -20,6 +20,7 @@ class LineItemTest extends \PHPUnit_Framework_TestCase
         $properties = [
             ['id', '123'],
             ['product', new Product()],
+            ['parentProduct', new Product()],
             ['shoppingList', new ShoppingList()],
             ['organization', new Organization()],
             ['notes', 'notes-test-123'],

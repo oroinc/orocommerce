@@ -19,9 +19,9 @@
                         <li class="oro-toolbar__list-item">
                             {% set title = localization.titles|localized_value %}
                             {% if selected_localization == localization %}
-                                <b class="oro-toolbar__link">
+                                <span class="oro-toolbar__link--active">
                                     {{ title }}
-                                </b>
+                                </span>
                             {% else %}
                                 <a class="oro-toolbar__link" href="javascript: void(0);" data-localization="{{ localization.id }}">
                                     {{ title }}
