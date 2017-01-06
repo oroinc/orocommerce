@@ -201,3 +201,35 @@
 {% block oro_product_page_variant_widget %}
     {{ form_row(form.productPageProduct) }}
 {% endblock %}
+
+{% block oro_product_custom_variant_fields_collection_widget %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    <div class="enum-value-collection" {{ UI.renderPageComponentAttributes({
+        module: 'oroui/js/app/components/view-component',
+        options: {
+            view: 'oroproduct/js/app/views/variant-fields-view',
+            autoRender: true
+        }
+    }) }}>
+        {{ block('oro_collection_widget') }}
+    </div>
+{% endblock %}
+
+{% block oro_product_variant_field_widget %}
+    <div class="float-holder">
+        <div class="input-append input-append-sortable collection-element-primary">
+            <span class="add-on ui-sortable-handle"
+                  data-name="sortable-handle"
+                  title="{{ 'oro.product.variant_field.priority.tooltip'|trans }}">
+                <i class="fa-arrows-v"></i>
+                {{ form_widget(form.priority) }}
+            </span>
+            <div class="add-on" title="{{ 'oro.product.variant_field.default.tooltip'|trans }}">
+                {{ form_widget(form.is_selected) }}
+            </div>
+            <div class="add-on" title="{{ 'oro.product.variant_field.default.tooltip'|trans }}">
+                {{ form_label(form.is_selected) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

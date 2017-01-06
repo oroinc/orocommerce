@@ -122,7 +122,7 @@
         }
     }) %}
 
-    {% set productHasVariants = (entity.isConfigurable and form.variantFields.vars.choices|length != 0) %}
+    {% set productHasVariants = (entity.isConfigurable and form.variantFields.vars.data|length != 0) %}
     {% if productHasVariants %}
         {% set variantLinksForm = form.variantLinks %}
         {% set dataBlocks = dataBlocks|merge([{
