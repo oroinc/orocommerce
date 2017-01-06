@@ -78,6 +78,21 @@ class LineItem extends ExtendLineItem implements
     protected $product;
 
     /**
+     * @var Product
+     *
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\Product")
+     * @ORM\JoinColumn(name="parent_product_id", referencedColumnName="id", onDelete="CASCADE")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $parentProduct;
+
+    /**
      * @var ShoppingList
      *
      * @ORM\ManyToOne(
@@ -178,6 +193,26 @@ class LineItem extends ExtendLineItem implements
     public function setProduct(Product $product)
     {
         $this->product = $product;
+
+        return $this;
+    }
+
+    /**
+     * @return Product
+     */
+    public function getParentProduct()
+    {
+        return $this->parentProduct;
+    }
+
+    /**
+     * @param Product $parentProduct
+     *
+     * @return $this
+     */
+    public function setParentProduct(Product $parentProduct)
+    {
+        $this->parentProduct = $parentProduct;
 
         return $this;
     }
