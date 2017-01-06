@@ -56,6 +56,14 @@ class PayflowExpressCheckoutView implements PaymentMethodViewInterface
         return $this->config->getShortLabel();
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function getAdminLabel()
+    {
+        return $this->config->getAdminLabel();
+    }
+
     /** {@inheritdoc} */
     public function getPaymentMethodIdentifier()
     {

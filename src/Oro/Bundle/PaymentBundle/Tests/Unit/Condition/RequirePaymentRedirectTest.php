@@ -3,11 +3,10 @@
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\Condition;
 
 use Doctrine\Common\Collections\Collection;
-
 use Oro\Bundle\PaymentBundle\Condition\RequirePaymentRedirect;
 use Oro\Bundle\PaymentBundle\Event\RequirePaymentRedirectEvent;
-
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodProviderInterface;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodProvidersRegistry;
 use Oro\Component\ConfigExpression\Condition\AbstractCondition;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -60,10 +59,21 @@ class RequirePaymentRedirectTest extends \PHPUnit_Framework_TestCase
         /** @var PaymentMethodInterface|\PHPUnit_Framework_MockObject_MockObject $paymentMethod */
         $paymentMethod = $this->createMock(PaymentMethodInterface::class);
 
-        $this->paymentMethodProvidersRegistry->expects($this->once())
+        $paymentMethodProvider = $this->getMockBuilder(PaymentMethodProviderInterface::class)->getMock();
+
+        $paymentMethodProvider->expects($this->once())
+            ->method('hasPaymentMethod')
+            ->willReturn(true);
+
+        $paymentMethodProvider->expects($this->once())
             ->method('getPaymentMethod')
             ->with('payment_method')
             ->willReturn($paymentMethod);
+
+        $this->paymentMethodProvidersRegistry
+            ->expects($this->once())
+            ->method('getPaymentMethodProviders')
+            ->willReturn([$paymentMethodProvider]);
 
         $event = new RequirePaymentRedirectEvent($paymentMethod);
 

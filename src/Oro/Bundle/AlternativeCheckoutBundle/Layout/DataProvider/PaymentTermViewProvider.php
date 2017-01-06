@@ -4,6 +4,7 @@ namespace Oro\Bundle\AlternativeCheckoutBundle\Layout\DataProvider;
 
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodProvidersRegistry;
+use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProvidersRegistry;
 use Oro\Bundle\PaymentTermBundle\Method\PaymentTerm;
 
@@ -38,20 +39,46 @@ class PaymentTermViewProvider
     public function getView(PaymentContextInterface $context)
     {
         try {
-            $paymentMethod = $this->paymentMethodRegistry->getPaymentMethod(PaymentTerm::TYPE);
-            if (!$paymentMethod->isApplicable($context)) {
+            $paymentMethodProvider = $this->paymentMethodRegistry->getPaymentMethodProvider(PaymentTerm::TYPE);
+            $paymentMethods = [];
+            foreach ($paymentMethodProvider->getPaymentMethods() as $paymentMethod) {
+                if ($paymentMethod->isApplicable($context)) {
+                    $paymentMethods[] = $paymentMethod->getIdentifier();
+                }
+            }
+            if (count($paymentMethods) === 0) {
                 return null;
             }
 
-            $view = $this->paymentMethodViewRegistry->getPaymentMethodView(PaymentTerm::TYPE);
+            $views = $this->paymentMethodViewRegistry->getPaymentMethodViews($paymentMethods);
         } catch (\InvalidArgumentException $e) {
             return null;
         }
 
-        return [
-            'label' => $view->getLabel(),
-            'block' => $view->getBlock(),
-            'options' => $view->getOptions($context),
-        ];
+        if (0 === count($views)) {
+            return null;
+        }
+
+        return $this->formatPaymentViews($views, $context);
+    }
+
+    /**
+     * @param PaymentMethodViewInterface[] $views
+     * @param PaymentContextInterface $context
+     * @return array
+     */
+    protected function formatPaymentViews($views, PaymentContextInterface $context)
+    {
+
+        $paymentMethodViews = [];
+        foreach ($views as $view) {
+            $paymentMethodViews[$view->getPaymentMethodIdentifier()] = [
+                'label' => $view->getLabel(),
+                'block' => $view->getBlock(),
+                'options' => $view->getOptions($context),
+            ];
+        }
+
+        return $paymentMethodViews;
     }
 }

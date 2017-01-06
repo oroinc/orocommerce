@@ -3,9 +3,9 @@
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\Action;
 
 use Oro\Bundle\PaymentBundle\Action\CaptureAction;
-
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodProviderInterface;
 use Symfony\Component\PropertyAccess\PropertyPath;
 
 class CaptureActionTest extends AbstractActionTest
@@ -91,11 +91,24 @@ class CaptureActionTest extends AbstractActionTest
             ->with($options['paymentMethod'], PaymentMethodInterface::CAPTURE, $options['object'])
             ->willReturn($capturePaymentTransaction);
 
-        $this->paymentMethodProvidersRegistry
+        $paymentMethodProvider = $this->getMockBuilder(PaymentMethodProviderInterface::class)->getMock();
+
+        $paymentMethodProvider
+            ->expects($this->once())
+            ->method('hasPaymentMethod')
+            ->with($options['paymentMethod'])
+            ->willReturn(true);
+        
+        $paymentMethodProvider
             ->expects($this->once())
             ->method('getPaymentMethod')
             ->with($options['paymentMethod'])
             ->willReturn($paymentMethod);
+
+        $this->paymentMethodProvidersRegistry
+            ->expects($this->once())
+            ->method('getPaymentMethodProviders')
+            ->willReturn([$paymentMethodProvider]);
 
         $this->paymentTransactionProvider
             ->expects($this->exactly(2))

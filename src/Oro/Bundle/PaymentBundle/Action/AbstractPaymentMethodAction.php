@@ -2,17 +2,15 @@
 
 namespace Oro\Bundle\PaymentBundle\Action;
 
-use Psr\Log\LoggerAwareTrait;
-
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Routing\RouterInterface;
-
-use Oro\Component\Action\Action\AbstractAction;
-use Oro\Component\ConfigExpression\ContextAccessor;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodProvidersRegistry;
 use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
+use Oro\Component\Action\Action\AbstractAction;
+use Oro\Component\ConfigExpression\ContextAccessor;
+use Psr\Log\LoggerAwareTrait;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Routing\RouterInterface;
 
 abstract class AbstractPaymentMethodAction extends AbstractAction
 {
@@ -175,9 +173,14 @@ abstract class AbstractPaymentMethodAction extends AbstractAction
     protected function executePaymentTransaction(PaymentTransaction $paymentTransaction)
     {
         try {
-            return $this->paymentMethodRegistry
-                ->getPaymentMethod($paymentTransaction->getPaymentMethod())
-                ->execute($paymentTransaction->getAction(), $paymentTransaction);
+            $paymentMethodIdentifier = $paymentTransaction->getPaymentMethod();
+            foreach ($this->paymentMethodRegistry->getPaymentMethodProviders() as $provider) {
+                if ($provider->hasPaymentMethod($paymentMethodIdentifier)) {
+                    return $provider
+                        ->getPaymentMethod($paymentMethodIdentifier)
+                        ->execute($paymentTransaction->getAction(), $paymentTransaction);
+                }
+            }
         } catch (\Exception $e) {
             if ($this->logger) {
                 // do not expose sensitive data in context

@@ -119,6 +119,14 @@ class PayflowGatewayView implements PaymentMethodViewInterface
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function getAdminLabel()
+    {
+        return $this->config->getAdminLabel();
+    }
+
+    /**
      * @return array
      */
     public function getAllowedCreditCards()

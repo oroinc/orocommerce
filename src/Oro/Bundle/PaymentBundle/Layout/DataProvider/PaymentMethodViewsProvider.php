@@ -46,14 +46,14 @@ class PaymentMethodViewsProvider
             return [];
         }
 
-        $methodTypes = array_map(function (PaymentMethodInterface $method) {
+        $methodIdentifiers = array_map(function (PaymentMethodInterface $method) {
             return $method->getIdentifier();
         }, $methods);
 
         $paymentMethodViews = [];
-        $views = $this->paymentMethodViewRegistry->getPaymentMethodViews($methodTypes);
+        $views = $this->paymentMethodViewRegistry->getPaymentMethodViews($methodIdentifiers);
         foreach ($views as $view) {
-            $paymentMethodViews[$view->getPaymentMethodType()] = [
+            $paymentMethodViews[$view->getPaymentMethodIdentifier()] = [
                 'label' => $view->getLabel(),
                 'block' => $view->getBlock(),
                 'options' => $view->getOptions($context),
