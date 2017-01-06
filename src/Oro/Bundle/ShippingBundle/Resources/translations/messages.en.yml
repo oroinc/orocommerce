@@ -105,7 +105,9 @@ oro:
             general: 'General Information'
             shippingrule_destination: 'Destinations'
             shippingrule_conditions: 'Conditions'
-            shippingrule_configurations: 'Shipping Method Configurations'
+            shippingrule_configurations:
+                no_methods.message: 'Please enable at least one shipping integration.'
+                label: 'Shipping Method Configurations'
 
         controller:
             rule.saved.message: 'Shipping rule has been saved'

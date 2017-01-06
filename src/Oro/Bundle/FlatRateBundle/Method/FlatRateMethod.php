@@ -15,13 +15,18 @@ class FlatRateMethod implements ShippingMethodInterface
     /** @var string */
     protected $label;
 
+    /** @var int */
+    protected $channelId;
+
     /**
      * @param string $label
+     * @param int    $channelId
      */
-    public function __construct($label)
+    public function __construct($label, $channelId)
     {
         $this->type = new FlatRateMethodType();
         $this->label = $label;
+        $this->channelId = $channelId;
     }
 
     /**
@@ -29,7 +34,7 @@ class FlatRateMethod implements ShippingMethodInterface
      */
     public function getIdentifier()
     {
-        return static::IDENTIFIER;
+        return static::IDENTIFIER . $this->channelId;
     }
 
     /**

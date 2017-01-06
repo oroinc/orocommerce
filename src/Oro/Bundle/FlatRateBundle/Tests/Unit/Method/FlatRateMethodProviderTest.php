@@ -24,7 +24,7 @@ class FlatRateMethodProviderTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->method = new FlatRateMethod('test');
+        $this->method = new FlatRateMethod('test', 1);
 
         $this->methodBuilder = $this->getMockBuilder(FlatRateMethodFromChannelBuilder::class)
             ->disableOriginalConstructor()

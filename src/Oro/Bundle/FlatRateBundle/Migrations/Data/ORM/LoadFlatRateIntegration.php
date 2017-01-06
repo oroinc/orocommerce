@@ -7,20 +7,27 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\FlatRateBundle\Entity\FlatRateSettings;
 use Oro\Bundle\FlatRateBundle\Integration\FlatRateChannelType;
+use Oro\Bundle\FlatRateBundle\Method\FlatRateMethod;
+use Oro\Bundle\FlatRateBundle\Method\FlatRateMethodType;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\OrganizationBundle\Migrations\Data\ORM\LoadOrganizationAndBusinessUnitData;
+use Oro\Bundle\RuleBundle\Entity\Rule;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class LoadFlatRateIntegration extends AbstractFixture implements
     DependentFixtureInterface,
     ContainerAwareInterface
 {
-    /**
-     * @var ContainerInterface
-     */
+    /** @var ContainerInterface */
     protected $container;
 
     /**
@@ -54,6 +61,18 @@ class LoadFlatRateIntegration extends AbstractFixture implements
             return;
         }
 
+        $channel = $this->loadIntegration($manager);
+
+        $this->loadShippingRule($manager, $channel);
+    }
+
+    /**
+     * @param ObjectManager $manager
+     *
+     * @return Channel
+     */
+    private function loadIntegration(ObjectManager $manager)
+    {
         $label = (new LocalizedFallbackValue())->setString('Flat Rate');
 
         $transport = new FlatRateSettings();
@@ -67,6 +86,40 @@ class LoadFlatRateIntegration extends AbstractFixture implements
             ->setTransport($transport);
 
         $manager->persist($channel);
+        $manager->flush();
+
+        return $channel;
+    }
+
+    /**
+     * @param ObjectManager $manager
+     * @param Channel       $channel
+     */
+    private function loadShippingRule(ObjectManager $manager, Channel $channel)
+    {
+        $typeConfig = new ShippingMethodTypeConfig();
+        $typeConfig->setEnabled(true);
+        $typeConfig->setType(FlatRateMethodType::IDENTIFIER)
+            ->setOptions([
+                FlatRateMethodType::PRICE_OPTION => 10,
+                FlatRateMethodType::TYPE_OPTION => FlatRateMethodType::PER_ORDER_TYPE,
+            ]);
+
+        $methodConfig = new ShippingMethodConfig();
+        $methodConfig->setMethod(FlatRateMethod::IDENTIFIER . $channel->getId())
+            ->addTypeConfig($typeConfig);
+
+        $rule = new Rule();
+        $rule->setName('Default')
+            ->setEnabled(true)
+            ->setSortOrder(1);
+
+        $shippingRule = new ShippingMethodsConfigsRule();
+        $shippingRule->setRule($rule);
+        $shippingRule->setCurrency('USD')
+            ->addMethodConfig($methodConfig);
+
+        $manager->persist($shippingRule);
         $manager->flush();
     }
 

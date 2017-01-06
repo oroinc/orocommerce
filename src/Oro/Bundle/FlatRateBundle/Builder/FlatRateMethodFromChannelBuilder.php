@@ -29,7 +29,7 @@ class FlatRateMethodFromChannelBuilder
     {
         $label = $this->getChannelLabel($channel);
 
-        return new FlatRateMethod($label);
+        return new FlatRateMethod($label, $channel->getId());
     }
 
     /**
