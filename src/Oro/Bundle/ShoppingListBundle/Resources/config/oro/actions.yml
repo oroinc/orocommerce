@@ -179,6 +179,7 @@ operations:
         order: 220
         button_options:
             icon: fa-briefcase
+            class: btn--info btn--size-l
         preconditions:
             '@and':
                 - '@route_exists': oro_rfp_frontend_request_create
