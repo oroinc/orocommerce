@@ -3,7 +3,7 @@
 namespace Oro\Bundle\TaxBundle\EventListener;
 
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\TaxBundle\Entity\Repository\AccountTaxCodeRepository;
 
 class AccountGroupFormViewListener extends AbstractFormViewListener
@@ -13,7 +13,7 @@ class AccountGroupFormViewListener extends AbstractFormViewListener
      */
     public function onView(BeforeListRenderEvent $event)
     {
-        /** @var AccountGroup $accountGroup */
+        /** @var CustomerGroup $accountGroup */
         $accountGroup = $this->getEntityFromRequest();
         if (!$accountGroup) {
             return;

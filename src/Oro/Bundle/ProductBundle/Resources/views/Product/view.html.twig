@@ -59,6 +59,10 @@
                     'data' : {
                         'sku': UI.renderProperty('oro.product.sku.label'|trans, entity.sku),
                         'names': UI.renderProperty('oro.product.names.label'|trans, entity.defaultName),
+                        'slugPrototypes': UI.renderProperty(
+                            'oro.product.slug_prototypes.label'|trans,
+                            entity.defaultSlugPrototype
+                        ),
                         'info': productInfo
                     }
                 },

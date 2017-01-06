@@ -14,6 +14,13 @@ services:
         arguments:
             - "@oro_shipping.shipping_method.registry"
 
+    oro_shipping.translator.shipping_method_label:
+        public: false
+        class: 'Oro\Bundle\ShippingBundle\Translator\ShippingMethodLabelTranslator'
+        arguments:
+            - "@oro_shipping.formatter.shipping_method_label"
+            - "@translator.default"
+
     oro_shipping.twig.shipping_method_extension:
         class: 'Oro\Bundle\ShippingBundle\Twig\ShippingMethodExtension'
         public: false

@@ -49,7 +49,7 @@ define(function(require) {
             productReplacementContainer: '.quote-lineitem-product-replacement-row',
             sellerNotesContainer: '.quote-lineitem-notes-seller',
             requestsOnlyContainer: '.sale-quoteproductrequest-only',
-            errorMessage: 'Sorry, unexpected error was occurred',
+            errorMessage: 'Sorry, an unexpected error has occurred.',
             allUnits: {},
             units: {}
         },

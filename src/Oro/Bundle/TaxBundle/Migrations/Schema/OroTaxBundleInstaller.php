@@ -17,7 +17,7 @@ class OroTaxBundleInstaller implements Installation
      */
     public function getMigrationVersion()
     {
-        return 'v1_3';
+        return 'v1_4';
     }
 
     /**
@@ -65,17 +65,17 @@ class OroTaxBundleInstaller implements Installation
     }
 
     /**
-     * Create oro_tax_acc_grp_tc_acc_grp table
+     * Create oro_tax_cus_grp_tc_cus_grp table
      *
      * @param Schema $schema
      */
     protected function createOroTaxAccGrpTcAccGrpTable(Schema $schema)
     {
-        $table = $schema->createTable('oro_tax_acc_grp_tc_acc_grp');
-        $table->addColumn('account_group_tax_code_id', 'integer', []);
-        $table->addColumn('account_group_id', 'integer', []);
-        $table->setPrimaryKey(['account_group_tax_code_id', 'account_group_id']);
-        $table->addUniqueIndex(['account_group_id'], 'UNIQ_D3457B7869A3BF1');
+        $table = $schema->createTable('oro_tax_cus_grp_tc_cus_grp');
+        $table->addColumn('customer_group_tax_code_id', 'integer', []);
+        $table->addColumn('customer_group_id', 'integer', []);
+        $table->setPrimaryKey(['customer_group_tax_code_id', 'customer_group_id']);
+        $table->addUniqueIndex(['customer_group_id'], 'UNIQ_D3457B7869A3BF1');
     }
 
     /**
@@ -217,22 +217,22 @@ class OroTaxBundleInstaller implements Installation
     }
 
     /**
-     * Add oro_tax_acc_grp_tc_acc_grp foreign keys.
+     * Add oro_tax_cus_grp_tc_cus_grp foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroTaxAccGrpTcAccGrpForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('oro_tax_acc_grp_tc_acc_grp');
+        $table = $schema->getTable('oro_tax_cus_grp_tc_cus_grp');
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_account_group'),
-            ['account_group_id'],
+            $schema->getTable('oro_customer_group'),
+            ['customer_group_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_tax_account_tax_code'),
-            ['account_group_tax_code_id'],
+            ['customer_group_tax_code_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );

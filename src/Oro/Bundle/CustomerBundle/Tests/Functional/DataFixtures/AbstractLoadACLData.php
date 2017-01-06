@@ -8,7 +8,7 @@ use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserManager;
-use Oro\Bundle\CustomerBundle\Entity\AccountUserRole;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 use Oro\Bundle\CustomerBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
 use Oro\Bundle\SecurityBundle\Acl\Extension\EntityAclExtension;
 use Oro\Bundle\UserBundle\Entity\Role;
@@ -231,7 +231,7 @@ abstract class AbstractLoadACLData extends AbstractFixture implements
     protected function loadRoles(ObjectManager $manager)
     {
         $user = $this->getAdminUser($manager);
-        $repository = $manager->getRepository('OroCustomerBundle:AccountUserRole');
+        $repository = $manager->getRepository('OroCustomerBundle:CustomerUserRole');
         $this->setReference(self::ROLE_FRONTEND_BUYER, $repository->findOneBy(['role' => 'ROLE_FRONTEND_BUYER']));
         $this->setReference(
             self::ROLE_FRONTEND_ADMINISTRATOR,
@@ -250,7 +250,7 @@ abstract class AbstractLoadACLData extends AbstractFixture implements
             if (!in_array($key, $this->getSupportedRoles())) {
                 continue;
             }
-            $role = new AccountUserRole(AccountUserRole::PREFIX_ROLE.$key);
+            $role = new CustomerUserRole(CustomerUserRole::PREFIX_ROLE.$key);
             $role->setLabel($key)
                 ->setSelfManaged(true)
                 ->setOrganization($user->getOrganization());
@@ -264,11 +264,11 @@ abstract class AbstractLoadACLData extends AbstractFixture implements
     }
 
     /**
-     * @param AccountUserRole $role
+     * @param CustomerUserRole $role
      * @param string $className
      * @param array $allowedACL
      */
-    protected function setRolePermissions(AccountUserRole $role, $className, array $allowedACL)
+    protected function setRolePermissions(CustomerUserRole $role, $className, array $allowedACL)
     {
         $chainMetadataProvider = $this->container->get('oro_security.owner.metadata_provider.chain');
         $aclManager = $this->container->get('oro_security.acl.manager');

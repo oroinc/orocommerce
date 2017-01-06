@@ -6,7 +6,6 @@ define(function(require) {
     var ElementsHelper = require('orofrontend/js/app/elements-helper');
     var layout = require('oroui/js/layout');
     var BaseModel = require('oroui/js/app/models/base/model');
-    var NumberFormatter = require('orolocale/js/formatter/number');
     var _ = require('underscore');
     var $ = require('jquery');
 
@@ -43,6 +42,8 @@ define(function(require) {
         foundPrice: null,
 
         changeQuantity: false,
+
+        rendered: false,
 
         initialize: function(options) {
             BaseProductPricesView.__super__.initialize.apply(this, arguments);
@@ -128,7 +129,12 @@ define(function(require) {
                 this.prices[unit] = unitPrices;
             }, this);
 
-            this.setFoundPrice();
+            if (!this.rendered) {
+                this.rendered = true;
+                this.setFoundPrice(true);
+            } else {
+                this.setFoundPrice();
+            }
         },
 
         onQuantityChange: function(options) {

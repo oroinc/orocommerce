@@ -1092,6 +1092,8 @@ class Product extends ExtendProduct implements
             $this->images = new ArrayCollection();
             $this->variantLinks = new ArrayCollection();
             $this->parentVariantLinks = new ArrayCollection();
+            $this->slugPrototypes = new ArrayCollection();
+            $this->slugs = new ArrayCollection();
             $this->variantFields = [];
         }
     }

@@ -7,7 +7,7 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToAccount;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToAccountGroup;
@@ -235,7 +235,7 @@ class LoadCombinedPriceLists extends AbstractFixture implements DependentFixture
         CombinedPriceList $combinedPriceList
     ) {
         foreach ($priceListData['priceListsToAccountGroups'] as $priceListsToAccountGroup) {
-            /** @var AccountGroup $accountGroup */
+            /** @var CustomerGroup $accountGroup */
             $accountGroup = $this->getReference($priceListsToAccountGroup['group']);
             /** @var Website $website */
             $website = $this->getReference($priceListsToAccountGroup['website']);

@@ -9,7 +9,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountUserRole;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 use Oro\Bundle\WorkflowBundle\Acl\Extension\WorkflowAclExtension;
 use Oro\Bundle\WorkflowBundle\Acl\Extension\WorkflowMaskBuilder;
 use Oro\Bundle\SecurityBundle\Acl\Persistence\AclManager;
@@ -30,7 +30,7 @@ class LoadWorkflowAcl extends AbstractFixture implements DependentFixtureInterfa
     public function getDependencies()
     {
         return [
-            'Oro\Bundle\CustomerBundle\Migrations\Data\ORM\LoadAccountUserRoles'
+            LoadCustomerUserRoles::class
         ];
     }
 
@@ -55,6 +55,7 @@ class LoadWorkflowAcl extends AbstractFixture implements DependentFixtureInterfa
         }
 
         $roles = $this->getRoles($manager);
+        $this->addIsAuthenticatedAnonymouslyRole($roles);
         $rootOid = $securityManager->getRootOid(WorkflowAclExtension::NAME);
         foreach ($roles as $role) {
             $sid = $securityManager->getSid($role);
@@ -67,10 +68,22 @@ class LoadWorkflowAcl extends AbstractFixture implements DependentFixtureInterfa
     /**
      * @param ObjectManager $manager
      *
-     * @return AccountUserRole[]
+     * @return CustomerUserRole[]
      */
     protected function getRoles(ObjectManager $manager)
     {
-        return $manager->getRepository('OroCustomerBundle:AccountUserRole')->findAll();
+        return $manager->getRepository('OroCustomerBundle:CustomerUserRole')->findAll();
+    }
+
+    /**
+     * Add inbuilt IS_AUTHENTICATED_ANONYMOUSLY to the roles list.
+     * It should gain root permission along with frontend roles, because of it assigned to any user by Symfony,
+     * and this behaviour, availability of the root permission for any user, expected by the system.
+     *
+     * @param $roles
+     */
+    private function addIsAuthenticatedAnonymouslyRole(&$roles)
+    {
+        $roles[] = 'IS_AUTHENTICATED_ANONYMOUSLY';
     }
 }

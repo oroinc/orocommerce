@@ -50,7 +50,7 @@ class FrontendAccountUserType extends AbstractType
         $builder->remove('salesRepresentatives');
         $builder->add(
             'roles',
-            FrontendAccountUserRoleSelectType::NAME,
+            FrontendCustomerUserRoleSelectType::NAME,
             [
                 'label' => 'oro.customer.accountuser.roles.label'
             ]
