@@ -7,7 +7,7 @@ services:
                 -
                     -
                         productPrices: {required: true}
-                        productUnitSelectionVisible: {required: true}
+                        productUnitSelectionVisible: ~
             - [setName, ['product_prices']]
         tags:
              - { name: layout.block_type, alias: product_prices }

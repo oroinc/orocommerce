@@ -27,7 +27,7 @@
                     <tr class="product-prices__tr">
                         <td colspan="2" class="product-prices__td">
                             {% if loop.index > 1 %}<br/>{% endif %}
-                            {% if productUnitSelectionVisible %}
+                            {% if productUnitSelectionVisible is defined and productUnitSelectionVisible %}
                                 <strong>{{ currenctUnit|capitalize }}</strong>
                             {% endif %}
                         </td>
