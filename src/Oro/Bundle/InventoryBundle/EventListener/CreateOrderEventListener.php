@@ -6,6 +6,7 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
+use Oro\Bundle\InventoryBundle\Inventory\BaseInventoryQuantityManager;
 use Oro\Bundle\InventoryBundle\Inventory\InventoryStatusHandler;
 use Oro\Bundle\InventoryBundle\Inventory\InventoryQuantityManagerInterface;
 use Oro\Bundle\InventoryBundle\Exception\InventoryLevelNotFoundException;
@@ -24,7 +25,7 @@ use Oro\Component\Action\Event\ExtendableConditionEvent;
 class CreateOrderEventListener
 {
     /**
-     * @var InventoryQuantityManagerInterface
+     * @var BaseInventoryQuantityManager
      */
     protected $quantityManager;
 
@@ -44,13 +45,13 @@ class CreateOrderEventListener
     protected $orderValidator;
 
     /**
-     * @param InventoryQuantityManagerInterface $quantityManager
+     * @param BaseInventoryQuantityManager $quantityManager
      * @param InventoryStatusHandler $statusHandler
      * @param InventoryLevelOrderValidator $orderValidator
      * @param DoctrineHelper $doctrineHelper
      */
     public function __construct(
-        InventoryQuantityManagerInterface $quantityManager,
+        BaseInventoryQuantityManager $quantityManager,
         InventoryStatusHandler $statusHandler,
         InventoryLevelOrderValidator $orderValidator,
         DoctrineHelper $doctrineHelper
@@ -79,8 +80,10 @@ class CreateOrderEventListener
             if (!$inventoryLevel) {
                 throw new InventoryLevelNotFoundException();
             }
-            $this->quantityManager->decrementInventory($inventoryLevel, $lineItem->getQuantity());
-            $this->statusHandler->changeInventoryStatusWhenDecrement($inventoryLevel);
+            if ($this->quantityManager->canDecrementInventory($inventoryLevel, $lineItem->getQuantity())) {
+                $this->quantityManager->decrementInventory($inventoryLevel, $lineItem->getQuantity());
+                $this->statusHandler->changeInventoryStatusWhenDecrement($inventoryLevel);
+            }
         }
     }
 
@@ -104,12 +107,9 @@ class CreateOrderEventListener
 
             if (!$this->orderValidator->hasEnoughQuantity($inventoryLevel, $lineItem->getQuantity())) {
                 $event->addError('');
-                $event->stopPropagation();
                 return;
             }
         }
-
-        $event->stopPropagation();
     }
 
     /**
