@@ -4,8 +4,6 @@ namespace Oro\Bundle\PaymentBundle\Formatter;
 
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProvidersRegistry;
 
-use Symfony\Component\Translation\TranslatorInterface;
-
 class PaymentMethodLabelFormatter
 {
     /**
@@ -14,22 +12,12 @@ class PaymentMethodLabelFormatter
     protected $paymentMethodViewRegistry;
 
     /**
-     * @var TranslatorInterface
-     */
-    protected $translator;
-
-    /**
      * @param PaymentMethodViewProvidersRegistry $paymentMethodViewRegistry
-     * @param TranslatorInterface $translator
      */
-    public function __construct(
-        PaymentMethodViewProvidersRegistry $paymentMethodViewRegistry,
-        TranslatorInterface $translator
-    ) {
+    public function __construct(PaymentMethodViewProvidersRegistry $paymentMethodViewRegistry)
+    {
         $this->paymentMethodViewRegistry = $paymentMethodViewRegistry;
-        $this->translator = $translator;
     }
-
 
     /**
      * @param string $paymentMethod
@@ -53,17 +41,10 @@ class PaymentMethodLabelFormatter
      */
     public function formatPaymentMethodAdminLabel($paymentMethod)
     {
-        $adminPaymentMethodLabel = $this->translator->trans(sprintf('oro.payment.admin.%s.label', $paymentMethod));
-        $adminPaymentMethodShortLabel = $this->formatPaymentMethodLabel($paymentMethod);
-
-        if ($adminPaymentMethodLabel === $adminPaymentMethodShortLabel) {
-            return $adminPaymentMethodLabel;
-        } else {
-            return sprintf(
-                '%s (%s)',
-                $adminPaymentMethodShortLabel,
-                $adminPaymentMethodLabel
-            );
+        try {
+            return $this->paymentMethodViewRegistry->getPaymentMethodView($paymentMethod)->getAdminLabel();
+        } catch (\InvalidArgumentException $e) {
+            return '';
         }
     }
 }
