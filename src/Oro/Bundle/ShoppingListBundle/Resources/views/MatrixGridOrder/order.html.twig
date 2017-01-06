@@ -1,3 +1,36 @@
 <div class="widget-content">
-    Matrix Grid Order Form
+    {{ form_start(form) }}
+    <table>
+        {% if variantFields|length > 1 %}
+            <thead>
+                <tr>
+                    <td></td>
+                    {% for value in variantFields[1]['values'] %}
+                        <td>{{ value['label'] }}</td>
+                    {% endfor %}
+                </tr>
+            </thead>
+        {% endif %}
+        <tbody>
+            {% for row in form.rows %}
+                <tr>
+                    <td>{{ variantFields[0]['values'][loop.index0]['label'] }}</td>
+                    {% for column in row.columns %}
+                        <td>{{ form_widget(column) }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+            <tr class="qty">
+                <td>{{ 'oro.frontend.shoppinglist.matrix_grid_order.qty'|trans }}</td>
+                {% for quantity in totalQuantities['columns'] %}
+                    <td>{{ quantity }}</td>
+                {% endfor %}
+            </tr>
+        </tbody>
+    </table>
+    <div>
+        {{ 'oro.frontend.shoppinglist.matrix_grid_order.total_qty'|trans }}: {{ totalQuantities['total'] }}
+        {{ 'oro.frontend.shoppinglist.matrix_grid_order.total'|trans }}: {{ totalPrice }}
+    </div>
+    {{ form_end(form) }}
 </div>

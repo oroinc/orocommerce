@@ -247,6 +247,13 @@ services:
         tags:
             - { name: oro_user.privilege_category}
 
+    oro_shopping_list.provider.matrix_grid_order_manager:
+        class: 'Oro\Bundle\ShoppingListBundle\Manager\MatrixGridOrderManager'
+        arguments:
+            - '@property_accessor'
+            - '@oro_product.provider.product_variant_availability_provider'
+            - '@oro_pricing.subtotal_processor.total_processor_provider'
+
     oro_shopping_list.condition.has_price_in_shopping_line_items:
         class: 'Oro\Bundle\ShoppingListBundle\Condition\HasPriceInShoppingLineItems'
         arguments:

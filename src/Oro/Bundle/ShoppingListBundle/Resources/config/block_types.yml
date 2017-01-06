@@ -52,6 +52,18 @@ services:
         tags:
              - { name: layout.block_type, alias: add_to_shopping_list_form_button }
 
+    oro_shopping_list.layout.type.matrix_grid_order_button:
+        parent: oro_layout.block_type.abstract_configurable_container
+        calls:
+            -
+                - setOptionsConfig
+                -
+                    -
+                        product: {required: true}
+            - [setName, ['matrix_grid_order_button']]
+        tags:
+             - { name: layout.block_type, alias: matrix_grid_order_button }
+
     oro_shopping_list.layout.block_type.extension.widget_content:
         parent: oro_layout.block_type.extension.abstract_configurable
         calls:

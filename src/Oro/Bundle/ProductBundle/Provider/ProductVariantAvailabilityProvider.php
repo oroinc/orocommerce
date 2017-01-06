@@ -29,6 +29,9 @@ class ProductVariantAvailabilityProvider
     /** @var EventDispatcherInterface */
     protected $eventDispatcher;
 
+    /** @var array */
+    protected $fieldTypeCache = [];
+
     /**
      * @param DoctrineHelper $doctrineHelper
      * @param EnumValueProvider $enumValueProvider
@@ -119,22 +122,14 @@ class ProductVariantAvailabilityProvider
         $allVariants = [];
         foreach ($variantFields as $variantField) {
             // get array of all variants
-            $allVariants[$variantField] = $this->getAllVariantsByVariantFieldName($variantField);
-            $fieldType = $this->getFieldType($variantField);
+            $allVariants[$variantField] = array_fill_keys(
+                array_keys($this->getAllVariantsByVariantFieldName($variantField)),
+                false
+            );
 
             foreach ($availableSimpleProducts as $simpleProduct) {
-                $variantValue = $this->propertyAccessor->getValue($simpleProduct, $variantField);
-
-                switch ($fieldType) {
-                    case 'enum':
-                        $id = $this->doctrineHelper->getSingleEntityIdentifier($variantValue);
-                        $allVariants[$variantField][$id] = true;
-                        break;
-
-                    case 'boolean':
-                        $allVariants[$variantField][$variantValue] = true;
-                        break;
-                }
+                $variantValue = $this->getVariantFieldValue($simpleProduct, $variantField);
+                $allVariants[$variantField][$variantValue] = true;
             }
         }
 
@@ -142,10 +137,30 @@ class ProductVariantAvailabilityProvider
     }
 
     /**
+     * @param Product $simpleProduct
+     * @param $variantFieldName
+     * @return string|null
+     */
+    public function getVariantFieldValue(Product $simpleProduct, $variantFieldName)
+    {
+        $fieldType = $this->getFieldType($variantFieldName);
+        $variantValue = $this->propertyAccessor->getValue($simpleProduct, $variantFieldName);
+
+        switch ($fieldType) {
+            case 'enum':
+                return $this->doctrineHelper->getSingleEntityIdentifier($variantValue);
+            case 'boolean':
+                return $variantValue;
+        }
+
+        return null;
+    }
+
+    /**
      * @param string $variantFieldName
      * @return array
      */
-    protected function getAllVariantsByVariantFieldName($variantFieldName)
+    public function getAllVariantsByVariantFieldName($variantFieldName)
     {
         $type = $this->getFieldType($variantFieldName);
 
@@ -162,7 +177,7 @@ class ProductVariantAvailabilityProvider
                 break;
         }
 
-        return array_fill_keys(array_keys($variants), false);
+        return $variants;
     }
 
     /**
@@ -171,10 +186,14 @@ class ProductVariantAvailabilityProvider
      */
     protected function getFieldType($fieldName)
     {
-        $customFields = $this->customFieldProvider->getEntityCustomFields(Product::class);
+        if (!array_key_exists($fieldName, $this->fieldTypeCache)) {
+            $customFields = $this->customFieldProvider->getEntityCustomFields(Product::class);
 
-        // TODO: Add cache?
-        return array_key_exists($fieldName, $customFields) ? $customFields[$fieldName]['type'] : null;
+            $this->fieldTypeCache[$fieldName] = array_key_exists($fieldName, $customFields) ?
+                $customFields[$fieldName]['type'] : null;
+        }
+
+        return $this->fieldTypeCache[$fieldName];
     }
 
     /**

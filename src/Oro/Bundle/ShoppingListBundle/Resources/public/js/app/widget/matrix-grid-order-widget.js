@@ -4,7 +4,6 @@ define(function(require) {
     var MatrixGridOrderWidget;
     var routing = require('routing');
     var DialogWidget = require('oro/dialog-widget');
-    var _ = require('underscore');
 
     MatrixGridOrderWidget = DialogWidget.extend({
         initialize: function(options) {
