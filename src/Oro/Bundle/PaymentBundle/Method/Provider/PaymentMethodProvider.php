@@ -45,10 +45,12 @@ class PaymentMethodProvider
 
         foreach ($paymentMethodsConfigsRules as $paymentMethodsConfigsRule) {
             foreach ($paymentMethodsConfigsRule->getMethodConfigs() as $methodConfig) {
-                $paymentMethod = $this->paymentMethodRegistry
-                    ->getPaymentMethod($methodConfig->getType());
-                if ($paymentMethod->isApplicable($context)) {
-                    $paymentMethods[$methodConfig->getType()] = $paymentMethod;
+                foreach ($this->paymentMethodRegistry->getPaymentMethodProviders() as $provider) {
+                    $paymentMethod = $provider
+                        ->getPaymentMethod($methodConfig->getType());
+                    if ($paymentMethod->isApplicable($context)) {
+                        $paymentMethods[$methodConfig->getType()] = $paymentMethod;
+                    }
                 }
             }
         }

@@ -4,6 +4,7 @@ namespace Oro\Bundle\PaymentBundle\Tests\Unit\Condition;
 
 use Oro\Bundle\PaymentBundle\Condition\PaymentMethodSupports;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodProviderInterface;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodProvidersRegistry;
 
 class PaymentMethodSupportsTest extends \PHPUnit_Framework_TestCase
@@ -74,10 +75,23 @@ class PaymentMethodSupportsTest extends \PHPUnit_Framework_TestCase
             ->with($data[self::ACTION_NAME_KEY])
             ->willReturn($supportsData);
 
-        $this->paymentMethodProvidersRegistry->expects($this->once())
+        $paymentMethodProvider = $this->getMockBuilder(PaymentMethodProviderInterface::class)->getMock();
+
+        $paymentMethodProvider->expects($this->once())
+            ->method('hasPaymentMethod')
+            ->with($data[self::PAYMENT_METHOD_KEY])
+            ->willReturn(true);
+
+        $paymentMethodProvider
+            ->expects($this->once())
             ->method('getPaymentMethod')
             ->with($data[self::PAYMENT_METHOD_KEY])
             ->willReturn($paymentMethod);
+
+        $this->paymentMethodProvidersRegistry
+            ->expects($this->once())
+            ->method('getPaymentMethodProviders')
+            ->willReturn([$paymentMethodProvider]);
 
         $this->condition->initialize($data);
         $this->assertEquals($expected, $this->condition->evaluate($context, $errors));
@@ -102,14 +116,22 @@ class PaymentMethodSupportsTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-    public function testEvaluateWithException()
+    public function testEvaluateWithNotExistingPaymentMethod()
     {
         $context = new \stdClass();
         $errors = $this->getMockForAbstractClass('Doctrine\Common\Collections\Collection');
 
-        $this->paymentMethodProvidersRegistry->expects($this->once())
-            ->method('getPaymentMethod')
-            ->will($this->throwException(new \InvalidArgumentException));
+        $paymentMethodProvider = $this->getMockBuilder(PaymentMethodProviderInterface::class)->getMock();
+
+        $paymentMethodProvider->expects($this->once())
+            ->method('hasPaymentMethod')
+            ->willReturn(false);
+
+        $this->paymentMethodProvidersRegistry
+            ->expects($this->once())
+            ->method('getPaymentMethodProviders')
+            ->willReturn([$paymentMethodProvider]);
+
 
         $this->condition->initialize($this->paymentMethod);
         $this->assertFalse($this->condition->evaluate($context, $errors));

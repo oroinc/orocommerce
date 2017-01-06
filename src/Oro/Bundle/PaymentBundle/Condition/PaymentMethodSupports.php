@@ -65,7 +65,11 @@ class PaymentMethodSupports extends AbstractCondition implements ContextAccessor
         $actionName = $this->resolveValue($context, $this->actionName, false);
 
         try {
-            return $this->paymentMethodRegistry->getPaymentMethod($paymentMethod)->supports($actionName);
+            foreach ($this->paymentMethodRegistry->getPaymentMethodProviders() as $provider) {
+                if ($provider->hasPaymentMethod($paymentMethod)) {
+                    return $provider->getPaymentMethod($paymentMethod)->supports($actionName);
+                }
+            }
         } catch (\InvalidArgumentException $e) {
         }
 

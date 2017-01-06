@@ -4,6 +4,7 @@ namespace Oro\Bundle\PayPalBundle\Method\Config;
 
 use Oro\Bundle\PayPalBundle\DependencyInjection\Configuration;
 use Oro\Bundle\PayPalBundle\DependencyInjection\OroPayPalExtension;
+use Oro\Bundle\PayPalBundle\Method\PayflowExpressCheckout;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 use Oro\Bundle\PaymentBundle\Method\Config\AbstractPaymentConfig;
 
@@ -60,5 +61,17 @@ class PayflowExpressCheckoutConfig extends AbstractPaymentConfig implements Payf
     public function getShortLabel()
     {
         return (string)$this->getConfigValue(Configuration::PAYFLOW_EXPRESS_CHECKOUT_SHORT_LABEL_KEY);
+    }
+
+    /** {@inheritdoc} */
+    public function getAdminLabel()
+    {
+        return (string)$this->getLabel();
+    }
+
+    /** {@inheritdoc} */
+    public function getPaymentMethodIdentifier()
+    {
+        return (string)PayflowExpressCheckout::TYPE;
     }
 }

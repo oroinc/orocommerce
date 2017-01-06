@@ -38,20 +38,31 @@ class PaymentTermViewProvider
     public function getView(PaymentContextInterface $context)
     {
         try {
-            $paymentMethod = $this->paymentMethodRegistry->getPaymentMethod(PaymentTerm::TYPE);
-            if (!$paymentMethod->isApplicable($context)) {
+            $paymentMethodProvider = $this->paymentMethodRegistry->getPaymentMethodProvider(PaymentTerm::TYPE);
+            $paymentMethods = [];
+            foreach ($paymentMethodProvider->getPaymentMethods() as $paymentMethod) {
+                if ($paymentMethod->isApplicable($context)) {
+                    $paymentMethods[] = $paymentMethod->getIdentifier();
+                }
+            }
+            if (count($paymentMethods) === 0) {
                 return null;
             }
 
-            $view = $this->paymentMethodViewRegistry->getPaymentMethodView(PaymentTerm::TYPE);
+            $views = $this->paymentMethodViewRegistry->getPaymentMethodViews($paymentMethods);
         } catch (\InvalidArgumentException $e) {
             return null;
         }
 
-        return [
-            'label' => $view->getLabel(),
-            'block' => $view->getBlock(),
-            'options' => $view->getOptions($context),
-        ];
+        $paymentMethodViews = [];
+        foreach ($views as $view) {
+            $paymentMethodViews[$view->getPaymentMethodIdentifier()] = [
+                'label' => $view->getLabel(),
+                'block' => $view->getBlock(),
+                'options' => $view->getOptions($context),
+            ];
+        }
+
+        return $paymentMethodViews;
     }
 }
