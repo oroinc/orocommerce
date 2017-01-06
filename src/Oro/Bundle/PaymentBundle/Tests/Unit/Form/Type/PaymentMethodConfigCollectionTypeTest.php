@@ -8,20 +8,22 @@ use Oro\Bundle\PaymentBundle\Form\EventSubscriber\RuleMethodConfigCollectionSubs
 use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodConfigCollectionType;
 use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodConfigType;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodProvidersRegistry;
+use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProvidersRegistry;
 use Oro\Bundle\PaymentBundle\Tests\Unit\Form\EventListener\Stub\RuleMethodConfigCollectionSubscriberStub;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\PreloadedExtension;
-use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Validation;
 
 class PaymentMethodConfigCollectionTypeTest extends FormIntegrationTestCase
 {
     use EntityTrait;
 
-    /** @var RuleMethodConfigCollectionSubscriber */
+    /**
+     * @var RuleMethodConfigCollectionSubscriber
+     */
     protected $subscriber;
 
     /**
@@ -99,18 +101,15 @@ class PaymentMethodConfigCollectionTypeTest extends FormIntegrationTestCase
     protected function getExtensions()
     {
         /** @var PaymentMethodProvidersRegistry|\PHPUnit_Framework_MockObject_MockObject $methodRegistry */
-        $methodRegistry = $this
-            ->getMockBuilder(PaymentMethodProvidersRegistry::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        /** @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject $translator */
-        $translator = $this->getMockBuilder(TranslatorInterface::class)->disableOriginalConstructor()->getMock();
+        $methodRegistry = $this->createMock(PaymentMethodProvidersRegistry::class);
+        /** @var PaymentMethodViewProvidersRegistry|\PHPUnit_Framework_MockObject_MockObject $methodViewRegistry */
+        $methodViewRegistry = $this->createMock(PaymentMethodViewProvidersRegistry::class);
 
         return [
             new PreloadedExtension(
                 [
                     CollectionType::NAME          => new CollectionType(),
-                    PaymentMethodConfigType::NAME => new PaymentMethodConfigType($methodRegistry, $translator),
+                    PaymentMethodConfigType::NAME => new PaymentMethodConfigType($methodRegistry, $methodViewRegistry),
                 ],
                 []
             ),
@@ -136,7 +135,7 @@ class PaymentMethodConfigCollectionTypeTest extends FormIntegrationTestCase
     public function testBuildFormSubscriber()
     {
         /** @var FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder */
-        $builder = $this->getMockBuilder(FormBuilderInterface::class)->getMock();
+        $builder = $this->createMock(FormBuilderInterface::class);
         $builder->expects($this->once())
             ->method('addEventSubscriber')
             ->with($this->subscriber)

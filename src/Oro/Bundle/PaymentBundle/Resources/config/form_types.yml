@@ -15,7 +15,7 @@ services:
         class: Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodConfigType
         arguments:
             - '@oro_payment.payment_method_provider.registry'
-            - '@translator'
+            - '@oro_payment.payment_method_view_provider.registry'
         tags:
             - { name: form.type, alias: oro_payment_method_config }
 
@@ -35,6 +35,6 @@ services:
         class: Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodsConfigsRuleType
         arguments:
             - '@oro_payment.payment_method_provider.registry'
-            - '@translator'
+            - '@oro_payment.payment_method_view_provider.registry'
         tags:
             - { name: form.type, alias: oro_payment_methods_configs_rule }
