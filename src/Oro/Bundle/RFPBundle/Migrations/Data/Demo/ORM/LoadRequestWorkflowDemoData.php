@@ -104,10 +104,10 @@ class LoadRequestWorkflowDemoData extends AbstractFixture implements
         foreach ($requests as $request) {
             $workflowItem = $this->workflowManager->getWorkflowItem($request, $workflowName);
 
+            $user = $user ?: $request->getAccountUser();
             if (null === $user) {
-                $user = $request->getAccountUser();
+                continue;
             }
-
             $this->setUserToken($user);
             $this->randomTransitionWalk($workflowItem, rand(0, 4));
         }
