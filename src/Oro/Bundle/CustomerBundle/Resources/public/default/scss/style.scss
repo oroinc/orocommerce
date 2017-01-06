@@ -100,6 +100,11 @@
     margin: 0 0 2rem 0;
     border-bottom: 1px solid #e6e6e6;
     font-size: 1.6rem;
+
+    @media (max-width: 450px) {
+      display: block;
+      width: 100%;
+    }
   }
 
   .field {
@@ -113,6 +118,16 @@
   .profile__form__col.col_last{
     padding-left: 2rem;
   }
+
+  @media (max-width: 450px) {
+    .profile__form__col.col_first{
+      padding-right: 0;
+    }
+
+    .profile__form__col.col_last{
+      padding-left: 0;
+    }
+  }
 }
 
 .profile__form__fields_container{
@@ -121,6 +136,10 @@
 
 .profile__form__col.form__col_x6 {
   width: 50%;
+
+  @media (max-width: 450px) {
+    width: 100%;
+  }
 }
 
 .profile__form__col {
