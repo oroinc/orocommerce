@@ -185,7 +185,7 @@ abstract class AbstractProductDataStorageExtension extends AbstractTypeExtension
                 $this->propertyAccessor->setValue($entity, $property, $value);
             } catch (NoSuchPropertyException $e) {
                 if (null !== $this->logger) {
-                    $this->logger->error(
+                    $this->logger->notice(
                         'No such property {property} in the entity {entity}',
                         [
                             'property' => $property,

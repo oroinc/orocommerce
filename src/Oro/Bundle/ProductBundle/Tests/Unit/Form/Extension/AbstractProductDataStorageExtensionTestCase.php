@@ -130,7 +130,7 @@ abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit_Fram
         $this->assertMetadataCalled(['product' => ['targetClass' => 'Oro\Bundle\ProductBundle\Entity\Product']]);
         $this->assertRequestGetCalled();
         $this->assertStorageCalled($data);
-        $this->assertLoggerErrorMethodCalled();
+        $this->assertLoggerNoticeMethodCalled();
 
         $this->extension->buildForm($this->getBuilderMock(true), []);
     }
