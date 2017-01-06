@@ -4,11 +4,12 @@ define(function(require) {
     var FrontendLineItemView;
     var ElementsHelper = require('orofrontend/js/app/elements-helper');
     var BaseView = require('oroui/js/app/views/base/view');
+    var Messenger = require('oroui/js/messenger');
     var NumberFormatter = require('orolocale/js/formatter/number');
     var $ = require('jquery');
     var _ = require('underscore');
 
-    FrontendLineItemView = BaseView.extend(_.extend({}, ElementsHelper, {
+    FrontendLineItemView = BaseView.extend(_.extend({}, ElementsHelper, Messenger, {
         elements: {
             lineItem: '[data-role="line-item"]',
             editView: '[data-role="line-item-edit"]',
@@ -62,8 +63,14 @@ define(function(require) {
             }
         },
 
-        viewMode: function() {
-            if (!this.validate()) {
+        viewMode: function( action ) {
+            if (!this.validate() && action == 'update' ) {
+
+                Messenger.notificationMessage( 'warning', 'Product is invalid or do not selected', {
+                    container: this.getElement('editView').get(),
+                    delay: 3000
+                } );
+
                 return;
             }
             this.render();
@@ -83,12 +90,12 @@ define(function(require) {
         decline: function(e) {
             e.preventDefault();
             this.revertChanges();
-            this.viewMode();
+            this.toggleEditMode('disable');
         },
 
         update: function(e) {
             e.preventDefault();
-            this.viewMode();
+            this.viewMode( 'update' );
         },
 
         getData: function() {
@@ -145,6 +152,11 @@ define(function(require) {
         },
 
         revertChanges: function() {
+
+            if( !this.formState ) {
+                return;
+            }
+
             this.$el.find(':input[data-name]').each(_.bind(function(i, el) {
                 var value = this.formState[el.name];
                 if (value !== undefined && el.value !== value) {
