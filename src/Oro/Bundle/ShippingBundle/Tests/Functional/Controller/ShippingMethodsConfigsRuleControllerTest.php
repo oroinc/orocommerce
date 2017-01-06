@@ -7,6 +7,7 @@ use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingMethodsConfigsRules;
 use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadUserData;
+use Oro\Bundle\ShippingBundle\Tests\Functional\Helper\FlatRateIntegrationTrait;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Symfony\Component\DomCrawler\Form;
@@ -20,7 +21,7 @@ use Symfony\Component\DomCrawler\Form;
  */
 class ShippingMethodsConfigsRuleControllerTest extends WebTestCase
 {
-    const NAME = 'New rule';
+    use FlatRateIntegrationTrait;
 
     /**
      * @var ShippingMethodRegistry
@@ -110,8 +111,9 @@ class ShippingMethodsConfigsRuleControllerTest extends WebTestCase
             $this->assertEquals($expectedColumns, $testedColumns);
         }
 
+        //i starts from 1 because we have default shipping rule loaded with ORM data migration
         $expectedDataCount = count($expectedData['data']);
-        for ($i = 0; $i < $expectedDataCount; $i++) {
+        for ($i = 1; $i < $expectedDataCount; $i++) {
             foreach ($expectedData['data'][$i] as $key => $value) {
                 $this->assertArrayHasKey($key, $data[$i]);
                 switch ($key) {
@@ -166,7 +168,7 @@ class ShippingMethodsConfigsRuleControllerTest extends WebTestCase
         ];
         $formValues['oro_shipping_methods_configs_rule']['methodConfigs'] = [
             [
-                'method' => 'flat_rate',
+                'method' => $this->getFlatRateIdentifier(),
                 'options' => [],
                 'typeConfigs' => [
                     [
@@ -272,7 +274,7 @@ class ShippingMethodsConfigsRuleControllerTest extends WebTestCase
         ];
         $formValues['oro_shipping_methods_configs_rule']['methodConfigs'] = [
             [
-                'method' => 'flat_rate',
+                'method' => $this->getFlatRateIdentifier(),
                 'options' => [],
                 'typeConfigs' => [
                     [
@@ -304,7 +306,7 @@ class ShippingMethodsConfigsRuleControllerTest extends WebTestCase
         static::assertEquals('TH-83', $destination[0]->getRegion()->getCombinedCode());
         static::assertEquals('54321', $destination[0]->getPostalCodes()->current()->getName());
         $methodConfigs = $shippingRule->getMethodConfigs();
-        static::assertEquals('flat_rate', $methodConfigs[0]->getMethod());
+        static::assertEquals($this->getFlatRateIdentifier(), $methodConfigs[0]->getMethod());
         static::assertEquals(
             24,
             $methodConfigs[0]->getTypeConfigs()[0]->getOptions()['price']
