@@ -82,7 +82,7 @@ class LoadFlatRateIntegration extends AbstractFixture implements
         } else {
             return $manager
                 ->getRepository('OroOrganizationBundle:Organization')
-                ->getOrganizationByName(LoadOrganizationAndBusinessUnitData::MAIN_ORGANIZATION);
+                ->getFirst();
         }
     }
 }
