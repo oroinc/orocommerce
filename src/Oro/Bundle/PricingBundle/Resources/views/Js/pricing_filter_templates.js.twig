@@ -8,7 +8,7 @@
             <ul class="dropdown-menu" data-name="unit">
                 <% _.each(choices, function (option) { %>
                 <li<% if (selectedChoice == option.value) { %> class="active"<% } %>>
-                <a class="choice-value" href="#" data-value="<%= option.value %>"><%- option.label %></a>
+                <a class="dropdown-item choice-value" href="#" data-value="<%= option.value %>"><%- option.label %></a>
                 </li>
                 <% }); %>
             </ul>
