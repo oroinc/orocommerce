@@ -99,12 +99,7 @@ oro:
         method_type:
             shipping_methods_widget:
                 label: '%translatedMethodType%: <strong>%price%</strong>'
-            backend:
-                label: >
-                    {0}%translatedMethodType%|
-                    {1}%translatedMethodType%: %price%|
-                    {2}%translatedMethod%, %translatedMethodType%: %price%|
-                    {3}%translatedMethod%, %translatedMethodType%
+
         methods:
             label: "Shipping Method"
             select_method: 'Select a Shipping Method'

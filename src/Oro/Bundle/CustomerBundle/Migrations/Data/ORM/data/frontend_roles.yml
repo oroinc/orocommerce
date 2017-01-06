@@ -14,3 +14,9 @@ BUYER:
         entity|Oro\Bundle\CustomerBundle\Entity\AccountUser: [VIEW_LOCAL, EDIT_LOCAL]
         entity|Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress: [VIEW_BASIC]
         entity|Oro\Bundle\CustomerBundle\Entity\CustomerUserRole: []
+
+ANONYMOUS:
+    label: Non-Authenticated Visitors
+    public: false
+    permissions:
+        entity|Oro\Bundle\ProductBundle\Entity\Product: [VIEW_SYSTEM]
