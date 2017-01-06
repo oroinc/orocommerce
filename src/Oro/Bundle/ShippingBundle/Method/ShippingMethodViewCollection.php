@@ -222,4 +222,12 @@ class ShippingMethodViewCollection
 
         return $this;
     }
+
+    /**
+     * @return bool
+     */
+    public function isEmpty()
+    {
+        return count($this->methodViews) <= 0;
+    }
 }

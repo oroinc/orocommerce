@@ -649,4 +649,25 @@ class ShippingMethodViewCollectionTest extends \PHPUnit_Framework_TestCase
             $collection->toArray()
         );
     }
+
+    public function testCount()
+    {
+        $collection = $this->createCollection();
+
+        $methodId = 'someMethodId';
+
+        $methodView = [
+            'someField1' => 'someValue1',
+            'someField2' => 'someValue2',
+            'sortOrder' => 1
+        ];
+
+        $collection->addMethodView($methodId, $methodView);
+
+        $this->assertFalse($collection->isEmpty());
+
+        $collection->clear();
+
+        $this->assertTrue($collection->isEmpty());
+    }
 }
