@@ -24,7 +24,7 @@ class FlatRateMethod implements ShippingMethodInterface
      */
     public function __construct($label, $channelId)
     {
-        $this->type = new FlatRateMethodType();
+        $this->type = new FlatRateMethodType($label);
         $this->label = $label;
         $this->channelId = $channelId;
     }

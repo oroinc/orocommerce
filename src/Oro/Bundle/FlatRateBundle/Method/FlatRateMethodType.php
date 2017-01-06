@@ -19,6 +19,17 @@ class FlatRateMethodType implements ShippingMethodTypeInterface
     const PER_ORDER_TYPE = 'per_order';
     const PER_ITEM_TYPE = 'per_item';
 
+    /** @var string */
+    protected $label;
+
+    /**
+     * @param string $label
+     */
+    public function __construct($label)
+    {
+        $this->label = $label;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -32,7 +43,7 @@ class FlatRateMethodType implements ShippingMethodTypeInterface
      */
     public function getLabel()
     {
-        return 'oro.flat_rate.method.type.label';
+        return $this->label;
     }
 
     /**

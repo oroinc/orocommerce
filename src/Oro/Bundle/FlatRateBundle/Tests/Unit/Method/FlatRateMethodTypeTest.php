@@ -14,14 +14,15 @@ class FlatRateMethodTypeTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var FlatRateMethodType
-     */
+    /** @internal */
+    const LABEL = 'Flat Rate';
+
+    /** @var FlatRateMethodType */
     protected $flatRateType;
 
     protected function setUp()
     {
-        $this->flatRateType = new FlatRateMethodType();
+        $this->flatRateType = new FlatRateMethodType(self::LABEL);
     }
 
     public function testGetIdentifier()
@@ -31,7 +32,7 @@ class FlatRateMethodTypeTest extends \PHPUnit_Framework_TestCase
 
     public function testGetLabel()
     {
-        static::assertEquals('oro.flat_rate.method.type.label', $this->flatRateType->getLabel());
+        static::assertEquals(self::LABEL, $this->flatRateType->getLabel());
     }
 
     public function testGetOptionsConfigurationFormType()
