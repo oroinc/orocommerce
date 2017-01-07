@@ -272,6 +272,15 @@ services:
         tags:
             - {name: oro_product.default_product_unit_provider, priority: 0}
 
+    oro_product.provider.default_product_unit_provider.single_unit:
+        class: 'Oro\Bundle\ProductBundle\Provider\SingleUnitDefaultProductUnitProvider'
+        public: false
+        arguments:
+            - "@oro_product.service.single_unit_mode"
+            - "@oro_product.provider.default_product_unit_provider.system"
+        tags:
+            - {name: oro_product.default_product_unit_provider, priority: 240}
+
     oro_product.event_listener.product_variant_custom_fields_datagrid:
         class: 'Oro\Bundle\ProductBundle\EventListener\ProductVariantCustomFieldsDatagridListener'
         arguments:
