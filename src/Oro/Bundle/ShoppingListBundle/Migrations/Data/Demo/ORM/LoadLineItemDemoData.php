@@ -82,7 +82,6 @@ class LoadLineItemDemoData extends AbstractFixture implements DependentFixtureIn
                     ->setOrganization($accountUser->getOrganization())
                     ->setOwner($owner)
                     ->setShoppingList($shoppingList)
-                    ->setNotes(sprintf('Line item %d notes', $id + 1))
                     ->setProduct($product)
                     ->setQuantity(mt_rand(1, 25))
                     ->setUnit($product->getUnitPrecisions()->current()->getUnit());

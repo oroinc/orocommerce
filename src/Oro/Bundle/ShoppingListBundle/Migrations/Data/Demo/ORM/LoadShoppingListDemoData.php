@@ -99,7 +99,6 @@ class LoadShoppingListDemoData extends AbstractFixture implements DependentFixtu
         $shoppingList->setOwner($owner);
         $shoppingList->setAccountUser($accountUser);
         $shoppingList->setAccount($accountUser->getAccount());
-        $shoppingList->setNotes('Some notes for ' . $label);
         $shoppingList->setCurrent($current);
         $shoppingList->setLabel($label);
         $shoppingList->setWebsite($website);
