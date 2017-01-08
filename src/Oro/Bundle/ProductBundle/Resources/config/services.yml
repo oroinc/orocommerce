@@ -661,6 +661,6 @@ services:
         arguments:
             - 'unitCode'
             - 'quantity'
-            - 'OroProductBundle:Product:Datagrid/quantitySingleMode.html.twig'
+            - 'OroProductBundle:ProductUnit:Datagrid/quantity.html.twig'
             - {isShortUnitCode: true}
             - '@oro_product.service.single_unit_mode'

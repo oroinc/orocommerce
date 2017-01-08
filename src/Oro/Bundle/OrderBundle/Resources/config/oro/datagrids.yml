@@ -604,8 +604,9 @@ datagrids:
                 template:      OroOrderBundle:Order:Datagrid/frontendProduct.html.twig
             quantity:
                 label: oro.order.orderlineitem.quantity.label
-            productUnitCode:
-                label: oro.order.orderlineitem.product_unit_code.label
+                type:          twig
+                frontend_type: html
+                template:      OroOrderBundle:Order:Datagrid/frontendQuantity.html.twig
             price:
                 label:         oro.order.orderlineitem.price.label
                 type:          twig

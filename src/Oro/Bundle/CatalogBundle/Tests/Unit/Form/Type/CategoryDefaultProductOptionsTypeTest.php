@@ -26,21 +26,11 @@ class CategoryDefaultProductOptionsTypeTest extends FormIntegrationTestCase
     protected $formType;
 
     /**
-     * @var CategoryDefaultProductUnitOptionsVisibilityInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $defaultProductOptionsVisibility;
-
-    /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
-        $this->defaultProductOptionsVisibility = $this
-            ->getMockBuilder(CategoryDefaultProductUnitOptionsVisibilityInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->formType = new CategoryDefaultProductOptionsType($this->defaultProductOptionsVisibility);
+        $this->formType = new CategoryDefaultProductOptionsType();
         $this->formType->setDataClass(self::DATA_CLASS);
         parent::setUp();
     }
@@ -50,7 +40,7 @@ class CategoryDefaultProductOptionsTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        $categoryUnitPrecisionType = new CategoryUnitPrecisionType();
+        $categoryUnitPrecisionType = new CategoryUnitPrecisionType($this->getVisibilityMock());
         $categoryUnitPrecisionType->setDataClass('Oro\Bundle\CatalogBundle\Model\CategoryUnitPrecision');
         return [
             new PreloadedExtension(
@@ -82,10 +72,6 @@ class CategoryDefaultProductOptionsTypeTest extends FormIntegrationTestCase
         $submittedData,
         CategoryDefaultProductOptions $expectedData
     ) {
-        $this->defaultProductOptionsVisibility->expects(static::any())
-            ->method('isDefaultUnitPrecisionSelectionAvailable')
-            ->willReturn(true);
-
         $form = $this->factory->create($this->formType, $defaultData, []);
 
         $this->assertEquals($defaultData, $form->getData());
@@ -122,24 +108,22 @@ class CategoryDefaultProductOptionsTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    public function testSubmitNotAvailableUnitPrecisionOptions()
-    {
-        $this->defaultProductOptionsVisibility->expects(static::any())
-            ->method('isDefaultUnitPrecisionSelectionAvailable')
-            ->willReturn(false);
-        $defaultData = new CategoryDefaultProductOptions();
-
-        $form = $this->factory->create($this->formType, $defaultData, []);
-
-        $this->assertEquals($defaultData, $form->getData());
-
-        $form->submit([]);
-        $this->assertEquals(true, $form->isValid());
-        $this->assertEquals(new CategoryDefaultProductOptions(), $form->getData());
-    }
-
     public function testGetName()
     {
         $this->assertEquals(CategoryDefaultProductOptionsType::NAME, $this->formType->getName());
+    }
+
+    /**
+     * @return CategoryDefaultProductUnitOptionsVisibilityInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private function getVisibilityMock()
+    {
+        $defaultProductOptionsVisibility = $this
+            ->createMock(CategoryDefaultProductUnitOptionsVisibilityInterface::class);
+        $defaultProductOptionsVisibility->expects(static::any())
+            ->method('isDefaultUnitPrecisionSelectionAvailable')
+            ->willReturn(true);
+
+        return $defaultProductOptionsVisibility;
     }
 }

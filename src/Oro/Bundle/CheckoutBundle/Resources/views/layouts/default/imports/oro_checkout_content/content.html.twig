@@ -144,7 +144,13 @@
                                                 class="red">{{ productSku }}</span></div>
                                 </td>
                                 {% set quantity = lineItem.quantity %}
-                                <td class="checkout-order-summary__table-col checkout-order-summary__qty">{{ quantity ? quantity|oro_format_short_product_unit_value(lineItem.productUnit) : 'N/A'|trans }}</td>
+                                <td class="checkout-order-summary__table-col checkout-order-summary__qty">
+                                    {% if oro_is_unit_code_visible(lineItem.productUnit.code) %}
+                                        {{ quantity ? quantity|oro_format_short_product_unit_value(lineItem.productUnit) : 'N/A'|trans }}
+                                    {% else %}
+                                        {{ quantity }}
+                                    {% endif %}
+                                </td>
                                 <td class="checkout-order-summary__table-col checkout-order-summary__price">
                                     <div class="checkout-order-summary__price-inner">
                                         <table class="checkout-order-summary__price-table">

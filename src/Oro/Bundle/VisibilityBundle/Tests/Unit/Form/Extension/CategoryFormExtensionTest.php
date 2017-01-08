@@ -77,10 +77,10 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $defaultProductOptions = new CategoryDefaultProductOptionsType($defaultProductOptionsVisibility);
+        $defaultProductOptions = new CategoryDefaultProductOptionsType();
         $defaultProductOptions->setDataClass('Oro\Bundle\CatalogBundle\Entity\CategoryDefaultProductOptions');
 
-        $categoryUnitPrecision = new CategoryUnitPrecisionType();
+        $categoryUnitPrecision = new CategoryUnitPrecisionType($defaultProductOptionsVisibility);
         $categoryUnitPrecision->setDataClass('Oro\Bundle\CatalogBundle\Model\CategoryUnitPrecision');
 
         return [
