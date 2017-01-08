@@ -125,13 +125,13 @@ services:
         tags:
             - { name: layout.data_provider, alias: oro_shopping_list_shopping_list_form }
 
-    oro_shopping_list.layout.data_provider.single_unit_mode:
-        class: 'Oro\Bundle\ShoppingListBundle\Layout\DataProvider\SingleUnitModeProvider'
+    oro_shopping_list.layout.data_provider.product_unit_code_visibility:
+        class: 'Oro\Bundle\ShoppingListBundle\Layout\DataProvider\ProductUnitCodeVisibilityProvider'
         arguments:
             - "@oro_product.visibility.product_unit_fields_settings"
             - "@oro_product.visibility.unit"
         tags:
-            - { name: layout.data_provider, alias: oro_shopping_list_single_unit_mode }
+            - { name: layout.data_provider, alias: oro_shopping_list_product_unit_code_visibility }
 
     oro_shopping_list.layout.data_provider.account_user_shopping_lists:
         class: 'Oro\Bundle\ShoppingListBundle\Layout\DataProvider\AccountUserShoppingListsProvider'

@@ -8,9 +8,9 @@ use Oro\Bundle\ProductBundle\Visibility\ProductUnitFieldsSettingsInterface;
 use Oro\Bundle\ProductBundle\Visibility\UnitVisibilityInterface;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use Oro\Bundle\ShoppingListBundle\Layout\DataProvider\SingleUnitModeProvider;
+use Oro\Bundle\ShoppingListBundle\Layout\DataProvider\ProductUnitCodeVisibilityProvider;
 
-class SingleUnitModeProviderTest extends \PHPUnit_Framework_TestCase
+class ProductUnitCodeVisibilityProviderTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \PHPUnit_Framework_MockObject_MockObject|ProductUnitFieldsSettingsInterface */
     private $productUnitFieldsSettings;
@@ -18,7 +18,7 @@ class SingleUnitModeProviderTest extends \PHPUnit_Framework_TestCase
     /** @var \PHPUnit_Framework_MockObject_MockObject|UnitVisibilityInterface */
     private $unitVisibility;
 
-    /** @var SingleUnitModeProvider $unitModeProvider */
+    /** @var ProductUnitCodeVisibilityProvider $unitModeProvider */
     protected $unitModeProvider;
 
     public function setUp()
@@ -30,7 +30,10 @@ class SingleUnitModeProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->unitModeProvider = new SingleUnitModeProvider($this->productUnitFieldsSettings, $this->unitVisibility);
+        $this->unitModeProvider = new ProductUnitCodeVisibilityProvider(
+            $this->productUnitFieldsSettings,
+            $this->unitVisibility
+        );
     }
 
     public function testGetProductsUnitSelectionVisibilities()

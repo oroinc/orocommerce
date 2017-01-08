@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\CatalogBundle\Visibility;
 
-use Oro\Bundle\ProductBundle\Service\SingleUnitModeService;
 use Oro\Bundle\ProductBundle\Service\SingleUnitModeServiceInterface;
 
 class SingleUnitCategoryDefaultProductUnitOptionsVisibilityDecorator implements
@@ -14,7 +13,7 @@ class SingleUnitCategoryDefaultProductUnitOptionsVisibilityDecorator implements
     private $optionsVisibility;
 
     /**
-     * @var SingleUnitModeService
+     * @var SingleUnitModeServiceInterface
      */
     private $singleUnitModeService;
 

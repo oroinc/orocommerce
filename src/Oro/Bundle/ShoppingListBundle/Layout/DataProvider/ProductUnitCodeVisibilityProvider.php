@@ -7,7 +7,7 @@ use Oro\Bundle\ProductBundle\Visibility\ProductUnitFieldsSettingsInterface;
 use Oro\Bundle\ProductBundle\Visibility\UnitVisibilityInterface;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
-class SingleUnitModeProvider
+class ProductUnitCodeVisibilityProvider
 {
     /** @var SingleUnitModeService */
     private $productUnitFieldsSettings;

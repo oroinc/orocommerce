@@ -90,7 +90,7 @@ class SingleUnitModeProductUnitFieldsSettingsDecorator implements ProductUnitFie
             $primaryUnitCode = $primaryUnitPrecision->getUnit()->getCode();
             $defaultUnitCode = $this->singleUnitModeService->getDefaultUnitCode();
             $defaultUnit = $this->doctrineHelper->getEntityReference(ProductUnit::class, $defaultUnitCode);
-            if ($defaultUnitCode !== $primaryUnitCode) {
+            if ($defaultUnit && $defaultUnitCode !== $primaryUnitCode) {
                 $units[] = $defaultUnit;
             }
         }
