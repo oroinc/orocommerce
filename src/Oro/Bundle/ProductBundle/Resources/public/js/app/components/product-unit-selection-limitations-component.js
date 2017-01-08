@@ -343,6 +343,9 @@ define(function (require) {
 
             if (selects.length < 1) {
                 table.hide();
+                if(this.getAddButton().length === 0) {
+                  this.options._sourceElement.parents('.control-group:first').hide();
+                }
             } else {
                 table.show();
             }

@@ -160,6 +160,7 @@ oro:
             groups:
                 product.title: 'Product'
                 product_unit_rounding.title: 'Product Unit Rounding'
+                product_single_unit_mode.title: 'Product Single Unit Mode'
                 frontend_inventory_statuses_visibility.title: 'Store Frontend'
                 backend_inventory_statuses_visibility.title: 'Management Console'
                 product_inventory.title: 'Inventory'
@@ -173,6 +174,8 @@ oro:
             fields:
                 enable_quick_order_form.title: Enable Quick Order Form
                 unit_rounding_type.label: 'Unit Rounding Type'
+                single_unit_mode.label: 'Single Unit'
+                single_unit_mode_show_code.label: 'Show Unit Code'
                 general_frontend_inventory_statuses_visibility.label: 'Visible Inventory Statuses'
                 default_unit.label: 'Default Primary Unit'
                 default_unit_precision.label: 'Default Primary Unit Precision'
