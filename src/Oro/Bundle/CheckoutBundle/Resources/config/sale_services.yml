@@ -1,0 +1,14 @@
+services:
+    oro_checkout.shipping_method.provider_main:
+        parent: oro_checkout.shipping_method.price_provider_chain_element
+        calls:
+            - ['setSuccessor', ['@oro_checkout.shipping_method.quote_provider_chain_element']]
+        tags:
+            - { name: layout.data_provider, alias: 'checkout_shipping_methods' }
+
+    oro_checkout.shipping_method.quote_provider_chain_element:
+        class: 'Oro\Bundle\CheckoutBundle\Shipping\Method\Chain\Member\Quote\QuoteCheckoutShippingMethodsProviderChainElement'
+        arguments:
+            - '@oro_checkout.factory.shipping_context_provider_factory'
+            - '@oro_sale.quote.configured_shipping_price_provider'
+            - '@oro_sale.quote.shipping_configuration_factory'

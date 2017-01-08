@@ -24,7 +24,24 @@ class OroCheckoutExtension extends Extension
         $loader->load('block_types.yml');
         $loader->load('form_types.yml');
 
+        $this->registerSaleBundleDependencies($loader, $container);
+
         $container->prependExtensionConfig($this->getAlias(), array_intersect_key($config, array_flip(['settings'])));
+    }
+
+    /**
+     * @param Loader\YamlFileLoader $loader
+     * @param ContainerBuilder $container
+     */
+    private function registerSaleBundleDependencies(Loader\YamlFileLoader $loader, ContainerBuilder $container)
+    {
+        $bundles = $container->getParameter('kernel.bundles');
+
+        if (false === array_key_exists('OroSaleBundle', $bundles)) {
+            return;
+        }
+
+        $loader->load('sale_services.yml');
     }
 
     /**

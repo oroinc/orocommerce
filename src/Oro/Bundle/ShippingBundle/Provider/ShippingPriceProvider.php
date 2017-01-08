@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ShippingBundle\Provider;
 
-use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodConfig;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig;
@@ -11,8 +10,9 @@ use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewCollection;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewFactory;
 use Oro\Bundle\ShippingBundle\Provider\Cache\ShippingPriceCache;
+use Oro\Bundle\ShippingBundle\Provider\Price\ShippingPriceProviderInterface;
 
-class ShippingPriceProvider
+class ShippingPriceProvider implements ShippingPriceProviderInterface
 {
     /** @var ShippingRulesProvider */
     protected $shippingRulesProvider;
@@ -45,9 +45,7 @@ class ShippingPriceProvider
     }
 
     /**
-     * @param ShippingContextInterface $context
-     *
-     * @return ShippingMethodViewCollection
+     * {@inheritdoc}
      */
     public function getApplicableMethodsViews(ShippingContextInterface $context)
     {
@@ -86,11 +84,7 @@ class ShippingPriceProvider
     }
 
     /**
-     * @param ShippingContextInterface $context
-     * @param string $methodId
-     * @param string|int $typeId
-     *
-     * @return Price|null
+     * {@inheritdoc}
      */
     public function getPrice(ShippingContextInterface $context, $methodId, $typeId)
     {

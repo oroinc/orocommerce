@@ -561,8 +561,8 @@ workflows:
                             message: oro.checkout.workflow.condition.order_line_item_has_count.message
                             parameters:
                                 entity: $checkout
-                        - '@has_applicable_shipping_methods':
-                            shippingContext: $.result.shippingContext
+                        - '@checkout_has_applicable_shipping_methods':
+                            checkout: $checkout
                 conditions:
                     '@and':
                         - '@or':

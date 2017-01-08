@@ -7,6 +7,24 @@ use Oro\Bundle\TestFrameworkBundle\Test\DependencyInjection\ExtensionTestCase;
 
 class OroSaleExtensionTest extends ExtensionTestCase
 {
+    /**
+     * {@inheritdoc}
+     */
+    protected function buildContainerMock()
+    {
+        $mockBuilder = $this->getMockBuilder('Symfony\Component\DependencyInjection\ContainerBuilder')
+            ->setMethods(['setDefinition', 'setParameter', 'prependExtensionConfig', 'getParameter'])
+            ->getMock();
+
+        $mockBuilder
+            ->expects($this->once())
+            ->method('getParameter')
+            ->with('kernel.bundles')
+            ->willReturn(['OroShippingBundle' => []]);
+
+        return $mockBuilder;
+    }
+
     public function testLoad()
     {
         $this->loadExtension(new OroSaleExtension());
@@ -27,7 +45,7 @@ class OroSaleExtensionTest extends ExtensionTestCase
             // twig extensions
             'oro_sale.twig.quote',
             // event listeners
-            'oro_sale.event_listener.quote.possible_shipping_methods'
+            'oro_sale.quote_event_listener.possible_shipping_methods'
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
 

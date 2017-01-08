@@ -1,0 +1,73 @@
+services:
+    oro_sale.quote.selected_offers_shipping_context_factory:
+        class: 'Oro\Bundle\SaleBundle\Factory\BasicQuoteShippingContextFactory'
+        arguments:
+            - '@oro_shipping.factory.shipping_context_factory'
+            - '@oro_sale.quote.shipping_line_items_converter_selected_offers'
+
+    oro_sale.quote.first_offers_shipping_context_factory:
+        class: 'Oro\Bundle\SaleBundle\Factory\BasicQuoteShippingContextFactory'
+        arguments:
+            - '@oro_shipping.factory.shipping_context_factory'
+            - '@oro_sale.quote.shipping_line_items_converter_first_offers'
+
+    oro_sale.quote_event_listener.possible_shipping_methods:
+        class: 'Oro\Bundle\SaleBundle\EventListener\Quote\QuotePossibleShippingMethodsEventListener'
+        arguments:
+            - '@oro_sale.quote.first_offers_shipping_context_factory'
+            - '@oro_order.converter.shipping_prices'
+            - '@oro_shipping.shipping_price.provider'
+        tags:
+            - { name: kernel.event_listener, event: oro_sale.quote, method: onQuoteEvent }
+
+    oro_sale.quote.shipping_configuration_factory:
+        class: 'Oro\Bundle\SaleBundle\Quote\Shipping\Configuration\QuoteShippingConfigurationFactory'
+        arguments:
+            - '@oro_shipping.method.composed_configuration_builder_factory'
+
+    oro_sale.quote.configured_shipping_price_provider:
+        class: 'Oro\Bundle\ShippingBundle\Provider\Price\Configured\Basic\BasicShippingConfiguredPriceProvider'
+        arguments:
+            - '@oro_shipping.shipping_price.provider'
+
+    oro_sale.quote.configured_shipping_price_provider_overridden_decorator:
+        class: 'Oro\Bundle\ShippingBundle\Provider\Price\Configured\Decorator\OverriddenCost\OverriddenCostShippingConfiguredPriceProviderDecorator'
+        public: false
+        decorates: oro_sale.quote.configured_shipping_price_provider
+        decoration_priority: 1
+        arguments:
+            - '@oro_sale.quote.configured_shipping_price_provider_overridden_decorator.inner'
+
+    oro_sale.quote.configured_shipping_price_provider_allow_unlisted_decorator:
+        class: 'Oro\Bundle\ShippingBundle\Provider\Price\Configured\Decorator\AllowUnlisted\AllowUnlistedConfiguredPriceProviderDecorator'
+        public: false
+        decorates: oro_sale.quote.configured_shipping_price_provider
+        decoration_priority: 2
+        arguments:
+            - '@oro_shipping.method.view_factory'
+            - '@oro_sale.quote.configured_shipping_price_provider_allow_unlisted_decorator.inner'
+
+    oro_sale.quote.configured_shipping_price_provider_method_locked_decorator:
+        class: 'Oro\Bundle\ShippingBundle\Provider\Price\Configured\Decorator\Locked\MethodLockedConfiguredPriceProviderDecorator'
+        public: false
+        decorates: oro_sale.quote.configured_shipping_price_provider
+        decoration_priority: 3
+        arguments:
+            - '@oro_sale.quote.configured_shipping_price_provider_method_locked_decorator.inner'
+
+    oro_sale.quote_demand.subtotals_calculator_shipping_cost_decorator:
+        class: 'Oro\Bundle\SaleBundle\Quote\Demand\Subtotals\Calculator\Decorator\ShippingCost\ShippingCostQuoteDemandSubtotalsCalculatorDecorator'
+        public: false
+        decorates: oro_sale.quote_demand.subtotals_calculator_main
+        decoration_priority: 1
+        arguments:
+            - '@oro_sale.quote.selected_offers_shipping_context_factory'
+            - '@oro_sale.quote.shipping_configuration_factory'
+            - '@oro_sale.quote.configured_shipping_price_provider'
+            - '@oro_sale.quote_demand.subtotals_calculator_shipping_cost_decorator.inner'
+
+    oro_sale.quote.shipping_line_items_converter_first_offers:
+        class: 'Oro\Bundle\SaleBundle\Quote\Shipping\LineItem\FirstOffers\FirstOffersQuoteToShippingLineItemConverter'
+
+    oro_sale.quote.shipping_line_items_converter_selected_offers:
+        class: 'Oro\Bundle\SaleBundle\Quote\Shipping\LineItem\SelectedOffers\SelectedOffersQuoteToShippingLineItemConverter'

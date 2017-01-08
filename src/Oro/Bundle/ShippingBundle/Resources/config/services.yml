@@ -291,3 +291,6 @@ services:
         class: Oro\Bundle\ShippingBundle\Method\ShippingMethodViewFactory
         arguments:
             - '@oro_shipping.shipping_method.registry'
+
+    oro_shipping.method.composed_configuration_builder_factory:
+        class: Oro\Bundle\ShippingBundle\Method\Configuration\Composed\ComposedShippingMethodConfigurationBuilderFactory

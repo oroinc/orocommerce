@@ -7,7 +7,7 @@ use Oro\Bundle\OrderBundle\Converter\ShippingPricesConverter;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Event\QuoteEvent;
 use Oro\Bundle\SaleBundle\EventListener\Quote\QuotePossibleShippingMethodsEventListener;
-use Oro\Bundle\SaleBundle\Factory\QuoteShippingContextFactory;
+use Oro\Bundle\SaleBundle\Factory\QuoteShippingContextFactoryInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewCollection;
 use Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider;
@@ -16,7 +16,7 @@ use Symfony\Component\Form\FormInterface;
 class QuotePossibleShippingMethodsEventListenerTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var QuoteShippingContextFactory|\PHPUnit_Framework_MockObject_MockObject
+     * @var QuoteShippingContextFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $factory;
 
@@ -37,7 +37,7 @@ class QuotePossibleShippingMethodsEventListenerTest extends \PHPUnit_Framework_T
 
     protected function setUp()
     {
-        $this->factory = $this->getMockBuilder(QuoteShippingContextFactory::class)
+        $this->factory = $this->getMockBuilder(QuoteShippingContextFactoryInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->priceProvider = $this->getMockBuilder(ShippingPriceProvider::class)
@@ -187,26 +187,5 @@ class QuotePossibleShippingMethodsEventListenerTest extends \PHPUnit_Framework_T
                 ],
             ],
         ];
-    }
-
-    public function testOnOrderEventWithoutProvider()
-    {
-        $this->listener = new QuotePossibleShippingMethodsEventListener($this->factory, $this->priceConverter, null);
-        $quote = new Quote();
-        $this->factory->expects(static::never())
-            ->method('create');
-
-        $this->priceProvider->expects(static::never())
-            ->method('getApplicableMethodsViews');
-
-        $methods = ['field' => 'value'];
-        $event = new QuoteEvent($this->getMock(FormInterface::class), $quote, $methods);
-
-        $this->listener->onQuoteEvent($event);
-
-        static::assertArrayNotHasKey(
-            QuotePossibleShippingMethodsEventListener::POSSIBLE_SHIPPING_METHODS_KEY,
-            $event->getData()
-        );
     }
 }

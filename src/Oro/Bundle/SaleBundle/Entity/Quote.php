@@ -16,6 +16,9 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\SaleBundle\Model\ExtendQuote;
+use Oro\Bundle\ShippingBundle\Method\Configuration\AllowUnlistedShippingMethodConfigurationInterface;
+use Oro\Bundle\ShippingBundle\Method\Configuration\MethodLockedShippingMethodConfigurationInterface;
+use Oro\Bundle\ShippingBundle\Method\Configuration\OverriddenCostShippingMethodConfigurationInterface;
 use Oro\Bundle\UserBundle\Entity\Ownership\AuditableUserAwareTrait;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
@@ -62,7 +65,10 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 class Quote extends ExtendQuote implements
     AccountOwnerAwareInterface,
     EmailHolderInterface,
-    OrganizationAwareInterface
+    OrganizationAwareInterface,
+    MethodLockedShippingMethodConfigurationInterface,
+    AllowUnlistedShippingMethodConfigurationInterface,
+    OverriddenCostShippingMethodConfigurationInterface
 {
     use AuditableUserAwareTrait;
     use AuditableFrontendAccountUserAwareTrait;
@@ -880,5 +886,13 @@ class Quote extends ExtendQuote implements
         $this->shippingMethodLocked = $shippingMethodLocked;
 
         return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isOverriddenShippingCost()
+    {
+        return null !== $this->overriddenShippingCostAmount;
     }
 }

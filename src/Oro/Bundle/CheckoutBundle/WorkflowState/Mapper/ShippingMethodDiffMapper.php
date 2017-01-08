@@ -3,33 +3,23 @@
 namespace Oro\Bundle\CheckoutBundle\WorkflowState\Mapper;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\Factory\ShippingContextProviderFactory;
-use Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider;
+use Oro\Bundle\CheckoutBundle\Shipping\Method\CheckoutShippingMethodsProviderInterface;
 
 class ShippingMethodDiffMapper implements CheckoutStateDiffMapperInterface
 {
     const DATA_NAME = 'shipping_method';
 
     /**
-     * @var ShippingPriceProvider
+     * @var CheckoutShippingMethodsProviderInterface
      */
-    protected $shippingPriceProvider;
+    private $checkoutShippingMethodsProvider;
 
     /**
-     * @var ShippingContextProviderFactory
+     * @param CheckoutShippingMethodsProviderInterface $checkoutShippingMethodsProvider
      */
-    protected $shippingContextProviderFactory;
-
-    /**
-     * @param ShippingPriceProvider $shippingPriceProvider
-     * @param ShippingContextProviderFactory $shippingContextProviderFactory
-     */
-    public function __construct(
-        ShippingPriceProvider $shippingPriceProvider,
-        ShippingContextProviderFactory $shippingContextProviderFactory
-    ) {
-        $this->shippingPriceProvider = $shippingPriceProvider;
-        $this->shippingContextProviderFactory = $shippingContextProviderFactory;
+    public function __construct(CheckoutShippingMethodsProviderInterface $checkoutShippingMethodsProvider)
+    {
+        $this->checkoutShippingMethodsProvider = $checkoutShippingMethodsProvider;
     }
 
     /**
@@ -57,11 +47,8 @@ class ShippingMethodDiffMapper implements CheckoutStateDiffMapperInterface
         $shippingMethod = $checkout->getShippingMethod();
         if ($shippingMethod) {
             $shippingMethodType = $checkout->getShippingMethodType();
-            $price = $this->shippingPriceProvider->getPrice(
-                $this->shippingContextProviderFactory->create($checkout),
-                $shippingMethod,
-                $shippingMethodType
-            );
+            $price = $this->checkoutShippingMethodsProvider->getPrice($checkout);
+
             if ($price) {
                 return md5(serialize([
                     'method' => $shippingMethod,

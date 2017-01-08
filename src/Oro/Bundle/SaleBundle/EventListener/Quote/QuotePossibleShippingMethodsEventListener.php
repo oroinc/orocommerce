@@ -4,7 +4,7 @@ namespace Oro\Bundle\SaleBundle\EventListener\Quote;
 
 use Oro\Bundle\OrderBundle\Converter\ShippingPricesConverter;
 use Oro\Bundle\SaleBundle\Event\QuoteEvent;
-use Oro\Bundle\SaleBundle\Factory\QuoteShippingContextFactory;
+use Oro\Bundle\SaleBundle\Factory\QuoteShippingContextFactoryInterface;
 use Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider;
 
 class QuotePossibleShippingMethodsEventListener
@@ -13,12 +13,12 @@ class QuotePossibleShippingMethodsEventListener
     const POSSIBLE_SHIPPING_METHODS_KEY = 'possibleShippingMethods';
 
     /**
-     * @var QuoteShippingContextFactory
+     * @var QuoteShippingContextFactoryInterface
      */
-    protected $factory;
+    protected $quoteShippingContextFactory;
 
     /**
-     * @var ShippingPriceProvider|null
+     * @var ShippingPriceProvider
      */
     protected $priceProvider;
 
@@ -28,16 +28,16 @@ class QuotePossibleShippingMethodsEventListener
     protected $priceConverter;
 
     /**
-     * @param QuoteShippingContextFactory $factory
+     * @param QuoteShippingContextFactoryInterface $factory
      * @param ShippingPricesConverter $priceConverter
-     * @param ShippingPriceProvider|null $priceProvider
+     * @param ShippingPriceProvider $priceProvider
      */
     public function __construct(
-        QuoteShippingContextFactory $factory,
+        QuoteShippingContextFactoryInterface $factory,
         ShippingPricesConverter $priceConverter,
-        ShippingPriceProvider $priceProvider = null
+        ShippingPriceProvider $priceProvider
     ) {
-        $this->factory = $factory;
+        $this->quoteShippingContextFactory = $factory;
         $this->priceConverter = $priceConverter;
         $this->priceProvider = $priceProvider;
     }
@@ -56,7 +56,7 @@ class QuotePossibleShippingMethodsEventListener
         ) {
             $data = [];
             if ($this->priceProvider) {
-                $shippingContext = $this->factory->create($event->getQuote());
+                $shippingContext = $this->quoteShippingContextFactory->create($event->getQuote());
                 $shippingMethodViews = $this->priceProvider
                     ->getApplicableMethodsViews($shippingContext)
                     ->toArray();
@@ -66,4 +66,3 @@ class QuotePossibleShippingMethodsEventListener
         }
     }
 }
-

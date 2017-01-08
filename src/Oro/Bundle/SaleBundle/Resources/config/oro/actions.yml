@@ -235,6 +235,10 @@ action_groups:
                         parameters: [$.disallow_shipping_address_edit, false]
             - '@assign_value':
                 parameters: [$.shippingCost, $.data.quote.shippingCost]
+            - '@assign_value':
+                parameters: [$.shippingMethod, $.data.quote.shippingMethod]
+            - '@assign_value':
+                parameters: [$.shippingMethodType, $.data.quote.shippingMethodType]
             - '@start_checkout':
                 source_name: 'quoteDemand'
                 source_entity: $.data
@@ -242,6 +246,8 @@ action_groups:
                 data:
                     shippingAddress: $.orderAddress
                     shippingCost: $.shippingCost
+                    shippingMethod: $.shippingMethod
+                    shippingMethodType: $.shippingMethodType
                 settings:
                     allow_manual_source_remove: false
                     auto_remove_source: true
