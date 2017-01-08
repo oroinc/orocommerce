@@ -40,9 +40,9 @@ class CustomerUserManager extends BaseUserManager implements ContainerAwareInter
     }
 
     /**
-     * @param AccountUser $user
+     * @param CustomerUser $user
      */
-    public function register(AccountUser $user)
+    public function register(CustomerUser $user)
     {
         if ($this->isConfirmationRequired()) {
             $this->sendConfirmationEmail($user);
@@ -52,9 +52,9 @@ class CustomerUserManager extends BaseUserManager implements ContainerAwareInter
     }
 
     /**
-     * @param AccountUser $user
+     * @param CustomerUser $user
      */
-    public function confirmRegistration(AccountUser $user)
+    public function confirmRegistration(CustomerUser $user)
     {
         $user->setConfirmed(true)
             ->setConfirmationToken(null);
@@ -62,9 +62,9 @@ class CustomerUserManager extends BaseUserManager implements ContainerAwareInter
     }
 
     /**
-     * @param AccountUser $user
+     * @param CustomerUser $user
      */
-    public function sendWelcomeEmail(AccountUser $user)
+    public function sendWelcomeEmail(CustomerUser $user)
     {
         try {
             $this->getEmailProcessor()->sendWelcomeNotification(
@@ -79,9 +79,9 @@ class CustomerUserManager extends BaseUserManager implements ContainerAwareInter
     }
 
     /**
-     * @param AccountUser $user
+     * @param CustomerUser $user
      */
-    public function sendConfirmationEmail(AccountUser $user)
+    public function sendConfirmationEmail(CustomerUser $user)
     {
         $user->setConfirmed(false)
             ->setConfirmationToken($user->generateToken());
@@ -95,9 +95,9 @@ class CustomerUserManager extends BaseUserManager implements ContainerAwareInter
     }
 
     /**
-     * @param AccountUser $user
+     * @param CustomerUser $user
      */
-    public function sendResetPasswordEmail(AccountUser $user)
+    public function sendResetPasswordEmail(CustomerUser $user)
     {
         $this->getEmailProcessor()->sendResetPasswordEmail($user);
     }

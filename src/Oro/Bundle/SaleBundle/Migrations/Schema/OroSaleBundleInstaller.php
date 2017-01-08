@@ -61,7 +61,7 @@ class OroSaleBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_12';
+        return 'v1_13';
     }
 
     /**
@@ -105,16 +105,16 @@ class OroSaleBundleInstaller implements
     }
 
     /**
-     * Create oro_quote_assigned_acc_users table
+     * Create oro_quote_assigned_cus_users table
      *
      * @param Schema $schema
      */
     protected function createOroQuoteAssignedAccUsersTable(Schema $schema)
     {
-        $table = $schema->createTable('oro_quote_assigned_acc_users');
+        $table = $schema->createTable('oro_quote_assigned_cus_users');
         $table->addColumn('quote_id', 'integer', []);
-        $table->addColumn('account_user_id', 'integer', []);
-        $table->setPrimaryKey(['quote_id', 'account_user_id']);
+        $table->addColumn('customer_user_id', 'integer', []);
+        $table->setPrimaryKey(['quote_id', 'customer_user_id']);
     }
 
     /**
@@ -139,7 +139,7 @@ class OroSaleBundleInstaller implements
     {
         $table = $schema->createTable('oro_sale_quote');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('account_user_id', 'integer', ['notnull' => false]);
+        $table->addColumn('customer_user_id', 'integer', ['notnull' => false]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('request_id', 'integer', ['notnull' => false]);
         $table->addColumn('account_id', 'integer', ['notnull' => false]);
@@ -268,16 +268,16 @@ class OroSaleBundleInstaller implements
     }
 
     /**
-     * Add oro_quote_assigned_acc_users foreign keys.
+     * Add oro_quote_assigned_cus_users foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroQuoteAssignedAccUsersForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('oro_quote_assigned_acc_users');
+        $table = $schema->getTable('oro_quote_assigned_cus_users');
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_account_user'),
-            ['account_user_id'],
+            $schema->getTable('oro_customer_user'),
+            ['customer_user_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
@@ -320,8 +320,8 @@ class OroSaleBundleInstaller implements
     {
         $table = $schema->getTable('oro_sale_quote');
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_account_user'),
-            ['account_user_id'],
+            $schema->getTable('oro_customer_user'),
+            ['customer_user_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
@@ -554,7 +554,7 @@ class OroSaleBundleInstaller implements
         $table = $schema->createTable('oro_quote_demand');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('account_id', 'integer', ['notnull' => false]);
-        $table->addColumn('account_user_id', 'integer', ['notnull' => false]);
+        $table->addColumn('customer_user_id', 'integer', ['notnull' => false]);
         $table->addColumn('quote_id', 'integer', ['notnull' => false]);
         $table->addColumn(
             'subtotal',
@@ -622,8 +622,8 @@ class OroSaleBundleInstaller implements
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_account_user'),
-            ['account_user_id'],
+            $schema->getTable('oro_customer_user'),
+            ['customer_user_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );

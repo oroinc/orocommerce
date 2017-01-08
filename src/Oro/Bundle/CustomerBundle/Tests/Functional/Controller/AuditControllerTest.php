@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CustomerBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
@@ -37,14 +37,14 @@ class AuditControllerTest extends WebTestCase
     }
 
     /**
-     * @return AccountUser
+     * @return CustomerUser
      */
     protected function getCurrentUser()
     {
         return $this->getContainer()
             ->get('doctrine')
-            ->getManagerForClass('OroCustomerBundle:AccountUser')
-            ->getRepository('OroCustomerBundle:AccountUser')
+            ->getManagerForClass('OroCustomerBundle:CustomerUser')
+            ->getRepository('OroCustomerBundle:CustomerUser')
             ->findOneBy(['username' => LoadAccountUserData::AUTH_USER]);
     }
 }

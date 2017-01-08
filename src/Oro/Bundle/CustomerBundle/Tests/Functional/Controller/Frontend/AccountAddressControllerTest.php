@@ -5,7 +5,7 @@ namespace Oro\Bundle\CustomerBundle\Tests\Functional\Controller\Frontend;
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountAddressACLData;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountAddressesACLData;
@@ -114,7 +114,7 @@ class AccountAddressControllerTest extends WebTestCase
             'id="oro_account_frontend_typed_address_frontend_owner" ' .
             'tabindex="-1" class="select2-offscreen"> ' .
             '<option value="" selected="selected"></option> ' .
-            '<option value="' . $user->getAccount()->getId() . '">AccountUser</option> </select>'
+            '<option value="' . $user->getAccount()->getId() . '">CustomerUser</option> </select>'
         );
         $field = new ChoiceFormField($doc->getElementsByTagName('select')->item(0));
         $form->set($field);
@@ -216,7 +216,7 @@ class AccountAddressControllerTest extends WebTestCase
     public function testACL($route, $resource, $user, $status)
     {
         $this->loginUser($user);
-        /* @var $resource AccountUser */
+        /* @var $resource CustomerUser */
         $resource = $this->getReference($resource);
         /** @var Account $account */
         $account = $resource->getAccount();

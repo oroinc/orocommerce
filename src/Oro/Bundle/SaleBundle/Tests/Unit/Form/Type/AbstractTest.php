@@ -13,7 +13,7 @@ use Oro\Bundle\CurrencyBundle\Tests\Unit\Form\Type\PriceTypeGenerator;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Form\Type\AccountUserMultiSelectType;
 
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
@@ -307,7 +307,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
 
     /**
      * @param int $id
-     * @return AccountUser
+     * @return CustomerUser
      */
     protected function getAccountUser($id)
     {
@@ -316,8 +316,8 @@ abstract class AbstractTest extends FormIntegrationTestCase
 
         $account = $this->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\Account')->getMock();
 
-        /** @var AccountUser $accountUser */
-        $accountUser = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountUser', $id);
+        /** @var CustomerUser $accountUser */
+        $accountUser = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUser', $id);
         $accountUser->setEmail('test@test.test')
             ->setFirstName('First Name')
             ->setLastName('Last Name')

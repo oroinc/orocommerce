@@ -76,7 +76,7 @@ define(function(require) {
         },
 
         /**
-         * Handle AccountUser change
+         * Handle CustomerUser change
          *
          * @param {jQuery.Event} e
          */

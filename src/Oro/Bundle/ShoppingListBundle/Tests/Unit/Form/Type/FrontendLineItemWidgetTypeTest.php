@@ -5,7 +5,7 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Form\Type;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
@@ -221,8 +221,8 @@ class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
         /** @var \PHPUnit_Framework_MockObject_MockObject|TokenInterface $accountUser */
         $token = $this->createMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|AccountUser $accountUser */
-        $accountUser = $this->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\AccountUser')
+        /** @var \PHPUnit_Framework_MockObject_MockObject|CustomerUser $accountUser */
+        $accountUser = $this->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\CustomerUser')
             ->disableOriginalConstructor()
             ->getMock();
 

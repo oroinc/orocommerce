@@ -11,7 +11,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Collections\Criteria;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\Repository\CustomerUserRoleRepository;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
@@ -83,7 +83,7 @@ class FrontendCustomerUserRoleSelectType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $loggedUser = $this->securityFacade->getLoggedUser();
-        if (!$loggedUser instanceof AccountUser) {
+        if (!$loggedUser instanceof CustomerUser) {
             return;
         }
 

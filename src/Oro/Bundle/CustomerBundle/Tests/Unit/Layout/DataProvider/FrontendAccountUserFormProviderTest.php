@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CustomerBundle\Tests\Unit\Layout\DataProvider;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Form\Type\AccountUserPasswordRequestType;
 use Oro\Bundle\CustomerBundle\Form\Type\AccountUserPasswordResetType;
 use Oro\Bundle\CustomerBundle\Form\Type\FrontendOwnerSelectType;
@@ -50,11 +50,11 @@ class FrontendAccountUserFormProviderTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider getAccountUserFormProvider
      *
-     * @param AccountUser $accountUser
+     * @param CustomerUser $accountUser
      * @param string $route
      * @param array $routeParameters
      */
-    public function testGetAccountUserFormView(AccountUser $accountUser, $route, array $routeParameters = [])
+    public function testGetAccountUserFormView(CustomerUser $accountUser, $route, array $routeParameters = [])
     {
         $this->router->expects($this->exactly(2))
             ->method('generate')
@@ -73,11 +73,11 @@ class FrontendAccountUserFormProviderTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider getAccountUserFormProvider
      *
-     * @param AccountUser $accountUser
+     * @param CustomerUser $accountUser
      * @param string $route
      * @param array $routeParameters
      */
-    public function testGetAccountUserForm(AccountUser $accountUser, $route, array $routeParameters = [])
+    public function testGetAccountUserForm(CustomerUser $accountUser, $route, array $routeParameters = [])
     {
         $this->router->expects($this->exactly(2))
             ->method('generate')
@@ -185,7 +185,7 @@ class FrontendAccountUserFormProviderTest extends \PHPUnit_Framework_TestCase
             ->willReturn($view);
 
         $target = new \stdClass();
-        $selectedAccountUser = new AccountUser();
+        $selectedAccountUser = new CustomerUser();
         $this->formFactory->expects($this->once())
             ->method('create')
             ->with(FrontendOwnerSelectType::NAME, $selectedAccountUser, ['targetObject' => $target])
@@ -196,11 +196,11 @@ class FrontendAccountUserFormProviderTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider getProfileFormProvider
      *
-     * @param AccountUser $accountUser
+     * @param CustomerUser $accountUser
      * @param string $route
      * @param array $routeParameters
      */
-    public function testGetProfileFormView(AccountUser $accountUser, $route, array $routeParameters = [])
+    public function testGetProfileFormView(CustomerUser $accountUser, $route, array $routeParameters = [])
     {
         $this->router->expects($this->exactly(2))
             ->method('generate')
@@ -219,11 +219,11 @@ class FrontendAccountUserFormProviderTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider getProfileFormProvider
      *
-     * @param AccountUser $accountUser
+     * @param CustomerUser $accountUser
      * @param string $route
      * @param array $routeParameters
      */
-    public function testGetProfileForm(AccountUser $accountUser, $route, array $routeParameters = [])
+    public function testGetProfileForm(CustomerUser $accountUser, $route, array $routeParameters = [])
     {
         $this->router->expects($this->exactly(2))
             ->method('generate')
@@ -246,11 +246,11 @@ class FrontendAccountUserFormProviderTest extends \PHPUnit_Framework_TestCase
     {
         return [
             [
-                'accountUser' => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountUser'),
+                'accountUser' => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUser'),
                 'route' => 'oro_customer_frontend_account_user_create'
             ],
             [
-                'accountUser' => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountUser', ['id' => 42]),
+                'accountUser' => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUser', ['id' => 42]),
                 'route' => 'oro_customer_frontend_account_user_update',
                 'routeParameters' => ['id' => 42]
             ]
@@ -264,7 +264,7 @@ class FrontendAccountUserFormProviderTest extends \PHPUnit_Framework_TestCase
     {
         return [
             [
-                'accountUser' => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountUser', ['id' => 42]),
+                'accountUser' => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUser', ['id' => 42]),
                 'route' => 'oro_customer_frontend_account_user_profile_update',
                 'routeParameters' => ['id' => 42]
             ]

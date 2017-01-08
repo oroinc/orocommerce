@@ -7,7 +7,7 @@ use Oro\Bundle\UserBundle\Entity\UserInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\VisibilityBundle\EventListener\CategoryTreeHandlerListener;
 use Oro\Bundle\CustomerBundle\Provider\AccountUserRelationsProvider;
 use Oro\Bundle\VisibilityBundle\Visibility\Resolver\CategoryVisibilityResolverInterface;
@@ -112,7 +112,7 @@ class CategoryTreeHandlerListenerTest extends \PHPUnit_Framework_TestCase
                 ->method('isCategoryVisibleForAccountGroup');
             $this->categoryVisibilityResolver->expects($this->never())
                 ->method('getHiddenCategoryIds');
-        } elseif ($user instanceof AccountUser && $account) {
+        } elseif ($user instanceof CustomerUser && $account) {
             $this->accountUserRelationsProvider->expects($this->once())
                 ->method('getAccount')
                 ->with($user)
@@ -188,7 +188,7 @@ class CategoryTreeHandlerListenerTest extends \PHPUnit_Framework_TestCase
                     ['id' => 9, 'parent' => 5],
                 ],
                 'hiddenCategoryIds' => [3],
-                'user' => new AccountUser(),
+                'user' => new CustomerUser(),
                 'account' => $this->getEntity(Account::class, ['id' => 42])
             ]
         ];

@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\Persistence\ObjectManager;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 
 class LoadCustomerUserRoleACLData extends AbstractLoadACLData
@@ -58,7 +58,7 @@ class LoadCustomerUserRoleACLData extends AbstractLoadACLData
             $entity->setLabel($name);
             $entity->setSelfManaged(true);
 
-            /** @var AccountUser $accountUser */
+            /** @var CustomerUser $accountUser */
             $accountUser = $this->getReference($role['accountUser']);
             if ($name !== self::ROLE_WITHOUT_ACCOUNT_1_USER_LOCAL) {
                 $entity->setAccount($accountUser->getCustomer());

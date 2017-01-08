@@ -8,7 +8,7 @@ use Symfony\Component\Form\FormInterface;
 
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Component\Testing\Unit\FormHandlerTestCase;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Form\Handler\AccountUserHandler;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -45,7 +45,7 @@ class AccountUserHandlerTest extends FormHandlerTestCase
     protected $logger;
 
     /**
-     * @var AccountUser
+     * @var CustomerUser
      */
     protected $entity;
 
@@ -56,7 +56,7 @@ class AccountUserHandlerTest extends FormHandlerTestCase
     {
         parent::setUp();
 
-        $this->entity = new AccountUser();
+        $this->entity = new CustomerUser();
 
         $this->userManager = $this->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\CustomerUserManager')
             ->disableOriginalConstructor()

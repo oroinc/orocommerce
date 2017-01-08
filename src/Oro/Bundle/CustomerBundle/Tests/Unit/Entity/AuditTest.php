@@ -4,7 +4,7 @@ namespace Oro\Bundle\CustomerBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\DataAuditBundle\Entity\AuditField;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\Audit;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
@@ -14,7 +14,7 @@ class AuditTest extends \PHPUnit_Framework_TestCase
 
     public function testUser()
     {
-        $user = new AccountUser();
+        $user = new CustomerUser();
         $audit = new Audit();
         $audit->setUser($user);
         $this->assertSame($user, $audit->getUser());
@@ -23,7 +23,7 @@ class AuditTest extends \PHPUnit_Framework_TestCase
     public function testAccessors()
     {
         $properties = [
-            ['objectName', (string)(new AccountUser())],
+            ['objectName', (string)(new CustomerUser())],
             ['objectId', 2],
             ['organization', new Organization()],
             ['id', 2],

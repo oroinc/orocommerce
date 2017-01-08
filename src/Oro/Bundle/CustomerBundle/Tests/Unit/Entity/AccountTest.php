@@ -4,7 +4,7 @@ namespace Oro\Bundle\CustomerBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
@@ -27,7 +27,7 @@ class AccountTest extends \PHPUnit_Framework_TestCase
             ['organization', $this->createOrganization()],
         ]);
         $this->assertPropertyCollections(new Account(), [
-            ['users', new AccountUser()],
+            ['users', new CustomerUser()],
             ['salesRepresentatives', new User()],
         ]);
     }
@@ -77,11 +77,11 @@ class AccountTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return AccountUser
+     * @return CustomerUser
      */
     protected function createUserEntity()
     {
-        return new AccountUser();
+        return new CustomerUser();
     }
 
     /**

@@ -4,7 +4,7 @@ namespace Oro\Bundle\PaymentBundle\Context\Builder\Basic;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 use Oro\Bundle\PaymentBundle\Context\Builder\PaymentContextBuilderInterface;
 use Oro\Bundle\PaymentBundle\Context\LineItem\Collection\Factory\PaymentLineItemCollectionFactoryInterface;
@@ -65,7 +65,7 @@ class BasicPaymentContextBuilder implements PaymentContextBuilderInterface
     private $customer;
 
     /**
-     * @var AccountUser
+     * @var CustomerUser
      */
     private $customerUser;
 
@@ -206,7 +206,7 @@ class BasicPaymentContextBuilder implements PaymentContextBuilderInterface
     /**
      * {@inheritDoc}
      */
-    public function setCustomerUser(AccountUser $customerUser)
+    public function setCustomerUser(CustomerUser $customerUser)
     {
         $this->customerUser = $customerUser;
 

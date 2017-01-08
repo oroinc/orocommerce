@@ -97,7 +97,7 @@ navigation:
                     description: 'oro.customer.menu.shortcut_account_list.description'
 
             account_users:
-                label: 'oro.customer.accountuser.entity_plural_label'
+                label: 'oro.customer.customeruser.entity_plural_label'
                 route: 'oro_customer_account_user_index'
                 extras:
                     position: 30
@@ -235,13 +235,13 @@ navigation:
         oro_customer_customer_user_role_create:    oro.ui.create_entity
 
         oro_customer_frontend_account_user_profile: 'oro.customer.frontend.account_user.profile.label'
-        oro_customer_frontend_account_user_profile_update: oro.customer.accountuser.profile.edit
+        oro_customer_frontend_account_user_profile_update: oro.customer.customeruser.profile.edit
 
-        oro_customer_account_user_security_login: oro.customer.accountuser.profile.login
-        oro_customer_frontend_account_user_register: oro.customer.accountuser.profile.registration.title
-        oro_customer_frontend_account_user_reset_request: oro.customer.accountuser.profile.forgot_password
-        oro_customer_frontend_account_user_reset_check_email: oro.customer.accountuser.profile.check_email.title
-        oro_customer_frontend_account_user_password_reset: oro.customer.accountuser.profile.reset_password.title
+        oro_customer_account_user_security_login: oro.customer.customeruser.profile.login
+        oro_customer_frontend_account_user_register: oro.customer.customeruser.profile.registration.title
+        oro_customer_frontend_account_user_reset_request: oro.customer.customeruser.profile.forgot_password
+        oro_customer_frontend_account_user_reset_check_email: oro.customer.customeruser.profile.check_email.title
+        oro_customer_frontend_account_user_password_reset: oro.customer.customeruser.profile.reset_password.title
 
         oro_customer_frontend_customer_user_role_index:  'oro.customer.frontend.account_user.role.entity_plural_label'
         oro_customer_frontend_customer_user_role_view:   'oro.customer.frontend.account_user.role.entity_plural_label - oro.ui.view'

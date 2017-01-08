@@ -4,7 +4,7 @@ namespace Oro\Bundle\ShippingBundle\Context\Builder\Basic;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 use Oro\Bundle\ShippingBundle\Context\Builder\ShippingContextBuilderInterface;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Factory\ShippingLineItemCollectionFactoryInterface;
@@ -66,7 +66,7 @@ class BasicShippingContextBuilder implements ShippingContextBuilderInterface
     private $customer;
 
     /**
-     * @var AccountUser
+     * @var CustomerUser
      */
     private $customerUser;
 
@@ -220,7 +220,7 @@ class BasicShippingContextBuilder implements ShippingContextBuilderInterface
     /**
      * {@inheritDoc}
      */
-    public function setCustomerUser(AccountUser $customerUser)
+    public function setCustomerUser(CustomerUser $customerUser)
     {
         $this->customerUser = $customerUser;
 

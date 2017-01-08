@@ -10,7 +10,7 @@ use Oro\Bundle\SecurityBundle\Acl\Voter\AbstractEntityVoter;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 use Oro\Bundle\CustomerBundle\Entity\Repository\CustomerUserRoleRepository;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 
 class CustomerUserRoleVoter extends AbstractEntityVoter
 {
@@ -107,10 +107,10 @@ class CustomerUserRoleVoter extends AbstractEntityVoter
      */
     protected function getPermissionForAccountRole($type)
     {
-        /* @var $user AccountUser */
+        /* @var $user CustomerUser */
         $user = $this->getLoggedUser();
 
-        if (!$user instanceof AccountUser) {
+        if (!$user instanceof CustomerUser) {
             return self::ACCESS_DENIED;
         }
 
@@ -137,7 +137,7 @@ class CustomerUserRoleVoter extends AbstractEntityVoter
     }
 
     /**
-     * @return AccountUser|null
+     * @return CustomerUser|null
      */
     protected function getLoggedUser()
     {

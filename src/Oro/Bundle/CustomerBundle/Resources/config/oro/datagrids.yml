@@ -315,16 +315,16 @@ datagrids:
                     - { table: %oro_customer.entity.account_user.class%, alias: accountUser }
         columns:
             firstName:
-                label: oro.customer.accountuser.first_name.label
+                label: oro.customer.customeruser.first_name.label
             lastName:
-                label: oro.customer.accountuser.last_name.label
+                label: oro.customer.customeruser.last_name.label
             email:
-                label: oro.customer.accountuser.email.label
+                label: oro.customer.customeruser.email.label
             enabled:
-                label: oro.customer.accountuser.enabled.label
+                label: oro.customer.customeruser.enabled.label
                 frontend_type: boolean
             confirmed:
-                label: oro.customer.accountuser.confirmed.label
+                label: oro.customer.customeruser.confirmed.label
                 frontend_type: boolean
         properties:
             id: ~
@@ -376,7 +376,7 @@ datagrids:
                         - { join: accountUser.account, alias: customer }
         columns:
             accountName:
-                label: oro.customer.accountuser.account.label
+                label: oro.customer.customeruser.account.label
                 order: -1
         sorters:
             columns:
@@ -441,7 +441,7 @@ datagrids:
                         - { join: accountUser.account, alias: customer }
         columns:
             accountName:
-                label: oro.customer.accountuser.account.label
+                label: oro.customer.customeruser.account.label
                 order: -1
         sorters:
             columns:
@@ -605,15 +605,15 @@ datagrids:
         extends: account-account-users-grid-basic
         columns:
             hasRole:
-                label: oro.customer.accountuser.has_role.label
+                label: oro.customer.customeruser.has_role.label
                 editable: true
                 frontend_type: boolean
             firstName:
-                label: oro.customer.accountuser.first_name.label
+                label: oro.customer.customeruser.first_name.label
             lastName:
-                label: oro.customer.accountuser.last_name.label
+                label: oro.customer.customeruser.last_name.label
             email:
-                label: oro.customer.accountuser.email.label
+                label: oro.customer.customeruser.email.label
         filters:
             columns:
                 hasRole:
@@ -681,11 +681,11 @@ datagrids:
                     default: NULL
         columns:
             firstName:
-                label: oro.customer.accountuser.first_name.label
+                label: oro.customer.customeruser.first_name.label
             lastName:
-                label: oro.customer.accountuser.last_name.label
+                label: oro.customer.customeruser.last_name.label
             email:
-                label: oro.customer.accountuser.email.label
+                label: oro.customer.customeruser.email.label
 
     account-account-users-grid-view:
         acl_resource: oro_account_account_user_view
@@ -699,7 +699,7 @@ datagrids:
                         - { join: user.account, alias: userAccount }
         columns:
             accountName:
-                label: oro.customer.accountuser.account.label
+                label: oro.customer.customeruser.account.label
         filters:
             columns:
                 accountName:
@@ -807,7 +807,7 @@ datagrids:
                         - { join: user.account, alias: userAccount }
         columns:
             accountName:
-                label: oro.customer.accountuser.account.label
+                label: oro.customer.customeruser.account.label
         filters:
             columns:
                 accountName:
@@ -825,7 +825,7 @@ datagrids:
         extends: frontend-account-account-users-grid-basic
         columns:
             hasRole:
-                label: oro.customer.accountuser.has_role.label
+                label: oro.customer.customeruser.has_role.label
                 editable: true
                 frontend_type: boolean
             fullName:

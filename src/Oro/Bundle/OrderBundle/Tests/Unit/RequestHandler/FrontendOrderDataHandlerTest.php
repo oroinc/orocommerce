@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\OrderBundle\RequestHandler\FrontendOrderDataHandler;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
@@ -83,7 +83,7 @@ class FrontendOrderDataHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function testGetAccountUser()
     {
-        $accountUser = new AccountUser();
+        $accountUser = new CustomerUser();
         $this->securityFacade->expects($this->once())
             ->method('getLoggedUser')
             ->willReturn($accountUser);
@@ -93,7 +93,7 @@ class FrontendOrderDataHandlerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Only AccountUser can create an Order
+     * @expectedExceptionMessage Only CustomerUser can create an Order
      */
     public function testGetAccountUserWithoutAccountUser()
     {
@@ -107,7 +107,7 @@ class FrontendOrderDataHandlerTest extends \PHPUnit_Framework_TestCase
     public function testGetAccount()
     {
         $account = new Account();
-        $accountUser = new AccountUser();
+        $accountUser = new CustomerUser();
         $accountUser->setAccount($account);
 
         $this->securityFacade->expects($this->once())
@@ -120,7 +120,7 @@ class FrontendOrderDataHandlerTest extends \PHPUnit_Framework_TestCase
     public function testGetPaymentTerm()
     {
         $account = new Account();
-        $accountUser = new AccountUser();
+        $accountUser = new CustomerUser();
         $accountUser->setAccount($account);
 
         $this->securityFacade->expects($this->once())

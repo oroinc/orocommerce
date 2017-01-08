@@ -5,7 +5,7 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\DataProvider;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
@@ -77,13 +77,13 @@ class FrontendProductPricesDataProviderTest extends \PHPUnit_Framework_TestCase
      * @dataProvider getDataDataProvider
      * @param ProductPriceCriteria $criteria
      * @param Price $price
-     * @param AccountUser|null $accountUser
+     * @param CustomerUser|null $accountUser
      * @param array $lineItems
      */
     public function testGetProductsPrices(
         ProductPriceCriteria $criteria,
         Price $price,
-        AccountUser $accountUser = null,
+        CustomerUser $accountUser = null,
         array $lineItems = null
     ) {
         $expected = null;
@@ -142,7 +142,7 @@ class FrontendProductPricesDataProviderTest extends \PHPUnit_Framework_TestCase
             'with account user' => [
                 'criteria' => $criteria,
                 'price' => $price,
-                'accountUser' => new AccountUser(),
+                'accountUser' => new CustomerUser(),
                 'lineItems' => [$lineItem]
             ],
             'without account user' => [

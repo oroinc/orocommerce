@@ -7,7 +7,7 @@ use Symfony\Component\Translation\TranslatorInterface;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\ShoppingListBundle\Datagrid\Provider\MassAction\AddLineItemMassActionProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
@@ -216,7 +216,7 @@ class AddLineItemMassActionProviderTest extends \PHPUnit_Framework_TestCase
                 'label' => 'shopping_list_' . $id,
                 'organization' => new Organization(),
                 'account' => new Account(),
-                'accountUser' => new AccountUser(),
+                'accountUser' => new CustomerUser(),
                 'current' => $isCurrent
             ]
         );

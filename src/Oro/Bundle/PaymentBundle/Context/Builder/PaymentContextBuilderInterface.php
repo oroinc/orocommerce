@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PaymentBundle\Context\Builder;
 
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 use Oro\Bundle\PaymentBundle\Context\LineItem\Collection\PaymentLineItemCollectionInterface;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
@@ -66,9 +66,9 @@ interface PaymentContextBuilderInterface
     public function setCustomer(Account $customer);
 
     /**
-     * @param AccountUser $customerUser
+     * @param CustomerUser $customerUser
      *
      * @return self
      */
-    public function setCustomerUser(AccountUser $customerUser);
+    public function setCustomerUser(CustomerUser $customerUser);
 }

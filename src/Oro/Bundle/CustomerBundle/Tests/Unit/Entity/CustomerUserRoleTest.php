@@ -5,7 +5,7 @@ namespace Oro\Bundle\CustomerBundle\Tests\Unit\Entity;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
@@ -50,7 +50,7 @@ class CustomerUserRoleTest extends \PHPUnit_Framework_TestCase
     {
         static::assertPropertyCollections(new CustomerUserRole(), [
             ['websites', new Website()],
-            ['accountUsers', new AccountUser()],
+            ['accountUsers', new CustomerUser()],
         ]);
 
         static::assertPropertyAccessors(new CustomerUserRole(), [

@@ -108,7 +108,7 @@ class QuoteAddressType extends AbstractType
                     return;
                 }
 
-                //Enter manually or Account/AccountUser address
+                //Enter manually or Account/CustomerUser address
                 $quoteAddress = $event->getData();
 
                 $address = null;

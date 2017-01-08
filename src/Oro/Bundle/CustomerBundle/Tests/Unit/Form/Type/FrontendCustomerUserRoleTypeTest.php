@@ -12,7 +12,7 @@ use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as AccountSelectTypeStu
 use Genemu\Bundle\FormBundle\Form\JQuery\Type\Select2Type;
 
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 use Oro\Bundle\CustomerBundle\Form\Type\AccountSelectType;
 use Oro\Bundle\CustomerBundle\Form\Type\FrontendCustomerUserRoleType;
@@ -152,16 +152,16 @@ class FrontendCustomerUserRoleTypeTest extends AbstractCustomerUserRoleTypeTest
         $role->setRole('label');
         $role->setAccount($account1);
 
-        /** @var AccountUser $accountUser1 */
-        $accountUser1 = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountUser', 1);
+        /** @var CustomerUser $accountUser1 */
+        $accountUser1 = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUser', 1);
         $accountUser1->setAccount($account1);
 
-        /** @var AccountUser $accountUser2 */
-        $accountUser2 = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountUser', 2);
+        /** @var CustomerUser $accountUser2 */
+        $accountUser2 = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUser', 2);
         $accountUser2->setAccount($account2);
 
-        /** @var AccountUser $accountUser3 */
-        $accountUser3 = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountUser', 3);
+        /** @var CustomerUser $accountUser3 */
+        $accountUser3 = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUser', 3);
 
         /** @var CustomerUserRole $predefinedRole */
         $predefinedRole = $this->getEntity(self::DATA_CLASS, 2);

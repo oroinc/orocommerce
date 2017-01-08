@@ -7,7 +7,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\CustomerBundle\Datagrid\Extension\AccountUserExtension;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 
 class AccountUserExtensionTest extends \PHPUnit_Framework_TestCase
 {
@@ -79,13 +79,13 @@ class AccountUserExtensionTest extends \PHPUnit_Framework_TestCase
     public function applicableDataProvider()
     {
         return [
-            [new User(), 'Oro\Bundle\CustomerBundle\Entity\AccountUser', false],
-            [null, 'Oro\Bundle\CustomerBundle\Entity\AccountUser', true],
-            ['anon.', 'Oro\Bundle\CustomerBundle\Entity\AccountUser', true],
-            [new AccountUser(), 'Oro\Bundle\CustomerBundle\Entity\AccountUser', true],
+            [new User(), 'Oro\Bundle\CustomerBundle\Entity\CustomerUser', false],
+            [null, 'Oro\Bundle\CustomerBundle\Entity\CustomerUser', true],
+            ['anon.', 'Oro\Bundle\CustomerBundle\Entity\CustomerUser', true],
+            [new CustomerUser(), 'Oro\Bundle\CustomerBundle\Entity\CustomerUser', true],
             [
-                'Oro\Bundle\CustomerBundle\Entity\AccountUser',
-                'Oro\Bundle\CustomerBundle\Entity\AccountUser',
+                'Oro\Bundle\CustomerBundle\Entity\CustomerUser',
+                'Oro\Bundle\CustomerBundle\Entity\CustomerUser',
                 true,
             ],
         ];

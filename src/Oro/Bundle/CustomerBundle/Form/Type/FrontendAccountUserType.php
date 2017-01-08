@@ -9,7 +9,7 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 
 class FrontendAccountUserType extends AbstractType
 {
@@ -52,7 +52,7 @@ class FrontendAccountUserType extends AbstractType
             'roles',
             FrontendCustomerUserRoleSelectType::NAME,
             [
-                'label' => 'oro.customer.accountuser.roles.label'
+                'label' => 'oro.customer.customeruser.roles.label'
             ]
         );
     }
@@ -63,12 +63,12 @@ class FrontendAccountUserType extends AbstractType
      */
     public function onPreSetData(FormEvent $event)
     {
-        /** @var $user AccountUser */
+        /** @var $user CustomerUser */
         $user = $this->securityFacade->getLoggedUser();
-        if (!$user instanceof AccountUser) {
+        if (!$user instanceof CustomerUser) {
             return;
         }
-        /** @var AccountUser $data */
+        /** @var CustomerUser $data */
         $data = $event->getData();
 
         $event->getForm()->add('account', FrontendOwnerSelectType::NAME, [

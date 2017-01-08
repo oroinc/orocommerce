@@ -5,7 +5,7 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Entity;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
@@ -26,7 +26,7 @@ class LineItemTest extends \PHPUnit_Framework_TestCase
             ['notes', 'notes-test-123'],
             ['unit', new ProductUnit()],
             ['quantity', 12.5],
-            ['accountUser', new AccountUser()],
+            ['accountUser', new CustomerUser()],
             ['organization', new Organization()],
             ['owner', new User()],
         ];

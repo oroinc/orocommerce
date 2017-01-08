@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Acl\Voter;
 
 use Oro\Bundle\CheckoutBundle\Acl\Voter\CheckoutVoter;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
@@ -145,7 +145,7 @@ class CheckoutVoterTest extends \PHPUnit_Framework_TestCase
                 }
                 if ($attribute === $inputData['isGrantedAttrCheckout']) {
                     if ($object instanceof Quote) {
-                        $this->assertInstanceOf(AccountUser::class, $object->getAccountUser());
+                        $this->assertInstanceOf(CustomerUser::class, $object->getAccountUser());
                     }
 
                     return $inputData['isGrantedCheckout'];
@@ -170,7 +170,7 @@ class CheckoutVoterTest extends \PHPUnit_Framework_TestCase
     public function voteProvider()
     {
         $object = $this->createMock(Quote::class);
-        $object->expects($this->once())->method('getAccountUser')->willReturn(new AccountUser());
+        $object->expects($this->once())->method('getAccountUser')->willReturn(new CustomerUser());
 
         return [
             '!Entity' => [

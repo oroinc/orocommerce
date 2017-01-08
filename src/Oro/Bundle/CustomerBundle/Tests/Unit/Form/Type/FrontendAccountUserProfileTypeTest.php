@@ -9,7 +9,7 @@ use Symfony\Component\Validator\Validation;
 
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Bundle\UserBundle\Tests\Unit\Stub\ChangePasswordTypeStub;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Form\Type\FrontendAccountUserProfileType;
 use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\FrontendOwnerSelectTypeStub;
@@ -34,7 +34,7 @@ class FrontendAccountUserProfileTypeTest extends FormIntegrationTestCase
         parent::setUp();
 
         $this->formType = new FrontendAccountUserProfileType();
-        $this->formType->setDataClass('Oro\Bundle\CustomerBundle\Entity\AccountUser');
+        $this->formType->setDataClass('Oro\Bundle\CustomerBundle\Entity\CustomerUser');
     }
 
     /**
@@ -67,9 +67,9 @@ class FrontendAccountUserProfileTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @param AccountUser $defaultData
+     * @param CustomerUser $defaultData
      * @param array $submittedData
-     * @param AccountUser $expectedData
+     * @param CustomerUser $expectedData
      * @dataProvider submitProvider
      */
     public function testSubmit($defaultData, array $submittedData, $expectedData)
@@ -87,10 +87,10 @@ class FrontendAccountUserProfileTypeTest extends FormIntegrationTestCase
      */
     public function submitProvider()
     {
-        $entity = new AccountUser();
+        $entity = new CustomerUser();
         $account = new Account();
         $entity->setAccount($account);
-        $existingEntity = new AccountUser();
+        $existingEntity = new CustomerUser();
         $this->setPropertyValue($existingEntity, 'id', 42);
 
         $existingEntity->setFirstName('John');
@@ -132,11 +132,11 @@ class FrontendAccountUserProfileTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @param AccountUser $existingAccountUser
+     * @param CustomerUser $existingAccountUser
      * @param string $property
      * @param mixed $value
      */
-    protected function setPropertyValue(AccountUser $existingAccountUser, $property, $value)
+    protected function setPropertyValue(CustomerUser $existingAccountUser, $property, $value)
     {
         $class = new \ReflectionClass($existingAccountUser);
         $prop = $class->getProperty($property);

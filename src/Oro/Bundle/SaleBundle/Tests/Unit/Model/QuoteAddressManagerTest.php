@@ -10,7 +10,7 @@ use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 use Oro\Bundle\OrderBundle\Tests\Unit\Manager\AbstractAddressManagerTest;
 use Oro\Bundle\SaleBundle\Entity\Quote;
@@ -185,7 +185,7 @@ class QuoteAddressManagerTest extends AbstractAddressManagerTest
         return [
             'empty account user' => [new Quote()],
             'empty account' => [
-                (new Quote())->setAccountUser(new AccountUser()),
+                (new Quote())->setAccountUser(new CustomerUser()),
                 [],
                 [
                     $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress', 1),
@@ -205,7 +205,7 @@ class QuoteAddressManagerTest extends AbstractAddressManagerTest
                 ],
             ],
             'account' => [
-                (new Quote())->setAccountUser(new AccountUser())->setAccount(new Account()),
+                (new Quote())->setAccountUser(new CustomerUser())->setAccount(new Account()),
                 [
                     $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerAddress', 1),
                     $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerAddress', 2),
@@ -225,7 +225,7 @@ class QuoteAddressManagerTest extends AbstractAddressManagerTest
                 ],
             ],
             'full' => [
-                (new Quote())->setAccountUser(new AccountUser())->setAccount(new Account()),
+                (new Quote())->setAccountUser(new CustomerUser())->setAccount(new Account()),
                 [
                     $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerAddress', 1),
                     $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerAddress', 2),

@@ -5,7 +5,7 @@ namespace Oro\Bundle\CustomerBundle\Tests\Unit\Provider;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Provider\AccountUserRelationsProvider;
 use Oro\Bundle\CustomerBundle\Provider\ScopeAccountGroupCriteriaProvider;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
@@ -41,7 +41,7 @@ class ScopeAccountGroupCriteriaProviderTest extends \PHPUnit_Framework_TestCase
     public function testGetCriteriaForCurrentScope()
     {
         $accGroup = new CustomerGroup();
-        $accUser = new AccountUser();
+        $accUser = new CustomerUser();
         $account = new Account();
         $accUser->setAccount($account);
         $account->setGroup($accGroup);

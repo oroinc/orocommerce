@@ -5,7 +5,7 @@ namespace Oro\Bundle\CustomerBundle\Tests\Unit\Traits;
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Bundle\CustomerBundle\Entity\AbstractDefaultTypedAddress;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 
 trait AddressEntityTestTrait
@@ -118,7 +118,7 @@ trait AddressEntityTestTrait
     /**
      * Return tested entity
      *
-     * @return AccountUser|Account
+     * @return CustomerUser|Account
      */
     abstract protected function createTestedEntity();
 

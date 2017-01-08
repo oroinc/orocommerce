@@ -447,8 +447,8 @@ class RequestTypeTest extends AbstractTest
 
         $accountUserSelectType = new StubEntityType(
             [
-                1 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountUser', 1),
-                2 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountUser', 2),
+                1 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUser', 1),
+                2 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUser', 2),
             ],
             AccountUserSelectType::NAME
         );

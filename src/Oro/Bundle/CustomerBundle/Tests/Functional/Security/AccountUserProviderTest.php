@@ -4,7 +4,7 @@ namespace Oro\Bundle\CustomerBundle\Tests\Functional\Security;
 
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 use Oro\Bundle\CustomerBundle\Migrations\Data\ORM\LoadCustomerUserRoles;
 use Oro\Bundle\CustomerBundle\Security\AccountUserProvider;
@@ -66,7 +66,7 @@ class AccountUserProviderTest extends WebTestCase
         /* @var $securityProvider AccountUserProvider */
         $securityProvider = $this->getContainer()->get('oro_customer.security.account_user_provider');
 
-        /** @var AccountUser $user */
+        /** @var CustomerUser $user */
         $user = $securityProvider->getLoggedUser();
         $this->assertNotEmpty($user);
 

@@ -48,7 +48,7 @@ Oro\Bundle\CustomerBundle\Entity\Account:
         organization: '@organization'
         owner: '@admin'
 
-Oro\Bundle\CustomerBundle\Entity\AccountUser:
+Oro\Bundle\CustomerBundle\Entity\CustomerUser:
     amanda:
         email: 'AmandaRCole@example.org'
         username: 'AmandaRCole@example.org'
