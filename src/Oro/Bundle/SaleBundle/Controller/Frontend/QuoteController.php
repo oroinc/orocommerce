@@ -131,7 +131,7 @@ class QuoteController extends Controller
                 'data' => $quoteDemand,
                 'form' => $form->createView(),
                 'quote' => $quoteDemand->getQuote(),
-                'totals' => $this->getSubtotalsCalculator()->calculateSubtotals($quoteDemand)
+                'totals' => (object)$this->getSubtotalsCalculator()->calculateSubtotals($quoteDemand)
             ]
         ];
     }
@@ -161,7 +161,7 @@ class QuoteController extends Controller
 
         return [
             'data' => [
-                'totals' => $this->getSubtotalsCalculator()->calculateSubtotals($quoteDemand)
+                'totals' => (object)$this->getSubtotalsCalculator()->calculateSubtotals($quoteDemand)
             ]
         ];
     }

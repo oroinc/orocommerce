@@ -26,6 +26,6 @@ class BasicQuoteDemandSubtotalsCalculator implements QuoteDemandSubtotalsCalcula
      */
     public function calculateSubtotals(QuoteDemand $quoteDemand)
     {
-        return (object)$this->totalProcessorProvider->getTotalWithSubtotalsAsArray($quoteDemand);
+        return $this->totalProcessorProvider->getTotalWithSubtotalsAsArray($quoteDemand);
     }
 }
