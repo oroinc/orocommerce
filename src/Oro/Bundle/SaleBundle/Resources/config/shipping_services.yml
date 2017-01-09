@@ -67,7 +67,7 @@ services:
             - '@oro_sale.quote_demand.subtotals_calculator_shipping_cost_decorator.inner'
 
     oro_sale.quote.shipping_line_items_converter_first_offers:
-        class: 'Oro\Bundle\SaleBundle\Quote\Shipping\LineItem\FirstOffers\FirstOffersQuoteToShippingLineItemConverter'
+        class: 'Oro\Bundle\SaleBundle\Quote\Shipping\LineItem\Converter\FirstOffers\FirstOffersQuoteToShippingLineItemConverter'
 
     oro_sale.quote.shipping_line_items_converter_selected_offers:
-        class: 'Oro\Bundle\SaleBundle\Quote\Shipping\LineItem\SelectedOffers\SelectedOffersQuoteToShippingLineItemConverter'
+        class: 'Oro\Bundle\SaleBundle\Quote\Shipping\LineItem\Converter\SelectedOffers\SelectedOffersQuoteToShippingLineItemConverter'

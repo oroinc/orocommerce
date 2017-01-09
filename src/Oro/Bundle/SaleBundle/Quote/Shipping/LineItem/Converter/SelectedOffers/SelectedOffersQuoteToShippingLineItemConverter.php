@@ -1,11 +1,11 @@
 <?php
 
-namespace Oro\Bundle\SaleBundle\Quote\Shipping\LineItem\SelectedOffers;
+namespace Oro\Bundle\SaleBundle\Quote\Shipping\LineItem\Converter\SelectedOffers;
 
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductDemand;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
-use Oro\Bundle\SaleBundle\Quote\Shipping\LineItem\QuoteToShippingLineItemConverterInterface;
+use Oro\Bundle\SaleBundle\Quote\Shipping\LineItem\Converter\QuoteToShippingLineItemConverterInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
 
 class SelectedOffersQuoteToShippingLineItemConverter implements QuoteToShippingLineItemConverterInterface

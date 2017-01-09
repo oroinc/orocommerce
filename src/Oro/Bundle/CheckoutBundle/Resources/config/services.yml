@@ -398,9 +398,8 @@ services:
             - '@oro_checkout.factory.shipping_context_provider_factory'
 
     oro_checkout.condition.checkout_has_applicable_shipping_methods:
-        class: 'Oro\Bundle\CheckoutBundle\Condition\HasApplicableShippingMethods'
+        class: 'Oro\Bundle\CheckoutBundle\Condition\CheckoutHasApplicableShippingMethods'
         arguments:
-            - '@oro_shipping.shipping_method.registry'
             - '@oro_checkout.shipping_method.provider_main'
         tags:
             - { name: oro_workflow.condition, alias: 'checkout_has_applicable_shipping_methods' }

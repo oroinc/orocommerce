@@ -4,7 +4,7 @@ namespace Oro\Bundle\SaleBundle\Quote\Shipping\Context\Factory\Basic;
 
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Quote\Shipping\Context\Factory\QuoteShippingContextFactoryInterface;
-use Oro\Bundle\SaleBundle\Quote\Shipping\LineItem\QuoteToShippingLineItemConverterInterface;
+use Oro\Bundle\SaleBundle\Quote\Shipping\LineItem\Converter\QuoteToShippingLineItemConverterInterface;
 use Oro\Bundle\ShippingBundle\Factory\ShippingContextFactory;
 
 class BasicQuoteShippingContextFactory implements QuoteShippingContextFactoryInterface

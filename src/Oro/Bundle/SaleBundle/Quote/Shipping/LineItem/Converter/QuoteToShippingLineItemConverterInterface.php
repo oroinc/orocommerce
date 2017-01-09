@@ -1,15 +1,16 @@
 <?php
 
-namespace Oro\Bundle\SaleBundle\Quote\Shipping\LineItem;
+namespace Oro\Bundle\SaleBundle\Quote\Shipping\LineItem\Converter;
 
 use Oro\Bundle\SaleBundle\Entity\Quote;
+use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
 
 interface QuoteToShippingLineItemConverterInterface
 {
     /**
      * @param Quote $quote
      *
-     * @return array
+     * @return ShippingLineItemInterface[]
      */
     public function convertLineItems(Quote $quote);
 }

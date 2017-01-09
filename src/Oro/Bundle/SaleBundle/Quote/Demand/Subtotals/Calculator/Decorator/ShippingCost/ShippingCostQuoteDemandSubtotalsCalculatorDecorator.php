@@ -12,7 +12,7 @@ use Oro\Bundle\ShippingBundle\Provider\Price\Configured\ShippingConfiguredPriceP
 class ShippingCostQuoteDemandSubtotalsCalculatorDecorator extends AbstractQuoteDemandSubtotalsCalculatorDecorator
 {
     /**
-     * @var \Oro\Bundle\SaleBundle\Quote\Shipping\Context\Factory\QuoteShippingContextFactoryInterface
+     * @var QuoteShippingContextFactoryInterface
      */
     private $quoteShippingContextFactory;
 
@@ -27,7 +27,7 @@ class ShippingCostQuoteDemandSubtotalsCalculatorDecorator extends AbstractQuoteD
     private $shippingConfiguredPriceProvider;
 
     /**
-     * @param \Oro\Bundle\SaleBundle\Quote\Shipping\Context\Factory\QuoteShippingContextFactoryInterface $quoteShippingContextFactory
+     * @param QuoteShippingContextFactoryInterface $quoteShippingContextFactory
      * @param QuoteShippingConfigurationFactory $quoteShippingConfigurationFactory
      * @param ShippingConfiguredPriceProviderInterface $shippingConfiguredPriceProvider
      * @param QuoteDemandSubtotalsCalculatorInterface $quoteDemandSubtotalsCalculator

@@ -4,22 +4,16 @@ namespace Oro\Bundle\CheckoutBundle\Condition;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Shipping\Method\CheckoutShippingMethodsProviderInterface;
-use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 use Oro\Component\ConfigExpression\Condition\AbstractCondition;
 use Oro\Component\ConfigExpression\ContextAccessorAwareInterface;
 use Oro\Component\ConfigExpression\ContextAccessorAwareTrait;
 use Oro\Component\ConfigExpression\Exception\InvalidArgumentException;
 
-class HasApplicableShippingMethods extends AbstractCondition implements ContextAccessorAwareInterface
+class CheckoutHasApplicableShippingMethods extends AbstractCondition implements ContextAccessorAwareInterface
 {
     use ContextAccessorAwareTrait;
 
     const NAME = 'checkout_has_applicable_shipping_methods';
-
-    /**
-     * @var ShippingMethodRegistry
-     */
-    private $shippingMethodRegistry;
 
     /**
      * @var CheckoutShippingMethodsProviderInterface
@@ -32,14 +26,10 @@ class HasApplicableShippingMethods extends AbstractCondition implements ContextA
     private $checkout;
 
     /**
-     * @param ShippingMethodRegistry $shippingMethodRegistry
      * @param CheckoutShippingMethodsProviderInterface $checkoutShippingMethodsProvider
      */
-    public function __construct(
-        ShippingMethodRegistry $shippingMethodRegistry,
-        CheckoutShippingMethodsProviderInterface $checkoutShippingMethodsProvider
-    ) {
-        $this->shippingMethodRegistry = $shippingMethodRegistry;
+    public function __construct(CheckoutShippingMethodsProviderInterface $checkoutShippingMethodsProvider)
+    {
         $this->checkoutShippingMethodsProvider = $checkoutShippingMethodsProvider;
     }
 
