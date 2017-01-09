@@ -2,20 +2,18 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Functional\Workflow;
 
-use Doctrine\ORM\EntityManager;
-use Oro\Bundle\EntityExtendBundle\Entity\Repository\EnumValueRepository;
-use Oro\Bundle\EntityExtendBundle\Model\Action\RequestEnumEntity;
-use Oro\Bundle\EntityExtendBundle\Provider\EnumValueProvider;
-use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
+use Symfony\Component\DomCrawler\Crawler;
+
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadUserData;
+
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\WorkflowBundle\Model\Transition;
+
 use Oro\Bundle\WorkflowBundle\Model\TransitionManager;
 use Oro\Bundle\WorkflowBundle\Model\Workflow;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
-use Symfony\Component\DomCrawler\Crawler;
+
 
 /**
  * @dbIsolation
