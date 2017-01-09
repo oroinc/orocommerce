@@ -136,7 +136,6 @@ workflows:
                         enum_code: 'rfp_customer_status'
                         attribute: $request.customerStatus
                         identifier: 'submitted'
-
                     - '@assign_constant_value':
                         attribute: $.result.note_type
                         value: Oro\Bundle\RFPBundle\Entity\RequestAdditionalNote::TYPE_CUSTOMER_NOTE
