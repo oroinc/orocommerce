@@ -4,7 +4,7 @@ namespace Oro\Bundle\SaleBundle\EventListener\Quote;
 
 use Oro\Bundle\OrderBundle\Converter\ShippingPricesConverter;
 use Oro\Bundle\SaleBundle\Event\QuoteEvent;
-use Oro\Bundle\SaleBundle\Factory\QuoteShippingContextFactoryInterface;
+use Oro\Bundle\SaleBundle\Quote\Shipping\Context\Factory\QuoteShippingContextFactoryInterface;
 use Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider;
 
 class QuotePossibleShippingMethodsEventListener

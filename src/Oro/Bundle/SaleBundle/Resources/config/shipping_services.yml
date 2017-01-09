@@ -1,12 +1,12 @@
 services:
     oro_sale.quote.selected_offers_shipping_context_factory:
-        class: 'Oro\Bundle\SaleBundle\Factory\BasicQuoteShippingContextFactory'
+        class: 'Oro\Bundle\SaleBundle\Quote\Shipping\Context\Factory\Basic\BasicQuoteShippingContextFactory'
         arguments:
             - '@oro_shipping.factory.shipping_context_factory'
             - '@oro_sale.quote.shipping_line_items_converter_selected_offers'
 
     oro_sale.quote.first_offers_shipping_context_factory:
-        class: 'Oro\Bundle\SaleBundle\Factory\BasicQuoteShippingContextFactory'
+        class: 'Oro\Bundle\SaleBundle\Quote\Shipping\Context\Factory\Basic\BasicQuoteShippingContextFactory'
         arguments:
             - '@oro_shipping.factory.shipping_context_factory'
             - '@oro_sale.quote.shipping_line_items_converter_first_offers'

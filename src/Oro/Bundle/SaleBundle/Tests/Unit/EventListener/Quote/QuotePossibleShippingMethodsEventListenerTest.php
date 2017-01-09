@@ -7,7 +7,7 @@ use Oro\Bundle\OrderBundle\Converter\ShippingPricesConverter;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Event\QuoteEvent;
 use Oro\Bundle\SaleBundle\EventListener\Quote\QuotePossibleShippingMethodsEventListener;
-use Oro\Bundle\SaleBundle\Factory\QuoteShippingContextFactoryInterface;
+use Oro\Bundle\SaleBundle\Quote\Shipping\Context\Factory\QuoteShippingContextFactoryInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewCollection;
 use Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider;
