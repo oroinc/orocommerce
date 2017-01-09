@@ -224,7 +224,7 @@ class ProductVariantAvailabilityProvider
             throw new \InvalidArgumentException('Variant values provided don\'t match exactly one simple product');
         }
 
-        return $simpleProducts[0];
+        return reset($simpleProducts);
     }
 
     /**

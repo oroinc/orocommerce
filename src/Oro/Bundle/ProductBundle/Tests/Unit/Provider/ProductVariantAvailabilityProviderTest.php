@@ -200,8 +200,7 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit_Framework_TestCase
     {
         $configurableProduct = $this->getConfigurableProduct();
 
-        $products = [
-        ];
+        $products = [];
 
         $this->setUpRepositoryResult($configurableProduct, [], $products);
 
@@ -256,7 +255,7 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit_Framework_TestCase
     public function variantFieldsWithAvailabilityProvider()
     {
         return [
-            0 => [
+            'variant 1' => [
                 'variantsData' => [
                     'color' => [
                         'type' => 'enum',
@@ -322,7 +321,7 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit_Framework_TestCase
                     ]
                 ],
             ],
-            1 => [
+            'variant 2' => [
                 'variantsData' => [
                     'color' => [
                         'type' => 'enum',
@@ -400,6 +399,45 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit_Framework_TestCase
                     'slim_fit' => [
                         0 => true,
                         1 => true
+                    ]
+                ],
+            ],
+            'variant 3' => [
+                'variantsData' => [
+                    'color' => [
+                        'type' => 'enum',
+                        'values' => [
+                            'red' => 'Red',
+                            'green' => 'Green',
+                            'blue' => 'Blue',
+                        ]
+                    ],
+                    'extended_field' => [
+                        'type' => 'string',
+                    ],
+                ],
+                'productData' => [
+                    'product1' => [
+                        'color' => 'red'
+                    ],
+                    'product2' => [
+                        'color' => 'green'
+                    ],
+                    'product3' => [
+                        'color' => null
+                    ],
+                ],
+                'variantParameters' => [
+                    'color' => 'green',
+                ],
+                'variantFields' => [
+                    'color',
+                ],
+                'expected' => [
+                    'color' => [
+                        'red' => true,
+                        'green' => true,
+                        'blue' => false,
                     ]
                 ],
             ],
