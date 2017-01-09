@@ -680,13 +680,13 @@ datagrids:
                 label:         oro.product.time_period.label
             sku:
                 label:         oro.product.sku.label
+            productName:
+                label:         oro.product.names.label
             qtySold:
                 label:         oro.product.qty_sold.label
                 type: twig
                 template: OroOrderBundle:Order:Datagrid/productQtySold.html.twig
                 frontend_type: html
-            productName:
-                label:         oro.product.names.label
         sorters:
             columns:
                 sku:
