@@ -146,10 +146,10 @@ class Account extends ExtendAccount
     protected $group;
 
     /**
-     * @var Collection|AccountUser[]
+     * @var Collection|CustomerUser[]
      *
      * @ORM\OneToMany(
-     *      targetEntity="Oro\Bundle\CustomerBundle\Entity\AccountUser",
+     *      targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerUser",
      *      mappedBy="account",
      *      cascade={"persist"}
      * )
@@ -436,11 +436,11 @@ class Account extends ExtendAccount
     }
 
     /**
-     * @param AccountUser $accountUser
+     * @param CustomerUser $accountUser
      *
      * @return $this
      */
-    public function addUser(AccountUser $accountUser)
+    public function addUser(CustomerUser $accountUser)
     {
         if (!$this->hasUser($accountUser)) {
             $accountUser->setAccount($this);
@@ -455,11 +455,11 @@ class Account extends ExtendAccount
     }
 
     /**
-     * @param AccountUser $accountUser
+     * @param CustomerUser $accountUser
      *
      * @return $this
      */
-    public function removeUser(AccountUser $accountUser)
+    public function removeUser(CustomerUser $accountUser)
     {
         if ($this->hasUser($accountUser)) {
             $accountUser->setAccount(null);
@@ -470,7 +470,7 @@ class Account extends ExtendAccount
     }
 
     /**
-     * @return Collection|AccountUser[]
+     * @return Collection|CustomerUser[]
      */
     public function getUsers()
     {
@@ -571,11 +571,11 @@ class Account extends ExtendAccount
     }
 
     /**
-     * @param AccountUser $accountUser
+     * @param CustomerUser $accountUser
      *
      * @return bool
      */
-    protected function hasUser(AccountUser $accountUser)
+    protected function hasUser(CustomerUser $accountUser)
     {
         return $this->users->contains($accountUser);
     }

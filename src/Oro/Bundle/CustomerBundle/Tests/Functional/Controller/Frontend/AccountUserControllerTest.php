@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CustomerBundle\Tests\Functional\Controller\Frontend;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Tests\Functional\Controller\AbstractUserControllerTest;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserACLData;
 use Symfony\Component\DomCrawler\Field\ChoiceFormField;
@@ -215,7 +215,7 @@ class AccountUserControllerTest extends AbstractUserControllerTest
     public function testACL($route, $resource, $user, $status)
     {
         $this->loginUser($user);
-        /* @var $resource AccountUser */
+        /* @var $resource CustomerUser */
         $resource = $this->getReference($resource);
 
         $this->client->request(

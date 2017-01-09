@@ -11,7 +11,7 @@ use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use Oro\Bundle\UserBundle\Entity\BaseUserManager;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 
 class LoadAccountUserData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
@@ -52,7 +52,7 @@ class LoadAccountUserData extends AbstractFixture implements ContainerAwareInter
             ->getRepository('OroUserBundle:User')
             ->findOneBy([]);
 
-        /** @var AccountUser $entity */
+        /** @var CustomerUser $entity */
         $entity = $userManager->createUser();
 
         $role = $this->container
@@ -62,8 +62,8 @@ class LoadAccountUserData extends AbstractFixture implements ContainerAwareInter
             ->findOneBy(['role' => 'ROLE_FRONTEND_ADMINISTRATOR']);
 
         $entity
-            ->setFirstName('AccountUser')
-            ->setLastName('AccountUser')
+            ->setFirstName('CustomerUser')
+            ->setLastName('CustomerUser')
             ->setEmail(self::AUTH_USER)
             ->setOwner($user)
             ->setEnabled(true)

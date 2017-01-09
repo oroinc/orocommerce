@@ -8,13 +8,13 @@ acls:
     oro_account_account_user_delete:
         type: entity
         permission: DELETE
-        class: OroCustomerBundle:AccountUser
+        class: OroCustomerBundle:CustomerUser
         category: 'account_management'
 
     oro_account_frontend_account_user_view:
         type: entity
         permission: VIEW
-        class: OroCustomerBundle:AccountUser
+        class: OroCustomerBundle:CustomerUser
         group_name: "commerce"
         category: 'account_management'
 

@@ -19,7 +19,7 @@ use Oro\Bundle\SecurityBundle\Model\AclPrivilegeIdentity;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Form\Type\CustomerUserRoleType;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 use Oro\Bundle\CustomerBundle\Form\Handler\CustomerUserRoleUpdateHandler;
@@ -277,13 +277,13 @@ class CustomerUserRoleUpdateHandlerTest extends AbstractCustomerUserRoleUpdateHa
             ->willReturn($objectManager);
 
         $expectedFirstEntityPrivilege = $this->createPrivilege('entity', 'entity:FirstClass', 'VIEW');
-        $expectedFirstEntityPrivilege->setGroup(AccountUser::SECURITY_GROUP);
+        $expectedFirstEntityPrivilege->setGroup(CustomerUser::SECURITY_GROUP);
 
         $expectedSecondEntityPrivilege = $this->createPrivilege('entity', 'entity:SecondClass', 'VIEW');
-        $expectedSecondEntityPrivilege->setGroup(AccountUser::SECURITY_GROUP);
+        $expectedSecondEntityPrivilege->setGroup(CustomerUser::SECURITY_GROUP);
 
         $expectedActionPrivilege = $this->createPrivilege('action', 'action', 'random_action');
-        $expectedActionPrivilege->setGroup(AccountUser::SECURITY_GROUP);
+        $expectedActionPrivilege->setGroup(CustomerUser::SECURITY_GROUP);
 
         $this->privilegeRepository->expects($this->once())
             ->method('savePrivileges')
@@ -346,11 +346,11 @@ class CustomerUserRoleUpdateHandlerTest extends AbstractCustomerUserRoleUpdateHa
     /**
      * @param CustomerUserRole $role
      * @param Account|null    $newAccount
-     * @param AccountUser[]   $appendUsers
-     * @param AccountUser[]   $removedUsers
-     * @param AccountUser[]   $assignedUsers
-     * @param AccountUser[]   $expectedUsersWithRole
-     * @param AccountUser[]   $expectedUsersWithoutRole
+     * @param CustomerUser[]   $appendUsers
+     * @param CustomerUser[]   $removedUsers
+     * @param CustomerUser[]   $assignedUsers
+     * @param CustomerUser[]   $expectedUsersWithRole
+     * @param CustomerUser[]   $expectedUsersWithoutRole
      * @param bool            $changeAccountProcessed
      * @dataProvider processWithAccountProvider
      */
@@ -381,7 +381,7 @@ class CustomerUserRoleUpdateHandlerTest extends AbstractCustomerUserRoleUpdateHa
         );
 
         // Array of persisted users
-        /** @var AccountUser[] $persistedUsers */
+        /** @var CustomerUser[] $persistedUsers */
         $persistedUsers = [];
 
         $objectManager = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
@@ -390,7 +390,7 @@ class CustomerUserRoleUpdateHandlerTest extends AbstractCustomerUserRoleUpdateHa
             ->method('persist')
             ->willReturnCallback(
                 function ($entity) use (&$persistedUsers) {
-                    if ($entity instanceof AccountUser) {
+                    if ($entity instanceof CustomerUser) {
                         $persistedUsers[$entity->getEmail()] = $entity;
                     }
                 }

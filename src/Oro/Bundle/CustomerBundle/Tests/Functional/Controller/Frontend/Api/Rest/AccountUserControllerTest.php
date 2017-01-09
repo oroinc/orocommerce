@@ -45,7 +45,7 @@ class AccountUserControllerTest extends WebTestCase
         $this->assertResponseStatusCodeEquals($this->client->getResponse(), $status);
 
         if ($status === 204) {
-            /** @var \Oro\Bundle\CustomerBundle\Entity\AccountUser $user */
+            /** @var \Oro\Bundle\CustomerBundle\Entity\CustomerUser $user */
             $user = $this->getUserRepository()->findOneBy(['email' => $resource]);
             $this->assertNull($user);
         }
@@ -103,6 +103,6 @@ class AccountUserControllerTest extends WebTestCase
      */
     protected function getUserRepository()
     {
-        return $this->getObjectManager()->getRepository('OroCustomerBundle:AccountUser');
+        return $this->getObjectManager()->getRepository('OroCustomerBundle:CustomerUser');
     }
 }

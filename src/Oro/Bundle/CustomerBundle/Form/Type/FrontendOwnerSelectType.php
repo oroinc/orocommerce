@@ -7,7 +7,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigInterface;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
@@ -55,7 +55,7 @@ class FrontendOwnerSelectType extends AbstractType
         $resolver->setDefaults(
             [
                 'choice_label' => function ($owner) {
-                    if ($owner instanceof AccountUser) {
+                    if ($owner instanceof CustomerUser) {
                         return $owner->getFullName();
                     }
 
@@ -124,7 +124,7 @@ class FrontendOwnerSelectType extends AbstractType
     private function getOwnerClass(ConfigInterface $config)
     {
         $ownerType = $config->get('frontend_owner_type');
-        $ownerClass = ($ownerType == 'FRONTEND_ACCOUNT') ? Account::class : AccountUser::class;
+        $ownerClass = ($ownerType == 'FRONTEND_ACCOUNT') ? Account::class : CustomerUser::class;
         return $ownerClass;
     }
 

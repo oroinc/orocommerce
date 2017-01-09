@@ -6,7 +6,7 @@ use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 
 use Oro\Bundle\OrderBundle\Provider\AddressProviderInterface;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
@@ -48,7 +48,7 @@ abstract class AbstractQuoteAddressProviderTest extends \PHPUnit_Framework_TestC
      */
     public function testGetAccountUserAddressesUnsupportedType()
     {
-        $this->provider->getAccountUserAddresses(new AccountUser(), 'test');
+        $this->provider->getAccountUserAddresses(new CustomerUser(), 'test');
     }
 
     /**
@@ -176,7 +176,7 @@ abstract class AbstractQuoteAddressProviderTest extends \PHPUnit_Framework_TestC
             ->method('getLoggedUser')
             ->will($this->returnValue($loggedUser));
 
-        $accountUser = new AccountUser();
+        $accountUser = new CustomerUser();
 
         $permissionsValueMap = [];
         foreach ($expectedCalledPermissions as $permission => $decision) {

@@ -6,7 +6,7 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 
 class AccountUserRelationsProvider
 {
@@ -31,10 +31,10 @@ class AccountUserRelationsProvider
     }
 
     /**
-     * @param AccountUser|null $accountUser
+     * @param CustomerUser|null $accountUser
      * @return null|Account
      */
-    public function getAccount(AccountUser $accountUser = null)
+    public function getAccount(CustomerUser $accountUser = null)
     {
         if ($accountUser) {
             return $accountUser->getAccount();
@@ -44,10 +44,10 @@ class AccountUserRelationsProvider
     }
 
     /**
-     * @param AccountUser|null $accountUser
+     * @param CustomerUser|null $accountUser
      * @return null|CustomerGroup
      */
-    public function getAccountGroup(AccountUser $accountUser = null)
+    public function getAccountGroup(CustomerUser $accountUser = null)
     {
         if ($accountUser) {
             $account = $this->getAccount($accountUser);
@@ -69,10 +69,10 @@ class AccountUserRelationsProvider
     }
 
     /**
-     * @param AccountUser|null $accountUser
+     * @param CustomerUser|null $accountUser
      * @return null|Account
      */
-    public function getAccountIncludingEmpty(AccountUser $accountUser = null)
+    public function getAccountIncludingEmpty(CustomerUser $accountUser = null)
     {
         $account = $this->getAccount($accountUser);
         if (!$account) {

@@ -9,7 +9,7 @@ layout:
             id: page_title
             optionName: text
             optionValue:
-                label: 'oro.customer.accountuser.profile.edit'
+                label: 'oro.customer.customeruser.profile.edit'
 
         - '@addTree':
             items:

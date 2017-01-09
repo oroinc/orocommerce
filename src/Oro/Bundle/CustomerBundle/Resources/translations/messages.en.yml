@@ -55,7 +55,7 @@ oro.customer:
         customers.label: 'Customers'
         form.choose: 'Choose a customer group...'
 
-    accountuser:
+    customeruser:
         entity_label:                'Customer User'
         entity_plural_label:         'Customer Users'
         id.label:                    'ID'
@@ -300,9 +300,9 @@ oro.customer:
     controller:
         account:
             saved.message: 'Customer has been saved'
-        accountgroup:
+        customergroup:
             saved.message: 'Customer group has been saved'
-        accountuser:
+        customeruser:
             registered.message: 'Registration successful'
             registered_with_confirmation.message: 'Please check your email to complete registration'
             confirmed.message: 'Confirmation successful'
@@ -317,9 +317,9 @@ oro.customer:
             token_not_found.message: 'The user with "confirmation token" does not exist for value "%token%"'
             confirmation_sent.message: 'Confirmation email has been sent'
             welcome_failed.message: 'Welcome email sending failed'
-        accountuseraddress:
+        customeruseraddress:
             saved.message: 'Customer User Address has been saved'
-        accountaddress:
+        customeraddress:
             saved.message: 'Customer Address has been saved'
         customeruserrole:
             saved.message:     'Customer User Role has been saved'
@@ -343,9 +343,9 @@ oro.customer:
         permission:
             register_account_user: 'Register Customer User'
         access-level:
-            BASIC: 'Customer User'
-            LOCAL: 'Customer'
-            DEEP: 'Сorporate'
+            BASIC: 'User (Own)'
+            LOCAL: 'Department (Same Level)'
+            DEEP: 'Сorporate (All Levels)'
             GLOBAL: 'Not supported'
             SYSTEM: 'Full'
             NONE: 'None'
@@ -387,11 +387,11 @@ oro.customer:
                 save: Save
         security:
             access-level:
-                BASIC: 'Individual'
-                LOCAL: 'Сorporate'
-                DEEP: 'All'
+                BASIC: 'User (Own)'
+                LOCAL: 'Department (Same Level)'
+                DEEP: 'Сorporate (All Levels)'
                 GLOBAL: 'Not supported'
-                SYSTEM: 'System'
+                SYSTEM: 'Full'
                 NONE: 'None'
         account_user:
             role.entity_plural_label: Roles

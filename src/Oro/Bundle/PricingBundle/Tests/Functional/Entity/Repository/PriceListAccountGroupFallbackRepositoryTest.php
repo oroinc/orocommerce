@@ -34,7 +34,7 @@ class PriceListAccountGroupFallbackRepositoryTest extends AbstractFallbackReposi
                 'expectedAccounts' => [
                     'account.level_1_1',
                     'account.level_1.3',
-                    'AccountUser AccountUser',
+                    'CustomerUser CustomerUser',
                     'account.orphan',
                     'account.level_1.1',
                     'account.level_1.1.1',
@@ -52,7 +52,7 @@ class PriceListAccountGroupFallbackRepositoryTest extends AbstractFallbackReposi
                 'expectedAccounts' => [
                     'account.level_1.3',
                     'account.orphan',
-                    'AccountUser AccountUser',
+                    'CustomerUser CustomerUser',
                     'account.level_1.1',
                     'account.level_1.1.1',
                     'account.level_1.1.2',

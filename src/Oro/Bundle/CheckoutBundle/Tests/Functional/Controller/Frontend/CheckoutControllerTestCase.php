@@ -95,7 +95,7 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
     {
         $this->setCurrentWebsite('default');
         $user = $this->registry
-            ->getRepository('OroCustomerBundle:AccountUser')
+            ->getRepository('OroCustomerBundle:CustomerUser')
             ->findOneBy(['username' => TestAccountUserData::AUTH_USER]);
         $user->setAccount($this->getReference('account.level_1'));
         $token = new UsernamePasswordToken($user, false, 'key', $user->getRoles());

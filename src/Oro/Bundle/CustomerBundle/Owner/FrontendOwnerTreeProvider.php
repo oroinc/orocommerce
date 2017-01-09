@@ -10,7 +10,7 @@ use Doctrine\ORM\Query;
 use Oro\Component\DoctrineUtils\ORM\QueryUtils;
 use Oro\Bundle\SecurityBundle\Owner\AbstractOwnerTreeProvider;
 use Oro\Bundle\SecurityBundle\Owner\OwnerTreeInterface;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
 
 class FrontendOwnerTreeProvider extends AbstractOwnerTreeProvider
@@ -30,7 +30,7 @@ class FrontendOwnerTreeProvider extends AbstractOwnerTreeProvider
      */
     public function supports()
     {
-        return $this->getContainer()->get('oro_security.security_facade')->getLoggedUser() instanceof AccountUser;
+        return $this->getContainer()->get('oro_security.security_facade')->getLoggedUser() instanceof CustomerUser;
     }
 
     /**

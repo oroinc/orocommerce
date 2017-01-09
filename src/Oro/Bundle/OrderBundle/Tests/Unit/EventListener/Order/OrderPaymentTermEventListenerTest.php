@@ -6,7 +6,7 @@ use Symfony\Component\Form\FormInterface;
 
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Event\OrderEvent;
@@ -40,7 +40,7 @@ class OrderPaymentTermEventListenerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
-     * @expectedExceptionMessage AccountUser must belong to Account
+     * @expectedExceptionMessage CustomerUser must belong to Account
      */
     public function testThrowExceptionWhenAccountUserHasWrongAccount()
     {
@@ -53,7 +53,7 @@ class OrderPaymentTermEventListenerTest extends \PHPUnit_Framework_TestCase
         /** @var Account $account2 */
         $account2 = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account', ['id' => 2]);
 
-        $accountUser1 = new AccountUser();
+        $accountUser1 = new CustomerUser();
         $accountUser1->setAccount($account1);
 
         $order = new Order();
@@ -78,14 +78,14 @@ class OrderPaymentTermEventListenerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
-     * @expectedExceptionMessage AccountUser without Account is not allowed
+     * @expectedExceptionMessage CustomerUser without Account is not allowed
      */
     public function testAccountUserWithoutOrderAccount()
     {
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
         $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
-        $accountUser = new AccountUser();
+        $accountUser = new CustomerUser();
         $accountUser->setAccount(new Account());
 
         $order = new Order();
@@ -100,14 +100,14 @@ class OrderPaymentTermEventListenerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
-     * @expectedExceptionMessage AccountUser without Account is not allowed
+     * @expectedExceptionMessage CustomerUser without Account is not allowed
      */
     public function testAccountUserWithoutAccount()
     {
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
         $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
-        $accountUser = new AccountUser();
+        $accountUser = new CustomerUser();
 
         $order = new Order();
         $order
@@ -126,7 +126,7 @@ class OrderPaymentTermEventListenerTest extends \PHPUnit_Framework_TestCase
         /** @var Account $account */
         $account = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account', ['id' => 1]);
 
-        $accountUser = new AccountUser();
+        $accountUser = new CustomerUser();
         $accountUser->setAccount($account);
 
         $order = new Order();

@@ -10,7 +10,7 @@ use Oro\Bundle\SecurityBundle\Acl\Persistence\AclManager;
 use Oro\Bundle\SecurityBundle\Owner\Metadata\ChainMetadataProvider;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Entity\UserManager;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 use Oro\Bundle\CustomerBundle\Entity\Account;
@@ -169,7 +169,7 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
         $organization   = $defaultUser->getOrganization();
 
         foreach ($this->accountUsers as $item) {
-            /* @var $accountUser AccountUser */
+            /* @var $accountUser CustomerUser */
             $accountUser = $userManager->createUser();
 
             $accountUser

@@ -4,7 +4,7 @@ namespace Oro\Bundle\PaymentTermBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Event\ResolvePaymentTermEvent;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
@@ -143,7 +143,7 @@ class PaymentTermProviderTest extends \PHPUnit_Framework_TestCase
         $this->paymentTermAssociationProvider->expects($this->once())->method('getPaymentTerm')
             ->willReturn($paymentTerm);
         $token = $this->createMock(TokenInterface::class);
-        $accountUser = new AccountUser();
+        $accountUser = new CustomerUser();
         $accountUser->setAccount(new Account());
         $token->expects($this->once())->method('getUser')->willReturn($accountUser);
         $this->tokenStorage->expects($this->once())->method('getToken')->willReturn($token);

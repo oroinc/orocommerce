@@ -12,7 +12,7 @@
 {% block _account_profile_edit_form_fields_widget %}
     <fieldset class="profile__form__fields_container">
         <fieldset class="profile__form__row">
-            <legend>{{ 'oro.customer.accountuser.profile.form.sections.profile_information.label'|trans }}</legend>
+            <legend>{{ 'oro.customer.customeruser.profile.form.sections.profile_information.label'|trans }}</legend>
             <fieldset>
                 <div class="profile__form__col form__col_x6 col_first">
                     {{ form_row(form.account, {'attr': {'placeholder': 'oro.customer.form.placeholder.account'|trans}, 'parentClass': ''}) }}
@@ -42,7 +42,7 @@
         </fieldset>
 
         <fieldset class="profile__form__row">
-            <legend>{{ 'oro.customer.accountuser.profile.form.sections.password.label'|trans }}</legend>
+            <legend>{{ 'oro.customer.customeruser.profile.form.sections.password.label'|trans }}</legend>
             <fieldset>
                 <input type="text" class="profile__form__no-autocomplete-fix" />
                 {{ form_row(form.changePassword.currentPassword, {'attr': {'placeholder': 'oro.customer.form.placeholder.current_password'|trans}, 'parentClass': 'field profile__form__col form__col_x6 col_first current_password'}) }}

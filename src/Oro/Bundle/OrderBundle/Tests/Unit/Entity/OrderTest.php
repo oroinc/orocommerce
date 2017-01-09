@@ -5,7 +5,7 @@ namespace Oro\Bundle\OrderBundle\Tests\Unit\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Entity\OrderDiscount;
@@ -44,7 +44,7 @@ class OrderTest extends \PHPUnit_Framework_TestCase
             ['subtotal', 999.99],
             ['total', 999.99],
             ['account', new Account()],
-            ['accountUser', new AccountUser()],
+            ['accountUser', new CustomerUser()],
             ['website', new Website()],
             ['sourceEntityClass', 'EntityClass'],
             ['sourceEntityIdentifier', 'source-identifier-test-01'],
@@ -91,7 +91,7 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         $email = 'test@test.com';
         $order = new Order();
         $this->assertEmpty($order->getEmail());
-        $accountUser = new AccountUser();
+        $accountUser = new CustomerUser();
         $accountUser->setEmail($email);
         $order->setAccountUser($accountUser);
         $this->assertEquals($email, $order->getEmail());
@@ -106,7 +106,7 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         $account->expects($this->any())
             ->method('getId')
             ->will($this->returnValue(1));
-        $accountUser = new AccountUser();
+        $accountUser = new CustomerUser();
         $accountUser->setAccount($account);
 
         $this->assertEmpty($order->getAccount());

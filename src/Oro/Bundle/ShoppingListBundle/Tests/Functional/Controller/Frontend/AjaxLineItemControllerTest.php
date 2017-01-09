@@ -156,6 +156,104 @@ class AjaxLineItemControllerTest extends WebTestCase
         $this->assertFalse($result['successful']);
     }
 
+    public function testAddProductFromViewWithParentProduct()
+    {
+        $product = $this->getReference(LoadProductData::PRODUCT_3);
+        $parentProduct = $this->getReference(LoadProductData::PRODUCT_8);
+        $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_3);
+        $unit = $this->getReference('product_unit.liter');
+
+        $this->client->request(
+            'POST',
+            $this->getUrl(
+                'oro_shopping_list_frontend_add_product',
+                [
+                    'productId' => $product->getId(),
+                    'shoppingListId' => $shoppingList->getId(),
+                    'parentProductId' => $parentProduct->getId(),
+                ]
+            ),
+            [
+                'oro_product_frontend_line_item' => [
+                    'quantity' => 10,
+                    'unit' => $unit->getCode(),
+                    '_token' => $this->getCsrfToken(),
+                ],
+            ]
+        );
+
+        $result = $this->getJsonResponseContent($this->client->getResponse(), 200);
+
+        $this->assertArrayHasKey('successful', $result);
+        $this->assertTrue($result['successful']);
+
+        $this->assertArrayHasKey('product', $result);
+        $this->assertArrayHasKey('id', $result['product']);
+        $this->assertEquals($product->getId(), $result['product']['id']);
+
+        $shoppingList = $this->getContainer()->get('doctrine')
+            ->getManagerForClass('OroShoppingListBundle:ShoppingList')
+            ->find('OroShoppingListBundle:ShoppingList', $result['shoppingList']['id']);
+
+        $this->assertArrayHasKey('shoppingList', $result);
+        $this->assertArrayHasKey('id', $result['shoppingList']);
+        $this->assertEquals($shoppingList->getId(), $result['shoppingList']['id']);
+
+        /** @var LineItem $lineItem */
+        $lineItem = $shoppingList->getLineItems()->first();
+        $this->assertNotNull($lineItem->getParentProduct());
+        $this->assertTrue($lineItem->getParentProduct()->isConfigurable());
+        $this->assertEquals($parentProduct->getId(), $lineItem->getParentProduct()->getId());
+    }
+
+    public function testAddProductFromViewWithParentProductNotConfigurable()
+    {
+        $product = $this->getReference(LoadProductData::PRODUCT_3);
+        $parentProduct = $this->getReference(LoadProductData::PRODUCT_4);
+        $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_4);
+        $unit = $this->getReference('product_unit.liter');
+
+        $this->client->request(
+            'POST',
+            $this->getUrl(
+                'oro_shopping_list_frontend_add_product',
+                [
+                    'productId' => $product->getId(),
+                    'shoppingListId' => $shoppingList->getId(),
+                    'parentProductId' => $parentProduct->getId(),
+                ]
+            ),
+            [
+                'oro_product_frontend_line_item' => [
+                    'quantity' => 10,
+                    'unit' => $unit->getCode(),
+                    '_token' => $this->getCsrfToken(),
+                ],
+            ]
+        );
+
+        $result = $this->getJsonResponseContent($this->client->getResponse(), 200);
+
+        $this->assertArrayHasKey('successful', $result);
+        $this->assertTrue($result['successful']);
+
+        $this->assertArrayHasKey('product', $result);
+        $this->assertArrayHasKey('id', $result['product']);
+        $this->assertEquals($product->getId(), $result['product']['id']);
+
+        $shoppingList = $this->getContainer()->get('doctrine')
+            ->getManagerForClass('OroShoppingListBundle:ShoppingList')
+            ->find('OroShoppingListBundle:ShoppingList', $result['shoppingList']['id']);
+
+        $this->assertArrayHasKey('shoppingList', $result);
+        $this->assertArrayHasKey('id', $result['shoppingList']);
+        $this->assertEquals($shoppingList->getId(), $result['shoppingList']['id']);
+
+        /** @var LineItem $lineItem */
+        $lineItem = $shoppingList->getLineItems()->first();
+        $this->assertNull($lineItem->getParentProduct());
+    }
+
     /**
      * @depends      testAddProductFromView
      * @dataProvider removeProductFromViewProvider

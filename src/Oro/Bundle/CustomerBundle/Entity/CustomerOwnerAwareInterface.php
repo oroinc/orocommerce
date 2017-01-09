@@ -10,7 +10,7 @@ interface CustomerOwnerAwareInterface
     public function getCustomer();
 
     /**
-     * @return \Oro\Bundle\CustomerBundle\Entity\AccountUser
+     * @return \Oro\Bundle\CustomerBundle\Entity\CustomerUser
      */
     public function getCustomerUser();
 }

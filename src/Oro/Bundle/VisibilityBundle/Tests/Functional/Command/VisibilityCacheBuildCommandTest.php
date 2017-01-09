@@ -7,9 +7,6 @@ use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductDa
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\VisibilityBundle\Command\VisibilityCacheBuildCommand;
-use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountGroupProductVisibilityResolved;
-use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
-use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData;
 use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
 
@@ -234,7 +231,7 @@ class VisibilityCacheBuildCommandTest extends WebTestCase
     protected function getEntitiesCount(EntityRepository $repository)
     {
         return (int)$repository->createQueryBuilder('entity')
-            ->select('count(entity.visibility)')
+            ->select('COUNT(entity.visibility)')
             ->getQuery()
             ->getSingleScalarResult();
     }

@@ -13,7 +13,7 @@ use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as AccountSelectTypeStu
 
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Form\Type\CustomerUserRoleSelectType;
 use Oro\Bundle\CustomerBundle\Form\Type\AccountUserType;
@@ -26,7 +26,7 @@ use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\FrontendOwnerSelectTypeS
 
 class FrontendAccountUserTypeTest extends AccountUserTypeTest
 {
-    const DATA_CLASS = 'Oro\Bundle\CustomerBundle\Entity\AccountUser';
+    const DATA_CLASS = 'Oro\Bundle\CustomerBundle\Entity\CustomerUser';
 
     /**
      * @var FrontendAccountUserType
@@ -58,7 +58,7 @@ class FrontendAccountUserTypeTest extends AccountUserTypeTest
     protected function getExtensions()
     {
         $account = $this->getAccount(1);
-        $user = new AccountUser();
+        $user = new CustomerUser();
         $user->setAccount($account);
         $this->securityFacade->expects($this->any())->method('getLoggedUser')->willReturn($user);
 
@@ -94,15 +94,15 @@ class FrontendAccountUserTypeTest extends AccountUserTypeTest
     /**
      * @dataProvider submitProvider
      *
-     * @param AccountUser $defaultData
+     * @param CustomerUser $defaultData
      * @param array $submittedData
-     * @param AccountUser $expectedData
+     * @param CustomerUser $expectedData
      * @param bool $roleGranted
      */
     public function testSubmit(
-        AccountUser $defaultData,
+        CustomerUser $defaultData,
         array $submittedData,
-        AccountUser $expectedData,
+        CustomerUser $expectedData,
         $roleGranted = true
     ) {
         $form = $this->factory->create($this->formType, $defaultData, []);
@@ -119,10 +119,10 @@ class FrontendAccountUserTypeTest extends AccountUserTypeTest
      */
     public function submitProvider()
     {
-        $newAccountUser = new AccountUser();
+        $newAccountUser = new CustomerUser();
         $account = new Account();
         $newAccountUser->setAccount($account);
-        $existingAccountUser = new AccountUser();
+        $existingAccountUser = new CustomerUser();
 
         $class = new \ReflectionClass($existingAccountUser);
         $prop = $class->getProperty('id');

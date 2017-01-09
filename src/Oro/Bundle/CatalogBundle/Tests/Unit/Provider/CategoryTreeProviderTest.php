@@ -4,7 +4,7 @@ namespace Oro\Bundle\CatalogBundle\Tests\Unit\Provider;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Event\CategoryTreeCreateAfterEvent;
@@ -41,7 +41,7 @@ class CategoryTreeProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetCategories()
     {
-        $user = new AccountUser();
+        $user = new CustomerUser();
 
         $childCategory = new Category();
         $childCategory->setLevel(2);

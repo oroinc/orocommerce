@@ -87,7 +87,7 @@ abstract class AbstractOrderAddressType extends AbstractType
                     return;
                 }
 
-                //Enter manually or Account/AccountUser address
+                //Enter manually or Account/CustomerUser address
                 $orderAddress = $event->getData();
 
                 $address = null;

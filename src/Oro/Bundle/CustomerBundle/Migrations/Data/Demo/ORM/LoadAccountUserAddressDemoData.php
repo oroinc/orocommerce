@@ -5,7 +5,7 @@ namespace Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 
 class LoadAccountUserAddressDemoData extends AbstractLoadAddressDemoData implements DependentFixtureInterface
@@ -44,7 +44,7 @@ class LoadAccountUserAddressDemoData extends AbstractLoadAddressDemoData impleme
                 continue;
             }
 
-            /** @var AccountUser $accountUser */
+            /** @var CustomerUser $accountUser */
             $accountUser = $this->getReference($referenceName);
             $accountUser
                 ->addAddress($this->createAddress($row));

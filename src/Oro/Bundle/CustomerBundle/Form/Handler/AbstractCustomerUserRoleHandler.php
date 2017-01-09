@@ -10,7 +10,7 @@ use Oro\Bundle\SecurityBundle\Owner\Metadata\ChainMetadataProvider;
 use Oro\Bundle\UserBundle\Entity\AbstractRole;
 use Oro\Bundle\UserBundle\Form\Handler\AclRoleHandler;
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 use Oro\Bundle\CustomerBundle\Form\Type\CustomerUserRoleType;
 
@@ -119,7 +119,7 @@ abstract class AbstractCustomerUserRoleHandler extends AclRoleHandler
      */
     protected function getAclGroup()
     {
-        return AccountUser::SECURITY_GROUP;
+        return CustomerUser::SECURITY_GROUP;
     }
 
     /**

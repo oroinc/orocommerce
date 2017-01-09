@@ -35,15 +35,15 @@ search:
                 target_type:            text
                 target_fields:          [name]
 
-    Oro\Bundle\CustomerBundle\Entity\AccountUser:
+    Oro\Bundle\CustomerBundle\Entity\CustomerUser:
         alias: oro_account_account_user
-        label: oro.customer.accountuser.entity_plural_label
+        label: oro.customer.customeruser.entity_plural_label
         title_fields: [email]
         route:
             name: oro_customer_account_user_view
             parameters:
                 id: id
-        search_template: OroCustomerBundle:AccountUser:searchResult.html.twig
+        search_template: OroCustomerBundle:CustomerUser:searchResult.html.twig
         fields:
             -
                 name: email

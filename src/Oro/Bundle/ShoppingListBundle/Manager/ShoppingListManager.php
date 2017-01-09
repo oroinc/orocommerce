@@ -6,7 +6,7 @@ use Doctrine\Common\Cache\Cache;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManager;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Rounding\QuantityRoundingService;
@@ -22,7 +22,7 @@ use Symfony\Component\Translation\TranslatorInterface;
 class ShoppingListManager
 {
     /**
-     * @var AccountUser
+     * @var CustomerUser
      */
     private $accountUser;
 
@@ -142,10 +142,10 @@ class ShoppingListManager
     }
 
     /**
-     * @param AccountUser  $accountUser
+     * @param CustomerUser  $accountUser
      * @param ShoppingList $shoppingList
      */
-    public function setCurrent(AccountUser $accountUser, ShoppingList $shoppingList)
+    public function setCurrent(CustomerUser $accountUser, ShoppingList $shoppingList)
     {
         $this->cache->save($accountUser->getId(), $shoppingList->getId());
         $shoppingList->setCurrent(true);
@@ -341,7 +341,7 @@ class ShoppingListManager
     }
 
     /**
-     * @return string|AccountUser
+     * @return string|CustomerUser
      */
     protected function getAccountUser()
     {

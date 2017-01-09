@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CustomerBundle\Tests\Unit\Entity\Ownership;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\Ownership\FrontendCustomerUserAwareTrait;
 
@@ -20,8 +20,8 @@ class FrontendCustomerUserAwareTraitTest extends \PHPUnit_Framework_TestCase
 
     public function testSetCustomerUser()
     {
-        /** @var AccountUser|\PHPUnit_Framework_MockObject_MockObject $customerUser **/
-        $customerUser = $this->createMock(AccountUser::class);
+        /** @var CustomerUser|\PHPUnit_Framework_MockObject_MockObject $customerUser **/
+        $customerUser = $this->createMock(CustomerUser::class);
         $this->frontendCustomerUserAwareTrait->setCustomerUser($customerUser);
 
         $this->assertSame($customerUser, $this->frontendCustomerUserAwareTrait->getCustomerUser());

@@ -23,6 +23,11 @@ class UpdateNoteAssociationQuery extends ParametrizedMigrationQuery
     protected $fieldName;
 
     /**
+     * @var string
+     */
+    protected $targetClass;
+
+    /**
      * @param Schema $schema
      */
     public function __construct(Schema $schema)
@@ -72,10 +77,10 @@ class UpdateNoteAssociationQuery extends ParametrizedMigrationQuery
         $this->logQuery($logger, $sql, $params, $types);
         $result = $this->connection->fetchAssoc($sql, $params, $types);
         $config = $this->connection->convertToPHPValue($result['data'], 'array');
-        $key = 'manyToOne|Oro\\Bundle\\NoteBundle\\Entity\\Note|Oro\\Bundle\\CustomerBundle\\Entity\\CustomerUserRole|'
-            .$fieldName;
-
+        $key = 'manyToOne|Oro\\Bundle\\NoteBundle\\Entity\\Note|Oro\\Bundle\\CustomerBundle\\Entity\\'
+            . $this->targetClass . '|' . $fieldName;
         unset($config['extend']['relation'][$key]);
+        unset($config['extend']['schema']['relation'][$fieldName]);
         unset($config['extend']['schema']['relation']['account_user_role_604160ea']);
 
         $sql = 'UPDATE oro_entity_config SET data = :data WHERE id = :id';
@@ -106,5 +111,13 @@ class UpdateNoteAssociationQuery extends ParametrizedMigrationQuery
     public function setFieldName($fieldName)
     {
         $this->fieldName = $fieldName;
+    }
+
+    /**
+     * @param string $targetClass
+     */
+    public function setTargetClass($targetClass)
+    {
+        $this->targetClass = $targetClass;
     }
 }

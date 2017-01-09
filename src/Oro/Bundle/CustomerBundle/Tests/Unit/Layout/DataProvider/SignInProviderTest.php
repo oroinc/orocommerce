@@ -12,7 +12,7 @@ use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Layout\DataProvider\SignInProvider;
 
 class SignInProviderTest extends \PHPUnit_Framework_TestCase
@@ -169,7 +169,7 @@ class SignInProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetLoggedUser()
     {
-        $accountUser = new AccountUser();
+        $accountUser = new CustomerUser();
 
         $this->securityFacade
             ->expects($this->once())

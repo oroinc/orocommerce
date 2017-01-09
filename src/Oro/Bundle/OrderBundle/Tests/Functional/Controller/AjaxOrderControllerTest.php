@@ -3,7 +3,7 @@
 namespace Oro\Bundle\OrderBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountAddresses;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserAddresses;
 use Oro\Bundle\OrderBundle\Form\Type\OrderType;
@@ -87,7 +87,7 @@ class AjaxOrderControllerTest extends WebTestCase
         /** @var Account $order */
         $accountEntity = $this->getReference($account);
 
-        /** @var AccountUser $order */
+        /** @var CustomerUser $order */
         $accountUserEntity = $accountUser ? $this->getReference($accountUser) : null;
 
         $website = $this->getContainer()->get('oro_website.manager')->getDefaultWebsite();

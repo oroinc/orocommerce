@@ -10,7 +10,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 
 class LoadAccountUserDemoData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
@@ -79,7 +79,7 @@ class LoadAccountUserDemoData extends AbstractFixture implements ContainerAwareI
             $role = $roles[$roleLabel];
 
             // create account user
-            /** @var AccountUser $accountUser */
+            /** @var CustomerUser $accountUser */
             $accountUser = $userManager->createUser();
             $accountUser
                 ->setWebsite($website)

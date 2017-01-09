@@ -15,7 +15,7 @@ use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\UserBundle\Entity\Ownership\AuditableUserAwareTrait;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\CustomerBundle\Entity\AccountOwnerAwareInterface;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\Ownership\AuditableFrontendAccountUserAwareTrait;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\SaleBundle\Model\ExtendQuote;
@@ -42,7 +42,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  *              "organization_column_name"="organization_id",
  *              "frontend_owner_type"="FRONTEND_USER",
  *              "frontend_owner_field_name"="accountUser",
- *              "frontend_owner_column_name"="account_user_id"
+ *              "frontend_owner_column_name"="customer_user_id"
  *          },
  *          "security"={
  *              "type"="ACL",
@@ -238,16 +238,16 @@ class Quote extends ExtendQuote implements
     protected $assignedUsers;
 
     /**
-     * @var Collection|AccountUser[]
+     * @var Collection|CustomerUser[]
      *
-     * @ORM\ManyToMany(targetEntity="Oro\Bundle\CustomerBundle\Entity\AccountUser")
+     * @ORM\ManyToMany(targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerUser")
      * @ORM\JoinTable(
-     *      name="oro_quote_assigned_acc_users",
+     *      name="oro_quote_assigned_cus_users",
      *      joinColumns={
      *          @ORM\JoinColumn(name="quote_id", referencedColumnName="id", onDelete="CASCADE")
      *      },
      *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="account_user_id", referencedColumnName="id", onDelete="CASCADE")
+     *          @ORM\JoinColumn(name="customer_user_id", referencedColumnName="id", onDelete="CASCADE")
      *      }
      * )
      **/
@@ -623,7 +623,7 @@ class Quote extends ExtendQuote implements
     }
 
     /**
-     * @return Collection|AccountUser[]
+     * @return Collection|CustomerUser[]
      */
     public function getAssignedAccountUsers()
     {
@@ -631,10 +631,10 @@ class Quote extends ExtendQuote implements
     }
 
     /**
-     * @param AccountUser $assignedAccountUser
+     * @param CustomerUser $assignedAccountUser
      * @return $this
      */
-    public function addAssignedAccountUser(AccountUser $assignedAccountUser)
+    public function addAssignedAccountUser(CustomerUser $assignedAccountUser)
     {
         if (!$this->assignedAccountUsers->contains($assignedAccountUser)) {
             $this->assignedAccountUsers->add($assignedAccountUser);
@@ -644,10 +644,10 @@ class Quote extends ExtendQuote implements
     }
 
     /**
-     * @param AccountUser $assignedAccountUser
+     * @param CustomerUser $assignedAccountUser
      * @return $this
      */
-    public function removeAssignedAccountUser(AccountUser $assignedAccountUser)
+    public function removeAssignedAccountUser(CustomerUser $assignedAccountUser)
     {
         if ($this->assignedAccountUsers->contains($assignedAccountUser)) {
             $this->assignedAccountUsers->removeElement($assignedAccountUser);

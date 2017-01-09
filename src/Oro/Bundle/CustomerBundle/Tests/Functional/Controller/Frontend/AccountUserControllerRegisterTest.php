@@ -7,7 +7,7 @@ use Symfony\Component\DomCrawler\Crawler;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 
 /**
  * @dbIsolation
@@ -313,14 +313,14 @@ class AccountUserControllerRegisterTest extends WebTestCase
 
     /**
      * @param array $criteria
-     * @return AccountUser
+     * @return CustomerUser
      */
     protected function getAccountUser(array $criteria)
     {
         return $this->getContainer()
             ->get('doctrine')
-            ->getManagerForClass('OroCustomerBundle:AccountUser')
-            ->getRepository('OroCustomerBundle:AccountUser')
+            ->getManagerForClass('OroCustomerBundle:CustomerUser')
+            ->getRepository('OroCustomerBundle:CustomerUser')
             ->findOneBy($criteria);
     }
 

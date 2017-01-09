@@ -28,7 +28,7 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  * @ORM\Entity(repositoryClass="Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository")
  * @ORM\AssociationOverrides({
  *      @ORM\AssociationOverride(name="accountUser",
- *          joinColumns=@ORM\JoinColumn(name="account_user_id", referencedColumnName="id", onDelete="CASCADE")
+ *          joinColumns=@ORM\JoinColumn(name="customer_user_id", referencedColumnName="id", onDelete="CASCADE")
  *      )
  * })
  * @Config(
@@ -52,7 +52,7 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  *              "owner_column_name"="user_owner_id",
  *              "frontend_owner_type"="FRONTEND_USER",
  *              "frontend_owner_field_name"="accountUser",
- *              "frontend_owner_column_name"="account_user_id",
+ *              "frontend_owner_column_name"="customer_user_id",
  *              "organization_field_name"="organization",
  *              "organization_column_name"="organization_id"
  *          },

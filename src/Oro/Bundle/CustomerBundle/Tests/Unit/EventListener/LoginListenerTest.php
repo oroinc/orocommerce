@@ -8,7 +8,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
 
 use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\EventListener\LoginListener;
 
 class LoginListenerTest extends \PHPUnit_Framework_TestCase
@@ -90,7 +90,7 @@ class LoginListenerTest extends \PHPUnit_Framework_TestCase
                 'expected' => null,
             ],
             'account user' => [
-                'user' => new AccountUser(),
+                'user' => new CustomerUser(),
                 'expected' => true,
             ],
         ];

@@ -6,7 +6,7 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 use Oro\Bundle\CustomerBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
@@ -200,7 +200,7 @@ abstract class AbstractLoadACLData extends AbstractFixture implements
             if ($this->hasReference($item['email'])) {
                 $accountUser = $this->getReference($item['email']);
             } else {
-                /* @var $accountUser AccountUser */
+                /* @var $accountUser CustomerUser */
                 $accountUser = $userManager->createUser();
                 $accountUser
                     ->setEmail($item['email'])

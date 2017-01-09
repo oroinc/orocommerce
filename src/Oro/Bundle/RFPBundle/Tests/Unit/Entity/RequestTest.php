@@ -6,7 +6,7 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Entity\RequestProduct;
@@ -59,7 +59,7 @@ class RequestTest extends \PHPUnit_Framework_TestCase
             [
                 ['requestProducts', new RequestProduct()],
                 ['assignedUsers', new User()],
-                ['assignedAccountUsers', new AccountUser()],
+                ['assignedAccountUsers', new CustomerUser()],
             ]
         );
     }
@@ -80,7 +80,7 @@ class RequestTest extends \PHPUnit_Framework_TestCase
     {
         $properties = [
             ['account', new Account()],
-            ['accountUser', new AccountUser()],
+            ['accountUser', new CustomerUser()],
             ['organization', new Organization()],
             ['owner', new User()]
         ];

@@ -122,7 +122,7 @@ class OroAlternativeCheckoutBundle implements Migration, OrderedMigrationInterfa
         workflow_item_id,
         source_id,
         website_id,
-        account_user_id,
+        customer_user_id,
         account_id,
         organization_id,
         user_owner_id,
