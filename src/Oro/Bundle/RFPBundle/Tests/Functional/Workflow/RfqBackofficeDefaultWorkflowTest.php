@@ -2,36 +2,51 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Functional\Workflow;
 
+use Symfony\Component\DomCrawler\Crawler;
+
+use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
  * @dbIsolation
  */
-class RfqBackofficeDefaultWorkflowTest extends AbstractRfpDefaultWorkflowTestCase
+class RfqBackofficeDefaultWorkflowTest extends WebTestCase
 {
+    const WORKFLOW_BUTTONS = [
+        'Start',
+        'Process',
+        'Request More Information',
+        'Delete',
+        'Decline',
+        'Reprocess',
+        'Undelete',
+    ];
+
+    /**
+     * @var Request
+     */
+    private $request;
+
     /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
-        parent::setUp();
+        $this->initClient([], static::generateBasicAuthHeader());
+
+        $this->loadFixtures(
+            [
+                LoadRequestData::class,
+            ]
+        );
 
         $this->request = $this->getReference(LoadRequestData::REQUEST1);
     }
 
-    protected function tearDown()
-    {
-        parent::tearDown();
-    }
-
-    public function testWorkflowIsStarted()
-    {
-        $this->assertWorkflowIsStarted($this->request);
-        $this->assertButtonsAvailable($this->request, ['Request More Information', 'Decline', 'Delete']);
-    }
-
     public function testMoreInfoRequest()
     {
+        $this->assertButtonsAvailable($this->request, ['Request More Information', 'Decline', 'Delete']);
         $crawler = $this->openRequestWorkflowWidget($this->request);
 
         $link = $crawler->selectLink('Request More Information');
@@ -69,6 +84,7 @@ class RfqBackofficeDefaultWorkflowTest extends AbstractRfpDefaultWorkflowTestCas
         $this->assertButtonsAvailable($this->request, ['Request More Information', 'Decline', 'Delete']);
     }
 
+
     public function testDecline()
     {
         $this->transit($this->request, 'Decline');
@@ -78,42 +94,104 @@ class RfqBackofficeDefaultWorkflowTest extends AbstractRfpDefaultWorkflowTestCas
     }
 
     /**
-     * @inheritDoc
+     * @param Request $request
+     * @param string
+     * @return array
      */
-    protected function getWorkflowName()
+    private function transit(Request $request, $linkTitle)
     {
-        return 'rfq_backoffice_default';
+        $crawler = $this->openRequestWorkflowWidget($request);
+
+        $this->assertContains('RFQ Backoffice', $crawler->html());
+        $link = $crawler->selectLink($linkTitle);
+        $this->assertNotEmpty($link, 'Transit button not found');
+
+        $this->client->request(
+            'GET',
+            $link->attr('data-transition-url'),
+            [],
+            [],
+            $this->generateWsseAuthHeader()
+        );
+
+        $this->assertJsonResponseStatusCodeEquals($this->client->getResponse(), 200);
+
+        $data = json_decode($this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('workflowItem', $data);
+        $this->request = $this->refreshRequestEntity($request);
+
+        return $data;
     }
 
     /**
-     * {@inheritdoc}
+     * @param Request $request
+     * @return null|Crawler
      */
-    protected function getWidgetRouteName()
+    private function openRequestWorkflowWidget(Request $request)
     {
-        return 'oro_workflow_widget_entity_workflows';
+        $crawler = $this->client->request(
+            'GET',
+            $this->getUrl('oro_workflow_widget_entity_workflows', [
+                '_widgetContainer' => 'dialog',
+                'entityClass' => Request::class,
+                'entityId' => $request->getId(),
+            ]),
+            [],
+            [],
+            $this->generateBasicAuthHeader()
+        );
+
+        $this->assertNotEmpty($crawler->html());
+        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+        $this->assertContains('RFQ Backoffice', $crawler->html());
+
+        return $crawler;
     }
 
     /**
-     * {@inheritdoc}
+     * @param Request $request
+     * @return null|Crawler
      */
-    protected function getButtonTitles()
+    private function openRequestPage(Request $request)
     {
-        return [
-            'Start',
-            'Process',
-            'Request More Information',
-            'Delete',
-            'Decline',
-            'Reprocess',
-            'Undelete',
-        ];
+        $crawler = $this->client->request(
+            'GET',
+            $this->getUrl('oro_rfp_request_view', ['id' => $request->getId()]),
+            [],
+            [],
+            $this->generateBasicAuthHeader()
+        );
+
+        $this->assertNotEmpty($crawler->html());
+        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+
+        return $crawler;
     }
 
     /**
-     * @param string $html
+     * @param Request $request
+     * @param array $buttonTitles
      */
-    protected function assertContainsWorkflowTitle($html)
+    private function assertButtonsAvailable(Request $request, array $buttonTitles)
     {
-        $this->assertContains('RFQ Backoffice', $html);
+        $crawler = $this->openRequestWorkflowWidget($request);
+        foreach ($buttonTitles as $title) {
+            $this->assertNotEmpty($crawler->selectLink($title));
+        }
+
+        foreach (array_diff(self::WORKFLOW_BUTTONS, $buttonTitles) as $title) {
+            $this->assertEmpty($crawler->selectLink($title));
+        }
+    }
+
+    /**
+     * @param Request $request
+     * @return Request
+     */
+    private function refreshRequestEntity(Request $request)
+    {
+        $em = $this->getContainer()->get('doctrine')->getManagerForClass(Request::class);
+
+        return $em->find(Request::class, $request->getId());
     }
 }
