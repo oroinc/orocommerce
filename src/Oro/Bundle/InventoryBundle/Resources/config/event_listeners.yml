@@ -100,7 +100,6 @@ services:
         arguments:
             - '@oro_inventory.manager.inventory_quantity_manager'
             - '@oro_inventory.handler.inventory_decrement_status_handler'
-            - '@oro_inventory.validator.inventory_level_order_validator'
             - '@oro_entity.doctrine_helper'
         tags:
             - { name: kernel.event_listener, event: extendable_action.finish_checkout, method: onCreateOrder, priority: 10 }
@@ -109,7 +108,7 @@ services:
     oro_inventory.event_listener.create_order_line_item_validation_listener:
         class: Oro\Bundle\InventoryBundle\EventListener\CreateOrderLineItemValidationListener
         arguments:
-            - '@oro_inventory.validator.inventory_level_order_validator'
+            - '@oro_inventory.manager.inventory_quantity_manager'
             - '@oro_entity.doctrine_helper'
             - '@translator'
             - '@request_stack'

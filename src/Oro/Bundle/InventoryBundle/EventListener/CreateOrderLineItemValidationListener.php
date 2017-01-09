@@ -10,7 +10,7 @@ use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\InventoryBundle\Exception\InventoryLevelNotFoundException;
-use Oro\Bundle\InventoryBundle\Validator\InventoryLevelOrderValidator;
+use Oro\Bundle\InventoryBundle\Inventory\InventoryQuantityManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
@@ -21,9 +21,9 @@ use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 class CreateOrderLineItemValidationListener
 {
     /**
-     * @var InventoryLevelOrderValidator
+     * @var InventoryQuantityManager
      */
-    protected $orderValidator;
+    protected $inventoryQuantityManager;
 
     /**
      * @var TranslatorInterface
@@ -46,18 +46,18 @@ class CreateOrderLineItemValidationListener
     protected static $allowedValidationSteps = ['order_review'];
 
     /**
-     * @param InventoryLevelOrderValidator $orderValidator
+     * @param InventoryQuantityManager $orderValidator
      * @param DoctrineHelper $doctrineHelper
      * @param TranslatorInterface $translator
      * @param RequestStack $requestStack
      */
     public function __construct(
-        InventoryLevelOrderValidator $orderValidator,
+        InventoryQuantityManager $inventoryQuantityManager,
         DoctrineHelper $doctrineHelper,
         TranslatorInterface $translator,
         RequestStack $requestStack
     ) {
-        $this->orderValidator = $orderValidator;
+        $this->inventoryQuantityManager = $inventoryQuantityManager;
         $this->translator = $translator;
         $this->requestStack = $requestStack;
         $this->doctrineHelper = $doctrineHelper;
@@ -81,7 +81,7 @@ class CreateOrderLineItemValidationListener
                 throw new InventoryLevelNotFoundException();
             }
 
-            if (!$this->orderValidator->hasEnoughQuantity($inventoryLevel, $lineItem->getQuantity())) {
+            if (!$this->inventoryQuantityManager->hasEnoughQuantity($inventoryLevel, $lineItem->getQuantity())) {
                 $event->addError(
                     $lineItem->getProductSku(),
                     $this->translator->trans('oro.inventory.decrement_inventory.product.not_allowed')

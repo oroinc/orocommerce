@@ -87,8 +87,3 @@ services:
         arguments:
             - '@oro_entity.fallback.resolver.entity_fallback_resolver'
             - '@oro_entity.doctrine_helper'
-
-    oro_inventory.validator.inventory_level_order_validator:
-        class: 'Oro\Bundle\InventoryBundle\Validator\InventoryLevelOrderValidator'
-        arguments:
-            - '@oro_entity.fallback.resolver.entity_fallback_resolver'

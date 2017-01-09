@@ -6,11 +6,9 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
-use Oro\Bundle\InventoryBundle\Inventory\BaseInventoryQuantityManager;
+use Oro\Bundle\InventoryBundle\Inventory\InventoryQuantityManager;
 use Oro\Bundle\InventoryBundle\Inventory\InventoryStatusHandler;
-use Oro\Bundle\InventoryBundle\Inventory\InventoryQuantityManagerInterface;
 use Oro\Bundle\InventoryBundle\Exception\InventoryLevelNotFoundException;
-use Oro\Bundle\InventoryBundle\Validator\InventoryLevelOrderValidator;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -25,7 +23,7 @@ use Oro\Component\Action\Event\ExtendableConditionEvent;
 class CreateOrderEventListener
 {
     /**
-     * @var BaseInventoryQuantityManager
+     * @var InventoryQuantityManager
      */
     protected $quantityManager;
 
@@ -40,24 +38,16 @@ class CreateOrderEventListener
     protected $statusHandler;
 
     /**
-     * @var InventoryLevelOrderValidator
-     */
-    protected $orderValidator;
-
-    /**
-     * @param BaseInventoryQuantityManager $quantityManager
+     * @param InventoryQuantityManager $quantityManager
      * @param InventoryStatusHandler $statusHandler
-     * @param InventoryLevelOrderValidator $orderValidator
      * @param DoctrineHelper $doctrineHelper
      */
     public function __construct(
-        BaseInventoryQuantityManager $quantityManager,
+        InventoryQuantityManager $quantityManager,
         InventoryStatusHandler $statusHandler,
-        InventoryLevelOrderValidator $orderValidator,
         DoctrineHelper $doctrineHelper
     ) {
         $this->quantityManager = $quantityManager;
-        $this->orderValidator = $orderValidator;
         $this->statusHandler = $statusHandler;
         $this->doctrineHelper = $doctrineHelper;
     }
@@ -105,7 +95,7 @@ class CreateOrderEventListener
                 throw new InventoryLevelNotFoundException();
             }
 
-            if (!$this->orderValidator->hasEnoughQuantity($inventoryLevel, $lineItem->getQuantity())) {
+            if (!$this->quantityManager->hasEnoughQuantity($inventoryLevel, $lineItem->getQuantity())) {
                 $event->addError('');
                 return;
             }
