@@ -17,12 +17,30 @@ class FrontendTransitionButtonProviderExtension extends TransitionButtonProvider
      */
     protected function getTransitions(Workflow $workflow, ButtonSearchContext $searchContext)
     {
-        if ($workflow->getDefinition()->getRelatedEntity() === $searchContext->getEntityClass()) {
-            $transitions = $workflow->getTransitionManager()->getTransitions()->toArray();
+        $transitions = array_merge(
+            $this->findByRelatedEntity($workflow, $searchContext),
+            parent::getTransitions($workflow, $searchContext)
+        );
 
-            return array_filter($transitions, function (Transition $transition) {
-                return !$transition->isStart();
-            });
+        $transitions = array_filter($transitions, function (Transition $transition) {
+            return !$transition->isStart();
+        });
+
+        return array_unique($transitions);
+    }
+
+    /**
+     * @param Workflow $workflow
+     * @param ButtonSearchContext $searchContext
+     *
+     * @return array
+     */
+    protected function findByRelatedEntity(Workflow $workflow, ButtonSearchContext $searchContext)
+    {
+        if ($workflow->getDefinition()->getRelatedEntity() === $searchContext->getEntityClass() &&
+            !$searchContext->getDatagrid()
+        ) {
+            return $workflow->getTransitionManager()->getTransitions()->toArray();
         }
 
         return [];
