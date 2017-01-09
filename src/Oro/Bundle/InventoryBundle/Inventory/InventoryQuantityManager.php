@@ -36,6 +36,11 @@ class InventoryQuantityManager
         return $this->checkQuantities($inventoryLevel, $quantityToDecrement, $product);
     }
 
+    /**
+     * @param InventoryLevel $inventoryLevel
+     * @param $quantityToDecrement
+     * @return bool
+     */
     public function hasEnoughQuantity(InventoryLevel $inventoryLevel, $quantityToDecrement)
     {
         $product = $inventoryLevel->getProduct();
@@ -68,6 +73,12 @@ class InventoryQuantityManager
         $inventoryLevel->setQuantity($inventoryLevel->getQuantity() + $quantityToIncrement);
     }
 
+    /**
+     * @param InventoryLevel $inventoryLevel
+     * @param $quantityToDecrement
+     * @param $product
+     * @return bool
+     */
     protected function checkQuantities(InventoryLevel $inventoryLevel, $quantityToDecrement, $product)
     {
         $inventoryThreshold = $this->entityFallbackResolver->getFallbackValue($product, 'inventoryThreshold');
