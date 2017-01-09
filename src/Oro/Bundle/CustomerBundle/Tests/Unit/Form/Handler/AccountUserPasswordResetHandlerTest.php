@@ -20,7 +20,7 @@ class AccountUserPasswordResetHandlerTest extends AbstractAccountUserPasswordHan
 
     public function testProcess()
     {
-        $user = $this->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\AccountUser')
+        $user = $this->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\CustomerUser')
             ->disableOriginalConstructor()
             ->getMock();
 

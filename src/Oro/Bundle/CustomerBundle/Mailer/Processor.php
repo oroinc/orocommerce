@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CustomerBundle\Mailer;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 
 class Processor extends AccountUserProcessor
 {
@@ -11,11 +11,11 @@ class Processor extends AccountUserProcessor
     const RESET_PASSWORD_EMAIL_TEMPLATE_NAME = 'account_user_reset_password';
 
     /**
-     * @param AccountUser $accountUser
+     * @param CustomerUser $accountUser
      * @param string $password
      * @return int
      */
-    public function sendWelcomeNotification(AccountUser $accountUser, $password)
+    public function sendWelcomeNotification(CustomerUser $accountUser, $password)
     {
         return $this->getEmailTemplateAndSendEmail(
             $accountUser,
@@ -25,10 +25,10 @@ class Processor extends AccountUserProcessor
     }
 
     /**
-     * @param AccountUser $accountUser
+     * @param CustomerUser $accountUser
      * @return int
      */
-    public function sendConfirmationEmail(AccountUser $accountUser)
+    public function sendConfirmationEmail(CustomerUser $accountUser)
     {
         return $this->getEmailTemplateAndSendEmail(
             $accountUser,
@@ -38,10 +38,10 @@ class Processor extends AccountUserProcessor
     }
 
     /**
-     * @param AccountUser $accountUser
+     * @param CustomerUser $accountUser
      * @return int
      */
-    public function sendResetPasswordEmail(AccountUser $accountUser)
+    public function sendResetPasswordEmail(CustomerUser $accountUser)
     {
         return $this->getEmailTemplateAndSendEmail(
             $accountUser,

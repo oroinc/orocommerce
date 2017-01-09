@@ -25,7 +25,7 @@
 
 {% block _hero_promo_item_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' hero-promo-item'
+        '~class':  ' hero-promo-item ' ~ item.class|default('')
     }) %}
 
     <div {{ block('block_attributes') }}>
@@ -50,8 +50,8 @@
                             <h2 class="hero-promo-item__title">{{ item.label }}</h2>
                         {% endif %}
                         {% if item.link|default('') and item.link_label|default('') %}
-                            <a href="{{ app.request.getUriForPath(item.link) }}" class="btn btn--action btn-info--size-l hero-promo-item__view-btn">
-                                {{ item.link_label }} <i class="fa-angle-right"></i>
+                            <a href="{{ app.request.getUriForPath(item.link) }}" class="btn btn--info hero-promo-item__view-btn">
+                                {{ item.link_label }}
                             </a>
                         {% endif %}
                     </div>
@@ -94,11 +94,11 @@
 
     {% if category.smallImage %}
         {% set attr = layout_attr_defaults(attr, {
-            src: Image.url(category.smallImage, 'product_large')
+            src: Image.url(category.smallImage, 'category_medium')
         }) %}
     {% else %}
         {% set attr = layout_attr_defaults(attr, {
-            src: '/bundles/orocatalog/default/images/no_image.png'
+            src: '/bundles/orocatalog/default/images/no_image_315x260.png'
         }) %}
     {% endif %}
 

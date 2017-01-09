@@ -5,7 +5,7 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\Context\Builder\Basic;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 use Oro\Bundle\ShippingBundle\Context\Builder\Basic\BasicShippingContextBuilder;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Factory\ShippingLineItemCollectionFactoryInterface;
@@ -23,7 +23,7 @@ class BasicShippingContextBuilderTest extends \PHPUnit_Framework_TestCase
     private $customerMock;
 
     /**
-     * @var AccountUser|\PHPUnit_Framework_MockObject_MockObject
+     * @var CustomerUser|\PHPUnit_Framework_MockObject_MockObject
      */
     private $customerUserMock;
 
@@ -77,7 +77,7 @@ class BasicShippingContextBuilderTest extends \PHPUnit_Framework_TestCase
         $this->customerMock = $this->getMockBuilder(Account::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->customerUserMock = $this->getMockBuilder(AccountUser::class)
+        $this->customerUserMock = $this->getMockBuilder(CustomerUser::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->lineItemsCollectionMock = $this->createMock(ShippingLineItemCollectionInterface::class);

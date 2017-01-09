@@ -34,10 +34,10 @@ class OroSaleBundle implements Migration, DatabasePlatformAwareInterface
             $queries->addQuery('UPDATE oro_quote_demand d
                 INNER JOIN oro_checkout_source s ON s.quoteDemand_id = d.id
                 INNER JOIN oro_checkout c ON c.source_id = s.id
-                SET d.account_id = c.account_id, d.account_user_id = c.account_user_id');
+                SET d.account_id = c.account_id, d.account_user_id = c.customer_user_id');
         } else {
             $queries->addQuery('UPDATE oro_quote_demand d
-                SET account_id = c.account_id, account_user_id = c.account_user_id
+                SET account_id = c.account_id, account_user_id = c.customer_user_id
                 FROM oro_checkout_source s INNER JOIN oro_checkout c ON c.source_id = s.id
                 WHERE s.quoteDemand_id = d.id');
         }
@@ -68,7 +68,7 @@ class OroSaleBundle implements Migration, DatabasePlatformAwareInterface
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_account_user'),
+            $schema->getTable('oro_customer_user'),
             ['account_user_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]

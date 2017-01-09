@@ -8,7 +8,7 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Tests\Unit\Entity\AbstractUserTest;
 use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserSettings;
@@ -24,11 +24,11 @@ class AccountUserTest extends AbstractUserTest
     use AddressEntityTestTrait;
 
     /**
-     * @return AccountUser
+     * @return CustomerUser
      */
     public function getUser()
     {
-        return new AccountUser();
+        return new CustomerUser();
     }
 
     /**
@@ -40,7 +40,7 @@ class AccountUserTest extends AbstractUserTest
     }
 
     /**
-     * @return AccountUser
+     * @return CustomerUser
      */
     protected function createTestedEntity()
     {
@@ -49,7 +49,7 @@ class AccountUserTest extends AbstractUserTest
 
     public function testCollections()
     {
-        $this->assertPropertyCollections(new AccountUser(), [
+        $this->assertPropertyCollections(new CustomerUser(), [
             ['addresses', $this->createAddressEntity()],
             ['salesRepresentatives', new User()],
         ]);

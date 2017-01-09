@@ -16,16 +16,16 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * @ORM\Entity()
- * @ORM\Table(name="oro_account_user")
+ * @ORM\Table(name="oro_customer_user")
  * @ORM\HasLifecycleCallbacks()
  * @ORM\AssociationOverrides({
  *      @ORM\AssociationOverride(
  *          name="organizations",
  *          joinTable=@ORM\JoinTable(
- *              name="oro_account_user_org",
+ *              name="oro_customer_user_org",
  *              joinColumns={
  *                  @ORM\JoinColumn(
- *                      name="account_user_id",
+ *                      name="customer_user_id",
  *                      referencedColumnName="id",
  *                      onDelete="CASCADE"
  *                  )
@@ -76,7 +76,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  * @SuppressWarnings(PHPMD.TooManyFields)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  */
-class AccountUser extends AbstractUser implements FullNameInterface, EmailHolderInterface, CustomerUserIdentity
+class CustomerUser extends AbstractUser implements FullNameInterface, EmailHolderInterface, CustomerUserIdentity
 {
     const SECURITY_GROUP = 'commerce';
 
@@ -85,9 +85,9 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
      *
      * @ORM\ManyToMany(targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerUserRole", inversedBy="accountUsers")
      * @ORM\JoinTable(
-     *      name="oro_acc_user_access_role",
+     *      name="oro_cus_user_access_role",
      *      joinColumns={
-     *          @ORM\JoinColumn(name="account_user_id", referencedColumnName="id", onDelete="CASCADE")
+     *          @ORM\JoinColumn(name="customer_user_id", referencedColumnName="id", onDelete="CASCADE")
      *      },
      *      inverseJoinColumns={
      *          @ORM\JoinColumn(name="customer_user_role_id", referencedColumnName="id", onDelete="CASCADE")
@@ -284,9 +284,9 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
      *
      * @ORM\ManyToMany(targetEntity="Oro\Bundle\UserBundle\Entity\User")
      * @ORM\JoinTable(
-     *      name="oro_account_user_sales_reps",
+     *      name="oro_customer_user_sales_reps",
      *      joinColumns={
-     *          @ORM\JoinColumn(name="account_user_id", referencedColumnName="id", onDelete="CASCADE")
+     *          @ORM\JoinColumn(name="customer_user_id", referencedColumnName="id", onDelete="CASCADE")
      *      },
      *      inverseJoinColumns={
      *          @ORM\JoinColumn(name="user_id", referencedColumnName="id", onDelete="CASCADE")
@@ -401,7 +401,7 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
     /**
      * @deprecated Use setCustomer()
      * @param Account $account
-     * @return AccountUser
+     * @return CustomerUser
      */
     public function setAccount(Account $account = null)
     {
@@ -480,7 +480,7 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
 
     /**
      * @param string $username
-     * @return AccountUser
+     * @return CustomerUser
      */
     public function setUsername($username)
     {
@@ -501,7 +501,7 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
 
     /**
      * @param string $email
-     * @return AccountUser
+     * @return CustomerUser
      */
     public function setEmail($email)
     {
@@ -521,7 +521,7 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
 
     /**
      * @param string $namePrefix
-     * @return AccountUser
+     * @return CustomerUser
      */
     public function setNamePrefix($namePrefix)
     {
@@ -540,7 +540,7 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
 
     /**
      * @param string $firstName
-     * @return AccountUser
+     * @return CustomerUser
      */
     public function setFirstName($firstName)
     {
@@ -559,7 +559,7 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
 
     /**
      * @param string $middleName
-     * @return AccountUser
+     * @return CustomerUser
      */
     public function setMiddleName($middleName)
     {
@@ -578,7 +578,7 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
 
     /**
      * @param string $lastName
-     * @return AccountUser
+     * @return CustomerUser
      */
     public function setLastName($lastName)
     {
@@ -597,7 +597,7 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
 
     /**
      * @param string $nameSuffix
-     * @return AccountUser
+     * @return CustomerUser
      */
     public function setNameSuffix($nameSuffix)
     {
@@ -616,7 +616,7 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
 
     /**
      * @param \DateTime $birthday
-     * @return AccountUser
+     * @return CustomerUser
      */
     public function setBirthday($birthday)
     {
@@ -629,7 +629,7 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
      * Add addresses
      *
      * @param AbstractDefaultTypedAddress $address
-     * @return AccountUser
+     * @return CustomerUser
      */
     public function addAddress(AbstractDefaultTypedAddress $address)
     {
@@ -651,7 +651,7 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
      * Remove addresses
      *
      * @param AbstractDefaultTypedAddress $addresses
-     * @return AccountUser
+     * @return CustomerUser
      */
     public function removeAddress(AbstractDefaultTypedAddress $addresses)
     {
@@ -728,7 +728,7 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
     /**
      * @param User $owner
      *
-     * @return AccountUser
+     * @return CustomerUser
      */
     public function setOwner(User $owner)
     {
@@ -793,7 +793,7 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
 
     /**
      * @param \DateTime $createdAt
-     * @return AccountUser
+     * @return CustomerUser
      */
     public function setCreatedAt(\DateTime $createdAt)
     {
@@ -812,7 +812,7 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
 
     /**
      * @param \DateTime $updatedAt
-     * @return AccountUser
+     * @return CustomerUser
      */
     public function setUpdatedAt(\DateTime $updatedAt)
     {

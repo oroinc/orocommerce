@@ -7,7 +7,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Provider\AccountUserRelationsProvider;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
@@ -344,7 +344,7 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider accountUserAccountDataProvider
-     * @param AccountUser|null $user
+     * @param CustomerUser|null $user
      * @param Account|null $expectedAccount
      */
     public function testGetPriceListByAccountForAccountUser($user, $expectedAccount)
@@ -385,7 +385,7 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
         return [
             [null, null],
             [null, new Account()],
-            [new AccountUser(), new Account()]
+            [new CustomerUser(), new Account()]
         ];
     }
 

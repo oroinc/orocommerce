@@ -19,7 +19,7 @@ operations:
                     data: $.data
                     value: false
             - '@flash_message':
-                message: oro.customer.controller.accountuser.disabled.message
+                message: oro.customer.controller.customeruser.disabled.message
                 type: 'success'
 
     oro_account_accountuser_enable:
@@ -42,7 +42,7 @@ operations:
                     data: $.data
                     value: true
             - '@flash_message':
-                message: oro.customer.controller.accountuser.enabled.message
+                message: oro.customer.controller.customeruser.enabled.message
                 type: 'success'
 
     oro_account_frontend_accountuser_disable:
@@ -73,7 +73,7 @@ operations:
                     route_parameters:
                         id: $id
             - '@flash_message':
-                message: oro.customer.controller.accountuser.disabled.message
+                message: oro.customer.controller.customeruser.disabled.message
                 type: 'success'
 
     oro_account_frontend_accountuser_disable_datagrid:
@@ -112,7 +112,7 @@ operations:
                     route_parameters:
                         id: $id
             - '@flash_message':
-                message: oro.customer.controller.accountuser.enabled.message
+                message: oro.customer.controller.customeruser.enabled.message
                 type: 'success'
 
     oro_account_frontend_accountuser_enable_datagrid:
@@ -141,7 +141,7 @@ operations:
                 parameters_mapping:
                     data: $.data
             - '@flash_message':
-                message: oro.customer.controller.accountuser.confirmed.message
+                message: oro.customer.controller.customeruser.confirmed.message
                 type: 'success'
 
     oro_account_accountuser_sendconfirmation:
@@ -162,7 +162,7 @@ operations:
                 parameters_mapping:
                     data: $.data
             - '@flash_message':
-                message: oro.customer.controller.accountuser.confirmation_sent.message
+                message: oro.customer.controller.customeruser.confirmation_sent.message
                 type: 'success'
 
     oro_account_frontend_create:
@@ -170,7 +170,7 @@ operations:
         applications: [commerce]
         routes:
            - oro_customer_frontend_account_user_index
-        acl_resource: [CREATE, entity:commerce@Oro\Bundle\CustomerBundle\Entity\AccountUser]
+        acl_resource: [CREATE, entity:commerce@Oro\Bundle\CustomerBundle\Entity\CustomerUser]
         order: 10
         actions:
            - '@redirect':
@@ -211,7 +211,7 @@ operations:
                 parameters_mapping:
                     data: $.data
             - '@trans':
-                id: oro.customer.accountuser.entity_label
+                id: oro.customer.customeruser.entity_label
                 attribute: $.entityLabel
             - '@flash_message':
                 message: oro.action.delete_message
@@ -320,7 +320,7 @@ action_groups:
     oro_account_accountuser_set_enabled:
         parameters:
             data:
-                type: Oro\Bundle\CustomerBundle\Entity\AccountUser
+                type: Oro\Bundle\CustomerBundle\Entity\CustomerUser
             value:
                 type: boolean
         acl_resource: [EDIT, $.data]
@@ -336,7 +336,7 @@ action_groups:
     oro_account_frontend_accountuser_set_enabled:
         parameters:
             data:
-                type: Oro\Bundle\CustomerBundle\Entity\AccountUser
+                type: Oro\Bundle\CustomerBundle\Entity\CustomerUser
             value:
                 type: boolean
             current_user:
@@ -356,7 +356,7 @@ action_groups:
     oro_account_accountuser_confirm:
         parameters:
             data:
-                type: Oro\Bundle\CustomerBundle\Entity\AccountUser
+                type: Oro\Bundle\CustomerBundle\Entity\CustomerUser
         acl_resource: [EDIT, $.data]
         conditions:
             '@equal': [$.data.confirmed, false]
@@ -373,7 +373,7 @@ action_groups:
     oro_account_accountuser_sendconfirmation:
         parameters:
             data:
-                type: Oro\Bundle\CustomerBundle\Entity\AccountUser
+                type: Oro\Bundle\CustomerBundle\Entity\CustomerUser
         acl_resource: [EDIT, $.data]
         conditions:
             '@equal': [$.data.confirmed, false]

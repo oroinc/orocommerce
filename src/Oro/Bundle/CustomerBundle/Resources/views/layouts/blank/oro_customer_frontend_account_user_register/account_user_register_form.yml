@@ -10,11 +10,11 @@ layout:
         - '@setOption':
             id: registration_label
             optionName: text
-            optionValue: oro.customer.accountuser.profile.register
+            optionValue: oro.customer.customeruser.profile.register
         - '@setOption':
             id: registration_description
             optionName: text
-            optionValue: oro.customer.accountuser.profile.register.description
+            optionValue: oro.customer.customeruser.profile.register.description
         - '@setOption':
             id: registration_form
             optionName: form
@@ -22,7 +22,7 @@ layout:
         - '@setOption':
             id: registration_form_submit
             optionName: text
-            optionValue: oro.customer.accountuser.profile.create_an_account
+            optionValue: oro.customer.customeruser.profile.create_an_account
         - '@add':
             id: registration_link_back
             parentId: registration_links

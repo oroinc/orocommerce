@@ -12,7 +12,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Entity\UserManager;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 
 class FrontendAccountUserRegistrationType extends AbstractType
 {
@@ -55,9 +55,9 @@ class FrontendAccountUserRegistrationType extends AbstractType
                 [
                     'required' => true,
                     'mapped' => false,
-                    'label' => 'oro.customer.accountuser.profile.company_name',
+                    'label' => 'oro.customer.customeruser.profile.company_name',
                     'constraints' => [new Assert\NotBlank()],
-                    'attr' => ['placeholder' => 'oro.customer.accountuser.placeholder.company_name']
+                    'attr' => ['placeholder' => 'oro.customer.customeruser.placeholder.company_name']
                 ]
             )
             ->add(
@@ -65,8 +65,8 @@ class FrontendAccountUserRegistrationType extends AbstractType
                 'text',
                 [
                     'required' => true,
-                    'label' => 'oro.customer.accountuser.first_name.label',
-                    'attr' => ['placeholder' => 'oro.customer.accountuser.placeholder.first_name']
+                    'label' => 'oro.customer.customeruser.first_name.label',
+                    'attr' => ['placeholder' => 'oro.customer.customeruser.placeholder.first_name']
                 ]
             )
             ->add(
@@ -74,8 +74,8 @@ class FrontendAccountUserRegistrationType extends AbstractType
                 'text',
                 [
                     'required' => true,
-                    'label' => 'oro.customer.accountuser.last_name.label',
-                    'attr' => ['placeholder' => 'oro.customer.accountuser.placeholder.last_name']
+                    'label' => 'oro.customer.customeruser.last_name.label',
+                    'attr' => ['placeholder' => 'oro.customer.customeruser.placeholder.last_name']
                 ]
             )
             ->add(
@@ -83,8 +83,8 @@ class FrontendAccountUserRegistrationType extends AbstractType
                 'email',
                 [
                     'required' => true,
-                    'label' => 'oro.customer.accountuser.email.label',
-                    'attr' => ['placeholder' => 'oro.customer.accountuser.placeholder.email']
+                    'label' => 'oro.customer.customeruser.email.label',
+                    'attr' => ['placeholder' => 'oro.customer.customeruser.placeholder.email']
                 ]
             );
 
@@ -94,12 +94,12 @@ class FrontendAccountUserRegistrationType extends AbstractType
             [
                 'type' => 'password',
                 'first_options' => [
-                    'label' => 'oro.customer.accountuser.password.label',
-                    'attr' => ['placeholder' => 'oro.customer.accountuser.placeholder.password']
+                    'label' => 'oro.customer.customeruser.password.label',
+                    'attr' => ['placeholder' => 'oro.customer.customeruser.placeholder.password']
                 ],
                 'second_options' => [
-                    'label' => 'oro.customer.accountuser.password_confirmation.label',
-                    'attr' => ['placeholder' => 'oro.customer.accountuser.placeholder.password_confirmation']
+                    'label' => 'oro.customer.customeruser.password_confirmation.label',
+                    'attr' => ['placeholder' => 'oro.customer.customeruser.placeholder.password_confirmation']
                 ],
                 'invalid_message' => 'oro.customer.message.password_mismatch',
                 'required' => true,
@@ -110,7 +110,7 @@ class FrontendAccountUserRegistrationType extends AbstractType
         $builder->addEventListener(
             FormEvents::SUBMIT,
             function (FormEvent $event) {
-                /** @var AccountUser $accountUser */
+                /** @var CustomerUser $accountUser */
                 $accountUser = $event->getData();
 
                 if (!$accountUser->getOwner()) {
@@ -129,7 +129,7 @@ class FrontendAccountUserRegistrationType extends AbstractType
         $builder->addEventListener(
             FormEvents::POST_SUBMIT,
             function (FormEvent $event) {
-                /** @var AccountUser $accountUser */
+                /** @var CustomerUser $accountUser */
                 $accountUser = $event->getData();
                 if (!$accountUser->getAccount()) {
                     $form = $event->getForm();

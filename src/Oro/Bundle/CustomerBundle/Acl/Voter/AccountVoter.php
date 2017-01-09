@@ -13,7 +13,7 @@ use Oro\Bundle\EntityBundle\Exception\NotManageableEntityException;
 use Oro\Bundle\SecurityBundle\Acl\Voter\AbstractEntityVoter;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\CustomerBundle\Entity\AccountOwnerAwareInterface;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Provider\AccountUserRelationsProvider;
 use Oro\Bundle\CustomerBundle\Security\AccountUserProvider;
 
@@ -41,7 +41,7 @@ class AccountVoter extends AbstractEntityVoter implements ContainerAwareInterfac
     protected $object;
 
     /**
-     * @var AccountUser
+     * @var CustomerUser
      */
     protected $user;
 
@@ -98,7 +98,7 @@ class AccountVoter extends AbstractEntityVoter implements ContainerAwareInterfac
     public function vote(TokenInterface $token, $object, array $attributes)
     {
         $user = $this->getUser($token);
-        if (!$user instanceof AccountUser) {
+        if (!$user instanceof CustomerUser) {
             return self::ACCESS_ABSTAIN;
         }
 
@@ -129,7 +129,7 @@ class AccountVoter extends AbstractEntityVoter implements ContainerAwareInterfac
     {
         $trustResolver = $this->getAuthenticationTrustResolver();
         if ($trustResolver->isAnonymous($token)) {
-            $user = new AccountUser();
+            $user = new CustomerUser();
             $relationsProvider = $this->getRelationsProvider();
             $user->setAccount($relationsProvider->getAccountIncludingEmpty());
 
@@ -166,21 +166,21 @@ class AccountVoter extends AbstractEntityVoter implements ContainerAwareInterfac
     }
 
     /**
-     * @param AccountUser $user
+     * @param CustomerUser $user
      * @param AccountOwnerAwareInterface $object
      * @return bool
      */
-    protected function isSameAccount(AccountUser $user, AccountOwnerAwareInterface $object)
+    protected function isSameAccount(CustomerUser $user, AccountOwnerAwareInterface $object)
     {
         return $object->getAccount() && $user->getAccount()->getId() === $object->getAccount()->getId();
     }
 
     /**
-     * @param AccountUser $user
+     * @param CustomerUser $user
      * @param AccountOwnerAwareInterface $object
      * @return bool
      */
-    protected function isSameUser(AccountUser $user, AccountOwnerAwareInterface $object)
+    protected function isSameUser(CustomerUser $user, AccountOwnerAwareInterface $object)
     {
         return $object->getAccountUser() && $user->getId() === $object->getAccountUser()->getId();
     }
@@ -299,6 +299,6 @@ class AccountVoter extends AbstractEntityVoter implements ContainerAwareInterfac
      */
     protected function getDescriptorByClass($class)
     {
-        return sprintf('entity:%s@%s', AccountUser::SECURITY_GROUP, $class);
+        return sprintf('entity:%s@%s', CustomerUser::SECURITY_GROUP, $class);
     }
 }

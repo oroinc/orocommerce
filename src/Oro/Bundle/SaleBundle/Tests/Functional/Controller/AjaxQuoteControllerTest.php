@@ -4,7 +4,7 @@ namespace Oro\Bundle\SaleBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteType;
 
 /**
@@ -35,7 +35,7 @@ class AjaxQuoteControllerTest extends WebTestCase
         /** @var Account $order */
         $accountEntity = $this->getReference($account);
 
-        /** @var AccountUser $order */
+        /** @var CustomerUser $order */
         $accountUserEntity = $accountUser ? $this->getReference($accountUser) : null;
 
         $this->client->request(
@@ -78,10 +78,10 @@ class AjaxQuoteControllerTest extends WebTestCase
 
     public function testGetRelatedDataActionException()
     {
-        /** @var AccountUser $accountUser1 */
+        /** @var CustomerUser $accountUser1 */
         $accountUser1 = $this->getReference('sale-account1-user1@example.com');
 
-        /** @var AccountUser $accountUser2 */
+        /** @var CustomerUser $accountUser2 */
         $accountUser2 = $this->getReference('sale-account2-user1@example.com');
 
         $this->client->request(

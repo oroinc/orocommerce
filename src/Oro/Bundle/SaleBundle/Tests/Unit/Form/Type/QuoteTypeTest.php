@@ -11,7 +11,7 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Form\Type\AccountUserSelectType;
 use Oro\Bundle\CustomerBundle\Form\Type\AccountSelectType;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
@@ -126,8 +126,8 @@ class QuoteTypeTest extends AbstractTest
             $account = $this->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\Account')->getMock();
             $role = $this->getMockBuilder('Symfony\Component\Security\Core\Role\RoleInterface')->getMock();
 
-            /** @var AccountUser $accountUser */
-            $accountUser = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountUser', $accountUserId);
+            /** @var CustomerUser $accountUser */
+            $accountUser = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUser', $accountUserId);
             $accountUser->setEmail('test@test.test')
                 ->setFirstName('First Name')
                 ->setLastName('Last Name')
@@ -373,8 +373,8 @@ class QuoteTypeTest extends AbstractTest
 
         $accountUserSelectType = new StubEntityType(
             [
-                1 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountUser', 1),
-                2 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountUser', 2),
+                1 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUser', 1),
+                2 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUser', 2),
             ],
             AccountUserSelectType::NAME
         );

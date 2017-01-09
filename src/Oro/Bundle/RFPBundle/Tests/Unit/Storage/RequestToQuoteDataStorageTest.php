@@ -4,7 +4,7 @@ namespace Oro\Bundle\RFPBundle\Tests\Unit\Storage;
 
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
@@ -99,8 +99,8 @@ class RequestToQuoteDataStorageTest extends \PHPUnit_Framework_TestCase
         /** @var Account $account */
         $account = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account', ['id' => $accountId]);
 
-        /** @var AccountUser $accountUser */
-        $accountUser = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountUser', ['id' => $accountUserId]);
+        /** @var CustomerUser $accountUser */
+        $accountUser = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUser', ['id' => $accountUserId]);
 
         $product = new Product();
         $product->setSku($productSku);

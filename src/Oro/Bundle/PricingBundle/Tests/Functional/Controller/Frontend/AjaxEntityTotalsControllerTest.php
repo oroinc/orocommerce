@@ -4,7 +4,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\Controller\Frontend;
 
 use Doctrine\Common\Util\ClassUtils;
 use Oro\Bundle\CurrencyBundle\DependencyInjection\Configuration as CurrencyConfig;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserSettings;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -88,12 +88,12 @@ class AjaxEntityTotalsControllerTest extends WebTestCase
     }
 
     /**
-     * @return AccountUser
+     * @return CustomerUser
      */
     protected function getCurrentUser()
     {
         return $this->getContainer()->get('doctrine')
-            ->getRepository('OroCustomerBundle:AccountUser')
+            ->getRepository('OroCustomerBundle:CustomerUser')
             ->findOneBy(['username' => LoadAccountUserData::AUTH_USER]);
     }
 

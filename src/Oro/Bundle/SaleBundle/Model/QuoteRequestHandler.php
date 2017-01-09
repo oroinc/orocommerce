@@ -7,7 +7,7 @@ use Doctrine\ORM\EntityRepository;
 
 use Symfony\Component\HttpFoundation\RequestStack;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteType;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 
@@ -76,7 +76,7 @@ class QuoteRequestHandler
     }
 
     /**
-     * @return AccountUser|null
+     * @return CustomerUser|null
      */
     public function getAccountUser()
     {

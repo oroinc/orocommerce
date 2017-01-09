@@ -8,7 +8,7 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Factory\CheckoutShippingContextFactory;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 use Oro\Bundle\OrderBundle\Converter\OrderShippingLineItemConverterInterface;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
@@ -85,7 +85,7 @@ class CheckoutShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
         $paymentMethod = 'SomePaymentMethod';
         $amount = 100;
         $customer = new Account();
-        $customerUser = new AccountUser();
+        $customerUser = new CustomerUser();
         $checkoutLineItems = new ArrayCollection([
             new OrderLineItem()
         ]);
@@ -175,7 +175,7 @@ class CheckoutShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
         $paymentMethod = 'SomePaymentMethod';
         $amount = 100;
         $customer = new Account();
-        $customerUser = new AccountUser();
+        $customerUser = new CustomerUser();
         $checkoutLineItems = new ArrayCollection([
             new OrderLineItem()
         ]);

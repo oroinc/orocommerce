@@ -64,6 +64,11 @@ define(function(require) {
         },
 
         updateProductInfo: function(id) {
+            var parentProductId = this.model.get('id');
+            if (!_.isUndefined(parentProductId) && parentProductId.length !== 0) {
+                this.model.set('parentProduct', parentProductId);
+            }
+
             this.model.set('id', id ? parseInt(id, 10) : 0);
         },
 

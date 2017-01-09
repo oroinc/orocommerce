@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CustomerBundle\Tests\Functional;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
@@ -25,7 +25,7 @@ class AccountUserOperationsTest extends WebTestCase
     }
     public function testConfirm()
     {
-        /** @var \Oro\Bundle\CustomerBundle\Entity\AccountUser $user */
+        /** @var \Oro\Bundle\CustomerBundle\Entity\CustomerUser $user */
         $user = $this->getReference(static::EMAIL);
         $this->assertNotNull($user);
 
@@ -70,7 +70,7 @@ class AccountUserOperationsTest extends WebTestCase
 
     public function testSendConfirmation()
     {
-        /** @var AccountUser $user */
+        /** @var CustomerUser $user */
         $email = static::EMAIL;
 
         $user = $this->getReference($email);
@@ -98,7 +98,7 @@ class AccountUserOperationsTest extends WebTestCase
 
     public function testEnableAndDisable()
     {
-        /** @var AccountUser $user */
+        /** @var CustomerUser $user */
         $user = $this->getUserRepository()->findOneBy(['email' => static::EMAIL]);
         $id = $user->getId();
 
@@ -135,13 +135,13 @@ class AccountUserOperationsTest extends WebTestCase
      */
     protected function getUserRepository()
     {
-        return $this->getObjectManager()->getRepository('OroCustomerBundle:AccountUser');
+        return $this->getObjectManager()->getRepository('OroCustomerBundle:CustomerUser');
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function executeOperation(AccountUser $accountUser, $operationName)
+    protected function executeOperation(CustomerUser $accountUser, $operationName)
     {
         $this->client->request(
             'GET',
@@ -151,7 +151,7 @@ class AccountUserOperationsTest extends WebTestCase
                     'operationName' => $operationName,
                     'route' => 'oro_customer_account_user_view',
                     'entityId' => $accountUser->getId(),
-                    'entityClass' => 'Oro\Bundle\CustomerBundle\Entity\AccountUser'
+                    'entityClass' => 'Oro\Bundle\CustomerBundle\Entity\CustomerUser'
                 ]
             )
         );

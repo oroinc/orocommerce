@@ -49,7 +49,7 @@ abstract class AbstractCustomerUserRoleType extends AbstractType
                 'appendUsers',
                 'oro_entity_identifier',
                 [
-                    'class'    => 'Oro\Bundle\CustomerBundle\Entity\AccountUser',
+                    'class'    => 'Oro\Bundle\CustomerBundle\Entity\CustomerUser',
                     'required' => false,
                     'mapped'   => false,
                     'multiple' => true
@@ -59,7 +59,7 @@ abstract class AbstractCustomerUserRoleType extends AbstractType
                 'removeUsers',
                 'oro_entity_identifier',
                 [
-                    'class'    => 'Oro\Bundle\CustomerBundle\Entity\AccountUser',
+                    'class'    => 'Oro\Bundle\CustomerBundle\Entity\CustomerUser',
                     'required' => false,
                     'mapped'   => false,
                     'multiple' => true

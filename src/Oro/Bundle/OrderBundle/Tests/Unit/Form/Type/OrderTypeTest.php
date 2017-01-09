@@ -299,8 +299,8 @@ class OrderTypeTest extends TypeTestCase
 
         $accountUserSelectType = new StubEntityType(
             [
-                1 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountUser', 1),
-                2 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountUser', 2),
+                1 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUser', 1),
+                2 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUser', 2),
             ],
             AccountUserSelectType::NAME
         );
@@ -448,7 +448,7 @@ class OrderTypeTest extends TypeTestCase
                 }
             } elseif ($fieldName === 'accountUser') {
                 $order->setAccountUser($this->getEntity(
-                    'Oro\Bundle\CustomerBundle\Entity\AccountUser',
+                    'Oro\Bundle\CustomerBundle\Entity\CustomerUser',
                     $value
                 ));
             } elseif ($fieldName === 'account') {

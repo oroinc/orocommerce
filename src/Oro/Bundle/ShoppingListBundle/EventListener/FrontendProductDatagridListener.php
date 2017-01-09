@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ShoppingListBundle\EventListener;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface;
@@ -110,12 +110,12 @@ class FrontendProductDatagridListener
     }
 
     /**
-     * @return AccountUser|null
+     * @return CustomerUser|null
      */
     protected function getLoggedAccountUser()
     {
         $token = $this->tokenStorage->getToken(TokenInterface::class);
-        if (!$token || !($token->getUser() instanceof AccountUser)) {
+        if (!$token || !($token->getUser() instanceof CustomerUser)) {
             return null;
         }
 
@@ -124,13 +124,13 @@ class FrontendProductDatagridListener
 
     /**
      * @param ResultRecord[] $records
-     * @param AccountUser    $accountUser
+     * @param CustomerUser    $accountUser
      * @param ShoppingList   $currentShoppingList
      * @return array
      */
     protected function getGroupedLineItems(
         array $records,
-        AccountUser $accountUser,
+        CustomerUser $accountUser,
         ShoppingList $currentShoppingList
     ) {
         /** @var LineItemRepository $lineItemRepository */

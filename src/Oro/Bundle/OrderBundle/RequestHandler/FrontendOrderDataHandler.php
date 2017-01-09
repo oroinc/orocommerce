@@ -11,7 +11,7 @@ use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 
 class FrontendOrderDataHandler
 {
@@ -56,13 +56,13 @@ class FrontendOrderDataHandler
     }
 
     /**
-     * @return AccountUser
+     * @return CustomerUser
      */
     public function getAccountUser()
     {
         $accountUser = $this->securityFacade->getLoggedUser();
-        if (!$accountUser instanceof AccountUser) {
-            throw new \InvalidArgumentException('Only AccountUser can create an Order');
+        if (!$accountUser instanceof CustomerUser) {
+            throw new \InvalidArgumentException('Only CustomerUser can create an Order');
         }
 
         return $accountUser;

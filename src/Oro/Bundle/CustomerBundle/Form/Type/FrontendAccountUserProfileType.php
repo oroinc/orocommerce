@@ -38,7 +38,7 @@ class FrontendAccountUserProfileType extends AbstractType
                 'text',
                 [
                     'required' => false,
-                    'label' => 'oro.customer.accountuser.name_prefix.label'
+                    'label' => 'oro.customer.customeruser.name_prefix.label'
                 ]
             )
             ->add(
@@ -46,7 +46,7 @@ class FrontendAccountUserProfileType extends AbstractType
                 'text',
                 [
                     'required' => true,
-                    'label' => 'oro.customer.accountuser.first_name.label'
+                    'label' => 'oro.customer.customeruser.first_name.label'
                 ]
             )
             ->add(
@@ -54,7 +54,7 @@ class FrontendAccountUserProfileType extends AbstractType
                 'text',
                 [
                     'required' => false,
-                    'label' => 'oro.customer.accountuser.middle_name.label'
+                    'label' => 'oro.customer.customeruser.middle_name.label'
                 ]
             )
             ->add(
@@ -62,7 +62,7 @@ class FrontendAccountUserProfileType extends AbstractType
                 'text',
                 [
                     'required' => true,
-                    'label' => 'oro.customer.accountuser.last_name.label'
+                    'label' => 'oro.customer.customeruser.last_name.label'
                 ]
             )
             ->add(
@@ -70,7 +70,7 @@ class FrontendAccountUserProfileType extends AbstractType
                 'text',
                 [
                     'required' => false,
-                    'label' => 'oro.customer.accountuser.name_suffix.label'
+                    'label' => 'oro.customer.customeruser.name_suffix.label'
                 ]
             )
             ->add(
@@ -78,7 +78,7 @@ class FrontendAccountUserProfileType extends AbstractType
                 'oro_date',
                 [
                     'required' => false,
-                    'label' => 'oro.customer.accountuser.birthday.label'
+                    'label' => 'oro.customer.customeruser.birthday.label'
                 ]
             )
             ->add(
@@ -86,17 +86,17 @@ class FrontendAccountUserProfileType extends AbstractType
                 'email',
                 [
                     'required' => true,
-                    'label' => 'oro.customer.accountuser.email.label'
+                    'label' => 'oro.customer.customeruser.email.label'
                 ]
             )
             ->add(
                 'changePassword',
                 ChangePasswordType::NAME,
                 [
-                    'current_password_label' => 'oro.customer.accountuser.current_password.label',
+                    'current_password_label' => 'oro.customer.customeruser.current_password.label',
                     'plain_password_invalid_message' => 'oro.customer.message.password_mismatch',
-                    'first_options_label' => 'oro.customer.accountuser.new_password.label',
-                    'second_options_label' => 'oro.customer.accountuser.password_confirmation.label'
+                    'first_options_label' => 'oro.customer.customeruser.new_password.label',
+                    'second_options_label' => 'oro.customer.customeruser.password_confirmation.label'
                 ]
             );
         $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);

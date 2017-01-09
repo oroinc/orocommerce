@@ -4,7 +4,7 @@ namespace Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type;
 
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Form\Type\FrontendOwnerSelectType;
 use Oro\Bundle\EntityConfigBundle\Config\Config;
 use Oro\Bundle\EntityConfigBundle\Config\Id\EntityConfigId;
@@ -101,7 +101,7 @@ class FrontendOwnerSelectTypeTest extends FormIntegrationTestCase
         $this->aclHelper
             ->expects($this->any())
             ->method('applyAclToCriteria')
-            ->with(AccountUser::class, $criteria, 'VIEW', ['account' => 'account.id'])
+            ->with(CustomerUser::class, $criteria, 'VIEW', ['account' => 'account.id'])
             ->willReturn($queryBuilder);
 
         $queryBuilder

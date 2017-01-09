@@ -20,7 +20,7 @@ class RequestRepository extends EntityRepository
     ) {
         $qb = $this->createQueryBuilder('r');
         $qb
-            ->select('count(r.id)')
+            ->select('COUNT(r.id)')
             ->leftJoin('r.requestProducts', 'requestProducts')
             ->leftJoin('requestProducts.requestProductItems', 'requestProductItems')
             ->where($qb->expr()->in('requestProductItems.currency', $removingCurrencies));

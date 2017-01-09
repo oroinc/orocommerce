@@ -101,7 +101,7 @@ class AddressProviderTest extends \PHPUnit_Framework_TestCase
         /** @var Account $entity */
         $entity = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account');
 
-        $this->provider->setEntityClass('Oro\Bundle\CustomerBundle\Entity\AccountUser');
+        $this->provider->setEntityClass('Oro\Bundle\CustomerBundle\Entity\CustomerUser');
         $this->provider->getComponentOptions($entity);
     }
 }

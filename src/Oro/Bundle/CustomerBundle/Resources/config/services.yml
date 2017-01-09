@@ -2,7 +2,7 @@ parameters:
     oro_customer.entity.account.class: Oro\Bundle\CustomerBundle\Entity\Account
     oro_customer.entity.account_address.class: Oro\Bundle\CustomerBundle\Entity\CustomerAddress
     oro_customer.entity.account_group.class: Oro\Bundle\CustomerBundle\Entity\CustomerGroup
-    oro_customer.entity.account_user.class: Oro\Bundle\CustomerBundle\Entity\AccountUser
+    oro_customer.entity.account_user.class: Oro\Bundle\CustomerBundle\Entity\CustomerUser
     oro_customer.entity.customer_user_settings.class: Oro\Bundle\CustomerBundle\Entity\CustomerUserSettings
     oro_customer.entity.account_user_address.class: Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress
     oro_customer.entity.customer_user_role.class: Oro\Bundle\CustomerBundle\Entity\CustomerUserRole
@@ -584,7 +584,7 @@ services:
     oro_customer.layout.data_provider.account_user_address_provider:
         parent: oro_customer.layout.data_provider.address_provider_abstract
         calls:
-            - [setEntityClass, ['Oro\Bundle\CustomerBundle\Entity\AccountUser']]
+            - [setEntityClass, ['Oro\Bundle\CustomerBundle\Entity\CustomerUser']]
             - [setListRouteName, ['oro_api_account_frontend_get_accountuser_addresses']]
             - [setCreateRouteName, ['oro_customer_frontend_account_user_address_create']]
             - [setUpdateRouteName, ['oro_customer_frontend_account_user_address_update']]

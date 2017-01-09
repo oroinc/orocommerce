@@ -5,7 +5,7 @@ namespace Oro\Bundle\FrontendLocalizationBundle\Manager;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserSettings;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\LocaleBundle\DependencyInjection\Configuration;
@@ -100,7 +100,7 @@ class UserLocalizationManager
         $localization = null;
 
         $user = $this->getLoggedUser();
-        if ($user instanceof AccountUser) {
+        if ($user instanceof CustomerUser) {
             $userSettings = $user->getWebsiteSettings($website);
             if ($userSettings) {
                 $localization = $userSettings->getLocalization();
@@ -134,7 +134,7 @@ class UserLocalizationManager
         }
 
         $user = $this->getLoggedUser();
-        if ($user instanceof AccountUser) {
+        if ($user instanceof CustomerUser) {
             $userWebsiteSettings = $user->getWebsiteSettings($website);
             if (!$userWebsiteSettings) {
                 $userWebsiteSettings = new CustomerUserSettings($website);
@@ -150,7 +150,7 @@ class UserLocalizationManager
     }
 
     /**
-     * @return null|AccountUser
+     * @return null|CustomerUser
      */
     protected function getLoggedUser()
     {

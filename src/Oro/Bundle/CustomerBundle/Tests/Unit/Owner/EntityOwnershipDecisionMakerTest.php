@@ -7,7 +7,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Oro\Bundle\SecurityBundle\Owner\Metadata\OwnershipMetadataProvider;
 use Oro\Bundle\SecurityBundle\Owner\OwnerTreeProvider;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Owner\EntityOwnershipDecisionMaker;
 
 class EntityOwnershipDecisionMakerTest extends \PHPUnit_Framework_TestCase
@@ -123,7 +123,7 @@ class EntityOwnershipDecisionMakerTest extends \PHPUnit_Framework_TestCase
                 'expectedResult' => false,
             ],
             'security facade with user class' => [
-                'user' => new AccountUser(),
+                'user' => new CustomerUser(),
                 'expectedResult' => true,
             ],
         ];

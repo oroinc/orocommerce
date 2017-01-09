@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Form\Type\AccountUserType;
 use Oro\Bundle\CustomerBundle\Form\Handler\AccountUserHandler;
 
@@ -25,14 +25,14 @@ class AccountUserController extends Controller
      * @Acl(
      *      id="oro_account_account_user_view",
      *      type="entity",
-     *      class="OroCustomerBundle:AccountUser",
+     *      class="OroCustomerBundle:CustomerUser",
      *      permission="VIEW"
      * )
      *
-     * @param AccountUser $accountUser
+     * @param CustomerUser $accountUser
      * @return array
      */
-    public function viewAction(AccountUser $accountUser)
+    public function viewAction(CustomerUser $accountUser)
     {
         return [
             'entity' => $accountUser
@@ -58,10 +58,10 @@ class AccountUserController extends Controller
      * @Template
      * @AclAncestor("oro_account_account_user_view")
      *
-     * @param AccountUser $accountUser
+     * @param CustomerUser $accountUser
      * @return array
      */
-    public function infoAction(AccountUser $accountUser)
+    public function infoAction(CustomerUser $accountUser)
     {
         return [
             'entity' => $accountUser
@@ -93,7 +93,7 @@ class AccountUserController extends Controller
                 $accountUserId
             );
         } else {
-            $accountUser = new AccountUser();
+            $accountUser = new CustomerUser();
         }
 
         $account = null;
@@ -124,7 +124,7 @@ class AccountUserController extends Controller
      * @Acl(
      *      id="oro_account_account_user_create",
      *      type="entity",
-     *      class="OroCustomerBundle:AccountUser",
+     *      class="OroCustomerBundle:CustomerUser",
      *      permission="CREATE"
      * )
      * @param Request $request
@@ -132,7 +132,7 @@ class AccountUserController extends Controller
      */
     public function createAction(Request $request)
     {
-        return $this->update(new AccountUser(), $request);
+        return $this->update(new CustomerUser(), $request);
     }
 
     /**
@@ -143,24 +143,24 @@ class AccountUserController extends Controller
      * @Acl(
      *      id="oro_account_account_user_update",
      *      type="entity",
-     *      class="OroCustomerBundle:AccountUser",
+     *      class="OroCustomerBundle:CustomerUser",
      *      permission="EDIT"
      * )
-     * @param AccountUser $accountUser
+     * @param CustomerUser $accountUser
      * @param Request     $request
      * @return array|RedirectResponse
      */
-    public function updateAction(AccountUser $accountUser, Request $request)
+    public function updateAction(CustomerUser $accountUser, Request $request)
     {
         return $this->update($accountUser, $request);
     }
 
     /**
-     * @param AccountUser $accountUser
+     * @param CustomerUser $accountUser
      * @param Request     $request
      * @return array|RedirectResponse
      */
-    protected function update(AccountUser $accountUser, Request $request)
+    protected function update(CustomerUser $accountUser, Request $request)
     {
         $form = $this->createForm(AccountUserType::NAME, $accountUser);
         $handler = new AccountUserHandler(
@@ -175,19 +175,19 @@ class AccountUserController extends Controller
         $result = $this->get('oro_form.model.update_handler')->handleUpdate(
             $accountUser,
             $form,
-            function (AccountUser $accountUser) {
+            function (CustomerUser $accountUser) {
                 return [
                     'route'      => 'oro_customer_account_user_update',
                     'parameters' => ['id' => $accountUser->getId()]
                 ];
             },
-            function (AccountUser $accountUser) {
+            function (CustomerUser $accountUser) {
                 return [
                     'route'      => 'oro_customer_account_user_view',
                     'parameters' => ['id' => $accountUser->getId()]
                 ];
             },
-            $this->get('translator')->trans('oro.customer.controller.accountuser.saved.message'),
+            $this->get('translator')->trans('oro.customer.controller.customeruser.saved.message'),
             $handler
         );
 

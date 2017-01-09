@@ -7,7 +7,7 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 use Oro\Bundle\ActionBundle\Tests\Unit\Provider\RouteProviderTest as BaseRouteProviderTest;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\FrontendBundle\Provider\RouteProvider;
 use Oro\Bundle\UserBundle\Entity\User;
 
@@ -114,7 +114,7 @@ class RouteProviderTest extends BaseRouteProviderTest
                 ],
             ],
             'frontend user' => [
-                'token' => $this->createToken(new AccountUser(), $this->any()),
+                'token' => $this->createToken(new CustomerUser(), $this->any()),
                 'routes' => [
                     'widget' => 'oro_frontend_action_widget_buttons',
                     'dialog' => 'oro_frontend_action_widget_form',
@@ -154,7 +154,7 @@ class RouteProviderTest extends BaseRouteProviderTest
                 'expectedResult' => 'default',
             ],
             'frontend user' => [
-                'token' => $this->createToken(new AccountUser()),
+                'token' => $this->createToken(new CustomerUser()),
                 'expectedResult' => 'commerce',
             ],
             'not supported user' => [
@@ -174,7 +174,7 @@ class RouteProviderTest extends BaseRouteProviderTest
     public function isApplicationsValidDataProvider()
     {
         $user = new User();
-        $accountUser = new AccountUser();
+        $accountUser = new CustomerUser();
         $otherUser = 'anon.';
 
         return [

@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CustomerBundle\Placeholder;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 
 class PlaceholderFilter
 {
@@ -25,7 +25,7 @@ class PlaceholderFilter
      */
     public function isUserApplicable()
     {
-        return $this->securityFacade->getLoggedUser() instanceof AccountUser;
+        return $this->securityFacade->getLoggedUser() instanceof CustomerUser;
     }
 
     /**
@@ -43,6 +43,6 @@ class PlaceholderFilter
     {
         $user = $this->securityFacade->getLoggedUser();
 
-        return !is_object($user) || $user instanceof AccountUser;
+        return !is_object($user) || $user instanceof CustomerUser;
     }
 }

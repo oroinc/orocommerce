@@ -6,7 +6,7 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Provider\AccountUserRelationsProvider;
 
 class AccountUserRelationsProviderTest extends \PHPUnit_Framework_TestCase
@@ -44,10 +44,10 @@ class AccountUserRelationsProviderTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider accountDataProvider
-     * @param AccountUser|null $accountUser
+     * @param CustomerUser|null $accountUser
      * @param Account|null $expectedAccount
      */
-    public function testGetAccount(AccountUser $accountUser = null, Account $expectedAccount = null)
+    public function testGetAccount(CustomerUser $accountUser = null, Account $expectedAccount = null)
     {
         $this->assertEquals($expectedAccount, $this->provider->getAccount($accountUser));
     }
@@ -57,7 +57,7 @@ class AccountUserRelationsProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function accountDataProvider()
     {
-        $accountUser = new AccountUser();
+        $accountUser = new CustomerUser();
         $account = new Account();
         $accountUser->setAccount($account);
 
@@ -75,10 +75,10 @@ class AccountUserRelationsProviderTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider accountGroupDataProvider
-     * @param AccountUser|null $accountUser
+     * @param CustomerUser|null $accountUser
      * @param CustomerGroup $expectedAccountGroup
      */
-    public function testGetAccountGroup(AccountUser $accountUser = null, CustomerGroup $expectedAccountGroup = null)
+    public function testGetAccountGroup(CustomerUser $accountUser = null, CustomerGroup $expectedAccountGroup = null)
     {
         $this->assertEquals($expectedAccountGroup, $this->provider->getAccountGroup($accountUser));
     }
@@ -88,7 +88,7 @@ class AccountUserRelationsProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function accountGroupDataProvider()
     {
-        $accountUser = new AccountUser();
+        $accountUser = new CustomerUser();
         $account = new Account();
         $accountGroup = new CustomerGroup();
         $account->setGroup($accountGroup);
@@ -132,7 +132,7 @@ class AccountUserRelationsProviderTest extends \PHPUnit_Framework_TestCase
         $accountGroup = new CustomerGroup();
         $accountGroup->setName('test2');
         $account->setGroup($accountGroup);
-        $accountUser = new AccountUser();
+        $accountUser = new CustomerUser();
         $accountUser->setAccount($account);
 
         $this->configManager->expects($this->never())

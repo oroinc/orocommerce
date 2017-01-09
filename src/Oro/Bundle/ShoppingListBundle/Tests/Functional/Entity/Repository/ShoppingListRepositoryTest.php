@@ -4,7 +4,7 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Entity\Repository;
 
 use Doctrine\Common\Collections\Criteria;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\SecurityBundle\Authentication\Token\UsernamePasswordOrganizationToken;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
@@ -19,7 +19,7 @@ use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 class ShoppingListRepositoryTest extends WebTestCase
 {
     /**
-     * @var AccountUser
+     * @var CustomerUser
      */
     protected $accountUser;
 
@@ -89,11 +89,11 @@ class ShoppingListRepositoryTest extends WebTestCase
     }
 
     /**
-     * @return AccountUser
+     * @return CustomerUser
      */
     public function getAccountUser()
     {
-        return $this->getContainer()->get('doctrine')->getRepository(AccountUser::class)
+        return $this->getContainer()->get('doctrine')->getRepository(CustomerUser::class)
             ->findOneBy(['username' => LoadAccountUserData::AUTH_USER]);
     }
 
@@ -106,10 +106,10 @@ class ShoppingListRepositoryTest extends WebTestCase
     }
 
     /**
-     * @param AccountUser $accountUser
+     * @param CustomerUser $accountUser
      * @return UsernamePasswordOrganizationToken
      */
-    protected function createToken(AccountUser $accountUser)
+    protected function createToken(CustomerUser $accountUser)
     {
         return new UsernamePasswordOrganizationToken(
             $accountUser,

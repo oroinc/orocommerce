@@ -31,9 +31,9 @@ class CustomerUserSettings extends ExtendCustomerUserSettings
     protected $id;
 
     /**
-     * @var AccountUser
+     * @var CustomerUser
      *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\AccountUser", inversedBy="settings")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerUser", inversedBy="settings")
      * @ORM\JoinColumn(name="customer_user_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
      */
     protected $customerUser;
@@ -79,7 +79,7 @@ class CustomerUserSettings extends ExtendCustomerUserSettings
     }
 
     /**
-     * @return AccountUser
+     * @return CustomerUser
      */
     public function getCustomerUser()
     {
@@ -87,10 +87,10 @@ class CustomerUserSettings extends ExtendCustomerUserSettings
     }
 
     /**
-     * @param AccountUser $customerUser
+     * @param CustomerUser $customerUser
      * @return $this
      */
-    public function setCustomerUser(AccountUser $customerUser)
+    public function setCustomerUser(CustomerUser $customerUser)
     {
         $this->customerUser = $customerUser;
 

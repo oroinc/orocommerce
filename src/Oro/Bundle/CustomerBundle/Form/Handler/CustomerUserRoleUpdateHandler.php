@@ -6,7 +6,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 use Oro\Bundle\UserBundle\Entity\AbstractRole;
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 use Oro\Bundle\CustomerBundle\Entity\Repository\CustomerUserRoleRepository;
 use Oro\Bundle\CustomerBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
@@ -100,7 +100,7 @@ class CustomerUserRoleUpdateHandler extends AbstractCustomerUserRoleHandler
                 $removeUsers,
                 array_filter(
                     $assignedUsers,
-                    function (AccountUser $accountUser) use ($role) {
+                    function (CustomerUser $accountUser) use ($role) {
                         return $accountUser->getAccount() !== $role->getAccount();
                     }
                 )
@@ -117,7 +117,7 @@ class CustomerUserRoleUpdateHandler extends AbstractCustomerUserRoleHandler
             // Security check
             $appendUsers = array_filter(
                 $appendUsers,
-                function (AccountUser $user) use ($role) {
+                function (CustomerUser $user) use ($role) {
                     return $user->getAccount() === $role->getAccount();
                 }
             );

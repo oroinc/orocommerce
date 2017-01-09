@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\ProductBundle\Visibility\ProductUnitFieldsSettingsInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
@@ -33,13 +34,27 @@ class FrontendLineItemTypeTest extends FormIntegrationTestCase
     ];
 
     /**
+     * @var ProductUnitFieldsSettingsInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $productUnitFieldsSettings;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
         parent::setUp();
 
-        $this->type = new FrontendLineItemType();
+        $this->productUnitFieldsSettings = $this
+            ->getMockBuilder(ProductUnitFieldsSettingsInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->productUnitFieldsSettings->expects($this->any())
+            ->method('isProductUnitSelectionVisible')
+            ->willReturn(true);
+
+        $this->type = new FrontendLineItemType($this->productUnitFieldsSettings);
     }
 
     /**

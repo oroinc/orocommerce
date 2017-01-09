@@ -4,7 +4,7 @@ namespace Oro\Bundle\CustomerBundle\Tests\Unit\Mailer;
 
 use Oro\Bundle\UserBundle\Tests\Unit\Mailer\AbstractProcessorTest;
 use Oro\Bundle\CustomerBundle\Mailer\Processor;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 
 class ProcessorTest extends AbstractProcessorTest
 {
@@ -16,7 +16,7 @@ class ProcessorTest extends AbstractProcessorTest
     protected $mailProcessor;
 
     /**
-     * @var AccountUser
+     * @var CustomerUser
      */
     protected $user;
 
@@ -24,7 +24,7 @@ class ProcessorTest extends AbstractProcessorTest
     {
         parent::setUp();
 
-        $this->user = new AccountUser();
+        $this->user = new CustomerUser();
         $this->user
             ->setEmail('email_to@example.com')
             ->setPlainPassword(self::PASSWORD)

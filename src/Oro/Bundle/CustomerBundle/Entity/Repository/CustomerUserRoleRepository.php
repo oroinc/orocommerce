@@ -7,7 +7,7 @@ use Doctrine\ORM\QueryBuilder;
 
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
@@ -62,7 +62,7 @@ class CustomerUserRoleRepository extends EntityRepository
         $qb = $this->getEntityManager()->createQueryBuilder();
         $findResult = $qb
             ->select('accountUser.id')
-            ->from('OroCustomerBundle:AccountUser', 'accountUser')
+            ->from('OroCustomerBundle:CustomerUser', 'accountUser')
             ->innerJoin('accountUser.roles', 'CustomerUserRole')
             ->where($qb->expr()->eq('CustomerUserRole', ':CustomerUserRole'))
             ->setParameter('CustomerUserRole', $role)
@@ -77,14 +77,14 @@ class CustomerUserRoleRepository extends EntityRepository
      * Return array of assigned users to the given role
      *
      * @param CustomerUserRole $role
-     * @return AccountUser[]
+     * @return CustomerUser[]
      */
     public function getAssignedUsers(CustomerUserRole $role)
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $findResult = $qb
             ->select('accountUser')
-            ->from('OroCustomerBundle:AccountUser', 'accountUser')
+            ->from('OroCustomerBundle:CustomerUser', 'accountUser')
             ->innerJoin('accountUser.roles', 'CustomerUserRole')
             ->where($qb->expr()->eq('CustomerUserRole', ':CustomerUserRole'))
             ->setParameter('CustomerUserRole', $role)

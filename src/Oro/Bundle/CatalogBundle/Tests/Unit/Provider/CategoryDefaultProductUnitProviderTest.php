@@ -78,7 +78,7 @@ class CategoryDefaultProductUnitProviderTest extends \PHPUnit_Framework_TestCase
     {
         $defaultProductOptions =  new CategoryDefaultProductOptions();
         $defaultProductOptions->setUnitPrecision($categoryUnitPrecision);
-        
+
         $category =  new Category();
         $category->setDefaultProductOptions($defaultProductOptions);
         $category->setParentCategory($parent);

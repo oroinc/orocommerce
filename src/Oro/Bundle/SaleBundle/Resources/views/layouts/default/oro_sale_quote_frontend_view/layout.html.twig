@@ -118,7 +118,11 @@
                                     </td>
                                 {% endif %}
                                 <td>
-                                    {{ productOffer.quantity|oro_format_short_product_unit_value(productOffer.productUnit) }}
+                                    {% if oro_is_unit_code_visible(productOffer.productUnit.code) %}
+                                        {{ productOffer.quantity|oro_format_short_product_unit_value(productOffer.productUnit) }}
+                                    {% else %}
+                                        {{ productOffer.quantity }}
+                                    {% endif %}
                                     {% if productOffer.allowIncrements %}
                                         {{ 'oro.frontend.sale.quoteproductoffer.allow_increments.label'|trans }}
                                     {% endif %}
@@ -217,7 +221,13 @@
                                         </tr>
                                         {% for productOffer in quoteProduct.quoteProductOffers %}
                                             <tr>
-                                                <td class="text-left">{{ productOffer.quantity|oro_format_product_unit_code(productOffer.productUnit) }}</td>
+                                                <td class="text-left">
+                                                    {% if oro_is_unit_code_visible(productOffer.productUnit) %}
+                                                        {{ productOffer.quantity|oro_format_product_unit_code(productOffer.productUnit) }}
+                                                    {% else %}
+                                                        {{ productOffer.quantity }}
+                                                    {% endif %}
+                                                </td>
                                                 <td class="text-left">{{ productOffer.price|oro_format_price }}</td>
                                             </tr>
                                         {% endfor %}

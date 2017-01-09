@@ -135,9 +135,9 @@ class CustomerUserRole extends AbstractRole implements OrganizationAwareInterfac
     protected $websites;
 
     /**
-     * @var AccountUser[]|Collection
+     * @var CustomerUser[]|Collection
      *
-     * @ORM\ManyToMany(targetEntity="Oro\Bundle\CustomerBundle\Entity\AccountUser", mappedBy="roles")
+     * @ORM\ManyToMany(targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerUser", mappedBy="roles")
      */
     protected $accountUsers;
 
@@ -299,11 +299,11 @@ class CustomerUserRole extends AbstractRole implements OrganizationAwareInterfac
     }
 
     /**
-     * @param AccountUser $accountUser
+     * @param CustomerUser $accountUser
      *
      * @return $this
      */
-    public function addAccountUser(AccountUser $accountUser)
+    public function addAccountUser(CustomerUser $accountUser)
     {
         if (!$this->accountUsers->contains($accountUser)) {
             $this->accountUsers[] = $accountUser;
@@ -313,11 +313,11 @@ class CustomerUserRole extends AbstractRole implements OrganizationAwareInterfac
     }
 
     /**
-     * @param AccountUser $accountUser
+     * @param CustomerUser $accountUser
      *
      * @return $this
      */
-    public function removeAccountUser(AccountUser $accountUser)
+    public function removeAccountUser(CustomerUser $accountUser)
     {
         $this->accountUsers->removeElement($accountUser);
 
@@ -325,7 +325,7 @@ class CustomerUserRole extends AbstractRole implements OrganizationAwareInterfac
     }
 
     /**
-     * @return Collection|AccountUser[]
+     * @return Collection|CustomerUser[]
      */
     public function getAccountUsers()
     {

@@ -4,7 +4,7 @@ namespace Oro\Bundle\SaleBundle\Provider;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 
 class QuoteAddressSecurityProvider
@@ -82,11 +82,11 @@ class QuoteAddressSecurityProvider
 
     /**
      * @param string $type
-     * @param AccountUser $accountUser
+     * @param CustomerUser $accountUser
      *
      * @return bool
      */
-    public function isAccountUserAddressGranted($type, AccountUser $accountUser = null)
+    public function isAccountUserAddressGranted($type, CustomerUser $accountUser = null)
     {
         if ($this->isManualEditGranted($type)) {
             return true;
@@ -137,7 +137,7 @@ class QuoteAddressSecurityProvider
      */
     protected function getPermission($permission)
     {
-        if (!$this->securityFacade->getLoggedUser() instanceof AccountUser) {
+        if (!$this->securityFacade->getLoggedUser() instanceof CustomerUser) {
             $permission .= QuoteAddressProvider::ADMIN_ACL_POSTFIX;
         }
 

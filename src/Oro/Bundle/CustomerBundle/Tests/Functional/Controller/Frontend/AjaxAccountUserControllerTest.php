@@ -7,7 +7,7 @@ use Doctrine\Common\Persistence\ObjectRepository;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData as LoadLoginAccountUserData;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 
 /**
  * @dbIsolation
@@ -33,7 +33,7 @@ class AjaxAccountUserControllerTest extends WebTestCase
 
     public function testGetAccountIdAction()
     {
-        /** @var AccountUser $user */
+        /** @var CustomerUser $user */
         $user = $this->getUserRepository()->findOneBy(['email' => 'account.user2@test.com']);
         $this->assertNotNull($user);
         $id = $user->getId();
@@ -62,6 +62,6 @@ class AjaxAccountUserControllerTest extends WebTestCase
      */
     protected function getUserRepository()
     {
-        return $this->getObjectManager()->getRepository('OroCustomerBundle:AccountUser');
+        return $this->getObjectManager()->getRepository('OroCustomerBundle:CustomerUser');
     }
 }

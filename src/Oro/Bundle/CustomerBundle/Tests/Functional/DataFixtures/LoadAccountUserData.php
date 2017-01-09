@@ -13,7 +13,7 @@ use Oro\Bundle\UserBundle\Entity\BaseUserManager;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData as UserData;
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 
 class LoadAccountUserData extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
 {
@@ -129,11 +129,11 @@ class LoadAccountUserData extends AbstractFixture implements DependentFixtureInt
                 /** @var Account $account */
                 $account = $this->getReference($user['account']);
             } else {
-                $accountUser = $manager->getRepository('OroCustomerBundle:AccountUser')
+                $accountUser = $manager->getRepository('OroCustomerBundle:CustomerUser')
                     ->findOneBy(['username' => UserData::AUTH_USER]);
                 $account = $accountUser->getAccount();
             }
-            $entity = new AccountUser();
+            $entity = new CustomerUser();
             $entity
                 ->setAccount($account)
                 ->setOwner($owner)
