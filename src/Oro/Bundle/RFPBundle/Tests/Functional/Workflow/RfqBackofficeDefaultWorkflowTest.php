@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\RFPBundle\Tests\Functional;
+namespace Oro\Bundle\RFPBundle\Tests\Functional\Workflow;
 
 use Symfony\Component\DomCrawler\Crawler;
 
@@ -11,7 +11,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 /**
  * @dbIsolation
  */
-class RFPBackendWorkflowsTest extends WebTestCase
+class RfqBackofficeDefaultWorkflowTest extends WebTestCase
 {
     /**
      * @var Request
@@ -88,7 +88,6 @@ class RFPBackendWorkflowsTest extends WebTestCase
         $this->assertButtonsAvailable($this->request, ['Delete']);
     }
 
-
     /**
      * @param Request $request
      */
@@ -142,7 +141,6 @@ class RFPBackendWorkflowsTest extends WebTestCase
 
         return $data;
     }
-
 
     /**
      * @param Request $request
