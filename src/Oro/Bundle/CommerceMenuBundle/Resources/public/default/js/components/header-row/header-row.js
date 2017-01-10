@@ -19,11 +19,12 @@ define(function(require) {
          */
         initialize: function(options) {
             this.$el = $(options._sourceElement);
+            this.$mainMenuDropdown = this.$el.find('[data-header-row-toggle]');
 
             /**
              * Prevent to close Bootstrap dropdowns
              */
-            this.$el.find('.header-row__toggle').on('click', function(e) {
+            this.$mainMenuDropdown.on('click', function(e) {
                 e.stopPropagation();
             });
         },
@@ -69,8 +70,9 @@ define(function(require) {
                 return;
             }
 
-            this.$el.find('.header-row__toggle').off('click');
+            this.$mainMenuDropdown.off('click');
 
+            delete this.$mainMenuDropdown;
             delete this.$el;
 
             HeaderRowComponent.__super__.dispose.call(this);

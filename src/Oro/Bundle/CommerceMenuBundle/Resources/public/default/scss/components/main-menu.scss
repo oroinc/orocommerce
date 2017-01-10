@@ -51,16 +51,14 @@
         }
 
         &.open {
+            background: get-color('additional', 'base');
+
             .main-menu__sublist-container {
                 display: block !important;
             }
 
             .messages-widget__dropdown-mode {
                 display: block;
-            }
-
-            .main-menu__link {
-                background: get-color('additional', 'base');
             }
         }
     }
@@ -101,7 +99,7 @@
     }
 
     &__button-arrow {
-        padding: 8px;
+        padding: 8px 12px 8px 8px;
 
         font-size: inherit;
 
@@ -112,6 +110,29 @@
     }
 }
 
+@include only-desktop() {
+    .main-menu {
+        &__item {
+            &--ancestor {
+                &:hover {
+                    background: get-color('additional', 'base');
+                }
+            }
+
+            &[data-dropdown-trigger] {
+                &:hover {
+                    .main-menu__sublist-container {
+                        display: block !important;
+                    }
+
+                    .messages-widget__dropdown-mode {
+                        display: block;
+                    }
+                }
+            }
+        }
+    }
+}
 @include breakpoint('desktop') {
     .main-menu {
         max-height: $main-menu-item-height;
@@ -127,41 +148,9 @@
         }
 
         &__link {
-            margin-right: -35px;
-
             min-height: $main-menu-item-height;
 
             display: inline-block;
-
-            .fa-angle-down {
-                display: none;
-            }
-        }
-    }
-
-    .desktop-version {
-        .main-menu {
-            &__item {
-                &--ancestor {
-                    &:hover {
-                        .main-menu__link {
-                            background: get-color('additional', 'base');
-                        }
-                    }
-                }
-
-                &[data-dropdown-trigger] {
-                    &:hover {
-                        .main-menu__sublist-container {
-                            display: block !important;
-                        }
-
-                        .messages-widget__dropdown-mode {
-                            display: block;
-                        }
-                    }
-                }
-            }
         }
     }
 }

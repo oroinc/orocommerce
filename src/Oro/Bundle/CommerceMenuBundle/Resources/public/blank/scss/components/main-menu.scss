@@ -35,28 +35,27 @@
         }
     }
 }
-@include breakpoint('desktop') {
-    .desktop-version {
-        .main-menu {
-            &__item {
-                &:hover {
-                    .main-menu__sublist-container {
-                        display: block;
-                    }
+
+@include only-desktop {
+    .main-menu {
+        &__item {
+            &:hover {
+                .main-menu__sublist-container {
+                    display: block;
                 }
             }
+        }
 
-            &__sublist-container {
-                position: absolute;
-                z-index: $main-menu-sublist-container-d-z-index;
-                top: 100%;
-                right: 0;
-                left: 0;
+        &__sublist-container {
+            position: absolute;
+            z-index: $main-menu-sublist-container-d-z-index;
+            top: 100%;
+            right: 0;
+            left: 0;
 
-                display: none;
+            display: none;
 
-                background-color: $main-menu-sublist-container-d-bg-color;
-            }
+            background-color: $main-menu-sublist-container-d-bg-color;
         }
     }
 }

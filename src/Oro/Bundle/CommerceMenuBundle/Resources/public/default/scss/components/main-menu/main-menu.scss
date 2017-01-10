@@ -1,8 +1,10 @@
 .main-menu {
     flex-grow: 0;
 
+    &__item {
+        padding-right: 10px;
+    }
     &__link {
-        padding-right: 40px;
         padding-left: 24px;
 
         white-space: nowrap;
