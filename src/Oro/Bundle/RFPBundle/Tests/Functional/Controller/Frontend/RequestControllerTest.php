@@ -392,7 +392,7 @@ class RequestControllerTest extends WebTestCase
                     'password' => LoadUserData::ACCOUNT1_USER1,
                 ],
                 'expected' => [
-                    'columnsCount' => 10,
+                    'columnsCount' => 8,
                 ],
             ],
             'customer1 user3 (CustomerUser:VIEW_LOCAL)' => [
@@ -402,7 +402,7 @@ class RequestControllerTest extends WebTestCase
                     'password' => LoadUserData::ACCOUNT1_USER2,
                 ],
                 'expected' => [
-                    'columnsCount' => 11,
+                    'columnsCount' => 9,
                     'hideButtonEdit' => true
                 ],
             ],
