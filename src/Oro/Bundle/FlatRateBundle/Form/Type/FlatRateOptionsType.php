@@ -1,20 +1,21 @@
 <?php
 
-namespace Oro\Bundle\ShippingBundle\Form\Type;
+namespace Oro\Bundle\FlatRateBundle\Form\Type;
 
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
-use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethodType;
+use Oro\Bundle\FlatRateBundle\Method\FlatRateMethodType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\Exception\AccessException;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Type;
 
-class FlatRateShippingMethodTypeOptionsType extends AbstractType
+class FlatRateOptionsType extends AbstractType
 {
-    const BLOCK_PREFIX = 'oro_shipping_flat_rate_type_options';
+    const BLOCK_PREFIX = 'oro_flat_rate_options_type';
 
     /**
      * @var RoundingServiceInterface
@@ -41,34 +42,36 @@ class FlatRateShippingMethodTypeOptionsType extends AbstractType
         ];
 
         $builder
-            ->add(FlatRateShippingMethodType::PRICE_OPTION, NumberType::class, array_merge([
+            ->add(FlatRateMethodType::PRICE_OPTION, NumberType::class, array_merge([
                 'required' => true,
-                'label' => 'oro.shipping.method.flat_rate.price.label',
+                'label' => 'oro.flat_rate.method.price.label',
                 'constraints' => [new NotBlank(), new Type(['type' => 'numeric'])]
             ], $priceOptions))
-            ->add(FlatRateShippingMethodType::HANDLING_FEE_OPTION, NumberType::class, array_merge([
-                'label' => 'oro.shipping.method.flat_rate.handling_fee.label',
+            ->add(FlatRateMethodType::HANDLING_FEE_OPTION, NumberType::class, array_merge([
+                'label' => 'oro.flat_rate.method.handling_fee.label',
                 'constraints' => [new Type(['type' => 'numeric'])]
             ], $priceOptions))
-            ->add(FlatRateShippingMethodType::TYPE_OPTION, ChoiceType::class, [
+            ->add(FlatRateMethodType::TYPE_OPTION, ChoiceType::class, [
                 'required' => true,
                 'choices' => [
-                    FlatRateShippingMethodType::PER_ITEM_TYPE
-                    => 'oro.shipping.method.flat_rate.processing_type.per_item.label',
-                    FlatRateShippingMethodType::PER_ORDER_TYPE
-                    => 'oro.shipping.method.flat_rate.processing_type.per_order.label',
+                    FlatRateMethodType::PER_ITEM_TYPE
+                    => 'oro.flat_rate.method.processing_type.per_item.label',
+                    FlatRateMethodType::PER_ORDER_TYPE
+                    => 'oro.flat_rate.method.processing_type.per_order.label',
                 ],
-                'label' => 'oro.shipping.method.flat_rate.processing_type.label',
+                'label' => 'oro.flat_rate.method.processing_type.label',
             ]);
     }
 
     /**
      * @param OptionsResolver $resolver
+     *
+     * @throws AccessException
      */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'label' => 'oro.shipping.form.oro_shipping_flat_rate_type_options.label',
+            'label' => 'oro.flat_rate.form.oro_flat_rate_options_type.label',
         ]);
     }
 

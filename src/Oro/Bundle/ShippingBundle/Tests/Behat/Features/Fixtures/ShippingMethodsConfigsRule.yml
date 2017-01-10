@@ -1,6 +1,6 @@
 Oro\Bundle\RuleBundle\Entity\Rule:
     rule1:
-        name: 'Shipping Rule 1'
+        name: 'Shipping Rule First'
         enabled: true
         sortOrder: 5
         expression: 'true'
@@ -10,7 +10,6 @@ Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule:
     shipping_methods_configs_rule1:
         rule: '@rule1'
         currency: 'EUR'
-        methodConfigs: ['@method_configuration']
 
 Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination:
     germany_destination:
@@ -23,19 +22,6 @@ Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination:
 Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestinationPostalCode:
     postalCode1:
         name: '10115'
-
-Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig:
-    method_configuration:
-        method: 'flat_rate'
-        methodConfigsRule: '@shipping_methods_configs_rule1'
-        typeConfigs: ['@method_type_configuration']
-
-Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig:
-    method_type_configuration:
-        enabled: true
-        type: 'primary'
-        options: { price: '1.5', handling_fee: '1.5', type: 'per_order' }
-        methodConfig: '@method_configuration'
 
 Oro\Bundle\CurrencyBundle\Entity\Price(local):
     price1:

@@ -1,21 +1,22 @@
 <?php
 
-namespace Oro\Bundle\ShippingBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\FlatRateBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
-use Oro\Bundle\ShippingBundle\Form\Type\FlatRateShippingMethodTypeOptionsType;
-use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethodType;
+use Oro\Bundle\FlatRateBundle\Form\Type\FlatRateOptionsType;
+use Oro\Bundle\FlatRateBundle\Method\FlatRateMethodType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Symfony\Component\Form\PreloadedExtension;
 
-class FlatRateShippingMethodTypeOptionsTypeTest extends FormIntegrationTestCase
+class FlatRateOptionsTypeTest extends FormIntegrationTestCase
 {
-    /** @var FlatRateShippingMethodTypeOptionsType */
+    /** @var FlatRateOptionsType */
     protected $formType;
 
     protected function setUp()
     {
         parent::setUp();
+        
         $roundingService = $this->createMock(RoundingServiceInterface::class);
         $roundingService->expects($this->any())
             ->method('getPrecision')
@@ -24,12 +25,12 @@ class FlatRateShippingMethodTypeOptionsTypeTest extends FormIntegrationTestCase
             ->method('getRoundType')
             ->willReturn(RoundingServiceInterface::ROUND_HALF_UP);
 
-        $this->formType = new FlatRateShippingMethodTypeOptionsType($roundingService);
+        $this->formType = new FlatRateOptionsType($roundingService);
     }
 
     public function testGetBlockPrefix()
     {
-        $this->assertEquals(FlatRateShippingMethodTypeOptionsType::BLOCK_PREFIX, $this->formType->getBlockPrefix());
+        $this->assertEquals(FlatRateOptionsType::BLOCK_PREFIX, $this->formType->getBlockPrefix());
     }
 
     public function testSubmitDefaultNull()
@@ -37,9 +38,9 @@ class FlatRateShippingMethodTypeOptionsTypeTest extends FormIntegrationTestCase
         $form = $this->factory->create($this->formType);
 
         $data = [
-            FlatRateShippingMethodType::PRICE_OPTION => '42',
-            FlatRateShippingMethodType::TYPE_OPTION => FlatRateShippingMethodType::PER_ITEM_TYPE,
-            FlatRateShippingMethodType::HANDLING_FEE_OPTION => 10,
+            FlatRateMethodType::PRICE_OPTION => '42',
+            FlatRateMethodType::TYPE_OPTION => FlatRateMethodType::PER_ITEM_TYPE,
+            FlatRateMethodType::HANDLING_FEE_OPTION => 10,
         ];
         $form->submit($data);
 
@@ -50,15 +51,15 @@ class FlatRateShippingMethodTypeOptionsTypeTest extends FormIntegrationTestCase
     public function testSubmit()
     {
         $form = $this->factory->create($this->formType, [
-            FlatRateShippingMethodType::PRICE_OPTION => 1,
-            FlatRateShippingMethodType::TYPE_OPTION => FlatRateShippingMethodType::PER_ORDER_TYPE,
-            FlatRateShippingMethodType::HANDLING_FEE_OPTION => 2,
+            FlatRateMethodType::PRICE_OPTION => 1,
+            FlatRateMethodType::TYPE_OPTION => FlatRateMethodType::PER_ORDER_TYPE,
+            FlatRateMethodType::HANDLING_FEE_OPTION => 2,
         ]);
 
         $data = [
-            FlatRateShippingMethodType::PRICE_OPTION => '42',
-            FlatRateShippingMethodType::TYPE_OPTION => FlatRateShippingMethodType::PER_ITEM_TYPE,
-            FlatRateShippingMethodType::HANDLING_FEE_OPTION => 10,
+            FlatRateMethodType::PRICE_OPTION => '42',
+            FlatRateMethodType::TYPE_OPTION => FlatRateMethodType::PER_ITEM_TYPE,
+            FlatRateMethodType::HANDLING_FEE_OPTION => 10,
         ];
         $form->submit($data);
 

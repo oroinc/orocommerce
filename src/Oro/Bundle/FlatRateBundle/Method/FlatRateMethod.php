@@ -1,25 +1,32 @@
 <?php
 
-namespace Oro\Bundle\ShippingBundle\Method\FlatRate;
+namespace Oro\Bundle\FlatRateBundle\Method;
 
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 
-class FlatRateShippingMethod implements ShippingMethodInterface
+class FlatRateMethod implements ShippingMethodInterface
 {
     const IDENTIFIER = 'flat_rate';
 
-    /**
-     * @var FlatRateShippingMethodType
-     */
+    /** @var FlatRateMethodType */
     protected $type;
 
+    /** @var string */
+    protected $label;
+
+    /** @var int */
+    protected $channelId;
+
     /**
-     * Construct
+     * @param string $label
+     * @param int    $channelId
      */
-    public function __construct()
+    public function __construct($label, $channelId)
     {
-        $this->type = new FlatRateShippingMethodType();
+        $this->type = new FlatRateMethodType($label);
+        $this->label = $label;
+        $this->channelId = $channelId;
     }
 
     /**
@@ -27,7 +34,7 @@ class FlatRateShippingMethod implements ShippingMethodInterface
      */
     public function getIdentifier()
     {
-        return static::IDENTIFIER;
+        return static::IDENTIFIER . $this->channelId;
     }
 
     /**
@@ -43,7 +50,7 @@ class FlatRateShippingMethod implements ShippingMethodInterface
      */
     public function getLabel()
     {
-        return 'oro.shipping.method.flat_rate.label';
+        return $this->label;
     }
 
     /**

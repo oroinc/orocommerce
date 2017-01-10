@@ -1,14 +1,14 @@
 <?php
 
-namespace Oro\Bundle\ShippingBundle\Method\FlatRate;
+namespace Oro\Bundle\FlatRateBundle\Method;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\FlatRateBundle\Form\Type\FlatRateOptionsType;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
-use Oro\Bundle\ShippingBundle\Form\Type\FlatRateShippingMethodTypeOptionsType;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
 
-class FlatRateShippingMethodType implements ShippingMethodTypeInterface
+class FlatRateMethodType implements ShippingMethodTypeInterface
 {
     const IDENTIFIER = 'primary';
 
@@ -18,6 +18,17 @@ class FlatRateShippingMethodType implements ShippingMethodTypeInterface
 
     const PER_ORDER_TYPE = 'per_order';
     const PER_ITEM_TYPE = 'per_item';
+
+    /** @var string */
+    protected $label;
+
+    /**
+     * @param string $label
+     */
+    public function __construct($label)
+    {
+        $this->label = $label;
+    }
 
     /**
      * {@inheritdoc}
@@ -32,7 +43,7 @@ class FlatRateShippingMethodType implements ShippingMethodTypeInterface
      */
     public function getLabel()
     {
-        return 'oro.shipping.method.flat_rate.type.label';
+        return $this->label;
     }
 
     /**
@@ -48,7 +59,7 @@ class FlatRateShippingMethodType implements ShippingMethodTypeInterface
      */
     public function getOptionsConfigurationFormType()
     {
-        return FlatRateShippingMethodTypeOptionsType::class;
+        return FlatRateOptionsType::class;
     }
 
     /**

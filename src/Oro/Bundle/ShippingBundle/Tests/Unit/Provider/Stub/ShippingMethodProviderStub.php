@@ -1,17 +1,28 @@
 <?php
 
-namespace Oro\Bundle\ShippingBundle\Method\FlatRate;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub;
 
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 
-class FlatRateShippingMethodProvider implements ShippingMethodProviderInterface
+class ShippingMethodProviderStub implements ShippingMethodProviderInterface
 {
-    /** @var FlatRateShippingMethod */
+    const METHOD_IDENTIFIER = 'test';
+    const METHOD_TYPE_IDENTIFIER = 'test_type';
+
+    /** @var ShippingMethodStub */
     protected $method;
 
     public function __construct()
     {
-        $this->method = new FlatRateShippingMethod();
+        $type = new ShippingMethodTypeStub();
+        $type->setIdentifier(self::METHOD_TYPE_IDENTIFIER);
+
+        $method = new ShippingMethodStub();
+        $method->setIdentifier(self::METHOD_IDENTIFIER)
+            ->setIsGrouped(false)
+            ->setTypes([$type]);
+
+        $this->method = $method;
     }
 
     /**
