@@ -4,12 +4,12 @@ namespace Oro\Bundle\RFPBundle\Tests\Functional\Controller\Frontend;
 
 use Symfony\Component\DomCrawler\Field\InputFormField;
 
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
+use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadUserData;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
  * @dbIsolation
@@ -91,7 +91,11 @@ class RequestControllerTest extends WebTestCase
             sort($testedColumns);
             sort($expectedColumns);
 
-            static::assertEquals($expectedData['action_configuration'], $data[0]['action_configuration']);
+            foreach ($expectedData['action_configuration'] as $actionName => $actionData) {
+                static::assertArrayHasKey($actionName, $data[0]['action_configuration']);
+                static::assertEquals($actionData, $data[0]['action_configuration'][$actionName]);
+            }
+
             static::assertEquals($expectedColumns, $testedColumns);
         }
 
@@ -149,13 +153,21 @@ class RequestControllerTest extends WebTestCase
 
         $result = $this->client->getResponse();
         static::assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains($request->getFirstName(), $result->getContent());
-        $this->assertContains($request->getLastName(), $result->getContent());
-        $this->assertContains($request->getEmail(), $result->getContent());
-        $this->assertContains($request->getPoNumber(), $result->getContent());
-
+        $shouldContainText = [
+            $request->getFirstName(),
+            $request->getLastName(),
+            $request->getEmail(),
+            $request->getPoNumber(),
+        ];
         if ($request->getShipUntil()) {
-            $this->assertContains($request->getShipUntil()->format('M j, Y'), $result->getContent());
+            $shouldContainText[] = $request->getShipUntil()->format('M j, Y');
+        }
+
+        foreach ($shouldContainText as $expectedText) {
+            $this->assertContains(
+                $expectedText,
+                $result->getContent()
+            );
         }
 
         if (isset($expectedData['columnsCount'])) {
@@ -197,6 +209,8 @@ class RequestControllerTest extends WebTestCase
                         'update_link',
                         'view_link',
                         'action_configuration',
+                        'customerStatusName',
+                        'workflowStepLabel',
                     ],
                     'action_configuration' => [
                         'view' => true,
@@ -228,6 +242,8 @@ class RequestControllerTest extends WebTestCase
                         'update_link',
                         'view_link',
                         'action_configuration',
+                        'customerStatusName',
+                        'workflowStepLabel',
                     ],
                     'action_configuration' => [
                         'view' => true,
@@ -254,6 +270,8 @@ class RequestControllerTest extends WebTestCase
                         'update_link',
                         'view_link',
                         'action_configuration',
+                        'customerStatusName',
+                        'workflowStepLabel',
                     ],
                     'action_configuration' => [
                         'view' => true,
@@ -281,6 +299,8 @@ class RequestControllerTest extends WebTestCase
                         'update_link',
                         'view_link',
                         'action_configuration',
+                        'customerStatusName',
+                        'workflowStepLabel',
                     ],
                     'action_configuration' => [
                         'view' => true,
@@ -309,7 +329,9 @@ class RequestControllerTest extends WebTestCase
                         'update_link',
                         'view_link',
                         'action_configuration',
-                        'accountUserName'
+                        'accountUserName',
+                        'customerStatusName',
+                        'workflowStepLabel',
                     ],
                     'action_configuration' => [
                         'view' => true,
@@ -370,7 +392,7 @@ class RequestControllerTest extends WebTestCase
                     'password' => LoadUserData::ACCOUNT1_USER1,
                 ],
                 'expected' => [
-                    'columnsCount' => 9,
+                    'columnsCount' => 10,
                 ],
             ],
             'account1 user3 (CustomerUser:VIEW_LOCAL)' => [
@@ -380,7 +402,7 @@ class RequestControllerTest extends WebTestCase
                     'password' => LoadUserData::ACCOUNT1_USER2,
                 ],
                 'expected' => [
-                    'columnsCount' => 10,
+                    'columnsCount' => 11,
                     'hideButtonEdit' => true
                 ],
             ],
@@ -488,6 +510,7 @@ class RequestControllerTest extends WebTestCase
     /**
      * @param array $formData
      * @param array $expected
+     *
      * @dataProvider createProvider
      */
     public function testCreate(array $formData, array $expected)
@@ -568,6 +591,7 @@ class RequestControllerTest extends WebTestCase
 
     /**
      * @dataProvider createQueryInitDataProvider
+     *
      * @param array $productItems
      * @param array $expectedData
      */
@@ -602,11 +626,13 @@ class RequestControllerTest extends WebTestCase
                 $quantity = $requestProductItem['quantity'];
                 /** @var InputFormField $unit */
                 $unit = $requestProductItem['productUnit'];
+
                 return [
                     'unit' => $unit->getValue(),
                     'quantity' => $quantity->getValue(),
                 ];
             }, $formRequestProduct['requestProductItems']);
+
             return $result;
         }, []);
         $expectedData = array_combine(array_map($productIdCallable, array_keys($expectedData)), $expectedData);
