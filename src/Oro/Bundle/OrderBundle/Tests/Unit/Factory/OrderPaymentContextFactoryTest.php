@@ -4,7 +4,7 @@ namespace Oro\Bundle\OrderBundle\Bundle\Tests\Unit\Factory;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 use Oro\Bundle\OrderBundle\Converter\OrderPaymentLineItemConverterInterface;
@@ -60,7 +60,7 @@ class OrderPaymentContextFactoryTest extends \PHPUnit_Framework_TestCase
         $currency = 'USD';
         $shippingMethod = 'SomeShippingMethod';
         $amount = 100;
-        $customer = $this->createMock(Account::class);
+        $customer = $this->createMock(Customer::class);
         $customerUser = $this->createMock(CustomerUser::class);
 
         $ordersLineItems = [
@@ -151,7 +151,7 @@ class OrderPaymentContextFactoryTest extends \PHPUnit_Framework_TestCase
         $currency = 'USD';
         $shippingMethod = 'SomeShippingMethod';
         $amount = 100;
-        $customer = $this->createMock(Account::class);
+        $customer = $this->createMock(Customer::class);
         $customerUser = $this->createMock(CustomerUser::class);
 
         $ordersLineItems = [

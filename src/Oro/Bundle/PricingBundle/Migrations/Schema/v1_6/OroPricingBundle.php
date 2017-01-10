@@ -42,6 +42,10 @@ class OroPricingBundle implements
         $extension->renameTable($schema, $queries, 'oro_price_list_to_acc_group', 'oro_price_list_to_cus_group');
         $extension->renameTable($schema, $queries, 'oro_price_list_acc_gr_fb', 'oro_price_list_cus_gr_fb');
         $extension->renameTable($schema, $queries, 'oro_cmb_plist_to_acc_gr', 'oro_cmb_plist_to_cus_gr');
+
+        $extension->renameTable($schema, $queries, 'oro_price_list_to_account', 'oro_price_list_to_customer');
+        $extension->renameTable($schema, $queries, 'oro_price_list_acc_fb', 'oro_price_list_cus_fb');
+        $extension->renameTable($schema, $queries, 'oro_cmb_price_list_to_acc', 'oro_cmb_price_list_to_cus');
     }
 
     /**
@@ -69,6 +73,23 @@ class OroPricingBundle implements
         $table->removeForeignKey($fk);
         $table->dropIndex('oro_cpl_to_acc_gr_ws_unq');
         $extension->renameColumn($schema, $queries, $table, 'account_group_id', 'customer_group_id');
+
+        $table = $schema->getTable('oro_price_list_to_account');
+        $fk = $this->getConstraintName($table, 'account_id');
+        $table->removeForeignKey($fk);
+        $extension->renameColumn($schema, $queries, $table, 'account_id', 'customer_id');
+
+        $table = $schema->getTable('oro_price_list_acc_fb');
+        $fk = $this->getConstraintName($table, 'account_id');
+        $table->removeForeignKey($fk);
+        $table->dropIndex('oro_price_list_acc_fb_unq');
+        $extension->renameColumn($schema, $queries, $table, 'account_id', 'customer_id');
+
+        $table = $schema->getTable('oro_cmb_price_list_to_acc');
+        $fk = $this->getConstraintName($table, 'account_id');
+        $table->removeForeignKey($fk);
+        $table->dropIndex('oro_cpl_to_acc_ws_unq');
+        $extension->renameColumn($schema, $queries, $table, 'account_id', 'customer_id');
     }
 
     /**

@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CustomerBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 use Oro\Bundle\CustomerBundle\Migrations\Data\ORM\LoadCustomerUserRoles;
@@ -58,7 +58,7 @@ class AccountUserControllerTest extends AbstractUserControllerTest
         $crawler = $this->client->request('GET', $this->getUrl('oro_customer_account_user_create'));
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
-        /** @var \Oro\Bundle\CustomerBundle\Entity\Account $account */
+        /** @var \Oro\Bundle\CustomerBundle\Entity\Customer $account */
         $account = $this->getAccountRepository()->findOneBy([]);
 
         /** @var \Oro\Bundle\CustomerBundle\Entity\CustomerUserRole $role */
@@ -333,11 +333,11 @@ class AccountUserControllerTest extends AbstractUserControllerTest
 
     /**
      * @param string $name
-     * @return Account
+     * @return Customer
      */
     protected function createAccount($name)
     {
-        $account = new Account();
+        $account = new Customer();
         $account->setName($name);
         $account->setOrganization($this->getDefaultOrganization());
         $this->getObjectManager()->persist($account);

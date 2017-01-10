@@ -1,5 +1,5 @@
 parameters:
-    oro_customer.entity.account.class: Oro\Bundle\CustomerBundle\Entity\Account
+    oro_customer.entity.account.class: Oro\Bundle\CustomerBundle\Entity\Customer
     oro_customer.entity.account_address.class: Oro\Bundle\CustomerBundle\Entity\CustomerAddress
     oro_customer.entity.account_group.class: Oro\Bundle\CustomerBundle\Entity\CustomerGroup
     oro_customer.entity.account_user.class: Oro\Bundle\CustomerBundle\Entity\CustomerUser
@@ -574,7 +574,7 @@ services:
     oro_customer.layout.data_provider.account_address_provider:
         parent: oro_customer.layout.data_provider.address_provider_abstract
         calls:
-            - [setEntityClass, ['Oro\Bundle\CustomerBundle\Entity\Account']]
+            - [setEntityClass, ['Oro\Bundle\CustomerBundle\Entity\Customer']]
             - [setListRouteName, ['oro_api_account_frontend_get_account_addresses']]
             - [setCreateRouteName, ['oro_customer_frontend_account_address_create']]
             - [setUpdateRouteName, ['oro_customer_frontend_account_address_update']]

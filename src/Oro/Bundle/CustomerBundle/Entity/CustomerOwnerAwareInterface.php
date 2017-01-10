@@ -5,7 +5,7 @@ namespace Oro\Bundle\CustomerBundle\Entity;
 interface CustomerOwnerAwareInterface
 {
     /**
-     * @return \Oro\Bundle\CustomerBundle\Entity\Account
+     * @return \Oro\Bundle\CustomerBundle\Entity\Customer
      */
     public function getCustomer();
 

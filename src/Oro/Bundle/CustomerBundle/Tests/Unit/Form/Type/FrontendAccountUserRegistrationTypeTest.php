@@ -13,7 +13,7 @@ use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Entity\UserManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Form\Type\FrontendAccountUserRegistrationType;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 
 class FrontendAccountUserRegistrationTypeTest extends FormIntegrationTestCase
 {
@@ -33,7 +33,7 @@ class FrontendAccountUserRegistrationTypeTest extends FormIntegrationTestCase
     protected $formType;
 
     /**
-     * @var Account[]
+     * @var Customer[]
      */
     protected static $accounts = [];
 

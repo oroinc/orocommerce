@@ -22,6 +22,12 @@ class OroShoppingListBundleStage2 implements Migration, OrderedMigrationInterfac
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_customer'),
+            ['customer_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
 
         $table = $schema->getTable('oro_shopping_list_line_item');
         $table->addForeignKeyConstraint(

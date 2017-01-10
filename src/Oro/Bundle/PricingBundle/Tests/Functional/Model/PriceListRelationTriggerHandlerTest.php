@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Model;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
@@ -65,7 +65,7 @@ class PriceListRelationTriggerHandlerTest extends WebTestCase
     {
         /** @var Website $website */
         $website = $this->getReference(LoadWebsiteData::WEBSITE1);
-        /** @var Account $account */
+        /** @var Customer $account */
         $account = $this->getReference('account.level_1');
 
         $this->handler->handleAccountChange($account, $website);

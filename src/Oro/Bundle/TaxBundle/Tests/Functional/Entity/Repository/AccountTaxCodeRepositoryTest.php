@@ -3,7 +3,7 @@
 namespace Oro\Bundle\TaxBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccounts;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
@@ -26,7 +26,7 @@ class AccountTaxCodeRepositoryTest extends WebTestCase
 
     public function testFindOneByAccount()
     {
-        /** @var Account $account1 */
+        /** @var Customer $account1 */
         $account1 = $this->getReference(LoadAccounts::DEFAULT_ACCOUNT_NAME);
         $expectedTaxCode = $this->getRepository()->findOneByAccount($account1);
 
@@ -37,7 +37,7 @@ class AccountTaxCodeRepositoryTest extends WebTestCase
 
     public function testFindNewAccount()
     {
-        $this->assertEmpty($this->getRepository()->findOneByAccount(new Account()));
+        $this->assertEmpty($this->getRepository()->findOneByAccount(new Customer()));
     }
 
     public function testFindByCodes()

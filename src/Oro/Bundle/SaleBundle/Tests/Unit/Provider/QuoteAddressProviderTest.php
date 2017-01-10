@@ -6,7 +6,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 use Oro\Bundle\OrderBundle\Tests\Unit\Provider\AbstractQuoteAddressProviderTest;
@@ -53,7 +53,7 @@ class QuoteAddressProviderTest extends AbstractQuoteAddressProviderTest
      */
     public function testGetAccountAddressesUnsupportedType()
     {
-        $this->provider->getAccountAddresses(new Account(), 'test');
+        $this->provider->getAccountAddresses(new Customer(), 'test');
     }
 
     /**

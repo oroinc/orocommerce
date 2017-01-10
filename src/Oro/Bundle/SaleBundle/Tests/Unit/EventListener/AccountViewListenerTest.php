@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\SaleBundle\EventListener\AccountViewListener;
 
@@ -105,7 +105,7 @@ class AccountViewListenerTest extends FormViewListenerTestCase
         $this->request->expects($this->once())
             ->method('get')
             ->willReturn(1);
-        $account = new Account();
+        $account = new Customer();
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityReference')
             ->willReturn($account);

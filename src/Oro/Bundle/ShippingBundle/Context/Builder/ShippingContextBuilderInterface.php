@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ShippingBundle\Context\Builder;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\ShippingLineItemCollectionInterface;
@@ -59,11 +59,11 @@ interface ShippingContextBuilderInterface
     public function setPaymentMethod($paymentMethod);
 
     /**
-     * @param Account $customer
+     * @param Customer $customer
      *
      * @return self
      */
-    public function setCustomer(Account $customer);
+    public function setCustomer(Customer $customer);
 
     /**
      * @param CustomerUser $customerUser

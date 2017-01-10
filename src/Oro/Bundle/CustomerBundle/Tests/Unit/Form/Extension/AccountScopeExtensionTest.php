@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CustomerBundle\Tests\Unit\Form\Extension;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Form\Extension\AccountScopeExtension;
 use Oro\Bundle\CustomerBundle\Form\Type\AccountSelectType;
 use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Extension\Stub\AccountSelectTypeStub;
@@ -37,7 +37,7 @@ class AccountScopeExtensionTest extends FormIntegrationTestCase
         $this->scopeManager->expects($this->once())
             ->method('getScopeEntities')
             ->with('web_content')
-            ->willReturn(['account' => Account::class]);
+            ->willReturn(['account' => Customer::class]);
 
         $form = $this->factory->create(
             ScopeType::NAME,

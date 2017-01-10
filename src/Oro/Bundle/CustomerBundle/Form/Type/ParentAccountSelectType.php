@@ -7,7 +7,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 
 class ParentAccountSelectType extends AbstractType
 {
@@ -36,7 +36,7 @@ class ParentAccountSelectType extends AbstractType
     {
         $parentData = $form->getParent()->getData();
         $accountId = null;
-        if ($parentData instanceof Account) {
+        if ($parentData instanceof Customer) {
             $accountId = $parentData->getId();
         }
         $view->vars['configs']['entityId'] = $accountId;

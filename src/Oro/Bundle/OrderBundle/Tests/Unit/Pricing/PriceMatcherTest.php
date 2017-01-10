@@ -3,7 +3,7 @@
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Pricing;
 
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Pricing\PriceMatcher;
@@ -49,7 +49,7 @@ class PriceMatcherTest extends \PHPUnit_Framework_TestCase
         $lineItemCurrency = 'USD';
         $orderCurrency = 'EUR';
 
-        $account = new Account();
+        $account = new Customer();
         $website = new Website();
 
         /** @var Product $product */

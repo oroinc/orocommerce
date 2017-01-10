@@ -18,8 +18,8 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  * @ORM\Entity(repositoryClass="Oro\Bundle\CustomerBundle\Entity\Repository\CustomerUserRoleRepository")
  * @ORM\Table(name="oro_customer_user_role",
  *      uniqueConstraints={
- *          @ORM\UniqueConstraint(name="oro_customer_user_role_account_id_label_idx", columns={
- *              "account_id",
+ *          @ORM\UniqueConstraint(name="oro_customer_user_role_customer_id_label_idx", columns={
+ *              "customer_id",
  *              "label"
  *          })
  *      }
@@ -38,7 +38,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  *          "ownership"={
  *              "frontend_owner_type"="FRONTEND_ACCOUNT",
  *              "frontend_owner_field_name"="account",
- *              "frontend_owner_column_name"="account_id",
+ *              "frontend_owner_column_name"="customer_id",
  *              "organization_field_name"="organization",
  *              "organization_column_name"="organization_id"
  *          },
@@ -75,10 +75,10 @@ class CustomerUserRole extends AbstractRole implements OrganizationAwareInterfac
     protected $role;
 
     /**
-     * @var Account
+     * @var Customer
      *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\Account")
-     * @ORM\JoinColumn(name="account_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\Customer")
+     * @ORM\JoinColumn(name="customer_id", referencedColumnName="id", onDelete="SET NULL")
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -123,7 +123,7 @@ class CustomerUserRole extends AbstractRole implements OrganizationAwareInterfac
      *
      * @ORM\ManyToMany(targetEntity="Oro\Bundle\WebsiteBundle\Entity\Website")
      * @ORM\JoinTable(
-     *      name="oro_account_role_to_website",
+     *      name="oro_customer_role_to_website",
      *      joinColumns={
      *          @ORM\JoinColumn(name="customer_user_role_id", referencedColumnName="id", onDelete="CASCADE")
      *      },
@@ -246,7 +246,7 @@ class CustomerUserRole extends AbstractRole implements OrganizationAwareInterfac
     }
 
     /**
-     * @return Account
+     * @return Customer
      */
     public function getAccount()
     {
@@ -254,10 +254,10 @@ class CustomerUserRole extends AbstractRole implements OrganizationAwareInterfac
     }
 
     /**
-     * @param Account|null $account
+     * @param Customer|null $account
      * @return CustomerUserRole
      */
-    public function setAccount(Account $account = null)
+    public function setAccount(Customer $account = null)
     {
         $this->account = $account;
 

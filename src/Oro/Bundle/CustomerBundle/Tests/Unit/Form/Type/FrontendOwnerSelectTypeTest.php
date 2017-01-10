@@ -95,7 +95,7 @@ class FrontendOwnerSelectTypeTest extends FormIntegrationTestCase
         $this->registry
             ->expects($this->any())
             ->method('getRepository')
-            ->with('OroCustomerBundle:Account')
+            ->with('OroCustomerBundle:Customer')
             ->willReturn($accountUserRepository);
 
         $this->aclHelper

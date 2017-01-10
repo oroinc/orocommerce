@@ -5,7 +5,7 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Unit\EventListener;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Entity\UserInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\VisibilityBundle\EventListener\CategoryTreeHandlerListener;
@@ -82,7 +82,7 @@ class CategoryTreeHandlerListenerTest extends \PHPUnit_Framework_TestCase
      * @param array $expected
      * @param array $hiddenCategoryIds
      * @param UserInterface|null $user
-     * @param Account $account
+     * @param Customer $account
      * @param CustomerGroup|null $accountGroup
      */
     public function testOnCreateAfter(
@@ -90,7 +90,7 @@ class CategoryTreeHandlerListenerTest extends \PHPUnit_Framework_TestCase
         array $expected,
         array $hiddenCategoryIds,
         UserInterface $user = null,
-        Account $account = null,
+        Customer $account = null,
         CustomerGroup $accountGroup = null
     ) {
         $categories = $this->prepareCategories($categories);
@@ -189,7 +189,7 @@ class CategoryTreeHandlerListenerTest extends \PHPUnit_Framework_TestCase
                 ],
                 'hiddenCategoryIds' => [3],
                 'user' => new CustomerUser(),
-                'account' => $this->getEntity(Account::class, ['id' => 42])
+                'account' => $this->getEntity(Customer::class, ['id' => 42])
             ]
         ];
     }

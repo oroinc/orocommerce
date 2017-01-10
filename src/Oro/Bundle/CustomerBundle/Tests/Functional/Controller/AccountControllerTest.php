@@ -6,7 +6,7 @@ use Symfony\Component\DomCrawler\Crawler;
 
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadUserData;
 
@@ -44,7 +44,7 @@ class AccountControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        /** @var Account $parent */
+        /** @var Customer $parent */
         $parent = $this->getReference('account.level_1');
         /** @var CustomerGroup $group */
         $group = $this->getReference('account_group.group1');
@@ -52,10 +52,10 @@ class AccountControllerTest extends WebTestCase
         $internalRating = $this->getReference('internal_rating.1 of 5');
         $this->assertAccountSave($crawler, self::ACCOUNT_NAME, $parent, $group, $internalRating);
 
-        /** @var Account $account */
+        /** @var Customer $account */
         $account = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroCustomerBundle:Account')
-            ->getRepository('OroCustomerBundle:Account')
+            ->getManagerForClass('OroCustomerBundle:Customer')
+            ->getRepository('OroCustomerBundle:Customer')
             ->findOneBy(['name' => self::ACCOUNT_NAME]);
         $this->assertNotEmpty($account);
 
@@ -76,7 +76,7 @@ class AccountControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        /** @var Account $newParent */
+        /** @var Customer $newParent */
         $newParent = $this->getReference('account.level_1.1');
         /** @var CustomerGroup $newGroup */
         $newGroup = $this->getReference('account_group.group2');
@@ -105,7 +105,7 @@ class AccountControllerTest extends WebTestCase
         $this->assertContains('Add attachment', $html);
         $this->assertContains('Add note', $html);
         $this->assertContains('Address Book', $html);
-        /** @var Account $newParent */
+        /** @var Customer $newParent */
         $newParent = $this->getReference('account.level_1.1');
         /** @var CustomerGroup $newGroup */
         $newGroup = $this->getReference('account_group.group2');
@@ -117,14 +117,14 @@ class AccountControllerTest extends WebTestCase
     /**
      * @param Crawler           $crawler
      * @param string            $name
-     * @param Account           $parent
+     * @param Customer           $parent
      * @param CustomerGroup      $group
      * @param AbstractEnumValue $internalRating
      */
     protected function assertAccountSave(
         Crawler $crawler,
         $name,
-        Account $parent,
+        Customer $parent,
         CustomerGroup $group,
         AbstractEnumValue $internalRating
     ) {
@@ -148,14 +148,14 @@ class AccountControllerTest extends WebTestCase
     /**
      * @param string $html
      * @param string $name
-     * @param Account $parent
+     * @param Customer $parent
      * @param CustomerGroup $group
      * @param AbstractEnumValue $internalRating
      */
     protected function assertViewPage(
         $html,
         $name,
-        Account $parent,
+        Customer $parent,
         CustomerGroup $group,
         AbstractEnumValue $internalRating
     ) {
@@ -167,7 +167,7 @@ class AccountControllerTest extends WebTestCase
 
     /**
      * @param $name
-     * @param Account $parent
+     * @param Customer $parent
      * @param CustomerGroup $group
      * @param AbstractEnumValue $internalRating
      *
@@ -175,7 +175,7 @@ class AccountControllerTest extends WebTestCase
      */
     protected function prepareFormValues(
         $name,
-        Account $parent,
+        Customer $parent,
         CustomerGroup $group,
         AbstractEnumValue $internalRating
     ) {

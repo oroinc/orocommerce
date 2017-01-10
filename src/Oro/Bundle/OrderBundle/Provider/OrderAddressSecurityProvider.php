@@ -4,7 +4,7 @@ namespace Oro\Bundle\OrderBundle\Provider;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\OrderBundle\Entity\Order;
 
@@ -56,11 +56,11 @@ class OrderAddressSecurityProvider
 
     /**
      * @param string $type
-     * @param Account $account
+     * @param Customer $account
      *
      * @return bool
      */
-    public function isAccountAddressGranted($type, Account $account = null)
+    public function isAccountAddressGranted($type, Customer $account = null)
     {
         if ($this->isManualEditGranted($type)) {
             return true;

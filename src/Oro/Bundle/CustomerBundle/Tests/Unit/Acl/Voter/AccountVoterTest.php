@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CustomerBundle\Tests\Unit\Acl\Voter;
 
 use Oro\Bundle\CustomerBundle\Acl\Voter\AccountVoter;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\AccountOwnerAwareInterface;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Provider\AccountUserRelationsProvider;
@@ -600,11 +600,11 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param int $id
-     * @return Account
+     * @return Customer
      */
     protected function getAccount($id)
     {
-        return $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account', $id);
+        return $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', $id);
     }
 
     /**
@@ -708,7 +708,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
 
         $this->relationsProvider->expects($this->once())
             ->method('getAccountIncludingEmpty')
-            ->willReturn(new Account());
+            ->willReturn(new Customer());
 
         $this->assertEquals(
             AccountVoter::ACCESS_ABSTAIN,
@@ -755,7 +755,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
 
         $this->relationsProvider->expects($this->once())
             ->method('getAccountIncludingEmpty')
-            ->willReturn(new Account());
+            ->willReturn(new Customer());
 
         $this->assertEquals(
             $expectedResult,

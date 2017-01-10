@@ -5,7 +5,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectRepository;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\BasePriceListRelation;
 use Oro\Bundle\PricingBundle\Entity\PriceListAccountFallback;
@@ -110,11 +110,11 @@ class PriceListCollectionProvider
     }
 
     /**
-     * @param Account $account
+     * @param Customer $account
      * @param Website $website
      * @return PriceListSequenceMember[]
      */
-    public function getPriceListsByAccount(Account $account, Website $website)
+    public function getPriceListsByAccount(Customer $account, Website $website)
     {
         /** @var PriceListToAccountRepository $repo */
         $repo = $this->getRepository('OroPricingBundle:PriceListToAccount');

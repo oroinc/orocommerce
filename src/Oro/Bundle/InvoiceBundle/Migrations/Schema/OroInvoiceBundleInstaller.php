@@ -47,7 +47,7 @@ class OroInvoiceBundleInstaller implements Installation
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('customer_user_id', 'integer', ['notnull' => false]);
         $table->addColumn('user_owner_id', 'integer', ['notnull' => false]);
-        $table->addColumn('account_id', 'integer', ['notnull' => false]);
+        $table->addColumn('customer_id', 'integer', ['notnull' => false]);
         $table->addColumn('website_id', 'integer', ['notnull' => false]);
         $table->addColumn('invoice_number', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('invoice_date', 'date', []);
@@ -120,8 +120,8 @@ class OroInvoiceBundleInstaller implements Installation
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_account'),
-            ['account_id'],
+            $schema->getTable('oro_customer'),
+            ['customer_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );

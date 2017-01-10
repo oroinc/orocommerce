@@ -5,7 +5,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Form;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\PricingBundle\Entity\PriceListToAccount;
 use Oro\Bundle\PricingBundle\Entity\PriceListToWebsite;
 use Oro\Bundle\PricingBundle\Form\PriceListWithPriorityCollectionHandler;
@@ -149,7 +149,7 @@ class PriceListWithPriorityCollectionHandlerTest extends \PHPUnit_Framework_Test
     public function testNewRelationsAdded()
     {
         $website = new Website();
-        $account = new Account();
+        $account = new Customer();
         $newRelation = new PriceListToAccount();
         $notChangedRelation = new PriceListToAccount();
 

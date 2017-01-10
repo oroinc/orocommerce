@@ -4,68 +4,20 @@ namespace Oro\Bundle\SaleBundle\Migrations\Schema\v1_13;
 
 use Doctrine\DBAL\Schema\Schema;
 
-use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
-use Oro\Bundle\MigrationBundle\Migration\MigrationConstraintTrait;
-use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
+use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 
-class OroSaleBundle implements Migration, RenameExtensionAwareInterface, OrderedMigrationInterface
+class OroSaleBundle implements Migration, RenameExtensionAwareInterface
 {
-    use MigrationConstraintTrait;
-
     /**
      * @var RenameExtension
      */
     private $renameExtension;
 
     /**
-     * {@inheritdoc}
-     */
-    public function up(Schema $schema, QueryBag $queries)
-    {
-        $table = $schema->getTable('oro_sale_quote');
-        $table->removeForeignKey($this->getConstraintName($table, 'account_user_id'));
-        $this->renameExtension->renameColumn(
-            $schema,
-            $queries,
-            $table,
-            'account_user_id',
-            'customer_user_id'
-        );
-
-        $table = $schema->getTable('oro_quote_demand');
-        $table->removeForeignKey($this->getConstraintName($table, 'account_user_id'));
-        $this->renameExtension->renameColumn(
-            $schema,
-            $queries,
-            $table,
-            'account_user_id',
-            'customer_user_id'
-        );
-
-        $table = $schema->getTable('oro_quote_assigned_acc_users');
-        $table->removeForeignKey($this->getConstraintName($table, 'account_user_id'));
-        $this->renameExtension->renameColumn(
-            $schema,
-            $queries,
-            $table,
-            'account_user_id',
-            'customer_user_id'
-        );
-        $this->renameExtension->renameTable(
-            $schema,
-            $queries,
-            'oro_quote_assigned_acc_users',
-            'oro_quote_assigned_cus_users'
-        );
-    }
-
-    /**
-     * Sets the RenameExtension
-     *
-     * @param RenameExtension $renameExtension
+     * @inheritDoc
      */
     public function setRenameExtension(RenameExtension $renameExtension)
     {
@@ -73,12 +25,90 @@ class OroSaleBundle implements Migration, RenameExtensionAwareInterface, Ordered
     }
 
     /**
-     * Get the order of this migration
-     *
-     * @return integer
+     * {@inheritdoc}
      */
-    public function getOrder()
+    public function up(Schema $schema, QueryBag $queries)
     {
-        return 1;
+        $this->renameShippingEstimateAmountColumn($schema, $queries);
+        $this->renameShippingEstimateCurrencyColumn($schema, $queries);
+        $this->addOverriddenShippingCostColumn($schema);
+        $this->addShippingMethodColumns($schema);
+        $this->addAllowUnlistedAndLockedColumns($schema);
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    private function addAllowUnlistedAndLockedColumns(Schema $schema)
+    {
+        $table = $schema->getTable('oro_sale_quote');
+        $table->addColumn('shipping_method_locked', 'boolean');
+        $table->addColumn('allow_unlisted_shipping_method', 'boolean');
+    }
+
+    /**
+     * @param Schema $schema
+     *
+     * @throws \Doctrine\DBAL\Schema\SchemaException
+     */
+    protected function addOverriddenShippingCostColumn(Schema $schema)
+    {
+        $table = $schema->getTable('oro_sale_quote');
+        $table->addColumn('override_shipping_cost_amount', 'money', [
+            'notnull' => false,
+            'precision' => 19,
+            'scale' => 4,
+            'comment' => '(DC2Type:money)'
+        ]);
+    }
+
+    /**
+     * Add shipping_method, shipping_method_type columns
+     *
+     * @param Schema $schema
+     *
+     * @throws \Doctrine\DBAL\Schema\SchemaException
+     */
+    protected function addShippingMethodColumns(Schema $schema)
+    {
+        $table = $schema->getTable('oro_sale_quote');
+        $table->addColumn('shipping_method', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('shipping_method_type', 'string', ['notnull' => false, 'length' => 255]);
+    }
+
+    /**
+     * @param Schema $schema
+     * @param QueryBag $queries
+     *
+     * @throws \Doctrine\DBAL\Schema\SchemaException
+     */
+    protected function renameShippingEstimateAmountColumn(Schema $schema, QueryBag $queries)
+    {
+        $table = $schema->getTable('oro_sale_quote');
+        $this->renameExtension->renameColumn(
+            $schema,
+            $queries,
+            $table,
+            'shipping_estimate_amount',
+            'estimated_shipping_cost_amount'
+        );
+    }
+
+    /**
+     * @param Schema $schema
+     * @param QueryBag $queries
+     *
+     * @throws \Doctrine\DBAL\Schema\SchemaException
+     */
+    protected function renameShippingEstimateCurrencyColumn(Schema $schema, QueryBag $queries)
+    {
+        $table = $schema->getTable('oro_sale_quote');
+        $this->renameExtension->renameColumn(
+            $schema,
+            $queries,
+            $table,
+            'shipping_estimate_currency',
+            'currency'
+        );
     }
 }

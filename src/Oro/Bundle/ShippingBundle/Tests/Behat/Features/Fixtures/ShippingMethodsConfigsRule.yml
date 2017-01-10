@@ -42,7 +42,7 @@ Oro\Bundle\CurrencyBundle\Entity\Price(local):
         value: '1'
         currency: 'EUR'
 
-Oro\Bundle\CustomerBundle\Entity\Account:
+Oro\Bundle\CustomerBundle\Entity\Customer:
     account1:
         name: 'Company A'
         organization: '@organization'

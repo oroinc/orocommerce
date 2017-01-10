@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\OrderBundle\RequestHandler\FrontendOrderDataHandler;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
@@ -106,7 +106,7 @@ class FrontendOrderDataHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function testGetAccount()
     {
-        $account = new Account();
+        $account = new Customer();
         $accountUser = new CustomerUser();
         $accountUser->setAccount($account);
 
@@ -119,7 +119,7 @@ class FrontendOrderDataHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function testGetPaymentTerm()
     {
-        $account = new Account();
+        $account = new Customer();
         $accountUser = new CustomerUser();
         $accountUser->setAccount($account);
 

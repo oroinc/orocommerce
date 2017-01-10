@@ -54,7 +54,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  *              "owner_column_name"="owner_id",
  *              "frontend_owner_type"="FRONTEND_ACCOUNT",
  *              "frontend_owner_field_name"="account",
- *              "frontend_owner_column_name"="account_id",
+ *              "frontend_owner_column_name"="customer_id",
  *              "organization_field_name"="organization",
  *              "organization_column_name"="organization_id"
  *          },
@@ -104,14 +104,14 @@ class CustomerUser extends AbstractUser implements FullNameInterface, EmailHolde
     protected $roles;
 
     /**
-     * @var Account
+     * @var Customer
      *
      * @ORM\ManyToOne(
-     *      targetEntity="Oro\Bundle\CustomerBundle\Entity\Account",
+     *      targetEntity="Oro\Bundle\CustomerBundle\Entity\Customer",
      *      inversedBy="users",
      *      cascade={"persist"}
      * )
-     * @ORM\JoinColumn(name="account_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ORM\JoinColumn(name="customer_id", referencedColumnName="id", onDelete="SET NULL")
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -391,7 +391,7 @@ class CustomerUser extends AbstractUser implements FullNameInterface, EmailHolde
 
     /**
      * @deprecated Use getCustomer()
-     * @return Account|null
+     * @return Customer|null
      */
     public function getAccount()
     {
@@ -400,10 +400,10 @@ class CustomerUser extends AbstractUser implements FullNameInterface, EmailHolde
 
     /**
      * @deprecated Use setCustomer()
-     * @param Account $account
+     * @param Customer $account
      * @return CustomerUser
      */
-    public function setAccount(Account $account = null)
+    public function setAccount(Customer $account = null)
     {
         $this->account = $account;
 
@@ -411,7 +411,7 @@ class CustomerUser extends AbstractUser implements FullNameInterface, EmailHolde
     }
 
     /**
-     * @return Account|null
+     * @return Customer|null
      */
     public function getCustomer()
     {
@@ -419,10 +419,10 @@ class CustomerUser extends AbstractUser implements FullNameInterface, EmailHolde
     }
 
     /**
-     * @param Account|null $customer
+     * @param Customer|null $customer
      * @return $this
      */
-    public function setCustomer(Account $customer = null)
+    public function setCustomer(Customer $customer = null)
     {
         $this->account = $customer;
 
@@ -435,7 +435,7 @@ class CustomerUser extends AbstractUser implements FullNameInterface, EmailHolde
     public function createAccount($companyName = null)
     {
         if (!$this->account) {
-            $this->account = new Account();
+            $this->account = new Customer();
             $this->account->setOrganization($this->organization);
 
             if (!$companyName) {

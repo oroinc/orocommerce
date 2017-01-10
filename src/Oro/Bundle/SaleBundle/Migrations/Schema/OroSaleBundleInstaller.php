@@ -153,7 +153,7 @@ class OroSaleBundleInstaller implements
         $table->addColumn('customer_user_id', 'integer', ['notnull' => false]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('request_id', 'integer', ['notnull' => false]);
-        $table->addColumn('account_id', 'integer', ['notnull' => false]);
+        $table->addColumn('customer_id', 'integer', ['notnull' => false]);
         $table->addColumn('shipping_address_id', 'integer', ['notnull' => false]);
         $table->addColumn('user_owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('qid', 'string', ['notnull' => false, 'length' => 255]);
@@ -282,7 +282,7 @@ class OroSaleBundleInstaller implements
         $table->addColumn('free_form_product', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('free_form_product_replacement', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('comment', 'text', ['notnull' => false]);
-        $table->addColumn('comment_account', 'text', ['notnull' => false]);
+        $table->addColumn('comment_customer', 'text', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
     }
 
@@ -357,8 +357,8 @@ class OroSaleBundleInstaller implements
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_account'),
-            ['account_id'],
+            $schema->getTable('oro_customer'),
+            ['customer_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
@@ -572,7 +572,7 @@ class OroSaleBundleInstaller implements
     {
         $table = $schema->createTable('oro_quote_demand');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('account_id', 'integer', ['notnull' => false]);
+        $table->addColumn('customer_id', 'integer', ['notnull' => false]);
         $table->addColumn('customer_user_id', 'integer', ['notnull' => false]);
         $table->addColumn('quote_id', 'integer', ['notnull' => false]);
         $table->addColumn(
@@ -635,8 +635,8 @@ class OroSaleBundleInstaller implements
     {
         $table = $schema->getTable('oro_quote_demand');
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_account'),
-            ['account_id'],
+            $schema->getTable('oro_customer'),
+            ['customer_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );

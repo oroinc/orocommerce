@@ -4,7 +4,7 @@ namespace Oro\Bundle\OrderBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 
@@ -39,7 +39,7 @@ abstract class AbstractQuoteAddressProviderTest extends \PHPUnit_Framework_TestC
      */
     public function testGetAccountAddressesUnsupportedType()
     {
-        $this->provider->getAccountAddresses(new Account(), 'test');
+        $this->provider->getAccountAddresses(new Customer(), 'test');
     }
 
     /**
@@ -78,10 +78,10 @@ abstract class AbstractQuoteAddressProviderTest extends \PHPUnit_Framework_TestC
         $repository->expects($this->never())
             ->method($this->anything());
 
-        $this->provider->getAccountAddresses(new Account(), $type);
+        $this->provider->getAccountAddresses(new Customer(), $type);
 
         // cache
-        $this->provider->getAccountAddresses(new Account(), $type);
+        $this->provider->getAccountAddresses(new Customer(), $type);
     }
 
     /**
@@ -96,7 +96,7 @@ abstract class AbstractQuoteAddressProviderTest extends \PHPUnit_Framework_TestC
             ->method('getLoggedUser')
             ->will($this->returnValue($loggedUser));
 
-        $account = new Account();
+        $account = new Customer();
         $addresses = [new CustomerAddress()];
 
         $this->securityFacade->expects($this->once())
@@ -128,7 +128,7 @@ abstract class AbstractQuoteAddressProviderTest extends \PHPUnit_Framework_TestC
             ->method('getLoggedUser')
             ->will($this->returnValue($loggedUser));
 
-        $account = new Account();
+        $account = new Customer();
         $addresses = [new CustomerAddress()];
 
         $this->securityFacade->expects($this->exactly(2))

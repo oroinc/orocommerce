@@ -3,7 +3,7 @@
 namespace Oro\Bundle\VisibilityBundle\Form\EventListener;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\ScopeBundle\Form\FormScopeCriteriaResolver;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
@@ -125,7 +125,7 @@ class VisibilityFormFieldDataProvider
         foreach ($visibilities as $visibilityEntity) {
             $scope = $visibilityEntity->getScope();
 
-            /** @var Account $account */
+            /** @var Customer $account */
             /** @noinspection PhpUndefinedMethodInspection - field added through entity extend */
             $account = $scope->getAccount();
 

@@ -5,7 +5,7 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Storage;
 use Doctrine\Common\Util\ClassUtils;
 
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
@@ -47,8 +47,8 @@ class ProductDataStorageTest extends \PHPUnit_Framework_TestCase
         $comment = 'Test Comment';
         $unitCode = 'kg';
 
-        /** @var Account $account */
-        $account = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account', ['id' => $accountId]);
+        /** @var Customer $account */
+        $account = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', ['id' => $accountId]);
 
         /** @var CustomerUser $accountUser */
         $accountUser = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUser', ['id' => $accountUserId]);

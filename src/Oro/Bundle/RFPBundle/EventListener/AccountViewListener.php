@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\RFPBundle\EventListener;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
@@ -55,8 +55,8 @@ class AccountViewListener implements FeatureToggleableInterface
             return;
         }
 
-        /** @var Account $account */
-        $account = $this->getEntityFromRequestId('OroCustomerBundle:Account');
+        /** @var Customer $account */
+        $account = $this->getEntityFromRequestId('OroCustomerBundle:Customer');
         if ($account) {
             $template = $event->getEnvironment()->render(
                 'OroRFPBundle:Account:rfp_view.html.twig',

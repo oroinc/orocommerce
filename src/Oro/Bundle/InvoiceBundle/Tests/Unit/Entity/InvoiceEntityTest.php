@@ -5,7 +5,7 @@ namespace Oro\Bundle\InvoiceBundle\Tests\Unit\Entity;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\InvoiceBundle\Entity\Invoice;
 use Oro\Bundle\InvoiceBundle\Entity\InvoiceLineItem;
@@ -29,7 +29,7 @@ class InvoiceEntityTest extends \PHPUnit_Framework_TestCase
             ['paymentDueDate', $now, false],
             ['currency', 'USD'],
             ['poNumber', 'po-test'],
-            ['account', new Account()],
+            ['account', new Customer()],
             ['accountUser', new CustomerUser()],
             ['website', new Website()],
             ['subtotal', 12.55]

@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Model\DTO;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
@@ -14,7 +14,7 @@ class PriceListRelationTrigger
     const FORCE = 'force';
 
     /**
-     * @var Account
+     * @var Customer
      */
     protected $account;
 
@@ -34,7 +34,7 @@ class PriceListRelationTrigger
     protected $force = false;
 
     /**
-     * @return Account|null
+     * @return Customer|null
      */
     public function getAccount()
     {
@@ -42,10 +42,10 @@ class PriceListRelationTrigger
     }
 
     /**
-     * @param Account|null $account
+     * @param Customer|null $account
      * @return $this
      */
-    public function setAccount(Account $account = null)
+    public function setAccount(Customer $account = null)
     {
         $this->account = $account;
 

@@ -34,6 +34,14 @@ class OroRFPBundle implements Migration, RenameExtensionAwareInterface, OrderedM
             'account_user_id',
             'customer_user_id'
         );
+        $table->removeForeignKey($this->getConstraintName($table, 'account_id'));
+        $this->renameExtension->renameColumn(
+            $schema,
+            $queries,
+            $table,
+            'account_id',
+            'customer_id'
+        );
 
         $table = $schema->getTable('oro_rfp_assigned_acc_users');
         $table->removeForeignKey($this->getConstraintName($table, 'account_user_id'));

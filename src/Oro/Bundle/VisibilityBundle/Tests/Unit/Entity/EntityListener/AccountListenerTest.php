@@ -5,7 +5,7 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Entity\EntityListener;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 
 use Oro\Bundle\VisibilityBundle\Driver\AccountPartialUpdateDriverInterface;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\VisibilityBundle\Entity\EntityListener\AccountListener;
 use Oro\Bundle\VisibilityBundle\Model\MessageFactoryInterface;
@@ -30,7 +30,7 @@ class AccountListenerTest extends \PHPUnit_Framework_TestCase
     protected $driver;
 
     /**
-     * @var Account
+     * @var Customer
      */
     protected $account;
 
@@ -48,7 +48,7 @@ class AccountListenerTest extends \PHPUnit_Framework_TestCase
         $this->driver = $this->getMockBuilder(AccountPartialUpdateDriverInterface::class)
             ->getMock();
 
-        $this->account = new Account();
+        $this->account = new Customer();
         $this->listener = new AccountListener($this->factory, $this->producer, $this->driver);
     }
 

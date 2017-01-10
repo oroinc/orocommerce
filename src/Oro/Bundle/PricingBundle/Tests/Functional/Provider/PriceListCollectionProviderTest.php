@@ -7,7 +7,7 @@ use Doctrine\ORM\EntityManager;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListFallbackSettings;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\PricingBundle\Provider\PriceListCollectionProvider;
 use Oro\Bundle\PricingBundle\Provider\PriceListSequenceMember;
@@ -247,7 +247,7 @@ class PriceListCollectionProviderTest extends WebTestCase
     ) {
         $expectedPriceLists = $this->resolveExpectedPriceLists($expectedPriceLists);
 
-        /** @var Account $account */
+        /** @var Customer $account */
         $account = $this->getReference($accountReference);
         /** @var Website $website */
         $website = $this->getReference($websiteReference);
@@ -300,7 +300,7 @@ class PriceListCollectionProviderTest extends WebTestCase
      */
     public function testGetPriceListsByAccountForAccountWithoutGroup($website, array $expectedPriceLists)
     {
-        /** @var Account $account */
+        /** @var Customer $account */
         $account = $this->getReference('account.level_1_1');
         $this->assertNull($account->getGroup());
 

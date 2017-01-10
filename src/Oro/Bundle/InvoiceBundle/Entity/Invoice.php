@@ -27,7 +27,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  * @ORM\Entity
  * @ORM\AssociationOverrides({
  *      @ORM\AssociationOverride(name="account",
- *          joinColumns=@ORM\JoinColumn(name="account_id", referencedColumnName="id", onDelete="CASCADE")
+ *          joinColumns=@ORM\JoinColumn(name="customer_id", referencedColumnName="id", onDelete="CASCADE")
  *      )
  * })
  * @Config(

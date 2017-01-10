@@ -14,7 +14,7 @@ use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as AccountSelectTypeStu
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Form\Type\CustomerUserRoleSelectType;
 use Oro\Bundle\CustomerBundle\Form\Type\AccountUserType;
 use Oro\Bundle\CustomerBundle\Form\Type\FrontendCustomerUserRoleSelectType;
@@ -120,7 +120,7 @@ class FrontendAccountUserTypeTest extends AccountUserTypeTest
     public function submitProvider()
     {
         $newAccountUser = new CustomerUser();
-        $account = new Account();
+        $account = new Customer();
         $newAccountUser->setAccount($account);
         $existingAccountUser = new CustomerUser();
 

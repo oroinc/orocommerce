@@ -5,7 +5,7 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountCategoryVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountGroupCategoryVisibilityResolved;
@@ -103,7 +103,7 @@ class LoadCategoryVisibilityResolvedData extends AbstractFixture implements Depe
     protected function createAccountCategoryVisibilities(Category $category, array $accountVisibilityData)
     {
         foreach ($accountVisibilityData as $accountReference => $data) {
-            /** @var Account $account */
+            /** @var Customer $account */
             $account = $this->getReference($accountReference);
             $accountCategoryVisibility = (new AccountCategoryVisibilityResolved($category, $account))
                 ->setVisibility($data['visibility']);

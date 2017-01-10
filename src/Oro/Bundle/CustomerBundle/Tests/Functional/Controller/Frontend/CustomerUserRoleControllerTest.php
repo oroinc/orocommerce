@@ -39,7 +39,7 @@ class CustomerUserRoleControllerTest extends WebTestCase
         'entity' => [
             0 => [
                 'identity' => [
-                    'id' => 'entity:Oro\Bundle\CustomerBundle\Entity\Account',
+                    'id' => 'entity:Oro\Bundle\CustomerBundle\Entity\Customer',
                     'name' => 'oro.customer.account.entity_label',
                 ],
                 'permissions' => [],
@@ -408,7 +408,7 @@ class CustomerUserRoleControllerTest extends WebTestCase
      */
     protected function getAccountRepository()
     {
-        return $this->getObjectManager()->getRepository('OroCustomerBundle:Account');
+        return $this->getObjectManager()->getRepository('OroCustomerBundle:Customer');
     }
 
     /**

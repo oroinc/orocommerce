@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
 use Doctrine\Common\Persistence\ObjectManager;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\BasePriceListRelation;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
@@ -55,7 +55,7 @@ class CombinedPriceListRepositoryTest extends WebTestCase
 
     public function testAccountPriceList()
     {
-        /** @var Account $account */
+        /** @var Customer $account */
         $account = $this->getReference('account.level_1.2');
 
         /** @var CombinedPriceList $priceList */
@@ -190,7 +190,7 @@ class CombinedPriceListRepositoryTest extends WebTestCase
         $website = $this->getReference($website);
 
         if ($targetEntity) {
-            /** @var Account|CustomerGroup $targetEntity */
+            /** @var Customer|CustomerGroup $targetEntity */
             $targetEntity = $this->getReference($targetEntity);
         }
 
@@ -212,7 +212,7 @@ class CombinedPriceListRepositoryTest extends WebTestCase
                 ->findOneBy(array_merge(['website' => $website], $additionalCriteria));
         };
 
-        $getAccountConnection = function (Website $website, Account $targetEntity) use ($getConnection) {
+        $getAccountConnection = function (Website $website, Customer $targetEntity) use ($getConnection) {
             return call_user_func(
                 $getConnection,
                 'OroPricingBundle:CombinedPriceListToAccount',

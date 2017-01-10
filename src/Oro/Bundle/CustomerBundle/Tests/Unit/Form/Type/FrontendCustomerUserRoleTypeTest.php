@@ -11,7 +11,7 @@ use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as AccountSelectTypeStu
 
 use Genemu\Bundle\FormBundle\Form\JQuery\Type\Select2Type;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 use Oro\Bundle\CustomerBundle\Form\Type\AccountSelectType;
@@ -99,7 +99,7 @@ class FrontendCustomerUserRoleTypeTest extends AbstractCustomerUserRoleTypeTest
     {
         $roleLabel = 'account_role_label';
         $alteredRoleLabel = 'altered_role_label';
-        $account = new Account();
+        $account = new Customer();
 
         $defaultRole = new CustomerUserRole();
         $defaultRole->setLabel($roleLabel);
@@ -143,9 +143,9 @@ class FrontendCustomerUserRoleTypeTest extends AbstractCustomerUserRoleTypeTest
 
     public function testSubmitUpdateAccountUsers()
     {
-        /** @var Account $account */
-        $account1 = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account', 1);
-        $account2 = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account', 2);
+        /** @var Customer $account */
+        $account1 = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', 1);
+        $account2 = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', 2);
 
         /** @var CustomerUserRole $role */
         $role = $this->getEntity(self::DATA_CLASS, 1);

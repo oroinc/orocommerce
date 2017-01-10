@@ -4,7 +4,7 @@ namespace Oro\Bundle\CustomerBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
@@ -17,7 +17,7 @@ class CustomerUserRoleTest extends \PHPUnit_Framework_TestCase
     {
         $name = 'test role#$%';
         $role = new CustomerUserRole();
-        $account = new Account();
+        $account = new Customer();
         $organization = new Organization();
 
         $this->assertEmpty($role->getId());
@@ -54,7 +54,7 @@ class CustomerUserRoleTest extends \PHPUnit_Framework_TestCase
         ]);
 
         static::assertPropertyAccessors(new CustomerUserRole(), [
-            ['account', new Account()],
+            ['account', new Customer()],
             ['organization', new Organization()]
         ]);
     }
@@ -85,7 +85,7 @@ class CustomerUserRoleTest extends \PHPUnit_Framework_TestCase
         $role = new CustomerUserRole($name);
         $this->assertTrue($role->isPredefined());
 
-        $role->setAccount(new Account());
+        $role->setAccount(new Customer());
         $this->assertFalse($role->isPredefined());
     }
 }

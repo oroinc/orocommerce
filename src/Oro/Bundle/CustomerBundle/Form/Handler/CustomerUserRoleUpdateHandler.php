@@ -5,7 +5,7 @@ namespace Oro\Bundle\CustomerBundle\Form\Handler;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 use Oro\Bundle\UserBundle\Entity\AbstractRole;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 use Oro\Bundle\CustomerBundle\Entity\Repository\CustomerUserRoleRepository;
@@ -26,7 +26,7 @@ class CustomerUserRoleUpdateHandler extends AbstractCustomerUserRoleHandler
     }
     
     /**
-     * @var Account
+     * @var Customer
      */
     protected $originalAccount;
 

@@ -6,7 +6,7 @@ use Oro\Bundle\CustomerBundle\Entity\Repository\AccountRepository;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\EventListener\Datagrid\AccountDatagridListener;
 use Oro\Bundle\CustomerBundle\Security\AccountUserProvider;
@@ -252,7 +252,7 @@ class AccountDatagridListenerTest extends \PHPUnit_Framework_TestCase
     {
         return $this->getEntity(
             CustomerUser::class,
-            ['id' => $id, 'account' => $this->getEntity(Account::class, ['id' => $customerId])]
+            ['id' => $id, 'account' => $this->getEntity(Customer::class, ['id' => $customerId])]
         );
     }
 

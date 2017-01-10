@@ -13,7 +13,7 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
@@ -40,7 +40,7 @@ class AccountUserTypeTest extends FormIntegrationTestCase
     protected $securityFacade;
 
     /**
-     * @var Account[]
+     * @var Customer[]
      */
     protected static $accounts = [];
 
@@ -286,7 +286,7 @@ class AccountUserTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @return Account[]
+     * @return Customer[]
      */
     protected function getAccounts()
     {
@@ -302,7 +302,7 @@ class AccountUserTypeTest extends FormIntegrationTestCase
 
     /**
      * @param int $id
-     * @return Account
+     * @return Customer
      */
     protected function getAccount($id)
     {
@@ -314,11 +314,11 @@ class AccountUserTypeTest extends FormIntegrationTestCase
     /**
      * @param int $id
      * @param string $name
-     * @return Account
+     * @return Customer
      */
     protected static function createAccount($id, $name)
     {
-        $account = new Account();
+        $account = new Customer();
 
         $reflection = new \ReflectionProperty(get_class($account), 'id');
         $reflection->setAccessible(true);

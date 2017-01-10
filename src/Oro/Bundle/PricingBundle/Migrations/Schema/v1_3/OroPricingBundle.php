@@ -315,7 +315,7 @@ class OroPricingBundle implements
             $schema,
             $queries,
             'orob2b_cmb_price_list_to_acc',
-            'oro_account',
+            'oro_customer',
             ['account_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']

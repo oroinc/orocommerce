@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CustomerBundle\Tests\Unit\Validator\Constraints;
 
 use Doctrine\Common\Collections\Collection;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Validator\Constraints\ScopeWithCustomerGroupAndCustomer;
 use Oro\Bundle\CustomerBundle\Validator\Constraints\ScopeWithCustomerGroupAndCustomerValidator;
@@ -42,7 +42,7 @@ class ScopeWithCustomerGroupAndCustomerValidatorTest extends \PHPUnit_Framework_
     {
         $index = 1;
         $notValidScope = new StubScope([
-            'account' => $this->getEntity(Account::class, ['id' => 123]),
+            'account' => $this->getEntity(Customer::class, ['id' => 123]),
             'accountGroup' => $this->getEntity(CustomerGroup::class, ['id' => 42]),
         ]);
 
