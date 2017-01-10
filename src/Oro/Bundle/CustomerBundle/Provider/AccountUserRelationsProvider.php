@@ -4,7 +4,7 @@ namespace Oro\Bundle\CustomerBundle\Provider;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 
@@ -32,7 +32,7 @@ class AccountUserRelationsProvider
 
     /**
      * @param CustomerUser|null $accountUser
-     * @return null|Account
+     * @return null|Customer
      */
     public function getAccount(CustomerUser $accountUser = null)
     {
@@ -70,13 +70,13 @@ class AccountUserRelationsProvider
 
     /**
      * @param CustomerUser|null $accountUser
-     * @return null|Account
+     * @return null|Customer
      */
     public function getAccountIncludingEmpty(CustomerUser $accountUser = null)
     {
         $account = $this->getAccount($accountUser);
         if (!$account) {
-            $account = new Account();
+            $account = new Customer();
             $account->setGroup($this->getAccountGroup($accountUser));
         }
         

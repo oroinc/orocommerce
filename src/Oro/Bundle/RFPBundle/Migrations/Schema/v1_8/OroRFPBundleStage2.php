@@ -22,6 +22,13 @@ class OroRFPBundleStage2 implements Migration, OrderedMigrationInterface
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_customer'),
+            ['customer_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
+
         $table = $schema->getTable('oro_rfp_assigned_cus_users');
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_customer_user'),

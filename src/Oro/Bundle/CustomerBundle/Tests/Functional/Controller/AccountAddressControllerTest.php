@@ -7,14 +7,14 @@ use Symfony\Component\DomCrawler\Form;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 
 /**
  * @dbIsolation
  */
 class AccountAddressControllerTest extends WebTestCase
 {
-    /** @var Account $account */
+    /** @var Customer $account */
     protected $account;
 
     /**

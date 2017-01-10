@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\EventListener;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToAccount;
 use Oro\Bundle\PricingBundle\EventListener\AccountDataGridListener;
@@ -29,8 +29,8 @@ class AccountDataGridListenerTest extends AbstractPriceListRelationDataGridListe
     protected function createRelation()
     {
         $relation = new PriceListToAccount();
-        /** @var Account $account */
-        $account = new Account();
+        /** @var Customer $account */
+        $account = new Customer();
         /** @var PriceList|\PHPUnit_Framework_MockObject_MockObject $priceList */
         $priceList = $this->createMock('Oro\Bundle\PricingBundle\Entity\PriceList');
         /** @var Website|\PHPUnit_Framework_MockObject_MockObject $website */

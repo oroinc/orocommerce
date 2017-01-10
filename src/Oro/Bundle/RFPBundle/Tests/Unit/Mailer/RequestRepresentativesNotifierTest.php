@@ -6,7 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\RFPBundle\Mailer\Processor;
 use Oro\Bundle\RFPBundle\Entity\Request;
@@ -29,7 +29,7 @@ class RequestRepresentativesNotifierTest extends \PHPUnit_Framework_TestCase
     /** @var  CustomerUser|\PHPUnit_Framework_MockObject_MockObject $accountUser */
     protected $accountUser;
 
-    /** @var  Account|\PHPUnit_Framework_MockObject_MockObject $accountUser */
+    /** @var  Customer|\PHPUnit_Framework_MockObject_MockObject $accountUser */
     protected $account;
 
     /** @var  User $owner */

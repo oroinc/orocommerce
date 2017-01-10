@@ -10,7 +10,7 @@ use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 
 class FrontendOrderDataHandler
@@ -46,7 +46,7 @@ class FrontendOrderDataHandler
     }
 
     /**
-     * @return Account|null
+     * @return Customer|null
      */
     public function getAccount()
     {

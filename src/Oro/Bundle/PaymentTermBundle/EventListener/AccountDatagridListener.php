@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PaymentTermBundle\EventListener;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
@@ -27,7 +27,7 @@ class AccountDatagridListener
     {
         $config = $event->getConfig();
         $className = $config->getExtendedEntityClassName();
-        if (!is_a(Account::class, $className, true)) {
+        if (!is_a(Customer::class, $className, true)) {
             return;
         }
 
@@ -65,7 +65,7 @@ class AccountDatagridListener
                 )
             );
 
-            $targetField = $this->paymentTermAssociationProvider->getTargetField(Account::class, $associationName);
+            $targetField = $this->paymentTermAssociationProvider->getTargetField(Customer::class, $associationName);
             $query->addSelect(
                 $this->getSelectPart(
                     $aliases,

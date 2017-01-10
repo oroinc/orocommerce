@@ -9,7 +9,7 @@ use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class ShoppingListTest extends \PHPUnit_Framework_TestCase
@@ -27,7 +27,7 @@ class ShoppingListTest extends \PHPUnit_Framework_TestCase
             ['subtotal', new Subtotal()],
             ['organization', new Organization()],
             ['owner', new User()],
-            ['account', new Account()],
+            ['account', new Customer()],
             ['accountUser', new CustomerUser()],
             ['createdAt', $now, false],
             ['updatedAt', $now, false],

@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CustomerBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
@@ -130,7 +130,7 @@ class AccountAddressControllerTest extends WebTestCase
     {
         $this->loginUser(LoadAccountAddressACLData::USER_ACCOUNT_2_ROLE_LOCAL);
         $user = $this->getReference(LoadAccountAddressACLData::USER_ACCOUNT_2_ROLE_LOCAL);
-        /** @var Account $account */
+        /** @var Customer $account */
         $account = $user->getAccount();
         /** @var CustomerAddress $address */
         $address = $account->getAddresses()->first();
@@ -218,7 +218,7 @@ class AccountAddressControllerTest extends WebTestCase
         $this->loginUser($user);
         /* @var $resource CustomerUser */
         $resource = $this->getReference($resource);
-        /** @var Account $account */
+        /** @var Customer $account */
         $account = $resource->getAccount();
         /** @var CustomerAddress $address */
         $address = $account->getAddresses()->first();

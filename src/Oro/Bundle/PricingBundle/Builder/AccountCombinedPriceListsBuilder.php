@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Builder;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\PriceListAccountFallback;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToAccountRepository;
@@ -15,10 +15,10 @@ class AccountCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
 {
     /**
      * @param Website $website
-     * @param Account $account
+     * @param Customer $account
      * @param bool|false $force
      */
-    public function build(Website $website, Account $account, $force = false)
+    public function build(Website $website, Customer $account, $force = false)
     {
         if (!$this->isBuiltForAccount($website, $account)) {
             $this->updatePriceListsOnCurrentLevel($website, $account, $force);
@@ -48,10 +48,10 @@ class AccountCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
 
     /**
      * @param Website $website
-     * @param Account $account
+     * @param Customer $account
      * @param bool $force
      */
-    protected function updatePriceListsOnCurrentLevel(Website $website, Account $account, $force)
+    protected function updatePriceListsOnCurrentLevel(Website $website, Customer $account, $force)
     {
         $priceListsToAccount = $this->getPriceListToEntityRepository()
             ->findOneBy(['website' => $website, 'account' => $account]);
@@ -72,19 +72,19 @@ class AccountCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
 
     /**
      * @param Website $website
-     * @param Account $account
+     * @param Customer $account
      * @return bool
      */
-    protected function isBuiltForAccount(Website $website, Account $account)
+    protected function isBuiltForAccount(Website $website, Customer $account)
     {
         return !empty($this->builtList['account'][$website->getId()][$account->getId()]);
     }
 
     /**
      * @param Website $website
-     * @param Account $account
+     * @param Customer $account
      */
-    protected function setBuiltForAccount(Website $website, Account $account)
+    protected function setBuiltForAccount(Website $website, Customer $account)
     {
         $this->builtList['account'][$website->getId()][$account->getId()] = true;
     }
@@ -110,10 +110,10 @@ class AccountCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
 
     /**
      * @param Website $website
-     * @param Account $account
+     * @param Customer $account
      * @return bool
      */
-    public function hasFallbackOnNextLevel(Website $website, Account $account)
+    public function hasFallbackOnNextLevel(Website $website, Customer $account)
     {
         $fallback = $this->getFallbackRepository()->findOneBy(
             ['website' => $website, 'account' => $account, 'fallback' => PriceListAccountFallback::CURRENT_ACCOUNT_ONLY]

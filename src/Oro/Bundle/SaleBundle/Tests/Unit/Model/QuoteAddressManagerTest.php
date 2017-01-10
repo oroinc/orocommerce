@@ -8,7 +8,7 @@ use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
@@ -205,7 +205,7 @@ class QuoteAddressManagerTest extends AbstractAddressManagerTest
                 ],
             ],
             'account' => [
-                (new Quote())->setAccountUser(new CustomerUser())->setAccount(new Account()),
+                (new Quote())->setAccountUser(new CustomerUser())->setAccount(new Customer()),
                 [
                     $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerAddress', 1),
                     $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerAddress', 2),
@@ -225,7 +225,7 @@ class QuoteAddressManagerTest extends AbstractAddressManagerTest
                 ],
             ],
             'full' => [
-                (new Quote())->setAccountUser(new CustomerUser())->setAccount(new Account()),
+                (new Quote())->setAccountUser(new CustomerUser())->setAccount(new Customer()),
                 [
                     $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerAddress', 1),
                     $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerAddress', 2),

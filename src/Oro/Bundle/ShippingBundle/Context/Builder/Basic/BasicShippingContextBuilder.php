@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ShippingBundle\Context\Builder\Basic;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 use Oro\Bundle\ShippingBundle\Context\Builder\ShippingContextBuilderInterface;
@@ -61,7 +61,7 @@ class BasicShippingContextBuilder implements ShippingContextBuilderInterface
     private $paymentMethod;
 
     /**
-     * @var Account
+     * @var Customer
      */
     private $customer;
 
@@ -210,7 +210,7 @@ class BasicShippingContextBuilder implements ShippingContextBuilderInterface
     /**
      * {@inheritDoc}
      */
-    public function setCustomer(Account $customer)
+    public function setCustomer(Customer $customer)
     {
         $this->customer = $customer;
 

@@ -3,7 +3,7 @@
 namespace Oro\Bundle\SaleBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteType;
 
@@ -32,7 +32,7 @@ class AjaxQuoteControllerTest extends WebTestCase
      */
     public function testGetRelatedDataAction($account, $accountUser = null)
     {
-        /** @var Account $order */
+        /** @var Customer $order */
         $accountEntity = $this->getReference($account);
 
         /** @var CustomerUser $order */

@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteType;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 
 class QuoteRequestHandler
 {
@@ -62,7 +62,7 @@ class QuoteRequestHandler
     }
 
     /**
-     * @return Account|null
+     * @return Customer|null
      */
     public function getAccount()
     {

@@ -13,10 +13,10 @@ use Oro\Bundle\ScopeBundle\Entity\ScopeAwareInterface;
  *      repositoryClass="Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\AccountProductVisibilityRepository"
  * )
  * @ORM\Table(
- *      name="oro_acc_product_visibility",
+ *      name="oro_cus_product_visibility",
  *      uniqueConstraints={
  *          @ORM\UniqueConstraint(
- *              name="oro_acc_prod_vis_uidx",
+ *              name="oro_cus_prod_vis_uidx",
  *              columns={"product_id", "scope_id"}
  *          )
  *      }

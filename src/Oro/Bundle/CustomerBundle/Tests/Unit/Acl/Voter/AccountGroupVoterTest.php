@@ -9,7 +9,7 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\CustomerBundle\Acl\Voter\AccountGroupVoter;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 
 class AccountGroupVoterTest extends \PHPUnit_Framework_TestCase
@@ -95,7 +95,7 @@ class AccountGroupVoterTest extends \PHPUnit_Framework_TestCase
                 'attribute' => 'VIEW',
             ],
             'abstain when another entity' => [
-                'object' => new Account(),
+                'object' => new Customer(),
                 'result' => VoterInterface::ACCESS_ABSTAIN,
                 'attribute' => 'DELETE',
             ],

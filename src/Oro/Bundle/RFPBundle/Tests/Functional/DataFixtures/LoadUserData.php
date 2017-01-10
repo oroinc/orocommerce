@@ -13,7 +13,7 @@ use Oro\Bundle\UserBundle\Entity\UserManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
 
 class LoadUserData extends AbstractFixture implements FixtureInterface
@@ -203,7 +203,7 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
         $organization   = $defaultUser->getOrganization();
 
         foreach ($this->accounts as $item) {
-            $account = new Account();
+            $account = new Customer();
             $account
                 ->setName($item['name'])
                 ->setOrganization($organization)

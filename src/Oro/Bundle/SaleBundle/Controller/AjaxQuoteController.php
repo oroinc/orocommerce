@@ -14,7 +14,7 @@ use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteType;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Model\QuoteRequestHandler;
@@ -74,7 +74,7 @@ class AjaxQuoteController extends Controller
 
     /**
      * @param CustomerUser $accountUser
-     * @return null|Account
+     * @return null|Customer
      */
     protected function getAccount(CustomerUser $accountUser = null)
     {
@@ -91,11 +91,11 @@ class AjaxQuoteController extends Controller
 
     /**
      * @param CustomerUser $accountUser
-     * @param Account $account
+     * @param Customer $account
      *
      * @throws BadRequestHttpException
      */
-    protected function validateRelation(CustomerUser $accountUser, Account $account)
+    protected function validateRelation(CustomerUser $accountUser, Customer $account)
     {
         if ($accountUser && $accountUser->getAccount() && $accountUser->getAccount()->getId() !== $account->getId()) {
             throw new BadRequestHttpException('CustomerUser must belong to Account');

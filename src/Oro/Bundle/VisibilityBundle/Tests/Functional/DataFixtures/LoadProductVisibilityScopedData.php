@@ -6,7 +6,7 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccounts;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
@@ -165,7 +165,7 @@ class LoadProductVisibilityScopedData extends AbstractFixture implements
         array $accountsData
     ) {
         foreach ($accountsData as $accountReference => $accountData) {
-            /** @var Account $account */
+            /** @var Customer $account */
             $account = $this->getReference($accountReference);
 
             $accountProductVisibility = new AccountProductVisibility();

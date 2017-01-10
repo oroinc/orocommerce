@@ -314,7 +314,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
         $organization = $this->getMockBuilder('Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface')->getMock();
         $role = $this->getMockBuilder('Symfony\Component\Security\Core\Role\RoleInterface')->getMock();
 
-        $account = $this->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\Account')->getMock();
+        $account = $this->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\Customer')->getMock();
 
         /** @var CustomerUser $accountUser */
         $accountUser = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUser', $id);

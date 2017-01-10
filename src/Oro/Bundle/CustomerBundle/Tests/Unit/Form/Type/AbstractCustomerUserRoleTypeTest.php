@@ -11,7 +11,7 @@ use Symfony\Component\Validator\Validation;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType;
 use Oro\Bundle\SecurityBundle\Form\Type\PrivilegeCollectionType;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as AccountSelectTypeStub;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 use Oro\Bundle\CustomerBundle\Form\Type\CustomerUserRoleType;
 use Oro\Bundle\CustomerBundle\Form\Type\AccountSelectType;
@@ -22,7 +22,7 @@ abstract class AbstractCustomerUserRoleTypeTest extends FormIntegrationTestCase
     const DATA_CLASS = 'Oro\Bundle\CustomerBundle\Entity\CustomerUserRole';
 
     /**
-     * @var Account
+     * @var Customer
      */
     protected static $accounts;
 
@@ -156,7 +156,7 @@ abstract class AbstractCustomerUserRoleTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @return Account[]
+     * @return Customer[]
      */
     protected function getAccounts()
     {
@@ -173,11 +173,11 @@ abstract class AbstractCustomerUserRoleTypeTest extends FormIntegrationTestCase
     /**
      * @param int $id
      * @param string $name
-     * @return Account
+     * @return Customer
      */
     protected static function createAccount($id, $name)
     {
-        $account = new Account();
+        $account = new Customer();
 
         $reflection = new \ReflectionProperty(get_class($account), 'id');
         $reflection->setAccessible(true);

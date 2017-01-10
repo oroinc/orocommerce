@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Command;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Entity\Repository\CustomerGroupRepository;
 use Oro\Bundle\CustomerBundle\Entity\Repository\AccountRepository;
@@ -261,15 +261,15 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
 
     /**
      * @param InputInterface $input
-     * @return array|Account[]
+     * @return array|Customer[]
      */
     protected function getAccounts(InputInterface $input)
     {
         $accountIds = $input->getOption(self::ACCOUNT);
         /** @var AccountRepository $repository */
         $repository = $this->getContainer()->get('doctrine')
-            ->getManagerForClass(Account::class)
-            ->getRepository(Account::class);
+            ->getManagerForClass(Customer::class)
+            ->getRepository(Customer::class);
         $accounts = [];
         if (count($accountIds)) {
             $accounts = $repository->findBy(['id' => $accountIds]);

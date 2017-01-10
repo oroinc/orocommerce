@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Controller;
 
 use Doctrine\ORM\EntityManager;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccounts;
 use Oro\Bundle\CatalogBundle\Entity\Category;
@@ -273,7 +273,7 @@ class PriceListControllerTest extends WebTestCase
 
         //Create relation price list to account for CPL's check
 
-        /** @var Account $account */
+        /** @var Customer $account */
         $account = $this->getReference('account.level_1.2.1');
 
         /** @var Website $website */
@@ -405,7 +405,7 @@ class PriceListControllerTest extends WebTestCase
     /**
      * @param string $reference
      *
-     * @return Account
+     * @return Customer
      */
     protected function getAccount($reference)
     {

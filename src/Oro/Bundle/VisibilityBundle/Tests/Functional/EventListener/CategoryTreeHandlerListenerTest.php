@@ -3,7 +3,7 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\EventListener;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
@@ -317,7 +317,7 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
             ->get('doctrine')
             ->getManagerForClass('OroVisibilityBundle:Visibility\AccountCategoryVisibility');
 
-        /** @var Account $account */
+        /** @var Customer $account */
         $account = $this->getReference('account.level_1');
         /** @var AccountCategoryVisibility $accountVisibility */
         $scope = $this->scopeManager->findOrCreate(AccountCategoryVisibility::VISIBILITY_TYPE, ['account' => $account]);

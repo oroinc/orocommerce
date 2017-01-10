@@ -12,7 +12,7 @@ use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\SecurityBundle\Acl\Persistence\AclManager;
 use Oro\Bundle\SecurityBundle\Owner\Metadata\ChainMetadataProvider;
 use Oro\Bundle\SecurityBundle\Acl\Persistence\AclPrivilegeRepository;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 use Oro\Bundle\CustomerBundle\Form\Handler\CustomerUserRoleUpdateHandler;
@@ -146,12 +146,16 @@ abstract class AbstractCustomerUserRoleUpdateHandlerTestCase extends \PHPUnit_Fr
     /**
      * @param CustomerUserRole $role
      * @param int $numberOfUsers
-     * @param Account $account
+     * @param Customer $account
      * @param int $offset
      * @return \Oro\Bundle\CustomerBundle\Entity\CustomerUser[]
      */
-    protected function createUsersWithRole(CustomerUserRole $role, $numberOfUsers, Account $account = null, $offset = 0)
-    {
+    protected function createUsersWithRole(
+        CustomerUserRole $role,
+        $numberOfUsers,
+        Customer $account = null,
+        $offset = 0
+    ) {
         /** @var CustomerUser[] $users */
         $users = [];
         for ($i = 0; $i < $numberOfUsers; $i++) {

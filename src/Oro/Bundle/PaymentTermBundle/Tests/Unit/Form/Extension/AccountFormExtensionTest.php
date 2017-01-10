@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PaymentTermBundle\Tests\Unit\Form\Extension;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Form\Type\AccountType;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
@@ -69,7 +69,7 @@ class AccountFormExtensionTest extends \PHPUnit_Framework_TestCase
         $builder = $this->createMock(FormBuilderInterface::class);
         $builder->expects($this->once())
             ->method('getData')
-            ->willReturn(new Account());
+            ->willReturn(new Customer());
 
         $this->paymentTermAssociationProvider->expects($this->never())->method($this->anything());
         $this->paymentTermProvider->expects($this->never())->method($this->anything());
@@ -82,7 +82,7 @@ class AccountFormExtensionTest extends \PHPUnit_Framework_TestCase
         $builder = $this->createMock(FormBuilderInterface::class);
         $builder->expects($this->once())
             ->method('getData')
-            ->willReturn((new Account())->setGroup(new CustomerGroup()));
+            ->willReturn((new Customer())->setGroup(new CustomerGroup()));
 
         $this->paymentTermAssociationProvider->expects($this->once())->method('getAssociationNames')->willReturn([]);
         $this->paymentTermProvider->expects($this->never())->method($this->anything());
@@ -95,7 +95,7 @@ class AccountFormExtensionTest extends \PHPUnit_Framework_TestCase
         $builder = $this->createMock(FormBuilderInterface::class);
         $builder->expects($this->once())
             ->method('getData')
-            ->willReturn((new Account())->setGroup(new CustomerGroup()));
+            ->willReturn((new Customer())->setGroup(new CustomerGroup()));
 
         $this->paymentTermAssociationProvider->expects($this->once())->method('getAssociationNames')
             ->willReturn(['paymentTerm']);
@@ -110,7 +110,7 @@ class AccountFormExtensionTest extends \PHPUnit_Framework_TestCase
         $builder = $this->createMock(FormBuilderInterface::class);
         $builder->expects($this->once())
             ->method('getData')
-            ->willReturn((new Account())->setGroup(new CustomerGroup()));
+            ->willReturn((new Customer())->setGroup(new CustomerGroup()));
 
         $this->paymentTermAssociationProvider->expects($this->once())->method('getAssociationNames')
             ->willReturn(['paymentTerm']);
@@ -128,7 +128,7 @@ class AccountFormExtensionTest extends \PHPUnit_Framework_TestCase
         $builder = $this->createMock(FormBuilderInterface::class);
         $builder->expects($this->once())
             ->method('getData')
-            ->willReturn((new Account())->setGroup(new CustomerGroup()));
+            ->willReturn((new Customer())->setGroup(new CustomerGroup()));
 
         $this->paymentTermAssociationProvider->expects($this->once())->method('getAssociationNames')
             ->willReturn(['paymentTerm']);

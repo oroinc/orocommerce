@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\Context\Converter\Basic;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\EntityBundle\Helper\FieldHelper;
 use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
@@ -38,7 +38,7 @@ class BasicPaymentContextToRulesValueConverterTest extends \PHPUnit_Framework_Te
     private $shippingOriginMock;
 
     /**
-     * @var Account|\PHPUnit_Framework_MockObject_MockObject
+     * @var Customer|\PHPUnit_Framework_MockObject_MockObject
      */
     private $customerMock;
 
@@ -57,7 +57,7 @@ class BasicPaymentContextToRulesValueConverterTest extends \PHPUnit_Framework_Te
         $this->shippingAddressMock = $this->createMock(AddressInterface::class);
         $this->billingAddressMock = $this->createMock(AddressInterface::class);
         $this->shippingOriginMock = $this->createMock(AddressInterface::class);
-        $this->customerMock = $this->getMockBuilder(Account::class)
+        $this->customerMock = $this->getMockBuilder(Customer::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->customerUserMock = $this->getMockBuilder(CustomerUser::class)

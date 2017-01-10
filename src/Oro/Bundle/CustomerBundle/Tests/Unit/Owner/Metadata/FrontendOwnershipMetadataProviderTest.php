@@ -22,7 +22,7 @@ use Oro\Bundle\CustomerBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
  */
 class FrontendOwnershipMetadataProviderTest extends \PHPUnit_Framework_TestCase
 {
-    const LOCAL_LEVEL = 'Oro\Bundle\CustomerBundle\Entity\Account';
+    const LOCAL_LEVEL = 'Oro\Bundle\CustomerBundle\Entity\Customer';
     const BASIC_LEVEL = 'Oro\Bundle\CustomerBundle\Entity\CustomerUser';
 
     /**
@@ -81,7 +81,7 @@ class FrontendOwnershipMetadataProviderTest extends \PHPUnit_Framework_TestCase
             ->method('getEntityClass')
             ->willReturnMap(
                 [
-                    ['OroCustomerBundle:Account', self::LOCAL_LEVEL],
+                    ['OroCustomerBundle:Customer', self::LOCAL_LEVEL],
                     ['OroCustomerBundle:CustomerUser', self::BASIC_LEVEL],
                     [self::LOCAL_LEVEL, self::LOCAL_LEVEL],
                     [self::BASIC_LEVEL, self::BASIC_LEVEL],
@@ -152,7 +152,7 @@ class FrontendOwnershipMetadataProviderTest extends \PHPUnit_Framework_TestCase
     {
         $provider = new FrontendOwnershipMetadataProvider(
             [
-                'local_level' => 'OroCustomerBundle:Account',
+                'local_level' => 'OroCustomerBundle:Customer',
                 'basic_level' => 'OroCustomerBundle:CustomerUser',
             ]
         );

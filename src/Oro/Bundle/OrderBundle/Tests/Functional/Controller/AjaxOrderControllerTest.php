@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Functional\Controller;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountAddresses;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserAddresses;
@@ -84,7 +84,7 @@ class AjaxOrderControllerTest extends WebTestCase
      */
     public function testGetRelatedDataAction($account, $accountUser = null)
     {
-        /** @var Account $order */
+        /** @var Customer $order */
         $accountEntity = $this->getReference($account);
 
         /** @var CustomerUser $order */

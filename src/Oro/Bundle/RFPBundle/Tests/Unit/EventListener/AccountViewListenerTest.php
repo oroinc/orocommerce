@@ -10,7 +10,7 @@ use Oro\Component\Testing\Unit\FormViewListenerTestCase;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\RFPBundle\EventListener\AccountViewListener;
 
 class AccountViewListenerTest extends FormViewListenerTestCase
@@ -124,7 +124,7 @@ class AccountViewListenerTest extends FormViewListenerTestCase
         $this->request->expects($this->once())
             ->method('get')
             ->willReturn(1);
-        $account = new Account();
+        $account = new Customer();
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityReference')
             ->willReturn($account);

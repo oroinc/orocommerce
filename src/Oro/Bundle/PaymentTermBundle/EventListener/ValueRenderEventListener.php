@@ -4,7 +4,7 @@ namespace Oro\Bundle\PaymentTermBundle\EventListener;
 
 use Doctrine\Common\Util\ClassUtils;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\EntityExtendBundle\Event\ValueRenderEvent;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
@@ -42,7 +42,7 @@ class ValueRenderEventListener
     public function beforeValueRender(ValueRenderEvent $event)
     {
         $entity = $event->getEntity();
-        if (!$entity instanceof Account) {
+        if (!$entity instanceof Customer) {
             return;
         }
 

@@ -3,7 +3,7 @@
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
@@ -71,7 +71,7 @@ class QuoteProductPriceProviderTest extends \PHPUnit_Framework_TestCase
     {
         $quote = new Quote();
         $website = new Website();
-        $account = new Account();
+        $account = new Customer();
         $quote->setWebsite($website)
             ->setAccount($account);
         foreach ($quoteProducts as $quoteProduct) {
@@ -144,7 +144,7 @@ class QuoteProductPriceProviderTest extends \PHPUnit_Framework_TestCase
     {
         $quote = new Quote();
         $website = new Website();
-        $account = new Account();
+        $account = new Customer();
         $quote->setWebsite($website)
             ->setAccount($account);
         foreach ($quoteProducts as $quoteProduct) {

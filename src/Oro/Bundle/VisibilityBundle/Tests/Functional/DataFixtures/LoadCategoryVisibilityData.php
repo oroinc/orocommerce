@@ -7,7 +7,7 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccounts;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
@@ -141,7 +141,7 @@ class LoadCategoryVisibilityData extends AbstractFixture implements DependentFix
     protected function createAccountCategoryVisibilities(Category $category, array $accountVisibilityData)
     {
         foreach ($accountVisibilityData as $accountReference => $data) {
-            /** @var Account $account */
+            /** @var Customer $account */
             $account = $this->getReference($accountReference);
             $scope = $this->scopeManager->findOrCreate(
                 AccountCategoryVisibility::VISIBILITY_TYPE,

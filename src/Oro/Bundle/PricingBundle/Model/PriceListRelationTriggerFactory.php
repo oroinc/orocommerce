@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Model;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\PricingBundle\Model\DTO\PriceListRelationTrigger;
 use Oro\Bundle\PricingBundle\Model\Exception\InvalidArgumentException;
@@ -42,7 +42,7 @@ class PriceListRelationTriggerFactory
 
         $priceListChangeTrigger = new PriceListRelationTrigger();
         if ($data[PriceListRelationTrigger::ACCOUNT]) {
-            $account = $this->registry->getRepository(Account::class)
+            $account = $this->registry->getRepository(Customer::class)
                 ->find($data[PriceListRelationTrigger::ACCOUNT]);
             if (!$account) {
                 throw new InvalidArgumentException('Account was not found');

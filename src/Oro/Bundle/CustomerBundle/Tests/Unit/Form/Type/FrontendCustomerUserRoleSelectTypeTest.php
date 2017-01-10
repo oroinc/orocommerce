@@ -13,7 +13,7 @@ use Doctrine\ORM\QueryBuilder;
 
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 use Oro\Bundle\CustomerBundle\Entity\Repository\CustomerUserRoleRepository;
@@ -144,11 +144,11 @@ class FrontendCustomerUserRoleSelectTypeTest extends FormIntegrationTestCase
     /**
      * @param int $id
      * @param string $name
-     * @return Account
+     * @return Customer
      */
     protected function createAccount($id, $name)
     {
-        $account = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account', ['id' => $id]);
+        $account = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', ['id' => $id]);
         $account->setName($name);
 
         return $account;
@@ -156,7 +156,7 @@ class FrontendCustomerUserRoleSelectTypeTest extends FormIntegrationTestCase
 
     /**
      * @param int $id
-     * @return Account
+     * @return Customer
      */
     protected function createOrganization($id)
     {

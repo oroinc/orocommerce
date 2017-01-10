@@ -3,8 +3,6 @@
 namespace Oro\Bundle\PricingBundle\Migrations\Schema\v1_6;
 
 use Doctrine\DBAL\Schema\Schema;
-use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
-use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\MigrationConstraintTrait;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
@@ -54,6 +52,38 @@ class OroPricingBundleStage2 implements
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
         $table->addUniqueIndex(['customer_group_id', 'website_id'], 'oro_cpl_to_cus_gr_ws_unq');
+
+        $schema->getTable('oro_price_list_to_customer')
+            ->addForeignKeyConstraint(
+                $schema->getTable('oro_customer'),
+                ['customer_id'],
+                ['id'],
+                ['onDelete' => 'CASCADE', 'onUpdate' => null]
+            );
+
+        $schema->getTable('oro_price_list_cus_fb')
+            ->addForeignKeyConstraint(
+                $schema->getTable('oro_customer'),
+                ['customer_id'],
+                ['id'],
+                ['onUpdate' => null, 'onDelete' => 'CASCADE']
+            );
+
+        $schema->getTable('oro_cmb_price_list_to_cus')
+            ->addForeignKeyConstraint(
+                $schema->getTable('oro_customer'),
+                ['customer_id'],
+                ['id'],
+                ['onUpdate' => null, 'onDelete' => 'CASCADE']
+            );
+        $schema->getTable('oro_price_list_cus_fb')
+            ->addUniqueIndex(['customer_id', 'website_id'], 'oro_price_list_cus_fb_unq');
+
+        $schema->getTable('oro_cmb_price_list_to_cus')
+            ->addUniqueIndex(
+                ['customer_id', 'website_id'],
+                'oro_cpl_to_cus_ws_unq'
+            );
     }
 
     /**

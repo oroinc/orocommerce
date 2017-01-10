@@ -4,7 +4,7 @@ namespace Oro\Bundle\VisibilityBundle\Form\EventListener;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Util\ClassUtils;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -106,7 +106,7 @@ class VisibilityFormPostSubmitDataHandler
                 continue;
             }
 
-            /** @var Account|CustomerGroup $visibilityToEntity */
+            /** @var Customer|CustomerGroup $visibilityToEntity */
             $visibilityToEntity = $visibilityData['entity'];
 
             if (isset($visibilitiesEntity[$visibilityToEntity->getId()])) {

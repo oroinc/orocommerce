@@ -3,7 +3,7 @@
 namespace Oro\Bundle\SaleBundle\Provider;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 
@@ -55,11 +55,11 @@ class QuoteAddressSecurityProvider
 
     /**
      * @param string $type
-     * @param Account $account
+     * @param Customer $account
      *
      * @return bool
      */
-    public function isAccountAddressGranted($type, Account $account = null)
+    public function isAccountAddressGranted($type, Customer $account = null)
     {
         if ($this->isManualEditGranted($type)) {
             return true;

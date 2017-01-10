@@ -3,13 +3,13 @@
 namespace Oro\Bundle\CustomerBundle\Model;
 
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 
 /**
  * @method AbstractEnumValue getInternalRating()
- * @method Account setInternalRating(AbstractEnumValue $enumId)
+ * @method Customer setInternalRating(AbstractEnumValue $enumId)
  */
-class ExtendAccount
+class ExtendCustomer
 {
     /**
      * Constructor

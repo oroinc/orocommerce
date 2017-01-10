@@ -4,7 +4,7 @@ namespace Oro\Bundle\CustomerBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Provider\AccountUserRelationsProvider;
@@ -45,9 +45,9 @@ class AccountUserRelationsProviderTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider accountDataProvider
      * @param CustomerUser|null $accountUser
-     * @param Account|null $expectedAccount
+     * @param Customer|null $expectedAccount
      */
-    public function testGetAccount(CustomerUser $accountUser = null, Account $expectedAccount = null)
+    public function testGetAccount(CustomerUser $accountUser = null, Customer $expectedAccount = null)
     {
         $this->assertEquals($expectedAccount, $this->provider->getAccount($accountUser));
     }
@@ -58,7 +58,7 @@ class AccountUserRelationsProviderTest extends \PHPUnit_Framework_TestCase
     public function accountDataProvider()
     {
         $accountUser = new CustomerUser();
-        $account = new Account();
+        $account = new Customer();
         $accountUser->setAccount($account);
 
         return [
@@ -89,7 +89,7 @@ class AccountUserRelationsProviderTest extends \PHPUnit_Framework_TestCase
     public function accountGroupDataProvider()
     {
         $accountUser = new CustomerUser();
-        $account = new Account();
+        $account = new Customer();
         $accountGroup = new CustomerGroup();
         $account->setGroup($accountGroup);
         $accountUser->setAccount($account);
@@ -116,7 +116,7 @@ class AccountUserRelationsProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetAccountIncludingEmptyAnonymous()
     {
-        $account = new Account();
+        $account = new Customer();
         $accountGroup = new CustomerGroup();
         $accountGroup->setName('test');
         $account->setGroup($accountGroup);
@@ -127,7 +127,7 @@ class AccountUserRelationsProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetAccountIncludingEmptyLogged()
     {
-        $account = new Account();
+        $account = new Customer();
         $account->setName('test2');
         $accountGroup = new CustomerGroup();
         $accountGroup->setName('test2');
