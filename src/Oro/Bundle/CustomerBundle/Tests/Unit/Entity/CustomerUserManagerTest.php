@@ -4,12 +4,12 @@ namespace Oro\Bundle\CustomerBundle\Tests\Unit\Entity;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserManager;
 
 class CustomerUserManagerTest extends \PHPUnit_Framework_TestCase
 {
-    const USER_CLASS = 'Oro\Bundle\CustomerBundle\Entity\AccountUser';
+    const USER_CLASS = 'Oro\Bundle\CustomerBundle\Entity\CustomerUser';
 
     /**
      * @var CustomerUserManager
@@ -83,7 +83,7 @@ class CustomerUserManagerTest extends \PHPUnit_Framework_TestCase
     {
         $password = 'test';
 
-        $user = new AccountUser();
+        $user = new CustomerUser();
         $user->setConfirmed(false);
         $user->setPlainPassword($password);
 
@@ -105,7 +105,7 @@ class CustomerUserManagerTest extends \PHPUnit_Framework_TestCase
     {
         $password = 'test';
 
-        $user = new AccountUser();
+        $user = new CustomerUser();
         $user->setPlainPassword($password);
 
         $this->emailProcessor->expects($this->once())
@@ -143,7 +143,7 @@ class CustomerUserManagerTest extends \PHPUnit_Framework_TestCase
     {
         $password = 'test1Q';
 
-        $user = new AccountUser();
+        $user = new CustomerUser();
         $user->setEnabled(false);
         $user->setPlainPassword($password);
 
@@ -166,7 +166,7 @@ class CustomerUserManagerTest extends \PHPUnit_Framework_TestCase
     {
         $password = 'test1Q';
 
-        $user = new AccountUser();
+        $user = new CustomerUser();
         $user->setConfirmed(false);
         $user->setPlainPassword($password);
 
@@ -190,7 +190,7 @@ class CustomerUserManagerTest extends \PHPUnit_Framework_TestCase
 
     public function testSendResetPasswordEmail()
     {
-        $user = new AccountUser();
+        $user = new CustomerUser();
         $this->emailProcessor->expects($this->once())
             ->method('sendResetPasswordEmail')
             ->with($user);

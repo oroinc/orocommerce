@@ -57,7 +57,7 @@ class UpdateAlternativeCheckoutWorkflowStatusQuery extends ParametrizedMigration
      */
     protected function isAccountExists(LoggerInterface $logger, $accountId)
     {
-        $sql = 'SELECT a.id FROM oro_account AS a WHERE a.id = :id LIMIT 1';
+        $sql = 'SELECT a.id FROM oro_customer AS a WHERE a.id = :id LIMIT 1';
         $params = ['id' => $accountId];
         $types  = ['id' => Type::INTEGER];
 

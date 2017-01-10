@@ -164,7 +164,7 @@ class RequestControllerTest extends WebTestCase
         }
 
         if (isset($expectedData['hideButtonEdit'])) {
-            $buttonEdit = $crawler->filter('.oro-account-user-role__controls-list')->html();
+            $buttonEdit = $crawler->filter('.oro-customer-user-role__controls-list')->html();
             static::assertNotContains('edit', $buttonEdit);
         }
     }
@@ -368,7 +368,7 @@ class RequestControllerTest extends WebTestCase
     public function viewProvider()
     {
         return [
-            'account1 user1 (AccountUser:VIEW_BASIC)' => [
+            'account1 user1 (CustomerUser:VIEW_BASIC)' => [
                 'input' => [
                     'request' => LoadRequestData::REQUEST2,
                     'login' => LoadUserData::ACCOUNT1_USER1,
@@ -378,7 +378,7 @@ class RequestControllerTest extends WebTestCase
                     'columnsCount' => 9,
                 ],
             ],
-            'account1 user3 (AccountUser:VIEW_LOCAL)' => [
+            'account1 user3 (CustomerUser:VIEW_LOCAL)' => [
                 'input' => [
                     'request' => LoadRequestData::REQUEST2,
                     'login' => LoadUserData::ACCOUNT1_USER2,

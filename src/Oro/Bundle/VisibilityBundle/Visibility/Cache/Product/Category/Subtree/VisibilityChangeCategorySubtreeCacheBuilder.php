@@ -5,7 +5,7 @@ namespace Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\Subtree;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CategoryVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CategoryRepository;
@@ -116,7 +116,7 @@ class VisibilityChangeCategorySubtreeCacheBuilder extends AbstractRelatedEntitie
     {
         /** @var QueryBuilder $qb */
         $qb = $this->registry
-            ->getManagerForClass('OroCustomerBundle:AccountGroup')
+            ->getManagerForClass('OroCustomerBundle:CustomerGroup')
             ->createQueryBuilder();
 
         /** @var QueryBuilder $subQb */
@@ -130,7 +130,7 @@ class VisibilityChangeCategorySubtreeCacheBuilder extends AbstractRelatedEntitie
             ->andWhere('scope.accountGroup = accountGroup.id');
 
         $qb->select('accountGroup.id')
-            ->from('OroCustomerBundle:AccountGroup', 'accountGroup')
+            ->from('OroCustomerBundle:CustomerGroup', 'accountGroup')
             ->where($qb->expr()->not($qb->expr()->exists($subQb->getQuery()->getDQL())))
             ->setParameter('category', $category);
 

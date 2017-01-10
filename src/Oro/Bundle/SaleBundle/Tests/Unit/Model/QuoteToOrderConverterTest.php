@@ -6,10 +6,10 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\CurrencyBundle\Entity\MultiCurrency;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Entity\AccountUserAddress;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
@@ -141,11 +141,13 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
         $shippingAddress = $this->createShippingAddress();
 
         $quoteShippingEstimateValue = 222.33;
+        /** @var Quote $quote */
         $quote = $this
             ->createMainEntity(self::ACCOUNT_NAME, self::ACCOUNT_USER_FIRST_NAME, self::ACCOUNT_USER_LAST_NAME)
             ->addQuoteProduct($quoteProduct1)
-            ->addQuoteProduct($quoteProduct2)
-            ->setShippingEstimate(Price::create($quoteShippingEstimateValue, self::CURRENCY));
+            ->addQuoteProduct($quoteProduct2);
+        $quote->setCurrency(self::CURRENCY)
+              ->setEstimatedShippingCostAmount($quoteShippingEstimateValue);
 
         $order = $this
             ->createMainEntity(self::ACCOUNT_NAME, self::ACCOUNT_USER_FIRST_NAME, self::ACCOUNT_USER_LAST_NAME, true)
@@ -213,10 +215,12 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
         $shippingAddress = $this->createShippingAddress();
 
         $quoteShippingEstimateValue = 222.33;
+        /** @var Quote $quote */
         $quote = $this
             ->createMainEntity(self::ACCOUNT_NAME, self::ACCOUNT_USER_FIRST_NAME, self::ACCOUNT_USER_LAST_NAME)
-            ->addQuoteProduct($quoteProduct)
-            ->setShippingEstimate(Price::create($quoteShippingEstimateValue, self::CURRENCY));
+            ->addQuoteProduct($quoteProduct);
+        $quote->setCurrency(self::CURRENCY)
+            ->setEstimatedShippingCostAmount($quoteShippingEstimateValue);
 
         $order = $this
             ->createMainEntity($accountName, self::ACCOUNT_USER_FIRST_NAME, self::ACCOUNT_USER_LAST_NAME, true)
@@ -276,8 +280,9 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
 
         $quoteShippingEstimateValue = 222.33;
         $quote = $this
-            ->createMainEntity(self::ACCOUNT_NAME, self::ACCOUNT_USER_FIRST_NAME, self::ACCOUNT_USER_LAST_NAME)
-            ->setShippingEstimate(Price::create($quoteShippingEstimateValue, self::CURRENCY));
+            ->createMainEntity(self::ACCOUNT_NAME, self::ACCOUNT_USER_FIRST_NAME, self::ACCOUNT_USER_LAST_NAME);
+        $quote->setCurrency(self::CURRENCY)
+            ->setEstimatedShippingCostAmount($quoteShippingEstimateValue);
 
         $order = $this
             ->createMainEntity(self::ACCOUNT_NAME, self::ACCOUNT_USER_FIRST_NAME, self::ACCOUNT_USER_LAST_NAME, true)
@@ -345,7 +350,8 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
             true
         );
         $quoteShippingEstimateValue = 222.33;
-        $quote->setShippingEstimate(Price::create($quoteShippingEstimateValue, self::CURRENCY));
+        $quote->setCurrency(self::CURRENCY)
+            ->setEstimatedShippingCostAmount($quoteShippingEstimateValue);
 
         $order = $this
             ->createMainEntity(self::ACCOUNT_NAME, self::ACCOUNT_USER_FIRST_NAME, self::ACCOUNT_USER_LAST_NAME, true)
@@ -425,8 +431,8 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
         if ($entity instanceof Quote) {
             if (!$emptyShippingAddress) {
                 $shippingAddress = new QuoteAddress();
-                $shippingAddress->setAccountAddress(new AccountAddress());
-                $shippingAddress->setAccountUserAddress(new AccountUserAddress());
+                $shippingAddress->setAccountAddress(new CustomerAddress());
+                $shippingAddress->setAccountUserAddress(new CustomerUserAddress());
                 $shippingAddress->setLabel('Label');
                 $shippingAddress->setStreet('Street');
                 $shippingAddress->setStreet2('Street');
@@ -526,14 +532,14 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param string $accountName
-     * @return AccountUser
+     * @return CustomerUser
      */
     protected function createAccountUser($accountName)
     {
-        $accountUser = new AccountUser();
+        $accountUser = new CustomerUser();
         $accountUser->setFirstName($accountName . ' first')->setLastName($accountName . ' last')->setSalt(null);
 
-        $account = new Account();
+        $account = new Customer();
         $account->setName($accountName)->addUser($accountUser);
 
         return $accountUser;
@@ -562,8 +568,8 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
     {
         $shippingAddress = new OrderAddress();
 
-        $shippingAddress->setAccountAddress(new AccountAddress());
-        $shippingAddress->setAccountUserAddress(new AccountUserAddress());
+        $shippingAddress->setAccountAddress(new CustomerAddress());
+        $shippingAddress->setAccountUserAddress(new CustomerUserAddress());
         $shippingAddress->setLabel('Label');
         $shippingAddress->setStreet('Street');
         $shippingAddress->setStreet2('Street');

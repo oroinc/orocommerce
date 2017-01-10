@@ -15,11 +15,14 @@ use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\UserBundle\Entity\Ownership\AuditableUserAwareTrait;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\CustomerBundle\Entity\AccountOwnerAwareInterface;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\Ownership\AuditableFrontendAccountUserAwareTrait;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\SaleBundle\Model\ExtendQuote;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\ShippingBundle\Method\Configuration\AllowUnlistedShippingMethodConfigurationInterface;
+use Oro\Bundle\ShippingBundle\Method\Configuration\MethodLockedShippingMethodConfigurationInterface;
+use Oro\Bundle\ShippingBundle\Method\Configuration\OverriddenCostShippingMethodConfigurationInterface;
 
 /**
  * @ORM\Table(name="oro_sale_quote")
@@ -42,7 +45,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  *              "organization_column_name"="organization_id",
  *              "frontend_owner_type"="FRONTEND_USER",
  *              "frontend_owner_field_name"="accountUser",
- *              "frontend_owner_column_name"="account_user_id"
+ *              "frontend_owner_column_name"="customer_user_id"
  *          },
  *          "security"={
  *              "type"="ACL",
@@ -63,7 +66,10 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 class Quote extends ExtendQuote implements
     AccountOwnerAwareInterface,
     EmailHolderInterface,
-    OrganizationAwareInterface
+    OrganizationAwareInterface,
+    MethodLockedShippingMethodConfigurationInterface,
+    AllowUnlistedShippingMethodConfigurationInterface,
+    OverriddenCostShippingMethodConfigurationInterface
 {
     use AuditableUserAwareTrait;
     use AuditableFrontendAccountUserAwareTrait;
@@ -238,39 +244,80 @@ class Quote extends ExtendQuote implements
     protected $assignedUsers;
 
     /**
-     * @var Collection|AccountUser[]
+     * @var Collection|CustomerUser[]
      *
-     * @ORM\ManyToMany(targetEntity="Oro\Bundle\CustomerBundle\Entity\AccountUser")
+     * @ORM\ManyToMany(targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerUser")
      * @ORM\JoinTable(
-     *      name="oro_quote_assigned_acc_users",
+     *      name="oro_quote_assigned_cus_users",
      *      joinColumns={
      *          @ORM\JoinColumn(name="quote_id", referencedColumnName="id", onDelete="CASCADE")
      *      },
      *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="account_user_id", referencedColumnName="id", onDelete="CASCADE")
+     *          @ORM\JoinColumn(name="customer_user_id", referencedColumnName="id", onDelete="CASCADE")
      *      }
      * )
      **/
     protected $assignedAccountUsers;
 
     /**
-     * @var float
+     * @var string
      *
-     * @ORM\Column(name="shipping_estimate_amount", type="money", nullable=true)
+     * @ORM\Column(name="shipping_method", type="string", length=255, nullable=true)
      */
-    protected $shippingEstimateAmount;
+    protected $shippingMethod;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="shipping_estimate_currency", type="string", nullable=true, length=3)
+     * @ORM\Column(name="shipping_method_type", type="string", length=255, nullable=true)
      */
-    protected $shippingEstimateCurrency;
+    protected $shippingMethodType;
 
     /**
-     * @var Price
+     * @ORM\Column(name="shipping_method_locked", type="boolean")
+     *
+     * @var bool
      */
-    protected $shippingEstimate;
+    private $shippingMethodLocked = false;
+
+    /**
+     * @ORM\Column(name="allow_unlisted_shipping_method", type="boolean")
+     *
+     * @var bool
+     */
+    private $allowUnlistedShippingMethod = false;
+
+    /**
+     * @var float
+     *
+     * @ORM\Column(name="estimated_shipping_cost_amount", type="money", nullable=true)
+     */
+    protected $estimatedShippingCostAmount;
+
+    /**
+     * @var float
+     *
+     * @ORM\Column(name="override_shipping_cost_amount", type="money", nullable=true)
+     */
+    protected $overriddenShippingCostAmount;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="currency", type="string", nullable=true, length=3)
+     */
+    protected $currency;
+
+    /**
+     * @ORM\OneToMany(
+     *     targetEntity="Oro\Bundle\SaleBundle\Entity\QuoteDemand",
+     *     mappedBy="quote",
+     *     cascade={"all"},
+     *     orphanRemoval=true
+     * )
+     * @ORM\OrderBy({"id" = "ASC"})
+     */
+    protected $demands;
 
     /**
      * Constructor
@@ -282,6 +329,7 @@ class Quote extends ExtendQuote implements
         $this->quoteProducts = new ArrayCollection();
         $this->assignedUsers = new ArrayCollection();
         $this->assignedAccountUsers = new ArrayCollection();
+        $this->demands = new ArrayCollection();
     }
 
     /**
@@ -623,7 +671,7 @@ class Quote extends ExtendQuote implements
     }
 
     /**
-     * @return Collection|AccountUser[]
+     * @return Collection|CustomerUser[]
      */
     public function getAssignedAccountUsers()
     {
@@ -631,10 +679,10 @@ class Quote extends ExtendQuote implements
     }
 
     /**
-     * @param AccountUser $assignedAccountUser
+     * @param CustomerUser $assignedAccountUser
      * @return $this
      */
-    public function addAssignedAccountUser(AccountUser $assignedAccountUser)
+    public function addAssignedAccountUser(CustomerUser $assignedAccountUser)
     {
         if (!$this->assignedAccountUsers->contains($assignedAccountUser)) {
             $this->assignedAccountUsers->add($assignedAccountUser);
@@ -644,10 +692,10 @@ class Quote extends ExtendQuote implements
     }
 
     /**
-     * @param AccountUser $assignedAccountUser
+     * @param CustomerUser $assignedAccountUser
      * @return $this
      */
-    public function removeAssignedAccountUser(AccountUser $assignedAccountUser)
+    public function removeAssignedAccountUser(CustomerUser $assignedAccountUser)
     {
         if ($this->assignedAccountUsers->contains($assignedAccountUser)) {
             $this->assignedAccountUsers->removeElement($assignedAccountUser);
@@ -657,26 +705,127 @@ class Quote extends ExtendQuote implements
     }
 
     /**
-     * Get shipping estimate
+     * Set currency
      *
-     * @return Price|null
+     * @param string $currency
+     *
+     * @return $this
      */
-    public function getShippingEstimate()
+    public function setCurrency($currency)
     {
-        return $this->shippingEstimate;
+        $this->currency = $currency;
+
+        return $this;
     }
 
     /**
-     * Set shipping estimate
+     * Get currency
      *
-     * @param Price $shippingEstimate
+     * @return string
+     */
+    public function getCurrency()
+    {
+        return $this->currency;
+    }
+
+    /**
+     * @return string
+     */
+    public function getShippingMethod()
+    {
+        return $this->shippingMethod;
+    }
+
+    /**
+     * @param string $shippingMethod
      * @return $this
      */
-    public function setShippingEstimate($shippingEstimate = null)
+    public function setShippingMethod($shippingMethod)
     {
-        $this->shippingEstimate = $shippingEstimate;
+        $this->shippingMethod = $shippingMethod;
 
-        $this->updateShippingEstimate();
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getShippingMethodType()
+    {
+        return $this->shippingMethodType;
+    }
+
+    /**
+     * @param string $shippingMethodType
+     * @return $this
+     */
+    public function setShippingMethodType($shippingMethodType)
+    {
+        $this->shippingMethodType = $shippingMethodType;
+
+        return $this;
+    }
+
+    /**
+     * @return Price|null
+     */
+    public function getShippingCost()
+    {
+        $amount = $this->estimatedShippingCostAmount;
+        if ($this->overriddenShippingCostAmount) {
+            $amount = $this->overriddenShippingCostAmount;
+        }
+        if ($amount && $this->currency) {
+            return Price::create($amount, $this->currency);
+        }
+        return null;
+    }
+
+    /**
+     * @return Price|null
+     */
+    public function getEstimatedShippingCost()
+    {
+        if ($this->estimatedShippingCostAmount && $this->currency) {
+            return Price::create($this->estimatedShippingCostAmount, $this->currency);
+        }
+        return null;
+    }
+
+    /**
+     * @return float|null
+     */
+    public function getEstimatedShippingCostAmount()
+    {
+        return $this->estimatedShippingCostAmount;
+    }
+
+    /**
+     * @param float $amount
+     * @return $this
+     */
+    public function setEstimatedShippingCostAmount($amount)
+    {
+        $this->estimatedShippingCostAmount = $amount;
+
+        return $this;
+    }
+
+    /**
+     * @return float|null
+     */
+    public function getOverriddenShippingCostAmount()
+    {
+        return $this->overriddenShippingCostAmount;
+    }
+
+    /**
+     * @param float $amount
+     * @return $this
+     */
+    public function setOverriddenShippingCostAmount($amount)
+    {
+        $this->overriddenShippingCostAmount = $amount;
 
         return $this;
     }
@@ -693,22 +842,58 @@ class Quote extends ExtendQuote implements
     }
 
     /**
-     * @ORM\PostLoad
+     * @return QuoteDemand[]|ArrayCollection
      */
-    public function postLoad()
+    public function getDemands()
     {
-        if (null !== $this->shippingEstimateAmount && null !==  $this->shippingEstimateCurrency) {
-            $this->shippingEstimate = Price::create($this->shippingEstimateAmount, $this->shippingEstimateCurrency);
-        }
+        return $this->demands;
     }
 
     /**
-     * @ORM\PrePersist
-     * @ORM\PreUpdate
+     * @return bool
      */
-    public function updateShippingEstimate()
+    public function isAllowUnlistedShippingMethod()
     {
-        $this->shippingEstimateAmount = $this->shippingEstimate ? $this->shippingEstimate->getValue() : null;
-        $this->shippingEstimateCurrency = $this->shippingEstimate ? $this->shippingEstimate->getCurrency() : null;
+        return $this->allowUnlistedShippingMethod;
+    }
+
+    /**
+     * @param bool $allowUnlistedShippingMethod
+     *
+     * @return $this
+     */
+    public function setAllowUnlistedShippingMethod($allowUnlistedShippingMethod)
+    {
+        $this->allowUnlistedShippingMethod = $allowUnlistedShippingMethod;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isShippingMethodLocked()
+    {
+        return $this->shippingMethodLocked;
+    }
+
+    /**
+     * @param bool $shippingMethodLocked
+     *
+     * @return $this
+     */
+    public function setShippingMethodLocked($shippingMethodLocked)
+    {
+        $this->shippingMethodLocked = $shippingMethodLocked;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isOverriddenShippingCost()
+    {
+        return null !== $this->overriddenShippingCostAmount;
     }
 }

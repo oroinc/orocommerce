@@ -134,7 +134,7 @@ class OroCatalogBundleInstaller implements
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['default_product_options_id']);
 
-        $this->activityExtension->addActivityAssociation($schema, 'oro_note', 'oro_catalog_category');
+        $this->activityExtension->addActivityAssociation($schema, 'oro_note', self::ORO_CATALOG_CATEGORY_TABLE_NAME);
     }
 
     /**

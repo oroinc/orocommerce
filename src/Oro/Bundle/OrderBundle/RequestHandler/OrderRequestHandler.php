@@ -6,8 +6,8 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\OrderBundle\Form\Type\OrderType;
 
 class OrderRequestHandler
@@ -39,7 +39,7 @@ class OrderRequestHandler
     }
 
     /**
-     * @return Account|null
+     * @return Customer|null
      */
     public function getAccount()
     {
@@ -53,7 +53,7 @@ class OrderRequestHandler
     }
 
     /**
-     * @return AccountUser|null
+     * @return CustomerUser|null
      */
     public function getAccountUser()
     {

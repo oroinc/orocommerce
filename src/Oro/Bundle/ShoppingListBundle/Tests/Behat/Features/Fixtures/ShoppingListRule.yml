@@ -1,10 +1,10 @@
-Oro\Bundle\CustomerBundle\Entity\Account:
+Oro\Bundle\CustomerBundle\Entity\Customer:
    account1:
        name: 'Company A'
        organization: '@organization'
        owner: '@admin'
 
-Oro\Bundle\CustomerBundle\Entity\AccountUser:
+Oro\Bundle\CustomerBundle\Entity\CustomerUser:
    amanda:
        email: 'AmandaRCole@example.org'
        username: 'AmandaRCole@example.org'

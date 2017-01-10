@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CustomerBundle\Migrations\Schema\v1_8;
 
 use Doctrine\DBAL\Schema\Schema;
-use Oro\Bundle\CustomerBundle\Migrations\Schema\OroAccountBundleInstaller;
+use Oro\Bundle\CustomerBundle\Migrations\Schema\OroCustomerBundleInstaller;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\ScopeBundle\Migration\Extension\ScopeExtensionAwareInterface;
@@ -29,14 +29,14 @@ class OroAccountBundleScopeRelations implements Migration, ScopeExtensionAwareIn
         $this->scopeExtension->addScopeAssociation(
             $schema,
             'account',
-            OroAccountBundleInstaller::ORO_ACCOUNT_TABLE_NAME,
+            'oro_account',
             'name'
         );
 
         $this->scopeExtension->addScopeAssociation(
             $schema,
             'accountGroup',
-            OroAccountBundleInstaller::ORO_ACCOUNT_GROUP_TABLE_NAME,
+            'oro_account_group',
             'name'
         );
     }

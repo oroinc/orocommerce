@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Provider;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Provider\ScopeAccountCriteriaProvider;
 use Oro\Bundle\CustomerBundle\Provider\ScopeAccountGroupCriteriaProvider;
 use Oro\Bundle\VisibilityBundle\Provider\VisibilityScopeProvider;
@@ -53,7 +53,7 @@ class VisibilityScopeProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetAccountProductVisibilityScope()
     {
-        $account = $this->createMock(Account::class);
+        $account = $this->createMock(Customer::class);
         $this->scopeManager
             ->expects($this->once())
             ->method('findOrCreate')
@@ -66,7 +66,7 @@ class VisibilityScopeProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetAccountGroupProductVisibilityScope()
     {
-        $accountGroup = $this->createMock(AccountGroup::class);
+        $accountGroup = $this->createMock(CustomerGroup::class);
         $this->scopeManager
             ->expects($this->once())
             ->method('findOrCreate')

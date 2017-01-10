@@ -5,9 +5,9 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Unit\EventListener;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Entity\UserInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\VisibilityBundle\EventListener\CategoryTreeHandlerListener;
 use Oro\Bundle\CustomerBundle\Provider\AccountUserRelationsProvider;
 use Oro\Bundle\VisibilityBundle\Visibility\Resolver\CategoryVisibilityResolverInterface;
@@ -82,16 +82,16 @@ class CategoryTreeHandlerListenerTest extends \PHPUnit_Framework_TestCase
      * @param array $expected
      * @param array $hiddenCategoryIds
      * @param UserInterface|null $user
-     * @param Account $account
-     * @param AccountGroup|null $accountGroup
+     * @param Customer $account
+     * @param CustomerGroup|null $accountGroup
      */
     public function testOnCreateAfter(
         array $categories,
         array $expected,
         array $hiddenCategoryIds,
         UserInterface $user = null,
-        Account $account = null,
-        AccountGroup $accountGroup = null
+        Customer $account = null,
+        CustomerGroup $accountGroup = null
     ) {
         $categories = $this->prepareCategories($categories);
         $expected = $this->prepareCategories($expected);
@@ -112,7 +112,7 @@ class CategoryTreeHandlerListenerTest extends \PHPUnit_Framework_TestCase
                 ->method('isCategoryVisibleForAccountGroup');
             $this->categoryVisibilityResolver->expects($this->never())
                 ->method('getHiddenCategoryIds');
-        } elseif ($user instanceof AccountUser && $account) {
+        } elseif ($user instanceof CustomerUser && $account) {
             $this->accountUserRelationsProvider->expects($this->once())
                 ->method('getAccount')
                 ->with($user)
@@ -162,7 +162,7 @@ class CategoryTreeHandlerListenerTest extends \PHPUnit_Framework_TestCase
                 'hiddenCategoryIds' => [3, 4, 5, 8, 9, 10, 11],
                 'user' => null,
                 'account' => null,
-                'accountGroup' => new AccountGroup()
+                'accountGroup' => new CustomerGroup()
             ],
             'tree without user and group' => [
                 'categories' => self::$categories,
@@ -188,8 +188,8 @@ class CategoryTreeHandlerListenerTest extends \PHPUnit_Framework_TestCase
                     ['id' => 9, 'parent' => 5],
                 ],
                 'hiddenCategoryIds' => [3],
-                'user' => new AccountUser(),
-                'account' => $this->getEntity(Account::class, ['id' => 42])
+                'user' => new CustomerUser(),
+                'account' => $this->getEntity(Customer::class, ['id' => 42])
             ]
         ];
     }

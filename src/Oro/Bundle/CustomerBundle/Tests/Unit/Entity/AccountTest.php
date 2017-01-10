@@ -4,10 +4,10 @@ namespace Oro\Bundle\CustomerBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Tests\Unit\Traits\AddressEntityTestTrait;
 
 class AccountTest extends \PHPUnit_Framework_TestCase
@@ -26,8 +26,8 @@ class AccountTest extends \PHPUnit_Framework_TestCase
             ['group', $this->createAccountGroupEntity()],
             ['organization', $this->createOrganization()],
         ]);
-        $this->assertPropertyCollections(new Account(), [
-            ['users', new AccountUser()],
+        $this->assertPropertyCollections(new Customer(), [
+            ['users', new CustomerUser()],
             ['salesRepresentatives', new User()],
         ]);
     }
@@ -45,7 +45,7 @@ class AccountTest extends \PHPUnit_Framework_TestCase
         $account = $this->createAccountEntity();
 
         $this->assertInstanceOf(
-            'Oro\Bundle\CustomerBundle\Entity\Account',
+            'Oro\Bundle\CustomerBundle\Entity\Customer',
             $parentAccount->addChild($account)
         );
 
@@ -61,27 +61,27 @@ class AccountTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return AccountGroup
+     * @return CustomerGroup
      */
     protected function createAccountGroupEntity()
     {
-        return new AccountGroup();
+        return new CustomerGroup();
     }
 
     /**
-     * @return Account
+     * @return Customer
      */
     protected function createAccountEntity()
     {
-        return new Account();
+        return new Customer();
     }
 
     /**
-     * @return AccountUser
+     * @return CustomerUser
      */
     protected function createUserEntity()
     {
-        return new AccountUser();
+        return new CustomerUser();
     }
 
     /**
@@ -93,15 +93,15 @@ class AccountTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return AccountAddress
+     * @return CustomerAddress
      */
     protected function createAddressEntity()
     {
-        return new AccountAddress();
+        return new CustomerAddress();
     }
 
     /**
-     * @return Account
+     * @return Customer
      */
     protected function createTestedEntity()
     {

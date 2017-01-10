@@ -6,7 +6,7 @@ use Oro\Bundle\CustomerBundle\Entity\Repository\AccountRepository;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Extension\Action\ActionExtension;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Security\AccountUserProvider;
 
 class AccountDatagridListener
@@ -59,7 +59,7 @@ class AccountDatagridListener
      */
     public function onBuildBeforeFrontendItems(BuildBefore $event)
     {
-        if (!$this->getUser() instanceof AccountUser) {
+        if (!$this->getUser() instanceof CustomerUser) {
             return;
         }
 
@@ -69,7 +69,12 @@ class AccountDatagridListener
             return;
         }
 
-        if ([] === ($from = $config->offsetGetByPath('[source][query][from]', []))) {
+        $entityClass = $config->getOrmQuery()->getRootEntity();
+        if (!$entityClass) {
+            return;
+        }
+        $entityAlias = $config->getOrmQuery()->getRootAlias();
+        if (!$entityAlias) {
             return;
         }
 
@@ -77,11 +82,17 @@ class AccountDatagridListener
             $config->offsetSetByPath(ActionExtension::ACTION_CONFIGURATION_KEY, $this->actionCallback);
         }
 
-        $fromFirst = reset($from);
+        $this->entityClass = $entityClass;
+        $this->entityAlias = $entityAlias;
 
-        $this->entityClass = $fromFirst['table'];
-        $this->entityAlias = $fromFirst['alias'];
+        $this->updateConfiguration($config);
+    }
 
+    /**
+     * @param DatagridConfiguration $config
+     */
+    protected function updateConfiguration(DatagridConfiguration $config)
+    {
         if ($this->permissionShowAllAccountItems()) {
             $this->showAllAccountItems($config);
         } elseif ($this->permissionShowAllAccountItemsForChild()) {
@@ -103,8 +114,6 @@ class AccountDatagridListener
     {
         $config->offsetSetByPath(DatagridConfiguration::DATASOURCE_SKIP_ACL_APPLY_PATH, true);
 
-        $where = $config->offsetGetByPath('[source][query][where]', ['and' => []]);
-
         $user = $this->getUser();
         $customerId = $user->getCustomer()->getId();
         $ids = [$customerId];
@@ -113,15 +122,15 @@ class AccountDatagridListener
             $ids = array_merge($ids, $this->repository->getChildrenIds($customerId));
         }
 
-        $where['and'][] = sprintf(
-            '(%s.account IN (%s) OR %s.accountUser = %d)',
-            $this->entityAlias,
-            implode(',', $ids),
-            $this->entityAlias,
-            $user->getId()
+        $config->getOrmQuery()->addAndWhere(
+            sprintf(
+                '(%s.account IN (%s) OR %s.accountUser = %d)',
+                $this->entityAlias,
+                implode(',', $ids),
+                $this->entityAlias,
+                $user->getId()
+            )
         );
-
-        $config->offsetSetByPath('[source][query][where]', $where);
     }
 
     /**
@@ -137,7 +146,7 @@ class AccountDatagridListener
     }
 
     /**
-     * @return AccountUser
+     * @return CustomerUser
      */
     protected function getUser()
     {

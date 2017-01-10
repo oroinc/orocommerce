@@ -52,10 +52,10 @@
                                 <td class="account-oq__order-info__title">{{ 'oro.frontend.sale.quote.ship_until.label'|trans }}</td>
                                 <td>{{ quote.shipUntil|oro_format_date|default('N/A'|trans) }}</td>
                             </tr>
-                            {% if quote.shippingEstimate is not empty %}
+                            {% if quote.shippingCost is not empty %}
                             <tr class="account-oq__order-info__control">
                                 <td class="account-oq__order-info__title">{{ 'oro.frontend.sale.quote.ship_estimate.label'|trans }}</td>
-                                <td>{{ quote.shippingEstimate|oro_format_price }}</td>
+                                <td>{{ quote.shippingCost|oro_format_price }}</td>
                             </tr>
                             {% endif %}
                             {% if paymentTerm is defined and paymentTerm is not empty %}
@@ -118,7 +118,11 @@
                                     </td>
                                 {% endif %}
                                 <td>
-                                    {{ productOffer.quantity|oro_format_short_product_unit_value(productOffer.productUnit) }}
+                                    {% if oro_is_unit_code_visible(productOffer.productUnit.code) %}
+                                        {{ productOffer.quantity|oro_format_short_product_unit_value(productOffer.productUnit) }}
+                                    {% else %}
+                                        {{ productOffer.quantity }}
+                                    {% endif %}
                                     {% if productOffer.allowIncrements %}
                                         {{ 'oro.frontend.sale.quoteproductoffer.allow_increments.label'|trans }}
                                     {% endif %}
@@ -217,7 +221,13 @@
                                         </tr>
                                         {% for productOffer in quoteProduct.quoteProductOffers %}
                                             <tr>
-                                                <td class="text-left">{{ productOffer.quantity|oro_format_product_unit_code(productOffer.productUnit) }}</td>
+                                                <td class="text-left">
+                                                    {% if oro_is_unit_code_visible(productOffer.productUnit) %}
+                                                        {{ productOffer.quantity|oro_format_product_unit_code(productOffer.productUnit) }}
+                                                    {% else %}
+                                                        {{ productOffer.quantity }}
+                                                    {% endif %}
+                                                </td>
                                                 <td class="text-left">{{ productOffer.price|oro_format_price }}</td>
                                             </tr>
                                         {% endfor %}
@@ -294,11 +304,8 @@
 {% endblock %}
 
 {% block address_widget %}
-    {% if address %}
-        {{ address|oro_format_address|escape|nl2br }}
-    {% else %}
-        {{ 'oro.ui.empty'|trans }}
-    {% endif %}
+    {% from 'OroAddressBundle::macros.html.twig' import renderAddress %}
+    {{ renderAddress(address) }}
 {% endblock %}
 
 {% block quote_body_column_element_widget %}

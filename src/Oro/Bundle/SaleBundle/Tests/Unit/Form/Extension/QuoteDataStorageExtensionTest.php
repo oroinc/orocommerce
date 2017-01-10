@@ -5,8 +5,8 @@ namespace Oro\Bundle\SaleBundle\Tests\Unit\Form\Extension;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
@@ -58,10 +58,10 @@ class QuoteDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
                         'targetEntity' => 'Oro\Bundle\RFPBundle\Entity\Request',
                     ],
                     'account' => [
-                        'targetEntity' => 'Oro\Bundle\CustomerBundle\Entity\Account',
+                        'targetEntity' => 'Oro\Bundle\CustomerBundle\Entity\Customer',
                     ],
                     'accountUser' => [
-                        'targetEntity' => 'Oro\Bundle\CustomerBundle\Entity\AccountUser',
+                        'targetEntity' => 'Oro\Bundle\CustomerBundle\Entity\CustomerUser',
                     ],
                 ],
             ],
@@ -104,10 +104,10 @@ class QuoteDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
         /* @var $product Product */
         $product = $this->getProductEntity($inputData['productSku'], $productUnit);
 
-        /* @var $account Account */
-        $account = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account', $inputData['accountId']);
-        /* @var $accountUser AccountUser */
-        $accountUser = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountUser', $inputData['accountUserId']);
+        /* @var $account Customer */
+        $account = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', $inputData['accountId']);
+        /* @var $accountUser CustomerUser */
+        $accountUser = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUser', $inputData['accountUserId']);
 
         $data = [
             ProductDataStorage::ENTITY_DATA_KEY => [

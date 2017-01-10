@@ -1,5 +1,5 @@
 {% block _rfp_request_view_top_actions_widget %}
-    {% set attr = attr|merge({ class: attr.class|default('') ~ " oro-account-user-role__controls-list pull-right mt0-md mb0-md mt0-sm mb0-sm" }) %}
+    {% set attr = attr|merge({ class: attr.class|default('') ~ " oro-customer-user-role__controls-list pull-right mt0-md mb0-md mt0-sm mb0-sm" }) %}
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
@@ -155,7 +155,11 @@
                                     </td>
                                 {% endif %}
                                 <td>
-                                    {{ requestProductItem.quantity|oro_format_short_product_unit_value(requestProductItem.productUnit) }}
+                                    {% if oro_is_unit_code_visible(requestProductItem.productUnit.code) %}
+                                        {{ requestProductItem.quantity|oro_format_short_product_unit_value(requestProductItem.productUnit) }}
+                                    {% else %}
+                                        {{ requestProductItem.quantity }}
+                                    {% endif %}
                                 </td>
                                 <td class="text-right">
                                     {% if requestProductItem.price %}

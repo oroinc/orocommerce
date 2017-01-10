@@ -4,6 +4,7 @@ namespace Oro\Bundle\CheckoutBundle\Datagrid;
 
 use Doctrine\Common\Cache\Cache;
 
+use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
@@ -92,12 +93,16 @@ class CheckoutGridListener
         }
 
         if ($updates) {
-            $config->offsetAddToArrayByPath('[source][query][select]', $updates['selects']);
+            $query = $config->getOrmQuery();
+            $query->addSelect($updates['selects']);
+            $query->setLeftJoins(array_merge($query->getLeftJoins(), $updates['joins']));
             $config->offsetAddToArrayByPath('[columns]', $updates['columns']);
             $config->offsetAddToArrayByPath('[filters][columns]', $updates['filters']);
             $config->offsetAddToArrayByPath('[sorters][columns]', $updates['sorters']);
-            $config->offsetAddToArrayByPath('[source][query][join][left]', $updates['joins']);
-            $config->offsetAddToArrayByPath('[source][bind_parameters]', $updates['bindParameters']);
+            $config->offsetAddToArrayByPath(
+                DatagridConfiguration::DATASOURCE_BIND_PARAMETERS_PATH,
+                $updates['bindParameters']
+            );
 
             if (in_array(self::USER_CURRENCY_PARAMETER, $updates['bindParameters'], true)) {
                 $event->getDatagrid()

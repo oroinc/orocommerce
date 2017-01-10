@@ -92,7 +92,7 @@ class RolePermissionDatasourceTest extends \PHPUnit_Framework_TestCase
     public function testGetResults()
     {
         $datasource = $this->getDatasource();
-        $identity = 'entity:Oro\Bundle\CustomerBundle\Entity\Account';
+        $identity = 'entity:Oro\Bundle\CustomerBundle\Entity\Customer';
 
         $results = $this->retrieveResultsFromPermissionsDatasource($datasource, $identity);
 

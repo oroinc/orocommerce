@@ -3,8 +3,8 @@
 namespace Oro\Bundle\CustomerBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 use Oro\Bundle\CustomerBundle\Form\EventListener\FixAccountAddressesDefaultSubscriber;
 
 use Symfony\Component\Form\FormEvents;
@@ -34,11 +34,14 @@ class FixAccountAddressesDefaultSubscriberTest extends \PHPUnit_Framework_TestCa
 
     /**
      * @dataProvider postSubmitDataProvider
+     * @param array $allAddresses
+     * @param $formAddressKey
+     * @param array $expectedAddressesData
      */
     public function testPostSubmit(array $allAddresses, $formAddressKey, array $expectedAddressesData)
     {
         // Set owner for all addresses
-        $account = new Account();
+        $account = new Customer();
         foreach ($allAddresses as $address) {
             $account->addAddress($address);
         }
@@ -55,7 +58,7 @@ class FixAccountAddressesDefaultSubscriberTest extends \PHPUnit_Framework_TestCa
         $this->subscriber->postSubmit($event);
 
         foreach ($expectedAddressesData as $addressKey => $expectedData) {
-            /** @var AccountAddress $address */
+            /** @var CustomerAddress $address */
             $address = $allAddresses[$addressKey];
 
             $defaultTypeNames = [];
@@ -67,6 +70,9 @@ class FixAccountAddressesDefaultSubscriberTest extends \PHPUnit_Framework_TestCa
         }
     }
 
+    /**
+     * @return array
+     */
     public function postSubmitDataProvider()
     {
         $billing = new AddressType(AddressType::TYPE_BILLING);
@@ -102,10 +108,10 @@ class FixAccountAddressesDefaultSubscriberTest extends \PHPUnit_Framework_TestCa
     }
 
     /**
-     * @return AccountAddress
+     * @return CustomerAddress
      */
     protected function createAddress()
     {
-        return new AccountAddress();
+        return new CustomerAddress();
     }
 }

@@ -7,10 +7,10 @@ use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Tests\Unit\Entity\AbstractUserTest;
-use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Entity\AccountUserAddress;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserSettings;
 use Oro\Bundle\CustomerBundle\Tests\Unit\Traits\AddressEntityTestTrait;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
@@ -24,23 +24,23 @@ class AccountUserTest extends AbstractUserTest
     use AddressEntityTestTrait;
 
     /**
-     * @return AccountUser
+     * @return CustomerUser
      */
     public function getUser()
     {
-        return new AccountUser();
+        return new CustomerUser();
     }
 
     /**
-     * @return AccountUserAddress
+     * @return CustomerUserAddress
      */
     public function createAddressEntity()
     {
-        return new AccountUserAddress();
+        return new CustomerUserAddress();
     }
 
     /**
-     * @return AccountUser
+     * @return CustomerUser
      */
     protected function createTestedEntity()
     {
@@ -49,7 +49,7 @@ class AccountUserTest extends AbstractUserTest
 
     public function testCollections()
     {
-        $this->assertPropertyCollections(new AccountUser(), [
+        $this->assertPropertyCollections(new CustomerUser(), [
             ['addresses', $this->createAddressEntity()],
             ['salesRepresentatives', new User()],
         ]);
@@ -66,7 +66,7 @@ class AccountUserTest extends AbstractUserTest
             ->setLastName('Doe')
             ->setOwner(new User());
         $this->assertEmpty($user->getAccount());
-        $address = new AccountAddress();
+        $address = new CustomerAddress();
         $user->addAddress($address);
         $this->assertContains($address, $user->getAddresses());
         $backendUser = new User();
@@ -76,7 +76,7 @@ class AccountUserTest extends AbstractUserTest
         // createAccount is triggered on prePersist event
         $user->createAccount();
         $account = $user->getAccount();
-        $this->assertInstanceOf('Oro\Bundle\CustomerBundle\Entity\Account', $account);
+        $this->assertInstanceOf('Oro\Bundle\CustomerBundle\Entity\Customer', $account);
         $this->assertEquals($organization, $account->getOrganization());
         $this->assertEquals('John Doe', $account->getName());
 
@@ -117,7 +117,7 @@ class AccountUserTest extends AbstractUserTest
     public function provider()
     {
         return [
-            ['account', new Account()],
+            ['account', new Customer()],
             ['username', 'test'],
             ['email', 'test'],
             ['nameprefix', 'test'],

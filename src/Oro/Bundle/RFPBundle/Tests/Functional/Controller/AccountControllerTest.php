@@ -3,7 +3,7 @@
 namespace Oro\Bundle\RFPBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
 
@@ -31,7 +31,7 @@ class AccountControllerTest extends WebTestCase
             ->getEntityRepository('OroRFPBundle:Request');
         /** @var Request $request */
         $request = $repo->findOneBy(['note' => 'rfp.request.3']);
-        /** @var Account $account */
+        /** @var Customer $account */
         $account = $request->getAccountUser()->getAccount();
         $urlCustomerAccountView = $this->getUrl('oro_customer_account_view', ['id' => $account->getId()]);
         $crawler = $this->client->request('GET', $urlCustomerAccountView);

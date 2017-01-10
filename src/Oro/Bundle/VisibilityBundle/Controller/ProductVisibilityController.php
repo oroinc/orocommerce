@@ -99,6 +99,7 @@ class ProductVisibilityController extends Controller
             $product,
             [
                 'ownership_disabled' => true,
+                'dynamic_fields_disabled' => true,
                 ScopedDataType::PRELOADED_SCOPES_OPTION => $preloadedScopes,
                 ScopedDataType::SCOPES_OPTION => $this->get('oro_visibility.root_scopes_provider')->getScopes(),
                 ScopedDataType::TYPE_OPTION => EntityVisibilityType::NAME,

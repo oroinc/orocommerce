@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Model\DTO;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\PricingBundle\Model\DTO\PriceListRelationTrigger;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
@@ -18,8 +18,8 @@ class PriceListRelationTriggerTest extends \PHPUnit_Framework_TestCase
             new PriceListRelationTrigger(),
             [
                 ['website', new Website()],
-                ['account', new Account()],
-                ['accountGroup', new AccountGroup()],
+                ['account', new Customer()],
+                ['accountGroup', new CustomerGroup()],
                 ['force', true],
             ]
         );
@@ -30,11 +30,11 @@ class PriceListRelationTriggerTest extends \PHPUnit_Framework_TestCase
         /** @var Website|\PHPUnit_Framework_MockObject_MockObject $website */
         $website = $this->createMock(Website::class);
         $website->method('getId')->willReturn(1);
-        /** @var Account|\PHPUnit_Framework_MockObject_MockObject $account */
-        $account = $this->createMock(Account::class);
+        /** @var Customer|\PHPUnit_Framework_MockObject_MockObject $account */
+        $account = $this->createMock(Customer::class);
         $account->method('getId')->willReturn(1);
-        /** @var AccountGroup|\PHPUnit_Framework_MockObject_MockObject $accountGroup */
-        $accountGroup = $this->createMock(AccountGroup::class);
+        /** @var CustomerGroup|\PHPUnit_Framework_MockObject_MockObject $accountGroup */
+        $accountGroup = $this->createMock(CustomerGroup::class);
         $accountGroup->method('getId')->willReturn(1);
         $trigger = new PriceListRelationTrigger();
         $trigger->setWebsite($website)

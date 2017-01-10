@@ -11,7 +11,7 @@ use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountProductVisibility;
  * @ORM\Entity(
  *    repositoryClass="Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\AccountProductRepository"
  * )
- * @ORM\Table(name="oro_acc_prod_vsb_resolv")
+ * @ORM\Table(name="oro_cus_prod_vsb_resolv")
  */
 class AccountProductVisibilityResolved extends BaseProductVisibilityResolved
 {

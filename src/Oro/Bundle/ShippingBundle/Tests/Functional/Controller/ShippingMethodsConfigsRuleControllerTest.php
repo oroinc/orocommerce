@@ -4,11 +4,10 @@ namespace Oro\Bundle\ShippingBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
-use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethod;
-use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethodType;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingMethodsConfigsRules;
 use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadUserData;
+use Oro\Bundle\ShippingBundle\Tests\Functional\Helper\FlatRateIntegrationTrait;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Symfony\Component\DomCrawler\Form;
@@ -22,7 +21,7 @@ use Symfony\Component\DomCrawler\Form;
  */
 class ShippingMethodsConfigsRuleControllerTest extends WebTestCase
 {
-    const NAME = 'New rule';
+    use FlatRateIntegrationTrait;
 
     /**
      * @var ShippingMethodRegistry
@@ -112,8 +111,9 @@ class ShippingMethodsConfigsRuleControllerTest extends WebTestCase
             $this->assertEquals($expectedColumns, $testedColumns);
         }
 
+        //i starts from 1 because we have default shipping rule loaded with ORM data migration
         $expectedDataCount = count($expectedData['data']);
-        for ($i = 0; $i < $expectedDataCount; $i++) {
+        for ($i = 1; $i < $expectedDataCount; $i++) {
             foreach ($expectedData['data'][$i] as $key => $value) {
                 $this->assertArrayHasKey($key, $data[$i]);
                 switch ($key) {
@@ -168,16 +168,16 @@ class ShippingMethodsConfigsRuleControllerTest extends WebTestCase
         ];
         $formValues['oro_shipping_methods_configs_rule']['methodConfigs'] = [
             [
-                'method' => FlatRateShippingMethod::IDENTIFIER,
+                'method' => $this->getFlatRateIdentifier(),
                 'options' => [],
                 'typeConfigs' => [
                     [
                         'enabled' => '1',
-                        'type' => FlatRateShippingMethodType::IDENTIFIER,
+                        'type' => 'primary',
                         'options' => [
-                            FlatRateShippingMethodType::PRICE_OPTION => 12,
-                            FlatRateShippingMethodType::HANDLING_FEE_OPTION => null,
-                            FlatRateShippingMethodType::TYPE_OPTION => FlatRateShippingMethodType::PER_ITEM_TYPE,
+                            'price' => 12,
+                            'handling_fee' => null,
+                            'type' => 'per_item',
                         ],
                     ]
                 ]
@@ -274,16 +274,16 @@ class ShippingMethodsConfigsRuleControllerTest extends WebTestCase
         ];
         $formValues['oro_shipping_methods_configs_rule']['methodConfigs'] = [
             [
-                'method' => FlatRateShippingMethod::IDENTIFIER,
+                'method' => $this->getFlatRateIdentifier(),
                 'options' => [],
                 'typeConfigs' => [
                     [
                         'enabled' => '1',
-                        'type' => FlatRateShippingMethodType::IDENTIFIER,
+                        'type' => 'primary',
                         'options' => [
-                            FlatRateShippingMethodType::PRICE_OPTION => 24,
-                            FlatRateShippingMethodType::HANDLING_FEE_OPTION => null,
-                            FlatRateShippingMethodType::TYPE_OPTION => FlatRateShippingMethodType::PER_ORDER_TYPE,
+                            'price' => 24,
+                            'handling_fee' => null,
+                            'type' => 'per_order',
                         ],
                     ]
                 ]
@@ -306,10 +306,10 @@ class ShippingMethodsConfigsRuleControllerTest extends WebTestCase
         static::assertEquals('TH-83', $destination[0]->getRegion()->getCombinedCode());
         static::assertEquals('54321', $destination[0]->getPostalCodes()->current()->getName());
         $methodConfigs = $shippingRule->getMethodConfigs();
-        static::assertEquals(FlatRateShippingMethod::IDENTIFIER, $methodConfigs[0]->getMethod());
+        static::assertEquals($this->getFlatRateIdentifier(), $methodConfigs[0]->getMethod());
         static::assertEquals(
             24,
-            $methodConfigs[0]->getTypeConfigs()[0]->getOptions()[FlatRateShippingMethodType::PRICE_OPTION]
+            $methodConfigs[0]->getTypeConfigs()[0]->getOptions()['price']
         );
         static::assertFalse($shippingRule->getRule()->isEnabled());
 

@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\CustomerBundle\Provider;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\ScopeBundle\Manager\AbstractScopeCriteriaProvider;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Component\PropertyAccess\PropertyAccessor;
@@ -58,7 +58,7 @@ class ScopeAccountGroupCriteriaProvider extends AbstractScopeCriteriaProvider
             return [];
         }
         $loggedUser = $token->getUser();
-        if (!($loggedUser instanceof AccountUser)) {
+        if (!($loggedUser instanceof CustomerUser)) {
             $loggedUser = null;
         }
 
@@ -70,6 +70,6 @@ class ScopeAccountGroupCriteriaProvider extends AbstractScopeCriteriaProvider
      */
     public function getCriteriaValueType()
     {
-        return AccountGroup::class;
+        return CustomerGroup::class;
     }
 }

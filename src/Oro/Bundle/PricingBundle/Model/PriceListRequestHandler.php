@@ -4,7 +4,7 @@ namespace Oro\Bundle\PricingBundle\Model;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityRepository;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Provider\AccountUserRelationsProvider;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
@@ -170,7 +170,7 @@ class PriceListRequestHandler implements PriceListRequestHandlerInterface
     }
 
     /**
-     * @return null|Account
+     * @return null|Customer
      */
     protected function getAccount()
     {
@@ -180,8 +180,8 @@ class PriceListRequestHandler implements PriceListRequestHandlerInterface
             $request = $this->getRequest();
             if ($request && $accountId = $request->get(self::ACCOUNT_ID_KEY)) {
                 return $this->registry
-                    ->getManagerForClass(Account::class)
-                    ->getRepository(Account::class)
+                    ->getManagerForClass(Customer::class)
+                    ->getRepository(Customer::class)
                     ->find($accountId);
             }
         } else {

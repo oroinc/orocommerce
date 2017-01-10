@@ -83,9 +83,11 @@
             {{ form_widget(form.lineItems) }}
             {{ form_errors(form.lineItems) }}
         </div>
+
+        {% set entityDataOptions = {entityData: orderData} %}
         <div
                 data-page-component-module="oroorder/js/app/components/data-load-component"
-                data-page-component-options="{{ orderData|json_encode }}"></div>
+                data-page-component-options="{{ entityDataOptions|json_encode }}"></div>
     {% endset %}
 
     {% set dataBlocks = [
@@ -178,19 +180,12 @@
     {% set shippingInformation %}
 
         {% if entity.shippingMethod and entity.shippingMethodType and entity.estimatedShippingCost %}
-            {% set methodLabel = get_shipping_method_label(entity.shippingMethod) %}
-            {% set choice = 2 %}
-            {% if methodLabel is empty %}
-                {% set choice = 1 %}
-            {% endif %}
-            {% set methodLabel = 'oro.shipping.method_type.backend.label'|transchoice(choice, {
-                '%translatedMethodType%': get_shipping_method_type_label(entity.shippingMethod, entity.shippingMethodType)|trans,
-                '%translatedMethod%': get_shipping_method_label(entity.shippingMethod)|trans,
-                '%price%': entity.estimatedShippingCost|oro_format_price
-            }) %}
+            {% set shippingMethodLabel = oro_order_shipping_method_label(entity.shippingMethod, entity.shippingMethodType) ~
+                ': ' ~ entity.estimatedShippingCost|oro_format_price
+            %}
 
             {{ UI.renderAttribute('oro.order.shipping_method.label'|trans,
-                '<div class="control-label selected-shipping-method">' ~methodLabel ~'</div>'
+                '<div class="control-label selected-shipping-method">' ~ shippingMethodLabel ~'</div>'
             ) }}
         {% endif %}
 

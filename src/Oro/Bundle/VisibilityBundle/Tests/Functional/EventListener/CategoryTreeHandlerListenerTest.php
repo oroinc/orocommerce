@@ -3,9 +3,9 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\EventListener;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -259,7 +259,7 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
 
         $accountGroupVisibility = new AccountGroupCategoryVisibility();
 
-        /** @var AccountGroup $accountGroup */
+        /** @var CustomerGroup $accountGroup */
         $accountGroup = $this->getReference('account_group.group1');
         $scope = $this->scopeManager->findOrCreate(
             AccountGroupCategoryVisibility::VISIBILITY_TYPE,
@@ -285,7 +285,7 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
             ->get('doctrine')
             ->getManagerForClass('OroVisibilityBundle:Visibility\AccountGroupCategoryVisibility');
 
-        /** @var AccountGroup $accountGroup */
+        /** @var CustomerGroup $accountGroup */
         $accountGroup = $this->getReference('account_group.group1');
         /** @var AccountGroupCategoryVisibility $accountGroupVisibility */
         $scope = $this->scopeManager->findOrCreate(
@@ -317,7 +317,7 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
             ->get('doctrine')
             ->getManagerForClass('OroVisibilityBundle:Visibility\AccountCategoryVisibility');
 
-        /** @var Account $account */
+        /** @var Customer $account */
         $account = $this->getReference('account.level_1');
         /** @var AccountCategoryVisibility $accountVisibility */
         $scope = $this->scopeManager->findOrCreate(AccountCategoryVisibility::VISIBILITY_TYPE, ['account' => $account]);
@@ -332,14 +332,14 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
     }
 
     /**
-     * @return AccountUser
+     * @return CustomerUser
      */
     protected function getAccountUser()
     {
         return $this->getContainer()
             ->get('doctrine')
-            ->getManagerForClass('OroCustomerBundle:AccountUser')
-            ->getRepository('OroCustomerBundle:AccountUser')
+            ->getManagerForClass('OroCustomerBundle:CustomerUser')
+            ->getRepository('OroCustomerBundle:CustomerUser')
             ->findOneBy(['email' => LoadAccountUserData::EMAIL]);
     }
 

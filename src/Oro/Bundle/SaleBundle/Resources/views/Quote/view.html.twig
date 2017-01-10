@@ -71,7 +71,12 @@
                                 </td>
                             {% endif %}
                             <td class="quote-line_item-quantity quote-line_item-quantity-{% if loop.first %}first{% else %}not_first{% endif %}">
-                                {{ quoteProductOffer.quantity|oro_format_short_product_unit_value(quoteProductOffer.productUnit) }}
+                                {% if oro_is_unit_code_visible(quoteProductOffer.productUnit.code) %}
+                                    {{ quoteProductOffer.quantity|oro_format_short_product_unit_value(quoteProductOffer.productUnit) }}
+                                {% else %}
+                                    {{ quoteProductOffer.quantity }}
+                                {% endif %}
+
                                 {% if quoteProductOffer.allowIncrements %}{{ 'oro.sale.quoteproductoffer.allow_increments.label'|trans }}{% endif %}
                             </td>
                             <td class="quote-line_item-price quote-line_item-price-{% if loop.first %}first{% else %}not_first{% endif %}">
@@ -91,20 +96,20 @@
 
     {% set shippingAddress %}
         {% if entity.shippingAddress %}
-            {{ UI.renderHtmlProperty('oro.sale.quoteaddress.label.label'|trans, entity.shippingAddress.label) }}
-            {{ UI.renderHtmlProperty('oro.sale.quoteaddress.name_prefix.label'|trans, entity.shippingAddress.namePrefix) }}
-            {{ UI.renderHtmlProperty('oro.sale.quoteaddress.first_name.label'|trans, entity.shippingAddress.firstName) }}
-            {{ UI.renderHtmlProperty('oro.sale.quoteaddress.middle_name.label'|trans,entity.shippingAddress.middleName) }}
-            {{ UI.renderHtmlProperty('oro.sale.quoteaddress.last_name.label'|trans, entity.shippingAddress.lastName) }}
-            {{ UI.renderHtmlProperty('oro.sale.quoteaddress.name_suffix.label'|trans, entity.shippingAddress.nameSuffix) }}
-            {{ UI.renderHtmlProperty('oro.sale.quoteaddress.organization.label'|trans , entity.shippingAddress.organization) }}
-            {{ UI.renderHtmlProperty('oro.sale.quoteaddress.country.label'|trans, entity.shippingAddress.country.name|default('N/A')) }}
-            {{ UI.renderHtmlProperty('oro.sale.quoteaddress.street.label'|trans, entity.shippingAddress.street) }}
-            {{ UI.renderHtmlProperty('oro.sale.quoteaddress.street2.label'|trans,entity.shippingAddress.street2) }}
-            {{ UI.renderHtmlProperty('oro.sale.quoteaddress.city.label'|trans, entity.shippingAddress.city) }}
-            {{ UI.renderHtmlProperty('oro.sale.quoteaddress.region.label'|trans, entity.shippingAddress.region) }}
-            {{ UI.renderHtmlProperty('oro.sale.quoteaddress.postal_code.label'|trans, entity.shippingAddress.postalCode) }}
-            {{ UI.renderHtmlProperty('oro.sale.quoteaddress.phone.label'|trans, entity.shippingAddress.phone) }}
+            {{ UI.renderProperty('oro.sale.quoteaddress.label.label'|trans, entity.shippingAddress.label) }}
+            {{ UI.renderProperty('oro.sale.quoteaddress.name_prefix.label'|trans, entity.shippingAddress.namePrefix) }}
+            {{ UI.renderProperty('oro.sale.quoteaddress.first_name.label'|trans, entity.shippingAddress.firstName) }}
+            {{ UI.renderProperty('oro.sale.quoteaddress.middle_name.label'|trans,entity.shippingAddress.middleName) }}
+            {{ UI.renderProperty('oro.sale.quoteaddress.last_name.label'|trans, entity.shippingAddress.lastName) }}
+            {{ UI.renderProperty('oro.sale.quoteaddress.name_suffix.label'|trans, entity.shippingAddress.nameSuffix) }}
+            {{ UI.renderProperty('oro.sale.quoteaddress.organization.label'|trans , entity.shippingAddress.organization) }}
+            {{ UI.renderProperty('oro.sale.quoteaddress.country.label'|trans, entity.shippingAddress.country.name|default('N/A')) }}
+            {{ UI.renderProperty('oro.sale.quoteaddress.street.label'|trans, entity.shippingAddress.street) }}
+            {{ UI.renderProperty('oro.sale.quoteaddress.street2.label'|trans,entity.shippingAddress.street2) }}
+            {{ UI.renderProperty('oro.sale.quoteaddress.city.label'|trans, entity.shippingAddress.city) }}
+            {{ UI.renderProperty('oro.sale.quoteaddress.region.label'|trans, entity.shippingAddress.region) }}
+            {{ UI.renderProperty('oro.sale.quoteaddress.postal_code.label'|trans, entity.shippingAddress.postalCode) }}
+            {{ UI.renderProperty('oro.sale.quoteaddress.phone.label'|trans, entity.shippingAddress.phone) }}
         {% else %}
             <div class="items list-box list-shaped"></div>
             <div class="no-data">
@@ -114,11 +119,14 @@
     {% endset %}
 
     {% set shippingInformation %}
-        {% if entity.shippingEstimate is not null %}
-            {{ UI.renderHtmlProperty('oro.sale.quote.shipping_estimate.label'|trans,
-            entity.shippingEstimate.value|oro_format_currency({'currency': entity.shippingEstimate.currency})) }}
+        {%- if entity.shippingMethod and entity.shippingMethodType -%}
+            {{ UI.renderProperty('oro.sale.quote.shipping_method.label'|trans, oro_shipping_method_with_type_label(entity.shippingMethod, entity.shippingMethodType)) }}
+        {%- endif -%}
+        {% if entity.shippingCost is not null %}
+            {{ UI.renderProperty('oro.sale.quote.shipping_cost.label'|trans,
+            entity.shippingCost.value|oro_format_currency({'currency': entity.shippingCost.currency})) }}
         {% else %}
-            {{ UI.renderHtmlProperty('oro.sale.quote.shipping_estimate.label'|trans, 'N/A'|trans) }}
+            {{ UI.renderProperty('oro.sale.quote.shipping_cost.label'|trans, 'N/A'|trans) }}
         {% endif %}
     {% endset %}
 

@@ -5,8 +5,8 @@ namespace Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type;
 use Doctrine\Common\Collections\ArrayCollection;
 use Genemu\Bundle\FormBundle\Form\JQuery\Type\Select2Type;
 use Oro\Bundle\AddressBundle\Entity\AddressType;
-use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Form\Type\FrontendAccountUserTypedAddressType;
 use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\AccountTypedAddressWithDefaultTypeStub;
 use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\AddressTypeStub;
@@ -36,7 +36,7 @@ class FrontendAccountUserTypedAddressTypeTest extends AccountTypedAddressTypeTes
 
         $this->formType = new FrontendAccountUserTypedAddressType();
         $this->formType->setAddressTypeDataClass('Oro\Bundle\AddressBundle\Entity\AddressType');
-        $this->formType->setDataClass('Oro\Bundle\CustomerBundle\Entity\AccountAddress');
+        $this->formType->setDataClass('Oro\Bundle\CustomerBundle\Entity\CustomerAddress');
     }
 
     /**
@@ -112,20 +112,20 @@ class FrontendAccountUserTypedAddressTypeTest extends AccountTypedAddressTypeTes
      */
     public function submitWithFormSubscribersProvider()
     {
-        $accountAddress1 = new AccountAddress();
+        $accountAddress1 = new CustomerAddress();
         $accountAddress1
             ->setTypes(new ArrayCollection([$this->billingType, $this->shippingType]));
 
-        $accountAddress2 = new AccountAddress();
+        $accountAddress2 = new CustomerAddress();
         $accountAddress2
             ->setTypes(new ArrayCollection([$this->billingType, $this->shippingType]))
             ->setDefaults(new ArrayCollection([$this->billingType, $this->shippingType]));
 
-        $accountUser = new AccountUser();
+        $accountUser = new CustomerUser();
         $accountUser->addAddress($accountAddress1);
         $accountUser->addAddress($accountAddress2);
 
-        $accountAddressExpected = new AccountAddress();
+        $accountAddressExpected = new CustomerAddress();
         $accountAddressExpected
             ->setPrimary(true)
             ->addType($this->billingType)

@@ -7,7 +7,7 @@ use Symfony\Component\DomCrawler\Form;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
 
 /**
@@ -15,7 +15,7 @@ use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
  */
 class AccountUserAddressControllerTest extends WebTestCase
 {
-    /** @var AccountUser $accountUser */
+    /** @var CustomerUser $accountUser */
     protected $accountUser;
 
     protected function setUp()

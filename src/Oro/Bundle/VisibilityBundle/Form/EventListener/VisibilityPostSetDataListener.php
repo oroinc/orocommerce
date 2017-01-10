@@ -3,7 +3,7 @@
 namespace Oro\Bundle\VisibilityBundle\Form\EventListener;
 
 use Oro\Bundle\CustomerBundle\Entity\AccountAwareInterface;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroupAwareInterface;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroupAwareInterface;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\VisibilityBundle\Form\Type\EntityVisibilityType;
 use Symfony\Component\Form\FormEvent;
@@ -69,7 +69,7 @@ class VisibilityPostSetDataListener
 
         $data = array_map(
             function ($visibility) {
-                /** @var VisibilityInterface|AccountGroupAwareInterface $visibility */
+                /** @var VisibilityInterface|CustomerGroupAwareInterface $visibility */
                 /** @noinspection PhpUndefinedMethodInspection - field added through entity extend */
                 $accountGroup = $visibility->getScope()->getAccountGroup();
 

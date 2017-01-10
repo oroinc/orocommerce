@@ -34,7 +34,7 @@ class OwnerTreeListenerPassTest extends \PHPUnit_Framework_TestCase
             ->willReturnMap(
                 [
                     ['oro_customer.entity.account.class', 'Entity\Account'],
-                    ['oro_customer.entity.account_user.class', 'Entity\AccountUser'],
+                    ['oro_customer.entity.account_user.class', 'Entity\CustomerUser'],
                 ]
             );
 
@@ -48,7 +48,7 @@ class OwnerTreeListenerPassTest extends \PHPUnit_Framework_TestCase
             ->method('addMethodCall')
             ->with(
                 'addSupportedClass',
-                ['Entity\AccountUser', ['account', 'organization'], ['organizations']]
+                ['Entity\CustomerUser', ['account', 'organization'], ['organizations']]
             );
 
         $compilerPass = new OwnerTreeListenerPass();

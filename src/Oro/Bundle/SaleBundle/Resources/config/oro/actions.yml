@@ -153,12 +153,16 @@ action_groups:
                 route_parameters: { 'id': $.data.id }
             - '@assign_value':
                 conditions:
-                   '@empty': $.data.quote.shippingEstimate
+                   '@empty': $.data.quote.shippingCost
                 parameters: [$.disallow_shipping_method_edit, false]
             - '@assign_value':
                 conditions:
-                   '@not_empty': $.data.quote.shippingEstimate
+                   '@not_empty': $.data.quote.shippingCost
                 parameters: [$.disallow_shipping_method_edit, true]
+            - '@call_service_method':
+                service: oro_sale.quote_demand.subtotals_calculator_main
+                method: calculateSubtotals
+                method_parameters: [$.data]
             - '@tree':
                 conditions:
                     '@not_empty': $.data.quote.shippingAddress
@@ -196,7 +200,10 @@ action_groups:
                         parameters: [$.disallow_shipping_address_edit, false]
             - '@assign_value':
                 parameters: [$.shippingEstimate, $.data.quote.shippingEstimate]
-                
+            - '@assign_value':
+                parameters: [$.shippingMethod, $.data.quote.shippingMethod]
+            - '@assign_value':
+                parameters: [$.shippingMethodType, $.data.quote.shippingMethodType]
             - '@run_action_group':
                 action_group: start_checkout
                 parameters_mapping:
@@ -206,6 +213,8 @@ action_groups:
                     data:
                         shippingAddress: $.orderAddress
                         shippingCost: $.shippingEstimate
+                        shippingMethod: $.shippingMethod
+                        shippingMethodType: $.shippingMethodType
                     settings:
                         allow_manual_source_remove: false
                         auto_remove_source: true

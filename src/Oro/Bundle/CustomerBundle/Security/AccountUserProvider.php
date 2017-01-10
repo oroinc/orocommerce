@@ -12,7 +12,7 @@ use Oro\Bundle\SecurityBundle\Acl\Extension\EntityAclExtension;
 use Oro\Bundle\SecurityBundle\Acl\Extension\EntityMaskBuilder;
 use Oro\Bundle\SecurityBundle\Acl\Persistence\AclManager;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 
 class AccountUserProvider
 {
@@ -55,12 +55,12 @@ class AccountUserProvider
     }
 
     /**
-     * @return AccountUser|null
+     * @return CustomerUser|null
      */
     public function getLoggedUser()
     {
         $user = $this->securityFacade->getLoggedUser();
-        if ($user instanceof AccountUser) {
+        if ($user instanceof CustomerUser) {
             return $user;
         }
 
@@ -127,7 +127,7 @@ class AccountUserProvider
      */
     public function isGrantedViewAccountUser($class)
     {
-        $descriptor = sprintf('entity:%s@%s', AccountUser::SECURITY_GROUP, $this->accountUserClass);
+        $descriptor = sprintf('entity:%s@%s', CustomerUser::SECURITY_GROUP, $this->accountUserClass);
         if (!$this->securityFacade->isGranted(BasicPermissionMap::PERMISSION_VIEW, $descriptor)) {
             return false;
         }

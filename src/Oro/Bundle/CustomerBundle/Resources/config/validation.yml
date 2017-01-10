@@ -1,4 +1,4 @@
-Oro\Bundle\CustomerBundle\Entity\Account:
+Oro\Bundle\CustomerBundle\Entity\Customer:
     properties:
         name:
             - NotBlank: ~
@@ -7,7 +7,7 @@ Oro\Bundle\CustomerBundle\Entity\Account:
                 message: One of the addresses must be set as primary.
             - Oro\Bundle\CustomerBundle\Validator\Constraints\UniqueAddressDefaultTypes: ~
 
-Oro\Bundle\CustomerBundle\Entity\AccountAddress:
+Oro\Bundle\CustomerBundle\Entity\CustomerAddress:
     properties:
         street:
             - NotBlank: ~
@@ -22,12 +22,12 @@ Oro\Bundle\CustomerBundle\Entity\AccountAddress:
         - Callback:
             methods: [isRegionValid]
 
-Oro\Bundle\CustomerBundle\Entity\AccountGroup:
+Oro\Bundle\CustomerBundle\Entity\CustomerGroup:
     properties:
         name:
             - NotBlank: ~
 
-Oro\Bundle\CustomerBundle\Entity\AccountUser:
+Oro\Bundle\CustomerBundle\Entity\CustomerUser:
     constraints:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: username
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: email
@@ -47,9 +47,9 @@ Oro\Bundle\CustomerBundle\Entity\AccountUser:
                 min: 6
                 max: 255
         plainPassword:
-            - NotBlank: { groups: [create] }
-            - Length:
-                min: 2
+            - NotBlank:
+                groups: [create]
+            - Oro\Bundle\UserBundle\Validator\Constraints\PasswordComplexity: ~
         username:
             - NotBlank: ~
             - Length:
@@ -70,7 +70,7 @@ Oro\Bundle\CustomerBundle\Entity\AccountUser:
                 message: One of the addresses must be set as primary.
             - Oro\Bundle\CustomerBundle\Validator\Constraints\UniqueAddressDefaultTypes: ~
 
-Oro\Bundle\CustomerBundle\Entity\AccountUserAddress:
+Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
     properties:
         street:
             - NotBlank: ~
@@ -85,7 +85,7 @@ Oro\Bundle\CustomerBundle\Entity\AccountUserAddress:
         - Callback:
             methods: [isRegionValid]
 
-Oro\Bundle\CustomerBundle\Entity\AccountUserRole:
+Oro\Bundle\CustomerBundle\Entity\CustomerUserRole:
     constraints:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
             fields: [label, account]

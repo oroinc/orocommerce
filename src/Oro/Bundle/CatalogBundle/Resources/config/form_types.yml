@@ -16,6 +16,8 @@ services:
 
     oro_catalog.form.type.category_unit_precision:
         class: 'Oro\Bundle\CatalogBundle\Form\Type\CategoryUnitPrecisionType'
+        arguments:
+            - '@oro_catalog.visibility.default_product_options'
         calls:
             - [setDataClass, ['%oro_catalog.entity.category_unit_precision.class%']]
         tags:

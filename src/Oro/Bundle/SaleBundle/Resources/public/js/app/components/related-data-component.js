@@ -27,7 +27,17 @@ define(function(require) {
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});
 
-            mediator.on('account-account-user:change', this.loadRelatedData, this);
+            mediator.on('account-account-user:change', this.onAccountUserChange, this);
+        },
+
+        /**
+         * @param accountUser
+         */
+        onAccountUserChange: function(accountUser)
+        {
+            this.loadRelatedData(accountUser);
+
+            mediator.trigger('entry-point:quote:trigger');
         },
 
         /**

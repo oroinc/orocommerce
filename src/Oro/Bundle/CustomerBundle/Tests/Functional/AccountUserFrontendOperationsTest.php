@@ -4,7 +4,7 @@ namespace Oro\Bundle\CustomerBundle\Tests\Functional;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserACLData;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
@@ -33,7 +33,7 @@ class AccountUserFrontendOperationsTest extends WebTestCase
     {
         $this->loginUser($login);
 
-        /** @var AccountUser $user */
+        /** @var CustomerUser $user */
         $user = $this->getUserRepository()->findOneBy(['email' => $resource]);
 
         $user->setConfirmed(false);
@@ -72,7 +72,7 @@ class AccountUserFrontendOperationsTest extends WebTestCase
     {
         $this->loginUser($login);
 
-        /** @var AccountUser $user */
+        /** @var CustomerUser $user */
         $user = $this->getUserRepository()->findOneBy(['email' => $resource]);
         $user->setConfirmed(false);
         $this->getObjectManager()->flush();
@@ -97,7 +97,7 @@ class AccountUserFrontendOperationsTest extends WebTestCase
     {
         $this->loginUser($login);
 
-        /** @var \Oro\Bundle\CustomerBundle\Entity\AccountUser $user */
+        /** @var \Oro\Bundle\CustomerBundle\Entity\CustomerUser $user */
         $user = $this->getUserRepository()->findOneBy(['email' => $resource]);
         $user->setConfirmed(false);
         $this->getObjectManager()->flush();
@@ -126,8 +126,8 @@ class AccountUserFrontendOperationsTest extends WebTestCase
         $this->assertContains($user->getEmail(), $message->getBody());
 
         $configManager = $this->getContainer()->get('oro_config.manager');
-        $loginUrl = trim($configManager->get('oro_ui.application_url'), '/')
-            . $this->getUrl('oro_customer_account_user_security_login');
+        $applicationUrl = $configManager->get('oro_ui.application_url');
+        $loginUrl = $applicationUrl . $this->getUrl('oro_customer_account_user_security_login');
 
         $this->assertContains($loginUrl, $message->getBody());
 
@@ -145,7 +145,7 @@ class AccountUserFrontendOperationsTest extends WebTestCase
     public function testConfirmAccessDenied($login, $resource, $status)
     {
         $this->loginUser($login);
-        /** @var AccountUser $user */
+        /** @var CustomerUser $user */
         $user = $this->getUserRepository()->findOneBy(['email' => $resource]);
 
         $user->setConfirmed(false);
@@ -169,7 +169,7 @@ class AccountUserFrontendOperationsTest extends WebTestCase
     {
         $this->loginUser($login);
 
-        /** @var AccountUser $user */
+        /** @var CustomerUser $user */
         $user = $this->getUserRepository()->findOneBy(['email' => $resource]);
         $this->assertTrue($user->isEnabled());
 
@@ -202,14 +202,14 @@ class AccountUserFrontendOperationsTest extends WebTestCase
     {
         $this->loginUser($login);
 
-        /** @var AccountUser $user */
+        /** @var CustomerUser $user */
         $user = $this->getUserRepository()->findOneBy(['email' => $resource]);
         $user->setConfirmed(false);
         $this->getObjectManager()->flush();
         $this->executeOperation($user, 'oro_account_frontend_accountuser_enable');
         $this->assertSame($this->client->getResponse()->getStatusCode(), $status);
 
-        /** @var AccountUser $user */
+        /** @var CustomerUser $user */
         $user = $this->getUserRepository()->findOneBy(['email' => $resource]);
         $user->setConfirmed(true);
         $this->getObjectManager()->flush();
@@ -276,13 +276,13 @@ class AccountUserFrontendOperationsTest extends WebTestCase
      */
     protected function getUserRepository()
     {
-        return $this->getObjectManager()->getRepository('OroCustomerBundle:AccountUser');
+        return $this->getObjectManager()->getRepository('OroCustomerBundle:CustomerUser');
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function executeOperation(AccountUser $accountUser, $operationName)
+    protected function executeOperation(CustomerUser $accountUser, $operationName)
     {
         $this->client->request(
             'GET',
@@ -292,7 +292,7 @@ class AccountUserFrontendOperationsTest extends WebTestCase
                     'operationName' => $operationName,
                     'route' => 'oro_customer_frontend_account_user_view',
                     'entityId' => $accountUser->getId(),
-                    'entityClass' => 'Oro\Bundle\CustomerBundle\Entity\AccountUser'
+                    'entityClass' => 'Oro\Bundle\CustomerBundle\Entity\CustomerUser'
                 ]
             ),
             [],

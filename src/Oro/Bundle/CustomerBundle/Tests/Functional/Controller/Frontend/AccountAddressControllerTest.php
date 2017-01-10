@@ -3,10 +3,10 @@
 namespace Oro\Bundle\CustomerBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Entity\AccountUserAddress;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountAddressACLData;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountAddressesACLData;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserAddressesACLData;
@@ -114,7 +114,7 @@ class AccountAddressControllerTest extends WebTestCase
             'id="oro_account_frontend_typed_address_frontend_owner" ' .
             'tabindex="-1" class="select2-offscreen"> ' .
             '<option value="" selected="selected"></option> ' .
-            '<option value="' . $user->getAccount()->getId() . '">AccountUser</option> </select>'
+            '<option value="' . $user->getAccount()->getId() . '">CustomerUser</option> </select>'
         );
         $field = new ChoiceFormField($doc->getElementsByTagName('select')->item(0));
         $form->set($field);
@@ -130,12 +130,12 @@ class AccountAddressControllerTest extends WebTestCase
     {
         $this->loginUser(LoadAccountAddressACLData::USER_ACCOUNT_2_ROLE_LOCAL);
         $user = $this->getReference(LoadAccountAddressACLData::USER_ACCOUNT_2_ROLE_LOCAL);
-        /** @var Account $account */
+        /** @var Customer $account */
         $account = $user->getAccount();
-        /** @var AccountAddress $address */
+        /** @var CustomerAddress $address */
         $address = $account->getAddresses()->first();
 
-        $this->assertInstanceOf('Oro\Bundle\CustomerBundle\Entity\AccountAddress', $address);
+        $this->assertInstanceOf('Oro\Bundle\CustomerBundle\Entity\CustomerAddress', $address);
 
         $addressId = $address->getId();
 
@@ -166,7 +166,7 @@ class AccountAddressControllerTest extends WebTestCase
 
         $address = $this->getAddressById($addressId);
 
-        $this->assertInstanceOf('Oro\Bundle\CustomerBundle\Entity\AccountAddress', $address);
+        $this->assertInstanceOf('Oro\Bundle\CustomerBundle\Entity\CustomerAddress', $address);
 
         $this->assertEquals('Changed Label', $address->getLabel());
     }
@@ -185,14 +185,14 @@ class AccountAddressControllerTest extends WebTestCase
 
     /**
      * @param $addressId
-     * @return AccountUserAddress
+     * @return CustomerUserAddress
      */
     protected function getAddressById($addressId)
     {
-        $this->getObjectManager()->clear('OroCustomerBundle:AccountAddress');
+        $this->getObjectManager()->clear('OroCustomerBundle:CustomerAddress');
 
         return $this->getObjectManager()
-            ->getRepository('OroCustomerBundle:AccountAddress')
+            ->getRepository('OroCustomerBundle:CustomerAddress')
             ->find($addressId);
     }
 
@@ -216,11 +216,11 @@ class AccountAddressControllerTest extends WebTestCase
     public function testACL($route, $resource, $user, $status)
     {
         $this->loginUser($user);
-        /* @var $resource AccountUser */
+        /* @var $resource CustomerUser */
         $resource = $this->getReference($resource);
-        /** @var Account $account */
+        /** @var Customer $account */
         $account = $resource->getAccount();
-        /** @var AccountAddress $address */
+        /** @var CustomerAddress $address */
         $address = $account->getAddresses()->first();
         $this->client->request(
             'GET',

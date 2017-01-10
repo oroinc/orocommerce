@@ -160,6 +160,7 @@ services:
         class: 'Oro\Bundle\OrderBundle\EventListener\Order\OrderPossibleShippingMethodsEventListener'
         arguments:
             - '@oro_order.factory.shipping_context'
+            - '@oro_order.converter.shipping_prices'
             - '@?oro_shipping.shipping_price.provider'
         tags:
             - { name: kernel.event_listener, event: oro_order.order, method: onOrderEvent }
@@ -200,6 +201,14 @@ services:
         arguments:
             - '@oro_order.formatter.source_document'
             - '@oro_order.formatter.shipping_tracking'
+        tags:
+            - { name: twig.extension }
+
+    oro_order.twig.order_shipping:
+        class: 'Oro\Bundle\OrderBundle\Twig\OrderShippingExtension'
+        public: false
+        calls:
+            - [setShippingLabelFormatter, ['@?oro_shipping.translator.shipping_method_label']]
         tags:
             - { name: twig.extension }
 
@@ -328,10 +337,14 @@ services:
             - '@oro_currency.config.currency'
             - '@oro_currency.converter.rate'
 
-    oro_order.provider.order_currency_checker:
-        class: Oro\Bundle\OrderBundle\Provider\CurrencyCheckerProvider
-        public: false
+    oro_order.event_listener.unit_visibility.datagrid:
+        parent: oro_product.event_listener.unit_visibility.datagrid_basic
         arguments:
-            - '@doctrine'
+            index_0: 'productUnitCode'
+            index_3: {isShortUnitCode: false}
         tags:
-            - { name: oro_multi_currency.currency_checker_provider }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.order-line-items-grid, method: onBuildBefore }
+
+
+    oro_order.converter.shipping_prices:
+        class: 'Oro\Bundle\OrderBundle\Converter\ShippingPricesConverter'

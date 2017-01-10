@@ -66,6 +66,8 @@ workflows:
                 type: entity
                 options:
                     class: Oro\Bundle\OrderBundle\Entity\Order
+            checkout_finished:
+                type: bool
         steps:
             enter_billing_address:
                 order: 10
@@ -628,8 +630,8 @@ workflows:
                             message: oro.checkout.workflow.condition.order_line_item_has_count.message
                             parameters:
                                 entity: $checkout
-                        - '@has_applicable_shipping_methods':
-                            shippingContext: $.result.shippingContext
+                        - '@checkout_has_applicable_shipping_methods':
+                            checkout: $checkout
                 conditions:
                     '@and':
                         - '@or':
@@ -791,6 +793,13 @@ workflows:
 
             place_order_definition:
                 preactions:
+                    - '@flash_message':
+                        conditions:
+                            '@and':
+                                - '@equal': [$payment_in_progress, true]
+                                - '@equal': [$checkout_finished, false]
+                        message: oro.checkout.workflow.condition.payment_has_not_been_processed.message
+                        type: 'warning'
                     - '@tree':
                         conditions:
                             '@not_empty': [$.id]
@@ -829,9 +838,7 @@ workflows:
                                 attribute: $.result.paymentContext
                 preconditions:
                     '@and':
-                        - '@not_equal':
-                            message: Payment process is running for this checkout
-                            parameters: [$payment_in_progress, true]
+                        - '@not_empty': $.result.paymentContext
                         - '@payment_method_applicable':
                             message: oro.checkout.workflow.condition.payment_method_is_not_applicable_please_return_to_payment_step.message
                             payment_method: $checkout.paymentMethod
@@ -992,7 +999,7 @@ workflows:
                                 identifier: $.result.typeBillingName
                             - '@create_entity':
                                 attribute: $.result.customerBillingAddress
-                                class: Oro\Bundle\CustomerBundle\Entity\AccountUserAddress
+                                class: Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress
                                 data:
                                     frontendOwner: $checkout.accountUser
                                     owner: $checkout.owner
@@ -1042,7 +1049,7 @@ workflows:
                                 actions:
                                     - '@create_entity':
                                         attribute: $.result.customerShippingAddress
-                                        class: Oro\Bundle\CustomerBundle\Entity\AccountUserAddress
+                                        class: Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress
                                         data:
                                             frontendOwner: $checkout.accountUser
                                             owner: $checkout.owner
@@ -1096,6 +1103,7 @@ workflows:
                     - '@remove_entity': $checkout.billingAddress
                     - '@remove_entity': $checkout.shippingAddress
                     - '@remove_entity': $checkout
+                    - '@assign_value': [$checkout_finished, true]
                     - '@redirect':
                         route: oro_order_frontend_success
                         route_parameters:

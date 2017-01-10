@@ -1,7 +1,7 @@
 <?php
 namespace Oro\Bundle\OrderBundle\Tests\Functional\Controller;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\LocaleBundle\Formatter\NameFormatter;
 use Oro\Bundle\OrderBundle\Entity\Order;
@@ -57,7 +57,7 @@ class OrderControllerTest extends WebTestCase
 
     /**
      * @param Form $form
-     * @param Account $orderAccount
+     * @param Customer $orderAccount
      * @param $lineItems
      * @param $discountItems
      * @return array
@@ -81,7 +81,7 @@ class OrderControllerTest extends WebTestCase
 
     /**
      * @param Form $form
-     * @param Account $orderAccount
+     * @param Customer $orderAccount
      * @param array $lineItems
      * @param array $discountItems
      * @return array
@@ -161,7 +161,7 @@ class OrderControllerTest extends WebTestCase
         /** @var Form $form */
         $form = $crawler->selectButton('Save')->form();
 
-        /** @var Account $orderAccount */
+        /** @var Customer $orderAccount */
         $orderAccount = $this->getReference('account.level_1');
         
         /** @var Product $product */
@@ -251,7 +251,7 @@ class OrderControllerTest extends WebTestCase
         /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
 
-        /** @var Account $orderAccount */
+        /** @var Customer $orderAccount */
         $orderAccount = $this->getReference('account.level_1');
 
         $date = (new \DateTime('now'))->format('Y-m-d');
@@ -289,7 +289,7 @@ class OrderControllerTest extends WebTestCase
         $actualLineItems = $this->getActualLineItems($crawler, count($lineItems));
 
         usort($actualLineItems, function ($a, $b) {
-            return $a['product'] - $b['product'];
+            return (int)$a['product'] - (int)$b['product'];
         });
 
         $expectedLineItems = $this->getExpectedLineItemsAfterUpdate($date);

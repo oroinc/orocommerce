@@ -166,3 +166,8 @@ services:
            - '@doctrine'
        tags:
            - { name: oro_multi_currency.currency_checker_provider }
+
+    oro_sale.quote_demand.subtotals_calculator_main:
+        class: 'Oro\Bundle\SaleBundle\Quote\Demand\Subtotals\Calculator\Basic\BasicQuoteDemandSubtotalsCalculator'
+        arguments:
+            - '@oro_pricing.subtotal_processor.total_processor_provider'

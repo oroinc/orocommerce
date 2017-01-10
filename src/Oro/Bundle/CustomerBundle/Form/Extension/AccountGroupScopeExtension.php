@@ -26,7 +26,7 @@ class AccountGroupScopeExtension extends AbstractTypeExtension
                 self::SCOPE_FIELD,
                 AccountGroupSelectType::NAME,
                 [
-                    'label' => 'oro.customer.accountgroup.entity_label',
+                    'label' => 'oro.customer.customergroup.entity_label',
                     'create_form_route' => null,
                 ]
             );

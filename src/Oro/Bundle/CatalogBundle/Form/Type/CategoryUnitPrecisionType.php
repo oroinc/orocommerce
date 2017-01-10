@@ -2,11 +2,15 @@
 
 namespace Oro\Bundle\CatalogBundle\Form\Type;
 
+use Oro\Bundle\CatalogBundle\Visibility\CategoryDefaultProductUnitOptionsVisibilityInterface;
+use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 
 class CategoryUnitPrecisionType extends AbstractType
 {
@@ -16,6 +20,19 @@ class CategoryUnitPrecisionType extends AbstractType
      * @var string
      */
     protected $dataClass;
+
+    /**
+     * @var CategoryDefaultProductUnitOptionsVisibilityInterface
+     */
+    protected $defaultProductOptionsVisibility;
+
+    /**
+     * @param CategoryDefaultProductUnitOptionsVisibilityInterface $defaultProductOptionsVisibility
+     */
+    public function __construct(CategoryDefaultProductUnitOptionsVisibilityInterface $defaultProductOptionsVisibility)
+    {
+        $this->defaultProductOptionsVisibility = $defaultProductOptionsVisibility;
+    }
 
     /**
      * @param string $dataClass
@@ -31,23 +48,8 @@ class CategoryUnitPrecisionType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder
-            ->add(
-                'unit',
-                ProductUnitSelectionType::NAME,
-                [
-                    'empty_value' => 'oro.catalog.category.unit.empty.value'
-                ]
-            )
-            ->add(
-                'precision',
-                'integer',
-                [
-                    'type' => 'text',
-                    'required' => false
-                ]
-            )
-        ;
+        $this->addUnitField($builder);
+        $this->addPrecisionField($builder);
     }
 
     /**
@@ -74,5 +76,41 @@ class CategoryUnitPrecisionType extends AbstractType
     public function getBlockPrefix()
     {
         return self::NAME;
+    }
+
+    /**
+     * @param FormBuilderInterface $builder
+     */
+    private function addUnitField(FormBuilderInterface $builder)
+    {
+        $type = EntityIdentifierType::NAME;
+        $options = [
+            'class' => ProductUnit::class,
+            'multiple' => false,
+        ];
+        if ($this->defaultProductOptionsVisibility->isDefaultUnitPrecisionSelectionAvailable()) {
+            $type = ProductUnitSelectionType::NAME;
+            $options = [
+                'empty_value' => 'oro.catalog.category.unit.empty.value',
+            ];
+        }
+        $builder->add('unit', $type, $options);
+    }
+
+    /**
+     * @param FormBuilderInterface $builder
+     */
+    private function addPrecisionField(FormBuilderInterface $builder)
+    {
+        $type = HiddenType::class;
+        $options = [
+            'required' => false,
+        ];
+        if ($this->defaultProductOptionsVisibility->isDefaultUnitPrecisionSelectionAvailable()) {
+            $type = IntegerType::class;
+            $options['type'] = 'text';
+        }
+
+        $builder->add('precision', $type, $options);
     }
 }

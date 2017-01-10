@@ -6,7 +6,7 @@ use Symfony\Component\HttpKernel\Fragment\FragmentHandler;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Layout\DataProvider\AddressProvider;
 
 class AddressProviderTest extends \PHPUnit_Framework_TestCase
@@ -37,13 +37,13 @@ class AddressProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetComponentOptions()
     {
-        $this->provider->setEntityClass('Oro\Bundle\CustomerBundle\Entity\Account');
+        $this->provider->setEntityClass('Oro\Bundle\CustomerBundle\Entity\Customer');
         $this->provider->setListRouteName('oro_api_account_frontend_get_account_addresses');
         $this->provider->setCreateRouteName('oro_customer_frontend_account_address_create');
         $this->provider->setUpdateRouteName('oro_customer_frontend_account_address_update');
 
-        /** @var Account $entity */
-        $entity = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account', ['id' => 40]);
+        /** @var Customer $entity */
+        $entity = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', ['id' => 40]);
 
         $this->router->expects($this->exactly(2))
             ->method('generate')
@@ -86,8 +86,8 @@ class AddressProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetComponentOptionsWithoutRouteName()
     {
-        /** @var Account $entity */
-        $entity = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account');
+        /** @var Customer $entity */
+        $entity = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer');
 
         $this->provider->setListRouteName('');
         $this->provider->getComponentOptions($entity);
@@ -98,10 +98,10 @@ class AddressProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetComponentOptionsWithWrongEntityClass()
     {
-        /** @var Account $entity */
-        $entity = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account');
+        /** @var Customer $entity */
+        $entity = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer');
 
-        $this->provider->setEntityClass('Oro\Bundle\CustomerBundle\Entity\AccountUser');
+        $this->provider->setEntityClass('Oro\Bundle\CustomerBundle\Entity\CustomerUser');
         $this->provider->getComponentOptions($entity);
     }
 }

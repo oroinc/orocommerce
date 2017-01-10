@@ -13,7 +13,7 @@ use Oro\Bundle\EmailBundle\Form\Model\Email;
 use Oro\Bundle\EmailBundle\Mailer\Processor;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Notification\NotificationHelper;
 
@@ -73,7 +73,7 @@ class NotificationHelperTest extends \PHPUnit_Framework_TestCase
             ->method('createEmailModel')
             ->willReturn(new Email());
 
-        $accountUser = new AccountUser();
+        $accountUser = new CustomerUser();
         $accountUser->setEmail('test@example.com');
 
         /** @var Quote $quote */

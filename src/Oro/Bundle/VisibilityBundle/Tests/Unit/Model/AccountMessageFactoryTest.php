@@ -4,7 +4,7 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Model;
 
 use Doctrine\Common\Persistence\ObjectManager;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\Repository\AccountRepository;
 use Oro\Bundle\CustomerBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\VisibilityBundle\Model\AccountMessageFactory;
@@ -36,8 +36,8 @@ class AccountMessageFactoryTest extends \PHPUnit_Framework_TestCase
     public function testCreateMessage()
     {
         $params = ['id' => 1];
-        /** @var Account $account **/
-        $account = $this->getEntity(Account::class, $params);
+        /** @var Customer $account **/
+        $account = $this->getEntity(Customer::class, $params);
 
         $message = $this->accountMessageFactory->createMessage($account);
         $this->assertEquals($params, $message);
@@ -46,7 +46,7 @@ class AccountMessageFactoryTest extends \PHPUnit_Framework_TestCase
     public function testGetEntityFromMessage()
     {
         $params = ['id' => 1];
-        $account = $this->getEntity(Account::class, $params);
+        $account = $this->getEntity(Customer::class, $params);
         $repository = $this->getMockBuilder(AccountRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -58,11 +58,11 @@ class AccountMessageFactoryTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         $manager->expects($this->once())
             ->method('getRepository')
-            ->with(Account::class)
+            ->with(Customer::class)
             ->willReturn($repository);
         $this->registry->expects($this->once())
             ->method('getManagerForClass')
-            ->with(Account::class)
+            ->with(Customer::class)
             ->willReturn($manager);
 
         $this->accountMessageFactory->getEntityFromMessage($params);
