@@ -18,16 +18,16 @@ With product attributes functionality that extends the Product bundle, you can:
 * use product attributes in the scope of Product families (similar to categories) and attribute groups.
 * organize and distinguish products of different types, which actually have different sets of characteristics applicable to. 
 
-On 'Products -> Product Attributes' page, there is a grid of attributes created for the product entity. By defaults, there are only generic predefined attributes (sku, description, names).
+On the Product Attributes page, there is a grid of attributes created for the product entity. By defaults, there are only generic predefined attributes (sku, description, names).
 
 **Note**: System attributes (sku, description, names) are shared among all product families. Delete is disabled.
 
 Creating Product Attributes
 ---------------------------
 
-To create a new Landing Page:
+To create a new Product Attribute:
 
-1. Navigate to **Products > Product Attributes** in the main menu.
+1. Navigate to **Products > Product Attributes** using the main menu.
 
    ![Product Attributes page](./images/ProductAttributes.png)
 2. Click **Create attribute**. The following page opens:
@@ -89,24 +89,81 @@ To create a new Landing Page:
    The product attribute storage type is set to *table column* for the attribute with Select of Multi-Select data type, and also for attribute of any type with *Filterable* or *Sortable* option enabled.
    If this step is ommited, the newly created attribute will not appear in the select attribute options in other areas of OroCommerce (e.g. product families configuration).
  
-Using Product Attributes in Product Families
---------------------------------------------
+Understanding Product Families
+------------------------------
 
-On 'Products -> Product Families' there is a grid of Product Families created for product entity. Initially there is only
-one predefined family with set of default groups with system attributes assigned. Groups are 'General', 'Product Prices',
-'Inventory', 'Images'. You can move any system attribute from one to another group or assign new attribute simply choosing
-needed one in groups select. Also you can create new group as well as remove existing. If there were any system attributes
-confirmation dialog will appear. After confirm deletion all system attributes will be automatically moved to first group 
-in the list. System attributes should be always assigned to family and it is not possible to remove such attribute only
-move to another group.
+The product family is designed to group product attributes for products of similar type (e.g TV attributes vs T-shirts attributes). By default, there is only one predefined product family with a set of default groups with nested system attributes with the following structure:
+
+* General:
+   - SKU
+   - Name
+   - Description
+   - Short Description
+* Images	
+   - Images
+* Inventory	
+   - Inventory Status
+* Product Prices
+   - Product prices
+* SEO
+   - Meta keywords
+   - Meta description
+   
+<img src="./images/ProductAttributeFamilies.png" alt="Default Product Family" width="50%" height="50%">
 
 Creating new Product Family
 ---------------------------
-Default Product Family may not be enough to cover all your needs. To create new one click 'Create Product Family' button.
-On form there are several required fields - 'Code' and 'Label'. Also required condition for creating family is to 
-have at least one group with all system attributes assigned. Initially there is 'Default group'. For adding new one
-click on 'Add' button. After filling label of new group (which should be unique in scope of one family) you can assign
-new attribute or move already assigned from other groups. After saving changes new Product Family will be created.
+Default Product Family may not be enough to cover all your needs. To create a new product family:
+1. Navigate to **Products > Product Families** using the main menu.
+2. Click **Create Product Family**.
+
+   <img src="./images/ProductAttributeFamiliesCreate.png" alt="Create Product Family" width="50%" height="50%">
+3. Provide the product family details:
+   - Code
+   - Label
+   - Enabled
+   - Image
+4. In the Attributes section, link the attributes to the product family and organize them into groups as described in the sections below. **Note**: Ensure that every system attribute is linked to the proper attribute group in the product family. By default, they are linked to the default_group, but you may modify the link as necessary.
+5. Once you are happy with the product attribute organization, click **Save**.
+
+Using Product Attributes in Product Families
+--------------------------------------------
+
+Adding a new Product Attribute Group
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+1. Navigate to **Products > Product Families** using the main menu.
+2. Click **+ Add** to create a new group. Type in the label and add the product attributes:
+   - Start typing the product attribute name. Filtered list will apear as you type. 
+   - Select the attribute from the list or press **Enter** once there is only one option.
+3. Once you are done with the product attribute organization, click **Save**.
+
+Adding a Product Attribute to the Attribute Group
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+1. Navigate to **Products > Product Families** using the main menu.
+2. Start typing the product attribute name. Filtered list will apear as you type. Select the attribute from the list or press Enter once there is only one option.
+3. Once you are done with the product attribute organization, click **Save**.
+
+Moving a Product Attribute to Another Attribute Group
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+1. Navigate to **Products > Product Families** using the main menu.
+2. When an attribute you are adding to the group is already a member of another attribute group in this product family, the *(move from \<attribute group\>* will be shown next to the attribute name in the hint list that appears as you type.
+   
+   <img src="./images/ProductAttributeFamiliesMove.png" alt="Move Product Attribute to a New Prodcut Attribute Group in Product Family" width="50%" height="50%">
+   Adding such attribute to another group will remove it from it's current group.
+3. Once you are done with the product attribute organization, click **Save**.
+
+Deleting a Product Attribute from the Attribute Group
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+1. Navigate to **Products > Product Families** using the main menu.
+2. Click the **X** next to the attribute name to remove it from the attribute group. Though it is impossible to delete system attributes, you can move them to the default attribute group. This will remove an attribute from it's current group.
+3. Once you are done with the product attribute organization, click **Save**.
+
+Deleting a Product Attribute Group
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+To remove existing aproduct attribute group:
+1. Navigate to **Products > Product Families** using the main menu.
+2. Click **x** on the top right of the group area. If the group contains any system attributes, the confirmation dialog appears. Once confirmed, the group is deleted and the system attributes are automatically moved to deafult group.
+3. Once you are done with the product attribute organization, click **Save**.
 
 Assigning Product Family to product
 -----------------------------------
