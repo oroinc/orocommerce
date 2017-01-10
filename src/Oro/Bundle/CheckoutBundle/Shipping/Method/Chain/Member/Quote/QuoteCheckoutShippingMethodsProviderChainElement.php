@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CheckoutBundle\Shipping\Method\Chain\Member\Quote;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\Factory\ShippingContextProviderFactory;
+use Oro\Bundle\CheckoutBundle\Factory\CheckoutShippingContextFactory;
 use Oro\Bundle\CheckoutBundle\Shipping\Method\Chain\Member\AbstractCheckoutShippingMethodsProviderChainElement;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
@@ -13,7 +13,7 @@ use Oro\Bundle\ShippingBundle\Provider\Price\Configured\ShippingConfiguredPriceP
 class QuoteCheckoutShippingMethodsProviderChainElement extends AbstractCheckoutShippingMethodsProviderChainElement
 {
     /**
-     * @var ShippingContextProviderFactory
+     * @var CheckoutShippingContextFactory
      */
     private $checkoutShippingContextFactory;
 
@@ -28,12 +28,12 @@ class QuoteCheckoutShippingMethodsProviderChainElement extends AbstractCheckoutS
     private $quoteShippingConfigurationFactory;
 
     /**
-     * @param ShippingContextProviderFactory $checkoutShippingContextFactory
+     * @param CheckoutShippingContextFactory $checkoutShippingContextFactory
      * @param ShippingConfiguredPriceProviderInterface $shippingConfiguredPriceProvider
      * @param QuoteShippingConfigurationFactory $quoteShippingConfigurationFactory
      */
     public function __construct(
-        ShippingContextProviderFactory $checkoutShippingContextFactory,
+        CheckoutShippingContextFactory $checkoutShippingContextFactory,
         ShippingConfiguredPriceProviderInterface $shippingConfiguredPriceProvider,
         QuoteShippingConfigurationFactory $quoteShippingConfigurationFactory
     ) {

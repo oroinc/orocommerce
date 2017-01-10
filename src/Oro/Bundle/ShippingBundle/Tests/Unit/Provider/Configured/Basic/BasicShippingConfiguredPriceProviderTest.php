@@ -78,6 +78,7 @@ class BasicShippingConfiguredPriceProviderTest extends \PHPUnit_Framework_TestCa
     {
         return $this
             ->getMockBuilder(ShippingContext::class)
+            ->disableOriginalConstructor()
             ->getMock();
     }
 

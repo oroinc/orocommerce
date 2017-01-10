@@ -101,6 +101,7 @@ class MethodLockedConfiguredPriceProviderDecoratorTest extends \PHPUnit_Framewor
     {
         return $this
             ->getMockBuilder(ShippingContext::class)
+            ->disableOriginalConstructor()
             ->getMock();
     }
 

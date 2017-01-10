@@ -2,17 +2,19 @@
 
 namespace Oro\Bundle\SaleBundle\Quote\Shipping\Context\Factory\Basic;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Quote\Shipping\Context\Factory\QuoteShippingContextFactoryInterface;
 use Oro\Bundle\SaleBundle\Quote\Shipping\LineItem\Converter\QuoteToShippingLineItemConverterInterface;
-use Oro\Bundle\ShippingBundle\Factory\ShippingContextFactory;
+use Oro\Bundle\ShippingBundle\Context\Builder\Factory\ShippingContextBuilderFactoryInterface;
 
 class BasicQuoteShippingContextFactory implements QuoteShippingContextFactoryInterface
 {
     /**
-     * @var ShippingContextFactory
+     * @var ShippingContextBuilderFactoryInterface
      */
-    private $shippingContextFactory;
+    private $shippingContextBuilderFactory;
 
     /**
      * @var QuoteToShippingLineItemConverterInterface
@@ -20,15 +22,23 @@ class BasicQuoteShippingContextFactory implements QuoteShippingContextFactoryInt
     private $quoteToShippingLineItemConverter;
 
     /**
-     * @param ShippingContextFactory $shippingContextFactory
+     * @var TotalProcessorProvider
+     */
+    private $totalProcessorProvider;
+
+    /**
+     * @param ShippingContextBuilderFactoryInterface $shippingContextBuilderFactory
      * @param QuoteToShippingLineItemConverterInterface $quoteToShippingLineItemConverter
+     * @param TotalProcessorProvider $totalProcessorProvider
      */
     public function __construct(
-        ShippingContextFactory $shippingContextFactory,
-        QuoteToShippingLineItemConverterInterface $quoteToShippingLineItemConverter
+        ShippingContextBuilderFactoryInterface $shippingContextBuilderFactory,
+        QuoteToShippingLineItemConverterInterface $quoteToShippingLineItemConverter,
+        TotalProcessorProvider $totalProcessorProvider
     ) {
-        $this->shippingContextFactory = $shippingContextFactory;
+        $this->shippingContextBuilderFactory = $shippingContextBuilderFactory;
         $this->quoteToShippingLineItemConverter = $quoteToShippingLineItemConverter;
+        $this->totalProcessorProvider = $totalProcessorProvider;
     }
 
     /**
@@ -36,19 +46,31 @@ class BasicQuoteShippingContextFactory implements QuoteShippingContextFactoryInt
      */
     public function create(Quote $quote)
     {
-        $shippingContext = $this->shippingContextFactory->create();
+        $convertedLineItems = $this->quoteToShippingLineItemConverter->convertLineItems($quote);
 
-        $shippingContext->setShippingAddress($quote->getShippingAddress());
-        $shippingContext->setCurrency($quote->getCurrency());
-        $shippingContext->setSourceEntity($quote);
-        $shippingContext->setSourceEntityIdentifier($quote->getId());
+        //$total = $this->totalProcessorProvider->getTotal($quote);
+        $subtotal = Price::create(
+            0,
+            ''
+        );
+        //@TODO: count by "shippingLineItemAwareInterface"
 
-        if (!$quote->getDemands()->isEmpty()) {
-            $shippingContext->setLineItemsByData(
-                $this->quoteToShippingLineItemConverter->convertLineItems($quote)
-            );
+        $shippingContextBuilder = $this->shippingContextBuilderFactory->createShippingContextBuilder(
+            $quote->getCurrency(),
+            $subtotal,
+            $quote,
+            $quote->getId()
+        );
+
+        if (null !== $quote->getShippingAddress()) {
+            $shippingContextBuilder
+                ->setShippingAddress($quote->getShippingAddress());
         }
 
-        return $shippingContext;
+        if (false === $convertedLineItems->isEmpty()) {
+            $shippingContextBuilder->setLineItems($convertedLineItems);
+        }
+
+        return $shippingContextBuilder->getResult();
     }
 }

@@ -10,7 +10,7 @@ class QuoteEventTest extends \PHPUnit_Framework_TestCase
     public function testGetters()
     {
         $quote = new Quote();
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->getMockBuilder('Symfony\Component\Form\FormInterface')->getMock();
         $submittedData = ['test'];
 
         $event = new QuoteEvent($form, $quote, $submittedData);

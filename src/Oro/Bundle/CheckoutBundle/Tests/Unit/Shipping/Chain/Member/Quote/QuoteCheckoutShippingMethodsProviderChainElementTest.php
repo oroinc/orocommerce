@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Shipping\Chain\Member\Quote;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\Factory\ShippingContextProviderFactory;
+use Oro\Bundle\CheckoutBundle\Factory\CheckoutShippingContextFactory;
 use Oro\Bundle\CheckoutBundle\Shipping\Method\Chain\Member\Quote\QuoteCheckoutShippingMethodsProviderChainElement;
 use Oro\Bundle\CheckoutBundle\Shipping\Method\CheckoutShippingMethodsProviderInterface;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
@@ -23,7 +23,7 @@ class QuoteCheckoutShippingMethodsProviderChainElementTest extends \PHPUnit_Fram
     private $testedMethodsProvider;
 
     /**
-     * @var ShippingContextProviderFactory|\PHPUnit_Framework_MockObject_MockObject
+     * @var CheckoutShippingContextFactory|\PHPUnit_Framework_MockObject_MockObject
      */
     private $checkoutShippingContextFactoryMock;
 
@@ -39,7 +39,7 @@ class QuoteCheckoutShippingMethodsProviderChainElementTest extends \PHPUnit_Fram
 
     public function setUp()
     {
-        $this->checkoutShippingContextFactoryMock = $this->getMockBuilder(ShippingContextProviderFactory::class)
+        $this->checkoutShippingContextFactoryMock = $this->getMockBuilder(CheckoutShippingContextFactory::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -346,6 +346,7 @@ class QuoteCheckoutShippingMethodsProviderChainElementTest extends \PHPUnit_Fram
     {
         return $this
             ->getMockBuilder(ShippingContext::class)
+            ->disableOriginalConstructor()
             ->getMock();
     }
 }

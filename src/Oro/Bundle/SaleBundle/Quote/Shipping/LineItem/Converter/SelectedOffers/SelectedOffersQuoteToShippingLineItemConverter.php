@@ -3,13 +3,34 @@
 namespace Oro\Bundle\SaleBundle\Quote\Shipping\LineItem\Converter\SelectedOffers;
 
 use Oro\Bundle\SaleBundle\Entity\Quote;
-use Oro\Bundle\SaleBundle\Entity\QuoteProductDemand;
-use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use Oro\Bundle\SaleBundle\Quote\Shipping\LineItem\Converter\QuoteToShippingLineItemConverterInterface;
-use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
+use Oro\Bundle\ShippingBundle\Context\LineItem\Builder\Factory\ShippingLineItemBuilderFactoryInterface;
+use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Factory\ShippingLineItemCollectionFactoryInterface;
 
 class SelectedOffersQuoteToShippingLineItemConverter implements QuoteToShippingLineItemConverterInterface
 {
+    /**
+     * @var ShippingLineItemCollectionFactoryInterface
+     */
+    private $shippingLineItemCollectionFactory;
+
+    /**
+     * @var ShippingLineItemBuilderFactoryInterface
+     */
+    private $shippingLineItemBuilderFactory;
+
+    /**
+     * @param ShippingLineItemCollectionFactoryInterface $shippingLineItemCollectionFactory
+     * @param ShippingLineItemBuilderFactoryInterface $shippingLineItemBuilderFactory
+     */
+    public function __construct(
+        ShippingLineItemCollectionFactoryInterface $shippingLineItemCollectionFactory,
+        ShippingLineItemBuilderFactoryInterface $shippingLineItemBuilderFactory
+    ) {
+        $this->shippingLineItemCollectionFactory = $shippingLineItemCollectionFactory;
+        $this->shippingLineItemBuilderFactory = $shippingLineItemBuilderFactory;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -21,29 +42,20 @@ class SelectedOffersQuoteToShippingLineItemConverter implements QuoteToShippingL
             foreach ($demand->getDemandProducts() as $productDemand) {
                 $productOffer = $productDemand->getQuoteProductOffer();
 
-                $shippingLineItems[] = $this->createShippingLineItem($productDemand, $productOffer);
+                $lineItemBuilder = $this->shippingLineItemBuilderFactory->createBuilder(
+                    $productOffer->getPrice(),
+                    $productOffer->getProductUnit(),
+                    $productOffer->getProductUnitCode(),
+                    $productDemand->getQuantity(),
+                    $productOffer
+                );
+
+                $lineItemBuilder->setProduct($productOffer->getProduct());
+
+                $shippingLineItems[] = $lineItemBuilder->getResult();
             }
         }
 
-        return $shippingLineItems;
-    }
-
-    /**
-     * @param QuoteProductDemand $demand
-     * @param QuoteProductOffer  $productOffer
-     *
-     * @return ShippingLineItem
-     */
-    private function createShippingLineItem(QuoteProductDemand $demand, QuoteProductOffer $productOffer)
-    {
-        $shippingLineItem = new ShippingLineItem();
-
-        $shippingLineItem->setProduct($productOffer->getProduct());
-        $shippingLineItem->setProductHolder($productOffer);
-        $shippingLineItem->setProductUnit($productOffer->getProductUnit());
-        $shippingLineItem->setQuantity($demand->getQuantity());
-        $shippingLineItem->setPrice($productOffer->getPrice());
-
-        return $shippingLineItem;
+        return $this->shippingLineItemCollectionFactory->createShippingLineItemCollection($shippingLineItems);
     }
 }

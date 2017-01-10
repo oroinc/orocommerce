@@ -3,6 +3,12 @@
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\PreloadedExtension;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Translation\TranslatorInterface;
+
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\Account;
@@ -10,7 +16,6 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Form\Type\AccountUserSelectType;
 use Oro\Bundle\CustomerBundle\Form\Type\AccountSelectType;
-use Oro\Bundle\CustomerBundle\Form\Type\AccountUserSelectType;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
@@ -32,9 +37,6 @@ use Oro\Bundle\SaleBundle\Form\Type\QuoteType;
 use Oro\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider;
 use Oro\Bundle\SaleBundle\Tests\Unit\Form\Type\Stub\EntityType as StubEntityType;
 use Oro\Bundle\UserBundle\Entity\User;
-use Symfony\Component\Form\PreloadedExtension;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Translation\TranslatorInterface;
 
 class QuoteTypeTest extends AbstractTest
 {
@@ -344,7 +346,8 @@ class QuoteTypeTest extends AbstractTest
         $account->setGroup($accountGroup);
         $quote->setAccount($account);
 
-        $builder->expects($this->atMost(13))->method('add')->willReturn($builder);
+        $builder->expects($this->atMost(18))->method('add')->willReturn($builder);
+        $builder->expects($this->once())->method('get')->willReturn($builder);
 
         $this->formType->buildForm($builder, ['data' => $quote]);
     }
@@ -355,7 +358,8 @@ class QuoteTypeTest extends AbstractTest
         $builder = $this->createMock(FormBuilderInterface::class);
         $quote = new Quote();
 
-        $builder->expects($this->atMost(12))->method('add')->willReturn($builder);
+        $builder->expects($this->atMost(18))->method('add')->willReturn($builder);
+        $builder->expects($this->once())->method('get')->willReturn($builder);
 
         $this->formType->buildForm($builder, ['data' => $quote]);
     }

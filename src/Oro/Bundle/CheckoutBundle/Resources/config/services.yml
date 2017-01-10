@@ -401,7 +401,7 @@ services:
         class: 'Oro\Bundle\CheckoutBundle\Shipping\Method\Chain\Member\Price\PriceCheckoutShippingMethodsProviderChainElement'
         arguments:
             - '@oro_shipping.shipping_price.provider'
-            - '@oro_checkout.factory.shipping_context_provider_factory'
+            - '@oro_checkout.factory.shipping_context_factory'
 
     oro_checkout.condition.checkout_has_applicable_shipping_methods:
         class: 'Oro\Bundle\CheckoutBundle\Condition\CheckoutHasApplicableShippingMethods'

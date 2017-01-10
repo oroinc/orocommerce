@@ -66,7 +66,9 @@ class QuotePossibleShippingMethodsEventListenerTest extends \PHPUnit_Framework_T
         $this->priceProvider->expects(static::never())
             ->method('getApplicableMethodsViews');
 
-        $event = new QuoteEvent($this->getMock(FormInterface::class), $quote, $submittedData);
+        $formMock = $this->getMockBuilder(FormInterface::class)->getMock();
+
+        $event = new QuoteEvent($formMock, $quote, $submittedData);
 
         $this->listener->onQuoteEvent($event);
 
@@ -99,7 +101,7 @@ class QuotePossibleShippingMethodsEventListenerTest extends \PHPUnit_Framework_T
     public function testOnOrderEvent(ShippingMethodViewCollection $methods, $submittedData, array $expectedMethods)
     {
         $quote = new Quote();
-        $context = $this->getMock(ShippingContextInterface::class);
+        $context = $this->getMockBuilder(ShippingContextInterface::class)->getMock();
         $this->factory->expects(static::any())
             ->method('create')
             ->with($quote)
@@ -115,7 +117,8 @@ class QuotePossibleShippingMethodsEventListenerTest extends \PHPUnit_Framework_T
             ->with($context)
             ->willReturn($methods);
 
-        $event = new QuoteEvent($this->getMock(FormInterface::class), $quote, $submittedData);
+        $formMock = $this->getMockBuilder(FormInterface::class)->getMock();
+        $event = new QuoteEvent($formMock, $quote, $submittedData);
 
         $this->listener->onQuoteEvent($event);
 

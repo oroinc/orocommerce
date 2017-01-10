@@ -218,15 +218,4 @@ class QuoteToOrderConverter
     {
         return 1.0;
     }
-    /**
-     * @param Order $order
-     */
-    protected function fillSubtotals(Order $order)
-    {
-        $subtotal = $this->lineItemSubtotalProvider->getSubtotal($order);
-        $total = $this->totalProvider->getTotal($order);
-
-        $order->setSubtotal($subtotal->getAmount());
-        $order->setTotal($total->getAmount());
-    }
 }

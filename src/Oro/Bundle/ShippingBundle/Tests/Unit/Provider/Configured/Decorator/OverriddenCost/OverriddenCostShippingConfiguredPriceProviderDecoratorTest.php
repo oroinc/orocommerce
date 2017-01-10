@@ -100,6 +100,7 @@ class OverriddenCostShippingConfiguredPriceProviderDecoratorTest extends \PHPUni
     {
         return $this
             ->getMockBuilder(ShippingContext::class)
+            ->disableOriginalConstructor()
             ->getMock();
     }
 

@@ -2,27 +2,34 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Quote\Shipping\Context\Factory\Basic;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteAddress;
-use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\SaleBundle\Quote\Shipping\Context\Factory\Basic\BasicQuoteShippingContextFactory;
 use Oro\Bundle\SaleBundle\Quote\Shipping\LineItem\Converter\QuoteToShippingLineItemConverterInterface;
+use Oro\Bundle\ShippingBundle\Context\Builder\Factory\ShippingContextBuilderFactoryInterface;
+use Oro\Bundle\ShippingBundle\Context\Builder\ShippingContextBuilderInterface;
+use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\DoctrineShippingLineItemCollection;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
-use Oro\Bundle\ShippingBundle\Factory\ShippingContextFactory;
-use Doctrine\Common\Collections\ArrayCollection;
 
 class BasicQuoteShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var ShippingContextFactory|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingContextBuilderFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $shippingContextFactoryMock;
+    private $shippingContextBuilderFactoryMock;
 
     /**
      * @var QuoteToShippingLineItemConverterInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private $quoteToShippingLineItemConverterMock;
+
+    /**
+     * @var TotalProcessorProvider|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $totalProcessorProviderMock;
 
     /**
      * @var BasicQuoteShippingContextFactory
@@ -31,18 +38,23 @@ class BasicQuoteShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->shippingContextFactoryMock = $this
-            ->getMockBuilder(ShippingContextFactory::class)
-            ->disableOriginalConstructor()
+        $this->shippingContextBuilderFactoryMock = $this
+            ->getMockBuilder(ShippingContextBuilderFactoryInterface::class)
             ->getMock();
 
         $this->quoteToShippingLineItemConverterMock = $this
             ->getMockBuilder(QuoteToShippingLineItemConverterInterface::class)
             ->getMock();
 
+        $this->totalProcessorProviderMock = $this
+            ->getMockBuilder(TotalProcessorProvider::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->basicQuoteShippingContextFactory = new BasicQuoteShippingContextFactory(
-            $this->shippingContextFactoryMock,
-            $this->quoteToShippingLineItemConverterMock
+            $this->shippingContextBuilderFactoryMock,
+            $this->quoteToShippingLineItemConverterMock,
+            $this->totalProcessorProviderMock
         );
     }
 
@@ -52,66 +64,12 @@ class BasicQuoteShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
         $currency = 'USD';
 
         $shippingAddressMock = $this->getShippingAddressMock();
-        $quoteDemands = new ArrayCollection([
-            $this->getQuoteDemandMock()
-        ]);
-        $shippingLineItems = [
+        $shippingLineItems = new DoctrineShippingLineItemCollection([
             $this->getShippingLineItemMock()
-        ];
-
+        ]);
         $quoteMock = $this->getQuoteMock();
-
-        $quoteMock
-            ->expects($this->once())
-            ->method('getId')
-            ->willReturn($quoteId);
-
-        $quoteMock
-            ->expects($this->once())
-            ->method('getShippingAddress')
-            ->willReturn($shippingAddressMock);
-
-        $quoteMock
-            ->expects($this->once())
-            ->method('getCurrency')
-            ->willReturn($currency);
-
-        $quoteMock
-            ->expects($this->once())
-            ->method('getDemands')
-            ->willReturn($quoteDemands);
-
         $shippingContextMock = $this->getShippingContextMock();
-
-        $shippingContextMock
-            ->expects($this->once())
-            ->method('setShippingAddress')
-            ->with($shippingAddressMock);
-
-        $shippingContextMock
-            ->expects($this->once())
-            ->method('setCurrency')
-            ->with($currency);
-
-        $shippingContextMock
-            ->expects($this->once())
-            ->method('setSourceEntity')
-            ->with($quoteMock);
-
-        $shippingContextMock
-            ->expects($this->once())
-            ->method('setSourceEntityIdentifier')
-            ->with($quoteId);
-
-        $this->shippingContextFactoryMock
-            ->expects($this->once())
-            ->method('create')
-            ->willReturn($shippingContextMock);
-
-        $shippingContextMock
-            ->expects($this->once())
-            ->method('setLineItemsByData')
-            ->with($shippingLineItems);
+        $builder = $this->getShippingContextBuilderMock();
 
         $this->quoteToShippingLineItemConverterMock
             ->expects($this->once())
@@ -119,21 +77,6 @@ class BasicQuoteShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
             ->with($quoteMock)
             ->willReturn($shippingLineItems);
 
-        $actualContext = $this->basicQuoteShippingContextFactory->create($quoteMock);
-
-        $this->assertEquals($shippingContextMock, $actualContext);
-    }
-
-    public function testCreateWithoutDemands()
-    {
-        $quoteId = 5;
-        $currency = 'USD';
-
-        $shippingAddressMock = $this->getShippingAddressMock();
-        $quoteDemands = new ArrayCollection([]);
-
-        $quoteMock = $this->getQuoteMock();
-
         $quoteMock
             ->expects($this->once())
             ->method('getId')
@@ -149,49 +92,40 @@ class BasicQuoteShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
             ->method('getCurrency')
             ->willReturn($currency);
 
-        $quoteMock
-            ->expects($this->once())
-            ->method('getDemands')
-            ->willReturn($quoteDemands);
-
-        $shippingContextMock = $this->getShippingContextMock();
-
-        $shippingContextMock
+        $builder
             ->expects($this->once())
             ->method('setShippingAddress')
             ->with($shippingAddressMock);
 
-        $shippingContextMock
+        $builder
             ->expects($this->once())
-            ->method('setCurrency')
-            ->with($currency);
-
-        $shippingContextMock
-            ->expects($this->once())
-            ->method('setSourceEntity')
-            ->with($quoteMock);
-
-        $shippingContextMock
-            ->expects($this->once())
-            ->method('setSourceEntityIdentifier')
-            ->with($quoteId);
-
-        $this->shippingContextFactoryMock
-            ->expects($this->once())
-            ->method('create')
+            ->method('getResult')
             ->willReturn($shippingContextMock);
 
-        $shippingContextMock
-            ->expects($this->never())
-            ->method('setLineItemsByData');
+        $builder
+            ->expects($this->once())
+            ->method('setLineItems')
+            ->with($shippingLineItems);
 
-        $this->quoteToShippingLineItemConverterMock
-            ->expects($this->never())
-            ->method('convertLineItems');
+        $this->shippingContextBuilderFactoryMock
+            ->expects($this->once())
+            ->method('createShippingContextBuilder')
+            ->with($currency, Price::create(0,''), $quoteMock, $quoteId)//@TODO: change price
+            ->willReturn($builder);
 
         $actualContext = $this->basicQuoteShippingContextFactory->create($quoteMock);
 
         $this->assertEquals($shippingContextMock, $actualContext);
+    }
+
+    /**
+     * @return ShippingContextBuilderInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private function getShippingContextBuilderMock()
+    {
+        return $this
+            ->getMockBuilder(ShippingContextBuilderInterface::class)
+            ->getMock();
     }
 
     /**
@@ -201,17 +135,6 @@ class BasicQuoteShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
     {
         return $this
             ->getMockBuilder(ShippingLineItemInterface::class)
-            ->getMock();
-    }
-
-    /**
-     * @return QuoteDemand|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private function getQuoteDemandMock()
-    {
-        return $this
-            ->getMockBuilder(QuoteDemand::class)
-            ->disableOriginalConstructor()
             ->getMock();
     }
 

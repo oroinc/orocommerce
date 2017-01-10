@@ -163,6 +163,7 @@ class AllowUnlistedConfiguredPriceProviderDecoratorTest extends \PHPUnit_Framewo
     {
         return $this
             ->getMockBuilder(ShippingContext::class)
+            ->disableOriginalConstructor()
             ->getMock();
     }
 

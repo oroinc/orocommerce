@@ -2,14 +2,16 @@ services:
     oro_sale.quote.selected_offers_shipping_context_factory:
         class: 'Oro\Bundle\SaleBundle\Quote\Shipping\Context\Factory\Basic\BasicQuoteShippingContextFactory'
         arguments:
-            - '@oro_shipping.factory.shipping_context_factory'
+            - '@oro_shipping.context.builder_factory_basic'
             - '@oro_sale.quote.shipping_line_items_converter_selected_offers'
+            - '@oro_pricing.subtotal_processor.total_processor_provider'
 
     oro_sale.quote.first_offers_shipping_context_factory:
         class: 'Oro\Bundle\SaleBundle\Quote\Shipping\Context\Factory\Basic\BasicQuoteShippingContextFactory'
         arguments:
-            - '@oro_shipping.factory.shipping_context_factory'
+            - '@oro_shipping.context.builder_factory_basic'
             - '@oro_sale.quote.shipping_line_items_converter_first_offers'
+            - '@oro_pricing.subtotal_processor.total_processor_provider'
 
     oro_sale.quote_event_listener.possible_shipping_methods:
         class: 'Oro\Bundle\SaleBundle\EventListener\Quote\QuotePossibleShippingMethodsEventListener'
@@ -68,6 +70,12 @@ services:
 
     oro_sale.quote.shipping_line_items_converter_first_offers:
         class: 'Oro\Bundle\SaleBundle\Quote\Shipping\LineItem\Converter\FirstOffers\FirstOffersQuoteToShippingLineItemConverter'
+        arguments:
+            - '@oro_shipping.context.doctrine_line_item_collection_factory'
+            - '@oro_shipping.line_item.factory_basic'
 
     oro_sale.quote.shipping_line_items_converter_selected_offers:
         class: 'Oro\Bundle\SaleBundle\Quote\Shipping\LineItem\Converter\SelectedOffers\SelectedOffersQuoteToShippingLineItemConverter'
+        arguments:
+            - '@oro_shipping.context.doctrine_line_item_collection_factory'
+            - '@oro_shipping.line_item.factory_basic'

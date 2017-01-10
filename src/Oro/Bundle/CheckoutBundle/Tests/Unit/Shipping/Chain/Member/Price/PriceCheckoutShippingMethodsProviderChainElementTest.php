@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Shipping\Chain\Member\Price;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\Factory\ShippingContextProviderFactory;
+use Oro\Bundle\CheckoutBundle\Factory\CheckoutShippingContextFactory;
 use Oro\Bundle\CheckoutBundle\Shipping\Method\Chain\Member\Price\PriceCheckoutShippingMethodsProviderChainElement;
 use Oro\Bundle\CheckoutBundle\Shipping\Method\CheckoutShippingMethodsProviderInterface;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
@@ -24,7 +24,7 @@ class PriceCheckoutShippingMethodsProviderChainElementTest extends \PHPUnit_Fram
     private $shippingPriceProviderMock;
 
     /**
-     * @var ShippingContextProviderFactory|\PHPUnit_Framework_MockObject_MockObject
+     * @var CheckoutShippingContextFactory|\PHPUnit_Framework_MockObject_MockObject
      */
     private $shippingContextFactoryMock;
 
@@ -36,7 +36,7 @@ class PriceCheckoutShippingMethodsProviderChainElementTest extends \PHPUnit_Fram
             ->getMock();
 
         $this->shippingContextFactoryMock = $this
-            ->getMockBuilder(ShippingContextProviderFactory::class)
+            ->getMockBuilder(CheckoutShippingContextFactory::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -195,6 +195,7 @@ class PriceCheckoutShippingMethodsProviderChainElementTest extends \PHPUnit_Fram
     {
         return $this
             ->getMockBuilder(ShippingContext::class)
+            ->disableOriginalConstructor()
             ->getMock();
     }
 }
