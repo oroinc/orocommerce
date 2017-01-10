@@ -9,4 +9,4 @@ layout:
         - '@setOption':
             id: page_title
             optionName: text
-            optionValue: 'oro.customer.frontend.account_user.role.entity_plural_label'
+            optionValue: 'oro.customer.frontend.customer_user.role.entity_plural_label'

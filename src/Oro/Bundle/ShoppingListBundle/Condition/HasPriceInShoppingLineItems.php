@@ -146,15 +146,15 @@ class HasPriceInShoppingLineItems extends AbstractCondition implements ContextAc
             );
         }
 
-        /** @var CustomerUser $accountUser */
-        $accountUser = $this->securityFacade->getLoggedUser();
-        if (!$accountUser) {
+        /** @var CustomerUser $customerUser */
+        $customerUser = $this->securityFacade->getLoggedUser();
+        if (!$customerUser) {
             return false;
         }
 
         $prices = $this->productPriceProvider->getMatchedPrices(
             $productsPricesCriteria,
-            $this->priceListRequestHandler->getPriceListByAccount()
+            $this->priceListRequestHandler->getPriceListByCustomer()
         );
 
         return !empty(array_filter($prices));

@@ -15,8 +15,8 @@ class QuoteAddressTest extends AbstractTest
         $now = new \DateTime('now');
         $properties = [
             ['id', '123'],
-            ['accountAddress', new CustomerAddress()],
-            ['accountUserAddress', new CustomerUserAddress()],
+            ['customerAddress', new CustomerAddress()],
+            ['customerUserAddress', new CustomerUserAddress()],
             ['region', new Region('combineCode')],
             ['country', new Country('en-US')],
             ['label', 'QuoteAddress'],

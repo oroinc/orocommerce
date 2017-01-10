@@ -10,7 +10,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
-use Oro\Bundle\CustomerBundle\Form\Type\Frontend\AccountUserMultiSelectType;
+use Oro\Bundle\CustomerBundle\Form\Type\Frontend\CustomerUserMultiSelectType;
 
 class RequestType extends AbstractType
 {
@@ -92,8 +92,8 @@ class RequestType extends AbstractType
                     'compact_units' => true,
                 ],
             ])
-            ->add('assignedAccountUsers', AccountUserMultiSelectType::NAME, [
-                'label' => 'oro.frontend.rfp.request.assigned_account_users.label',
+            ->add('assignedCustomerUsers', CustomerUserMultiSelectType::NAME, [
+                'label' => 'oro.frontend.rfp.request.assigned_customer_users.label',
             ])
         ;
     }

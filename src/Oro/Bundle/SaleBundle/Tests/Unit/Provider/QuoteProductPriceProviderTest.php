@@ -45,7 +45,7 @@ class QuoteProductPriceProviderTest extends \PHPUnit_Framework_TestCase
         $this->treeHandler = $this->getMockBuilder(
             'Oro\Bundle\PricingBundle\Model\PriceListTreeHandler'
         )
-            ->setMethods(['getPriceList', 'getPriceListByAccount'])
+            ->setMethods(['getPriceList', 'getPriceListByCustomer'])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -71,16 +71,16 @@ class QuoteProductPriceProviderTest extends \PHPUnit_Framework_TestCase
     {
         $quote = new Quote();
         $website = new Website();
-        $account = new Customer();
+        $customer = new Customer();
         $quote->setWebsite($website)
-            ->setAccount($account);
+            ->setCustomer($customer);
         foreach ($quoteProducts as $quoteProduct) {
             $quote->addQuoteProduct($quoteProduct);
         }
 
         $this->treeHandler->expects($this->once())
             ->method('getPriceList')
-            ->with($account, $website)
+            ->with($customer, $website)
             ->willReturn($quotePriceList);
 
         if ($productPriceProviderArgs) {
@@ -144,16 +144,16 @@ class QuoteProductPriceProviderTest extends \PHPUnit_Framework_TestCase
     {
         $quote = new Quote();
         $website = new Website();
-        $account = new Customer();
+        $customer = new Customer();
         $quote->setWebsite($website)
-            ->setAccount($account);
+            ->setCustomer($customer);
         foreach ($quoteProducts as $quoteProduct) {
             $quote->addQuoteProduct($quoteProduct);
         }
 
         $this->treeHandler->expects($this->once())
             ->method('getPriceList')
-            ->with($account, $website)
+            ->with($customer, $website)
             ->willReturn($quotePriceList);
 
         if ($productPriceProviderArgs) {

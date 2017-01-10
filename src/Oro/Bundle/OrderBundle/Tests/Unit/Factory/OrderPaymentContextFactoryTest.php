@@ -102,8 +102,8 @@ class OrderPaymentContextFactoryTest extends \PHPUnit_Framework_TestCase
             ->setLineItems($orderLineItemsCollection)
             ->setSubtotal($amount)
             ->setCurrency($currency)
-            ->setAccount($customer)
-            ->setAccountUser($customerUser);
+            ->setCustomer($customer)
+            ->setCustomerUser($customerUser);
 
         $this->contextBuilder
             ->method('setShippingAddress')
@@ -179,8 +179,8 @@ class OrderPaymentContextFactoryTest extends \PHPUnit_Framework_TestCase
             ->setLineItems($orderLineItemsCollection)
             ->setSubtotal($amount)
             ->setCurrency($currency)
-            ->setAccount($customer)
-            ->setAccountUser($customerUser);
+            ->setCustomer($customer)
+            ->setCustomerUser($customerUser);
 
         $this->contextBuilder
             ->method('setShippingAddress')

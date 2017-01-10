@@ -58,7 +58,7 @@ class RequestTest extends \PHPUnit_Framework_TestCase
             [
                 ['requestProducts', new RequestProduct()],
                 ['assignedUsers', new User()],
-                ['assignedAccountUsers', new CustomerUser()],
+                ['assignedCustomerUsers', new CustomerUser()],
                 ['requestAdditionalNotes', new RequestAdditionalNote()],
             ]
         );
@@ -79,8 +79,8 @@ class RequestTest extends \PHPUnit_Framework_TestCase
     public function testOwnershipAccessors()
     {
         $properties = [
-            ['account', new Customer()],
-            ['accountUser', new CustomerUser()],
+            ['customer', new Customer()],
+            ['customerUser', new CustomerUser()],
             ['organization', new Organization()],
             ['owner', new User()]
         ];

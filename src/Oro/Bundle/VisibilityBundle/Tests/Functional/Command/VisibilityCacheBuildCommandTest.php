@@ -40,12 +40,12 @@ class VisibilityCacheBuildCommandTest extends WebTestCase
         $this->clearAllResolvedTables();
 
         $this->assertEquals(0, $this->getCategoryVisibilityResolvedCount());
-        $this->assertEquals(0, $this->getAccountGroupCategoryVisibilityResolvedCount());
-        $this->assertEquals(0, $this->getAccountCategoryVisibilityResolvedCount());
+        $this->assertEquals(0, $this->getCustomerGroupCategoryVisibilityResolvedCount());
+        $this->assertEquals(0, $this->getCustomerCategoryVisibilityResolvedCount());
 
         $this->assertEquals(0, $this->getProductVisibilityResolvedCount());
-        $this->assertEquals(0, $this->getAccountGroupProductVisibilityResolvedCount());
-        $this->assertEquals(0, $this->getAccountProductVisibilityResolvedCount());
+        $this->assertEquals(0, $this->getCustomerGroupProductVisibilityResolvedCount());
+        $this->assertEquals(0, $this->getCustomerProductVisibilityResolvedCount());
 
         // Run command and check result messages
         $result = $this->runCommand(VisibilityCacheBuildCommand::NAME, $params);
@@ -59,24 +59,24 @@ class VisibilityCacheBuildCommandTest extends WebTestCase
             $this->getCategoryVisibilityResolvedCount()
         );
         $this->assertEquals(
-            $expectedRecordsCount['accountGroupCategoryVisibility'],
-            $this->getAccountGroupCategoryVisibilityResolvedCount()
+            $expectedRecordsCount['customerGroupCategoryVisibility'],
+            $this->getCustomerGroupCategoryVisibilityResolvedCount()
         );
         $this->assertEquals(
-            $expectedRecordsCount['accountCategoryVisibility'],
-            $this->getAccountCategoryVisibilityResolvedCount()
+            $expectedRecordsCount['customerCategoryVisibility'],
+            $this->getCustomerCategoryVisibilityResolvedCount()
         );
         $this->assertEquals(
             $expectedRecordsCount['productVisibility'],
             $this->getProductVisibilityResolvedCount()
         );
         $this->assertEquals(
-            $expectedRecordsCount['accountGroupProductVisibility'],
-            $this->getAccountGroupProductVisibilityResolvedCount()
+            $expectedRecordsCount['customerGroupProductVisibility'],
+            $this->getCustomerGroupProductVisibilityResolvedCount()
         );
         $this->assertEquals(
-            $expectedRecordsCount['accountProductVisibility'],
-            $this->getAccountProductVisibilityResolvedCount()
+            $expectedRecordsCount['customerProductVisibility'],
+            $this->getCustomerProductVisibilityResolvedCount()
         );
     }
 
@@ -95,11 +95,11 @@ class VisibilityCacheBuildCommandTest extends WebTestCase
                 ],
                 'expectedCounts' => [
                     'categoryVisibility' => 8,
-                    'accountGroupCategoryVisibility' => 14,
-                    'accountCategoryVisibility' => 35,
+                    'customerGroupCategoryVisibility' => 14,
+                    'customerCategoryVisibility' => 35,
                     'productVisibility' => 3,
-                    'accountGroupProductVisibility' => 10,
-                    'accountProductVisibility' => 5,
+                    'customerGroupProductVisibility' => 10,
+                    'customerProductVisibility' => 5,
                 ]
             ],
         ];
@@ -116,17 +116,17 @@ class VisibilityCacheBuildCommandTest extends WebTestCase
     /**
      * @return int
      */
-    protected function getAccountGroupCategoryVisibilityResolvedCount()
+    protected function getCustomerGroupCategoryVisibilityResolvedCount()
     {
-        return $this->getEntitiesCount($this->getAccountGroupCategoryVisibilityResolvedRepository());
+        return $this->getEntitiesCount($this->getCustomerGroupCategoryVisibilityResolvedRepository());
     }
 
     /**
      * @return int
      */
-    protected function getAccountCategoryVisibilityResolvedCount()
+    protected function getCustomerCategoryVisibilityResolvedCount()
     {
-        return $this->getEntitiesCount($this->getAccountCategoryVisibilityResolvedRepository());
+        return $this->getEntitiesCount($this->getCustomerCategoryVisibilityResolvedRepository());
     }
 
     /**
@@ -140,17 +140,17 @@ class VisibilityCacheBuildCommandTest extends WebTestCase
     /**
      * @return int
      */
-    protected function getAccountGroupProductVisibilityResolvedCount()
+    protected function getCustomerGroupProductVisibilityResolvedCount()
     {
-        return $this->getEntitiesCount($this->getAccountGroupProductVisibilityResolvedRepository());
+        return $this->getEntitiesCount($this->getCustomerGroupProductVisibilityResolvedRepository());
     }
 
     /**
      * @return int
      */
-    protected function getAccountProductVisibilityResolvedCount()
+    protected function getCustomerProductVisibilityResolvedCount()
     {
-        return $this->getEntitiesCount($this->getAccountProductVisibilityResolvedRepository());
+        return $this->getEntitiesCount($this->getCustomerProductVisibilityResolvedRepository());
     }
 
     /**
@@ -166,21 +166,21 @@ class VisibilityCacheBuildCommandTest extends WebTestCase
     /**
      * @return EntityRepository
      */
-    protected function getAccountGroupCategoryVisibilityResolvedRepository()
+    protected function getCustomerGroupCategoryVisibilityResolvedRepository()
     {
         return $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
-            ->getRepository('OroVisibilityBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved');
+            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\CustomerGroupCategoryVisibilityResolved')
+            ->getRepository('OroVisibilityBundle:VisibilityResolved\CustomerGroupCategoryVisibilityResolved');
     }
 
     /**
      * @return EntityRepository
      */
-    protected function getAccountCategoryVisibilityResolvedRepository()
+    protected function getCustomerCategoryVisibilityResolvedRepository()
     {
         return $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
-            ->getRepository('OroVisibilityBundle:VisibilityResolved\AccountCategoryVisibilityResolved');
+            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\CustomerCategoryVisibilityResolved')
+            ->getRepository('OroVisibilityBundle:VisibilityResolved\CustomerCategoryVisibilityResolved');
     }
 
     /**
@@ -196,32 +196,32 @@ class VisibilityCacheBuildCommandTest extends WebTestCase
     /**
      * @return EntityRepository
      */
-    protected function getAccountGroupProductVisibilityResolvedRepository()
+    protected function getCustomerGroupProductVisibilityResolvedRepository()
     {
         return $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\AccountGroupProductVisibilityResolved')
-            ->getRepository('OroVisibilityBundle:VisibilityResolved\AccountGroupProductVisibilityResolved');
+            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\CustomerGroupProductVisibilityResolved')
+            ->getRepository('OroVisibilityBundle:VisibilityResolved\CustomerGroupProductVisibilityResolved');
     }
 
     /**
      * @return EntityRepository
      */
-    protected function getAccountProductVisibilityResolvedRepository()
+    protected function getCustomerProductVisibilityResolvedRepository()
     {
         return $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\AccountProductVisibilityResolved')
-            ->getRepository('OroVisibilityBundle:VisibilityResolved\AccountProductVisibilityResolved');
+            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\CustomerProductVisibilityResolved')
+            ->getRepository('OroVisibilityBundle:VisibilityResolved\CustomerProductVisibilityResolved');
     }
 
     protected function clearAllResolvedTables()
     {
         $this->deleteAllEntities($this->getCategoryVisibilityResolvedRepository());
-        $this->deleteAllEntities($this->getAccountGroupCategoryVisibilityResolvedRepository());
-        $this->deleteAllEntities($this->getAccountCategoryVisibilityResolvedRepository());
+        $this->deleteAllEntities($this->getCustomerGroupCategoryVisibilityResolvedRepository());
+        $this->deleteAllEntities($this->getCustomerCategoryVisibilityResolvedRepository());
 
         $this->deleteAllEntities($this->getProductVisibilityResolvedRepository());
-        $this->deleteAllEntities($this->getAccountGroupProductVisibilityResolvedRepository());
-        $this->deleteAllEntities($this->getAccountProductVisibilityResolvedRepository());
+        $this->deleteAllEntities($this->getCustomerGroupProductVisibilityResolvedRepository());
+        $this->deleteAllEntities($this->getCustomerProductVisibilityResolvedRepository());
     }
 
     /**

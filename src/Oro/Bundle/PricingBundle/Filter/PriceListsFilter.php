@@ -8,8 +8,8 @@ use Oro\Bundle\FilterBundle\Datasource\FilterDatasourceAdapterInterface;
 use Oro\Bundle\FilterBundle\Datasource\Orm\OrmFilterDatasourceAdapter;
 use Oro\Bundle\FilterBundle\Filter\EntityFilter;
 use Oro\Component\ConfigExpression\Exception\InvalidArgumentException;
-use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToAccountGroupRepository;
-use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToAccountRepository;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToCustomerGroupRepository;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToCustomerRepository;
 
 class PriceListsFilter extends EntityFilter
 {
@@ -49,7 +49,7 @@ class PriceListsFilter extends EntityFilter
         $priceList = reset($data['value']);
         $relationClass = $this->params[self::RELATION_CLASS_NAME_PARAMETER];
 
-        /** @var PriceListToAccountRepository|PriceListToAccountGroupRepository $repository */
+        /** @var PriceListToCustomerRepository|PriceListToCustomerGroupRepository $repository */
         $repository = $this->registry->getManagerForClass($relationClass)
             ->getRepository($relationClass);
         $repository->restrictByPriceList($queryBuilder, $priceList, $parameterName);

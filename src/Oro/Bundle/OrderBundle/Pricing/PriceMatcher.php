@@ -45,7 +45,7 @@ class PriceMatcher
             }
         );
 
-        $priceList = $this->priceListTreeHandler->getPriceList($order->getAccount(), $order->getWebsite());
+        $priceList = $this->priceListTreeHandler->getPriceList($order->getCustomer(), $order->getWebsite());
 
         return $this->provider->getMatchingPrices($lineItems->toArray(), $priceList);
     }

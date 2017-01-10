@@ -11,12 +11,12 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountProductVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
-use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\AbstractVisibilityRepository;
-use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\AccountGroupProductRepository;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CustomerGroupProductRepository;
 use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
 use Oro\Bundle\VisibilityBundle\Tests\Functional\Entity\ResolvedEntityRepositoryTestTrait;
 
@@ -49,7 +49,7 @@ abstract class VisibilityResolvedRepositoryTestCase extends WebTestCase
 
         $this->loadFixtures(
             [
-                LoadProductVisibilityData::class
+                LoadProductVisibilityData::class,
             ]
         );
     }
@@ -84,7 +84,7 @@ abstract class VisibilityResolvedRepositoryTestCase extends WebTestCase
 
         $this->getRepository()->clearTable();
         $scope = $this->getScope($targetEntityReference);
-        /** @var AccountGroupProductRepository $repository */
+        /** @var CustomerGroupProductRepository $repository */
         $repository = $this->getRepository();
         $repository->insertByCategory($this->getInsertFromSelectExecutor(), $this->scopeManager, $scope);
         $resolvedEntities = $this->getResolvedValues();
@@ -111,7 +111,7 @@ abstract class VisibilityResolvedRepositoryTestCase extends WebTestCase
      */
     public function testInsertStatic($expectedRows)
     {
-        /** @var AccountGroupProductRepository $repository */
+        /** @var CustomerGroupProductRepository $repository */
         $repository = $this->getRepository();
         $repository->clearTable();
         $repository->insertStatic($this->getInsertFromSelectExecutor());
@@ -126,8 +126,10 @@ abstract class VisibilityResolvedRepositoryTestCase extends WebTestCase
             $this->assertNotNull($source);
             if ($resolvedValue->getVisibility() == BaseProductVisibilityResolved::VISIBILITY_HIDDEN) {
                 $visibility = VisibilityInterface::HIDDEN;
-            } elseif ($resolvedValue->getVisibility() == AccountProductVisibilityResolved::VISIBILITY_FALLBACK_TO_ALL) {
-                $visibility = AccountProductVisibility::CURRENT_PRODUCT;
+            } elseif ($resolvedValue->getVisibility()
+                == CustomerProductVisibilityResolved::VISIBILITY_FALLBACK_TO_ALL
+            ) {
+                $visibility = CustomerProductVisibility::CURRENT_PRODUCT;
             } else {
                 $visibility = VisibilityInterface::VISIBLE;
             }

@@ -64,7 +64,7 @@ class RecordOwnerDataListener
                     $owner = $user;
                 }
                 if ($frontendOwnerType === self::OWNER_TYPE_ACCOUNT) {
-                    $owner = $user->getAccount();
+                    $owner = $user->getCustomer();
                 }
                 $accessor->setValue(
                     $entity,

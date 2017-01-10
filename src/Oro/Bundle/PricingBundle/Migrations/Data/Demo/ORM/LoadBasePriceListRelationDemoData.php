@@ -103,8 +103,8 @@ abstract class LoadBasePriceListRelationDemoData extends AbstractFixture impleme
     public function getDependencies()
     {
         return [
-            'Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadAccountDemoData',
-            'Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadAccountGroupDemoData',
+            'Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomerDemoData',
+            'Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomerGroupDemoData',
             'Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM\LoadPriceListDemoData',
         ];
     }

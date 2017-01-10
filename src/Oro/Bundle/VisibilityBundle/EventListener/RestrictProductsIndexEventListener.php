@@ -6,8 +6,8 @@ use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountGroupProductVisibilityResolved;
-use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerGroupProductVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Visibility\ProductVisibilityTrait;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
@@ -65,8 +65,8 @@ class RestrictProductsIndexEventListener
         $qb->andWhere(
             $qb->expr()->orX(
                 $qb->expr()->gt($productVisibilityForAll, 0),
-                $this->getAccountProductVisibilitySubQuery($qb, $websiteId),
-                $this->getAccountGroupProductVisibilitySubQuery($qb, $websiteId)
+                $this->getCustomerProductVisibilitySubQuery($qb, $websiteId),
+                $this->getCustomerGroupProductVisibilitySubQuery($qb, $websiteId)
             )
         );
     }
@@ -115,18 +115,18 @@ class RestrictProductsIndexEventListener
      * @param int $websiteId
      * @return Expr\Func
      */
-    private function getAccountProductVisibilitySubQuery(QueryBuilder $queryBuilder, $websiteId)
+    private function getCustomerProductVisibilitySubQuery(QueryBuilder $queryBuilder, $websiteId)
     {
         $subQueryBuilder = $this->getVisibilityQueryBuilder(
             $queryBuilder,
-            AccountProductVisibilityResolved::class,
-            'account_product_visibility_resolved',
+            CustomerProductVisibilityResolved::class,
+            'customer_product_visibility_resolved',
             $websiteId
         );
 
-        $accountFallback = $this->addCategoryConfigFallback('account_product_visibility_resolved.visibility');
+        $customerFallback = $this->addCategoryConfigFallback('customer_product_visibility_resolved.visibility');
 
-        $visibilityTerm = $this->getAccountProductVisibilityResolvedVisibilityTerm($accountFallback);
+        $visibilityTerm = $this->getCustomerProductVisibilityResolvedVisibilityTerm($customerFallback);
 
         $subQueryBuilder->andWhere(
             $subQueryBuilder->expr()->gt($visibilityTerm, 0)
@@ -136,21 +136,21 @@ class RestrictProductsIndexEventListener
     }
 
     /**
-     * @param string $accountFallback
+     * @param string $customerFallback
      * @return string
      */
-    private function getAccountProductVisibilityResolvedVisibilityTerm($accountFallback)
+    private function getCustomerProductVisibilityResolvedVisibilityTerm($customerFallback)
     {
         $term = <<<TERM
-CASE WHEN account_product_visibility_resolved.visibility = %s
+CASE WHEN customer_product_visibility_resolved.visibility = %s
     THEN 0
 ELSE (COALESCE(%s, 0) * 100)
 END
 TERM;
         return sprintf(
             $term,
-            AccountProductVisibilityResolved::VISIBILITY_FALLBACK_TO_ALL,
-            $accountFallback
+            CustomerProductVisibilityResolved::VISIBILITY_FALLBACK_TO_ALL,
+            $customerFallback
         );
     }
 
@@ -159,17 +159,17 @@ TERM;
      * @param int $websiteId
      * @return Expr\Func
      */
-    private function getAccountGroupProductVisibilitySubQuery(QueryBuilder $queryBuilder, $websiteId)
+    private function getCustomerGroupProductVisibilitySubQuery(QueryBuilder $queryBuilder, $websiteId)
     {
         $subQueryBuilder = $this->getVisibilityQueryBuilder(
             $queryBuilder,
-            AccountGroupProductVisibilityResolved::class,
-            'account_group_product_visibility_resolved',
+            CustomerGroupProductVisibilityResolved::class,
+            'customer_group_product_visibility_resolved',
             $websiteId
         );
 
         $subQueryBuilder->andWhere(
-            $subQueryBuilder->expr()->gt($this->getAccountGroupProductVisibilityResolvedQueryPart(), 0)
+            $subQueryBuilder->expr()->gt($this->getCustomerGroupProductVisibilityResolvedQueryPart(), 0)
         );
 
         return $queryBuilder->expr()->exists($subQueryBuilder->getDQL());
@@ -178,11 +178,11 @@ TERM;
     /**
      * @return string
      */
-    private function getAccountGroupProductVisibilityResolvedQueryPart()
+    private function getCustomerGroupProductVisibilityResolvedQueryPart()
     {
         return sprintf(
             'COALESCE(%s, 0) * 10',
-            $this->addCategoryConfigFallback('account_group_product_visibility_resolved.visibility')
+            $this->addCategoryConfigFallback('customer_group_product_visibility_resolved.visibility')
         );
     }
 }

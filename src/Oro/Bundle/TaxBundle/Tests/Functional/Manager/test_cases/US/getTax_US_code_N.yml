@@ -3,12 +3,12 @@ reference: simple_order
 configuration: { use_as_base_by_default: destination }
 databaseBefore:
     'Oro\Bundle\CustomerBundle\Entity\Customer':
-        account.TAX3:
-            name: { property_value: account.TAX3 }
+        customer.TAX3:
+            name: { property_value: customer.TAX3 }
     'Oro\Bundle\OrderBundle\Entity\Order':
         simple_order:
             poNumber: { property_value: simple_order }
-            account: { reference: account.TAX3 }
+            customer: { reference: customer.TAX3 }
             currency: 'USD'
             billingAddress:
                 class: 'Oro\Bundle\OrderBundle\Entity\OrderAddress'
@@ -32,19 +32,19 @@ databaseBefore:
             code: { property_value: us_any_state_jurisdiction_code }
             country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
             region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-CA' } }
-    'Oro\Bundle\TaxBundle\Entity\AccountTaxCode':
-        account_tax_code.TAX3:
+    'Oro\Bundle\TaxBundle\Entity\CustomerTaxCode':
+        customer_tax_code.TAX3:
             code: { property_value: 'TAX3' }
             description: { property_value: 'TAX3 customer tax code description' }
-            accounts:
+            customers:
                 property_value:
-                    - { reference: account.TAX3 }
+                    - { reference: customer.TAX3 }
     'Oro\Bundle\TaxBundle\Entity\TaxRule':
         tax_rule.TAX3:
             tax: { class: 'Oro\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX1' } }
             taxJurisdiction: { reference: us_any_state_jurisdiction_code }
             productTaxCode: { reference: product_tax_code.TAX1 }
-            accountTaxCode: { reference: account_tax_code.TAX3 }
+            customerTaxCode: { reference: customer_tax_code.TAX3 }
         tax_rule.TAX4:
             tax: { class: 'Oro\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX2' } }
             taxJurisdiction: { reference: us_any_state_jurisdiction_code }

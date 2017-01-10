@@ -3,8 +3,8 @@
 namespace Oro\Bundle\VisibilityBundle\Form\Extension;
 
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryType;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountCategoryVisibility;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupCategoryVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerCategoryVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Form\Type\EntityVisibilityType;
 use Symfony\Component\Form\AbstractTypeExtension;
@@ -32,8 +32,8 @@ class CategoryFormExtension extends AbstractTypeExtension
                 [
                     'data' => $options['data'],
                     EntityVisibilityType::ALL_CLASS => CategoryVisibility::class,
-                    EntityVisibilityType::ACCOUNT_GROUP_CLASS => AccountGroupCategoryVisibility::class,
-                    EntityVisibilityType::ACCOUNT_CLASS => AccountCategoryVisibility::class,
+                    EntityVisibilityType::ACCOUNT_GROUP_CLASS => CustomerGroupCategoryVisibility::class,
+                    EntityVisibilityType::ACCOUNT_CLASS => CustomerCategoryVisibility::class,
                 ]
             );
     }

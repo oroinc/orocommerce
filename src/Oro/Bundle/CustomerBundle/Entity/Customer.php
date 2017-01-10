@@ -13,7 +13,7 @@ use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\CustomerBundle\Model\ExtendCustomer;
 
 /**
- * @ORM\Entity(repositoryClass="Oro\Bundle\CustomerBundle\Entity\Repository\AccountRepository")
+ * @ORM\Entity(repositoryClass="Oro\Bundle\CustomerBundle\Entity\Repository\CustomerRepository")
  * @ORM\Table(
  *      name="oro_customer",
  *      indexes={
@@ -22,10 +22,10 @@ use Oro\Bundle\CustomerBundle\Model\ExtendCustomer;
  * )
  *
  * @Config(
- *      routeName="oro_customer_account_index",
- *      routeView="oro_customer_account_view",
- *      routeCreate="oro_customer_account_create",
- *      routeUpdate="oro_customer_account_update",
+ *      routeName="oro_customer_customer_index",
+ *      routeView="oro_customer_customer_view",
+ *      routeCreate="oro_customer_customer_create",
+ *      routeUpdate="oro_customer_customer_update",
  *      defaultValues={
  *          "entity"={
  *              "icon"="fa-user"
@@ -38,15 +38,15 @@ use Oro\Bundle\CustomerBundle\Model\ExtendCustomer;
  *              "organization_column_name"="organization_id"
  *          },
  *          "form"={
- *              "form_type"="oro_customer_account_select",
- *              "grid_name"="account-accounts-select-grid",
+ *              "form_type"="oro_customer_customer_select",
+ *              "grid_name"="customer-customers-select-grid",
  *          },
  *          "security"={
  *              "type"="ACL",
  *              "group_name"="commerce"
  *          },
  *          "grid"={
- *              "default"="account-accounts-select-grid"
+ *              "default"="customer-customers-select-grid"
  *          },
  *          "dataaudit"={
  *              "auditable"=true
@@ -150,7 +150,7 @@ class Customer extends ExtendCustomer
      *
      * @ORM\OneToMany(
      *      targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerUser",
-     *      mappedBy="account",
+     *      mappedBy="customer",
      *      cascade={"persist"}
      * )
      * @ConfigField(
@@ -436,34 +436,34 @@ class Customer extends ExtendCustomer
     }
 
     /**
-     * @param CustomerUser $accountUser
+     * @param CustomerUser $customerUser
      *
      * @return $this
      */
-    public function addUser(CustomerUser $accountUser)
+    public function addUser(CustomerUser $customerUser)
     {
-        if (!$this->hasUser($accountUser)) {
-            $accountUser->setAccount($this);
+        if (!$this->hasUser($customerUser)) {
+            $customerUser->setCustomer($this);
             if ($this->getOwner()) {
-                $accountUser->setOwner($this->getOwner());
+                $customerUser->setOwner($this->getOwner());
             }
 
-            $this->users->add($accountUser);
+            $this->users->add($customerUser);
         }
 
         return $this;
     }
 
     /**
-     * @param CustomerUser $accountUser
+     * @param CustomerUser $customerUser
      *
      * @return $this
      */
-    public function removeUser(CustomerUser $accountUser)
+    public function removeUser(CustomerUser $customerUser)
     {
-        if ($this->hasUser($accountUser)) {
-            $accountUser->setAccount(null);
-            $this->users->removeElement($accountUser);
+        if ($this->hasUser($customerUser)) {
+            $customerUser->setCustomer(null);
+            $this->users->removeElement($customerUser);
         }
 
         return $this;
@@ -496,12 +496,12 @@ class Customer extends ExtendCustomer
         $this->owner = $owner;
 
         if ($force) {
-            foreach ($this->users as $accountUser) {
-                $accountUser->setOwner($owner);
+            foreach ($this->users as $customerUser) {
+                $customerUser->setOwner($owner);
             }
 
-            foreach ($this->addresses as $accountAddress) {
-                $accountAddress->setOwner($owner);
+            foreach ($this->addresses as $customerAddress) {
+                $customerAddress->setOwner($owner);
             }
         }
 
@@ -571,12 +571,12 @@ class Customer extends ExtendCustomer
     }
 
     /**
-     * @param CustomerUser $accountUser
+     * @param CustomerUser $customerUser
      *
      * @return bool
      */
-    protected function hasUser(CustomerUser $accountUser)
+    protected function hasUser(CustomerUser $customerUser)
     {
-        return $this->users->contains($accountUser);
+        return $this->users->contains($customerUser);
     }
 }

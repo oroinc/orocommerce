@@ -88,7 +88,11 @@ define(function(require) {
          * @param {Object} data
          */
         onSidebarChange: function(data) {
-            var params = _.extend(this._getQueryParamsFromUrl(location.search), data.params);
+            var params = _.extend(
+                this._getQueryParamsFromUrl(location.search),
+                data.params,
+                this._getDatagridParams()
+            );
             var widgetParams = _.extend(
                 _.omit(this.options.widgetRouteParameters, this.options.gridParam),
                 params
@@ -234,6 +238,17 @@ define(function(require) {
          */
         _urlParamsToString: function(params) {
             return $.param(params);
+        },
+
+        /**
+         * @returns {Object}
+         * @private
+         */
+        _getDatagridParams: function() {
+            var params = {};
+            params[this.gridCollection.options.gridName] = this.gridCollection.urlParams;
+
+            return params;
         },
 
         dispose: function() {

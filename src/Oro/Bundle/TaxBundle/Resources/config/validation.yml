@@ -30,7 +30,7 @@ Oro\Bundle\TaxBundle\Entity\TaxRule:
             - NotBlank: ~
         productTaxCode:
             - NotBlank: ~
-        accountTaxCode:
+        customerTaxCode:
             - NotBlank: ~
         taxJurisdiction:
             - NotBlank: ~

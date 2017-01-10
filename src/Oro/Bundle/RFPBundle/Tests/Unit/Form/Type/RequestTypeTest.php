@@ -8,8 +8,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as StubEntityType;
-use Oro\Bundle\CustomerBundle\Form\Type\AccountSelectType;
-use Oro\Bundle\CustomerBundle\Form\Type\AccountUserSelectType;
+use Oro\Bundle\CustomerBundle\Form\Type\CustomerSelectType;
+use Oro\Bundle\CustomerBundle\Form\Type\CustomerUserSelectType;
 
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 
@@ -109,7 +109,7 @@ class RequestTypeTest extends AbstractTest
                         ],
                     ],
                     'assignedUsers' => [1],
-                    'assignedAccountUsers' => [11],
+                    'assignedCustomerUsers' => [11],
                 ],
                 'expectedData'  => $this->getRequest(
                     'FirstName',
@@ -124,7 +124,7 @@ class RequestTypeTest extends AbstractTest
                 )
                     ->addRequestProduct($requestProduct)
                     ->addAssignedUser($this->getUser(1))
-                    ->addAssignedAccountUser($this->getAccountUser(11)),
+                    ->addAssignedCustomerUser($this->getCustomerUser(11)),
                 'defaultData'   => $this->getRequest(
                     'FirstName',
                     'LastName',
@@ -434,22 +434,22 @@ class RequestTypeTest extends AbstractTest
         $currencySelectionType      = new CurrencySelectionTypeStub();
         $requestProductItemType     = $this->prepareRequestProductItemType();
         $productUnitSelectionType   = $this->prepareProductUnitSelectionType();
-        $accountMultiSelectType     = $this->prepareAccountUserMultiSelectType();
+        $customerMultiSelectType     = $this->prepareCustomerUserMultiSelectType();
 
-        $accountSelectType = new StubEntityType(
+        $customerSelectType = new StubEntityType(
             [
                 1 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', 1),
                 2 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', 2),
             ],
-            AccountSelectType::NAME
+            CustomerSelectType::NAME
         );
 
-        $accountUserSelectType = new StubEntityType(
+        $customerUserSelectType = new StubEntityType(
             [
                 1 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUser', 1),
                 2 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUser', 2),
             ],
-            AccountUserSelectType::NAME
+            CustomerUserSelectType::NAME
         );
 
         $requestProductType = new RequestProductType($productUnitLabelFormatter);
@@ -465,14 +465,14 @@ class RequestTypeTest extends AbstractTest
                     OroDateType::NAME                       => new OroDateType(),
                     $priceType->getName()                   => $priceType,
                     $productSelectType->getName()           => $productSelectType,
-                    $accountSelectType->getName()           => $accountSelectType,
+                    $customerSelectType->getName()           => $customerSelectType,
                     $requestProductType->getName()          => $requestProductType,
                     $userMultiSelectType->getName()         => $userMultiSelectType,
-                    $accountUserSelectType->getName()       => $accountUserSelectType,
+                    $customerUserSelectType->getName()       => $customerUserSelectType,
                     $currencySelectionType->getName()       => $currencySelectionType,
                     $requestProductItemType->getName()      => $requestProductItemType,
                     $productUnitSelectionType->getName()    => $productUnitSelectionType,
-                    $accountMultiSelectType->getName()      => $accountMultiSelectType,
+                    $customerMultiSelectType->getName()      => $customerMultiSelectType,
                     QuantityTypeTrait::$name                => $this->getQuantityType(),
                 ],
                 []

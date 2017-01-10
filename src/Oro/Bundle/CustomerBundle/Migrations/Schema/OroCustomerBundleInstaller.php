@@ -315,11 +315,11 @@ class OroCustomerBundleInstaller implements
     protected function updateOroAuditTable(Schema $schema)
     {
         $auditTable = $schema->getTable('oro_audit');
-        $auditTable->addColumn('account_user_id', 'integer', ['notnull' => false]);
+        $auditTable->addColumn('customer_user_id', 'integer', ['notnull' => false]);
 
         $auditTable->addForeignKeyConstraint(
             $schema->getTable('oro_customer_user'),
-            ['account_user_id'],
+            ['customer_user_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
@@ -1148,14 +1148,14 @@ class OroCustomerBundleInstaller implements
     {
         $this->scopeExtension->addScopeAssociation(
             $schema,
-            'accountGroup',
+            'customerGroup',
             OroCustomerBundleInstaller::ORO_CUSTOMER_GROUP_TABLE_NAME,
             'name'
         );
 
         $this->scopeExtension->addScopeAssociation(
             $schema,
-            'account',
+            'customer',
             OroCustomerBundleInstaller::ORO_CUSTOMER_TABLE_NAME,
             'name'
         );

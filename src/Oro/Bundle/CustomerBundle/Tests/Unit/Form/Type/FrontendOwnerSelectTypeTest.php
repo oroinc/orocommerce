@@ -81,27 +81,27 @@ class FrontendOwnerSelectTypeTest extends FormIntegrationTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $accountUserRepository =
+        $customerUserRepository =
             $this->getMockBuilder(EntityRepository::class)
                 ->disableOriginalConstructor()
                 ->getMock();
 
-        $accountUserRepository
+        $customerUserRepository
             ->expects($this->any())
             ->method('createQueryBuilder')
-            ->with('account')
+            ->with('customer')
             ->willReturn($queryBuilder);
 
         $this->registry
             ->expects($this->any())
             ->method('getRepository')
             ->with('OroCustomerBundle:Customer')
-            ->willReturn($accountUserRepository);
+            ->willReturn($customerUserRepository);
 
         $this->aclHelper
             ->expects($this->any())
             ->method('applyAclToCriteria')
-            ->with(CustomerUser::class, $criteria, 'VIEW', ['account' => 'account.id'])
+            ->with(CustomerUser::class, $criteria, 'VIEW', ['customer' => 'customer.id'])
             ->willReturn($queryBuilder);
 
         $queryBuilder

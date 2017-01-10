@@ -7,7 +7,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
-use Oro\Bundle\TaxBundle\Entity\AccountTaxCode;
+use Oro\Bundle\TaxBundle\Entity\CustomerTaxCode;
 use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
 use Oro\Bundle\TaxBundle\Entity\Tax;
 use Oro\Bundle\TaxBundle\Entity\TaxJurisdiction;
@@ -22,15 +22,15 @@ class TaxEntitiesFactory
      * @param ObjectManager $persistTo (optional)
      * @param AbstractFixture $addReferenceTo (optional)
      *
-     * @return AccountTaxCode
+     * @return CustomerTaxCode
      */
-    public function createAccountTaxCode(
+    public function createCustomerTaxCode(
         $code,
         $description,
         ObjectManager $persistTo = null,
         AbstractFixture $addReferenceTo = null
     ) {
-        $taxCode = new AccountTaxCode();
+        $taxCode = new CustomerTaxCode();
         $taxCode->setCode($code);
         $taxCode->setDescription($description);
 
@@ -160,7 +160,7 @@ class TaxEntitiesFactory
     }
 
     /**
-     * @param AccountTaxCode $accountTaxCode
+     * @param CustomerTaxCode $customerTaxCode
      * @param ProductTaxCode $productTaxCode
      * @param TaxJurisdiction $taxJurisdiction
      * @param Tax $tax
@@ -172,7 +172,7 @@ class TaxEntitiesFactory
      *
      */
     public function createTaxRule(
-        AccountTaxCode $accountTaxCode,
+        CustomerTaxCode $customerTaxCode,
         ProductTaxCode $productTaxCode,
         TaxJurisdiction $taxJurisdiction,
         Tax $tax,
@@ -181,7 +181,7 @@ class TaxEntitiesFactory
         AbstractFixture $addReferenceTo = null
     ) {
         $taxRule = new TaxRule();
-        $taxRule->setAccountTaxCode($accountTaxCode);
+        $taxRule->setCustomerTaxCode($customerTaxCode);
         $taxRule->setProductTaxCode($productTaxCode);
         $taxRule->setTaxJurisdiction($taxJurisdiction);
         $taxRule->setTax($tax);
@@ -193,7 +193,7 @@ class TaxEntitiesFactory
 
         if ($addReferenceTo) {
             $code = 'TAX_RULE-' . implode('-', [
-                    $accountTaxCode->getCode(),
+                    $customerTaxCode->getCode(),
                     $productTaxCode->getCode(),
                     $taxJurisdiction->getCode(),
                     $tax->getCode()

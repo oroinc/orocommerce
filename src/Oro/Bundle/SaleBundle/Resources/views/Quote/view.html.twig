@@ -49,7 +49,7 @@
                         <th><span>{{ 'oro.sale.quoteproduct.column.product'|trans }}</span></th>
                         <th class="quote-line_item-quantity"><span>{{ 'oro.sale.quoteproductoffer.quantity.label'|trans }}</span></th>
                         <th class="quote-line_item-price"><span>{{ 'oro.sale.quoteproductoffer.price.label'|trans }}</span></th>
-                        <th><span>{{ 'oro.sale.quoteproduct.comment_account.label'|trans }}</span></th>
+                        <th><span>{{ 'oro.sale.quoteproduct.comment_customer.label'|trans }}</span></th>
                         <th><span>{{ 'oro.sale.quoteproduct.comment.label'|trans }}</span></th>
                     </tr>
                 </thead>
@@ -83,7 +83,7 @@
                                 {{ quoteProductOffer.price|oro_format_price }}
                             </td>
                             {% if loop.first %}
-                                <td  class="quote-line_item-target_notes" rowspan="{{ numSubItems }}">{{ quoteProduct.commentAccount }}</td>
+                                <td  class="quote-line_item-target_notes" rowspan="{{ numSubItems }}">{{ quoteProduct.commentCustomer }}</td>
                                 <td class="quote-line_item-target_notes" rowspan="{{ numSubItems }}">{{ quoteProduct.comment }}</td>
                             {% endif %}
                         </tr>
@@ -119,11 +119,14 @@
     {% endset %}
 
     {% set shippingInformation %}
-        {% if entity.shippingEstimate is not null %}
-            {{ UI.renderProperty('oro.sale.quote.shipping_estimate.label'|trans,
-            entity.shippingEstimate.value|oro_format_currency({'currency': entity.shippingEstimate.currency})) }}
+        {%- if entity.shippingMethod and entity.shippingMethodType -%}
+            {{ UI.renderProperty('oro.sale.quote.shipping_method.label'|trans, oro_shipping_method_with_type_label(entity.shippingMethod, entity.shippingMethodType)) }}
+        {%- endif -%}
+        {% if entity.shippingCost is not null %}
+            {{ UI.renderProperty('oro.sale.quote.shipping_cost.label'|trans,
+            entity.shippingCost.value|oro_format_currency({'currency': entity.shippingCost.currency})) }}
         {% else %}
-            {{ UI.renderProperty('oro.sale.quote.shipping_estimate.label'|trans, 'N/A'|trans) }}
+            {{ UI.renderProperty('oro.sale.quote.shipping_cost.label'|trans, 'N/A'|trans) }}
         {% endif %}
     {% endset %}
 

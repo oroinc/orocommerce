@@ -118,7 +118,7 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
             ->willReturn(1);
 
         $shoppingList->expects($this->any())
-            ->method('getAccountUser')
+            ->method('getCustomerUser')
             ->willReturn(new CustomerUser());
 
         $shoppingListItemHandler = $this

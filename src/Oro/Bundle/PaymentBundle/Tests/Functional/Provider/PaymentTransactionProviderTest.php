@@ -7,7 +7,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\TestFrameworkBundle\Entity\Item;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -49,8 +49,8 @@ class PaymentTransactionProviderTest extends WebTestCase
         $this->initClient(
             [],
             $this->generateBasicAuthHeader(
-                LoadAccountUserData::LEVEL_1_1_EMAIL,
-                LoadAccountUserData::LEVEL_1_1_PASSWORD
+                LoadCustomerUserData::LEVEL_1_1_EMAIL,
+                LoadCustomerUserData::LEVEL_1_1_PASSWORD
             )
         );
 
@@ -60,8 +60,8 @@ class PaymentTransactionProviderTest extends WebTestCase
 
         $this->getContainer()->get('security.token_storage')->setToken(
             new UsernamePasswordToken(
-                $this->getReference(LoadAccountUserData::LEVEL_1_1_EMAIL),
-                LoadAccountUserData::LEVEL_1_1_PASSWORD,
+                $this->getReference(LoadCustomerUserData::LEVEL_1_1_EMAIL),
+                LoadCustomerUserData::LEVEL_1_1_PASSWORD,
                 'key'
             )
         );
@@ -81,8 +81,8 @@ class PaymentTransactionProviderTest extends WebTestCase
         $this->initClient(
             [],
             $this->generateBasicAuthHeader(
-                LoadAccountUserData::LEVEL_1_1_EMAIL,
-                LoadAccountUserData::LEVEL_1_1_PASSWORD
+                LoadCustomerUserData::LEVEL_1_1_EMAIL,
+                LoadCustomerUserData::LEVEL_1_1_PASSWORD
             )
         );
 
@@ -92,8 +92,8 @@ class PaymentTransactionProviderTest extends WebTestCase
 
         $this->getContainer()->get('security.token_storage')->setToken(
             new UsernamePasswordToken(
-                $this->getReference(LoadAccountUserData::LEVEL_1_1_EMAIL),
-                LoadAccountUserData::LEVEL_1_1_PASSWORD,
+                $this->getReference(LoadCustomerUserData::LEVEL_1_1_EMAIL),
+                LoadCustomerUserData::LEVEL_1_1_PASSWORD,
                 'key'
             )
         );
@@ -107,7 +107,7 @@ class PaymentTransactionProviderTest extends WebTestCase
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(LoadAccountUserData::EMAIL, LoadAccountUserData::PASSWORD)
+            $this->generateBasicAuthHeader(LoadCustomerUserData::EMAIL, LoadCustomerUserData::PASSWORD)
         );
 
         $this->loadFixtures(['Oro\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTransactionData']);
@@ -116,8 +116,8 @@ class PaymentTransactionProviderTest extends WebTestCase
 
         $this->getContainer()->get('security.token_storage')->setToken(
             new UsernamePasswordToken(
-                $this->getReference(LoadAccountUserData::EMAIL),
-                LoadAccountUserData::PASSWORD,
+                $this->getReference(LoadCustomerUserData::EMAIL),
+                LoadCustomerUserData::PASSWORD,
                 'key'
             )
         );
@@ -141,11 +141,11 @@ class PaymentTransactionProviderTest extends WebTestCase
         );
     }
 
-    public function testCreatePaymentTransactionUseCurrentLoggedAccountUser()
+    public function testCreatePaymentTransactionUseCurrentLoggedCustomerUser()
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(LoadAccountUserData::EMAIL, LoadAccountUserData::PASSWORD)
+            $this->generateBasicAuthHeader(LoadCustomerUserData::EMAIL, LoadCustomerUserData::PASSWORD)
         );
 
         $this->loadFixtures(['Oro\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTransactionData']);
@@ -154,8 +154,8 @@ class PaymentTransactionProviderTest extends WebTestCase
 
         $this->getContainer()->get('security.token_storage')->setToken(
             new UsernamePasswordToken(
-                $this->getReference(LoadAccountUserData::EMAIL),
-                LoadAccountUserData::PASSWORD,
+                $this->getReference(LoadCustomerUserData::EMAIL),
+                LoadCustomerUserData::PASSWORD,
                 'key'
             )
         );
@@ -173,7 +173,7 @@ class PaymentTransactionProviderTest extends WebTestCase
 
         $paymentTransactionProvider->savePaymentTransaction($paymentTransaction);
 
-        $this->assertEquals(LoadAccountUserData::EMAIL, $paymentTransaction->getFrontendOwner()->getEmail());
+        $this->assertEquals(LoadCustomerUserData::EMAIL, $paymentTransaction->getFrontendOwner()->getEmail());
     }
 
     public function testTransactionSaveExceptionDoNotBreakThings()

@@ -28,7 +28,7 @@ class LoadPaymentTermToAccountGroupDemoData extends AbstractFixture implements
     {
         return [
             'Oro\Bundle\PaymentTermBundle\Migrations\Data\Demo\ORM\LoadPaymentTermDemoData',
-            'Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadAccountGroupDemoData',
+            'Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomerGroupDemoData',
         ];
     }
 

@@ -133,7 +133,7 @@ operations:
                 class: Oro\Bundle\ShoppingListBundle\Entity\LineItem
                 attribute: $.lineItem
             - '@assign_value': [$.lineItem.shoppingList, $.data]
-            - '@assign_value': [$.lineItem.accountUser, $.data.accountUser]
+            - '@assign_value': [$.lineItem.customerUser, $.data.customerUser]
             - '@assign_value': [$.lineItem.organization, $.data.organization]
         actions:
             - '@run_action_group':

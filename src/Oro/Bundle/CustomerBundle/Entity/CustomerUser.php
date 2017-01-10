@@ -41,9 +41,9 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  *      )
  * })
  * @Config(
- *      routeName="oro_customer_account_user_index",
- *      routeView="oro_customer_account_user_view",
- *      routeUpdate="oro_customer_account_user_update",
+ *      routeName="oro_customer_customer_user_index",
+ *      routeView="oro_customer_customer_user_view",
+ *      routeUpdate="oro_customer_customer_user_update",
  *      defaultValues={
  *          "entity"={
  *              "icon"="fa-briefcase"
@@ -53,14 +53,14 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  *              "owner_field_name"="owner",
  *              "owner_column_name"="owner_id",
  *              "frontend_owner_type"="FRONTEND_ACCOUNT",
- *              "frontend_owner_field_name"="account",
+ *              "frontend_owner_field_name"="customer",
  *              "frontend_owner_column_name"="customer_id",
  *              "organization_field_name"="organization",
  *              "organization_column_name"="organization_id"
  *          },
  *          "form"={
- *              "form_type"="oro_account_account_user_select",
- *              "grid_name"="account-account-user-select-grid"
+ *              "form_type"="oro_customer_customer_user_select",
+ *              "grid_name"="customer-customer-user-select-grid"
  *          },
  *          "security"={
  *              "type"="ACL",
@@ -83,7 +83,7 @@ class CustomerUser extends AbstractUser implements FullNameInterface, EmailHolde
     /**
      * @var CustomerUserRole[]|Collection
      *
-     * @ORM\ManyToMany(targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerUserRole", inversedBy="accountUsers")
+     * @ORM\ManyToMany(targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerUserRole", inversedBy="customerUsers")
      * @ORM\JoinTable(
      *      name="oro_cus_user_access_role",
      *      joinColumns={
@@ -120,7 +120,7 @@ class CustomerUser extends AbstractUser implements FullNameInterface, EmailHolde
      *      }
      * )
      */
-    protected $account;
+    protected $customer;
 
     /**
      * @var bool
@@ -390,32 +390,11 @@ class CustomerUser extends AbstractUser implements FullNameInterface, EmailHolde
     }
 
     /**
-     * @deprecated Use getCustomer()
-     * @return Customer|null
-     */
-    public function getAccount()
-    {
-        return $this->account;
-    }
-
-    /**
-     * @deprecated Use setCustomer()
-     * @param Customer $account
-     * @return CustomerUser
-     */
-    public function setAccount(Customer $account = null)
-    {
-        $this->account = $account;
-
-        return $this;
-    }
-
-    /**
      * @return Customer|null
      */
     public function getCustomer()
     {
-        return $this->account;
+        return $this->customer;
     }
 
     /**
@@ -424,7 +403,7 @@ class CustomerUser extends AbstractUser implements FullNameInterface, EmailHolde
      */
     public function setCustomer(Customer $customer = null)
     {
-        $this->account = $customer;
+        $this->customer = $customer;
 
         return $this;
     }
@@ -432,20 +411,20 @@ class CustomerUser extends AbstractUser implements FullNameInterface, EmailHolde
     /**
      * @param string|null $companyName
      */
-    public function createAccount($companyName = null)
+    public function createCustomer($companyName = null)
     {
-        if (!$this->account) {
-            $this->account = new Customer();
-            $this->account->setOrganization($this->organization);
+        if (!$this->customer) {
+            $this->customer = new Customer();
+            $this->customer->setOrganization($this->organization);
 
             if (!$companyName) {
                 $companyName = sprintf('%s %s', $this->firstName, $this->lastName);
             }
 
-            $this->account->setName($companyName);
+            $this->customer->setName($companyName);
 
-            if ($this->getOwner() && !$this->account->getOwner()) {
-                $this->account->setOwner($this->getOwner(), false);
+            if ($this->getOwner() && !$this->customer->getOwner()) {
+                $this->customer->setOwner($this->getOwner(), false);
             }
         }
     }
@@ -453,7 +432,7 @@ class CustomerUser extends AbstractUser implements FullNameInterface, EmailHolde
     /**
      * {@inheritDoc}
      */
-    public function isAccountNonLocked()
+    public function isCustomerNonLocked()
     {
         return $this->isEnabled() && $this->isConfirmed();
     }
@@ -734,8 +713,8 @@ class CustomerUser extends AbstractUser implements FullNameInterface, EmailHolde
     {
         $this->owner = $owner;
 
-        foreach ($this->addresses as $accountUserAddress) {
-            $accountUserAddress->setOwner($owner);
+        foreach ($this->addresses as $customerUserAddress) {
+            $customerUserAddress->setOwner($owner);
         }
 
         return $this;
@@ -883,7 +862,7 @@ class CustomerUser extends AbstractUser implements FullNameInterface, EmailHolde
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
         $this->loginCount = 0;
 
-        $this->createAccount();
+        $this->createCustomer();
     }
 
     /**

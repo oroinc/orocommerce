@@ -27,7 +27,7 @@ class QuoteProductListener
      */
     public function preUpdate(PreUpdateEventArgs $event)
     {
-        $fieldToKeep = 'commentAccount';
+        $fieldToKeep = 'commentCustomer';
         /** @var Request $request */
         $request = $this->requestStack->getCurrentRequest();
         if (!$request) {

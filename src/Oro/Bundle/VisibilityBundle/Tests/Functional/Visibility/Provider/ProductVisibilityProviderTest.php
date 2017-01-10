@@ -4,8 +4,8 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Visibility\Provider;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
-use Oro\Bundle\CustomerBundle\Migrations\Data\ORM\LoadAnonymousAccountGroup;
-use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
+use Oro\Bundle\CustomerBundle\Migrations\Data\ORM\LoadAnonymousCustomerGroup;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
@@ -42,7 +42,7 @@ class ProductVisibilityProviderTest extends WebTestCase
 
         $this->loadFixtures([
             LoadWebsiteData::class,
-            LoadAccountUserData::class,
+            LoadCustomerUserData::class,
             LoadCategoryVisibilityData::class,
             LoadProductVisibilityScopedData::class
         ]);
@@ -67,21 +67,21 @@ class ProductVisibilityProviderTest extends WebTestCase
     /**
      * @return int
      */
-    private function getAnonymousAccountGroupId()
+    private function getAnonymousCustomerGroupId()
     {
-        $accountGroupRepository = $this->getContainer()
+        $customerGroupRepository = $this->getContainer()
             ->get('doctrine')
             ->getManagerForClass('OroCustomerBundle:CustomerGroup')
             ->getRepository('OroCustomerBundle:CustomerGroup');
 
-        /** @var CustomerGroup $accountGroup */
-        $accountGroup = $accountGroupRepository
-            ->findOneBy(['name' => LoadAnonymousAccountGroup::GROUP_NAME_NON_AUTHENTICATED]);
+        /** @var CustomerGroup $customerGroup */
+        $customerGroup = $customerGroupRepository
+            ->findOneBy(['name' => LoadAnonymousCustomerGroup::GROUP_NAME_NON_AUTHENTICATED]);
 
-        return $accountGroup->getId();
+        return $customerGroup->getId();
     }
 
-    public function testGetAccountVisibilitiesForProducts()
+    public function testGetCustomerVisibilitiesForProducts()
     {
         $this->configManager
             ->expects($this->exactly(2))
@@ -95,20 +95,20 @@ class ProductVisibilityProviderTest extends WebTestCase
         $this->provider->setProductVisibilitySystemConfigurationPath(static::PRODUCT_VISIBILITY_CONFIGURATION_PATH);
         $this->provider->setCategoryVisibilitySystemConfigurationPath(static::CATEGORY_VISIBILITY_CONFIGURATION_PATH);
 
-        $expectedAccountsVisibilities = [
+        $expectedCustomersVisibilities = [
             [
                 'productId' => $this->getReference('product.1')->getId(),
-                'accountId' => $this->getReference('account.level_1')->getId(),
+                'customerId' => $this->getReference('customer.level_1')->getId(),
             ],
             [
                 'productId' => $this->getReference('product.4')->getId(),
-                'accountId' => $this->getReference('account.orphan')->getId(),
+                'customerId' => $this->getReference('customer.orphan')->getId(),
             ],
         ];
 
         $this->assertEquals(
-            $expectedAccountsVisibilities,
-            $this->provider->getAccountVisibilitiesForProducts(
+            $expectedCustomersVisibilities,
+            $this->provider->getCustomerVisibilitiesForProducts(
                 [
                     $this->getReference('product.1'),
                     $this->getReference('product.4'),
@@ -118,7 +118,7 @@ class ProductVisibilityProviderTest extends WebTestCase
         );
     }
 
-    public function testGetAccountVisibilitiesForProductsWhenAccountGroupVisibilityDiffersProduct()
+    public function testGetCustomerVisibilitiesForProductsWhenCustomerGroupVisibilityDiffersProduct()
     {
         $this->configManager
             ->expects($this->exactly(2))
@@ -132,36 +132,36 @@ class ProductVisibilityProviderTest extends WebTestCase
         $this->provider->setProductVisibilitySystemConfigurationPath(static::PRODUCT_VISIBILITY_CONFIGURATION_PATH);
         $this->provider->setCategoryVisibilitySystemConfigurationPath(static::CATEGORY_VISIBILITY_CONFIGURATION_PATH);
 
-        $expectedAccountsVisibilities = [
+        $expectedCustomersVisibilities = [
             [
                 'productId' => $this->getReference('product.3')->getId(),
-                'accountId' => $this->getReference('account.level_1')->getId(),
+                'customerId' => $this->getReference('customer.level_1')->getId(),
             ],
             [
                 'productId' => $this->getReference('product.3')->getId(),
-                'accountId' => $this->getReference('account.level_1.3')->getId(),
+                'customerId' => $this->getReference('customer.level_1.3')->getId(),
             ],
             [
                 'productId' => $this->getReference('product.5')->getId(),
-                'accountId' => $this->getReference('account.level_1.2')->getId(),
+                'customerId' => $this->getReference('customer.level_1.2')->getId(),
             ],
             [
                 'productId' => $this->getReference('product.5')->getId(),
-                'accountId' => $this->getReference('account.level_1.2.1')->getId(),
+                'customerId' => $this->getReference('customer.level_1.2.1')->getId(),
             ],
             [
                 'productId' => $this->getReference('product.5')->getId(),
-                'accountId' => $this->getReference('account.level_1.2.1.1')->getId(),
+                'customerId' => $this->getReference('customer.level_1.2.1.1')->getId(),
             ],
             [
                 'productId' => $this->getReference('product.5')->getId(),
-                'accountId' => $this->getReference('account.level_1.3')->getId(),
+                'customerId' => $this->getReference('customer.level_1.3')->getId(),
             ],
         ];
 
         $this->assertEquals(
-            $expectedAccountsVisibilities,
-            $this->provider->getAccountVisibilitiesForProducts(
+            $expectedCustomersVisibilities,
+            $this->provider->getCustomerVisibilitiesForProducts(
                 [
                     $this->getReference('product.3'),
                     $this->getReference('product.5')
@@ -171,7 +171,7 @@ class ProductVisibilityProviderTest extends WebTestCase
         );
     }
 
-    public function testGetAccountVisibilitiesForProductsWhenAccountGroupVisibilityDiffers()
+    public function testGetCustomerVisibilitiesForProductsWhenCustomerGroupVisibilityDiffers()
     {
         $this->configManager
             ->expects($this->exactly(2))
@@ -185,32 +185,32 @@ class ProductVisibilityProviderTest extends WebTestCase
         $this->provider->setProductVisibilitySystemConfigurationPath(static::PRODUCT_VISIBILITY_CONFIGURATION_PATH);
         $this->provider->setCategoryVisibilitySystemConfigurationPath(static::CATEGORY_VISIBILITY_CONFIGURATION_PATH);
 
-        $expectedAccountsVisibilities = [
+        $expectedCustomersVisibilities = [
             [
                 'productId' => $this->getReference('product.1')->getId(),
-                'accountId' => $this->getReference('account.level_1.3')->getId(),
+                'customerId' => $this->getReference('customer.level_1.3')->getId(),
             ],
             [
                 'productId' => $this->getReference('product.2')->getId(),
-                'accountId' => $this->getReference('account.level_1')->getId(),
+                'customerId' => $this->getReference('customer.level_1')->getId(),
             ],
             [
                 'productId' => $this->getReference('product.2')->getId(),
-                'accountId' => $this->getReference('account.level_1.2')->getId(),
+                'customerId' => $this->getReference('customer.level_1.2')->getId(),
             ],
             [
                 'productId' => $this->getReference('product.2')->getId(),
-                'accountId' => $this->getReference('account.level_1.2.1')->getId(),
+                'customerId' => $this->getReference('customer.level_1.2.1')->getId(),
             ],
             [
                 'productId' => $this->getReference('product.2')->getId(),
-                'accountId' => $this->getReference('account.level_1.2.1.1')->getId(),
+                'customerId' => $this->getReference('customer.level_1.2.1.1')->getId(),
             ],
         ];
 
         $this->assertEquals(
-            $expectedAccountsVisibilities,
-            $this->provider->getAccountVisibilitiesForProducts(
+            $expectedCustomersVisibilities,
+            $this->provider->getCustomerVisibilitiesForProducts(
                 [
                     $this->getReference('product.1'),
                     $this->getReference('product.2')
@@ -220,7 +220,7 @@ class ProductVisibilityProviderTest extends WebTestCase
         );
     }
 
-    public function testGetAccountVisibilitiesForProductsWhenAccountGroupVisibilityDiffersAndInversed()
+    public function testGetCustomerVisibilitiesForProductsWhenCustomerGroupVisibilityDiffersAndInversed()
     {
         $this->configManager
             ->expects($this->exactly(2))
@@ -234,72 +234,72 @@ class ProductVisibilityProviderTest extends WebTestCase
         $this->provider->setProductVisibilitySystemConfigurationPath(static::PRODUCT_VISIBILITY_CONFIGURATION_PATH);
         $this->provider->setCategoryVisibilitySystemConfigurationPath(static::CATEGORY_VISIBILITY_CONFIGURATION_PATH);
 
-        $expectedAccountsVisibilities = [
+        $expectedCustomersVisibilities = [
             [
                 'productId' => $this->getReference('product.1')->getId(),
-                'accountId' => 1
+                'customerId' => 1
             ],
             [
                 'productId' => $this->getReference('product.1')->getId(),
-                'accountId' => $this->getReference('account.orphan')->getId(),
+                'customerId' => $this->getReference('customer.orphan')->getId(),
             ],
             [
                 'productId' => $this->getReference('product.1')->getId(),
-                'accountId' => $this->getReference('account.level_1.1')->getId(),
+                'customerId' => $this->getReference('customer.level_1.1')->getId(),
             ],
             [
                 'productId' => $this->getReference('product.1')->getId(),
-                'accountId' => $this->getReference('account.level_1.1.1')->getId(),
+                'customerId' => $this->getReference('customer.level_1.1.1')->getId(),
             ],
             [
                 'productId' => $this->getReference('product.1')->getId(),
-                'accountId' => $this->getReference('account.level_1.1.2')->getId(),
+                'customerId' => $this->getReference('customer.level_1.1.2')->getId(),
             ],
             [
                 'productId' => $this->getReference('product.1')->getId(),
-                'accountId' => $this->getReference('account.level_1.2')->getId(),
+                'customerId' => $this->getReference('customer.level_1.2')->getId(),
             ],
             [
                 'productId' => $this->getReference('product.1')->getId(),
-                'accountId' => $this->getReference('account.level_1.2.1')->getId(),
+                'customerId' => $this->getReference('customer.level_1.2.1')->getId(),
             ],
             [
                 'productId' => $this->getReference('product.1')->getId(),
-                'accountId' => $this->getReference('account.level_1.2.1.1')->getId(),
+                'customerId' => $this->getReference('customer.level_1.2.1.1')->getId(),
             ],
             [
                 'productId' => $this->getReference('product.1')->getId(),
-                'accountId' => $this->getReference('account.level_1.3')->getId(),
+                'customerId' => $this->getReference('customer.level_1.3')->getId(),
             ],
             [
                 'productId' => $this->getReference('product.1')->getId(),
-                'accountId' => $this->getReference('account.level_1.3.1')->getId(),
+                'customerId' => $this->getReference('customer.level_1.3.1')->getId(),
             ],
             [
                 'productId' => $this->getReference('product.1')->getId(),
-                'accountId' => $this->getReference('account.level_1.3.1.1')->getId(),
+                'customerId' => $this->getReference('customer.level_1.3.1.1')->getId(),
             ],
             [
                 'productId' => $this->getReference('product.1')->getId(),
-                'accountId' => $this->getReference('account.level_1.4')->getId(),
+                'customerId' => $this->getReference('customer.level_1.4')->getId(),
             ],
             [
                 'productId' => $this->getReference('product.1')->getId(),
-                'accountId' => $this->getReference('account.level_1.4.1')->getId(),
+                'customerId' => $this->getReference('customer.level_1.4.1')->getId(),
             ],
             [
                 'productId' => $this->getReference('product.1')->getId(),
-                'accountId' => $this->getReference('account.level_1.4.1.1')->getId(),
+                'customerId' => $this->getReference('customer.level_1.4.1.1')->getId(),
             ],
             [
                 'productId' => $this->getReference('product.1')->getId(),
-                'accountId' => $this->getReference('account.level_1_1')->getId(),
+                'customerId' => $this->getReference('customer.level_1_1')->getId(),
             ],
         ];
 
         $this->assertEquals(
-            $expectedAccountsVisibilities,
-            $this->provider->getAccountVisibilitiesForProducts(
+            $expectedCustomersVisibilities,
+            $this->provider->getCustomerVisibilitiesForProducts(
                 [
                     $this->getReference('product.1'),
                 ],
@@ -329,12 +329,12 @@ class ProductVisibilityProviderTest extends WebTestCase
             ->withConsecutive(
                 [self::PRODUCT_VISIBILITY_CONFIGURATION_PATH],
                 [self::CATEGORY_VISIBILITY_CONFIGURATION_PATH],
-                ['oro_customer.anonymous_account_group']
+                ['oro_customer.anonymous_customer_group']
             )
             ->willReturnOnConsecutiveCalls(
                 VisibilityInterface::HIDDEN,
                 VisibilityInterface::HIDDEN,
-                $this->getAnonymousAccountGroupId()
+                $this->getAnonymousCustomerGroupId()
             );
 
         $this->provider->setProductVisibilitySystemConfigurationPath(static::PRODUCT_VISIBILITY_CONFIGURATION_PATH);

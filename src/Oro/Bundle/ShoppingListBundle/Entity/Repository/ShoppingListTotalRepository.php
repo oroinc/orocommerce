@@ -45,17 +45,17 @@ class ShoppingListTotalRepository extends EntityRepository
     }
 
     /**
-     * @param array $accountIds
+     * @param array $customerIds
      * @param int $websiteId
      */
-    public function invalidateByAccounts(array $accountIds, $websiteId)
+    public function invalidateByCustomers(array $customerIds, $websiteId)
     {
-        if (empty($accountIds)) {
+        if (empty($customerIds)) {
             return;
         }
         $qb = $this->getBaseInvalidateQb($websiteId);
-        $qb->andWhere($qb->expr()->in('shoppingList.account', ':accounts'))
-            ->setParameter('accounts', $accountIds);
+        $qb->andWhere($qb->expr()->in('shoppingList.customer', ':customers'))
+            ->setParameter('customers', $customerIds);
 
         $iterator = new BufferedQueryResultIterator($qb);
         $iterator->setHydrationMode(Query::HYDRATE_SCALAR);

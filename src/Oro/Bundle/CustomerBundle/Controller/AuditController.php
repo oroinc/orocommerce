@@ -20,7 +20,7 @@ class AuditController extends Controller
      * )
      * @Template("OroDataAuditBundle:Audit/widget:history.html.twig")
      * @Acl(
-     *      id="oro_account_dataaudit_history",
+     *      id="oro_customer_dataaudit_history",
      *      type="action",
      *      label="oro.customer.dataaudit.module_label",
      *      group_name="commerce"

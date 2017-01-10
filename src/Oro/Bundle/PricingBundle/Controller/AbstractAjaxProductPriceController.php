@@ -21,10 +21,10 @@ abstract class AbstractAjaxProductPriceController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function getProductPricesByAccount(Request $request)
+    public function getProductPricesByCustomer(Request $request)
     {
         $priceListId = $this->get('oro_pricing.model.price_list_request_handler')
-            ->getPriceListByAccount()
+            ->getPriceListByCustomer()
             ->getId();
 
         return new JsonResponse(

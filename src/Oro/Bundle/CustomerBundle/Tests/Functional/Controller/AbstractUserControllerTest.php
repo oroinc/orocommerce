@@ -95,7 +95,7 @@ abstract class AbstractUserControllerTest extends WebTestCase
     /**
      * @return ObjectRepository
      */
-    protected function getAccountRepository()
+    protected function getCustomerRepository()
     {
         return $this->getObjectManager()->getRepository('OroCustomerBundle:Customer');
     }

@@ -64,14 +64,14 @@ class FrontendOwnerTreeProvider extends AbstractOwnerTreeProvider
     protected function fillTree(OwnerTreeInterface $tree)
     {
         $ownershipMetadataProvider = $this->getOwnershipMetadataProvider();
-        $accountUserClass = $ownershipMetadataProvider->getBasicLevelClass();
-        $accountClass = $ownershipMetadataProvider->getLocalLevelClass();
-        $connection = $this->getManagerForClass($accountUserClass)->getConnection();
+        $customerUserClass = $ownershipMetadataProvider->getBasicLevelClass();
+        $customerClass = $ownershipMetadataProvider->getLocalLevelClass();
+        $connection = $this->getManagerForClass($customerUserClass)->getConnection();
 
-        list($accounts, $columnMap) = $this->executeQuery(
+        list($customers, $columnMap) = $this->executeQuery(
             $connection,
             $this
-                ->getRepository($accountClass)
+                ->getRepository($customerClass)
                 ->createQueryBuilder('a')
                 ->select(
                     'a.id, IDENTITY(a.organization) orgId, IDENTITY(a.parent) parentId'
@@ -80,25 +80,25 @@ class FrontendOwnerTreeProvider extends AbstractOwnerTreeProvider
                 ->addOrderBy('ORD, parentId', 'ASC')
                 ->getQuery()
         );
-        foreach ($accounts as $account) {
-            $orgId = $this->getId($account, $columnMap['orgId']);
+        foreach ($customers as $customer) {
+            $orgId = $this->getId($customer, $columnMap['orgId']);
             if (null !== $orgId) {
-                $buId = $this->getId($account, $columnMap['id']);
+                $buId = $this->getId($customer, $columnMap['id']);
                 $tree->addLocalEntity($buId, $orgId);
-                $tree->addDeepEntity($buId, $this->getId($account, $columnMap['parentId']));
+                $tree->addDeepEntity($buId, $this->getId($customer, $columnMap['parentId']));
             }
         }
 
         $tree->buildTree();
 
-        list($accountUsers, $columnMap) = $this->executeQuery(
+        list($customerUsers, $columnMap) = $this->executeQuery(
             $connection,
             $this
-                ->getRepository($accountUserClass)
+                ->getRepository($customerUserClass)
                 ->createQueryBuilder('au')
                 ->innerJoin('au.organizations', 'organizations')
                 ->select(
-                    'au.id as userId, organizations.id as orgId, IDENTITY(au.account) as accountId'
+                    'au.id as userId, organizations.id as orgId, IDENTITY(au.customer) as customerId'
                 )
                 ->addOrderBy('orgId')
                 ->getQuery()
@@ -106,19 +106,19 @@ class FrontendOwnerTreeProvider extends AbstractOwnerTreeProvider
         $lastUserId = false;
         $lastOrgId = false;
         $processedUsers = [];
-        foreach ($accountUsers as $accountUser) {
-            $userId = $this->getId($accountUser, $columnMap['userId']);
-            $orgId = $this->getId($accountUser, $columnMap['orgId']);
-            $accountId = $this->getId($accountUser, $columnMap['accountId']);
+        foreach ($customerUsers as $customerUser) {
+            $userId = $this->getId($customerUser, $columnMap['userId']);
+            $orgId = $this->getId($customerUser, $columnMap['orgId']);
+            $customerId = $this->getId($customerUser, $columnMap['customerId']);
             if ($userId !== $lastUserId && !isset($processedUsers[$userId])) {
-                $tree->addBasicEntity($userId, $accountId);
+                $tree->addBasicEntity($userId, $customerId);
                 $processedUsers[$userId] = true;
             }
             if ($orgId !== $lastOrgId || $userId !== $lastUserId) {
                 $tree->addGlobalEntity($userId, $orgId);
             }
-            if (null !== $accountId) {
-                $tree->addLocalEntityToBasic($userId, $accountId, $orgId);
+            if (null !== $customerId) {
+                $tree->addLocalEntityToBasic($userId, $customerId, $orgId);
             }
             $lastUserId = $userId;
             $lastOrgId = $orgId;

@@ -22,10 +22,10 @@ class ProductDuplicateListener
     protected $visibilityToAllClassName;
 
     /** @var string */
-    protected $visibilityAccountClassName;
+    protected $visibilityCustomerClassName;
 
     /** @var string */
-    protected $visibilityAccountGroupClassName;
+    protected $visibilityCustomerGroupClassName;
 
     /**
      * @param ManagerRegistry $registry
@@ -50,13 +50,13 @@ class ProductDuplicateListener
             $manager
         );
         $this->duplicateVisibility(
-            $this->visibilityAccountClassName,
+            $this->visibilityCustomerClassName,
             $product,
             $sourceProduct,
             $manager
         );
         $this->duplicateVisibility(
-            $this->visibilityAccountGroupClassName,
+            $this->visibilityCustomerGroupClassName,
             $product,
             $sourceProduct,
             $manager
@@ -99,19 +99,19 @@ class ProductDuplicateListener
     }
 
     /**
-     * @param string $visibilityAccountClassName
+     * @param string $visibilityCustomerClassName
      */
-    public function setVisibilityAccountClassName($visibilityAccountClassName)
+    public function setVisibilityCustomerClassName($visibilityCustomerClassName)
     {
-        $this->visibilityAccountClassName = $visibilityAccountClassName;
+        $this->visibilityCustomerClassName = $visibilityCustomerClassName;
     }
 
     /**
-     * @param string $visibilityAccountGroupClassName
+     * @param string $visibilityCustomerGroupClassName
      */
-    public function setVisibilityAccountGroupClassName($visibilityAccountGroupClassName)
+    public function setVisibilityCustomerGroupClassName($visibilityCustomerGroupClassName)
     {
-        $this->visibilityAccountGroupClassName = $visibilityAccountGroupClassName;
+        $this->visibilityCustomerGroupClassName = $visibilityCustomerGroupClassName;
     }
 
     /**

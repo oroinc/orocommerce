@@ -53,7 +53,7 @@ class ActionCurrentApplicationProviderTest extends CurrentApplicationProviderTes
     public function isApplicationsValidDataProvider()
     {
         $user = new User();
-        $accountUser = new CustomerUser();
+        $customerUser = new CustomerUser();
         $otherUser = 'anon.';
 
         return [
@@ -64,7 +64,7 @@ class ActionCurrentApplicationProviderTest extends CurrentApplicationProviderTes
             ],
             [
                 'applications' => ['default', 'commerce'],
-                'token' => $this->createToken($accountUser),
+                'token' => $this->createToken($customerUser),
                 'expectedResult' => true
             ],
             [
@@ -74,7 +74,7 @@ class ActionCurrentApplicationProviderTest extends CurrentApplicationProviderTes
             ],
             [
                 'applications' => ['default'],
-                'token' => $this->createToken($accountUser),
+                'token' => $this->createToken($customerUser),
                 'expectedResult' => false
             ],
             [
@@ -84,7 +84,7 @@ class ActionCurrentApplicationProviderTest extends CurrentApplicationProviderTes
             ],
             [
                 'applications' => ['commerce'],
-                'token' => $this->createToken($accountUser),
+                'token' => $this->createToken($customerUser),
                 'expectedResult' => true
             ],
             [

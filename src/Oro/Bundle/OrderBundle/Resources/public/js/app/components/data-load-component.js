@@ -10,13 +10,22 @@ define(function(require) {
         /**
          * @property {Object}
          */
-        options: {},
+        options: {
+            events: {
+                before: 'entry-point:order:load:before',
+                load: 'entry-point:order:load',
+                after: 'entry-point:order:load:after',
+                listenersOff: 'entry-point:listeners:off',
+                listenersOn: 'entry-point:listeners:on'
+            },
+            entityData: {}
+        },
 
         /**
          * @inheritDoc
          */
         initialize: function(options) {
-            this.options = _.extend({}, options);
+            this.options = _.extend(this.options, options);
             mediator.on('page:afterChange', this.updateOrderData, this);
         },
 
@@ -31,11 +40,11 @@ define(function(require) {
         },
 
         updateOrderData: function() {
-            mediator.trigger('entry-point:listeners:off');
-            mediator.trigger('entry-point:order:load:before');
-            mediator.trigger('entry-point:order:load', this.options);
-            mediator.trigger('entry-point:order:load:after');
-            mediator.trigger('entry-point:listeners:on');
+            mediator.trigger(this.options.events.listenersOff);
+            mediator.trigger(this.options.events.before);
+            mediator.trigger(this.options.events.load, this.options.entityData);
+            mediator.trigger(this.options.events.after);
+            mediator.trigger(this.options.events.listenersOn);
         }
     });
 

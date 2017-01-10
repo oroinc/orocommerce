@@ -4,7 +4,7 @@
 
 {% oro_title_set({params : {"%label%": entity.label }}) %}
 
-{% set gridName = 'account-account-users-grid-view' %}
+{% set gridName = 'customer-customer-users-grid-view' %}
 
 {% block pageHeader %}
     {% set breadcrumbs = {
@@ -37,7 +37,7 @@
             'subblocks': [
                 {'data' : [
                     UI.renderProperty('oro.customer.customeruserrole.label.label'|trans, entity.label),
-                    UI.renderProperty('oro.customer.customeruserrole.account.label'|trans, entity.account),
+                    UI.renderProperty('oro.customer.customeruserrole.customer.label'|trans, entity.customer),
                     selfManagedProperty
                 ]}
             ]
@@ -76,7 +76,7 @@
         }]
     }] ) %}
 
-    {% set id = 'account-customer-user-role-view' %}
+    {% set id = 'customer-customer-user-role-view' %}
     {% set data = {'dataBlocks': dataBlocks} %}
 
     {{ parent() }}

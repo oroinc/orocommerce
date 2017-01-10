@@ -3,7 +3,6 @@
 namespace Oro\Bundle\SaleBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
-
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
@@ -61,7 +60,7 @@ class OroSaleBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_12';
+        return 'v1_13';
     }
 
     /**
@@ -102,6 +101,18 @@ class OroSaleBundleInstaller implements
             'oro_sale_quote',
             ['datagrid' => ['is_visible' => DatagridScope::IS_VISIBLE_HIDDEN]]
         );
+
+        $this->addAllowUnlistedAndLockMethodFlagsToQuoteTable($schema);
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    protected function addAllowUnlistedAndLockMethodFlagsToQuoteTable(Schema $schema)
+    {
+        $table = $schema->getTable('oro_sale_quote');
+        $table->addColumn('shipping_method_locked', 'boolean');
+        $table->addColumn('allow_unlisted_shipping_method', 'boolean');
     }
 
     /**
@@ -154,13 +165,21 @@ class OroSaleBundleInstaller implements
         $table->addColumn('locked', 'boolean');
         $table->addColumn('expired', 'boolean', ['default' => false]);
         $table->addColumn('website_id', 'integer', ['notnull' => false]);
-        $table->addColumn('shipping_estimate_amount', 'money', [
+        $table->addColumn('shipping_method', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('shipping_method_type', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('estimated_shipping_cost_amount', 'money', [
             'notnull' => false,
             'precision' => 19,
             'scale' => 4,
             'comment' => '(DC2Type:money)'
         ]);
-        $table->addColumn('shipping_estimate_currency', 'string', ['notnull' => false, 'length' => 3]);
+        $table->addColumn('override_shipping_cost_amount', 'money', [
+            'notnull' => false,
+            'precision' => 19,
+            'scale' => 4,
+            'comment' => '(DC2Type:money)'
+        ]);
+        $table->addColumn('currency', 'string', ['notnull' => false, 'length' => 3]);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['shipping_address_id'], 'UNIQ_4F66B6F64D4CFF2B');
     }

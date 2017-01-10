@@ -12,7 +12,7 @@ use Oro\Bundle\ProductBundle\Event\ProductDBQueryRestrictionEvent;
  */
 class ProductSelectPriceListAwareListener
 {
-    const DEFAULT_ACCOUNT_USER = 'default_account_user';
+    const DEFAULT_ACCOUNT_USER = 'default_customer_user';
 
     /**
      * @var ProductDBQueryRestrictionEvent

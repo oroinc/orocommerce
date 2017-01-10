@@ -32,8 +32,8 @@ class LoadTaxTableRatesDemoData extends AbstractFixture implements DependentFixt
     {
         return [
             'Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductDemoData',
-            'Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadAccountDemoData',
-            'Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadAccountGroupDemoData',
+            'Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomerDemoData',
+            'Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomerGroupDemoData',
         ];
     }
 
@@ -46,7 +46,7 @@ class LoadTaxTableRatesDemoData extends AbstractFixture implements DependentFixt
     {
         $data = require __DIR__ . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'tax_table_rates.php';
 
-        $this->loadAccountTaxCodes($manager, $data['account_tax_codes']);
+        $this->loadCustomerTaxCodes($manager, $data['customer_tax_codes']);
         $this->loadProductTaxCodes($manager, $data['product_tax_codes']);
         $this->loadTaxes($manager, $data['taxes']);
         $this->loadTaxJurisdictions($manager, $data['tax_jurisdictions']);
@@ -57,27 +57,27 @@ class LoadTaxTableRatesDemoData extends AbstractFixture implements DependentFixt
 
     /**
      * @param ObjectManager $manager
-     * @param array $accountTaxCodes
+     * @param array $customerTaxCodes
      *
      * @return $this
      */
-    private function loadAccountTaxCodes(ObjectManager $manager, $accountTaxCodes)
+    private function loadCustomerTaxCodes(ObjectManager $manager, $customerTaxCodes)
     {
-        foreach ($accountTaxCodes as $code => $data) {
-            $taxCode = $this->entitiesFactory->createAccountTaxCode($code, $data['description'], $manager, $this);
-            if (isset($data['accounts'])) {
-                foreach ($data['accounts'] as $accountName) {
-                    $account = $manager->getRepository('OroCustomerBundle:Customer')->findOneByName($accountName);
-                    if (null !== $account) {
-                        $taxCode->addAccount($account);
+        foreach ($customerTaxCodes as $code => $data) {
+            $taxCode = $this->entitiesFactory->createCustomerTaxCode($code, $data['description'], $manager, $this);
+            if (isset($data['customers'])) {
+                foreach ($data['customers'] as $customerName) {
+                    $customer = $manager->getRepository('OroCustomerBundle:Customer')->findOneByName($customerName);
+                    if (null !== $customer) {
+                        $taxCode->addCustomer($customer);
                     }
                 }
             }
-            if (isset($data['account_groups'])) {
-                foreach ($data['account_groups'] as $groupName) {
+            if (isset($data['customer_groups'])) {
+                foreach ($data['customer_groups'] as $groupName) {
                     $group = $manager->getRepository('OroCustomerBundle:CustomerGroup')->findOneByName($groupName);
                     if (null !== $group) {
-                        $taxCode->addAccountGroup($group);
+                        $taxCode->addCustomerGroup($group);
                     }
                 }
             }
@@ -157,8 +157,8 @@ class LoadTaxTableRatesDemoData extends AbstractFixture implements DependentFixt
     private function loadTaxRules(ObjectManager $manager, $taxRules)
     {
         foreach ($taxRules as $rule) {
-            /** @var \Oro\Bundle\TaxBundle\Entity\AccountTaxCode $accountTaxCode */
-            $accountTaxCode = $this->getReference($rule['account_tax_code']);
+            /** @var \Oro\Bundle\TaxBundle\Entity\CustomerTaxCode $customerTaxCode */
+            $customerTaxCode = $this->getReference($rule['customer_tax_code']);
 
             /** @var \Oro\Bundle\TaxBundle\Entity\ProductTaxCode $productTaxCode */
             $productTaxCode = $this->getReference($rule['product_tax_code']);
@@ -170,7 +170,7 @@ class LoadTaxTableRatesDemoData extends AbstractFixture implements DependentFixt
             $tax = $this->getReference($rule['tax']);
 
             $this->entitiesFactory->createTaxRule(
-                $accountTaxCode,
+                $customerTaxCode,
                 $productTaxCode,
                 $taxJurisdiction,
                 $tax,

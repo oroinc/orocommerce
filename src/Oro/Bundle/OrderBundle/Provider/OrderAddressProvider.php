@@ -19,17 +19,17 @@ class OrderAddressProvider implements AddressProviderInterface
 
     const ADMIN_ACL_POSTFIX = '_backend';
 
-    const ACCOUNT_ADDRESS_ANY = 'account_any';
-    const ACCOUNT_USER_ADDRESS_DEFAULT = 'account_user_default';
-    const ACCOUNT_USER_ADDRESS_ANY = 'account_user_any';
+    const ACCOUNT_ADDRESS_ANY = 'customer_any';
+    const ACCOUNT_USER_ADDRESS_DEFAULT = 'customer_user_default';
+    const ACCOUNT_USER_ADDRESS_ANY = 'customer_user_any';
 
-    const ADDRESS_SHIPPING_ACCOUNT_USE_ANY = 'oro_order_address_shipping_account_use_any';
-    const ADDRESS_SHIPPING_ACCOUNT_USER_USE_DEFAULT = 'oro_order_address_shipping_account_user_use_default';
-    const ADDRESS_SHIPPING_ACCOUNT_USER_USE_ANY = 'oro_order_address_shipping_account_user_use_any';
+    const ADDRESS_SHIPPING_ACCOUNT_USE_ANY = 'oro_order_address_shipping_customer_use_any';
+    const ADDRESS_SHIPPING_ACCOUNT_USER_USE_DEFAULT = 'oro_order_address_shipping_customer_user_use_default';
+    const ADDRESS_SHIPPING_ACCOUNT_USER_USE_ANY = 'oro_order_address_shipping_customer_user_use_any';
 
-    const ADDRESS_BILLING_ACCOUNT_USE_ANY = 'oro_order_address_billing_account_use_any';
-    const ADDRESS_BILLING_ACCOUNT_USER_USE_DEFAULT = 'oro_order_address_billing_account_user_use_default';
-    const ADDRESS_BILLING_ACCOUNT_USER_USE_ANY = 'oro_order_address_billing_account_user_use_any';
+    const ADDRESS_BILLING_ACCOUNT_USE_ANY = 'oro_order_address_billing_customer_use_any';
+    const ADDRESS_BILLING_ACCOUNT_USER_USE_DEFAULT = 'oro_order_address_billing_customer_user_use_default';
+    const ADDRESS_BILLING_ACCOUNT_USER_USE_ANY = 'oro_order_address_billing_customer_user_use_any';
 
     /**
      * @var array
@@ -65,12 +65,12 @@ class OrderAddressProvider implements AddressProviderInterface
     /**
      * @var string
      */
-    protected $accountAddressClass;
+    protected $customerAddressClass;
 
     /**
      * @var string
      */
-    protected $accountUserAddressClass;
+    protected $customerUserAddressClass;
 
     /**
      * @var array
@@ -81,42 +81,42 @@ class OrderAddressProvider implements AddressProviderInterface
      * @param SecurityFacade $securityFacade
      * @param ManagerRegistry $registry
      * @param AclHelper $aclHelper
-     * @param string $accountAddressClass
-     * @param string $accountUserAddressClass
+     * @param string $customerAddressClass
+     * @param string $customerUserAddressClass
      */
     public function __construct(
         SecurityFacade $securityFacade,
         ManagerRegistry $registry,
         AclHelper $aclHelper,
-        $accountAddressClass,
-        $accountUserAddressClass
+        $customerAddressClass,
+        $customerUserAddressClass
     ) {
         $this->securityFacade = $securityFacade;
         $this->registry = $registry;
         $this->aclHelper = $aclHelper;
 
-        $this->accountAddressClass = $accountAddressClass;
-        $this->accountUserAddressClass = $accountUserAddressClass;
+        $this->customerAddressClass = $customerAddressClass;
+        $this->customerUserAddressClass = $customerUserAddressClass;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getAccountAddresses(Customer $account, $type)
+    public function getCustomerAddresses(Customer $customer, $type)
     {
         static::assertType($type);
 
-        $key = $this->getCacheKey($account, $type);
+        $key = $this->getCacheKey($customer, $type);
         if (array_key_exists($key, $this->cache)) {
             return $this->cache[$key];
         }
 
         $result = [];
-        $repository = $this->getAccountAddressRepository();
+        $repository = $this->getCustomerAddressRepository();
         if ($this->securityFacade->isGranted($this->getPermission($type, self::ACCOUNT_ADDRESS_ANY))) {
-            $result = $repository->getAddressesByType($account, $type, $this->aclHelper);
-        } elseif ($this->securityFacade->isGranted(sprintf('VIEW;entity:%s', $this->accountAddressClass))) {
-            $result = $repository->getDefaultAddressesByType($account, $type, $this->aclHelper);
+            $result = $repository->getAddressesByType($customer, $type, $this->aclHelper);
+        } elseif ($this->securityFacade->isGranted(sprintf('VIEW;entity:%s', $this->customerAddressClass))) {
+            $result = $repository->getDefaultAddressesByType($customer, $type, $this->aclHelper);
         }
 
         $this->cache[$key] = $result;
@@ -127,21 +127,21 @@ class OrderAddressProvider implements AddressProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function getAccountUserAddresses(CustomerUser $accountUser, $type)
+    public function getCustomerUserAddresses(CustomerUser $customerUser, $type)
     {
         static::assertType($type);
 
-        $key = $this->getCacheKey($accountUser, $type);
+        $key = $this->getCacheKey($customerUser, $type);
         if (array_key_exists($key, $this->cache)) {
             return $this->cache[$key];
         }
 
         $result = [];
-        $repository = $this->getAccountUserAddressRepository();
+        $repository = $this->getCustomerUserAddressRepository();
         if ($this->securityFacade->isGranted($this->getPermission($type, self::ACCOUNT_USER_ADDRESS_ANY))) {
-            $result = $repository->getAddressesByType($accountUser, $type, $this->aclHelper);
+            $result = $repository->getAddressesByType($customerUser, $type, $this->aclHelper);
         } elseif ($this->securityFacade->isGranted($this->getPermission($type, self::ACCOUNT_USER_ADDRESS_DEFAULT))) {
-            $result = $repository->getDefaultAddressesByType($accountUser, $type, $this->aclHelper);
+            $result = $repository->getDefaultAddressesByType($customerUser, $type, $this->aclHelper);
         }
 
         $this->cache[$key] = $result;
@@ -170,19 +170,19 @@ class OrderAddressProvider implements AddressProviderInterface
     /**
      * @return CustomerAddressRepository
      */
-    protected function getAccountAddressRepository()
+    protected function getCustomerAddressRepository()
     {
-        return $this->registry->getManagerForClass($this->accountAddressClass)
-            ->getRepository($this->accountAddressClass);
+        return $this->registry->getManagerForClass($this->customerAddressClass)
+            ->getRepository($this->customerAddressClass);
     }
 
     /**
      * @return CustomerUserAddressRepository
      */
-    protected function getAccountUserAddressRepository()
+    protected function getCustomerUserAddressRepository()
     {
-        return $this->registry->getManagerForClass($this->accountUserAddressClass)
-            ->getRepository($this->accountUserAddressClass);
+        return $this->registry->getManagerForClass($this->customerUserAddressClass)
+            ->getRepository($this->customerUserAddressClass);
     }
 
     /**

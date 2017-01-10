@@ -7,8 +7,8 @@ use Doctrine\ORM\QueryBuilder;
 
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
-use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToAccount;
-use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToAccountGroup;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomer;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite;
 use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
@@ -275,7 +275,7 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
                 $qb->expr()->exists(
                     $this->getEntityManager()
                         ->createQueryBuilder()
-                        ->from(CombinedPriceListToAccount::class, 'cpl_a')
+                        ->from(CombinedPriceListToCustomer::class, 'cpl_a')
                         ->select('cpl_a.id')
                         ->where('cpl_a.website = :websiteId')
                         ->andWhere('cpl_a.priceList = mp.priceList')
@@ -284,7 +284,7 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
                 $qb->expr()->exists(
                     $this->getEntityManager()
                         ->createQueryBuilder()
-                        ->from(CombinedPriceListToAccountGroup::class, 'cpl_ag')
+                        ->from(CombinedPriceListToCustomerGroup::class, 'cpl_ag')
                         ->select('cpl_ag.id')
                         ->where('cpl_ag.website = :websiteId')
                         ->andWhere('cpl_ag.priceList = mp.priceList')

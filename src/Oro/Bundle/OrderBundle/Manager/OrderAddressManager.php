@@ -57,13 +57,13 @@ class OrderAddressManager extends AbstractAddressManager
             }
         }
 
-        $orderAddress->setAccountAddress(null);
-        $orderAddress->setAccountUserAddress(null);
+        $orderAddress->setCustomerAddress(null);
+        $orderAddress->setCustomerUserAddress(null);
 
         if ($address instanceof CustomerAddress) {
-            $orderAddress->setAccountAddress($address);
+            $orderAddress->setCustomerAddress($address);
         } elseif ($address instanceof CustomerUserAddress) {
-            $orderAddress->setAccountUserAddress($address);
+            $orderAddress->setCustomerUserAddress($address);
         }
 
         return $orderAddress;

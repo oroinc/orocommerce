@@ -12,7 +12,7 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 
 class FrontendCustomerUserRoleType extends AbstractCustomerUserRoleType
 {
-    const NAME = 'oro_account_frontend_customer_user_role';
+    const NAME = 'oro_customer_frontend_customer_user_role';
 
     /**
      * {@inheritdoc}
@@ -37,7 +37,7 @@ class FrontendCustomerUserRoleType extends AbstractCustomerUserRoleType
     {
         parent::buildForm($builder, $options);
 
-        $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'updateAccountUsers']);
+        $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'updateCustomerUsers']);
         $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);
     }
 
@@ -48,8 +48,8 @@ class FrontendCustomerUserRoleType extends AbstractCustomerUserRoleType
      */
     public function preSetData(FormEvent $event)
     {
-        $event->getForm()->add('account', FrontendOwnerSelectType::NAME, [
-            'label' => 'oro.customer.account.entity_label',
+        $event->getForm()->add('customer', FrontendOwnerSelectType::NAME, [
+            'label' => 'oro.customer.customer.entity_label',
             'targetObject' => $event->getData()
         ]);
     }
@@ -57,7 +57,7 @@ class FrontendCustomerUserRoleType extends AbstractCustomerUserRoleType
     /**
      * @param FormEvent $event
      */
-    public function updateAccountUsers(FormEvent $event)
+    public function updateCustomerUsers(FormEvent $event)
     {
         $options = $event->getForm()->getConfig()->getOptions();
 
@@ -67,24 +67,24 @@ class FrontendCustomerUserRoleType extends AbstractCustomerUserRoleType
         }
 
         $role = $event->getData();
-        if (!$role instanceof CustomerUserRole || !$role->getAccount()) {
+        if (!$role instanceof CustomerUserRole || !$role->getCustomer()) {
             return;
         }
 
-        $accountUsers = $predefinedRole->getAccountUsers()->filter(
-            function (CustomerUser $accountUser) use ($role) {
-                return $accountUser->getAccount() &&
-                    $accountUser->getAccount()->getId() === $role->getAccount()->getId();
+        $customerUsers = $predefinedRole->getCustomerUsers()->filter(
+            function (CustomerUser $customerUser) use ($role) {
+                return $customerUser->getCustomer() &&
+                    $customerUser->getCustomer()->getId() === $role->getCustomer()->getId();
             }
         );
 
-        $accountUsers->map(
-            function (CustomerUser $accountUser) use ($predefinedRole) {
-                $accountUser->removeRole($predefinedRole);
+        $customerUsers->map(
+            function (CustomerUser $customerUser) use ($predefinedRole) {
+                $customerUser->removeRole($predefinedRole);
             }
         );
 
-        $event->getForm()->get('appendUsers')->setData($accountUsers->toArray());
+        $event->getForm()->get('appendUsers')->setData($customerUsers->toArray());
     }
 
     /**
@@ -96,7 +96,7 @@ class FrontendCustomerUserRoleType extends AbstractCustomerUserRoleType
 
         $resolver->setDefaults(
             [
-                'access_level_route' => 'oro_account_frontend_acl_access_levels',
+                'access_level_route' => 'oro_customer_frontend_acl_access_levels',
                 'predefined_role' => null,
                 'hide_self_managed' => true
             ]

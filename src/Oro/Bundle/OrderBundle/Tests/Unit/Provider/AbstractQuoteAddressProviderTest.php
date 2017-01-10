@@ -23,10 +23,10 @@ abstract class AbstractQuoteAddressProviderTest extends \PHPUnit_Framework_TestC
     protected $aclHelper;
 
     /** @var string */
-    protected $accountAddressClass = 'class1';
+    protected $customerAddressClass = 'class1';
 
     /** @var string */
-    protected $accountUserAddressClass = 'class2';
+    protected $customerUserAddressClass = 'class2';
 
     /**
      * @var AddressProviderInterface
@@ -37,27 +37,27 @@ abstract class AbstractQuoteAddressProviderTest extends \PHPUnit_Framework_TestC
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Unknown type "test", known types are: shipping
      */
-    public function testGetAccountAddressesUnsupportedType()
+    public function testGetCustomerAddressesUnsupportedType()
     {
-        $this->provider->getAccountAddresses(new Customer(), 'test');
+        $this->provider->getCustomerAddresses(new Customer(), 'test');
     }
 
     /**
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Unknown type "test", known types are: shipping
      */
-    public function testGetAccountUserAddressesUnsupportedType()
+    public function testGetCustomerUserAddressesUnsupportedType()
     {
-        $this->provider->getAccountUserAddresses(new CustomerUser(), 'test');
+        $this->provider->getCustomerUserAddresses(new CustomerUser(), 'test');
     }
 
     /**
-     * @dataProvider accountAddressPermissions
+     * @dataProvider customerAddressPermissions
      * @param string $type
      * @param string $expectedPermission
      * @param object $loggedUser
      */
-    public function testGetAccountAddressesNotGranted($type, $expectedPermission, $loggedUser)
+    public function testGetCustomerAddressesNotGranted($type, $expectedPermission, $loggedUser)
     {
         $this->securityFacade->expects($this->any())
             ->method('getLoggedUser')
@@ -69,34 +69,34 @@ abstract class AbstractQuoteAddressProviderTest extends \PHPUnit_Framework_TestC
                 $this->returnValueMap(
                     [
                         [$expectedPermission, null, false],
-                        ['VIEW;entity:' . $this->accountAddressClass, null, false],
+                        ['VIEW;entity:' . $this->customerAddressClass, null, false],
                     ]
                 )
             );
 
-        $repository = $this->assertAccountAddressRepositoryCall();
+        $repository = $this->assertCustomerAddressRepositoryCall();
         $repository->expects($this->never())
             ->method($this->anything());
 
-        $this->provider->getAccountAddresses(new Customer(), $type);
+        $this->provider->getCustomerAddresses(new Customer(), $type);
 
         // cache
-        $this->provider->getAccountAddresses(new Customer(), $type);
+        $this->provider->getCustomerAddresses(new Customer(), $type);
     }
 
     /**
-     * @dataProvider accountAddressPermissions
+     * @dataProvider customerAddressPermissions
      * @param string $type
      * @param string $expectedPermission
      * @param object $loggedUser
      */
-    public function testGetAccountAddressesGrantedAny($type, $expectedPermission, $loggedUser)
+    public function testGetCustomerAddressesGrantedAny($type, $expectedPermission, $loggedUser)
     {
         $this->securityFacade->expects($this->any())
             ->method('getLoggedUser')
             ->will($this->returnValue($loggedUser));
 
-        $account = new Customer();
+        $customer = new Customer();
         $addresses = [new CustomerAddress()];
 
         $this->securityFacade->expects($this->once())
@@ -104,31 +104,31 @@ abstract class AbstractQuoteAddressProviderTest extends \PHPUnit_Framework_TestC
             ->with($expectedPermission)
             ->willReturn(true);
 
-        $repository = $this->assertAccountAddressRepositoryCall();
+        $repository = $this->assertCustomerAddressRepositoryCall();
         $repository->expects($this->once())
             ->method('getAddressesByType')
-            ->with($account, $type, $this->aclHelper)
+            ->with($customer, $type, $this->aclHelper)
             ->will($this->returnValue($addresses));
 
-        $this->assertEquals($addresses, $this->provider->getAccountAddresses($account, $type));
+        $this->assertEquals($addresses, $this->provider->getCustomerAddresses($customer, $type));
 
         // cache
-        $this->assertEquals($addresses, $this->provider->getAccountAddresses($account, $type));
+        $this->assertEquals($addresses, $this->provider->getCustomerAddresses($customer, $type));
     }
 
     /**
-     * @dataProvider accountAddressPermissions
+     * @dataProvider customerAddressPermissions
      * @param string $type
      * @param string $expectedPermission
      * @param object $loggedUser
      */
-    public function testGetAccountAddressesGrantedView($type, $expectedPermission, $loggedUser)
+    public function testGetCustomerAddressesGrantedView($type, $expectedPermission, $loggedUser)
     {
         $this->securityFacade->expects($this->any())
             ->method('getLoggedUser')
             ->will($this->returnValue($loggedUser));
 
-        $account = new Customer();
+        $customer = new Customer();
         $addresses = [new CustomerAddress()];
 
         $this->securityFacade->expects($this->exactly(2))
@@ -137,35 +137,35 @@ abstract class AbstractQuoteAddressProviderTest extends \PHPUnit_Framework_TestC
                 $this->returnValueMap(
                     [
                         [$expectedPermission, null, false],
-                        ['VIEW;entity:' . $this->accountAddressClass, null, true],
+                        ['VIEW;entity:' . $this->customerAddressClass, null, true],
                     ]
                 )
             );
 
-        $repository = $this->assertAccountAddressRepositoryCall();
+        $repository = $this->assertCustomerAddressRepositoryCall();
         $repository->expects($this->never())
             ->method('getAddressesByType');
 
         $repository->expects($this->once())
             ->method('getDefaultAddressesByType')
-            ->with($account, $type, $this->aclHelper)
+            ->with($customer, $type, $this->aclHelper)
             ->will($this->returnValue($addresses));
 
-        $this->assertEquals($addresses, $this->provider->getAccountAddresses($account, $type));
+        $this->assertEquals($addresses, $this->provider->getCustomerAddresses($customer, $type));
 
         // cache
-        $this->assertEquals($addresses, $this->provider->getAccountAddresses($account, $type));
+        $this->assertEquals($addresses, $this->provider->getCustomerAddresses($customer, $type));
     }
 
     /**
-     * @dataProvider accountUserAddressPermissions
+     * @dataProvider customerUserAddressPermissions
      * @param string $type
      * @param array $expectedCalledPermissions
      * @param string $calledRepositoryMethod
      * @param array $addresses
      * @param object $loggedUser
      */
-    public function testGetAccountUserAddresses(
+    public function testGetCustomerUserAddresses(
         $type,
         array $expectedCalledPermissions,
         $calledRepositoryMethod,
@@ -176,7 +176,7 @@ abstract class AbstractQuoteAddressProviderTest extends \PHPUnit_Framework_TestC
             ->method('getLoggedUser')
             ->will($this->returnValue($loggedUser));
 
-        $accountUser = new CustomerUser();
+        $customerUser = new CustomerUser();
 
         $permissionsValueMap = [];
         foreach ($expectedCalledPermissions as $permission => $decision) {
@@ -187,27 +187,27 @@ abstract class AbstractQuoteAddressProviderTest extends \PHPUnit_Framework_TestC
             ->method('isGranted')
             ->will($this->returnValueMap($permissionsValueMap));
 
-        $repository = $this->assertAccountUserAddressRepositoryCall();
+        $repository = $this->assertCustomerUserAddressRepositoryCall();
         if ($calledRepositoryMethod) {
             $repository->expects($this->once())
                 ->method($calledRepositoryMethod)
-                ->with($accountUser, $type, $this->aclHelper)
+                ->with($customerUser, $type, $this->aclHelper)
                 ->will($this->returnValue($addresses));
         } else {
             $repository->expects($this->never())
                 ->method($this->anything());
         }
 
-        $this->assertEquals($addresses, $this->provider->getAccountUserAddresses($accountUser, $type));
+        $this->assertEquals($addresses, $this->provider->getCustomerUserAddresses($customerUser, $type));
 
         // cache
-        $this->assertEquals($addresses, $this->provider->getAccountUserAddresses($accountUser, $type));
+        $this->assertEquals($addresses, $this->provider->getCustomerUserAddresses($customerUser, $type));
     }
 
     /**
      * @return \PHPUnit_Framework_MockObject_MockObject
      */
-    protected function assertAccountAddressRepositoryCall()
+    protected function assertCustomerAddressRepositoryCall()
     {
         $repository = $this->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\Repository\CustomerAddressRepository')
             ->disableOriginalConstructor()
@@ -216,12 +216,12 @@ abstract class AbstractQuoteAddressProviderTest extends \PHPUnit_Framework_TestC
         $manager = $this->createMock('Doctrine\ORM\EntityManagerInterface');
         $manager->expects($this->any())
             ->method('getRepository')
-            ->with($this->accountAddressClass)
+            ->with($this->customerAddressClass)
             ->will($this->returnValue($repository));
 
         $this->registry->expects($this->any())
             ->method('getManagerForClass')
-            ->with($this->accountAddressClass)
+            ->with($this->customerAddressClass)
             ->will($this->returnValue($manager));
 
         return $repository;
@@ -230,7 +230,7 @@ abstract class AbstractQuoteAddressProviderTest extends \PHPUnit_Framework_TestC
     /**
      * @return \PHPUnit_Framework_MockObject_MockObject
      */
-    protected function assertAccountUserAddressRepositoryCall()
+    protected function assertCustomerUserAddressRepositoryCall()
     {
         $repository = $this
             ->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\Repository\CustomerUserAddressRepository')
@@ -240,12 +240,12 @@ abstract class AbstractQuoteAddressProviderTest extends \PHPUnit_Framework_TestC
         $manager = $this->createMock('Doctrine\ORM\EntityManagerInterface');
         $manager->expects($this->any())
             ->method('getRepository')
-            ->with($this->accountUserAddressClass)
+            ->with($this->customerUserAddressClass)
             ->will($this->returnValue($repository));
 
         $this->registry->expects($this->any())
             ->method('getManagerForClass')
-            ->with($this->accountUserAddressClass)
+            ->with($this->customerUserAddressClass)
             ->will($this->returnValue($manager));
 
         return $repository;

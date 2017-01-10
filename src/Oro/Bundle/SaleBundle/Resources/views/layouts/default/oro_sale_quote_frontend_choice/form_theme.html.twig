@@ -68,15 +68,15 @@
             <span data-role="price-view">{{ defaultPriceValue }}</span>
         </td>
     </tr>
-    {% if (quoteProduct.commentAccount is not empty) %}
+    {% if (quoteProduct.commentCustomer is not empty) %}
         <tr class="borderless">
             <td colspan="4">
-                <div class="account-oq__order-item-more">
+                <div class="customer-oq__order-item-more">
                     <span class="expand-text"
                          data-page-component-module="oroui/js/app/components/jquery-widget-component"
                          data-page-component-options="{{ expandTextOptions }}"
                     >
-                         {{ 'oro.frontend.sale.quoteproduct.comment_account.label'|trans }}: {{ quoteProduct.commentAccount }}
+                         {{ 'oro.frontend.sale.quoteproduct.comment_customer.label'|trans }}: {{ quoteProduct.commentCustomer }}
                     </span>
                 </div>
             </td>
@@ -86,7 +86,7 @@
     {% if (quoteProduct.comment is not empty) %}
         <tr class="borderless">
             <td colspan="4">
-                <div class="account-oq__order-item-more">
+                <div class="customer-oq__order-item-more">
                     <span class="expand-text"
                                data-page-component-module="oroui/js/app/components/jquery-widget-component"
                                data-page-component-options="{{ expandTextOptions }}"
