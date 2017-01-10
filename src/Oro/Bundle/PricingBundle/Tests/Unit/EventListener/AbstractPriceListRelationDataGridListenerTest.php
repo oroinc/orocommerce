@@ -11,8 +11,8 @@ use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
-use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToAccountRepository;
-use Oro\Bundle\PricingBundle\EventListener\AccountDataGridListener;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToCustomerRepository;
+use Oro\Bundle\PricingBundle\EventListener\CustomerDataGridListener;
 use Oro\Bundle\PricingBundle\Entity\BasePriceListRelation;
 
 abstract class AbstractPriceListRelationDataGridListenerTest extends \PHPUnit_Framework_TestCase
@@ -28,12 +28,12 @@ abstract class AbstractPriceListRelationDataGridListenerTest extends \PHPUnit_Fr
     protected $manager;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|AccountDataGridListener
+     * @var \PHPUnit_Framework_MockObject_MockObject|CustomerDataGridListener
      */
     protected $listener;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|PriceListToAccountRepository
+     * @var \PHPUnit_Framework_MockObject_MockObject|PriceListToCustomerRepository
      */
     protected $repository;
 

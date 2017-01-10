@@ -34,7 +34,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
         $this->listener = new FormViewListener($this->translator, $this->doctrineHelper, $requestStack);
     }
 
-    public function testOnAccountUserView()
+    public function testOnCustomerUserView()
     {
         $this->request
             ->expects($this->any())
@@ -42,12 +42,12 @@ class FormViewListenerTest extends FormViewListenerTestCase
             ->with('id')
             ->willReturn(1);
 
-        $accountUser = new CustomerUser();
+        $customerUser = new CustomerUser();
 
         $this->doctrineHelper
             ->expects($this->once())
             ->method('getEntityReference')
-            ->willReturn($accountUser);
+            ->willReturn($customerUser);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $env */
         $env = $this->getMockBuilder('\Twig_Environment')
@@ -55,7 +55,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
             ->getMock();
         $env->expects($this->once())
             ->method('render')
-            ->with('OroOrderBundle:AccountUser:orders_view.html.twig', ['entity' => $accountUser])
+            ->with('OroOrderBundle:CustomerUser:orders_view.html.twig', ['entity' => $customerUser])
             ->willReturn('');
 
         $event = $this->getBeforeListRenderEvent();
@@ -63,10 +63,10 @@ class FormViewListenerTest extends FormViewListenerTestCase
             ->method('getEnvironment')
             ->willReturn($env);
 
-        $this->listener->onAccountUserView($event);
+        $this->listener->onCustomerUserView($event);
     }
 
-    public function testOnAccountUserViewWithEmptyRequest()
+    public function testOnCustomerUserViewWithEmptyRequest()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|BeforeListRenderEvent $event */
         $event = $this->getMockBuilder('Oro\Bundle\UIBundle\Event\BeforeListRenderEvent')
@@ -76,19 +76,19 @@ class FormViewListenerTest extends FormViewListenerTestCase
         $event->expects($this->never())
             ->method('getScrollData');
 
-        $this->listener->onAccountUserView($event);
+        $this->listener->onCustomerUserView($event);
     }
 
-    public function testOnAccountView()
+    public function testOnCustomerView()
     {
         $this->request->expects($this->any())->method('get')->with('id')->willReturn(1);
 
-        $account = new Customer();
+        $customer = new Customer();
 
         $this->doctrineHelper
             ->expects($this->once())
             ->method('getEntityReference')
-            ->willReturn($account);
+            ->willReturn($customer);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $env */
         $env = $this->getMockBuilder('\Twig_Environment')
@@ -96,7 +96,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
             ->getMock();
         $env->expects($this->once())
             ->method('render')
-            ->with('OroOrderBundle:Account:orders_view.html.twig', ['entity' => $account])
+            ->with('OroOrderBundle:Customer:orders_view.html.twig', ['entity' => $customer])
             ->willReturn('');
 
         $event = $this->getBeforeListRenderEvent();
@@ -104,19 +104,19 @@ class FormViewListenerTest extends FormViewListenerTestCase
             ->method('getEnvironment')
             ->willReturn($env);
 
-        $this->listener->onAccountView($event);
+        $this->listener->onCustomerView($event);
     }
 
-    public function testOnAccountViewWithoutId()
+    public function testOnCustomerViewWithoutId()
     {
         $this->request->expects($this->any())->method('get')->with('id')->willReturn(null);
 
-        $account = new Customer();
+        $customer = new Customer();
 
         $this->doctrineHelper
             ->expects($this->never())
             ->method('getEntityReference')
-            ->willReturn($account);
+            ->willReturn($customer);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|BeforeListRenderEvent $event */
         $event = $this->getMockBuilder('Oro\Bundle\UIBundle\Event\BeforeListRenderEvent')
@@ -124,10 +124,10 @@ class FormViewListenerTest extends FormViewListenerTestCase
             ->getMock();
         $event->expects($this->never())->method('getScrollData');
 
-        $this->listener->onAccountView($event);
+        $this->listener->onCustomerView($event);
     }
 
-    public function testOnAccountViewWithoutEntity()
+    public function testOnCustomerViewWithoutEntity()
     {
         $this->request->expects($this->any())->method('get')->with('id')->willReturn(1);
 
@@ -142,10 +142,10 @@ class FormViewListenerTest extends FormViewListenerTestCase
             ->getMock();
         $event->expects($this->never())->method('getScrollData');
 
-        $this->listener->onAccountView($event);
+        $this->listener->onCustomerView($event);
     }
 
-    public function testOnAccountViewWithEmptyRequest()
+    public function testOnCustomerViewWithEmptyRequest()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|BeforeListRenderEvent $event */
         $event = $this->getMockBuilder('Oro\Bundle\UIBundle\Event\BeforeListRenderEvent')
@@ -155,6 +155,6 @@ class FormViewListenerTest extends FormViewListenerTestCase
         $event->expects($this->never())
             ->method('getScrollData');
 
-        $this->listener->onAccountView($event);
+        $this->listener->onCustomerView($event);
     }
 }

@@ -7,8 +7,8 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 use Oro\Bundle\PricingBundle\Entity\PriceListFallback;
-use Oro\Bundle\PricingBundle\Entity\PriceListToAccount;
-use Oro\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
+use Oro\Bundle\PricingBundle\Entity\PriceListToCustomer;
+use Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepositoryInterface;
 use Oro\Bundle\PricingBundle\Form\PriceListWithPriorityCollectionHandler;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListCollectionType;
@@ -122,7 +122,7 @@ abstract class AbstractPriceListCollectionAwareListener
     /**
      * @param CustomerGroup|Customer $targetEntity
      * @param Website $website
-     * @return array|PriceListToAccountGroup[]|PriceListToAccount[]
+     * @return array|PriceListToCustomerGroup[]|PriceListToCustomer[]
      */
     protected function getExistingRelations($targetEntity, Website $website)
     {

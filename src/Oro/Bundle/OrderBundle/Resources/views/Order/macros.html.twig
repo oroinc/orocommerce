@@ -1,5 +1,11 @@
-{% macro renderPossibleShippingMethods(form) %}
+{% macro renderPossibleShippingMethods(
+    form,
+    events = {}
+) %}
     <div data-page-component-module="oroorder/js/app/components/possible-shipping-methods-component"
+         {% if events|length > 0 %}
+            data-page-component-options="{{ { events: events }|json_encode }}"
+         {% endif %}
          class="possible_shipping_methods_container">
         <div class="btn-group">
             <span id="possible_shipping_methods_btn" class="btn">{{ 'oro.order.btn.calculate_shipping'|trans }}</span>

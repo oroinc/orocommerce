@@ -6,7 +6,7 @@ services:
             - '@doctrine'
         tags:
             - { name: kernel.event_listener, event: oro_pricing.combined_price_list.update, method: onPriceListUpdate }
-            - { name: kernel.event_listener, event: oro_pricing.account.combined_price_list.update, method: onAccountPriceListUpdate }
-            - { name: kernel.event_listener, event: oro_pricing.account_group.combined_price_list.update, method: onAccountGroupPriceListUpdate }
+            - { name: kernel.event_listener, event: oro_pricing.customer.combined_price_list.update, method: onCustomerPriceListUpdate }
+            - { name: kernel.event_listener, event: oro_pricing.customer_group.combined_price_list.update, method: onCustomerGroupPriceListUpdate }
             - { name: kernel.event_listener, event: oro_pricing.website.combined_price_list.update, method: onWebsitePriceListUpdate }
             - { name: kernel.event_listener, event: oro_pricing.config.combined_price_list.update, method: onConfigPriceListUpdate }

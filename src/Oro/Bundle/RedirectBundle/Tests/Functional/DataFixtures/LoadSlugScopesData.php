@@ -6,7 +6,7 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccounts;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 
@@ -17,12 +17,12 @@ class LoadSlugScopesData extends AbstractFixture implements DependentFixtureInte
      */
     public function load(ObjectManager $manager)
     {
-        /** @var CustomerUser $account */
-        $account = $this->getReference(LoadAccounts::DEFAULT_ACCOUNT_NAME);
+        /** @var CustomerUser $customer */
+        $customer = $this->getReference(LoadCustomers::DEFAULT_ACCOUNT_NAME);
 
         $scope = new Scope();
-        if (method_exists($scope, 'setAccount')) {
-            $scope->setAccount($account);
+        if (method_exists($scope, 'setCustomer')) {
+            $scope->setCustomer($customer);
         }
         $manager->persist($scope);
 
@@ -48,7 +48,7 @@ class LoadSlugScopesData extends AbstractFixture implements DependentFixtureInte
     {
         return [
             LoadSlugsData::class,
-            LoadAccounts::class
+            LoadCustomers::class
         ];
     }
 }

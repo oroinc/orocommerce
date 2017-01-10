@@ -74,12 +74,12 @@ class OrderShippingContextFactory
             $shippingContextBuilder->setBillingAddress($order->getBillingAddress());
         }
 
-        if (null !== $order->getAccount()) {
-            $shippingContextBuilder->setCustomer($order->getAccount());
+        if (null !== $order->getCustomer()) {
+            $shippingContextBuilder->setCustomer($order->getCustomer());
         }
 
-        if (null !== $order->getAccountUser()) {
-            $shippingContextBuilder->setCustomerUser($order->getAccountUser());
+        if (null !== $order->getCustomerUser()) {
+            $shippingContextBuilder->setCustomerUser($order->getCustomerUser());
         }
 
         if (null !== $convertedLineItems && !$convertedLineItems->isEmpty()) {

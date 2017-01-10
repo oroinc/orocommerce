@@ -82,15 +82,15 @@ class OrderAddressTest extends \PHPUnit_Framework_TestCase
         $this->orderAddressValidator->validate($value, $this->constraint);
     }
 
-    public function testValidateAccountAddress()
+    public function testValidateCustomerAddress()
     {
         $value = new OrderAddressEntity();
-        $value->setAccountAddress(new CustomerAddress());
+        $value->setCustomerAddress(new CustomerAddress());
         $this->validator->expects($this->never())->method('validate');
 
         $this->orderAddressValidator->validate($value, $this->constraint);
-        $value->setAccountAddress(null);
-        $value->setAccountUserAddress(new CustomerUserAddress());
+        $value->setCustomerAddress(null);
+        $value->setCustomerUserAddress(new CustomerUserAddress());
         $this->orderAddressValidator->validate($value, $this->constraint);
     }
 }

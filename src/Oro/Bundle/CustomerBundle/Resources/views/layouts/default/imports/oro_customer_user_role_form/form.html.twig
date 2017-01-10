@@ -1,4 +1,4 @@
-{% block oro_account_frontend_customer_user_role_widget %}
+{% block oro_customer_frontend_customer_user_role_widget %}
     {% set fields = [] %}
     {% for name, child in form %}
         {% if name not in ['appendUsers', 'removeUsers', 'entity', 'privileges', 'action'] %}
@@ -21,17 +21,17 @@
          data-page-component-options="{{ options|json_encode }}">
     </div>
 
-    {{ form_row(form.account) }}
+    {{ form_row(form.customer) }}
     {{ form_row(form.label) }}
 
     {{ form_widget(form.appendUsers, {'id': 'roleAppendUsers'}) }}
     {{ form_widget(form.removeUsers, {'id': 'roleRemoveUsers'}) }}
 {% endblock %}
 
-{% block _oro_account_frontend_customer_user_role_entity_row %}{% endblock %}
-{% block _oro_account_frontend_customer_user_role_action_row %}{% endblock %}
+{% block _oro_customer_frontend_customer_user_role_entity_row %}{% endblock %}
+{% block _oro_customer_frontend_customer_user_role_action_row %}{% endblock %}
 
-{% block _oro_account_frontend_customer_user_role_label_row %}
+{% block _oro_customer_frontend_customer_user_role_label_row %}
     <div class="grid">
         <div class="grid__row">
             <div class="grid__column--5">

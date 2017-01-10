@@ -48,24 +48,24 @@ class FrontendOrderDataHandler
     /**
      * @return Customer|null
      */
-    public function getAccount()
+    public function getCustomer()
     {
-        $accountUser = $this->getAccountUser();
+        $customerUser = $this->getCustomerUser();
 
-        return $accountUser->getAccount();
+        return $customerUser->getCustomer();
     }
 
     /**
      * @return CustomerUser
      */
-    public function getAccountUser()
+    public function getCustomerUser()
     {
-        $accountUser = $this->securityFacade->getLoggedUser();
-        if (!$accountUser instanceof CustomerUser) {
+        $customerUser = $this->securityFacade->getLoggedUser();
+        if (!$customerUser instanceof CustomerUser) {
             throw new \InvalidArgumentException('Only CustomerUser can create an Order');
         }
 
-        return $accountUser;
+        return $customerUser;
     }
 
     /**
@@ -73,7 +73,7 @@ class FrontendOrderDataHandler
      */
     public function getPaymentTerm()
     {
-        return $this->paymentTermProvider->getPaymentTerm($this->getAccount());
+        return $this->paymentTermProvider->getPaymentTerm($this->getCustomer());
     }
 
     /**

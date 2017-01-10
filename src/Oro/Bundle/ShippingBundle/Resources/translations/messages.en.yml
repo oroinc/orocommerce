@@ -79,22 +79,10 @@ oro:
             section:
                 shipping_options: Shipping Options
         form:
-            oro_shipping_flat_rate_type_options:
-                label: Flat Rate
             placeholder:
                 length_unit.label: Select unit of length
                 weight_unit.label: Select unit of weight
                 freight_class.label: Select freight class
-        method:
-            flat_rate:
-                label: Flat Rate
-                type.label: Flat Rate
-                price.label: Price
-                handling_fee.label: Handling Fee
-                processing_type:
-                    label: Type
-                    per_item.label: Per Item
-                    per_order.label: Per Order
 
         method_type:
             shipping_methods_widget:
@@ -117,7 +105,9 @@ oro:
             general: 'General Information'
             shippingrule_destination: 'Destinations'
             shippingrule_conditions: 'Conditions'
-            shippingrule_configurations: 'Shipping Method Configurations'
+            shippingrule_configurations:
+                no_methods.message: 'Please enable at least one shipping integration.'
+                label: 'Shipping Method Configurations'
 
         controller:
             rule.saved.message: 'Shipping rule has been saved'

@@ -45,13 +45,13 @@ class CPLIdPlaceholder extends AbstractPlaceholder
     public function getDefaultValue()
     {
         $token = $this->tokenStorage->getToken();
-        $account = null;
+        $customer = null;
 
         if ($token && $token->getUser() instanceof CustomerUser) {
-            $account = $token->getUser()->getAccount();
+            $customer = $token->getUser()->getCustomer();
         }
 
-        $cpl = $this->priceListTreeHandler->getPriceList($account);
+        $cpl = $this->priceListTreeHandler->getPriceList($customer);
 
         if (!$cpl) {
             throw new \RuntimeException('Can\'t get current cpl');

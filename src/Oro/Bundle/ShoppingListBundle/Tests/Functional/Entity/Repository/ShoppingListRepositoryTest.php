@@ -5,7 +5,7 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Entity\Repository;
 use Doctrine\Common\Collections\Criteria;
 
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\SecurityBundle\Authentication\Token\UsernamePasswordOrganizationToken;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -21,7 +21,7 @@ class ShoppingListRepositoryTest extends WebTestCase
     /**
      * @var CustomerUser
      */
-    protected $accountUser;
+    protected $customerUser;
 
     /**
      * @var AclHelper
@@ -38,19 +38,19 @@ class ShoppingListRepositoryTest extends WebTestCase
 
         $this->loadFixtures([LoadShoppingLists::class]);
 
-        $this->accountUser = $this->getAccountUser();
+        $this->customerUser = $this->getCustomerUser();
 
-        $token = $this->createToken($this->accountUser);
+        $token = $this->createToken($this->customerUser);
 
         $this->client->getContainer()->get('security.token_storage')->setToken($token);
 
         $this->aclHelper = $this->getContainer()->get('oro_security.acl_helper');
     }
 
-    public function testFindAvailableForAccountUser()
+    public function testFindAvailableForCustomerUser()
     {
         // Isset current shopping list
-        $availableShoppingList = $this->getRepository()->findAvailableForAccountUser($this->aclHelper);
+        $availableShoppingList = $this->getRepository()->findAvailableForCustomerUser($this->aclHelper);
         $this->assertInstanceOf(ShoppingList::class, $availableShoppingList);
 
         // the latest shopping list for current user
@@ -68,7 +68,7 @@ class ShoppingListRepositoryTest extends WebTestCase
 
         foreach ($shoppingLists as $shoppingList) {
             $this->assertInstanceOf(ShoppingList::class, $shoppingList);
-            $this->assertSame($this->accountUser, $shoppingList->getAccountUser());
+            $this->assertSame($this->customerUser, $shoppingList->getCustomerUser());
 
             if ($updatedAt) {
                 $this->assertTrue($updatedAt <= $shoppingList->getUpdatedAt());
@@ -85,16 +85,16 @@ class ShoppingListRepositoryTest extends WebTestCase
         $shoppingList = $this->getRepository()->findByUserAndId($this->aclHelper, $shoppingListReference->getId());
 
         $this->assertInstanceOf(ShoppingList::class, $shoppingList);
-        $this->assertSame($this->accountUser, $shoppingList->getAccountUser());
+        $this->assertSame($this->customerUser, $shoppingList->getCustomerUser());
     }
 
     /**
      * @return CustomerUser
      */
-    public function getAccountUser()
+    public function getCustomerUser()
     {
         return $this->getContainer()->get('doctrine')->getRepository(CustomerUser::class)
-            ->findOneBy(['username' => LoadAccountUserData::AUTH_USER]);
+            ->findOneBy(['username' => LoadCustomerUserData::AUTH_USER]);
     }
 
     /**
@@ -106,17 +106,17 @@ class ShoppingListRepositoryTest extends WebTestCase
     }
 
     /**
-     * @param CustomerUser $accountUser
+     * @param CustomerUser $customerUser
      * @return UsernamePasswordOrganizationToken
      */
-    protected function createToken(CustomerUser $accountUser)
+    protected function createToken(CustomerUser $customerUser)
     {
         return new UsernamePasswordOrganizationToken(
-            $accountUser,
+            $customerUser,
             false,
             'k',
-            $accountUser->getOrganization(),
-            $accountUser->getRoles()
+            $customerUser->getOrganization(),
+            $customerUser->getRoles()
         );
     }
 }

@@ -11,24 +11,24 @@ use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 
 abstract class AbstractAddressDiffMapperTest extends AbstractCheckoutDiffMapperTest
 {
-    public function testGetCurrentStateAccountUserAddress()
+    public function testGetCurrentStateCustomerUserAddress()
     {
-        $accountUserAddress = $this->fillAddress(new CustomerUserAddress());
+        $customerUserAddress = $this->fillAddress(new CustomerUserAddress());
 
         $orderAddress = new OrderAddress();
-        $orderAddress->setAccountUserAddress($accountUserAddress);
+        $orderAddress->setCustomerUserAddress($customerUserAddress);
         $this->checkout->{$this->getAddressMethodName('set')}($orderAddress);
 
         $result = $this->mapper->getCurrentState($this->checkout);
         $this->assertEquals($this->getStringAddressView(), $result);
     }
 
-    public function testGetCurrentStateAccountAddress()
+    public function testGetCurrentStateCustomerAddress()
     {
-        $accountAddress = $this->fillAddress(new CustomerAddress());
+        $customerAddress = $this->fillAddress(new CustomerAddress());
 
         $orderAddress = new OrderAddress();
-        $orderAddress->setAccountAddress($accountAddress);
+        $orderAddress->setCustomerAddress($customerAddress);
         $this->checkout->{$this->getAddressMethodName('set')}($orderAddress);
 
         $result = $this->mapper->getCurrentState($this->checkout);

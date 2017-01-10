@@ -12,8 +12,8 @@ use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\UserBundle\Entity\Ownership\AuditableUserAwareTrait;
-use Oro\Bundle\CustomerBundle\Entity\AccountOwnerAwareInterface;
-use Oro\Bundle\CustomerBundle\Entity\Ownership\FrontendAccountUserAwareTrait;
+use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
+use Oro\Bundle\CustomerBundle\Entity\Ownership\FrontendCustomerUserAwareTrait;
 use Oro\Bundle\InvoiceBundle\Model\ExtendInvoice;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
@@ -26,7 +26,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  * )
  * @ORM\Entity
  * @ORM\AssociationOverrides({
- *      @ORM\AssociationOverride(name="account",
+ *      @ORM\AssociationOverride(name="customer",
  *          joinColumns=@ORM\JoinColumn(name="customer_id", referencedColumnName="id", onDelete="CASCADE")
  *      )
  * })
@@ -41,7 +41,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  *              "organization_field_name"="organization",
  *              "organization_column_name"="organization_id",
  *              "frontend_owner_type"="FRONTEND_USER",
- *              "frontend_owner_field_name"="accountUser",
+ *              "frontend_owner_field_name"="customerUser",
  *              "frontend_owner_column_name"="customer_user_id",
  *          },
  *          "dataaudit"={
@@ -58,7 +58,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class Invoice extends ExtendInvoice implements
-    AccountOwnerAwareInterface,
+    CustomerOwnerAwareInterface,
     OrganizationAwareInterface,
     CurrencyAwareInterface,
     LineItemsAwareInterface,
@@ -67,7 +67,7 @@ class Invoice extends ExtendInvoice implements
 {
     use DatesAwareTrait;
     use AuditableUserAwareTrait;
-    use FrontendAccountUserAwareTrait;
+    use FrontendCustomerUserAwareTrait;
 
     /**
      * @var integer

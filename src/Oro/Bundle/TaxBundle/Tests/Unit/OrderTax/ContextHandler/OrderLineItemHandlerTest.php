@@ -10,7 +10,7 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\TaxBundle\Entity\AccountTaxCode;
+use Oro\Bundle\TaxBundle\Entity\CustomerTaxCode;
 use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
 use Oro\Bundle\TaxBundle\Entity\Repository\AbstractTaxCodeRepository;
 use Oro\Bundle\TaxBundle\Event\ContextEvent;
@@ -55,14 +55,14 @@ class OrderLineItemHandlerTest extends \PHPUnit_Framework_TestCase
     protected $productTaxCode;
 
     /**
-     * @var AccountTaxCode
+     * @var CustomerTaxCode
      */
-    protected $accountTaxCode;
+    protected $customerTaxCode;
 
     /**
-     * @var AccountTaxCode
+     * @var CustomerTaxCode
      */
-    protected $accountGroupTaxCode;
+    protected $customerGroupTaxCode;
 
     /**
      * @var Order
@@ -86,10 +86,10 @@ class OrderLineItemHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->order = new Order();
 
-        $this->accountTaxCode = (new AccountTaxCode())
+        $this->customerTaxCode = (new CustomerTaxCode())
             ->setCode(self::ACCOUNT_TAX_CODE);
 
-        $this->accountGroupTaxCode = (new AccountTaxCode())
+        $this->customerGroupTaxCode = (new CustomerTaxCode())
             ->setCode(self::ACCOUNT_GROUP_TAX_CODE);
 
         $billingAddress = new OrderAddress();
@@ -155,40 +155,40 @@ class OrderLineItemHandlerTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider onContextEventProvider
      * @param bool $hasProduct
-     * @param bool $hasAccount
+     * @param bool $hasCustomer
      * @param bool $hasProductTaxCode
-     * @param bool $hasAccountTaxCode
+     * @param bool $hasCustomerTaxCode
      * @param bool $isProductDigital
      * @param OrderAddress|null $taxationAddress
      * @param \ArrayObject $expectedContext
-     * @param bool $hasAccountGroup
-     * @param bool $hasAccountGroupTaxCode
+     * @param bool $hasCustomerGroup
+     * @param bool $hasCustomerGroupTaxCode
      *
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function testOnContextEvent(
         $hasProduct,
-        $hasAccount,
+        $hasCustomer,
         $hasProductTaxCode,
-        $hasAccountTaxCode,
+        $hasCustomerTaxCode,
         $isProductDigital,
         $taxationAddress,
         $expectedContext,
-        $hasAccountGroup = false,
-        $hasAccountGroupTaxCode = false
+        $hasCustomerGroup = false,
+        $hasCustomerGroupTaxCode = false
     ) {
         $this->isProductTaxCodeDigital = $isProductDigital;
         $this->address = $taxationAddress;
 
         $orderLineItem = new OrderLineItem();
 
-        if ($hasAccount) {
-            $this->order->setAccount(new Customer());
+        if ($hasCustomer) {
+            $this->order->setCustomer(new Customer());
         }
 
-        if ($hasAccount && $hasAccountGroup) {
-            $this->order->getAccount()->setGroup(new CustomerGroup());
+        if ($hasCustomer && $hasCustomerGroup) {
+            $this->order->getCustomer()->setGroup(new CustomerGroup());
         }
 
         $orderLineItem->setOrder($this->order);
@@ -201,12 +201,12 @@ class OrderLineItemHandlerTest extends \PHPUnit_Framework_TestCase
             $this->productTaxCode = null;
         }
 
-        if (!$hasAccountTaxCode) {
-            $this->accountTaxCode = null;
+        if (!$hasCustomerTaxCode) {
+            $this->customerTaxCode = null;
         }
 
-        if (!$hasAccountGroupTaxCode) {
-            $this->accountGroupTaxCode = null;
+        if (!$hasCustomerGroupTaxCode) {
+            $this->customerGroupTaxCode = null;
         }
 
         $this->repository
@@ -217,9 +217,9 @@ class OrderLineItemHandlerTest extends \PHPUnit_Framework_TestCase
                     case TaxCodeInterface::TYPE_PRODUCT:
                         return $this->productTaxCode;
                     case TaxCodeInterface::TYPE_ACCOUNT:
-                        return $this->accountTaxCode;
+                        return $this->customerTaxCode;
                     case TaxCodeInterface::TYPE_ACCOUNT_GROUP:
-                        return $this->accountGroupTaxCode;
+                        return $this->customerGroupTaxCode;
                 }
 
                 return false;
@@ -249,9 +249,9 @@ class OrderLineItemHandlerTest extends \PHPUnit_Framework_TestCase
         return [
             'order line item without product' => [
                 'hasProduct' => false,
-                'hasAccount' => true,
+                'hasCustomer' => true,
                 'hasProductTaxCode' => false,
-                'hasAccountTaxCode' => false,
+                'hasCustomerTaxCode' => false,
                 'isProductDigital' => false,
                 'taxationAddress' => $taxationAddress,
                 'expectedContext' => new \ArrayObject(
@@ -264,9 +264,9 @@ class OrderLineItemHandlerTest extends \PHPUnit_Framework_TestCase
             ],
             'product is not digital' => [
                 'hasProduct' => true,
-                'hasAccount' => true,
+                'hasCustomer' => true,
                 'hasProductTaxCode' => true,
-                'hasAccountTaxCode' => false,
+                'hasCustomerTaxCode' => false,
                 'isProductDigital' => false,
                 'taxationAddress' => $taxationAddress,
                 'expectedContext' => new \ArrayObject(
@@ -279,9 +279,9 @@ class OrderLineItemHandlerTest extends \PHPUnit_Framework_TestCase
             ],
             'product is digital' => [
                 'hasProduct' => true,
-                'hasAccount' => true,
+                'hasCustomer' => true,
                 'hasProductTaxCode' => true,
-                'hasAccountTaxCode' => false,
+                'hasCustomerTaxCode' => false,
                 'isProductDigital' => true,
                 'taxationAddress' => $taxationAddress,
                 'expectedContext' => new \ArrayObject(
@@ -294,9 +294,9 @@ class OrderLineItemHandlerTest extends \PHPUnit_Framework_TestCase
             ],
             'product without product tax code' => [
                 'hasProduct' => true,
-                'hasAccount' => true,
+                'hasCustomer' => true,
                 'hasProductTaxCode' => false,
-                'hasAccountTaxCode' => false,
+                'hasCustomerTaxCode' => false,
                 'isProductDigital' => false,
                 'taxationAddress' => $taxationAddress,
                 'expectedContext' => new \ArrayObject(
@@ -309,9 +309,9 @@ class OrderLineItemHandlerTest extends \PHPUnit_Framework_TestCase
             ],
             'nullable taxation address' => [
                 'hasProduct' => true,
-                'hasAccount' => true,
+                'hasCustomer' => true,
                 'hasProductTaxCode' => true,
-                'hasAccountTaxCode' => true,
+                'hasCustomerTaxCode' => true,
                 'isProductDigital' => true,
                 'taxationAddress' => null,
                 'expectedContext' => new \ArrayObject([
@@ -320,11 +320,11 @@ class OrderLineItemHandlerTest extends \PHPUnit_Framework_TestCase
                     Taxable::ACCOUNT_TAX_CODE => self::ACCOUNT_TAX_CODE,
                 ])
             ],
-            'order with account and account product tax code' => [
+            'order with customer and customer product tax code' => [
                 'hasProduct' => true,
-                'hasAccount' => true,
+                'hasCustomer' => true,
                 'hasProductTaxCode' => true,
-                'hasAccountTaxCode' => true,
+                'hasCustomerTaxCode' => true,
                 'isProductDigital' => true,
                 'taxationAddress' => $taxationAddress,
                 'expectedContext' => new \ArrayObject(
@@ -335,11 +335,11 @@ class OrderLineItemHandlerTest extends \PHPUnit_Framework_TestCase
                     ]
                 ),
             ],
-            'order with account and without account tax code' => [
+            'order with customer and without customer tax code' => [
                 'hasProduct' => true,
-                'hasAccount' => true,
+                'hasCustomer' => true,
                 'hasProductTaxCode' => true,
-                'hasAccountTaxCode' => false,
+                'hasCustomerTaxCode' => false,
                 'isProductDigital' => true,
                 'taxationAddress' => $taxationAddress,
                 'expectedContext' => new \ArrayObject(
@@ -350,11 +350,11 @@ class OrderLineItemHandlerTest extends \PHPUnit_Framework_TestCase
                     ]
                 ),
             ],
-            'order without account' => [
+            'order without customer' => [
                 'hasProduct' => true,
-                'hasAccount' => false,
+                'hasCustomer' => false,
                 'hasProductTaxCode' => true,
-                'hasAccountTaxCode' => false,
+                'hasCustomerTaxCode' => false,
                 'isProductDigital' => true,
                 'taxationAddress' => $taxationAddress,
                 'expectedContext' => new \ArrayObject(
@@ -365,11 +365,11 @@ class OrderLineItemHandlerTest extends \PHPUnit_Framework_TestCase
                     ]
                 ),
             ],
-            'order with account Group tax code' => [
+            'order with customer Group tax code' => [
                 'hasProduct' => true,
-                'hasAccount' => true,
+                'hasCustomer' => true,
                 'hasProductTaxCode' => true,
-                'hasAccountTaxCode' => false,
+                'hasCustomerTaxCode' => false,
                 'isProductDigital' => true,
                 'taxationAddress' => $taxationAddress,
                 'expectedContext' => new \ArrayObject(
@@ -379,14 +379,14 @@ class OrderLineItemHandlerTest extends \PHPUnit_Framework_TestCase
                         Taxable::ACCOUNT_TAX_CODE => self::ACCOUNT_GROUP_TAX_CODE,
                     ]
                 ),
-                'hasAccountGroup' => true,
-                'hasAccountGroupTaxCode' => true
+                'hasCustomerGroup' => true,
+                'hasCustomerGroupTaxCode' => true
             ],
-            'order without account Group tax code and account tax code' => [
+            'order without customer Group tax code and customer tax code' => [
                 'hasProduct' => true,
-                'hasAccount' => true,
+                'hasCustomer' => true,
                 'hasProductTaxCode' => true,
-                'hasAccountTaxCode' => true,
+                'hasCustomerTaxCode' => true,
                 'isProductDigital' => true,
                 'taxationAddress' => $taxationAddress,
                 'expectedContext' => new \ArrayObject(
@@ -396,8 +396,8 @@ class OrderLineItemHandlerTest extends \PHPUnit_Framework_TestCase
                         Taxable::ACCOUNT_TAX_CODE => self::ACCOUNT_TAX_CODE,
                     ]
                 ),
-                'hasAccountGroup' => true,
-                'hasAccountGroupTaxCode' => true
+                'hasCustomerGroup' => true,
+                'hasCustomerGroupTaxCode' => true
             ],
         ];
     }

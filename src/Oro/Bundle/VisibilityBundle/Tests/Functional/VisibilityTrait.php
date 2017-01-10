@@ -7,8 +7,8 @@ use Doctrine\Common\Util\ClassUtils;
 
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountCategoryVisibility;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupCategoryVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerCategoryVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\CatalogBundle\Entity\Category;
@@ -51,26 +51,26 @@ trait VisibilityTrait
     /**
      * @param ManagerRegistry $registry
      * @param Category $category
-     * @param CustomerGroup $accountGroup
+     * @param CustomerGroup $customerGroup
      * @return VisibilityInterface
      */
-    public function getCategoryVisibilityForAccountGroup(
+    public function getCategoryVisibilityForCustomerGroup(
         ManagerRegistry $registry,
         Category $category,
-        CustomerGroup $accountGroup
+        CustomerGroup $customerGroup
     ) {
         $scope = $this->scopeManager->findOrCreate(
-            AccountGroupCategoryVisibility::VISIBILITY_TYPE,
-            ['accountGroup' => $accountGroup]
+            CustomerGroupCategoryVisibility::VISIBILITY_TYPE,
+            ['customerGroup' => $customerGroup]
         );
-        $entity = $registry->getManagerForClass('OroVisibilityBundle:Visibility\AccountGroupCategoryVisibility')
-            ->getRepository('OroVisibilityBundle:Visibility\AccountGroupCategoryVisibility')
+        $entity = $registry->getManagerForClass('OroVisibilityBundle:Visibility\CustomerGroupCategoryVisibility')
+            ->getRepository('OroVisibilityBundle:Visibility\CustomerGroupCategoryVisibility')
             ->findOneBy([
                 'category' => $category,
                 'scope' => $scope,
             ]);
         if (!$entity) {
-            $entity = (new AccountGroupCategoryVisibility());
+            $entity = (new CustomerGroupCategoryVisibility());
             $entity->setTargetEntity($category)
                 ->setVisibility($entity->getDefault($entity->getTargetEntity()))
                 ->setScope($scope);
@@ -81,24 +81,24 @@ trait VisibilityTrait
     /**
      * @param ManagerRegistry $registry
      * @param Category $category
-     * @param Customer $account
+     * @param Customer $customer
      * @return VisibilityInterface
      */
-    public function getCategoryVisibilityForAccount(ManagerRegistry $registry, Category $category, Customer $account)
+    public function getCategoryVisibilityForCustomer(ManagerRegistry $registry, Category $category, Customer $customer)
     {
         $scope = $this->scopeManager->findOrCreate(
-            AccountCategoryVisibility::VISIBILITY_TYPE,
-            ['account' => $account]
+            CustomerCategoryVisibility::VISIBILITY_TYPE,
+            ['customer' => $customer]
         );
-        $entity = $registry->getManagerForClass('OroVisibilityBundle:Visibility\AccountCategoryVisibility')
-            ->getRepository('OroVisibilityBundle:Visibility\AccountCategoryVisibility')
+        $entity = $registry->getManagerForClass('OroVisibilityBundle:Visibility\CustomerCategoryVisibility')
+            ->getRepository('OroVisibilityBundle:Visibility\CustomerCategoryVisibility')
             ->findOneBy([
                 'category' => $category,
                 'scope' => $scope,
             ]);
 
         if (!$entity) {
-            $entity = (new AccountCategoryVisibility());
+            $entity = (new CustomerCategoryVisibility());
             $entity->setTargetEntity($category)
                 ->setVisibility($entity->getDefault($entity->getTargetEntity()))
                 ->setScope($scope);

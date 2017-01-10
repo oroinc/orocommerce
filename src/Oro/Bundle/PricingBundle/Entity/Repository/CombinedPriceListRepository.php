@@ -12,8 +12,8 @@ use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\BaseCombinedPriceListRelation;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
-use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToAccount;
-use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToAccountGroup;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomer;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
@@ -40,26 +40,26 @@ class CombinedPriceListRepository extends BasePriceListRepository
     }
 
     /**
-     * @param Customer $account
+     * @param Customer $customer
      * @param Website $website
      * @param bool|true $isEnabled
      * @return null|CombinedPriceList
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function getPriceListByAccount(Customer $account, Website $website, $isEnabled = true)
+    public function getPriceListByCustomer(Customer $customer, Website $website, $isEnabled = true)
     {
         $qb = $this->createQueryBuilder('priceList');
         $qb
             ->innerJoin(
-                'OroPricingBundle:CombinedPriceListToAccount',
-                'priceListToAccount',
+                'OroPricingBundle:CombinedPriceListToCustomer',
+                'priceListToCustomer',
                 Join::WITH,
-                'priceListToAccount.priceList = priceList'
+                'priceListToCustomer.priceList = priceList'
             )
-            ->where($qb->expr()->eq('priceListToAccount.account', ':account'))
-            ->andWhere($qb->expr()->eq('priceListToAccount.website', ':website'))
+            ->where($qb->expr()->eq('priceListToCustomer.customer', ':customer'))
+            ->andWhere($qb->expr()->eq('priceListToCustomer.website', ':website'))
             ->andWhere($qb->expr()->eq('priceList.enabled', ':enabled'))
-            ->setParameter('account', $account)
+            ->setParameter('customer', $customer)
             ->setParameter('website', $website)
             ->setParameter('enabled', $isEnabled)
             ->setMaxResults(1);
@@ -69,26 +69,26 @@ class CombinedPriceListRepository extends BasePriceListRepository
 
 
     /**
-     * @param CustomerGroup $accountGroup
+     * @param CustomerGroup $customerGroup
      * @param Website $website
      * @param bool|true $isEnabled
      * @return null|CombinedPriceList
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function getPriceListByAccountGroup(CustomerGroup $accountGroup, Website $website, $isEnabled = true)
+    public function getPriceListByCustomerGroup(CustomerGroup $customerGroup, Website $website, $isEnabled = true)
     {
         $qb = $this->createQueryBuilder('priceList');
         $qb
             ->innerJoin(
-                'OroPricingBundle:CombinedPriceListToAccountGroup',
-                'priceListToAccountGroup',
+                'OroPricingBundle:CombinedPriceListToCustomerGroup',
+                'priceListToCustomerGroup',
                 Join::WITH,
-                'priceListToAccountGroup.priceList = priceList'
+                'priceListToCustomerGroup.priceList = priceList'
             )
-            ->where($qb->expr()->eq('priceListToAccountGroup.accountGroup', ':accountGroup'))
-            ->andWhere($qb->expr()->eq('priceListToAccountGroup.website', ':website'))
+            ->where($qb->expr()->eq('priceListToCustomerGroup.customerGroup', ':customerGroup'))
+            ->andWhere($qb->expr()->eq('priceListToCustomerGroup.website', ':website'))
             ->andWhere($qb->expr()->eq('priceList.enabled', ':enabled'))
-            ->setParameter('accountGroup', $accountGroup)
+            ->setParameter('customerGroup', $customerGroup)
             ->setParameter('website', $website)
             ->setParameter('enabled', $isEnabled)
             ->setMaxResults(1);
@@ -157,8 +157,8 @@ class CombinedPriceListRepository extends BasePriceListRepository
 
         $relations = [
             'priceListToWebsite' => 'OroPricingBundle:CombinedPriceListToWebsite',
-            'priceListToAccountGroup' => 'OroPricingBundle:CombinedPriceListToAccountGroup',
-            'priceListToAccount' => 'OroPricingBundle:CombinedPriceListToAccount',
+            'priceListToCustomerGroup' => 'OroPricingBundle:CombinedPriceListToCustomerGroup',
+            'priceListToCustomer' => 'OroPricingBundle:CombinedPriceListToCustomer',
         ];
 
         foreach ($relations as $alias => $entityName) {
@@ -205,22 +205,22 @@ class CombinedPriceListRepository extends BasePriceListRepository
         $em = $this->getEntityManager();
         $relation = null;
         if ($targetEntity instanceof Customer) {
-            $relation = $em->getRepository('OroPricingBundle:CombinedPriceListToAccount')
-                ->findOneBy(['account' => $targetEntity, 'website' => $website]);
+            $relation = $em->getRepository('OroPricingBundle:CombinedPriceListToCustomer')
+                ->findOneBy(['customer' => $targetEntity, 'website' => $website]);
             if (!$relation) {
-                $relation = new CombinedPriceListToAccount();
-                $relation->setAccount($targetEntity);
+                $relation = new CombinedPriceListToCustomer();
+                $relation->setCustomer($targetEntity);
                 $relation->setWebsite($website);
                 $relation->setPriceList($combinedPriceList);
                 $relation->setFullChainPriceList($combinedPriceList);
                 $em->persist($relation);
             }
         } elseif ($targetEntity instanceof CustomerGroup) {
-            $relation = $em->getRepository('OroPricingBundle:CombinedPriceListToAccountGroup')
-                ->findOneBy(['accountGroup' => $targetEntity, 'website' => $website]);
+            $relation = $em->getRepository('OroPricingBundle:CombinedPriceListToCustomerGroup')
+                ->findOneBy(['customerGroup' => $targetEntity, 'website' => $website]);
             if (!$relation) {
-                $relation = new CombinedPriceListToAccountGroup();
-                $relation->setAccountGroup($targetEntity);
+                $relation = new CombinedPriceListToCustomerGroup();
+                $relation->setCustomerGroup($targetEntity);
                 $relation->setWebsite($website);
                 $relation->setPriceList($combinedPriceList);
                 $relation->setFullChainPriceList($combinedPriceList);
@@ -253,8 +253,8 @@ class CombinedPriceListRepository extends BasePriceListRepository
     public function hasOtherRelations(BaseCombinedPriceListRelation $exceptRelation)
     {
         $relationsClasses = [
-            'accountCpl' => CombinedPriceListToAccount::class,
-            'accountGroupCpl' => CombinedPriceListToAccountGroup::class,
+            'customerCpl' => CombinedPriceListToCustomer::class,
+            'customerGroupCpl' => CombinedPriceListToCustomerGroup::class,
             'websiteCpl' => CombinedPriceListToWebsite::class,
         ];
 

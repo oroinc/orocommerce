@@ -6,13 +6,13 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Driver\DriverException;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
-use Oro\Bundle\PricingBundle\Builder\AccountCombinedPriceListsBuilder;
-use Oro\Bundle\PricingBundle\Builder\AccountGroupCombinedPriceListsBuilder;
+use Oro\Bundle\PricingBundle\Builder\CustomerCombinedPriceListsBuilder;
+use Oro\Bundle\PricingBundle\Builder\CustomerGroupCombinedPriceListsBuilder;
 use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilder;
 use Oro\Bundle\PricingBundle\Builder\WebsiteCombinedPriceListsBuilder;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
-use Oro\Bundle\PricingBundle\Event\CombinedPriceList\AccountCPLUpdateEvent;
-use Oro\Bundle\PricingBundle\Event\CombinedPriceList\AccountGroupCPLUpdateEvent;
+use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CustomerCPLUpdateEvent;
+use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CustomerGroupCPLUpdateEvent;
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\ConfigCPLUpdateEvent;
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\WebsiteCPLUpdateEvent;
 use Oro\Bundle\PricingBundle\Model\DTO\PriceListRelationTrigger;
@@ -39,14 +39,14 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
     protected $websitePriceListsBuilder;
 
     /**
-     * @var AccountGroupCombinedPriceListsBuilder
+     * @var CustomerGroupCombinedPriceListsBuilder
      */
-    protected $accountGroupPriceListsBuilder;
+    protected $customerGroupPriceListsBuilder;
 
     /**
-     * @var AccountCombinedPriceListsBuilder
+     * @var CustomerCombinedPriceListsBuilder
      */
-    protected $accountPriceListsBuilder;
+    protected $customerPriceListsBuilder;
 
     /**
      * @var EventDispatcherInterface
@@ -76,8 +76,8 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
     /**
      * @param CombinedPriceListsBuilder $commonPriceListsBuilder
      * @param WebsiteCombinedPriceListsBuilder $websitePriceListsBuilder
-     * @param AccountGroupCombinedPriceListsBuilder $accountGroupPriceListsBuilder
-     * @param AccountCombinedPriceListsBuilder $accountPriceListsBuilder
+     * @param CustomerGroupCombinedPriceListsBuilder $customerGroupPriceListsBuilder
+     * @param CustomerCombinedPriceListsBuilder $customerPriceListsBuilder
      * @param EventDispatcherInterface $dispatcher
      * @param LoggerInterface $logger
      * @param PriceListRelationTriggerFactory $triggerFactory
@@ -87,8 +87,8 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
     public function __construct(
         CombinedPriceListsBuilder $commonPriceListsBuilder,
         WebsiteCombinedPriceListsBuilder $websitePriceListsBuilder,
-        AccountGroupCombinedPriceListsBuilder $accountGroupPriceListsBuilder,
-        AccountCombinedPriceListsBuilder $accountPriceListsBuilder,
+        CustomerGroupCombinedPriceListsBuilder $customerGroupPriceListsBuilder,
+        CustomerCombinedPriceListsBuilder $customerPriceListsBuilder,
         EventDispatcherInterface $dispatcher,
         LoggerInterface $logger,
         PriceListRelationTriggerFactory $triggerFactory,
@@ -97,8 +97,8 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
     ) {
         $this->commonPriceListsBuilder = $commonPriceListsBuilder;
         $this->websitePriceListsBuilder = $websitePriceListsBuilder;
-        $this->accountGroupPriceListsBuilder = $accountGroupPriceListsBuilder;
-        $this->accountPriceListsBuilder = $accountPriceListsBuilder;
+        $this->customerGroupPriceListsBuilder = $customerGroupPriceListsBuilder;
+        $this->customerPriceListsBuilder = $customerPriceListsBuilder;
         $this->dispatcher = $dispatcher;
         $this->logger = $logger;
         $this->triggerFactory = $triggerFactory;
@@ -156,17 +156,17 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
     protected function handlePriceListRelationTrigger(PriceListRelationTrigger $trigger)
     {
         switch (true) {
-            case !is_null($trigger->getAccount()):
-                $this->accountPriceListsBuilder->build(
+            case !is_null($trigger->getCustomer()):
+                $this->customerPriceListsBuilder->build(
                     $trigger->getWebsite(),
-                    $trigger->getAccount(),
+                    $trigger->getCustomer(),
                     $trigger->isForce()
                 );
                 break;
-            case !is_null($trigger->getAccountGroup()):
-                $this->accountGroupPriceListsBuilder->build(
+            case !is_null($trigger->getCustomerGroup()):
+                $this->customerGroupPriceListsBuilder->build(
                     $trigger->getWebsite(),
-                    $trigger->getAccountGroup(),
+                    $trigger->getCustomerGroup(),
                     $trigger->isForce()
                 );
                 break;
@@ -180,42 +180,42 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
 
     protected function dispatchChangeAssociationEvents()
     {
-        $this->dispatchAccountScopeEvent();
-        $this->dispatchAccountGroupScopeEvent();
+        $this->dispatchCustomerScopeEvent();
+        $this->dispatchCustomerGroupScopeEvent();
         $this->dispatchWebsiteScopeEvent();
         $this->dispatchConfigScopeEvent();
     }
 
-    protected function dispatchAccountScopeEvent()
+    protected function dispatchCustomerScopeEvent()
     {
-        $accountBuildList = $this->accountPriceListsBuilder->getBuiltList();
-        $accountScope = isset($accountBuildList['account']) ? $accountBuildList['account'] : null;
-        if ($accountScope) {
+        $customerBuildList = $this->customerPriceListsBuilder->getBuiltList();
+        $customerScope = isset($customerBuildList['customer']) ? $customerBuildList['customer'] : null;
+        if ($customerScope) {
             $data = [];
-            foreach ($accountScope as $websiteId => $accounts) {
+            foreach ($customerScope as $websiteId => $customers) {
                 $data[] = [
                     'websiteId' => $websiteId,
-                    'accounts' => array_filter(array_keys($accounts)),
+                    'customers' => array_filter(array_keys($customers)),
                 ];
             }
-            $event = new AccountCPLUpdateEvent($data);
-            $this->dispatcher->dispatch(AccountCPLUpdateEvent::NAME, $event);
+            $event = new CustomerCPLUpdateEvent($data);
+            $this->dispatcher->dispatch(CustomerCPLUpdateEvent::NAME, $event);
         }
     }
 
-    protected function dispatchAccountGroupScopeEvent()
+    protected function dispatchCustomerGroupScopeEvent()
     {
-        $accountGroupBuildList = $this->accountGroupPriceListsBuilder->getBuiltList();
-        if ($accountGroupBuildList) {
+        $customerGroupBuildList = $this->customerGroupPriceListsBuilder->getBuiltList();
+        if ($customerGroupBuildList) {
             $data = [];
-            foreach ($accountGroupBuildList as $websiteId => $accountGroups) {
+            foreach ($customerGroupBuildList as $websiteId => $customerGroups) {
                 $data[] = [
                     'websiteId' => $websiteId,
-                    'accountGroups' => array_filter(array_keys($accountGroups)),
+                    'customerGroups' => array_filter(array_keys($customerGroups)),
                 ];
             }
-            $event = new AccountGroupCPLUpdateEvent($data);
-            $this->dispatcher->dispatch(AccountGroupCPLUpdateEvent::NAME, $event);
+            $event = new CustomerGroupCPLUpdateEvent($data);
+            $this->dispatcher->dispatch(CustomerGroupCPLUpdateEvent::NAME, $event);
         }
     }
 
@@ -248,7 +248,7 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
     {
         $this->commonPriceListsBuilder->resetCache();
         $this->websitePriceListsBuilder->resetCache();
-        $this->accountGroupPriceListsBuilder->resetCache();
-        $this->accountPriceListsBuilder->resetCache();
+        $this->customerGroupPriceListsBuilder->resetCache();
+        $this->customerPriceListsBuilder->resetCache();
     }
 }

@@ -1,5 +1,5 @@
 .request-form-container {
-    @extend %account-form;
+    @extend %customer-form;
 
     &:not(:last-child) {
         margin-bottom: 50px;

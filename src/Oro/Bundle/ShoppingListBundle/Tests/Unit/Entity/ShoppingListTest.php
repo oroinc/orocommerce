@@ -27,8 +27,8 @@ class ShoppingListTest extends \PHPUnit_Framework_TestCase
             ['subtotal', new Subtotal()],
             ['organization', new Organization()],
             ['owner', new User()],
-            ['account', new Customer()],
-            ['accountUser', new CustomerUser()],
+            ['customer', new Customer()],
+            ['customerUser', new CustomerUser()],
             ['createdAt', $now, false],
             ['updatedAt', $now, false],
         ];

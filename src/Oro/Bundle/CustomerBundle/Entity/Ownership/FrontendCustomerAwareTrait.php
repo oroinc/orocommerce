@@ -13,16 +13,16 @@ trait FrontendCustomerAwareTrait
      *      targetEntity="Oro\Bundle\CustomerBundle\Entity\Customer",
      *      cascade={"persist"}
      * )
-     * @ORM\JoinColumn(name="account_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ORM\JoinColumn(name="customer_id", referencedColumnName="id", onDelete="SET NULL")
      */
-    protected $account;
+    protected $customer;
 
     /**
      * @return Customer|null
      */
     public function getCustomer()
     {
-        return $this->account;
+        return $this->customer;
     }
 
     /**
@@ -31,7 +31,7 @@ trait FrontendCustomerAwareTrait
      */
     public function setCustomer(Customer $customer = null)
     {
-        $this->account = $customer;
+        $this->customer = $customer;
 
         return $this;
     }

@@ -39,7 +39,7 @@ class QuoteAddress extends ExtendQuoteAddress
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerAddress")
      * @ORM\JoinColumn(name="customer_address_id", referencedColumnName="id", onDelete="SET NULL")
      */
-    protected $accountAddress;
+    protected $customerAddress;
 
     /**
      * @var CustomerUserAddress
@@ -47,7 +47,7 @@ class QuoteAddress extends ExtendQuoteAddress
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress")
      * @ORM\JoinColumn(name="customer_user_address_id", referencedColumnName="id", onDelete="SET NULL")
      */
-    protected $accountUserAddress;
+    protected $customerUserAddress;
 
     /**
      * @var string
@@ -64,51 +64,51 @@ class QuoteAddress extends ExtendQuoteAddress
     protected $phone;
 
     /**
-     * Set accountAddress
+     * Set customerAddress
      *
-     * @param CustomerAddress|null $accountAddress
+     * @param CustomerAddress|null $customerAddress
      *
      * @return QuoteAddress
      */
-    public function setAccountAddress(CustomerAddress $accountAddress = null)
+    public function setCustomerAddress(CustomerAddress $customerAddress = null)
     {
-        $this->accountAddress = $accountAddress;
+        $this->customerAddress = $customerAddress;
 
         return $this;
     }
 
     /**
-     * Get accountUserAddress
+     * Get customerUserAddress
      *
      * @return CustomerAddress|null
      */
-    public function getAccountAddress()
+    public function getCustomerAddress()
     {
-        return $this->accountAddress;
+        return $this->customerAddress;
     }
 
     /**
-     * Set accountUserAddress
+     * Set customerUserAddress
      *
-     * @param CustomerUserAddress|null $accountUserAddress
+     * @param CustomerUserAddress|null $customerUserAddress
      *
      * @return QuoteAddress
      */
-    public function setAccountUserAddress(CustomerUserAddress $accountUserAddress = null)
+    public function setCustomerUserAddress(CustomerUserAddress $customerUserAddress = null)
     {
-        $this->accountUserAddress = $accountUserAddress;
+        $this->customerUserAddress = $customerUserAddress;
 
         return $this;
     }
 
     /**
-     * Get accountUserAddress
+     * Get customerUserAddress
      *
      * @return CustomerUserAddress|null
      */
-    public function getAccountUserAddress()
+    public function getCustomerUserAddress()
     {
-        return $this->accountUserAddress;
+        return $this->customerUserAddress;
     }
 
     /**

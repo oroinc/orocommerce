@@ -15,8 +15,8 @@ use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\CustomerBundle\Doctrine\SoftDeleteableInterface;
 use Oro\Bundle\CustomerBundle\Doctrine\SoftDeleteableTrait;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Oro\Bundle\CustomerBundle\Entity\AccountOwnerAwareInterface;
-use Oro\Bundle\CustomerBundle\Entity\Ownership\AuditableFrontendAccountUserAwareTrait;
+use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
+use Oro\Bundle\CustomerBundle\Entity\Ownership\AuditableFrontendCustomerUserAwareTrait;
 use Oro\Bundle\UserBundle\Entity\Ownership\AuditableUserAwareTrait;
 use Oro\Bundle\RFPBundle\Model\ExtendRequest;
 
@@ -43,7 +43,7 @@ use Oro\Bundle\RFPBundle\Model\ExtendRequest;
  *              "owner_field_name"="owner",
  *              "owner_column_name"="user_owner_id",
  *              "frontend_owner_type"="FRONTEND_USER",
- *              "frontend_owner_field_name"="accountUser",
+ *              "frontend_owner_field_name"="customerUser",
  *              "frontend_owner_column_name"="customer_user_id",
  *              "organization_field_name"="organization",
  *              "organization_column_name"="organization_id"
@@ -59,13 +59,13 @@ use Oro\Bundle\RFPBundle\Model\ExtendRequest;
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class Request extends ExtendRequest implements
-    AccountOwnerAwareInterface,
+    CustomerOwnerAwareInterface,
     SoftDeleteableInterface,
     OrganizationAwareInterface
 {
     use SoftDeleteableTrait;
     use DatesAwareTrait;
-    use AuditableFrontendAccountUserAwareTrait;
+    use AuditableFrontendCustomerUserAwareTrait;
     use AuditableUserAwareTrait;
 
     /**
@@ -275,7 +275,7 @@ class Request extends ExtendRequest implements
      *      }
      * )
      **/
-    protected $assignedAccountUsers;
+    protected $assignedCustomerUsers;
 
     /**
      * Constructor
@@ -289,7 +289,7 @@ class Request extends ExtendRequest implements
 
         $this->requestProducts = new ArrayCollection();
         $this->assignedUsers = new ArrayCollection();
-        $this->assignedAccountUsers = new ArrayCollection();
+        $this->assignedCustomerUsers = new ArrayCollection();
     }
 
     /**
@@ -628,32 +628,32 @@ class Request extends ExtendRequest implements
     /**
      * @return Collection|CustomerUser[]
      */
-    public function getAssignedAccountUsers()
+    public function getAssignedCustomerUsers()
     {
-        return $this->assignedAccountUsers;
+        return $this->assignedCustomerUsers;
     }
 
     /**
-     * @param CustomerUser $assignedAccountUser
+     * @param CustomerUser $assignedCustomerUser
      * @return $this
      */
-    public function addAssignedAccountUser(CustomerUser $assignedAccountUser)
+    public function addAssignedCustomerUser(CustomerUser $assignedCustomerUser)
     {
-        if (!$this->assignedAccountUsers->contains($assignedAccountUser)) {
-            $this->assignedAccountUsers->add($assignedAccountUser);
+        if (!$this->assignedCustomerUsers->contains($assignedCustomerUser)) {
+            $this->assignedCustomerUsers->add($assignedCustomerUser);
         }
 
         return $this;
     }
 
     /**
-     * @param CustomerUser $assignedAccountUser
+     * @param CustomerUser $assignedCustomerUser
      * @return $this
      */
-    public function removeAssignedAccountUser(CustomerUser $assignedAccountUser)
+    public function removeAssignedCustomerUser(CustomerUser $assignedCustomerUser)
     {
-        if ($this->assignedAccountUsers->contains($assignedAccountUser)) {
-            $this->assignedAccountUsers->removeElement($assignedAccountUser);
+        if ($this->assignedCustomerUsers->contains($assignedCustomerUser)) {
+            $this->assignedCustomerUsers->removeElement($assignedCustomerUser);
         }
 
         return $this;

@@ -19,51 +19,55 @@ class OrderRequestHandler
     protected $registry;
 
     /** @var string */
-    protected $accountClass;
+    protected $customerClass;
 
     /** @var string */
-    protected $accountUserClass;
+    protected $customerUserClass;
 
     /**
      * @param ManagerRegistry $registry
      * @param RequestStack $requestStack
-     * @param string $accountClass
-     * @param string $accountUserClass
+     * @param string $customerClass
+     * @param string $customerUserClass
      */
-    public function __construct(ManagerRegistry $registry, RequestStack $requestStack, $accountClass, $accountUserClass)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        RequestStack $requestStack,
+        $customerClass,
+        $customerUserClass
+    ) {
         $this->registry = $registry;
-        $this->accountClass = $accountClass;
-        $this->accountUserClass = $accountUserClass;
+        $this->customerClass = $customerClass;
+        $this->customerUserClass = $customerUserClass;
         $this->requestStack = $requestStack;
     }
 
     /**
      * @return Customer|null
      */
-    public function getAccount()
+    public function getCustomer()
     {
-        $accountId = $this->getFromRequest('account');
-        $account = null;
-        if ($accountId) {
-            $account = $this->findEntity($this->accountClass, $accountId);
+        $customerId = $this->getFromRequest('customer');
+        $customer = null;
+        if ($customerId) {
+            $customer = $this->findEntity($this->customerClass, $customerId);
         }
 
-        return $account;
+        return $customer;
     }
 
     /**
      * @return CustomerUser|null
      */
-    public function getAccountUser()
+    public function getCustomerUser()
     {
-        $accountUserId = $this->getFromRequest('accountUser');
-        $accountUser = null;
-        if ($accountUserId) {
-            $accountUser = $this->findEntity($this->accountUserClass, $accountUserId);
+        $customerUserId = $this->getFromRequest('customerUser');
+        $customerUser = null;
+        if ($customerUserId) {
+            $customerUser = $this->findEntity($this->customerUserClass, $customerUserId);
         }
 
-        return $accountUser;
+        return $customerUser;
     }
 
     /**

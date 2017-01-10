@@ -43,7 +43,7 @@ class ZipCodeMatcherTest extends AbstractMatcherTest
     /**
      * @dataProvider matchProvider
      * @param string $productTaxCode
-     * @param string $accountTaxCode
+     * @param string $customerTaxCode
      * @param Country $country
      * @param Region $region
      * @param string $regionText
@@ -53,7 +53,7 @@ class ZipCodeMatcherTest extends AbstractMatcherTest
      */
     public function testMatch(
         $productTaxCode,
-        $accountTaxCode,
+        $customerTaxCode,
         $country,
         $region,
         $regionText,
@@ -77,8 +77,8 @@ class ZipCodeMatcherTest extends AbstractMatcherTest
         if ($productTaxCode) {
             $taxCodes[] = TaxCode::create($productTaxCode, TaxCodeInterface::TYPE_PRODUCT);
         }
-        if ($accountTaxCode) {
-            $taxCodes[] = TaxCode::create($accountTaxCode, TaxCodeInterface::TYPE_ACCOUNT);
+        if ($customerTaxCode) {
+            $taxCodes[] = TaxCode::create($customerTaxCode, TaxCodeInterface::TYPE_ACCOUNT);
         }
 
         $taxCodes = TaxCodes::create($taxCodes);
@@ -123,7 +123,7 @@ class ZipCodeMatcherTest extends AbstractMatcherTest
         return [
             'with region' => [
                 'productTaxCode' => 'PRODUCT_TAX_CODE',
-                'accountTaxCode' => 'ACCOUNT_TAX_CODE',
+                'customerTaxCode' => 'ACCOUNT_TAX_CODE',
                 'country' => $country,
                 'region' => $region,
                 'regionText' => '',
@@ -133,7 +133,7 @@ class ZipCodeMatcherTest extends AbstractMatcherTest
             ],
             'with regionText' => [
                 'productTaxCode' => 'PRODUCT_TAX_CODE',
-                'accountTaxCode' => 'ACCOUNT_TAX_CODE',
+                'customerTaxCode' => 'ACCOUNT_TAX_CODE',
                 'country' => $country,
                 'region' => null,
                 'regionText' => $regionText,
@@ -143,7 +143,7 @@ class ZipCodeMatcherTest extends AbstractMatcherTest
             ],
             'without country' => [
                 'productTaxCode' => 'PRODUCT_TAX_CODE',
-                'accountTaxCode' => 'ACCOUNT_TAX_CODE',
+                'customerTaxCode' => 'ACCOUNT_TAX_CODE',
                 'country' => null,
                 'region' => $region,
                 'regionText' => $regionText,
@@ -153,7 +153,7 @@ class ZipCodeMatcherTest extends AbstractMatcherTest
             ],
             'without product tax code' => [
                 'productTaxCode' => null,
-                'accountTaxCode' => 'ACCOUNT_TAX_CODE',
+                'customerTaxCode' => 'ACCOUNT_TAX_CODE',
                 'country' => $country,
                 'region' => $region,
                 'regionText' => $regionText,
@@ -161,9 +161,9 @@ class ZipCodeMatcherTest extends AbstractMatcherTest
                 'zipCodeMatcherRules' => [],
                 'expected' => $regionMatcherTaxRules,
             ],
-            'without account tax code' => [
+            'without customer tax code' => [
                 'productTaxCode' => 'PRODUCT_TAX_CODE',
-                'accountTaxCode' => null,
+                'customerTaxCode' => null,
                 'country' => $country,
                 'region' => $region,
                 'regionText' => $regionText,
@@ -173,7 +173,7 @@ class ZipCodeMatcherTest extends AbstractMatcherTest
             ],
             'without region and regionText' => [
                 'productTaxCode' => 'PRODUCT_TAX_CODE',
-                'accountTaxCode' => 'ACCOUNT_TAX_CODE',
+                'customerTaxCode' => 'ACCOUNT_TAX_CODE',
                 'country' => $country,
                 'region' => null,
                 'regionText' => '',

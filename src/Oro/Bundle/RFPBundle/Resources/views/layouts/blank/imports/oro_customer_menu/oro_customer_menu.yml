@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@add':
-            id: __account_user_request
+            id: __customer_user_request
             parentId: __list
             blockType: link
             options:

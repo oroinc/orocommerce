@@ -18,8 +18,8 @@ class PriceListRelationTriggerTest extends \PHPUnit_Framework_TestCase
             new PriceListRelationTrigger(),
             [
                 ['website', new Website()],
-                ['account', new Customer()],
-                ['accountGroup', new CustomerGroup()],
+                ['customer', new Customer()],
+                ['customerGroup', new CustomerGroup()],
                 ['force', true],
             ]
         );
@@ -30,22 +30,22 @@ class PriceListRelationTriggerTest extends \PHPUnit_Framework_TestCase
         /** @var Website|\PHPUnit_Framework_MockObject_MockObject $website */
         $website = $this->createMock(Website::class);
         $website->method('getId')->willReturn(1);
-        /** @var Customer|\PHPUnit_Framework_MockObject_MockObject $account */
-        $account = $this->createMock(Customer::class);
-        $account->method('getId')->willReturn(1);
-        /** @var CustomerGroup|\PHPUnit_Framework_MockObject_MockObject $accountGroup */
-        $accountGroup = $this->createMock(CustomerGroup::class);
-        $accountGroup->method('getId')->willReturn(1);
+        /** @var Customer|\PHPUnit_Framework_MockObject_MockObject $customer */
+        $customer = $this->createMock(Customer::class);
+        $customer->method('getId')->willReturn(1);
+        /** @var CustomerGroup|\PHPUnit_Framework_MockObject_MockObject $customerGroup */
+        $customerGroup = $this->createMock(CustomerGroup::class);
+        $customerGroup->method('getId')->willReturn(1);
         $trigger = new PriceListRelationTrigger();
         $trigger->setWebsite($website)
-            ->setAccount($account)
-            ->setAccountGroup($accountGroup);
+            ->setCustomer($customer)
+            ->setCustomerGroup($customerGroup);
 
         $this->assertEquals(
             [
                 'website' => 1,
-                'account' => 1,
-                'accountGroup' => 1,
+                'customer' => 1,
+                'customerGroup' => 1,
                 'force' => false,
             ],
             $trigger->toArray()

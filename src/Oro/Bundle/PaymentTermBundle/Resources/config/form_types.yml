@@ -10,14 +10,14 @@ services:
         tags:
             - { name: form.type, alias: oro_payment_term_select }
 
-    oro_payment_term.form.extension.account_type:
-        class: 'Oro\Bundle\PaymentTermBundle\Form\Extension\AccountFormExtension'
+    oro_payment_term.form.extension.customer_type:
+        class: 'Oro\Bundle\PaymentTermBundle\Form\Extension\CustomerFormExtension'
         arguments:
             - '@oro_payment_term.provider.payment_term'
             - '@oro_payment_term.provider.payment_term_association'
             - '@translator'
         tags:
-            - { name: form.type_extension, alias: oro_account_type }
+            - { name: form.type_extension, alias: oro_customer_type }
 
     oro_payment_term.form.extension.abstract_acl_type:
         class: 'Oro\Bundle\PaymentTermBundle\Form\Extension\PaymentTermAclExtension'
@@ -28,7 +28,7 @@ services:
     oro_payment_term.form.extension.order_type:
         parent: oro_payment_term.form.extension.abstract_acl_type
         calls:
-            - [setAclResource, ['oro_order_payment_term_account_can_override']]
+            - [setAclResource, ['oro_order_payment_term_customer_can_override']]
             - [setExtendedType, ['oro_order_type']]
         tags:
             - { name: form.type_extension, alias: oro_order_type }
@@ -36,7 +36,7 @@ services:
     oro_payment_term.form.extension.quote_type:
         parent: oro_payment_term.form.extension.abstract_acl_type
         calls:
-            - [setAclResource, ['oro_quote_payment_term_account_can_override']]
+            - [setAclResource, ['oro_quote_payment_term_customer_can_override']]
             - [setExtendedType, ['oro_sale_quote']]
         tags:
             - { name: form.type_extension, alias: oro_sale_quote }

@@ -73,9 +73,9 @@ class CustomerUserRoleVoter extends AbstractEntityVoter
             case static::ATTRIBUTE_DELETE:
                 return $this->getPermissionForDelete();
             case static::ATTRIBUTE_FRONTEND_ACCOUNT_ROLE_VIEW:
-                return $this->getPermissionForAccountRole(self::VIEW);
+                return $this->getPermissionForCustomerRole(self::VIEW);
             case static::ATTRIBUTE_FRONTEND_ACCOUNT_ROLE_UPDATE:
-                return $this->getPermissionForAccountRole(self::UPDATE);
+                return $this->getPermissionForCustomerRole(self::UPDATE);
             case static::ATTRIBUTE_FRONTEND_ACCOUNT_ROLE_DELETE:
                 return $this->getFrontendPermissionForDelete();
             default:
@@ -105,7 +105,7 @@ class CustomerUserRoleVoter extends AbstractEntityVoter
      * @param string $type
      * @return int
      */
-    protected function getPermissionForAccountRole($type)
+    protected function getPermissionForCustomerRole($type)
     {
         /* @var $user CustomerUser */
         $user = $this->getLoggedUser();

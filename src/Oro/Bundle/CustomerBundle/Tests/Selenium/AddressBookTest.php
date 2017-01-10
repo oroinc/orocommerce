@@ -3,11 +3,11 @@
 namespace Oro\Bundle\CustomerBundle\Tests\Selenium;
 
 use Oro\Bundle\CustomerBundle\Tests\Selenium\Cache\AddressBookCache;
-use Oro\Bundle\CustomerBundle\Tests\Selenium\Entity\SeleniumAccountUser;
-use Oro\Bundle\CustomerBundle\Tests\Selenium\Entity\SeleniumAccountUserTestRole;
+use Oro\Bundle\CustomerBundle\Tests\Selenium\Entity\SeleniumCustomerUser;
+use Oro\Bundle\CustomerBundle\Tests\Selenium\Entity\SeleniumCustomerUserTestRole;
 use Oro\Bundle\CustomerBundle\Tests\Selenium\Entity\SeleniumAddress;
-use Oro\Bundle\CustomerBundle\Tests\Selenium\Pages\AdminAccountAddressPages;
-use Oro\Bundle\CustomerBundle\Tests\Selenium\Pages\AccountAdminPages;
+use Oro\Bundle\CustomerBundle\Tests\Selenium\Pages\AdminCustomerAddressPages;
+use Oro\Bundle\CustomerBundle\Tests\Selenium\Pages\CustomerAdminPages;
 use Oro\Bundle\CustomerBundle\Tests\Selenium\Pages\AddAddressPage;
 use Oro\Bundle\CustomerBundle\Tests\Selenium\Pages\AddressBookTestPage;
 use Oro\Bundle\TestFrameworkBundle\Pages\AbstractPage;
@@ -15,7 +15,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\Selenium2TestCase;
 
 class AddressBookTest extends Selenium2TestCase
 {
-    // View/create/edit/delete account address and account user address
+    // View/create/edit/delete customer address and customer user address
     const ROLE1 = 'ROLE__VCED-AC_AD-VCED-ACU_AD';
     const ROLE2 = 'ROLE__VED-AC_AD-VED-ACU_AD';
     const ROLE3 = 'ROLE__VE-AC_AD-VE-ACU_AD';
@@ -36,34 +36,34 @@ class AddressBookTest extends Selenium2TestCase
         $page = $this->getAddressBookPage();
         $page->loginAdmin();
 
-        $accountPage = $this->getAccountAdminPage();
-        $accountPage->createAccountUserRoles($this->getRoles());
+        $customerPage = $this->getCustomerAdminPage();
+        $customerPage->createCustomerUserRoles($this->getRoles());
 
-        AddressBookCache::$usersInfo = $accountPage->createAccountUsersWithRoles($this->getAccountUsers());
+        AddressBookCache::$usersInfo = $customerPage->createCustomerUsersWithRoles($this->getCustomerUsers());
 
         // add one default address for each user
-        $accountAddressPage = $this->getAccountAddressPage();
+        $customerAddressPage = $this->getCustomerAddressPage();
         foreach (AddressBookCache::$usersInfo as $userInfo) {
-            $accountAddressPage->addAccountUserAddress($userInfo['userId'], 1);
+            $customerAddressPage->addCustomerUserAddress($userInfo['userId'], 1);
         }
     }
 
     /**
-     * @param SeleniumAccountUser $frontendUser
-     * @param bool $usrAddrIsGrid           Account user address should be in grid on not (list)
-     * @param bool $accAddrIsGrid           Account address should be in grid on not (list)
-     * @param bool $usrAddrHasAddBtn        Account user address should have add address button
-     * @param bool $accAddrHasAddBtn        Account address should have add address button
-     * @param bool $usrAddrHasEditButtons   Account user address should have edit address button
-     * @param bool $accAddrHasEditBtn       Account address should have edit address button
-     * @param bool $usrAddrHasDeleteButtons Account user address should have delete address button
-     * @param bool $accAddrHasDeleteBtn     Account address should have delete address button
-     * @param int $nrOfUsrAddr              Number of expected account users addresses
-     * @param int $nrOfAccAddr              Number of expected account addresses
-     * @param int $nrOfUsrAddrToCreate      Number of account user addresses that should be created
-     * @param int $nrOfAccAddrToCreate      Number of account addresses that should be created
-     * @param int $nrOfUsrAddrToDelete      Number of account user addresses that should be deleted
-     * @param int $nrOfAccAddrToDelete      Number of account addresses that should be deleted
+     * @param SeleniumCustomerUser $frontendUser
+     * @param bool $usrAddrIsGrid           Customer user address should be in grid on not (list)
+     * @param bool $accAddrIsGrid           Customer address should be in grid on not (list)
+     * @param bool $usrAddrHasAddBtn        Customer user address should have add address button
+     * @param bool $accAddrHasAddBtn        Customer address should have add address button
+     * @param bool $usrAddrHasEditButtons   Customer user address should have edit address button
+     * @param bool $accAddrHasEditBtn       Customer address should have edit address button
+     * @param bool $usrAddrHasDeleteButtons Customer user address should have delete address button
+     * @param bool $accAddrHasDeleteBtn     Customer address should have delete address button
+     * @param int $nrOfUsrAddr              Number of expected customer users addresses
+     * @param int $nrOfAccAddr              Number of expected customer addresses
+     * @param int $nrOfUsrAddrToCreate      Number of customer user addresses that should be created
+     * @param int $nrOfAccAddrToCreate      Number of customer addresses that should be created
+     * @param int $nrOfUsrAddrToDelete      Number of customer user addresses that should be deleted
+     * @param int $nrOfAccAddrToDelete      Number of customer addresses that should be deleted
      *
      * @throws \Throwable
      * @dataProvider getAddressBookTestProvider
@@ -74,7 +74,7 @@ class AddressBookTest extends Selenium2TestCase
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function testAddressBook(
-        SeleniumAccountUser $frontendUser,
+        SeleniumCustomerUser $frontendUser,
         $usrAddrIsGrid,
         $accAddrIsGrid,
         $usrAddrHasAddBtn,
@@ -98,7 +98,7 @@ class AddressBookTest extends Selenium2TestCase
         $nrOfAccAddrAddBtn = $accAddrHasAddBtn ? ($accAddrIsGrid ? 2 : 1) : 0;
 
         $page = $this->getAddressBookPage();
-        $addressPage = $this->getAccountAddressPage();
+        $addressPage = $this->getCustomerAddressPage();
         if ($nrOfUsrAddrToCreate > 0
             || $nrOfAccAddrToCreate > 0
             || $nrOfUsrAddrToDelete > 0
@@ -117,7 +117,7 @@ class AddressBookTest extends Selenium2TestCase
             $page->waitPageToLoad();
             $page->waitForAjax();
 
-            // Account User Address section assertions
+            // Customer User Address section assertions
             $this->assertGridColumns($page, $usrAddrIsGrid, AddressBookTestPage::USER_ADDRESS_BLOCK_SELECTOR);
 
             $this->assertContains($usrAddrGridClass, $page->getUserAddressBlock()->attribute('class'));
@@ -126,13 +126,13 @@ class AddressBookTest extends Selenium2TestCase
             $this->assertButtons($page, $usrAddrHasEditButtons, 'edit', 'user', $usrAddrIsGrid, $nrOfUsrAddr);
             $this->assertButtons($page, $usrAddrHasDeleteButtons, 'delete', 'user', $usrAddrIsGrid, $nrOfUsrAddr);
 
-            // Account Address section assertions
+            // Customer Address section assertions
             $this->assertGridColumns($page, $accAddrIsGrid, AddressBookTestPage::ACCOUNT_ADDRESS_BLOCK_SELECTOR);
-            $this->assertContains($accAddrGridClass, $page->getAccountAddressBlock()->attribute('class'));
-            $this->assertButtons($page, $usrAddrIsGrid, 'showOnMap', 'account', $accAddrIsGrid, $nrOfAccAddr);
-            $this->assertButtons($page, $accAddrHasAddBtn, 'add', 'account', $accAddrIsGrid, $nrOfAccAddrAddBtn);
-            $this->assertButtons($page, $accAddrHasEditBtn, 'edit', 'account', $accAddrIsGrid, $nrOfAccAddr);
-            $this->assertButtons($page, $accAddrHasDeleteBtn, 'delete', 'account', $accAddrIsGrid, $nrOfAccAddr);
+            $this->assertContains($accAddrGridClass, $page->getCustomerAddressBlock()->attribute('class'));
+            $this->assertButtons($page, $usrAddrIsGrid, 'showOnMap', 'customer', $accAddrIsGrid, $nrOfAccAddr);
+            $this->assertButtons($page, $accAddrHasAddBtn, 'add', 'customer', $accAddrIsGrid, $nrOfAccAddrAddBtn);
+            $this->assertButtons($page, $accAddrHasEditBtn, 'edit', 'customer', $accAddrIsGrid, $nrOfAccAddr);
+            $this->assertButtons($page, $accAddrHasDeleteBtn, 'delete', 'customer', $accAddrIsGrid, $nrOfAccAddr);
         } catch (\Throwable $e) {
             // making sure fixtures are also deleted in case of test failure
             $this->cleanupAddresses($addressPage, $frontendUserInfo, $nrOfUsrAddrToDelete, $nrOfAccAddrToDelete);
@@ -149,15 +149,31 @@ class AddressBookTest extends Selenium2TestCase
     public function getAddressBookTestProvider()
     {
         return [
-            [$this->getAccountUsers(self::USER1), false, false, true, true, true, true, true, true, 1, 1],
-            [$this->getAccountUsers(self::USER2), false, false, false, false, true, true, true, true, 1, 1],
-            [$this->getAccountUsers(self::USER3), false, false, false, false, true, true, false, false, 1, 1],
-            [$this->getAccountUsers(self::USER4), false, false, false, false, false, false, false, false, 1, 1],
-            [$this->getAccountUsers(self::USER1), true, true, true, true, true, true, true, true, 9, 9, 8, 8, 8, 0],
-            [$this->getAccountUsers(self::USER2), true, true, false, false, true, true, true, true, 9, 9, 8, 0, 8, 0],
-            [$this->getAccountUsers(self::USER3), true, true, false, false, true, true, false, false, 9, 9, 8, 0, 8, 0],
+            [$this->getCustomerUsers(self::USER1), false, false, true, true, true, true, true, true, 1, 1],
+            [$this->getCustomerUsers(self::USER2), false, false, false, false, true, true, true, true, 1, 1],
+            [$this->getCustomerUsers(self::USER3), false, false, false, false, true, true, false, false, 1, 1],
+            [$this->getCustomerUsers(self::USER4), false, false, false, false, false, false, false, false, 1, 1],
+            [$this->getCustomerUsers(self::USER1), true, true, true, true, true, true, true, true, 9, 9, 8, 8, 8, 0],
+            [$this->getCustomerUsers(self::USER2), true, true, false, false, true, true, true, true, 9, 9, 8, 0, 8, 0],
             [
-                $this->getAccountUsers(self::USER4),
+                $this->getCustomerUsers(self::USER3),
+                true,
+                true,
+                false,
+                false,
+                true,
+                true,
+                false,
+                false,
+                9,
+                9,
+                8,
+                0,
+                8,
+                0
+            ],
+            [
+                $this->getCustomerUsers(self::USER4),
                 true,
                 true,
                 false,
@@ -183,12 +199,12 @@ class AddressBookTest extends Selenium2TestCase
     {
         $this->markTestSkipped("Skipped until task BB-4263 gets resolved!");
         $page = $this->getAddressBookPage();
-        $user = $this->getAccountUsers(self::USER1);
+        $user = $this->getCustomerUsers(self::USER1);
         $page->login($user->email, $user->password);
 
         $page->getTest()->url(AddressBookTestPage::ADDRESS_BOOK_URL);
         $page->waitPageToLoad();
-        $page->deleteAccountAddresses(false);
+        $page->deleteCustomerAddresses(false);
         $page->deleteUserAddresses(false);
         $page->getTest()->url(AddressBookTestPage::ADDRESS_BOOK_URL);
         $page->waitPageToLoad();
@@ -208,10 +224,10 @@ class AddressBookTest extends Selenium2TestCase
     /**
      * @depends testNoAddresses
      */
-    public function testAddAccountAddress()
+    public function testAddCustomerAddress()
     {
         $this->markTestSkipped("Skipped until task BB-4263 gets resolved!");
-        $user = $this->getAccountUsers(self::USER1);
+        $user = $this->getCustomerUsers(self::USER1);
         $addressPage = $this->getAddressBookPage();
         $addressPage->login($user->email, $user->password);
 
@@ -219,7 +235,7 @@ class AddressBookTest extends Selenium2TestCase
         $userInfo = $this->getUsersInfo()[$user->email];
 
         foreach ($this->getAddressesWithTypes() as $addressInfo) {
-            $addAddressPage->openAddAccountAddressPage($userInfo['accountId']);
+            $addAddressPage->openAddCustomerAddressPage($userInfo['customerId']);
             $addAddressPage->addNewAddress($addressInfo['address']);
 
             $types = $addressPage->getElement(
@@ -230,7 +246,7 @@ class AddressBookTest extends Selenium2TestCase
             $this->assertEquals(sort($addressInfo['expectedTypes']), sort($types));
 
             if (!isset($addressInfo['deleteOnFinish']) || $addressInfo['deleteOnFinish']) {
-                $addressPage->deleteAccountAddresses(false);
+                $addressPage->deleteCustomerAddresses(false);
             }
         }
     }
@@ -242,9 +258,9 @@ class AddressBookTest extends Selenium2TestCase
     {
         $this->markTestSkipped("Skipped until task BB-4263 gets resolved!");
         $this->getAddressBookPage()->loginAdmin();
-        $this->getAccountAdminPage()
+        $this->getCustomerAdminPage()
             ->deleteRoles($this->getRoles())
-            ->deleteAccountUsers($this->getAccountUsers());
+            ->deleteCustomerUsers($this->getCustomerUsers());
     }
 
     /**
@@ -333,7 +349,7 @@ class AddressBookTest extends Selenium2TestCase
      * @param AbstractPage $page
      * @param bool $shouldHaveButtons
      * @param string $buttonType 'edit'|'delete'
-     * @param string $userType   'user'|'account'
+     * @param string $userType   'user'|'customer'
      * @param bool $isGrid
      * @param int $nrOfButtons
      */
@@ -352,30 +368,30 @@ class AddressBookTest extends Selenium2TestCase
     }
 
     /**
-     * @param AdminAccountAddressPages $addressPage
+     * @param AdminCustomerAddressPages $addressPage
      * @param array $userInfo
      * @param int $nrOfUserAddresses
-     * @param int $nrOfAccountAddresses
+     * @param int $nrOfCustomerAddresses
      */
-    protected function cleanupAddresses($addressPage, $userInfo, $nrOfUserAddresses, $nrOfAccountAddresses)
+    protected function cleanupAddresses($addressPage, $userInfo, $nrOfUserAddresses, $nrOfCustomerAddresses)
     {
-        if ($nrOfUserAddresses > 0 || $nrOfAccountAddresses > 0) {
-            $addressPage->deleteAccountUserAddress($userInfo['userId'], $nrOfUserAddresses);
-            $addressPage->deleteAccountAddress($userInfo['accountId'], $nrOfAccountAddresses);
+        if ($nrOfUserAddresses > 0 || $nrOfCustomerAddresses > 0) {
+            $addressPage->deleteCustomerUserAddress($userInfo['userId'], $nrOfUserAddresses);
+            $addressPage->deleteCustomerAddress($userInfo['customerId'], $nrOfCustomerAddresses);
         }
     }
 
     /**
-     * @param AdminAccountAddressPages $addressPage
+     * @param AdminCustomerAddressPages $addressPage
      * @param array $userInfo
      * @param int $nrOfUserAddresses
-     * @param int $nrOfAccountAddresses
+     * @param int $nrOfCustomerAddresses
      */
-    protected function createAddresses($addressPage, $userInfo, $nrOfUserAddresses, $nrOfAccountAddresses)
+    protected function createAddresses($addressPage, $userInfo, $nrOfUserAddresses, $nrOfCustomerAddresses)
     {
-        if ($nrOfUserAddresses > 0 || $nrOfAccountAddresses > 0) {
-            $addressPage->addAccountUserAddress($userInfo['userId'], $nrOfUserAddresses);
-            $addressPage->addAccountAddress($userInfo['accountId'], $nrOfAccountAddresses);
+        if ($nrOfUserAddresses > 0 || $nrOfCustomerAddresses > 0) {
+            $addressPage->addCustomerUserAddress($userInfo['userId'], $nrOfUserAddresses);
+            $addressPage->addCustomerAddress($userInfo['customerId'], $nrOfCustomerAddresses);
         }
     }
 
@@ -393,88 +409,88 @@ class AddressBookTest extends Selenium2TestCase
     }
 
     /**
-     * @return AdminAccountAddressPages
+     * @return AdminCustomerAddressPages
      */
-    protected function getAccountAddressPage()
+    protected function getCustomerAddressPage()
     {
-        return new AdminAccountAddressPages($this);
+        return new AdminCustomerAddressPages($this);
     }
 
     /**
-     * @return AccountAdminPages
+     * @return CustomerAdminPages
      */
-    protected function getAccountAdminPage()
+    protected function getCustomerAdminPage()
     {
-        return new AccountAdminPages($this);
+        return new CustomerAdminPages($this);
     }
 
     /**
      * @param string|null $userAlias
      *
-     * @return SeleniumAccountUser[]|SeleniumAccountUser
+     * @return SeleniumCustomerUser[]|SeleniumCustomerUser
      */
-    protected function getAccountUsers($userAlias = null)
+    protected function getCustomerUsers($userAlias = null)
     {
         $users = [
-            self::USER1 => new SeleniumAccountUser(self::USER1, 'U1', 'U1', '123123', self::ROLE1, 'Company A'),
-            self::USER2 => new SeleniumAccountUser(self::USER2, 'U2', 'U2', '123123', self::ROLE2, 'Company A'),
-            self::USER3 => new SeleniumAccountUser(self::USER3, 'U3', 'U3', '123123', self::ROLE3, 'Company A'),
-            self::USER4 => new SeleniumAccountUser(self::USER4, 'U4', 'U4', '123123', self::ROLE4, 'Company A'),
+            self::USER1 => new SeleniumCustomerUser(self::USER1, 'U1', 'U1', '123123', self::ROLE1, 'Company A'),
+            self::USER2 => new SeleniumCustomerUser(self::USER2, 'U2', 'U2', '123123', self::ROLE2, 'Company A'),
+            self::USER3 => new SeleniumCustomerUser(self::USER3, 'U3', 'U3', '123123', self::ROLE3, 'Company A'),
+            self::USER4 => new SeleniumCustomerUser(self::USER4, 'U4', 'U4', '123123', self::ROLE4, 'Company A'),
         ];
 
         return $userAlias ? array_key_exists($userAlias, $users) ? $users[$userAlias] : null : $users;
     }
 
     /**
-     * @return SeleniumAccountUserTestRole[]
+     * @return SeleniumCustomerUserTestRole[]
      */
     protected function getRoles()
     {
         return [
-            new SeleniumAccountUserTestRole(
+            new SeleniumCustomerUserTestRole(
                 self::ROLE1,
                 [
-                    'Account User' => ['View' => 'Account'],
-                    'Account User Address' => [
-                        'View' => 'Account User',
-                        'Create' => 'Account User',
-                        'Edit' => 'Account User',
-                        'Delete' => 'Account User',
+                    'Customer User' => ['View' => 'Customer'],
+                    'Customer User Address' => [
+                        'View' => 'Customer User',
+                        'Create' => 'Customer User',
+                        'Edit' => 'Customer User',
+                        'Delete' => 'Customer User',
                     ],
                     'Address' => [
-                        'View' => 'Account',
-                        'Create' => 'Account',
-                        'Edit' => 'Account',
-                        'Delete' => 'Account',
+                        'View' => 'Customer',
+                        'Create' => 'Customer',
+                        'Edit' => 'Customer',
+                        'Delete' => 'Customer',
                     ],
                 ]
             ),
-            new SeleniumAccountUserTestRole(
+            new SeleniumCustomerUserTestRole(
                 self::ROLE2,
                 [
-                    'Account User' => ['View' => 'Account'],
-                    'Account User Address' => [
-                        'View' => 'Account User',
-                        'Edit' => 'Account User',
-                        'Delete' => 'Account User',
+                    'Customer User' => ['View' => 'Customer'],
+                    'Customer User Address' => [
+                        'View' => 'Customer User',
+                        'Edit' => 'Customer User',
+                        'Delete' => 'Customer User',
                     ],
-                    'Address' => ['View' => 'Account', 'Edit' => 'Account', 'Delete' => 'Account'],
+                    'Address' => ['View' => 'Customer', 'Edit' => 'Customer', 'Delete' => 'Customer'],
                 ]
             ),
-            new SeleniumAccountUserTestRole(
+            new SeleniumCustomerUserTestRole(
                 self::ROLE3,
                 [
-                    'Account User' => ['View' => 'Account'],
-                    'Account User Address' => ['View' => 'Account User', 'Edit' => 'Account User',],
-                    'Address' => ['View' => 'Account', 'Edit' => 'Account',],
+                    'Customer User' => ['View' => 'Customer'],
+                    'Customer User Address' => ['View' => 'Customer User', 'Edit' => 'Customer User',],
+                    'Address' => ['View' => 'Customer', 'Edit' => 'Customer',],
                 ]
             ),
-            new SeleniumAccountUserTestRole(
+            new SeleniumCustomerUserTestRole(
                 self::ROLE4,
                 [
-                    'Account User' => ['View' => 'Account'],
-                    'Account User Address' => ['View' => 'Account User',],
-                    'Address' => ['View' => 'Account',],
+                    'Customer User' => ['View' => 'Customer'],
+                    'Customer User Address' => ['View' => 'Customer User',],
+                    'Address' => ['View' => 'Customer',],
                 ]
             ),
         ];

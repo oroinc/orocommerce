@@ -52,14 +52,14 @@ operations:
                 type: 'success'
     UPDATE:
         exclude_datagrids:
-            - price-list-accounts-grid
-            - price-list-account-groups-grid
+            - price-list-customers-grid
+            - price-list-customer-groups-grid
             - price-list-websites-grid
             - pricing-price-list-select-grid
     DELETE:
         exclude_datagrids:
-            - price-list-accounts-grid
-            - price-list-account-groups-grid
+            - price-list-customers-grid
+            - price-list-customer-groups-grid
             - price-list-websites-grid
             - pricing-price-list-select-grid
             - product-prices-grid

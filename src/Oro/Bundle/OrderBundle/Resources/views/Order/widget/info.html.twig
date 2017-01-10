@@ -29,22 +29,22 @@
             {{ UI.renderProperty('oro.order.subtotal.label'|trans, order.subtotal|oro_format_currency({'currency': order.currency})) }}
             {{ currency.convert_to_base_currency(order.subtotalObject, '', order, 'subtotal') }}
 
-            {% if resource_granted('VIEW', order.account) %}
-                {% set accountView = UI.renderUrl(path('oro_customer_account_view', {'id': order.account.id}), order.account|oro_format_name|default('oro.ui.empty'|trans)) %}
+            {% if resource_granted('VIEW', order.customer) %}
+                {% set customerView = UI.renderUrl(path('oro_customer_customer_view', {'id': order.customer.id}), order.customer|oro_format_name|default('oro.ui.empty'|trans)) %}
             {% else %}
-                {% set accountView = order.account|oro_format_name|trim %}
+                {% set customerView = order.customer|oro_format_name|trim %}
             {% endif %}
-            {{ UI.renderHtmlProperty('oro.order.account.label'|trans, accountView) }}
+            {{ UI.renderHtmlProperty('oro.order.customer.label'|trans, customerView) }}
 
-            {% set accountUserView = '' %}
-            {% if order.accountUser is not empty %}
-                {% if resource_granted('VIEW', order.accountUser) %}
-                    {% set accountUserView = UI.renderUrl(path('oro_customer_account_user_view', {'id': order.accountUser.id}), order.accountUser|oro_format_name|default('oro.ui.empty'|trans)) %}
+            {% set customerUserView = '' %}
+            {% if order.customerUser is not empty %}
+                {% if resource_granted('VIEW', order.customerUser) %}
+                    {% set customerUserView = UI.renderUrl(path('oro_customer_customer_user_view', {'id': order.customerUser.id}), order.customerUser|oro_format_name|default('oro.ui.empty'|trans)) %}
                 {% else %}
-                    {% set accountUserView = order.accountUser|oro_format_name|trim %}
+                    {% set customerUserView = order.customerUser|oro_format_name|trim %}
                 {% endif %}
             {% endif %}
-            {{ UI.renderHtmlProperty('oro.order.account_user.label'|trans, accountUserView) }}
+            {{ UI.renderHtmlProperty('oro.order.customer_user.label'|trans, customerUserView) }}
 
             {{ UI.renderProperty('oro.order.ship_until.label'|trans, order.shipUntil|oro_format_date) }}
             {{ UI.renderHtmlProperty('oro.order.source_document.label'|trans, sourceEntityBlock) }}

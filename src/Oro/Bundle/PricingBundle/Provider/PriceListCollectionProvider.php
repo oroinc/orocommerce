@@ -8,11 +8,11 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\BasePriceListRelation;
-use Oro\Bundle\PricingBundle\Entity\PriceListAccountFallback;
-use Oro\Bundle\PricingBundle\Entity\PriceListAccountGroupFallback;
+use Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback;
+use Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback;
 use Oro\Bundle\PricingBundle\Entity\PriceListWebsiteFallback;
-use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToAccountGroupRepository;
-use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToAccountRepository;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToCustomerGroupRepository;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToCustomerRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToWebsiteRepository;
 use Oro\Bundle\PricingBundle\SystemConfig\PriceListConfig;
 use Oro\Bundle\PricingBundle\SystemConfig\PriceListConfigConverter;
@@ -89,49 +89,49 @@ class PriceListCollectionProvider
     }
 
     /**
-     * @param CustomerGroup $accountGroup
+     * @param CustomerGroup $customerGroup
      * @param Website $website
      * @return PriceListSequenceMember[]
      */
-    public function getPriceListsByAccountGroup(CustomerGroup $accountGroup, Website $website)
+    public function getPriceListsByCustomerGroup(CustomerGroup $customerGroup, Website $website)
     {
-        /** @var PriceListToAccountGroupRepository $repo */
-        $repo = $this->getRepository('OroPricingBundle:PriceListToAccountGroup');
+        /** @var PriceListToCustomerGroupRepository $repo */
+        $repo = $this->getRepository('OroPricingBundle:PriceListToCustomerGroup');
         $priceListCollection = $this->getPriceListSequenceMembers(
-            $repo->getPriceLists($accountGroup, $website)
+            $repo->getPriceLists($customerGroup, $website)
         );
         $fallbackEntity = $this->registry
-            ->getRepository('OroPricingBundle:PriceListAccountGroupFallback')
-            ->findOneBy(['accountGroup' => $accountGroup, 'website' => $website]);
-        if (!$fallbackEntity || $fallbackEntity->getFallback() === PriceListAccountGroupFallback::WEBSITE) {
+            ->getRepository('OroPricingBundle:PriceListCustomerGroupFallback')
+            ->findOneBy(['customerGroup' => $customerGroup, 'website' => $website]);
+        if (!$fallbackEntity || $fallbackEntity->getFallback() === PriceListCustomerGroupFallback::WEBSITE) {
             return array_merge($priceListCollection, $this->getPriceListsByWebsite($website));
         }
         return $priceListCollection;
     }
 
     /**
-     * @param Customer $account
+     * @param Customer $customer
      * @param Website $website
      * @return PriceListSequenceMember[]
      */
-    public function getPriceListsByAccount(Customer $account, Website $website)
+    public function getPriceListsByCustomer(Customer $customer, Website $website)
     {
-        /** @var PriceListToAccountRepository $repo */
-        $repo = $this->getRepository('OroPricingBundle:PriceListToAccount');
+        /** @var PriceListToCustomerRepository $repo */
+        $repo = $this->getRepository('OroPricingBundle:PriceListToCustomer');
         $priceListCollection = $this->getPriceListSequenceMembers(
-            $repo->getPriceLists($account, $website)
+            $repo->getPriceLists($customer, $website)
         );
 
         $fallbackEntity = $this->registry
-            ->getRepository('OroPricingBundle:PriceListAccountFallback')
-            ->findOneBy(['account' => $account, 'website' => $website]);
+            ->getRepository('OroPricingBundle:PriceListCustomerFallback')
+            ->findOneBy(['customer' => $customer, 'website' => $website]);
 
-        if ($this->isFallbackToCurrentAccountOnly($fallbackEntity)) {
+        if ($this->isFallbackToCurrentCustomerOnly($fallbackEntity)) {
             $priceLists = $priceListCollection;
-        } elseif ($account->getGroup() && $this->isFallbackToAccountGroup($fallbackEntity)) {
+        } elseif ($customer->getGroup() && $this->isFallbackToCustomerGroup($fallbackEntity)) {
             $priceLists = array_merge(
                 $priceListCollection,
-                $this->getPriceListsByAccountGroup($account->getGroup(), $website)
+                $this->getPriceListsByCustomerGroup($customer->getGroup(), $website)
             );
         } else {
             $priceLists = array_merge($priceListCollection, $this->getPriceListsByWebsite($website));
@@ -168,20 +168,20 @@ class PriceListCollectionProvider
     }
 
     /**
-     * @param PriceListAccountFallback|null $fallbackEntity
+     * @param PriceListCustomerFallback|null $fallbackEntity
      * @return bool
      */
-    protected function isFallbackToCurrentAccountOnly(PriceListAccountFallback $fallbackEntity = null)
+    protected function isFallbackToCurrentCustomerOnly(PriceListCustomerFallback $fallbackEntity = null)
     {
-        return $fallbackEntity && $fallbackEntity->getFallback() === PriceListAccountFallback::CURRENT_ACCOUNT_ONLY;
+        return $fallbackEntity && $fallbackEntity->getFallback() === PriceListCustomerFallback::CURRENT_ACCOUNT_ONLY;
     }
 
     /**
-     * @param PriceListAccountFallback|null $fallbackEntity
+     * @param PriceListCustomerFallback|null $fallbackEntity
      * @return bool
      */
-    protected function isFallbackToAccountGroup(PriceListAccountFallback $fallbackEntity = null)
+    protected function isFallbackToCustomerGroup(PriceListCustomerFallback $fallbackEntity = null)
     {
-        return !$fallbackEntity || $fallbackEntity->getFallback() === PriceListAccountFallback::ACCOUNT_GROUP;
+        return !$fallbackEntity || $fallbackEntity->getFallback() === PriceListCustomerFallback::ACCOUNT_GROUP;
     }
 }

@@ -33,35 +33,35 @@ class PriceListRecalculateCommandTest extends WebTestCase
      * @param array $params
      * @param int $expectedCount
      * @param array $websites
-     * @param array $accountGroups
-     * @param array $accounts
+     * @param array $customerGroups
+     * @param array $customers
      */
     public function testCommand(
         $expectedMessage,
         array $params,
         $expectedCount,
         array $websites = [],
-        array $accountGroups = [],
-        array $accounts = []
+        array $customerGroups = [],
+        array $customers = []
     ) {
         $this->clearCombinedPrices();
         $this->assertCombinedPriceCount(0);
 
         $this->getContainer()->get('oro_pricing.builder.combined_price_list_builder')->resetCache();
         $this->getContainer()->get('oro_pricing.builder.website_combined_price_list_builder')->resetCache();
-        $this->getContainer()->get('oro_pricing.builder.account_group_combined_price_list_builder')->resetCache();
-        $this->getContainer()->get('oro_pricing.builder.account_combined_price_list_builder')->resetCache();
+        $this->getContainer()->get('oro_pricing.builder.customer_group_combined_price_list_builder')->resetCache();
+        $this->getContainer()->get('oro_pricing.builder.customer_combined_price_list_builder')->resetCache();
 
         foreach ($websites as $websiteName) {
             $params[] = '--website='.$this->getReference($websiteName)->getId();
         }
 
-        foreach ($accountGroups as $accountGroupName) {
-            $params[] = '--account-group='.$this->getReference($accountGroupName)->getId();
+        foreach ($customerGroups as $customerGroupName) {
+            $params[] = '--customer-group='.$this->getReference($customerGroupName)->getId();
         }
 
-        foreach ($accounts as $accountName) {
-            $params[] = '--account='.$this->getReference($accountName)->getId();
+        foreach ($customers as $customerName) {
+            $params[] = '--customer='.$this->getReference($customerName)->getId();
         }
 
         $result = $this->runCommand(PriceListRecalculateCommand::NAME, $params);
@@ -90,40 +90,40 @@ class PriceListRecalculateCommandTest extends WebTestCase
                 'params' => [],
                 'expectedCount' => 38,
                 'website' => [LoadWebsiteData::WEBSITE1],
-                'accountGroup' => [],
-                'account' => []
+                'customerGroup' => [],
+                'customer' => []
             ],
-            'account.level_1_1' => [
+            'customer.level_1_1' => [
                 'expected_message' => 'Start processing',
                 'params' => [],
                 'expectedCount' => 14,
                 'website' => [],
-                'accountGroup' => [],
-                'account' => ['account.level_1_1']
+                'customerGroup' => [],
+                'customer' => ['customer.level_1_1']
             ],
-            'account.level_1.2' => [
+            'customer.level_1.2' => [
                 'expected_message' => 'Start processing',
                 'params' => [],
                 'expectedCount' => 4,
                 'website' => [],
-                'accountGroup' => [],
-                'account' => ['account.level_1.2']
+                'customerGroup' => [],
+                'customer' => ['customer.level_1.2']
             ],
-            'account.level_1.3' => [
+            'customer.level_1.3' => [
                 'expected_message' => 'Start processing',
                 'params' => [],
                 'expectedCount' => 14,
                 'website' => [],
-                'accountGroup' => [],
-                'account' => ['account.level_1.3']
+                'customerGroup' => [],
+                'customer' => ['customer.level_1.3']
             ],
-            'account_group' => [
+            'customer_group' => [
                 'expected_message' => 'Start processing',
                 'params' => [],
-                'expectedCount' => 24, // 6 + 4 + 14 = account.level_1_1 + account.level_1.2 + account.level_1.3
+                'expectedCount' => 24, // 6 + 4 + 14 = customer.level_1_1 + customer.level_1.2 + customer.level_1.3
                 'website' => [],
-                'accountGroup' => ['account_group.group1'], // doesn't has own price list
-                'account' => []
+                'customerGroup' => ['customer_group.group1'], // doesn't has own price list
+                'customer' => []
             ],
         ];
     }

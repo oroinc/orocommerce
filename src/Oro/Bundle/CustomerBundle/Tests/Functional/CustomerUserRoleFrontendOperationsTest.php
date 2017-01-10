@@ -32,7 +32,7 @@ class CustomerUserRoleFrontendOperationsTest extends WebTestCase
         $predefinedRole = $this->getReference(LoadCustomerUserRoleACLData::ROLE_WITHOUT_ACCOUNT_1_USER_LOCAL);
         $this->assertNotNull($predefinedRole);
 
-        $this->executeOperation($predefinedRole, 'oro_account_frontend_delete_role');
+        $this->executeOperation($predefinedRole, 'oro_customer_frontend_delete_role');
 
         $result = $this->client->getResponse();
         $this->assertJsonResponseStatusCodeEquals($result, 404);
@@ -54,7 +54,7 @@ class CustomerUserRoleFrontendOperationsTest extends WebTestCase
         $customizedRole = $this->getReference($resource);
         $this->assertNotNull($customizedRole);
 
-        $this->executeOperation($customizedRole, 'oro_account_frontend_delete_role');
+        $this->executeOperation($customizedRole, 'oro_customer_frontend_delete_role');
 
         $result = $this->client->getResponse();
 
@@ -82,27 +82,27 @@ class CustomerUserRoleFrontendOperationsTest extends WebTestCase
                 'resource' => LoadCustomerUserRoleACLData::ROLE_WITH_ACCOUNT_1_USER_LOCAL,
                 'status' => 404,
             ],
-            'parent account: LOCAL' => [
+            'parent customer: LOCAL' => [
                 'login' => LoadCustomerUserRoleACLData::USER_ACCOUNT_1_ROLE_LOCAL,
                 'resource' => LoadCustomerUserRoleACLData::ROLE_WITH_ACCOUNT_1_2_USER_LOCAL,
                 'status' => 404,
             ],
-            'parent account: DEEP_VIEW_ONLY' => [
+            'parent customer: DEEP_VIEW_ONLY' => [
                 'login' => LoadCustomerUserRoleACLData::USER_ACCOUNT_1_ROLE_DEEP_VIEW_ONLY,
                 'resource' => LoadCustomerUserRoleACLData::ROLE_WITH_ACCOUNT_1_2_USER_LOCAL,
                 'status' => 404,
             ],
-            'different account: DEEP' => [
+            'different customer: DEEP' => [
                 'login' => LoadCustomerUserRoleACLData::USER_ACCOUNT_2_ROLE_DEEP,
                 'resource' => LoadCustomerUserRoleACLData::ROLE_WITH_ACCOUNT_1_2_USER_LOCAL,
                 'status' => 404,
             ],
-            'same account: LOCAL' => [
+            'same customer: LOCAL' => [
                 'login' => LoadCustomerUserRoleACLData::USER_ACCOUNT_1_ROLE_LOCAL,
                 'resource' => LoadCustomerUserRoleACLData::ROLE_WITH_ACCOUNT_1_USER_DEEP,
                 'status' => 200,
             ],
-            'parent account: DEEP' => [
+            'parent customer: DEEP' => [
                 'login' => LoadCustomerUserRoleACLData::USER_ACCOUNT_1_ROLE_DEEP,
                 'resource' => LoadCustomerUserRoleACLData::ROLE_WITH_ACCOUNT_1_2_USER_LOCAL,
                 'status' => 200,

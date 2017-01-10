@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Entity;
 
-use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
@@ -26,9 +25,9 @@ class QuoteTest extends AbstractTest
             ['id', '123'],
             ['qid', 'QID-123456'],
             ['owner', new User()],
-            ['accountUser', new CustomerUser()],
+            ['customerUser', new CustomerUser()],
             ['shippingAddress', new QuoteAddress()],
-            ['account', new Customer()],
+            ['customer', new Customer()],
             ['organization', new Organization()],
             ['poNumber', '1'],
             ['validUntil', $now, false],
@@ -37,9 +36,13 @@ class QuoteTest extends AbstractTest
             ['shipUntil', $now, false],
             ['expired', true],
             ['locked', true],
+            ['shippingMethodLocked', true],
+            ['allowUnlistedShippingMethod', true],
             ['request', new Request()],
             ['website', new Website()],
-            ['shippingEstimate', new Price()],
+            ['currency', 'UAH'],
+            ['estimatedShippingCostAmount', 15],
+            ['overriddenShippingCostAmount', 15],
         ];
 
         static::assertPropertyAccessors(new Quote(), $properties);
@@ -47,7 +50,7 @@ class QuoteTest extends AbstractTest
         static::assertPropertyCollections(new Quote(), [
             ['quoteProducts', new QuoteProduct()],
             ['assignedUsers', new User()],
-            ['assignedAccountUsers', new CustomerUser()],
+            ['assignedCustomerUsers', new CustomerUser()],
         ]);
     }
 
@@ -67,9 +70,9 @@ class QuoteTest extends AbstractTest
     {
         $quote = new Quote();
         $this->assertEmpty($quote->getEmail());
-        $accountUser = new CustomerUser();
-        $accountUser->setEmail('test');
-        $quote->setAccountUser($accountUser);
+        $customerUser = new CustomerUser();
+        $customerUser->setEmail('test');
+        $quote->setCustomerUser($customerUser);
         $this->assertEquals('test', $quote->getEmail());
     }
 
@@ -107,50 +110,6 @@ class QuoteTest extends AbstractTest
         $quote->addQuoteProduct($quoteProduct);
 
         $this->assertEquals($quote, $quoteProduct->getQuote());
-    }
-
-    public function testPostLoad()
-    {
-        $item = new Quote();
-
-        $this->assertNull($item->getShippingEstimate());
-
-        $value = 100;
-        $currency = 'EUR';
-        $this->setProperty($item, 'shippingEstimateAmount', $value)
-            ->setProperty($item, 'shippingEstimateCurrency', $currency);
-
-        $item->postLoad();
-
-        $this->assertEquals(Price::create($value, $currency), $item->getShippingEstimate());
-    }
-
-    public function testUpdateShippingEstimate()
-    {
-        $item = new Quote();
-        $value = 1000;
-        $currency = 'EUR';
-        $item->setShippingEstimate(Price::create($value, $currency));
-
-        $item->updateShippingEstimate();
-
-        $this->assertEquals($value, $this->getProperty($item, 'shippingEstimateAmount'));
-        $this->assertEquals($currency, $this->getProperty($item, 'shippingEstimateCurrency'));
-    }
-
-    public function testSetShippingEstimate()
-    {
-        $value = 10;
-        $currency = 'USD';
-        $price = Price::create($value, $currency);
-
-        $item = new Quote();
-        $item->setShippingEstimate($price);
-
-        $this->assertEquals($price, $item->getShippingEstimate());
-
-        $this->assertEquals($value, $this->getProperty($item, 'shippingEstimateAmount'));
-        $this->assertEquals($currency, $this->getProperty($item, 'shippingEstimateCurrency'));
     }
 
     /**

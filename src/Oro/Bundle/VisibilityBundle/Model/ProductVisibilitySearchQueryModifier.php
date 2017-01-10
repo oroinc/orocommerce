@@ -13,7 +13,7 @@ use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Query\Modifier\QueryModifierInterface;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
-use Oro\Bundle\WebsiteSearchBundle\Placeholder\AccountIdPlaceholder;
+use Oro\Bundle\WebsiteSearchBundle\Placeholder\CustomerIdPlaceholder;
 use Oro\Bundle\WebsiteSearchBundle\Provider\PlaceholderProvider;
 
 class ProductVisibilitySearchQueryModifier implements QueryModifierInterface
@@ -54,30 +54,30 @@ class ProductVisibilitySearchQueryModifier implements QueryModifierInterface
     private function createProductVisibilityExpression()
     {
         $exprBuilder = Criteria::expr();
-        $account = $this->getAccount();
+        $customer = $this->getCustomer();
 
-        if ($account) {
-            $accountField = $this->placeholderProvider->getPlaceholderFieldName(
+        if ($customer) {
+            $customerField = $this->placeholderProvider->getPlaceholderFieldName(
                 Product::class,
                 ProductVisibilityIndexer::FIELD_VISIBILITY_ACCOUNT,
                 [
-                   AccountIdPlaceholder::NAME => $account->getId()
+                   CustomerIdPlaceholder::NAME => $customer->getId()
                 ]
             );
 
-            $accountField = $this->completeFieldName($accountField);
+            $customerField = $this->completeFieldName($customerField);
 
             $defaultField = $this->completeFieldName(ProductVisibilityIndexer::FIELD_IS_VISIBLE_BY_DEFAULT);
 
             $expression = $exprBuilder->orX(
                 $exprBuilder->andX(
                     $exprBuilder->eq($defaultField, BaseVisibilityResolved::VISIBILITY_VISIBLE),
-                    $exprBuilder->notExists($accountField)
+                    $exprBuilder->notExists($customerField)
                 ),
                 $exprBuilder->andX(
                     $exprBuilder->eq($defaultField, BaseVisibilityResolved::VISIBILITY_HIDDEN),
                     $exprBuilder->eq(
-                        $accountField,
+                        $customerField,
                         BaseVisibilityResolved::VISIBILITY_VISIBLE
                     )
                 )
@@ -102,11 +102,11 @@ class ProductVisibilitySearchQueryModifier implements QueryModifierInterface
     /**
      * @return CustomerUser|null
      */
-    private function getAccount()
+    private function getCustomer()
     {
         $token = $this->tokenStorage->getToken();
         if ($token && ($user = $token->getUser()) instanceof CustomerUser) {
-            return $user->getAccount();
+            return $user->getCustomer();
         }
 
         return null;
