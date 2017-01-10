@@ -7,9 +7,8 @@ use Symfony\Component\DomCrawler\Crawler;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadUserData;
-
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
+use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\TransitionManager;
 use Oro\Bundle\WorkflowBundle\Model\Workflow;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
@@ -32,7 +31,7 @@ class RfqFrontofficeDefaultWorkflowTestCase extends WebTestCase
     protected $workflow;
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function setUp()
     {
@@ -58,7 +57,7 @@ class RfqFrontofficeDefaultWorkflowTestCase extends WebTestCase
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function tearDown()
     {
@@ -177,9 +176,10 @@ class RfqFrontofficeDefaultWorkflowTestCase extends WebTestCase
      */
     protected function transitSystem($entity, $workflowName, $transitionName, $transitionData = [])
     {
+        /* @var $wi WorkflowItem */
         $wi = $this->manager->getWorkflowItem($entity, $workflowName);
         $this->assertNotNull($wi);
-        $wi->setData($wi->getData()->add($transitionData));
+        $wi->getData()->add($transitionData);
         $this->manager->transit($wi, $transitionName);
     }
 
@@ -214,7 +214,7 @@ class RfqFrontofficeDefaultWorkflowTestCase extends WebTestCase
     /**
      * @param Request $request
      *
-     * @return null|Crawler
+     * @return Crawler
      */
     protected function openEntityViewPage(Request $request)
     {
