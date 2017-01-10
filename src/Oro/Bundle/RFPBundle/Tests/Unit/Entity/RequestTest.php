@@ -58,7 +58,7 @@ class RequestTest extends \PHPUnit_Framework_TestCase
             [
                 ['requestProducts', new RequestProduct()],
                 ['assignedUsers', new User()],
-                ['assignedAccountUsers', new AccountUser()],
+                ['assignedAccountUsers', new CustomerUser()],
                 ['requestAdditionalNotes', new RequestAdditionalNote()],
             ]
         );
