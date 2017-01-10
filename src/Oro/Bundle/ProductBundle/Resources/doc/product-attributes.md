@@ -3,6 +3,7 @@ Product attributes
 This topic contains the following sections: 
 * [Understanding Product Attributes](#understanding-product-attributes) 
 * [Creating Product Attributes](#creating-product-attributes)
+* [Understanding Product Families](#understanding-product-families)
 * [Using Product Attributes in Product Families](#using-product-attributes-in-product-families)
 * 
 
@@ -114,6 +115,7 @@ The product family is designed to group product attributes for products of simil
 Creating new Product Family
 ---------------------------
 Default Product Family may not be enough to cover all your needs. To create a new product family:
+
 1. Navigate to **Products > Product Families** using the main menu.
 2. Click **Create Product Family**.
 
@@ -129,37 +131,38 @@ Default Product Family may not be enough to cover all your needs. To create a ne
 Using Product Attributes in Product Families
 --------------------------------------------
 
-Adding a new Product Attribute Group
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Adding a new Product Attribute Group
+
 1. Navigate to **Products > Product Families** using the main menu.
 2. Click **+ Add** to create a new group. Type in the label and add the product attributes:
    - Start typing the product attribute name. Filtered list will apear as you type. 
    - Select the attribute from the list or press **Enter** once there is only one option.
 3. Once you are done with the product attribute organization, click **Save**.
 
-Adding a Product Attribute to the Attribute Group
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Adding a Product Attribute to the Attribute Group
+
 1. Navigate to **Products > Product Families** using the main menu.
 2. Start typing the product attribute name. Filtered list will apear as you type. Select the attribute from the list or press Enter once there is only one option.
 3. Once you are done with the product attribute organization, click **Save**.
 
-Moving a Product Attribute to Another Attribute Group
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Moving a Product Attribute to Another Attribute Group
+
 1. Navigate to **Products > Product Families** using the main menu.
 2. When an attribute you are adding to the group is already a member of another attribute group in this product family, the *(move from \<attribute group\>* will be shown next to the attribute name in the hint list that appears as you type.
    
    <img src="./images/ProductAttributeFamiliesMove.png" alt="Move Product Attribute to a New Prodcut Attribute Group in Product Family" width="50%" height="50%">
+   
    Adding such attribute to another group will remove it from it's current group.
 3. Once you are done with the product attribute organization, click **Save**.
 
-Deleting a Product Attribute from the Attribute Group
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Deleting a Product Attribute from the Attribute Group
+
 1. Navigate to **Products > Product Families** using the main menu.
 2. Click the **X** next to the attribute name to remove it from the attribute group. Though it is impossible to delete system attributes, you can move them to the default attribute group. This will remove an attribute from it's current group.
 3. Once you are done with the product attribute organization, click **Save**.
 
-Deleting a Product Attribute Group
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Deleting a Product Attribute Group
+
 To remove existing aproduct attribute group:
 1. Navigate to **Products > Product Families** using the main menu.
 2. Click **x** on the top right of the group area. If the group contains any system attributes, the confirmation dialog appears. Once confirmed, the group is deleted and the system attributes are automatically moved to deafult group.
