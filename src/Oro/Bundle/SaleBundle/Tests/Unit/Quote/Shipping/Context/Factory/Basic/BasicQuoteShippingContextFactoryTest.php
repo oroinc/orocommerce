@@ -64,9 +64,11 @@ class BasicQuoteShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
         $currency = 'USD';
 
         $shippingAddressMock = $this->getShippingAddressMock();
-        $shippingLineItems = new DoctrineShippingLineItemCollection([
-            $this->getShippingLineItemMock()
-        ]);
+        $shippingLineItems = new DoctrineShippingLineItemCollection(
+            [
+                $this->getShippingLineItemMock(),
+            ]
+        );
         $quoteMock = $this->getQuoteMock();
         $shippingContextMock = $this->getShippingContextMock();
         $builder = $this->getShippingContextBuilderMock();
@@ -110,7 +112,7 @@ class BasicQuoteShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
         $this->shippingContextBuilderFactoryMock
             ->expects($this->once())
             ->method('createShippingContextBuilder')
-            ->with($currency, Price::create(0,''), $quoteMock, $quoteId)//@TODO: change price
+            ->with($currency, Price::create(0, ''), $quoteMock, $quoteId)//@TODO: change price
             ->willReturn($builder);
 
         $actualContext = $this->basicQuoteShippingContextFactory->create($quoteMock);
