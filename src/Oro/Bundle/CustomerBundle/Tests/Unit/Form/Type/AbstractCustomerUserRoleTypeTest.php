@@ -10,11 +10,11 @@ use Symfony\Component\Validator\Validation;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType;
 use Oro\Bundle\SecurityBundle\Form\Type\PrivilegeCollectionType;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as AccountSelectTypeStub;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as CustomerSelectTypeStub;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 use Oro\Bundle\CustomerBundle\Form\Type\CustomerUserRoleType;
-use Oro\Bundle\CustomerBundle\Form\Type\AccountSelectType;
+use Oro\Bundle\CustomerBundle\Form\Type\CustomerSelectType;
 use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\AclPriviledgeTypeStub;
 
 abstract class AbstractCustomerUserRoleTypeTest extends FormIntegrationTestCase
@@ -24,7 +24,7 @@ abstract class AbstractCustomerUserRoleTypeTest extends FormIntegrationTestCase
     /**
      * @var Customer
      */
-    protected static $accounts;
+    protected static $customers;
 
     /**
      * @var CustomerUserRoleType
@@ -63,13 +63,13 @@ abstract class AbstractCustomerUserRoleTypeTest extends FormIntegrationTestCase
     protected function getExtensions()
     {
         $entityIdentifierType = new EntityIdentifierType([]);
-        $accountSelectType = new AccountSelectTypeStub($this->getAccounts(), AccountSelectType::NAME);
+        $customerSelectType = new CustomerSelectTypeStub($this->getCustomers(), CustomerSelectType::NAME);
 
         return [
             new PreloadedExtension(
                 [
                     $entityIdentifierType->getName() => $entityIdentifierType,
-                    $accountSelectType->getName() => $accountSelectType,
+                    $customerSelectType->getName() => $customerSelectType,
                     'oro_acl_collection' => new PrivilegeCollectionType(),
                     AclPriviledgeTypeStub::NAME => new AclPriviledgeTypeStub(),
                 ],
@@ -84,7 +84,7 @@ abstract class AbstractCustomerUserRoleTypeTest extends FormIntegrationTestCase
      */
     public function submitDataProvider()
     {
-        $roleLabel = 'account_role_label';
+        $roleLabel = 'customer_role_label';
         $alteredRoleLabel = 'altered_role_label';
 
         $defaultRole = new CustomerUserRole();
@@ -158,16 +158,16 @@ abstract class AbstractCustomerUserRoleTypeTest extends FormIntegrationTestCase
     /**
      * @return Customer[]
      */
-    protected function getAccounts()
+    protected function getCustomers()
     {
-        if (!self::$accounts) {
-            self::$accounts = [
-                '1' => $this->createAccount(1, 'first'),
-                '2' => $this->createAccount(2, 'second')
+        if (!self::$customers) {
+            self::$customers = [
+                '1' => $this->createCustomer(1, 'first'),
+                '2' => $this->createCustomer(2, 'second')
             ];
         }
 
-        return self::$accounts;
+        return self::$customers;
     }
 
     /**
@@ -175,17 +175,17 @@ abstract class AbstractCustomerUserRoleTypeTest extends FormIntegrationTestCase
      * @param string $name
      * @return Customer
      */
-    protected static function createAccount($id, $name)
+    protected static function createCustomer($id, $name)
     {
-        $account = new Customer();
+        $customer = new Customer();
 
-        $reflection = new \ReflectionProperty(get_class($account), 'id');
+        $reflection = new \ReflectionProperty(get_class($customer), 'id');
         $reflection->setAccessible(true);
-        $reflection->setValue($account, $id);
+        $reflection->setValue($customer, $id);
 
-        $account->setName($name);
+        $customer->setName($name);
 
-        return $account;
+        return $customer;
     }
 
     /**

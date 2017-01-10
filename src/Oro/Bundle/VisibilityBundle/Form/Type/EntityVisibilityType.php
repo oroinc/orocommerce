@@ -21,11 +21,11 @@ class EntityVisibilityType extends AbstractType
 
     const VISIBILITY = 'visibility';
     const ALL_FIELD = 'all';
-    const ACCOUNT_FIELD = 'account';
-    const ACCOUNT_GROUP_FIELD = 'accountGroup';
+    const ACCOUNT_FIELD = 'customer';
+    const ACCOUNT_GROUP_FIELD = 'customerGroup';
     const ALL_CLASS = 'allClass';
-    const ACCOUNT_GROUP_CLASS = 'accountGroupClass';
-    const ACCOUNT_CLASS = 'accountClass';
+    const ACCOUNT_GROUP_CLASS = 'customerGroupClass';
+    const ACCOUNT_CLASS = 'customerClass';
 
     /**
      * @var VisibilityPostSetDataListener
@@ -110,7 +110,7 @@ class EntityVisibilityType extends AbstractType
                 EntityChangesetType::NAME,
                 [
                     'class' => Customer::class,
-                    'context' => ['account' => ScopeCriteria::IS_NOT_NULL],
+                    'context' => ['customer' => ScopeCriteria::IS_NOT_NULL],
                     'constraints' => [new VisibilityChangeSet(['entityClass' => Customer::class])],
                 ]
             )
@@ -119,7 +119,7 @@ class EntityVisibilityType extends AbstractType
                 EntityChangesetType::NAME,
                 [
                     'class' => CustomerGroup::class,
-                    'context' => ['accountGroup' => ScopeCriteria::IS_NOT_NULL],
+                    'context' => ['customerGroup' => ScopeCriteria::IS_NOT_NULL],
                     'constraints' => [new VisibilityChangeSet(['entityClass' => CustomerGroup::class])],
                 ]
             );

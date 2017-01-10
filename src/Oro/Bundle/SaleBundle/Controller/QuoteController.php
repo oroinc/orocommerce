@@ -137,8 +137,8 @@ class QuoteController extends Controller
     protected function update(Quote $quote, Request $request)
     {
         if (in_array($request->getMethod(), ['POST', 'PUT'], true)) {
-            $quote->setAccount($this->getQuoteHandler()->getAccount());
-            $quote->setAccountUser($this->getQuoteHandler()->getAccountUser());
+            $quote->setCustomer($this->getQuoteHandler()->getCustomer());
+            $quote->setCustomerUser($this->getQuoteHandler()->getCustomerUser());
         }
 
         /* @var $handler UpdateHandler */

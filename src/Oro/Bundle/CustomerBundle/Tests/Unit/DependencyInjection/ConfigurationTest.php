@@ -43,11 +43,11 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                 'expected' => [
                     'settings' => [
                         'resolved' => 1,
-                        'default_account_owner' => [
+                        'default_customer_owner' => [
                             'value' => 1,
                             'scope' => 'app'
                         ],
-                        'anonymous_account_group' => [
+                        'anonymous_customer_group' => [
                             'value' => null,
                             'scope' => 'app'
                         ],

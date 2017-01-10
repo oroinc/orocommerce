@@ -174,7 +174,7 @@ class RouteProviderTest extends BaseRouteProviderTest
     public function isApplicationsValidDataProvider()
     {
         $user = new User();
-        $accountUser = new CustomerUser();
+        $customerUser = new CustomerUser();
         $otherUser = 'anon.';
 
         return [
@@ -185,7 +185,7 @@ class RouteProviderTest extends BaseRouteProviderTest
             ],
             [
                 'applications' => ['default', 'commerce'],
-                'token' => $this->createToken($accountUser),
+                'token' => $this->createToken($customerUser),
                 'expectedResult' => true
             ],
             [
@@ -195,7 +195,7 @@ class RouteProviderTest extends BaseRouteProviderTest
             ],
             [
                 'applications' => ['default'],
-                'token' => $this->createToken($accountUser),
+                'token' => $this->createToken($customerUser),
                 'expectedResult' => false
             ],
             [
@@ -205,7 +205,7 @@ class RouteProviderTest extends BaseRouteProviderTest
             ],
             [
                 'applications' => ['commerce'],
-                'token' => $this->createToken($accountUser),
+                'token' => $this->createToken($customerUser),
                 'expectedResult' => true
             ],
             [

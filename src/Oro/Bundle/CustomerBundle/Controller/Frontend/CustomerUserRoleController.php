@@ -18,7 +18,7 @@ class CustomerUserRoleController extends Controller
      * @Route("/", name="oro_customer_frontend_customer_user_role_index")
      * @Layout(vars={"entity_class"})
      * @Acl(
-     *      id="oro_account_frontend_customer_user_role_index",
+     *      id="oro_customer_frontend_customer_user_role_index",
      *      type="entity",
      *      class="OroCustomerBundle:CustomerUserRole",
      *      permission="VIEW",
@@ -43,7 +43,7 @@ class CustomerUserRoleController extends Controller
     public function viewAction(CustomerUserRole $role)
     {
         $isGranted = $role->isPredefined()
-            ? $this->getSecurityFacade()->isGranted('oro_account_frontend_customer_user_role_view')
+            ? $this->getSecurityFacade()->isGranted('oro_customer_frontend_customer_user_role_view')
             : $this->getSecurityFacade()->isGranted('FRONTEND_ACCOUNT_ROLE_VIEW', $role);
 
         if (!$isGranted || !$role->isSelfManaged() || !$role->isPublic()) {
@@ -61,7 +61,7 @@ class CustomerUserRoleController extends Controller
      * @Route("/create", name="oro_customer_frontend_customer_user_role_create")
      * @Layout()
      * @Acl(
-     *      id="oro_account_frontend_customer_user_role_create",
+     *      id="oro_customer_frontend_customer_user_role_create",
      *      type="entity",
      *      class="OroCustomerBundle:CustomerUserRole",
      *      permission="CREATE",
@@ -86,7 +86,7 @@ class CustomerUserRoleController extends Controller
     public function updateAction(CustomerUserRole $role, Request $request)
     {
         $isGranted = $role->isPredefined()
-            ? $this->getSecurityFacade()->isGranted('oro_account_frontend_customer_user_role_create')
+            ? $this->getSecurityFacade()->isGranted('oro_customer_frontend_customer_user_role_create')
             : $this->getSecurityFacade()->isGranted('FRONTEND_ACCOUNT_ROLE_UPDATE', $role);
 
         if (!$isGranted || !$role->isSelfManaged() || !$role->isPublic()) {

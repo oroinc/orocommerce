@@ -19,16 +19,16 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
  *      }
  * )
  * @Config(
- *      routeName="oro_customer_account_group_index",
- *      routeView="oro_customer_account_group_view",
- *      routeUpdate="oro_customer_account_group_update",
+ *      routeName="oro_customer_customer_group_index",
+ *      routeView="oro_customer_customer_group_view",
+ *      routeUpdate="oro_customer_customer_group_update",
  *      defaultValues={
  *          "entity"={
  *              "icon"="fa-users"
  *          },
  *          "form"={
- *              "form_type"="oro_customer_account_group_select",
- *              "grid_name"="account-groups-select-grid",
+ *              "form_type"="oro_customer_customer_group_select",
+ *              "grid_name"="customer-groups-select-grid",
  *          },
  *          "dataaudit"={
  *              "auditable"=true

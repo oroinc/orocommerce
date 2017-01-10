@@ -35,7 +35,7 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
 {
     const CURRENCY = 'USD';
 
-    const ACCOUNT_NAME = 'Test Account';
+    const ACCOUNT_NAME = 'Test Customer';
     const ACCOUNT_USER_FIRST_NAME = 'TestFirstName';
     const ACCOUNT_USER_LAST_NAME = 'TestLastName';
 
@@ -204,8 +204,8 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
         $subtotalObject = $this->createMultiCurrencyObjectForOrder($subtotalAmount);
         $totalObject = $this->createMultiCurrencyObjectForOrder($totalAmount);
 
-        $accountName = 'acc';
-        $accountUser = $this->createAccountUser($accountName);
+        $customerName = 'acc';
+        $customerUser = $this->createCustomerUser($customerName);
 
         $quoteProduct = $this->createQuoteProduct($sku);
         $quoteProduct->addQuoteProductOffer(
@@ -223,10 +223,10 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
             ->setEstimatedShippingCostAmount($quoteShippingEstimateValue);
 
         $order = $this
-            ->createMainEntity($accountName, self::ACCOUNT_USER_FIRST_NAME, self::ACCOUNT_USER_LAST_NAME, true)
+            ->createMainEntity($customerName, self::ACCOUNT_USER_FIRST_NAME, self::ACCOUNT_USER_LAST_NAME, true)
             ->setCurrency(self::CURRENCY)
-            ->setAccountUser($accountUser)
-            ->setAccount($accountUser->getAccount())
+            ->setCustomerUser($customerUser)
+            ->setCustomer($customerUser->getCustomer())
             ->addLineItem(
                 $this->createOrderLineItem(
                     $sku,
@@ -254,7 +254,7 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
                 }
             );
 
-        $this->assertEquals($order, $this->converter->convert($quote, $accountUser));
+        $this->assertEquals($order, $this->converter->convert($quote, $customerUser));
     }
 
     /**
@@ -403,7 +403,7 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param string $accountName
+     * @param string $customerName
      * @param string $userFirstName
      * @param string $userLastName
      * @param bool $isOrder
@@ -412,13 +412,13 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
      * @return Order|Quote
      */
     protected function createMainEntity(
-        $accountName,
+        $customerName,
         $userFirstName,
         $userLastName,
         $isOrder = false,
         $emptyShippingAddress = false
     ) {
-        $accountUser = $this->createAccountUser($accountName);
+        $customerUser = $this->createCustomerUser($customerName);
 
         $owner = new User();
         $owner->setFirstName($userFirstName . ' owner')->setLastName($userLastName . ' owner')->setSalt(null);
@@ -431,8 +431,8 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
         if ($entity instanceof Quote) {
             if (!$emptyShippingAddress) {
                 $shippingAddress = new QuoteAddress();
-                $shippingAddress->setAccountAddress(new CustomerAddress());
-                $shippingAddress->setAccountUserAddress(new CustomerUserAddress());
+                $shippingAddress->setCustomerAddress(new CustomerAddress());
+                $shippingAddress->setCustomerUserAddress(new CustomerUserAddress());
                 $shippingAddress->setLabel('Label');
                 $shippingAddress->setStreet('Street');
                 $shippingAddress->setStreet2('Street');
@@ -453,8 +453,8 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
         }
 
         $entity
-            ->setAccount($accountUser->getAccount())
-            ->setAccountUser($accountUser)
+            ->setCustomer($customerUser->getCustomer())
+            ->setCustomerUser($customerUser)
             ->setOwner($owner)
             ->setOrganization($organization);
 
@@ -531,18 +531,18 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param string $accountName
+     * @param string $customerName
      * @return CustomerUser
      */
-    protected function createAccountUser($accountName)
+    protected function createCustomerUser($customerName)
     {
-        $accountUser = new CustomerUser();
-        $accountUser->setFirstName($accountName . ' first')->setLastName($accountName . ' last')->setSalt(null);
+        $customerUser = new CustomerUser();
+        $customerUser->setFirstName($customerName . ' first')->setLastName($customerName . ' last')->setSalt(null);
 
-        $account = new Customer();
-        $account->setName($accountName)->addUser($accountUser);
+        $customer = new Customer();
+        $customer->setName($customerName)->addUser($customerUser);
 
-        return $accountUser;
+        return $customerUser;
     }
 
     protected function assertDoctrineCalled()
@@ -568,8 +568,8 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
     {
         $shippingAddress = new OrderAddress();
 
-        $shippingAddress->setAccountAddress(new CustomerAddress());
-        $shippingAddress->setAccountUserAddress(new CustomerUserAddress());
+        $shippingAddress->setCustomerAddress(new CustomerAddress());
+        $shippingAddress->setCustomerUserAddress(new CustomerUserAddress());
         $shippingAddress->setLabel('Label');
         $shippingAddress->setStreet('Street');
         $shippingAddress->setStreet2('Street');

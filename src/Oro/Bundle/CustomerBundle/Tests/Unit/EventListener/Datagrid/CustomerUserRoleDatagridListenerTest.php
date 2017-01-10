@@ -65,7 +65,7 @@ class CustomerUserRoleDatagridListenerTest extends \PHPUnit_Framework_TestCase
                 CustomerUserRole::class,
                 $criteria,
                 'VIEW',
-                ['account' => '.account', 'organization' => '.organization']
+                ['customer' => '.customer', 'organization' => '.organization']
             )
             ->willReturn($this->queryBuilder);
 

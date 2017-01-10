@@ -169,13 +169,13 @@ class SignInProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetLoggedUser()
     {
-        $accountUser = new CustomerUser();
+        $customerUser = new CustomerUser();
 
         $this->securityFacade
             ->expects($this->once())
             ->method('getLoggedUser')
-            ->will($this->returnValue($accountUser));
+            ->will($this->returnValue($customerUser));
 
-        $this->assertEquals($accountUser, $this->dataProvider->getLoggedUser());
+        $this->assertEquals($customerUser, $this->dataProvider->getLoggedUser());
     }
 }

@@ -12,17 +12,17 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 class WebsiteCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
 {
     /**
-     * @var AccountGroupCombinedPriceListsBuilder
+     * @var CustomerGroupCombinedPriceListsBuilder
      */
-    protected $accountGroupCombinedPriceListsBuilder;
+    protected $customerGroupCombinedPriceListsBuilder;
 
     /**
-     * @param AccountGroupCombinedPriceListsBuilder $accountGroupCombinedPriceListsBuilder
+     * @param CustomerGroupCombinedPriceListsBuilder $customerGroupCombinedPriceListsBuilder
      * @return $this
      */
-    public function setAccountGroupCombinedPriceListsBuilder($accountGroupCombinedPriceListsBuilder)
+    public function setCustomerGroupCombinedPriceListsBuilder($customerGroupCombinedPriceListsBuilder)
     {
-        $this->accountGroupCombinedPriceListsBuilder = $accountGroupCombinedPriceListsBuilder;
+        $this->customerGroupCombinedPriceListsBuilder = $customerGroupCombinedPriceListsBuilder;
 
         return $this;
     }
@@ -43,7 +43,7 @@ class WebsiteCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
 
             foreach ($websites as $website) {
                 $this->updatePriceListsOnCurrentLevel($website, $force);
-                $this->accountGroupCombinedPriceListsBuilder->build($website, null, $force);
+                $this->customerGroupCombinedPriceListsBuilder->build($website, null, $force);
             }
 
             if ($currentWebsite) {

@@ -50,18 +50,18 @@ abstract class AbstractAddressTypeTest extends AddressFormExtensionTestCase
         }
         $this->assertEquals($expectedData, $form->getData());
 
-        $this->assertTrue($form->has('accountAddress'));
-        $this->assertTrue($form->get('accountAddress')->getConfig()->hasOption('attr'));
-        $this->assertArrayHasKey('data-addresses', $form->get('accountAddress')->getConfig()->getOption('attr'));
+        $this->assertTrue($form->has('customerAddress'));
+        $this->assertTrue($form->get('customerAddress')->getConfig()->hasOption('attr'));
+        $this->assertArrayHasKey('data-addresses', $form->get('customerAddress')->getConfig()->getOption('attr'));
         $this->assertInternalType(
             'string',
-            $form->get('accountAddress')->getConfig()->getOption('attr')['data-addresses']
+            $form->get('customerAddress')->getConfig()->getOption('attr')['data-addresses']
         );
         $this->assertInternalType(
             'array',
-            json_decode($form->get('accountAddress')->getConfig()->getOption('attr')['data-addresses'], true)
+            json_decode($form->get('customerAddress')->getConfig()->getOption('attr')['data-addresses'], true)
         );
-        $this->assertArrayHasKey('data-default', $form->get('accountAddress')->getConfig()->getOption('attr'));
+        $this->assertArrayHasKey('data-default', $form->get('customerAddress')->getConfig()->getOption('attr'));
     }
 
     /**

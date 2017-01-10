@@ -12,8 +12,8 @@ use Oro\Bundle\TestFrameworkBundle\Pages\AbstractPageFilteredGrid;
  */
 class Roles extends AbstractPageFilteredGrid
 {
-    const NEW_ENTITY_BUTTON = "//a[@title='Create Account User Role']";
-    const URL = 'admin/account/user/role';
+    const NEW_ENTITY_BUTTON = "//a[@title='Create Customer User Role']";
+    const URL = 'admin/customer/user/role';
 
     /**
      * @return Role
@@ -55,7 +55,8 @@ class Roles extends AbstractPageFilteredGrid
         }
 
         if ($confirmation) {
-            $this->test->byXPath("//div[div[contains(., 'Delete Account User Role')]]//a[contains(., 'Yes')]")->click();
+            $this->test->byXPath("//div[div[contains(., 'Delete Customer User Role')]]//a[contains(., 'Yes')]")
+                ->click();
         }
 
         $this->waitPageToLoad();

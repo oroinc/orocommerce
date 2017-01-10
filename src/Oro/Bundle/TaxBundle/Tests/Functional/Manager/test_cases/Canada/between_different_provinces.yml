@@ -10,7 +10,7 @@ databaseBefore:
     'Oro\Bundle\OrderBundle\Entity\Order':
         simple_order:
             poNumber: { property_value: simple_order }
-            account: { class: 'Oro\Bundle\CustomerBundle\Entity\Customer', query: { name: 'account.orphan' } }
+            customer: { class: 'Oro\Bundle\CustomerBundle\Entity\Customer', query: { name: 'customer.orphan' } }
             currency: 'USD'
             billingAddress:
                 class: 'Oro\Bundle\OrderBundle\Entity\OrderAddress'
@@ -43,12 +43,12 @@ databaseBefore:
             tax: { class: 'Oro\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX1' } }
             taxJurisdiction: { reference: canada_ontario_jurisdiction }
             productTaxCode: { reference: product_tax_code.TAX1 }
-            accountTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\AccountTaxCode', query: { code: 'TAX1' } }
+            customerTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\CustomerTaxCode', query: { code: 'TAX1' } }
         tax_rule.TAX2:
             tax: { class: 'Oro\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX2' } }
             taxJurisdiction: { reference: canada_nova_scotia_jurisdiction }
             productTaxCode: { reference: product_tax_code.TAX2 }
-            accountTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\AccountTaxCode', query: { code: 'TAX1' } }
+            customerTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\CustomerTaxCode', query: { code: 'TAX1' } }
 expectedResult:
     total:
         includingTax: '87.95'  # 79.95 + 8

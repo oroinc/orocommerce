@@ -96,14 +96,14 @@ class QuoteToOrderConverter
      */
     protected function createOrder(Quote $quote, CustomerUser $user = null)
     {
-        $accountUser = $user ?: $quote->getAccountUser();
-        $account = $user ? $user->getAccount() : $quote->getAccount();
+        $customerUser = $user ?: $quote->getCustomerUser();
+        $customer = $user ? $user->getCustomer() : $quote->getCustomer();
         $orderShippingAddress = $this->createOrderAddress($quote->getShippingAddress());
 
         $order = new Order();
         $order
-            ->setAccount($account)
-            ->setAccountUser($accountUser)
+            ->setCustomer($customer)
+            ->setCustomerUser($customerUser)
             ->setOwner($quote->getOwner())
             ->setOrganization($quote->getOrganization())
             ->setPoNumber($quote->getPoNumber())
@@ -131,8 +131,8 @@ class QuoteToOrderConverter
         if ($quoteAddress) {
             $orderAddress = new OrderAddress();
 
-            $orderAddress->setAccountAddress($quoteAddress->getAccountAddress());
-            $orderAddress->setAccountUserAddress($quoteAddress->getAccountUserAddress());
+            $orderAddress->setCustomerAddress($quoteAddress->getCustomerAddress());
+            $orderAddress->setCustomerUserAddress($quoteAddress->getCustomerUserAddress());
             $orderAddress->setLabel($quoteAddress->getLabel());
             $orderAddress->setStreet($quoteAddress->getStreet());
             $orderAddress->setStreet2($quoteAddress->getStreet2());

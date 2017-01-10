@@ -34,7 +34,7 @@ abstract class AbstractCustomerUserRoleHandler extends AclRoleHandler
     /**
      * @var Customer
      */
-    protected $originalAccount;
+    protected $originalCustomer;
 
     /**
      * @param ConfigProvider $provider

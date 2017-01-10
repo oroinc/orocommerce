@@ -149,9 +149,9 @@ services:
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-checkouts-grid, method: onResultAfter }
 
     oro_checkout.datagrid.checkout_grid_column_filter:
-        class: 'Oro\Bundle\CheckoutBundle\Datagrid\CheckoutGridAccountUserNameListener'
+        class: 'Oro\Bundle\CheckoutBundle\Datagrid\CheckoutGridCustomerUserNameListener'
         arguments:
-            - '@oro_customer.security.account_user_provider'
+            - '@oro_customer.security.customer_user_provider'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-checkouts-grid, method: onBuildBefore }
 

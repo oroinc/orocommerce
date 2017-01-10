@@ -21,7 +21,7 @@ class CustomerUserRoleTypeTest extends AbstractCustomerUserRoleTypeTest
 
         $this->assertTrue($form->has('appendUsers'));
         $this->assertTrue($form->has('removeUsers'));
-        $this->assertTrue($form->has('account'));
+        $this->assertTrue($form->has('customer'));
         $this->assertTrue($form->has('selfManaged'));
 
         $formConfig = $form->getConfig();

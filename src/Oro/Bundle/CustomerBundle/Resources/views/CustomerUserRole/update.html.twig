@@ -19,13 +19,13 @@
         elSelector: '.btn-success.role-submit',
         formName: form.vars.name,
         formSelector: '#' ~ form.vars.id,
-        accountSelector: '#' ~ form.account.vars.id,
+        customerSelector: '#' ~ form.customer.vars.id,
         privilegesSelector: '#' ~ form.privileges.vars.id,
         appendUsersSelector: '#roleAppendUsers',
         removeUsersSelector: '#roleRemoveUsers',
         fields: fields
     } %}
-    <div data-page-component-module="orocustomer/js/app/views/account-role-view"
+    <div data-page-component-module="orocustomer/js/app/views/customer-role-view"
          data-page-component-options="{{ options|json_encode }}">
     </div>
 
@@ -66,22 +66,22 @@
 {% block content_data %}
     {% set id = 'customer-user-role-edit' %}
 
-    {% set accountSelectorComponentOptions = {
-        accountFieldId: '#' ~ form.account.vars.id,
-        datagridName: 'account-account-users-grid-update',
-        originalValue: form.account.vars.value
+    {% set customerSelectorComponentOptions = {
+        customerFieldId: '#' ~ form.customer.vars.id,
+        datagridName: 'customer-customer-users-grid-update',
+        originalValue: form.customer.vars.value
     } %}
 
-    {% set accountSelector %}
+    {% set customerSelector %}
         <div data-page-component-module="orocustomer/js/app/components/customer-user-role-component"
-             data-page-component-options="{{ accountSelectorComponentOptions|json_encode }}">
-            {{ form_row(form.account) }}
+             data-page-component-options="{{ customerSelectorComponentOptions|json_encode }}">
+            {{ form_row(form.customer) }}
         </div>
     {% endset %}
 
     {% set fields = [
             form_row(form.label),
-            accountSelector,
+            customerSelector,
         ]
     %}
 
@@ -134,7 +134,7 @@
             'data' : [
                 form_widget(form.appendUsers, {'id': 'roleAppendUsers'}),
                 form_widget(form.removeUsers, {'id': 'roleRemoveUsers'}),
-                dataGrid.renderGrid('account-account-users-grid-update', {role: entity.id, account: entity.account.id|default(null)}, { cssClass: 'inner-grid' })
+                dataGrid.renderGrid('customer-customer-users-grid-update', {role: entity.id, customer: entity.customer.id|default(null)}, { cssClass: 'inner-grid' })
             ]
         }]
     }] ) %}

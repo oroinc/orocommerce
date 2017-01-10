@@ -53,7 +53,7 @@ class ActionPermissionProvider
     {
         $isGranted = true;
         if ($record->getValue('isRolePredefined')) {
-            $isGranted = $this->securityFacade->isGranted('oro_account_frontend_customer_user_role_create');
+            $isGranted = $this->securityFacade->isGranted('oro_customer_frontend_customer_user_role_create');
         }
 
         return [

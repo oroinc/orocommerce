@@ -57,9 +57,9 @@
     {% set ownerSelectors %}
         <div data-page-component-module="orosale/js/app/components/related-data-component"
              data-page-component-options="{{ {formName: form.vars.name}|json_encode }}">
-            <div data-page-component-module="orocustomer/js/app/components/account-selection-component">
-                {{ form_row(form.account) }}
-                {{ form_row(form.accountUser) }}
+            <div data-page-component-module="orocustomer/js/app/components/customer-selection-component">
+                {{ form_row(form.customer) }}
+                {{ form_row(form.customerUser) }}
             </div>
         </div>
     {% endset %}
@@ -70,7 +70,7 @@
              data-page-component-options="{{ {
                  view: 'orosale/js/app/views/line-items-view',
                  tierPrices: tierPrices|default({}),
-                 tierPricesRoute: 'oro_pricing_price_by_account'
+                 tierPricesRoute: 'oro_pricing_price_by_customer'
              }|json_encode }}"
              data-layout="separate">
             {{ form_widget(form.quoteProducts) }}
@@ -89,7 +89,7 @@
             data-page-component-options="{{ {
                 'view': 'orofrontend/js/app/views/form-view',
                  selectors: {
-                     account: 'input[name$="[account]"]'
+                     customer: 'input[name$="[customer]"]'
                  }
              }|json_encode }}"
         >
@@ -100,7 +100,7 @@
             {{ form_row(form.poNumber) }}
             {{ form_row(form.shipUntil) }}
             {{ form_row(form.assignedUsers) }}
-            {{ form_row(form.assignedAccountUsers) }}
+            {{ form_row(form.assignedCustomerUsers) }}
         </div>
     {% endset %}
     {% set dataBlocks = [
@@ -133,7 +133,7 @@
                     view: 'orosale/js/app/views/address-view',
                     type: 'shipping',
                     selectors: {
-                        address: '#' ~ form.shippingAddress.accountAddress.vars.id,
+                        address: '#' ~ form.shippingAddress.customerAddress.vars.id,
                         subtotalsFields: [
                         '#' ~ form.shippingAddress.country.vars.id,
                         '#' ~ form.shippingAddress.street.vars.id,

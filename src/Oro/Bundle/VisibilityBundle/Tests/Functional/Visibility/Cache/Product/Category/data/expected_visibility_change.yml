@@ -7,32 +7,32 @@
         hiddenCategories:
             - category_1_5_6
             - category_1_5_6_7
-        hiddenCategoriesByAccountGroups:
-            account_group.group1:
+        hiddenCategoriesByCustomerGroups:
+            customer_group.group1:
                 - category_1
                 - category_1_2
                 - category_1_2_3
                 - category_1_2_3_4
-            account_group.group3:
+            customer_group.group3:
                 - category_1_2_3
                 - category_1_2_3_4
-        hiddenCategoriesByAccounts:
-            account.level_1:
+        hiddenCategoriesByCustomers:
+            customer.level_1:
                 - category_1_5_6
                 - category_1_5_6_7
-            account.level_1.1:
+            customer.level_1.1:
                 - category_1
                 - category_1_2
                 - category_1_2_3
                 - category_1_2_3_4
                 - category_1_5_6
                 - category_1_5_6_7
-            account.level_1.2.1:
+            customer.level_1.2.1:
                 - category_1_5_6_7
-            account.level_1.3.1:
+            customer.level_1.3.1:
                 - category_1_5_6
                 - category_1_5_6_7
-            account.level_1.3.1.1:
+            customer.level_1.3.1.1:
                 - category_1_2
                 - category_1_2_3
                 - category_1_2_3_4
@@ -40,15 +40,15 @@
             - product.4
             - product.7
             - product.8
-        hiddenProductsByAccountGroups:
-            account_group.group2:
+        hiddenProductsByCustomerGroups:
+            customer_group.group2:
                 - product.7
                 - product.8
-            account_group.group3:
+            customer_group.group3:
                 - product.3
                 - product.6
-        hiddenProductsByAccounts:
-            account.level_1.1:
+        hiddenProductsByCustomers:
+            customer.level_1.1:
                 - product.1
                 - product.2
                 - product.3
@@ -56,23 +56,23 @@
                 - product.4
                 - product.7
                 - product.8
-            account.level_1.2:
+            customer.level_1.2:
                 - product.7
                 - product.8
-            account.level_1.2.1:
+            customer.level_1.2.1:
                 - product.7
                 - product.8
-            account.level_1.3.1:
+            customer.level_1.3.1:
                 - product.3
                 - product.6
                 - product.4
                 - product.7
                 - product.8
-            account.level_1.3.1.1:
+            customer.level_1.3.1.1:
                 - product.2
                 - product.3
                 - product.6
-            account.level_1.4:
+            customer.level_1.4:
                 - product.3
 'change visibility to all to config':
     categoryReference: category_1
@@ -83,32 +83,32 @@
         hiddenCategories:
             - category_1_5_6
             - category_1_5_6_7
-        hiddenCategoriesByAccountGroups:
-            account_group.group1:
+        hiddenCategoriesByCustomerGroups:
+            customer_group.group1:
                 - category_1
                 - category_1_2
                 - category_1_2_3
                 - category_1_2_3_4
-            account_group.group3:
+            customer_group.group3:
                 - category_1_2_3
                 - category_1_2_3_4
-        hiddenCategoriesByAccounts:
-            account.level_1:
+        hiddenCategoriesByCustomers:
+            customer.level_1:
                 - category_1_5_6
                 - category_1_5_6_7
-            account.level_1.1:
+            customer.level_1.1:
                 - category_1
                 - category_1_2
                 - category_1_2_3
                 - category_1_2_3_4
                 - category_1_5_6
                 - category_1_5_6_7
-            account.level_1.2.1:
+            customer.level_1.2.1:
                 - category_1_5_6_7
-            account.level_1.3.1:
+            customer.level_1.3.1:
                 - category_1_5_6
                 - category_1_5_6_7
-            account.level_1.3.1.1:
+            customer.level_1.3.1.1:
                 - category_1_2
                 - category_1_2_3
                 - category_1_2_3_4
@@ -116,15 +116,15 @@
             - product.4
             - product.7
             - product.8
-        hiddenProductsByAccountGroups:
-            account_group.group2:
+        hiddenProductsByCustomerGroups:
+            customer_group.group2:
                 - product.7
                 - product.8
-            account_group.group3:
+            customer_group.group3:
                 - product.3
                 - product.6
-        hiddenProductsByAccounts:
-            account.level_1.1:
+        hiddenProductsByCustomers:
+            customer.level_1.1:
                 - product.1
                 - product.2
                 - product.3
@@ -132,23 +132,23 @@
                 - product.4
                 - product.7
                 - product.8
-            account.level_1.2:
+            customer.level_1.2:
                 - product.7
                 - product.8
-            account.level_1.2.1:
+            customer.level_1.2.1:
                 - product.7
                 - product.8
-            account.level_1.3.1:
+            customer.level_1.3.1:
                 - product.3
                 - product.6
                 - product.4
                 - product.7
                 - product.8
-            account.level_1.3.1.1:
+            customer.level_1.3.1.1:
                 - product.2
                 - product.3
                 - product.6
-            account.level_1.4:
+            customer.level_1.4:
                 - product.3
 'change visibility to all to hidden':
     categoryReference: category_1
@@ -162,53 +162,53 @@
             - category_1_5
             - category_1_5_6
             - category_1_5_6_7
-        hiddenCategoriesByAccountGroups:
-            account_group.group1:
+        hiddenCategoriesByCustomerGroups:
+            customer_group.group1:
                 - category_1
                 - category_1_2
                 - category_1_2_3
                 - category_1_2_3_4
                 - category_1_5_6
                 - category_1_5_6_7
-            account_group.group2:
+            customer_group.group2:
                 - category_1_2
-            account_group.group3:
+            customer_group.group3:
                 - category_1_2_3
                 - category_1_2_3_4
-        hiddenCategoriesByAccounts:
-            account.level_1:
+        hiddenCategoriesByCustomers:
+            customer.level_1:
                 - category_1_5_6
                 - category_1_5_6_7
-            account.level_1.1:
-                - category_1
-                - category_1_2
-                - category_1_2_3
-                - category_1_2_3_4
-                - category_1_5
-                - category_1_5_6
-                - category_1_5_6_7
-            account.level_1.2.1:
-                - category_1
-                - category_1_2
-                - category_1_2_3
-                - category_1_2_3_4
-                - category_1_5_6_7
-            account.level_1.3.1:
-                - category_1_2
-                - category_1_5_6
-                - category_1_5_6_7
-            account.level_1.3.1.1:
+            customer.level_1.1:
                 - category_1
                 - category_1_2
                 - category_1_2_3
                 - category_1_2_3_4
                 - category_1_5
                 - category_1_5_6
-            account.level_1.2.1.1:
+                - category_1_5_6_7
+            customer.level_1.2.1:
+                - category_1
+                - category_1_2
+                - category_1_2_3
+                - category_1_2_3_4
+                - category_1_5_6_7
+            customer.level_1.3.1:
+                - category_1_2
+                - category_1_5_6
+                - category_1_5_6_7
+            customer.level_1.3.1.1:
+                - category_1
+                - category_1_2
+                - category_1_2_3
+                - category_1_2_3_4
+                - category_1_5
+                - category_1_5_6
+            customer.level_1.2.1.1:
                 - category_1_5
                 - category_1_5_6
                 - category_1_5_6_7
-            account.level_1.4:
+            customer.level_1.4:
                 - category_1_2
                 - category_1_5
         hiddenProducts:
@@ -218,103 +218,103 @@
             - product.4
             - product.7
             - product.8
-        hiddenProductsByAccountGroups:
-            account_group.group2:
+        hiddenProductsByCustomerGroups:
+            customer_group.group2:
                 - product.1
                 - product.2
                 - product.5
                 - product.7
                 - product.8
-            account_group.group3:
+            customer_group.group3:
                 - product.2
                 - product.3
                 - product.6
-        hiddenProductsByAccounts:
-            account.level_1.1:
-                - product.1
-                - product.2
-                - product.3
-                - product.6
-                - product.5
-                - product.4
-                - product.7
-                - product.8
-            account.level_1.2:
-                - product.7
-                - product.8
-            account.level_1.2.1:
-                - product.1
-                - product.2
-                - product.3
-                - product.6
-                - product.5
-                - product.7
-                - product.8
-            account.level_1.2.1.1:
-                - product.1
-                - product.2
-                - product.5
-                - product.4
-                - product.7
-                - product.8
-            account.level_1.3.1:
-                - product.2
-                - product.3
-                - product.6
-                - product.4
-                - product.7
-                - product.8
-            account.level_1.3.1.1:
+        hiddenProductsByCustomers:
+            customer.level_1.1:
                 - product.1
                 - product.2
                 - product.3
                 - product.6
                 - product.5
                 - product.4
-            account.level_1.4:
+                - product.7
+                - product.8
+            customer.level_1.2:
+                - product.7
+                - product.8
+            customer.level_1.2.1:
+                - product.1
+                - product.2
+                - product.3
+                - product.6
+                - product.5
+                - product.7
+                - product.8
+            customer.level_1.2.1.1:
+                - product.1
+                - product.2
+                - product.5
+                - product.4
+                - product.7
+                - product.8
+            customer.level_1.3.1:
+                - product.2
+                - product.3
+                - product.6
+                - product.4
+                - product.7
+                - product.8
+            customer.level_1.3.1.1:
+                - product.1
+                - product.2
+                - product.3
+                - product.6
+                - product.5
+                - product.4
+            customer.level_1.4:
                 - product.2
                 - product.3
                 - product.5
-'change visibility account group to hidden':
+'change visibility customer group to hidden':
     categoryReference: category_1
     visibility:
-        type: accountGroup
-        accountGroup: account_group.group3
+        type: customerGroup
+        customerGroup: customer_group.group3
         visibility: hidden
     expectedData:
         hiddenCategories:
             - category_1_5_6
             - category_1_5_6_7
-        hiddenCategoriesByAccountGroups:
-            account_group.group1:
+        hiddenCategoriesByCustomerGroups:
+            customer_group.group1:
                 - category_1
                 - category_1_2
                 - category_1_2_3
                 - category_1_2_3_4
-            account_group.group3:
+            customer_group.group3:
                 - category_1
                 - category_1_2_3
                 - category_1_2_3_4
                 - category_1_5
                 - category_1_5_6
                 - category_1_5_6_7
-        hiddenCategoriesByAccounts:
-            account.level_1:
+        hiddenCategoriesByCustomers:
+            customer.level_1:
                 - category_1_5_6
                 - category_1_5_6_7
-            account.level_1.1:
+            customer.level_1.1:
                 - category_1
                 - category_1_2
                 - category_1_2_3
                 - category_1_2_3_4
                 - category_1_5_6
                 - category_1_5_6_7
-            account.level_1.2.1:
+            customer.level_1.2.1:
                 - category_1_5_6_7
-            account.level_1.3.1:
+            customer.level_1.3.1:
                 - category_1_5_6
                 - category_1_5_6_7
-            account.level_1.3.1.1:
+            customer.level_1.3.1.1:
                 - category_1_2
                 - category_1_2_3
                 - category_1_2_3_4
@@ -322,11 +322,11 @@
             - product.4
             - product.7
             - product.8
-        hiddenProductsByAccountGroups:
-            account_group.group2:
+        hiddenProductsByCustomerGroups:
+            customer_group.group2:
                 - product.7
                 - product.8
-            account_group.group3:
+            customer_group.group3:
                 - product.1
                 - product.3
                 - product.6
@@ -334,8 +334,8 @@
                 - product.4
                 - product.7
                 - product.8
-        hiddenProductsByAccounts:
-            account.level_1.1:
+        hiddenProductsByCustomers:
+            customer.level_1.1:
                 - product.1
                 - product.2
                 - product.3
@@ -343,13 +343,13 @@
                 - product.4
                 - product.7
                 - product.8
-            account.level_1.2:
+            customer.level_1.2:
                 - product.7
                 - product.8
-            account.level_1.2.1:
+            customer.level_1.2.1:
                 - product.7
                 - product.8
-            account.level_1.3.1:
+            customer.level_1.3.1:
                 - product.1
                 - product.3
                 - product.6
@@ -357,51 +357,51 @@
                 - product.4
                 - product.7
                 - product.8
-            account.level_1.3.1.1:
+            customer.level_1.3.1.1:
                 - product.2
                 - product.3
                 - product.6
                 - product.7
                 - product.8
-            account.level_1.4:
+            customer.level_1.4:
                 - product.3
                 - product.4
-'change visibility account group to parent category':
+'change visibility customer group to parent category':
     categoryReference: category_1
     visibility:
-        type: accountGroup
-        accountGroup: account_group.group2
+        type: customerGroup
+        customerGroup: customer_group.group2
         visibility: parent_category
     expectedData:
         hiddenCategories:
             - category_1_5_6
             - category_1_5_6_7
-        hiddenCategoriesByAccountGroups:
-            account_group.group1:
+        hiddenCategoriesByCustomerGroups:
+            customer_group.group1:
                 - category_1
                 - category_1_2
                 - category_1_2_3
                 - category_1_2_3_4
-            account_group.group3:
+            customer_group.group3:
                 - category_1_2_3
                 - category_1_2_3_4
-        hiddenCategoriesByAccounts:
-            account.level_1:
+        hiddenCategoriesByCustomers:
+            customer.level_1:
                 - category_1_5_6
                 - category_1_5_6_7
-            account.level_1.1:
+            customer.level_1.1:
                 - category_1
                 - category_1_2
                 - category_1_2_3
                 - category_1_2_3_4
                 - category_1_5_6
                 - category_1_5_6_7
-            account.level_1.2.1:
+            customer.level_1.2.1:
                 - category_1_5_6_7
-            account.level_1.3.1:
+            customer.level_1.3.1:
                 - category_1_5_6
                 - category_1_5_6_7
-            account.level_1.3.1.1:
+            customer.level_1.3.1.1:
                 - category_1_2
                 - category_1_2_3
                 - category_1_2_3_4
@@ -409,15 +409,15 @@
             - product.4
             - product.7
             - product.8
-        hiddenProductsByAccountGroups:
-            account_group.group2:
+        hiddenProductsByCustomerGroups:
+            customer_group.group2:
                 - product.7
                 - product.8
-            account_group.group3:
+            customer_group.group3:
                 - product.3
                 - product.6
-        hiddenProductsByAccounts:
-            account.level_1.1:
+        hiddenProductsByCustomers:
+            customer.level_1.1:
                 - product.1
                 - product.2
                 - product.3
@@ -425,60 +425,60 @@
                 - product.4
                 - product.7
                 - product.8
-            account.level_1.2:
+            customer.level_1.2:
                 - product.7
                 - product.8
-            account.level_1.2.1:
+            customer.level_1.2.1:
                 - product.7
                 - product.8
-            account.level_1.3.1:
+            customer.level_1.3.1:
                 - product.3
                 - product.6
                 - product.4
                 - product.7
                 - product.8
-            account.level_1.3.1.1:
+            customer.level_1.3.1.1:
                 - product.2
                 - product.3
                 - product.6
-            account.level_1.4:
+            customer.level_1.4:
                 - product.3
-'change visibility account group to all':
+'change visibility customer group to all':
     categoryReference: category_1
     visibility:
-        type: accountGroup
-        accountGroup: account_group.group3
+        type: customerGroup
+        customerGroup: customer_group.group3
         visibility: category
     expectedData:
         hiddenCategories:
             - category_1_5_6
             - category_1_5_6_7
-        hiddenCategoriesByAccountGroups:
-            account_group.group1:
+        hiddenCategoriesByCustomerGroups:
+            customer_group.group1:
                 - category_1
                 - category_1_2
                 - category_1_2_3
                 - category_1_2_3_4
-            account_group.group3:
+            customer_group.group3:
                 - category_1_2_3
                 - category_1_2_3_4
-        hiddenCategoriesByAccounts:
-            account.level_1:
+        hiddenCategoriesByCustomers:
+            customer.level_1:
                 - category_1_5_6
                 - category_1_5_6_7
-            account.level_1.1:
+            customer.level_1.1:
                 - category_1
                 - category_1_2
                 - category_1_2_3
                 - category_1_2_3_4
                 - category_1_5_6
                 - category_1_5_6_7
-            account.level_1.2.1:
+            customer.level_1.2.1:
                 - category_1_5_6_7
-            account.level_1.3.1:
+            customer.level_1.3.1:
                 - category_1_5_6
                 - category_1_5_6_7
-            account.level_1.3.1.1:
+            customer.level_1.3.1.1:
                 - category_1_2
                 - category_1_2_3
                 - category_1_2_3_4
@@ -486,15 +486,15 @@
             - product.4
             - product.7
             - product.8
-        hiddenProductsByAccountGroups:
-            account_group.group2:
+        hiddenProductsByCustomerGroups:
+            customer_group.group2:
                 - product.7
                 - product.8
-            account_group.group3:
+            customer_group.group3:
                 - product.3
                 - product.6
-        hiddenProductsByAccounts:
-            account.level_1.1:
+        hiddenProductsByCustomers:
+            customer.level_1.1:
                 - product.1
                 - product.2
                 - product.3
@@ -502,60 +502,60 @@
                 - product.4
                 - product.7
                 - product.8
-            account.level_1.2:
+            customer.level_1.2:
                 - product.7
                 - product.8
-            account.level_1.2.1:
+            customer.level_1.2.1:
                 - product.7
                 - product.8
-            account.level_1.3.1:
+            customer.level_1.3.1:
                 - product.3
                 - product.6
                 - product.4
                 - product.7
                 - product.8
-            account.level_1.3.1.1:
+            customer.level_1.3.1.1:
                 - product.2
                 - product.3
                 - product.6
-            account.level_1.4:
+            customer.level_1.4:
                 - product.3
-'change visibility account group to visible':
+'change visibility customer group to visible':
     categoryReference: category_1
     visibility:
-        type: accountGroup
-        accountGroup: account_group.group3
+        type: customerGroup
+        customerGroup: customer_group.group3
         visibility: visible
     expectedData:
         hiddenCategories:
             - category_1_5_6
             - category_1_5_6_7
-        hiddenCategoriesByAccountGroups:
-            account_group.group1:
+        hiddenCategoriesByCustomerGroups:
+            customer_group.group1:
                 - category_1
                 - category_1_2
                 - category_1_2_3
                 - category_1_2_3_4
-            account_group.group3:
+            customer_group.group3:
                 - category_1_2_3
                 - category_1_2_3_4
-        hiddenCategoriesByAccounts:
-            account.level_1:
+        hiddenCategoriesByCustomers:
+            customer.level_1:
                 - category_1_5_6
                 - category_1_5_6_7
-            account.level_1.1:
+            customer.level_1.1:
                 - category_1
                 - category_1_2
                 - category_1_2_3
                 - category_1_2_3_4
                 - category_1_5_6
                 - category_1_5_6_7
-            account.level_1.2.1:
+            customer.level_1.2.1:
                 - category_1_5_6_7
-            account.level_1.3.1:
+            customer.level_1.3.1:
                 - category_1_5_6
                 - category_1_5_6_7
-            account.level_1.3.1.1:
+            customer.level_1.3.1.1:
                 - category_1_2
                 - category_1_2_3
                 - category_1_2_3_4
@@ -563,15 +563,15 @@
             - product.4
             - product.7
             - product.8
-        hiddenProductsByAccountGroups:
-            account_group.group2:
+        hiddenProductsByCustomerGroups:
+            customer_group.group2:
                 - product.7
                 - product.8
-            account_group.group3:
+            customer_group.group3:
                 - product.3
                 - product.6
-        hiddenProductsByAccounts:
-            account.level_1.1:
+        hiddenProductsByCustomers:
+            customer.level_1.1:
                 - product.1
                 - product.2
                 - product.3
@@ -579,60 +579,60 @@
                 - product.4
                 - product.7
                 - product.8
-            account.level_1.2:
+            customer.level_1.2:
                 - product.7
                 - product.8
-            account.level_1.2.1:
+            customer.level_1.2.1:
                 - product.7
                 - product.8
-            account.level_1.3.1:
+            customer.level_1.3.1:
                 - product.3
                 - product.6
                 - product.4
                 - product.7
                 - product.8
-            account.level_1.3.1.1:
+            customer.level_1.3.1.1:
                 - product.2
                 - product.3
                 - product.6
-            account.level_1.4:
+            customer.level_1.4:
                 - product.3
-'change visibility account to parent category':
+'change visibility customer to parent category':
     categoryReference: category_1
     visibility:
-        type: account
-        account: account.level_1.2.1.1
+        type: customer
+        customer: customer.level_1.2.1.1
         visibility: parent_category
     expectedData:
         hiddenCategories:
             - category_1_5_6
             - category_1_5_6_7
-        hiddenCategoriesByAccountGroups:
-            account_group.group1:
+        hiddenCategoriesByCustomerGroups:
+            customer_group.group1:
                 - category_1
                 - category_1_2
                 - category_1_2_3
                 - category_1_2_3_4
-            account_group.group3:
+            customer_group.group3:
                 - category_1_2_3
                 - category_1_2_3_4
-        hiddenCategoriesByAccounts:
-            account.level_1:
+        hiddenCategoriesByCustomers:
+            customer.level_1:
                 - category_1_5_6
                 - category_1_5_6_7
-            account.level_1.1:
+            customer.level_1.1:
                 - category_1
                 - category_1_2
                 - category_1_2_3
                 - category_1_2_3_4
                 - category_1_5_6
                 - category_1_5_6_7
-            account.level_1.2.1:
+            customer.level_1.2.1:
                 - category_1_5_6_7
-            account.level_1.3.1:
+            customer.level_1.3.1:
                 - category_1_5_6
                 - category_1_5_6_7
-            account.level_1.3.1.1:
+            customer.level_1.3.1.1:
                 - category_1_2
                 - category_1_2_3
                 - category_1_2_3_4
@@ -640,15 +640,15 @@
             - product.4
             - product.7
             - product.8
-        hiddenProductsByAccountGroups:
-            account_group.group2:
+        hiddenProductsByCustomerGroups:
+            customer_group.group2:
                 - product.7
                 - product.8
-            account_group.group3:
+            customer_group.group3:
                 - product.3
                 - product.6
-        hiddenProductsByAccounts:
-            account.level_1.1:
+        hiddenProductsByCustomers:
+            customer.level_1.1:
                 - product.1
                 - product.2
                 - product.3
@@ -656,65 +656,65 @@
                 - product.4
                 - product.7
                 - product.8
-            account.level_1.2:
+            customer.level_1.2:
                 - product.7
                 - product.8
-            account.level_1.2.1:
+            customer.level_1.2.1:
                 - product.7
                 - product.8
-            account.level_1.3.1:
+            customer.level_1.3.1:
                 - product.3
                 - product.6
                 - product.4
                 - product.7
                 - product.8
-            account.level_1.3.1.1:
+            customer.level_1.3.1.1:
                 - product.2
                 - product.3
                 - product.6
-            account.level_1.4:
+            customer.level_1.4:
                 - product.3
-'change visibility account to hidden':
+'change visibility customer to hidden':
     categoryReference: category_1
     visibility:
-        type: account
-        account: account.level_1.2.1.1
+        type: customer
+        customer: customer.level_1.2.1.1
         visibility: hidden
     expectedData:
         hiddenCategories:
             - category_1_5_6
             - category_1_5_6_7
-        hiddenCategoriesByAccountGroups:
-            account_group.group1:
+        hiddenCategoriesByCustomerGroups:
+            customer_group.group1:
                 - category_1
                 - category_1_2
                 - category_1_2_3
                 - category_1_2_3_4
-            account_group.group3:
+            customer_group.group3:
                 - category_1_2_3
                 - category_1_2_3_4
-        hiddenCategoriesByAccounts:
-            account.level_1:
+        hiddenCategoriesByCustomers:
+            customer.level_1:
                 - category_1_5_6
                 - category_1_5_6_7
-            account.level_1.1:
+            customer.level_1.1:
                 - category_1
                 - category_1_2
                 - category_1_2_3
                 - category_1_2_3_4
                 - category_1_5_6
                 - category_1_5_6_7
-            account.level_1.2.1:
+            customer.level_1.2.1:
                 - category_1_5_6_7
-            account.level_1.2.1.1:
+            customer.level_1.2.1.1:
                 - category_1
                 - category_1_5
                 - category_1_5_6
                 - category_1_5_6_7
-            account.level_1.3.1:
+            customer.level_1.3.1:
                 - category_1_5_6
                 - category_1_5_6_7
-            account.level_1.3.1.1:
+            customer.level_1.3.1.1:
                 - category_1_2
                 - category_1_2_3
                 - category_1_2_3_4
@@ -722,15 +722,15 @@
             - product.4
             - product.7
             - product.8
-        hiddenProductsByAccountGroups:
-            account_group.group2:
+        hiddenProductsByCustomerGroups:
+            customer_group.group2:
                 - product.7
                 - product.8
-            account_group.group3:
+            customer_group.group3:
                 - product.3
                 - product.6
-        hiddenProductsByAccounts:
-            account.level_1.1:
+        hiddenProductsByCustomers:
+            customer.level_1.1:
                 - product.1
                 - product.2
                 - product.3
@@ -738,64 +738,64 @@
                 - product.4
                 - product.7
                 - product.8
-            account.level_1.2:
+            customer.level_1.2:
                 - product.7
                 - product.8
-            account.level_1.2.1:
+            customer.level_1.2.1:
                 - product.7
                 - product.8
-            account.level_1.2.1.1:
+            customer.level_1.2.1.1:
                 - product.1
                 - product.5
                 - product.4
                 - product.7
                 - product.8
-            account.level_1.3.1:
+            customer.level_1.3.1:
                 - product.3
                 - product.6
                 - product.4
                 - product.7
                 - product.8
-            account.level_1.3.1.1:
+            customer.level_1.3.1.1:
                 - product.2
                 - product.3
                 - product.6
-            account.level_1.4:
+            customer.level_1.4:
                 - product.3
-'change visibility account to visible':
+'change visibility customer to visible':
     categoryReference: category_1_2_3
     visibility:
-        type: account
-        account: account.level_1.1
+        type: customer
+        customer: customer.level_1.1
         visibility: visible
     expectedData:
         hiddenCategories:
             - category_1_5_6
             - category_1_5_6_7
-        hiddenCategoriesByAccountGroups:
-            account_group.group1:
+        hiddenCategoriesByCustomerGroups:
+            customer_group.group1:
                 - category_1
                 - category_1_2
                 - category_1_2_3
                 - category_1_2_3_4
-            account_group.group3:
+            customer_group.group3:
                 - category_1_2_3
                 - category_1_2_3_4
-        hiddenCategoriesByAccounts:
-            account.level_1:
+        hiddenCategoriesByCustomers:
+            customer.level_1:
                 - category_1_5_6
                 - category_1_5_6_7
-            account.level_1.1:
+            customer.level_1.1:
                 - category_1
                 - category_1_2
                 - category_1_5_6
                 - category_1_5_6_7
-            account.level_1.2.1:
+            customer.level_1.2.1:
                 - category_1_5_6_7
-            account.level_1.3.1:
+            customer.level_1.3.1:
                 - category_1_5_6
                 - category_1_5_6_7
-            account.level_1.3.1.1:
+            customer.level_1.3.1.1:
                 - category_1_2
                 - category_1_2_3
                 - category_1_2_3_4
@@ -803,77 +803,77 @@
             - product.4
             - product.7
             - product.8
-        hiddenProductsByAccountGroups:
-            account_group.group2:
+        hiddenProductsByCustomerGroups:
+            customer_group.group2:
                 - product.7
                 - product.8
-            account_group.group3:
+            customer_group.group3:
                 - product.3
                 - product.6
-        hiddenProductsByAccounts:
-            account.level_1.1:
+        hiddenProductsByCustomers:
+            customer.level_1.1:
                 - product.1
                 - product.2
                 - product.4
                 - product.7
                 - product.8
-            account.level_1.2:
+            customer.level_1.2:
                 - product.7
                 - product.8
-            account.level_1.2.1:
+            customer.level_1.2.1:
                 - product.7
                 - product.8
-            account.level_1.3.1:
+            customer.level_1.3.1:
                 - product.3
                 - product.6
                 - product.4
                 - product.7
                 - product.8
-            account.level_1.3.1.1:
+            customer.level_1.3.1.1:
                 - product.2
                 - product.3
                 - product.6
-            account.level_1.4:
+            customer.level_1.4:
                 - product.3
-'change visibility account to all':
+'change visibility customer to all':
     categoryReference: category_1_5_6
     visibility:
-        type: account
-        account: account.level_1.2.1.1
+        type: customer
+        customer: customer.level_1.2.1.1
         visibility: category
     expectedData:
         hiddenCategories:
             - category_1_5_6
             - category_1_5_6_7
-        hiddenCategoriesByAccountGroups:
-            account_group.group1:
+        hiddenCategoriesByCustomerGroups:
+            customer_group.group1:
                 - category_1
                 - category_1_2
                 - category_1_2_3
                 - category_1_2_3_4
-            account_group.group3:
+            customer_group.group3:
                 - category_1_2_3
                 - category_1_2_3_4
-        hiddenCategoriesByAccounts:
-            account.level_1:
+        hiddenCategoriesByCustomers:
+            customer.level_1:
                 - category_1_5_6
                 - category_1_5_6_7
-            account.level_1.1:
+            customer.level_1.1:
                 - category_1
                 - category_1_2
                 - category_1_2_3
                 - category_1_2_3_4
                 - category_1_5_6
                 - category_1_5_6_7
-            account.level_1.2.1:
+            customer.level_1.2.1:
                 - category_1_5_6_7
-            account.level_1.2.1.1:
+            customer.level_1.2.1.1:
                 - category_1_5_6
                 - category_1_5_6_7
-            account.level_1.3.1:
+            customer.level_1.3.1:
                 - category_1_5_6
                 - category_1_5_6_7
-            account.level_1.3.1.1:
+            customer.level_1.3.1.1:
                 - category_1_2
                 - category_1_2_3
                 - category_1_2_3_4
@@ -881,15 +881,15 @@
             - product.4
             - product.7
             - product.8
-        hiddenProductsByAccountGroups:
-            account_group.group2:
+        hiddenProductsByCustomerGroups:
+            customer_group.group2:
                 - product.7
                 - product.8
-            account_group.group3:
+            customer_group.group3:
                 - product.3
                 - product.6
-        hiddenProductsByAccounts:
-            account.level_1.1:
+        hiddenProductsByCustomers:
+            customer.level_1.1:
                 - product.1
                 - product.2
                 - product.3
@@ -897,63 +897,63 @@
                 - product.4
                 - product.7
                 - product.8
-            account.level_1.2:
+            customer.level_1.2:
                 - product.7
                 - product.8
-            account.level_1.2.1:
+            customer.level_1.2.1:
                 - product.7
                 - product.8
-            account.level_1.2.1.1:
+            customer.level_1.2.1.1:
                 - product.4
                 - product.7
                 - product.8
-            account.level_1.3.1:
+            customer.level_1.3.1:
                 - product.3
                 - product.6
                 - product.4
                 - product.7
                 - product.8
-            account.level_1.3.1.1:
+            customer.level_1.3.1.1:
                 - product.2
                 - product.3
                 - product.6
-            account.level_1.4:
+            customer.level_1.4:
                 - product.3
-'change visibility account to group':
+'change visibility customer to group':
     categoryReference: category_1_5_6
     visibility:
-        type: account
-        account: account.level_1.3.1
-        visibility: account_group
+        type: customer
+        customer: customer.level_1.3.1
+        visibility: customer_group
     expectedData:
         hiddenCategories:
             - category_1_5_6
             - category_1_5_6_7
-        hiddenCategoriesByAccountGroups:
-            account_group.group1:
+        hiddenCategoriesByCustomerGroups:
+            customer_group.group1:
                 - category_1
                 - category_1_2
                 - category_1_2_3
                 - category_1_2_3_4
-            account_group.group3:
+            customer_group.group3:
                 - category_1_2_3
                 - category_1_2_3_4
-        hiddenCategoriesByAccounts:
-            account.level_1:
+        hiddenCategoriesByCustomers:
+            customer.level_1:
                 - category_1_5_6
                 - category_1_5_6_7
-            account.level_1.1:
+            customer.level_1.1:
                 - category_1
                 - category_1_2
                 - category_1_2_3
                 - category_1_2_3_4
                 - category_1_5_6
                 - category_1_5_6_7
-            account.level_1.2.1:
+            customer.level_1.2.1:
                 - category_1_5_6_7
-            account.level_1.3.1:
+            customer.level_1.3.1:
                 - category_1_5_6_7
-            account.level_1.3.1.1:
+            customer.level_1.3.1.1:
                 - category_1_2
                 - category_1_2_3
                 - category_1_2_3_4
@@ -961,15 +961,15 @@
             - product.4
             - product.7
             - product.8
-        hiddenProductsByAccountGroups:
-            account_group.group2:
+        hiddenProductsByCustomerGroups:
+            customer_group.group2:
                 - product.7
                 - product.8
-            account_group.group3:
+            customer_group.group3:
                 - product.3
                 - product.6
-        hiddenProductsByAccounts:
-            account.level_1.1:
+        hiddenProductsByCustomers:
+            customer.level_1.1:
                 - product.1
                 - product.2
                 - product.3
@@ -977,21 +977,21 @@
                 - product.4
                 - product.7
                 - product.8
-            account.level_1.2:
+            customer.level_1.2:
                 - product.7
                 - product.8
-            account.level_1.2.1:
+            customer.level_1.2.1:
                 - product.7
                 - product.8
-            account.level_1.3.1:
+            customer.level_1.3.1:
                 - product.3
                 - product.6
                 - product.4
                 - product.7
                 - product.8
-            account.level_1.3.1.1:
+            customer.level_1.3.1.1:
                 - product.2
                 - product.3
                 - product.6
-            account.level_1.4:
+            customer.level_1.4:
                 - product.3

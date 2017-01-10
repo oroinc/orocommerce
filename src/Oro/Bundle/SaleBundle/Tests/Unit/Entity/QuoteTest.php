@@ -25,9 +25,9 @@ class QuoteTest extends AbstractTest
             ['id', '123'],
             ['qid', 'QID-123456'],
             ['owner', new User()],
-            ['accountUser', new CustomerUser()],
+            ['customerUser', new CustomerUser()],
             ['shippingAddress', new QuoteAddress()],
-            ['account', new Customer()],
+            ['customer', new Customer()],
             ['organization', new Organization()],
             ['poNumber', '1'],
             ['validUntil', $now, false],
@@ -50,7 +50,7 @@ class QuoteTest extends AbstractTest
         static::assertPropertyCollections(new Quote(), [
             ['quoteProducts', new QuoteProduct()],
             ['assignedUsers', new User()],
-            ['assignedAccountUsers', new CustomerUser()],
+            ['assignedCustomerUsers', new CustomerUser()],
         ]);
     }
 
@@ -70,9 +70,9 @@ class QuoteTest extends AbstractTest
     {
         $quote = new Quote();
         $this->assertEmpty($quote->getEmail());
-        $accountUser = new CustomerUser();
-        $accountUser->setEmail('test');
-        $quote->setAccountUser($accountUser);
+        $customerUser = new CustomerUser();
+        $customerUser->setEmail('test');
+        $quote->setCustomerUser($customerUser);
         $this->assertEquals('test', $quote->getEmail());
     }
 

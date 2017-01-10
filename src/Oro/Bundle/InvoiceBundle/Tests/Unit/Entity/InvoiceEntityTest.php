@@ -29,8 +29,8 @@ class InvoiceEntityTest extends \PHPUnit_Framework_TestCase
             ['paymentDueDate', $now, false],
             ['currency', 'USD'],
             ['poNumber', 'po-test'],
-            ['account', new Customer()],
-            ['accountUser', new CustomerUser()],
+            ['customer', new Customer()],
+            ['customerUser', new CustomerUser()],
             ['website', new Website()],
             ['subtotal', 12.55]
         ];

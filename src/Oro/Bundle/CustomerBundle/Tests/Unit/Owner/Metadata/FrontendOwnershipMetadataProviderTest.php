@@ -261,7 +261,7 @@ class FrontendOwnershipMetadataProviderTest extends \PHPUnit_Framework_TestCase
                 'securityFacadeUser' => new \stdClass(),
                 'expectedResult' => false,
             ],
-            'account user' => [
+            'customer user' => [
                 'securityFacadeUser' => new CustomerUser(),
                 'expectedResult' => true,
             ],
@@ -297,7 +297,7 @@ class FrontendOwnershipMetadataProviderTest extends \PHPUnit_Framework_TestCase
             ],
             [
                 'owningEntityNames' => [
-                    'local_level' => 'AcmeBundle\Entity\Account',
+                    'local_level' => 'AcmeBundle\Entity\Customer',
                 ],
             ],
             [
@@ -382,7 +382,7 @@ class FrontendOwnershipMetadataProviderTest extends \PHPUnit_Framework_TestCase
     public function testWarmUpCacheFilterConfigsByScope()
     {
         $config1 = new Config(new EntityConfigId('ownership', 'AcmeBundle\Entity\User'));
-        $config2 = new Config(new EntityConfigId('ownership', 'AcmeBundle\Entity\Account'));
+        $config2 = new Config(new EntityConfigId('ownership', 'AcmeBundle\Entity\Customer'));
 
         $this->configProvider->expects($this->once())->method('getConfigs')->willReturn([$config1, $config2]);
         $this->securityConfigProvider->expects($this->atLeastOnce())->method('hasConfig')->willReturn(true);
@@ -396,7 +396,7 @@ class FrontendOwnershipMetadataProviderTest extends \PHPUnit_Framework_TestCase
         $this->securityConfigProvider->expects($this->atLeastOnce())->method('getConfig')
             ->will($this->onConsecutiveCalls($securityConfig1, $securityConfig2));
 
-        $this->cache->expects($this->once())->method('fetch') ->with($this->equalTo('AcmeBundle\Entity\Account'));
+        $this->cache->expects($this->once())->method('fetch') ->with($this->equalTo('AcmeBundle\Entity\Customer'));
 
         $this->provider->warmUpCache();
     }

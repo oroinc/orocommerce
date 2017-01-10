@@ -7,9 +7,9 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CurrencyBundle\DependencyInjection\Configuration as CurrencyConfig;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
-use Oro\Bundle\CustomerBundle\Form\Type\AccountSelectType;
-use Oro\Bundle\CustomerBundle\Form\Type\AccountUserMultiSelectType;
-use Oro\Bundle\CustomerBundle\Form\Type\AccountUserSelectType;
+use Oro\Bundle\CustomerBundle\Form\Type\CustomerUserMultiSelectType;
+use Oro\Bundle\CustomerBundle\Form\Type\CustomerUserSelectType;
+use Oro\Bundle\CustomerBundle\Form\Type\CustomerSelectType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Bundle\OrderBundle\EventListener\Order\OrderPossibleShippingMethodsEventListener;
@@ -77,12 +77,12 @@ class QuoteType extends AbstractType
                 'label'     => 'oro.sale.quote.owner.label',
                 'required'  => true
             ])
-            ->add('accountUser', AccountUserSelectType::NAME, [
-                'label'     => 'oro.sale.quote.account_user.label',
+            ->add('customerUser', CustomerUserSelectType::NAME, [
+                'label'     => 'oro.sale.quote.customer_user.label',
                 'required'  => false
             ])
-            ->add('account', AccountSelectType::NAME, [
-                'label'     => 'oro.sale.quote.account.label',
+            ->add('customer', CustomerSelectType::NAME, [
+                'label'     => 'oro.sale.quote.customer.label',
                 'required'  => false
             ])
             ->add('validUntil', OroDateTimeType::class, [
@@ -122,8 +122,8 @@ class QuoteType extends AbstractType
             ->add('assignedUsers', UserMultiSelectType::NAME, [
                 'label' => 'oro.sale.quote.assigned_users.label',
             ])
-            ->add('assignedAccountUsers', AccountUserMultiSelectType::NAME, [
-                'label' => 'oro.sale.quote.assigned_account_users.label',
+            ->add('assignedCustomerUsers', CustomerUserMultiSelectType::NAME, [
+                'label' => 'oro.sale.quote.assigned_customer_users.label',
             ]);
         $this->addShippingFields($builder, $quote);
 

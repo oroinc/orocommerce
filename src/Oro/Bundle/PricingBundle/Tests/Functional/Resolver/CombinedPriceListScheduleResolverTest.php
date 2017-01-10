@@ -113,13 +113,13 @@ class CombinedPriceListScheduleResolverTest extends WebTestCase
         }
 
         $relations = $this->getInvalidRelations(
-            'OroPricingBundle:CombinedPriceListToAccount',
+            'OroPricingBundle:CombinedPriceListToCustomer',
             $fullCPL,
             $currentCPL
         );
         $this->assertEmpty($relations);
         $relations = $this->getInvalidRelations(
-            'OroPricingBundle:CombinedPriceListToAccountGroup',
+            'OroPricingBundle:CombinedPriceListToCustomerGroup',
             $fullCPL,
             $currentCPL
         );
