@@ -4,8 +4,10 @@ This topic contains the following sections:
 * [Understanding Product Attributes](#understanding-product-attributes) 
 * [Creating Product Attributes](#creating-product-attributes)
 * [Understanding Product Families](#understanding-product-families)
+* [Creating new Product Family](#creating-new-product-family)
 * [Using Product Attributes in Product Families](#using-product-attributes-in-product-families)
-* 
+* [Binding a Product to a Product Family](#binding-a-product-to-a-product-family)
+* [Customizing Product Attributes Layout on the OroCommerce Website](#customizing-product-attributes-layout-on-the-orocommerce-website)
 
 Understanding Product Attributes
 --------------------------------
