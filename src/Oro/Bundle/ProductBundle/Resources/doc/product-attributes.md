@@ -28,33 +28,45 @@ Creating Product Attributes
 To create a new Landing Page:
 
 1. Navigate to **Products > Product Attributes** in the main menu.
-   ![Product Attributes page](/images/ProductAttributes.png)
+
+   ![Product Attributes page](./images/ProductAttributes.png)
 2. Click **Create attribute**. The following page opens:
-   ![Create Product Attribute page. Step 1](/images/ProductAttributesCreate.png)
-3. Fill in the field name using only alphabetic symbols, underscore and numbers. It should be at least 2 characters long.
-4. Select an attribute type (bigint, select, string, etc) and click **Continue**. The following page opens:
-   ![Create Product Attribute page. Step 2](/images/ProductAttributesCreate2_1.png)
+
+   ![Create Product Attribute page. Step 1](./images/ProductAttributesCreate.png)
+3. Fill in the field name using only alphabetic symbols, underscore and numbers. It should be between 2 and 22 characters long.
+4. Select an attribute type (bigint, select, string, etc) and click **Continue**. 
+   The page with more product attribute details opens.
 5. Fill in remaining general information:
    - Attribute label
    - Attribute description
+     
+     <img src="./images/ProductAttributesCreate2_1.png" alt="Create Product Attribute page. Step 2" width="50%" height="50%">
    - Additional information for the product attributes of the following types:
       - **Select**, **Multi-Select**:
-        ![Create Product Attribute page. Step 2. Select options: Add](/images/ProductAttributesCreate2_1_Select1.png)
+         - Click **+ Add** next to the *Options*.
+         
+           <img src="./images/ProductAttributesCreate2_1_Select1.png" alt="Create Product Attribute page. Step 2. Select options: Add" width="50%" height="50%">
+         - Type in the option label. Tick the box next to the default option.
         
-        ![Create Product Attribute page. Step 2. Select options: Update](/images/ProductAttributesCreate2_1_Select2.png)
+           <img src="./images/ProductAttributesCreate2_1_Select2.png" alt="Create Product Attribute page. Step 2. Select options: Update" width="50%" height="50%">
+        - Repeat for more options.
         
-        ![Create Product Attribute page. Step 2. Select options: All](/images/ProductAttributesCreate2_1_Select3.png)
-      - **Image**: 
-        ![Create Product Attribute page. Step 2. Image options](/images/ProductAttributesCreate2_1_Image.png)
+          <img src="./images/ProductAttributesCreate2_1_Select3.png" alt="Create Product Attribute page. Step 2. Select options: All" width="50%" height="50%">
+      
+      - **Image**: Enter maximum allowed file size and provide the thumbnail dimensions.
+      
+        <img src="./images/ProductAttributesCreate2_1_Image.png" alt="Create Product Attribute page. Step 2. Image options" width="50%" height="50%">
        
-      - **File**: file size
-         ![Create Product Attribute page. Step 2. File options](/images/ProductAttributesCreate2_1_File.png)
+      - **File**: Enter maximum allowed file size.
+      
+        <img src="./images/ProductAttributesCreate2_1_File.png" alt="Create Product Attribute page. Step 2. File options" width="50%" height="50%">
 6. Fill in details for the product attribute import/export:
    - Column Name
    - Column position
    - Use As Identity Field (options: **No**, Only when not empty, Always)
    - Exclude Column (options: **No**, Yes)
-   ![Create Product Attribute page. Step 2. Import group](/images/ProductAttributesCreate2_1_Import_group.png)
+   
+   <img src="./images/ProductAttributesCreate2_1_Import.png" alt="Create Product Attribute page. Step 2. Import group" width="50%" height="50%">
 7. In the Other section, specify the configuration options for the product attribute view, search and use in other areas in OroCommerce:
    - Available In Email Templates (options: **Yes**, No)
    - Contact Information 
@@ -70,8 +82,8 @@ To create a new Landing Page:
    - Filterable (**No**, Yes)
    - Sortable (**No**, Yes)
    - Enabled (**No**, Yes)
-
-   ![Create Product Attribute page. Step 2. Import group](/images/ProductAttributesCreate2_1_Import_group.png)
+   
+   <img src="./images/ProductAttributesCreate2_1_Other1.png" alt="Create Product Attribute page. Step 2. Other" width="50%" height="50%">
 8. Once all options and information are provided, click **Save**.
 9. If the created attribute is of a *table column* storage type, click **Update Schema** to reindex the data for search and filter. 
    The product attribute storage type is set to *table column* for the attribute with Select of Multi-Select data type, and also for attribute of any type with *Filterable* or *Sortable* option enabled.
