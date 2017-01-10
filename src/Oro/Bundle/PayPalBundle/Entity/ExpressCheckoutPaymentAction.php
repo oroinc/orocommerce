@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\PayPalBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -20,18 +22,19 @@ class ExpressCheckoutPaymentAction
     /**
      * @var string
      *
-     * @ORM\Column(name="label", type="string", length=255, nullable=true)
+     * @ORM\Column(name="label", type="string", length=255, nullable=false)
      */
     protected $label;
 
     /**
-     * @var PayPalSettings
+     * @var PayPalSettings[]|Collection
      *
-     * @ORM\ManyToOne(
-     *     targetEntity="Oro\Bundle\PayPalBundle\Entity\PayPalSettings",
-     *     inversedBy="expressCheckoutPaymentAction"
+     * @ORM\OneToMany(
+     *      targetEntity="Oro\Bundle\PayPalBundle\Entity\PayPalSettings",
+     *      mappedBy="expressCheckoutPaymentAction",
+     *      cascade={"all"},
+     *      orphanRemoval=true
      * )
-     * @ORM\JoinColumn(name="settings_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $payPalSettings;
 
@@ -68,17 +71,42 @@ class ExpressCheckoutPaymentAction
     {
         return $this->label;
     }
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->payPalSettings = new ArrayCollection();
+    }
 
     /**
-     * Set payPalSettings
+     * Add payPalSetting
      *
-     * @param PayPalSettings $payPalSettings
+     * @param PayPalSettings $payPalSetting
      *
      * @return ExpressCheckoutPaymentAction
      */
-    public function setPayPalSettings(PayPalSettings $payPalSettings = null)
+    public function addPayPalSetting(PayPalSettings $payPalSetting)
     {
-        $this->payPalSettings = $payPalSettings;
+        if (!$this->payPalSettings->contains($payPalSetting)) {
+            $this->payPalSettings->add($payPalSetting);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Remove payPalSetting
+     *
+     * @param PayPalSettings $payPalSetting
+     *
+     * @return ExpressCheckoutPaymentAction
+     */
+    public function removePayPalSetting(PayPalSettings $payPalSetting)
+    {
+        if ($this->payPalSettings->contains($payPalSetting)) {
+            $this->payPalSettings->removeElement($payPalSetting);
+        }
 
         return $this;
     }
@@ -86,7 +114,7 @@ class ExpressCheckoutPaymentAction
     /**
      * Get payPalSettings
      *
-     * @return PayPalSettings
+     * @return Collection
      */
     public function getPayPalSettings()
     {

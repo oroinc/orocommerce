@@ -24,19 +24,19 @@ class OroPayPalBundleInstaller implements Installation
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->migratePayPalSettings($schema, $queries);
+        $this->updateOroIntegrationTransportTable($schema);
         $this->createOroPaypalAllowedCcTypesTable($schema);
         $this->createOroPaypalCcPaymentActionTable($schema);
         $this->createOroPaypalCreditCardLblTable($schema);
-        $this->createOroPaypalCreditCardShrtLblTable($schema);
+        $this->createOroPaypalCreditCardShLblTable($schema);
         $this->createOroPaypalCreditCardTypesTable($schema);
         $this->createOroPaypalEcPaymentActionTable($schema);
         $this->createOroPaypalXprssChktLblTable($schema);
         $this->createOroPaypalXprssChktShrtLblTable($schema);
+        $this->addOroIntegrationTransportForeignKeys($schema);
         $this->addOroPaypalAllowedCcTypesForeignKeys($schema);
-        $this->addOroPaypalCcPaymentActionForeignKeys($schema);
         $this->addOroPaypalCreditCardLblForeignKeys($schema);
-        $this->addOroPaypalCreditCardShrtLblForeignKeys($schema);
-        $this->addOroPaypalEcPaymentActionForeignKeys($schema);
+        $this->addOroPaypalCreditCardShLblForeignKeys($schema);
         $this->addOroPaypalXprssChktLblForeignKeys($schema);
         $this->addOroPaypalXprssChktShrtLblForeignKeys($schema);
     }
@@ -115,6 +115,34 @@ class OroPayPalBundleInstaller implements Installation
     }
 
     /**
+     * Update oro_integration_transport table
+     *
+     * @param Schema $schema
+     */
+    protected function updateOroIntegrationTransportTable(Schema $schema)
+    {
+        $table = $schema->getTable('oro_integration_transport');
+        $table->addColumn('ec_settings_id', 'integer', ['notnull' => false]);
+        $table->addColumn('cc_settings_id', 'integer', ['notnull' => false]);
+        $table->addColumn('pp_express_checkout_name', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('pp_partner', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('pp_vendor', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('pp_user', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('pp_password', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('pp_test_mode', 'boolean', ['default' => '0', 'notnull' => false]);
+        $table->addColumn('pp_debug_mode', 'boolean', ['default' => '0', 'notnull' => false]);
+        $table->addColumn('pp_require_cvv_entry', 'boolean', ['default' => '1', 'notnull' => false]);
+        $table->addColumn('pp_zero_amount_authorization', 'boolean', ['default' => '0', 'notnull' => false]);
+        $table->addColumn('pp_auth_for_req_amount', 'boolean', ['default' => '0', 'notnull' => false]);
+        $table->addColumn('pp_use_proxy', 'boolean', ['default' => '0', 'notnull' => false]);
+        $table->addColumn('pp_proxy_host', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('pp_proxy_port', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('pp_enable_ssl_verification', 'boolean', ['default' => '1', 'notnull' => false]);
+        $table->addIndex(['cc_settings_id'], 'IDX_D7A389A8EEC289BC', []);
+        $table->addIndex(['ec_settings_id'], 'IDX_D7A389A81600C20A', []);
+    }
+
+    /**
      * Create oro_paypal_allowed_cc_types table
      *
      * @param Schema $schema
@@ -125,8 +153,6 @@ class OroPayPalBundleInstaller implements Installation
         $table->addColumn('pp_settings_id', 'integer', []);
         $table->addColumn('cc_id', 'integer', []);
         $table->setPrimaryKey(['pp_settings_id', 'cc_id']);
-        $table->addIndex(['pp_settings_id'], 'IDX_EBCFE954FDDC5A1F', []);
-        $table->addIndex(['cc_id'], 'IDX_EBCFE954A823BE4F', []);
     }
 
     /**
@@ -138,10 +164,8 @@ class OroPayPalBundleInstaller implements Installation
     {
         $table = $schema->createTable('oro_paypal_cc_payment_action');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('settings_id', 'integer', ['notnull' => false]);
-        $table->addColumn('label', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('label', 'string', ['notnull' => true, 'length' => 255]);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['settings_id'], 'IDX_24D6481759949888', []);
     }
 
     /**
@@ -164,14 +188,13 @@ class OroPayPalBundleInstaller implements Installation
      *
      * @param Schema $schema
      */
-    protected function createOroPaypalCreditCardShrtLblTable(Schema $schema)
+    protected function createOroPaypalCreditCardShLblTable(Schema $schema)
     {
         $table = $schema->createTable('oro_paypal_credit_card_sh_lbl');
         $table->addColumn('transport_id', 'integer', []);
         $table->addColumn('localized_value_id', 'integer', []);
         $table->setPrimaryKey(['transport_id', 'localized_value_id']);
-        $table->addUniqueIndex(['localized_value_id'], 'UNIQ_415165DEEB576E89');
-        $table->addIndex(['transport_id'], 'IDX_415165DE9909C13F', []);
+        $table->addUniqueIndex(['localized_value_id'], 'UNIQ_55FE472FEB576E89');
     }
 
     /**
@@ -183,7 +206,7 @@ class OroPayPalBundleInstaller implements Installation
     {
         $table = $schema->createTable('oro_paypal_credit_card_types');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('label', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('label', 'string', ['notnull' => true, 'length' => 255]);
         $table->setPrimaryKey(['id']);
     }
 
@@ -196,10 +219,8 @@ class OroPayPalBundleInstaller implements Installation
     {
         $table = $schema->createTable('oro_paypal_ec_payment_action');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('settings_id', 'integer', ['notnull' => false]);
-        $table->addColumn('label', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('label', 'string', ['notnull' => true, 'length' => 255]);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['settings_id'], 'IDX_83E2FF1F59949888', []);
     }
 
     /**
@@ -214,7 +235,6 @@ class OroPayPalBundleInstaller implements Installation
         $table->addColumn('localized_value_id', 'integer', []);
         $table->setPrimaryKey(['transport_id', 'localized_value_id']);
         $table->addUniqueIndex(['localized_value_id'], 'UNIQ_386D1FC6EB576E89');
-        $table->addIndex(['transport_id'], 'IDX_386D1FC69909C13F', []);
     }
 
     /**
@@ -229,7 +249,6 @@ class OroPayPalBundleInstaller implements Installation
         $table->addColumn('localized_value_id', 'integer', []);
         $table->setPrimaryKey(['transport_id', 'localized_value_id']);
         $table->addUniqueIndex(['localized_value_id'], 'UNIQ_A9419ECEB576E89');
-        $table->addIndex(['transport_id'], 'IDX_A9419EC9909C13F', []);
     }
 
     /**
@@ -249,22 +268,6 @@ class OroPayPalBundleInstaller implements Installation
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_integration_transport'),
             ['pp_settings_id'],
-            ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
-        );
-    }
-
-    /**
-     * Add oro_paypal_cc_payment_action foreign keys.
-     *
-     * @param Schema $schema
-     */
-    protected function addOroPaypalCcPaymentActionForeignKeys(Schema $schema)
-    {
-        $table = $schema->getTable('oro_paypal_cc_payment_action');
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_integration_transport'),
-            ['settings_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
@@ -297,7 +300,7 @@ class OroPayPalBundleInstaller implements Installation
      *
      * @param Schema $schema
      */
-    protected function addOroPaypalCreditCardShrtLblForeignKeys(Schema $schema)
+    protected function addOroPaypalCreditCardShLblForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('oro_paypal_credit_card_sh_lbl');
         $table->addForeignKeyConstraint(
@@ -309,22 +312,6 @@ class OroPayPalBundleInstaller implements Installation
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_fallback_localization_val'),
             ['localized_value_id'],
-            ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
-        );
-    }
-
-    /**
-     * Add oro_paypal_ec_payment_action foreign keys.
-     *
-     * @param Schema $schema
-     */
-    protected function addOroPaypalEcPaymentActionForeignKeys(Schema $schema)
-    {
-        $table = $schema->getTable('oro_paypal_ec_payment_action');
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_integration_transport'),
-            ['settings_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
@@ -369,6 +356,28 @@ class OroPayPalBundleInstaller implements Installation
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_fallback_localization_val'),
             ['localized_value_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+    }
+
+    /**
+     * Add oro_integration_transport foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOroIntegrationTransportForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('oro_integration_transport');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_paypal_ec_payment_action'),
+            ['ec_settings_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_paypal_cc_payment_action'),
+            ['cc_settings_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );

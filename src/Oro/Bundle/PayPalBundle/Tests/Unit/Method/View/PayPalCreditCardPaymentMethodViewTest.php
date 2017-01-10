@@ -8,18 +8,18 @@ use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
 use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 use Oro\Bundle\PayPalBundle\Form\Type\CreditCardType;
 use Oro\Bundle\PayPalBundle\Method\Config\PayflowGatewayConfigInterface;
-use Oro\Bundle\PayPalBundle\Method\View\PayflowGatewayView;
+use Oro\Bundle\PayPalBundle\Method\View\PayPalCreditCardPaymentMethodView;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Form\FormFactoryInterface;
 
-abstract class AbstractPayflowGatewayViewTest extends \PHPUnit_Framework_TestCase
+class PayPalCreditCardPaymentMethodViewTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
 
     /** @var FormFactoryInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $formFactory;
 
-    /** @var PaymentMethodViewInterface|PayflowGatewayView */
+    /** @var PayPalCreditCardPaymentMethodView */
     protected $methodView;
 
     /** @var  PaymentTransactionProvider|\PHPUnit_Framework_MockObject_MockObject */
@@ -42,33 +42,12 @@ abstract class AbstractPayflowGatewayViewTest extends \PHPUnit_Framework_TestCas
         $this->paymentConfig =
             $this->createMock('Oro\Bundle\PayPalBundle\Method\Config\PayflowGatewayConfigInterface');
 
-        $this->methodView = $this->getMethodView();
+        $this->methodView = new PayPalCreditCardPaymentMethodView(
+            $this->formFactory,
+            $this->paymentConfig,
+            $this->paymentTransactionProvider
+        );
     }
-
-    /**
-     * @return PaymentMethodViewInterface
-     */
-    abstract protected function getMethodView();
-
-    /**
-     * @return string
-     */
-    abstract protected function getZeroAmountKey();
-
-    /**
-     * @return string
-     */
-    abstract protected function getRequireCvvEntryKey();
-
-    /**
-     * @return string
-     */
-    abstract protected function getAuthForRequiredAmountKey();
-
-    /**
-     * @return string
-     */
-    abstract protected function getAllowedCCTypesKey();
 
     public function testGetOptionsWithoutZeroAmount()
     {
@@ -351,5 +330,33 @@ abstract class AbstractPayflowGatewayViewTest extends \PHPUnit_Framework_TestCas
             ->willReturn($allowedCards);
 
         $this->assertEquals($allowedCards, $this->methodView->getAllowedCreditCards());
+    }
+
+
+    public function testGetPaymentMethodIdentifier()
+    {
+        $this->paymentConfig->expects($this->once())
+            ->method('getPaymentMethodIdentifier')
+            ->willReturn('identifier');
+
+        $this->assertEquals('identifier', $this->methodView->getPaymentMethodIdentifier());
+    }
+
+    public function testGetLabel()
+    {
+        $this->paymentConfig->expects($this->once())
+            ->method('getLabel')
+            ->willReturn('label');
+
+        $this->assertEquals('label', $this->methodView->getLabel());
+    }
+
+    public function testGetShortLabel()
+    {
+        $this->paymentConfig->expects($this->once())
+            ->method('getShortLabel')
+            ->willReturn('short label');
+
+        $this->assertEquals('short label', $this->methodView->getShortLabel());
     }
 }

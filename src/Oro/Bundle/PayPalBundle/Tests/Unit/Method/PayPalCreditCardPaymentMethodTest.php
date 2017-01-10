@@ -8,8 +8,7 @@ use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PaymentBundle\Tests\Unit\Method\ConfigTestTrait;
 use Oro\Bundle\PayPalBundle\DependencyInjection\OroPayPalExtension;
 use Oro\Bundle\PayPalBundle\Method\Config\PayflowGatewayConfigInterface;
-use Oro\Bundle\PayPalBundle\Method\PayflowGateway;
-use Oro\Bundle\PayPalBundle\Method\PayPalPaymentsPro;
+use Oro\Bundle\PayPalBundle\Method\PayPalCreditCardPaymentMethod;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\Response;
@@ -23,7 +22,7 @@ use Symfony\Component\Routing\RouterInterface;
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-abstract class AbstractPayflowGatewayTest extends \PHPUnit_Framework_TestCase
+class PayPalCreditCardPaymentMethodTest extends \PHPUnit_Framework_TestCase
 {
     use ConfigTestTrait, EntityTrait;
 
@@ -36,7 +35,7 @@ abstract class AbstractPayflowGatewayTest extends \PHPUnit_Framework_TestCase
     /** @var RouterInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $router;
 
-    /** @var PayflowGateway|PayPalPaymentsPro */
+    /** @var PayPalCreditCardPaymentMethod */
     protected $method;
 
     /** @var PayflowGatewayConfigInterface|\PHPUnit_Framework_MockObject_MockObject */
@@ -55,7 +54,7 @@ abstract class AbstractPayflowGatewayTest extends \PHPUnit_Framework_TestCase
         $this->paymentConfig =
             $this->createMock('Oro\Bundle\PayPalBundle\Method\Config\PayflowGatewayConfigInterface');
 
-        $this->method = $this->getMethod();
+        $this->method = new PayPalCreditCardPaymentMethod($this->gateway, $this->paymentConfig, $this->router);
     }
 
     /**
@@ -64,16 +63,6 @@ abstract class AbstractPayflowGatewayTest extends \PHPUnit_Framework_TestCase
     protected function getExtensionAlias()
     {
         return OroPayPalExtension::ALIAS;
-    }
-
-    /**
-     * @return PayflowGateway|PayPalPaymentsPro
-     */
-    abstract protected function getMethod();
-
-    protected function tearDown()
-    {
-        unset($this->router, $this->gateway, $this->paymentConfig, $this->method);
     }
 
     public function testExecute()
@@ -139,7 +128,7 @@ abstract class AbstractPayflowGatewayTest extends \PHPUnit_Framework_TestCase
             [true, PaymentMethodInterface::CAPTURE],
             [true, PaymentMethodInterface::CHARGE],
             [true, PaymentMethodInterface::PURCHASE],
-            [true, PayflowGateway::COMPLETE],
+            [true, PayPalCreditCardPaymentMethod::COMPLETE],
         ];
     }
 
@@ -805,11 +794,6 @@ abstract class AbstractPayflowGatewayTest extends \PHPUnit_Framework_TestCase
         $this->method->execute($transaction->getAction(), $transaction);
     }
 
-    /**
-     * @return string
-     */
-    abstract protected function getConfigPrefix();
-
     public function testIsApplicable()
     {
         /** @var PaymentContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
@@ -857,5 +841,14 @@ abstract class AbstractPayflowGatewayTest extends \PHPUnit_Framework_TestCase
         $this->method->complete($paymentTransaction);
         $this->assertEquals('ref', $paymentTransaction->getReference());
         $this->assertFalse($paymentTransaction->isActive());
+    }
+
+
+    public function testGetIdentifier()
+    {
+        $this->paymentConfig->expects(static::once())
+            ->method('getPaymentMethodIdentifier')
+            ->willReturn('payflow_express_checkout');
+        $this->assertSame('payflow_express_checkout', $this->method->getIdentifier());
     }
 }

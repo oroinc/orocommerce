@@ -4,8 +4,9 @@ namespace Oro\Bundle\PaymentBundle\Form\Type;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodProviderInterface;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodProvidersRegistry;
+use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProvidersRegistry;
 use Oro\Bundle\RuleBundle\Form\Type\RuleType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -13,30 +14,31 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Translation\TranslatorInterface;
 
 class PaymentMethodsConfigsRuleType extends AbstractType
 {
     const BLOCK_PREFIX = 'oro_payment_methods_configs_rule';
 
     /**
-     * @var PaymentMethodRegistry
+     * @var PaymentMethodProvidersRegistry
      */
     protected $methodRegistry;
 
     /**
-     * @var TranslatorInterface
+     * @var PaymentMethodViewProvidersRegistry
      */
-    protected $translator;
+    protected $methodViewRegistry;
 
     /**
-     * @param PaymentMethodRegistry $methodRegistry
-     * @param TranslatorInterface $translator
+     * @param PaymentMethodProvidersRegistry $methodRegistry
+     * @param PaymentMethodViewProvidersRegistry $methodViewRegistry
      */
-    public function __construct(PaymentMethodRegistry $methodRegistry, TranslatorInterface $translator)
-    {
+    public function __construct(
+        PaymentMethodProvidersRegistry $methodRegistry,
+        PaymentMethodViewProvidersRegistry $methodViewRegistry
+    ) {
         $this->methodRegistry = $methodRegistry;
-        $this->translator = $translator;
+        $this->methodViewRegistry = $methodViewRegistry;
     }
 
     /**
@@ -70,7 +72,7 @@ class PaymentMethodsConfigsRuleType extends AbstractType
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        $view->vars['methods'] = $this->getMethods(true);
+        $view->vars['methods'] = $this->getMethods();
     }
 
     /**
@@ -92,18 +94,18 @@ class PaymentMethodsConfigsRuleType extends AbstractType
     }
 
     /**
-     * @param bool $translate
      * @return array
      */
-    protected function getMethods($translate = false)
+    protected function getMethods()
     {
         return array_reduce(
-            $this->methodRegistry->getPaymentMethods(),
-            function (array $result, PaymentMethodInterface $method) use ($translate) {
-                $type = $method->getType();
-                $result[$type] = $translate ?
-                    $this->translator->trans(sprintf('oro.payment.admin.%s.label', $type)) : $type;
-
+            $this->methodRegistry->getPaymentMethodProviders(),
+            function (array $result, PaymentMethodProviderInterface $provider) {
+                foreach ($provider->getPaymentMethods() as $method) {
+                    $result[$method->getIdentifier()] = $this
+                        ->methodViewRegistry->getPaymentMethodView($method->getIdentifier())
+                        ->getAdminLabel();
+                }
                 return $result;
             },
             []

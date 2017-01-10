@@ -1,16 +1,16 @@
 <?php
 
-namespace Oro\Bundle\PaymentBundle\Tests\Unit\DependencyInjection\Compiler;
+namespace Oro\Bundle\PaymentBundle\Tests\Unit\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
-use Oro\Bundle\PaymentBundle\DependencyInjection\Compiler\PaymentMethodViewPass;
+use Oro\Bundle\PaymentBundle\DependencyInjection\Compiler\PaymentMethodProvidersPass;
 
-class PaymentMethodViewPassTest extends \PHPUnit_Framework_TestCase
+class PaymentMethodProvidersPassTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var PaymentMethodViewPass
+     * @var PaymentMethodProvidersPass
      */
     protected $compilerPass;
 
@@ -25,7 +25,7 @@ class PaymentMethodViewPassTest extends \PHPUnit_Framework_TestCase
             ->getMockBuilder('Symfony\Component\DependencyInjection\ContainerBuilder')
             ->getMock();
 
-        $this->compilerPass = new PaymentMethodViewPass();
+        $this->compilerPass = new PaymentMethodProvidersPass();
     }
 
     public function tearDown()
@@ -38,7 +38,7 @@ class PaymentMethodViewPassTest extends \PHPUnit_Framework_TestCase
         $this->containerBuilder
             ->expects($this->once())
             ->method('hasDefinition')
-            ->with(PaymentMethodViewPass::REGISTRY_SERVICE)
+            ->with(PaymentMethodProvidersPass::REGISTRY_SERVICE)
             ->willReturn(false);
 
         $this->containerBuilder
@@ -57,7 +57,7 @@ class PaymentMethodViewPassTest extends \PHPUnit_Framework_TestCase
         $this->containerBuilder
             ->expects($this->once())
             ->method('hasDefinition')
-            ->with(PaymentMethodViewPass::REGISTRY_SERVICE)
+            ->with(PaymentMethodProvidersPass::REGISTRY_SERVICE)
             ->willReturn(true);
 
         $this->containerBuilder
@@ -77,7 +77,7 @@ class PaymentMethodViewPassTest extends \PHPUnit_Framework_TestCase
         $this->containerBuilder
             ->expects($this->once())
             ->method('hasDefinition')
-            ->with(PaymentMethodViewPass::REGISTRY_SERVICE)
+            ->with(PaymentMethodProvidersPass::REGISTRY_SERVICE)
             ->willReturn(true);
 
         $registryServiceDefinition = $this->createMock('Symfony\Component\DependencyInjection\Definition');
@@ -85,12 +85,14 @@ class PaymentMethodViewPassTest extends \PHPUnit_Framework_TestCase
         $this->containerBuilder
             ->expects($this->once())
             ->method('getDefinition')
-            ->with(PaymentMethodViewPass::REGISTRY_SERVICE)
+            ->with(PaymentMethodProvidersPass::REGISTRY_SERVICE)
             ->willReturn($registryServiceDefinition);
 
         $taggedServices = [
-            'service.name.1' => [],
-            'service.name.2' => [],
+            'service.name.1' => [[]],
+            'service.name.2' => [[]],
+            'service.name.3' => [[]],
+            'service.name.4' => [[]],
         ];
 
         $this->containerBuilder
@@ -99,11 +101,13 @@ class PaymentMethodViewPassTest extends \PHPUnit_Framework_TestCase
             ->willReturn($taggedServices);
 
         $registryServiceDefinition
-            ->expects($this->exactly(2))
+            ->expects($this->exactly(4))
             ->method('addMethodCall')
             ->withConsecutive(
-                ['addPaymentMethodView', [new Reference('service.name.1')]],
-                ['addPaymentMethodView', [new Reference('service.name.2')]]
+                ['addProvider', [new Reference('service.name.1')]],
+                ['addProvider', [new Reference('service.name.2')]],
+                ['addProvider', [new Reference('service.name.3')]],
+                ['addProvider', [new Reference('service.name.4')]]
             );
 
         $this->compilerPass->process($this->containerBuilder);

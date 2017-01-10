@@ -9,7 +9,7 @@ use Oro\Bundle\PayPalBundle\Method\Config\PayflowExpressCheckoutConfigInterface;
 use Oro\Bundle\PayPalBundle\Method\PayflowExpressCheckout;
 use Symfony\Component\Form\FormFactoryInterface;
 
-class PayflowExpressCheckoutView implements PaymentMethodViewInterface
+class PayPalExpressCheckoutPaymentMethodView implements PaymentMethodViewInterface
 {
     /** @var FormFactoryInterface */
     protected $formFactory;
@@ -39,12 +39,6 @@ class PayflowExpressCheckoutView implements PaymentMethodViewInterface
     }
 
     /** {@inheritdoc} */
-    public function getPaymentMethodType()
-    {
-        return PayflowExpressCheckout::TYPE;
-    }
-
-    /** {@inheritdoc} */
     public function getLabel()
     {
         return $this->config->getLabel();
@@ -54,5 +48,19 @@ class PayflowExpressCheckoutView implements PaymentMethodViewInterface
     public function getShortLabel()
     {
         return $this->config->getShortLabel();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAdminLabel()
+    {
+        return $this->config->getAdminLabel();
+    }
+
+    /** {@inheritdoc} */
+    public function getPaymentMethodIdentifier()
+    {
+        return $this->config->getPaymentMethodIdentifier();
     }
 }

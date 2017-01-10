@@ -20,26 +20,24 @@ class PayPalSettings extends Transport
     protected $settings;
 
     /**
-     * @var CreditCardPaymentAction[]|Collection
+     * @var CreditCardPaymentAction
      *
-     * @ORM\OneToMany(
-     *      targetEntity="Oro\Bundle\PayPalBundle\Entity\CreditCardPaymentAction",
-     *      mappedBy="payPalSettings",
-     *      cascade={"all"},
-     *      orphanRemoval=true
+     * @ORM\ManyToOne(
+     *     targetEntity="Oro\Bundle\PayPalBundle\Entity\CreditCardPaymentAction",
+     *     inversedBy="payPalSettings"
      * )
+     * @ORM\JoinColumn(name="cc_settings_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $creditCardPaymentAction;
 
     /**
-     * @var ExpressCheckoutPaymentAction[]|Collection
+     * @var ExpressCheckoutPaymentAction
      *
-     * @ORM\OneToMany(
-     *      targetEntity="Oro\Bundle\PayPalBundle\Entity\ExpressCheckoutPaymentAction",
-     *      mappedBy="payPalSettings",
-     *      cascade={"all"},
-     *      orphanRemoval=true
+     * @ORM\ManyToOne(
+     *     targetEntity="Oro\Bundle\PayPalBundle\Entity\ExpressCheckoutPaymentAction",
+     *     inversedBy="payPalSettings"
      * )
+     * @ORM\JoinColumn(name="ec_settings_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $expressCheckoutPaymentAction;
 
@@ -279,8 +277,6 @@ class PayPalSettings extends Transport
     public function __construct()
     {
         $this->allowedCreditCardTypes = new ArrayCollection();
-        $this->expressCheckoutPaymentAction = new ArrayCollection();
-        $this->creditCardPaymentAction = new ArrayCollection();
         $this->creditCardLabels = new ArrayCollection();
         $this->creditCardShortLabels = new ArrayCollection();
         $this->expressCheckoutLabels = new ArrayCollection();
@@ -791,89 +787,6 @@ class PayPalSettings extends Transport
         return $this->expressCheckoutShortLabels;
     }
 
-    /**
-     * Add creditCardPaymentAction
-     *
-     * @param CreditCardPaymentAction $creditCardPaymentAction
-     *
-     * @return PayPalSettings
-     */
-    public function addCreditCardPaymentAction(CreditCardPaymentAction $creditCardPaymentAction)
-    {
-        if (!$this->creditCardPaymentAction->contains($creditCardPaymentAction)) {
-            $this->creditCardPaymentAction->add($creditCardPaymentAction);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Remove creditCardPaymentAction
-     *
-     * @param CreditCardPaymentAction $creditCardPaymentAction
-     *
-     * @return PayPalSettings
-     */
-    public function removeCreditCardPaymentAction(CreditCardPaymentAction $creditCardPaymentAction)
-    {
-        if ($this->creditCardPaymentAction->contains($creditCardPaymentAction)) {
-            $this->creditCardPaymentAction->removeElement($creditCardPaymentAction);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Get creditCardPaymentAction
-     *
-     * @return Collection
-     */
-    public function getCreditCardPaymentAction()
-    {
-        return $this->creditCardPaymentAction;
-    }
-
-    /**
-     * Add expressCheckoutPaymentAction
-     *
-     * @param ExpressCheckoutPaymentAction $expressCheckoutPaymentAction
-     *
-     * @return PayPalSettings
-     */
-    public function addExpressCheckoutPaymentAction(ExpressCheckoutPaymentAction $expressCheckoutPaymentAction)
-    {
-        if (!$this->expressCheckoutPaymentAction->contains($expressCheckoutPaymentAction)) {
-            $this->expressCheckoutPaymentAction->add($expressCheckoutPaymentAction);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Remove expressCheckoutPaymentAction
-     *
-     * @param ExpressCheckoutPaymentAction $expressCheckoutPaymentAction
-     *
-     * @return PayPalSettings
-     */
-    public function removeExpressCheckoutPaymentAction(ExpressCheckoutPaymentAction $expressCheckoutPaymentAction)
-    {
-        if ($this->expressCheckoutPaymentAction->contains($expressCheckoutPaymentAction)) {
-            $this->expressCheckoutPaymentAction->removeElement($expressCheckoutPaymentAction);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Get expressCheckoutPaymentAction
-     *
-     * @return Collection
-     */
-    public function getExpressCheckoutPaymentAction()
-    {
-        return $this->expressCheckoutPaymentAction;
-    }
 
     /**
      * Add allowedCreditCardType
@@ -915,5 +828,53 @@ class PayPalSettings extends Transport
     public function getAllowedCreditCardTypes()
     {
         return $this->allowedCreditCardTypes;
+    }
+
+    /**
+     * Set creditCardPaymentAction
+     *
+     * @param CreditCardPaymentAction $creditCardPaymentAction
+     *
+     * @return PayPalSettings
+     */
+    public function setCreditCardPaymentAction(CreditCardPaymentAction $creditCardPaymentAction = null)
+    {
+        $this->creditCardPaymentAction = $creditCardPaymentAction;
+
+        return $this;
+    }
+
+    /**
+     * Get creditCardPaymentAction
+     *
+     * @return CreditCardPaymentAction
+     */
+    public function getCreditCardPaymentAction()
+    {
+        return $this->creditCardPaymentAction;
+    }
+
+    /**
+     * Set expressCheckoutPaymentAction
+     *
+     * @param ExpressCheckoutPaymentAction $expressCheckoutPaymentAction
+     *
+     * @return PayPalSettings
+     */
+    public function setExpressCheckoutPaymentAction(ExpressCheckoutPaymentAction $expressCheckoutPaymentAction = null)
+    {
+        $this->expressCheckoutPaymentAction = $expressCheckoutPaymentAction;
+
+        return $this;
+    }
+
+    /**
+     * Get expressCheckoutPaymentAction
+     *
+     * @return ExpressCheckoutPaymentAction
+     */
+    public function getExpressCheckoutPaymentAction()
+    {
+        return $this->expressCheckoutPaymentAction;
     }
 }

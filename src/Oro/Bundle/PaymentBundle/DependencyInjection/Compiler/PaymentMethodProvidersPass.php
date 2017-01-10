@@ -6,10 +6,10 @@ use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
-class PaymentMethodViewPass implements CompilerPassInterface
+class PaymentMethodProvidersPass implements CompilerPassInterface
 {
-    const REGISTRY_SERVICE = 'oro_payment.payment_method.view.registry';
-    const TAG = 'oro_payment.payment_method_view';
+    const REGISTRY_SERVICE = 'oro_payment.payment_method_provider.registry';
+    const TAG = 'oro_payment.payment_method_provider';
 
     /**
      * {@inheritdoc}
@@ -27,8 +27,8 @@ class PaymentMethodViewPass implements CompilerPassInterface
 
         $registryDefinition = $container->getDefinition(self::REGISTRY_SERVICE);
 
-        foreach ($taggedServices as $id => $attributes) {
-            $registryDefinition->addMethodCall('addPaymentMethodView', [new Reference($id)]);
+        foreach ($taggedServices as $method => $value) {
+            $registryDefinition->addMethodCall('addProvider', [new Reference($method)]);
         }
     }
 }

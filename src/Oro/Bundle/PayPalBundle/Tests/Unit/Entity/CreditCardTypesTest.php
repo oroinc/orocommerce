@@ -12,6 +12,7 @@ class CreditCardTypesTest extends \PHPUnit_Framework_TestCase
     public function testAccessors()
     {
         static::assertPropertyAccessors(new CreditCardTypes(), [
+            ['id', 1],
             ['label', 'some string'],
         ]);
     }

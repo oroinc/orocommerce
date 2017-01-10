@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\PayPalBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -21,19 +23,20 @@ class CreditCardPaymentAction
     /**
      * @var string
      *
-     * @ORM\Column(name="label", type="string", length=255, nullable=true)
+     * @ORM\Column(name="label", type="string", length=255, nullable=false)
      */
     protected $label;
 
 
     /**
-     * @var PayPalSettings
+     * @var PayPalSettings[]|Collection
      *
-     * @ORM\ManyToOne(
-     *     targetEntity="Oro\Bundle\PayPalBundle\Entity\PayPalSettings",
-     *     inversedBy="creditCardPaymentAction"
+     * @ORM\OneToMany(
+     *      targetEntity="Oro\Bundle\PayPalBundle\Entity\PayPalSettings",
+     *      mappedBy="creditCardPaymentAction",
+     *      cascade={"all"},
+     *      orphanRemoval=true
      * )
-     * @ORM\JoinColumn(name="settings_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $payPalSettings;
 
@@ -72,15 +75,41 @@ class CreditCardPaymentAction
     }
 
     /**
-     * Set payPalSettings
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->payPalSettings = new ArrayCollection();
+    }
+
+    /**
+     * Add payPalSetting
      *
-     * @param PayPalSettings $payPalSettings
+     * @param PayPalSettings $payPalSetting
      *
      * @return CreditCardPaymentAction
      */
-    public function setPayPalSettings(PayPalSettings $payPalSettings = null)
+    public function addPayPalSetting(PayPalSettings $payPalSetting)
     {
-        $this->payPalSettings = $payPalSettings;
+        if (!$this->payPalSettings->contains($payPalSetting)) {
+            $this->payPalSettings->add($payPalSetting);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Remove payPalSetting
+     *
+     * @param PayPalSettings $payPalSetting
+     *
+     * @return CreditCardPaymentAction
+     */
+    public function removePayPalSetting(PayPalSettings $payPalSetting)
+    {
+        if ($this->payPalSettings->contains($payPalSetting)) {
+            $this->payPalSettings->removeElement($payPalSetting);
+        }
 
         return $this;
     }
@@ -88,7 +117,7 @@ class CreditCardPaymentAction
     /**
      * Get payPalSettings
      *
-     * @return PayPalSettings
+     * @return Collection
      */
     public function getPayPalSettings()
     {

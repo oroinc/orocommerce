@@ -25,7 +25,7 @@ class CreditCardTypes
     /**
      * @var string
      *
-     * @ORM\Column(name="label", type="string", length=255, nullable=true)
+     * @ORM\Column(name="label", type="string", length=255, nullable=false)
      */
     protected $label;
 

@@ -4,6 +4,7 @@ namespace Oro\Bundle\PayPalBundle\Method\Config;
 
 use Oro\Bundle\PayPalBundle\DependencyInjection\Configuration;
 use Oro\Bundle\PayPalBundle\DependencyInjection\OroPayPalExtension;
+use Oro\Bundle\PayPalBundle\Method\PayPalPaymentsPro;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 use Oro\Bundle\PaymentBundle\Method\Config\AbstractPaymentConfig;
 
@@ -78,6 +79,18 @@ class PayPalPaymentsProConfig extends AbstractPaymentConfig implements PayflowGa
         return (string)$this->getConfigValue(Configuration::PAYPAL_PAYMENTS_PRO_SHORT_LABEL_KEY);
     }
 
+    /** {@inheritdoc} */
+    public function getAdminLabel()
+    {
+        return (string)$this->getLabel();
+    }
+
+    /** {@inheritdoc} */
+    public function getPaymentMethodIdentifier()
+    {
+        return (string)PayPalPaymentsPro::TYPE;
+    }
+    
     /**
      * {@inheritdoc}
      */
