@@ -1,0 +1,25 @@
+<div class="modal-dialog modal-dialog--centered" aria-hidden="false">
+    <div class="modal-content">
+        <div class="modal-dialog__body">
+            <% if (allowCancel) { %>
+                <button type="button" class="close btn_close" data-dismiss="modal" aria-label="Close">
+                    <i aria-hidden="true" class="fa-close"></i>
+                </button>
+            <% } %>
+            <% if (title) { %>
+                <h2 class="page-title"><%= title %></h2>
+            <% } %>
+            <div class="grid__row--offset-l"><%= content %></div>
+            <div class="buttons-flex-container buttons-flex-container_equal-btns">
+            <% if (allowCancel) { %>
+                <% if (cancelText) { %>
+                    <button class="<%= cancelButtonClass %>" data-dismiss="modal" aria-label="Close"><%= cancelText %></button>
+                <% } %>
+            <% } %>
+            <% if (allowOk) { %>
+                <button class="<%= okButtonClass %>" data-dismiss="modal" aria-label="Close"><%= okText %></button>
+            <% } %>
+            </div>
+        </div>
+    </div>
+</div>
