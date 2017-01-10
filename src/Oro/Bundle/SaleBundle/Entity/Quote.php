@@ -257,7 +257,7 @@ class Quote extends ExtendQuote implements
      *      }
      * )
      **/
-    protected $assignedAccountUsers;
+    protected $assignedCustomerUsers;
 
     /**
      * @var string
