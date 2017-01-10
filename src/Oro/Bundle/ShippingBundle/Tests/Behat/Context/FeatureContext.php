@@ -41,7 +41,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      */
     public function loadFlatRateConfig(BeforeScenarioScope $scope)
     {
-        $shippingRuleName = 'Shipping Rule 1';
+        $shippingRuleName = 'Shipping Rule First';
 
         $em = $this->getContainer()->get('oro_entity.doctrine_helper')
             ->getEntityManagerForClass(ShippingMethodsConfigsRule::class);

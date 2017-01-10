@@ -1,6 +1,6 @@
 Oro\Bundle\RuleBundle\Entity\Rule:
     rule1:
-        name: 'Shipping Rule 1'
+        name: 'Shipping Rule First'
         enabled: true
         sortOrder: 5
         expression: 'true'
