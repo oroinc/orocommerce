@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Placeholder;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\AbstractPlaceholder;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -47,7 +47,7 @@ class CPLIdPlaceholder extends AbstractPlaceholder
         $token = $this->tokenStorage->getToken();
         $account = null;
 
-        if ($token && $token->getUser() instanceof AccountUser) {
+        if ($token && $token->getUser() instanceof CustomerUser) {
             $account = $token->getUser()->getAccount();
         }
 

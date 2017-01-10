@@ -16,7 +16,7 @@ use Oro\Bundle\LocaleBundle\Manager\LocalizationManager;
 use Oro\Bundle\UserBundle\Entity\BaseUserManager;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserSettings;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
@@ -90,7 +90,7 @@ class UserLocalizationManagerTest extends \PHPUnit_Framework_TestCase
         $this->websiteManager->expects($this->once())->method('getCurrentWebsite')->willReturn($website);
 
         $token = $this->createMock(TokenInterface::class);
-        $token->expects($this->once())->method('getUser')->willReturn(new AccountUser());
+        $token->expects($this->once())->method('getUser')->willReturn(new CustomerUser());
 
         $this->tokenStorage->expects($this->once())->method('getToken')->willReturn($token);
 
@@ -123,7 +123,7 @@ class UserLocalizationManagerTest extends \PHPUnit_Framework_TestCase
         $this->websiteManager->expects($this->once())->method('getCurrentWebsite')->willReturn($website);
 
         $token = $this->createMock(TokenInterface::class);
-        $token->expects($this->once())->method('getUser')->willReturn(new AccountUser());
+        $token->expects($this->once())->method('getUser')->willReturn(new CustomerUser());
 
         $this->tokenStorage->expects($this->once())->method('getToken')->willReturn($token);
 
@@ -179,7 +179,7 @@ class UserLocalizationManagerTest extends \PHPUnit_Framework_TestCase
         $userWebsiteSettings = new CustomerUserSettings($website);
         $userWebsiteSettings->setLocalization($localization1);
 
-        $user = $this->getMockBuilder(AccountUser::class)
+        $user = $this->getMockBuilder(CustomerUser::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -258,7 +258,7 @@ class UserLocalizationManagerTest extends \PHPUnit_Framework_TestCase
         $localization = $this->getEntity(Localization::class, ['id' => 1]);
         /** @var Website $website **/
         $website = $this->getEntity(Website::class, ['id' => 1]);
-        $user = $this->getMockBuilder(AccountUser::class)
+        $user = $this->getMockBuilder(CustomerUser::class)
             ->disableOriginalConstructor()
             ->getMock();
 

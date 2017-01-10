@@ -21,7 +21,7 @@ abstract class QuickAddControllerTest extends WebTestCase
     const VALIDATION_ERRORS          = 'Errors';
     const VALIDATION_RESULT_SELECTOR = 'div.validation-info table tbody tr';
     const VALIDATION_ERRORS_SELECTOR = 'div.import-errors ol li';
-    const VALIDATION_ERROR_NOT_FOUND = 'Item number %s does not found.';
+    const VALIDATION_ERROR_NOT_FOUND = 'Item number %s not found.';
     const VALIDATION_ERROR_MALFORMED = 'Row #%d has invalid format.';
 
     protected function setUp()

@@ -8,7 +8,7 @@ use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Extension\CurrentLocalizationExtensionInterface;
 use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 
 class CurrentLocalizationExtension implements CurrentLocalizationExtensionInterface
 {
@@ -45,7 +45,7 @@ class CurrentLocalizationExtension implements CurrentLocalizationExtensionInterf
     }
 
     /**
-     * @return null|User|AccountUser
+     * @return null|User|CustomerUser
      */
     protected function getLoggedUser()
     {

@@ -4,7 +4,7 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData as LoadBaseAccountUserData;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -59,14 +59,14 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
 
     /**
      * @param ObjectManager $manager
-     * @param AccountUser $accountUser
+     * @param CustomerUser $accountUser
      * @param string $name
      * @param bool $isCurrent
      * @return ShoppingList
      */
     protected function createShoppingList(
         ObjectManager $manager,
-        AccountUser $accountUser,
+        CustomerUser $accountUser,
         $name,
         $isCurrent = false
     ) {
@@ -92,12 +92,12 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
      * @param ObjectManager $manager
      * @param string $email
      *
-     * @return AccountUser
+     * @return CustomerUser
      * @throws \LogicException
      */
     protected function getAccountUser(ObjectManager $manager, $email)
     {
-        $accountUser = $manager->getRepository('OroCustomerBundle:AccountUser')
+        $accountUser = $manager->getRepository('OroCustomerBundle:CustomerUser')
             ->findOneBy(['email' => $email]);
 
         if (!$accountUser) {

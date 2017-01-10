@@ -8,9 +8,9 @@ use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
@@ -184,7 +184,7 @@ class OrderAddressManagerTest extends AbstractAddressManagerTest
         return [
             'empty account user' => [new Order()],
             'empty account' => [
-                (new Order())->setAccountUser(new AccountUser()),
+                (new Order())->setAccountUser(new CustomerUser()),
                 [],
                 [
                     $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress', 1),
@@ -204,7 +204,7 @@ class OrderAddressManagerTest extends AbstractAddressManagerTest
                 ],
             ],
             'account' => [
-                (new Order())->setAccountUser(new AccountUser())->setAccount(new Account()),
+                (new Order())->setAccountUser(new CustomerUser())->setAccount(new Customer()),
                 [
                     $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerAddress', 1),
                     $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerAddress', 2),
@@ -224,7 +224,7 @@ class OrderAddressManagerTest extends AbstractAddressManagerTest
                 ],
             ],
             'full' => [
-                (new Order())->setAccountUser(new AccountUser())->setAccount(new Account()),
+                (new Order())->setAccountUser(new CustomerUser())->setAccount(new Customer()),
                 [
                     $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerAddress', 1),
                     $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerAddress', 2),

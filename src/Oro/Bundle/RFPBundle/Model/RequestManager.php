@@ -4,7 +4,7 @@ namespace Oro\Bundle\RFPBundle\Model;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use Oro\Bundle\RFPBundle\Entity\Request;
@@ -41,7 +41,7 @@ class RequestManager
     {
         $request = new Request();
         $user = $this->securityFacade->getLoggedUser();
-        if ($user instanceof AccountUser) {
+        if ($user instanceof CustomerUser) {
             $request
                 ->setAccountUser($user)
                 ->setAccount($user->getAccount())

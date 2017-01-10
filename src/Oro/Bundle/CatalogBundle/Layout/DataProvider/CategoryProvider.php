@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CatalogBundle\Layout\DataProvider;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
@@ -57,11 +57,11 @@ class CategoryProvider
     }
 
     /**
-     * @param AccountUser|null $user
+     * @param CustomerUser|null $user
      *
      * @return Category[]
      */
-    public function getCategoryTree(AccountUser $user = null)
+    public function getCategoryTree(CustomerUser $user = null)
     {
         $userId = $user ? $user->getId() : 0;
         if (!array_key_exists($userId, $this->tree)) {

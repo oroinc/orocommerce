@@ -17,7 +17,7 @@ use Oro\Component\TestUtils\ORM\OrmTestCase;
 use Oro\Bundle\SecurityBundle\Owner\OwnerTree;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Owner\FrontendOwnerTreeProvider;
 use Oro\Bundle\CustomerBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
 
@@ -674,7 +674,7 @@ class FrontendOwnerTreeProviderTest extends OrmTestCase
     {
         $this->securityFacade->expects($this->exactly(2))
             ->method('getLoggedUser')
-            ->willReturnOnConsecutiveCalls(new AccountUser(), new User());
+            ->willReturnOnConsecutiveCalls(new CustomerUser(), new User());
 
         $this->assertTrue($this->treeProvider->supports());
         $this->assertFalse($this->treeProvider->supports());

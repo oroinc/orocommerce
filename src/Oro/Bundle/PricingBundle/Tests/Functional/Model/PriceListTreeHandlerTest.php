@@ -6,8 +6,8 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\PricingBundle\DependencyInjection\Configuration;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\PricingBundle\DependencyInjection\OroPricingExtension;
 use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
@@ -62,7 +62,7 @@ class PriceListTreeHandlerTest extends WebTestCase
      */
     public function testGetPriceList($accountReference, $expectedPriceListReference)
     {
-        $accountUser = new AccountUser();
+        $accountUser = new CustomerUser();
         $accountUser->setAccount($this->getAccount($accountReference));
 
         $this->websiteManager->expects($this->any())->method('getCurrentWebsite')
@@ -86,7 +86,7 @@ class PriceListTreeHandlerTest extends WebTestCase
         $configPriceListReference,
         $expectedPriceListReference
     ) {
-        $accountUser = new AccountUser();
+        $accountUser = new CustomerUser();
         $accountUser->setAccount($this->getAccount($accountReference));
         $key = implode(
             ConfigManager::SECTION_MODEL_SEPARATOR,
@@ -129,7 +129,7 @@ class PriceListTreeHandlerTest extends WebTestCase
 
     /**
      * @param string $reference
-     * @return Account
+     * @return Customer
      */
     protected function getAccount($reference)
     {

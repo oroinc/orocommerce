@@ -11,10 +11,14 @@ use Oro\Bundle\EntityConfigBundle\Config\Id\ConfigIdInterface;
 
 class ConfigMigration
 {
-    /** @var ManagerRegistry */
+    /**
+     * @var ManagerRegistry
+     */
     private $managerRegistry;
 
-    /** @var ConfigManager */
+    /**
+     * @var ConfigManager
+     */
     private $configManager;
 
     /**

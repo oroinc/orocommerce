@@ -29,7 +29,7 @@ class AccountUserPasswordRequestHandlerTest extends AbstractAccountUserPasswordH
 
         $this->assertFormErrorAdded(
             $emailSubform,
-            'oro.customer.accountuser.profile.email_not_exists',
+            'oro.customer.customeruser.profile.email_not_exists',
             ['%email%' => $email]
         );
 
@@ -41,7 +41,7 @@ class AccountUserPasswordRequestHandlerTest extends AbstractAccountUserPasswordH
         $email = 'test@test.com';
         $token = 'answerisfourtytwo';
 
-        $user = $this->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\AccountUser')
+        $user = $this->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\CustomerUser')
             ->disableOriginalConstructor()
             ->getMock();
         $user->expects($this->once())
@@ -77,7 +77,7 @@ class AccountUserPasswordRequestHandlerTest extends AbstractAccountUserPasswordH
         $email = 'test@test.com';
         $token = 'answerisfourtytwo';
 
-        $user = $this->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\AccountUser')
+        $user = $this->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\CustomerUser')
             ->disableOriginalConstructor()
             ->getMock();
 

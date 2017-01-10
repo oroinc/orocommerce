@@ -149,7 +149,7 @@ class DiscountSubtotalProviderTest extends AbstractSubtotalProviderTest
             ->with('oro.order.subtotals.' . DiscountSubtotalProvider::TYPE)
             ->willReturn(ucfirst(DiscountSubtotalProvider::TYPE));
 
-        $accountUser = $this->createMock('Oro\Bundle\CustomerBundle\Entity\AccountUser');
+        $accountUser = $this->createMock('Oro\Bundle\CustomerBundle\Entity\CustomerUser');
         $this->securityFacade->expects($this->once())
             ->method('getLoggedUser')
             ->willReturn($accountUser);

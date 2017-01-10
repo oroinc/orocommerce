@@ -7,7 +7,7 @@ use FOS\RestBundle\Routing\ClassResourceInterface;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Symfony\Component\HttpFoundation\Response;
 
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
@@ -27,7 +27,7 @@ class AccountGroupController extends RestController implements ClassResourceInte
      * @Acl(
      *      id="oro_customer_account_group_delete",
      *      type="entity",
-     *      class="OroCustomerBundle:AccountGroup",
+     *      class="OroCustomerBundle:CustomerGroup",
      *      permission="DELETE"
      * )
      *
@@ -36,9 +36,9 @@ class AccountGroupController extends RestController implements ClassResourceInte
      */
     public function deleteAction($id)
     {
-        /** @var AccountGroup $accountGroup */
+        /** @var CustomerGroup $accountGroup */
         $accountGroup = $this->get('oro_api.doctrine_helper')
-            ->getEntityRepository('OroCustomerBundle:AccountGroup')
+            ->getEntityRepository('OroCustomerBundle:CustomerGroup')
             ->find($id);
         if ($accountGroup) {
             $this->get('event_dispatcher')

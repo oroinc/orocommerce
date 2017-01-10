@@ -7,7 +7,7 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Form\Extension\OroEntitySelectOrCreateInlineExtension;
 
 class OroEntitySelectOrCreateInlineExtensionTest extends AbstractAccountUserAwareExtensionTest
@@ -72,8 +72,8 @@ class OroEntitySelectOrCreateInlineExtensionTest extends AbstractAccountUserAwar
     {
         return [
             [new \stdClass(), 'oro_form_autocomplete_search', 'oro_form_autocomplete_search'],
-            [new AccountUser(), 'custom_route', 'custom_route'],
-            [new AccountUser(), 'oro_form_autocomplete_search', 'oro_frontend_autocomplete_search'],
+            [new CustomerUser(), 'custom_route', 'custom_route'],
+            [new CustomerUser(), 'oro_form_autocomplete_search', 'oro_frontend_autocomplete_search'],
         ];
     }
 }

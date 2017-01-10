@@ -9,7 +9,7 @@ use Symfony\Component\Form\FormInterface;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\TaxBundle\Entity\AbstractTaxCode;
 use Oro\Bundle\TaxBundle\Form\Extension\AbstractTaxExtension;
@@ -38,7 +38,7 @@ abstract class AbstractTaxExtensionTest extends \PHPUnit_Framework_TestCase
             ->method('getEntityIdentifier')
             ->willReturnCallback(
                 function ($entity) {
-                    /** @var Account|Product $entity */
+                    /** @var Customer|Product $entity */
                     return $entity->getId();
                 }
             );

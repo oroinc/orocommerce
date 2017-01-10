@@ -6,7 +6,7 @@ use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 
 abstract class AbstractAccountUserAwareExtensionTest extends \PHPUnit_Framework_TestCase
 {
@@ -50,7 +50,7 @@ abstract class AbstractAccountUserAwareExtensionTest extends \PHPUnit_Framework_
     protected function assertAccountUserTokenCall($user = null)
     {
         if (!$user) {
-            $user = new AccountUser();
+            $user = new CustomerUser();
         }
         $token = $this->createMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
         $token->expects($this->once())

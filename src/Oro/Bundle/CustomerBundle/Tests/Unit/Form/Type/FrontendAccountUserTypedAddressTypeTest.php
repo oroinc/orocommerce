@@ -6,7 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Genemu\Bundle\FormBundle\Form\JQuery\Type\Select2Type;
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Form\Type\FrontendAccountUserTypedAddressType;
 use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\AccountTypedAddressWithDefaultTypeStub;
 use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\AddressTypeStub;
@@ -121,7 +121,7 @@ class FrontendAccountUserTypedAddressTypeTest extends AccountTypedAddressTypeTes
             ->setTypes(new ArrayCollection([$this->billingType, $this->shippingType]))
             ->setDefaults(new ArrayCollection([$this->billingType, $this->shippingType]));
 
-        $accountUser = new AccountUser();
+        $accountUser = new CustomerUser();
         $accountUser->addAddress($accountAddress1);
         $accountUser->addAddress($accountAddress2);
 

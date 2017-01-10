@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\Layout\DataProvider;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
@@ -105,7 +105,7 @@ class CategoryProviderTest extends \PHPUnit_Framework_TestCase
         $rootCategory->setLevel(0);
         $rootCategory->addChildCategory($mainCategory);
 
-        $user = new AccountUser();
+        $user = new CustomerUser();
 
         $this->categoryRepository
             ->expects($this->once())

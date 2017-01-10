@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Placeholder;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
 use Oro\Bundle\PricingBundle\Placeholder\CPLIdPlaceholder;
@@ -53,8 +53,8 @@ class CPLIdPlaceholderTest extends \PHPUnit_Framework_TestCase
 
     public function testReplaceDefault()
     {
-        $user = new AccountUser();
-        $account = new Account();
+        $user = new CustomerUser();
+        $account = new Customer();
         $user->setAccount($account);
 
         $token = $this->createMock(TokenInterface::class);
@@ -99,8 +99,8 @@ class CPLIdPlaceholderTest extends \PHPUnit_Framework_TestCase
      */
     public function testReplaceDefaultCplNotFound()
     {
-        $user = new AccountUser();
-        $account = new Account();
+        $user = new CustomerUser();
+        $account = new Customer();
         $user->setAccount($account);
 
         $token = $this->createMock(TokenInterface::class);

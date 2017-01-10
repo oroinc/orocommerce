@@ -10,18 +10,18 @@ layout:
         - '@setOption':
             id: login_label
             optionName: text
-            optionValue: oro.customer.accountuser.profile.login
+            optionValue: oro.customer.customeruser.profile.login
         - '@setOption':
             id: login_form_submit
             optionName: text
-            optionValue: oro.customer.accountuser.profile.login
+            optionValue: oro.customer.customeruser.profile.login
         - '@add':
             id: login_link_forgot
             parentId: login_links
             blockType: link
             options:
                 route_name: oro_customer_frontend_account_user_reset_request
-                text: oro.customer.accountuser.profile.forgot_password
+                text: oro.customer.customeruser.profile.forgot_password
         - '@add':
             id: login_link_register
             parentId: login_links
@@ -29,7 +29,7 @@ layout:
             options:
                 visible: '=data["registrationAllowed"]==true'
                 route_name: oro_customer_frontend_account_user_register
-                text: oro.customer.accountuser.profile.create_an_account
+                text: oro.customer.customeruser.profile.create_an_account
 
         - '@changeBlockType':
             id: login_form
@@ -53,16 +53,16 @@ layout:
                         id: userNameSignIn
                         name: _username
                         value: '=data["oro_account_sign_in"].getLastName()'
-                        placeholder: oro.customer.accountuser.placeholder.email
-                        label: oro.customer.accountuser.email.label
+                        placeholder: oro.customer.customeruser.placeholder.email
+                        label: oro.customer.customeruser.email.label
                 login_form_password:
                     blockType: input
                     options:
                         type: password
                         id: passwordSignIn
                         name: _password
-                        placeholder: oro.customer.accountuser.placeholder.password
-                        label: oro.customer.accountuser.password.label
+                        placeholder: oro.customer.customeruser.placeholder.password
+                        label: oro.customer.customeruser.password.label
                 login_form_remember:
                     blockType: input
                     options:
@@ -70,7 +70,7 @@ layout:
                         id: rememberMe
                         name: _remember_me
                         value: on
-                        label: oro.customer.accountuser.profile.remember_me
+                        label: oro.customer.customeruser.profile.remember_me
                 login_form_target:
                     blockType: input
                     options:

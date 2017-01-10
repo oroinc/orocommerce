@@ -3,8 +3,8 @@
 namespace Oro\Bundle\PricingBundle\Model;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
@@ -71,10 +71,10 @@ class PriceListRelationTriggerHandler
     }
 
     /**
-     * @param Account $account
+     * @param Customer $account
      * @param Website $website
      */
-    public function handleAccountChange(Account $account, Website $website)
+    public function handleAccountChange(Customer $account, Website $website)
     {
         $trigger = $this->triggerFactory->create();
         $trigger->setAccount($account)
@@ -90,10 +90,10 @@ class PriceListRelationTriggerHandler
     }
 
     /**
-     * @param AccountGroup $accountGroup
+     * @param CustomerGroup $accountGroup
      * @param Website $website
      */
-    public function handleAccountGroupChange(AccountGroup $accountGroup, Website $website)
+    public function handleAccountGroupChange(CustomerGroup $accountGroup, Website $website)
     {
         $trigger = $this->triggerFactory->create();
         $trigger->setAccountGroup($accountGroup)
@@ -142,9 +142,9 @@ class PriceListRelationTriggerHandler
     }
 
     /**
-     * @param AccountGroup $accountGroup
+     * @param CustomerGroup $accountGroup
      */
-    public function handleAccountGroupRemove(AccountGroup $accountGroup)
+    public function handleAccountGroupRemove(CustomerGroup $accountGroup)
     {
         $iterator = $this->registry->getRepository(PriceListToAccount::class)
             ->getAccountWebsitePairsByAccountGroupIterator($accountGroup);

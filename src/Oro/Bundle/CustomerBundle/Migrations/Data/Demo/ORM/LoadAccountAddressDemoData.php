@@ -5,7 +5,7 @@ namespace Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 
 class LoadAccountAddressDemoData extends AbstractLoadAddressDemoData implements DependentFixtureInterface
@@ -34,10 +34,10 @@ class LoadAccountAddressDemoData extends AbstractLoadAddressDemoData implements 
         $handler = fopen($filePath, 'r');
         $headers = fgetcsv($handler, 1000, ',');
 
-        /** @var AccountUser[] $accountUsers */
+        /** @var CustomerUser[] $accountUsers */
         $accountUsers = $this->getDemoAccountUsers();
 
-        /** @var AccountUser[] $accountUserByEmail */
+        /** @var CustomerUser[] $accountUserByEmail */
         $accountUserByEmail = [];
         foreach ($accountUsers as $accountUser) {
             $accountUserByEmail[$accountUser->getEmail()] = $accountUser;
@@ -62,7 +62,7 @@ class LoadAccountAddressDemoData extends AbstractLoadAddressDemoData implements 
     }
 
     /**
-     * @return AccountUser[]
+     * @return CustomerUser[]
      */
     protected function getDemoAccountUsers()
     {

@@ -4,14 +4,14 @@ namespace Oro\Bundle\PricingBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 
 /**
  * @ORM\Table(
- *      name="oro_cmb_price_list_to_acc",
+ *      name="oro_cmb_price_list_to_cus",
  *      uniqueConstraints={
- *          @ORM\UniqueConstraint(name="oro_cpl_to_acc_ws_unq", columns={
- *              "account_id",
+ *          @ORM\UniqueConstraint(name="oro_cpl_to_cus_ws_unq", columns={
+ *              "customer_id",
  *              "website_id"
  *          })
  *      }
@@ -21,15 +21,15 @@ use Oro\Bundle\CustomerBundle\Entity\Account;
 class CombinedPriceListToAccount extends BaseCombinedPriceListRelation
 {
     /**
-     * @var Account
+     * @var Customer
      *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\Account")
-     * @ORM\JoinColumn(name="account_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\Customer")
+     * @ORM\JoinColumn(name="customer_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
      */
     protected $account;
 
     /**
-     * @return Account
+     * @return Customer
      */
     public function getAccount()
     {
@@ -37,10 +37,10 @@ class CombinedPriceListToAccount extends BaseCombinedPriceListRelation
     }
 
     /**
-     * @param Account $account
+     * @param Customer $account
      * @return $this
      */
-    public function setAccount(Account $account)
+    public function setAccount(Customer $account)
     {
         $this->account = $account;
 

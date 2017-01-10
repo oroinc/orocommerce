@@ -7,7 +7,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Translation\TranslatorInterface;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserManager;
 
 abstract class AbstractAccountUserPasswordHandler
@@ -35,7 +35,7 @@ abstract class AbstractAccountUserPasswordHandler
     /**
      * @param FormInterface $form
      * @param Request $request
-     * @return AccountUser|bool
+     * @return CustomerUser|bool
      */
     abstract public function process(FormInterface $form, Request $request);
 

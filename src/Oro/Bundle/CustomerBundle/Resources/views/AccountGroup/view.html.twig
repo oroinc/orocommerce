@@ -9,7 +9,7 @@
     {% set breadcrumbs = {
         'entity': entity,
         'indexPath': path('oro_customer_account_group_index'),
-        'indexLabel': 'oro.customer.accountgroup.entity_plural_label'|trans,
+        'indexLabel': 'oro.customer.customergroup.entity_plural_label'|trans,
         'entityTitle': entity.name|default('N/A'|trans)
     } %}
 
@@ -26,7 +26,7 @@
             'aCss': 'no-hash remove-button',
             'dataId': entity.id,
             'id': 'btn-remove-attribute',
-            'entity_label': 'oro.customer.accountgroup.entity_label'|trans,
+            'entity_label': 'oro.customer.customergroup.entity_label'|trans,
         }) }}
     {% endif %}
 {% endblock navButtons %}

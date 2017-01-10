@@ -52,7 +52,7 @@ class TaxRule
      * @var AccountTaxCode
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\TaxBundle\Entity\AccountTaxCode")
-     * @ORM\JoinColumn(name="account_tax_code_id", referencedColumnName="id", onDelete="CASCADE")
+     * @ORM\JoinColumn(name="customer_tax_code_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $accountTaxCode;
 

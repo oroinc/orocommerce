@@ -55,7 +55,7 @@ class AccountUserProfileController extends Controller
             $form,
             ['route' => 'oro_customer_frontend_account_user_profile_update'],
             ['route' => 'oro_customer_frontend_account_user_profile'],
-            $this->get('translator')->trans('oro.customer.controller.accountuser.profile_updated.message'),
+            $this->get('translator')->trans('oro.customer.controller.customeruser.profile_updated.message'),
             $handler
         );
 

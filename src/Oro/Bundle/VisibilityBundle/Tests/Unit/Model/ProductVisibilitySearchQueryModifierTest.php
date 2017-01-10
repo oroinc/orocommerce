@@ -9,8 +9,8 @@ use Doctrine\Common\Collections\Expr\Value;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\VisibilityBundle\Indexer\ProductVisibilityIndexer;
 use Oro\Bundle\VisibilityBundle\Model\ProductVisibilitySearchQueryModifier;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -68,12 +68,12 @@ class ProductVisibilitySearchQueryModifierTest extends \PHPUnit_Framework_TestCa
             )
             ->willReturn('visibility_account_1');
 
-        $account = new Account();
-        $reflection = new \ReflectionProperty(Account::class, 'id');
+        $account = new Customer();
+        $reflection = new \ReflectionProperty(Customer::class, 'id');
         $reflection->setAccessible(true);
         $reflection->setValue($account, 1);
 
-        $accountUser = new AccountUser();
+        $accountUser = new CustomerUser();
         $accountUser->setAccount($account);
 
         $token = $this

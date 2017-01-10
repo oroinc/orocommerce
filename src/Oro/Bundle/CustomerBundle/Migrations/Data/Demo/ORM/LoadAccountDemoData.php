@@ -5,10 +5,10 @@ namespace Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\MigrationBundle\Fixture\AbstractEntityReferenceFixture;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 
 class LoadAccountDemoData extends AbstractEntityReferenceFixture implements DependentFixtureInterface
 {
@@ -56,7 +56,7 @@ class LoadAccountDemoData extends AbstractEntityReferenceFixture implements Depe
     {
         $internalRatings = $this->getObjectReferencesByIds(
             $manager,
-            ExtendHelper::buildEnumValueClassName(Account::INTERNAL_RATING_CODE),
+            ExtendHelper::buildEnumValueClassName(Customer::INTERNAL_RATING_CODE),
             LoadAccountInternalRatingDemoData::getDataKeys()
         );
 
@@ -64,12 +64,12 @@ class LoadAccountDemoData extends AbstractEntityReferenceFixture implements Depe
         $accountOwner = $manager->getRepository('OroUserBundle:User')->findOneBy([]);
 
         foreach ($this->accounts as $accountName => $accountData) {
-            /** @var AccountGroup $accountGroup */
+            /** @var CustomerGroup $accountGroup */
             $accountGroup = $this->getReference(
                 LoadAccountGroupDemoData::ACCOUNT_GROUP_REFERENCE_PREFIX . $accountData['group']
             );
 
-            $account = new Account();
+            $account = new Customer();
             $account
                 ->setName($accountName)
                 ->setGroup($accountGroup)
@@ -83,11 +83,11 @@ class LoadAccountDemoData extends AbstractEntityReferenceFixture implements Depe
 
             if (isset($accountData['subsidiaries'])) {
                 foreach ($accountData['subsidiaries'] as $subsidiaryName => $subsidiaryData) {
-                    /** @var AccountGroup $subsidiaryGroup */
+                    /** @var CustomerGroup $subsidiaryGroup */
                     $subsidiaryGroup = $this->getReference(
                         LoadAccountGroupDemoData::ACCOUNT_GROUP_REFERENCE_PREFIX . $subsidiaryData['group']
                     );
-                    $subsidiary = new Account();
+                    $subsidiary = new Customer();
                     $subsidiary
                         ->setName($subsidiaryName)
                         ->setGroup($subsidiaryGroup)

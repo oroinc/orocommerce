@@ -14,7 +14,7 @@ use Oro\Bundle\LayoutBundle\Layout\DataProvider\AbstractFormProvider;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Entity\UserManager;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Form\Type\FrontendAccountUserRegistrationType;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
@@ -83,13 +83,13 @@ class FrontendAccountUserRegistrationFormProvider extends AbstractFormProvider
     }
 
     /**
-     * @return AccountUser
+     * @return CustomerUser
      *
      * TODO: remove logic with creating new account user from data provider
      */
     private function createAccountUser()
     {
-        $accountUser = new AccountUser();
+        $accountUser = new CustomerUser();
 
         $defaultOwnerId = $this->configManager->get('oro_customer.default_account_owner');
         if (!$defaultOwnerId) {
@@ -108,12 +108,12 @@ class FrontendAccountUserRegistrationFormProvider extends AbstractFormProvider
         }
 
         $defaultRole = $this->managerRegistry
-            ->getManagerForClass('OroCustomerBundle:AccountUserRole')
-            ->getRepository('OroCustomerBundle:AccountUserRole')
-            ->getDefaultAccountUserRoleByWebsite($website);
+            ->getManagerForClass('OroCustomerBundle:CustomerUserRole')
+            ->getRepository('OroCustomerBundle:CustomerUserRole')
+            ->getDefaultCustomerUserRoleByWebsite($website);
 
         if (!$defaultRole) {
-            throw new \RuntimeException(sprintf('Role "%s" was not found', AccountUser::ROLE_DEFAULT));
+            throw new \RuntimeException(sprintf('Role "%s" was not found', CustomerUser::ROLE_DEFAULT));
         }
 
         /** @var User $owner */

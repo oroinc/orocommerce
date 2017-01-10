@@ -38,7 +38,7 @@ class OroOrderBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_10';
+        return 'v1_11';
     }
 
     /**
@@ -134,8 +134,8 @@ class OroOrderBundleInstaller implements
             'money',
             ['notnull' => false, 'precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']
         );
-        $table->addColumn('account_id', 'integer', ['notnull' => false]);
-        $table->addColumn('account_user_id', 'integer', ['notnull' => false]);
+        $table->addColumn('customer_id', 'integer', ['notnull' => false]);
+        $table->addColumn('customer_user_id', 'integer', ['notnull' => false]);
         $table->addColumn('source_entity_class', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('source_entity_id', 'integer', ['notnull' => false]);
         $table->addColumn('source_entity_identifier', 'string', ['notnull' => false, 'length' => 255]);
@@ -290,14 +290,14 @@ class OroOrderBundleInstaller implements
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_account'),
-            ['account_id'],
+            $schema->getTable('oro_customer'),
+            ['customer_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_account_user'),
-            ['account_user_id'],
+            $schema->getTable('oro_customer_user'),
+            ['customer_user_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );

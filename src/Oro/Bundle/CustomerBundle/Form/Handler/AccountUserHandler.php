@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 use Oro\Bundle\SecurityBundle\Authentication\Token\OrganizationContextTokenInterface;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserManager;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -61,10 +61,10 @@ class AccountUserHandler
     /**
      * Process form
      *
-     * @param AccountUser $accountUser
+     * @param CustomerUser $accountUser
      * @return bool True on successful processing, false otherwise
      */
-    public function process(AccountUser $accountUser)
+    public function process(CustomerUser $accountUser)
     {
         if (in_array($this->request->getMethod(), ['POST', 'PUT'], true)) {
             $this->form->submit($this->request);
@@ -86,7 +86,7 @@ class AccountUserHandler
                             $session->getFlashBag()->add(
                                 'error',
                                 $this->translator
-                                    ->trans('oro.customer.controller.accountuser.welcome_failed.message')
+                                    ->trans('oro.customer.controller.customeruser.welcome_failed.message')
                             );
                         }
                     }

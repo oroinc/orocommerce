@@ -5,7 +5,7 @@ namespace Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData as TestAccountUserData;
 use Oro\Bundle\OrderBundle\Entity\Order;
@@ -107,8 +107,8 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface, C
         if (!$user->getOrganization()) {
             $user->setOrganization($manager->getRepository('OroOrganizationBundle:Organization')->findOneBy([]));
         }
-        /** @var AccountUser $accountUser */
-        $accountUser = $manager->getRepository('OroCustomerBundle:AccountUser')
+        /** @var CustomerUser $accountUser */
+        $accountUser = $manager->getRepository('OroCustomerBundle:CustomerUser')
             ->findOneBy(['username' => $orderData['accountUser']]);
 
         /** @var PaymentTerm $paymentTerm */

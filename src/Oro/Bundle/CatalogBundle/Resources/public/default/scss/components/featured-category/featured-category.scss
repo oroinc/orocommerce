@@ -1,6 +1,5 @@
 .featured-category {
     display: inline-block;
-    margin-top: 52px;
 
     vertical-align: top;
 
@@ -21,18 +20,19 @@
     }
 
     &__name {
-        font-size: 18px;
+        padding-top: 8px;
+
+        font-size: $base-font-size--m;
         font-weight: normal;
         line-height: normal;
-
-        padding-top: 8px;
     }
 
     &__qty {
-        line-height: normal;
-
         margin-bottom: -2px;
         padding-top: 2px;
+
+        font-size: $base-font-size--s;
+        line-height: normal;
     }
 
     &:hover {
@@ -48,14 +48,10 @@
 
 @include breakpoint('mobile') {
     .featured-category {
-        margin-top: 20px;
+        margin-top: 10px;
 
         &__name {
-            font-size: $base-font-size;
-        }
-
-        &__qty {
-            font-size: 10px;
+            font-size: $base-font-size--m;
         }
     }
 }

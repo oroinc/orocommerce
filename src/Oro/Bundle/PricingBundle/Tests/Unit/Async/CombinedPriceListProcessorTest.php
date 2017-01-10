@@ -5,8 +5,8 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Async;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManagerInterface;
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
 use Oro\Bundle\PricingBundle\Async\CombinedPriceListProcessor;
 use Oro\Bundle\PricingBundle\Builder\AccountCombinedPriceListsBuilder;
@@ -210,11 +210,11 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
      */
     public function processDataProvider()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|Account $account */
-        $account = $this->createMock(Account::class);
+        /** @var \PHPUnit_Framework_MockObject_MockObject|Customer $account */
+        $account = $this->createMock(Customer::class);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|AccountGroup $accountGroup */
-        $accountGroup = $this->createMock('Oro\Bundle\CustomerBundle\Entity\AccountGroup');
+        /** @var \PHPUnit_Framework_MockObject_MockObject|CustomerGroup $accountGroup */
+        $accountGroup = $this->createMock('Oro\Bundle\CustomerBundle\Entity\CustomerGroup');
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|Website $website */
         $website = $this->createMock(Website::class);
@@ -276,8 +276,8 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
         $session = $this->createMock(SessionInterface::class);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|Account $account */
-        $account = $this->createMock(Account::class);
+        /** @var \PHPUnit_Framework_MockObject_MockObject|Customer $account */
+        $account = $this->createMock(Customer::class);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|Website $website */
         $website = $this->createMock(Website::class);
@@ -352,8 +352,8 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
         $session = $this->createMock(SessionInterface::class);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|AccountGroup $account */
-        $accountGroup = $this->createMock(AccountGroup::class);
+        /** @var \PHPUnit_Framework_MockObject_MockObject|CustomerGroup $account */
+        $accountGroup = $this->createMock(CustomerGroup::class);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|Website $website */
         $website = $this->createMock(Website::class);

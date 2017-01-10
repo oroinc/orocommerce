@@ -73,28 +73,28 @@ services:
         tags:
             - { name: form.type, alias: oro_account_account_user }
 
-    oro_customer.form.type.account_user_role_select:
-        class: 'Oro\Bundle\CustomerBundle\Form\Type\AccountUserRoleSelectType'
+    oro_customer.form.type.customer_user_role_select:
+        class: 'Oro\Bundle\CustomerBundle\Form\Type\CustomerUserRoleSelectType'
         arguments:
             - '@translator'
         calls:
-            - [setRoleClass, ['%oro_customer.entity.account_user_role.class%']]
+            - [setRoleClass, ['%oro_customer.entity.customer_user_role.class%']]
         tags:
-            - { name: form.type, alias: oro_account_account_user_role_select }
+            - { name: form.type, alias: oro_account_customer_user_role_select }
 
-    oro_customer.form.type.account_user_role:
-        class: 'Oro\Bundle\CustomerBundle\Form\Type\AccountUserRoleType'
+    oro_customer.form.type.customer_user_role:
+        class: 'Oro\Bundle\CustomerBundle\Form\Type\CustomerUserRoleType'
         calls:
-            - [setDataClass, ['%oro_customer.entity.account_user_role.class%']]
+            - [setDataClass, ['%oro_customer.entity.customer_user_role.class%']]
         tags:
-            - { name: form.type, alias: oro_account_account_user_role }
+            - { name: form.type, alias: oro_account_customer_user_role }
 
-    oro_customer.form.type.frontend.account_user_role:
-        class: 'Oro\Bundle\CustomerBundle\Form\Type\FrontendAccountUserRoleType'
+    oro_customer.form.type.frontend.customer_user_role:
+        class: 'Oro\Bundle\CustomerBundle\Form\Type\FrontendCustomerUserRoleType'
         calls:
-            - [setDataClass, ['%oro_customer.entity.account_user_role.class%']]
+            - [setDataClass, ['%oro_customer.entity.customer_user_role.class%']]
         tags:
-            - { name: form.type, alias: oro_account_frontend_account_user_role }
+            - { name: form.type, alias: oro_account_frontend_customer_user_role }
 
     oro_customer.form.type.frontend.account_user_profile:
         class: 'Oro\Bundle\CustomerBundle\Form\Type\FrontendAccountUserProfileType'
@@ -112,16 +112,16 @@ services:
         tags:
             - { name: form.type, alias: oro_account_frontend_account_user }
 
-    oro_customer.form.type.frontend.account_user_role_select:
-        class: 'Oro\Bundle\CustomerBundle\Form\Type\FrontendAccountUserRoleSelectType'
+    oro_customer.form.type.frontend.customer_user_role_select:
+        class: 'Oro\Bundle\CustomerBundle\Form\Type\FrontendCustomerUserRoleSelectType'
         arguments:
             - '@oro_security.security_facade'
             - '@doctrine'
             - '@oro_security.acl_helper'
         calls:
-            - [setRoleClass, ['%oro_customer.entity.account_user_role.class%']]
+            - [setRoleClass, ['%oro_customer.entity.customer_user_role.class%']]
         tags:
-            - { name: form.type, alias: oro_account_frontend_account_user_role_select }
+            - { name: form.type, alias: oro_account_frontend_customer_user_role_select }
 
     oro_customer.form.type.frontend.account_user.register:
         class: 'Oro\Bundle\CustomerBundle\Form\Type\FrontendAccountUserRegistrationType'
@@ -145,9 +145,9 @@ services:
         tags:
             - { name: form.type, alias: oro_account_account_user_password_reset }
 
-    oro_customer.form.handler.update_account_user_role:
+    oro_customer.form.handler.update_customer_user_role:
         parent: oro_user.form.handler.abstract.acl_role
-        class: 'Oro\Bundle\CustomerBundle\Form\Handler\AccountUserRoleUpdateHandler'
+        class: 'Oro\Bundle\CustomerBundle\Form\Handler\CustomerUserRoleUpdateHandler'
         scope: prototype
         calls:
             - [setRequestStack, ['@request_stack']]
@@ -157,9 +157,9 @@ services:
             - [addExtensionFilter, ['entity', 'commerce']]
             - [addExtensionFilter, ['action', 'commerce']]
 
-    oro_customer.form.handler.update_account_user_role_frontend:
-        parent: oro_customer.form.handler.update_account_user_role
-        class: 'Oro\Bundle\CustomerBundle\Form\Handler\AccountUserRoleUpdateFrontendHandler'
+    oro_customer.form.handler.update_customer_user_role_frontend:
+        parent: oro_customer.form.handler.update_customer_user_role
+        class: 'Oro\Bundle\CustomerBundle\Form\Handler\CustomerUserRoleUpdateFrontendHandler'
         scope: prototype
         calls:
             - [setTokenStorage, ['@security.token_storage']]
