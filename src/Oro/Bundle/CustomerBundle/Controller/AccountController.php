@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Form\Type\AccountType;
 
 class AccountController extends Controller
@@ -35,14 +35,14 @@ class AccountController extends Controller
      * @Acl(
      *      id="oro_customer_account_view",
      *      type="entity",
-     *      class="OroCustomerBundle:Account",
+     *      class="OroCustomerBundle:Customer",
      *      permission="VIEW"
      * )
      *
-     * @param Account $account
+     * @param Customer $account
      * @return array
      */
-    public function viewAction(Account $account)
+    public function viewAction(Customer $account)
     {
         return [
             'entity' => $account,
@@ -55,7 +55,7 @@ class AccountController extends Controller
      * @Acl(
      *      id="oro_customer_create",
      *      type="entity",
-     *      class="OroCustomerBundle:Account",
+     *      class="OroCustomerBundle:Customer",
      *      permission="CREATE"
      * )
      *
@@ -63,7 +63,7 @@ class AccountController extends Controller
      */
     public function createAction()
     {
-        return $this->update(new Account());
+        return $this->update(new Customer());
     }
 
     /**
@@ -72,34 +72,34 @@ class AccountController extends Controller
      * @Acl(
      *      id="oro_customer_account_update",
      *      type="entity",
-     *      class="OroCustomerBundle:Account",
+     *      class="OroCustomerBundle:Customer",
      *      permission="EDIT"
      * )
      *
-     * @param Account $account
+     * @param Customer $account
      * @return array
      */
-    public function updateAction(Account $account)
+    public function updateAction(Customer $account)
     {
         return $this->update($account);
     }
 
     /**
-     * @param Account $account
+     * @param Customer $account
      * @return array|RedirectResponse
      */
-    protected function update(Account $account)
+    protected function update(Customer $account)
     {
         return $this->get('oro_form.model.update_handler')->handleUpdate(
             $account,
             $this->createForm(AccountType::NAME, $account),
-            function (Account $account) {
+            function (Customer $account) {
                 return [
                     'route' => 'oro_customer_account_update',
                     'parameters' => ['id' => $account->getId()],
                 ];
             },
-            function (Account $account) {
+            function (Customer $account) {
                 return [
                     'route' => 'oro_customer_account_view',
                     'parameters' => ['id' => $account->getId()],
@@ -114,10 +114,10 @@ class AccountController extends Controller
      * @Template("OroCustomerBundle:Account/widget:info.html.twig")
      * @AclAncestor("oro_customer_account_view")
      *
-     * @param Account $account
+     * @param Customer $account
      * @return array
      */
-    public function infoAction(Account $account)
+    public function infoAction(Customer $account)
     {
         return [
             'entity' => $account,

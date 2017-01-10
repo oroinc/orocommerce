@@ -12,8 +12,8 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\UserBundle\Entity\BaseUserManager;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData as UserData;
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 
 class LoadAccountUserData extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
 {
@@ -121,17 +121,19 @@ class LoadAccountUserData extends AbstractFixture implements DependentFixtureInt
         /** @var BaseUserManager $userManager */
         $userManager = $this->container->get('oro_account_user.manager');
         $owner = $this->getFirstUser($manager);
-        $role = $manager->getRepository('OroCustomerBundle:AccountUserRole')->findOneBy([]);
+        $role = $manager->getRepository('OroCustomerBundle:CustomerUserRole')->findOneBy([
+            'role' => 'ROLE_FRONTEND_ADMINISTRATOR'
+        ]);
         foreach (static::$users as $user) {
             if (isset($user['account'])) {
-                /** @var Account $account */
+                /** @var Customer $account */
                 $account = $this->getReference($user['account']);
             } else {
-                $accountUser = $manager->getRepository('OroCustomerBundle:AccountUser')
+                $accountUser = $manager->getRepository('OroCustomerBundle:CustomerUser')
                     ->findOneBy(['username' => UserData::AUTH_USER]);
                 $account = $accountUser->getAccount();
             }
-            $entity = new AccountUser();
+            $entity = new CustomerUser();
             $entity
                 ->setAccount($account)
                 ->setOwner($owner)

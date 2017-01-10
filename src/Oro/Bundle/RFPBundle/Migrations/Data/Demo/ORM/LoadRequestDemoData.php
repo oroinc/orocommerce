@@ -12,7 +12,7 @@ use Doctrine\ORM\EntityManager;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\MigrationBundle\Fixture\AbstractEntityReferenceFixture;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Entity\RequestProduct;
@@ -130,11 +130,11 @@ class LoadRequestDemoData extends AbstractEntityReferenceFixture implements
 
     /**
      * @param ObjectManager $manager
-     * @return AccountUser[]
+     * @return CustomerUser[]
      */
     protected function getAccountUsers(ObjectManager $manager)
     {
-        return array_merge([null], $manager->getRepository('OroCustomerBundle:AccountUser')->findBy([], null, 10));
+        return array_merge([null], $manager->getRepository('OroCustomerBundle:CustomerUser')->findBy([], null, 10));
     }
 
     /**

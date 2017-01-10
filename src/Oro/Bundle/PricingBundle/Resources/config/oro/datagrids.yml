@@ -215,7 +215,7 @@ datagrids:
                         - { join: priceListToAccountGroup.accountGroup, alias: relatedEntity }
         columns:
             name:
-                label: oro.customer.accountgroup.name.label
+                label: oro.customer.customergroup.name.label
         properties:
             view_link:
                 route:  oro_customer_account_group_view
@@ -330,7 +330,7 @@ datagrids:
                         - { join: %oro_pricing.entity.price_list.class%, alias: priceList, conditionType: 'WITH', condition: 'relatedEntity MEMBER OF priceList.accountGroups' }
         columns:
             name:
-                label:          oro.customer.accountgroup.name.label
+                label:          oro.customer.customergroup.name.label
         options:
             rowSelection:
                 selectors:

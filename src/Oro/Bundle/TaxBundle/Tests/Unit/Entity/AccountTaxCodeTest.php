@@ -3,8 +3,8 @@
 namespace Oro\Bundle\TaxBundle\Tests\Unit\Entity;
 
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\TaxBundle\Entity\AccountTaxCode;
 use Oro\Bundle\TaxBundle\Model\TaxCodeInterface;
 
@@ -31,8 +31,8 @@ class AccountTaxCodeTest extends \PHPUnit_Framework_TestCase
     public function testRelations()
     {
         $this->assertPropertyCollections($this->createAccountTaxCode(), [
-            ['accounts', new Account()],
-            ['accountGroups', new AccountGroup()],
+            ['accounts', new Customer()],
+            ['accountGroups', new CustomerGroup()],
         ]);
     }
 

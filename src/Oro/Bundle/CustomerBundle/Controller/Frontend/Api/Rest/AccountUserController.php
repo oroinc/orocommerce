@@ -26,7 +26,7 @@ class AccountUserController extends RestController implements ClassResourceInter
      * @Acl(
      *      id="oro_account_frontend_account_user_delete",
      *      type="entity",
-     *      class="OroCustomerBundle:AccountUser",
+     *      class="OroCustomerBundle:CustomerUser",
      *      permission="DELETE",
      *      group_name="commerce"
      * )

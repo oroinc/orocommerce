@@ -4,9 +4,9 @@ namespace Oro\Bundle\CustomerBundle\Tests\Functional\Security;
 
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Entity\AccountUserRole;
-use Oro\Bundle\CustomerBundle\Migrations\Data\ORM\LoadAccountUserRoles;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
+use Oro\Bundle\CustomerBundle\Migrations\Data\ORM\LoadCustomerUserRoles;
 use Oro\Bundle\CustomerBundle\Security\AccountUserProvider;
 
 /**
@@ -33,13 +33,16 @@ class AccountUserProviderTest extends WebTestCase
         $this->client->request('GET', $this->getUrl('oro_customer_frontend_account_user_profile'));
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
-        $this->assertRoleHasPermission(LoadAccountUserRoles::ADMINISTRATOR, [true, true, true, true, true, true, true]);
-        $this->assertRoleHasPermission(LoadAccountUserRoles::BUYER, [true, false, true, false, false, false, true]);
+        $this->assertRoleHasPermission(
+            LoadCustomerUserRoles::ADMINISTRATOR,
+            [true, true, true, true, true, true, true]
+        );
+        $this->assertRoleHasPermission(LoadCustomerUserRoles::BUYER, [true, false, true, false, false, false, true]);
 
         $roleName = 'DENIED';
-        $role = new AccountUserRole(AccountUserRole::PREFIX_ROLE . $roleName);
+        $role = new CustomerUserRole(CustomerUserRole::PREFIX_ROLE . $roleName);
         $role->setLabel($roleName);
-        $className = $this->getContainer()->getParameter('oro_customer.entity.account_user_role.class');
+        $className = $this->getContainer()->getParameter('oro_customer.entity.customer_user_role.class');
         $em = $this->getContainer()->get('doctrine')->getManagerForClass($className);
         $em->persist($role);
         $em->flush();
@@ -53,17 +56,17 @@ class AccountUserProviderTest extends WebTestCase
      */
     protected function assertRoleHasPermission($roleName, array $expected)
     {
-        $className = $this->getContainer()->getParameter('oro_customer.entity.account_user_role.class');
+        $className = $this->getContainer()->getParameter('oro_customer.entity.customer_user_role.class');
         $em = $this->getContainer()->get('doctrine')->getManagerForClass($className);
         $repository = $em->getRepository($className);
 
-        $role = $repository->findOneBy(['role' => AccountUserRole::PREFIX_ROLE . $roleName]);
+        $role = $repository->findOneBy(['role' => CustomerUserRole::PREFIX_ROLE . $roleName]);
         $this->assertNotEmpty($role);
 
         /* @var $securityProvider AccountUserProvider */
         $securityProvider = $this->getContainer()->get('oro_customer.security.account_user_provider');
 
-        /** @var AccountUser $user */
+        /** @var CustomerUser $user */
         $user = $securityProvider->getLoggedUser();
         $this->assertNotEmpty($user);
 

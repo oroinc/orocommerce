@@ -20,7 +20,7 @@ define(function(require) {
             accountUserSelect: '.account-accountuser-select input[type="hidden"]',
             accountUserMultiSelect: '.account-accountuser-multiselect input[type="hidden"]',
             accountRoute: 'oro_customer_account_user_get_account',
-            errorMessage: 'Sorry, unexpected error was occurred'
+            errorMessage: 'Sorry, an unexpected error has occurred.'
         },
 
         /**
@@ -76,7 +76,7 @@ define(function(require) {
         },
 
         /**
-         * Handle AccountUser change
+         * Handle CustomerUser change
          *
          * @param {jQuery.Event} e
          */

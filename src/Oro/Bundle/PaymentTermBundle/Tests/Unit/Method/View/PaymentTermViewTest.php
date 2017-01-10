@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PaymentTermBundle\Tests\Unit\Method\View;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Method\Config\PaymentTermConfigInterface;
@@ -45,7 +45,7 @@ class PaymentTermViewTest extends \PHPUnit_Framework_TestCase
 
     public function testGetOptionsEmpty()
     {
-        $customer = $this->createMock(Account::class);
+        $customer = $this->createMock(Customer::class);
 
         /** @var PaymentContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
         $context = $this->createMock(PaymentContextInterface::class);
@@ -66,7 +66,7 @@ class PaymentTermViewTest extends \PHPUnit_Framework_TestCase
         $paymentTerm = new PaymentTerm();
         $paymentTerm->setLabel('testLabel');
 
-        $customer = $this->createMock(Account::class);
+        $customer = $this->createMock(Customer::class);
 
         /** @var PaymentContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
         $context = $this->createMock(PaymentContextInterface::class);

@@ -182,11 +182,20 @@ class QuickAddRowCollectionBuilder
      * @param string[] $skus
      * @return Product[]
      */
-    private function getVisibleProductsBySkus(array $skus)
+    private function getRestrictedProductsBySkus(array $skus)
     {
-        $qb = $this->productRepository->getProductWithNamesQueryBuilder($skus);
+        $qb = $this->productRepository->getProductWithNamesBySkuQueryBuilder($skus);
         $restricted = $this->productManager->restrictQueryBuilder($qb, []);
+
+        // Configurable products require additional option selection is not implemented yet
+        // Thus we need to hide configurable products from the product drop-downs
+        // @TODO remove after configurable products require additional option selection implementation
+        $restricted->andWhere($restricted->expr()->neq('product.type', ':configurable_type'))
+            ->setParameter('configurable_type', Product::TYPE_CONFIGURABLE);
+
         $query = $restricted->getQuery();
+
+        /** @var Product[] $products */
         $products = $query->execute();
         $productsBySku = [];
 
@@ -221,7 +230,7 @@ class QuickAddRowCollectionBuilder
      */
     private function mapProductsAndValidate(QuickAddRowCollection $collection)
     {
-        $products = $this->getVisibleProductsBySkus($collection->getSkus());
+        $products = $this->getRestrictedProductsBySkus($collection->getSkus());
         $collection->mapProducts($products)->validate();
     }
 }

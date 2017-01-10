@@ -4,25 +4,25 @@ namespace Oro\Bundle\PricingBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 
 /**
- * @ORM\Table(name="oro_price_list_to_account")
+ * @ORM\Table(name="oro_price_list_to_customer")
  * @ORM\Entity(repositoryClass="Oro\Bundle\PricingBundle\Entity\Repository\PriceListToAccountRepository")
  */
 class PriceListToAccount extends BasePriceListRelation
 {
     /**
-     * @var Account
+     * @var Customer
      *
      * @ORM\Id
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\Account")
-     * @ORM\JoinColumn(name="account_id", referencedColumnName="id", onDelete="CASCADE")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\Customer")
+     * @ORM\JoinColumn(name="customer_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $account;
 
     /**
-     * @return Account
+     * @return Customer
      */
     public function getAccount()
     {
@@ -30,10 +30,10 @@ class PriceListToAccount extends BasePriceListRelation
     }
 
     /**
-     * @param Account $account
+     * @param Customer $account
      * @return $this
      */
-    public function setAccount(Account $account)
+    public function setAccount(Customer $account)
     {
         $this->account = $account;
 

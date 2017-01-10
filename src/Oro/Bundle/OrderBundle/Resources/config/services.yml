@@ -203,6 +203,14 @@ services:
         tags:
             - { name: twig.extension }
 
+    oro_order.twig.order_shipping:
+        class: 'Oro\Bundle\OrderBundle\Twig\OrderShippingExtension'
+        public: false
+        calls:
+            - [setShippingLabelFormatter, ['@?oro_shipping.translator.shipping_method_label']]
+        tags:
+            - { name: twig.extension }
+
     oro_order.formatter.source_document:
         class: 'Oro\Bundle\OrderBundle\Formatter\SourceDocumentFormatter'
         public: false
@@ -328,10 +336,11 @@ services:
             - '@oro_currency.config.currency'
             - '@oro_currency.converter.rate'
 
-    oro_order.provider.order_currency_checker:
-        class: Oro\Bundle\OrderBundle\Provider\CurrencyCheckerProvider
-        public: false
+    oro_order.event_listener.unit_visibility.datagrid:
+        parent: oro_product.event_listener.unit_visibility.datagrid_basic
         arguments:
-            - '@doctrine'
+            index_0: 'productUnitCode'
+            index_3: {isShortUnitCode: false}
         tags:
-            - { name: oro_multi_currency.currency_checker_provider }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.order-line-items-grid, method: onBuildBefore }
+

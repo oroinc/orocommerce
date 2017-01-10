@@ -3,8 +3,8 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Model;
 
 use Doctrine\Common\Persistence\ObjectRepository;
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\PricingBundle\Model\DTO\PriceListRelationTrigger;
 use Oro\Bundle\PricingBundle\Model\PriceListRelationTriggerFactory;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
@@ -33,15 +33,15 @@ class PriceListRelationTriggerFactoryTest extends \PHPUnit_Framework_TestCase
     public function testCreateFromArray()
     {
         $website = new Website();
-        $account = new Account();
-        $accountGroup = new AccountGroup();
+        $account = new Customer();
+        $accountGroup = new CustomerGroup();
 
         $accountRepository = $this->createMock(ObjectRepository::class);
         $accountRepository->expects($this->once())
             ->method('find')->with(1)->willReturn($account);
         $this->registry->expects($this->at(0))
             ->method('getRepository')
-            ->with(Account::class)
+            ->with(Customer::class)
             ->willReturn($accountRepository);
 
         $accountGroupRepository = $this->createMock(ObjectRepository::class);
@@ -49,7 +49,7 @@ class PriceListRelationTriggerFactoryTest extends \PHPUnit_Framework_TestCase
             ->method('find')->with(1)->willReturn($accountGroup);
         $this->registry->expects($this->at(1))
             ->method('getRepository')
-            ->with(AccountGroup::class)
+            ->with(CustomerGroup::class)
             ->willReturn($accountGroupRepository);
 
         $accountRepository = $this->createMock(ObjectRepository::class);

@@ -5,8 +5,8 @@ namespace Oro\Bundle\VisibilityBundle\Visibility\Provider;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Query\Expr\Join;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\VisibilityBundle\Visibility\ProductVisibilityTrait;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
@@ -130,10 +130,10 @@ class ProductVisibilityProvider
      */
     private function getAccountIds()
     {
-        $queryBuilder = $this->doctrineHelper->getEntityManagerForClass(Account::class)->createQueryBuilder();
+        $queryBuilder = $this->doctrineHelper->getEntityManagerForClass(Customer::class)->createQueryBuilder();
         $queryBuilder
             ->select('account.id as accountIid')
-            ->from(Account::class, 'account');
+            ->from(Customer::class, 'account');
 
         return array_column($queryBuilder->getQuery()->getArrayResult(), 'accountIid');
     }
@@ -201,11 +201,11 @@ class ProductVisibilityProvider
     }
 
     /**
-     * @param Account $account
+     * @param Customer $account
      * @param Website $website
      * @return QueryBuilder
      */
-    public function getAccountProductsVisibilitiesByWebsiteQueryBuilder(Account $account, Website $website)
+    public function getAccountProductsVisibilitiesByWebsiteQueryBuilder(Customer $account, Website $website)
     {
         $queryBuilder = $this->doctrineHelper->getEntityManagerForClass(Product::class)->createQueryBuilder();
 
@@ -246,14 +246,14 @@ class ProductVisibilityProvider
     }
 
     /**
-     * @return AccountGroup
+     * @return CustomerGroup
      */
     private function getAnonymousAccountGroup()
     {
         $anonymousGroupId = $this->configManager->get('oro_customer.anonymous_account_group');
 
         return $this->doctrineHelper
-            ->getEntityRepository(AccountGroup::class)
+            ->getEntityRepository(CustomerGroup::class)
             ->find($anonymousGroupId);
     }
 
@@ -326,7 +326,7 @@ class ProductVisibilityProvider
                 )
             )
             ->innerJoin(
-                'OroCustomerBundle:Account',
+                'OroCustomerBundle:Customer',
                 'account',
                 Join::WITH,
                 'account.group = accountGroupScope.accountGroup'

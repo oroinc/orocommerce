@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\VisibilityBundle\Form\Type;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\FormBundle\Form\Type\EntityChangesetType;
 use Oro\Bundle\ScopeBundle\Form\FormScopeCriteriaResolver;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
@@ -109,18 +109,18 @@ class EntityVisibilityType extends AbstractType
                 self::ACCOUNT_FIELD,
                 EntityChangesetType::NAME,
                 [
-                    'class' => Account::class,
+                    'class' => Customer::class,
                     'context' => ['account' => ScopeCriteria::IS_NOT_NULL],
-                    'constraints' => [new VisibilityChangeSet(['entityClass' => Account::class])],
+                    'constraints' => [new VisibilityChangeSet(['entityClass' => Customer::class])],
                 ]
             )
             ->add(
                 self::ACCOUNT_GROUP_FIELD,
                 EntityChangesetType::NAME,
                 [
-                    'class' => AccountGroup::class,
+                    'class' => CustomerGroup::class,
                     'context' => ['accountGroup' => ScopeCriteria::IS_NOT_NULL],
-                    'constraints' => [new VisibilityChangeSet(['entityClass' => AccountGroup::class])],
+                    'constraints' => [new VisibilityChangeSet(['entityClass' => CustomerGroup::class])],
                 ]
             );
 

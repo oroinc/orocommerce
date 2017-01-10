@@ -6,9 +6,9 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\CurrencyBundle\Entity\MultiCurrency;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
@@ -526,14 +526,14 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param string $accountName
-     * @return AccountUser
+     * @return CustomerUser
      */
     protected function createAccountUser($accountName)
     {
-        $accountUser = new AccountUser();
+        $accountUser = new CustomerUser();
         $accountUser->setFirstName($accountName . ' first')->setLastName($accountName . ' last')->setSalt(null);
 
-        $account = new Account();
+        $account = new Customer();
         $account->setName($accountName)->addUser($accountUser);
 
         return $accountUser;

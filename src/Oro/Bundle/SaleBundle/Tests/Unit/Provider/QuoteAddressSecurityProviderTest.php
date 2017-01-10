@@ -7,8 +7,8 @@ use Symfony\Component\Finder\Finder;
 use Symfony\Component\Yaml\Parser;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\SaleBundle\Provider\QuoteAddressProvider;
 use Oro\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider;
 
@@ -109,8 +109,8 @@ class QuoteAddressSecurityProviderTest extends \PHPUnit_Framework_TestCase
         $account = null;
         $accountUser = null;
         if ($hasEntity) {
-            $account = new Account();
-            $accountUser = new AccountUser();
+            $account = new Customer();
+            $accountUser = new CustomerUser();
         }
         $quote = (new Quote())->setAccount($account)->setAccountUser($accountUser);
 

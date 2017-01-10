@@ -7,7 +7,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Migration\Fixture\AbstractEnumFixture;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 
 class LoadInternalRating extends AbstractEnumFixture
 {
@@ -32,7 +32,7 @@ class LoadInternalRating extends AbstractEnumFixture
      */
     protected function getEnumCode()
     {
-        return Account::INTERNAL_RATING_CODE;
+        return Customer::INTERNAL_RATING_CODE;
     }
 
     /**

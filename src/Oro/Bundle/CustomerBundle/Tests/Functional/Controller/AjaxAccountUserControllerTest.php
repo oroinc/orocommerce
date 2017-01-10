@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CustomerBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
 
 /**
@@ -20,14 +20,14 @@ class AjaxAccountUserControllerTest extends WebTestCase
         $this->client->useHashNavigation(true);
         $this->loadFixtures(
             [
-                'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserRoleData'
+                'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserRoleData'
             ]
         );
     }
 
     public function testGetAccountIdAction()
     {
-        /** @var AccountUser $user */
+        /** @var CustomerUser $user */
         $user = $this->getUserRepository()->findOneBy(['email' => LoadAccountUserData::EMAIL]);
 
         $this->assertNotNull($user);
@@ -65,6 +65,6 @@ class AjaxAccountUserControllerTest extends WebTestCase
      */
     protected function getUserRepository()
     {
-        return $this->getObjectManager()->getRepository('OroCustomerBundle:AccountUser');
+        return $this->getObjectManager()->getRepository('OroCustomerBundle:CustomerUser');
     }
 }

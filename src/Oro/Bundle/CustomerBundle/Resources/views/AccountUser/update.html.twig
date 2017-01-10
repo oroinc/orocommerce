@@ -3,7 +3,7 @@
 {% oro_title_set({
     params : {
         "%email%": entity.email|default('N/A'|trans),
-        "%entityName%": 'oro.customer.accountuser.entity_label'|trans
+        "%entityName%": 'oro.customer.customeruser.entity_label'|trans
     }
 }) %}
 
@@ -25,12 +25,12 @@
         {% set breadcrumbs = {
             'entity':      entity,
             'indexPath':   path('oro_customer_account_user_index'),
-            'indexLabel': 'oro.customer.accountuser.entity_plural_label'|trans,
+            'indexLabel': 'oro.customer.customeruser.entity_plural_label'|trans,
             'entityTitle': entity.email|default('N/A'|trans)
         } %}
         {{ parent() }}
     {% else %}
-        {% set title = 'oro.ui.create_entity'|trans({'%entityName%': 'oro.customer.accountuser.entity_label'|trans}) %}
+        {% set title = 'oro.ui.create_entity'|trans({'%entityName%': 'oro.customer.customeruser.entity_label'|trans}) %}
         {% include 'OroUIBundle::page_title_block.html.twig' with { title: title } %}
     {% endif %}
 {% endblock pageHeader %}
@@ -38,13 +38,13 @@
 {% block stats %}
     <li>{{ 'oro.ui.created_at'|trans }}: {{ entity.createdAt ? entity.createdAt|oro_format_datetime : 'N/A' }}</li>
     <li>{{ 'oro.ui.updated_at'|trans }}: {{ entity.updatedAt ? entity.updatedAt|oro_format_datetime : 'N/A' }}</li>
-    <li>{{ 'oro.customer.accountuser.last_login.label'|trans }}: {{ entity.lastLogin ? entity.lastLogin|oro_format_datetime : 'N/A' }}</li>
-    <li>{{ 'oro.customer.accountuser.login_count.label'|trans }}: {{ entity.loginCount|default(0) }}</li>
+    <li>{{ 'oro.customer.customeruser.last_login.label'|trans }}: {{ entity.lastLogin ? entity.lastLogin|oro_format_datetime : 'N/A' }}</li>
+    <li>{{ 'oro.customer.customeruser.login_count.label'|trans }}: {{ entity.loginCount|default(0) }}</li>
 {% endblock stats %}
 
 {% block content_data %}
     {% set id = 'account-user-edit' %}
-    {% set roleWidgetAlias = 'oro_customer_account_user_role' %}
+    {% set roleWidgetAlias = 'oro_customer_customer_user_role' %}
 
     {% set accountFormOptions = {
         accountUserId: entity.id|default(null),
@@ -112,7 +112,7 @@
     {% if hasRoles %}
         {% set userRoles %}
             {% set widgetOptions = {} %}
-            {% set widgetUrl = 'oro_customer_account_user_roles' %}
+            {% set widgetUrl = 'oro_customer_customer_user_roles' %}
             {% if entity.id %}
                 {% set widgetOptions = widgetOptions|merge({accountUserId: entity.id}) %}
             {% endif %}
@@ -131,7 +131,7 @@
             }) }}
         {% endset %}
 
-        {% set title = 'oro.customer.accountuser.roles.label'|trans %}
+        {% set title = 'oro.customer.customeruser.roles.label'|trans %}
 
         {% set dataBlocks = dataBlocks|merge( [{
             'title': title,

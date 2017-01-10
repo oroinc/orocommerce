@@ -81,6 +81,7 @@ oro:
                 enter: Enter a QTY
                 placeholder: 'QTY #'
             product.label: Product
+            parent_product.label: Parent Product
             shopping_list.label: Shopping List
             unit.label: Unit
             organization.label: Organization

@@ -3,8 +3,8 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Visibility\Resolver;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
@@ -167,8 +167,8 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
         /** @var Category $category */
         $category = $this->getEntity('Oro\Bundle\CatalogBundle\Entity\Category', ['id' => 123]);
 
-        /** @var AccountGroup $accountGroup */
-        $accountGroup = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountGroup', ['id' => 42]);
+        /** @var CustomerGroup $accountGroup */
+        $accountGroup = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerGroup', ['id' => 42]);
 
         $scope = $this->getEntity(Scope::class, ['id' => 1]);
         $this->scopeManager->method('findOrCreate')->willReturn($scope);
@@ -203,8 +203,8 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
 
     public function testGetVisibleCategoryIdsForAccountGroup()
     {
-        /** @var AccountGroup $accountGroup */
-        $accountGroup = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountGroup', ['id' => 42]);
+        /** @var CustomerGroup $accountGroup */
+        $accountGroup = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerGroup', ['id' => 42]);
 
         $scope = $this->getEntity(Scope::class, ['id' => 1]);
         $this->scopeManager->method('findOrCreate')->willReturn($scope);
@@ -246,8 +246,8 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
 
     public function testGetHiddenCategoryIdsForAccountGroup()
     {
-        /** @var AccountGroup $accountGroup */
-        $accountGroup = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountGroup', ['id' => 42]);
+        /** @var CustomerGroup $accountGroup */
+        $accountGroup = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerGroup', ['id' => 42]);
 
         $scope = $this->getEntity(Scope::class, ['id' => 1]);
         $this->scopeManager->method('findOrCreate')->willReturn($scope);
@@ -292,9 +292,9 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
         /** @var Category $category */
         $category = $this->getEntity(Category::class, ['id' => 10]);
 
-        /** @var Account $account */
-        $account = $this->getEntity(Account::class, ['id' => 20]);
-        $account->setGroup($this->getEntity(AccountGroup::class, ['id' => 1]));
+        /** @var Customer $account */
+        $account = $this->getEntity(Customer::class, ['id' => 20]);
+        $account->setGroup($this->getEntity(CustomerGroup::class, ['id' => 1]));
 
         $scope = $this->getEntity(Scope::class, ['id' => 1]);
         $this->scopeManager->method('findOrCreate')->willReturn($scope);
@@ -332,9 +332,9 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
 
     public function testGetVisibleCategoryIdsForAccount()
     {
-        /** @var Account $account */
-        $account = $this->getEntity(Account::class, ['id' => 20]);
-        $account->setGroup($this->getEntity(AccountGroup::class, ['id' => 1]));
+        /** @var Customer $account */
+        $account = $this->getEntity(Customer::class, ['id' => 20]);
+        $account->setGroup($this->getEntity(CustomerGroup::class, ['id' => 1]));
 
         $scope = $this->getEntity(Scope::class, ['id' => 1]);
         $this->scopeManager->method('findOrCreate')->willReturn($scope);
@@ -380,9 +380,9 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
 
     public function testGetHiddenCategoryIdsForAccount()
     {
-        /** @var Account $account */
-        $account = $this->getEntity(Account::class, ['id' => 20]);
-        $account->setGroup($this->getEntity(AccountGroup::class, ['id' => 1]));
+        /** @var Customer $account */
+        $account = $this->getEntity(Customer::class, ['id' => 20]);
+        $account->setGroup($this->getEntity(CustomerGroup::class, ['id' => 1]));
 
         $scope = $this->getEntity(Scope::class, ['id' => 1]);
         $this->scopeManager->method('findOrCreate')->willReturn($scope);

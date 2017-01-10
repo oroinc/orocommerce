@@ -5,7 +5,7 @@ namespace Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
@@ -210,7 +210,7 @@ class AccountGroupCategoryRepository extends EntityRepository
             'agcvr.visibility as a',
             'cvr.visibility as b'
         )
-        ->from('OroCustomerBundle:AccountGroup', 'accountGroup')
+        ->from('OroCustomerBundle:CustomerGroup', 'accountGroup')
         ->leftJoin('OroScopeBundle:Scope', 'scope', 'WITH', 'scope.accountGroup = accountGroup')
         ->leftJoin(
             'OroVisibilityBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved',

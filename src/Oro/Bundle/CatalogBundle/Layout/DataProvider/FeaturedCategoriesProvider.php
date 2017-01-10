@@ -26,23 +26,31 @@ class FeaturedCategoriesProvider
     }
 
     /**
+     * @param array $categoryIds
      * @return Category[]
      */
-    public function getAll()
+    public function getAll(array $categoryIds = [])
     {
-        $this->setCategories();
+        $this->setCategories($categoryIds);
 
         return $this->categories;
     }
 
-    protected function setCategories()
+    /**
+     * @param array $categoryIds
+     * @return Category[]
+     */
+    protected function setCategories(array $categoryIds = [])
     {
         if ($this->categories !== null) {
             return;
         }
 
         $categories = $this->categoryTreeProvider->getCategories(null);
-        $this->categories = array_filter($categories, function (Category $category) {
+        $this->categories = array_filter($categories, function (Category $category) use ($categoryIds) {
+            if ($categoryIds && !in_array($category->getId(), $categoryIds, true)) {
+                return false;
+            }
             return $category->getLevel() !== 0;
         });
     }

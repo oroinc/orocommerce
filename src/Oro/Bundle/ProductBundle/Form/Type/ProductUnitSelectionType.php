@@ -2,20 +2,19 @@
 
 namespace Oro\Bundle\ProductBundle\Form\Type;
 
-use Symfony\Component\Form\FormError;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormView;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Translation\TranslatorInterface;
-use Symfony\Component\Form\ChoiceList\View\ChoiceView;
-
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
 use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
+use Symfony\Component\Form\ChoiceList\View\ChoiceView;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class ProductUnitSelectionType extends AbstractProductAwareType
 {
@@ -80,7 +79,7 @@ class ProductUnitSelectionType extends AbstractProductAwareType
         $options['choices'] = $this->getProductUnits($form, $product);
         $options['choices_updated'] = true;
 
-        $formParent->add($form->getName(), $this->getName(), $options);
+        $formParent->add($form->getName(), static::class, $options);
     }
 
     /**
@@ -129,7 +128,8 @@ class ProductUnitSelectionType extends AbstractProductAwareType
                 }
             }
 
-            if ($primaryUnitPrecision = $product->getPrimaryUnitPrecision()) {
+            $primaryUnitPrecision = $product->getPrimaryUnitPrecision();
+            if ($primaryUnitPrecision) {
                 $primaryUnit = $primaryUnitPrecision->getUnit();
                 array_unshift($choices, $primaryUnit);
             }
@@ -161,7 +161,7 @@ class ProductUnitSelectionType extends AbstractProductAwareType
                 'choices_updated' => false,
                 'required' => true,
                 'empty_label' => 'oro.product.productunit.removed',
-                'sell' => null,
+                'sell' => null
             ]
         );
     }

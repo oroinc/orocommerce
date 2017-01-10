@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CustomerBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 use Oro\Bundle\CustomerBundle\Entity\Repository\CustomerUserAddressRepository;
 
@@ -40,7 +40,7 @@ class CustomerUserAddressRepositoryTest extends WebTestCase
      */
     public function testGetAddressesByType($userReference, $type, array $expectedAddressReferences)
     {
-        /** @var AccountUser $user */
+        /** @var CustomerUser $user */
         $user = $this->getReference($userReference);
 
         /** @var CustomerUserAddress[] $actual */
@@ -93,7 +93,7 @@ class CustomerUserAddressRepositoryTest extends WebTestCase
      */
     public function testGetDefaultAddressesByType($accountUserReference, $type, $expectedAddressReference)
     {
-        /** @var AccountUser $user */
+        /** @var CustomerUser $user */
         $user = $this->getReference($accountUserReference);
 
         /** @var CustomerUserAddress[] $actual */
