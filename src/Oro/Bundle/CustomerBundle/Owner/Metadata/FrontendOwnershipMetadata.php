@@ -6,7 +6,7 @@ use Oro\Bundle\SecurityBundle\Acl\AccessLevel;
 use Oro\Bundle\SecurityBundle\Owner\Metadata\OwnershipMetadata;
 
 /**
- * This class represents the entity ownership metadata for AccountUser
+ * This class represents the entity ownership metadata for CustomerUser
  */
 class FrontendOwnershipMetadata extends OwnershipMetadata
 {
@@ -50,10 +50,10 @@ class FrontendOwnershipMetadata extends OwnershipMetadata
         }
 
         if ($this->isBasicLevelOwned()) {
-            $maxLevel = AccessLevel::LOCAL_LEVEL;
+            $maxLevel = AccessLevel::DEEP_LEVEL;
             $minLevel = AccessLevel::BASIC_LEVEL;
         } elseif ($this->isLocalLevelOwned()) {
-            $maxLevel = AccessLevel::LOCAL_LEVEL;
+            $maxLevel = AccessLevel::DEEP_LEVEL;
             $minLevel = AccessLevel::LOCAL_LEVEL;
         } else {
             throw new \BadMethodCallException(sprintf('Owner type %s is not supported', $this->ownerType));

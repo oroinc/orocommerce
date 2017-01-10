@@ -4,15 +4,13 @@ namespace Oro\Bundle\ShippingBundle\Datagrid\Extension\MassAction;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\QueryBuilder;
-
-use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
-use Symfony\Component\Translation\TranslatorInterface;
-
-use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionResponse;
-use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionHandlerInterface;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionHandlerArgs;
+use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionHandlerInterface;
+use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionResponse;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Component\DependencyInjection\ServiceLink;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class StatusMassActionHandler implements MassActionHandlerInterface
 {
@@ -63,7 +61,7 @@ class StatusMassActionHandler implements MassActionHandlerInterface
         $this->entityManager->beginTransaction();
         try {
             set_time_limit(0);
-            $iteration = $this->handleShippingRuleStatuses($options, $data);
+            $iteration = $this->handleShippingMethodsConfigsRuleStatuses($options, $data);
             $this->entityManager->commit();
         } catch (\Exception $e) {
             $this->entityManager->rollback();
@@ -78,7 +76,7 @@ class StatusMassActionHandler implements MassActionHandlerInterface
      * @param array $data
      * @return int
      */
-    protected function handleShippingRuleStatuses($options, $data)
+    protected function handleShippingMethodsConfigsRuleStatuses($options, $data)
     {
         $status = $options['enable'];
         $isAllSelected = $this->isAllSelected($data);
@@ -92,14 +90,14 @@ class StatusMassActionHandler implements MassActionHandlerInterface
         if ($shippingRuleIds || $isAllSelected) {
             $queryBuilder = $this
                 ->entityManager
-                ->getRepository('OroShippingBundle:ShippingRule')
-                ->createQueryBuilder('rule');
+                ->getRepository('OroShippingBundle:ShippingMethodsConfigsRule')
+                ->createQueryBuilder('shippingRule');
 
 
             if (!$isAllSelected) {
-                $queryBuilder->andWhere($queryBuilder->expr()->in('rule.id', $shippingRuleIds));
+                $queryBuilder->andWhere($queryBuilder->expr()->in('shippingRule.id', $shippingRuleIds));
             } elseif ($shippingRuleIds) {
-                $queryBuilder->andWhere($queryBuilder->expr()->notIn('rule.id', $shippingRuleIds));
+                $queryBuilder->andWhere($queryBuilder->expr()->notIn('shippingRule.id', $shippingRuleIds));
             }
 
             $iteration = $this->process($queryBuilder, $status, $iteration);
@@ -152,10 +150,10 @@ class StatusMassActionHandler implements MassActionHandlerInterface
     {
         $result = $queryBuilder->getQuery()->iterate();
         foreach ($result as $entity) {
-            /** @var ShippingRule $entity */
+            /** @var ShippingMethodsConfigsRule $entity */
             $entity = $entity[0];
 
-            $entity->setEnabled($status);
+            $entity->getRule()->setEnabled($status);
 
             $this->entityManager->persist($entity);
 

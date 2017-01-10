@@ -1,10 +1,11 @@
 <?php
 
-namespace Oro\src\Oro\Bundle\ShippingBundle\Tests\Unit\Formatter;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\Formatter;
 
 use Oro\Bundle\ShippingBundle\Formatter\ShippingMethodLabelFormatter;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
 
 class ShippingMethodLabelFormatterTest extends \PHPUnit_Framework_TestCase
 {
@@ -164,54 +165,61 @@ class ShippingMethodLabelFormatterTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-    /**
-     * @dataProvider shippingMethodWithTypeProvider
-     * @param string $shippingMethod
-     * @param string $shippingMethodLabel
-     * @param string $shippingMethodType
-     * @param string $shippingMethodTypeLabel
-     * @param bool $isGrouped
-     * @param string $expectedResult
-     */
-    public function testFormatShippingMethodWithType(
-        $shippingMethod,
-        $shippingMethodLabel,
-        $shippingMethodType,
-        $shippingMethodTypeLabel,
-        $isGrouped,
-        $expectedResult
-    ) {
-        $this->shippingMethodLabelMock($shippingMethod, $shippingMethodLabel, $isGrouped);
-        $this->shippingMethodTypeLabelMock($shippingMethod, $shippingMethodType, $shippingMethodTypeLabel);
+    public function testFormatShippingMethodWithTypeLabel()
+    {
+        $methodName = 'method';
+        $typeName = 'type';
 
-        $this->assertEquals(
-            $expectedResult,
-            $this->formatter->formatShippingMethodWithType($shippingMethod, $shippingMethodType)
+        $methodType = $this->createConfiguredMock(
+            ShippingMethodTypeInterface::class,
+            ['getLabel' => $typeName]
         );
+
+        $this->shippingMethod->expects(static::any())
+            ->method('getLabel')
+            ->willReturn($methodName);
+        $this->shippingMethod->expects(static::any())
+            ->method('isGrouped')
+            ->willReturn(true);
+        $this->shippingMethod->expects(static::any())
+            ->method('getType')
+            ->willReturn($methodType);
+
+        $this->shippingMethodRegistry->expects(static::any())
+            ->method('getShippingMethod')
+            ->willReturn($this->shippingMethod);
+
+        $label = $this->formatter->formatShippingMethodWithTypeLabel($methodName, $typeName);
+
+        static::assertSame($methodName . ', ' . $typeName, $label);
     }
 
-    /**
-     * @return array
-     */
-    public function shippingMethodWithTypeProvider()
+    public function testFormatShippingMethodWithTypeLabelWithEmptyMethod()
     {
-        return [
-            [
-                'shippingMethod'          => 'shipping_method_1',
-                'shippingMethodLabel'     => 'Shipping Method 1',
-                'shippingMethodType'      => 'shipping_type_1',
-                'shippingTypeLabel'       => 'Type 1 Label',
-                'isGrouped'                => false,
-                'expectedResult'          => 'Type 1 Label'
-            ],
-            [
-                'shippingMethod'          => 'shipping_method_2',
-                'shippingMethodLabel'     => 'Shipping Method 2',
-                'shippingMethodType'      => 'shipping_type_2',
-                'shippingTypeLabel'       => 'Type 2 Label',
-                'isGrouped'                => true,
-                'expectedResult'          => 'Shipping Method 2, Type 2 Label'
-            ],
-        ];
+        $methodName = 'method';
+        $typeName = 'type';
+
+        $methodType = $this->createConfiguredMock(
+            ShippingMethodTypeInterface::class,
+            ['getLabel' => $typeName]
+        );
+
+        $this->shippingMethod->expects(static::any())
+            ->method('getLabel')
+            ->willReturn($methodName);
+        $this->shippingMethod->expects(static::any())
+            ->method('isGrouped')
+            ->willReturn(false);
+        $this->shippingMethod->expects(static::any())
+            ->method('getType')
+            ->willReturn($methodType);
+
+        $this->shippingMethodRegistry->expects(static::any())
+            ->method('getShippingMethod')
+            ->willReturn($this->shippingMethod);
+
+        $label = $this->formatter->formatShippingMethodWithTypeLabel($methodName, $typeName);
+
+        static::assertSame($typeName, $label);
     }
 }

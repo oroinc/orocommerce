@@ -4,9 +4,9 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
-
-use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData as LoadBaseAccountUserData;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
@@ -18,6 +18,8 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
     const SHOPPING_LIST_3 = 'shopping_list_3';
     const SHOPPING_LIST_4 = 'shopping_list_4';
     const SHOPPING_LIST_5 = 'shopping_list_5';
+    const SHOPPING_LIST_6 = 'shopping_list_6';
+    const SHOPPING_LIST_7 = 'shopping_list_7';
 
     /**
      * @var array
@@ -33,7 +35,8 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
     public function getDependencies()
     {
         return [
-            LoadWebsiteData::class
+            LoadWebsiteData::class,
+            LoadAccountUserData::class
         ];
     }
 
@@ -42,31 +45,28 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
      */
     public function load(ObjectManager $manager)
     {
-        $accountUser = $this->getAccountUser($manager);
-        $lists = $this->getData();
-        foreach ($lists as $listLabel) {
+        foreach ($this->getData() as $listLabel => $definition) {
             $isCurrent = $listLabel === self::SHOPPING_LIST_2;
             $this->createShoppingList(
                 $manager,
-                $accountUser,
+                $this->getAccountUser($manager, $definition['accountUser']),
                 $listLabel,
                 $isCurrent
             );
         }
-
         $manager->flush();
     }
 
     /**
      * @param ObjectManager $manager
-     * @param AccountUser $accountUser
+     * @param CustomerUser $accountUser
      * @param string $name
      * @param bool $isCurrent
      * @return ShoppingList
      */
     protected function createShoppingList(
         ObjectManager $manager,
-        AccountUser $accountUser,
+        CustomerUser $accountUser,
         $name,
         $isCurrent = false
     ) {
@@ -90,14 +90,15 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
 
     /**
      * @param ObjectManager $manager
+     * @param string $email
      *
-     * @return AccountUser
+     * @return CustomerUser
      * @throws \LogicException
      */
-    protected function getAccountUser(ObjectManager $manager)
+    protected function getAccountUser(ObjectManager $manager, $email)
     {
-        $accountUser = $manager->getRepository('OroCustomerBundle:AccountUser')
-            ->findOneBy(['username' => LoadAccountUserData::AUTH_USER]);
+        $accountUser = $manager->getRepository('OroCustomerBundle:CustomerUser')
+            ->findOneBy(['email' => $email]);
 
         if (!$accountUser) {
             throw new \LogicException('Test account user not loaded');
@@ -112,11 +113,27 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
     protected function getData()
     {
         return [
-            self::SHOPPING_LIST_1,
-            self::SHOPPING_LIST_2,
-            self::SHOPPING_LIST_3,
-            self::SHOPPING_LIST_4,
-            self::SHOPPING_LIST_5
+            self::SHOPPING_LIST_1 => [
+                'accountUser' => LoadBaseAccountUserData::AUTH_USER,
+            ],
+            self::SHOPPING_LIST_2 => [
+                'accountUser' => LoadBaseAccountUserData::AUTH_USER,
+            ],
+            self::SHOPPING_LIST_3 => [
+                'accountUser' => LoadBaseAccountUserData::AUTH_USER,
+            ],
+            self::SHOPPING_LIST_4 => [
+                'accountUser' => LoadBaseAccountUserData::AUTH_USER,
+            ],
+            self::SHOPPING_LIST_5 => [
+                'accountUser' => LoadBaseAccountUserData::AUTH_USER,
+            ],
+            self::SHOPPING_LIST_6 => [
+                'accountUser' => LoadAccountUserData::LEVEL_1_1_EMAIL,
+            ],
+            self::SHOPPING_LIST_7 => [
+                'accountUser' => LoadAccountUserData::LEVEL_1_EMAIL,
+            ],
         ];
     }
 

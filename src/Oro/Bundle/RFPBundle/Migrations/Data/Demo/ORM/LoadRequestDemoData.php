@@ -12,7 +12,7 @@ use Doctrine\ORM\EntityManager;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\MigrationBundle\Fixture\AbstractEntityReferenceFixture;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Entity\RequestProduct;
@@ -129,26 +129,16 @@ class LoadRequestDemoData extends AbstractEntityReferenceFixture implements
      */
     protected function getCurrencies()
     {
-        $currencies = $this->container->get('oro_config.manager')->get('oro_currency.allowed_currencies');
-
-        if (!$currencies) {
-            $currencies = (array)$this->container->get('oro_locale.settings')->getCurrency();
-        }
-
-        if (!$currencies) {
-            throw new \LogicException('There are no currencies in system');
-        }
-
-        return $currencies;
+        return $this->container->get('oro_currency.config.currency')->getCurrencyList();
     }
 
     /**
      * @param ObjectManager $manager
-     * @return AccountUser[]
+     * @return CustomerUser[]
      */
     protected function getAccountUsers(ObjectManager $manager)
     {
-        return array_merge([null], $manager->getRepository('OroCustomerBundle:AccountUser')->findBy([], null, 10));
+        return array_merge([null], $manager->getRepository('OroCustomerBundle:CustomerUser')->findBy([], null, 10));
     }
 
     /**

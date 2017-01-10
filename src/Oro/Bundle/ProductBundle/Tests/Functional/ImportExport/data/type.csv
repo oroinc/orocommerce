@@ -1,0 +1,4 @@
+sku,attributeFamily.code,type,primaryUnitPrecision:unit:code,primaryUnitPrecision:precision,primaryUnitPrecision:conversionRate,primaryUnitPrecision:sell,status,inventory_status.id
+SKU100,default_family,simple,kg,3,1,1,enabled,in_stock
+SKU101,default_family,test,kg,3,1,1,enabled,in_stock
+SKU102,default_family,,kg,3,1,1,enabled,in_stock

@@ -8,14 +8,14 @@ use Symfony\Component\Form\FormInterface;
 
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Component\Testing\Unit\FormHandlerTestCase;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Form\Handler\AccountUserHandler;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class AccountUserHandlerTest extends FormHandlerTestCase
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|\Oro\Bundle\CustomerBundle\Entity\AccountUserManager
+     * @var \PHPUnit_Framework_MockObject_MockObject|\Oro\Bundle\CustomerBundle\Entity\CustomerUserManager
      */
     protected $userManager;
 
@@ -45,7 +45,7 @@ class AccountUserHandlerTest extends FormHandlerTestCase
     protected $logger;
 
     /**
-     * @var AccountUser
+     * @var CustomerUser
      */
     protected $entity;
 
@@ -56,9 +56,9 @@ class AccountUserHandlerTest extends FormHandlerTestCase
     {
         parent::setUp();
 
-        $this->entity = new AccountUser();
+        $this->entity = new CustomerUser();
 
-        $this->userManager = $this->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\AccountUserManager')
+        $this->userManager = $this->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\CustomerUserManager')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -74,8 +74,8 @@ class AccountUserHandlerTest extends FormHandlerTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
-        $this->logger = $this->getMock('Psr\Log\LoggerInterface');
+        $this->translator = $this->createMock('Symfony\Component\Translation\TranslatorInterface');
+        $this->logger = $this->createMock('Psr\Log\LoggerInterface');
 
         $this->handler = new AccountUserHandler(
             $this->form,
@@ -109,7 +109,7 @@ class AccountUserHandlerTest extends FormHandlerTestCase
             $organization->setName('test');
 
             $organizationToken =
-                $this->getMock('Oro\Bundle\SecurityBundle\Authentication\Token\OrganizationContextTokenInterface');
+                $this->createMock('Oro\Bundle\SecurityBundle\Authentication\Token\OrganizationContextTokenInterface');
             $organizationToken->expects($this->any())
                 ->method('getOrganizationContext')
                 ->willReturn($organization);

@@ -6,8 +6,8 @@
             <p>{{ 'oro.order.success.receive_email'|trans }}</p>
         </div>
         {#<div class="checkout__success__print">#}
-            {#<a href="#"><i class="icon-print"></i> <span class="underlined">Print Your Order</span></a>#}
+            {#<a href="#"><i class="fa-print"></i> <span class="underlined">Print Your Order</span></a>#}
         {#</div>#}
-        <a href="{{ path('oro_frontend_root') }}" class="btn theme-btn_sm btn-orange checkout__success__btn">{{ 'oro.order.success.done'|trans }}</a>
+        <a href="{{ path('oro_frontend_root') }}" class="btn btn--info checkout__success__btn">{{ 'oro.order.success.done'|trans }}</a>
     </div>
 {% endblock %}

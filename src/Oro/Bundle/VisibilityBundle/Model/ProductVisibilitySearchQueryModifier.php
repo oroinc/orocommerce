@@ -6,7 +6,7 @@ use Doctrine\Common\Collections\Expr\CompositeExpression;
 
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\VisibilityBundle\Indexer\ProductVisibilityIndexer;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
@@ -100,12 +100,12 @@ class ProductVisibilitySearchQueryModifier implements QueryModifierInterface
     }
 
     /**
-     * @return AccountUser|null
+     * @return CustomerUser|null
      */
     private function getAccount()
     {
         $token = $this->tokenStorage->getToken();
-        if ($token && ($user = $token->getUser()) instanceof AccountUser) {
+        if ($token && ($user = $token->getUser()) instanceof CustomerUser) {
             return $user->getAccount();
         }
 

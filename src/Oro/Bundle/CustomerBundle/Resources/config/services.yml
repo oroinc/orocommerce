@@ -1,21 +1,27 @@
 parameters:
     oro_customer.entity.account.class: Oro\Bundle\CustomerBundle\Entity\Account
-    oro_customer.entity.account_address.class: Oro\Bundle\CustomerBundle\Entity\AccountAddress
-    oro_customer.entity.account_group.class: Oro\Bundle\CustomerBundle\Entity\AccountGroup
-    oro_customer.entity.account_user.class: Oro\Bundle\CustomerBundle\Entity\AccountUser
-    oro_customer.entity.account_user_settings.class: Oro\Bundle\CustomerBundle\Entity\AccountUserSettings
-    oro_customer.entity.account_user_address.class: Oro\Bundle\CustomerBundle\Entity\AccountUserAddress
-    oro_customer.entity.account_user_role.class: Oro\Bundle\CustomerBundle\Entity\AccountUserRole
+    oro_customer.entity.account_address.class: Oro\Bundle\CustomerBundle\Entity\CustomerAddress
+    oro_customer.entity.account_group.class: Oro\Bundle\CustomerBundle\Entity\CustomerGroup
+    oro_customer.entity.account_user.class: Oro\Bundle\CustomerBundle\Entity\CustomerUser
+    oro_customer.entity.customer_user_settings.class: Oro\Bundle\CustomerBundle\Entity\CustomerUserSettings
+    oro_customer.entity.account_user_address.class: Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress
+    oro_customer.entity.customer_user_role.class: Oro\Bundle\CustomerBundle\Entity\CustomerUserRole
     oro_customer.entity.audit.class: Oro\Bundle\CustomerBundle\Entity\Audit
     oro_customer.entity.navigation_item.class: Oro\Bundle\CustomerBundle\Entity\NavigationItem
     oro_customer.entity.navigation_history_item.class: Oro\Bundle\CustomerBundle\Entity\NavigationHistoryItem
     oro_customer.entity.pinbar_tab.class: Oro\Bundle\CustomerBundle\Entity\PinbarTab
-    oro_customer.entity.sidebar_state.class: Oro\Bundle\CustomerBundle\Entity\AccountUserSidebarState
-    oro_customer.entity.widget.class: Oro\Bundle\CustomerBundle\Entity\AccountUserSidebarWidget
+    oro_customer.entity.sidebar_state.class: Oro\Bundle\CustomerBundle\Entity\CustomerUserSidebarState
+    oro_customer.entity.widget.class: Oro\Bundle\CustomerBundle\Entity\CustomerUserSidebarWidget
     oro_customer.entity.page_state.class: Oro\Bundle\CustomerBundle\Entity\PageState
     oro_customer.entity.windows_state.class: Oro\Bundle\CustomerBundle\Entity\WindowsState
 
 services:
+    oro_customer.deprecated_rest_api_route_options_resolver:
+        class: Oro\Bundle\CustomerBundle\Routing\DeprecatedRestApiRouteOptionsResolver
+        public: false
+        tags:
+            - { name: routing.options_resolver }
+
     oro_customer.security.account_user_provider:
         class: 'Oro\Bundle\CustomerBundle\Security\AccountUserProvider'
         public: false
@@ -30,6 +36,7 @@ services:
         public: false
         arguments:
             - "@oro_entity.doctrine_helper"
+            - "@security.authentication.trust_resolver"
         calls:
             - [setContainer, ["@service_container"]]
         tags:
@@ -50,6 +57,7 @@ services:
         class: 'Oro\Bundle\CustomerBundle\EventListener\Datagrid\AccountDatagridListener'
         arguments:
             - "@oro_customer.security.account_user_provider"
+            - "@oro_customer.repository.account"
             - ["@oro_customer.datagrid.account_action_permission_provider", "getActions"]
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before, method: onBuildBeforeFrontendItems }
@@ -129,13 +137,6 @@ services:
             - '%oro_customer.entity.account_user.class%'
             - "@doctrine.orm.entity_manager"
 
-    oro_customer.account_user_role.manager.api:
-        class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
-        parent: oro_soap.manager.entity_manager.abstract
-        arguments:
-            - '%oro_customer.entity.account_user_role.class%'
-            - "@doctrine.orm.entity_manager"
-
     oro_customer.datagrid.action_permission_provider:
         class: 'Oro\Bundle\CustomerBundle\Datagrid\ActionPermissionProvider'
         arguments:
@@ -174,7 +175,7 @@ services:
             - "@oro_email.direct_mailer"
 
     oro_account_user.manager:
-        class: 'Oro\Bundle\CustomerBundle\Entity\AccountUserManager'
+        class: 'Oro\Bundle\CustomerBundle\Entity\CustomerUserManager'
         arguments:
             - '%oro_customer.entity.account_user.class%'
             - "@doctrine"
@@ -220,14 +221,14 @@ services:
         class: 'Oro\Bundle\CustomerBundle\Form\Handler\AccountUserPasswordResetHandler'
         parent: oro_customer.account_user.password.handler.abstract
 
-    oro_customer.acl.voter.account_user_role:
-        class: 'Oro\Bundle\CustomerBundle\Acl\Voter\AccountUserRoleVoter'
+    oro_customer.acl.voter.customer_user_role:
+        class: 'Oro\Bundle\CustomerBundle\Acl\Voter\CustomerUserRoleVoter'
         public: false
         arguments:
             - "@oro_entity.doctrine_helper"
         calls:
             - [setContainer, ["@service_container"]]
-            - [setClassName, ['%oro_customer.entity.account_user_role.class%']]
+            - [setClassName, ['%oro_customer.entity.customer_user_role.class%']]
         tags:
             - { name: security.voter, priority: 10 }
 
@@ -263,12 +264,12 @@ services:
             - '%oro_customer.entity.account_user_address.class%'
             - "@doctrine.orm.entity_manager"
 
-    oro_customer.event_listener.datagrid.account_user_role:
-        class: 'Oro\Bundle\CustomerBundle\EventListener\Datagrid\AccountUserRoleDatagridListener'
+    oro_customer.event_listener.datagrid.customer_user_role:
+        class: 'Oro\Bundle\CustomerBundle\EventListener\Datagrid\CustomerUserRoleDatagridListener'
         arguments:
-            - "@oro_security.security_facade"
+            - "@oro_security.acl_helper"
         tags:
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-account-account-user-roles-grid, method: onBuildBefore }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.frontend-account-customer-user-roles-grid, method: onBuildAfter }
 
     oro_customer.event_listener.datagrid.account_user:
         class: 'Oro\Bundle\CustomerBundle\EventListener\Datagrid\AccountUserDatagridListener'
@@ -492,14 +493,14 @@ services:
         tags:
             - { name: kernel.event_listener, event: kernel.request, method: onRequest }
 
-    oro_customer.provider.frontend_account_user_role_form:
-        class: 'Oro\Bundle\CustomerBundle\Layout\DataProvider\FrontendAccountUserRoleFormProvider'
+    oro_customer.provider.frontend_customer_user_role_form:
+        class: 'Oro\Bundle\CustomerBundle\Layout\DataProvider\FrontendCustomerUserRoleFormProvider'
         arguments:
             - '@form.factory'
-            - '@oro_customer.form.handler.update_account_user_role_frontend='
+            - '@oro_customer.form.handler.update_customer_user_role_frontend='
             - '@router'
         tags:
-            - { name: layout.data_provider, alias: oro_account_frontend_account_user_role_form }
+            - { name: layout.data_provider, alias: oro_account_frontend_customer_user_role_form }
 
     oro_customer.provider.fronted_account_user_address_form:
         class: Oro\Bundle\CustomerBundle\Layout\DataProvider\FrontendAccountUserAddressFormProvider
@@ -531,21 +532,21 @@ services:
             - '@oro_config.global'
             - '@oro_entity.doctrine_helper'
 
-    oro_customer.provider.fronted_account_user_role_tabs_options:
-        class: 'Oro\Bundle\CustomerBundle\Layout\DataProvider\FrontendAccountUserRoleOptionsProvider'
+    oro_customer.provider.fronted_customer_user_role_tabs_options:
+        class: 'Oro\Bundle\CustomerBundle\Layout\DataProvider\FrontendCustomerUserRoleOptionsProvider'
         arguments:
             - '@oro_user.provider.role_privilege_capability_provider'
             - '@oro_user.provider.role_privilege_category_provider'
             - '@translator'
         tags:
-            - { name: layout.data_provider, alias: oro_account_fronted_account_user_role_options }
+            - { name: layout.data_provider, alias: oro_account_fronted_customer_user_role_options }
 
     oro_customer.datagrid.datasource.account_role_frontend_permission_datasource:
         class: 'Oro\Bundle\CustomerBundle\Datagrid\RolePermissionDatasource'
         arguments:
             - '@translator'
             - '@oro_security.acl.permission_manager'
-            - '@oro_customer.form.handler.update_account_user_role_frontend='
+            - '@oro_customer.form.handler.update_customer_user_role_frontend='
             - '@oro_user.provider.role_privilege_category_provider'
             - '@oro_entity_config.config_manager'
             - '@oro_customer.acl.resolver.role_translation_prefix'
@@ -557,7 +558,7 @@ services:
         arguments:
             - '@translator'
             - '@oro_security.acl.permission_manager'
-            - '@oro_customer.form.handler.update_account_user_role='
+            - '@oro_customer.form.handler.update_customer_user_role='
             - '@oro_user.provider.role_privilege_category_provider'
             - '@oro_entity_config.config_manager'
             - '@oro_customer.acl.resolver.role_translation_prefix'
@@ -583,7 +584,7 @@ services:
     oro_customer.layout.data_provider.account_user_address_provider:
         parent: oro_customer.layout.data_provider.address_provider_abstract
         calls:
-            - [setEntityClass, ['Oro\Bundle\CustomerBundle\Entity\AccountUser']]
+            - [setEntityClass, ['Oro\Bundle\CustomerBundle\Entity\CustomerUser']]
             - [setListRouteName, ['oro_api_account_frontend_get_accountuser_addresses']]
             - [setCreateRouteName, ['oro_customer_frontend_account_user_address_create']]
             - [setUpdateRouteName, ['oro_customer_frontend_account_user_address_update']]
@@ -609,6 +610,7 @@ services:
             - { name: oro_service_link, service: oro_customer.account_group_scope_criteria_provider }
             - { name: oro_scope.provider, scopeType: account_group_category_visibility, priority: 30 }
             - { name: oro_scope.provider, scopeType: account_group_product_visibility, priority: 30 }
+            - { name: oro_scope.provider, scopeType: web_content, priority: 100 }
             - { name: oro_scope.provider, scopeType: workflow_definition, priority: 20 }
 
     oro_customer.account_scope_criteria_provider.link:
@@ -617,15 +619,48 @@ services:
             - { name: oro_service_link, service: oro_customer.account_scope_criteria_provider }
             - { name: oro_scope.provider, scopeType: account_category_visibility, priority: 30 }
             - { name: oro_scope.provider, scopeType: account_product_visibility, priority: 30 }
+            - { name: oro_scope.provider, scopeType: web_content, priority: 1000 }
             - { name: oro_scope.provider, scopeType: workflow_definition, priority: 30 }
-
-    oro_customer.account_message_factory:
-        class: 'Oro\Bundle\CustomerBundle\Model\AccountMessageFactory'
-        arguments:
-            - '@doctrine'
 
     oro_customer.entity_ownership.listener:
         class: Oro\Bundle\CustomerBundle\EventListener\RecordOwnerDataListener
         arguments: ["@oro_organization.link.security_context", "@oro_entity_config.provider.ownership"]
         tags:
              - { name: doctrine.event_listener, event: prePersist }
+
+    oro_customer.event_listener.role_page_listener:
+        class: 'Oro\Bundle\CustomerBundle\EventListener\CustomerRolePageListener'
+        arguments:
+            - '@translator'
+        calls:
+            - [setRequest, ['@?request=']]
+        tags:
+            - { name: kernel.event_listener, event: entity_form.render.before, method: onUpdatePageRender }
+            - { name: kernel.event_listener, event: entity_view.render.before, method: onViewPageRender }
+
+    oro_customer.datagrid.datasource.workflow_permission_datasource:
+        class: Oro\Bundle\CustomerBundle\Datagrid\WorkflowPermissionDatasource
+        arguments:
+            - '@translator'
+            - '@oro_security.acl.permission_manager'
+            - '@oro_customer.form.handler.update_customer_user_role='
+            - '@oro_user.provider.role_privilege_category_provider'
+            - '@oro_entity_config.config_manager'
+            - '@oro_customer.acl.resolver.role_translation_prefix'
+        tags:
+            - { name: oro_datagrid.datasource, type: account-user-workflow-permission-grid-provider }
+
+    oro_customer.repository.account:
+        class: 'Oro\Bundle\CustomerBundle\Entity\Repository\AccountRepository'
+        parent: oro_entity.abstract_repository
+        arguments:
+            - '%oro_customer.entity.account.class%'
+
+    oro_customer.authentication.listener.anonymous:
+        class: Oro\Bundle\CustomerBundle\Security\Http\Firewall\AnonymousAuthenticationListener
+        decorates: security.authentication.listener.anonymous.frontend
+        arguments:
+            - '@oro_customer.authentication.listener.anonymous.inner'
+            - '@security.token_storage'
+            - '@logger'
+            - '@security.authentication.manager'

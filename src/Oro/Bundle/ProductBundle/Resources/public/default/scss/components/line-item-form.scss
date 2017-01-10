@@ -1,0 +1,11 @@
+// @theme: default
+
+.line-item-form {
+    .pinned-dropdown {
+        width: 100%;
+    }
+    &.disabled {
+        position: relative;
+        opacity: 0.25;
+    }
+}

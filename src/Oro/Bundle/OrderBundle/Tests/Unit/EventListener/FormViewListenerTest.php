@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Oro\Component\Testing\Unit\FormViewListenerTestCase;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\OrderBundle\EventListener\FormViewListener;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 
 class FormViewListenerTest extends FormViewListenerTestCase
@@ -29,7 +29,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
         parent::setUp();
         $this->request = $this->getRequest();
         /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
-        $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
+        $requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
         $requestStack->expects($this->any())->method('getCurrentRequest')->willReturn($this->request);
         $this->listener = new FormViewListener($this->translator, $this->doctrineHelper, $requestStack);
     }
@@ -42,7 +42,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
             ->with('id')
             ->willReturn(1);
 
-        $accountUser = new AccountUser();
+        $accountUser = new CustomerUser();
 
         $this->doctrineHelper
             ->expects($this->once())

@@ -48,7 +48,7 @@ class PriceListEntityListenerTest extends \PHPUnit_Framework_TestCase
         $this->triggerHandler = $this->getMockBuilder(PriceListRelationTriggerHandler::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->cache = $this->getMock(Cache::class);
+        $this->cache = $this->createMock(Cache::class);
         $this->priceListTriggerHandler = $this->getMockBuilder(PriceListTriggerHandler::class)
             ->disableOriginalConstructor()
             ->getMock();

@@ -14,7 +14,7 @@ class OroCatalogBundleTest extends \PHPUnit_Framework_TestCase
     {
         $container = new ContainerBuilder();
 
-        $kernel = $this->getMock('Symfony\Component\HttpKernel\KernelInterface');
+        $kernel = $this->createMock('Symfony\Component\HttpKernel\KernelInterface');
 
         $bundle = new OroCatalogBundle($kernel);
         $bundle->build($container);
@@ -29,7 +29,8 @@ class OroCatalogBundleTest extends \PHPUnit_Framework_TestCase
                 Category::class => [
                     'title' => 'titles',
                     'shortDescription' => 'shortDescriptions',
-                    'longDescription' => 'longDescriptions'
+                    'longDescription' => 'longDescriptions',
+                    'slugPrototype' => 'slugPrototypes'
                 ]
             ],
             'classes',

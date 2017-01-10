@@ -18,7 +18,7 @@ class OroCheckoutBundleInstaller implements Installation
      */
     public function getMigrationVersion()
     {
-        return 'v1_2';
+        return 'v1_4';
     }
 
     /**
@@ -44,6 +44,7 @@ class OroCheckoutBundleInstaller implements Installation
     {
         $table = $schema->createTable('oro_checkout_source');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('deleted', 'boolean', ['default' => false]);
         $table->setPrimaryKey(['id']);
     }
 
@@ -58,7 +59,7 @@ class OroCheckoutBundleInstaller implements Installation
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('source_id', 'integer', ['notnull' => true]);
         $table->addColumn('website_id', 'integer', ['notnull' => false]);
-        $table->addColumn('account_user_id', 'integer', ['notnull' => false]);
+        $table->addColumn('customer_user_id', 'integer', ['notnull' => false]);
         $table->addColumn('account_id', 'integer', ['notnull' => false]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('user_owner_id', 'integer', ['notnull' => false]);
@@ -83,6 +84,7 @@ class OroCheckoutBundleInstaller implements Installation
         $table->addColumn('save_shipping_address', 'boolean', ['default' => true]);
         $table->addColumn('shipping_method', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('shipping_method_type', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('deleted', 'boolean', ['default' => false]);
         $table->addUniqueIndex(['billing_address_id'], 'uniq_checkout_bill_addr');
         $table->addUniqueIndex(['shipping_address_id'], 'uniq_checkout_shipp_addr');
         $table->addUniqueIndex(['source_id'], 'uniq_e56b559d953c1c61');
@@ -110,8 +112,8 @@ class OroCheckoutBundleInstaller implements Installation
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_account_user'),
-            ['account_user_id'],
+            $schema->getTable('oro_customer_user'),
+            ['customer_user_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );

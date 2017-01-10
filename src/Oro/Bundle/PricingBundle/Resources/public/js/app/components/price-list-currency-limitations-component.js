@@ -108,9 +108,6 @@ define(function(require) {
                     },
                     complete: function() {
                         self.loadingMaskView.hide();
-                    },
-                    error: function(xhr) {
-                        Error.handle({}, xhr, {enforce: true});
                     }
                 });
             }

@@ -2,10 +2,14 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Model\Builder;
 
+use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
+
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use Oro\Bundle\ProductBundle\Form\Type\QuickAddType;
@@ -29,6 +33,11 @@ class QuickAddRowCollectionBuilderTest extends \PHPUnit_Framework_TestCase
      * @var \PHPUnit_Framework_MockObject_MockObject|ProductManager
      */
     private $productManager;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|EventDispatcherInterface
+     */
+    private $eventDispatcher;
 
     /**
      * @var array
@@ -73,13 +82,18 @@ class QuickAddRowCollectionBuilderTest extends \PHPUnit_Framework_TestCase
             ->getMockBuilder(ProductRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
+        $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
 
         $this->productManager = $this
             ->getMockBuilder(ProductManager::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->builder = new QuickAddRowCollectionBuilder($this->productRepository, $this->productManager);
+        $this->builder = new QuickAddRowCollectionBuilder(
+            $this->productRepository,
+            $this->productManager,
+            $this->eventDispatcher
+        );
     }
 
     public function testBuildFromRequest()
@@ -117,10 +131,11 @@ class QuickAddRowCollectionBuilderTest extends \PHPUnit_Framework_TestCase
         $this->assertValidCollection($this->builder->buildFromFile($file));
     }
 
+    /**
+     * @expectedException \Box\Spout\Common\Exception\UnsupportedTypeException
+     */
     public function testBuildFromFileWithInvalidFormat()
     {
-        $this->setExpectedException('Box\Spout\Common\Exception\UnsupportedTypeException');
-
         $this->builder->buildFromFile(new UploadedFile(__DIR__ . '/files/quick-order.txt', 'quick-order.txt'));
     }
 
@@ -136,6 +151,9 @@ class QuickAddRowCollectionBuilderTest extends \PHPUnit_Framework_TestCase
         $this->assertValidCollection($this->builder->buildFromCopyPasteText($text));
     }
 
+    /**
+     * @return array
+     */
     public function textDataProvider()
     {
         $commaSeparated = ['HSSUC, 1', 'HSTUC, 2.55', 'HCCM, 3,', 'SKU1,10.0112', 'SKU2,asd', 'SKU3,'];
@@ -185,7 +203,7 @@ class QuickAddRowCollectionBuilderTest extends \PHPUnit_Framework_TestCase
      */
     protected function prepareProduct($sku)
     {
-        $product = $this->getMock('Oro\Bundle\ProductBundle\Entity\Product');
+        $product = $this->createMock('Oro\Bundle\ProductBundle\Entity\Product');
         $product->expects($this->once())
             ->method('getSku')
             ->willReturn($sku);
@@ -196,23 +214,41 @@ class QuickAddRowCollectionBuilderTest extends \PHPUnit_Framework_TestCase
     private function prepareProductRepository()
     {
         $qb = $this->getMockBuilder(QueryBuilder::class)->disableOriginalConstructor()->getMock();
-        $this->productRepository->method('getProductWithNamesQueryBuilder')->willReturn($qb);
+        $this->productRepository->method('getProductWithNamesBySkuQueryBuilder')->willReturn($qb);
     }
 
     private function prepareProductManager()
     {
         $query = $this->getMockBuilder('\Doctrine\ORM\AbstractQuery')
-            ->setMethods(array('setParameter', 'getResult', 'execute'))
+            ->setMethods(['setParameter', 'getResult', 'execute'])
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
-        $query->method('execute')->willReturn(
-            [
+        $query->expects($this->once())
+            ->method('execute')
+            ->willReturn([
                 'HSSUC' => $this->prepareProduct('HSSUC'),
                 'HSTUC' => $this->prepareProduct('HSTUC'),
-            ]
-        );
+            ]);
+
+        $expr = $this->createMock(Expr::class);
+        $expr->expects($this->once())
+            ->method('neq')
+            ->with('product.type', ':configurable_type');
+
         $qb = $this->getMockBuilder(QueryBuilder::class)->disableOriginalConstructor()->getMock();
-        $qb->method('getQuery')->willReturn($query);
+        $qb->expects($this->once())
+            ->method('expr')
+            ->willReturn($expr);
+        $qb->expects($this->once())
+            ->method('andWhere')
+            ->willReturn($qb);
+        $qb->expects($this->once())
+            ->method('setParameter')
+            ->with('configurable_type', Product::TYPE_CONFIGURABLE);
+        $qb->expects($this->once())
+            ->method('getQuery')
+            ->willReturn($query);
+
         $this->productManager->method('restrictQueryBuilder')->withAnyParameters()->willReturn($qb);
     }
 }

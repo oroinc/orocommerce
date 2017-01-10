@@ -21,15 +21,15 @@ class AccountUserPasswordRequestHandlerTest extends AbstractAccountUserPasswordH
     public function testProcessInvalidUser()
     {
         $email = 'test@test.com';
-        $this->assertValidFormCall($email);
+        $emailSubform = $this->assertValidFormCall($email);
 
         $this->userManager->expects($this->once())
             ->method('findUserByUsernameOrEmail')
             ->with($email);
 
         $this->assertFormErrorAdded(
-            $this->form,
-            'oro.customer.accountuser.profile.email_not_exists',
+            $emailSubform,
+            'oro.customer.customeruser.profile.email_not_exists',
             ['%email%' => $email]
         );
 
@@ -41,7 +41,7 @@ class AccountUserPasswordRequestHandlerTest extends AbstractAccountUserPasswordH
         $email = 'test@test.com';
         $token = 'answerisfourtytwo';
 
-        $user = $this->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\AccountUser')
+        $user = $this->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\CustomerUser')
             ->disableOriginalConstructor()
             ->getMock();
         $user->expects($this->once())
@@ -77,7 +77,7 @@ class AccountUserPasswordRequestHandlerTest extends AbstractAccountUserPasswordH
         $email = 'test@test.com';
         $token = 'answerisfourtytwo';
 
-        $user = $this->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\AccountUser')
+        $user = $this->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\CustomerUser')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -130,7 +130,7 @@ class AccountUserPasswordRequestHandlerTest extends AbstractAccountUserPasswordH
             ->method('isValid')
             ->will($this->returnValue(true));
 
-        $emailSubform = $this->getMock('Symfony\Component\Form\FormInterface');
+        $emailSubform = $this->createMock('Symfony\Component\Form\FormInterface');
         $emailSubform->expects($this->once())
             ->method('getData')
             ->will($this->returnValue($email));
@@ -139,5 +139,7 @@ class AccountUserPasswordRequestHandlerTest extends AbstractAccountUserPasswordH
             ->method('get')
             ->with('email')
             ->will($this->returnValue($emailSubform));
+
+        return $emailSubform;
     }
 }

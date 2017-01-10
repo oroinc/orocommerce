@@ -8,7 +8,6 @@ use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
-use Oro\Bundle\DataGridBundle\EventListener\DatasourceBindParametersListener;
 use Oro\Bundle\LocaleBundle\Datagrid\Formatter\Property\LocalizedValueProperty;
 use Oro\Bundle\CatalogBundle\EventListener\DatagridListener;
 use Oro\Bundle\CatalogBundle\Entity\Category;
@@ -94,7 +93,7 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
     public function testOnBuildBeforeProductsSelect()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
-        $datagrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
+        $datagrid = $this->createMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
         $config = DatagridConfiguration::create([]);
 
         $event = new BuildBefore($datagrid, $config);
@@ -153,7 +152,7 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
         );
         $this->assertEquals(
             [self::CATEGORY_ID_ALIAS],
-            $event->getConfig()->offsetGetByPath(DatasourceBindParametersListener::DATASOURCE_BIND_PARAMETERS_PATH)
+            $event->getConfig()->offsetGetByPath(DatagridConfiguration::DATASOURCE_BIND_PARAMETERS_PATH)
         );
 
         $this->assertEquals(

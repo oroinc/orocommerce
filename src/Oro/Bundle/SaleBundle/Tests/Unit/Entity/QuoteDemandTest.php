@@ -3,6 +3,9 @@
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
@@ -18,6 +21,8 @@ class QuoteDemandTest extends AbstractTest
     {
         $properties = [
             ['id', '123'],
+            ['account', new Account()],
+            ['accountUser', new CustomerUser()],
             ['quote', new Quote()],
             ['total', 100.1],
             ['subtotal', 100.1],

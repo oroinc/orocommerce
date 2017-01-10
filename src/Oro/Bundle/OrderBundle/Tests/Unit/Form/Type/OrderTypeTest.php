@@ -2,6 +2,16 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Form\Type;
 
+use Symfony\Bridge\Doctrine\ManagerRegistry;
+use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
+use Symfony\Component\Form\PreloadedExtension;
+use Symfony\Component\Form\Test\TypeTestCase;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\Validator\ConstraintViolationList;
+use Symfony\Component\Validator\Validation;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\CurrencyBundle\Tests\Unit\Form\Type\PriceTypeGenerator;
@@ -33,15 +43,8 @@ use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 use Oro\Bundle\SaleBundle\Tests\Unit\Form\Type\Stub\EntityType as StubEntityType;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
-use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
-use Symfony\Component\Form\PreloadedExtension;
-use Symfony\Component\Form\Test\TypeTestCase;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\PropertyAccess\PropertyAccess;
-use Symfony\Component\Validator\ConstraintViolationList;
-use Symfony\Component\Validator\Validation;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Oro\Bundle\CurrencyBundle\Converter\RateConverterInterface;
+use Oro\Bundle\CurrencyBundle\Entity\MultiCurrency;
 
 class OrderTypeTest extends TypeTestCase
 {
@@ -67,6 +70,9 @@ class OrderTypeTest extends TypeTestCase
 
     /** @var PriceMatcher|\PHPUnit_Framework_MockObject_MockObject */
     protected $priceMatcher;
+
+    /** @var RateConverterInterface|\PHPUnit_Framework_MockObject_MockObject */
+    protected $rateConverter;
 
     /** @var ValidatorInterface  */
     private $validator;
@@ -98,10 +104,15 @@ class OrderTypeTest extends TypeTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->rateConverter = $this->getMockBuilder('Oro\Bundle\CurrencyBundle\Converter\RateConverterInterface')
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $totalHelper = new TotalHelper(
             $this->totalsProvider,
             $this->lineItemSubtotalProvider,
-            $this->discountSubtotalProvider
+            $this->discountSubtotalProvider,
+            $this->rateConverter
         );
 
         // create a type instance with the mocked dependencies
@@ -118,7 +129,7 @@ class OrderTypeTest extends TypeTestCase
     public function testConfigureOptions()
     {
         /* @var $resolver \PHPUnit_Framework_MockObject_MockObject|OptionsResolver */
-        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
+        $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with(
@@ -158,10 +169,26 @@ class OrderTypeTest extends TypeTestCase
 
         $subtotal = new Subtotal();
         $subtotal->setAmount(99);
+        $subtotal->setCurrency('USD');
         $this->lineItemSubtotalProvider
             ->expects($this->any())
             ->method('getSubtotal')
             ->willReturn($subtotal);
+
+        $total = new Subtotal();
+        $total->setAmount(0);
+        $total->setCurrency('USD');
+        $this->totalsProvider
+            ->expects($this->once())
+            ->method('getTotal')
+            ->willReturn($total);
+
+        $this->rateConverter
+            ->expects($this->exactly(2))
+            ->method('getBaseCurrencyAmount')
+            ->willReturnCallback(function (MultiCurrency $value) {
+                return $value->getValue();
+            });
 
         $form->submit($submitData);
 
@@ -221,8 +248,8 @@ class OrderTypeTest extends TypeTestCase
                         'account' => 2,
                         'poNumber' => '11',
                         'shipUntil' => null,
-                        'subtotal' => 99,
-                        'total' => 0.0,
+                        'subtotalObject' => MultiCurrency::create(99, 'USD', 99),
+                        'totalObject' => MultiCurrency::create(0, 'USD', 0),
                         'totalDiscounts' => new Price(),
                         'lineItems' => [
                             [
@@ -242,7 +269,7 @@ class OrderTypeTest extends TypeTestCase
                         'shippingMethod' => 'shippingMethod1',
                         'shippingMethodType' => 'shippingType1',
                         'estimatedShippingCostAmount' => '10',
-                        'overriddenShippingCostAmount' => 5
+                        'overriddenShippingCostAmount' => 5.0
                     ]
                 )
             ]
@@ -272,8 +299,8 @@ class OrderTypeTest extends TypeTestCase
 
         $accountUserSelectType = new StubEntityType(
             [
-                1 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountUser', 1),
-                2 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountUser', 2),
+                1 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUser', 1),
+                2 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUser', 2),
             ],
             AccountUserSelectType::NAME
         );
@@ -309,7 +336,7 @@ class OrderTypeTest extends TypeTestCase
         $OrderLineItemType->setDataClass('Oro\Bundle\OrderBundle\Entity\OrderLineItem');
         $currencySelectionType = new CurrencySelectionTypeStub();
 
-        $this->validator = $this->getMock(
+        $this->validator = $this->createMock(
             'Symfony\Component\Validator\Validator\ValidatorInterface'
         );
         $this->validator
@@ -402,7 +429,7 @@ class OrderTypeTest extends TypeTestCase
      */
     protected function preparePriceType()
     {
-        return PriceTypeGenerator::createPriceType();
+        return PriceTypeGenerator::createPriceType($this);
     }
 
     /**
@@ -421,7 +448,7 @@ class OrderTypeTest extends TypeTestCase
                 }
             } elseif ($fieldName === 'accountUser') {
                 $order->setAccountUser($this->getEntity(
-                    'Oro\Bundle\CustomerBundle\Entity\AccountUser',
+                    'Oro\Bundle\CustomerBundle\Entity\CustomerUser',
                     $value
                 ));
             } elseif ($fieldName === 'account') {

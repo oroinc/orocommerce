@@ -4,8 +4,8 @@ namespace Oro\Bundle\CustomerBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Provider\AccountUserRelationsProvider;
 use Oro\Bundle\CustomerBundle\Provider\ScopeAccountGroupCriteriaProvider;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
@@ -40,13 +40,13 @@ class ScopeAccountGroupCriteriaProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetCriteriaForCurrentScope()
     {
-        $accGroup = new AccountGroup();
-        $accUser = new AccountUser();
+        $accGroup = new CustomerGroup();
+        $accUser = new CustomerUser();
         $account = new Account();
         $accUser->setAccount($account);
         $account->setGroup($accGroup);
 
-        $token = $this->getMock(TokenInterface::class);
+        $token = $this->createMock(TokenInterface::class);
         $accUser->setAccount($account);
 
         $token->expects($this->once())
@@ -78,7 +78,7 @@ class ScopeAccountGroupCriteriaProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function contextDataProvider()
     {
-        $accountGroup = new AccountGroup();
+        $accountGroup = new CustomerGroup();
         $accountGroupAware = new \stdClass();
         $accountGroupAware->accountGroup = $accountGroup;
 
@@ -108,6 +108,6 @@ class ScopeAccountGroupCriteriaProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetCriteriaValueType()
     {
-        $this->assertEquals(AccountGroup::class, $this->provider->getCriteriaValueType());
+        $this->assertEquals(CustomerGroup::class, $this->provider->getCriteriaValueType());
     }
 }

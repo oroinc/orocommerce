@@ -42,9 +42,9 @@ class DiscountSubtotalProviderTest extends AbstractSubtotalProviderTest
     protected function setUp()
     {
         parent::setUp();
-        $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+        $this->translator = $this->createMock('Symfony\Component\Translation\TranslatorInterface');
 
-        $this->roundingService = $this->getMock('Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface');
+        $this->roundingService = $this->createMock('Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface');
         $this->roundingService->expects($this->any())
             ->method('round')
             ->will(
@@ -102,7 +102,7 @@ class DiscountSubtotalProviderTest extends AbstractSubtotalProviderTest
             ->method('trans')
             ->with('oro.order.subtotals.' . DiscountSubtotalProvider::TYPE)
             ->willReturn(ucfirst(DiscountSubtotalProvider::TYPE));
-        $subtotalMock =  $this->getMock('Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal');
+        $subtotalMock =  $this->createMock('Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal');
         $this->lineItemSubtotal->expects($this->once())
             ->method('getSubtotal')
             ->willReturn($subtotalMock);
@@ -149,7 +149,7 @@ class DiscountSubtotalProviderTest extends AbstractSubtotalProviderTest
             ->with('oro.order.subtotals.' . DiscountSubtotalProvider::TYPE)
             ->willReturn(ucfirst(DiscountSubtotalProvider::TYPE));
 
-        $accountUser = $this->getMock('Oro\Bundle\CustomerBundle\Entity\AccountUser');
+        $accountUser = $this->createMock('Oro\Bundle\CustomerBundle\Entity\CustomerUser');
         $this->securityFacade->expects($this->once())
             ->method('getLoggedUser')
             ->willReturn($accountUser);

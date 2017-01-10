@@ -24,10 +24,11 @@ use Oro\Bundle\CustomerBundle\Model\ExtendAccount;
  * @Config(
  *      routeName="oro_customer_account_index",
  *      routeView="oro_customer_account_view",
+ *      routeCreate="oro_customer_account_create",
  *      routeUpdate="oro_customer_account_update",
  *      defaultValues={
  *          "entity"={
- *              "icon"="icon-user"
+ *              "icon"="fa-user"
  *          },
  *          "ownership"={
  *              "owner_type"="USER",
@@ -43,6 +44,9 @@ use Oro\Bundle\CustomerBundle\Model\ExtendAccount;
  *          "security"={
  *              "type"="ACL",
  *              "group_name"="commerce"
+ *          },
+ *          "grid"={
+ *              "default"="account-accounts-select-grid"
  *          },
  *          "dataaudit"={
  *              "auditable"=true
@@ -110,9 +114,9 @@ class Account extends ExtendAccount
     protected $children;
 
     /**
-     * @var Collection|AccountAddress[]
+     * @var Collection|CustomerAddress[]
      *
-     * @ORM\OneToMany(targetEntity="Oro\Bundle\CustomerBundle\Entity\AccountAddress",
+     * @ORM\OneToMany(targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerAddress",
      *    mappedBy="frontendOwner", cascade={"all"}, orphanRemoval=true
      * )
      * @ORM\OrderBy({"primary" = "DESC"})
@@ -127,9 +131,9 @@ class Account extends ExtendAccount
     protected $addresses;
 
     /**
-     * @var AccountGroup
+     * @var CustomerGroup
      *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\AccountGroup", inversedBy="accounts")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerGroup", inversedBy="customers")
      * @ORM\JoinColumn(name="group_id", referencedColumnName="id", onDelete="SET NULL")
      * @ConfigField(
      *      defaultValues={
@@ -142,10 +146,10 @@ class Account extends ExtendAccount
     protected $group;
 
     /**
-     * @var Collection|AccountUser[]
+     * @var Collection|CustomerUser[]
      *
      * @ORM\OneToMany(
-     *      targetEntity="Oro\Bundle\CustomerBundle\Entity\AccountUser",
+     *      targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerUser",
      *      mappedBy="account",
      *      cascade={"persist"}
      * )
@@ -364,11 +368,11 @@ class Account extends ExtendAccount
     }
 
     /**
-     * @param AccountGroup $group
+     * @param CustomerGroup $group
      *
      * @return $this
      */
-    public function setGroup(AccountGroup $group = null)
+    public function setGroup(CustomerGroup $group = null)
     {
         $this->group = $group;
 
@@ -376,7 +380,7 @@ class Account extends ExtendAccount
     }
 
     /**
-     * @return AccountGroup
+     * @return CustomerGroup
      */
     public function getGroup()
     {
@@ -432,11 +436,11 @@ class Account extends ExtendAccount
     }
 
     /**
-     * @param AccountUser $accountUser
+     * @param CustomerUser $accountUser
      *
      * @return $this
      */
-    public function addUser(AccountUser $accountUser)
+    public function addUser(CustomerUser $accountUser)
     {
         if (!$this->hasUser($accountUser)) {
             $accountUser->setAccount($this);
@@ -451,11 +455,11 @@ class Account extends ExtendAccount
     }
 
     /**
-     * @param AccountUser $accountUser
+     * @param CustomerUser $accountUser
      *
      * @return $this
      */
-    public function removeUser(AccountUser $accountUser)
+    public function removeUser(CustomerUser $accountUser)
     {
         if ($this->hasUser($accountUser)) {
             $accountUser->setAccount(null);
@@ -466,7 +470,7 @@ class Account extends ExtendAccount
     }
 
     /**
-     * @return Collection|AccountUser[]
+     * @return Collection|CustomerUser[]
      */
     public function getUsers()
     {
@@ -567,11 +571,11 @@ class Account extends ExtendAccount
     }
 
     /**
-     * @param AccountUser $accountUser
+     * @param CustomerUser $accountUser
      *
      * @return bool
      */
-    protected function hasUser(AccountUser $accountUser)
+    protected function hasUser(CustomerUser $accountUser)
     {
         return $this->users->contains($accountUser);
     }

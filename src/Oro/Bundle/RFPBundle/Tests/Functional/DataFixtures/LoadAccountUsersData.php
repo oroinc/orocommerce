@@ -8,10 +8,10 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use Oro\Bundle\UserBundle\Entity\BaseUserManager;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Entity\AccountUserRole;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\Repository\AccountUserRoleRepository;
+use Oro\Bundle\CustomerBundle\Entity\Repository\CustomerUserRoleRepository;
 
 class LoadAccountUsersData extends AbstractFixture implements DependentFixtureInterface
 {
@@ -99,22 +99,22 @@ class LoadAccountUsersData extends AbstractFixture implements DependentFixtureIn
         /* @var $userManager BaseUserManager */
         $userManager = $this->container->get('oro_account_user.manager');
         $organization = $manager->getRepository('OroOrganizationBundle:Organization')->getFirst();
-        /* @var $accountUserRoleRepository AccountUserRoleRepository */
-        $accountUserRoleRepository =  $this->container
+        /* @var $CustomerUserRoleRepository CustomerUserRoleRepository */
+        $CustomerUserRoleRepository =  $this->container
             ->get('doctrine')
-            ->getManagerForClass('OroCustomerBundle:AccountUserRole')
-            ->getRepository('OroCustomerBundle:AccountUserRole');
+            ->getManagerForClass('OroCustomerBundle:CustomerUserRole')
+            ->getRepository('OroCustomerBundle:CustomerUserRole');
 
         foreach ($this->users as $user) {
             if ($userManager->findUserByUsernameOrEmail($user['email'])) {
                 continue;
             }
 
-            /* @var $entity AccountUser  */
+            /* @var $entity CustomerUser  */
             $entity = $userManager->createUser();
 
-            /** @var AccountUserRole $role */
-            $role = $accountUserRoleRepository->findOneBy(['role' => $user['role']]);
+            /** @var CustomerUserRole $role */
+            $role = $CustomerUserRoleRepository->findOneBy(['role' => $user['role']]);
 
             /** @var Account $account */
             $account = $this->getReference($user['account']);

@@ -27,9 +27,7 @@ class CategoryVisibilityRepositoryTest extends WebTestCase
         $this->repository = $this->getContainer()
             ->get('doctrine')
             ->getRepository('OroVisibilityBundle:Visibility\CategoryVisibility');
-        $a = $this->repository->getCategoriesVisibilities();
         $this->loadFixtures([LoadCategoryVisibilityData::class]);
-        $a = $this->repository->getCategoriesVisibilities();
     }
 
     /**

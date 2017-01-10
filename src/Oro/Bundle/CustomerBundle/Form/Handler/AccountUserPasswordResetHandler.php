@@ -5,7 +5,7 @@ namespace Oro\Bundle\CustomerBundle\Form\Handler;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 
 class AccountUserPasswordResetHandler extends AbstractAccountUserPasswordHandler
 {
@@ -19,7 +19,7 @@ class AccountUserPasswordResetHandler extends AbstractAccountUserPasswordHandler
         if ($request->isMethod('POST')) {
             $form->submit($request);
             if ($form->isValid()) {
-                /** @var AccountUser $user */
+                /** @var CustomerUser $user */
                 $user = $form->getData();
 
                 $user

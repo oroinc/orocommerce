@@ -48,7 +48,7 @@ class RequestTypeTest extends AbstractTest
     public function testConfigureOptions()
     {
         /* @var $resolver \PHPUnit_Framework_MockObject_MockObject|OptionsResolver */
-        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
+        $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with(
@@ -447,8 +447,8 @@ class RequestTypeTest extends AbstractTest
 
         $accountUserSelectType = new StubEntityType(
             [
-                1 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountUser', 1),
-                2 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountUser', 2),
+                1 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUser', 1),
+                2 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUser', 2),
             ],
             AccountUserSelectType::NAME
         );

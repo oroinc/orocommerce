@@ -129,10 +129,9 @@ define(function(require) {
         },
 
         initializeListeners: function() {
-            var self = this;
             _.each(this.options.events, function(event) {
-                mediator.on(event, self.updateTotals, self);
-            });
+                mediator.on(event, this.updateTotals, this);
+            }, this);
         },
 
         showLoadingMask: function() {
@@ -214,14 +213,14 @@ define(function(require) {
                 type: typeRequest,
                 data: data,
                 success: function (response) {
-                    if (formData === self.formData) {
+                    if (formData === self.formData && !self.disposed) {
                         //data doesn't change after ajax call
                         var totals = response || {};
                         callback(totals);
                     }
                 },
                 error: function(jqXHR) {
-                    messenger.showErrorMessage(_.__('Sorry, unexpected error was occurred'), jqXHR.responseJSON);
+                    messenger.showErrorMessage(_.__('Sorry, an unexpected error has occurred.'), jqXHR.responseJSON);
                 }
             });
         },
@@ -269,6 +268,13 @@ define(function(require) {
 
             item.formattedAmount = NumberFormatter.formatCurrency(item.amount, item.currency);
 
+            if(item.data && item.data.baseAmount && item.data.baseCurrency) {
+                item.formattedBaseAmount = NumberFormatter.formatCurrency(
+                    item.data.baseAmount,
+                    item.data.baseCurrency
+                );
+            }
+
             var renderedItem = null;
 
             if (localItem.template) {
@@ -290,10 +296,8 @@ define(function(require) {
 
             delete this.items;
 
-            var self = this;
-            _.each(this.options.events, function(event) {
-                mediator.off(event, self.updateTotals, self);
-            });
+            mediator.off(null, null, this);
+
             TotalsComponent.__super__.dispose.call(this);
         }
     });

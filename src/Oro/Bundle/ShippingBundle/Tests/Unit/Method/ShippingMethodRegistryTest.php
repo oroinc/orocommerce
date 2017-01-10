@@ -40,7 +40,7 @@ class ShippingMethodRegistryTest extends \PHPUnit_Framework_TestCase
 
     public function testRegistry()
     {
-        $method = $this->getMock(ShippingMethodInterface::class);
+        $method = $this->createMock(ShippingMethodInterface::class);
 
         $this->provider->expects($this->once())
             ->method('getShippingMethods')
@@ -127,8 +127,8 @@ class ShippingMethodRegistryTest extends \PHPUnit_Framework_TestCase
      */
     protected function mockShippingMethod($class, $identifier)
     {
-        $method = $this->getMock($class);
-        $method->expects(static::once())
+        $method = $this->createMock($class);
+        $method->expects(static::any())
             ->method('getIdentifier')
             ->willReturn($identifier);
         return $method;

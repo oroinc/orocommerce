@@ -3,17 +3,17 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Controller\Frontend;
 
 use Doctrine\Common\Util\ClassUtils;
-
+use Oro\Bundle\CurrencyBundle\DependencyInjection\Configuration as CurrencyConfig;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserSettings;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Entity\AccountUserSettings;
-use Oro\Bundle\PricingBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
+ * @group CommunityEdition
  * @dbIsolation
  */
 class AjaxEntityTotalsControllerTest extends WebTestCase
@@ -39,11 +39,11 @@ class AjaxEntityTotalsControllerTest extends WebTestCase
         $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
 
         // set account user not default currency
-        $this->getContainer()->get('oro_config.manager')
-            ->set(Configuration::getConfigKeyByName(Configuration::ENABLED_CURRENCIES), ['EUR', 'USD']);
+        $manager = $this->getContainer()->get('oro_config.manager');
+        $manager->set(CurrencyConfig::getConfigKeyByName(CurrencyConfig::KEY_DEFAULT_CURRENCY), 'EUR');
         $user = $this->getCurrentUser();
         $website = $this->getCurrentWebsite();
-        $settings = new AccountUserSettings($website);
+        $settings = new CustomerUserSettings($website);
         $settings->setCurrency('EUR');
         $user->setWebsiteSettings($settings);
         $em = $this->getContainer()->get('doctrine')->getManager();
@@ -88,12 +88,12 @@ class AjaxEntityTotalsControllerTest extends WebTestCase
     }
 
     /**
-     * @return AccountUser
+     * @return CustomerUser
      */
     protected function getCurrentUser()
     {
         return $this->getContainer()->get('doctrine')
-            ->getRepository('OroCustomerBundle:AccountUser')
+            ->getRepository('OroCustomerBundle:CustomerUser')
             ->findOneBy(['username' => LoadAccountUserData::AUTH_USER]);
     }
 

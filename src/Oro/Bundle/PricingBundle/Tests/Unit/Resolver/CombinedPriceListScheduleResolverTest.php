@@ -4,14 +4,19 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Resolver;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
-
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule;
+use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
 use Oro\Bundle\PricingBundle\Resolver\CombinedPriceListScheduleResolver;
 
 class CombinedPriceListScheduleResolverTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|CombinedPriceListTriggerHandler
+     */
+    protected $triggerHandler;
+
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry
      */
@@ -51,14 +56,14 @@ class CombinedPriceListScheduleResolverTest extends \PHPUnit_Framework_TestCase
         $activationRuleRepositoryMock->expects($this->once())
             ->method('findOneBy')
             ->willReturn($rule);
-        $this->manager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
+        $this->manager = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
         $this->manager->method('getRepository')->willReturnMap([
             ['OroPricingBundle:CombinedPriceListToAccount', $CPLAccountRepositoryMock],
             ['OroPricingBundle:CombinedPriceListToAccountGroup', $CPLAccountGroupRepositoryMock],
             ['OroPricingBundle:CombinedPriceListToWebsite', $CPLWebsiteRepositoryMock],
             ['OroPricingBundle:CombinedPriceListActivationRule', $activationRuleRepositoryMock],
         ]);
-        $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $this->registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
         $this->registry->method('getManagerForClass')->willReturn($this->manager);
 
         $this->configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
@@ -67,11 +72,19 @@ class CombinedPriceListScheduleResolverTest extends \PHPUnit_Framework_TestCase
         $this->configManager->expects($this->once())->method('set');
         $this->configManager->expects($this->any())->method('get')->willReturn(1);
         $this->configManager->expects($this->once())->method('flush');
+
+        $this->triggerHandler = $this->getMockBuilder(CombinedPriceListTriggerHandler::class)
+            ->disableOriginalConstructor()->getMock();
+
+        $this->triggerHandler->expects($this->once())->method('startCollect');
+        //once because new rule + for config
+        $this->triggerHandler->expects($this->exactly(2))->method('process');
+        $this->triggerHandler->expects($this->once())->method('commit');
     }
 
     public function testUpdateRelations()
     {
-        $resolver = new CombinedPriceListScheduleResolver($this->registry, $this->configManager);
+        $resolver = new CombinedPriceListScheduleResolver($this->registry, $this->configManager, $this->triggerHandler);
         $resolver->addRelationClass('OroPricingBundle:CombinedPriceListToAccount');
         $resolver->addRelationClass('OroPricingBundle:CombinedPriceListToAccountGroup');
         $resolver->addRelationClass('OroPricingBundle:CombinedPriceListToWebsite');

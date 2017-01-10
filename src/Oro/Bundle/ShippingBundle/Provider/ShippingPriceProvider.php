@@ -3,8 +3,8 @@
 namespace Oro\Bundle\ShippingBundle\Provider;
 
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodConfig;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
 use Oro\Bundle\ShippingBundle\Method\PricesAwareShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewCollection;
@@ -14,7 +14,7 @@ use Oro\Bundle\ShippingBundle\Provider\Price\ShippingPriceProviderInterface;
 
 class ShippingPriceProvider implements ShippingPriceProviderInterface
 {
-    /** @var ShippingRulesProvider */
+    /** @var ShippingMethodsConfigsRulesProvider */
     protected $shippingRulesProvider;
 
     /** @var ShippingMethodRegistry */
@@ -27,13 +27,13 @@ class ShippingPriceProvider implements ShippingPriceProviderInterface
     protected $shippingMethodViewFactory;
 
     /**
-     * @param ShippingRulesProvider $shippingRulesProvider
+     * @param ShippingMethodsConfigsRulesProvider $shippingRulesProvider
      * @param ShippingMethodRegistry $registry
      * @param ShippingPriceCache $priceCache
      * @param ShippingMethodViewFactory $shippingMethodViewFactory
      */
     public function __construct(
-        ShippingRulesProvider $shippingRulesProvider,
+        ShippingMethodsConfigsRulesProvider $shippingRulesProvider,
         ShippingMethodRegistry $registry,
         ShippingPriceCache $priceCache,
         ShippingMethodViewFactory $shippingMethodViewFactory
@@ -51,7 +51,7 @@ class ShippingPriceProvider implements ShippingPriceProviderInterface
     {
         $methodCollection = new ShippingMethodViewCollection();
 
-        $rules = $this->shippingRulesProvider->getApplicableShippingRules($context);
+        $rules = $this->shippingRulesProvider->getAllFilteredShippingMethodsConfigs($context);
         foreach ($rules as $rule) {
             foreach ($rule->getMethodConfigs() as $methodConfig) {
                 $methodId = $methodConfig->getMethod();
@@ -98,7 +98,7 @@ class ShippingPriceProvider implements ShippingPriceProviderInterface
             return null;
         }
 
-        $rules = $this->shippingRulesProvider->getApplicableShippingRules($context);
+        $rules = $this->shippingRulesProvider->getAllFilteredShippingMethodsConfigs($context);
         foreach ($rules as $rule) {
             foreach ($rule->getMethodConfigs() as $methodConfig) {
                 if ($methodConfig->getMethod() !== $methodId) {
@@ -127,13 +127,12 @@ class ShippingPriceProvider implements ShippingPriceProviderInterface
 
     /**
      * @param ShippingContextInterface $context
-     * @param ShippingRuleMethodConfig $methodConfig
-     *
+     * @param ShippingMethodConfig $methodConfig
      * @return array
      */
     protected function getApplicableMethodTypesViews(
         ShippingContextInterface $context,
-        ShippingRuleMethodConfig $methodConfig
+        ShippingMethodConfig $methodConfig
     ) {
         $method = $this->registry->getShippingMethod($methodConfig->getMethod());
         $methodId = $method->getIdentifier();
@@ -189,7 +188,7 @@ class ShippingPriceProvider implements ShippingPriceProviderInterface
     {
         return array_reduce(
             $typeConfigs,
-            function (array $result, ShippingRuleMethodTypeConfig $config) {
+            function (array $result, ShippingMethodTypeConfig $config) {
                 if ($config->isEnabled()) {
                     $result[$config->getType()] = $config->getOptions();
                 }

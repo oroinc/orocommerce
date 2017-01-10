@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Placeholder;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
@@ -38,7 +38,7 @@ class AccountIdPlaceholder extends AbstractPlaceholder
     {
         $token = $this->tokenStorage->getToken();
 
-        if ($token && ($user = $token->getUser()) instanceof AccountUser) {
+        if ($token && ($user = $token->getUser()) instanceof CustomerUser) {
             return $user->getId();
         }
 

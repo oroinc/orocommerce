@@ -2,11 +2,15 @@
 
 namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
+use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Join;
 
+use Doctrine\ORM\Query\Expr\Orx;
+use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
+use Oro\Bundle\PricingBundle\Entity\BaseCombinedPriceListRelation;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToAccount;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToAccountGroup;
@@ -65,13 +69,13 @@ class CombinedPriceListRepository extends BasePriceListRepository
 
 
     /**
-     * @param AccountGroup $accountGroup
+     * @param CustomerGroup $accountGroup
      * @param Website $website
      * @param bool|true $isEnabled
      * @return null|CombinedPriceList
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function getPriceListByAccountGroup(AccountGroup $accountGroup, Website $website, $isEnabled = true)
+    public function getPriceListByAccountGroup(CustomerGroup $accountGroup, Website $website, $isEnabled = true)
     {
         $qb = $this->createQueryBuilder('priceList');
         $qb
@@ -118,34 +122,17 @@ class CombinedPriceListRepository extends BasePriceListRepository
     }
 
     /**
-     * @param array CombinedPriceList[] $exceptPriceLists
-     * @param bool|null $priceListsEnabled
+     * @param array|CombinedPriceList[] $priceLists
      */
-    public function deleteUnusedPriceLists(array $exceptPriceLists = [], $priceListsEnabled = true)
+    public function deletePriceLists(array $priceLists)
     {
-        $iterator = $this->getUnusedPriceListsIterator($exceptPriceLists, $priceListsEnabled);
-        $bufferSize = $this->getBufferSize();
-        $iterator->setBufferSize($bufferSize);
-
         $deleteQb = $this->getEntityManager()->createQueryBuilder()
             ->delete($this->getEntityName(), 'cplDelete');
 
         $deleteQb->where($deleteQb->expr()->in('cplDelete.id', ':unusedPriceLists'));
 
-        $priceListsIdForDelete = [];
-        $i = 0;
-        foreach ($iterator as $priceList) {
-            $priceListsIdForDelete[] = $priceList->getId();
-            $i++;
-            if ($i === $bufferSize) {
-                $deleteQb->setParameter('unusedPriceLists', $priceListsIdForDelete)
-                    ->getQuery()->execute();
-                $priceListsIdForDelete = [];
-                $i = 0;
-            }
-        }
-        if ($priceListsIdForDelete) {
-            $deleteQb->setParameter('unusedPriceLists', $priceListsIdForDelete)
+        if ($priceLists) {
+            $deleteQb->setParameter('unusedPriceLists', $priceLists)
                 ->getQuery()->execute();
         }
     }
@@ -161,12 +148,12 @@ class CombinedPriceListRepository extends BasePriceListRepository
     /**
      * @param array $exceptPriceLists
      * @param bool|null $priceListsEnabled
-     * @return BufferedQueryResultIterator
+     * @return array
      */
-    protected function getUnusedPriceListsIterator(array $exceptPriceLists = [], $priceListsEnabled = true)
+    public function getUnusedPriceListsIds(array $exceptPriceLists = [], $priceListsEnabled = true)
     {
         $selectQb = $this->createQueryBuilder('priceList')
-            ->select('priceList');
+            ->select('priceList.id');
 
         $relations = [
             'priceListToWebsite' => 'OroPricingBundle:CombinedPriceListToWebsite',
@@ -199,14 +186,15 @@ class CombinedPriceListRepository extends BasePriceListRepository
                 ->setParameter('isEnabled', $priceListsEnabled);
         }
 
-        return new BufferedQueryResultIterator($selectQb->getQuery());
+        return array_column($selectQb->getQuery()->getScalarResult(), 'id');
     }
 
     /**
      * @param CombinedPriceList $combinedPriceList
      * @param CombinedPriceList $activeCpl
      * @param Website $website
-     * @param Account|AccountGroup $targetEntity
+     * @param Account|CustomerGroup $targetEntity
+     * @return BaseCombinedPriceListRelation
      */
     public function updateCombinedPriceListConnection(
         CombinedPriceList $combinedPriceList,
@@ -227,7 +215,7 @@ class CombinedPriceListRepository extends BasePriceListRepository
                 $relation->setFullChainPriceList($combinedPriceList);
                 $em->persist($relation);
             }
-        } elseif ($targetEntity instanceof AccountGroup) {
+        } elseif ($targetEntity instanceof CustomerGroup) {
             $relation = $em->getRepository('OroPricingBundle:CombinedPriceListToAccountGroup')
                 ->findOneBy(['accountGroup' => $targetEntity, 'website' => $website]);
             if (!$relation) {
@@ -254,6 +242,45 @@ class CombinedPriceListRepository extends BasePriceListRepository
         $relation->setFullChainPriceList($combinedPriceList);
         $relation->setPriceList($activeCpl);
         $em->flush($relation);
+
+        return $relation;
+    }
+
+    /**
+     * @param $exceptRelation
+     * @return bool
+     */
+    public function hasOtherRelations(BaseCombinedPriceListRelation $exceptRelation)
+    {
+        $relationsClasses = [
+            'accountCpl' => CombinedPriceListToAccount::class,
+            'accountGroupCpl' => CombinedPriceListToAccountGroup::class,
+            'websiteCpl' => CombinedPriceListToWebsite::class,
+        ];
+
+        $mainQb = $this->createQueryBuilder('cpl');
+        $mainQb->select('1')
+            ->where('cpl = :cpl')
+            ->setParameter('cpl', $exceptRelation->getPriceList())
+            ->setParameter('website', $exceptRelation->getWebsite());
+
+        $expr = new Orx();
+        foreach ($relationsClasses as $alias => $class) {
+            $subQb = $this->getEntityManager()->createQueryBuilder();
+            $subQb->select('1')
+                ->from($class, $alias)
+                ->where($subQb->expr()->eq($alias.'.priceList', ':cpl'))
+                ->andWhere($subQb->expr()->eq($alias.'.website', ':website'));
+            if (is_a($exceptRelation, $class)) {
+                $subQb->andWhere($subQb->expr()->neq($alias.'.id', ':exceptRelation'));
+                $mainQb->setParameter('exceptRelation', $exceptRelation->getId());
+            }
+            $expr->add($mainQb->expr()->exists($subQb->getDQL()));
+        }
+        $mainQb->andWhere($expr);
+        $result = $mainQb->getQuery()->getOneOrNullResult(Query::HYDRATE_SCALAR);
+
+        return !empty($result);
     }
 
     /**
@@ -310,6 +337,33 @@ class CombinedPriceListRepository extends BasePriceListRepository
      */
     public function getCPLsForPriceCollectByTimeOffset($offsetHours)
     {
+        $qb = $this->getCPLsForPriceCollectByTimeOffsetQueryBuilder($offsetHours);
+
+        $iterator = new BufferedQueryResultIterator($qb);
+        $iterator->setBufferSize(self::CPL_BATCH_SIZE);
+
+        return $iterator;
+    }
+
+    /**
+     * @param int $offsetHours
+     *
+     * @return int
+     */
+    public function getCPLsForPriceCollectByTimeOffsetCount($offsetHours)
+    {
+        $qb = $this->getCPLsForPriceCollectByTimeOffsetQueryBuilder($offsetHours);
+
+        return $qb->select('COUNT(cpl.id)')->getQuery()->getSingleScalarResult();
+    }
+
+    /**
+     * @param int $offsetHours
+     *
+     * @return QueryBuilder
+     */
+    protected function getCPLsForPriceCollectByTimeOffsetQueryBuilder($offsetHours)
+    {
         $activateDate = new \DateTime('now', new \DateTimeZone('UTC'));
         $activateDate->add(new \DateInterval(sprintf('PT%dM', $offsetHours * 60)));
 
@@ -333,9 +387,6 @@ class CombinedPriceListRepository extends BasePriceListRepository
                 'activateData' => $activateDate
             ]);
 
-        $iterator = new BufferedQueryResultIterator($qb);
-        $iterator->setBufferSize(self::CPL_BATCH_SIZE);
-
-        return $iterator;
+        return $qb;
     }
 }

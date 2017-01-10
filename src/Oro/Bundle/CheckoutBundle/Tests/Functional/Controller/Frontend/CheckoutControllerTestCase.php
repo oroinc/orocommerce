@@ -2,22 +2,23 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend;
 
+use Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadPaymentMethodsConfigsRuleData;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountAddresses;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
 use Oro\Bundle\ActionBundle\Model\ActionData;
-use Oro\Bundle\CheckoutBundle\Model\Action\StartCheckout;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData as TestAccountUserData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
 use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
-use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingRules;
+use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingMethodsConfigsRules;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\PropertyAccess\PropertyPath;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 abstract class CheckoutControllerTestCase extends FrontendWebTestCase
@@ -63,18 +64,27 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
             [],
             $this->generateBasicAuthHeader(TestAccountUserData::AUTH_USER, TestAccountUserData::AUTH_PW)
         );
-        $this->loadFixtures(
-            [
-                LoadAccountUserData::class,
-                LoadAccountAddresses::class,
-                LoadProductUnitPrecisions::class,
-                LoadShoppingListLineItems::class,
-                LoadCombinedProductPrices::class,
-                LoadPaymentTermData::class,
-                LoadShippingRules::class,
-            ]
-        );
+        $paymentFixtures = (array)$this->getPaymentFixtures();
+        $this->loadFixtures(array_merge([
+            LoadAccountUserData::class,
+            LoadAccountAddresses::class,
+            LoadProductUnitPrecisions::class,
+            LoadShoppingListLineItems::class,
+            LoadCombinedProductPrices::class,
+            LoadShippingMethodsConfigsRules::class,
+        ], $paymentFixtures));
         $this->registry = $this->getContainer()->get('doctrine');
+    }
+
+    /**
+     * @return array
+     */
+    protected function getPaymentFixtures()
+    {
+        return [
+            LoadPaymentTermData::class,
+            LoadPaymentMethodsConfigsRuleData::class
+        ];
     }
 
     /**
@@ -85,13 +95,13 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
     {
         $this->setCurrentWebsite('default');
         $user = $this->registry
-            ->getRepository('OroCustomerBundle:AccountUser')
+            ->getRepository('OroCustomerBundle:CustomerUser')
             ->findOneBy(['username' => TestAccountUserData::AUTH_USER]);
         $user->setAccount($this->getReference('account.level_1'));
-        $token = new UsernamePasswordToken($user, false, 'key');
+        $token = new UsernamePasswordToken($user, false, 'key', $user->getRoles());
         $this->client->getContainer()->get('security.token_storage')->setToken($token);
         $data = $this->getCheckoutData($shoppingList);
-        $action = $this->client->getContainer()->get('oro_checkout.model.action.start_checkout');
+        $action = $this->client->getContainer()->get('oro_action.action.run_action_group');
         $action->initialize($data['options']);
         $action->execute($data['context']);
         CheckoutControllerTestCase::$checkoutUrl = $data['context']['redirectUrl'];
@@ -103,23 +113,15 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
      */
     protected function getCheckoutData(ShoppingList $shoppingList)
     {
-        $context = new ActionData(['data' => $shoppingList]);
-
         return [
-            'shoppingList' => $shoppingList,
-            'context' => $context,
+            'context' => new ActionData(['shoppingList' => $shoppingList]),
             'options' => [
-                StartCheckout::SOURCE_FIELD_KEY => 'shoppingList',
-                StartCheckout::SOURCE_ENTITY_KEY => $shoppingList,
-                StartCheckout::CHECKOUT_DATA_KEY => [
-                    'poNumber' => 'PO#123' . $shoppingList->getId(),
-                    'currency' => 'EUR'
+                'action_group' => 'start_shoppinglist_checkout',
+                'parameters_mapping' => [
+                    'shoppingList' => $shoppingList,
                 ],
-                StartCheckout::SETTINGS_KEY => [
-                    'auto_remove_source' => true,
-                    'disallow_billing_address_edit' => false,
-                    'disallow_shipping_address_edit' => false,
-                    'remove_source' => false
+                'results' => [
+                    'redirectUrl' => new PropertyPath('redirectUrl'),
                 ]
             ]
         ];

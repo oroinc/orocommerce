@@ -27,7 +27,7 @@ class AddressProviderTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->router = $this->getMock('Symfony\Component\Routing\Generator\UrlGeneratorInterface');
+        $this->router = $this->createMock('Symfony\Component\Routing\Generator\UrlGeneratorInterface');
         $this->fragmentHandler = $this->getMockBuilder('Symfony\Component\HttpKernel\Fragment\FragmentHandler')
             ->disableOriginalConstructor()
             ->getMock();
@@ -101,7 +101,7 @@ class AddressProviderTest extends \PHPUnit_Framework_TestCase
         /** @var Account $entity */
         $entity = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account');
 
-        $this->provider->setEntityClass('Oro\Bundle\CustomerBundle\Entity\AccountUser');
+        $this->provider->setEntityClass('Oro\Bundle\CustomerBundle\Entity\CustomerUser');
         $this->provider->getComponentOptions($entity);
     }
 }

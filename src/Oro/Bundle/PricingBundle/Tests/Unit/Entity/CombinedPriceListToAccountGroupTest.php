@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Entity;
 
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToAccountGroup;
 
 class CombinedPriceListToAccountGroupTest extends \PHPUnit_Framework_TestCase
@@ -15,7 +15,7 @@ class CombinedPriceListToAccountGroupTest extends \PHPUnit_Framework_TestCase
         $this->assertPropertyAccessors(
             new CombinedPriceListToAccountGroup(),
             [
-                ['accountGroup', new AccountGroup()]
+                ['accountGroup', new CustomerGroup()]
             ]
         );
     }

@@ -4,20 +4,21 @@ namespace Oro\Bundle\ShippingBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodConfig;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig;
+use Oro\Bundle\RuleBundle\Entity\Rule;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
 use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethod;
 use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethodType;
 
 class LoadShippingRuleDemoData extends AbstractFixture
 {
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function load(ObjectManager $manager)
     {
-        $typeConfig = new ShippingRuleMethodTypeConfig();
+        $typeConfig = new ShippingMethodTypeConfig();
         $typeConfig->setEnabled(true);
         $typeConfig->setType(FlatRateShippingMethodType::IDENTIFIER)
             ->setOptions([
@@ -25,14 +26,18 @@ class LoadShippingRuleDemoData extends AbstractFixture
                 FlatRateShippingMethodType::TYPE_OPTION => FlatRateShippingMethodType::PER_ORDER_TYPE,
             ]);
 
-        $methodConfig = new ShippingRuleMethodConfig();
+        $methodConfig = new ShippingMethodConfig();
         $methodConfig->setMethod(FlatRateShippingMethod::IDENTIFIER)
             ->addTypeConfig($typeConfig);
 
-        $shippingRule = new ShippingRule();
-        $shippingRule->setName('Default')
-            ->setCurrency('USD')
-            ->setPriority(1)
+        $rule = new Rule();
+        $rule->setName('Default')
+            ->setEnabled(true)
+            ->setSortOrder(1);
+
+        $shippingRule = new ShippingMethodsConfigsRule();
+        $shippingRule->setRule($rule);
+        $shippingRule->setCurrency('USD')
             ->addMethodConfig($methodConfig);
 
         $manager->persist($shippingRule);

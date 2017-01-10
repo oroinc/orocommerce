@@ -1,0 +1,38 @@
+.request-form-lineitem-unit {
+    display: table-cell;
+    padding-bottom: 8px;
+
+    &:not(:first-child) {
+        padding-left: 5px;
+    }
+
+    &__input {
+        width: 90px;
+
+        text-align: right;
+
+        border-radius: 3px 0 0 3px;
+
+        &:hover, &:focus {
+            + .product-tier-prices .popover-trigger {
+                border-color: $input-border-color-focus-state;
+                border-left-color: transparent;
+            }
+        }
+    }
+
+    &--size {
+        &-s {
+            width: 50px;
+        }
+
+        &-m {
+            width: 90px;
+        }
+    }
+
+    &--remove {
+        @extend .request-form-lineitem-unit;
+        text-align: right;
+    }
+}

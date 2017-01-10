@@ -75,10 +75,10 @@
 
     {% set shippingInformation %}
         {% if entity.shippingCost is not null %}
-            {{ UI.renderHtmlProperty('oro.sale.quote.shipping_cost.label'|trans,
+            {{ UI.renderProperty('oro.sale.quote.shipping_cost.label'|trans,
             entity.shippingCost.value|oro_format_currency({'currency': entity.shippingCost.currency})) }}
         {% else %}
-            {{ UI.renderHtmlProperty('oro.sale.quote.shipping_cost.label'|trans, 'N/A'|trans) }}
+            {{ UI.renderProperty('oro.sale.quote.shipping_cost.label'|trans, 'N/A'|trans) }}
         {% endif %}
     {% endset %}
 

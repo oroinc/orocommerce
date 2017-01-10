@@ -63,7 +63,7 @@ class ParentAccountSearchHandlerTest extends \PHPUnit_Framework_TestCase
             ->with(self::TEST_ENTITY_CLASS)
             ->will($this->returnValue($this->entityRepository));
 
-        $this->managerRegistry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $this->managerRegistry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
         $this->managerRegistry->expects($this->once())
             ->method('getManagerForClass')
             ->with(self::TEST_ENTITY_CLASS)
@@ -166,7 +166,7 @@ class ParentAccountSearchHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->entityRepository->expects($this->once())
             ->method('getChildrenIds')
-            ->with($this->aclHelper, $accountId)
+            ->with($accountId, $this->aclHelper)
             ->will($this->returnValue([]));
 
         $this->assertSearchCall($search, $page, $perPage, $foundElements, $resultData, $expectedIds);
@@ -202,7 +202,7 @@ class ParentAccountSearchHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->entityRepository->expects($this->once())
             ->method('getChildrenIds')
-            ->with($this->aclHelper, $accountId)
+            ->with($accountId, $this->aclHelper)
             ->will($this->returnValue([3]));
 
         $this->assertSearchCall($search, $page, $perPage, $foundElements, $resultData, $expectedIds);

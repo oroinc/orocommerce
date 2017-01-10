@@ -3,7 +3,7 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Entity\VisibilityResolved\Repository;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountGroupCategoryVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
@@ -42,11 +42,11 @@ class AccountGroupCategoryRepositoryTest extends AbstractCategoryRepositoryTest
         );
 
         $actualVisibility = $this->getRepository()
-            ->getVisibilitiesForAccountGroups($category, $accountGroups);
+            ->getVisibilitiesForAccountGroups($this->scopeManager, $category, $accountGroups);
 
         $expectedVisibilities = [];
         foreach ($visibilities as $account => $expectedVisibility) {
-            /** @var AccountGroup $account */
+            /** @var CustomerGroup $account */
             $accountGroup = $this->getReference($account);
             $expectedVisibilities[$accountGroup->getId()] = $expectedVisibility;
         }
@@ -108,7 +108,7 @@ class AccountGroupCategoryRepositoryTest extends AbstractCategoryRepositoryTest
         /** @var Category $category */
         $category = $this->getReference($categoryName);
 
-        /** @var AccountGroup $accountGroup */
+        /** @var CustomerGroup $accountGroup */
         $accountGroup = $this->getReference($accountGroupName);
         $scope = $this->scopeManager->findOrCreate(
             AccountGroupCategoryVisibility::VISIBILITY_TYPE,
@@ -173,7 +173,7 @@ class AccountGroupCategoryRepositoryTest extends AbstractCategoryRepositoryTest
      */
     public function testGetCategoryIdsByVisibility($visibility, $accountGroupName, $configValue, array $expected)
     {
-        /** @var AccountGroup $accountGroup */
+        /** @var CustomerGroup $accountGroup */
         $accountGroup = $this->getReference($accountGroupName);
         $scope = $this->scopeManager->findOrCreate(
             AccountGroupCategoryVisibility::VISIBILITY_TYPE,
@@ -493,7 +493,7 @@ class AccountGroupCategoryRepositoryTest extends AbstractCategoryRepositoryTest
 
     public function testInsertParentCategoryValues()
     {
-        /** @var AccountGroup $accountGroup */
+        /** @var CustomerGroup $accountGroup */
         $accountGroup = $this->getReference('account_group.group3');
 
         $parentCategoryFallbackCategories = ['category_1_5','category_1_5_6', 'category_1_5_6_7'];
@@ -515,6 +515,7 @@ class AccountGroupCategoryRepositoryTest extends AbstractCategoryRepositoryTest
         $visibility = CategoryVisibilityResolved::VISIBILITY_VISIBLE;
         $this->repository->clearTable();
         $this->repository->insertParentCategoryValues(
+            $this->getInsertExecutor(),
             array_merge($parentCategoryVisibilities, $staticCategoryVisibilities),
             $visibility
         );
@@ -571,7 +572,7 @@ class AccountGroupCategoryRepositoryTest extends AbstractCategoryRepositoryTest
      */
     protected function getRepository()
     {
-        return $this->getContainer()->get('oro_visibility.account_group_category_repository_holder')->getRepository();
+        return $this->getContainer()->get('oro_visibility.account_group_category_repository');
     }
 
     /**

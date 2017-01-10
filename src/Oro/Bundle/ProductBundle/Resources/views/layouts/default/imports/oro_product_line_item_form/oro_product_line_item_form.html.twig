@@ -15,7 +15,12 @@
         {% set renderCache %}
             {% set attr = layout_attr_defaults(attr, {
                 '~class': ' product-item__qty__current-grid',
-                'data-page-component-module': 'oroproduct/js/app/components/product-unit-select-component'
+                'data-page-component-module': 'oroproduct/js/app/components/product-unit-select-component',
+                'data-page-component-options': {
+                    'singleUnitMode': singleUnitMode,
+                    'singleUnitModeCodeVisible': singleUnitModeCodeVisible,
+                    'configDefaultUnit': defaultUnitCode
+                }|json_encode
             }) %}
             <div {{ block('block_attributes') }}>
                 {{ block_widget(block) }}
@@ -29,20 +34,44 @@
 {% endblock %}
 
 {% block __oro_product_line_item_form__line_item_form_widget %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' product-item__qty product-item__qty_{{ class_prefix }}'
     }) %}
+
     <div {{ block('block_attributes') }}>
-        {{ block_widget(block) }}
+        {% if is_configurable_product_type(product.type) %}
+            <div class="add-product-from-view-component">
+                <div class="btn-group full" {{ block('block_attributes') }}>
+                    {{ UI.addButton({
+                        'path': path('oro_product_frontend_product_view', {id: product.id}),
+                        'label': 'oro.product.frontend.index.view_details'|trans,
+                        'title': 'oro.product.frontend.index.view_details'|trans,
+                        'aCss': 'btn--info'
+                    }) }}
+                </div>
+            </div>
+        {% else %}
+            {{ block_widget(block) }}
+        {% endif %}
     </div>
 {% endblock %}
 
 {% block __oro_product_line_item_form__line_item_form_buttons_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
+
+    {% if 'list-view' in class_prefix %}
+        {% set decoreClass = 'btn--size-m btn--info' %}
+    {% else %}
+        {% set decoreClass = 'btn--info' %}
+    {% endif %}
+
     {% if block.children is not empty %}
         {% set attr = layout_attr_defaults(attr, {
             '~class': ' add-product-from-view-component '
         }) %}
+
         <div {{ block('block_attributes') }}>
             {{ UI.pinnedDropdownButton({
                 'html': block_widget(block),
@@ -54,8 +83,9 @@
                     'widgetModule': 'oroproduct/js/content-processor/product-add-to-dropdown-button',
                     'widgetName': 'productAddToDropdownButtonProcessor',
                     'truncateLength': 25,
-                    'groupContainer': '<div id="add-to-shopping-list" class="btn btn-orange btn-block btn_has-dropdown btn_has-dropdown_lg width-auto"></div>',
-                    'appendToBody': true
+                    'groupContainer': '<div class="btn-group full"></div>',
+                    'appendToBody': true,
+                    'decoreClass': decoreClass
                 }
             }) }}
         </div>

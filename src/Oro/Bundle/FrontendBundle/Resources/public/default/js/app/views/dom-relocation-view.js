@@ -2,6 +2,7 @@ define(function(require) {
     'use strict';
 
     var DomRelocationView;
+    var viewportManager = require('oroui/js/viewport-manager');
     var BaseView = require('oroui/js/app/views/base/view');
     var mediator = require('oroui/js/mediator');
     var _ = require('underscore');
@@ -41,13 +42,7 @@ define(function(require) {
         delegateEvents: function() {
             DomRelocationView.__super__.delegateEvents.apply(this, arguments);
 
-            this.$window.on(
-                'resize' + this.eventNamespace(),
-                _.debounce(_.bind(this.onResize, this), this.options.resizeTimeout)
-            );
-
-            mediator.on('layout:reposition',  _.debounce(this.onResize, this.options.layoutTimeout), this);
-
+            mediator.on('viewport:change', this.onViewportChange, this);
             return this;
         },
 
@@ -55,7 +50,6 @@ define(function(require) {
          * @inheritDoc
          */
         undelegateEvents: function() {
-            this.$window.off(this.eventNamespace());
             mediator.off(null, null, this);
             this.elements = null;
             return DomRelocationView.__super__.undelegateEvents.apply(this, arguments);
@@ -66,6 +60,7 @@ define(function(require) {
          */
         render: function() {
             this.collectElements();
+            this.onViewportChange(viewportManager.getViewport())
             return this;
         },
 
@@ -88,21 +83,18 @@ define(function(require) {
             return DomRelocationView.__super__.dispose.apply(this, arguments);
         },
 
-        onResize: function() {
-            var windowSize = this.$window.outerWidth();
-
+        onViewportChange: function(viewportData) {
             if (!this.$elements.length) {
                 return;
             }
-
             _.each(this.$elements, function(el) {
                 var $el = $(el);
-                var options = this.checkTargetOptions(windowSize, $el.data('responsiveOptions'));
+                var options = this.checkTargetOptions(viewportData, $el.data('responsiveOptions'));
 
                 if (_.isObject(options)) {
-                    if ($el.data('targetBreakPoint') !== options.breakpoint) {
+                    if ($el.data('targetBreakPoint') !== options.screenType) {
                         $(options.moveTo).first().append($el);
-                        $el.data('targetBreakPoint', options.breakpoint);
+                        $el.data('targetBreakPoint', options.screenType);
                     }
                 } else {
                     $el.data('originalPosition').append($el);
@@ -111,18 +103,12 @@ define(function(require) {
             }, this);
         },
 
-        checkTargetOptions: function(windowSize, responsiveOptions) {
-            var breakpoints = [];
-
-            for (var i = 0; i <= responsiveOptions.length - 1 ; i++) {
-                if (windowSize < responsiveOptions[i].breakpoint) {
-                    breakpoints.push(responsiveOptions[i]);
+        checkTargetOptions: function(viewportData, responsiveOptions) {
+            for (var i = responsiveOptions.length - 1; i >= 0; i--) {
+                if (viewportData.screenTypes[responsiveOptions[i].screenType]) {
+                    return responsiveOptions[i];
                 }
             }
-
-            return breakpoints.sort(function(a, b) {
-                      return a.breakpoint - b.breakpoint;
-                   })[0] || null;
         },
 
         collectElements: function() {

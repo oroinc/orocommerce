@@ -1,5 +1,0 @@
-styles:
-    inputs:
-        - 'bundles/oromenu/default/scss/variables/main-menu-config.scss'
-        - 'bundles/oromenu/default/scss/variables/top-bar-config.scss'
-        - 'bundles/oromenu/default/scss/styles.scss'

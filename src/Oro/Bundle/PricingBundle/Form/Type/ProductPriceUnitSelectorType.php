@@ -2,12 +2,11 @@
 
 namespace Oro\Bundle\PricingBundle\Form\Type;
 
-use Symfony\Component\Form\FormInterface;
-
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use Symfony\Component\Form\FormInterface;
 
 /**
  * Regular extension is used to change default set of units used to render and validate data
@@ -23,18 +22,11 @@ class ProductPriceUnitSelectorType extends ProductUnitSelectionType
      */
     protected function getProductUnits(FormInterface $form, Product $product = null)
     {
-        $priceType = $form->getParent();
-        if (!$priceType) {
-            return parent::getProductUnits($form, $product);
-        }
-        $collectionForm = $priceType->getParent();
-        if (!$collectionForm) {
-            return parent::getProductUnits($form, $product);
-        }
-        $productForm = $collectionForm->getParent();
+        $productForm = $this->getProductForm($form);
         if (!$productForm ||
             !$productForm->has('primaryUnitPrecision') ||
-            !$productForm->has('additionalUnitPrecisions')) {
+            !$productForm->has('additionalUnitPrecisions')
+        ) {
             return parent::getProductUnits($form, $product);
         }
 
@@ -43,10 +35,22 @@ class ProductPriceUnitSelectorType extends ProductUnitSelectionType
 
         /** @var ProductUnitPrecision[] $additionalUnitPrecisions */
         $additionalUnitPrecisions = $productForm->get('additionalUnitPrecisions')->getData();
+
+        return $this->getAllProductEnabledUnits($primaryUnitPrecision, $additionalUnitPrecisions);
+    }
+
+    /**
+     * @param ProductUnitPrecision $primaryUnitPrecision
+     * @param ProductUnitPrecision[] $additionalUnitPrecisions
+     * @return ProductUnit[]
+     */
+    protected function getAllProductEnabledUnits(ProductUnitPrecision $primaryUnitPrecision, $additionalUnitPrecisions)
+    {
         $units = [];
         if ($primaryUnitPrecision) {
             $units[] = $primaryUnitPrecision->getUnit();
         }
+
         if ($additionalUnitPrecisions) {
             foreach ($additionalUnitPrecisions as $precision) {
                 $units[] = $precision->getUnit();
@@ -54,5 +58,17 @@ class ProductPriceUnitSelectorType extends ProductUnitSelectionType
         }
 
         return $units;
+    }
+
+    /**
+     * @param FormInterface $form
+     * @return null|FormInterface
+     */
+    protected function getProductForm(FormInterface $form)
+    {
+        $priceType = $form->getParent();
+        $collectionForm = $priceType ? $priceType->getParent() : null;
+
+        return $collectionForm ? $collectionForm->getParent() : null;
     }
 }

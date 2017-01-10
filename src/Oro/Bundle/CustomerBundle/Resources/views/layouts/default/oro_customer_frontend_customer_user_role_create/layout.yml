@@ -1,0 +1,27 @@
+layout:
+    imports:
+        -
+            id: oro_customer_user_role_form
+            root: page_content
+        -
+            id: oro_customer_user_role_permission_grid
+            root: customer_user_role_container
+            namespace: customer_user_role_form_privileges
+
+    actions:
+        - '@setOption':
+            id: page_title
+            optionName: text
+            optionValue:
+                label: 'oro.customer.frontend.title.page.customer_user_role.create'
+        - '@setOption':
+            id: customer_user_role_form_actions_update_top
+            optionName: text
+            optionValue: oro.customer.action.customer_user_role.create_label
+        - '@setOption':
+            id: customer_user_role_form_actions_update_bottom
+            optionName: text
+            optionValue: oro.customer.action.customer_user_role.create_label
+        - '@move':
+            id: customer_user_role_form_privileges_datagrid
+            siblingId: customer_user_role_form_fields

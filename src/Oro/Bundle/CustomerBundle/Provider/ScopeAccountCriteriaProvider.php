@@ -3,19 +3,19 @@
 namespace Oro\Bundle\CustomerBundle\Provider;
 
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\ScopeBundle\Manager\AbstractScopeCriteriaProvider;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class ScopeAccountCriteriaProvider extends AbstractScopeCriteriaProvider
 {
     const ACCOUNT = 'account';
-
+    
     /**
      * @var TokenStorageInterface
      */
     protected $tokenStorage;
-
+    
     /**
      * @param TokenStorageInterface $tokenStorage
      */
@@ -23,7 +23,7 @@ class ScopeAccountCriteriaProvider extends AbstractScopeCriteriaProvider
     {
         $this->tokenStorage = $tokenStorage;
     }
-
+    
     /**
      * @return array
      */
@@ -34,13 +34,13 @@ class ScopeAccountCriteriaProvider extends AbstractScopeCriteriaProvider
             return [];
         }
         $loggedUser = $token->getUser();
-        if (null !== $loggedUser && $loggedUser instanceof AccountUser) {
+        if (null !== $loggedUser && $loggedUser instanceof CustomerUser) {
             return [self::ACCOUNT => $loggedUser->getAccount()];
         }
-
+    
         return [];
     }
-
+    
     /**
      * @return string
      */
@@ -48,7 +48,7 @@ class ScopeAccountCriteriaProvider extends AbstractScopeCriteriaProvider
     {
         return static::ACCOUNT;
     }
-
+    
     /**
      * {@inheritdoc}
      */

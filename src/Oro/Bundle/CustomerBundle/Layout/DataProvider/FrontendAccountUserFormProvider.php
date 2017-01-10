@@ -2,15 +2,15 @@
 
 namespace Oro\Bundle\CustomerBundle\Layout\DataProvider;
 
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
-
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Form\Type\AccountUserPasswordRequestType;
 use Oro\Bundle\CustomerBundle\Form\Type\AccountUserPasswordResetType;
 use Oro\Bundle\CustomerBundle\Form\Type\FrontendAccountUserProfileType;
 use Oro\Bundle\CustomerBundle\Form\Type\FrontendAccountUserType;
+use Oro\Bundle\CustomerBundle\Form\Type\FrontendOwnerSelectType;
 use Oro\Bundle\LayoutBundle\Layout\DataProvider\AbstractFormProvider;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 
 class FrontendAccountUserFormProvider extends AbstractFormProvider
 {
@@ -21,11 +21,11 @@ class FrontendAccountUserFormProvider extends AbstractFormProvider
     const ACCOUNT_USER_PASSWORD_RESET_ROUTE_NAME    = 'oro_customer_frontend_account_user_password_reset';
 
     /**
-     * @param AccountUser $accountUser
+     * @param CustomerUser $accountUser
      *
      * @return FormView
      */
-    public function getAccountUserFormView(AccountUser $accountUser)
+    public function getAccountUserFormView(CustomerUser $accountUser)
     {
         $options = $this->getAccountUserFormOptions($accountUser);
 
@@ -33,11 +33,11 @@ class FrontendAccountUserFormProvider extends AbstractFormProvider
     }
 
     /**
-     * @param AccountUser $accountUser
+     * @param CustomerUser $accountUser
      *
      * @return FormInterface
      */
-    public function getAccountUserForm(AccountUser $accountUser)
+    public function getAccountUserForm(CustomerUser $accountUser)
     {
         $options = $this->getAccountUserFormOptions($accountUser);
 
@@ -69,11 +69,11 @@ class FrontendAccountUserFormProvider extends AbstractFormProvider
     }
 
     /**
-     * @param AccountUser $accountUser
+     * @param CustomerUser $accountUser
      *
      * @return FormView
      */
-    public function getResetPasswordFormView(AccountUser $accountUser = null)
+    public function getResetPasswordFormView(CustomerUser $accountUser = null)
     {
         $options['action'] = $this->generateUrl(self::ACCOUNT_USER_PASSWORD_RESET_ROUTE_NAME);
 
@@ -81,11 +81,11 @@ class FrontendAccountUserFormProvider extends AbstractFormProvider
     }
 
     /**
-     * @param AccountUser $accountUser
+     * @param CustomerUser $accountUser
      *
      * @return FormInterface
      */
-    public function getResetPasswordForm(AccountUser $accountUser = null)
+    public function getResetPasswordForm(CustomerUser $accountUser = null)
     {
         $options['action'] = $this->generateUrl(self::ACCOUNT_USER_PASSWORD_RESET_ROUTE_NAME);
 
@@ -93,11 +93,11 @@ class FrontendAccountUserFormProvider extends AbstractFormProvider
     }
 
     /**
-     * @param AccountUser $accountUser
+     * @param CustomerUser $accountUser
      *
      * @return FormView
      */
-    public function getProfileFormView(AccountUser $accountUser)
+    public function getProfileFormView(CustomerUser $accountUser)
     {
         $options = $this->getProfilerFormOptions($accountUser);
 
@@ -105,11 +105,11 @@ class FrontendAccountUserFormProvider extends AbstractFormProvider
     }
 
     /**
-     * @param AccountUser $accountUser
+     * @param CustomerUser $accountUser
      *
      * @return FormInterface
      */
-    public function getProfileForm(AccountUser $accountUser)
+    public function getProfileForm(CustomerUser $accountUser)
     {
         $options = $this->getProfilerFormOptions($accountUser);
 
@@ -117,11 +117,11 @@ class FrontendAccountUserFormProvider extends AbstractFormProvider
     }
 
     /**
-     * @param AccountUser $accountUser
+     * @param CustomerUser $accountUser
      *
      * @return array
      */
-    private function getAccountUserFormOptions(AccountUser $accountUser)
+    private function getAccountUserFormOptions(CustomerUser $accountUser)
     {
         $options = [];
 
@@ -140,11 +140,11 @@ class FrontendAccountUserFormProvider extends AbstractFormProvider
     }
 
     /**
-     * @param AccountUser $accountUser
+     * @param CustomerUser $accountUser
      *
      * @return array
      */
-    private function getProfilerFormOptions(AccountUser $accountUser)
+    private function getProfilerFormOptions(CustomerUser $accountUser)
     {
         $options = [];
         if ($accountUser->getId()) {
@@ -159,8 +159,22 @@ class FrontendAccountUserFormProvider extends AbstractFormProvider
         throw new \RuntimeException(
             sprintf(
                 'Entity with type "%s" must be loaded. Method getId() return NULL.',
-                AccountUser::class
+                CustomerUser::class
             )
+        );
+    }
+
+    /**
+     * @param CustomerUser $accountUser
+     * @param object $target
+     * @return FormInterface
+     */
+    public function getAccountUserSelectFormView(CustomerUser $accountUser, $target)
+    {
+        return $this->getFormView(
+            FrontendOwnerSelectType::NAME,
+            $accountUser,
+            ['targetObject' => $target]
         );
     }
 }

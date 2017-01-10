@@ -13,9 +13,9 @@ use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Entity\AccountUserAddress;
-use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 
 /**
  * @NamePrefix("oro_api_account_")
@@ -37,10 +37,10 @@ class AccountUserAddressController extends RestController implements ClassResour
      */
     public function getAction($entityId, $addressId)
     {
-        /** @var AccountUser $accountUser */
+        /** @var CustomerUser $accountUser */
         $accountUser = $this->getAccountUserManager()->find($entityId);
 
-        /** @var AccountAddress $address */
+        /** @var CustomerAddress $address */
         $address = $this->getManager()->find($addressId);
 
         $addressData = null;
@@ -65,7 +65,7 @@ class AccountUserAddressController extends RestController implements ClassResour
      */
     public function cgetAction($entityId)
     {
-        /** @var AccountUser $accountUser */
+        /** @var CustomerUser $accountUser */
         $accountUser = $this->getAccountUserManager()->find($entityId);
         $result  = [];
 
@@ -95,9 +95,9 @@ class AccountUserAddressController extends RestController implements ClassResour
      */
     public function deleteAction($entityId, $addressId)
     {
-        /** @var AccountUserAddress $address */
+        /** @var CustomerUserAddress $address */
         $address = $this->getManager()->find($addressId);
-        /** @var AccountUser $accountUser */
+        /** @var CustomerUser $accountUser */
         $accountUser = $this->getAccountUserManager()->find($entityId);
         if ($accountUser->getAddresses()->contains($address)) {
             $accountUser->removeAddress($address);
@@ -122,7 +122,7 @@ class AccountUserAddressController extends RestController implements ClassResour
      */
     public function getByTypeAction($entityId, $typeName)
     {
-        /** @var AccountUser $accountUser */
+        /** @var CustomerUser $accountUser */
         $accountUser = $this->getAccountUserManager()->find($entityId);
 
         if ($accountUser) {
@@ -150,7 +150,7 @@ class AccountUserAddressController extends RestController implements ClassResour
      */
     public function getPrimaryAction($entityId)
     {
-        /** @var AccountUser $accountUser */
+        /** @var CustomerUser $accountUser */
         $accountUser = $this->getAccountUserManager()->find($entityId);
 
         if ($accountUser) {

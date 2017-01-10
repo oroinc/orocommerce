@@ -7,6 +7,10 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Oro\Bundle\CustomerBundle\Entity\AccountOwnerAwareInterface;
+use Oro\Bundle\CustomerBundle\Entity\Ownership\AuditableFrontendAccountUserAwareTrait;
 use Oro\Bundle\OrderBundle\Model\ShippingAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
@@ -19,7 +23,7 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  * @Config(
  *      defaultValues={
  *          "entity"={
- *              "icon"="icon-list-alt",
+ *              "icon"="fa-list-alt",
  *              "totals_mapping"={
  *                  "type"="entity_fields",
  *                  "fields"={
@@ -28,6 +32,11 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  *                       "total"="total"
  *                  }
  *              }
+ *          },
+ *          "ownership"={
+ *              "frontend_owner_type"="FRONTEND_USER",
+ *              "frontend_owner_field_name"="accountUser",
+ *              "frontend_owner_column_name"="customer_user_id"
  *          }
  *      }
  * )
@@ -36,8 +45,11 @@ class QuoteDemand implements
     CheckoutSourceEntityInterface,
     LineItemsAwareInterface,
     ShippingAwareInterface,
-    SubtotalAwareInterface
+    SubtotalAwareInterface,
+    AccountOwnerAwareInterface
 {
+    use AuditableFrontendAccountUserAwareTrait;
+
     /**
      * @var int
      *

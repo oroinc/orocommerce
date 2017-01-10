@@ -3,8 +3,9 @@
 namespace Oro\Bundle\VisibilityBundle\Entity\EntityListener;
 
 use Doctrine\ORM\Event\PreUpdateEventArgs;
+
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\CatalogBundle\Model\CategoryMessageHandler;
+use Oro\Bundle\VisibilityBundle\Model\CategoryMessageHandler;
 
 class CategoryListener
 {
@@ -35,8 +36,14 @@ class CategoryListener
         }
     }
 
-    public function postRemove()
+    /**
+     * @param Category $category
+     */
+    public function preRemove(Category $category)
     {
-        $this->categoryMessageHandler->addCategoryMessageToSchedule('oro_visibility.visibility.category_remove');
+        $this->categoryMessageHandler->addCategoryMessageToSchedule(
+            'oro_visibility.visibility.category_remove',
+            $category
+        );
     }
 }

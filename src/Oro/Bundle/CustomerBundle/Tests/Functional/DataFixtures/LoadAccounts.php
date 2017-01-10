@@ -9,7 +9,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 
 class LoadAccounts extends AbstractFixture implements DependentFixtureInterface
 {
@@ -32,6 +32,7 @@ class LoadAccounts extends AbstractFixture implements DependentFixtureInterface
      * account.level_1
      *     account.level_1.1
      *         account.level_1.1.1
+     *         account.level_1.1.2
      *     account.level_1.2
      *         account.level_1.2.1
      *             account.level_1.2.1.1
@@ -57,6 +58,7 @@ class LoadAccounts extends AbstractFixture implements DependentFixtureInterface
 
         $levelTwoFirst = $this->createAccount($manager, 'account.level_1.1', $owner, $levelOne);
         $this->createAccount($manager, 'account.level_1.1.1', $owner, $levelTwoFirst);
+        $this->createAccount($manager, 'account.level_1.1.2', $owner, $levelTwoFirst);
 
         $levelTwoSecond = $this->createAccount($manager, 'account.level_1.2', $owner, $levelOne, $group2);
         $levelTreeFirst = $this->createAccount($manager, 'account.level_1.2.1', $owner, $levelTwoSecond, $group2);
@@ -77,7 +79,7 @@ class LoadAccounts extends AbstractFixture implements DependentFixtureInterface
 
     /**
      * @param string $reference
-     * @return AccountGroup
+     * @return CustomerGroup
      */
     protected function getAccountGroup($reference)
     {
@@ -89,7 +91,7 @@ class LoadAccounts extends AbstractFixture implements DependentFixtureInterface
      * @param string $name
      * @param User $owner
      * @param Account $parent
-     * @param AccountGroup $group
+     * @param CustomerGroup $group
      * @return Account
      */
     protected function createAccount(
@@ -97,7 +99,7 @@ class LoadAccounts extends AbstractFixture implements DependentFixtureInterface
         $name,
         User $owner,
         Account $parent = null,
-        AccountGroup $group = null
+        CustomerGroup $group = null
     ) {
         $account = new Account();
         $account->setName($name);

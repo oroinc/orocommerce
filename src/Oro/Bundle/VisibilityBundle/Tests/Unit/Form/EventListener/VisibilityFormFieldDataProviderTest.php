@@ -5,7 +5,7 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Form\EventListener;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Form\FormScopeCriteriaResolver;
@@ -47,7 +47,7 @@ class VisibilityFormFieldDataProviderTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->registry = $this->getMock(ManagerRegistry::class);
+        $this->registry = $this->createMock(ManagerRegistry::class);
 
         $this->scopeManager = $this->getMockBuilder(ScopeManager::class)
             ->disableOriginalConstructor()
@@ -70,9 +70,9 @@ class VisibilityFormFieldDataProviderTest extends \PHPUnit_Framework_TestCase
         $product = $this->getEntity(Product::class, ['id' => 1]);
 
         // configure form behaviour
-        $form = $this->getMock(FormInterface::class);
+        $form = $this->createMock(FormInterface::class);
         $form->method('getData')->willReturn($product);
-        $formConfig = $this->getMock(FormConfigInterface::class);
+        $formConfig = $this->createMock(FormConfigInterface::class);
         $rootScope = new Scope();
         $formConfig->method('getOption')
             ->willReturnMap(
@@ -82,7 +82,7 @@ class VisibilityFormFieldDataProviderTest extends \PHPUnit_Framework_TestCase
                 ]
             );
         $form->method('getConfig')->willReturn($formConfig);
-        $allForm = $this->getMock(FormInterface::class);
+        $allForm = $this->createMock(FormInterface::class);
         $form->expects($this->once())->method('get')->with('all')->willReturn($allForm);
 
         $this->formScopeCriteriaResolver->expects($this->once())
@@ -100,8 +100,8 @@ class VisibilityFormFieldDataProviderTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $em = $this->getMock(EntityManagerInterface::class);
-        $repository = $this->getMock(VisibilityRepositoryInterface::class);
+        $em = $this->createMock(EntityManagerInterface::class);
+        $repository = $this->createMock(VisibilityRepositoryInterface::class);
         $repository->expects($this->once())
             ->method('findByScopeCriteriaForTarget')
             ->willReturn([$visibility]);
@@ -118,9 +118,9 @@ class VisibilityFormFieldDataProviderTest extends \PHPUnit_Framework_TestCase
         $product = $this->getEntity(Product::class, ['id' => 1]);
 
         // configure form behaviour
-        $form = $this->getMock(FormInterface::class);
+        $form = $this->createMock(FormInterface::class);
         $form->method('getData')->willReturn($product);
-        $formConfig = $this->getMock(FormConfigInterface::class);
+        $formConfig = $this->createMock(FormConfigInterface::class);
         $rootScope = new Scope();
         $formConfig->method('getOption')
             ->willReturnMap(
@@ -130,7 +130,7 @@ class VisibilityFormFieldDataProviderTest extends \PHPUnit_Framework_TestCase
                 ]
             );
         $form->method('getConfig')->willReturn($formConfig);
-        $accountGroupForm = $this->getMock(FormInterface::class);
+        $accountGroupForm = $this->createMock(FormInterface::class);
         $form->expects($this->once())->method('get')->with('accountGroup')->willReturn($accountGroupForm);
 
         $this->formScopeCriteriaResolver->expects($this->once())
@@ -145,7 +145,7 @@ class VisibilityFormFieldDataProviderTest extends \PHPUnit_Framework_TestCase
                 'id' => 1,
                 'visibility' => 'visible',
                 'scope' => new StubScope(
-                    ['accountGroup' => $this->getEntity(AccountGroup::class, ['id' => 2]), 'account' => null]
+                    ['accountGroup' => $this->getEntity(CustomerGroup::class, ['id' => 2]), 'account' => null]
                 ),
             ]
         );
@@ -155,12 +155,12 @@ class VisibilityFormFieldDataProviderTest extends \PHPUnit_Framework_TestCase
                 'id' => 2,
                 'visibility' => 'hidden',
                 'scope' => new StubScope(
-                    ['accountGroup' => $this->getEntity(AccountGroup::class, ['id' => 4]), 'account' => null]
+                    ['accountGroup' => $this->getEntity(CustomerGroup::class, ['id' => 4]), 'account' => null]
                 ),
             ]
         );
-        $em = $this->getMock(EntityManagerInterface::class);
-        $repository = $this->getMock(VisibilityRepositoryInterface::class);
+        $em = $this->createMock(EntityManagerInterface::class);
+        $repository = $this->createMock(VisibilityRepositoryInterface::class);
         $repository->expects($this->once())
             ->method('findByScopeCriteriaForTarget')
             ->willReturn([$visibility1, $visibility2]);
@@ -179,9 +179,9 @@ class VisibilityFormFieldDataProviderTest extends \PHPUnit_Framework_TestCase
         $product = $this->getEntity(Product::class, ['id' => 1]);
 
         // configure form behaviour
-        $form = $this->getMock(FormInterface::class);
+        $form = $this->createMock(FormInterface::class);
         $form->method('getData')->willReturn($product);
-        $formConfig = $this->getMock(FormConfigInterface::class);
+        $formConfig = $this->createMock(FormConfigInterface::class);
         $rootScope = new Scope();
         $formConfig->method('getOption')
             ->willReturnMap(
@@ -191,7 +191,7 @@ class VisibilityFormFieldDataProviderTest extends \PHPUnit_Framework_TestCase
                 ]
             );
         $form->method('getConfig')->willReturn($formConfig);
-        $accountForm = $this->getMock(FormInterface::class);
+        $accountForm = $this->createMock(FormInterface::class);
         $form->expects($this->once())->method('get')->with('account')->willReturn($accountForm);
 
         $this->formScopeCriteriaResolver->expects($this->once())
@@ -220,8 +220,8 @@ class VisibilityFormFieldDataProviderTest extends \PHPUnit_Framework_TestCase
                 ),
             ]
         );
-        $em = $this->getMock(EntityManagerInterface::class);
-        $repository = $this->getMock(VisibilityRepositoryInterface::class);
+        $em = $this->createMock(EntityManagerInterface::class);
+        $repository = $this->createMock(VisibilityRepositoryInterface::class);
         $repository->expects($this->once())
             ->method('findByScopeCriteriaForTarget')
             ->willReturn([$visibility1, $visibility2]);
@@ -237,9 +237,9 @@ class VisibilityFormFieldDataProviderTest extends \PHPUnit_Framework_TestCase
     public function testCreateFormFieldData()
     {
         $product = new Product();
-        $form = $this->getMock(FormInterface::class);
+        $form = $this->createMock(FormInterface::class);
         $form->method('getData')->willReturn($product);
-        $formConfig = $this->getMock(FormConfigInterface::class);
+        $formConfig = $this->createMock(FormConfigInterface::class);
         $rootScope = new Scope();
         $formConfig->method('hasOption')->with('scope')->willReturn(true);
         $formConfig->method('getOption')

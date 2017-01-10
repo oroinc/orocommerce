@@ -1,5 +1,5 @@
 {% block _rfp_request_view_top_actions_widget %}
-    {% set attr = attr|merge({ class: attr.class|default('') ~ " oro-account-user-role__controls-list pull-right mt0-md mb0-md mt0-sm mb0-sm" }) %}
+    {% set attr = attr|merge({ class: attr.class|default('') ~ " oro-customer-user-role__controls-list pull-right mt0-md mb0-md mt0-sm mb0-sm" }) %}
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
@@ -7,9 +7,9 @@
 
 {% block _rfp_request_view_controls_list_widget %}
     <ul class="oro-order__controls-list">
-        <li><a href="#"><i class="cf-reply"></i>Share</a></li>
-        <li><a href="#"><i class="cf-print"></i>Print</a></li>
-        <li><a href="#"><i class="cf-insert_drive_file"></i>Save PDF</a></li>
+        <li><a href="#"><i class="fa-reply"></i>Share</a></li>
+        <li><a href="#"><i class="fa-print"></i>Print</a></li>
+        <li><a href="#"><i class="fa-file"></i>Save PDF</a></li>
     </ul>
 {% endblock %}
 
@@ -155,7 +155,11 @@
                                     </td>
                                 {% endif %}
                                 <td>
-                                    {{ requestProductItem.quantity|oro_format_short_product_unit_value(requestProductItem.productUnit) }}
+                                    {% if oro_is_unit_code_visible(requestProductItem.productUnit.code) %}
+                                        {{ requestProductItem.quantity|oro_format_short_product_unit_value(requestProductItem.productUnit) }}
+                                    {% else %}
+                                        {{ requestProductItem.quantity }}
+                                    {% endif %}
                                 </td>
                                 <td class="text-right">
                                     {% if requestProductItem.price %}

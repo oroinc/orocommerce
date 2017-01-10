@@ -149,13 +149,25 @@ class ProductRepository extends EntityRepository
 
     /**
      * @param array $skus
-     * @return Product[]
+     * @return QueryBuilder
      */
-    public function getProductWithNamesBySku(array $skus)
+    public function getProductWithNamesBySkuQueryBuilder(array $skus)
     {
         $qb = $this->getProductWithNamesQueryBuilder();
         $qb->where($qb->expr()->in('product.sku', ':product_skus'))
             ->setParameter('product_skus', $skus);
+
+        return $qb;
+    }
+
+    /**
+     * @param array $skus
+     * @return Product[]
+     */
+    public function getProductWithNamesBySku(array $skus)
+    {
+        $qb = $this->getProductWithNamesBySkuQueryBuilder($skus);
+
         return $qb->getQuery()->getResult();
     }
 
@@ -259,5 +271,34 @@ class ProductRepository extends EntityRepository
             ->setParameter('imageType', ProductImageType::TYPE_MAIN);
 
         return $this;
+    }
+
+    /**
+     * @param Product $configurableProduct
+     * @param array $variantParameters
+     * $variantParameters = [
+     *     'size' => 'm',
+     *     'color' => 'red',
+     *     'slim_fit' => true
+     * ]
+     * Value is extended field id for select field and true or false for boolean field
+     * @return QueryBuilder
+     */
+    public function getSimpleProductsByVariantFieldsQueryBuilder(Product $configurableProduct, array $variantParameters)
+    {
+        $qb = $this
+            ->createQueryBuilder('p')
+            ->select('p')
+            ->leftJoin('p.parentVariantLinks', 'l')
+            ->andWhere('l.parentProduct = :parentProduct')
+            ->setParameter('parentProduct', $configurableProduct);
+
+        foreach ($variantParameters as $variantName => $variantValue) {
+            $qb
+                ->andWhere(sprintf('p.%s = :variantValue%s', $variantName, $variantName))
+                ->setParameter(sprintf('variantValue%s', $variantName), $variantValue);
+        }
+
+        return $qb;
     }
 }

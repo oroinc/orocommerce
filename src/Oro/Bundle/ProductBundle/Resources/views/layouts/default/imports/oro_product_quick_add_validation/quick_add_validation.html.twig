@@ -75,15 +75,22 @@
         <div {{ block('block_attributes') }}>
             <ol>
                 {% for invalidRow in collection.invalidRows %}
-                    <li>
-                        {% if invalidRow.isComplete and invalidRow.product is empty %}
+                    {% if invalidRow.isComplete and invalidRow.product is empty %}
+                        <li>
                             {{ 'oro.product.frontend.quick_add.import_validation.validator.not_found'
                             |trans({'%sku%' : invalidRow.sku}) }}
-                        {% else %}
+                        </li>
+                    {% elseif false == invalidRow.hasErrors %}
+                        <li>
                             {{ 'oro.product.frontend.quick_add.import_validation.validator.invalid_format'
                             |trans({'%index%' : invalidRow.index}) }}
-                        {% endif %}
-                    </li>
+                        </li>
+                    {% endif %}
+                    {% if invalidRow.hasErrors %}
+                        {% for error in invalidRow.getErrors %}
+                            <li>{{ error.message }}</li>
+                        {% endfor %}
+                    {% endif %}
                 {% endfor %}
             </ol>
         </div>

@@ -13,7 +13,7 @@ use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
 use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EnumSelectType;
-use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 use Oro\Bundle\CustomerBundle\Form\Type\AccountGroupSelectType;
 use Oro\Bundle\CustomerBundle\Form\Type\AccountType;
 use Oro\Bundle\CustomerBundle\Form\Type\ParentAccountSelectType;
@@ -32,7 +32,7 @@ class AccountTypeTest extends FormIntegrationTestCase
     protected $entityManager;
 
     /**
-     * @var AccountAddress[]
+     * @var CustomerAddress[]
      */
     protected static $addresses;
 
@@ -55,7 +55,7 @@ class AccountTypeTest extends FormIntegrationTestCase
         parent::setUp();
 
         $this->formType = new AccountType($this->getEventDispatcher());
-        $this->formType->setAddressClass('Oro\Bundle\CustomerBundle\Entity\AccountAddress');
+        $this->formType->setAddressClass('Oro\Bundle\CustomerBundle\Entity\CustomerAddress');
     }
 
     /**
@@ -73,8 +73,8 @@ class AccountTypeTest extends FormIntegrationTestCase
     {
         $accountGroupSelectType = new EntityType(
             [
-                1 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountGroup', 1),
-                2 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountGroup', 2)
+                1 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerGroup', 1),
+                2 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerGroup', 2)
             ],
             AccountGroupSelectType::NAME
         );
@@ -171,7 +171,7 @@ class AccountTypeTest extends FormIntegrationTestCase
                 ],
                 'expectedData' => [
                     'name' => 'account_name',
-                    'group' => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountGroup', 1),
+                    'group' => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerGroup', 1),
                     'parent' => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account', 2),
                     'addresses' => [$this->getAddresses()[1]],
                     'internal_rating' => new StubEnumValue('2_of_5', '2 of 5'),
@@ -191,7 +191,7 @@ class AccountTypeTest extends FormIntegrationTestCase
                 ],
                 'expectedData' => [
                     'name' => 'account_name',
-                    'group' => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountGroup', 1),
+                    'group' => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerGroup', 1),
                     'parent' => null,
                     'addresses' => [$this->getAddresses()[1]],
                     'internal_rating' => new StubEnumValue('2_of_5', '2 of 5'),
@@ -232,7 +232,7 @@ class AccountTypeTest extends FormIntegrationTestCase
                 ],
                 'expectedData' => [
                     'name' => 'account_name',
-                    'group' => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountGroup', 1),
+                    'group' => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerGroup', 1),
                     'parent' => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account', 2),
                     'addresses' => [],
                     'internal_rating' => new StubEnumValue('2_of_5', '2 of 5'),
@@ -251,7 +251,7 @@ class AccountTypeTest extends FormIntegrationTestCase
                 ],
                 'expectedData' => [
                     'name' => 'account_name',
-                    'group' => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountGroup', 1),
+                    'group' => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerGroup', 1),
                     'parent' => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account', 2),
                     'addresses' => [],
                     'salesRepresentatives' => [],
@@ -284,14 +284,14 @@ class AccountTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @return AccountAddress[]
+     * @return CustomerAddress[]
      */
     protected function getAddresses()
     {
         if (!self::$addresses) {
             self::$addresses = [
-                1 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountAddress', 1),
-                2 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountAddress', 2)
+                1 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerAddress', 1),
+                2 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerAddress', 2)
             ];
         }
 
@@ -319,7 +319,7 @@ class AccountTypeTest extends FormIntegrationTestCase
     protected function getEventDispatcher()
     {
         if (!$this->eventDispatcher) {
-            $this->eventDispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
+            $this->eventDispatcher = $this->createMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
         }
 
         return $this->eventDispatcher;

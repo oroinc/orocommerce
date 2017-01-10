@@ -37,20 +37,20 @@ abstract class AbstractActionTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->contextAccessor = $this->getMock('Oro\Component\ConfigExpression\ContextAccessor');
+        $this->contextAccessor = $this->createMock('Oro\Component\ConfigExpression\ContextAccessor');
 
-        $this->paymentMethodRegistry = $this->getMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry');
+        $this->paymentMethodRegistry = $this->createMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry');
 
         $this->paymentTransactionProvider = $this
             ->getMockBuilder('Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->router = $this->getMock('Symfony\Component\Routing\RouterInterface');
+        $this->router = $this->createMock('Symfony\Component\Routing\RouterInterface');
 
         $this->action = $this->getAction();
 
-        $this->logger = $this->getMock('Psr\Log\LoggerInterface');
+        $this->logger = $this->createMock('Psr\Log\LoggerInterface');
         $this->action->setLogger($this->logger);
 
         $this->dispatcher = $this->getMockBuilder('Symfony\Component\EventDispatcher\EventDispatcherInterface')

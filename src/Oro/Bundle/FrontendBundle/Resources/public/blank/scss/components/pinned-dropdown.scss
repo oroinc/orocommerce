@@ -1,0 +1,9 @@
+// @theme: blank;
+
+.pinned-dropdown {
+    width: 100%;
+
+    .icons-holder:not(:first-child) {
+        display: none;
+    }
+}

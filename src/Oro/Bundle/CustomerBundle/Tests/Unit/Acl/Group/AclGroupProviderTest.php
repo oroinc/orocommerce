@@ -6,12 +6,12 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\CustomerBundle\Acl\Group\AclGroupProvider;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 
 class AclGroupProviderTest extends \PHPUnit_Framework_TestCase
 {
     const LOCAL_LEVEL = 'Oro\Bundle\CustomerBundle\Entity\Account';
-    const BASIC_LEVEL = 'Oro\Bundle\CustomerBundle\Entity\AccountUser';
+    const BASIC_LEVEL = 'Oro\Bundle\CustomerBundle\Entity\CustomerUser';
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|SecurityFacade
@@ -34,7 +34,7 @@ class AclGroupProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->container = $this->getMock('Symfony\Component\DependencyInjection\ContainerInterface');
+        $this->container = $this->createMock('Symfony\Component\DependencyInjection\ContainerInterface');
         $this->container->expects($this->any())
             ->method('get')
             ->with('oro_security.security_facade')
@@ -75,7 +75,7 @@ class AclGroupProviderTest extends \PHPUnit_Framework_TestCase
                 'expectedResult' => false
             ],
             'account user' => [
-                'securityFacadeUser' => new AccountUser(),
+                'securityFacadeUser' => new CustomerUser(),
                 'expectedResult' => true
             ],
             'user is not logged in' => [
@@ -87,7 +87,7 @@ class AclGroupProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetGroup()
     {
-        $this->assertEquals(AccountUser::SECURITY_GROUP, $this->provider->getGroup());
+        $this->assertEquals(CustomerUser::SECURITY_GROUP, $this->provider->getGroup());
     }
 
     /**

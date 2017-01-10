@@ -9,7 +9,7 @@ use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Form\Type\AccountUserMultiSelectType;
 
 class AccountUserMultiSelectTypeTest extends FormIntegrationTestCase
@@ -34,7 +34,7 @@ class AccountUserMultiSelectTypeTest extends FormIntegrationTestCase
     public function testSetDefaultOptions()
     {
         /* @var $resolver \PHPUnit_Framework_MockObject_MockObject|OptionsResolver */
-        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
+        $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with(
@@ -43,7 +43,7 @@ class AccountUserMultiSelectTypeTest extends FormIntegrationTestCase
                     'configs' => [
                         'multiple' => true,
                         'component' => 'autocomplete-accountuser',
-                        'placeholder' => 'oro.customer.accountuser.form.choose',
+                        'placeholder' => 'oro.customer.customeruser.form.choose',
                     ],
                     'attr' => [
                         'class' => 'account-accountuser-multiselect',
@@ -138,10 +138,10 @@ class AccountUserMultiSelectTypeTest extends FormIntegrationTestCase
 
     /**
      * @param int $id
-     * @return AccountUser
+     * @return CustomerUser
      */
     protected function getAccountUser($id)
     {
-        return $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountUser', ['id' => $id, 'salt' => $id]);
+        return $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUser', ['id' => $id, 'salt' => $id]);
     }
 }

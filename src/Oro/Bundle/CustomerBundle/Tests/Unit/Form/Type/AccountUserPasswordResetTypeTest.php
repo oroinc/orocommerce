@@ -6,12 +6,12 @@ use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Validator\Validation;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Form\Type\AccountUserPasswordResetType;
 
 class AccountUserPasswordResetTypeTest extends FormIntegrationTestCase
 {
-    const DATA_CLASS = 'Oro\Bundle\CustomerBundle\Entity\AccountUser';
+    const DATA_CLASS = 'Oro\Bundle\CustomerBundle\Entity\CustomerUser';
 
     /** @var AccountUserPasswordResetType */
     protected $formType;
@@ -42,9 +42,9 @@ class AccountUserPasswordResetTypeTest extends FormIntegrationTestCase
     /**
      * @dataProvider submitProvider
      *
-     * @param AccountUser $defaultData
+     * @param CustomerUser $defaultData
      * @param array $submittedData
-     * @param AccountUser $expectedData
+     * @param CustomerUser $expectedData
      */
     public function testSubmit($defaultData, array $submittedData, $expectedData)
     {
@@ -61,8 +61,8 @@ class AccountUserPasswordResetTypeTest extends FormIntegrationTestCase
      */
     public function submitProvider()
     {
-        $entity = new AccountUser();
-        $expectedEntity = new AccountUser();
+        $entity = new CustomerUser();
+        $expectedEntity = new CustomerUser();
         $expectedEntity->setSalt($entity->getSalt());
         $expectedEntity->setPlainPassword('new password');
 

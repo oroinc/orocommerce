@@ -38,16 +38,30 @@
 
 {% block _middle_bar_search_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ " search-widget search-widget_centered bordered radiused"
+        class: attr.class|default('') ~ " search-widget-wrap"
     }) %}
+
+    {% set dom_relocation_options =  {
+        responsive: [
+            {
+                screenType: 'tablet',
+                moveTo: "[data-header-row-search-container]"
+            }
+        ]
+    }|json_encode %}
     <div {{ block('block_attributes') }}>
-        <div class="search-widget__container">
-            <form id="oro_website_search_search" action="{{ url('oro_website_search_results') }}" method="GET" novalidate="novalidate">
-                <input class="search-widget__input" type="text" placeholder="{{ 'oro.website_search.search_field_placeholder'|trans({}, translation_domain) }}" value="" name="search"/>
-                <button name="oro_website_search_search_button" class="search-widget__submit" type="submit">
-                    <i class="icon-search"></i>
-                </button>
-            </form>
-        </div>
+        <form  id="oro_website_search_search"
+               action="{{ url('oro_website_search_results') }}"
+               method="GET"
+               novalidate="novalidate"
+               class="search-widget"
+               data-dom-relocation
+               data-dom-relocation-options="{{ dom_relocation_options }}"
+        >
+            <input class="search-widget__input input input--full" type="text" placeholder="{{ 'oro.website_search.search_field_placeholder'|trans({}, translation_domain) }}" value="" name="search"/>
+            <button name="oro_website_search_search_button" class="search-widget__submit" type="submit">
+                <i class="fa-search fa--base-line"></i>
+            </button>
+        </form>
     </div>
 {% endblock %}

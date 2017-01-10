@@ -7,11 +7,11 @@ use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\EntityBundle\ORM\OroEntityManager;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestProduct;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexDatetime;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexDecimal;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexInteger;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexText;
+use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Repository\ItemRepository;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadItemData;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadProductsToIndex;
@@ -100,7 +100,7 @@ class ItemRepositoryTest extends WebTestCase
 
     public function testRemoveEntitiesForNonExistentEntities()
     {
-        $this->getItemRepository()->removeEntities([91, 92], 'SomeClass');
+        $this->getItemRepository()->removeEntities([91, 92], \stdClass::class);
 
         $this->assertEntityCount(8, Item::class);
         $this->assertEntityCount(2, IndexInteger::class);
@@ -171,7 +171,7 @@ class ItemRepositoryTest extends WebTestCase
         $repository = $this->getRepository($entityClass);
 
         $actualCount = $repository->createQueryBuilder('t')
-            ->select('count(t)')
+            ->select('COUNT(t)')
             ->getQuery()
             ->getSingleScalarResult();
 

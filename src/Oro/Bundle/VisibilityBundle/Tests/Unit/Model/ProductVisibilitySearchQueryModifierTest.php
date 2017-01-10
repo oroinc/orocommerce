@@ -10,7 +10,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\VisibilityBundle\Indexer\ProductVisibilityIndexer;
 use Oro\Bundle\VisibilityBundle\Model\ProductVisibilitySearchQueryModifier;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -73,7 +73,7 @@ class ProductVisibilitySearchQueryModifierTest extends \PHPUnit_Framework_TestCa
         $reflection->setAccessible(true);
         $reflection->setValue($account, 1);
 
-        $accountUser = new AccountUser();
+        $accountUser = new CustomerUser();
         $accountUser->setAccount($account);
 
         $token = $this

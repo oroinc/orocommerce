@@ -5,8 +5,8 @@ namespace Oro\Bundle\OrderBundle\Tests\Unit\Provider;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 
 use Oro\Bundle\OrderBundle\Provider\AddressProviderInterface;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
@@ -48,7 +48,7 @@ abstract class AbstractQuoteAddressProviderTest extends \PHPUnit_Framework_TestC
      */
     public function testGetAccountUserAddressesUnsupportedType()
     {
-        $this->provider->getAccountUserAddresses(new AccountUser(), 'test');
+        $this->provider->getAccountUserAddresses(new CustomerUser(), 'test');
     }
 
     /**
@@ -97,7 +97,7 @@ abstract class AbstractQuoteAddressProviderTest extends \PHPUnit_Framework_TestC
             ->will($this->returnValue($loggedUser));
 
         $account = new Account();
-        $addresses = [new AccountAddress()];
+        $addresses = [new CustomerAddress()];
 
         $this->securityFacade->expects($this->once())
             ->method('isGranted')
@@ -129,7 +129,7 @@ abstract class AbstractQuoteAddressProviderTest extends \PHPUnit_Framework_TestC
             ->will($this->returnValue($loggedUser));
 
         $account = new Account();
-        $addresses = [new AccountAddress()];
+        $addresses = [new CustomerAddress()];
 
         $this->securityFacade->expects($this->exactly(2))
             ->method('isGranted')
@@ -176,7 +176,7 @@ abstract class AbstractQuoteAddressProviderTest extends \PHPUnit_Framework_TestC
             ->method('getLoggedUser')
             ->will($this->returnValue($loggedUser));
 
-        $accountUser = new AccountUser();
+        $accountUser = new CustomerUser();
 
         $permissionsValueMap = [];
         foreach ($expectedCalledPermissions as $permission => $decision) {
@@ -209,11 +209,11 @@ abstract class AbstractQuoteAddressProviderTest extends \PHPUnit_Framework_TestC
      */
     protected function assertAccountAddressRepositoryCall()
     {
-        $repository = $this->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\Repository\AccountAddressRepository')
+        $repository = $this->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\Repository\CustomerAddressRepository')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $manager = $this->getMock('Doctrine\ORM\EntityManagerInterface');
+        $manager = $this->createMock('Doctrine\ORM\EntityManagerInterface');
         $manager->expects($this->any())
             ->method('getRepository')
             ->with($this->accountAddressClass)
@@ -233,11 +233,11 @@ abstract class AbstractQuoteAddressProviderTest extends \PHPUnit_Framework_TestC
     protected function assertAccountUserAddressRepositoryCall()
     {
         $repository = $this
-            ->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\Repository\AccountUserAddressRepository')
+            ->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\Repository\CustomerUserAddressRepository')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $manager = $this->getMock('Doctrine\ORM\EntityManagerInterface');
+        $manager = $this->createMock('Doctrine\ORM\EntityManagerInterface');
         $manager->expects($this->any())
             ->method('getRepository')
             ->with($this->accountUserAddressClass)

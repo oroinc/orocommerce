@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CustomerBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Provider\ScopeAccountCriteriaProvider;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -28,10 +28,10 @@ class ScopeAccountCriteriaProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetCriteriaForCurrentScope()
     {
-        $accUser = new AccountUser();
+        $accUser = new CustomerUser();
         $account = new Account();
 
-        $token = $this->getMock(TokenInterface::class);
+        $token = $this->createMock(TokenInterface::class);
         $accUser->setAccount($account);
 
         $token->expects($this->once())

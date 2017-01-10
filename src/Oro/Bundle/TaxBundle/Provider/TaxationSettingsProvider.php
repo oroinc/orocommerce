@@ -2,14 +2,15 @@
 
 namespace Oro\Bundle\TaxBundle\Provider;
 
-use Oro\Bundle\AddressBundle\Entity\Address;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\TaxBundle\Factory\AddressModelFactory;
+use Oro\Bundle\TaxBundle\Model\Address;
 use Oro\Bundle\TaxBundle\Model\TaxBaseExclusion;
 use Oro\Bundle\TaxBundle\Factory\TaxBaseExclusionFactory;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class TaxationSettingsProvider
 {
@@ -208,5 +209,21 @@ class TaxationSettingsProvider
         $originAddressValues = $this->configManager->get('oro_tax.origin_address');
 
         return $this->addressModelFactory->create($originAddressValues);
+    }
+
+    /**
+     * @return array
+     */
+    public function getShippingTaxCodes()
+    {
+        return (array)$this->configManager->get('oro_tax.shipping_tax_code');
+    }
+
+    /**
+     * @return bool
+     */
+    public function isShippingRatesIncludeTax()
+    {
+        return (bool)$this->configManager->get('oro_tax.shipping_rates_include_tax');
     }
 }

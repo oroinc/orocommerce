@@ -107,13 +107,16 @@ layout:
                 order_shipping_method:
                     blockType: text
                     options:
-                        text: '=data["oro_order_frontend_shipping_method_provider"].getData(data["order"])'
+                        text: ~
+                        vars:
+                            shippingMethod: '=data["order"].getShippingMethod()'
+                            shippingMethodType: '=data["order"].getShippingMethodType()'
                         label: 'oro.order.shipping_method.label'
                         additional_block_prefixes: ['order_body_column_element']
                 order_payment_method:
                     blockType: text
                     options:
-                        text: '=data["oro_payment_methods_provider"].getPaymentMethods(data["order"])'
+                        text: '=data["oro_payment_method_views_provider"].getPaymentMethods(data["order"])'
                         label: 'oro.payment.methods.label'
                         additional_block_prefixes: ['order_body_column_element']
                 order_payment_term:

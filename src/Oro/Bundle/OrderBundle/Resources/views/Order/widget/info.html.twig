@@ -1,14 +1,16 @@
 {% import 'OroUIBundle::macros.html.twig' as UI %}
 {% import 'OroEntityConfigBundle::macros.html.twig' as entityConfig %}
+{% import 'OroCurrencyBundle::macros.html.twig' as currency %}
 {% import 'OroAddressBundle::macros.html.twig' as address %}
 
 {% set sourceEntityBlock %}
-  {% set sourceDocumenttitle = order.sourceEntityClass|oro_order_format_source_document(
+  {% set sourceDocumenttitle = order.sourceEntityClass
+    |oro_order_format_source_document(
     order.sourceEntityId,
     order.sourceEntityIdentifier
-  ) %}
+  )|escape %}
 
-  <i class="icon {{ oro_entity_config_value(order.sourceEntityClass, 'icon') }}"></i>
+  <i class="{{ oro_entity_config_value(order.sourceEntityClass, 'icon') }}"></i>
   {% if sourceEntity is not null and resource_granted('VIEW', sourceEntity) %}
       <a href="{{ oro_entity_view_link(order.sourceEntityClass, order.sourceEntityId) }}">
           {{ sourceDocumenttitle }}
@@ -25,6 +27,7 @@
             {{ UI.renderProperty('oro.order.po_number.label'|trans, order.poNumber) }}
             {{ UI.renderProperty('oro.order.currency.label'|trans, order.currency) }}
             {{ UI.renderProperty('oro.order.subtotal.label'|trans, order.subtotal|oro_format_currency({'currency': order.currency})) }}
+            {{ currency.convert_to_base_currency(order.subtotalObject, '', order, 'subtotal') }}
 
             {% if resource_granted('VIEW', order.account) %}
                 {% set accountView = UI.renderUrl(path('oro_customer_account_view', {'id': order.account.id}), order.account|oro_format_name|default('oro.ui.empty'|trans)) %}
@@ -50,7 +53,7 @@
         <div class="responsive-block">
             {{ UI.renderHtmlProperty('oro.order.billing_address.label'|trans, address.renderAddress(order.billingAddress)) }}
             {{ UI.renderHtmlProperty('oro.order.shipping_address.label'|trans, address.renderAddress(order.shippingAddress)) }}
-            {{ UI.renderHtmlProperty('oro.order.customer_notes.label'|trans, order.customerNotes) }}
+            {{ UI.renderProperty('oro.order.customer_notes.label'|trans, order.customerNotes) }}
         </div>
         <div class="responsive-block">
             {{ entityConfig.renderDynamicFields(order) }}

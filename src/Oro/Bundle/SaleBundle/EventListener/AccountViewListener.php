@@ -9,7 +9,7 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 
 class AccountViewListener
 {
@@ -68,8 +68,8 @@ class AccountViewListener
      */
     public function onAccountUserView(BeforeListRenderEvent $event)
     {
-        /** @var AccountUser $account */
-        $account = $this->getEntityFromRequestId('OroCustomerBundle:AccountUser');
+        /** @var CustomerUser $account */
+        $account = $this->getEntityFromRequestId('OroCustomerBundle:CustomerUser');
         if ($account) {
             $template = $event->getEnvironment()->render(
                 'OroSaleBundle:AccountUser:quote_view.html.twig',

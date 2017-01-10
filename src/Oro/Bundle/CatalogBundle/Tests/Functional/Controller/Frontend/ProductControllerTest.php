@@ -123,29 +123,13 @@ class ProductControllerTest extends WebTestCase
     }
 
     /**
-     * @dataProvider dataProviderForNotExistingCategories
-     * @param mixed $categoryId
-     */
-    public function testControllerActionWithNotExistingCategoryId($categoryId)
-    {
-        $this->client->request('GET', $this->getUrl(
-            'oro_product_frontend_product_index',
-            [
-                RequestProductHandler::CATEGORY_ID_KEY => $categoryId
-            ]
-        ));
-
-        $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 404);
-    }
-
-    /**
      * @dataProvider navigationBarTestDataProvider
      *
      * @param $category
-     * @param $expectedParts
+     * @param array $expectedParts
+     * @param array $urlParts
      */
-    public function testNavigationBar($category, array $expectedParts)
+    public function testNavigationBar($category, array $expectedParts, array $urlParts)
     {
         $category = $this->getReference($category);
 
@@ -183,6 +167,13 @@ class ProductControllerTest extends WebTestCase
         }
 
         $this->assertSame($foundParts, $expectedParts);
+        $breadCrumbsNodes = $crawler->filter('span.path-info a');
+
+        foreach ($breadCrumbsNodes as $key => $node) {
+            $this->assertNotNull($node->getAttribute('href'));
+            $this->assertNotNull($node->textContent);
+            $this->assertEquals($urlParts[$key], trim($node->textContent));
+        }
     }
 
     /**
@@ -195,11 +186,23 @@ class ProductControllerTest extends WebTestCase
                 'category' => LoadCategoryData::SECOND_LEVEL1,
                 'expectedParts' => [
                     LoadCategoryData::SECOND_LEVEL1
+                ],
+                'urlParts' => [
+                    'Products categories',
+                    LoadCategoryData::FIRST_LEVEL,
+                    LoadCategoryData::SECOND_LEVEL1,
                 ]
+
             ],
             [
                 'categoryId' => LoadCategoryData::THIRD_LEVEL1,
                 'expectedParts' => [
+                    LoadCategoryData::SECOND_LEVEL1,
+                    LoadCategoryData::THIRD_LEVEL1
+                ],
+                'urlParts' => [
+                    'Products categories',
+                    LoadCategoryData::FIRST_LEVEL,
                     LoadCategoryData::SECOND_LEVEL1,
                     LoadCategoryData::THIRD_LEVEL1
                 ]
@@ -209,21 +212,13 @@ class ProductControllerTest extends WebTestCase
                 'expectedParts' => [
                     LoadCategoryData::SECOND_LEVEL1,
                     // filters are not expected to show as they render using javascript
+                ],
+                'urlParts' => [
+                    'Products categories',
+                    LoadCategoryData::FIRST_LEVEL,
+                    LoadCategoryData::SECOND_LEVEL1,
                 ]
             ]
-        ];
-    }
-
-    /**
-     * @return array
-     */
-    public function dataProviderForNotExistingCategories()
-    {
-        return [
-            [99999],
-            ['99999'],
-            ['dummy-string'],
-            [''],
         ];
     }
 }

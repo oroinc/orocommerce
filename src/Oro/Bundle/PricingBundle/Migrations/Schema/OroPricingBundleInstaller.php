@@ -3,29 +3,28 @@
 namespace Oro\Bundle\PricingBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
+
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
-use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
-class OroPricingBundleInstaller implements Installation, NoteExtensionAwareInterface
+class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareInterface
 {
-    /** @var NoteExtension */
-    protected $noteExtension;
+    /** @var  ActivityExtension */
+    protected $activityExtension;
 
     /**
-     * Sets the NoteExtension
-     *
-     * @param NoteExtension $noteExtension
+     * {@inheritdoc}
      */
-    public function setNoteExtension(NoteExtension $noteExtension)
+    public function setActivityExtension(ActivityExtension $activityExtension)
     {
-        $this->noteExtension = $noteExtension;
+        $this->activityExtension = $activityExtension;
     }
 
     /**
@@ -33,7 +32,7 @@ class OroPricingBundleInstaller implements Installation, NoteExtensionAwareInter
      */
     public function getMigrationVersion()
     {
-        return 'v1_5';
+        return 'v1_6';
     }
 
     /**
@@ -113,7 +112,7 @@ class OroPricingBundleInstaller implements Installation, NoteExtensionAwareInter
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->setPrimaryKey(['id']);
 
-        $this->noteExtension->addNoteAssociation($schema, 'oro_price_list');
+        $this->activityExtension->addActivityAssociation($schema, 'oro_note', 'oro_price_list');
     }
 
     /**
@@ -131,19 +130,19 @@ class OroPricingBundleInstaller implements Installation, NoteExtensionAwareInter
     }
 
     /**
-     * Create oro_price_list_to_acc_group table
+     * Create oro_price_list_to_cus_group table
      *
      * @param Schema $schema
      */
     protected function createOroPriceListToAccGrTable(Schema $schema)
     {
-        $table = $schema->createTable('oro_price_list_to_acc_group');
+        $table = $schema->createTable('oro_price_list_to_cus_group');
         $table->addColumn('price_list_id', 'integer', []);
         $table->addColumn('website_id', 'integer', []);
-        $table->addColumn('account_group_id', 'integer', []);
+        $table->addColumn('customer_group_id', 'integer', []);
         $table->addColumn('priority', 'integer', []);
         $table->addColumn('merge_allowed', 'boolean', ['default' => true]);
-        $table->setPrimaryKey(['account_group_id', 'price_list_id', 'website_id']);
+        $table->setPrimaryKey(['customer_group_id', 'price_list_id', 'website_id']);
     }
 
     /**
@@ -306,19 +305,19 @@ class OroPricingBundleInstaller implements Installation, NoteExtensionAwareInter
     }
 
     /**
-     * Create oro_price_list_acc_gr_fb table
+     * Create oro_price_list_cus_gr_fb table
      *
      * @param Schema $schema
      */
     protected function createOroPriceListAccGroupFallbackTable(Schema $schema)
     {
-        $table = $schema->createTable('oro_price_list_acc_gr_fb');
+        $table = $schema->createTable('oro_price_list_cus_gr_fb');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('account_group_id', 'integer', []);
+        $table->addColumn('customer_group_id', 'integer', []);
         $table->addColumn('website_id', 'integer', []);
         $table->addColumn('fallback', 'integer', []);
         $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['account_group_id', 'website_id'], 'oro_price_list_acc_gr_fb_unq');
+        $table->addUniqueIndex(['customer_group_id', 'website_id'], 'oro_price_list_cus_gr_fb_unq');
     }
 
     /**
@@ -354,19 +353,19 @@ class OroPricingBundleInstaller implements Installation, NoteExtensionAwareInter
     }
 
     /**
-     * Create oro_cmb_plist_to_acc_gr table
+     * Create oro_cmb_plist_to_cus_gr table
      *
      * @param Schema $schema
      */
     protected function createOroCmbPriceListToAccGrTable(Schema $schema)
     {
-        $table = $schema->createTable('oro_cmb_plist_to_acc_gr');
+        $table = $schema->createTable('oro_cmb_plist_to_cus_gr');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('account_group_id', 'integer', ['notnull' => true]);
+        $table->addColumn('customer_group_id', 'integer', ['notnull' => true]);
         $table->addColumn('website_id', 'integer', ['notnull' => true]);
         $table->addColumn('combined_price_list_id', 'integer', ['notnull' => true]);
         $table->addColumn('full_combined_price_list_id', 'integer', ['notnull' => true]);
-        $table->addUniqueIndex(['account_group_id', 'website_id'], 'oro_cpl_to_acc_gr_ws_unq');
+        $table->addUniqueIndex(['customer_group_id', 'website_id'], 'oro_cpl_to_cus_gr_ws_unq');
         $table->setPrimaryKey(['id']);
     }
 
@@ -519,13 +518,13 @@ class OroPricingBundleInstaller implements Installation, NoteExtensionAwareInter
     }
 
     /**
-     * Add oro_price_list_to_acc_group foreign keys.
+     * Add oro_price_list_to_cus_group foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroPriceListToAccGrForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('oro_price_list_to_acc_group');
+        $table = $schema->getTable('oro_price_list_to_cus_group');
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_website'),
             ['website_id'],
@@ -533,8 +532,8 @@ class OroPricingBundleInstaller implements Installation, NoteExtensionAwareInter
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_account_group'),
-            ['account_group_id'],
+            $schema->getTable('oro_customer_group'),
+            ['customer_group_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
@@ -725,16 +724,16 @@ class OroPricingBundleInstaller implements Installation, NoteExtensionAwareInter
     }
 
     /**
-     * Add oro_price_list_acc_gr_fb foreign keys.
+     * Add oro_price_list_cus_gr_fb foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroPriceListAccGroupFallbackForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('oro_price_list_acc_gr_fb');
+        $table = $schema->getTable('oro_price_list_cus_gr_fb');
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_account_group'),
-            ['account_group_id'],
+            $schema->getTable('oro_customer_group'),
+            ['customer_group_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
@@ -763,13 +762,13 @@ class OroPricingBundleInstaller implements Installation, NoteExtensionAwareInter
     }
 
     /**
-     * Add oro_cmb_plist_to_acc_gr foreign keys.
+     * Add oro_cmb_plist_to_cus_gr foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroCmbPriceListToAccGrForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('oro_cmb_plist_to_acc_gr');
+        $table = $schema->getTable('oro_cmb_plist_to_cus_gr');
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_website'),
             ['website_id'],
@@ -783,8 +782,8 @@ class OroPricingBundleInstaller implements Installation, NoteExtensionAwareInter
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_account_group'),
-            ['account_group_id'],
+            $schema->getTable('oro_customer_group'),
+            ['customer_group_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );

@@ -6,7 +6,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
@@ -32,8 +32,8 @@ class QuoteDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
         parent::setUp();
 
         /* @var $requestStack RequestStack|\PHPUnit_Framework_MockObject_MockObject */
-        $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
-        $this->request = $this->getMock('Symfony\Component\HttpFoundation\Request');
+        $requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
+        $this->request = $this->createMock('Symfony\Component\HttpFoundation\Request');
 
         $requestStack->expects($this->any())
             ->method('getCurrentRequest')
@@ -61,7 +61,7 @@ class QuoteDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
                         'targetEntity' => 'Oro\Bundle\CustomerBundle\Entity\Account',
                     ],
                     'accountUser' => [
-                        'targetEntity' => 'Oro\Bundle\CustomerBundle\Entity\AccountUser',
+                        'targetEntity' => 'Oro\Bundle\CustomerBundle\Entity\CustomerUser',
                     ],
                 ],
             ],
@@ -106,8 +106,8 @@ class QuoteDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
 
         /* @var $account Account */
         $account = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account', $inputData['accountId']);
-        /* @var $accountUser AccountUser */
-        $accountUser = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountUser', $inputData['accountUserId']);
+        /* @var $accountUser CustomerUser */
+        $accountUser = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUser', $inputData['accountUserId']);
 
         $data = [
             ProductDataStorage::ENTITY_DATA_KEY => [

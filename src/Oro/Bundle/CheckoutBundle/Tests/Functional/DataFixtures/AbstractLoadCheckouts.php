@@ -7,7 +7,7 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderAddressData;
@@ -66,11 +66,16 @@ abstract class AbstractLoadCheckouts extends AbstractFixture implements
     {
         $this->manager = $manager;
         $this->clearPreconditions();
-        /** @var AccountUser $accountUser */
-        $accountUser = $manager->getRepository('OroCustomerBundle:AccountUser')
+        /** @var CustomerUser $defaultAccountUser */
+        $defaultAccountUser = $manager->getRepository('OroCustomerBundle:CustomerUser')
             ->findOneBy(['username' => LoadAccountUserData::AUTH_USER]);
         $website = $this->getReference(LoadWebsiteData::WEBSITE1);
         foreach ($this->getData() as $name => $checkoutData) {
+            /* @var $accountUser CustomerUser */
+            $accountUser = isset($checkoutData['accountUser']) ?
+                $this->getReference($checkoutData['accountUser']) :
+                $defaultAccountUser;
+
             $checkout = $this->createCheckout();
             $checkout->setAccountUser($accountUser);
             $checkout->setOrganization($accountUser->getOrganization());

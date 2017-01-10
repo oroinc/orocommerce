@@ -35,7 +35,7 @@ class VisibilityMessageHandlerTest extends \PHPUnit_Framework_TestCase
         $this->messageFactory = $this->getMockBuilder(VisibilityMessageFactory::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->messageProducer = $this->getMock(MessageProducerInterface::class);
+        $this->messageProducer = $this->createMock(MessageProducerInterface::class);
         $this->visibilityMessageHandler = new VisibilityMessageHandler(
             $this->messageFactory,
             $this->messageProducer

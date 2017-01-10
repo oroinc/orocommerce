@@ -2,264 +2,112 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Context;
 
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\CurrencyBundle\Entity\PriceAwareInterface;
-use Oro\Bundle\LocaleBundle\Tests\Unit\Formatter\Stubs\AddressStub;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
-use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
-use Oro\Bundle\ProductBundle\Model\QuantityAwareInterface;
+use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\LocaleBundle\Model\AddressInterface;
+use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\ShippingLineItemCollectionInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
-use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
-use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
-use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptionsInterface;
-use Oro\Bundle\ShippingBundle\Model\Dimensions;
-use Oro\Bundle\ShippingBundle\Model\Weight;
-use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 class ShippingContextTest extends \PHPUnit_Framework_TestCase
 {
-    use EntityTestCaseTrait;
+    /**
+     * @var Account|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $customerMock;
 
     /**
-     * @var ShippingContext
+     * @var CustomerUser|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $model;
+    private $customerUserMock;
 
     /**
-     * @var Product
+     * @var ShippingLineItemCollectionInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $product;
+    private $lineItemsCollectionMock;
 
     /**
-     * @var ProductUnit
+     * @var AddressInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $productUnit;
+    private $billingAddressMock;
 
     /**
-     * @var Price
+     * @var AddressInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $price;
+    private $shippingAddressMock;
 
     /**
-     * @var Weight
+     * @var AddressInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $weight;
+    private $shippingOriginMock;
 
     /**
-     * @var ProductHolderInterface
+     * @var Price|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $productHolder;
+    private $subtotalMock;
 
     /**
-     * @var Dimensions
+     * @var Checkout|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $dimensions;
-
-    /**
-     * @var integer
-     */
-    private $quantity;
+    private $sourceEntityMock;
 
     protected function setUp()
     {
-        $this->model = new ShippingContext();
-
-        $this->productHolder = $this->getMockForAbstractClass(ProductHolderInterface::class);
-        $this->productHolder->expects($this->any())
-            ->method('getEntityIdentifier')
-            ->willReturn('test');
-        $this->product = new Product();
-        $this->product->setSku('test sku');
-        $this->productUnit = new ProductUnit();
-        $this->productUnit->setCode('kg')->setDefaultPrecision(3);
-        $this->price = new Price();
-        $this->weight = new Weight();
-        $this->dimensions = new Dimensions();
-        $this->quantity = 1;
+        $this->customerMock = $this->getMockBuilder(Account::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->customerUserMock = $this->getMockBuilder(CustomerUser::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->lineItemsCollectionMock = $this->createMock(ShippingLineItemCollectionInterface::class);
+        $this->billingAddressMock = $this->createMock(AddressInterface::class);
+        $this->shippingAddressMock = $this->createMock(AddressInterface::class);
+        $this->shippingOriginMock = $this->createMock(AddressInterface::class);
+        $this->subtotalMock = $this->getMockBuilder(Price::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->sourceEntityMock = $this->getMockBuilder(Checkout::class)
+            ->disableOriginalConstructor()
+            ->getMock();
     }
 
-    protected function tearDown()
+    public function testConstructionAndGetters()
     {
-        unset($this->model);
-    }
+        $paymentMethod = 'paymentMethod';
+        $currency = 'usd';
+        $entityId = '12';
 
-    public function testAccessors()
-    {
-        static::assertPropertyAccessors(
-            $this->model,
-            [
-                ['lineItems', []],
-                ['billingAddress', new AddressStub()],
-                ['shippingAddress', new AddressStub()],
-                ['shippingOrigin', new AddressStub()],
-                ['paymentMethod', ''],
-                ['currency', ''],
-                ['subtotal', new Price()],
-                ['sourceEntity', new \stdClass()],
-                ['sourceEntityIdentifier', 1],
-            ]
-        );
-    }
-
-    public function testSetLineItemsWithShippingContextInterface()
-    {
-        $mockItem = $this->getMockBuilder(ShippingLineItemInterface::class)->getMock();
-        $mockItem->expects($this->any())
-            ->method('getProduct')
-            ->willReturn($this->product);
-        $mockItem->expects($this->any())
-            ->method('getProductUnit')
-            ->willReturn($this->productUnit);
-        $mockItem->expects($this->once())
-            ->method('getDimensions')
-            ->willReturn($this->dimensions);
-        $mockItem->expects($this->once())
-            ->method('getQuantity')
-            ->willReturn($this->quantity);
-        $mockItem->expects($this->once())
-            ->method('getPrice')
-            ->willReturn($this->price);
-        $mockItem->expects($this->once())
-            ->method('getWeight')
-            ->willReturn($this->weight);
-
-        $this->model->setLineItems([$mockItem]);
-
-        $shippingLineItem = (new ShippingLineItem())
-            ->setProduct($this->product)
-            ->setProductUnit($this->productUnit)
-            ->setProductHolder($mockItem)
-            ->setDimensions($this->dimensions)
-            ->setQuantity($this->quantity)
-            ->setPrice($this->price)
-            ->setWeight($this->weight);
-
-        $this->assertEquals([$shippingLineItem], $this->model->getLineItems());
-    }
-
-    public function testSetLineItemsWithProductUnitHolderInterface()
-    {
-        $mockItem = $this->getMockBuilder(ProductUnitHolderInterface::class)->getMock();
-        $mockItem->expects($this->once())
-            ->method('getProductUnit')
-            ->willReturn($this->productUnit);
-
-        $this->model->setLineItems([$mockItem]);
-
-        $shippingLineItem = (new ShippingLineItem())
-            ->setProductUnit($this->productUnit);
-
-        $this->assertEquals([$shippingLineItem], $this->model->getLineItems());
-    }
-
-    public function testSetLineItemsWithProductHolderInterface()
-    {
-        $mockItem = $this->getMockBuilder(ProductHolderInterface::class)->getMock();
-        $mockItem->expects($this->once())
-            ->method('getProduct')
-            ->willReturn($this->product);
-
-        $this->model->setLineItems([$mockItem]);
-
-        $shippingLineItem = (new ShippingLineItem())
-            ->setProduct($this->product)
-            ->setProductHolder($mockItem);
-
-        $this->assertEquals([$shippingLineItem], $this->model->getLineItems());
-    }
-
-    public function testSetLineItemsWithProductShippingOptionsInterface()
-    {
-        $mockItem = $this->getMockBuilder(ProductShippingOptionsInterface::class)->getMock();
-        $mockItem->expects($this->once())
-            ->method('getProduct')
-            ->willReturn($this->product);
-        $mockItem->expects($this->once())
-            ->method('getProductUnit')
-            ->willReturn($this->productUnit);
-        $mockItem->expects($this->once())
-            ->method('getWeight')
-            ->willReturn($this->weight);
-        $mockItem->expects($this->once())
-            ->method('getDimensions')
-            ->willReturn($this->dimensions);
-
-        $this->model->setLineItems([$mockItem]);
-
-        $shippingLineItem = (new ShippingLineItem())
-            ->setProduct($this->product)
-            ->setProductUnit($this->productUnit)
-            ->setWeight($this->weight)
-            ->setDimensions($this->dimensions);
-
-        $this->assertEquals([$shippingLineItem], $this->model->getLineItems());
-    }
-
-    public function testSetLineItemsWithQuantityAwareInterface()
-    {
-        $mockItem = $this->getMockBuilder(QuantityAwareInterface::class)->getMock();
-        $mockItem->expects($this->once())
-            ->method('getQuantity')
-            ->willReturn($this->quantity);
-
-        $this->model->setLineItems([$mockItem]);
-
-        $shippingLineItem = (new ShippingLineItem())
-            ->setQuantity($this->quantity);
-
-        $this->assertEquals([$shippingLineItem], $this->model->getLineItems());
-    }
-
-    public function testSetLineItemsWithPriceAwareInterface()
-    {
-        $mockItem = $this->getMockBuilder(PriceAwareInterface::class)->getMock();
-        $mockItem->expects($this->once())
-            ->method('getPrice')
-            ->willReturn($this->price);
-
-        $this->model->setLineItems([$mockItem]);
-
-        $shippingLineItem = (new ShippingLineItem())
-            ->setPrice($this->price);
-
-        $this->assertEquals([$shippingLineItem], $this->model->getLineItems());
-    }
-
-    /**
-     * @param array $inputData
-     * @param array $expectedData
-     *
-     * @dataProvider getDataProvider
-     */
-    public function testSetLineItems(array $inputData, array $expectedData)
-    {
-        $this->model->setLineItems($inputData);
-
-        $this->assertEquals($expectedData, $this->model->getLineItems());
-    }
-
-    /**
-     * @return array
-     */
-    public function getDataProvider()
-    {
-        return [
-            'no data'            => [
-                'input'    => [
-                ],
-                'expected' => [
-                ],
-            ],
-            'without interfaces' => [
-                'input'    => [
-                    'no data'
-                ],
-                'expected' => [
-                    new ShippingLineItem()
-                ],
-            ]
+        $params = [
+            ShippingContext::FIELD_CUSTOMER => $this->customerMock,
+            ShippingContext::FIELD_CUSTOMER_USER => $this->customerUserMock,
+            ShippingContext::FIELD_LINE_ITEMS => $this->lineItemsCollectionMock,
+            ShippingContext::FIELD_BILLING_ADDRESS => $this->billingAddressMock,
+            ShippingContext::FIELD_SHIPPING_ADDRESS => $this->shippingAddressMock,
+            ShippingContext::FIELD_SHIPPING_ORIGIN => $this->shippingOriginMock,
+            ShippingContext::FIELD_PAYMENT_METHOD => $paymentMethod,
+            ShippingContext::FIELD_CURRENCY => $currency,
+            ShippingContext::FIELD_SUBTOTAL => $this->subtotalMock,
+            ShippingContext::FIELD_SOURCE_ENTITY => $this->sourceEntityMock,
+            ShippingContext::FIELD_SOURCE_ENTITY_ID => $entityId,
         ];
+
+        $shippingContext = new ShippingContext($params);
+
+        $getterValues = [
+            ShippingContext::FIELD_CUSTOMER => $shippingContext->getCustomer(),
+            ShippingContext::FIELD_CUSTOMER_USER => $shippingContext->getCustomerUser(),
+            ShippingContext::FIELD_LINE_ITEMS => $shippingContext->getLineItems(),
+            ShippingContext::FIELD_BILLING_ADDRESS => $shippingContext->getBillingAddress(),
+            ShippingContext::FIELD_SHIPPING_ADDRESS => $shippingContext->getShippingAddress(),
+            ShippingContext::FIELD_SHIPPING_ORIGIN => $shippingContext->getShippingOrigin(),
+            ShippingContext::FIELD_PAYMENT_METHOD => $shippingContext->getPaymentMethod(),
+            ShippingContext::FIELD_CURRENCY => $shippingContext->getCurrency(),
+            ShippingContext::FIELD_SUBTOTAL => $shippingContext->getSubtotal(),
+            ShippingContext::FIELD_SOURCE_ENTITY => $shippingContext->getSourceEntity(),
+            ShippingContext::FIELD_SOURCE_ENTITY_ID => $shippingContext->getSourceEntityIdentifier(),
+        ];
+
+        $this->assertEquals($params, $getterValues);
     }
 }

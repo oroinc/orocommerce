@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\src\Oro\Bundle\ShippingBundle\Tests\Unit\Twig;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\Twig;
 
 use Oro\Bundle\ShippingBundle\Event\ShippingMethodConfigDataEvent;
 use Oro\Bundle\ShippingBundle\Formatter\ShippingMethodLabelFormatter;
@@ -52,6 +52,10 @@ class ShippingMethodExtensionTest extends \PHPUnit_Framework_TestCase
                 new \Twig_SimpleFunction(
                     'get_shipping_method_type_label',
                     [$this->shippingMethodLabelFormatter, 'formatShippingMethodTypeLabel']
+                ),
+                new \Twig_SimpleFunction(
+                    'oro_shipping_method_with_type_label',
+                    [$this->shippingMethodLabelFormatter, 'formatShippingMethodWithTypeLabel']
                 ),
                 new \Twig_SimpleFunction(
                     'oro_shipping_method_config_template',

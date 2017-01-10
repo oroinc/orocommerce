@@ -6,7 +6,7 @@ use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 
 class FrontendProductSelectExtension extends AbstractTypeExtension
@@ -30,7 +30,7 @@ class FrontendProductSelectExtension extends AbstractTypeExtension
     public function configureOptions(OptionsResolver $resolver)
     {
         $token = $this->tokenStorage->getToken();
-        if ($token && $token->getUser() instanceof AccountUser) {
+        if ($token && $token->getUser() instanceof CustomerUser) {
             $resolver->setDefault('grid_name', 'products-select-grid-frontend');
         }
     }

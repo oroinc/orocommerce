@@ -6,21 +6,21 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\FormErrorIterator;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+use Oro\Bundle\ActionBundle\Model\ActionData;
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface;
+use Oro\Bundle\CheckoutBundle\Event\CheckoutValidateEvent;
+use Oro\Bundle\CheckoutBundle\Model\TransitionData;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
-use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowStep;
-use Oro\Bundle\CheckoutBundle\Model\TransitionData;
-use Oro\Bundle\CheckoutBundle\Event\CheckoutEntityEvent;
-use Oro\Bundle\CheckoutBundle\Event\CheckoutEvents;
-use Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface;
+use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 
 class CheckoutController extends Controller
 {
@@ -42,23 +42,17 @@ class CheckoutController extends Controller
      *      id="oro_checkout_frontend_checkout",
      *      type="entity",
      *      class="OroCheckoutBundle:Checkout",
-     *      permission="ACCOUNT_EDIT",
+     *      permission="EDIT",
      *      group_name="commerce"
      * )
      *
      * @param Request $request
-     * @param int $id
+     * @param Checkout $checkout
      * @return array|Response
      * @throws \Exception
      */
-    public function checkoutAction(Request $request, $id)
+    public function checkoutAction(Request $request, Checkout $checkout)
     {
-        $checkout = $this->getCheckout($id);
-
-        if (!$checkout) {
-            throw new NotFoundHttpException(sprintf('Checkout not found'));
-        }
-
         $workflowItem = $this->handleTransition($checkout, $request);
         $currentStep = $this->validateStep($workflowItem);
         $this->validateOrderLineItems($workflowItem, $checkout, $request);
@@ -160,16 +154,22 @@ class CheckoutController extends Controller
     protected function handleTransition(CheckoutInterface $checkout, Request $request)
     {
         $workflowItem = $this->getWorkflowItem($checkout);
+
         if ($request->isMethod(Request::METHOD_POST)) {
-            $continueTransition = $this->get('oro_checkout.layout.data_provider.transition')
-                ->getContinueTransition($workflowItem);
+            if ($this->isCheckoutRestartRequired($workflowItem)) {
+                return $this->restartCheckout($workflowItem, $checkout);
+            }
+            $transitionProvider = $this->get('oro_checkout.layout.data_provider.transition');
+            $continueTransition = $transitionProvider->getContinueTransition($workflowItem);
             if ($continueTransition) {
                 $transitionForm = $this->getTransitionForm($continueTransition, $workflowItem);
 
                 if ($transitionForm) {
                     $transitionForm->submit($request);
+
                     if ($transitionForm->isValid()) {
                         $this->getWorkflowManager()->transit($workflowItem, $continueTransition->getTransition());
+                        $transitionProvider->clearCache();
                     } else {
                         $this->handleFormErrors($transitionForm->getErrors());
                     }
@@ -209,20 +209,6 @@ class CheckoutController extends Controller
     }
 
     /**
-     * @param int $id
-     * @return CheckoutInterface|null
-     */
-    protected function getCheckout($id)
-    {
-        $event = new CheckoutEntityEvent();
-        $event->setCheckoutId($id);
-
-        $this->get('event_dispatcher')->dispatch(CheckoutEvents::GET_CHECKOUT_ENTITY, $event);
-
-        return $event->getCheckoutEntity();
-    }
-
-    /**
      * @param CheckoutInterface $checkout
      * @return WorkflowItem
      */
@@ -243,5 +229,40 @@ class CheckoutController extends Controller
     protected function handleFormErrors(FormErrorIterator $errors)
     {
         $this->get('oro_checkout.workflow_state.handler.checkout_error')->addFlashWorkflowStateWarning($errors);
+    }
+
+    /**
+     * @param WorkflowItem $workflowItem
+     * @return bool
+     */
+    protected function isCheckoutRestartRequired(WorkflowItem $workflowItem)
+    {
+        $event = new CheckoutValidateEvent($workflowItem);
+        $dispatcher = $this->get('event_dispatcher');
+        if (false == $dispatcher->hasListeners(CheckoutValidateEvent::NAME)) {
+            return false;
+        }
+
+        $dispatcher->dispatch(CheckoutValidateEvent::NAME, $event);
+
+        return $event->isCheckoutRestartRequired();
+    }
+
+    /**
+     * @param WorkflowItem $workflowItem
+     * @param CheckoutInterface $checkout
+     * @return WorkflowItem
+     */
+    protected function restartCheckout(WorkflowItem $workflowItem, CheckoutInterface $checkout)
+    {
+        $shoppingList = $workflowItem->getEntity()->getSource()->getShoppingList();
+        $this->getWorkflowManager()->resetWorkflowItem($workflowItem);
+
+        $actionData = new ActionData(['shoppingList' => $shoppingList, 'forceStartCheckout' => true]);
+        $this->get('oro_action.action_group_registry')
+            ->findByName('start_shoppinglist_checkout')
+            ->execute($actionData);
+
+        return $this->getWorkflowItem($checkout);
     }
 }

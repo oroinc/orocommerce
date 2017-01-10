@@ -9,11 +9,11 @@
         <div class="oro-toolbar__content" data-toggle="dropdown">
             {{ oro_currency_symbol(selected_currency) }}
             <span class="oro-toolbar__icon">
-                <i class="cf-down-open-mini"></i>
+                <i class="fa-angle-down"></i>
             </span>
         </div>
 
-        <div class="oro-toolbar__dropdown dropdown-menu">
+        <div class="oro-toolbar__dropdown">
             <ul class="oro-toolbar__list">
                 {% for currency in currencies %}
                 <li class="oro-toolbar__list-item">
@@ -60,4 +60,57 @@
     </div>
 
     {% placeholder oro_pricing_totals_after %}
+{% endblock %}
+
+{% block product_price_hint_content_js_widget %}
+    <table class="table">
+        <thead>
+        <tr>
+            <th class="text-uppercase">qty</th>
+            <th >Unit Price</th>
+        </tr>
+        </thead>
+        <tbody>
+            <% var addNewLine = false %>
+            <% var modelPrices = _.sortBy(model.prices, 'quantity'); %>
+            <% _.each(model.product_units, function(key) { %>
+                <% var prices = _.filter(modelPrices, function(price){return price.unit === key}); %>
+                <% if (prices.length) { %>
+                    <tr>
+                        <td colspan="2" class="text-capitalize">
+                            <%= addNewLine ? '<br/>' : '' %>
+                            <b><%= _.__('oro.product.product_unit.' + key + '.label.full') %></b>
+                        </td>
+                    </tr>
+                    <% addNewLine = true %>
+                    <% _.each(prices, function(price) { %>
+                        <tr class="<% if (!_.isEmpty(matchedPrice) && price.unit === matchedPrice.unit && parseFloat(price.price) === parseFloat(matchedPrice.price)) { %>matched-tier-price<% } %>">
+                            <td><%= price.quantity %></td>
+                            <td>
+                                <% if (clickable) { %>
+                                    <a
+                                        href="javascript: void(0);"
+                                        data-price="<%= parseFloat(price.price) %>"
+                                        data-unit="<%= price.unit %>"
+                                    ><%= formatter.formatCurrency(price.price, price.currency) %></a>
+                                <% } else { %>
+                                <%= formatter.formatCurrency(price.price, price.currency) %>
+                                <% } %>
+                            </td>
+                        </tr>
+                    <% }) %>
+                <% } %>
+            <% }) %>
+        </tbody>
+    </table>
+{% endblock %}
+
+{% block product_price_hint_js_widget %}
+    <span class="product-tier-prices"
+          data-toggle="popover"
+          data-placement="bottom"
+          data-close="false"
+          data-class="prices-hint-content">
+        <i class="popover-trigger"></i>
+    </span>
 {% endblock %}

@@ -7,9 +7,9 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Entity\AccountUserAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 use Oro\Bundle\OrderBundle\Provider\OrderAddressProvider;
 
 class OrderAddressProviderTest extends AbstractQuoteAddressProviderTest
@@ -40,7 +40,7 @@ class OrderAddressProviderTest extends AbstractQuoteAddressProviderTest
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $this->registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
 
         $this->aclHelper = $this->getMockBuilder('Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper')
             ->disableOriginalConstructor()
@@ -70,7 +70,7 @@ class OrderAddressProviderTest extends AbstractQuoteAddressProviderTest
      */
     public function testGetAccountUserAddressesUnsupportedType()
     {
-        $this->provider->getAccountUserAddresses(new AccountUser(), 'test');
+        $this->provider->getAccountUserAddresses(new CustomerUser(), 'test');
     }
 
     /**
@@ -79,9 +79,9 @@ class OrderAddressProviderTest extends AbstractQuoteAddressProviderTest
     public function accountAddressPermissions()
     {
         return [
-            ['shipping', 'oro_order_address_shipping_account_use_any', new AccountUser()],
+            ['shipping', 'oro_order_address_shipping_account_use_any', new CustomerUser()],
             ['shipping', 'oro_order_address_shipping_account_use_any_backend', new \stdClass()],
-            ['billing', 'oro_order_address_billing_account_use_any', new AccountUser()],
+            ['billing', 'oro_order_address_billing_account_use_any', new CustomerUser()],
             ['billing', 'oro_order_address_billing_account_use_any_backend', new \stdClass()],
         ];
     }
@@ -101,7 +101,7 @@ class OrderAddressProviderTest extends AbstractQuoteAddressProviderTest
                 ],
                 null,
                 [],
-                new AccountUser()
+                new CustomerUser()
             ],
             [
                 'shipping',
@@ -109,8 +109,8 @@ class OrderAddressProviderTest extends AbstractQuoteAddressProviderTest
                     'oro_order_address_shipping_account_user_use_any' => true
                 ],
                 'getAddressesByType',
-                [new AccountUserAddress()],
-                new AccountUser()
+                [new CustomerUserAddress()],
+                new CustomerUser()
             ],
             [
                 'shipping',
@@ -119,8 +119,8 @@ class OrderAddressProviderTest extends AbstractQuoteAddressProviderTest
                     'oro_order_address_shipping_account_user_use_default' => true
                 ],
                 'getDefaultAddressesByType',
-                [new AccountUserAddress()],
-                new AccountUser()
+                [new CustomerUserAddress()],
+                new CustomerUser()
             ],
             [
                 'billing',
@@ -130,7 +130,7 @@ class OrderAddressProviderTest extends AbstractQuoteAddressProviderTest
                 ],
                 null,
                 [],
-                new AccountUser()
+                new CustomerUser()
             ],
             [
                 'billing',
@@ -138,8 +138,8 @@ class OrderAddressProviderTest extends AbstractQuoteAddressProviderTest
                     'oro_order_address_billing_account_user_use_any' => true
                 ],
                 'getAddressesByType',
-                [new AccountUserAddress()],
-                new AccountUser()
+                [new CustomerUserAddress()],
+                new CustomerUser()
             ],
             [
                 'billing',
@@ -148,8 +148,8 @@ class OrderAddressProviderTest extends AbstractQuoteAddressProviderTest
                     'oro_order_address_billing_account_user_use_default' => true
                 ],
                 'getDefaultAddressesByType',
-                [new AccountUserAddress()],
-                new AccountUser()
+                [new CustomerUserAddress()],
+                new CustomerUser()
             ],
             [
                 'shipping',
@@ -167,7 +167,7 @@ class OrderAddressProviderTest extends AbstractQuoteAddressProviderTest
                     'oro_order_address_shipping_account_user_use_any_backend' => true
                 ],
                 'getAddressesByType',
-                [new AccountUserAddress()],
+                [new CustomerUserAddress()],
                 new \stdClass()
             ],
             [
@@ -177,7 +177,7 @@ class OrderAddressProviderTest extends AbstractQuoteAddressProviderTest
                     'oro_order_address_shipping_account_user_use_default_backend' => true
                 ],
                 'getDefaultAddressesByType',
-                [new AccountUserAddress()],
+                [new CustomerUserAddress()],
                 new \stdClass()
             ],
             [
@@ -196,7 +196,7 @@ class OrderAddressProviderTest extends AbstractQuoteAddressProviderTest
                     'oro_order_address_billing_account_user_use_any_backend' => true
                 ],
                 'getAddressesByType',
-                [new AccountUserAddress()],
+                [new CustomerUserAddress()],
                 new \stdClass()
             ],
             [
@@ -206,7 +206,7 @@ class OrderAddressProviderTest extends AbstractQuoteAddressProviderTest
                     'oro_order_address_billing_account_user_use_default_backend' => true
                 ],
                 'getDefaultAddressesByType',
-                [new AccountUserAddress()],
+                [new CustomerUserAddress()],
                 new \stdClass()
             ]
         ];

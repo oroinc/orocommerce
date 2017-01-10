@@ -2,6 +2,10 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Entity;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
@@ -25,7 +29,7 @@ class QuoteTest extends AbstractTest
             ['id', '123'],
             ['qid', 'QID-123456'],
             ['owner', new User()],
-            ['accountUser', new AccountUser()],
+            ['accountUser', new CustomerUser()],
             ['shippingAddress', new QuoteAddress()],
             ['account', new Account()],
             ['organization', new Organization()],
@@ -50,7 +54,7 @@ class QuoteTest extends AbstractTest
         static::assertPropertyCollections(new Quote(), [
             ['quoteProducts', new QuoteProduct()],
             ['assignedUsers', new User()],
-            ['assignedAccountUsers', new AccountUser()],
+            ['assignedAccountUsers', new CustomerUser()],
         ]);
     }
 
@@ -70,7 +74,7 @@ class QuoteTest extends AbstractTest
     {
         $quote = new Quote();
         $this->assertEmpty($quote->getEmail());
-        $accountUser = new AccountUser();
+        $accountUser = new CustomerUser();
         $accountUser->setEmail('test');
         $quote->setAccountUser($accountUser);
         $this->assertEquals('test', $quote->getEmail());

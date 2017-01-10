@@ -4,8 +4,7 @@ namespace Oro\Bundle\SaleBundle\Controller;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Event\QuoteEvent;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteType;
@@ -101,10 +100,10 @@ class AjaxQuoteController extends Controller
     }
 
     /**
-     * @param AccountUser $accountUser
+     * @param CustomerUser $accountUser
      * @return null|Account
      */
-    protected function getAccount(AccountUser $accountUser = null)
+    protected function getAccount(CustomerUser $accountUser = null)
     {
         $account = $this->getQuoteRequestHandler()->getAccount();
         if (!$account && $accountUser) {
@@ -118,15 +117,15 @@ class AjaxQuoteController extends Controller
     }
 
     /**
-     * @param AccountUser $accountUser
+     * @param CustomerUser $accountUser
      * @param Account $account
      *
      * @throws BadRequestHttpException
      */
-    protected function validateRelation(AccountUser $accountUser, Account $account)
+    protected function validateRelation(CustomerUser $accountUser, Account $account)
     {
         if ($accountUser && $accountUser->getAccount() && $accountUser->getAccount()->getId() !== $account->getId()) {
-            throw new BadRequestHttpException('AccountUser must belong to Account');
+            throw new BadRequestHttpException('CustomerUser must belong to Account');
         }
     }
 

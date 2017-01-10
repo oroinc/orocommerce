@@ -6,7 +6,7 @@ use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
@@ -24,11 +24,11 @@ class PriceListToAccountGroupRepository extends EntityRepository implements Pric
 {
     /**
      * @param BasePriceList $priceList
-     * @param AccountGroup $accountGroup
+     * @param CustomerGroup $accountGroup
      * @param Website $website
      * @return PriceListToAccountGroup
      */
-    public function findByPrimaryKey(BasePriceList $priceList, AccountGroup $accountGroup, Website $website)
+    public function findByPrimaryKey(BasePriceList $priceList, CustomerGroup $accountGroup, Website $website)
     {
         return $this->findOneBy(['accountGroup' => $accountGroup, 'priceList' => $priceList, 'website' => $website]);
     }
@@ -52,13 +52,13 @@ class PriceListToAccountGroupRepository extends EntityRepository implements Pric
     /**
      * @param Website $website
      * @param int|null $fallback
-     * @return BufferedQueryResultIterator|AccountGroup[]
+     * @return BufferedQueryResultIterator|CustomerGroup[]
      */
     public function getAccountGroupIteratorByDefaultFallback(Website $website, $fallback = null)
     {
         $qb = $this->getEntityManager()->createQueryBuilder()
             ->select('distinct accountGroup')
-            ->from('OroCustomerBundle:AccountGroup', 'accountGroup');
+            ->from('OroCustomerBundle:CustomerGroup', 'accountGroup');
 
         $qb->innerJoin(
             'OroPricingBundle:PriceListToAccountGroup',
@@ -115,11 +115,11 @@ class PriceListToAccountGroupRepository extends EntityRepository implements Pric
     }
 
     /**
-     * @param AccountGroup $accountGroup
+     * @param CustomerGroup $accountGroup
      * @param Website $website
      * @return mixed
      */
-    public function delete(AccountGroup $accountGroup, Website $website)
+    public function delete(CustomerGroup $accountGroup, Website $website)
     {
         return $this->getEntityManager()->createQueryBuilder()
             ->delete($this->getEntityName(), 'PriceListToAccountGroup')
@@ -132,7 +132,7 @@ class PriceListToAccountGroupRepository extends EntityRepository implements Pric
     }
 
     /**
-     * @param array AccountGroup[]|int[] $holdersIds
+     * @param array CustomerGroup[]|int[] $holdersIds
      * @return PriceListToAccountGroup[]
      */
     public function getRelationsByHolders(array $holdersIds)

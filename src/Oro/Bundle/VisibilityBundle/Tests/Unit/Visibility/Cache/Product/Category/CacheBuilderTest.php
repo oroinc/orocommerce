@@ -34,7 +34,7 @@ class CacheBuilderTest extends AbstractCacheBuilderTest
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|CategoryCaseCacheBuilderInterface $customBuilder */
         $customBuilder
-            = $this->getMock('Oro\Bundle\VisibilityBundle\Visibility\Cache\CategoryCaseCacheBuilderInterface');
+            = $this->createMock('Oro\Bundle\VisibilityBundle\Visibility\Cache\CategoryCaseCacheBuilderInterface');
         $customBuilder->expects($this->once())
             ->method('categoryPositionChanged')
             ->with($category);

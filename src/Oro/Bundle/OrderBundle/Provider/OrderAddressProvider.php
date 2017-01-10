@@ -8,9 +8,9 @@ use Doctrine\Common\Util\ClassUtils;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Entity\Repository\AccountAddressRepository;
-use Oro\Bundle\CustomerBundle\Entity\Repository\AccountUserAddressRepository;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Entity\Repository\CustomerAddressRepository;
+use Oro\Bundle\CustomerBundle\Entity\Repository\CustomerUserAddressRepository;
 
 class OrderAddressProvider implements AddressProviderInterface
 {
@@ -127,7 +127,7 @@ class OrderAddressProvider implements AddressProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function getAccountUserAddresses(AccountUser $accountUser, $type)
+    public function getAccountUserAddresses(CustomerUser $accountUser, $type)
     {
         static::assertType($type);
 
@@ -168,7 +168,7 @@ class OrderAddressProvider implements AddressProviderInterface
     }
 
     /**
-     * @return AccountAddressRepository
+     * @return CustomerAddressRepository
      */
     protected function getAccountAddressRepository()
     {
@@ -177,7 +177,7 @@ class OrderAddressProvider implements AddressProviderInterface
     }
 
     /**
-     * @return AccountUserAddressRepository
+     * @return CustomerUserAddressRepository
      */
     protected function getAccountUserAddressRepository()
     {
@@ -193,7 +193,7 @@ class OrderAddressProvider implements AddressProviderInterface
     protected function getPermission($type, $key)
     {
         $postfix = '';
-        if (!$this->securityFacade->getLoggedUser() instanceof AccountUser) {
+        if (!$this->securityFacade->getLoggedUser() instanceof CustomerUser) {
             $postfix = self::ADMIN_ACL_POSTFIX;
         }
 
@@ -201,7 +201,7 @@ class OrderAddressProvider implements AddressProviderInterface
     }
 
     /**
-     * @param Account|AccountUser $object
+     * @param Account|CustomerUser $object
      * @param string $type
      * @return string
      */

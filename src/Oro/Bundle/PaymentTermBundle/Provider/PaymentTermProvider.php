@@ -5,9 +5,9 @@ namespace Oro\Bundle\PaymentTermBundle\Provider;
 use Doctrine\Common\Util\ClassUtils;
 
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Entity\AccountOwnerAwareInterface;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Event\ResolvePaymentTermEvent;
 
@@ -64,8 +64,8 @@ class PaymentTermProvider
 
         $paymentTermEvent = new ResolvePaymentTermEvent();
 
-        /** @var AccountUser $user */
-        if ($token && ($user = $token->getUser()) instanceof AccountUser) {
+        /** @var CustomerUser $user */
+        if ($token && ($user = $token->getUser()) instanceof CustomerUser) {
             $paymentTermEvent->setPaymentTerm($this->getPaymentTerm($user->getAccount()));
         }
 
@@ -84,10 +84,10 @@ class PaymentTermProvider
     }
 
     /**
-     * @param AccountGroup $accountGroup
+     * @param CustomerGroup $accountGroup
      * @return PaymentTerm|null
      */
-    public function getAccountGroupPaymentTerm(AccountGroup $accountGroup)
+    public function getAccountGroupPaymentTerm(CustomerGroup $accountGroup)
     {
         return $this->paymentTermAssociationProvider->getPaymentTerm($accountGroup);
     }

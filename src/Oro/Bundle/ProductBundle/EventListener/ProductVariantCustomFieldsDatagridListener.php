@@ -4,11 +4,10 @@ namespace Oro\Bundle\ProductBundle\EventListener;
 
 use Doctrine\ORM\EntityRepository;
 
-use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
+use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
+use Oro\Bundle\DataGridBundle\Event\BuildAfter;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
-use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Component\PropertyAccess\PropertyAccessor;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Provider\CustomFieldProvider;
 
@@ -30,64 +29,94 @@ class ProductVariantCustomFieldsDatagridListener
     private $productClass;
 
     /**
+     * @var string
+     */
+    private $productVariantLinkClass;
+
+    /**
      * @param DoctrineHelper $doctrineHelper
      * @param CustomFieldProvider $customFieldProvider
      * @param string $productClass
+     * @param string $productVariantLinkClass
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         CustomFieldProvider $customFieldProvider,
-        $productClass
+        $productClass,
+        $productVariantLinkClass
     ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->customFieldProvider = $customFieldProvider;
         $this->productClass = $productClass;
+        $this->productVariantLinkClass = $productVariantLinkClass;
     }
 
     /**
+     * Add restriction to show only products that have all variant fields values set
+     *
      * @param BuildBefore $event
      */
-    public function onBuildBefore(BuildBefore $event)
+    public function onBuildBeforeHideUnsuitable(BuildBefore $event)
     {
-        $config = $event->getConfig();
+        $parameters = $event->getDatagrid()->getParameters();
 
-        $productRepository = $this->getProductRepository();
-        /** @var Product $parentProduct */
-        $parentProduct = $productRepository->find($event->getDatagrid()->getParameters()->get('parentProduct'));
-
-        foreach ($this->getActualVariantFields($parentProduct) as $customField) {
-            $columnName = $customField['name'];
-            $column = ['label' => $customField['label']];
-
-            $config->offsetSetByPath(sprintf('[columns][%s]', $columnName), $column);
+        if (!$parameters->has('parentProduct')) {
+            return;
         }
+
+        $parentProductId = $parameters->get('parentProduct');
+
+        /** @var Product $parentProduct */
+        $parentProduct = $this->getProductRepository()->find($parentProductId);
+        if (!$parentProduct) {
+            return;
+        }
+
+        $config = $event->getConfig();
+        $query = $config->getOrmQuery();
+        $variantFields = $parentProduct->getVariantFields();
+
+        // Don't show any product variants if there are no variant fields specified in the configurable product
+        if (!$variantFields) {
+            $query->addAndWhere('1 = 0');
+
+            return;
+        }
+
+        $rootEntityAlias = $this->getRootAlias($config);
+
+        $variantAndWherePart = [];
+        foreach ($variantFields as $variantFieldName) {
+            $variantAndWherePart[] = sprintf('%s.%s IS NOT NULL', $rootEntityAlias, $variantFieldName);
+        }
+        $query->addAndWhere($variantAndWherePart);
+
+        // Show all linked variants
+        $variantLinkLeftJoin = $this->getVariantLinkLeftJoin($config);
+        $query->addOrWhere(sprintf('%s.id IS NOT NULL', $variantLinkLeftJoin['alias']));
     }
 
     /**
-     * @param OrmResultAfter $event
+     * @param BuildAfter $event
      */
-    public function onResultAfter(OrmResultAfter $event)
+    public function onBuildAfter(BuildAfter $event)
     {
-        $propertyAccessor = new PropertyAccessor();
-
-        /** @var ResultRecord[] $records */
-        $records = $event->getRecords();
-
+        $datagridConfig = $event->getDatagrid()->getConfig();
         $productRepository = $this->getProductRepository();
+
         /** @var Product $parentProduct */
         $parentProduct = $productRepository->find($event->getDatagrid()->getParameters()->get('parentProduct'));
-        $customFields = $this->getActualVariantFields($parentProduct);
 
-        foreach ($records as $record) {
-            $productId = $record->getValue('id');
-            $product = $productRepository->find($productId);
+        $allCustomFields = $this->customFieldProvider->getEntityCustomFields($this->productClass);
+        $variantFields = $parentProduct->getVariantFields();
 
-            $data = [];
-            foreach ($customFields as $customField) {
-                $fieldName = $customField['name'];
-                $data[$fieldName] = $propertyAccessor->getValue($product, $fieldName);
+        foreach ($allCustomFields as $customField) {
+            $customFieldName = $customField['name'];
+            if (in_array($customFieldName, $variantFields, true)) {
+                continue;
             }
-            $record->addData($data);
+
+            $datagridConfig->removeColumn($customFieldName);
         }
     }
 
@@ -100,24 +129,49 @@ class ProductVariantCustomFieldsDatagridListener
     }
 
     /**
-     * @param Product $product
+     * @param DatagridConfiguration $config
      * @return array
      */
-    private function getActualVariantFields(Product $product)
+    private function getRootAlias(DatagridConfiguration $config)
     {
-        $customFields = [];
-        $allCustomFields = $this->customFieldProvider->getEntityCustomFields($this->productClass);
+        $rootAlias = $config->getOrmQuery()->getRootAlias();
+        if (!$rootAlias) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    'A root entity is missing for grid "%s"',
+                    $config->getName()
+                )
+            );
+        }
 
-        foreach ($product->getVariantFields() as $fieldName) {
-            if (array_key_exists($fieldName, $allCustomFields)) {
-                $fieldData = $allCustomFields[$fieldName];
-                $customFields[] = [
-                    'name' => $fieldData['name'],
-                    'label' => $fieldData['label']
-                ];
+        return $rootAlias;
+    }
+
+    /**
+     * @param DatagridConfiguration $config
+     * @return array
+     */
+    private function getVariantLinkLeftJoin(DatagridConfiguration $config)
+    {
+        $result = null;
+
+        $leftJoins = $config->getOrmQuery()->getLeftJoins();
+        foreach ($leftJoins as $leftJoin) {
+            if ($leftJoin['join'] === $this->productVariantLinkClass) {
+                $result = $leftJoin;
             }
         }
 
-        return $customFields;
+        if (null === $result) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    'A left join with "%s" is missing for grid "%s"',
+                    $this->productVariantLinkClass,
+                    $config->getName()
+                )
+            );
+        }
+
+        return $result;
     }
 }

@@ -29,23 +29,19 @@ class LoadProductPriceDemoData extends AbstractLoadProductPriceDemoData
 
         $priceLists = [
             'Default Price List' => [
-                'currencies' => ['USD'], // 'EUR'], // intentionally no prices in the default list in the sample data
+                'currencies' => [$this->getDefaultCurrency()],
                 'discount' => 0,
             ],
             'Wholesale Price List' => [
-                'currencies' => ['USD', 'EUR'],
+                'currencies' => [$this->getDefaultCurrency()],
                 'discount' => 0.1,
             ],
             'Partner C Custom Price List' => [
-                'currencies' => ['USD'],
+                'currencies' => [$this->getDefaultCurrency()],
                 'discount' => 0.2,
             ],
         ];
 
-        $xRate = [
-            'USD' => 1.00,
-            'EUR' => 0.89,
-        ];
 
         while (($data = fgetcsv($handler, 1000, ',')) !== false) {
             $row = array_combine($headers, array_values($data));
@@ -56,7 +52,7 @@ class LoadProductPriceDemoData extends AbstractLoadProductPriceDemoData
                 $priceList = $this->getPriceList($manager, $listName);
                 foreach ($listOptions['currencies'] as $currency) {
                     $amount = round(
-                        $row['price'] * (1 - $listOptions['discount']) * $xRate[$currency],
+                        (float)$row['price'] * (1 - (float)$listOptions['discount']),
                         2
                     );
                     $price = Price::create($amount, $currency);

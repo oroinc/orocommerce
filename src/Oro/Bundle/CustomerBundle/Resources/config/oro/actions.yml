@@ -3,12 +3,12 @@ operations:
         label: oro.customer.action.account_user.disable
         applications: [default]
         routes:
-            - oro_account_account_user_view
+            - oro_customer_account_user_view
         datagrids:
             - account-account-user-grid
         order: 30
         button_options:
-            icon: icon-remove
+            icon: fa-close
         acl_resource: [EDIT, $.data]
         preconditions:
             '@equal': [$enabled, true]
@@ -19,19 +19,19 @@ operations:
                     data: $.data
                     value: false
             - '@flash_message':
-                message: oro.customer.controller.accountuser.disabled.message
+                message: oro.customer.controller.customeruser.disabled.message
                 type: 'success'
 
     oro_account_accountuser_enable:
         label: oro.customer.action.account_user.enable
         applications: [default]
         routes:
-            - oro_account_account_user_view
+            - oro_customer_account_user_view
         datagrids:
             - account-account-user-grid
         order: 30
         button_options:
-            icon: icon-ok
+            icon: fa-check
         acl_resource: [EDIT, $.data]
         preconditions:
             '@equal': [$enabled, false]
@@ -42,7 +42,7 @@ operations:
                     data: $.data
                     value: true
             - '@flash_message':
-                message: oro.customer.controller.accountuser.enabled.message
+                message: oro.customer.controller.customeruser.enabled.message
                 type: 'success'
 
     oro_account_frontend_accountuser_disable:
@@ -52,7 +52,7 @@ operations:
             - oro_customer_frontend_account_user_view
         order: 10
         button_options:
-            icon: icon-remove
+            icon: fa-close
         acl_resource: [EDIT, $.data]
         preactions:
             - '@get_active_user': $.currentUser
@@ -73,7 +73,7 @@ operations:
                     route_parameters:
                         id: $id
             - '@flash_message':
-                message: oro.customer.controller.accountuser.disabled.message
+                message: oro.customer.controller.customeruser.disabled.message
                 type: 'success'
 
     oro_account_frontend_accountuser_disable_datagrid:
@@ -91,7 +91,7 @@ operations:
             - oro_customer_frontend_account_user_view
         order: 10
         button_options:
-            icon: icon-ok
+            icon: fa-check
         acl_resource: [EDIT, $.data]
         preactions:
             - '@get_active_user': $.currentUser
@@ -112,7 +112,7 @@ operations:
                     route_parameters:
                         id: $id
             - '@flash_message':
-                message: oro.customer.controller.accountuser.enabled.message
+                message: oro.customer.controller.customeruser.enabled.message
                 type: 'success'
 
     oro_account_frontend_accountuser_enable_datagrid:
@@ -131,7 +131,7 @@ operations:
         order: 20
         button_options:
             class: back no-hash icons-holder-text
-            icon: icon-ok
+            icon: fa-check
         acl_resource: [EDIT, $.data]
         preconditions:
             '@equal': [$confirmed, false]
@@ -141,7 +141,7 @@ operations:
                 parameters_mapping:
                     data: $.data
             - '@flash_message':
-                message: oro.customer.controller.accountuser.confirmed.message
+                message: oro.customer.controller.customeruser.confirmed.message
                 type: 'success'
 
     oro_account_accountuser_sendconfirmation:
@@ -152,7 +152,7 @@ operations:
         order: 30
         button_options:
             class: back no-hash icons-holder-text
-            icon: icon-envelope-alt
+            icon: fa-envelope-o
         acl_resource: [EDIT, $.data]
         preconditions:
             '@equal': [$confirmed, false]
@@ -162,7 +162,7 @@ operations:
                 parameters_mapping:
                     data: $.data
             - '@flash_message':
-                message: oro.customer.controller.accountuser.confirmation_sent.message
+                message: oro.customer.controller.customeruser.confirmation_sent.message
                 type: 'success'
 
     oro_account_frontend_create:
@@ -170,7 +170,7 @@ operations:
         applications: [commerce]
         routes:
            - oro_customer_frontend_account_user_index
-        acl_resource: [CREATE, entity:commerce@Oro\Bundle\CustomerBundle\Entity\AccountUser]
+        acl_resource: [CREATE, entity:commerce@Oro\Bundle\CustomerBundle\Entity\CustomerUser]
         order: 10
         actions:
            - '@redirect':
@@ -178,16 +178,16 @@ operations:
                    route: oro_customer_frontend_account_user_create
 
     oro_account_frontend_create_role:
-        label: oro.customer.action.account_user_role.create
+        label: oro.customer.action.customer_user_role.create
         applications: [commerce]
         routes:
-            - oro_customer_frontend_account_user_role_index
-        acl_resource: [CREATE, entity:commerce@Oro\Bundle\CustomerBundle\Entity\AccountUserRole]
+            - oro_customer_frontend_customer_user_role_index
+        acl_resource: [CREATE, entity:commerce@Oro\Bundle\CustomerBundle\Entity\CustomerUserRole]
         order: 10
         actions:
             - '@redirect':
                 parameters:
-                    route: oro_customer_frontend_account_user_role_create
+                    route: oro_customer_frontend_customer_user_role_create
 
     oro_account_frontend_delete_user:
         label: oro.customer.action.account_user.delete
@@ -198,7 +198,7 @@ operations:
         acl_resource: [DELETE, $.data]
         order: 20
         button_options:
-            icon: icon-trash
+            icon: fa-trash-o
         preactions:
             - '@get_active_user': $.currentUser
         preconditions:
@@ -211,7 +211,7 @@ operations:
                 parameters_mapping:
                     data: $.data
             - '@trans':
-                id: oro.customer.accountuser.entity_label
+                id: oro.customer.customeruser.entity_label
                 attribute: $.entityLabel
             - '@flash_message':
                 message: oro.action.delete_message
@@ -228,7 +228,7 @@ operations:
         acl_resource: [EDIT, $.data]
         order: 5
         button_options:
-            icon: icon-pencil
+            icon: fa-pencil
         actions:
             - '@redirect':
                 parameters:
@@ -244,59 +244,54 @@ operations:
         acl_resource: [EDIT, $.data]
         order: 5
         button_options:
-            icon: icon-pencil
+            icon: fa-pencil
         actions:
             - '@redirect':
                 parameters:
                     route: oro_customer_frontend_account_user_profile_update
 
     oro_account_frontend_edit_role:
-        label: oro.customer.frontend.action.account_user_role.edit
+        label: oro.customer.frontend.action.customer_user_role.edit
         applications: [commerce]
         routes:
-            - oro_customer_frontend_account_user_role_view
-        acl_resource: [EDIT, entity:commerce@Oro\Bundle\CustomerBundle\Entity\AccountUserRole]
+            - oro_customer_frontend_customer_user_role_view
+        acl_resource: [EDIT, entity:commerce@Oro\Bundle\CustomerBundle\Entity\CustomerUserRole]
         order: 10
         button_options:
-            icon: icon-pencil
+            icon: fa-pencil
         actions:
             - '@redirect':
                 parameters:
-                    route: oro_customer_frontend_account_user_role_update
+                    route: oro_customer_frontend_customer_user_role_update
                     route_parameters:
                         id: $id
 
     oro_account_frontend_delete_role:
-        label: oro.customer.action.account_user_role.delete
+        label: oro.customer.action.customer_user_role.delete
         applications: [commerce]
         routes:
-            - oro_customer_frontend_account_user_role_view
-            - oro_customer_frontend_account_user_role_update
-        acl_resource: [DELETE, $.data]
-        order: 20
+            - oro_customer_frontend_customer_user_role_view
+            - oro_customer_frontend_customer_user_role_update
+        datagrids:
+            - frontend-account-customer-user-roles-grid
+        acl_resource: [FRONTEND_ACCOUNT_ROLE_DELETE, $.data]
+        order: 30
         button_options:
-            icon: icon-trash
-        preactions:
-            - '@call_method':
-                object: $.data
-                method: isPredefined
-                attribute: $.isPredefined
-        preconditions:
-            '@equal': [false, $.isPredefined]
+            icon: fa-trash-o
         actions:
             - '@run_action_group':
                 action_group: DELETE
                 parameters_mapping:
                     data: $.data
             - '@trans':
-                id: oro.customer.accountuserrole.entity_label
+                id: oro.customer.customeruserrole.entity_label
                 attribute: $.entityLabel
             - '@flash_message':
                 message: oro.action.delete_message
                 type: 'success'
                 message_parameters:
                     entityLabel: $.entityLabel
-            - '@redirect': {route: oro_customer_frontend_account_user_role_index}
+            - '@redirect': {route: oro_customer_frontend_customer_user_role_index}
     UPDATE:
         exclude_datagrids:
             - account-account-user-select-grid
@@ -307,7 +302,7 @@ operations:
             - account-user-by-account-grid
     DELETE:
         exclude_entities:
-            - Oro\Bundle\CustomerBundle\Entity\AccountGroup
+            - Oro\Bundle\CustomerBundle\Entity\CustomerGroup
         exclude_datagrids:
             - account-account-user-select-grid
             - account-account-users-grid-view
@@ -315,7 +310,9 @@ operations:
             - account-accounts-select-grid
             - account-group-accounts-grid-basic
             - account-group-accounts-grid-view
+            - account-group-accounts-grid-create
             - account-group-accounts-grid-update
+            - account-group-accounts-grid-update-basic
             - account-groups-select-grid
             - account-user-by-account-grid
 
@@ -323,7 +320,7 @@ action_groups:
     oro_account_accountuser_set_enabled:
         parameters:
             data:
-                type: Oro\Bundle\CustomerBundle\Entity\AccountUser
+                type: Oro\Bundle\CustomerBundle\Entity\CustomerUser
             value:
                 type: boolean
         acl_resource: [EDIT, $.data]
@@ -339,7 +336,7 @@ action_groups:
     oro_account_frontend_accountuser_set_enabled:
         parameters:
             data:
-                type: Oro\Bundle\CustomerBundle\Entity\AccountUser
+                type: Oro\Bundle\CustomerBundle\Entity\CustomerUser
             value:
                 type: boolean
             current_user:
@@ -359,7 +356,7 @@ action_groups:
     oro_account_accountuser_confirm:
         parameters:
             data:
-                type: Oro\Bundle\CustomerBundle\Entity\AccountUser
+                type: Oro\Bundle\CustomerBundle\Entity\CustomerUser
         acl_resource: [EDIT, $.data]
         conditions:
             '@equal': [$.data.confirmed, false]
@@ -376,7 +373,7 @@ action_groups:
     oro_account_accountuser_sendconfirmation:
         parameters:
             data:
-                type: Oro\Bundle\CustomerBundle\Entity\AccountUser
+                type: Oro\Bundle\CustomerBundle\Entity\CustomerUser
         acl_resource: [EDIT, $.data]
         conditions:
             '@equal': [$.data.confirmed, false]

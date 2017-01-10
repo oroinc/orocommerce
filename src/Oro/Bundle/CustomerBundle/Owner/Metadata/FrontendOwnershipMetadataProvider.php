@@ -9,7 +9,7 @@ use Oro\Bundle\EntityConfigBundle\Config\ConfigInterface;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\SecurityBundle\Acl\AccessLevel;
 use Oro\Bundle\SecurityBundle\Owner\Metadata\AbstractMetadataProvider;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 
 class FrontendOwnershipMetadataProvider extends AbstractMetadataProvider
 {
@@ -68,23 +68,11 @@ class FrontendOwnershipMetadataProvider extends AbstractMetadataProvider
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
-    protected function getNoOwnershipMetadata()
+    protected function createNoOwnershipMetadata()
     {
-        if (!$this->noOwnershipMetadata) {
-            $this->noOwnershipMetadata = new FrontendOwnershipMetadata();
-        }
-
-        return $this->noOwnershipMetadata;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getSystemLevelClass()
-    {
-        throw new \BadMethodCallException('Method getSystemLevelClass() unsupported.');
+        return new FrontendOwnershipMetadata();
     }
 
     /**
@@ -116,7 +104,7 @@ class FrontendOwnershipMetadataProvider extends AbstractMetadataProvider
      */
     public function supports()
     {
-        return $this->getContainer()->get('oro_security.security_facade')->getLoggedUser() instanceof AccountUser;
+        return $this->getContainer()->get('oro_security.security_facade')->getLoggedUser() instanceof CustomerUser;
     }
 
     /**
@@ -145,18 +133,24 @@ class FrontendOwnershipMetadataProvider extends AbstractMetadataProvider
     public function getMaxAccessLevel($accessLevel, $className = null)
     {
         if ($className) {
-            if (in_array($accessLevel, [AccessLevel::NONE_LEVEL, AccessLevel::BASIC_LEVEL, AccessLevel::LOCAL_LEVEL])) {
+            if (in_array($accessLevel, [
+                    AccessLevel::NONE_LEVEL,
+                    AccessLevel::BASIC_LEVEL,
+                    AccessLevel::LOCAL_LEVEL,
+                    AccessLevel::DEEP_LEVEL
+                ])
+            ) {
                 $maxLevel = $accessLevel;
             } else {
                 $metadata = $this->getMetadata($className);
                 if ($metadata->hasOwner()) {
-                    $maxLevel = AccessLevel::LOCAL_LEVEL;
+                    $maxLevel = AccessLevel::DEEP_LEVEL;
                 } else {
                     $maxLevel = $accessLevel;
                 }
             }
         } else {
-            $maxLevel = $accessLevel;
+            $maxLevel = ($accessLevel > AccessLevel::DEEP_LEVEL) ? AccessLevel::DEEP_LEVEL : $accessLevel;
         }
 
         return $maxLevel;
@@ -190,7 +184,7 @@ class FrontendOwnershipMetadataProvider extends AbstractMetadataProvider
             $className = $value->getId()->getClassName();
             if ($securityProvider->hasConfig($className)) {
                 $securityConfig = $securityProvider->getConfig($className);
-                if ($securityConfig->get('group_name') === AccountUser::SECURITY_GROUP) {
+                if ($securityConfig->get('group_name') === CustomerUser::SECURITY_GROUP) {
                     continue;
                 }
             }

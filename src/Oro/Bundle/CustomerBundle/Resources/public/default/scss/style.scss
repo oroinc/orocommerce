@@ -22,7 +22,10 @@
   }
 
   .oro-account__controls-list {
-    text-align: right;
+    position: relative;
+    z-index: 1;
+    float: right;
+    margin: 0 15px 0 0;
   }
 
   .customer-info {
@@ -131,6 +134,13 @@
   color: #b84926;
 }
 
+.profile__form__no-autocomplete-fix {
+  height: 0;
+  padding: 0;
+  visibility: hidden;
+  border: none;
+}
+
 .account-profile-edit-page {
   .password {
     overflow: hidden;
@@ -163,7 +173,7 @@
   }
 }
 
-.oro-account-user-role__back-link {
+.oro-customer-user-role__back-link {
   padding-left: 0;
 }
 

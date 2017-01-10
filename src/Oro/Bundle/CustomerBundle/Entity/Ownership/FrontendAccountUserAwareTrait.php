@@ -2,22 +2,25 @@
 
 namespace Oro\Bundle\CustomerBundle\Entity\Ownership;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 
+/**
+ * @deprecated Use FrontendCustomerUserAwareTrait
+ */
 trait FrontendAccountUserAwareTrait
 {
     use FrontendAccountAwareTrait;
 
     /**
-     * @var AccountUser
+     * @var CustomerUser
      *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\AccountUser")
-     * @ORM\JoinColumn(name="account_user_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerUser")
+     * @ORM\JoinColumn(name="customer_user_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
      */
     protected $accountUser;
 
     /**
-     * @return AccountUser|null
+     * @return CustomerUser|null
      */
     public function getAccountUser()
     {
@@ -25,10 +28,10 @@ trait FrontendAccountUserAwareTrait
     }
 
     /**
-     * @param AccountUser|null $accountUser
+     * @param CustomerUser|null $accountUser
      * @return $this
      */
-    public function setAccountUser(AccountUser $accountUser = null)
+    public function setAccountUser(CustomerUser $accountUser = null)
     {
         $this->accountUser = $accountUser;
 

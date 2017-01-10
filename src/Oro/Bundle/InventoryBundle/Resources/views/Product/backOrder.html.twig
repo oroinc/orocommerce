@@ -1,0 +1,8 @@
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+
+{% set backOrder = oro_entity_fallback_value(entity, 'backOrder') %}
+{% if backOrder is not null %}
+    {% set backOrder = (backOrder == true) ? 'true' : 'false' %}
+{% endif %}
+{% set backOrderValue = backOrder is not null ? 'oro.inventory.manage_inventory.choice.' ~ backOrder : null %}
+{{ UI.renderProperty('oro.inventory.backorders.label'|trans, backOrderValue|trans) }}

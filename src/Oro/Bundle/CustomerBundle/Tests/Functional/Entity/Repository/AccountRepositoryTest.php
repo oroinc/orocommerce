@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\CustomerBundle\Tests\Functional\Entity\Repository;
 
+use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\Repository\AccountRepository;
-use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountCategoryVisibility;
@@ -35,7 +35,6 @@ class AccountRepositoryTest extends WebTestCase
         $this->loadFixtures(
             [
                 'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccounts',
-                'Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData',
             ]
         );
 
@@ -46,8 +45,9 @@ class AccountRepositoryTest extends WebTestCase
      * @dataProvider accountReferencesDataProvider
      * @param string $referenceName
      * @param array $expectedReferences
+     * @param bool $withAclCheck
      */
-    public function testGetChildrenIds($referenceName, array $expectedReferences)
+    public function testGetChildrenIds($referenceName, array $expectedReferences, $withAclCheck = true)
     {
         /** @var Account $account */
         $account = $this->getReference($referenceName);
@@ -56,7 +56,7 @@ class AccountRepositoryTest extends WebTestCase
         foreach ($expectedReferences as $reference) {
             $expected[] = $this->getReference($reference)->getId();
         }
-        $childrenIds = $this->repository->getChildrenIds($this->aclHelper, $account->getId());
+        $childrenIds = $this->repository->getChildrenIds($account->getId(), $withAclCheck ? $this->aclHelper : null);
         sort($expected);
         sort($childrenIds);
 
@@ -78,6 +78,7 @@ class AccountRepositoryTest extends WebTestCase
                 [
                     'account.level_1.1',
                     'account.level_1.1.1',
+                    'account.level_1.1.2',
                     'account.level_1.2',
                     'account.level_1.2.1',
                     'account.level_1.2.1.1',
@@ -92,7 +93,8 @@ class AccountRepositoryTest extends WebTestCase
             'level_1.1' => [
                 'account.level_1.1',
                 [
-                    'account.level_1.1.1'
+                    'account.level_1.1.1',
+                    'account.level_1.1.2',
                 ]
             ],
             'level_1.2' => [
@@ -115,6 +117,24 @@ class AccountRepositoryTest extends WebTestCase
                     'account.level_1.4.1',
                     'account.level_1.4.1.1',
                 ]
+            ],
+            'without acl' => [
+                'account.level_1',
+                [
+                    'account.level_1.1',
+                    'account.level_1.1.1',
+                    'account.level_1.1.2',
+                    'account.level_1.2',
+                    'account.level_1.2.1',
+                    'account.level_1.2.1.1',
+                    'account.level_1.3',
+                    'account.level_1.3.1',
+                    'account.level_1.3.1.1',
+                    'account.level_1.4',
+                    'account.level_1.4.1',
+                    'account.level_1.4.1.1'
+                ],
+                false
             ],
         ];
     }

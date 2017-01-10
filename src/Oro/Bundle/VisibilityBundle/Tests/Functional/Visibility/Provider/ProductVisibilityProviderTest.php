@@ -3,17 +3,17 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Visibility\Provider;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Migrations\Data\ORM\LoadAnonymousAccountGroup;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
-use Oro\Bundle\VisibilityBundle\Visibility\Provider\ProductVisibilityProvider;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData;
 use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityScopedData;
-use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
+use Oro\Bundle\VisibilityBundle\Visibility\Provider\ProductVisibilityProvider;
 use Oro\Bundle\WebsiteBundle\Migrations\Data\ORM\LoadWebsiteData as LoadWebsiteDataMigration;
+use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 /**
  * @dbIsolation
@@ -71,10 +71,10 @@ class ProductVisibilityProviderTest extends WebTestCase
     {
         $accountGroupRepository = $this->getContainer()
             ->get('doctrine')
-            ->getManagerForClass('OroCustomerBundle:AccountGroup')
-            ->getRepository('OroCustomerBundle:AccountGroup');
+            ->getManagerForClass('OroCustomerBundle:CustomerGroup')
+            ->getRepository('OroCustomerBundle:CustomerGroup');
 
-        /** @var AccountGroup $accountGroup */
+        /** @var CustomerGroup $accountGroup */
         $accountGroup = $accountGroupRepository
             ->findOneBy(['name' => LoadAnonymousAccountGroup::GROUP_NAME_NON_AUTHENTICATED]);
 
@@ -250,6 +250,10 @@ class ProductVisibilityProviderTest extends WebTestCase
             [
                 'productId' => $this->getReference('product.1')->getId(),
                 'accountId' => $this->getReference('account.level_1.1.1')->getId(),
+            ],
+            [
+                'productId' => $this->getReference('product.1')->getId(),
+                'accountId' => $this->getReference('account.level_1.1.2')->getId(),
             ],
             [
                 'productId' => $this->getReference('product.1')->getId(),

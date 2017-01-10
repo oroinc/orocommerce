@@ -4,12 +4,12 @@ namespace Oro\Bundle\PaymentBundle\Migrations\Schema\v1_0;
 
 use Doctrine\DBAL\Schema\Schema;
 
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
-use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
 
-class OroPaymentBundle implements Migration, NoteExtensionAwareInterface
+class OroPaymentBundle implements Migration, ActivityExtensionAwareInterface
 {
     /**
      * Table name for PaymentTerm
@@ -21,17 +21,9 @@ class OroPaymentBundle implements Migration, NoteExtensionAwareInterface
     const ACCOUNT_GROUP_TABLE                 = 'orob2b_account_group';
 
     /**
-     * @var NoteExtension
+     * @var ActivityExtension
      */
-    protected $noteExtension;
-
-    /**
-     * @param NoteExtension $noteExtension
-     */
-    public function setNoteExtension(NoteExtension $noteExtension)
-    {
-        $this->noteExtension = $noteExtension;
-    }
+    protected $activityExtension;
 
     /**
      * {@inheritdoc}
@@ -66,7 +58,7 @@ class OroPaymentBundle implements Migration, NoteExtensionAwareInterface
      */
     protected function addNoteAssociations(Schema $schema)
     {
-        $this->noteExtension->addNoteAssociation($schema, self::TABLE_NAME);
+        $this->activityExtension->addActivityAssociation($schema, 'oro_note', self::TABLE_NAME);
     }
 
     /**
@@ -125,5 +117,15 @@ class OroPaymentBundle implements Migration, NoteExtensionAwareInterface
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
+    }
+
+    /**
+     * Sets the ActivityExtension
+     *
+     * @param ActivityExtension $activityExtension
+     */
+    public function setActivityExtension(ActivityExtension $activityExtension)
+    {
+        $this->activityExtension = $activityExtension;
     }
 }

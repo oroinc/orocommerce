@@ -7,7 +7,8 @@ use Doctrine\ORM\EntityManager;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
+use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupCategoryVisibility;
@@ -26,7 +27,7 @@ class AccountGroupCategoryResolvedCacheBuilderTest extends AbstractProductResolv
     /** @var Category */
     protected $category;
 
-    /** @var AccountGroup */
+    /** @var CustomerGroup */
     protected $accountGroup;
 
     /** @var AccountGroupCategoryResolvedCacheBuilder */
@@ -36,6 +37,11 @@ class AccountGroupCategoryResolvedCacheBuilderTest extends AbstractProductResolv
      * @var ScopeManager
      */
     protected $scopeManager;
+
+    /**
+     * @var InsertFromSelectQueryExecutor
+     */
+    protected $insertExecutor;
 
     /**
      * @var Scope
@@ -55,6 +61,7 @@ class AccountGroupCategoryResolvedCacheBuilderTest extends AbstractProductResolv
             $container->get('event_dispatcher')
         );
 
+        $this->insertExecutor = $container->get('oro_entity.orm.insert_from_select_query_executor');
         $this->scopeManager = $container->get('oro_scope.scope_manager');
         $this->scope = $this->scopeManager->findOrCreate(
             AccountGroupCategoryVisibility::VISIBILITY_TYPE,
@@ -63,16 +70,17 @@ class AccountGroupCategoryResolvedCacheBuilderTest extends AbstractProductResolv
         $this->builder = new AccountGroupCategoryResolvedCacheBuilder(
             $container->get('doctrine'),
             $this->scopeManager,
-            $indexScheduler
+            $indexScheduler,
+            $this->insertExecutor
         );
         $this->builder->setCacheClass(
             $container->getParameter('oro_visibility.entity.account_group_category_visibility_resolved.class')
         );
-        $this->builder->setRepositoryHolder(
-            $container->get('oro_visibility.category_repository_holder')
+        $this->builder->setRepository(
+            $container->get('oro_visibility.category_repository')
         );
-        $this->builder->setAccountGroupCategoryVisibilityHolder(
-            $container->get('oro_visibility.account_group_category_repository_holder')
+        $this->builder->setAccountGroupCategoryVisibilityRepository(
+            $container->get('oro_visibility.account_group_category_repository')
         );
 
         $subtreeBuilder = new VisibilityChangeGroupSubtreeCacheBuilder(
@@ -362,7 +370,7 @@ class AccountGroupCategoryResolvedCacheBuilderTest extends AbstractProductResolv
 
             $visibilities[$key]['category'] = $category->getId();
 
-            /** @var AccountGroup $category */
+            /** @var CustomerGroup $category */
             $accountGroup = $this->getReference($row['accountGroup']);
             $visibilities[$key]['accountGroup'] = $accountGroup->getId();
         }

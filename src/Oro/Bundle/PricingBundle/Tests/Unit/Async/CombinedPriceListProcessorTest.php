@@ -6,7 +6,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
 use Oro\Bundle\PricingBundle\Async\CombinedPriceListProcessor;
 use Oro\Bundle\PricingBundle\Builder\AccountCombinedPriceListsBuilder;
@@ -114,14 +114,14 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->dispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
+        $this->dispatcher = $this->createMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
 
-        $this->logger = $this->getMock(LoggerInterface::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
         $this->triggerFactory = $this->getMockBuilder(PriceListRelationTriggerFactory::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->registry = $this->getMock(ManagerRegistry::class);
+        $this->registry = $this->createMock(ManagerRegistry::class);
 
         $this->databaseExceptionHelper = $this->getMockBuilder(DatabaseExceptionHelper::class)
             ->disableOriginalConstructor()
@@ -147,7 +147,7 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
      */
     public function testProcess(PriceListRelationTrigger $trigger)
     {
-        $em = $this->getMock(EntityManagerInterface::class);
+        $em = $this->createMock(EntityManagerInterface::class);
 
         $em->expects($this->once())
             ->method('beginTransaction');
@@ -164,11 +164,11 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
             ->willReturn($em);
 
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
-        $message = $this->getMock(MessageInterface::class);
+        $message = $this->createMock(MessageInterface::class);
         $message->method('getBody')->willReturn('');
 
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
-        $session = $this->getMock(SessionInterface::class);
+        $session = $this->createMock(SessionInterface::class);
 
         $this->triggerFactory->method('createFromArray')->willReturn($trigger);
 
@@ -177,7 +177,7 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
 
     public function testProcessWithException()
     {
-        $em = $this->getMock(EntityManagerInterface::class);
+        $em = $this->createMock(EntityManagerInterface::class);
 
         $em->expects($this->once())
             ->method('beginTransaction');
@@ -194,11 +194,11 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
             ->willReturn($em);
 
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
-        $message = $this->getMock(MessageInterface::class);
+        $message = $this->createMock(MessageInterface::class);
         $message->method('getBody')->willReturn('');
 
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
-        $session = $this->getMock(SessionInterface::class);
+        $session = $this->createMock(SessionInterface::class);
 
         $this->triggerFactory->method('createFromArray')->willThrowException(new InvalidArgumentException());
 
@@ -211,13 +211,13 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
     public function processDataProvider()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|Account $account */
-        $account = $this->getMock(Account::class);
+        $account = $this->createMock(Account::class);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|AccountGroup $accountGroup */
-        $accountGroup = $this->getMock('Oro\Bundle\CustomerBundle\Entity\AccountGroup');
+        /** @var \PHPUnit_Framework_MockObject_MockObject|CustomerGroup $accountGroup */
+        $accountGroup = $this->createMock('Oro\Bundle\CustomerBundle\Entity\CustomerGroup');
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|Website $website */
-        $website = $this->getMock(Website::class);
+        $website = $this->createMock(Website::class);
         $trigger = new PriceListRelationTrigger();
         return [
             [
@@ -241,7 +241,7 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
      */
     public function testDispatchAccountScopeEvent(array $builtList)
     {
-        $em = $this->getMock(EntityManagerInterface::class);
+        $em = $this->createMock(EntityManagerInterface::class);
 
         $em->expects($this->once())
             ->method('beginTransaction');
@@ -270,17 +270,17 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
         }
 
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
-        $message = $this->getMock(MessageInterface::class);
+        $message = $this->createMock(MessageInterface::class);
         $message->method('getBody')->willReturn('');
 
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
-        $session = $this->getMock(SessionInterface::class);
+        $session = $this->createMock(SessionInterface::class);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|Account $account */
-        $account = $this->getMock(Account::class);
+        $account = $this->createMock(Account::class);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|Website $website */
-        $website = $this->getMock(Website::class);
+        $website = $this->createMock(Website::class);
 
         $trigger = new PriceListRelationTrigger();
         $trigger->setWebsite($website)
@@ -318,7 +318,7 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
      */
     public function testDispatchAccountGroupScopeEvent(array $builtList)
     {
-        $em = $this->getMock(EntityManagerInterface::class);
+        $em = $this->createMock(EntityManagerInterface::class);
 
         $em->expects($this->once())
             ->method('beginTransaction');
@@ -346,17 +346,17 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
                 ->method('dispatch');
         }
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
-        $message = $this->getMock(MessageInterface::class);
+        $message = $this->createMock(MessageInterface::class);
         $message->method('getBody')->willReturn('');
 
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
-        $session = $this->getMock(SessionInterface::class);
+        $session = $this->createMock(SessionInterface::class);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|AccountGroup $account */
-        $accountGroup = $this->getMock(AccountGroup::class);
+        /** @var \PHPUnit_Framework_MockObject_MockObject|CustomerGroup $account */
+        $accountGroup = $this->createMock(CustomerGroup::class);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|Website $website */
-        $website = $this->getMock(Website::class);
+        $website = $this->createMock(Website::class);
 
         $trigger = new PriceListRelationTrigger();
         $trigger->setWebsite($website)
@@ -392,7 +392,7 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
      */
     public function testDispatchWebsiteScopeEvent(array $builtList)
     {
-        $em = $this->getMock(EntityManagerInterface::class);
+        $em = $this->createMock(EntityManagerInterface::class);
 
         $em->expects($this->once())
             ->method('beginTransaction');
@@ -421,14 +421,14 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
                 ->method('dispatch');
         }
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
-        $message = $this->getMock(MessageInterface::class);
+        $message = $this->createMock(MessageInterface::class);
         $message->method('getBody')->willReturn('');
 
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
-        $session = $this->getMock(SessionInterface::class);
+        $session = $this->createMock(SessionInterface::class);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|Website $website */
-        $website = $this->getMock(Website::class);
+        $website = $this->createMock(Website::class);
 
         $trigger = new PriceListRelationTrigger();
         $trigger->setWebsite($website);
@@ -458,7 +458,7 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
      */
     public function testDispatchConfigScopeEvent($isBuilt)
     {
-        $em = $this->getMock(EntityManagerInterface::class);
+        $em = $this->createMock(EntityManagerInterface::class);
 
         $em->expects($this->once())
             ->method('beginTransaction');
@@ -487,11 +487,11 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
                 ->method('dispatch');
         }
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
-        $message = $this->getMock(MessageInterface::class);
+        $message = $this->createMock(MessageInterface::class);
         $message->method('getBody')->willReturn('');
 
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
-        $session = $this->getMock(SessionInterface::class);
+        $session = $this->createMock(SessionInterface::class);
 
         $trigger = new PriceListRelationTrigger();
         $this->triggerFactory->method('createFromArray')->willReturn($trigger);
