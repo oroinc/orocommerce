@@ -87,7 +87,7 @@ class FirstOffersQuoteToShippingLineItemConverterTest extends \PHPUnit_Framework
             ->willReturn($quoteProductOffers);
 
         $quoteProductOfferMock
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('getProduct')
             ->willReturn($product);
 

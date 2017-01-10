@@ -83,7 +83,7 @@ class BasicQuoteShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
             ->willReturn($quoteId);
 
         $quoteMock
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('getShippingAddress')
             ->willReturn($shippingAddressMock);
 

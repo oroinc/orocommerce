@@ -53,7 +53,9 @@ class FirstOffersQuoteToShippingLineItemConverter implements QuoteToShippingLine
                 $firstQuoteProductOffer
             );
 
-            $lineItemBuilder->setProduct($firstQuoteProductOffer->getProduct());
+            if (null !== $firstQuoteProductOffer->getProduct()) {
+                $lineItemBuilder->setProduct($firstQuoteProductOffer->getProduct());
+            }
 
             $lineItems[] = $lineItemBuilder->getResult();
         }

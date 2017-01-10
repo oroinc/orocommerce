@@ -102,7 +102,7 @@ class SelectedOffersQuoteToShippingLineItemConverterTest extends \PHPUnit_Framew
             ->willReturn($quoteProductOfferMock);
 
         $quoteProductOfferMock
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('getProduct')
             ->willReturn($product);
 

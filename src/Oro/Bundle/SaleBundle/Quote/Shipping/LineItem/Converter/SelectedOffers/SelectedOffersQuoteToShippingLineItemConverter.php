@@ -50,7 +50,9 @@ class SelectedOffersQuoteToShippingLineItemConverter implements QuoteToShippingL
                     $productOffer
                 );
 
-                $lineItemBuilder->setProduct($productOffer->getProduct());
+                if (null !== $productOffer->getProduct()) {
+                    $lineItemBuilder->setProduct($productOffer->getProduct());
+                }
 
                 $shippingLineItems[] = $lineItemBuilder->getResult();
             }

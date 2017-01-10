@@ -101,5 +101,6 @@ services:
         arguments:
             - '@oro_product.formatter.product_unit_value'
             - '@translator'
+            - '@oro_product.visibility.unit'
         tags:
             - { name: form.type, alias: oro_sale_quote_product_demand_offer_choice }
