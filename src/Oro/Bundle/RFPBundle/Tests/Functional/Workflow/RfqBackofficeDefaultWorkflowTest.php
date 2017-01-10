@@ -84,7 +84,6 @@ class RfqBackofficeDefaultWorkflowTest extends WebTestCase
         $this->assertButtonsAvailable($this->request, ['Request More Information', 'Decline', 'Delete']);
     }
 
-
     public function testDecline()
     {
         $this->transit($this->request, 'Decline');
