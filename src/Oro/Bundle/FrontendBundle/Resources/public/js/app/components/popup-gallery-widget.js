@@ -2,12 +2,12 @@ define(function(require) {
 'use strict';
 
     var PopupGalleryWidget;
-    var BaseComponent = require('oroui/js/app/components/base/component');
+    var AbstractWidget = require('oroui/js/widget/abstract-widget');
     var $ = require('jquery');
     var _ = require('underscore');
     require('slick');
 
-    PopupGalleryWidget = BaseComponent.extend({
+    PopupGalleryWidget = AbstractWidget.extend({
         /**
          * @property {Object}
          */
@@ -30,6 +30,7 @@ define(function(require) {
                 asNavFor: null,
                 centerMode: true,
                 focusOnSelect: true,
+                lazyLoad: 'progressive',
                 arrows: true,
                 dots: false,
                 variableWidth: true,
