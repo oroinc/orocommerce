@@ -29,26 +29,26 @@
         '~class': ' product-prices__tbody'
     }) %}
 
-<tbody {{ block('block_attributes') }}>
-    {% set shownUnit = '' %}
-    {% for price in productPrices %}
-        {% if shownUnit != price.formatted_unit %}
-            {% set shownUnit = price.formatted_unit %}
+    <tbody {{ block('block_attributes') }}>
+        {% set shownUnit = '' %}
+        {% for price in productPrices %}
+            {% if shownUnit != price.formatted_unit %}
+                {% set shownUnit = price.formatted_unit %}
+                <tr class="product-prices__tr">
+                    <td colspan="2" class="product-prices__td">
+                        {% if loop.index > 1 %}<br/>{% endif %}
+                        <strong>{{ shownUnit|capitalize }}</strong>
+                    </td>
+                </tr>
+            {% endif %}
             <tr class="product-prices__tr">
-                <td colspan="2" class="product-prices__td">
-                    {% if loop.index > 1 %}<br/>{% endif %}
-                    <strong>{{ shownUnit|capitalize }}</strong>
+                <td class="product-prices__td">
+                    {{ price.quantity }}
+                </td>
+                <td class="product-prices__td">
+                    {{ price.formatted_price }}
                 </td>
             </tr>
-        {% endif %}
-        <tr class="product-prices__tr">
-            <td class="product-prices__td">
-                {{ price.quantity }}
-            </td>
-            <td class="product-prices__td">
-                {{ price.formatted_price }}
-            </td>
-        </tr>
-    {% endfor %}
-</tbody>
+        {% endfor %}
+    </tbody>
 {% endblock %}
