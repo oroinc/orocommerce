@@ -11,7 +11,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 use Oro\Bundle\SecurityBundle\Model\AclPrivilege;
 use Oro\Bundle\SecurityBundle\Model\AclPrivilegeIdentity;
 use Oro\Bundle\SecurityBundle\Acl\Domain\ObjectIdentityFactory;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 use Oro\Bundle\CustomerBundle\Form\Handler\CustomerUserRoleUpdateFrontendHandler;
@@ -91,7 +91,7 @@ class CustomerUserRoleUpdateFrontendHandlerTest extends AbstractCustomerUserRole
     public function successDataProvider()
     {
         $accountUser = new CustomerUser();
-        $account = new Account();
+        $account = new Customer();
         $accountUser->setAccount($account);
 
         return [
@@ -178,7 +178,7 @@ class CustomerUserRoleUpdateFrontendHandlerTest extends AbstractCustomerUserRole
     public function successDataPrivilegesProvider()
     {
         $accountUser = new CustomerUser();
-        $account = new Account();
+        $account = new Customer();
         $accountUser->setAccount($account);
 
         $privilege = new AclPrivilege();

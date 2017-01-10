@@ -9,7 +9,7 @@ use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Form\Type\AccountUserSelectType;
@@ -123,7 +123,7 @@ class QuoteTypeTest extends AbstractTest
         $quote->setOwner($owner);
 
         if (null !== $accountUserId) {
-            $account = $this->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\Account')->getMock();
+            $account = $this->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\Customer')->getMock();
             $role = $this->getMockBuilder('Symfony\Component\Security\Core\Role\RoleInterface')->getMock();
 
             /** @var CustomerUser $accountUser */
@@ -139,8 +139,8 @@ class QuoteTypeTest extends AbstractTest
         }
 
         if (null !== $accountId) {
-            /** @var Account $account */
-            $account = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account', $accountId);
+            /** @var Customer $account */
+            $account = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', $accountId);
             $account->setName('Name');
             $quote->setAccount($account);
         }
@@ -312,7 +312,7 @@ class QuoteTypeTest extends AbstractTest
         $builder = $this->createMock(FormBuilderInterface::class);
         $quote = new Quote();
         $accountGroup = new CustomerGroup();
-        $account = new Account();
+        $account = new Customer();
         $account->setGroup($accountGroup);
         $quote->setAccount($account);
 
@@ -365,8 +365,8 @@ class QuoteTypeTest extends AbstractTest
 
         $accountSelectType = new StubEntityType(
             [
-                1 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account', 1),
-                2 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account', 2),
+                1 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', 1),
+                2 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', 2),
             ],
             AccountSelectType::NAME
         );

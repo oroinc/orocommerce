@@ -5,7 +5,7 @@ namespace Oro\Bundle\RFPBundle\Tests\Unit\Model;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Model\RequestManager;
@@ -43,7 +43,7 @@ class RequestManagerTest extends \PHPUnit_Framework_TestCase
 
     public function testCreate()
     {
-        $account = new Account();
+        $account = new Customer();
         $accountUser = new CustomerUser();
         $accountUser->setAccount($account);
         $this->securityFacade->expects($this->once())

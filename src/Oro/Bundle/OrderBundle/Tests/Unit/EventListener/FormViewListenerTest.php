@@ -9,7 +9,7 @@ use Oro\Component\Testing\Unit\FormViewListenerTestCase;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\OrderBundle\EventListener\FormViewListener;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 
 class FormViewListenerTest extends FormViewListenerTestCase
 {
@@ -83,7 +83,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
     {
         $this->request->expects($this->any())->method('get')->with('id')->willReturn(1);
 
-        $account = new Account();
+        $account = new Customer();
 
         $this->doctrineHelper
             ->expects($this->once())
@@ -111,7 +111,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
     {
         $this->request->expects($this->any())->method('get')->with('id')->willReturn(null);
 
-        $account = new Account();
+        $account = new Customer();
 
         $this->doctrineHelper
             ->expects($this->never())

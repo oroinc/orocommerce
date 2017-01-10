@@ -3,7 +3,7 @@
 namespace Oro\Bundle\VisibilityBundle\Async\Visibility;
 
 use Oro\Bundle\VisibilityBundle\Driver\AccountPartialUpdateDriverInterface;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
@@ -64,7 +64,7 @@ class AccountProcessor implements MessageProcessorInterface
         $em->beginTransaction();
         try {
             $messageData = JSON::decode($message->getBody());
-            /** @var Account $account */
+            /** @var Customer $account */
             $account = $this->messageFactory->getEntityFromMessage($messageData);
 
             $this->partialUpdateDriver->updateAccountVisibility($account);

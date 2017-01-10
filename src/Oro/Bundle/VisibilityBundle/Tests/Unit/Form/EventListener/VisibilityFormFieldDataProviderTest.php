@@ -4,7 +4,7 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Form\EventListener;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
@@ -206,7 +206,7 @@ class VisibilityFormFieldDataProviderTest extends \PHPUnit_Framework_TestCase
                 'id' => 1,
                 'visibility' => 'visible',
                 'scope' => new StubScope(
-                    ['account' => $this->getEntity(Account::class, ['id' => 2]), 'accountGroup' => null]
+                    ['account' => $this->getEntity(Customer::class, ['id' => 2]), 'accountGroup' => null]
                 ),
             ]
         );
@@ -216,7 +216,7 @@ class VisibilityFormFieldDataProviderTest extends \PHPUnit_Framework_TestCase
                 'id' => 2,
                 'visibility' => 'hidden',
                 'scope' => new StubScope(
-                    ['account' => $this->getEntity(Account::class, ['id' => 4]), 'accountGroup' => null]
+                    ['account' => $this->getEntity(Customer::class, ['id' => 4]), 'accountGroup' => null]
                 ),
             ]
         );
@@ -253,9 +253,9 @@ class VisibilityFormFieldDataProviderTest extends \PHPUnit_Framework_TestCase
         $this->scopeManager->expects($this->once())
             ->method('getCriteriaByScope')
             ->with($rootScope, 'account_product_visibility')
-            ->willReturn(new ScopeCriteria(['account' => $this->getEntity(Account::class, ['id' => 3])]));
+            ->willReturn(new ScopeCriteria(['account' => $this->getEntity(Customer::class, ['id' => 3])]));
 
-        $fieldData = new Account();
+        $fieldData = new Customer();
         $scope = new Scope();
         $this->scopeManager->expects($this->once())
             ->method('findOrCreate')

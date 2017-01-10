@@ -3,7 +3,7 @@
 namespace Oro\Bundle\RFPBundle\Tests\Unit\Storage;
 
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
@@ -96,8 +96,8 @@ class RequestToQuoteDataStorageTest extends \PHPUnit_Framework_TestCase
      */
     protected function createRFPRequest($accountId, $accountUserId, $productSku, $unitCode, $quantity, $comment)
     {
-        /** @var Account $account */
-        $account = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account', ['id' => $accountId]);
+        /** @var Customer $account */
+        $account = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', ['id' => $accountId]);
 
         /** @var CustomerUser $accountUser */
         $accountUser = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUser', ['id' => $accountUserId]);

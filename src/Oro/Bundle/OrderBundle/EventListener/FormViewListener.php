@@ -9,7 +9,7 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 
 class FormViewListener
 {
@@ -64,8 +64,8 @@ class FormViewListener
      */
     public function onAccountView(BeforeListRenderEvent $event)
     {
-        /** @var Account $account */
-        $account = $this->getEntityFromRequestId('OroCustomerBundle:Account');
+        /** @var Customer $account */
+        $account = $this->getEntityFromRequestId('OroCustomerBundle:Customer');
         if ($account) {
             $template = $event->getEnvironment()->render(
                 'OroOrderBundle:Account:orders_view.html.twig',

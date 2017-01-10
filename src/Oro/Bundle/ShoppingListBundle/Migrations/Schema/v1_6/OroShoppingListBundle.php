@@ -33,6 +33,14 @@ class OroShoppingListBundle implements Migration, RenameExtensionAwareInterface,
             'account_user_id',
             'customer_user_id'
         );
+        $table->removeForeignKey($this->getConstraintName($table, 'account_id'));
+        $this->renameExtension->renameColumn(
+            $schema,
+            $queries,
+            $table,
+            'account_id',
+            'customer_id'
+        );
 
         $this->updateOroShoppingListLineItemTable($schema, $queries);
     }

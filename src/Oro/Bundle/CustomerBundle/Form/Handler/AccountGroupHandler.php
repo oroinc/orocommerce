@@ -8,7 +8,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Event\AccountGroupEvent;
 
@@ -75,8 +75,8 @@ class AccountGroupHandler
      * "Success" form handler
      *
      * @param CustomerGroup $entity
-     * @param Account[] $append
-     * @param Account[] $remove
+     * @param Customer[] $append
+     * @param Customer[] $remove
      */
     protected function onSuccess(CustomerGroup $entity, array $append, array $remove)
     {
@@ -92,7 +92,7 @@ class AccountGroupHandler
      * Append accounts to account group
      *
      * @param CustomerGroup $group
-     * @param Account[] $accounts
+     * @param Customer[] $accounts
      */
     protected function setGroup(CustomerGroup $group, array $accounts)
     {
@@ -106,7 +106,7 @@ class AccountGroupHandler
      * Remove users from business unit
      *
      * @param CustomerGroup $group
-     * @param Account[] $accounts
+     * @param Customer[] $accounts
      */
     protected function removeFromGroup(CustomerGroup $group, array $accounts)
     {

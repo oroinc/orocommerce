@@ -8,7 +8,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\TaxBundle\Migrations\TaxEntitiesFactory;
@@ -67,7 +67,7 @@ class LoadTaxTableRatesDemoData extends AbstractFixture implements DependentFixt
             $taxCode = $this->entitiesFactory->createAccountTaxCode($code, $data['description'], $manager, $this);
             if (isset($data['accounts'])) {
                 foreach ($data['accounts'] as $accountName) {
-                    $account = $manager->getRepository('OroCustomerBundle:Account')->findOneByName($accountName);
+                    $account = $manager->getRepository('OroCustomerBundle:Customer')->findOneByName($accountName);
                     if (null !== $account) {
                         $taxCode->addAccount($account);
                     }

@@ -4,7 +4,7 @@ namespace Oro\Bundle\CustomerBundle\Tests\Unit\Entity;
 
 use Oro\Component\Testing\Unit\EntityTestCase;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 
 class CustomerGroupTest extends EntityTestCase
 {
@@ -56,10 +56,10 @@ class CustomerGroupTest extends EntityTestCase
     }
 
     /**
-     * @return Account
+     * @return Customer
      */
     protected function createAccountEntity()
     {
-        return new Account();
+        return new Customer();
     }
 }

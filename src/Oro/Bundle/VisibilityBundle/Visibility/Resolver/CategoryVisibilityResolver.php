@@ -5,7 +5,7 @@ namespace Oro\Bundle\VisibilityBundle\Visibility\Resolver;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountCategoryVisibility;
@@ -149,10 +149,10 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
 
     /**
      * @param Category $category
-     * @param Account $account
+     * @param Customer $account
      * @return bool
      */
-    public function isCategoryVisibleForAccount(Category $category, Account $account)
+    public function isCategoryVisibleForAccount(Category $category, Customer $account)
     {
         $scope = $this->scopeManager->findOrCreate(AccountCategoryVisibility::VISIBILITY_TYPE, ['account' => $account]);
         $accountGroupScope = $this->getGroupScopeByAccount($account);
@@ -164,10 +164,10 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
     }
 
     /**
-     * @param Account $account
+     * @param Customer $account
      * @return array
      */
-    public function getVisibleCategoryIdsForAccount(Account $account)
+    public function getVisibleCategoryIdsForAccount(Customer $account)
     {
         $scope = $this->scopeManager->findOrCreate(AccountCategoryVisibility::VISIBILITY_TYPE, ['account' => $account]);
         $groupScope = $this->getGroupScopeByAccount($account);
@@ -184,10 +184,10 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
     }
 
     /**
-     * @param Account $account
+     * @param Customer $account
      * @return array
      */
-    public function getHiddenCategoryIdsForAccount(Account $account)
+    public function getHiddenCategoryIdsForAccount(Customer $account)
     {
         $scope = $this->scopeManager->findOrCreate(AccountCategoryVisibility::VISIBILITY_TYPE, ['account' => $account]);
         $groupScope = $this->getGroupScopeByAccount($account);
@@ -214,10 +214,10 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
     }
 
     /**
-     * @param Account $account
+     * @param Customer $account
      * @return null|\Oro\Bundle\ScopeBundle\Entity\Scope
      */
-    protected function getGroupScopeByAccount(Account $account)
+    protected function getGroupScopeByAccount(Customer $account)
     {
         $accountGroupScope = null;
         if ($account->getGroup()) {

@@ -5,7 +5,7 @@ namespace Oro\Bundle\WebCatalogBundle\Tests\Functional\DataFixtures;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccounts;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
@@ -33,7 +33,7 @@ class LoadWebCatalogScopes extends AbstractFixture implements DependentFixtureIn
     {
         /** @var WebCatalog $webCatalog */
         $webCatalog = $this->getReference(LoadWebCatalogData::CATALOG_1);
-        /** @var Account $account */
+        /** @var Customer $account */
         $account = $this->getReference(LoadAccounts::DEFAULT_ACCOUNT_NAME);
 
         $scope1 = new Scope();

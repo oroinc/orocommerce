@@ -10,7 +10,7 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\CustomerBundle\Acl\Voter\CustomerUserRoleVoter;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 
 /**
@@ -181,11 +181,11 @@ class CustomerUserRoleVoterTest extends \PHPUnit_Framework_TestCase
         $expected,
         $failCustomerUserRole = false
     ) {
-        /** @var Account $roleAccount */
-        $roleAccount = $this->createEntity('Oro\Bundle\CustomerBundle\Entity\Account', $accountId);
+        /** @var Customer $roleAccount */
+        $roleAccount = $this->createEntity('Oro\Bundle\CustomerBundle\Entity\Customer', $accountId);
 
-        /** @var Account $userAccount */
-        $userAccount = $this->createEntity('Oro\Bundle\CustomerBundle\Entity\Account', $loggedUserAccountId);
+        /** @var Customer $userAccount */
+        $userAccount = $this->createEntity('Oro\Bundle\CustomerBundle\Entity\Customer', $loggedUserAccountId);
 
         if ($failCustomerUserRole) {
             $customerUserRole = new \stdClass();
@@ -231,11 +231,11 @@ class CustomerUserRoleVoterTest extends \PHPUnit_Framework_TestCase
         $expected,
         $failCustomerUserRole = false
     ) {
-        /** @var Account $roleAccount */
-        $roleAccount = $this->createEntity('Oro\Bundle\CustomerBundle\Entity\Account', $accountId);
+        /** @var Customer $roleAccount */
+        $roleAccount = $this->createEntity('Oro\Bundle\CustomerBundle\Entity\Customer', $accountId);
 
-        /** @var Account $userAccount */
-        $userAccount = $this->createEntity('Oro\Bundle\CustomerBundle\Entity\Account', $loggedUserAccountId);
+        /** @var Customer $userAccount */
+        $userAccount = $this->createEntity('Oro\Bundle\CustomerBundle\Entity\Customer', $loggedUserAccountId);
 
         if ($failCustomerUserRole) {
             $customerUserRole = new \stdClass();

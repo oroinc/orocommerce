@@ -6,7 +6,7 @@ use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityRepository;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigInterface;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
@@ -124,7 +124,7 @@ class FrontendOwnerSelectType extends AbstractType
     private function getOwnerClass(ConfigInterface $config)
     {
         $ownerType = $config->get('frontend_owner_type');
-        $ownerClass = ($ownerType == 'FRONTEND_ACCOUNT') ? Account::class : CustomerUser::class;
+        $ownerClass = ($ownerType == 'FRONTEND_ACCOUNT') ? Customer::class : CustomerUser::class;
         return $ownerClass;
     }
 

@@ -15,7 +15,7 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadRolesData;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\RFPBundle\Entity\Request as RFPRequest;
@@ -72,7 +72,7 @@ class LoadQuoteDemoData extends AbstractFixture implements
             ->findOneBy(['name' => 'Default']);
 
         for ($i = 0; $i < 20; $i++) {
-            /* @var $account Account */
+            /* @var $account Customer */
             $account = $accounts[mt_rand(0, count($accounts) - 1)];
 
             if (!$account) {
@@ -114,11 +114,11 @@ class LoadQuoteDemoData extends AbstractFixture implements
 
     /**
      * @param ObjectManager $manager
-     * @return Collection|Account[]
+     * @return Collection|Customer[]
      */
     protected function getAccounts(ObjectManager $manager)
     {
-        return array_merge([null], $manager->getRepository('OroCustomerBundle:Account')->findBy([], null, 10));
+        return array_merge([null], $manager->getRepository('OroCustomerBundle:Customer')->findBy([], null, 10));
     }
 
     /**

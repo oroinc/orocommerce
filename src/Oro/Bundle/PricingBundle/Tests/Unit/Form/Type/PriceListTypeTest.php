@@ -22,7 +22,7 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 class PriceListTypeTest extends FormIntegrationTestCase
 {
-    const ACCOUNT_CLASS = 'Oro\Bundle\CustomerBundle\Entity\Account';
+    const ACCOUNT_CLASS = 'Oro\Bundle\CustomerBundle\Entity\Customer';
     const ACCOUNT_GROUP_CLASS = 'Oro\Bundle\CustomerBundle\Entity\CustomerGroup';
     const WEBSITE_CLASS = 'Oro\Bundle\WebsiteBundle\Entity\Website';
 

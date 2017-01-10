@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Unit\Form\Extension;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Form\Type\AccountType;
 use Oro\Bundle\TaxBundle\Entity\AccountTaxCode;
 use Oro\Bundle\TaxBundle\Form\Extension\AccountTaxExtension;
@@ -65,11 +65,11 @@ class AccountTaxExtensionTest extends AbstractAccountTaxExtensionTest
     /**
      * @param int|null $id
      *
-     * @return Account
+     * @return Customer
      */
     protected function createTaxCodeTarget($id = null)
     {
-        return $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account', ['id' => $id]);
+        return $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', ['id' => $id]);
     }
 
     /**

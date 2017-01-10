@@ -1,5 +1,5 @@
 search:
-    Oro\Bundle\CustomerBundle\Entity\Account:
+    Oro\Bundle\CustomerBundle\Entity\Customer:
         alias:                          oro_customer_account
         title_fields:                   [name]
         route:

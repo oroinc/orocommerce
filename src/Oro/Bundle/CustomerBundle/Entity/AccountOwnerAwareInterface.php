@@ -8,7 +8,7 @@ namespace Oro\Bundle\CustomerBundle\Entity;
 interface AccountOwnerAwareInterface
 {
     /**
-     * @return \Oro\Bundle\CustomerBundle\Entity\Account
+     * @return \Oro\Bundle\CustomerBundle\Entity\Customer
      */
     public function getAccount();
 

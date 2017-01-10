@@ -6,7 +6,7 @@ use Symfony\Component\Finder\Finder;
 use Symfony\Component\Yaml\Parser;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Provider\OrderAddressProvider;
@@ -111,7 +111,7 @@ class OrderAddressSecurityProviderTest extends \PHPUnit_Framework_TestCase
         $account = null;
         $accountUser = null;
         if ($hasEntity) {
-            $account = new Account();
+            $account = new Customer();
             $accountUser = new CustomerUser();
         }
         $order = (new Order())->setAccount($account)->setAccountUser($accountUser);

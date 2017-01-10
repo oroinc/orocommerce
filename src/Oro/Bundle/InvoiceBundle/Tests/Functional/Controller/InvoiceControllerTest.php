@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\InvoiceBundle\Tests\Functional\Controller;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\InvoiceBundle\Entity\Invoice;
 use Oro\Bundle\LocaleBundle\Formatter\NameFormatter;
 use Oro\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
@@ -28,7 +28,7 @@ class InvoiceControllerTest extends WebTestCase
 
     /**
      * @param Form $form
-     * @param Account $account
+     * @param Customer $account
      * @param string $today
      * @param array $lineItems
      * @param string $poNumber
@@ -321,12 +321,12 @@ class InvoiceControllerTest extends WebTestCase
     }
 
     /**
-     * @return Account
+     * @return Customer
      */
     protected function getAccount()
     {
         $doctrine = $this->getContainer()->get('doctrine');
 
-        return $doctrine->getRepository('OroCustomerBundle:Account')->findOneBy([]);
+        return $doctrine->getRepository('OroCustomerBundle:Customer')->findOneBy([]);
     }
 }

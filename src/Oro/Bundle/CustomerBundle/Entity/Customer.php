@@ -10,14 +10,14 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\CustomerBundle\Model\ExtendAccount;
+use Oro\Bundle\CustomerBundle\Model\ExtendCustomer;
 
 /**
  * @ORM\Entity(repositoryClass="Oro\Bundle\CustomerBundle\Entity\Repository\AccountRepository")
  * @ORM\Table(
- *      name="oro_account",
+ *      name="oro_customer",
  *      indexes={
- *          @ORM\Index(name="oro_account_name_idx", columns={"name"})
+ *          @ORM\Index(name="oro_customer_name_idx", columns={"name"})
  *      }
  * )
  *
@@ -57,7 +57,7 @@ use Oro\Bundle\CustomerBundle\Model\ExtendAccount;
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class Account extends ExtendAccount
+class Customer extends ExtendCustomer
 {
     const INTERNAL_RATING_CODE = 'acc_internal_rating';
 
@@ -85,9 +85,9 @@ class Account extends ExtendAccount
     protected $name;
 
     /**
-     * @var Account
+     * @var Customer
      *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\Account", inversedBy="children")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\Customer", inversedBy="children")
      * @ORM\JoinColumn(name="parent_id", referencedColumnName="id", onDelete="SET NULL")
      * @ConfigField(
      *      defaultValues={
@@ -100,9 +100,9 @@ class Account extends ExtendAccount
     protected $parent;
 
     /**
-     * @var Collection|Account[]
+     * @var Collection|Customer[]
      *
-     * @ORM\OneToMany(targetEntity="Oro\Bundle\CustomerBundle\Entity\Account", mappedBy="parent")
+     * @ORM\OneToMany(targetEntity="Oro\Bundle\CustomerBundle\Entity\Customer", mappedBy="parent")
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -198,9 +198,9 @@ class Account extends ExtendAccount
      *
      * @ORM\ManyToMany(targetEntity="Oro\Bundle\UserBundle\Entity\User")
      * @ORM\JoinTable(
-     *      name="oro_account_sales_reps",
+     *      name="oro_customer_sales_reps",
      *      joinColumns={
-     *          @ORM\JoinColumn(name="account_id", referencedColumnName="id", onDelete="CASCADE")
+     *          @ORM\JoinColumn(name="customer_id", referencedColumnName="id", onDelete="CASCADE")
      *      },
      *      inverseJoinColumns={
      *          @ORM\JoinColumn(name="user_id", referencedColumnName="id", onDelete="CASCADE")
@@ -259,11 +259,11 @@ class Account extends ExtendAccount
     }
 
     /**
-     * @param Account $parent
+     * @param Customer $parent
      *
      * @return $this
      */
-    public function setParent(Account $parent = null)
+    public function setParent(Customer $parent = null)
     {
         $this->parent = $parent;
 
@@ -271,7 +271,7 @@ class Account extends ExtendAccount
     }
 
     /**
-     * @return Account
+     * @return Customer
      */
     public function getParent()
     {
@@ -388,11 +388,11 @@ class Account extends ExtendAccount
     }
 
     /**
-     * @param Account $child
+     * @param Customer $child
      *
      * @return $this
      */
-    public function addChild(Account $child)
+    public function addChild(Customer $child)
     {
         if (!$this->hasChild($child)) {
             $child->setParent($this);
@@ -403,11 +403,11 @@ class Account extends ExtendAccount
     }
 
     /**
-     * @param Account $child
+     * @param Customer $child
      *
      * @return $this
      */
-    public function removeChild(Account $child)
+    public function removeChild(Customer $child)
     {
         if ($this->hasChild($child)) {
             $child->setParent(null);
@@ -418,7 +418,7 @@ class Account extends ExtendAccount
     }
 
     /**
-     * @return Collection|Account[]
+     * @return Collection|Customer[]
      */
     public function getChildren()
     {
@@ -426,11 +426,11 @@ class Account extends ExtendAccount
     }
 
     /**
-     * @param Account $child
+     * @param Customer $child
      *
      * @return bool
      */
-    protected function hasChild(Account $child)
+    protected function hasChild(Customer $child)
     {
         return $this->children->contains($child);
     }

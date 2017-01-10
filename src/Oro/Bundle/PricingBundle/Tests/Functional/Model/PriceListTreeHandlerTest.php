@@ -7,7 +7,7 @@ use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceList
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\PricingBundle\DependencyInjection\Configuration;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\PricingBundle\DependencyInjection\OroPricingExtension;
 use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
@@ -129,7 +129,7 @@ class PriceListTreeHandlerTest extends WebTestCase
 
     /**
      * @param string $reference
-     * @return Account
+     * @return Customer
      */
     protected function getAccount($reference)
     {

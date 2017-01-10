@@ -10,7 +10,7 @@ use Symfony\Component\Validator\Validation;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Bundle\UserBundle\Tests\Unit\Stub\ChangePasswordTypeStub;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Form\Type\FrontendAccountUserProfileType;
 use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\FrontendOwnerSelectTypeStub;
 
@@ -22,7 +22,7 @@ class FrontendAccountUserProfileTypeTest extends FormIntegrationTestCase
     protected $formType;
 
     /**
-     * @var Account[]
+     * @var Customer[]
      */
     protected static $accounts = [];
 
@@ -88,7 +88,7 @@ class FrontendAccountUserProfileTypeTest extends FormIntegrationTestCase
     public function submitProvider()
     {
         $entity = new CustomerUser();
-        $account = new Account();
+        $account = new Customer();
         $entity->setAccount($account);
         $existingEntity = new CustomerUser();
         $this->setPropertyValue($existingEntity, 'id', 42);

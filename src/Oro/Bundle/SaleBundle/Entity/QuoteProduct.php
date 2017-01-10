@@ -113,7 +113,7 @@ class QuoteProduct implements ProductHolderInterface
     /**
      * @var string
      *
-     * @ORM\Column(name="comment_account", type="text", nullable=true)
+     * @ORM\Column(name="comment_customer", type="text", nullable=true)
      */
     protected $commentAccount;
 

@@ -1,4 +1,4 @@
-Oro\Bundle\CustomerBundle\Entity\Account:
+Oro\Bundle\CustomerBundle\Entity\Customer:
    account1:
        name: 'Company A'
        organization: '@organization'

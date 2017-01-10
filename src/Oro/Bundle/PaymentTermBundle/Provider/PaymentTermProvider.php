@@ -4,7 +4,7 @@ namespace Oro\Bundle\PaymentTermBundle\Provider;
 
 use Doctrine\Common\Util\ClassUtils;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Entity\AccountOwnerAwareInterface;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
@@ -41,10 +41,10 @@ class PaymentTermProvider
     }
 
     /**
-     * @param Account $account
+     * @param Customer $account
      * @return PaymentTerm|null
      */
-    public function getPaymentTerm(Account $account)
+    public function getPaymentTerm(Customer $account)
     {
         $paymentTerm = $this->getAccountPaymentTerm($account);
 
@@ -75,10 +75,10 @@ class PaymentTermProvider
     }
 
     /**
-     * @param Account $account
+     * @param Customer $account
      * @return PaymentTerm|null
      */
-    public function getAccountPaymentTerm(Account $account)
+    public function getAccountPaymentTerm(Customer $account)
     {
         return $this->paymentTermAssociationProvider->getPaymentTerm($account);
     }

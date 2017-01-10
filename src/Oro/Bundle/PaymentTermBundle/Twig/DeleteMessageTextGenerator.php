@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PaymentTermBundle\Twig;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\FilterBundle\Grid\Extension\OrmFilterExtension;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
@@ -99,7 +99,7 @@ class DeleteMessageTextGenerator
      */
     protected function generateAccountFilterUrl(PaymentTerm $paymentTerm)
     {
-        if (!$this->paymentTermManager->hasAssignedPaymentTerm(Account::class, $paymentTerm)) {
+        if (!$this->paymentTermManager->hasAssignedPaymentTerm(Customer::class, $paymentTerm)) {
             return null;
         }
 

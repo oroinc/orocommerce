@@ -7,7 +7,7 @@ use Doctrine\Common\Util\ClassUtils;
 
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\Repository\CustomerAddressRepository;
 use Oro\Bundle\CustomerBundle\Entity\Repository\CustomerUserAddressRepository;
@@ -102,7 +102,7 @@ class OrderAddressProvider implements AddressProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function getAccountAddresses(Account $account, $type)
+    public function getAccountAddresses(Customer $account, $type)
     {
         static::assertType($type);
 
@@ -201,7 +201,7 @@ class OrderAddressProvider implements AddressProviderInterface
     }
 
     /**
-     * @param Account|CustomerUser $object
+     * @param Customer|CustomerUser $object
      * @param string $type
      * @return string
      */

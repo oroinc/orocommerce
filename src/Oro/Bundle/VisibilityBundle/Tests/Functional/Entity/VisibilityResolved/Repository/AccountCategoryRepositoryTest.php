@@ -3,7 +3,7 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Entity\VisibilityResolved\Repository;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountCategoryVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
@@ -45,7 +45,7 @@ class AccountCategoryRepositoryTest extends AbstractCategoryRepositoryTest
 
         $expectedVisibilities = [];
         foreach ($visibilities as $account => $expectedVisibility) {
-            /** @var Account $account */
+            /** @var Customer $account */
             $account = $this->getReference($account);
             $expectedVisibilities[$account->getId()] = $expectedVisibility;
         }
@@ -111,7 +111,7 @@ class AccountCategoryRepositoryTest extends AbstractCategoryRepositoryTest
         /** @var Category $category */
         $category = $this->getReference($categoryName);
 
-        /** @var Account $account */
+        /** @var Customer $account */
         $account = $this->getReference($accountName);
         $scope = $this->scopeManager->findOrCreate('account_category_visibility', ['account' => $account]);
         $groupScope = $this->scopeManager->findOrCreate(
@@ -472,7 +472,7 @@ class AccountCategoryRepositoryTest extends AbstractCategoryRepositoryTest
 
     public function testInsertParentCategoryValues()
     {
-        /** @var Account $account */
+        /** @var Customer $account */
         $account = $this->getReference('account.level_1.1');
         $scope = $this->scopeManager->find('account_category_visibility', ['account' => $account]);
         $parentCategoryFallbackCategories = ['category_1_2','category_1_2_3'];

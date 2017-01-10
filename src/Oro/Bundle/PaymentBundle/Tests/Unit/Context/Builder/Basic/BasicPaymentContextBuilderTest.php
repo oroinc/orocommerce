@@ -4,7 +4,7 @@ namespace Oro\Bundle\PaymentBundle\Tests\Unit\Context\Builder\Basic;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 use Oro\Bundle\PaymentBundle\Context\Builder\Basic\BasicPaymentContextBuilder;
@@ -16,7 +16,7 @@ use Oro\Bundle\PaymentBundle\Context\PaymentLineItem;
 class BasicPaymentContextBuilderTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var Account|\PHPUnit_Framework_MockObject_MockObject
+     * @var Customer|\PHPUnit_Framework_MockObject_MockObject
      */
     private $customerMock;
 
@@ -57,7 +57,7 @@ class BasicPaymentContextBuilderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->customerMock = $this->getMockBuilder(Account::class)
+        $this->customerMock = $this->getMockBuilder(Customer::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->customerUserMock = $this->getMockBuilder(CustomerUser::class)

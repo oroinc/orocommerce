@@ -7,7 +7,7 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
@@ -35,7 +35,7 @@ class CheckoutTest extends \PHPUnit_Framework_TestCase
             ['poNumber', 'PO-#1'],
             ['customerNotes', 'customer notes'],
             ['shipUntil', $now],
-            ['account', new Account()],
+            ['account', new Customer()],
             ['accountUser', new CustomerUser()],
             ['website', new Website()],
             ['source', new CheckoutSource()],
@@ -51,7 +51,7 @@ class CheckoutTest extends \PHPUnit_Framework_TestCase
 
     public function testSetAccountUser()
     {
-        $account = new Account();
+        $account = new Customer();
         $accountUser = new CustomerUser();
         $accountUser->setAccount($account);
         $entity = new Checkout();

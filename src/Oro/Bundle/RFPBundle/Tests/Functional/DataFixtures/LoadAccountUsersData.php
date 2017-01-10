@@ -10,7 +10,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Oro\Bundle\UserBundle\Entity\BaseUserManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\Repository\CustomerUserRoleRepository;
 
 class LoadAccountUsersData extends AbstractFixture implements DependentFixtureInterface
@@ -116,7 +116,7 @@ class LoadAccountUsersData extends AbstractFixture implements DependentFixtureIn
             /** @var CustomerUserRole $role */
             $role = $CustomerUserRoleRepository->findOneBy(['role' => $user['role']]);
 
-            /** @var Account $account */
+            /** @var Customer $account */
             $account = $this->getReference($user['account']);
 
             $entity

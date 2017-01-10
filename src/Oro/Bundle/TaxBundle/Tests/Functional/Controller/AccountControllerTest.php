@@ -8,7 +8,7 @@ use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\TaxBundle\Entity\AccountTaxCode;
 use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadAccountTaxCodes;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 
 /**
@@ -34,7 +34,7 @@ class AccountControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        /** @var Account $parent */
+        /** @var Customer $parent */
         $parent = $this->getReference('account.level_1');
         /** @var CustomerGroup $group */
         $group = $this->getReference('account_group.group1');
@@ -45,10 +45,10 @@ class AccountControllerTest extends WebTestCase
 
         $this->assertAccountSave($crawler, self::ACCOUNT_NAME, $parent, $group, $internalRating, $accountTaxCode);
 
-        /** @var Account $taxAccount */
+        /** @var Customer $taxAccount */
         $taxAccount = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroCustomerBundle:Account')
-            ->getRepository('OroCustomerBundle:Account')
+            ->getManagerForClass('OroCustomerBundle:Customer')
+            ->getRepository('OroCustomerBundle:Customer')
             ->findOneBy(['name' => self::ACCOUNT_NAME]);
         $this->assertNotEmpty($taxAccount);
 
@@ -127,7 +127,7 @@ class AccountControllerTest extends WebTestCase
         /** @var AccountTaxCode $accountTaxCode */
         $accountTaxCode = $this->getReference(LoadAccountTaxCodes::REFERENCE_PREFIX . '.' . LoadAccountTaxCodes::TAX_2);
 
-        /** @var Account $account */
+        /** @var Customer $account */
         $account = $this->getReference('account.level_1.2');
 
         $response = $this->client->requestGrid(
@@ -150,7 +150,7 @@ class AccountControllerTest extends WebTestCase
      */
     public function testViewAccountTaxCodeFallbackToAccountGroup()
     {
-        /** @var Account $account */
+        /** @var Customer $account */
         $account = $this->getReference('account.level_1.2');
 
         $response = $this->client->requestGrid(
@@ -183,7 +183,7 @@ class AccountControllerTest extends WebTestCase
     /**
      * @param Crawler           $crawler
      * @param string            $name
-     * @param Account           $parent
+     * @param Customer           $parent
      * @param CustomerGroup      $group
      * @param AbstractEnumValue $internalRating
      * @param AccountTaxCode    $accountTaxCode
@@ -191,7 +191,7 @@ class AccountControllerTest extends WebTestCase
     protected function assertAccountSave(
         Crawler $crawler,
         $name,
-        Account $parent,
+        Customer $parent,
         CustomerGroup $group,
         AbstractEnumValue $internalRating,
         AccountTaxCode $accountTaxCode
@@ -214,7 +214,7 @@ class AccountControllerTest extends WebTestCase
     /**
      * @param string            $html
      * @param string            $name
-     * @param Account           $parent
+     * @param Customer           $parent
      * @param CustomerGroup      $group
      * @param AbstractEnumValue $internalRating
      * @param AccountTaxCode    $accountTaxCode
@@ -222,7 +222,7 @@ class AccountControllerTest extends WebTestCase
     protected function assertViewPage(
         $html,
         $name,
-        Account $parent,
+        Customer $parent,
         CustomerGroup $group,
         AbstractEnumValue $internalRating,
         AccountTaxCode $accountTaxCode
@@ -237,7 +237,7 @@ class AccountControllerTest extends WebTestCase
 
     /**
      * @param string $name
-     * @param Account $parent
+     * @param Customer $parent
      * @param CustomerGroup $group
      * @param AbstractEnumValue $internalRating
      * @param AccountTaxCode $accountTaxCode
@@ -246,7 +246,7 @@ class AccountControllerTest extends WebTestCase
      */
     protected function getFormValues(
         $name,
-        Account $parent,
+        Customer $parent,
         CustomerGroup $group,
         AbstractEnumValue $internalRating,
         AccountTaxCode $accountTaxCode

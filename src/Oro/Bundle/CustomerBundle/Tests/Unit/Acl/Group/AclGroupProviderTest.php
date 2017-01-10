@@ -10,7 +10,7 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 
 class AclGroupProviderTest extends \PHPUnit_Framework_TestCase
 {
-    const LOCAL_LEVEL = 'Oro\Bundle\CustomerBundle\Entity\Account';
+    const LOCAL_LEVEL = 'Oro\Bundle\CustomerBundle\Entity\Customer';
     const BASIC_LEVEL = 'Oro\Bundle\CustomerBundle\Entity\CustomerUser';
 
     /**

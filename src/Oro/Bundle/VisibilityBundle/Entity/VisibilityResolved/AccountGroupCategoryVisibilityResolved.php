@@ -11,7 +11,7 @@ use Oro\Bundle\ScopeBundle\Entity\Scope;
  * @ORM\Entity(
  *    repositoryClass="Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\AccountGroupCategoryRepository"
  * )
- * @ORM\Table(name="oro_acc_grp_ctgr_vsb_resolv")
+ * @ORM\Table(name="oro_cus_grp_ctgr_vsb_resolv")
  */
 class AccountGroupCategoryVisibilityResolved extends BaseCategoryVisibilityResolved
 {

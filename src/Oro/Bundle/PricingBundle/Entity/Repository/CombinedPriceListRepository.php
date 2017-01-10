@@ -8,7 +8,7 @@ use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\Query\Expr\Orx;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\BaseCombinedPriceListRelation;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
@@ -40,13 +40,13 @@ class CombinedPriceListRepository extends BasePriceListRepository
     }
 
     /**
-     * @param Account $account
+     * @param Customer $account
      * @param Website $website
      * @param bool|true $isEnabled
      * @return null|CombinedPriceList
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function getPriceListByAccount(Account $account, Website $website, $isEnabled = true)
+    public function getPriceListByAccount(Customer $account, Website $website, $isEnabled = true)
     {
         $qb = $this->createQueryBuilder('priceList');
         $qb
@@ -193,7 +193,7 @@ class CombinedPriceListRepository extends BasePriceListRepository
      * @param CombinedPriceList $combinedPriceList
      * @param CombinedPriceList $activeCpl
      * @param Website $website
-     * @param Account|CustomerGroup $targetEntity
+     * @param Customer|CustomerGroup $targetEntity
      * @return BaseCombinedPriceListRelation
      */
     public function updateCombinedPriceListConnection(
@@ -204,7 +204,7 @@ class CombinedPriceListRepository extends BasePriceListRepository
     ) {
         $em = $this->getEntityManager();
         $relation = null;
-        if ($targetEntity instanceof Account) {
+        if ($targetEntity instanceof Customer) {
             $relation = $em->getRepository('OroPricingBundle:CombinedPriceListToAccount')
                 ->findOneBy(['account' => $targetEntity, 'website' => $website]);
             if (!$relation) {

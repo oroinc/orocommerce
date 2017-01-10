@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CustomerBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
@@ -32,7 +32,7 @@ class CustomerUserRoleControllerTest extends WebTestCase
         'entity' => [
             0 => [
                 'identity' => [
-                    'id' => 'entity:Oro\Bundle\CustomerBundle\Entity\Account',
+                    'id' => 'entity:Oro\Bundle\CustomerBundle\Entity\Customer',
                     'name' => 'oro.customer.account.entity_label',
                 ],
                 'permissions' => [],
@@ -158,7 +158,7 @@ class CustomerUserRoleControllerTest extends WebTestCase
      */
     public function testView($id)
     {
-        $crawler = $this->client->request(
+        $this->client->request(
             'GET',
             $this->getUrl('oro_customer_customer_user_role_view', ['id' => $id])
         );
@@ -208,7 +208,7 @@ class CustomerUserRoleControllerTest extends WebTestCase
      */
     protected function getAccountRepository()
     {
-        return $this->getObjectManager()->getRepository('OroCustomerBundle:Account');
+        return $this->getObjectManager()->getRepository('OroCustomerBundle:Customer');
     }
 
     /**
