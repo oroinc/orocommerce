@@ -5,6 +5,7 @@ layout:
         - '@add':
             id: units_request_for_quote
             parentId: product_prices
+            prepend: false
             blockType: units_request_for_quote
             options:
                 visible: '=data["feature"].isFeatureEnabled("rfp_frontend")'

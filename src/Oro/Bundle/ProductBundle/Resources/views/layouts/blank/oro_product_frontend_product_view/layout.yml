@@ -27,8 +27,6 @@ layout:
                     blockType: container
                 product_view_line_item_container:
                     blockType: container
-                product_view_price_container:
-                    blockType: container
                 product_view_description_container:
                     blockType: container
                 product_view_additional_container:
@@ -50,32 +48,33 @@ layout:
             tree:
                 page_content:
                     product_view_container:
-                        product_view_attribute_group_images: ~
-                        product_view_attribute_group_general: ~
                         product_view_primary_container:
                         product_view_aside_container:
+                          product_view_attribute_group_images: ~
                         product_view_main_container:
                             product_view_content_container:
-                                product_view_main_attributes_container: ~
                                 product_view_specification_container:
-                                    product_view_price_container: ~
                                     product_view_variant_field_container: ~
                                 product_view_description_container:
                                     product_view_line_item_container: ~
+                                product_view_attribute_group_general: ~
+                                product_view_main_attributes_container: ~
                         product_view_additional_container: ~
+        - '@move':
+            id: product_view_attribute_group_general_attribute_text_sku
+            parentId: product_view_specification_container
+            prepend: true
+        - '@move':
+            id: product_view_attribute_group_general_attribute_localized_fallback_descriptions
+            parentId: product_view_description_container
+        - '@setOption':
+            id: product_view_attribute_group_general_attribute_localized_fallback_shortDescriptions
+            optionName: visible
+            optionValue: false
         - '@move':
             id: product_view_attribute_group_general_attribute_localized_fallback_names
             parentId: product_view_primary_container
             prepend: true
-        - '@move':
-            id: product_view_attribute_group_general_attribute_text_sku
-            parentId: product_view_main_attributes_container
-        - '@move':
-            id: product_view_attribute_group_general_attribute_localized_fallback_shortDescriptions
-            parentId: product_view_main_attributes_container
-#        - '@move':
-#            id: product_view_attribute_group_general_attribute_localized_fallback_descriptions
-#            parentId: product_view_main_attributes_container
 
     imports:
         -
