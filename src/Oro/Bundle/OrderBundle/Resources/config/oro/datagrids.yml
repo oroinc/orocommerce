@@ -671,7 +671,7 @@ datagrids:
             productName:
                 type: localized_value
                 data_name: product.names
-                join_type: left
+                allow_empty: true
         columns:
             cDate:
                 frontend_type: date
