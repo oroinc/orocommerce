@@ -179,7 +179,7 @@ When creating a new product, after you select a custom product family and click 
 Customizing Product Attributes Layout on the OroCommerce Website
 ----------------------------------------------------------------
 
-For information on how to customize the way attribute groups display on OroCommerce Web Store, see [Customize products using layouts](./Resources/doc/customize-products.md). For quick examples, please, check out the following sections:
+For information on how to customize the way attribute groups display on OroCommerce Web Store, see [Customize products using layouts](./customize-products.md). For quick examples, please, check out the following sections:
 * [Product Family](./customize-pdp.md#product-family)
   - [Attribute Set (example 1)](./customize-pdp.md#attribute-set-example-1)
   - [Attribute Set (example 2)](./customize-pdp.md#attribute-set-example-2)
