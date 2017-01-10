@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Filter;
 
-use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\DataGridBundle\Extension\Sorter\AbstractSorterExtension;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberRangeFilterType;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
@@ -21,7 +21,7 @@ class FrontendProductPriceFilterTest extends FrontendWebTestCase
         $this->loadFixtures(
             [
                 LoadCombinedProductPrices::class,
-                LoadAccountUserData::class,
+                LoadCustomerUserData::class,
             ]
         );
     }

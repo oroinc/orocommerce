@@ -13,11 +13,11 @@ use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\VisibilityBundle\Async\Visibility\CategoryProcessor;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountProductVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\AccountGroupProductVisibilityRepository;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\AccountProductVisibilityRepository;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\CustomerGroupProductVisibilityRepository;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\CustomerProductVisibilityRepository;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\ProductVisibilityRepository;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CategoryVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\CacheBuilder;
@@ -154,18 +154,20 @@ class CategoryProcessorTest extends \PHPUnit_Framework_TestCase
             ->method('setToDefaultWithoutCategory')
             ->with($this->insertFromSelectQueryExecutor, $this->scopeManager);
 
-        $accountGroupProductVisibilityRepository = $this->getMockBuilder(AccountGroupProductVisibilityRepository::class)
+        $customerGroupProductVisibilityRepository = $this->getMockBuilder(
+            CustomerGroupProductVisibilityRepository::class
+        )
             ->disableOriginalConstructor()
             ->getMock();
 
-        $accountGroupProductVisibilityRepository->expects($this->once())
+        $customerGroupProductVisibilityRepository->expects($this->once())
             ->method('setToDefaultWithoutCategory');
 
-        $accountProductVisibilityRepository = $this->getMockBuilder(AccountProductVisibilityRepository::class)
+        $customerProductVisibilityRepository = $this->getMockBuilder(CustomerProductVisibilityRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $accountProductVisibilityRepository->expects($this->once())
+        $customerProductVisibilityRepository->expects($this->once())
             ->method('setToDefaultWithoutCategory');
 
         $em = $this->getMockBuilder(EntityManagerInterface::class)
@@ -185,8 +187,8 @@ class CategoryProcessorTest extends \PHPUnit_Framework_TestCase
             ->method('getRepository')
             ->willReturnMap([
                 [ProductVisibility::class, $productVisibilityRepository],
-                [AccountGroupProductVisibility::class, $accountGroupProductVisibilityRepository],
-                [AccountProductVisibility::class, $accountProductVisibilityRepository]
+                [CustomerGroupProductVisibility::class, $customerGroupProductVisibilityRepository],
+                [CustomerProductVisibility::class, $customerProductVisibilityRepository]
             ]);
 
         $this->registry->expects($this->any())

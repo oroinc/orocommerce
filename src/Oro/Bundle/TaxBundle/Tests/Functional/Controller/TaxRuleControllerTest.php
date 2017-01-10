@@ -6,11 +6,11 @@ use Symfony\Component\DomCrawler\Crawler;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\TaxBundle\Entity\TaxRule;
-use Oro\Bundle\TaxBundle\Entity\AccountTaxCode;
+use Oro\Bundle\TaxBundle\Entity\CustomerTaxCode;
 use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
 use Oro\Bundle\TaxBundle\Entity\Tax;
 use Oro\Bundle\TaxBundle\Entity\TaxJurisdiction;
-use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadAccountTaxCodes;
+use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadCustomerTaxCodes;
 use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadProductTaxCodes;
 use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxes;
 use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxJurisdictions;
@@ -32,7 +32,7 @@ class TaxRulesControllerTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadAccountTaxCodes',
+                'Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadCustomerTaxCodes',
                 'Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadProductTaxCodes',
                 'Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxes',
                 'Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxJurisdictions',
@@ -56,7 +56,7 @@ class TaxRulesControllerTest extends WebTestCase
 
         $this->assertTaxRuleSave(
             $crawler,
-            $this->getAccountTaxCode(LoadAccountTaxCodes::TAX_1),
+            $this->getCustomerTaxCode(LoadCustomerTaxCodes::TAX_1),
             $this->getProductTaxCode(LoadProductTaxCodes::TAX_1),
             $this->getTax(LoadTaxes::TAX_1),
             $this->getTaxJurisdiction(LoadTaxes::TAX_1),
@@ -75,11 +75,11 @@ class TaxRulesControllerTest extends WebTestCase
 
     /**
      * @param string $reference
-     * @return AccountTaxCode
+     * @return CustomerTaxCode
      */
-    protected function getAccountTaxCode($reference)
+    protected function getCustomerTaxCode($reference)
     {
-        return $this->getReference(LoadAccountTaxCodes::REFERENCE_PREFIX . '.' . $reference);
+        return $this->getReference(LoadCustomerTaxCodes::REFERENCE_PREFIX . '.' . $reference);
     }
 
     /**
@@ -125,7 +125,7 @@ class TaxRulesControllerTest extends WebTestCase
 
         $this->assertTaxRuleSave(
             $crawler,
-            $this->getAccountTaxCode(LoadAccountTaxCodes::TAX_2),
+            $this->getCustomerTaxCode(LoadCustomerTaxCodes::TAX_2),
             $this->getProductTaxCode(LoadProductTaxCodes::TAX_2),
             $this->getTax(LoadTaxes::TAX_2),
             $this->getTaxJurisdiction(LoadTaxes::TAX_2),
@@ -154,7 +154,7 @@ class TaxRulesControllerTest extends WebTestCase
 
         $this->assertViewPage(
             $html,
-            $this->getAccountTaxCode(LoadAccountTaxCodes::TAX_2),
+            $this->getCustomerTaxCode(LoadCustomerTaxCodes::TAX_2),
             $this->getProductTaxCode(LoadProductTaxCodes::TAX_2),
             $this->getTax(LoadTaxes::TAX_2),
             $this->getTaxJurisdiction(LoadTaxes::TAX_2),
@@ -164,7 +164,7 @@ class TaxRulesControllerTest extends WebTestCase
 
     /**
      * @param Crawler         $crawler
-     * @param AccountTaxCode  $accountTaxCode
+     * @param CustomerTaxCode  $customerTaxCode
      * @param ProductTaxCode  $productTaxCode
      * @param Tax             $tax
      * @param TaxJurisdiction $taxJurisdiction
@@ -172,7 +172,7 @@ class TaxRulesControllerTest extends WebTestCase
      */
     protected function assertTaxRuleSave(
         Crawler $crawler,
-        AccountTaxCode $accountTaxCode,
+        CustomerTaxCode $customerTaxCode,
         ProductTaxCode $productTaxCode,
         Tax $tax,
         TaxJurisdiction $taxJurisdiction,
@@ -181,7 +181,7 @@ class TaxRulesControllerTest extends WebTestCase
         $form = $crawler->selectButton('Save and Close')->form(
             [
                 'oro_tax_rule_type[description]' => $description,
-                'oro_tax_rule_type[accountTaxCode]' => $accountTaxCode->getId(),
+                'oro_tax_rule_type[customerTaxCode]' => $customerTaxCode->getId(),
                 'oro_tax_rule_type[productTaxCode]' => $productTaxCode->getId(),
                 'oro_tax_rule_type[tax]' => $tax->getId(),
                 'oro_tax_rule_type[taxJurisdiction]' => $taxJurisdiction->getId(),
@@ -196,12 +196,12 @@ class TaxRulesControllerTest extends WebTestCase
         $html = $crawler->html();
 
         $this->assertContains(self::TAX_RULE_SAVE_MESSAGE, $html);
-        $this->assertViewPage($html, $accountTaxCode, $productTaxCode, $tax, $taxJurisdiction, $description);
+        $this->assertViewPage($html, $customerTaxCode, $productTaxCode, $tax, $taxJurisdiction, $description);
     }
 
     /**
      * @param string          $html
-     * @param AccountTaxCode  $accountTaxCode
+     * @param CustomerTaxCode  $customerTaxCode
      * @param ProductTaxCode  $productTaxCode
      * @param Tax             $tax
      * @param TaxJurisdiction $taxJurisdiction
@@ -209,14 +209,14 @@ class TaxRulesControllerTest extends WebTestCase
      */
     protected function assertViewPage(
         $html,
-        AccountTaxCode $accountTaxCode,
+        CustomerTaxCode $customerTaxCode,
         ProductTaxCode $productTaxCode,
         Tax $tax,
         TaxJurisdiction $taxJurisdiction,
         $description
     ) {
         $this->assertContains($description, $html);
-        $this->assertContains($accountTaxCode->getCode(), $html);
+        $this->assertContains($customerTaxCode->getCode(), $html);
         $this->assertContains($productTaxCode->getCode(), $html);
         $this->assertContains($tax->getCode(), $html);
         $this->assertContains($taxJurisdiction->getCode(), $html);

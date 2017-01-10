@@ -81,13 +81,13 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
         ],
         self::QUOTE2 => [
             'qid'           => self::QUOTE2,
-            'account'       => LoadUserData::ACCOUNT1,
+            'customer'       => LoadUserData::ACCOUNT1,
             'products'      => [],
         ],
         self::QUOTE3 => [
             'qid'           => self::QUOTE3,
-            'account'       => LoadUserData::ACCOUNT1,
-            'accountUser'   => LoadUserData::ACCOUNT1_USER1,
+            'customer'       => LoadUserData::ACCOUNT1,
+            'customerUser'   => LoadUserData::ACCOUNT1_USER1,
             'products'      => [
                 self::PRODUCT1 => [
                     [
@@ -104,54 +104,54 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
         ],
         self::QUOTE4 => [
             'qid'           => self::QUOTE4,
-            'account'       => LoadUserData::ACCOUNT1,
-            'accountUser'   => LoadUserData::ACCOUNT1_USER2,
+            'customer'       => LoadUserData::ACCOUNT1,
+            'customerUser'   => LoadUserData::ACCOUNT1_USER2,
             'products'      => [],
 
         ],
         self::QUOTE5 => [
             'qid'           => self::QUOTE5,
-            'account'       => LoadUserData::ACCOUNT1,
-            'accountUser'   => LoadUserData::ACCOUNT1_USER3,
+            'customer'       => LoadUserData::ACCOUNT1,
+            'customerUser'   => LoadUserData::ACCOUNT1_USER3,
             'validUntil'    => 'now',
             'products'      => [],
         ],
         self::QUOTE6 => [
             'qid'           => self::QUOTE6,
-            'account'       => LoadUserData::ACCOUNT2,
+            'customer'       => LoadUserData::ACCOUNT2,
             'products'      => [],
         ],
         self::QUOTE7 => [
             'qid'           => self::QUOTE7,
-            'account'       => LoadUserData::ACCOUNT2,
-            'accountUser'   => LoadUserData::ACCOUNT2_USER1,
+            'customer'       => LoadUserData::ACCOUNT2,
+            'customerUser'   => LoadUserData::ACCOUNT2_USER1,
             'products'      => [],
         ],
         self::QUOTE8 => [
             'qid'           => self::QUOTE8,
-            'account'       => LoadUserData::ACCOUNT1,
-            'accountUser'   => LoadUserData::ACCOUNT1_USER3,
+            'customer'       => LoadUserData::ACCOUNT1,
+            'customerUser'   => LoadUserData::ACCOUNT1_USER3,
             'expired'       => true,
             'products'      => [],
         ],
         self::QUOTE9 => [
             'qid'           => self::QUOTE9,
-            'account'       => LoadUserData::ACCOUNT1,
-            'accountUser'   => LoadUserData::ACCOUNT1_USER3,
+            'customer'       => LoadUserData::ACCOUNT1,
+            'customerUser'   => LoadUserData::ACCOUNT1_USER3,
             'validUntil'    => null,
             'products'      => [],
             'paymentTerm'   => LoadPaymentTermData::TERM_LABEL_NET_10,
         ],
         self::QUOTE10 => [
             'qid'           => self::QUOTE10,
-            'account'       => LoadUserData::PARENT_ACCOUNT,
-            'accountUser'   => LoadUserData::PARENT_ACCOUNT_USER1,
+            'customer'       => LoadUserData::PARENT_ACCOUNT,
+            'customerUser'   => LoadUserData::PARENT_ACCOUNT_USER1,
             'products'      => [],
         ],
         self::QUOTE11 => [
             'qid'           => self::QUOTE11,
-            'account'       => LoadUserData::PARENT_ACCOUNT,
-            'accountUser'   => LoadUserData::PARENT_ACCOUNT_USER2,
+            'customer'       => LoadUserData::PARENT_ACCOUNT,
+            'customerUser'   => LoadUserData::PARENT_ACCOUNT_USER2,
             'products'      => [],
         ],
     ];
@@ -175,8 +175,8 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
     {
         return [
             LoadUserData::class,
-            LoadAccountUserAddresses::class,
-            LoadAccountAddresses::class,
+            LoadCustomerUserAddresses::class,
+            LoadCustomerAddresses::class,
             LoadProductUnitPrecisions::class,
             LoadPaymentTermData::class,
         ];
@@ -211,12 +211,12 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
             if (!empty($item['estimatedShippingCostAmount'])) {
                 $quote->setEstimatedShippingCostAmount($item['estimatedShippingCostAmount'])->setCurrency('USD');
             }
-            if (!empty($item['account'])) {
-                $quote->setAccount($this->getReference($item['account']));
+            if (!empty($item['customer'])) {
+                $quote->setCustomer($this->getReference($item['customer']));
             }
 
-            if (!empty($item['accountUser'])) {
-                $quote->setAccountUser($this->getReference($item['accountUser']));
+            if (!empty($item['customerUser'])) {
+                $quote->setCustomerUser($this->getReference($item['customerUser']));
             }
 
             if (!empty($item['paymentTerm'])) {

@@ -57,13 +57,13 @@
         <div data-page-component-module="oroorder/js/app/components/related-data-component"
              data-page-component-options="{{ {
                  selectors: {
-                     account: '#' ~ form.account.vars.id,
-                     accountUser: '#' ~ form.accountUser.vars.id
+                     customer: '#' ~ form.customer.vars.id,
+                     customerUser: '#' ~ form.customerUser.vars.id
                  }
              }|json_encode }}">
-            <div data-page-component-module="orocustomer/js/app/components/account-selection-component">
-                {{ form_row(form.account) }}
-                {{ form_row(form.accountUser) }}
+            <div data-page-component-module="orocustomer/js/app/components/customer-selection-component">
+                {{ form_row(form.customer) }}
+                {{ form_row(form.customerUser) }}
             </div>
         </div>
     {% endset %}
@@ -76,7 +76,7 @@
                  view: 'oroorder/js/app/views/line-items-view',
                  tierPrices: orderData.tierPrices|default({}),
                  currency: entity.currency,
-                 account: entity.account is null ? null : entity.account.id,
+                 customer: entity.customer is null ? null : entity.customer.id,
                  subtotalType: subtotalType
              }|json_encode }}"
              data-layout="separate">
@@ -120,7 +120,7 @@
                     view: 'oroorder/js/app/views/address-view',
                     type: 'billing',
                     selectors: {
-                        address: '#' ~ form.billingAddress.accountAddress.vars.id,
+                        address: '#' ~ form.billingAddress.customerAddress.vars.id,
                         subtotalsFields: [
                         '#' ~ form.billingAddress.country.vars.id,
                         '#' ~ form.billingAddress.street.vars.id,
@@ -144,8 +144,8 @@
 
     {% if isShippingAddressGranted %}
         {% set shippingAddress %}
-            {% if form.shippingAddress.accountAddress is defined %}
-                {% set idAddressBlock = '#' ~ form.shippingAddress.accountAddress.vars.id %}
+            {% if form.shippingAddress.customerAddress is defined %}
+                {% set idAddressBlock = '#' ~ form.shippingAddress.customerAddress.vars.id %}
             {% else %}
                 {% set idAddressBlock = null %}
             {% endif %}

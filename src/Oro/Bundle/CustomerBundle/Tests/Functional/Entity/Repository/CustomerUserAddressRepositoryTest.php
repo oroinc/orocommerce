@@ -27,7 +27,7 @@ class CustomerUserAddressRepositoryTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserAddresses'
+                'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserAddresses'
             ]
         );
     }
@@ -87,14 +87,14 @@ class CustomerUserAddressRepositoryTest extends WebTestCase
 
     /**
      * @dataProvider defaultAddressDataProvider
-     * @param string $accountUserReference
+     * @param string $customerUserReference
      * @param string $type
      * @param string $expectedAddressReference
      */
-    public function testGetDefaultAddressesByType($accountUserReference, $type, $expectedAddressReference)
+    public function testGetDefaultAddressesByType($customerUserReference, $type, $expectedAddressReference)
     {
         /** @var CustomerUser $user */
-        $user = $this->getReference($accountUserReference);
+        $user = $this->getReference($customerUserReference);
 
         /** @var CustomerUserAddress[] $actual */
         $actual = $this->repository->getDefaultAddressesByType(

@@ -20,7 +20,7 @@ class CommerceMainContext extends OroFeatureContext implements OroPageObjectAwar
      */
     public function loginAsBuyer($email)
     {
-        $this->visitPath('account/user/login');
+        $this->visitPath('customer/user/login');
         $this->waitForAjax();
         /** @var OroForm $form */
         $form = $this->createElement('OroForm');

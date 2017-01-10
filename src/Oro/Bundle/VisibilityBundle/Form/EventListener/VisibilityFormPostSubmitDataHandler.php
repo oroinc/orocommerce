@@ -45,8 +45,8 @@ class VisibilityFormPostSubmitDataHandler
         }
 
         $this->saveFormAllData($visibilityForm);
-        $this->saveFormAccountGroupData($visibilityForm);
-        $this->saveFormAccountData($visibilityForm);
+        $this->saveFormCustomerGroupData($visibilityForm);
+        $this->saveFormCustomerData($visibilityForm);
     }
 
     /**
@@ -75,7 +75,7 @@ class VisibilityFormPostSubmitDataHandler
     /**
      * @param FormInterface $form
      */
-    protected function saveFormAccountGroupData(FormInterface $form)
+    protected function saveFormCustomerGroupData(FormInterface $form)
     {
         $this->saveFormFieldData($form, EntityVisibilityType::ACCOUNT_GROUP_FIELD);
     }
@@ -83,7 +83,7 @@ class VisibilityFormPostSubmitDataHandler
     /**
      * @param FormInterface $form
      */
-    protected function saveFormAccountData(FormInterface $form)
+    protected function saveFormCustomerData(FormInterface $form)
     {
         $this->saveFormFieldData($form, EntityVisibilityType::ACCOUNT_FIELD);
     }

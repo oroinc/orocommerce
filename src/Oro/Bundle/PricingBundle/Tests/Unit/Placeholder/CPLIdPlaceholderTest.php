@@ -54,8 +54,8 @@ class CPLIdPlaceholderTest extends \PHPUnit_Framework_TestCase
     public function testReplaceDefault()
     {
         $user = new CustomerUser();
-        $account = new Customer();
-        $user->setAccount($account);
+        $customer = new Customer();
+        $user->setCustomer($customer);
 
         $token = $this->createMock(TokenInterface::class);
         $token->method('getUser')->willReturn($user);
@@ -63,7 +63,7 @@ class CPLIdPlaceholderTest extends \PHPUnit_Framework_TestCase
 
         $this->priceListTreeHandler->expects($this->once())
             ->method('getPriceList')
-            ->with($account)
+            ->with($customer)
             ->willReturn($this->getEntity(CombinedPriceList::class, ['id' => 1]));
 
         $this->assertSame("test_1", $this->placeholder->replaceDefault("test_CPL_ID"));
@@ -100,8 +100,8 @@ class CPLIdPlaceholderTest extends \PHPUnit_Framework_TestCase
     public function testReplaceDefaultCplNotFound()
     {
         $user = new CustomerUser();
-        $account = new Customer();
-        $user->setAccount($account);
+        $customer = new Customer();
+        $user->setCustomer($customer);
 
         $token = $this->createMock(TokenInterface::class);
         $token->method('getUser')->willReturn($user);
@@ -109,7 +109,7 @@ class CPLIdPlaceholderTest extends \PHPUnit_Framework_TestCase
 
         $this->priceListTreeHandler->expects($this->once())
             ->method('getPriceList')
-            ->with($account)
+            ->with($customer)
             ->willReturn(null);
 
         $this->placeholder->replaceDefault("test_CPL_ID");

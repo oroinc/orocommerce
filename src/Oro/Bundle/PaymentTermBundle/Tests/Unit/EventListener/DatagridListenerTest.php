@@ -140,7 +140,7 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener->onResultAfter($event);
     }
 
-    public function testOnResultAfterNotAccountOwner()
+    public function testOnResultAfterNotCustomerOwner()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
         $datagrid = $this->createMock(DatagridInterface::class);
@@ -156,7 +156,7 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener->onResultAfter($event);
     }
 
-    public function testOnResultWithAccountOwner()
+    public function testOnResultWithCustomerOwner()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
         $datagrid = $this->createMock(DatagridInterface::class);
@@ -167,7 +167,7 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
 
         $paymentTerm = new PaymentTerm();
         $paymentTerm->setLabel('label');
-        $this->provider->expects($this->once())->method('getAccountGroupPaymentTermByOwner')
+        $this->provider->expects($this->once())->method('getCustomerGroupPaymentTermByOwner')
             ->willReturn($paymentTerm);
         $this->associationProvider->expects($this->once())->method('getAssociationNames')->willReturn(['paymentTerm']);
 
@@ -175,6 +175,6 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
         $event = new OrmResultAfter($datagrid, [$resultRecord]);
         $this->listener->onResultAfter($event);
 
-        $this->assertEquals('label', $resultRecord->getValue('account_group_payment_term'));
+        $this->assertEquals('label', $resultRecord->getValue('customer_group_payment_term'));
     }
 }

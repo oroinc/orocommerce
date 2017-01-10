@@ -86,7 +86,7 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
         $tokenStorage = $this->getTokenStorage(
             (new CustomerUser())
                 ->setFirstName('skip')
-                ->setAccount(new Customer())
+                ->setCustomer(new Customer())
                 ->setOrganization(new Organization())
         );
 
@@ -110,8 +110,8 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
         $shoppingList = $this->manager->create();
 
         $this->assertInstanceOf('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList', $shoppingList);
-        $this->assertInstanceOf('Oro\Bundle\CustomerBundle\Entity\Customer', $shoppingList->getAccount());
-        $this->assertInstanceOf('Oro\Bundle\CustomerBundle\Entity\CustomerUser', $shoppingList->getAccountUser());
+        $this->assertInstanceOf('Oro\Bundle\CustomerBundle\Entity\Customer', $shoppingList->getCustomer());
+        $this->assertInstanceOf('Oro\Bundle\CustomerBundle\Entity\CustomerUser', $shoppingList->getCustomerUser());
         $this->assertInstanceOf('Oro\Bundle\OrganizationBundle\Entity\Organization', $shoppingList->getOrganization());
     }
 
@@ -355,16 +355,16 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param CustomerUser $accountUser
+     * @param CustomerUser $customerUser
      * @return \PHPUnit_Framework_MockObject_MockObject|TokenStorageInterface
      */
-    protected function getTokenStorage(CustomerUser $accountUser)
+    protected function getTokenStorage(CustomerUser $customerUser)
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|TokenInterface $securityToken */
         $securityToken = $this->createMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
         $securityToken->expects($this->any())
             ->method('getUser')
-            ->willReturn($accountUser);
+            ->willReturn($customerUser);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|TokenStorageInterface $tokenStorage */
         $tokenStorage = $this

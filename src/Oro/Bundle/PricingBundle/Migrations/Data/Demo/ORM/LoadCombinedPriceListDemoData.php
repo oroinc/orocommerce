@@ -23,8 +23,8 @@ class LoadCombinedPriceListDemoData extends AbstractFixture implements
     public function getDependencies()
     {
         return [
-            'Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM\LoadPriceListToAccountDemoData',
-            'Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM\LoadPriceListToAccountGroupDemoData',
+            'Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM\LoadPriceListToCustomerDemoData',
+            'Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM\LoadPriceListToCustomerGroupDemoData',
             'Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM\LoadPriceListToWebsiteDemoData',
             'Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM\LoadProductPriceDemoData',
         ];

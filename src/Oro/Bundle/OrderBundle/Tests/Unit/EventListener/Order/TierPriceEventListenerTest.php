@@ -54,7 +54,7 @@ class TierPriceEventListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnOrderEvent()
     {
-        $account = new Customer();
+        $customer = new Customer();
         $website = new Website();
 
         /** @var Product $product */
@@ -69,7 +69,7 @@ class TierPriceEventListenerTest extends \PHPUnit_Framework_TestCase
         $order = new Order();
         $order
             ->setCurrency('EUR')
-            ->setAccount($account)
+            ->setCustomer($customer)
             ->setWebsite($website)
             ->addLineItem($lineItem)
             ->addLineItem($lineItem2);
@@ -80,7 +80,7 @@ class TierPriceEventListenerTest extends \PHPUnit_Framework_TestCase
         $this->priceListTreeHandler
             ->expects($this->once())
             ->method('getPriceList')
-            ->with($account, $website)
+            ->with($customer, $website)
             ->willReturn($priceList);
 
         $prices = ['prices'];

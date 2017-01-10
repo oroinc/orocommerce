@@ -6,8 +6,8 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
-use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData as TestAccountUserData;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData as TestCustomerUserData;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\UserBundle\Entity\User;
@@ -29,9 +29,9 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface, C
     protected $orders = [
         self::ORDER_1 => [
             'user' => LoadOrderUsers::ORDER_USER_1,
-            'accountUser' => self::ACCOUNT_USER,
+            'customerUser' => self::ACCOUNT_USER,
             'poNumber' => '1234567890',
-            'customerNotes' => 'Test account user notes',
+            'customerNotes' => 'Test customer user notes',
             'currency' => 'USD',
             'subtotal' => self::SUBTOTAL,
             'total' => self::TOTAL,
@@ -39,9 +39,9 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface, C
         ],
         self::MY_ORDER => [
             'user' => LoadOrderUsers::ORDER_USER_1,
-            'accountUser' => TestAccountUserData::AUTH_USER,
+            'customerUser' => TestCustomerUserData::AUTH_USER,
             'poNumber' => 'PO_NUM',
-            'customerNotes' => 'Test account user notes',
+            'customerNotes' => 'Test customer user notes',
             'currency' => 'EUR',
             'subtotal' => '1500',
             'total' => '1700',
@@ -76,7 +76,7 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface, C
     public function getDependencies()
     {
         return [
-            LoadAccountUserData::class,
+            LoadCustomerUserData::class,
             LoadOrderUsers::class,
             LoadPaymentTermData::class
         ];
@@ -107,9 +107,9 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface, C
         if (!$user->getOrganization()) {
             $user->setOrganization($manager->getRepository('OroOrganizationBundle:Organization')->findOneBy([]));
         }
-        /** @var CustomerUser $accountUser */
-        $accountUser = $manager->getRepository('OroCustomerBundle:CustomerUser')
-            ->findOneBy(['username' => $orderData['accountUser']]);
+        /** @var CustomerUser $customerUser */
+        $customerUser = $manager->getRepository('OroCustomerBundle:CustomerUser')
+            ->findOneBy(['username' => $orderData['customerUser']]);
 
         /** @var PaymentTerm $paymentTerm */
         $paymentTerm = $this->getReference($orderData['paymentTerm']);
@@ -126,9 +126,9 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface, C
             ->setPoNumber($orderData['poNumber'])
             ->setSubtotal($orderData['subtotal'])
             ->setTotal($orderData['total'])
-            ->setAccount($accountUser->getAccount())
+            ->setCustomer($customerUser->getCustomer())
             ->setWebsite($website)
-            ->setAccountUser($accountUser);
+            ->setCustomerUser($customerUser);
 
         $this->container->get('oro_payment_term.provider.payment_term_association')
             ->setPaymentTerm($order, $paymentTerm);

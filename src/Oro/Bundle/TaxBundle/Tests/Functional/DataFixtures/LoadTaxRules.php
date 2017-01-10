@@ -6,7 +6,7 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
-use Oro\Bundle\TaxBundle\Entity\AccountTaxCode;
+use Oro\Bundle\TaxBundle\Entity\CustomerTaxCode;
 use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
 use Oro\Bundle\TaxBundle\Entity\Tax;
 use Oro\Bundle\TaxBundle\Entity\TaxJurisdiction;
@@ -29,7 +29,7 @@ class LoadTaxRules extends AbstractFixture implements DependentFixtureInterface
     public function getDependencies()
     {
         return [
-            'Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadAccountTaxCodes',
+            'Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadCustomerTaxCodes',
             'Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadProductTaxCodes',
             'Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxes',
             'Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxJurisdictions',
@@ -41,8 +41,8 @@ class LoadTaxRules extends AbstractFixture implements DependentFixtureInterface
      */
     public function load(ObjectManager $manager)
     {
-        /** @var AccountTaxCode $accountTaxCode */
-        $accountTaxCode = $this->getReference(LoadAccountTaxCodes::REFERENCE_PREFIX . '.' . LoadAccountTaxCodes::TAX_1);
+        /** @var CustomerTaxCode $customerTaxCode */
+        $customerTaxCode = $this->getReference(LoadCustomerTaxCodes::REFERENCE_PREFIX.'.'.LoadCustomerTaxCodes::TAX_1);
 
         /** @var productTaxCode $productTaxCode */
         $productTaxCode = $this->getReference(LoadProductTaxCodes::REFERENCE_PREFIX . '.' . LoadProductTaxCodes::TAX_1);
@@ -72,7 +72,7 @@ class LoadTaxRules extends AbstractFixture implements DependentFixtureInterface
 
         $this->createTaxRule(
             $manager,
-            $accountTaxCode,
+            $customerTaxCode,
             $productTaxCode,
             $tax,
             $taxJurisdiction,
@@ -82,7 +82,7 @@ class LoadTaxRules extends AbstractFixture implements DependentFixtureInterface
 
         $this->createTaxRule(
             $manager,
-            $accountTaxCode,
+            $customerTaxCode,
             $productTaxCode,
             $tax,
             $taxJurisdiction2,
@@ -92,7 +92,7 @@ class LoadTaxRules extends AbstractFixture implements DependentFixtureInterface
 
         $this->createTaxRule(
             $manager,
-            $accountTaxCode,
+            $customerTaxCode,
             $productTaxCode,
             $tax,
             $taxJurisdiction3,
@@ -102,7 +102,7 @@ class LoadTaxRules extends AbstractFixture implements DependentFixtureInterface
 
         $this->createTaxRule(
             $manager,
-            $accountTaxCode,
+            $customerTaxCode,
             $productTaxCode,
             $tax,
             $taxJurisdiction4,
@@ -115,7 +115,7 @@ class LoadTaxRules extends AbstractFixture implements DependentFixtureInterface
 
     /**
      * @param ObjectManager $manager
-     * @param AccountTaxCode $accountTaxCode
+     * @param CustomerTaxCode $customerTaxCode
      * @param ProductTaxCode $productTaxCode
      * @param Tax $tax
      * @param TaxJurisdiction $taxJurisdiction
@@ -125,7 +125,7 @@ class LoadTaxRules extends AbstractFixture implements DependentFixtureInterface
      */
     protected function createTaxRule(
         ObjectManager $manager,
-        AccountTaxCode $accountTaxCode,
+        CustomerTaxCode $customerTaxCode,
         ProductTaxCode $productTaxCode,
         Tax $tax,
         TaxJurisdiction $taxJurisdiction,
@@ -134,7 +134,7 @@ class LoadTaxRules extends AbstractFixture implements DependentFixtureInterface
     ) {
         $taxRule = new TaxRule();
         $taxRule
-            ->setAccountTaxCode($accountTaxCode)
+            ->setCustomerTaxCode($customerTaxCode)
             ->setProductTaxCode($productTaxCode)
             ->setTax($tax)
             ->setTaxJurisdiction($taxJurisdiction)

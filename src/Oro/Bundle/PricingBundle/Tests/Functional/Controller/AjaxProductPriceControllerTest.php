@@ -16,7 +16,7 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
     /**
      * @var string
      */
-    protected $pricesByAccountActionUrl = 'oro_pricing_price_by_account';
+    protected $pricesByCustomerActionUrl = 'oro_pricing_price_by_customer';
 
     /**
      * @var string
@@ -153,20 +153,20 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
     /**
      * @return array
      */
-    public function getProductPricesByAccountActionDataProvider()
+    public function getProductPricesByCustomerActionDataProvider()
     {
         return [
-            'with account and website' => [
+            'with customer and website' => [
                 'product' => 'product.1',
                 'expected' => [
                     ['price' => '1.1000', 'currency' => 'USD', 'quantity' => 1, 'unit' => 'bottle'],
                     ['price' => '1.2000', 'currency' => 'USD', 'quantity' => 10, 'unit' => 'liter'],
                 ],
                 'currency' => null,
-                'account' => 'account.level_1.1',
+                'customer' => 'customer.level_1.1',
                 'website' => LoadWebsiteData::WEBSITE1
             ],
-            'default, without account and website' => [
+            'default, without customer and website' => [
                 'product' => 'product.1',
                 'expected' => [
                     ['price' => '12.2000', 'currency' => 'EUR', 'quantity' => 1, 'unit' => 'bottle'],

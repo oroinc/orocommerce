@@ -70,20 +70,20 @@ class CustomerUserRoleSelectTypeTest extends FormIntegrationTestCase
         $this->assertArrayHasKey('choice_label', $formOptions);
         $this->assertInternalType('callable', $formOptions['choice_label']);
 
-        $roleWithoutAccount = new CustomerUserRole();
-        $roleWithoutAccount->setLabel('roleWithoutAccount');
+        $roleWithoutCustomer = new CustomerUserRole();
+        $roleWithoutCustomer->setLabel('roleWithoutCustomer');
         $this->assertEquals(
-            'roleWithoutAccount (oro.customer.customeruserrole.type.predefined.label.trans)',
-            $formOptions['choice_label']($roleWithoutAccount)
+            'roleWithoutCustomer (oro.customer.customeruserrole.type.predefined.label.trans)',
+            $formOptions['choice_label']($roleWithoutCustomer)
         );
 
-        $account = new Customer();
-        $roleWithAccount = new CustomerUserRole();
-        $roleWithAccount->setAccount($account);
-        $roleWithAccount->setLabel('roleWithAccount');
+        $customer = new Customer();
+        $roleWithCustomer = new CustomerUserRole();
+        $roleWithCustomer->setCustomer($customer);
+        $roleWithCustomer->setLabel('roleWithCustomer');
         $this->assertEquals(
-            'roleWithAccount (oro.customer.customeruserrole.type.customizable.label.trans)',
-            $formOptions['choice_label']($roleWithAccount)
+            'roleWithCustomer (oro.customer.customeruserrole.type.customizable.label.trans)',
+            $formOptions['choice_label']($roleWithCustomer)
         );
 
         $testEntity = new Customer();

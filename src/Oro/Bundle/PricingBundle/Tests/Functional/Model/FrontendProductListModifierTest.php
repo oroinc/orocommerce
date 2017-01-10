@@ -84,11 +84,11 @@ class FrontendProductListModifierTest extends WebTestCase
             $priceList = $this->getReference($priceList);
             $this->priceListTreeHandler->expects($this->never())
                 ->method('getPriceList')
-                ->with($this->tokenStorage->getToken()->getUser()->getAccount());
+                ->with($this->tokenStorage->getToken()->getUser()->getCustomer());
         } else {
             $this->priceListTreeHandler->expects($this->once())
                 ->method('getPriceList')
-                ->with($this->tokenStorage->getToken()->getUser()->getAccount())
+                ->with($this->tokenStorage->getToken()->getUser()->getCustomer())
                 ->will($this->returnValue($this->getReference('2f')));
         }
 
@@ -170,7 +170,7 @@ class FrontendProductListModifierTest extends WebTestCase
     {
         $this->priceListTreeHandler->expects($this->exactly(3))
             ->method('getPriceList')
-            ->with($this->tokenStorage->getToken()->getUser()->getAccount())
+            ->with($this->tokenStorage->getToken()->getUser()->getCustomer())
             ->will($this->returnValue($this->getReference('2f')));
 
         $qb = $this->getManager()->createQueryBuilder()

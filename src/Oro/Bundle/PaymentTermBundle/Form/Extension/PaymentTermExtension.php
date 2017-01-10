@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PaymentTermBundle\Form\Extension;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountOwnerAwareInterface;
+use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
 use Oro\Bundle\FormBundle\Utils\FormUtils;
 use Oro\Bundle\PaymentTermBundle\Form\Type\PaymentTermSelectType;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
@@ -50,7 +50,7 @@ class PaymentTermExtension extends AbstractTypeExtension
                     return;
                 }
 
-                if (!$data instanceof AccountOwnerAwareInterface) {
+                if (!$data instanceof CustomerOwnerAwareInterface) {
                     return;
                 }
 
@@ -80,15 +80,15 @@ class PaymentTermExtension extends AbstractTypeExtension
     }
 
     /**
-     * @param AccountOwnerAwareInterface $data
+     * @param CustomerOwnerAwareInterface $data
      * @return array
      */
-    protected function getPaymentTermOptions(AccountOwnerAwareInterface $data)
+    protected function getPaymentTermOptions(CustomerOwnerAwareInterface $data)
     {
         $options = [
             'attr' => [
-                'data-account-payment-term' => $this->getAccountPaymentTermId($data),
-                'data-account-group-payment-term' => $this->getAccountGroupPaymentTermId($data),
+                'data-customer-payment-term' => $this->getCustomerPaymentTermId($data),
+                'data-customer-group-payment-term' => $this->getCustomerGroupPaymentTermId($data),
             ],
         ];
 
@@ -96,23 +96,23 @@ class PaymentTermExtension extends AbstractTypeExtension
     }
 
     /**
-     * @param AccountOwnerAwareInterface $accountOwnerAware
+     * @param CustomerOwnerAwareInterface $customerOwnerAware
      * @return int|null
      */
-    protected function getAccountPaymentTermId(AccountOwnerAwareInterface $accountOwnerAware)
+    protected function getCustomerPaymentTermId(CustomerOwnerAwareInterface $customerOwnerAware)
     {
-        $paymentTerm = $this->paymentTermProvider->getAccountPaymentTermByOwner($accountOwnerAware);
+        $paymentTerm = $this->paymentTermProvider->getCustomerPaymentTermByOwner($customerOwnerAware);
 
         return $paymentTerm ? $paymentTerm->getId() : null;
     }
 
     /**
-     * @param AccountOwnerAwareInterface $accountOwnerAware
+     * @param CustomerOwnerAwareInterface $customerOwnerAware
      * @return int|null
      */
-    protected function getAccountGroupPaymentTermId(AccountOwnerAwareInterface $accountOwnerAware)
+    protected function getCustomerGroupPaymentTermId(CustomerOwnerAwareInterface $customerOwnerAware)
     {
-        $paymentTerm = $this->paymentTermProvider->getAccountGroupPaymentTermByOwner($accountOwnerAware);
+        $paymentTerm = $this->paymentTermProvider->getCustomerGroupPaymentTermByOwner($customerOwnerAware);
 
         return $paymentTerm ? $paymentTerm->getId() : null;
     }

@@ -14,9 +14,9 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\UserBundle\Entity\Ownership\AuditableUserAwareTrait;
 use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\CustomerBundle\Entity\AccountOwnerAwareInterface;
+use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Oro\Bundle\CustomerBundle\Entity\Ownership\AuditableFrontendAccountUserAwareTrait;
+use Oro\Bundle\CustomerBundle\Entity\Ownership\AuditableFrontendCustomerUserAwareTrait;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\SaleBundle\Model\ExtendQuote;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
@@ -44,7 +44,7 @@ use Oro\Bundle\ShippingBundle\Method\Configuration\OverriddenCostShippingMethodC
  *              "organization_field_name"="organization",
  *              "organization_column_name"="organization_id",
  *              "frontend_owner_type"="FRONTEND_USER",
- *              "frontend_owner_field_name"="accountUser",
+ *              "frontend_owner_field_name"="customerUser",
  *              "frontend_owner_column_name"="customer_user_id"
  *          },
  *          "security"={
@@ -64,7 +64,7 @@ use Oro\Bundle\ShippingBundle\Method\Configuration\OverriddenCostShippingMethodC
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  */
 class Quote extends ExtendQuote implements
-    AccountOwnerAwareInterface,
+    CustomerOwnerAwareInterface,
     EmailHolderInterface,
     OrganizationAwareInterface,
     MethodLockedShippingMethodConfigurationInterface,
@@ -72,7 +72,7 @@ class Quote extends ExtendQuote implements
     OverriddenCostShippingMethodConfigurationInterface
 {
     use AuditableUserAwareTrait;
-    use AuditableFrontendAccountUserAwareTrait;
+    use AuditableFrontendCustomerUserAwareTrait;
     use DatesAwareTrait;
 
     /**
@@ -257,7 +257,7 @@ class Quote extends ExtendQuote implements
      *      }
      * )
      **/
-    protected $assignedAccountUsers;
+    protected $assignedCustomerUsers;
 
     /**
      * @var string
@@ -328,7 +328,7 @@ class Quote extends ExtendQuote implements
 
         $this->quoteProducts = new ArrayCollection();
         $this->assignedUsers = new ArrayCollection();
-        $this->assignedAccountUsers = new ArrayCollection();
+        $this->assignedCustomerUsers = new ArrayCollection();
         $this->demands = new ArrayCollection();
     }
 
@@ -529,8 +529,8 @@ class Quote extends ExtendQuote implements
      */
     public function getEmail()
     {
-        if (null !== $this->getAccountUser()) {
-            return (string)$this->getAccountUser()->getEmail();
+        if (null !== $this->getCustomerUser()) {
+            return (string)$this->getCustomerUser()->getEmail();
         }
 
         return null;
@@ -673,32 +673,32 @@ class Quote extends ExtendQuote implements
     /**
      * @return Collection|CustomerUser[]
      */
-    public function getAssignedAccountUsers()
+    public function getAssignedCustomerUsers()
     {
-        return $this->assignedAccountUsers;
+        return $this->assignedCustomerUsers;
     }
 
     /**
-     * @param CustomerUser $assignedAccountUser
+     * @param CustomerUser $assignedCustomerUser
      * @return $this
      */
-    public function addAssignedAccountUser(CustomerUser $assignedAccountUser)
+    public function addAssignedCustomerUser(CustomerUser $assignedCustomerUser)
     {
-        if (!$this->assignedAccountUsers->contains($assignedAccountUser)) {
-            $this->assignedAccountUsers->add($assignedAccountUser);
+        if (!$this->assignedCustomerUsers->contains($assignedCustomerUser)) {
+            $this->assignedCustomerUsers->add($assignedCustomerUser);
         }
 
         return $this;
     }
 
     /**
-     * @param CustomerUser $assignedAccountUser
+     * @param CustomerUser $assignedCustomerUser
      * @return $this
      */
-    public function removeAssignedAccountUser(CustomerUser $assignedAccountUser)
+    public function removeAssignedCustomerUser(CustomerUser $assignedCustomerUser)
     {
-        if ($this->assignedAccountUsers->contains($assignedAccountUser)) {
-            $this->assignedAccountUsers->removeElement($assignedAccountUser);
+        if ($this->assignedCustomerUsers->contains($assignedCustomerUser)) {
+            $this->assignedCustomerUsers->removeElement($assignedCustomerUser);
         }
 
         return $this;

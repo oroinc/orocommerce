@@ -48,12 +48,12 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before, method: onBuildBefore }
 
-    oro_payment_term.event_listener.account_datagrid:
-        class: 'Oro\Bundle\PaymentTermBundle\EventListener\AccountDatagridListener'
+    oro_payment_term.event_listener.customer_datagrid:
+        class: 'Oro\Bundle\PaymentTermBundle\EventListener\CustomerDatagridListener'
         arguments:
             - '@oro_payment_term.provider.payment_term_association'
         tags:
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.account-accounts-select-grid, method: onBuildBefore, priority: 128 }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.customer-customers-select-grid, method: onBuildBefore, priority: 128 }
 
     oro_payment_term.provider.payment_term:
         class: 'Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider'

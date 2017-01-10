@@ -48,7 +48,7 @@
                 },
                 events: [
                     'line-items-totals:update',
-                    'update:account',
+                    'update:customer',
                     'update:currency'
                 ],
                 entityClassName: 'Oro\\Bundle\\InvoiceBundle\\Entity\\Invoice',
@@ -64,9 +64,9 @@
              data-page-component-options="{{ {
                  view: 'oroinvoice/js/app/views/invoice-line-items-view',
                  tierPrices: tierPrices|default({}),
-                 tierPricesRoute: 'oro_pricing_price_by_account',
+                 tierPricesRoute: 'oro_pricing_price_by_customer',
                  currency: entity.currency,
-                 account: entity.account is null ? null : entity.account.id
+                 customer: entity.customer is null ? null : entity.customer.id
              }|json_encode }}"
              data-layout="separate">
             {{ form_widget(form.lineItems) }}
@@ -81,12 +81,12 @@
                 'view': 'orofrontend/js/app/views/form-view',
                 selectors: {
                     currency: 'select[name$="[currency]"]',
-                    account: 'input[name$="[account]"]'
+                    customer: 'input[name$="[customer]"]'
                 }
             }|json_encode }}">
-            <div data-page-component-module="orocustomer/js/app/components/account-selection-component">
-                {{ form_row(form.account) }}
-                {{ form_row(form.accountUser) }}
+            <div data-page-component-module="orocustomer/js/app/components/customer-selection-component">
+                {{ form_row(form.customer) }}
+                {{ form_row(form.customerUser) }}
             </div>
             <div>
                 {{ form_row(form.invoiceDate) }}

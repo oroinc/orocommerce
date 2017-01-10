@@ -112,32 +112,32 @@ action_groups:
                 type: Oro\Bundle\RFPBundle\Entity\Request
         actions:
             - '@foreach':
-                array: $.data.accountUser.salesRepresentatives
+                array: $.data.customerUser.salesRepresentatives
                 value: $.saleRep
                 actions:
                     - '@send_email_template':
                         conditions:
-                            '@not_empty': $.data.accountUser.owner
+                            '@not_empty': $.data.customerUser.owner
                         parameters:
-                            from: $.data.accountUser.owner.email
+                            from: $.data.customerUser.owner.email
                             to: $.saleRep.email
                             template: 'request_no_quote_alert'
                             entity: $.data
             - '@call_method':
-                object: $.data.accountUser.salesRepresentatives
+                object: $.data.customerUser.salesRepresentatives
                 method: toArray
-                attribute: $.accountUserSalesReps
+                attribute: $.customerUserSalesReps
             - '@foreach':
-                array: $.data.account.salesRepresentatives
+                array: $.data.customer.salesRepresentatives
                 value: $.saleRep
                 actions:
                     - '@send_email_template':
                         conditions:
                             '@and':
-                                - '@not_empty': $.data.accountUser.owner
-                                - '@not_in': [$.saleRep, $.accountUserSalesReps]
+                                - '@not_empty': $.data.customerUser.owner
+                                - '@not_in': [$.saleRep, $.customerUserSalesReps]
                         parameters:
-                            from: $.data.accountUser.owner.email
+                            from: $.data.customerUser.owner.email
                             to: $.saleRep.email
                             template: 'request_no_quote_alert'
                             entity: $.data
@@ -171,8 +171,8 @@ action_groups:
                         attribute: $.orderAddress
                         class: Oro\Bundle\OrderBundle\Entity\OrderAddress
                         data:
-                            accountAddress: $.data.quote.accountAddress
-                            accountUserAddress: $.data.quote.accountUserAddress
+                            customerAddress: $.data.quote.customerAddress
+                            customerUserAddress: $.data.quote.customerUserAddress
                             label: $.data.quote.shippingAddress.label
                             organization: $.data.quote.shippingAddress.organization
                             street: $.data.quote.shippingAddress.street

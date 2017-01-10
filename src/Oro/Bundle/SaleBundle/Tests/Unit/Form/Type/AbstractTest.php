@@ -14,7 +14,7 @@ use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
 
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Oro\Bundle\CustomerBundle\Form\Type\AccountUserMultiSelectType;
+use Oro\Bundle\CustomerBundle\Form\Type\CustomerUserMultiSelectType;
 
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
@@ -196,14 +196,14 @@ abstract class AbstractTest extends FormIntegrationTestCase
     /**
      * @return EntityType
      */
-    protected function prepareAccountUserMultiSelectType()
+    protected function prepareCustomerUserMultiSelectType()
     {
         return new EntityType(
             [
-                10 => $this->getAccountUser(10),
-                11 => $this->getAccountUser(11),
+                10 => $this->getCustomerUser(10),
+                11 => $this->getCustomerUser(11),
             ],
-            AccountUserMultiSelectType::NAME,
+            CustomerUserMultiSelectType::NAME,
             [
                 'multiple' => true
             ]
@@ -309,31 +309,31 @@ abstract class AbstractTest extends FormIntegrationTestCase
      * @param int $id
      * @return CustomerUser
      */
-    protected function getAccountUser($id)
+    protected function getCustomerUser($id)
     {
         $organization = $this->getMockBuilder('Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface')->getMock();
         $role = $this->getMockBuilder('Symfony\Component\Security\Core\Role\RoleInterface')->getMock();
 
-        $account = $this->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\Customer')->getMock();
+        $customer = $this->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\Customer')->getMock();
 
-        /** @var CustomerUser $accountUser */
-        $accountUser = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUser', $id);
-        $accountUser->setEmail('test@test.test')
+        /** @var CustomerUser $customerUser */
+        $customerUser = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUser', $id);
+        $customerUser->setEmail('test@test.test')
             ->setFirstName('First Name')
             ->setLastName('Last Name')
             ->setUsername('test@test.test')
-            ->setAccount($account)
+            ->setCustomer($customer)
             ->setRoles([$role])
             ->setOrganization($organization);
 
-        return $accountUser;
+        return $customerUser;
     }
 
     /**
      * @param int $productId
      * @param int $type
      * @param string $comment
-     * @param string $commentAccount
+     * @param string $commentCustomer
      * @param QuoteProductRequest[] $requests
      * @param QuoteProductOffer[] $offers
      * @return QuoteProduct
@@ -342,7 +342,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
         $productId = null,
         $type = null,
         $comment = null,
-        $commentAccount = null,
+        $commentCustomer = null,
         array $requests = [],
         array $offers = []
     ) {
@@ -362,7 +362,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
             ->setProduct($product)
             ->setType($type)
             ->setComment($comment)
-            ->setCommentAccount($commentAccount)
+            ->setCommentCustomer($commentCustomer)
         ;
 
         foreach ($requests as $request) {

@@ -12,20 +12,20 @@ class DatagridListener
     /**
      * @param BuildBefore $event
      */
-    public function onBuildBeforeAccounts(BuildBefore $event)
+    public function onBuildBeforeCustomers(BuildBefore $event)
     {
         $leftJoins = [
             [
-                'join' => 'Oro\Bundle\PricingBundle\Entity\PriceListToAccount',
-                'alias' => 'priceListToAccount',
+                'join' => 'Oro\Bundle\PricingBundle\Entity\PriceListToCustomer',
+                'alias' => 'priceListToCustomer',
                 'conditionType' => 'WITH',
-                'condition' => 'priceListToAccount.account = account',
+                'condition' => 'priceListToCustomer.customer = customer',
             ],
             [
-                'join' => 'priceListToAccount.priceList',
+                'join' => 'priceListToCustomer.priceList',
                 'alias' => 'priceList',
                 'conditionType' => 'WITH',
-                'condition' => 'priceListToAccount.priceList = priceList',
+                'condition' => 'priceListToCustomer.priceList = priceList',
             ],
         ];
         $this->addPriceListRelation($event->getConfig(), $leftJoins);
@@ -34,20 +34,20 @@ class DatagridListener
     /**
      * @param BuildBefore $event
      */
-    public function onBuildBeforeAccountGroups(BuildBefore $event)
+    public function onBuildBeforeCustomerGroups(BuildBefore $event)
     {
         $leftJoins = [
             [
-                'join' => 'Oro\Bundle\PricingBundle\Entity\PriceListToAccountGroup',
-                'alias' => 'priceListToAccountGroup',
+                'join' => 'Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup',
+                'alias' => 'priceListToCustomerGroup',
                 'conditionType' => 'WITH',
-                'condition' => 'priceListToAccountGroup.accountGroup = account_group',
+                'condition' => 'priceListToCustomerGroup.customerGroup = customer_group',
             ],
             [
-                'join' => 'priceListToAccountGroup.priceList',
+                'join' => 'priceListToCustomerGroup.priceList',
                 'alias' => 'priceList',
                 'conditionType' => 'WITH',
-                'condition' => 'priceListToAccountGroup.priceList = priceList',
+                'condition' => 'priceListToCustomerGroup.priceList = priceList',
             ],
         ];
         $this->addPriceListRelation($event->getConfig(), $leftJoins);

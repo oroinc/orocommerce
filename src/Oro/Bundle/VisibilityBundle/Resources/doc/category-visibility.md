@@ -2,32 +2,32 @@ Category visibility
 -------------------
 
 Category visibility is a functionality that allows to show or hide some products specific category based on settings parent category
-account or account group. Category visibility related to the product visibility and affects [product visibility](./product-visibility.md).
+customer or customer group. Category visibility related to the product visibility and affects [product visibility](./product-visibility.md).
 
 ### General Information
 As product visibility category visibility has same 3 levels.
 
 ####Visibility to all:
 * **Parent Category** - `Default value`. Value is taken from the parent category
-* **Config** - The value is taken from the system configuration parameter "Category Visibility to Accounts"
+* **Config** - The value is taken from the system configuration parameter "Category Visibility to Customers"
 * **Hidden** - Specific static value
 * **Visible** - Specific static value
 
-####Visibility to Account Groups:
+####Visibility to Customer Groups:
 * **Visibility to All**  - `Default value`. Fallback to Visibility to All value
-* **Parent Category** - Value is taken from the parent category for selected account group
+* **Parent Category** - Value is taken from the parent category for selected customer group
 * **Hidden** - Specific static value
 * **Visible** - Specific static value
 
-####Visibility to Accounts:
-* **Account Group** - `Default value`. Fallback to Visibility to Account Groups
+####Visibility to Customers:
+* **Customer Group** - `Default value`. Fallback to Visibility to Customer Groups
 * **Visibility to All** - Fallback to Visibility to All value
-* **Parent Category** - Value is taken from the parent category for selected account
+* **Parent Category** - Value is taken from the parent category for selected customer
 * **Hidden** - Specific static value
 * **Visible** - Specific static value
 
 As well as for the product visibility there are entities in database for each listed level:
-`CategoryVisibility`, `AccountGroupCategoryVisibility`, `AccountCategoryVisibility` each of which implements 
+`CategoryVisibility`, `CustomerGroupCategoryVisibility`, `CustomerCategoryVisibility` each of which implements 
 `VisibilityInterface` interface.
 
 ####Addition information:
@@ -41,10 +41,10 @@ Resolved category category visibility settings must be pre-calculated and cached
 To do this there are 3 resolved entities that contains only static visibility values (visible or hidden) or fallback to config value.
 
 There are resolved entities in database for each level:
-`CategoryVisibilityResolved`, `AccountGroupCategoryVisibilityResolved`, `AccountCategoryVisibilityResolved`
+`CategoryVisibilityResolved`, `CustomerGroupCategoryVisibilityResolved`, `CustomerCategoryVisibilityResolved`
 each of which extend `BaseCategoryVisibilityResolved` abstract class.
 
-For `AccountCategoryVisibilityResolved`, `AccountGroupCategoryVisibilityResolved` in case if source tables does not
+For `CustomerCategoryVisibilityResolved`, `CustomerGroupCategoryVisibilityResolved` in case if source tables does not
 contain a record (default visibility setting was selected), then entity is not written to resolved tables.
 For `CategoryVisibilityResolved` entity is not written to resolved table is case then source table 
 (CategoryVisibility) contains record with "Config" value.
@@ -70,22 +70,22 @@ Here is a list of possible cases that require to update the cache:
 | **visibility**                   | Get parent category visibility from cache    |      X     |             ::VISIBILITY_HIDDEN               |             ::VISIBILITY_VISIBLE             |
 | **source**                       |           ::SOURCE_PARENT_CATEGORY           |      X     |               ::SOURCE_STATIC                 |               ::SOURCE_STATIC                |
 
-#####Category Visibility to Account Group
-| `AccountGroupCategoryVisibilityResolved` | **Visibility to All** | **Parent Category**                                              | **Hidden**                                                 | **Visible**                                                |
+#####Category Visibility to Customer Group
+| `CustomerGroupCategoryVisibilityResolved` | **Visibility to All** | **Parent Category**                                              | **Hidden**                                                 | **Visible**                                                |
 |------------------------------------------|-----------------------|------------------------------------------------------------------|------------------------------------------------------------|------------------------------------------------------------|
-| **category (FK) (PK)**                   |          X            | Get category from current account group category visibility      | Get category from current account group category visibility| Get category from current account group category visibility|
+| **category (FK) (PK)**                   |          X            | Get category from current customer group category visibility      | Get category from current customer group category visibility| Get category from current customer group category visibility|
 | **scope (FK) (PK)**                      |          X            |                                                                  |                                                            |                                                            |
-| **sourceProductVisibility (FK)**         |          X            | Current account group category visibility                        | Current account group product visibility                   | Current account group category visibility                  |
-| **visibility**                           |          X            | Get parent category visibility from cache for this account group |                     ::VISIBILITY_HIDDEN                    |                   ::VISIBILITY_VISIBLE                     |
+| **sourceProductVisibility (FK)**         |          X            | Current customer group category visibility                        | Current customer group product visibility                   | Current customer group category visibility                  |
+| **visibility**                           |          X            | Get parent category visibility from cache for this customer group |                     ::VISIBILITY_HIDDEN                    |                   ::VISIBILITY_VISIBLE                     |
 | **source**                               |          X            |           ::SOURCE_PARENT_CATEGORY                               |                       ::SOURCE_STATIC                      |                     ::SOURCE_STATIC                        |
 
-#####Category Visibility to Account
-| `AccountCategoryVisibilityResolved`     | **Account Group** | **Visibility to All**                                       | **Parent Category**                                        | **Hidden**                                           | **Visible**                                          |
+#####Category Visibility to Customer
+| `CustomerCategoryVisibilityResolved`     | **Customer Group** | **Visibility to All**                                       | **Parent Category**                                        | **Hidden**                                           | **Visible**                                          |
 |-----------------------------------------|-------------------|-------------------------------------------------------------|------------------------------------------------------------|------------------------------------------------------|------------------------------------------------------|
-| **category (FK) (PK)**                  |         X         | Get category from current account group category visibility | Get category from current account category visibility      | Get category from current account category visibility| Get category from current account category visibility|
+| **category (FK) (PK)**                  |         X         | Get category from current customer group category visibility | Get category from current customer category visibility      | Get category from current customer category visibility| Get category from current customer category visibility|
 | **scope (FK) (PK)**                     |         X         |                                                             |                                                            |                                                      |                                                      |
-| **sourceProductVisibility (FK)**        |         X         | Current account category visibility                         | Current account category visibility                        | Current account product visibility                   | Current account product visibility                   |
-| **visibility**                          |         X         | Get category visibility to all from cache                   | Get parent category visibility from cache for this account |                   ::VISIBILITY_HIDDEN                |                   ::VISIBILITY_VISIBLE               |
+| **sourceProductVisibility (FK)**        |         X         | Current customer category visibility                         | Current customer category visibility                        | Current customer product visibility                   | Current customer product visibility                   |
+| **visibility**                          |         X         | Get category visibility to all from cache                   | Get parent category visibility from cache for this customer |                   ::VISIBILITY_HIDDEN                |                   ::VISIBILITY_VISIBLE               |
 | **source**                              |         X         |                 ::SOURCE_STATIC                             |               ::SOURCE_PARENT_CATEGORY                     |                     ::SOURCE_STATIC                  |                       ::SOURCE_STATIC                |
 
 
@@ -102,29 +102,29 @@ For example:
 ```
 Parent category:
     Category Visibility to All: Config
-    Category Visibility to Account Group 1: Visibility to All
+    Category Visibility to Customer Group 1: Visibility to All
     
 Child category:
     Category Visibility to All: Config
-    Category Visibility to Account Group 1: Parent Category
+    Category Visibility to Customer Group 1: Parent Category
 ```
-In this case `AccountGroupCategoryVisibility` for child category should be:
+In this case `CustomerGroupCategoryVisibility` for child category should be:
 
 | **Field**                                | **Value**                                                        |
 |------------------------------------------|------------------------------------------------------------------|
-| **Id (PK)**                              |             AccountGroupCategoryVisibilityId                     |
+| **Id (PK)**                              |             CustomerGroupCategoryVisibilityId                     |
 | **category (FK)**                        |                       ChildCategoryId                            |
 | **scope (FK)**                           |                       Visibility Scope                           |
-| **account (FK)**                         |                       AccountGroup1Id                            |
+| **customer (FK)**                         |                       CustomerGroup1Id                            |
 | **visibility**                           |                      ::PARENT_CATEGORY                           |
 
-And `AccountGroupCategoryVisibilityResolved` for child category should be:
+And `CustomerGroupCategoryVisibilityResolved` for child category should be:
 
 | **Field**                                | **Value**                                                        |
 |------------------------------------------|------------------------------------------------------------------|
 | **category (FK) (PK)**                   |                       ChildCategoryId                            |
 | **scope (FK) (PK)**                      |                       Scope                                      |
-| **sourceProductVisibility (FK)**         |               AccountGroupCategoryVisibilityId                   |
+| **sourceProductVisibility (FK)**         |               CustomerGroupCategoryVisibilityId                   |
 | **visibility**                           |               ::VISIBILITY_FALLBACK_TO_CONFIG                    |
 | **source**                               |                  ::SOURCE_PARENT_CATEGORY                        |
 

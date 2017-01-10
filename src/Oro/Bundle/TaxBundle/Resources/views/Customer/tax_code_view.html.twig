@@ -1,0 +1,18 @@
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+
+{% set taxCode %}
+    {% if entity %}
+        {% set isGranted = resource_granted('VIEW', entity) %}
+        {% if isGranted %}<a href="{{ path('oro_tax_customer_tax_code_view', {'id': entity.id}) }}">{% endif %}
+        {{ entity.code }}
+        {% if isGranted %}</a>{% endif %}
+    {% elseif groupCustomerTaxCode %}
+        {% set isGranted = resource_granted('VIEW', groupCustomerTaxCode) %}
+        {% if isGranted %}<a href="{{ path('oro_tax_customer_tax_code_view', {'id': groupCustomerTaxCode.id}) }}">{% endif %}
+        {{ groupCustomerTaxCode.code }}
+        {% if isGranted %}</a>{% endif %}
+        ({{ 'oro.tax.customertaxcode.customer_group.view.label'|trans }})
+    {% endif %}
+{% endset %}
+
+{{ UI.renderHtmlProperty('oro.tax.taxcode.label'|trans, taxCode) }}

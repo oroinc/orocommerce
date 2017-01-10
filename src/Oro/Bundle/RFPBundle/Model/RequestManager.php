@@ -43,11 +43,11 @@ class RequestManager
         $user = $this->securityFacade->getLoggedUser();
         if ($user instanceof CustomerUser) {
             $request
-                ->setAccountUser($user)
-                ->setAccount($user->getAccount())
+                ->setCustomerUser($user)
+                ->setCustomer($user->getCustomer())
                 ->setFirstName($user->getFirstName())
                 ->setLastName($user->getLastName())
-                ->setCompany($user->getAccount()->getName())
+                ->setCompany($user->getCustomer()->getName())
                 ->setEmail($user->getEmail());
         }
 

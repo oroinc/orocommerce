@@ -96,7 +96,7 @@ class FrontendProductPricesProvider
             return;
         }
 
-        $priceList = $this->priceListRequestHandler->getPriceListByAccount();
+        $priceList = $this->priceListRequestHandler->getPriceListByCustomer();
         $productsIds = array_map(function (Product $product) {
             return $product->getId();
         }, $products);

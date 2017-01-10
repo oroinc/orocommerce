@@ -26,39 +26,39 @@ interface CategoryVisibilityResolverInterface
 
     /**
      * @param Category $category
-     * @param CustomerGroup $accountGroup
+     * @param CustomerGroup $customerGroup
      * @return bool
      */
-    public function isCategoryVisibleForAccountGroup(Category $category, CustomerGroup $accountGroup);
+    public function isCategoryVisibleForCustomerGroup(Category $category, CustomerGroup $customerGroup);
 
     /**
-     * @param CustomerGroup $accountGroup
+     * @param CustomerGroup $customerGroup
      * @return array
      */
-    public function getVisibleCategoryIdsForAccountGroup(CustomerGroup $accountGroup);
+    public function getVisibleCategoryIdsForCustomerGroup(CustomerGroup $customerGroup);
 
     /**
-     * @param CustomerGroup $accountGroup
+     * @param CustomerGroup $customerGroup
      * @return array
      */
-    public function getHiddenCategoryIdsForAccountGroup(CustomerGroup $accountGroup);
+    public function getHiddenCategoryIdsForCustomerGroup(CustomerGroup $customerGroup);
 
     /**
      * @param Category $category
-     * @param Customer $account
+     * @param Customer $customer
      * @return bool
      */
-    public function isCategoryVisibleForAccount(Category $category, Customer $account);
+    public function isCategoryVisibleForCustomer(Category $category, Customer $customer);
 
     /**
-     * @param Customer $account
+     * @param Customer $customer
      * @return array
      */
-    public function getVisibleCategoryIdsForAccount(Customer $account);
+    public function getVisibleCategoryIdsForCustomer(Customer $customer);
 
     /**
-     * @param Customer $account
+     * @param Customer $customer
      * @return array
      */
-    public function getHiddenCategoryIdsForAccount(Customer $account);
+    public function getHiddenCategoryIdsForCustomer(Customer $customer);
 }

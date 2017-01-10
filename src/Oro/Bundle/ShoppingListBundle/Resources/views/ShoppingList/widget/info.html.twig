@@ -5,11 +5,11 @@
     <div class="row-fluid form-horizontal">
         <div class="responsive-block">
             {{ UI.renderProperty('oro.shoppinglist.id.label'|trans, shopping_list.id) }}
-            {% if shopping_list.account %}
-                {{ UI.renderHtmlProperty('oro.shoppinglist.account.label'|trans, UI.entityViewLink(shopping_list.account, shopping_list.account|oro_format_name, 'oro_customer_account_view')) }}
+            {% if shopping_list.customer %}
+                {{ UI.renderHtmlProperty('oro.shoppinglist.customer.label'|trans, UI.entityViewLink(shopping_list.customer, shopping_list.customer|oro_format_name, 'oro_customer_customer_view')) }}
             {% endif %}
-            {% if shopping_list.accountUser %}
-                {{ UI.renderHtmlProperty('oro.shoppinglist.account_user.label'|trans, UI.entityViewLink(shopping_list.accountUser, shopping_list.accountUser|oro_format_name, 'oro_customer_account_user_view')) }}
+            {% if shopping_list.customerUser %}
+                {{ UI.renderHtmlProperty('oro.shoppinglist.customer_user.label'|trans, UI.entityViewLink(shopping_list.customerUser, shopping_list.customerUser|oro_format_name, 'oro_customer_customer_user_view')) }}
             {% endif %}
             {{ UI.renderProperty('oro.shoppinglist.label.label'|trans, shopping_list.label) }}
             {{ UI.renderSwitchableHtmlProperty('oro.shoppinglist.notes.label'|trans, shopping_list.notes) }}

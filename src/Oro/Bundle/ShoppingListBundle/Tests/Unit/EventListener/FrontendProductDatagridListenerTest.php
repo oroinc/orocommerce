@@ -143,7 +143,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $shoppingListRepository->expects($this->once())
-            ->method('findAvailableForAccountUser')
+            ->method('findAvailableForCustomerUser')
             ->with($this->aclHelper)
             ->willReturn(null);
         $this->registry->expects($this->once())
@@ -177,7 +177,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $shoppingListRepository->expects($this->once())
-            ->method('findAvailableForAccountUser')
+            ->method('findAvailableForCustomerUser')
             ->with($this->aclHelper)
             ->willReturn(new ShoppingList());
         $this->registry->expects($this->once())
@@ -221,7 +221,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $shoppingListRepository->expects($this->once())
-            ->method('findAvailableForAccountUser')
+            ->method('findAvailableForCustomerUser')
             ->with($this->aclHelper)
             ->willReturn($shoppingList1);
 
