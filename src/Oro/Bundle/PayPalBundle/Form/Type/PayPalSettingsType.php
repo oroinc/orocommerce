@@ -2,11 +2,16 @@
 
 namespace Oro\Bundle\PayPalBundle\Form\Type;
 
-use Oro\Bundle\EntityExtendBundle\Form\Type\EnumSelectType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
+use Oro\Bundle\PayPalBundle\Entity\CreditCardPaymentAction;
+use Oro\Bundle\PayPalBundle\Entity\ExpressCheckoutPaymentAction;
 use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
+use Oro\Bundle\PayPalBundle\Form\Provider\CreditCardTypeProvider;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -59,21 +64,25 @@ class PayPalSettingsType extends AbstractType
                 'label'    => 'oro.pay_pal.settings.express_checkout_name.label',
                 'required' => true,
             ])
-            ->add('creditCardPaymentAction', EnumSelectType::class, [
+            ->add('creditCardPaymentAction', EntityType::class, [
+                'class' => CreditCardPaymentAction::class,
+                'choice_label' => 'label',
                 'label'    => 'oro.pay_pal.settings.credit_card_payment_action.label',
                 'required' => true,
-                'enum_code' => 'pp_credit_card_payment_action',
             ])
-            ->add('expressCheckoutPaymentAction', EnumSelectType::class, [
+            ->add('expressCheckoutPaymentAction', EntityType::class, [
+                'class' => ExpressCheckoutPaymentAction::class,
+                'choice_label' => 'label',
                 'label'    => 'oro.pay_pal.settings.express_checkout_payment_action.label',
                 'required' => true,
-                'enum_code' => 'pp_express_checkout_payment_action',
             ])
-            ->add('allowedCreditCardTypes', EnumSelectType::class, [
+            ->add('allowedCreditCardTypes', CollectionType::class, [
+                'entry_type'   => ChoiceType::class,
                 'label'    => 'oro.pay_pal.settings.allowed_credit_card_types.label',
                 'required' => true,
-                'enum_code' => 'pp_credit_card_types',
-                'multiple' => true,
+                'entry_options'  => [
+                    'choices'  => CreditCardTypeProvider::get(),
+                ],
             ])
             ->add('partner', TextType::class, [
                 'label'    => 'oro.pay_pal.settings.partner.label',

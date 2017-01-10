@@ -3,21 +3,20 @@
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\Form\Type;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Genemu\Bundle\FormBundle\Form\JQuery\Type\Select2Type;
-use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
-use Oro\Bundle\EntityExtendBundle\Form\Type\EnumSelectType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedPropertyType;
-use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizationCollectionTypeStub;
 use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
 use Oro\Bundle\PayPalBundle\Form\Type\PayPalSettingsType;
-use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Validation;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class PayPalSettingsTypeTest extends FormIntegrationTestCase
 {
     /** @var PayPalSettingsType */
@@ -36,17 +35,13 @@ class PayPalSettingsTypeTest extends FormIntegrationTestCase
     protected function getExtensions()
     {
         $registry = $this->createMock(ManagerRegistry::class);
-        $configManager = $this->createMock(ConfigManager::class);
 
         return [
             new PreloadedExtension(
                 [
                     new LocalizedPropertyType(),
-                    new LocalizationCollectionTypeStub(),
                     new LocalizedFallbackValueCollectionType($registry),
-                    new EnumSelectType($configManager, $registry),
-                    new Select2Type('translatable_entity'),
-                    new TranslatableEntityType($registry),
+                    new EntityType($registry),
                 ],
                 []
             ),
@@ -88,8 +83,6 @@ class PayPalSettingsTypeTest extends FormIntegrationTestCase
         $payPalSettings = new PayPalSettings();
 
         $form = $this->factory->create($this->formType, $payPalSettings);
-
-        $this->assertSame($payPalSettings, $form->getData());
 
         $form->submit($submitData);
 
