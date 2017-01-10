@@ -5,7 +5,7 @@ namespace Oro\Bundle\VisibilityBundle\Visibility;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Query\Expr\Join;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\VisibilityBundle\Provider\VisibilityScopeProvider;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
@@ -80,13 +80,13 @@ trait ProductVisibilityTrait
 
     /**
      * @param QueryBuilder $queryBuilder
-     * @param Account $account
+     * @param Customer $account
      * @param Website $website
      * @return string
      */
     private function getAccountProductVisibilityResolvedTermByWebsite(
         QueryBuilder $queryBuilder,
-        Account $account,
+        Customer $account,
         Website $website
     ) {
         $queryBuilder->leftJoin(

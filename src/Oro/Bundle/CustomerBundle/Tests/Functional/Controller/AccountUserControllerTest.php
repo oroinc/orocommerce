@@ -3,8 +3,8 @@
 namespace Oro\Bundle\CustomerBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 use Oro\Bundle\CustomerBundle\Migrations\Data\ORM\LoadCustomerUserRoles;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadUserData;
@@ -58,7 +58,7 @@ class AccountUserControllerTest extends AbstractUserControllerTest
         $crawler = $this->client->request('GET', $this->getUrl('oro_customer_account_user_create'));
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
-        /** @var \Oro\Bundle\CustomerBundle\Entity\Account $account */
+        /** @var \Oro\Bundle\CustomerBundle\Entity\Customer $account */
         $account = $this->getAccountRepository()->findOneBy([]);
 
         /** @var \Oro\Bundle\CustomerBundle\Entity\CustomerUserRole $role */
@@ -131,10 +131,10 @@ class AccountUserControllerTest extends AbstractUserControllerTest
      */
     public function testUpdate()
     {
-        /** @var AccountUser $account */
+        /** @var CustomerUser $account */
         $accountUser = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroCustomerBundle:AccountUser')
-            ->getRepository('OroCustomerBundle:AccountUser')
+            ->getManagerForClass('OroCustomerBundle:CustomerUser')
+            ->getRepository('OroCustomerBundle:CustomerUser')
             ->findOneBy(['email' => self::EMAIL, 'firstName' => self::FIRST_NAME, 'lastName' => self::LAST_NAME]);
         $id = $accountUser->getId();
 
@@ -198,7 +198,7 @@ class AccountUserControllerTest extends AbstractUserControllerTest
             ['_widgetContainer' => 'dialog']
         );
 
-        /** @var \Oro\Bundle\CustomerBundle\Entity\AccountUser $user */
+        /** @var \Oro\Bundle\CustomerBundle\Entity\CustomerUser $user */
         $user = $this->getUserRepository()->find($id);
         $this->assertNotNull($user);
 
@@ -333,11 +333,11 @@ class AccountUserControllerTest extends AbstractUserControllerTest
 
     /**
      * @param string $name
-     * @return Account
+     * @return Customer
      */
     protected function createAccount($name)
     {
-        $account = new Account();
+        $account = new Customer();
         $account->setName($name);
         $account->setOrganization($this->getDefaultOrganization());
         $this->getObjectManager()->persist($account);
@@ -361,11 +361,11 @@ class AccountUserControllerTest extends AbstractUserControllerTest
 
     /**
      * @param string $email
-     * @return AccountUser
+     * @return CustomerUser
      */
     protected function createAccountUser($email)
     {
-        $accountUser = new AccountUser();
+        $accountUser = new CustomerUser();
         $accountUser->setEmail($email);
         $accountUser->setPassword('password');
         $accountUser->setOrganization($this->getDefaultOrganization());
@@ -386,13 +386,13 @@ class AccountUserControllerTest extends AbstractUserControllerTest
      * @param CustomerUserRole[] $expectedRoles
      * @param CustomerUserRole[] $notExpectedRoles
      * @param string            $content
-     * @param AccountUser|null  $accountUser
+     * @param CustomerUser|null  $accountUser
      */
     protected function assertRoles(
         array $expectedRoles,
         array $notExpectedRoles,
         $content,
-        AccountUser $accountUser = null
+        CustomerUser $accountUser = null
     ) {
         $shouldBeChecked = 0;
         /** @var CustomerUserRole $expectedRole */

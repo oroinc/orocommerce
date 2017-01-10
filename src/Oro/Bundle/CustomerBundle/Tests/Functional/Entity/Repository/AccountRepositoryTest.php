@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CustomerBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\Repository\AccountRepository;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -30,7 +30,7 @@ class AccountRepositoryTest extends WebTestCase
         $this->client->useHashNavigation(true);
         $this->repository = $this->getContainer()
             ->get('doctrine')
-            ->getRepository('OroCustomerBundle:Account');
+            ->getRepository('OroCustomerBundle:Customer');
 
         $this->loadFixtures(
             [
@@ -49,7 +49,7 @@ class AccountRepositoryTest extends WebTestCase
      */
     public function testGetChildrenIds($referenceName, array $expectedReferences, $withAclCheck = true)
     {
-        /** @var Account $account */
+        /** @var Customer $account */
         $account = $this->getReference($referenceName);
 
         $expected = [];
@@ -170,7 +170,7 @@ class AccountRepositoryTest extends WebTestCase
 
     public function testGetBatchIterator()
     {
-        /** @var Account[] $results */
+        /** @var Customer[] $results */
         $results  = $this->repository->findAll();
         $accounts = [];
 

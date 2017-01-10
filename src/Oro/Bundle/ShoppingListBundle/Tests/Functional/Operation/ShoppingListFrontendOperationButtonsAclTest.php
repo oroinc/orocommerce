@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Functional;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserACLData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\FrontendActionTestCase;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -72,13 +72,13 @@ class ShoppingListFrontendOperationButtonsAclTest extends FrontendActionTestCase
     }
 
     /**
-     * @return AccountUser
+     * @return CustomerUser
      */
     public function getAccountUser()
     {
         return $this->getContainer()
             ->get('doctrine')
-            ->getRepository(AccountUser::class)
+            ->getRepository(CustomerUser::class)
             ->findOneBy(['email' => LoadAccountUserACLData::USER_ACCOUNT_1_ROLE_LOCAL]);
     }
 }

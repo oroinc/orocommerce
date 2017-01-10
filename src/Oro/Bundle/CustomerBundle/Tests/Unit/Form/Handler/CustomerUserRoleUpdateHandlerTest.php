@@ -18,8 +18,8 @@ use Oro\Bundle\SecurityBundle\Model\AclPrivilege;
 use Oro\Bundle\SecurityBundle\Model\AclPrivilegeIdentity;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Form\Type\CustomerUserRoleType;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 use Oro\Bundle\CustomerBundle\Form\Handler\CustomerUserRoleUpdateHandler;
@@ -277,13 +277,13 @@ class CustomerUserRoleUpdateHandlerTest extends AbstractCustomerUserRoleUpdateHa
             ->willReturn($objectManager);
 
         $expectedFirstEntityPrivilege = $this->createPrivilege('entity', 'entity:FirstClass', 'VIEW');
-        $expectedFirstEntityPrivilege->setGroup(AccountUser::SECURITY_GROUP);
+        $expectedFirstEntityPrivilege->setGroup(CustomerUser::SECURITY_GROUP);
 
         $expectedSecondEntityPrivilege = $this->createPrivilege('entity', 'entity:SecondClass', 'VIEW');
-        $expectedSecondEntityPrivilege->setGroup(AccountUser::SECURITY_GROUP);
+        $expectedSecondEntityPrivilege->setGroup(CustomerUser::SECURITY_GROUP);
 
         $expectedActionPrivilege = $this->createPrivilege('action', 'action', 'random_action');
-        $expectedActionPrivilege->setGroup(AccountUser::SECURITY_GROUP);
+        $expectedActionPrivilege->setGroup(CustomerUser::SECURITY_GROUP);
 
         $this->privilegeRepository->expects($this->once())
             ->method('savePrivileges')
@@ -345,12 +345,12 @@ class CustomerUserRoleUpdateHandlerTest extends AbstractCustomerUserRoleUpdateHa
 
     /**
      * @param CustomerUserRole $role
-     * @param Account|null    $newAccount
-     * @param AccountUser[]   $appendUsers
-     * @param AccountUser[]   $removedUsers
-     * @param AccountUser[]   $assignedUsers
-     * @param AccountUser[]   $expectedUsersWithRole
-     * @param AccountUser[]   $expectedUsersWithoutRole
+     * @param Customer|null    $newAccount
+     * @param CustomerUser[]   $appendUsers
+     * @param CustomerUser[]   $removedUsers
+     * @param CustomerUser[]   $assignedUsers
+     * @param CustomerUser[]   $expectedUsersWithRole
+     * @param CustomerUser[]   $expectedUsersWithoutRole
      * @param bool            $changeAccountProcessed
      * @dataProvider processWithAccountProvider
      */
@@ -381,7 +381,7 @@ class CustomerUserRoleUpdateHandlerTest extends AbstractCustomerUserRoleUpdateHa
         );
 
         // Array of persisted users
-        /** @var AccountUser[] $persistedUsers */
+        /** @var CustomerUser[] $persistedUsers */
         $persistedUsers = [];
 
         $objectManager = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
@@ -390,7 +390,7 @@ class CustomerUserRoleUpdateHandlerTest extends AbstractCustomerUserRoleUpdateHa
             ->method('persist')
             ->willReturnCallback(
                 function ($entity) use (&$persistedUsers) {
-                    if ($entity instanceof AccountUser) {
+                    if ($entity instanceof CustomerUser) {
                         $persistedUsers[$entity->getEmail()] = $entity;
                     }
                 }
@@ -429,31 +429,31 @@ class CustomerUserRoleUpdateHandlerTest extends AbstractCustomerUserRoleUpdateHa
      */
     public function processWithAccountProvider()
     {
-        $oldAccount = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account', ['id' => 1]);
-        $newAccount1 = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account', ['id' => 10]);
+        $oldAccount = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', ['id' => 1]);
+        $newAccount1 = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', ['id' => 10]);
         $role1 = $this->createCustomerUserRole('test role1', 1);
         $users1 =
             $this->createUsersWithRole($role1, 6, $newAccount1) + $this->createUsersWithRole($role1, 2, $oldAccount, 6);
 
-        $newAccount2 = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account', ['id' => 20]);
-        $oldAcc2 = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account', ['id' => 21]);
+        $newAccount2 = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', ['id' => 20]);
+        $oldAcc2 = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', ['id' => 21]);
         $role2 = $this->createCustomerUserRole('test role2', 2);
         $role2->setAccount($oldAcc2);
         $users2 =
             $this->createUsersWithRole($role2, 6, $newAccount2) + $this->createUsersWithRole($role2, 2, $oldAcc2, 6);
 
         $role3 = $this->createCustomerUserRole('test role3', 3);
-        $role3->setAccount($this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account', ['id' => 31]));
+        $role3->setAccount($this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', ['id' => 31]));
         $users3 = $this->createUsersWithRole($role3, 6, $role3->getAccount());
 
-        $newAccount4 = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account', ['id' => 41]);
+        $newAccount4 = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', ['id' => 41]);
         $role4 = $this->createCustomerUserRole('test role4', 4);
-        $role4->setAccount($this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account', ['id' => 40]));
+        $role4->setAccount($this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', ['id' => 40]));
         $users4 = $this->createUsersWithRole($role4, 6, $newAccount4);
 
-        $newAccount5 = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account', ['id' => 50]);
+        $newAccount5 = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', ['id' => 50]);
         $role5 = $this->createCustomerUserRole('test role5');
-        $role5->setAccount($this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account', ['id' => 51]));
+        $role5->setAccount($this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', ['id' => 51]));
         $users5 = $this->createUsersWithRole($role5, 6, $newAccount5);
 
         return [
@@ -708,7 +708,7 @@ class CustomerUserRoleUpdateHandlerTest extends AbstractCustomerUserRoleUpdateHa
      * @param array            $appendUsers
      * @param array            $removedUsers
      * @param array            $assignedUsers
-     * @param Account|null     $newAccount
+     * @param Customer|null    $newAccount
      * @param bool             $changeAccountProcessed
      */
     protected function setUpMocksForProcessWithAccount(

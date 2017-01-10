@@ -10,8 +10,8 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\CustomerBundle\Acl\Voter\CustomerUserRoleVoter;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -164,7 +164,7 @@ class CustomerUserRoleVoterTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param AccountUser|null $accountUser
+     * @param CustomerUser|null $accountUser
      * @param bool             $isGranted
      * @param int              $accountId
      * @param int              $loggedUserAccountId
@@ -181,11 +181,11 @@ class CustomerUserRoleVoterTest extends \PHPUnit_Framework_TestCase
         $expected,
         $failCustomerUserRole = false
     ) {
-        /** @var Account $roleAccount */
-        $roleAccount = $this->createEntity('Oro\Bundle\CustomerBundle\Entity\Account', $accountId);
+        /** @var Customer $roleAccount */
+        $roleAccount = $this->createEntity('Oro\Bundle\CustomerBundle\Entity\Customer', $accountId);
 
-        /** @var Account $userAccount */
-        $userAccount = $this->createEntity('Oro\Bundle\CustomerBundle\Entity\Account', $loggedUserAccountId);
+        /** @var Customer $userAccount */
+        $userAccount = $this->createEntity('Oro\Bundle\CustomerBundle\Entity\Customer', $loggedUserAccountId);
 
         if ($failCustomerUserRole) {
             $customerUserRole = new \stdClass();
@@ -215,7 +215,7 @@ class CustomerUserRoleVoterTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param AccountUser|null $accountUser
+     * @param CustomerUser|null $accountUser
      * @param bool             $isGranted
      * @param int              $accountId
      * @param int              $loggedUserAccountId
@@ -231,11 +231,11 @@ class CustomerUserRoleVoterTest extends \PHPUnit_Framework_TestCase
         $expected,
         $failCustomerUserRole = false
     ) {
-        /** @var Account $roleAccount */
-        $roleAccount = $this->createEntity('Oro\Bundle\CustomerBundle\Entity\Account', $accountId);
+        /** @var Customer $roleAccount */
+        $roleAccount = $this->createEntity('Oro\Bundle\CustomerBundle\Entity\Customer', $accountId);
 
-        /** @var Account $userAccount */
-        $userAccount = $this->createEntity('Oro\Bundle\CustomerBundle\Entity\Account', $loggedUserAccountId);
+        /** @var Customer $userAccount */
+        $userAccount = $this->createEntity('Oro\Bundle\CustomerBundle\Entity\Customer', $loggedUserAccountId);
 
         if ($failCustomerUserRole) {
             $customerUserRole = new \stdClass();
@@ -268,7 +268,7 @@ class CustomerUserRoleVoterTest extends \PHPUnit_Framework_TestCase
      */
     public function attributeFrontendUpdateViewDataProvider()
     {
-        $accountUser = new AccountUser();
+        $accountUser = new CustomerUser();
 
         return [
             'account with logged user the same'  => [
@@ -340,7 +340,7 @@ class CustomerUserRoleVoterTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param AccountUser|null $accountUser
+     * @param CustomerUser|null $accountUser
      * @param CustomerUserRole $customerUserRole
      * @param bool             $isGranted
      * @param string           $attribute

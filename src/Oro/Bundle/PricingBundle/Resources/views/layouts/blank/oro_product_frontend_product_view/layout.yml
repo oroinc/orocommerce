@@ -15,4 +15,5 @@ layout:
             blockType: product_prices
             options:
                 visible: '=data["product"].getUnitPrecisions()!=null'
+                productUnitSelectionVisible: '=data["oro_product_unit_fields_settings"].isProductUnitSelectionVisible(data["product"])'
                 productPrices: '=data["frontend_product_prices"].getByProduct(data["product"])'

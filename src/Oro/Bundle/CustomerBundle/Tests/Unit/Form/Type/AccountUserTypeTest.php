@@ -13,8 +13,8 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 use Oro\Bundle\CustomerBundle\Form\Type\AccountSelectType;
@@ -25,7 +25,7 @@ use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\EntitySelectTypeStub;
 
 class AccountUserTypeTest extends FormIntegrationTestCase
 {
-    const DATA_CLASS = 'Oro\Bundle\CustomerBundle\Entity\AccountUser';
+    const DATA_CLASS = 'Oro\Bundle\CustomerBundle\Entity\CustomerUser';
     const ROLE_CLASS = 'Oro\Bundle\CustomerBundle\Entity\CustomerUserRole';
     const ADDRESS_CLASS = 'Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress';
 
@@ -40,7 +40,7 @@ class AccountUserTypeTest extends FormIntegrationTestCase
     protected $securityFacade;
 
     /**
-     * @var Account[]
+     * @var Customer[]
      */
     protected static $accounts = [];
 
@@ -107,15 +107,15 @@ class AccountUserTypeTest extends FormIntegrationTestCase
     /**
      * @dataProvider submitProvider
      *
-     * @param AccountUser $defaultData
+     * @param CustomerUser $defaultData
      * @param array $submittedData
-     * @param AccountUser $expectedData
+     * @param CustomerUser $expectedData
      * @param bool|true $rolesGranted
      */
     public function testSubmit(
-        AccountUser $defaultData,
+        CustomerUser $defaultData,
         array $submittedData,
-        AccountUser $expectedData,
+        CustomerUser $expectedData,
         $rolesGranted = true
     ) {
         if ($rolesGranted) {
@@ -286,7 +286,7 @@ class AccountUserTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @return Account[]
+     * @return Customer[]
      */
     protected function getAccounts()
     {
@@ -302,7 +302,7 @@ class AccountUserTypeTest extends FormIntegrationTestCase
 
     /**
      * @param int $id
-     * @return Account
+     * @return Customer
      */
     protected function getAccount($id)
     {
@@ -314,11 +314,11 @@ class AccountUserTypeTest extends FormIntegrationTestCase
     /**
      * @param int $id
      * @param string $name
-     * @return Account
+     * @return Customer
      */
     protected static function createAccount($id, $name)
     {
-        $account = new Account();
+        $account = new Customer();
 
         $reflection = new \ReflectionProperty(get_class($account), 'id');
         $reflection->setAccessible(true);
@@ -382,11 +382,11 @@ class AccountUserTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @return AccountUser
+     * @return CustomerUser
      */
     private function createAccountUser()
     {
-        $accountUser = new AccountUser();
+        $accountUser = new CustomerUser();
         $accountUser->setOrganization(new Organization());
 
         return $accountUser;

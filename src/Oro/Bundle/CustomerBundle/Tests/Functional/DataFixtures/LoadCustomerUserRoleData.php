@@ -7,8 +7,8 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
@@ -82,7 +82,7 @@ class LoadCustomerUserRoleData extends AbstractFixture implements DependentFixtu
         $entity = $this->loadEmptyRole($manager, $roleLabel);
         $entity->setSelfManaged(true);
 
-        /** @var AccountUser $accountUser */
+        /** @var CustomerUser $accountUser */
         $accountUser = $this->getReference($accountUser);
         $accountUser->addRole($entity);
 
@@ -99,7 +99,7 @@ class LoadCustomerUserRoleData extends AbstractFixture implements DependentFixtu
     {
         $entity = $this->loadEmptyRole($manager, $roleLabel);
 
-        /** @var Account $account */
+        /** @var Customer $account */
         $account = $this->getReference($account);
         $entity->setAccount($account);
         $entity->setSelfManaged(true);

@@ -9,7 +9,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
-use Oro\Bundle\SearchBundle\Query\Result\Item;
+use Oro\Bundle\ApiBundle\Collection\Criteria;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\SearchBundle\Query\Result;
 
 class AjaxProductController extends Controller
 {
@@ -32,22 +34,31 @@ class AjaxProductController extends Controller
             return new JsonResponse($names);
         }
 
-        $products = $this->get('oro_product.website_search.repository.product')->searchFilteredBySkus($skus);
-        $names    = $this->prepareNamesData($products);
+        $searchQuery = $this->get('oro_product.website_search.repository.product')->getFilterSkuQuery($skus);
+
+        // Configurable products require additional option selection is not implemented yet
+        // Thus we need to hide configurable products
+        // @TODO remove after configurable products require additional option selection implementation
+        $query = $searchQuery->getQuery();
+        $query->getCriteria()->andWhere(
+            Criteria::expr()->neq('type', Product::TYPE_CONFIGURABLE)
+        );
+
+        $products = $searchQuery->getResult();
+
+        $names = $this->prepareNamesData($products);
 
         return new JsonResponse($names);
     }
 
     /**
-     * @param array $products
+     * @param Result $products
      * @return array
      */
-    private function prepareNamesData(array $products)
+    private function prepareNamesData(Result $products)
     {
         $names = [];
-        /**
-         * @var Item $product
-         */
+
         foreach ($products as $product) {
             $selectedData                = $product->getSelectedData();
             $names[$selectedData['sku']] = [

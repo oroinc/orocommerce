@@ -7,7 +7,7 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 
 class FrontendCustomerUserRoleType extends AbstractCustomerUserRoleType
@@ -72,14 +72,14 @@ class FrontendCustomerUserRoleType extends AbstractCustomerUserRoleType
         }
 
         $accountUsers = $predefinedRole->getAccountUsers()->filter(
-            function (AccountUser $accountUser) use ($role) {
+            function (CustomerUser $accountUser) use ($role) {
                 return $accountUser->getAccount() &&
                     $accountUser->getAccount()->getId() === $role->getAccount()->getId();
             }
         );
 
         $accountUsers->map(
-            function (AccountUser $accountUser) use ($predefinedRole) {
+            function (CustomerUser $accountUser) use ($predefinedRole) {
                 $accountUser->removeRole($predefinedRole);
             }
         );

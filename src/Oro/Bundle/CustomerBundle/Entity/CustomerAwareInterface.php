@@ -5,14 +5,14 @@ namespace Oro\Bundle\CustomerBundle\Entity;
 interface CustomerAwareInterface
 {
     /**
-     * @return Account
+     * @return Customer
      */
     public function getCustomer();
 
     /**
      *
-     * @param Account $account
+     * @param Customer $account
      * @return $this
      */
-    public function setCustomer(Account $account);
+    public function setCustomer(Customer $account);
 }

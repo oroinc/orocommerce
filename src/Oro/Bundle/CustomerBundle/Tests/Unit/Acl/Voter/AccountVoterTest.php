@@ -3,9 +3,9 @@
 namespace Oro\Bundle\CustomerBundle\Tests\Unit\Acl\Voter;
 
 use Oro\Bundle\CustomerBundle\Acl\Voter\AccountVoter;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\AccountOwnerAwareInterface;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Provider\AccountUserRelationsProvider;
 use Oro\Bundle\CustomerBundle\Security\AccountUserProvider;
 use Oro\Bundle\EntityBundle\Exception\NotManageableEntityException;
@@ -243,7 +243,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
     public function voteProvider()
     {
         return [
-            '!AccountUser' => [
+            '!CustomerUser' => [
                 'input' => [
                     'objectId'      => 2,
                     'object'        => null,
@@ -550,7 +550,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
     {
         return sprintf(
             'entity:%s@%s',
-            AccountUser::SECURITY_GROUP,
+            CustomerUser::SECURITY_GROUP,
             'Oro\Bundle\CustomerBundle\Entity\AccountOwnerAwareInterface'
         );
     }
@@ -584,12 +584,12 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
     /**
      * @param int $id
      * @param int $accountId
-     * @return AccountUser
+     * @return CustomerUser
      */
     protected function getAccountUser($id, $accountId = null)
     {
-        /* @var $user AccountUser */
-        $user = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountUser', $id);
+        /* @var $user CustomerUser */
+        $user = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUser', $id);
 
         if ($accountId) {
             $user->setAccount($this->getAccount($accountId));
@@ -600,11 +600,11 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param int $id
-     * @return Account
+     * @return Customer
      */
     protected function getAccount($id)
     {
-        return $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account', $id);
+        return $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', $id);
     }
 
     /**
@@ -708,7 +708,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
 
         $this->relationsProvider->expects($this->once())
             ->method('getAccountIncludingEmpty')
-            ->willReturn(new Account());
+            ->willReturn(new Customer());
 
         $this->assertEquals(
             AccountVoter::ACCESS_ABSTAIN,
@@ -755,7 +755,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
 
         $this->relationsProvider->expects($this->once())
             ->method('getAccountIncludingEmpty')
-            ->willReturn(new Account());
+            ->willReturn(new Customer());
 
         $this->assertEquals(
             $expectedResult,

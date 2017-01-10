@@ -11,8 +11,8 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 use Oro\Bundle\SecurityBundle\Model\AclPrivilege;
 use Oro\Bundle\SecurityBundle\Model\AclPrivilegeIdentity;
 use Oro\Bundle\SecurityBundle\Acl\Domain\ObjectIdentityFactory;
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 use Oro\Bundle\CustomerBundle\Form\Handler\CustomerUserRoleUpdateFrontendHandler;
 
@@ -34,7 +34,7 @@ class CustomerUserRoleUpdateFrontendHandlerTest extends AbstractCustomerUserRole
     /**
      * @param CustomerUserRole $role
      * @param CustomerUserRole $expectedRole
-     * @param AccountUser $accountUser
+     * @param CustomerUser $accountUser
      * @param CustomerUserRole $expectedPredefinedRole
      *
      * @dataProvider successDataProvider
@@ -42,7 +42,7 @@ class CustomerUserRoleUpdateFrontendHandlerTest extends AbstractCustomerUserRole
     public function testOnSuccess(
         CustomerUserRole $role,
         CustomerUserRole $expectedRole,
-        AccountUser $accountUser,
+        CustomerUser $accountUser,
         CustomerUserRole $expectedPredefinedRole = null
     ) {
         $request = new Request();
@@ -90,8 +90,8 @@ class CustomerUserRoleUpdateFrontendHandlerTest extends AbstractCustomerUserRole
      */
     public function successDataProvider()
     {
-        $accountUser = new AccountUser();
-        $account = new Account();
+        $accountUser = new CustomerUser();
+        $account = new Customer();
         $accountUser->setAccount($account);
 
         return [
@@ -113,7 +113,7 @@ class CustomerUserRoleUpdateFrontendHandlerTest extends AbstractCustomerUserRole
     /**
      * @param CustomerUserRole $role
      * @param CustomerUserRole $expectedRole
-     * @param AccountUser $accountUser
+     * @param CustomerUser $accountUser
      * @param array $existingPrivileges
 
      * @dataProvider successDataPrivilegesProvider
@@ -121,7 +121,7 @@ class CustomerUserRoleUpdateFrontendHandlerTest extends AbstractCustomerUserRole
     public function testOnSuccessSetPrivileges(
         CustomerUserRole $role,
         CustomerUserRole $expectedRole,
-        AccountUser $accountUser,
+        CustomerUser $accountUser,
         array $existingPrivileges
     ) {
         $request = new Request();
@@ -177,8 +177,8 @@ class CustomerUserRoleUpdateFrontendHandlerTest extends AbstractCustomerUserRole
      */
     public function successDataPrivilegesProvider()
     {
-        $accountUser = new AccountUser();
-        $account = new Account();
+        $accountUser = new CustomerUser();
+        $account = new Customer();
         $accountUser->setAccount($account);
 
         $privilege = new AclPrivilege();

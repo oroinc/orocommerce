@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Model;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\PricingBundle\Async\Topics;
@@ -71,10 +71,10 @@ class PriceListRelationTriggerHandler
     }
 
     /**
-     * @param Account $account
+     * @param Customer $account
      * @param Website $website
      */
-    public function handleAccountChange(Account $account, Website $website)
+    public function handleAccountChange(Customer $account, Website $website)
     {
         $trigger = $this->triggerFactory->create();
         $trigger->setAccount($account)

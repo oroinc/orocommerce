@@ -19,14 +19,14 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        initialize: function (options) {
+        initialize: function(options) {
             this.header = null;
             this.footer = null;
             this.body = null;
 
             mediator.on('grid-content-loaded', function(params) {
                 this.updateGridContent(params);
-             }, this);
+            }, this);
 
             BackendGrid.__super__.initialize.apply(this, arguments);
         },
@@ -39,7 +39,10 @@ define(function(require) {
         updateGridContent: function(params) {
             this.$el.find('.grid-body').html(params.gridContent.html());
 
+            mediator.trigger('datagrid_filters:update', this);
+            this.collection.updateState(params.responseJSON.data.options);
             this.collection.reset(params.responseJSON.data.data);
+
             this.initLayout({collection: this.collection});
             this._afterRequest(params.responseJSON);
         },

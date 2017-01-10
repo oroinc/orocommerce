@@ -12,7 +12,7 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 class AccountGroupTypeTest extends FormIntegrationTestCase
 {
     const DATA_CLASS = 'Oro\Bundle\CustomerBundle\Entity\CustomerGroup';
-    const ACCOUNT_CLASS = 'Oro\Bundle\CustomerBundle\Entity\Account';
+    const ACCOUNT_CLASS = 'Oro\Bundle\CustomerBundle\Entity\Customer';
 
     /**
      * @var AccountGroupType

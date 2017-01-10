@@ -5,7 +5,7 @@ namespace Oro\Bundle\PricingBundle\Builder;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityRepository;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
@@ -247,7 +247,7 @@ abstract class AbstractCombinedPriceListBuilder
     /**
      * @param CombinedPriceList $cpl
      * @param Website $website
-     * @param Account|CustomerGroup $targetEntity
+     * @param Customer|CustomerGroup $targetEntity
      * @param bool|false $force
      */
     protected function updateRelationsAndPrices(

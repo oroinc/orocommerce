@@ -164,7 +164,7 @@ class OroPaymentBundleInstaller implements Installation, ActivityExtensionAwareI
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_account_user'),
+            $schema->getTable('oro_customer_user'),
             ['frontend_owner_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']

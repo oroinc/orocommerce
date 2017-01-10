@@ -9,8 +9,14 @@ BUYER:
     max_permissions: true
     self_managed: true
     permissions:
-        entity|Oro\Bundle\CustomerBundle\Entity\Account: [VIEW_SYSTEM]
+        entity|Oro\Bundle\CustomerBundle\Entity\Customer: [VIEW_SYSTEM]
         entity|Oro\Bundle\CustomerBundle\Entity\CustomerAddress: [VIEW_LOCAL]
-        entity|Oro\Bundle\CustomerBundle\Entity\AccountUser: [VIEW_LOCAL, EDIT_LOCAL]
+        entity|Oro\Bundle\CustomerBundle\Entity\CustomerUser: [VIEW_LOCAL, EDIT_LOCAL]
         entity|Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress: [VIEW_BASIC]
         entity|Oro\Bundle\CustomerBundle\Entity\CustomerUserRole: []
+
+ANONYMOUS:
+    label: Non-Authenticated Visitors
+    public: false
+    permissions:
+        entity|Oro\Bundle\ProductBundle\Entity\Product: [VIEW_SYSTEM]

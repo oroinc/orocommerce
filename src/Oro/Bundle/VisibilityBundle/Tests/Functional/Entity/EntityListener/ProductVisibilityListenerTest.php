@@ -4,7 +4,7 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Entity\EntityListener;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityManager;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -36,7 +36,7 @@ class ProductVisibilityListenerTest extends WebTestCase
     /** @var  CustomerGroup */
     protected $accountGroup;
 
-    /** @var  Account */
+    /** @var  Customer */
     protected $account;
 
     /**

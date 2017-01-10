@@ -6,7 +6,7 @@ use Oro\Bundle\DataGridBundle\Datasource\ResultRecordInterface;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\CustomerBundle\Datagrid\ActionPermissionProvider;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 
 class ActionPermissionProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -93,7 +93,7 @@ class ActionPermissionProviderTest extends \PHPUnit_Framework_TestCase
                     'update' => true,
                     'delete' => true
                 ],
-                'user' => new AccountUser()
+                'user' => new CustomerUser()
             ],
             'disabled record' => [
                 'isRecordEnabled' => false,

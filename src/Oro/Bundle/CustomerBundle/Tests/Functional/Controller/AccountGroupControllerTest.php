@@ -7,7 +7,7 @@ use Doctrine\ORM\EntityManager;
 use Symfony\Component\DomCrawler\Crawler;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 
 /**
@@ -112,8 +112,8 @@ class AccountGroupControllerTest extends WebTestCase
     /**
      * @param Crawler $crawler
      * @param string $name
-     * @param Account[] $appendAccounts
-     * @param Account[] $removeAccounts
+     * @param Customer[] $appendAccounts
+     * @param Customer[] $removeAccounts
      */
     protected function assertAccountGroupSave(
         Crawler $crawler,
@@ -122,13 +122,13 @@ class AccountGroupControllerTest extends WebTestCase
         array $removeAccounts = []
     ) {
         $appendAccountIds = array_map(
-            function (Account $account) {
+            function (Customer $account) {
                 return $account->getId();
             },
             $appendAccounts
         );
         $removeAccountIds = array_map(
-            function (Account $account) {
+            function (Customer $account) {
                 return $account->getId();
             },
             $removeAccounts

@@ -22,9 +22,9 @@ use Oro\Bundle\SidebarBundle\Entity\AbstractWidget;
 class CustomerUserSidebarWidget extends AbstractWidget
 {
     /**
-     * @var AccountUser
+     * @var CustomerUser
      *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\AccountUser")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerUser")
      * @ORM\JoinColumn(name="customer_user_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      * @Exclude
      */

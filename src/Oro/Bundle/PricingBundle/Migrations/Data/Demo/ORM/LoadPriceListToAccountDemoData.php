@@ -6,7 +6,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\PricingBundle\Entity\PriceListToAccount;
 use Oro\Bundle\WebsiteBundle\Migrations\Data\ORM\LoadWebsiteData;
 
@@ -18,7 +18,7 @@ class LoadPriceListToAccountDemoData extends LoadBasePriceListRelationDemoData
     protected $accountRepository;
 
     /**
-     * @var Account[]
+     * @var Customer[]
      */
     protected $accounts = [];
 
@@ -62,7 +62,7 @@ class LoadPriceListToAccountDemoData extends LoadBasePriceListRelationDemoData
     /**
      * @param EntityManager $manager
      * @param string $name
-     * @return Account
+     * @return Customer
      */
     protected function getAccountByName(EntityManager $manager, $name)
     {
@@ -86,7 +86,7 @@ class LoadPriceListToAccountDemoData extends LoadBasePriceListRelationDemoData
     protected function getAccountRepository(EntityManager $manager)
     {
         if ($this->accountRepository === null) {
-            $this->accountRepository = $manager->getRepository('OroCustomerBundle:Account');
+            $this->accountRepository = $manager->getRepository('OroCustomerBundle:Customer');
         }
 
         return $this->accountRepository;

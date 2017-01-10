@@ -7,7 +7,7 @@ use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
@@ -29,11 +29,11 @@ class PriceListToAccountRepository extends EntityRepository implements PriceList
 {
     /**
      * @param BasePriceList $priceList
-     * @param Account $account
+     * @param Customer $account
      * @param Website $website
      * @return PriceListToAccount
      */
-    public function findByPrimaryKey(BasePriceList $priceList, Account $account, Website $website)
+    public function findByPrimaryKey(BasePriceList $priceList, Customer $account, Website $website)
     {
         return $this->findOneBy(['account' => $account, 'priceList' => $priceList, 'website' => $website]);
     }
@@ -58,13 +58,13 @@ class PriceListToAccountRepository extends EntityRepository implements PriceList
      * @param CustomerGroup $accountGroup
      * @param Website $website
      * @param int|null $fallback
-     * @return BufferedQueryResultIterator|Account[]
+     * @return BufferedQueryResultIterator|Customer[]
      */
     public function getAccountIteratorByDefaultFallback(CustomerGroup $accountGroup, Website $website, $fallback = null)
     {
         $qb = $this->getEntityManager()->createQueryBuilder()
             ->select('distinct account')
-            ->from('OroCustomerBundle:Account', 'account');
+            ->from('OroCustomerBundle:Customer', 'account');
 
         $qb->innerJoin(
             PriceListToAccount::class,
@@ -155,10 +155,10 @@ class PriceListToAccountRepository extends EntityRepository implements PriceList
     }
 
     /**
-     * @param Account $account
+     * @param Customer $account
      * @return AccountWebsiteDTO[]|ArrayCollection
      */
-    public function getAccountWebsitePairsByAccount(Account $account)
+    public function getAccountWebsitePairsByAccount(Customer $account)
     {
         $qb = $this->createQueryBuilder('PriceListToAccount');
 
@@ -175,8 +175,8 @@ class PriceListToAccountRepository extends EntityRepository implements PriceList
         $em = $this->getEntityManager();
         $collection = new ArrayCollection();
         foreach ($pairs as $pair) {
-            /** @var Account $account */
-            $account = $em->getReference('OroCustomerBundle:Account', $pair['account_id']);
+            /** @var Customer $account */
+            $account = $em->getReference('OroCustomerBundle:Customer', $pair['account_id']);
             /** @var Website $website */
             $website = $em->getReference('OroWebsiteBundle:Website', $pair['website_id']);
             $collection->add(new AccountWebsiteDTO($account, $website));
@@ -186,11 +186,11 @@ class PriceListToAccountRepository extends EntityRepository implements PriceList
     }
 
     /**
-     * @param Account $account
+     * @param Customer $account
      * @param Website $website
      * @return mixed
      */
-    public function delete(Account $account, Website $website)
+    public function delete(Customer $account, Website $website)
     {
         return $this->getEntityManager()->createQueryBuilder()
             ->delete($this->getEntityName(), 'PriceListToAccount')
@@ -203,7 +203,7 @@ class PriceListToAccountRepository extends EntityRepository implements PriceList
     }
 
     /**
-     * @param array Account[]|int[] $holdersIds
+     * @param array Customer[]|int[] $holdersIds
      * @return PriceListToAccount[]
      */
     public function getRelationsByHolders(array $holdersIds)

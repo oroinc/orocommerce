@@ -4,27 +4,27 @@ namespace Oro\Bundle\CustomerBundle\Event;
 
 use Symfony\Component\EventDispatcher\Event;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 
 class AccountEvent extends Event
 {
     const ON_ACCOUNT_GROUP_CHANGE = 'oro_customer.account.on_account_group_change';
 
     /**
-     * @var  Account
+     * @var  Customer
      */
     protected $account;
 
     /**
-     * @param Account $account
+     * @param Customer $account
      */
-    public function __construct(Account $account)
+    public function __construct(Customer $account)
     {
         $this->account = $account;
     }
 
     /**
-     * @return Account
+     * @return Customer
      */
     public function getAccount()
     {

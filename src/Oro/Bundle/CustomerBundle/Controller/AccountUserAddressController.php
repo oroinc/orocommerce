@@ -11,7 +11,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\AddressBundle\Form\Handler\AddressHandler;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 use Oro\Bundle\CustomerBundle\Form\Type\AccountUserTypedAddressType;
 
@@ -22,10 +22,10 @@ class AccountUserAddressController extends Controller
      * @Template("OroCustomerBundle:Address/widget:addressBook.html.twig")
      * @AclAncestor("oro_account_account_user_view")
      *
-     * @param AccountUser $accountUser
+     * @param CustomerUser $accountUser
      * @return array
      */
-    public function addressBookAction(AccountUser $accountUser)
+    public function addressBookAction(CustomerUser $accountUser)
     {
         return [
             'entity' => $accountUser,
@@ -44,10 +44,10 @@ class AccountUserAddressController extends Controller
      * @AclAncestor("oro_account_account_user_create")
      * @ParamConverter("accountUser", options={"id" = "entityId"})
      *
-     * @param AccountUser $accountUser
+     * @param CustomerUser $accountUser
      * @return array
      */
-    public function createAction(AccountUser $accountUser)
+    public function createAction(CustomerUser $accountUser)
     {
         return $this->update($accountUser, new CustomerUserAddress());
     }
@@ -62,22 +62,22 @@ class AccountUserAddressController extends Controller
      * @AclAncestor("oro_account_account_user_update")
      * @ParamConverter("accountUser", options={"id" = "entityId"})
      *
-     * @param AccountUser        $accountUser
+     * @param CustomerUser        $accountUser
      * @param CustomerUserAddress $address
      * @return array
      */
-    public function updateAction(AccountUser $accountUser, CustomerUserAddress $address)
+    public function updateAction(CustomerUser $accountUser, CustomerUserAddress $address)
     {
         return $this->update($accountUser, $address);
     }
 
     /**
-     * @param AccountUser $accountUser
+     * @param CustomerUser $accountUser
      * @param CustomerUserAddress $address
      * @return array
      * @throws BadRequestHttpException
      */
-    protected function update(AccountUser $accountUser, CustomerUserAddress $address)
+    protected function update(CustomerUser $accountUser, CustomerUserAddress $address)
     {
         $responseData = [
             'saved' => false,
@@ -95,7 +95,7 @@ class AccountUserAddressController extends Controller
         if (!$address->getFrontendOwner()) {
             $accountUser->addAddress($address);
         } elseif ($address->getFrontendOwner()->getId() !== $accountUser->getId()) {
-            throw new BadRequestHttpException('Address must belong to AccountUser');
+            throw new BadRequestHttpException('Address must belong to CustomerUser');
         }
 
         $form = $this->createForm(AccountUserTypedAddressType::NAME, $address);
@@ -121,7 +121,7 @@ class AccountUserAddressController extends Controller
     }
 
     /**
-     * @param AccountUser $entity
+     * @param CustomerUser $entity
      * @return array
      */
     protected function getAddressBookOptions($entity)

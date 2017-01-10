@@ -4,7 +4,7 @@ namespace Oro\Bundle\ShoppingListBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -39,7 +39,7 @@ class LineItemRepository extends EntityRepository
 
     /**
      * @param array|Product $products
-     * @param AccountUser $accountUser
+     * @param CustomerUser $accountUser
      * @return array|LineItem[]
      */
     public function getProductItemsWithShoppingListNames($products, $accountUser)
@@ -89,10 +89,10 @@ class LineItemRepository extends EntityRepository
 
     /**
      * @param Product $product
-     * @param AccountUser $accountUser
+     * @param CustomerUser $accountUser
      * @return array|LineItem[]
      */
-    public function getOneProductLineItemsWithShoppingListNames(Product $product, AccountUser $accountUser)
+    public function getOneProductLineItemsWithShoppingListNames(Product $product, CustomerUser $accountUser)
     {
         $qb = $this->createQueryBuilder('li')
             ->select('li, shoppingList')

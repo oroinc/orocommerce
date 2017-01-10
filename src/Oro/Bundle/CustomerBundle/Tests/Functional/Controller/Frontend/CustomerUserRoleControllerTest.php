@@ -7,7 +7,7 @@ use Oro\Bundle\SecurityBundle\Acl\Persistence\AclManager;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData as OroLoadAccountUserData;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserRoleData;
 
@@ -39,7 +39,7 @@ class CustomerUserRoleControllerTest extends WebTestCase
         'entity' => [
             0 => [
                 'identity' => [
-                    'id' => 'entity:Oro\Bundle\CustomerBundle\Entity\Account',
+                    'id' => 'entity:Oro\Bundle\CustomerBundle\Entity\Customer',
                     'name' => 'oro.customer.account.entity_label',
                 ],
                 'permissions' => [],
@@ -48,7 +48,7 @@ class CustomerUserRoleControllerTest extends WebTestCase
     ];
 
     /**
-     * @var AccountUser
+     * @var CustomerUser
      */
     protected $currentUser;
 
@@ -188,7 +188,7 @@ class CustomerUserRoleControllerTest extends WebTestCase
         $this->assertEquals(self::ACCOUNT_UPDATED_ROLE, $role->getLabel());
         $this->assertNotEmpty($role->getRole());
 
-        /** @var \Oro\Bundle\CustomerBundle\Entity\AccountUser $user */
+        /** @var \Oro\Bundle\CustomerBundle\Entity\CustomerUser $user */
         $user = $this->getCurrentUser();
 
         $this->assertEquals($role, $user->getRole($role->getRole()));
@@ -284,7 +284,7 @@ class CustomerUserRoleControllerTest extends WebTestCase
         $this->assertEquals(self::CUSTOMIZED_ROLE, $role->getLabel());
         $this->assertNotEmpty($role->getRole());
 
-        /** @var \Oro\Bundle\CustomerBundle\Entity\AccountUser $user */
+        /** @var \Oro\Bundle\CustomerBundle\Entity\CustomerUser $user */
         $user = $this->getCurrentUser();
 
         // Add new role
@@ -400,7 +400,7 @@ class CustomerUserRoleControllerTest extends WebTestCase
      */
     protected function getUserRepository()
     {
-        return $this->getObjectManager()->getRepository('OroCustomerBundle:AccountUser');
+        return $this->getObjectManager()->getRepository('OroCustomerBundle:CustomerUser');
     }
 
     /**
@@ -408,7 +408,7 @@ class CustomerUserRoleControllerTest extends WebTestCase
      */
     protected function getAccountRepository()
     {
-        return $this->getObjectManager()->getRepository('OroCustomerBundle:Account');
+        return $this->getObjectManager()->getRepository('OroCustomerBundle:Customer');
     }
 
     /**
@@ -420,7 +420,7 @@ class CustomerUserRoleControllerTest extends WebTestCase
     }
 
     /**
-     * @return AccountUser
+     * @return CustomerUser
      */
     protected function getCurrentUser()
     {

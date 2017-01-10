@@ -11,8 +11,8 @@ use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as AccountSelectTypeStu
 
 use Genemu\Bundle\FormBundle\Form\JQuery\Type\Select2Type;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 use Oro\Bundle\CustomerBundle\Form\Type\AccountSelectType;
 use Oro\Bundle\CustomerBundle\Form\Type\FrontendCustomerUserRoleType;
@@ -99,7 +99,7 @@ class FrontendCustomerUserRoleTypeTest extends AbstractCustomerUserRoleTypeTest
     {
         $roleLabel = 'account_role_label';
         $alteredRoleLabel = 'altered_role_label';
-        $account = new Account();
+        $account = new Customer();
 
         $defaultRole = new CustomerUserRole();
         $defaultRole->setLabel($roleLabel);
@@ -143,25 +143,25 @@ class FrontendCustomerUserRoleTypeTest extends AbstractCustomerUserRoleTypeTest
 
     public function testSubmitUpdateAccountUsers()
     {
-        /** @var Account $account */
-        $account1 = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account', 1);
-        $account2 = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account', 2);
+        /** @var Customer $account */
+        $account1 = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', 1);
+        $account2 = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', 2);
 
         /** @var CustomerUserRole $role */
         $role = $this->getEntity(self::DATA_CLASS, 1);
         $role->setRole('label');
         $role->setAccount($account1);
 
-        /** @var AccountUser $accountUser1 */
-        $accountUser1 = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountUser', 1);
+        /** @var CustomerUser $accountUser1 */
+        $accountUser1 = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUser', 1);
         $accountUser1->setAccount($account1);
 
-        /** @var AccountUser $accountUser2 */
-        $accountUser2 = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountUser', 2);
+        /** @var CustomerUser $accountUser2 */
+        $accountUser2 = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUser', 2);
         $accountUser2->setAccount($account2);
 
-        /** @var AccountUser $accountUser3 */
-        $accountUser3 = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountUser', 3);
+        /** @var CustomerUser $accountUser3 */
+        $accountUser3 = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUser', 3);
 
         /** @var CustomerUserRole $predefinedRole */
         $predefinedRole = $this->getEntity(self::DATA_CLASS, 2);

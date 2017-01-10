@@ -5,7 +5,6 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 use Doctrine\Common\Collections\ArrayCollection;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\PricingBundle\Entity\BaseProductPrice;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
@@ -13,10 +12,11 @@ use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
-use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
  * @dbIsolation
@@ -700,7 +700,7 @@ class ProductPriceRepositoryTest extends WebTestCase
             ->get('doctrine')
             ->getRepository('OroPricingBundle:ProductPrice');
         return (int)$repository->createQueryBuilder('pp')
-            ->select('count(pp.id)')
+            ->select('COUNT(pp.id)')
             ->getQuery()
             ->getSingleScalarResult();
     }

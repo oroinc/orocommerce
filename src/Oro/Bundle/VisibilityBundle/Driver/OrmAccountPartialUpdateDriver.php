@@ -5,7 +5,7 @@ namespace Oro\Bundle\VisibilityBundle\Driver;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\VisibilityBundle\Visibility\Provider\ProductVisibilityProvider;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
@@ -47,7 +47,7 @@ class OrmAccountPartialUpdateDriver extends AbstractAccountPartialUpdateDriver
     /**
      * {@inheritdoc}
      */
-    public function createAccountWithoutAccountGroupVisibility(Account $account)
+    public function createAccountWithoutAccountGroupVisibility(Customer $account)
     {
         $queryBuilder = $this->getIndexIntegerQueryBuilder('visibilityNew');
 
@@ -79,7 +79,7 @@ class OrmAccountPartialUpdateDriver extends AbstractAccountPartialUpdateDriver
     /**
      * {@inheritdoc}
      */
-    public function updateAccountVisibility(Account $account)
+    public function updateAccountVisibility(Customer $account)
     {
         $connection = $this
             ->doctrineHelper
@@ -126,7 +126,7 @@ class OrmAccountPartialUpdateDriver extends AbstractAccountPartialUpdateDriver
     /**
      * {@inheritdoc}
      */
-    public function deleteAccountVisibility(Account $account)
+    public function deleteAccountVisibility(Customer $account)
     {
         $itemQueryBuilder = $this->getItemQueryBuilder();
 

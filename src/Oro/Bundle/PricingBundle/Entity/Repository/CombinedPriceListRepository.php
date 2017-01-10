@@ -2,13 +2,13 @@
 
 namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
-use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Join;
 
 use Doctrine\ORM\Query\Expr\Orx;
+use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\BaseCombinedPriceListRelation;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
@@ -40,13 +40,13 @@ class CombinedPriceListRepository extends BasePriceListRepository
     }
 
     /**
-     * @param Account $account
+     * @param Customer $account
      * @param Website $website
      * @param bool|true $isEnabled
      * @return null|CombinedPriceList
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function getPriceListByAccount(Account $account, Website $website, $isEnabled = true)
+    public function getPriceListByAccount(Customer $account, Website $website, $isEnabled = true)
     {
         $qb = $this->createQueryBuilder('priceList');
         $qb
@@ -193,7 +193,7 @@ class CombinedPriceListRepository extends BasePriceListRepository
      * @param CombinedPriceList $combinedPriceList
      * @param CombinedPriceList $activeCpl
      * @param Website $website
-     * @param Account|CustomerGroup $targetEntity
+     * @param Customer|CustomerGroup $targetEntity
      * @return BaseCombinedPriceListRelation
      */
     public function updateCombinedPriceListConnection(
@@ -204,7 +204,7 @@ class CombinedPriceListRepository extends BasePriceListRepository
     ) {
         $em = $this->getEntityManager();
         $relation = null;
-        if ($targetEntity instanceof Account) {
+        if ($targetEntity instanceof Customer) {
             $relation = $em->getRepository('OroPricingBundle:CombinedPriceListToAccount')
                 ->findOneBy(['account' => $targetEntity, 'website' => $website]);
             if (!$relation) {
@@ -337,6 +337,33 @@ class CombinedPriceListRepository extends BasePriceListRepository
      */
     public function getCPLsForPriceCollectByTimeOffset($offsetHours)
     {
+        $qb = $this->getCPLsForPriceCollectByTimeOffsetQueryBuilder($offsetHours);
+
+        $iterator = new BufferedQueryResultIterator($qb);
+        $iterator->setBufferSize(self::CPL_BATCH_SIZE);
+
+        return $iterator;
+    }
+
+    /**
+     * @param int $offsetHours
+     *
+     * @return int
+     */
+    public function getCPLsForPriceCollectByTimeOffsetCount($offsetHours)
+    {
+        $qb = $this->getCPLsForPriceCollectByTimeOffsetQueryBuilder($offsetHours);
+
+        return $qb->select('COUNT(cpl.id)')->getQuery()->getSingleScalarResult();
+    }
+
+    /**
+     * @param int $offsetHours
+     *
+     * @return QueryBuilder
+     */
+    protected function getCPLsForPriceCollectByTimeOffsetQueryBuilder($offsetHours)
+    {
         $activateDate = new \DateTime('now', new \DateTimeZone('UTC'));
         $activateDate->add(new \DateInterval(sprintf('PT%dM', $offsetHours * 60)));
 
@@ -360,9 +387,6 @@ class CombinedPriceListRepository extends BasePriceListRepository
                 'activateData' => $activateDate
             ]);
 
-        $iterator = new BufferedQueryResultIterator($qb);
-        $iterator->setBufferSize(self::CPL_BATCH_SIZE);
-
-        return $iterator;
+        return $qb;
     }
 }

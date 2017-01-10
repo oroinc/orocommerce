@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\DataProvider;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
@@ -82,8 +82,8 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit_Framework_TestCase
             ->method('getCurrent')
             ->willReturn($shoppingList);
 
-        /** @var  AccountUser $accountUser */
-        $accountUser = new AccountUser();
+        /** @var  CustomerUser $accountUser */
+        $accountUser = new CustomerUser();
 
         $this->lineItemRepository->expects($product && $shoppingList ? $this->once() : $this->never())
             ->method('getProductItemsWithShoppingListNames')

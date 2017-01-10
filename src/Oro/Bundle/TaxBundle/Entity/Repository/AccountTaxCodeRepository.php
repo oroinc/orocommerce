@@ -3,18 +3,18 @@
 namespace Oro\Bundle\TaxBundle\Entity\Repository;
 
 use Oro\Bundle\TaxBundle\Entity\AccountTaxCode;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\TaxBundle\Model\TaxCodeInterface;
 
 class AccountTaxCodeRepository extends AbstractTaxCodeRepository
 {
     /**
-     * @param Account $account
+     * @param Customer $account
      *
      * @return AccountTaxCode|null
      */
-    public function findOneByAccount(Account $account)
+    public function findOneByAccount(Customer $account)
     {
         if (!$account->getId()) {
             return null;

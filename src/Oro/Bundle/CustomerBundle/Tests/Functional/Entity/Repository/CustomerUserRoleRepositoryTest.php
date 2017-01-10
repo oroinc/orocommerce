@@ -4,7 +4,7 @@ namespace Oro\Bundle\CustomerBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\Repository\CustomerUserRoleRepository;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserRoleData;
@@ -103,7 +103,7 @@ class CustomerUserRoleRepositoryTest extends WebTestCase
      */
     public function testGetAvailableRolesByAccountUserQueryBuilder($accountUser, array $expectedCustomerUserRoles)
     {
-        /** @var AccountUser $accountUser */
+        /** @var CustomerUser $accountUser */
         $accountUser = $this->getReference($accountUser);
         /** @var CustomerUserRole[] $actual */
         $actual = $this->repository
@@ -130,7 +130,7 @@ class CustomerUserRoleRepositoryTest extends WebTestCase
     public function testGetAvailableSelfManagedRolesByAccountUserQueryBuilder(
         $accountUser
     ) {
-        /** @var AccountUser $accountUser */
+        /** @var CustomerUser $accountUser */
         $accountUser = $this->getReference($accountUser);
         /** @var CustomerUserRole[] $actual */
         $actual = $this->repository

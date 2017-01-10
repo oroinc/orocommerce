@@ -35,6 +35,8 @@ class OroAccountBundleStage2 implements
      */
     public function up(Schema $schema, QueryBag $queries)
     {
+        $this->renameCustomer($schema);
+        $this->renameCustomerUser($schema);
         $this->renameAccountUserSidebarWidget($schema);
         $this->renameAccountUserSidebarState($schema);
         $this->renameCustomerSettings($schema);
@@ -48,6 +50,16 @@ class OroAccountBundleStage2 implements
             'oro_note',
             'oro_customer_group'
         );
+        $this->activityExtension->addActivityAssociation(
+            $schema,
+            'oro_note',
+            'oro_customer_user'
+        );
+        $this->activityExtension->addActivityAssociation(
+            $schema,
+            'oro_note',
+            'oro_customer'
+        );
     }
 
     /**
@@ -60,15 +72,21 @@ class OroAccountBundleStage2 implements
             'oro_note',
             'oro_customer_user_role'
         );
-        $table = $schema->getTable("oro_acc_user_access_role");
+        $table = $schema->getTable("oro_cus_user_access_role");
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_customer_user_role'),
             ['customer_user_role_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_customer_user'),
+            ['customer_user_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
 
-        $table = $schema->getTable("oro_account_role_to_website");
+        $table = $schema->getTable("oro_customer_role_to_website");
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_customer_user_role'),
             ['customer_user_role_id'],
@@ -94,7 +112,7 @@ class OroAccountBundleStage2 implements
         $table = $schema->getTable("oro_customer_user_sdbar_wdg");
 
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_account_user'),
+            $schema->getTable('oro_customer_user'),
             ['customer_user_id'],
             ['id'],
             ['onDelete' => 'CASCADE'],
@@ -111,7 +129,7 @@ class OroAccountBundleStage2 implements
     {
         $table = $schema->getTable('oro_customer_user_sdbar_st');
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_account_user'),
+            $schema->getTable('oro_customer_user'),
             ['customer_user_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
@@ -127,7 +145,7 @@ class OroAccountBundleStage2 implements
     {
         $table = $schema->getTable('oro_customer_user_settings');
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_account_user'),
+            $schema->getTable('oro_customer_user'),
             ['customer_user_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
@@ -186,6 +204,146 @@ class OroAccountBundleStage2 implements
                 ['onUpdate' => null, 'onDelete' => 'CASCADE']
             );
         }
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    public function renameCustomer(Schema $schema)
+    {
+        $schema->getTable('oro_customer')->addIndex(['name'], 'oro_customer_name_idx', []);
+
+        $schema->getTable('oro_customer_user')
+            ->addForeignKeyConstraint(
+                $schema->getTable('oro_customer'),
+                ['customer_id'],
+                ['id'],
+                ['onDelete' => 'SET NULL', 'onUpdate' => null]
+            );
+
+        $schema->getTable('oro_attachment')
+            ->addForeignKeyConstraint(
+                $schema->getTable('oro_customer'),
+                ['customer_e2cfcbe5_id'],
+                ['id'],
+                ['onDelete' => 'SET NULL', 'onUpdate' => null]
+            );
+
+        if ($schema->hasTable('oro_rel_c3990ba6784fec5f6e321b')) {
+            $schema->getTable('oro_rel_c3990ba6784fec5f6e321b')
+                ->addForeignKeyConstraint(
+                    $schema->getTable('oro_customer'),
+                    ['customer_id'],
+                    ['id'],
+                    ['onDelete' => 'CASCADE', 'onUpdate' => null]
+                );
+        }
+        if ($schema->hasTable('oro_rel_6f8f552a784fec5fcd148c')) {
+            $schema->getTable('oro_rel_6f8f552a784fec5fcd148c')
+                ->addForeignKeyConstraint(
+                    $schema->getTable('oro_customer'),
+                    ['customer_id'],
+                    ['id'],
+                    ['onDelete' => 'CASCADE', 'onUpdate' => null]
+                );
+        }
+
+        $table = $schema->getTable('oro_customer_user_role');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_customer'),
+            ['customer_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
+        $table->addUniqueIndex(['customer_id', 'label'], 'oro_customer_user_role_customer_id_label_idx');
+
+        $table = $schema->getTable('oro_customer_sales_reps');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_customer'),
+            ['customer_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    public function renameCustomerUser(Schema $schema)
+    {
+        $table = $schema->getTable('oro_customer_user_org');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_customer_user'),
+            ['customer_user_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+
+//        $schema->getTable('oro_audit')
+//            ->addForeignKeyConstraint(
+//                $schema->getTable('oro_customer_user'),
+//                ['customer_user_id'],
+//                ['id'],
+//                ['onDelete' => 'CASCADE', 'onUpdate' => null]
+//            );
+
+        $schema->getTable('oro_cus_navigation_history')
+            ->addForeignKeyConstraint(
+                $schema->getTable('oro_customer_user'),
+                ['customer_user_id'],
+                ['id'],
+                ['onDelete' => 'CASCADE', 'onUpdate' => null]
+            );
+
+        $schema->getTable('oro_customer_user_sales_reps')
+            ->addForeignKeyConstraint(
+                $schema->getTable('oro_customer_user'),
+                ['customer_user_id'],
+                ['id'],
+                ['onDelete' => 'CASCADE', 'onUpdate' => null]
+            );
+
+        $schema->getTable('oro_cus_pagestate')
+            ->addForeignKeyConstraint(
+                $schema->getTable('oro_customer_user'),
+                ['customer_user_id'],
+                ['id'],
+                ['onDelete' => 'CASCADE', 'onUpdate' => null]
+            );
+
+        $schema->getTable('oro_cus_navigation_item')
+            ->addForeignKeyConstraint(
+                $schema->getTable('oro_customer_user'),
+                ['customer_user_id'],
+                ['id'],
+                ['onDelete' => 'CASCADE', 'onUpdate' => null]
+            );
+
+        $table = $schema->getTable('oro_cus_navigation_item');
+        $table->addIndex(['customer_user_id', 'position'], 'oro_sorted_items_idx', []);
+
+        $table = $schema->getTable('oro_rel_46a29d193708e583c5ba51');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_customer_user'),
+            ['customeruser_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table = $schema->getTable('oro_rel_265353703708e583c5ba51');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_customer_user'),
+            ['customeruser_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+
+        $table = $schema->getTable('oro_attachment');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_customer_user'),
+            ['customer_user_539cf909_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
     }
 
     /**

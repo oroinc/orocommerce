@@ -4,8 +4,8 @@ namespace Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 use Oro\Bundle\CustomerBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
@@ -260,7 +260,7 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
         $organization   = $defaultUser->getOrganization();
 
         foreach ($this->accounts as $item) {
-            $account = new Account();
+            $account = new Customer();
             $account
                 ->setName($item['name'])
                 ->setOrganization($organization)
@@ -288,7 +288,7 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
         $organization   = $defaultUser->getOrganization();
 
         foreach ($this->accountUsers as $item) {
-            /* @var $accountUser AccountUser */
+            /* @var $accountUser CustomerUser */
             $accountUser = $userManager->createUser();
 
             $accountUser

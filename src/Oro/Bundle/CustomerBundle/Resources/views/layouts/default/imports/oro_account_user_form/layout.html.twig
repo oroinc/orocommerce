@@ -13,7 +13,7 @@
     {{ form_row(form._token) }}
 
     <fieldset class="profile__form__row">
-        <legend>{{ 'oro.customer.accountuser.profile.form.sections.profile_information.label'|trans }}</legend>
+        <legend>{{ 'oro.customer.customeruser.profile.form.sections.profile_information.label'|trans }}</legend>
         <fieldset class="profile__form__row">
             <div class="profile__form__col form__col_x6 col_first">
                 {{ form_row(form.namePrefix, {'attr': {'placeholder': 'oro.customer.form.placeholder.name_prefix'|trans}, 'parentClass': ''}) }}
@@ -48,7 +48,7 @@
     </fieldset>
 
     <fieldset class="profile__form__row">
-        <legend>{{ 'oro.customer.accountuser.profile.form.sections.password.label'|trans }}</legend>
+        <legend>{{ 'oro.customer.customeruser.profile.form.sections.password.label'|trans }}</legend>
 
         <div class="password">
             <input type="text" class="profile__form__no-autocomplete-fix" />
@@ -75,7 +75,7 @@
     </fieldset>
 
     <fieldset class="profile__form__row">
-        <legend>{{ 'oro.customer.accountuser.profile.form.sections.roles.label'|trans }}</legend>
+        <legend>{{ 'oro.customer.customeruser.profile.form.sections.roles.label'|trans }}</legend>
         {{ form_row(form.roles)}}
     </fieldset>
 

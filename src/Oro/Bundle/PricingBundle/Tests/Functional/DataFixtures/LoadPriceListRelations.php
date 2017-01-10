@@ -6,7 +6,7 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\BasePriceListRelation;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
@@ -169,7 +169,7 @@ class LoadPriceListRelations extends AbstractFixture implements DependentFixture
             }
 
             foreach ($priceListsData['priceListsToAccounts'] as $accountReference => $priceLists) {
-                /** @var Account $account */
+                /** @var Customer $account */
                 $account = $this->getReference($accountReference);
                 foreach ($priceLists as $priceListData) {
                     $priceListToAccount = new PriceListToAccount();

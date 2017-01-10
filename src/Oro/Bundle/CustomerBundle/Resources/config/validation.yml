@@ -1,4 +1,4 @@
-Oro\Bundle\CustomerBundle\Entity\Account:
+Oro\Bundle\CustomerBundle\Entity\Customer:
     properties:
         name:
             - NotBlank: ~
@@ -27,7 +27,7 @@ Oro\Bundle\CustomerBundle\Entity\CustomerGroup:
         name:
             - NotBlank: ~
 
-Oro\Bundle\CustomerBundle\Entity\AccountUser:
+Oro\Bundle\CustomerBundle\Entity\CustomerUser:
     constraints:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: username
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: email

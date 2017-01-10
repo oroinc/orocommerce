@@ -4,7 +4,7 @@ namespace Oro\Bundle\CustomerBundle\Tests\Unit\Mailer;
 
 use Oro\Bundle\UserBundle\Tests\Unit\Mailer\AbstractProcessorTest;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Mailer\AccountUserProcessor;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
@@ -25,7 +25,7 @@ class AccountUserProcessorTest extends AbstractProcessorTest
 
     public function testSendEmail()
     {
-        $accountUser = new AccountUser();
+        $accountUser = new CustomerUser();
         $accountUser->setWebsite($this->website);
 
         $templateName = 'email_template_name';

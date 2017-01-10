@@ -15,7 +15,7 @@ use Oro\Bundle\SecurityBundle\Owner\Metadata\MetadataProviderInterface;
 use Oro\Bundle\SecurityBundle\Owner\Metadata\OwnershipMetadataInterface;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\EventListener\OrmDatasourceAclListener;
 
 class OrmDatasourceAclListenerTest extends \PHPUnit_Framework_TestCase
@@ -71,7 +71,7 @@ class OrmDatasourceAclListenerTest extends \PHPUnit_Framework_TestCase
     {
         $this->securityfacade->expects($this->once())
             ->method('getLoggedUser')
-            ->willReturn(new AccountUser());
+            ->willReturn(new CustomerUser());
 
         /** @var FromClause $from */
         $from = $this->getMockBuilder('Doctrine\ORM\Query\AST\FromClause')->disableOriginalConstructor()->getMock();
