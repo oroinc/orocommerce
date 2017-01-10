@@ -9,7 +9,7 @@ use Oro\Bundle\EntityConfigBundle\Config\ConfigInterface;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\SecurityBundle\Acl\AccessLevel;
 use Oro\Bundle\SecurityBundle\Owner\Metadata\AbstractMetadataProvider;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 
 class FrontendOwnershipMetadataProvider extends AbstractMetadataProvider
 {
@@ -104,7 +104,7 @@ class FrontendOwnershipMetadataProvider extends AbstractMetadataProvider
      */
     public function supports()
     {
-        return $this->getContainer()->get('oro_security.security_facade')->getLoggedUser() instanceof AccountUser;
+        return $this->getContainer()->get('oro_security.security_facade')->getLoggedUser() instanceof CustomerUser;
     }
 
     /**
@@ -184,7 +184,7 @@ class FrontendOwnershipMetadataProvider extends AbstractMetadataProvider
             $className = $value->getId()->getClassName();
             if ($securityProvider->hasConfig($className)) {
                 $securityConfig = $securityProvider->getConfig($className);
-                if ($securityConfig->get('group_name') === AccountUser::SECURITY_GROUP) {
+                if ($securityConfig->get('group_name') === CustomerUser::SECURITY_GROUP) {
                     continue;
                 }
             }

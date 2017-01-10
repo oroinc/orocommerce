@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Placeholder;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\AccountIdPlaceholder;
 
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -65,7 +65,7 @@ class AccountIdPlaceholderTest extends \PHPUnit_Framework_TestCase
     public function testGetValueWhenAccountUserIsGiven()
     {
         $accountUserId = 7;
-        $accountUser = $this->getMockBuilder(AccountUser::class)
+        $accountUser = $this->getMockBuilder(CustomerUser::class)
             ->getMock();
 
         $accountUser

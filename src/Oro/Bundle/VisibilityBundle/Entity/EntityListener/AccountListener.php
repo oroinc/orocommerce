@@ -5,7 +5,7 @@ namespace Oro\Bundle\VisibilityBundle\Entity\EntityListener;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 
 use Oro\Bundle\VisibilityBundle\Driver\AccountPartialUpdateDriverInterface;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\VisibilityBundle\Model\MessageFactoryInterface;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
@@ -55,9 +55,9 @@ class AccountListener
     }
 
     /**
-     * @param Account $account
+     * @param Customer $account
      */
-    public function postPersist(Account $account)
+    public function postPersist(Customer $account)
     {
         if ($account->getGroup()) {
             $this->sendMessageToProducer($account);
@@ -67,18 +67,18 @@ class AccountListener
     }
 
     /**
-     * @param Account $account
+     * @param Customer $account
      */
-    public function preRemove(Account $account)
+    public function preRemove(Customer $account)
     {
         $this->partialUpdateDriver->deleteAccountVisibility($account);
     }
 
     /**
-     * @param Account $account
+     * @param Customer $account
      * @param PreUpdateEventArgs $args
      */
-    public function preUpdate(Account $account, PreUpdateEventArgs $args)
+    public function preUpdate(Customer $account, PreUpdateEventArgs $args)
     {
         if ($args->hasChangedField('group')) {
             $this->sendMessageToProducer($account);
@@ -86,9 +86,9 @@ class AccountListener
     }
 
     /**
-     * @param Account $account
+     * @param Customer $account
      */
-    protected function sendMessageToProducer(Account $account)
+    protected function sendMessageToProducer(Customer $account)
     {
         $this->messageProducer->send($this->topic, $this->messageFactory->createMessage($account));
     }

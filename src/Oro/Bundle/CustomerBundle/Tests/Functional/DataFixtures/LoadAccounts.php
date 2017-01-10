@@ -8,8 +8,8 @@ use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 
 class LoadAccounts extends AbstractFixture implements DependentFixtureInterface
 {
@@ -79,7 +79,7 @@ class LoadAccounts extends AbstractFixture implements DependentFixtureInterface
 
     /**
      * @param string $reference
-     * @return AccountGroup
+     * @return CustomerGroup
      */
     protected function getAccountGroup($reference)
     {
@@ -90,18 +90,18 @@ class LoadAccounts extends AbstractFixture implements DependentFixtureInterface
      * @param ObjectManager $manager
      * @param string $name
      * @param User $owner
-     * @param Account $parent
-     * @param AccountGroup $group
-     * @return Account
+     * @param Customer $parent
+     * @param CustomerGroup $group
+     * @return Customer
      */
     protected function createAccount(
         ObjectManager $manager,
         $name,
         User $owner,
-        Account $parent = null,
-        AccountGroup $group = null
+        Customer $parent = null,
+        CustomerGroup $group = null
     ) {
-        $account = new Account();
+        $account = new Customer();
         $account->setName($name);
         $account->setOwner($owner);
         $account->setOrganization($owner->getOrganization());

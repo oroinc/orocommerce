@@ -5,14 +5,14 @@ namespace Oro\Bundle\CustomerBundle\Form\Handler;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 
 class AccountUserPasswordRequestHandler extends AbstractAccountUserPasswordHandler
 {
     /**
      * @param FormInterface $form
      * @param Request $request
-     * @return AccountUser|bool
+     * @return CustomerUser|bool
      */
     public function process(FormInterface $form, Request $request)
     {
@@ -22,7 +22,7 @@ class AccountUserPasswordRequestHandler extends AbstractAccountUserPasswordHandl
                 $emailForm = $form->get('email');
                 $email = $emailForm->getData();
 
-                /** @var AccountUser $user */
+                /** @var CustomerUser $user */
                 $user = $this->userManager->findUserByUsernameOrEmail($email);
                 if ($this->validateUser($emailForm, $email, $user)) {
                     if (null === $user->getConfirmationToken()) {
@@ -48,13 +48,13 @@ class AccountUserPasswordRequestHandler extends AbstractAccountUserPasswordHandl
     /**
      * @param FormInterface $form
      * @param string $email
-     * @param AccountUser|null $user
+     * @param CustomerUser|null $user
      * @return bool
      */
-    protected function validateUser(FormInterface $form, $email, AccountUser $user = null)
+    protected function validateUser(FormInterface $form, $email, CustomerUser $user = null)
     {
         if (!$user) {
-            $this->addFormError($form, 'oro.customer.accountuser.profile.email_not_exists', ['%email%' => $email]);
+            $this->addFormError($form, 'oro.customer.customeruser.profile.email_not_exists', ['%email%' => $email]);
 
             return false;
         }

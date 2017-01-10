@@ -6,7 +6,7 @@ use Doctrine\Common\Collections\Criteria;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\PricingBundle\Entity\PriceListAccountFallback;
 use Oro\Bundle\PricingBundle\Entity\PriceListToAccount;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 
 class AccountFormViewListener extends AbstractAccountFormViewListener
 {
@@ -30,8 +30,8 @@ class AccountFormViewListener extends AbstractAccountFormViewListener
             return;
         }
 
-        /** @var Account $account */
-        $account = $this->doctrineHelper->getEntityReference('OroCustomerBundle:Account', (int)$request->get('id'));
+        /** @var Customer $account */
+        $account = $this->doctrineHelper->getEntityReference('OroCustomerBundle:Customer', (int)$request->get('id'));
 
         /** @var PriceListToAccount[] $priceLists */
         $websites = $this->websiteProvider->getWebsites();

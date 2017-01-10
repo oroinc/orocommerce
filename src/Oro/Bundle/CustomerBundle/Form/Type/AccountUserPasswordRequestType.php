@@ -21,13 +21,13 @@ class AccountUserPasswordRequestType extends AbstractType
             'email',
             [
                 'required' => true,
-                'label' => 'oro.customer.accountuser.email.label',
+                'label' => 'oro.customer.customeruser.email.label',
                 'constraints' => [
                     new NotBlank(),
                     new Email()
                 ],
                 'attr' => [
-                    'placeholder' => 'oro.customer.accountuser.placeholder.email'
+                    'placeholder' => 'oro.customer.customeruser.placeholder.email'
                 ]
             ]
         );

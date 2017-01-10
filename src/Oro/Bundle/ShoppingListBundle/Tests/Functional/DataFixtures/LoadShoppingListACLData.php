@@ -7,7 +7,7 @@ use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserACLData;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
@@ -95,7 +95,7 @@ class LoadShoppingListACLData extends AbstractFixture implements
      */
     protected function createShoppingList(ObjectManager $manager, $name, array $orderData)
     {
-        /** @var AccountUser $accountUser */
+        /** @var CustomerUser $accountUser */
         $accountUser = $this->getReference($orderData['accountUser']);
 
         $shoppingList = new ShoppingList();

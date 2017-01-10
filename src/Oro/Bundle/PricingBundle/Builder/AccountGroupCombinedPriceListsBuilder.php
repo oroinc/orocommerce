@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Builder;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\PriceListAccountGroupFallback;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToAccountGroupRepository;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
@@ -27,10 +27,10 @@ class AccountGroupCombinedPriceListsBuilder extends AbstractCombinedPriceListBui
 
     /**
      * @param Website $website
-     * @param AccountGroup|null $currentAccountGroup
+     * @param CustomerGroup|null $currentAccountGroup
      * @param bool|false $force
      */
-    public function build(Website $website, AccountGroup $currentAccountGroup = null, $force = false)
+    public function build(Website $website, CustomerGroup $currentAccountGroup = null, $force = false)
     {
         if (!$this->isBuiltForAccountGroup($website, $currentAccountGroup)) {
             $accountGroups = [$currentAccountGroup];
@@ -56,10 +56,10 @@ class AccountGroupCombinedPriceListsBuilder extends AbstractCombinedPriceListBui
 
     /**
      * @param Website $website
-     * @param AccountGroup $accountGroup
+     * @param CustomerGroup $accountGroup
      * @param bool $force
      */
-    protected function updatePriceListsOnCurrentLevel(Website $website, AccountGroup $accountGroup, $force)
+    protected function updatePriceListsOnCurrentLevel(Website $website, CustomerGroup $accountGroup, $force)
     {
         $priceListsToAccountGroup = $this->getPriceListToEntityRepository()
             ->findOneBy(['website' => $website, 'accountGroup' => $accountGroup]);
@@ -80,10 +80,10 @@ class AccountGroupCombinedPriceListsBuilder extends AbstractCombinedPriceListBui
 
     /**
      * @param Website $website
-     * @param AccountGroup|null $accountGroup
+     * @param CustomerGroup|null $accountGroup
      * @return bool
      */
-    protected function isBuiltForAccountGroup(Website $website, AccountGroup $accountGroup = null)
+    protected function isBuiltForAccountGroup(Website $website, CustomerGroup $accountGroup = null)
     {
         $accountGroupId = 0;
         if ($accountGroup) {
@@ -94,9 +94,9 @@ class AccountGroupCombinedPriceListsBuilder extends AbstractCombinedPriceListBui
 
     /**
      * @param Website $website
-     * @param AccountGroup|null $accountGroup
+     * @param CustomerGroup|null $accountGroup
      */
-    protected function setBuiltForAccountGroup(Website $website, AccountGroup $accountGroup = null)
+    protected function setBuiltForAccountGroup(Website $website, CustomerGroup $accountGroup = null)
     {
         $accountGroupId = 0;
         if ($accountGroup) {
@@ -108,10 +108,10 @@ class AccountGroupCombinedPriceListsBuilder extends AbstractCombinedPriceListBui
 
     /**
      * @param Website $website
-     * @param AccountGroup $accountGroup
+     * @param CustomerGroup $accountGroup
      * @return bool
      */
-    public function hasFallbackOnNextLevel(Website $website, AccountGroup $accountGroup)
+    public function hasFallbackOnNextLevel(Website $website, CustomerGroup $accountGroup)
     {
         $fallback = $this->getFallbackRepository()->findOneBy(
             [

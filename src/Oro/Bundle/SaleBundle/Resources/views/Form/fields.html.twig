@@ -149,9 +149,13 @@
                         <td class="quote-lineitem-requested-quantity">
                             {{ child.quantity }}
                         </td>
+
                         <td class="quote-lineitem-requested-unit">
-                            {{ child.productUnit }}
+                            {% if oro_is_unit_code_visible(child.productUnit.code) %}
+                                {{ child.productUnit }}
+                            {% endif %}
                         </td>
+
                         <td class="quote-lineitem-requested-price">
                             {% if child.price is not empty %}
                                 {{ child.price|oro_format_price }}

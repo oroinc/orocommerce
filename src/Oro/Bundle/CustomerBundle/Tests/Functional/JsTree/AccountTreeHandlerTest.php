@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CustomerBundle\Tests\Functional\JsTree;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Component\Tree\Handler\AbstractTreeHandler;
 use Oro\Component\Tree\Test\AbstractTreeHandlerTestCase;
 
@@ -37,12 +37,12 @@ class AccountTreeHandlerTest extends AbstractTreeHandlerTestCase
     {
         $entity = null;
         if ($entityReference !== null) {
-            /** @var Account $entity */
+            /** @var Customer $entity */
             $entity = $this->getReference($entityReference);
         }
 
         $expectedData = array_reduce($expectedData, function ($result, $data) {
-            /** @var Account $entity */
+            /** @var Customer $entity */
             $entity = $this->getReference($data['entity']);
             $data['id'] = $entity->getId();
             $data['text'] = $entity->getName();

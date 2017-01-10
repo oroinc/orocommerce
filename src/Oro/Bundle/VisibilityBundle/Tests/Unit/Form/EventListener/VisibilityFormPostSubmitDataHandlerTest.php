@@ -4,7 +4,7 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Form\EventListener;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
@@ -76,16 +76,16 @@ class VisibilityFormPostSubmitDataHandlerTest extends \PHPUnit_Framework_TestCas
         $allForm = $this->createMock(FormInterface::class);
         $allForm->method('getData')->willReturn('hidden');
         $accountForm = $this->createMock(FormInterface::class);
-        $account3 = $this->getEntity(Account::class, ['id' => 3]);
+        $account3 = $this->getEntity(Customer::class, ['id' => 3]);
         $accountForm->method('getData')->willReturn(
             [
                 1 => [
                     'data' => ['visibility' => 'category'],
-                    'entity' => $this->getEntity(Account::class, ['id' => 1]),
+                    'entity' => $this->getEntity(Customer::class, ['id' => 1]),
                 ],
                 2 => [
                     'data' => ['visibility' => 'account_group'],
-                    'entity' => $this->getEntity(Account::class, ['id' => 2]),
+                    'entity' => $this->getEntity(Customer::class, ['id' => 2]),
                 ],
                 3 => [
                     'data' => ['visibility' => 'visible'],

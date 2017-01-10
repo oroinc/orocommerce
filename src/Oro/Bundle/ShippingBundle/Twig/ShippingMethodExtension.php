@@ -87,6 +87,10 @@ class ShippingMethodExtension extends \Twig_Extension
                 [$this->shippingMethodLabelFormatter, 'formatShippingMethodTypeLabel']
             ),
             new \Twig_SimpleFunction(
+                'oro_shipping_method_with_type_label',
+                [$this->shippingMethodLabelFormatter, 'formatShippingMethodWithTypeLabel']
+            ),
+            new \Twig_SimpleFunction(
                 'oro_shipping_method_config_template',
                 [$this, 'getShippingMethodConfigRenderData']
             )

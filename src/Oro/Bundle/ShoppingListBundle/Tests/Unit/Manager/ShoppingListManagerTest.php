@@ -7,8 +7,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -84,9 +84,9 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
         $this->aclHelper = $this->getAclHelperMock();
 
         $tokenStorage = $this->getTokenStorage(
-            (new AccountUser())
+            (new CustomerUser())
                 ->setFirstName('skip')
-                ->setAccount(new Account())
+                ->setAccount(new Customer())
                 ->setOrganization(new Organization())
         );
 
@@ -110,15 +110,15 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
         $shoppingList = $this->manager->create();
 
         $this->assertInstanceOf('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList', $shoppingList);
-        $this->assertInstanceOf('Oro\Bundle\CustomerBundle\Entity\Account', $shoppingList->getAccount());
-        $this->assertInstanceOf('Oro\Bundle\CustomerBundle\Entity\AccountUser', $shoppingList->getAccountUser());
+        $this->assertInstanceOf('Oro\Bundle\CustomerBundle\Entity\Customer', $shoppingList->getAccount());
+        $this->assertInstanceOf('Oro\Bundle\CustomerBundle\Entity\CustomerUser', $shoppingList->getAccountUser());
         $this->assertInstanceOf('Oro\Bundle\OrganizationBundle\Entity\Organization', $shoppingList->getOrganization());
     }
 
     public function testCreateCurrent()
     {
         $this->manager->setCurrent(
-            (new AccountUser())->setFirstName('setCurrent'),
+            (new CustomerUser())->setFirstName('setCurrent'),
             $this->shoppingListTwo
         );
         $this->assertTrue($this->shoppingListTwo->isCurrent());
@@ -306,7 +306,7 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
 
     public function testGetShoppingLists()
     {
-        $user = new AccountUser();
+        $user = new CustomerUser();
 
         $shoppingList1 = $this->getShoppingList(10, false);
         $shoppingList2 = $this->getShoppingList(20, false);
@@ -355,10 +355,10 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param AccountUser $accountUser
+     * @param CustomerUser $accountUser
      * @return \PHPUnit_Framework_MockObject_MockObject|TokenStorageInterface
      */
-    protected function getTokenStorage(AccountUser $accountUser)
+    protected function getTokenStorage(CustomerUser $accountUser)
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|TokenInterface $securityToken */
         $securityToken = $this->createMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');

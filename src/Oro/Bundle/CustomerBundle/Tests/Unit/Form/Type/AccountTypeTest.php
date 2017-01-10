@@ -73,16 +73,16 @@ class AccountTypeTest extends FormIntegrationTestCase
     {
         $accountGroupSelectType = new EntityType(
             [
-                1 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountGroup', 1),
-                2 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountGroup', 2)
+                1 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerGroup', 1),
+                2 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerGroup', 2)
             ],
             AccountGroupSelectType::NAME
         );
 
         $parentAccountSelectType = new EntityType(
             [
-                1 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account', 1),
-                2 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account', 2)
+                1 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', 1),
+                2 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', 2)
             ],
             ParentAccountSelectType::NAME
         );
@@ -171,8 +171,8 @@ class AccountTypeTest extends FormIntegrationTestCase
                 ],
                 'expectedData' => [
                     'name' => 'account_name',
-                    'group' => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountGroup', 1),
-                    'parent' => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account', 2),
+                    'group' => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerGroup', 1),
+                    'parent' => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', 2),
                     'addresses' => [$this->getAddresses()[1]],
                     'internal_rating' => new StubEnumValue('2_of_5', '2 of 5'),
                     'salesRepresentatives' => [$this->getUsers()[1]],
@@ -191,7 +191,7 @@ class AccountTypeTest extends FormIntegrationTestCase
                 ],
                 'expectedData' => [
                     'name' => 'account_name',
-                    'group' => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountGroup', 1),
+                    'group' => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerGroup', 1),
                     'parent' => null,
                     'addresses' => [$this->getAddresses()[1]],
                     'internal_rating' => new StubEnumValue('2_of_5', '2 of 5'),
@@ -213,7 +213,7 @@ class AccountTypeTest extends FormIntegrationTestCase
                 'expectedData' => [
                     'name' => 'account_name',
                     'group' => null,
-                    'parent' => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account', 2),
+                    'parent' => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', 2),
                     'addresses' => [$this->getAddresses()[1]],
                     'internal_rating' => new StubEnumValue('2_of_5', '2 of 5'),
                     'salesRepresentatives' => [$this->getUsers()[1], $this->getUsers()[2]],
@@ -232,8 +232,8 @@ class AccountTypeTest extends FormIntegrationTestCase
                 ],
                 'expectedData' => [
                     'name' => 'account_name',
-                    'group' => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountGroup', 1),
-                    'parent' => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account', 2),
+                    'group' => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerGroup', 1),
+                    'parent' => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', 2),
                     'addresses' => [],
                     'internal_rating' => new StubEnumValue('2_of_5', '2 of 5'),
                     'salesRepresentatives' => [],
@@ -251,8 +251,8 @@ class AccountTypeTest extends FormIntegrationTestCase
                 ],
                 'expectedData' => [
                     'name' => 'account_name',
-                    'group' => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountGroup', 1),
-                    'parent' => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account', 2),
+                    'group' => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerGroup', 1),
+                    'parent' => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', 2),
                     'addresses' => [],
                     'salesRepresentatives' => [],
                 ]

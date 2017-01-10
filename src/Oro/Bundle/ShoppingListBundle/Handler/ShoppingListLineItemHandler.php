@@ -8,7 +8,7 @@ use Symfony\Component\Form\Form;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
@@ -95,11 +95,11 @@ class ShoppingListLineItemHandler
     }
 
     /**
-     * @param AccountUser $accountUser
+     * @param CustomerUser $accountUser
      * @param Product $product
      * @return LineItem
      */
-    public function prepareLineItemWithProduct(AccountUser $accountUser, Product $product)
+    public function prepareLineItemWithProduct(CustomerUser $accountUser, Product $product)
     {
         $shoppingList = $this->shoppingListManager->getCurrent();
 

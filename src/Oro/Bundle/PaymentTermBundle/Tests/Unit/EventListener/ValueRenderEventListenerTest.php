@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\PaymentTermBundle\Tests\Unit\Datagrid;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\EntityExtendBundle\Event\ValueRenderEvent;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
@@ -63,9 +63,9 @@ class ValueRenderEventListenerTest extends \PHPUnit_Framework_TestCase
     public function testBeforeValueRenderFieldIsNotPaymentTerm()
     {
         $event = new ValueRenderEvent(
-            new Account(),
+            new Customer(),
             'value',
-            new FieldConfigId('scope', Account::class, 'field', 'string')
+            new FieldConfigId('scope', Customer::class, 'field', 'string')
         );
 
         $this->associationProvider->expects($this->once())->method('getAssociationNames')->willReturn(['paymentTerm']);
@@ -77,9 +77,9 @@ class ValueRenderEventListenerTest extends \PHPUnit_Framework_TestCase
     public function testBeforeValueRenderFieldAccountHasDefaultPaymentTerm()
     {
         $event = new ValueRenderEvent(
-            new Account(),
+            new Customer(),
             null,
-            new FieldConfigId('scope', Account::class, 'paymentTerm', 'entity')
+            new FieldConfigId('scope', Customer::class, 'paymentTerm', 'entity')
         );
 
         $paymentTerm = $this->getEntity(PaymentTerm::class, ['id' => 1, 'label' => 'pt']);
@@ -93,9 +93,9 @@ class ValueRenderEventListenerTest extends \PHPUnit_Framework_TestCase
     public function testBeforeValueRenderFieldAccountHasNotDefaultPaymentTermAndWithoutGroup()
     {
         $event = new ValueRenderEvent(
-            new Account(),
+            new Customer(),
             null,
-            new FieldConfigId('scope', Account::class, 'paymentTerm', 'entity')
+            new FieldConfigId('scope', Customer::class, 'paymentTerm', 'entity')
         );
 
         $this->associationProvider->expects($this->once())->method('getAssociationNames')->willReturn(['paymentTerm']);
@@ -107,11 +107,11 @@ class ValueRenderEventListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testBeforeValueRenderFieldAccountHasNotDefaultPaymentTermAndEmptyWithGroupAssociations()
     {
-        $entity = (new Account())->setGroup(new AccountGroup());
+        $entity = (new Customer())->setGroup(new CustomerGroup());
         $event = new ValueRenderEvent(
             $entity,
             null,
-            new FieldConfigId('scope', Account::class, 'paymentTerm', 'entity')
+            new FieldConfigId('scope', Customer::class, 'paymentTerm', 'entity')
         );
 
         $this->associationProvider->expects($this->exactly(2))->method('getAssociationNames')
@@ -125,11 +125,11 @@ class ValueRenderEventListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testBeforeValueRenderFieldAccountHasNotDefaultPaymentTermAndWithGroupAssociationsWithoutGroupPT()
     {
-        $entity = (new Account())->setGroup(new AccountGroup());
+        $entity = (new Customer())->setGroup(new CustomerGroup());
         $event = new ValueRenderEvent(
             $entity,
             null,
-            new FieldConfigId('scope', Account::class, 'paymentTerm', 'entity')
+            new FieldConfigId('scope', Customer::class, 'paymentTerm', 'entity')
         );
 
         $this->associationProvider->expects($this->exactly(2))->method('getAssociationNames')
@@ -143,11 +143,11 @@ class ValueRenderEventListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testBeforeValueRenderFieldAccountHasNotDefaultPaymentTermAndWithGroupAssociations()
     {
-        $entity = (new Account())->setGroup(new AccountGroup());
+        $entity = (new Customer())->setGroup(new CustomerGroup());
         $event = new ValueRenderEvent(
             $entity,
             null,
-            new FieldConfigId('scope', Account::class, 'paymentTerm', 'entity')
+            new FieldConfigId('scope', Customer::class, 'paymentTerm', 'entity')
         );
 
         $this->associationProvider->expects($this->exactly(2))->method('getAssociationNames')

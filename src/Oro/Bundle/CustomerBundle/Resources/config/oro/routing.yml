@@ -38,8 +38,8 @@ oro_customer_frontend_account_user_ajax:
     options:
         frontend: true
 
-oro_customer_account_user_role:
-    resource: "@OroCustomerBundle/Controller/AccountUserRoleController.php"
+oro_customer_customer_user_role:
+    resource: "@OroCustomerBundle/Controller/CustomerUserRoleController.php"
     type: annotation
     prefix: /account/user/role
 
@@ -112,8 +112,8 @@ oro_account_pinbar_help:
     options:
         frontend: true
 
-oro_customer_frontend_account_user_role:
-    resource: "@OroCustomerBundle/Controller/Frontend/AccountUserRoleController.php"
+oro_customer_frontend_customer_user_role:
+    resource: "@OroCustomerBundle/Controller/Frontend/CustomerUserRoleController.php"
     type:     annotation
     prefix:   /account/roles
     options:

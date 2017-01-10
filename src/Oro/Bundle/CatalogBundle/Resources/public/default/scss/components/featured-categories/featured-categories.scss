@@ -1,51 +1,81 @@
 .featured-categories {
-    & .embedded-list__item {
-        width: 33.33%;
-        padding: 0 8px;
+    margin: 35px 0 5px 0;
 
-        text-align: center;
+    .embedded-list {
+        margin: 0 -10px;
+
+        &__item {
+            width: 25%;
+            padding: 0 10px;
+            margin-bottom: 35px;
+
+            text-align: center;
+        }
     }
+}
 
-    & .embedded-list__item:nth-child(3n+1) {
-        padding-right: 16px;
-        padding-left: 0;
+@include breakpoint('tablet-small') {
+    .featured-categories {
+        margin-top: 25px;
 
-        text-align: left;
+        .embedded-list {
+            &__item {
+                width: 33.33%;
+                margin-bottom: 25px;
+
+                &:nth-last-child(2),
+                &:last-child {
+                    display: none;
+                }
+            }
+        }
     }
+}
 
-    & .embedded-list__item:nth-child(3n) {
-        padding-right: 0;
-        padding-left: 16px;
+@include breakpoint('mobile-landscape') {
+    .featured-categories {
+        &__image {
+            margin: 0 auto;
+        }
 
-        text-align: right;
+        .embedded-list {
+            &__item {
+                width: 50%;
+                margin-bottom: 20px;
+
+                &:nth-last-child(2),
+                &:last-child {
+                    display: block;
+                }
+            }
+        }
     }
 }
 
 @include breakpoint('mobile') {
     .featured-categories {
-        & .embedded-list__item {
-            width: 50%;
+        &__image {
+            margin: 0 auto;
         }
 
-        & .embedded-list__item:nth-child(3n),
-        & .embedded-list__item:nth-child(3n+1) {
-            padding: 0 4px;
+        .embedded-list {
+            margin: 0;
 
-            text-align: center;
+            &__item {
+                width: 100%;
+                padding: 0 4px;
+                margin-bottom: 15px;
+
+                text-align: center;
+            }
         }
+    }
+}
 
-        & .embedded-list__item:nth-child(2n+1) {
-            padding-right: 8px;
-            padding-left: 0;
-
-            text-align: left;
-        }
-
-        & .embedded-list__item:nth-child(2n) {
-            padding-right: 0;
-            padding-left: 8px;
-
-            text-align: right;
+@media (min-width: 1400px) {
+    .featured-categories {
+        .embedded-list {
+            margin: 0 -20px;
         }
     }
 }

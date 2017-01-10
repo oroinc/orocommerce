@@ -26,6 +26,7 @@ class OroSaleBundle implements Migration, RenameExtensionAwareInterface, Ordered
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->updateOroQuoteAddressTable($schema, $queries);
+        $this->updateAccountRelations($schema, $queries);
     }
 
     /**
@@ -56,6 +57,74 @@ class OroSaleBundle implements Migration, RenameExtensionAwareInterface, Ordered
             $table,
             'account_user_address_id',
             'customer_user_address_id'
+        );
+    }
+
+    /**
+     * @param Schema $schema
+     * @param QueryBag $queries
+     */
+    private function updateAccountRelations(Schema $schema, QueryBag $queries)
+    {
+        $table = $schema->getTable('oro_sale_quote');
+        $table->removeForeignKey($this->getConstraintName($table, 'account_user_id'));
+        $this->renameExtension->renameColumn(
+            $schema,
+            $queries,
+            $table,
+            'account_user_id',
+            'customer_user_id'
+        );
+        $table->removeForeignKey($this->getConstraintName($table, 'account_id'));
+        $this->renameExtension->renameColumn(
+            $schema,
+            $queries,
+            $table,
+            'account_id',
+            'customer_id'
+        );
+
+        $table = $schema->getTable('oro_quote_demand');
+        $table->removeForeignKey($this->getConstraintName($table, 'account_user_id'));
+        $this->renameExtension->renameColumn(
+            $schema,
+            $queries,
+            $table,
+            'account_user_id',
+            'customer_user_id'
+        );
+        $table->removeForeignKey($this->getConstraintName($table, 'account_id'));
+        $this->renameExtension->renameColumn(
+            $schema,
+            $queries,
+            $table,
+            'account_id',
+            'customer_id'
+        );
+
+        $table = $schema->getTable('oro_quote_assigned_acc_users');
+        $table->removeForeignKey($this->getConstraintName($table, 'account_user_id'));
+        $this->renameExtension->renameColumn(
+            $schema,
+            $queries,
+            $table,
+            'account_user_id',
+            'customer_user_id'
+        );
+        $this->renameExtension->renameTable(
+            $schema,
+            $queries,
+            'oro_quote_assigned_acc_users',
+            'oro_quote_assigned_cus_users'
+        );
+
+        $table = $schema->getTable('oro_sale_quote_product');
+        $this->renameExtension->renameColumn(
+            $schema,
+            $queries,
+            $table,
+            'comment_account',
+            'comment_customer'
         );
     }
 

@@ -4,8 +4,8 @@ namespace Oro\Bundle\OrderBundle\Provider;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\OrderBundle\Entity\Order;
 
 class OrderAddressSecurityProvider
@@ -56,11 +56,11 @@ class OrderAddressSecurityProvider
 
     /**
      * @param string $type
-     * @param Account $account
+     * @param Customer $account
      *
      * @return bool
      */
-    public function isAccountAddressGranted($type, Account $account = null)
+    public function isAccountAddressGranted($type, Customer $account = null)
     {
         if ($this->isManualEditGranted($type)) {
             return true;
@@ -83,11 +83,11 @@ class OrderAddressSecurityProvider
 
     /**
      * @param string $type
-     * @param AccountUser $accountUser
+     * @param CustomerUser $accountUser
      *
      * @return bool
      */
-    public function isAccountUserAddressGranted($type, AccountUser $accountUser = null)
+    public function isAccountUserAddressGranted($type, CustomerUser $accountUser = null)
     {
         if ($this->isManualEditGranted($type)) {
             return true;
@@ -140,7 +140,7 @@ class OrderAddressSecurityProvider
      */
     protected function getPermission($permission)
     {
-        if (!$this->securityFacade->getLoggedUser() instanceof AccountUser) {
+        if (!$this->securityFacade->getLoggedUser() instanceof CustomerUser) {
             $permission .= OrderAddressProvider::ADMIN_ACL_POSTFIX;
         }
 

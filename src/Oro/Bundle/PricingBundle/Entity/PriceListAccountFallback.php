@@ -4,14 +4,14 @@ namespace Oro\Bundle\PricingBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 
 /**
  * @ORM\Table(
- *      name="oro_price_list_acc_fb",
+ *      name="oro_price_list_cus_fb",
  *      uniqueConstraints={
- *          @ORM\UniqueConstraint(name="oro_price_list_acc_fb_unq", columns={
- *              "account_id",
+ *          @ORM\UniqueConstraint(name="oro_price_list_cus_fb_unq", columns={
+ *              "customer_id",
  *              "website_id"
  *          })
  *      }
@@ -23,15 +23,15 @@ class PriceListAccountFallback extends PriceListFallback
     const ACCOUNT_GROUP = 0;
     const CURRENT_ACCOUNT_ONLY = 1;
 
-    /** @var Account
+    /** @var Customer
      *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\Account")
-     * @ORM\JoinColumn(name="account_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\Customer")
+     * @ORM\JoinColumn(name="customer_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     protected $account;
 
     /**
-     * @return Account
+     * @return Customer
      */
     public function getAccount()
     {
@@ -39,7 +39,7 @@ class PriceListAccountFallback extends PriceListFallback
     }
 
     /**
-     * @param Account $account
+     * @param Customer $account
      *
      * @return $this
      */

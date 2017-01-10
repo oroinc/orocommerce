@@ -12,7 +12,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\InvoiceBundle\Entity\Invoice;
 
 class LoadInvoiceDemoData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
@@ -48,8 +48,8 @@ class LoadInvoiceDemoData extends AbstractFixture implements ContainerAwareInter
         /** @var User $user */
         $owner = $manager->getRepository('OroUserBundle:User')->findOneBy([]);
 
-        /** @var Account $account */
-        $account = $manager->getRepository('OroCustomerBundle:Account')->findOneBy([]);
+        /** @var Customer $account */
+        $account = $manager->getRepository('OroCustomerBundle:Customer')->findOneBy([]);
 
         $website = $manager->getRepository('OroWebsiteBundle:Website')
             ->findOneBy(['name' => LoadWebsiteData::DEFAULT_WEBSITE_NAME]);

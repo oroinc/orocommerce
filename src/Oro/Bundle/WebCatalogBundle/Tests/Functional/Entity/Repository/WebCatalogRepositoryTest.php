@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Tests\Functional\Entity\Repository;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccounts;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
@@ -54,7 +54,7 @@ class WebCatalogRepositoryTest extends WebTestCase
     {
         /** @var WebCatalog $webCatalog */
         $webCatalog = $this->getReference(LoadWebCatalogData::CATALOG_1);
-        /** @var Account $account */
+        /** @var Customer $account */
         $account = $this->getReference(LoadAccounts::DEFAULT_ACCOUNT_NAME);
         /** @var Scope $scope1 */
         $scope1 = $this->getReference(LoadWebCatalogScopes::SCOPE1);

@@ -12,7 +12,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Oro\Bundle\AddressBundle\Form\Type\AddressCollectionType;
 use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
 use Oro\Bundle\CustomerBundle\Event\AccountEvent;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 
 class AccountType extends AbstractType
 {
@@ -83,7 +83,7 @@ class AccountType extends AbstractType
                 'oro_enum_select',
                 [
                     'label' => 'oro.customer.account.internal_rating.label',
-                    'enum_code' => Account::INTERNAL_RATING_CODE,
+                    'enum_code' => Customer::INTERNAL_RATING_CODE,
                     'configs' => [
                         'allowClear' => false,
                     ],
@@ -108,9 +108,9 @@ class AccountType extends AbstractType
     {
         $this->modelChangeSet = [];
 
-        /** @var Account $account */
+        /** @var Customer $account */
         $account = $event->getForm()->getData();
-        if ($account instanceof Account
+        if ($account instanceof Customer
             && $this->isAccountGroupChanged($account, (int)$event->getData()[self::GROUP_FIELD])
         ) {
             $this->modelChangeSet[] = self::GROUP_FIELD;
@@ -118,11 +118,11 @@ class AccountType extends AbstractType
     }
 
     /**
-     * @param Account $account
+     * @param Customer $account
      * @param int $newGroupId
      * @return bool
      */
-    private function isAccountGroupChanged(Account $account, $newGroupId)
+    private function isAccountGroupChanged(Customer $account, $newGroupId)
     {
         return $account->getGroup() && $newGroupId !== $account->getGroup()->getId();
     }
@@ -132,9 +132,9 @@ class AccountType extends AbstractType
      */
     public function postSubmit(FormEvent $event)
     {
-        /** @var Account $account */
+        /** @var Customer $account */
         $account = $event->getForm()->getData();
-        if ($account instanceof Account
+        if ($account instanceof Customer
             && in_array(self::GROUP_FIELD, $this->modelChangeSet, true)
             && $event->getForm()->isValid()
         ) {

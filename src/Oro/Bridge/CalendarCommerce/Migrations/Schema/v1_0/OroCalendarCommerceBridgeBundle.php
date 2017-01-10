@@ -43,14 +43,14 @@ class OroCalendarCommerceBridgeBundle implements Migration, ActivityExtensionAwa
         // no create associations only if calendar bundle is installed
         if ($schema->hasTable(self::CALENDAR_EVENT_TABLE)) {
             $legacyAssocTables = [
-                'oro_account_user' => 'orob2b_account_user',
+                'oro_customer_user' => 'orob2b_account_user',
                 'oro_order' => 'orob2b_order',
                 'oro_rfp_request' => 'orob2b_rfp_request',
                 'oro_sale_quote' => 'orob2b_sale_quote',
             ];
 
             $associationTables = [
-                'oro_account_user',
+                'oro_customer_user',
                 'oro_order',
                 'oro_rfp_request',
                 'oro_sale_quote',

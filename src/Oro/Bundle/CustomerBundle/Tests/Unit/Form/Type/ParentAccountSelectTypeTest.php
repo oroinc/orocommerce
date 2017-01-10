@@ -4,7 +4,7 @@ namespace Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\FormView;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Form\Type\ParentAccountSelectType;
 
 class ParentAccountSelectTypeTest extends \PHPUnit_Framework_TestCase
@@ -85,7 +85,7 @@ class ParentAccountSelectTypeTest extends \PHPUnit_Framework_TestCase
     public function buildViewDataProvider()
     {
         $accountId = 42;
-        $account = new Account();
+        $account = new Customer();
 
         $reflection = new \ReflectionProperty(get_class($account), 'id');
         $reflection->setAccessible(true);

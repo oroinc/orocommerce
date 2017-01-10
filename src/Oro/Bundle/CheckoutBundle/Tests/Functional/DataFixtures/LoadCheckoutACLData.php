@@ -8,7 +8,7 @@ use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserACLData;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
@@ -80,7 +80,7 @@ class LoadCheckoutACLData extends AbstractFixture implements
      */
     protected function createOrder(ObjectManager $manager, $name, array $checkoutData)
     {
-        /** @var AccountUser $accountUser */
+        /** @var CustomerUser $accountUser */
         $accountUser = $this->getReference($checkoutData['accountUser']);
         $shoppingList = new ShoppingList();
         $shoppingList->setOrganization($accountUser->getOrganization())

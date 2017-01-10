@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\CustomerBundle\Tests\Unit\Provider;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Provider\ScopeAccountCriteriaProvider;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -28,8 +28,8 @@ class ScopeAccountCriteriaProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetCriteriaForCurrentScope()
     {
-        $accUser = new AccountUser();
-        $account = new Account();
+        $accUser = new CustomerUser();
+        $account = new Customer();
 
         $token = $this->createMock(TokenInterface::class);
         $accUser->setAccount($account);
@@ -63,7 +63,7 @@ class ScopeAccountCriteriaProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function contextDataProvider()
     {
-        $account = new Account();
+        $account = new Customer();
         $accountAware = new \stdClass();
         $accountAware->account = $account;
 
@@ -93,6 +93,6 @@ class ScopeAccountCriteriaProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetCriteriaValueType()
     {
-        $this->assertEquals(Account::class, $this->provider->getCriteriaValueType());
+        $this->assertEquals(Customer::class, $this->provider->getCriteriaValueType());
     }
 }

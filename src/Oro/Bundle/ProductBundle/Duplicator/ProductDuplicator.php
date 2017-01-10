@@ -106,9 +106,6 @@ class ProductDuplicator
 
         $this->cloneChildObjects($product, $productCopy);
 
-        //Clear all slug prototypes for product copy
-        $productCopy->getSlugPrototypes()->clear();
-
         return $productCopy;
     }
 

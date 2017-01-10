@@ -14,7 +14,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
@@ -181,11 +181,11 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
 
     /**
      * @param ObjectManager $manager
-     * @return AccountUser|null
+     * @return CustomerUser|null
      */
     protected function getAccountUser(ObjectManager $manager)
     {
-        return $manager->getRepository('OroCustomerBundle:AccountUser')->findOneBy([]);
+        return $manager->getRepository('OroCustomerBundle:CustomerUser')->findOneBy([]);
     }
 
     /**

@@ -317,7 +317,7 @@ class QuoteControllerTest extends WebTestCase
     public function viewProvider()
     {
         return [
-            'account1 user1 (AccountUser:VIEW_BASIC)' => [
+            'account1 user1 (CustomerUser:VIEW_BASIC)' => [
                 'input' => [
                     'qid' => LoadQuoteData::QUOTE3,
                     'login' => LoadUserData::ACCOUNT1_USER1,
@@ -353,7 +353,7 @@ class QuoteControllerTest extends WebTestCase
                     ],
                 ],
             ],
-            'account1 user3 (AccountUser:VIEW_LOCAL)' => [
+            'account1 user3 (CustomerUser:VIEW_LOCAL)' => [
                 'input' => [
                     'qid' => LoadQuoteData::QUOTE3,
                     'login' => LoadUserData::ACCOUNT1_USER3,
@@ -389,7 +389,7 @@ class QuoteControllerTest extends WebTestCase
                     ],
                 ],
             ],
-            'account1 user3 (AccountUser:VIEW_LOCAL, Quote date)' => [
+            'account1 user3 (CustomerUser:VIEW_LOCAL, Quote date)' => [
                 'input' => [
                     'qid' => LoadQuoteData::QUOTE5,
                     'login' => LoadUserData::ACCOUNT1_USER3,
@@ -417,7 +417,7 @@ class QuoteControllerTest extends WebTestCase
                     ],
                 ],
             ],
-            'account1 user3 (AccountUser:VIEW_LOCAL, Quote expired)' => [
+            'account1 user3 (CustomerUser:VIEW_LOCAL, Quote expired)' => [
                 'input' => [
                     'qid' => LoadQuoteData::QUOTE8,
                     'login' => LoadUserData::ACCOUNT1_USER3,
@@ -445,7 +445,7 @@ class QuoteControllerTest extends WebTestCase
                     ],
                 ],
             ],
-            'account1 user3 (AccountUser:VIEW_LOCAL, null Quote date)' => [
+            'account1 user3 (CustomerUser:VIEW_LOCAL, null Quote date)' => [
                 'input' => [
                     'qid' => LoadQuoteData::QUOTE9,
                     'login' => LoadUserData::ACCOUNT1_USER3,
@@ -477,7 +477,7 @@ class QuoteControllerTest extends WebTestCase
                     ],
                 ],
             ],
-            'account1 user3 (AccountUser:DEEP)' => [
+            'account1 user3 (CustomerUser:DEEP)' => [
                 'input' => [
                     'qid' => LoadQuoteData::QUOTE9,
                     'login' => LoadUserData::PARENT_ACCOUNT_USER1,

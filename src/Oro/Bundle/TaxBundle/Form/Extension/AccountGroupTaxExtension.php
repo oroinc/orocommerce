@@ -5,7 +5,7 @@ namespace Oro\Bundle\TaxBundle\Form\Extension;
 use Symfony\Component\Form\FormBuilderInterface;
 
 use Oro\Bundle\TaxBundle\Entity\AbstractTaxCode;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\TaxBundle\Entity\AccountTaxCode;
 use Oro\Bundle\TaxBundle\Entity\Repository\AccountTaxCodeRepository;
 use Oro\Bundle\TaxBundle\Form\Type\AccountTaxCodeAutocompleteType;
@@ -40,7 +40,7 @@ class AccountGroupTaxExtension extends AbstractTaxExtension
     }
 
     /**
-     * @param AccountGroup $accountGroup
+     * @param CustomerGroup $accountGroup
      * @param AccountTaxCode|AbstractTaxCode $taxCode
      * @param AccountTaxCode|AbstractTaxCode $taxCodeNew
      */
@@ -56,7 +56,7 @@ class AccountGroupTaxExtension extends AbstractTaxExtension
     }
 
     /**
-     * @param AccountGroup $object
+     * @param CustomerGroup $object
      * @return AccountTaxCode|null
      */
     protected function getTaxCode($object)

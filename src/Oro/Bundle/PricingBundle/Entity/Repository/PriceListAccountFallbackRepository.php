@@ -41,7 +41,7 @@ class PriceListAccountFallbackRepository extends EntityRepository
     {
         $qb = $this->_em->createQueryBuilder();
         $qb->select('DISTINCT account.id')
-            ->from('OroCustomerBundle:Account', 'account');
+            ->from('OroCustomerBundle:Customer', 'account');
         $qb->leftJoin(
             'OroPricingBundle:PriceListAccountFallback',
             'accountFallback',

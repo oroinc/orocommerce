@@ -3,17 +3,17 @@
 namespace Oro\Bundle\CustomerBundle\Entity\Ownership;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 
 trait AuditableFrontendAccountUserAwareTrait
 {
     use AuditableFrontendAccountAwareTrait;
 
     /**
-     * @var AccountUser
+     * @var CustomerUser
      *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\AccountUser")
-     * @ORM\JoinColumn(name="account_user_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerUser")
+     * @ORM\JoinColumn(name="customer_user_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -25,7 +25,7 @@ trait AuditableFrontendAccountUserAwareTrait
     protected $accountUser;
 
     /**
-     * @return AccountUser|null
+     * @return CustomerUser|null
      */
     public function getAccountUser()
     {
@@ -33,10 +33,10 @@ trait AuditableFrontendAccountUserAwareTrait
     }
 
     /**
-     * @param AccountUser|null $accountUser
+     * @param CustomerUser|null $accountUser
      * @return $this
      */
-    public function setAccountUser(AccountUser $accountUser = null)
+    public function setAccountUser(CustomerUser $accountUser = null)
     {
         $this->accountUser = $accountUser;
 

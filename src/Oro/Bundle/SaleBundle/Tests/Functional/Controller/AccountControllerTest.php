@@ -3,7 +3,7 @@
 namespace Oro\Bundle\SaleBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
 
@@ -29,7 +29,7 @@ class AccountControllerTest extends WebTestCase
     {
         /** @var Quote $quote */
         $quote = $this->getReference('sale.quote.3');
-        /** @var Account $account */
+        /** @var Customer $account */
         $account = $quote->getAccount();
         $urlCustomerAccountView = $this->getUrl('oro_customer_account_view', ['id' => $account->getId()]);
         $crawler = $this->client->request('GET', $urlCustomerAccountView);

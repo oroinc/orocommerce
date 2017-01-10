@@ -7,13 +7,13 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\TaxBundle\Model\TaxCodeInterface;
 
 /**
  * @ORM\Entity(repositoryClass="Oro\Bundle\TaxBundle\Entity\Repository\AccountTaxCodeRepository")
- * @ORM\Table(name="oro_tax_account_tax_code")
+ * @ORM\Table(name="oro_tax_customer_tax_code")
  * @ORM\HasLifecycleCallbacks
  * @Config(
  *      routeName="oro_tax_account_tax_code_index",
@@ -32,34 +32,34 @@ use Oro\Bundle\TaxBundle\Model\TaxCodeInterface;
 class AccountTaxCode extends AbstractTaxCode
 {
     /**
-     * @ORM\ManyToMany(targetEntity="Oro\Bundle\CustomerBundle\Entity\Account")
+     * @ORM\ManyToMany(targetEntity="Oro\Bundle\CustomerBundle\Entity\Customer")
      * @ORM\JoinTable(
-     *      name="oro_tax_acc_tax_code_acc",
+     *      name="oro_tax_cus_tax_code_cus",
      *      joinColumns={
-     *          @ORM\JoinColumn(name="account_tax_code_id", referencedColumnName="id", onDelete="CASCADE")
+     *          @ORM\JoinColumn(name="customer_tax_code_id", referencedColumnName="id", onDelete="CASCADE")
      *      },
      *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="account_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
+     *          @ORM\JoinColumn(name="customer_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
      *      }
      * )
      *
-     * @var Account[]|Collection
+     * @var Customer[]|Collection
      */
     protected $accounts;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Oro\Bundle\CustomerBundle\Entity\AccountGroup")
+     * @ORM\ManyToMany(targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerGroup")
      * @ORM\JoinTable(
-     *      name="oro_tax_acc_grp_tc_acc_grp",
+     *      name="oro_tax_cus_grp_tc_cus_grp",
      *      joinColumns={
-     *          @ORM\JoinColumn(name="account_group_tax_code_id", referencedColumnName="id", onDelete="CASCADE")
+     *          @ORM\JoinColumn(name="customer_group_tax_code_id", referencedColumnName="id", onDelete="CASCADE")
      *      },
      *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="account_group_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
+     *          @ORM\JoinColumn(name="customer_group_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
      *      }
      * )
      *
-     * @var AccountGroup[]|Collection
+     * @var CustomerGroup[]|Collection
      */
     protected $accountGroups;
 
@@ -72,10 +72,10 @@ class AccountTaxCode extends AbstractTaxCode
     /**
      * Add account
      *
-     * @param Account $account
+     * @param Customer $account
      * @return $this
      */
-    public function addAccount(Account $account)
+    public function addAccount(Customer $account)
     {
         if (!$this->accounts->contains($account)) {
             $this->accounts->add($account);
@@ -87,10 +87,10 @@ class AccountTaxCode extends AbstractTaxCode
     /**
      * Remove account
      *
-     * @param Account $account
+     * @param Customer $account
      * @return $this
      */
-    public function removeAccount(Account $account)
+    public function removeAccount(Customer $account)
     {
         if ($this->accounts->contains($account)) {
             $this->accounts->removeElement($account);
@@ -102,7 +102,7 @@ class AccountTaxCode extends AbstractTaxCode
     /**
      * Get accounts
      *
-     * @return Account[]|Collection
+     * @return Customer[]|Collection
      */
     public function getAccounts()
     {
@@ -112,10 +112,10 @@ class AccountTaxCode extends AbstractTaxCode
     /**
      * Add accountGroup
      *
-     * @param AccountGroup $accountGroup
+     * @param CustomerGroup $accountGroup
      * @return $this
      */
-    public function addAccountGroup(AccountGroup $accountGroup)
+    public function addAccountGroup(CustomerGroup $accountGroup)
     {
         if (!$this->accountGroups->contains($accountGroup)) {
             $this->accountGroups->add($accountGroup);
@@ -127,10 +127,10 @@ class AccountTaxCode extends AbstractTaxCode
     /**
      * Remove accountGroup
      *
-     * @param AccountGroup $accountGroup
+     * @param CustomerGroup $accountGroup
      * @return $this
      */
-    public function removeAccountGroup(AccountGroup $accountGroup)
+    public function removeAccountGroup(CustomerGroup $accountGroup)
     {
         if ($this->accountGroups->contains($accountGroup)) {
             $this->accountGroups->removeElement($accountGroup);
@@ -142,7 +142,7 @@ class AccountTaxCode extends AbstractTaxCode
     /**
      * Get accountGroups
      *
-     * @return AccountGroup[]|Collection
+     * @return CustomerGroup[]|Collection
      */
     public function getAccountGroups()
     {

@@ -46,7 +46,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  *              "organization_column_name"="organization_id",
  *              "frontend_owner_type"="FRONTEND_USER",
  *              "frontend_owner_field_name"="accountUser",
- *              "frontend_owner_column_name"="account_user_id",
+ *              "frontend_owner_column_name"="customer_user_id",
  *          },
  *          "dataaudit"={
  *              "auditable"=true
@@ -208,7 +208,10 @@ class Order extends ExtendOrder implements
      *  defaultValues={
      *      "dataaudit"={
      *          "auditable"=true
-     *     }
+     *      },
+     *      "multicurrency"={
+     *          "target"="subtotal"
+     *      }
      *  }
      * )
      */
@@ -229,9 +232,9 @@ class Order extends ExtendOrder implements
      *      "dataaudit"={
      *          "auditable"=true
      *      },
-     *     "multicurrency"={
-     *          "target" = "subtotal",
-     *          "virtual_field" = "subtotalBaseCurrency"
+     *      "multicurrency"={
+     *          "target"="subtotal",
+     *          "virtual_field"="subtotalBaseCurrency"
      *      }
      *  }
      * )
@@ -246,6 +249,9 @@ class Order extends ExtendOrder implements
      *  defaultValues={
      *      "dataaudit"={
      *          "auditable"=true
+     *      },
+     *      "multicurrency"={
+     *          "target"="subtotal"
      *      }
      *  }
      * )
@@ -269,7 +275,10 @@ class Order extends ExtendOrder implements
      *  defaultValues={
      *      "dataaudit"={
      *          "auditable"=true
-     *     }
+     *      },
+     *      "multicurrency"={
+     *          "target"="total"
+     *      }
      *  }
      * )
      */
@@ -290,9 +299,9 @@ class Order extends ExtendOrder implements
      *      "dataaudit"={
      *          "auditable"=true
      *      },
-     *     "multicurrency"={
-     *          "target" = "total",
-     *          "virtual_field" = "totalBaseCurrency"
+     *      "multicurrency"={
+     *          "target"="total",
+     *          "virtual_field"="totalBaseCurrency"
      *      }
      *  }
      * )
@@ -307,6 +316,9 @@ class Order extends ExtendOrder implements
      *  defaultValues={
      *      "dataaudit"={
      *          "auditable"=true
+     *      },
+     *      "multicurrency"={
+     *          "target"="total"
      *      }
      *  }
      * )

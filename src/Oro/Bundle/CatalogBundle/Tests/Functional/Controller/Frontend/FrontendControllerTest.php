@@ -4,7 +4,6 @@ namespace Oro\Bundle\CatalogBundle\Bundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 
 /**
  * @dbIsolation
@@ -31,13 +30,6 @@ class FrontendControllerTest extends WebTestCase
         $content = $result->getContent();
 
         $this->assertNotEmpty($content);
-        $this->assertContains(LoadCategoryData::FIRST_LEVEL, $content);
-        $this->assertContains(LoadCategoryData::SECOND_LEVEL1, $content);
-        $this->assertContains(LoadCategoryData::SECOND_LEVEL2, $content);
-        $this->assertContains(LoadCategoryData::THIRD_LEVEL1, $content);
-        $this->assertContains(LoadCategoryData::THIRD_LEVEL2, $content);
-        $this->assertContains(LoadCategoryData::FOURTH_LEVEL1, $content);
-        $this->assertContains(LoadCategoryData::FOURTH_LEVEL2, $content);
         $this->assertContains('list-slider-component', $content);
         $this->assertContains('Featured Products', $content);
         $this->assertContains('Top Selling Items', $content);

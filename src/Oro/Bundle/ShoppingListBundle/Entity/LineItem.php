@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ShoppingListBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
@@ -78,6 +78,21 @@ class LineItem extends ExtendLineItem implements
     protected $product;
 
     /**
+     * @var Product
+     *
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\Product")
+     * @ORM\JoinColumn(name="parent_product_id", referencedColumnName="id", onDelete="CASCADE")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $parentProduct;
+
+    /**
      * @var ShoppingList
      *
      * @ORM\ManyToOne(
@@ -140,10 +155,10 @@ class LineItem extends ExtendLineItem implements
     protected $notes;
 
     /**
-     * @var AccountUser
+     * @var CustomerUser
      *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\AccountUser")
-     * @ORM\JoinColumn(name="account_user_id", referencedColumnName="id", onDelete="CASCADE")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerUser")
+     * @ORM\JoinColumn(name="customer_user_id", referencedColumnName="id", onDelete="CASCADE")
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -178,6 +193,26 @@ class LineItem extends ExtendLineItem implements
     public function setProduct(Product $product)
     {
         $this->product = $product;
+
+        return $this;
+    }
+
+    /**
+     * @return Product
+     */
+    public function getParentProduct()
+    {
+        return $this->parentProduct;
+    }
+
+    /**
+     * @param Product $parentProduct
+     *
+     * @return $this
+     */
+    public function setParentProduct(Product $parentProduct)
+    {
+        $this->parentProduct = $parentProduct;
 
         return $this;
     }
@@ -263,7 +298,7 @@ class LineItem extends ExtendLineItem implements
     }
 
     /**
-     * @return AccountUser
+     * @return CustomerUser
      */
     public function getAccountUser()
     {
@@ -271,11 +306,11 @@ class LineItem extends ExtendLineItem implements
     }
 
     /**
-     * @param AccountUser $user
+     * @param CustomerUser $user
      *
      * @return $this
      */
-    public function setAccountUser(AccountUser $user)
+    public function setAccountUser(CustomerUser $user)
     {
         $this->accountUser = $user;
 

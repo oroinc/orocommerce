@@ -66,11 +66,11 @@ class OrderPaymentTermEventListener
 
         $account = $order->getAccount();
         if (!$account || !$accountUser->getAccount()) {
-            throw new BadRequestHttpException('AccountUser without Account is not allowed');
+            throw new BadRequestHttpException('CustomerUser without Account is not allowed');
         }
 
         if ($accountUser->getAccount()->getId() !== $account->getId()) {
-            throw new BadRequestHttpException('AccountUser must belong to Account');
+            throw new BadRequestHttpException('CustomerUser must belong to Account');
         }
     }
 }
