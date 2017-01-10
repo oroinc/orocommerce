@@ -49,6 +49,8 @@ class OroAccountBundle implements
         $this->renameAccountAdrAdrTypeTable($schema, $queries);
         $this->renameAccountUserAddressTable($schema, $queries);
         $this->renameAccountAddressTable($schema, $queries);
+        $this->renameAccWindowsStateTable($schema, $queries);
+        $this->renameAccNavItemPinbarTable($schema, $queries);
         $this->renameCustomerUserRole($schema, $queries);
         $this->renameCustomerGroup($schema, $queries);
         $this->renameLoadedFixtures($queries);
@@ -137,7 +139,6 @@ class OroAccountBundle implements
 
         $this->renameAccountId($schema, $queries, 'oro_account_user');
 
-//        $schema->getTable('oro_account_user_role')->dropIndex('oro_customer_user_role_account_id_label_idx');
         $this->renameAccountId($schema, $queries, 'oro_account_user_role');
 
         $this->renameAccountId($schema, $queries, 'oro_account_sales_reps');
@@ -668,6 +669,25 @@ class OroAccountBundle implements
         );
 
         $this->renameAccountUserId($schema, $queries, 'oro_acc_navigation_history');
+
+        $accNavigationHistory = $schema->getTable('oro_acc_navigation_history');
+        $accNavigationHistory->dropIndex('oro_acc_nav_history_route_idx');
+        $accNavigationHistory->dropIndex('oro_acc_nav_history_entity_id_idx');
+        $extension->addIndex(
+            $schema,
+            $queries,
+            'oro_acc_navigation_history',
+            ['route'],
+            'oro_cus_nav_history_route_idx'
+        );
+        $extension->addIndex(
+            $schema,
+            $queries,
+            'oro_acc_navigation_history',
+            ['entity_id'],
+            'oro_cus_nav_history_entity_id_idx'
+        );
+
         $this->renameExtension->renameTable(
             $schema,
             $queries,
@@ -797,17 +817,7 @@ class OroAccountBundle implements
             );
         }
         if ($schema->hasTable('oro_rel_6f8f552aa6adb604264ef1')) {
-//            $table = $schema->getTable('oro_rel_6f8f552aa6adb604264ef1');
             $schema->dropTable('oro_rel_6f8f552aa6adb604264ef1');
-//            $fk = $this->getConstraintName($table, 'accountuser_id');
-//            $table->removeForeignKey($fk);
-//            $extension->renameColumn($schema, $queries, $table, 'accountuser_id', 'customeruser_id');
-//            $extension->renameTable(
-//                $schema,
-//                $queries,
-//                'oro_rel_6f8f552aa6adb604264ef1',
-//                'oro_rel_6f8f552a3708e583c5ba51'
-//            );
         }
         $this->migrateConfig(
             $configManager,
@@ -927,28 +937,49 @@ class OroAccountBundle implements
             'customer_user_d5622eff',
             RelationType::MANY_TO_MANY
         );
-//        $this->migrateConfig(
-//            $configManager,
-//            'Oro\Bundle\NoteBundle\Entity\Note',
-//            'Oro\Bundle\CustomerBundle\Entity\CustomerUser',
-//            'account_user_741cdecd',
-//            'customer_user_d5622eff',
-//            RelationType::MANY_TO_MANY
-//        );
-//        $this->migrateConfig(
-//            $configManager,
-//            'Oro\Bundle\NoteBundle\Entity\Note',
-//            'Oro\Bundle\CustomerBundle\Entity\CustomerUser',
-//            'account_user_1cc98a31',
-//            'customer_user_d5622eff',
-//            RelationType::MANY_TO_MANY
-//        );
 
         $this->renameRelationTable(
             $schema,
             $queries,
             'oro_rel_26535370a6adb604264ef1',
             'oro_rel_265353703708e583c5ba51'
+        );
+    }
+
+    /**
+     * @param Schema $schema
+     * @param QueryBag $queries
+     */
+    private function renameAccWindowsStateTable(Schema $schema, QueryBag $queries)
+    {
+        $schema->getTable('oro_acc_windows_state')->dropIndex('oro_acc_windows_state_acu_idx');
+        $this->renameExtension->addIndex(
+            $schema,
+            $queries,
+            'oro_acc_windows_state',
+            ['customer_user_id'],
+            'oro_cus_windows_state_acu_idx'
+        );
+
+        $this->renameExtension->renameTable(
+            $schema,
+            $queries,
+            "oro_acc_windows_state",
+            "oro_cus_windows_state"
+        );
+    }
+
+    /**
+     * @param Schema $schema
+     * @param QueryBag $queries
+     */
+    private function renameAccNavItemPinbarTable(Schema $schema, QueryBag $queries)
+    {
+        $this->renameExtension->renameTable(
+            $schema,
+            $queries,
+            "oro_acc_nav_item_pinbar",
+            "oro_cus_nav_item_pinbar"
         );
     }
 
