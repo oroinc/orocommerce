@@ -952,14 +952,10 @@ class OroAccountBundle implements
      */
     private function renameAccWindowsStateTable(Schema $schema, QueryBag $queries)
     {
-        $schema->getTable('oro_acc_windows_state')->dropIndex('oro_acc_windows_state_acu_idx');
-        $this->renameExtension->addIndex(
-            $schema,
-            $queries,
-            'oro_acc_windows_state',
-            ['customer_user_id'],
-            'oro_cus_windows_state_acu_idx'
-        );
+        $windowsState = $schema->getTable('oro_acc_windows_state');
+        $windowsState->dropIndex('oro_acc_windows_state_acu_idx');
+        $windowsStateForeignKey = $this->getConstraintName($windowsState, 'customer_user_id');
+        $windowsState->removeForeignKey($windowsStateForeignKey);
 
         $this->renameExtension->renameTable(
             $schema,

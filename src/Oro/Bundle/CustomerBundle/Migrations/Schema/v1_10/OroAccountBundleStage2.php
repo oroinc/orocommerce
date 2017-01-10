@@ -44,6 +44,7 @@ class OroAccountBundleStage2 implements
         $this->renameAccountAddressToAddressType($schema);
         $this->renameAccountUserRole($schema);
         $this->renameCustomerGroup($schema);
+        $this->renameAccWindowsState($schema);
 
         $this->activityExtension->addActivityAssociation(
             $schema,
@@ -121,6 +122,22 @@ class OroAccountBundleStage2 implements
         );
         $table->addIndex(['position'], 'oro_cus_sdar_wdgs_pos_idx', []);
         $table->addIndex(['customer_user_id', 'placement'], 'oro_cus_sdbr_wdgs_usr_place_idx', []);
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    private function renameAccWindowsState(Schema $schema)
+    {
+        $table = $schema->getTable("oro_cus_windows_state");
+
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_customer_user'),
+            ['customer_user_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+        $table->addIndex(['customer_user_id'], 'oro_cus_windows_state_acu_idx', []);
     }
 
     /**
