@@ -14,7 +14,7 @@ use Oro\Bundle\PaymentBundle\Provider\ExtractOptionsProvider;
 use Oro\Bundle\PaymentBundle\Provider\SurchargeProvider;
 use Oro\Bundle\PaymentBundle\Tests\Unit\Method\EntityStub;
 use Oro\Bundle\PayPalBundle\Method\Config\PayflowExpressCheckoutConfigInterface;
-use Oro\Bundle\PayPalBundle\Method\PayflowExpressCheckout;
+use Oro\Bundle\PayPalBundle\Method\PayPalExpressCheckoutPaymentMethod;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\Response;
 use Symfony\Component\Routing\RouterInterface;
@@ -23,7 +23,7 @@ use Symfony\Component\Routing\RouterInterface;
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
-class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
+class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit_Framework_TestCase
 {
     const CONFIG_PREFIX = 'payflow_express_checkout_';
     const PRODUCTION_REDIRECT_URL = 'https://www.paypal.com/webscr?cmd=_express-checkout&useraction=commit&token=%s';
@@ -39,7 +39,7 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
     /** @var RouterInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $router;
 
-    /** @var PayflowExpressCheckout */
+    /** @var PayPalExpressCheckoutPaymentMethod */
     protected $expressCheckout;
 
     /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
@@ -69,7 +69,7 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->expressCheckout = new PayflowExpressCheckout(
+        $this->expressCheckout = new PayPalExpressCheckoutPaymentMethod(
             $this->gateway,
             $this->paymentConfig,
             $this->router,
@@ -112,8 +112,11 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
         $this->expressCheckout->execute($transaction->getAction(), $transaction);
     }
 
-    public function testGetType()
+    public function testGetIdentifier()
     {
+        $this->paymentConfig->expects(static::once())
+            ->method('getPaymentMethodIdentifier')
+            ->willReturn('payflow_express_checkout');
         $this->assertSame('payflow_express_checkout', $this->expressCheckout->getIdentifier());
     }
 
@@ -144,7 +147,7 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
             [true, PaymentMethodInterface::CAPTURE],
             [true, PaymentMethodInterface::CHARGE],
             [true, PaymentMethodInterface::PURCHASE],
-            [true, PayflowExpressCheckout::COMPLETE],
+            [true, PayPalExpressCheckoutPaymentMethod::COMPLETE],
             [false, PaymentMethodInterface::VALIDATE],
         ];
     }
@@ -537,7 +540,7 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
 
         $this->expressCheckout->execute($transaction->getAction(), $transaction);
 
-        $transaction->setAction(PayflowExpressCheckout::COMPLETE);
+        $transaction->setAction(PayPalExpressCheckoutPaymentMethod::COMPLETE);
 
         $this->expressCheckout->execute($transaction->getAction(), $transaction);
 
@@ -565,7 +568,7 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
 
         $this->expressCheckout->execute($transaction->getAction(), $transaction);
 
-        $this->expressCheckout->execute(PayflowExpressCheckout::COMPLETE, $transaction);
+        $this->expressCheckout->execute(PayPalExpressCheckoutPaymentMethod::COMPLETE, $transaction);
 
         $this->assertTrue($transaction->isActive());
         $this->assertFalse($transaction->isSuccessful());
@@ -591,7 +594,7 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
 
         $this->expressCheckout->execute($transaction->getAction(), $transaction);
 
-        $this->expressCheckout->execute(PayflowExpressCheckout::COMPLETE, $transaction);
+        $this->expressCheckout->execute(PayPalExpressCheckoutPaymentMethod::COMPLETE, $transaction);
 
         $this->assertTrue($transaction->isActive());
         $this->assertTrue($transaction->isSuccessful());
@@ -610,7 +613,7 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $transaction = $this->createTransaction(PayflowExpressCheckout::COMPLETE);
+        $transaction = $this->createTransaction(PayPalExpressCheckoutPaymentMethod::COMPLETE);
         $transaction->setReference(self::TOKEN);
 
         $this->gateway->expects($this->once())
@@ -620,7 +623,7 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
                 new Response(['RESPMSG' => 'Approved', 'RESULT' => '0', 'TOKEN' => self::TOKEN])
             );
 
-        $this->expressCheckout->execute(PayflowExpressCheckout::COMPLETE, $transaction);
+        $this->expressCheckout->execute(PayPalExpressCheckoutPaymentMethod::COMPLETE, $transaction);
     }
 
     public function testCaptureWithoutSourcePaymentTransaction()

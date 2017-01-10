@@ -8,12 +8,11 @@ use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
 use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 use Oro\Bundle\PayPalBundle\Form\Type\CreditCardType;
 use Oro\Bundle\PayPalBundle\Method\Config\PayflowGatewayConfigInterface;
-use Oro\Bundle\PayPalBundle\Method\PayflowGateway;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Option as GatewayOption;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\Response;
 use Symfony\Component\Form\FormFactoryInterface;
 
-class PayflowGatewayView implements PaymentMethodViewInterface
+class PayPalCreditCardPaymentMethodView implements PaymentMethodViewInterface
 {
     /** @var FormFactoryInterface */
     protected $formFactory;
@@ -63,7 +62,7 @@ class PayflowGatewayView implements PaymentMethodViewInterface
         }
 
         $validateTransaction = $this->paymentTransactionProvider
-            ->getActiveValidatePaymentTransaction($this->getPaymentMethodType());
+            ->getActiveValidatePaymentTransaction($this->getPaymentMethodIdentifier());
 
         if (!$validateTransaction) {
             return $viewOptions;
@@ -101,12 +100,6 @@ class PayflowGatewayView implements PaymentMethodViewInterface
     }
 
     /** {@inheritdoc} */
-    public function getPaymentMethodType()
-    {
-        return PayflowGateway::TYPE;
-    }
-
-    /** {@inheritdoc} */
     public function getLabel()
     {
         return $this->config->getLabel();
@@ -137,6 +130,6 @@ class PayflowGatewayView implements PaymentMethodViewInterface
     /** {@inheritdoc} */
     public function getPaymentMethodIdentifier()
     {
-        return $this->getPaymentMethodType();
+        return $this->config->getPaymentMethodIdentifier();
     }
 }
