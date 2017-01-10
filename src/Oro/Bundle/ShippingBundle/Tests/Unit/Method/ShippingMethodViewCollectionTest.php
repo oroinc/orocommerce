@@ -4,6 +4,11 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\Method;
 
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewCollection;
 
+/**
+* @SuppressWarnings(PHPMD.TooManyMethods)
+* @SuppressWarnings(PHPMD.TooManyPublicMethods)
+* @SuppressWarnings(PHPMD.ExcessivePublicCount)
+*/
 class ShippingMethodViewCollectionTest extends \PHPUnit_Framework_TestCase
 {
     /**
