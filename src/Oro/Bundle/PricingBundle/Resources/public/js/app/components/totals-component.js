@@ -220,7 +220,7 @@ define(function(require) {
                     }
                 },
                 error: function(jqXHR) {
-                    messenger.showErrorMessage(_.__('Sorry, unexpected error was occurred'), jqXHR.responseJSON);
+                    messenger.showErrorMessage(_.__('Sorry, an unexpected error has occurred.'), jqXHR.responseJSON);
                 }
             });
         },

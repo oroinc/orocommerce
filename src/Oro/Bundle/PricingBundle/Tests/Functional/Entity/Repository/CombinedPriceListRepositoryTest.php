@@ -3,8 +3,8 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
 use Doctrine\Common\Persistence\ObjectManager;
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\BasePriceListRelation;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToAccount;
@@ -55,7 +55,7 @@ class CombinedPriceListRepositoryTest extends WebTestCase
 
     public function testAccountPriceList()
     {
-        /** @var Account $account */
+        /** @var Customer $account */
         $account = $this->getReference('account.level_1.2');
 
         /** @var CombinedPriceList $priceList */
@@ -76,7 +76,7 @@ class CombinedPriceListRepositoryTest extends WebTestCase
 
     public function testAccountGroupPriceList()
     {
-        /** @var AccountGroup $accountGroup */
+        /** @var CustomerGroup $accountGroup */
         $accountGroup = $this->getReference('account_group.group1');
 
         /** @var CombinedPriceList $priceList */
@@ -190,7 +190,7 @@ class CombinedPriceListRepositoryTest extends WebTestCase
         $website = $this->getReference($website);
 
         if ($targetEntity) {
-            /** @var Account|AccountGroup $targetEntity */
+            /** @var Customer|CustomerGroup $targetEntity */
             $targetEntity = $this->getReference($targetEntity);
         }
 
@@ -212,7 +212,7 @@ class CombinedPriceListRepositoryTest extends WebTestCase
                 ->findOneBy(array_merge(['website' => $website], $additionalCriteria));
         };
 
-        $getAccountConnection = function (Website $website, Account $targetEntity) use ($getConnection) {
+        $getAccountConnection = function (Website $website, Customer $targetEntity) use ($getConnection) {
             return call_user_func(
                 $getConnection,
                 'OroPricingBundle:CombinedPriceListToAccount',
@@ -221,7 +221,7 @@ class CombinedPriceListRepositoryTest extends WebTestCase
             );
         };
 
-        $getAccountGroupConnection = function (Website $website, AccountGroup $targetEntity) use ($getConnection) {
+        $getAccountGroupConnection = function (Website $website, CustomerGroup $targetEntity) use ($getConnection) {
             return call_user_func(
                 $getConnection,
                 'OroPricingBundle:CombinedPriceListToAccountGroup',

@@ -7,7 +7,6 @@ define(function(require) {
     var mediator = require('oroui/js/mediator');
     var routing = require('routing');
     var layout = require('oroui/js/layout');
-    var tools = require('oroui/js/tools');
     var widgetManager = require('oroui/js/widget-manager');
     var BaseComponent = require('oroui/js/app/components/base/component');
     var PageableCollection = require('orodatagrid/js/pageable-collection');
@@ -17,6 +16,8 @@ define(function(require) {
          * @property {Object}
          */
         options: {
+            container: '',
+            sidebar: '',
             sidebarAlias: '',
             widgetAlias: '',
             widgetContainer: '',
@@ -24,7 +25,8 @@ define(function(require) {
             widgetRouteParameters: {
                 gridName: ''
             },
-            gridParam: 'grid'
+            gridParam: 'grid',
+            fixSidebarHeight: false
         },
 
         /**
@@ -58,7 +60,9 @@ define(function(require) {
             this.$container.find('.control-minimize').click(_.bind(this.minimize, this));
             this.$container.find('.control-maximize').click(_.bind(this.maximize, this));
 
-            this._fixSidebarHeight();
+            if (this.options.fixSidebarHeight) {
+                this._fixSidebarHeight();
+            }
 
             this._maximizeOrMaximize(null);
         },
@@ -84,7 +88,11 @@ define(function(require) {
          * @param {Object} data
          */
         onSidebarChange: function(data) {
-            var params = _.extend(this._getQueryParamsFromUrl(location.search), data.params);
+            var params = _.extend(
+                this._getQueryParamsFromUrl(location.search),
+                data.params,
+                this._getDatagridParams()
+            );
             var widgetParams = _.extend(
                 _.omit(this.options.widgetRouteParameters, this.options.gridParam),
                 params
@@ -183,8 +191,8 @@ define(function(require) {
         _fixSidebarHeight: function() {
             var $container = $('#container');
             var $pageTitle = $('.page-title', $container);
-            var $productContainer = $('.product-container');
-            var $sidebar = $('.grid-sidebar', $container);
+            var $productContainer = $('.' + this.options.container);
+            var $sidebar = $('.' + this.options.sidebar, $container);
 
             var fixHeight = function() {
                 $sidebar
@@ -230,6 +238,17 @@ define(function(require) {
          */
         _urlParamsToString: function(params) {
             return $.param(params);
+        },
+
+        /**
+         * @returns {Object}
+         * @private
+         */
+        _getDatagridParams: function() {
+            var params = {};
+            params[this.gridCollection.options.gridName] = this.gridCollection.urlParams;
+
+            return params;
         },
 
         dispose: function() {

@@ -6,7 +6,7 @@ use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\VisibilityBundle\Async\Visibility\AccountProcessor;
 use Oro\Bundle\VisibilityBundle\Driver\AccountPartialUpdateDriverInterface;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\VisibilityBundle\Model\MessageFactoryInterface;
@@ -94,7 +94,7 @@ class AccountProcessorTest extends \PHPUnit_Framework_TestCase
         $session = $this->getMockBuilder(SessionInterface::class)
             ->getMock();
 
-        $account = new Account();
+        $account = new Customer();
 
         $this->messageFactory->expects($this->once())
             ->method('getEntityFromMessage')
@@ -170,7 +170,7 @@ class AccountProcessorTest extends \PHPUnit_Framework_TestCase
         $this->logger->expects($this->once())
             ->method('error');
 
-        $account = new Account();
+        $account = new Customer();
         $this->messageFactory->expects($this->once())
             ->method('getEntityFromMessage')
             ->with($data)

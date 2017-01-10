@@ -1,0 +1,6 @@
+services:
+    oro_pricing.event_listener.unit_visibility.datagrid:
+        parent: oro_product.event_listener.unit_visibility.datagrid_basic
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.price-list-product-prices-grid, method: onBuildBefore }
+

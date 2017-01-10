@@ -26,7 +26,7 @@ services:
     oro_sale.layout.type.units_request_for_quote:
         parent: oro_layout.block_type.abstract_configurable_container
         calls:
-            - [setOptionsConfig, [{units: {required: true}}]]
+            - [setOptionsConfig, [{units: {required: true}, productUnitSelectionVisible: {required: true}}]]
             - [setName, ['units_request_for_quote']]
         tags:
              - { name: layout.block_type, alias: units_request_for_quote }

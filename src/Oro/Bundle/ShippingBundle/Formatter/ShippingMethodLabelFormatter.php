@@ -6,6 +6,9 @@ use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 
 class ShippingMethodLabelFormatter
 {
+    /** @internal */
+    const DELIMITER = ', ';
+
     /**
      * @var ShippingMethodRegistry
      */
@@ -55,5 +58,22 @@ class ShippingMethodLabelFormatter
         }
 
         return $shippingMethodType->getLabel();
+    }
+
+    /**
+     * @param string $shippingMethodName
+     * @param string $shippingTypeName
+     * @return string
+     */
+    public function formatShippingMethodWithTypeLabel($shippingMethodName, $shippingTypeName)
+    {
+        $methodLabel = $this->formatShippingMethodLabel($shippingMethodName);
+        $methodTypeLabel = $this->formatShippingMethodTypeLabel($shippingMethodName, $shippingTypeName);
+
+        if ($methodLabel === '') {
+            return $methodTypeLabel;
+        }
+
+        return $methodLabel . self::DELIMITER . $methodTypeLabel;
     }
 }

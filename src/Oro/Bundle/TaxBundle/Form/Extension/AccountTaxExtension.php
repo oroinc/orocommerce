@@ -4,7 +4,7 @@ namespace Oro\Bundle\TaxBundle\Form\Extension;
 
 use Symfony\Component\Form\FormBuilderInterface;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Form\Type\AccountType;
 use Oro\Bundle\TaxBundle\Entity\AbstractTaxCode;
 use Oro\Bundle\TaxBundle\Entity\AccountTaxCode;
@@ -40,7 +40,7 @@ class AccountTaxExtension extends AbstractTaxExtension
     }
 
     /**
-     * @param Account $account
+     * @param Customer $account
      * @param AccountTaxCode|AbstractTaxCode $taxCode
      * @param AccountTaxCode|AbstractTaxCode $taxCodeNew
      */
@@ -56,7 +56,7 @@ class AccountTaxExtension extends AbstractTaxExtension
     }
 
     /**
-     * @param Account $object
+     * @param Customer $object
      * @return AccountTaxCode|null
      */
     protected function getTaxCode($object)

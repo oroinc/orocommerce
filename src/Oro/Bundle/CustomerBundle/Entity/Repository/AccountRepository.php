@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CustomerBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\EntityBundle\ORM\Repository\BatchIteratorInterface;
 use Oro\Bundle\EntityBundle\ORM\Repository\BatchIteratorTrait;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
@@ -15,7 +15,7 @@ class AccountRepository extends EntityRepository implements BatchIteratorInterfa
     /**
      * @param string $name
      *
-     * @return null|Account
+     * @return null|Customer
      */
     public function findOneByName($name)
     {

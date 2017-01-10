@@ -13,9 +13,9 @@ use Oro\Bundle\UserBundle\Entity\AbstractUser;
 class Audit extends AbstractAudit
 {
     /**
-     * @var AccountUser $user
+     * @var CustomerUser $user
      *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\AccountUser", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerUser", cascade={"persist"})
      * @ORM\JoinColumn(name="account_user_id", referencedColumnName="id", nullable=true, onDelete="CASCADE")
      */
     protected $accountUser;

@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ShoppingListBundle\DataProvider;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
@@ -66,7 +66,7 @@ class ProductShoppingListsDataProvider
         }
         $currentShoppingListId = $currentShoppingList->getId();
 
-        /** @var AccountUser $accountUser */
+        /** @var CustomerUser $accountUser */
         $accountUser = $this->securityFacade->getLoggedUser();
         $lineItems = $this->lineItemRepository
             ->getProductItemsWithShoppingListNames($products, $accountUser);

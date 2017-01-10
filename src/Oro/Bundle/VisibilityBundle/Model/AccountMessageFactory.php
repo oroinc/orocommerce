@@ -4,7 +4,7 @@ namespace Oro\Bundle\VisibilityBundle\Model;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Model\Exception\InvalidArgumentException;
 
 class AccountMessageFactory implements MessageFactoryInterface
@@ -25,13 +25,13 @@ class AccountMessageFactory implements MessageFactoryInterface
     }
 
     /**
-     * @param Account $account
+     * @param Customer $account
      * @return array
      */
     public function createMessage($account)
     {
         $message = [self::ID => null];
-        if ($account instanceof Account) {
+        if ($account instanceof Customer) {
             $message[self::ID] = $account->getId();
         }
 
@@ -40,14 +40,14 @@ class AccountMessageFactory implements MessageFactoryInterface
 
     /**
      * @param array|null $data
-     * @return Account
+     * @return Customer
      */
     public function getEntityFromMessage($data)
     {
         $account = null;
         if (isset($data[self::ID])) {
-            $account = $this->registry->getManagerForClass(Account::class)
-                ->getRepository(Account::class)
+            $account = $this->registry->getManagerForClass(Customer::class)
+                ->getRepository(Customer::class)
                 ->find($data[self::ID]);
         }
         if (!$account) {

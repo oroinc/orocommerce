@@ -4,9 +4,9 @@ namespace Oro\Bundle\CustomerBundle\Provider;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 
 class AccountUserRelationsProvider
 {
@@ -31,10 +31,10 @@ class AccountUserRelationsProvider
     }
 
     /**
-     * @param AccountUser|null $accountUser
-     * @return null|Account
+     * @param CustomerUser|null $accountUser
+     * @return null|Customer
      */
-    public function getAccount(AccountUser $accountUser = null)
+    public function getAccount(CustomerUser $accountUser = null)
     {
         if ($accountUser) {
             return $accountUser->getAccount();
@@ -44,10 +44,10 @@ class AccountUserRelationsProvider
     }
 
     /**
-     * @param AccountUser|null $accountUser
-     * @return null|AccountGroup
+     * @param CustomerUser|null $accountUser
+     * @return null|CustomerGroup
      */
-    public function getAccountGroup(AccountUser $accountUser = null)
+    public function getAccountGroup(CustomerUser $accountUser = null)
     {
         if ($accountUser) {
             $account = $this->getAccount($accountUser);
@@ -59,7 +59,7 @@ class AccountUserRelationsProvider
 
             if ($anonymousGroupId) {
                 return $this->doctrineHelper->getEntityReference(
-                    'OroCustomerBundle:AccountGroup',
+                    'OroCustomerBundle:CustomerGroup',
                     $anonymousGroupId
                 );
             }
@@ -69,14 +69,14 @@ class AccountUserRelationsProvider
     }
 
     /**
-     * @param AccountUser|null $accountUser
-     * @return null|Account
+     * @param CustomerUser|null $accountUser
+     * @return null|Customer
      */
-    public function getAccountIncludingEmpty(AccountUser $accountUser = null)
+    public function getAccountIncludingEmpty(CustomerUser $accountUser = null)
     {
         $account = $this->getAccount($accountUser);
         if (!$account) {
-            $account = new Account();
+            $account = new Customer();
             $account->setGroup($this->getAccountGroup($accountUser));
         }
         

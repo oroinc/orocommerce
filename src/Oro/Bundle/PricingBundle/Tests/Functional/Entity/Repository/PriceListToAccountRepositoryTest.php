@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
@@ -43,8 +43,8 @@ class PriceListToAccountRepositoryTest extends WebTestCase
     public function testRestrictByPriceList($priceList, array $expectedAccounts)
     {
         $qb = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroCustomerBundle:Account')
-            ->getRepository('OroCustomerBundle:Account')
+            ->getManagerForClass('OroCustomerBundle:Customer')
+            ->getRepository('OroCustomerBundle:Customer')
             ->createQueryBuilder('account');
 
         /** @var BasePriceList $priceList */
@@ -126,7 +126,7 @@ class PriceListToAccountRepositoryTest extends WebTestCase
      */
     public function testGetPriceLists($account, $website, array $expectedPriceLists)
     {
-        /** @var Account $account */
+        /** @var Customer $account */
         $account = $this->getReference($account);
         /** @var Website $website */
         $website = $this->getReference($website);
@@ -189,7 +189,7 @@ class PriceListToAccountRepositoryTest extends WebTestCase
      */
     public function testGetAccountIteratorByFallback($accountGroup, $website, $expectedAccounts, $fallback = null)
     {
-        /** @var $accountGroup  AccountGroup */
+        /** @var $accountGroup  CustomerGroup */
         $accountGroup = $this->getReference($accountGroup);
         /** @var $website Website */
         $website = $this->getReference($website);
@@ -237,9 +237,9 @@ class PriceListToAccountRepositoryTest extends WebTestCase
 
     public function testGetAccountWebsitePairsByAccountGroupIterator()
     {
-        /** @var AccountGroup $accountGroup */
+        /** @var CustomerGroup $accountGroup */
         $accountGroup = $this->getReference('account_group.group1');
-        /** @var Account $account */
+        /** @var Customer $account */
         $account = $this->getReference('account.level_1.3');
         /** @var Website $website */
         $website = $this->getReference('US');
@@ -284,7 +284,7 @@ class PriceListToAccountRepositoryTest extends WebTestCase
 
     public function testGetAccountWebsitePairsByAccount()
     {
-        /** @var Account $account */
+        /** @var Customer $account */
         $account = $this->getReference('account.level_1_1');
 
         /** @var AccountWebsiteDTO[] $result */
@@ -313,7 +313,7 @@ class PriceListToAccountRepositoryTest extends WebTestCase
 
     public function testDelete()
     {
-        /** @var Account $account */
+        /** @var Customer $account */
         $account = $this->getReference('account.level_1_1');
         /** @var Website $website */
         $website = $this->getReference('US');

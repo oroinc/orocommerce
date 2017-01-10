@@ -4,7 +4,7 @@ namespace Oro\Bundle\CustomerBundle\Acl\Resolver;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 
 class RoleTranslationPrefixResolver
 {
@@ -34,10 +34,10 @@ class RoleTranslationPrefixResolver
 
         if ($user instanceof User) {
             return self::BACKEND_PREFIX;
-        } elseif ($user instanceof AccountUser) {
+        } elseif ($user instanceof CustomerUser) {
             return self::FRONTEND_PREFIX;
         }
 
-        throw new \RuntimeException('This method must be called only for logged User or AccountUser');
+        throw new \RuntimeException('This method must be called only for logged User or CustomerUser');
     }
 }

@@ -8,8 +8,8 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Event\AccountGroupEvent;
 
 class AccountGroupHandler
@@ -47,10 +47,10 @@ class AccountGroupHandler
     /**
      * Process form
      *
-     * @param AccountGroup $entity
+     * @param CustomerGroup $entity
      * @return bool  True on successful processing, false otherwise
      */
-    public function process(AccountGroup $entity)
+    public function process(CustomerGroup $entity)
     {
         $this->form->setData($entity);
 
@@ -74,11 +74,11 @@ class AccountGroupHandler
     /**
      * "Success" form handler
      *
-     * @param AccountGroup $entity
-     * @param Account[] $append
-     * @param Account[] $remove
+     * @param CustomerGroup $entity
+     * @param Customer[] $append
+     * @param Customer[] $remove
      */
-    protected function onSuccess(AccountGroup $entity, array $append, array $remove)
+    protected function onSuccess(CustomerGroup $entity, array $append, array $remove)
     {
         $this->setGroup($entity, $append);
         $this->removeFromGroup($entity, $remove);
@@ -91,10 +91,10 @@ class AccountGroupHandler
     /**
      * Append accounts to account group
      *
-     * @param AccountGroup $group
-     * @param Account[] $accounts
+     * @param CustomerGroup $group
+     * @param Customer[] $accounts
      */
-    protected function setGroup(AccountGroup $group, array $accounts)
+    protected function setGroup(CustomerGroup $group, array $accounts)
     {
         foreach ($accounts as $account) {
             $account->setGroup($group);
@@ -105,10 +105,10 @@ class AccountGroupHandler
     /**
      * Remove users from business unit
      *
-     * @param AccountGroup $group
-     * @param Account[] $accounts
+     * @param CustomerGroup $group
+     * @param Customer[] $accounts
      */
-    protected function removeFromGroup(AccountGroup $group, array $accounts)
+    protected function removeFromGroup(CustomerGroup $group, array $accounts)
     {
         foreach ($accounts as $account) {
             if ($account->getGroup()->getId() === $group->getId()) {

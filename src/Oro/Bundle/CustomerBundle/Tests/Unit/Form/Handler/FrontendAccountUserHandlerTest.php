@@ -21,7 +21,7 @@ class FrontendAccountUserHandlerTest extends FormHandlerTestCase
     {
         parent::setUp();
 
-        $this->entity = $this->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\AccountUser')
+        $this->entity = $this->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\CustomerUser')
             ->disableOriginalConstructor()
             ->getMock();
 

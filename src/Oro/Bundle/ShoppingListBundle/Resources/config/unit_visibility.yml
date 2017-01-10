@@ -1,0 +1,5 @@
+services:
+    oro_shopping.event_listener.unit_visibility.datagrid:
+        parent: oro_product.event_listener.unit_visibility.datagrid_basic
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.shopping-list-line-items-grid, method: onBuildBefore }

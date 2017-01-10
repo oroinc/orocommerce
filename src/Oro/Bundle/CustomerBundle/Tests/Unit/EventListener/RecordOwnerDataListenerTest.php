@@ -4,7 +4,7 @@ namespace Oro\Bundle\CustomerBundle\Tests\Unit\EventListener;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\Event\LifecycleEventArgs;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\EventListener\RecordOwnerDataListener;
 use Oro\Bundle\CustomerBundle\Tests\Unit\Fixtures\Entity\User;
 use Oro\Bundle\EntityConfigBundle\Config\Config;
@@ -88,7 +88,7 @@ class RecordOwnerDataListenerTest extends \PHPUnit_Framework_TestCase
         $user = new User();
         $user->setId(1);
 
-        $account = $this->createMock(Account::class);
+        $account = $this->createMock(Customer::class);
         $user->setAccount($account);
 
         $userConfig = new Config($entityConfigId);

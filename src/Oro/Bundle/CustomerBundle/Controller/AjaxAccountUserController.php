@@ -5,7 +5,7 @@ namespace Oro\Bundle\CustomerBundle\Controller;
 use Symfony\Component\Routing\Annotation\Route;
 
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 
 class AjaxAccountUserController extends AbstractAjaxAccountUserController
 {
@@ -18,7 +18,7 @@ class AjaxAccountUserController extends AbstractAjaxAccountUserController
      *
      * {@inheritdoc}
      */
-    public function getAccountIdAction(AccountUser $accountUser)
+    public function getAccountIdAction(CustomerUser $accountUser)
     {
         return parent::getAccountIdAction($accountUser);
     }

@@ -6,6 +6,7 @@ use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\RuleBundle\Form\Type\RuleType;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
+use Oro\Bundle\ShippingBundle\Form\EventSubscriber\DestinationCollectionTypeSubscriber;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 use Symfony\Component\Form\AbstractType;
@@ -52,9 +53,10 @@ class ShippingMethodsConfigsRuleType extends AbstractType
                 'empty_value' => 'oro.currency.currency.form.choose',
             ])
             ->add('destinations', CollectionType::class, [
-                'required' => false,
-                'entry_type' => ShippingMethodsConfigsRuleDestinationType::class,
-                'label' => 'oro.shipping.shippingmethodsconfigsrule.destinations.label',
+                'required'             => false,
+                'entry_type'           => ShippingMethodsConfigsRuleDestinationType::class,
+                'label'                => 'oro.shipping.shippingmethodsconfigsrule.destinations.label',
+                'show_form_when_empty' => false,
             ])
             ->add('methodConfigs', ShippingMethodConfigCollectionType::class, [
                 'required' => false,
@@ -63,6 +65,8 @@ class ShippingMethodsConfigsRuleType extends AbstractType
                 'mapped' => false,
                 'choices' => $this->getMethods(),
             ]);
+
+        $builder->addEventSubscriber(new DestinationCollectionTypeSubscriber());
     }
 
     /**

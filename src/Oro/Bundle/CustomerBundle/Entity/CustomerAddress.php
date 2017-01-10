@@ -47,7 +47,7 @@ use Oro\Bundle\CustomerBundle\Model\ExtendCustomerAddress;
 class CustomerAddress extends ExtendCustomerAddress implements AddressPhoneAwareInterface
 {
     /**
-     * @ORM\ManyToOne(targetEntity="Account", inversedBy="addresses", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="Customer", inversedBy="addresses", cascade={"persist"})
      * @ORM\JoinColumn(name="frontend_owner_id", referencedColumnName="id", onDelete="CASCADE")
      * @ConfigField(
      *      defaultValues={

@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\VisibilityBundle\Driver\AccountPartialUpdateDriverInterface;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Query\Query;
@@ -65,19 +65,19 @@ abstract class AbstractAccountPartialUpdateDriverTest extends WebTestCase
     abstract protected function isTestSkipped();
 
     /**
-     * @param Account $account
+     * @param Customer $account
      * @return string
      */
-    private function getVisibilityAccountFieldName(Account $account)
+    private function getVisibilityAccountFieldName(Customer $account)
     {
         return 'integer.visibility_account_' . $account->getId();
     }
 
     /**
-     * @param Account $account
+     * @param Customer $account
      * @return \Oro\Bundle\SearchBundle\Query\Result
      */
-    private function searchVisibilitiesForAccount(Account $account)
+    private function searchVisibilitiesForAccount(Customer $account)
     {
         $query = new Query();
         $query
@@ -107,11 +107,11 @@ abstract class AbstractAccountPartialUpdateDriverTest extends WebTestCase
 
         $this->reindexProducts();
 
-        /** @var Account $accountLevel1 */
+        /** @var Customer $accountLevel1 */
         $accountLevel1 = $this->getReference('account.level_1');
         $owner = $accountLevel1->getOwner();
 
-        $account = new Account();
+        $account = new Customer();
         $account
             ->setName('New Account')
             ->setOwner($owner)
@@ -120,7 +120,7 @@ abstract class AbstractAccountPartialUpdateDriverTest extends WebTestCase
         $searchResult = $this->searchVisibilitiesForAccount($account);
         $this->assertEquals(0, $searchResult->getRecordsCount());
 
-        $manager = $this->getContainer()->get('doctrine')->getManagerForClass(Account::class);
+        $manager = $this->getContainer()->get('doctrine')->getManagerForClass(Customer::class);
         $manager->persist($account);
         $manager->flush();
 
@@ -197,7 +197,7 @@ abstract class AbstractAccountPartialUpdateDriverTest extends WebTestCase
         $this->assertStringStartsWith('product.2', $values[0]->getSelectedData()['sku']);
         $this->assertStringStartsWith('product.3', $values[1]->getSelectedData()['sku']);
 
-        $manager = $this->getContainer()->get('doctrine')->getManagerForClass(Account::class);
+        $manager = $this->getContainer()->get('doctrine')->getManagerForClass(Customer::class);
         $manager->remove($account);
         $manager->flush();
 

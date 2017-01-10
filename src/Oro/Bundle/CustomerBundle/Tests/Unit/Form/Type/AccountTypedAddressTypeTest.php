@@ -8,7 +8,7 @@ use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Doctrine\Common\Collections\ArrayCollection;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 use Oro\Bundle\CustomerBundle\Form\Type\AccountTypedAddressType;
 use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\AddressTypeStub;
@@ -223,7 +223,7 @@ class AccountTypedAddressTypeTest extends FormIntegrationTestCase
             ->addType($this->shippingType)
             ->setDefaults(new ArrayCollection([$this->billingType, $this->shippingType]));
 
-        $account = new Account();
+        $account = new Customer();
         $account->addAddress($accountAddress1);
         $account->addAddress($accountAddress2);
 

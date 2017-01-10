@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\PricingBundle\Command;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
-use Oro\Bundle\CustomerBundle\Entity\Repository\AccountGroupRepository;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
+use Oro\Bundle\CustomerBundle\Entity\Repository\CustomerGroupRepository;
 use Oro\Bundle\CustomerBundle\Entity\Repository\AccountRepository;
 use Oro\Bundle\PricingBundle\Builder\PriceListProductAssignmentBuilder;
 use Oro\Bundle\PricingBundle\Builder\ProductPriceBuilder;
@@ -242,15 +242,15 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
 
     /**
      * @param InputInterface $input
-     * @return array|AccountGroup[]
+     * @return array|CustomerGroup[]
      */
     protected function getAccountGroups(InputInterface $input)
     {
         $accountGroupIds = $input->getOption(self::ACCOUNT_GROUP);
-        /** @var AccountGroupRepository $repository */
+        /** @var CustomerGroupRepository $repository */
         $repository = $this->getContainer()->get('doctrine')
-            ->getManagerForClass(AccountGroup::class)
-            ->getRepository(AccountGroup::class);
+            ->getManagerForClass(CustomerGroup::class)
+            ->getRepository(CustomerGroup::class);
         $accountGroups = [];
         if (count($accountGroupIds)) {
             $accountGroups = $repository->findBy(['id' => $accountGroupIds]);
@@ -261,15 +261,15 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
 
     /**
      * @param InputInterface $input
-     * @return array|Account[]
+     * @return array|Customer[]
      */
     protected function getAccounts(InputInterface $input)
     {
         $accountIds = $input->getOption(self::ACCOUNT);
         /** @var AccountRepository $repository */
         $repository = $this->getContainer()->get('doctrine')
-            ->getManagerForClass(Account::class)
-            ->getRepository(Account::class);
+            ->getManagerForClass(Customer::class)
+            ->getRepository(Customer::class);
         $accounts = [];
         if (count($accountIds)) {
             $accounts = $repository->findBy(['id' => $accountIds]);

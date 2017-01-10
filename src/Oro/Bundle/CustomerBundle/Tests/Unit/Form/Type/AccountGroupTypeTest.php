@@ -7,12 +7,12 @@ use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType;
 use Oro\Bundle\CustomerBundle\Form\Type\AccountGroupType;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 
 class AccountGroupTypeTest extends FormIntegrationTestCase
 {
-    const DATA_CLASS = 'Oro\Bundle\CustomerBundle\Entity\AccountGroup';
-    const ACCOUNT_CLASS = 'Oro\Bundle\CustomerBundle\Entity\Account';
+    const DATA_CLASS = 'Oro\Bundle\CustomerBundle\Entity\CustomerGroup';
+    const ACCOUNT_CLASS = 'Oro\Bundle\CustomerBundle\Entity\Customer';
 
     /**
      * @var AccountGroupType
@@ -95,10 +95,10 @@ class AccountGroupTypeTest extends FormIntegrationTestCase
         $groupName = 'account_group_name';
         $alteredGroupName = 'altered_group_name';
 
-        $defaultGroup = new AccountGroup();
+        $defaultGroup = new CustomerGroup();
         $defaultGroup->setName($groupName);
 
-        /** @var AccountGroup $existingGroupBefore */
+        /** @var CustomerGroup $existingGroupBefore */
         $existingGroupBefore = $this->getEntity(self::DATA_CLASS, 1);
         $existingGroupBefore->setName($groupName);
 

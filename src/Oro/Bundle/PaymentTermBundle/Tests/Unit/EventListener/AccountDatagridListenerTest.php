@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\PaymentTermBundle\Tests\Unit\Datagrid;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
@@ -64,7 +64,7 @@ class AccountDatagridListenerTest extends \PHPUnit_Framework_TestCase
         /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
         $datagrid = $this->createMock(DatagridInterface::class);
         $config = DatagridConfiguration::create(
-            ['extended_entity_name' => Account::class]
+            ['extended_entity_name' => Customer::class]
         );
 
         $this->associationProvider->expects($this->once())->method('getAssociationNames')->willReturn([]);
@@ -73,7 +73,7 @@ class AccountDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener->onBuildBefore($event);
 
         $this->assertEquals(
-            ['extended_entity_name' => Account::class],
+            ['extended_entity_name' => Customer::class],
             $config->toArray()
         );
     }
@@ -83,13 +83,13 @@ class AccountDatagridListenerTest extends \PHPUnit_Framework_TestCase
         /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
         $datagrid = $this->createMock(DatagridInterface::class);
         $config = DatagridConfiguration::create(
-            ['extended_entity_name' => Account::class]
+            ['extended_entity_name' => Customer::class]
         );
 
         $this->associationProvider->expects($this->exactly(2))->method('getAssociationNames')
             ->withConsecutive(
-                [Account::class],
-                [AccountGroup::class]
+                [Customer::class],
+                [CustomerGroup::class]
             )
             ->willReturnOnConsecutiveCalls(['accountPaymentTerm'], []);
 
@@ -97,7 +97,7 @@ class AccountDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener->onBuildBefore($event);
 
         $this->assertEquals(
-            ['extended_entity_name' => Account::class],
+            ['extended_entity_name' => Customer::class],
             $config->toArray()
         );
     }
@@ -108,15 +108,15 @@ class AccountDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $datagrid = $this->createMock(DatagridInterface::class);
         $config = DatagridConfiguration::create(
             [
-                'extended_entity_name' => Account::class,
+                'extended_entity_name' => Customer::class,
                 'source' => ['query' => ['from' => [['alias' => 'rootAlias']]]],
             ]
         );
 
         $this->associationProvider->expects($this->exactly(2))->method('getAssociationNames')
             ->withConsecutive(
-                [Account::class],
-                [AccountGroup::class]
+                [Customer::class],
+                [CustomerGroup::class]
             )
             ->willReturnOnConsecutiveCalls(['accountPaymentTerm'], ['accountGroupPaymentTerm']);
 
@@ -128,7 +128,7 @@ class AccountDatagridListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             [
-                'extended_entity_name' => Account::class,
+                'extended_entity_name' => Customer::class,
                 'source' => [
                     'query' => [
                         'from' => [['alias' => 'rootAlias']],
@@ -173,15 +173,15 @@ class AccountDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $datagrid = $this->createMock(DatagridInterface::class);
         $config = DatagridConfiguration::create(
             [
-                'extended_entity_name' => Account::class,
+                'extended_entity_name' => Customer::class,
                 'source' => ['query' => ['from' => [['alias' => 'rootAlias']]]],
             ]
         );
 
         $this->associationProvider->expects($this->exactly(2))->method('getAssociationNames')
             ->withConsecutive(
-                [Account::class],
-                [AccountGroup::class]
+                [Customer::class],
+                [CustomerGroup::class]
             )
             ->willReturnOnConsecutiveCalls(
                 ['accountPaymentTerm', 'accountPaymentTerm2'],
@@ -195,7 +195,7 @@ class AccountDatagridListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             [
-                'extended_entity_name' => Account::class,
+                'extended_entity_name' => Customer::class,
                 'source' => [
                     'query' => [
                         'from' => [['alias' => 'rootAlias']],

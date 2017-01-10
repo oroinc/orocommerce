@@ -7,7 +7,7 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 use Oro\Bundle\CustomerBundle\Form\Type\FrontendAccountTypedAddressType;
 use Oro\Bundle\CustomerBundle\Layout\DataProvider\FrontendAccountAddressFormProvider;
@@ -57,8 +57,8 @@ class FrontendAccountAddressFormProviderTest extends \PHPUnit_Framework_TestCase
             ->method('getId')
             ->willReturn($id);
 
-        /** @var Account|\PHPUnit_Framework_MockObject_MockObject $mockAccountUser */
-        $mockAccountUser = $this->getMockBuilder(Account::class)
+        /** @var Customer|\PHPUnit_Framework_MockObject_MockObject $mockAccountUser */
+        $mockAccountUser = $this->getMockBuilder(Customer::class)
             ->disableOriginalConstructor()
             ->getMock();
 

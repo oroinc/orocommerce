@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Oro\Component\Testing\Unit\FormViewListenerTestCase;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\PricingBundle\Entity\PriceListAccountFallback;
 use Oro\Bundle\PricingBundle\Entity\PriceListToAccount;
 use Oro\Bundle\PricingBundle\EventListener\AccountFormViewListener;
@@ -61,7 +61,7 @@ class AccountFormViewListenerTest extends FormViewListenerTestCase
     public function testOnAccountView()
     {
         $accountId = 1;
-        $account = new Account();
+        $account = new Customer();
         $websites = $this->websiteProvider->getWebsites();
 
         $priceListToAccount1 = new PriceListToAccount();
@@ -191,13 +191,13 @@ class AccountFormViewListenerTest extends FormViewListenerTestCase
     }
 
     /**
-     * @param Account $account
+     * @param Customer $account
      * @param PriceListToAccount[] $priceListsToAccount
      * @param PriceListAccountFallback $fallbackEntity
      * @param Website[] $websites
      */
     protected function setRepositoryExpectationsForAccount(
-        Account $account,
+        Customer $account,
         $priceListsToAccount,
         PriceListAccountFallback $fallbackEntity,
         array $websites

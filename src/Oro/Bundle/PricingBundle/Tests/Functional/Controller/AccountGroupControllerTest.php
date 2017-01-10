@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Controller;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Form\Type\AccountGroupType;
 
 /**
@@ -12,7 +12,7 @@ use Oro\Bundle\CustomerBundle\Form\Type\AccountGroupType;
 class AccountGroupControllerTest extends AbstractPriceListsByEntityTestCase
 {
     /**
-     * @var  AccountGroup
+     * @var  CustomerGroup
      */
     protected $accountGroup;
 

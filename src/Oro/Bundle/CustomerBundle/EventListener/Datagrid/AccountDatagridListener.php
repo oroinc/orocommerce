@@ -6,7 +6,7 @@ use Oro\Bundle\CustomerBundle\Entity\Repository\AccountRepository;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Extension\Action\ActionExtension;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Security\AccountUserProvider;
 
 class AccountDatagridListener
@@ -59,7 +59,7 @@ class AccountDatagridListener
      */
     public function onBuildBeforeFrontendItems(BuildBefore $event)
     {
-        if (!$this->getUser() instanceof AccountUser) {
+        if (!$this->getUser() instanceof CustomerUser) {
             return;
         }
 
@@ -146,7 +146,7 @@ class AccountDatagridListener
     }
 
     /**
-     * @return AccountUser
+     * @return CustomerUser
      */
     protected function getUser()
     {

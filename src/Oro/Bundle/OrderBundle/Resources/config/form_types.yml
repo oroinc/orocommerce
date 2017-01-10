@@ -1,3 +1,6 @@
+parameters:
+    oro_order.form.type.order_line_item.class: 'Oro\Bundle\OrderBundle\Form\Type\OrderLineItemType'
+
 services:
     oro_order.form.type.order:
         class: 'Oro\Bundle\OrderBundle\Form\Type\OrderType'
@@ -27,7 +30,7 @@ services:
         public: false
 
     oro_order.form.type.order_line_item:
-        class: 'Oro\Bundle\OrderBundle\Form\Type\OrderLineItemType'
+        class: '%oro_order.form.type.order_line_item.class%'
         arguments:
             - '@doctrine'
             - '@oro_product.formatter.product_unit_label'

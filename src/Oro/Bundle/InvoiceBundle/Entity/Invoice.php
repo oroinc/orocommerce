@@ -27,7 +27,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  * @ORM\Entity
  * @ORM\AssociationOverrides({
  *      @ORM\AssociationOverride(name="account",
- *          joinColumns=@ORM\JoinColumn(name="account_id", referencedColumnName="id", onDelete="CASCADE")
+ *          joinColumns=@ORM\JoinColumn(name="customer_id", referencedColumnName="id", onDelete="CASCADE")
  *      )
  * })
  * @Config(
@@ -42,7 +42,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  *              "organization_column_name"="organization_id",
  *              "frontend_owner_type"="FRONTEND_USER",
  *              "frontend_owner_field_name"="accountUser",
- *              "frontend_owner_column_name"="account_user_id",
+ *              "frontend_owner_column_name"="customer_user_id",
  *          },
  *          "dataaudit"={
  *              "auditable"=true

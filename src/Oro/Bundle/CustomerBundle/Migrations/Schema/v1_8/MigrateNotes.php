@@ -11,11 +11,11 @@ class MigrateNotes extends UpdateNoteAssociationKindForRenamedEntitiesMigration
 {
     protected $entitiesNames = [
         'Account',
+        'CustomerGroup',
         'CustomerAddress',
-        'AccountGroup',
         'CustomerUserSettings',
         'AccountUserRole',
-        'AccountUser',
+        'CustomerUser',
         'CustomerUserAddress',
         'ProductVisibility',
         'AccountProductVisibility',

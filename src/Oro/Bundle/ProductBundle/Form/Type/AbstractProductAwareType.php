@@ -2,16 +2,17 @@
 
 namespace Oro\Bundle\ProductBundle\Form\Type;
 
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Form\Type\Traits\ProductAwareTrait;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
-
 abstract class AbstractProductAwareType extends AbstractType
 {
+    use ProductAwareTrait;
+
     /** {@inheritdoc} */
     public function configureOptions(OptionsResolver $resolver)
     {
@@ -29,46 +30,6 @@ abstract class AbstractProductAwareType extends AbstractType
             ['Oro\Bundle\ProductBundle\Model\ProductHolderInterface', 'null']
         );
         $resolver->setAllowedTypes('product_field', 'string');
-    }
-
-    /**
-     * @param FormInterface $form
-     * @return null|Product
-     */
-    protected function getProduct(FormInterface $form)
-    {
-        $options = $form->getConfig()->getOptions();
-        $productField = $options['product_field'];
-
-        $parent = $form->getParent();
-        while ($parent && !$parent->has($productField)) {
-            $parent = $parent->getParent();
-        }
-
-        if ($parent && $parent->has($productField)) {
-            $productData = $parent->get($productField)->getData();
-            if ($productData instanceof Product) {
-                return $productData;
-            }
-
-            if ($productData instanceof ProductHolderInterface) {
-                return $productData->getProduct();
-            }
-        }
-
-        /** @var Product $product */
-        $product = $options['product'];
-        if ($product) {
-            return $product;
-        }
-
-        /** @var ProductHolderInterface $productHolder */
-        $productHolder = $options['product_holder'];
-        if ($productHolder) {
-            return $productHolder->getProduct();
-        }
-
-        return null;
     }
 
     /**
