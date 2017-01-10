@@ -10,9 +10,6 @@ actions:
             icon: fa-file-text
             class: icons-holder-text no-hash btn
 
-#        ToDo: how we should change this condition ?
-#        preconditions:
-#            '@equal': [$status.draft, false]
         actions:
             - '@call_service_method':
                 service: oro_rfp.service.request_to_quote_data_storage
