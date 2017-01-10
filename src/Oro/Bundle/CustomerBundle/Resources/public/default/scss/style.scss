@@ -123,6 +123,27 @@
   width: 50%;
 }
 
+@include breakpoint('mobile'){
+  .profile__form__row {
+    legend {
+      display: block;
+      width: 100%;
+    }
+
+    .profile__form__col.col_first{
+      padding-right: 0;
+    }
+
+    .profile__form__col.col_last{
+      padding-left: 0;
+    }
+  }
+
+  .profile__form__col.form__col_x6{
+    width: 100%;
+  }
+}
+
 .profile__form__col {
   float: left;
 }
