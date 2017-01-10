@@ -1,12 +1,14 @@
 Product attributes
-=========================
-Functionality which extends Product logic with possibility to add attributes (extend fields) and manipulate
-them in scope of Product families (similar to categories) and attribute groups. It makes possible to organize and distinguish
-products of different types, which actually have different sets of characteristics applicable to. For example we may 
-have two different types of products - TV and T-shirts. They have completely different sets of characteristics (attribute
-groups). Such groups as 'Screen properties'  (resolution, diagonal, matrix),  'Energy consumption'
- - is applicable for TV so it is logical to create separate TV's Product family with all these groups assigned. For T-shirts 
- we will have completely different attributes (size, material, ironing conditions) and groups with product family respectively.
+==================
+
+Product attribute in Product bundle is a special type of custom entity field that enables easy management for groupes of attributes that are unique for a special product family. To limit the product data to the necessary characteristics, you can bind the attribute groups to the product families they fit.
+
+For example, when your OroCommerce store sells TVs and T-shirts, these items share some generic attributes (e.g. name, vendor), and differ in the remaining attributes set. For example, there might be a *Screen properties* group that contains *resolution*, *diagonal*, and *matrix* that should be linked to the products in the TV product family. For the T-shirts family, the linked attribute group may have color, size, material, fit and care guidance (washing, ironing, dry cleaning, etc).
+
+With product attributes functionality that extends the Product bundle, you can:
+* add product attributes (extend fields)
+* use product attributes in scope of Product families (similar to categories) and attribute groups.
+* organize and distinguish products of different types, which actually have different sets of characteristics applicable to. 
  
 Creating attributes
 ----------------------
@@ -44,4 +46,8 @@ will appear here). After you click 'Continue' button all Attribute Groups will b
 Each group occupies own tab with all attributes assigned to it. All manipulations with attributes is reflected on edit/
 create product pages and on view page as well. Depending on attribute type each attribute will have corresponding input 
 (datepicker, file, textarea, select) so you can set value to it and save product. 
-It is possible to customize attribute groups displaying on frontend - [Customize products using layouts](./Resources/doc/customize-products.md)
+It is possible to customize attribute groups displaying on frontend - [Customize products using layouts](./Resources/doc/customize-products.md). For quick examples, see the following sections:
+* [Product Family](./customize-pdp.md#product-family)
+  - [Attribute Set (example 1)](./customize-pdp.md#attribute-set-example-1)
+  - [Attribute Set (example 2)](./customize-pdp.md#attribute-set-example-2)
+        - [Attribute Groups](./customize-pdp.md#attribute-groups)
