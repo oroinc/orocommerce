@@ -31,8 +31,8 @@ oro.pricing:
         set_default:
             label: Set default
             message: The "{{ priceListName }}" has been made default
-        account_groups.label: Customer Groups
-        accounts.label: Accounts
+        customer_groups.label: Customer Groups
+        customers.label: Customers
         websites.label: Websites
         prices.label: Prices
         priority.label: Priority
@@ -93,9 +93,9 @@ oro.pricing:
     quantity.label: Quantity
     fallback:
         label: Fallback
-        current_account_only.label: Current customer only
-        account_group.label: Customer group
-        current_account_group_only.label: Current customer group only
+        current_customer_only.label: Current customer only
+        customer_group.label: Customer group
+        current_customer_group_only.label: Current customer group only
         website.label: Website
         current_website_only.label: Current website only
         config.label: Config

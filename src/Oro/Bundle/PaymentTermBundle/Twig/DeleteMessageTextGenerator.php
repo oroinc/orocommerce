@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\PaymentTermBundle\Twig;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\FilterBundle\Grid\Extension\OrmFilterExtension;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Manager\PaymentTermManager;
@@ -12,10 +12,10 @@ use Symfony\Component\Routing\RouterInterface;
 
 class DeleteMessageTextGenerator
 {
-    const ACCOUNT_GROUP_GRID_NAME = 'account-groups-grid';
-    const ACCOUNT_GRID_NAME = 'account-accounts-grid';
-    const ACCOUNT_GROUP_GRID_ROUTE = 'oro_customer_account_group_index';
-    const ACCOUNT_GRID_ROUTE = 'oro_customer_account_index';
+    const ACCOUNT_GROUP_GRID_NAME = 'customer-groups-grid';
+    const ACCOUNT_GRID_NAME = 'customer-customers-grid';
+    const ACCOUNT_GROUP_GRID_ROUTE = 'oro_customer_customer_group_index';
+    const ACCOUNT_GRID_ROUTE = 'oro_customer_customer_index';
 
     /** @var RouterInterface */
     protected $router;
@@ -47,14 +47,14 @@ class DeleteMessageTextGenerator
      */
     public function getDeleteMessageText(PaymentTerm $paymentTerm)
     {
-        $accountGroupFilterUrlHtml = $this->generateAccountGroupFilterUrl($paymentTerm);
-        $accountFilterUrlHtml = $this->generateAccountFilterUrl($paymentTerm);
+        $customerGroupFilterUrlHtml = $this->generateCustomerGroupFilterUrl($paymentTerm);
+        $customerFilterUrlHtml = $this->generateCustomerFilterUrl($paymentTerm);
 
         $message = $this->twig->render(
             '@OroPaymentTerm/PaymentTerm/deleteMessage.html.twig',
             [
-                'accountFilterUrl' => $accountFilterUrlHtml,
-                'accountGroupFilterUrl' => $accountGroupFilterUrlHtml,
+                'customerFilterUrl' => $customerFilterUrlHtml,
+                'customerGroupFilterUrl' => $customerGroupFilterUrlHtml,
             ]
         );
 
@@ -79,9 +79,9 @@ class DeleteMessageTextGenerator
      * @param PaymentTerm $paymentTerm
      * @return string
      */
-    protected function generateAccountGroupFilterUrl(PaymentTerm $paymentTerm)
+    protected function generateCustomerGroupFilterUrl(PaymentTerm $paymentTerm)
     {
-        if (!$this->paymentTermManager->hasAssignedPaymentTerm(AccountGroup::class, $paymentTerm)) {
+        if (!$this->paymentTermManager->hasAssignedPaymentTerm(CustomerGroup::class, $paymentTerm)) {
             return null;
         }
 
@@ -89,7 +89,7 @@ class DeleteMessageTextGenerator
             $paymentTerm->getId(),
             static::ACCOUNT_GROUP_GRID_NAME,
             static::ACCOUNT_GROUP_GRID_ROUTE,
-            'oro.customer.accountgroup.entity_label'
+            'oro.customer.customergroup.entity_label'
         );
     }
 
@@ -97,9 +97,9 @@ class DeleteMessageTextGenerator
      * @param PaymentTerm $paymentTerm
      * @return string
      */
-    protected function generateAccountFilterUrl(PaymentTerm $paymentTerm)
+    protected function generateCustomerFilterUrl(PaymentTerm $paymentTerm)
     {
-        if (!$this->paymentTermManager->hasAssignedPaymentTerm(Account::class, $paymentTerm)) {
+        if (!$this->paymentTermManager->hasAssignedPaymentTerm(Customer::class, $paymentTerm)) {
             return null;
         }
 
@@ -107,7 +107,7 @@ class DeleteMessageTextGenerator
             $paymentTerm->getId(),
             static::ACCOUNT_GRID_NAME,
             static::ACCOUNT_GRID_ROUTE,
-            'oro.customer.account.entity_label'
+            'oro.customer.customer.entity_label'
         );
     }
 

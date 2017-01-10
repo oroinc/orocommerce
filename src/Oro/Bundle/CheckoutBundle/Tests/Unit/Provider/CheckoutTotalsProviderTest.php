@@ -4,7 +4,7 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Provider;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CheckoutBundle\Mapper\MapperInterface;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
@@ -65,8 +65,8 @@ class CheckoutTotalsProviderTest extends \PHPUnit_Framework_TestCase
         $price = Price::create(10, 'USD');
         $address = new OrderAddress();
         $address->setLabel('order address');
-        $account = new Account();
-        $account->setName('order account');
+        $customer = new Customer();
+        $customer->setName('order customer');
 
         $checkout = new Checkout();
 
@@ -78,7 +78,7 @@ class CheckoutTotalsProviderTest extends \PHPUnit_Framework_TestCase
                 'currency' => $price->getCurrency(),
                 'shippingAddress' => $address,
                 'billingAddress' => $address,
-                'account' => $account,
+                'customer' => $customer,
                 'website' => $website,
                 'organization' => $organization,
                 'lineItems' => $lineItems,
@@ -99,12 +99,12 @@ class CheckoutTotalsProviderTest extends \PHPUnit_Framework_TestCase
             ->method('getTotalWithSubtotalsAsArray')
             ->will(
                 $this->returnCallback(
-                    function (Order $order) use ($lineItems, $price, $address, $account, $website, $organization) {
+                    function (Order $order) use ($lineItems, $price, $address, $customer, $website, $organization) {
                         $this->assertEquals($lineItems, $order->getLineItems());
                         $this->assertEquals($price, $order->getShippingCost());
                         $this->assertSame($address, $order->getBillingAddress());
                         $this->assertSame($address, $order->getShippingAddress());
-                        $this->assertSame($account, $order->getAccount());
+                        $this->assertSame($customer, $order->getCustomer());
                         $this->assertSame($website, $order->getWebsite());
                         $this->assertSame($organization, $order->getOrganization());
                     }

@@ -22,7 +22,9 @@
         '~class': 'topbar-navigation__link'
     }) %}
 
-    {{ block('menu_widget') }}
+    <div class="topbar-navigation-wrap">
+        {{ block('menu_widget') }}
+    </div>
 {% endblock %}
 
 {% block _top_nav_menu_container_widget %}

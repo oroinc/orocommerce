@@ -7,7 +7,7 @@ use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigInterface;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
@@ -40,7 +40,7 @@ class ShoppingListOwnerManagerTest extends \PHPUnit_Framework_TestCase
         $entityConfig = $this->createMock(ConfigInterface::class);
         $configProvider->method('getConfig')->with(ShoppingList::class)->willReturn($entityConfig);
         $entityConfig->method('get')->willReturnMap([
-            ['frontend_owner_field_name', false, null, 'accountUser'],
+            ['frontend_owner_field_name', false, null, 'customerUser'],
             ['organization_field_name', false, null, 'organisation'],
         ]);
 
@@ -57,10 +57,10 @@ class ShoppingListOwnerManagerTest extends \PHPUnit_Framework_TestCase
     {
         $repo = $this->getMockBuilder(EntityRepository::class)->disableOriginalConstructor()->getMock();
         $this->registry->method('getRepository')
-            ->with(AccountUser::class)
+            ->with(CustomerUser::class)
             ->willReturn($repo);
 
-        $user = new AccountUser();
+        $user = new CustomerUser();
         $repo->method('find')->with(1)->willReturn($user);
 
         // assert that current user has ACL permissions to set user as ShoppingList owner
@@ -71,7 +71,7 @@ class ShoppingListOwnerManagerTest extends \PHPUnit_Framework_TestCase
                 ShoppingList::class,
                 $criteria,
                 "ASSIGN",
-                ['accountUser' => 'user.id', 'organisation' => 'user.organization']
+                ['customerUser' => 'user.id', 'organisation' => 'user.organization']
             );
         $qb = $this->getQueryBuilder();
         $repo->expects($this->once())->method('createQueryBuilder')->willReturn($qb);
@@ -86,17 +86,17 @@ class ShoppingListOwnerManagerTest extends \PHPUnit_Framework_TestCase
         $em->expects($this->once())->method('flush');
 
         $this->manager->setOwner(1, $shoppingList);
-        $this->assertSame($user, $shoppingList->getAccountUser());
+        $this->assertSame($user, $shoppingList->getCustomerUser());
     }
 
     public function testSetSameOwner()
     {
         $repo = $this->getMockBuilder(EntityRepository::class)->disableOriginalConstructor()->getMock();
         $this->registry->method('getRepository')
-            ->with(AccountUser::class)
+            ->with(CustomerUser::class)
             ->willReturn($repo);
 
-        $user = new AccountUser();
+        $user = new CustomerUser();
         $repo->method('find')->with(1)->willReturn($user);
 
         $em = $this->createMock(EntityManagerInterface::class);
@@ -106,9 +106,9 @@ class ShoppingListOwnerManagerTest extends \PHPUnit_Framework_TestCase
         $em->expects($this->never())->method('flush');
 
         $shoppingList = new ShoppingList();
-        $shoppingList->setAccountUser($user);
+        $shoppingList->setCustomerUser($user);
         $this->manager->setOwner(1, $shoppingList);
-        $this->assertSame($user, $shoppingList->getAccountUser());
+        $this->assertSame($user, $shoppingList->getCustomerUser());
     }
 
     /**
@@ -120,7 +120,7 @@ class ShoppingListOwnerManagerTest extends \PHPUnit_Framework_TestCase
         $repo = $this->getMockBuilder(EntityRepository::class)->disableOriginalConstructor()->getMock();
         $this->registry->expects($this->once())
             ->method('getRepository')
-            ->with(AccountUser::class)
+            ->with(CustomerUser::class)
             ->willReturn($repo);
         // user with requested id not exists
         $repo->method('find')->with(1)->willReturn(null);
@@ -137,10 +137,10 @@ class ShoppingListOwnerManagerTest extends \PHPUnit_Framework_TestCase
 
         $repo = $this->getMockBuilder(EntityRepository::class)->disableOriginalConstructor()->getMock();
         $this->registry->method('getRepository')
-            ->with(AccountUser::class)
+            ->with(CustomerUser::class)
             ->willReturn($repo);
 
-        $user = new AccountUser();
+        $user = new CustomerUser();
         $repo->method('find')->with(1)->willReturn($user);
 
         // current user don't have ACL permissions to perform action
@@ -151,7 +151,7 @@ class ShoppingListOwnerManagerTest extends \PHPUnit_Framework_TestCase
                 ShoppingList::class,
                 $criteria,
                 "ASSIGN",
-                ['accountUser' => 'user.id', 'organisation' => 'user.organization']
+                ['customerUser' => 'user.id', 'organisation' => 'user.organization']
             );
         $qb = $this->getQueryBuilder();
         $repo->expects($this->once())->method('createQueryBuilder')->willReturn($qb);

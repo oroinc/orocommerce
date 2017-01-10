@@ -3,9 +3,9 @@
 namespace Oro\Bundle\CheckoutBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Oro\Bundle\CustomerBundle\Entity\AccountOwnerAwareInterface;
+use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\CustomerBundle\Entity\Ownership\FrontendAccountUserAwareTrait;
+use Oro\Bundle\CustomerBundle\Entity\Ownership\FrontendCustomerUserAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField; // required by DatesAwareTrait
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
@@ -36,8 +36,8 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  *              "organization_field_name"="organization",
  *              "organization_column_name"="organization_id",
  *              "frontend_owner_type"="FRONTEND_USER",
- *              "frontend_owner_field_name"="accountUser",
- *              "frontend_owner_column_name"="account_user_id",
+ *              "frontend_owner_field_name"="customerUser",
+ *              "frontend_owner_column_name"="customer_user_id",
  *          },
  *          "security"={
  *              "type"="ACL",
@@ -50,7 +50,7 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 class Checkout implements
     CheckoutInterface,
     OrganizationAwareInterface,
-    AccountOwnerAwareInterface,
+    CustomerOwnerAwareInterface,
     DatesAwareInterface,
     ShippingAwareInterface,
     LineItemsNotPricedAwareInterface,
@@ -58,7 +58,7 @@ class Checkout implements
 {
     use DatesAwareTrait;
     use UserAwareTrait;
-    use FrontendAccountUserAwareTrait;
+    use FrontendCustomerUserAwareTrait;
     use CheckoutAddressesTrait;
 
     /**

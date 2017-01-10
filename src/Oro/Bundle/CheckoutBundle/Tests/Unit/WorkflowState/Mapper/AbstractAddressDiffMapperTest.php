@@ -4,31 +4,31 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\WorkflowState\Mapper;
 
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\AddressBundle\Entity\Country;
-use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
-use Oro\Bundle\CustomerBundle\Entity\AccountUserAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 use Oro\Bundle\CustomerBundle\Entity\AddressPhoneAwareInterface;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 
 abstract class AbstractAddressDiffMapperTest extends AbstractCheckoutDiffMapperTest
 {
-    public function testGetCurrentStateAccountUserAddress()
+    public function testGetCurrentStateCustomerUserAddress()
     {
-        $accountUserAddress = $this->fillAddress(new AccountUserAddress());
+        $customerUserAddress = $this->fillAddress(new CustomerUserAddress());
 
         $orderAddress = new OrderAddress();
-        $orderAddress->setAccountUserAddress($accountUserAddress);
+        $orderAddress->setCustomerUserAddress($customerUserAddress);
         $this->checkout->{$this->getAddressMethodName('set')}($orderAddress);
 
         $result = $this->mapper->getCurrentState($this->checkout);
         $this->assertEquals($this->getStringAddressView(), $result);
     }
 
-    public function testGetCurrentStateAccountAddress()
+    public function testGetCurrentStateCustomerAddress()
     {
-        $accountAddress = $this->fillAddress(new AccountAddress());
+        $customerAddress = $this->fillAddress(new CustomerAddress());
 
         $orderAddress = new OrderAddress();
-        $orderAddress->setAccountAddress($accountAddress);
+        $orderAddress->setCustomerAddress($customerAddress);
         $this->checkout->{$this->getAddressMethodName('set')}($orderAddress);
 
         $result = $this->mapper->getCurrentState($this->checkout);

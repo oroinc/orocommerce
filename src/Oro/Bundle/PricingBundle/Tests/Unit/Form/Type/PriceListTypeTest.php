@@ -22,8 +22,8 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 class PriceListTypeTest extends FormIntegrationTestCase
 {
-    const ACCOUNT_CLASS = 'Oro\Bundle\CustomerBundle\Entity\Account';
-    const ACCOUNT_GROUP_CLASS = 'Oro\Bundle\CustomerBundle\Entity\AccountGroup';
+    const ACCOUNT_CLASS = 'Oro\Bundle\CustomerBundle\Entity\Customer';
+    const ACCOUNT_GROUP_CLASS = 'Oro\Bundle\CustomerBundle\Entity\CustomerGroup';
     const WEBSITE_CLASS = 'Oro\Bundle\WebsiteBundle\Entity\Website';
 
     /**
@@ -167,10 +167,10 @@ class PriceListTypeTest extends FormIntegrationTestCase
                     'name' => 'Test Price List',
                     'active' => true,
                     'currencies' => [],
-                    'appendAccounts' => [],
-                    'removeAccounts' => [],
-                    'appendAccountGroups' => [],
-                    'removeAccountGroups' => [],
+                    'appendCustomers' => [],
+                    'removeCustomers' => [],
+                    'appendCustomerGroups' => [],
+                    'removeCustomerGroups' => [],
                     'appendWebsites' => [],
                     'removeWebsites' => [],
                     'schedules' => [
@@ -183,10 +183,10 @@ class PriceListTypeTest extends FormIntegrationTestCase
                     'active' => false,
                     'currencies' => [],
                     'default' => false,
-                    'appendAccounts' => [],
-                    'removeAccounts' => [],
-                    'appendAccountGroups' => [],
-                    'removeAccountGroups' => [],
+                    'appendCustomers' => [],
+                    'removeCustomers' => [],
+                    'appendCustomerGroups' => [],
+                    'removeCustomerGroups' => [],
                     'appendWebsites' => [],
                     'removeWebsites' => [],
                     'schedules' => [
@@ -200,10 +200,10 @@ class PriceListTypeTest extends FormIntegrationTestCase
                     'name' => 'Test Price List',
                     'active' => true,
                     'currencies' => ['USD', 'UAH'],
-                    'appendAccounts' => [],
-                    'removeAccounts' => [],
-                    'appendAccountGroups' => [],
-                    'removeAccountGroups' => [],
+                    'appendCustomers' => [],
+                    'removeCustomers' => [],
+                    'appendCustomerGroups' => [],
+                    'removeCustomerGroups' => [],
                     'appendWebsites' => [],
                     'removeWebsites' => [],
                 ],
@@ -211,10 +211,10 @@ class PriceListTypeTest extends FormIntegrationTestCase
                     'name' => 'Test Price List 01',
                     'active' => false,
                     'currencies' => ['EUR', 'USD'],
-                    'appendAccounts' => [1],
-                    'removeAccounts' => [2],
-                    'appendAccountGroups' => [3],
-                    'removeAccountGroups' => [4],
+                    'appendCustomers' => [1],
+                    'removeCustomers' => [2],
+                    'appendCustomerGroups' => [3],
+                    'removeCustomerGroups' => [4],
                     'appendWebsites' => [5],
                     'removeWebsites' => [6],
                     'schedules' => [
@@ -226,12 +226,12 @@ class PriceListTypeTest extends FormIntegrationTestCase
                     'name' => 'Test Price List 01',
                     'active' => true,
                     'currencies' => ['EUR', 'USD'],
-                    'appendAccounts' => [$this->getEntity(self::ACCOUNT_CLASS, 1)],
-                    'removeAccounts' => [$this->getEntity(self::ACCOUNT_CLASS, 2)],
-                    'appendAccountGroups' => [
+                    'appendCustomers' => [$this->getEntity(self::ACCOUNT_CLASS, 1)],
+                    'removeCustomers' => [$this->getEntity(self::ACCOUNT_CLASS, 2)],
+                    'appendCustomerGroups' => [
                         $this->getEntity(self::ACCOUNT_GROUP_CLASS, 3)
                     ],
-                    'removeAccountGroups' => [
+                    'removeCustomerGroups' => [
                         $this->getEntity(self::ACCOUNT_GROUP_CLASS, 4)
                     ],
                     'appendWebsites' => [$this->getEntity(self::WEBSITE_CLASS, 5)],

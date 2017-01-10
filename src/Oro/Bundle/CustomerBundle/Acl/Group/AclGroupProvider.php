@@ -7,7 +7,7 @@ use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 use Oro\Bundle\SecurityBundle\Acl\Group\AclGroupProviderInterface;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 
 class AclGroupProvider implements AclGroupProviderInterface, ContainerAwareInterface
 {
@@ -20,7 +20,7 @@ class AclGroupProvider implements AclGroupProviderInterface, ContainerAwareInter
     {
         $user = $this->getSecurityFacade()->getLoggedUser();
 
-        return !is_object($user) || $user instanceof AccountUser;
+        return !is_object($user) || $user instanceof CustomerUser;
     }
 
     /**
@@ -28,7 +28,7 @@ class AclGroupProvider implements AclGroupProviderInterface, ContainerAwareInter
      */
     public function getGroup()
     {
-        return AccountUser::SECURITY_GROUP;
+        return CustomerUser::SECURITY_GROUP;
     }
 
     /**

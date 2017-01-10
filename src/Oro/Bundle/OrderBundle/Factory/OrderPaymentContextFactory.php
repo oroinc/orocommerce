@@ -64,12 +64,12 @@ class OrderPaymentContextFactory
             $paymentContextBuilder->setBillingAddress($order->getBillingAddress());
         }
 
-        if (null !== $order->getAccount()) {
-            $paymentContextBuilder->setCustomer($order->getAccount());
+        if (null !== $order->getCustomer()) {
+            $paymentContextBuilder->setCustomer($order->getCustomer());
         }
 
-        if (null !== $order->getAccountUser()) {
-            $paymentContextBuilder->setCustomerUser($order->getAccountUser());
+        if (null !== $order->getCustomerUser()) {
+            $paymentContextBuilder->setCustomerUser($order->getCustomerUser());
         }
 
         if (null !== $convertedLineItems && !$convertedLineItems->isEmpty()) {

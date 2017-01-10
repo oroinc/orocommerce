@@ -10,8 +10,8 @@ use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 
 class FrontendOrderDataHandler
 {
@@ -46,26 +46,26 @@ class FrontendOrderDataHandler
     }
 
     /**
-     * @return Account|null
+     * @return Customer|null
      */
-    public function getAccount()
+    public function getCustomer()
     {
-        $accountUser = $this->getAccountUser();
+        $customerUser = $this->getCustomerUser();
 
-        return $accountUser->getAccount();
+        return $customerUser->getCustomer();
     }
 
     /**
-     * @return AccountUser
+     * @return CustomerUser
      */
-    public function getAccountUser()
+    public function getCustomerUser()
     {
-        $accountUser = $this->securityFacade->getLoggedUser();
-        if (!$accountUser instanceof AccountUser) {
-            throw new \InvalidArgumentException('Only AccountUser can create an Order');
+        $customerUser = $this->securityFacade->getLoggedUser();
+        if (!$customerUser instanceof CustomerUser) {
+            throw new \InvalidArgumentException('Only CustomerUser can create an Order');
         }
 
-        return $accountUser;
+        return $customerUser;
     }
 
     /**
@@ -73,7 +73,7 @@ class FrontendOrderDataHandler
      */
     public function getPaymentTerm()
     {
-        return $this->paymentTermProvider->getPaymentTerm($this->getAccount());
+        return $this->paymentTermProvider->getPaymentTerm($this->getCustomer());
     }
 
     /**

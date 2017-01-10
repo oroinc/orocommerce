@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@add':
-            id: __account_user_order
+            id: __customer_user_order
             parentId: __list
             blockType: link
             options:
@@ -9,7 +9,7 @@ layout:
                 route_name: oro_order_frontend_index
                 text: oro.order.order_history.label
         - '@add':
-            id: __account_user_open_orders
+            id: __customer_user_open_orders
             parentId: __list
             blockType: link
             options:

@@ -10,7 +10,7 @@ datagrids:
                     - checkout.id
                     - checkout.createdAt
                     - checkout.updatedAt
-                    - CONCAT(account_user.firstName, ' ', account_user.lastName) as accountUserName
+                    - CONCAT(customer_user.firstName, ' ', customer_user.lastName) as customerUserName
                     - checkout.paymentMethod
                     - checkout.poNumber
                     - checkout.shipUntil
@@ -23,12 +23,12 @@ datagrids:
                     - { table: '%oro_checkout.entity.checkout.class%', alias: checkout }
                 join:
                     left:
-                        - { join: checkout.accountUser, alias: account_user }
+                        - { join: checkout.customerUser, alias: customer_user }
                 where:
                     and:
                         - checkout.deleted = false
         columns:
-            accountUserName:
+            customerUserName:
                 label: oro.checkout.ordered_by.label
                 order: 0
             startedFrom:
@@ -86,8 +86,8 @@ datagrids:
                     data_name: checkout.createdAt
                 updatedAt:
                     data_name: checkout.updatedAt
-                accountUserName:
-                    data_name: accountUserName
+                customerUserName:
+                    data_name: customerUserName
                 paymentMethod:
                     data_name: checkout.paymentMethod
                 poNumber:
@@ -106,9 +106,9 @@ datagrids:
                 updatedAt:
                     type: datetime
                     data_name: checkout.updatedAt
-                accountUserName:
+                customerUserName:
                     type: string
-                    data_name: accountUserName
+                    data_name: customerUserName
                 poNumber:
                     type: string
                     data_name: checkout.poNumber

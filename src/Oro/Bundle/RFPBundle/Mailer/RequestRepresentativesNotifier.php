@@ -33,22 +33,22 @@ class RequestRepresentativesNotifier
     public function notifyRepresentatives(Request $request)
     {
         if ($request->getId()) {
-            foreach ($request->getAccountUser()->getSalesRepresentatives() as $salesRepresentative) {
+            foreach ($request->getCustomerUser()->getSalesRepresentatives() as $salesRepresentative) {
                 $this->processor->sendRFPNotification($request, $salesRepresentative);
             }
 
-            if ($this->shouldNotifySalesRepsOfAccount($request)) {
-                foreach ($request->getAccount()->getSalesRepresentatives() as $salesRepresentative) {
+            if ($this->shouldNotifySalesRepsOfCustomer($request)) {
+                foreach ($request->getCustomer()->getSalesRepresentatives() as $salesRepresentative) {
                     $this->processor->sendRFPNotification($request, $salesRepresentative);
                 }
             }
 
-            if ($this->shouldNotifyOwnerOfAccountUser($request)) {
-                $this->processor->sendRFPNotification($request, $request->getAccountUser()->getOwner());
+            if ($this->shouldNotifyOwnerOfCustomerUser($request)) {
+                $this->processor->sendRFPNotification($request, $request->getCustomerUser()->getOwner());
             }
 
-            if ($this->shouldNotifyOwnerOfAccount($request)) {
-                $this->processor->sendRFPNotification($request, $request->getAccount()->getOwner());
+            if ($this->shouldNotifyOwnerOfCustomer($request)) {
+                $this->processor->sendRFPNotification($request, $request->getCustomer()->getOwner());
             }
         }
     }
@@ -57,30 +57,30 @@ class RequestRepresentativesNotifier
      * @param Request $request
      * @return bool
      */
-    protected function shouldNotifySalesRepsOfAccount(Request $request)
+    protected function shouldNotifySalesRepsOfCustomer(Request $request)
     {
-        return ($request->getAccount()->hasSalesRepresentatives()
-            && ('always' == $this->configManager->get('oro_rfp.notify_assigned_sales_reps_of_the_account')
-                || !$request->getAccountUser()->hasSalesRepresentatives()));
+        return ($request->getCustomer()->hasSalesRepresentatives()
+            && ('always' == $this->configManager->get('oro_rfp.notify_assigned_sales_reps_of_the_customer')
+                || !$request->getCustomerUser()->hasSalesRepresentatives()));
     }
 
     /**
      * @param Request $request
      * @return bool
      */
-    protected function shouldNotifyOwnerOfAccountUser(Request $request)
+    protected function shouldNotifyOwnerOfCustomerUser(Request $request)
     {
-        return ('always' == $this->configManager->get('oro_rfp.notify_owner_of_account_user_record')
-            || !$request->getAccountUser()->hasSalesRepresentatives());
+        return ('always' == $this->configManager->get('oro_rfp.notify_owner_of_customer_user_record')
+            || !$request->getCustomerUser()->hasSalesRepresentatives());
     }
 
     /**
      * @param Request $request
      * @return bool
      */
-    protected function shouldNotifyOwnerOfAccount(Request $request)
+    protected function shouldNotifyOwnerOfCustomer(Request $request)
     {
-        return ('always' == $this->configManager->get('oro_rfp.notify_owner_of_account')
-            || !$request->getAccount()->hasSalesRepresentatives());
+        return ('always' == $this->configManager->get('oro_rfp.notify_owner_of_customer')
+            || !$request->getCustomer()->hasSalesRepresentatives());
     }
 }

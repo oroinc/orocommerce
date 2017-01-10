@@ -8,9 +8,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
-use Oro\Bundle\CustomerBundle\Form\Type\AccountSelectType;
-use Oro\Bundle\CustomerBundle\Form\Type\AccountUserMultiSelectType;
-use Oro\Bundle\CustomerBundle\Form\Type\AccountUserSelectType;
+use Oro\Bundle\CustomerBundle\Form\Type\CustomerSelectType;
+use Oro\Bundle\CustomerBundle\Form\Type\CustomerUserMultiSelectType;
+use Oro\Bundle\CustomerBundle\Form\Type\CustomerUserSelectType;
 
 class RequestType extends AbstractType
 {
@@ -55,12 +55,12 @@ class RequestType extends AbstractType
                 'label' => 'oro.rfp.request.role.label',
                 'required' => false,
             ])
-            ->add('accountUser', AccountUserSelectType::NAME, [
-                'label' => 'oro.rfp.request.account_user.label',
+            ->add('customerUser', CustomerUserSelectType::NAME, [
+                'label' => 'oro.rfp.request.customer_user.label',
                 'required' => false,
             ])
-            ->add('account', AccountSelectType::NAME, [
-                'label' => 'oro.rfp.request.account.label',
+            ->add('customer', CustomerSelectType::NAME, [
+                'label' => 'oro.rfp.request.customer.label',
                 'required' => false,
             ])
             ->add('status', RequestStatusSelectType::NAME, [
@@ -88,8 +88,8 @@ class RequestType extends AbstractType
             ->add('assignedUsers', UserMultiSelectType::NAME, [
                 'label' => 'oro.rfp.request.assigned_users.label',
             ])
-            ->add('assignedAccountUsers', AccountUserMultiSelectType::NAME, [
-                'label' => 'oro.rfp.request.assigned_account_users.label',
+            ->add('assignedCustomerUsers', CustomerUserMultiSelectType::NAME, [
+                'label' => 'oro.rfp.request.assigned_customer_users.label',
             ])
         ;
     }

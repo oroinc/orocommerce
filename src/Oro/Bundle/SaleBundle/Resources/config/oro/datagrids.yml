@@ -86,37 +86,37 @@ datagrids:
                 acl_resource:  oro_sale_quote_view
                 rowAction:     true
 
-    account-view-quote-grid:
+    customer-view-quote-grid:
         extends: base-quote-grid
         source:
             query:
                 select:
-                    - CONCAT(quoteAccountUser.firstName, ' ', quoteAccountUser.lastName) as accountUserName
+                    - CONCAT(quoteCustomerUser.firstName, ' ', quoteCustomerUser.lastName) as customerUserName
                 where:
                     or:
-                        - quoteAccountUser.account = :account_id
-                        - quote.account = :account_id
+                        - quoteCustomerUser.customer = :customer_id
+                        - quote.customer = :customer_id
                 join:
                     left:
-                        - { join: quote.accountUser, alias: quoteAccountUser }
+                        - { join: quote.customerUser, alias: quoteCustomerUser }
             bind_parameters:
-                - account_id
+                - customer_id
         sorters:
             columns:
-                accountUserName:
-                    data_name: accountUserName
+                customerUserName:
+                    data_name: customerUserName
         columns:
-            accountUserName:
-                label:         oro.sale.quote.account_user.label
+            customerUserName:
+                label:         oro.sale.quote.customer_user.label
                 order:         1
         filters:
             columns:
                 qid:
                     type:      string
                     data_name: quote.qid
-                accountUserName:
+                customerUserName:
                     type:      string
-                    data_name: accountUserName
+                    data_name: customerUserName
                 ownerName:
                     type:      string
                     data_name: ownerName
@@ -142,15 +142,15 @@ datagrids:
                     type:      datetime
                     data_name: quote.updatedAt
 
-    account-user-view-quote-grid:
+    customer-user-view-quote-grid:
         extends: base-quote-grid
         source:
             query:
                 where:
                     and:
-                        - quote.accountUser = :account_user_id
+                        - quote.customerUser = :customer_user_id
             bind_parameters:
-                - account_user_id
+                - customer_user_id
         filters:
             columns:
                 qid:
@@ -186,25 +186,25 @@ datagrids:
         source:
             query:
                 select:
-                    - CONCAT(quoteAccountUser.firstName, ' ', quoteAccountUser.lastName) as accountUserName
-                    - quoteAccount.name as accountName
+                    - CONCAT(quoteCustomerUser.firstName, ' ', quoteCustomerUser.lastName) as customerUserName
+                    - quoteCustomer.name as customerName
                 join:
                     left:
-                        - { join: quote.accountUser, alias: quoteAccountUser }
-                        - { join: quote.account, alias: quoteAccount }
+                        - { join: quote.customerUser, alias: quoteCustomerUser }
+                        - { join: quote.customer, alias: quoteCustomer }
         columns:
-            accountUserName:
-                label: oro.sale.quote.account_user.label
+            customerUserName:
+                label: oro.sale.quote.customer_user.label
                 order: 2
-            accountName:
-                label: oro.sale.quote.account.label
+            customerName:
+                label: oro.sale.quote.customer.label
                 order: 3
         sorters:
             columns:
-                accountUserName:
-                    data_name: accountUserName
-                accountName:
-                    data_name: accountName
+                customerUserName:
+                    data_name: customerUserName
+                customerName:
+                    data_name: customerName
         filters:
             columns:
                 qid:
@@ -213,12 +213,12 @@ datagrids:
                 ownerName:
                     type:      string
                     data_name: ownerName
-                accountUserName:
+                customerUserName:
                     type:      string
-                    data_name: accountUserName
-                accountName:
+                    data_name: customerUserName
+                customerName:
                     type:      string
-                    data_name: accountName
+                    data_name: customerName
                 locked:
                     type:      boolean
                     data_name: quote.locked
@@ -247,15 +247,15 @@ datagrids:
         options:
             entityHint:        quote
             entity_pagination: true
-            accountUserOwner:
-                accountUserColumn: accountUserName
+            customerUserOwner:
+                customerUserColumn: customerUserName
         source:
             type:         orm
             query:
                 select:
                     - quote.id
                     - quote.qid
-                    - CONCAT(quoteAccountUser.firstName, ' ', quoteAccountUser.lastName) as accountUserName
+                    - CONCAT(quoteCustomerUser.firstName, ' ', quoteCustomerUser.lastName) as customerUserName
                     - quote.createdAt
                     - quote.validUntil
                     - quote.poNumber
@@ -264,7 +264,7 @@ datagrids:
                     - { table: %oro_sale.entity.quote.class%, alias: quote }
                 join:
                     left:
-                        - { join: quote.accountUser, alias: quoteAccountUser }
+                        - { join: quote.customerUser, alias: quoteCustomerUser }
         columns:
             qid:
                 label:         oro.frontend.sale.quote.qid.label
@@ -279,8 +279,8 @@ datagrids:
             validUntil:
                 label:         oro.frontend.sale.quote.valid_until.label
                 frontend_type: datetime
-            accountUserName:
-                label:         oro.frontend.sale.quote.account_user.label
+            customerUserName:
+                label:         oro.frontend.sale.quote.customer_user.label
         properties:
             id: ~
             view_link:
@@ -291,8 +291,8 @@ datagrids:
             columns:
                 qid:
                     data_name: quote.qid
-                accountUserName:
-                    data_name: accountUserName
+                customerUserName:
+                    data_name: customerUserName
                 poNumber:
                     data_name: quote.poNumber
                 shipUntil:
@@ -307,12 +307,12 @@ datagrids:
                 qid:
                     type:      string
                     data_name: quote.qid
-                accountUserName:
+                customerUserName:
                     type:      entity
-                    data_name: quote.accountUser
+                    data_name: quote.customerUser
                     options:
                         field_options:
-                            class:      %oro_customer.entity.account_user.class%
+                            class:      %oro_customer.entity.customer_user.class%
                             multiple:   false
                 poNumber:
                     type:      string

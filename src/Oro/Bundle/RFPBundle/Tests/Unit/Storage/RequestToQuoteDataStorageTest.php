@@ -3,8 +3,8 @@
 namespace Oro\Bundle\RFPBundle\Tests\Unit\Storage;
 
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
@@ -39,14 +39,21 @@ class RequestToQuoteDataStorageTest extends \PHPUnit_Framework_TestCase
 
     public function testSaveToStorage()
     {
-        $accountId = 10;
-        $accountUserId = 42;
+        $customerId = 10;
+        $customerUserId = 42;
         $productSku = 'testSku';
         $quantity = 100;
         $comment = 'Test Comment';
         $unitCode = 'kg';
 
-        $rfpRequest = $this->createRFPRequest($accountId, $accountUserId, $productSku, $unitCode, $quantity, $comment);
+        $rfpRequest = $this->createRFPRequest(
+            $customerId,
+            $customerUserId,
+            $productSku,
+            $unitCode,
+            $quantity,
+            $comment
+        );
 
         /** @var RequestProduct $requestProduct */
         $requestProduct = $rfpRequest->getRequestProducts()->first();
@@ -58,8 +65,8 @@ class RequestToQuoteDataStorageTest extends \PHPUnit_Framework_TestCase
             ->method('set')
             ->with([
                 ProductDataStorage::ENTITY_DATA_KEY => [
-                    'account' => $accountId,
-                    'accountUser' => $accountUserId,
+                    'customer' => $customerId,
+                    'customerUser' => $customerUserId,
                     'request' => null,
                     'poNumber' => null,
                     'shipUntil' => null
@@ -68,7 +75,7 @@ class RequestToQuoteDataStorageTest extends \PHPUnit_Framework_TestCase
                     [
                         ProductDataStorage::PRODUCT_SKU_KEY => $productSku,
                         ProductDataStorage::PRODUCT_QUANTITY_KEY => null,
-                        'commentAccount' => $comment,
+                        'commentCustomer' => $comment,
                         'requestProductItems' => [
                             [
                                 'productUnit' => $unitCode,
@@ -86,21 +93,21 @@ class RequestToQuoteDataStorageTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param int $accountId
-     * @param int $accountUserId
+     * @param int $customerId
+     * @param int $customerUserId
      * @param string $productSku
      * @param string $unitCode
      * @param float $quantity
      * @param string $comment
      * @return RFPRequest
      */
-    protected function createRFPRequest($accountId, $accountUserId, $productSku, $unitCode, $quantity, $comment)
+    protected function createRFPRequest($customerId, $customerUserId, $productSku, $unitCode, $quantity, $comment)
     {
-        /** @var Account $account */
-        $account = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account', ['id' => $accountId]);
+        /** @var Customer $customer */
+        $customer = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', ['id' => $customerId]);
 
-        /** @var AccountUser $accountUser */
-        $accountUser = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountUser', ['id' => $accountUserId]);
+        /** @var CustomerUser $customerUser */
+        $customerUser = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUser', ['id' => $customerUserId]);
 
         $product = new Product();
         $product->setSku($productSku);
@@ -126,8 +133,8 @@ class RequestToQuoteDataStorageTest extends \PHPUnit_Framework_TestCase
 
         $rfpRequest = new RFPRequest();
         $rfpRequest
-            ->setAccount($account)
-            ->setAccountUser($accountUser)
+            ->setCustomer($customer)
+            ->setCustomerUser($customerUser)
             ->addRequestProduct($requestProduct);
 
         return $rfpRequest;

@@ -35,7 +35,7 @@ class OroAccountBundle implements Migration
 
         $queries->addQuery(
             new UpdateEntityConfigFieldValueQuery(
-                'Oro\Bundle\CustomerBundle\Entity\Account',
+                'Oro\Bundle\CustomerBundle\Entity\Customer',
                 'internal_rating',
                 'dataaudit',
                 'auditable',

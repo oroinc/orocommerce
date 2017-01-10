@@ -29,15 +29,14 @@ class CategoryDefaultProductOptionsType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder
-            ->add(
-                'unitPrecision',
-                CategoryUnitPrecisionType::NAME,
-                [
-                    'label' => 'oro.catalog.category.unit.label',
-                    'required' => false
-                ]
-            );
+        $builder->add(
+            'unitPrecision',
+            CategoryUnitPrecisionType::NAME,
+            [
+                'label' => 'oro.catalog.category.unit.label',
+                'required' => false,
+            ]
+        );
     }
 
     /**

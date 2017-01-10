@@ -7,7 +7,6 @@ use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
-use Oro\Bundle\EntityExtendBundle\Grid\DynamicFieldsExtension;
 use Oro\Bundle\PaymentTermBundle\EventListener\DatagridListener;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
@@ -53,7 +52,7 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
         /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
         $datagrid = $this->createMock(DatagridInterface::class);
         $config = DatagridConfiguration::create(
-            [DynamicFieldsExtension::EXTEND_ENTITY_CONFIG_PATH => \stdClass::class]
+            ['extended_entity_name' => \stdClass::class]
         );
 
         $this->provider->expects($this->never())->method($this->anything());
@@ -68,7 +67,7 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
         /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
         $datagrid = $this->createMock(DatagridInterface::class);
         $config = DatagridConfiguration::create(
-            [DynamicFieldsExtension::EXTEND_ENTITY_CONFIG_PATH => \stdClass::class]
+            ['extended_entity_name' => \stdClass::class]
         );
 
         $this->provider->expects($this->never())->method($this->anything());
@@ -86,7 +85,7 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
                         'template' => 'OroPaymentTermBundle:PaymentTerm:column.html.twig',
                     ],
                 ],
-                DynamicFieldsExtension::EXTEND_ENTITY_CONFIG_PATH => \stdClass::class,
+                'extended_entity_name' => \stdClass::class,
             ],
             $config->toArray()
         );
@@ -114,7 +113,7 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
         /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
         $datagrid = $this->createMock(DatagridInterface::class);
         $config = DatagridConfiguration::create(
-            [DynamicFieldsExtension::EXTEND_ENTITY_CONFIG_PATH => \stdClass::class]
+            ['extended_entity_name' => \stdClass::class]
         );
         $datagrid->expects($this->once())->method('getConfig')->willReturn($config);
 
@@ -130,7 +129,7 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
         /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
         $datagrid = $this->createMock(DatagridInterface::class);
         $config = DatagridConfiguration::create(
-            [DynamicFieldsExtension::EXTEND_ENTITY_CONFIG_PATH => \stdClass::class]
+            ['extended_entity_name' => \stdClass::class]
         );
         $datagrid->expects($this->once())->method('getConfig')->willReturn($config);
 
@@ -141,12 +140,12 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener->onResultAfter($event);
     }
 
-    public function testOnResultAfterNotAccountOwner()
+    public function testOnResultAfterNotCustomerOwner()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
         $datagrid = $this->createMock(DatagridInterface::class);
         $config = DatagridConfiguration::create(
-            [DynamicFieldsExtension::EXTEND_ENTITY_CONFIG_PATH => \stdClass::class]
+            ['extended_entity_name' => \stdClass::class]
         );
         $datagrid->expects($this->once())->method('getConfig')->willReturn($config);
 
@@ -157,18 +156,18 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener->onResultAfter($event);
     }
 
-    public function testOnResultWithAccountOwner()
+    public function testOnResultWithCustomerOwner()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
         $datagrid = $this->createMock(DatagridInterface::class);
         $config = DatagridConfiguration::create(
-            [DynamicFieldsExtension::EXTEND_ENTITY_CONFIG_PATH => \stdClass::class]
+            ['extended_entity_name' => \stdClass::class]
         );
         $datagrid->expects($this->once())->method('getConfig')->willReturn($config);
 
         $paymentTerm = new PaymentTerm();
         $paymentTerm->setLabel('label');
-        $this->provider->expects($this->once())->method('getAccountGroupPaymentTermByOwner')
+        $this->provider->expects($this->once())->method('getCustomerGroupPaymentTermByOwner')
             ->willReturn($paymentTerm);
         $this->associationProvider->expects($this->once())->method('getAssociationNames')->willReturn(['paymentTerm']);
 
@@ -176,6 +175,6 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
         $event = new OrmResultAfter($datagrid, [$resultRecord]);
         $this->listener->onResultAfter($event);
 
-        $this->assertEquals('label', $resultRecord->getValue('account_group_payment_term'));
+        $this->assertEquals('label', $resultRecord->getValue('customer_group_payment_term'));
     }
 }

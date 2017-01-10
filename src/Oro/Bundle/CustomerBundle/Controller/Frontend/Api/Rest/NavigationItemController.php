@@ -26,6 +26,6 @@ class NavigationItemController extends BaseNavigationItemController
      */
     protected function getUserClass()
     {
-        return $this->getParameter('oro_customer.entity.account_user.class');
+        return $this->getParameter('oro_customer.entity.customer_user.class');
     }
 }

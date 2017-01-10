@@ -4,7 +4,7 @@ namespace Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type;
 
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Form\Type\FrontendOwnerSelectType;
 use Oro\Bundle\EntityConfigBundle\Config\Config;
 use Oro\Bundle\EntityConfigBundle\Config\Id\EntityConfigId;
@@ -81,27 +81,27 @@ class FrontendOwnerSelectTypeTest extends FormIntegrationTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $accountUserRepository =
+        $customerUserRepository =
             $this->getMockBuilder(EntityRepository::class)
                 ->disableOriginalConstructor()
                 ->getMock();
 
-        $accountUserRepository
+        $customerUserRepository
             ->expects($this->any())
             ->method('createQueryBuilder')
-            ->with('account')
+            ->with('customer')
             ->willReturn($queryBuilder);
 
         $this->registry
             ->expects($this->any())
             ->method('getRepository')
-            ->with('OroCustomerBundle:Account')
-            ->willReturn($accountUserRepository);
+            ->with('OroCustomerBundle:Customer')
+            ->willReturn($customerUserRepository);
 
         $this->aclHelper
             ->expects($this->any())
             ->method('applyAclToCriteria')
-            ->with(AccountUser::class, $criteria, 'VIEW', ['account' => 'account.id'])
+            ->with(CustomerUser::class, $criteria, 'VIEW', ['customer' => 'customer.id'])
             ->willReturn($queryBuilder);
 
         $queryBuilder

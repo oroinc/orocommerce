@@ -159,12 +159,12 @@ class RequestControllerTest extends WebTestCase
         }
 
         if (isset($expectedData['columnsCount'])) {
-            $controls = $crawler->filter('.account-oq__order-info__control')->count();
+            $controls = $crawler->filter('.customer-oq__order-info__control')->count();
             static::assertEquals($expectedData['columnsCount'], $controls);
         }
 
         if (isset($expectedData['hideButtonEdit'])) {
-            $buttonEdit = $crawler->filter('.oro-account-user-role__controls-list')->html();
+            $buttonEdit = $crawler->filter('.oro-customer-user-role__controls-list')->html();
             static::assertNotContains('edit', $buttonEdit);
         }
     }
@@ -177,7 +177,7 @@ class RequestControllerTest extends WebTestCase
     public function indexProvider()
     {
         return [
-            'account1 user1 (only account user requests)' => [
+            'customer1 user1 (only customer user requests)' => [
                 'input' => [
                     'login' => LoadUserData::ACCOUNT1_USER1,
                     'password' => LoadUserData::ACCOUNT1_USER1,
@@ -206,7 +206,7 @@ class RequestControllerTest extends WebTestCase
                     ]
                 ],
             ],
-            'account1 user2 (all account requests)' => [
+            'customer1 user2 (all customer requests)' => [
                 'input' => [
                     'login' => LoadUserData::ACCOUNT1_USER2,
                     'password' => LoadUserData::ACCOUNT1_USER2,
@@ -226,7 +226,7 @@ class RequestControllerTest extends WebTestCase
                         'poNumber',
                         'shipUntil',
                         'createdAt',
-                        'accountUserName',
+                        'customerUserName',
                         'update_link',
                         'view_link',
                         'action_configuration',
@@ -238,7 +238,7 @@ class RequestControllerTest extends WebTestCase
                     ]
                 ],
             ],
-            'account1 user3 (all account requests and submittedTo)' => [
+            'customer1 user3 (all customer requests and submittedTo)' => [
                 'input' => [
                     'login' => LoadUserData::ACCOUNT1_USER3,
                     'password' => LoadUserData::ACCOUNT1_USER3,
@@ -265,7 +265,7 @@ class RequestControllerTest extends WebTestCase
                     ]
                 ],
             ],
-            'account2 user1 (only account user requests)' => [
+            'customer2 user1 (only customer user requests)' => [
                 'input' => [
                     'login' => LoadUserData::ACCOUNT2_USER1,
                     'password' => LoadUserData::ACCOUNT2_USER1,
@@ -293,7 +293,7 @@ class RequestControllerTest extends WebTestCase
                     ]
                 ],
             ],
-            'account2 user2 (all account user requests and full permissions)' => [
+            'customer2 user2 (all customer user requests and full permissions)' => [
                 'input' => [
                     'login' => LoadUserData::ACCOUNT2_USER2,
                     'password' => LoadUserData::ACCOUNT2_USER2,
@@ -314,7 +314,7 @@ class RequestControllerTest extends WebTestCase
                         'update_link',
                         'view_link',
                         'action_configuration',
-                        'accountUserName'
+                        'customerUserName'
                     ],
                     'action_configuration' => [
                         'view' => true,
@@ -323,7 +323,7 @@ class RequestControllerTest extends WebTestCase
                     ]
                 ],
             ],
-            'parent account user1 (all requests)' => [
+            'parent customer user1 (all requests)' => [
                 'input' => [
                     'login' => LoadUserData::PARENT_ACCOUNT_USER1,
                     'password' => LoadUserData::PARENT_ACCOUNT_USER1,
@@ -345,7 +345,7 @@ class RequestControllerTest extends WebTestCase
                     ]
                 ],
             ],
-            'parent account user2 (only account user requests)' => [
+            'parent customer user2 (only customer user requests)' => [
                 'input' => [
                     'login' => LoadUserData::PARENT_ACCOUNT_USER2,
                     'password' => LoadUserData::PARENT_ACCOUNT_USER2,
@@ -368,7 +368,7 @@ class RequestControllerTest extends WebTestCase
     public function viewProvider()
     {
         return [
-            'account1 user1 (AccountUser:VIEW_BASIC)' => [
+            'customer1 user1 (CustomerUser:VIEW_BASIC)' => [
                 'input' => [
                     'request' => LoadRequestData::REQUEST2,
                     'login' => LoadUserData::ACCOUNT1_USER1,
@@ -378,7 +378,7 @@ class RequestControllerTest extends WebTestCase
                     'columnsCount' => 9,
                 ],
             ],
-            'account1 user3 (AccountUser:VIEW_LOCAL)' => [
+            'customer1 user3 (CustomerUser:VIEW_LOCAL)' => [
                 'input' => [
                     'request' => LoadRequestData::REQUEST2,
                     'login' => LoadUserData::ACCOUNT1_USER2,
@@ -445,42 +445,42 @@ class RequestControllerTest extends WebTestCase
                 'password' => '',
                 'status' => 401
             ],
-            'VIEW (user from another account)' => [
+            'VIEW (user from another customer)' => [
                 'route' => 'oro_rfp_frontend_request_view',
                 'request' => LoadRequestData::REQUEST2,
                 'login' => LoadUserData::ACCOUNT2_USER1,
                 'password' => LoadUserData::ACCOUNT2_USER1,
                 'status' => 403
             ],
-            'UPDATE (user from another account)' => [
+            'UPDATE (user from another customer)' => [
                 'route' => 'oro_rfp_frontend_request_update',
                 'request' => LoadRequestData::REQUEST2,
                 'login' => LoadUserData::ACCOUNT2_USER1,
                 'password' => LoadUserData::ACCOUNT2_USER1,
                 'status' => 403
             ],
-            'VIEW (user from parent account : DEEP)' => [
+            'VIEW (user from parent customer : DEEP)' => [
                 'route' => 'oro_rfp_frontend_request_view',
                 'request' => LoadRequestData::REQUEST2,
                 'login' => LoadUserData::PARENT_ACCOUNT_USER1,
                 'password' => LoadUserData::PARENT_ACCOUNT_USER1,
                 'status' => 200
             ],
-            'UPDATE (user from parent account : DEEP)' => [
+            'UPDATE (user from parent customer : DEEP)' => [
                 'route' => 'oro_rfp_frontend_request_update',
                 'request' => LoadRequestData::REQUEST2,
                 'login' => LoadUserData::PARENT_ACCOUNT_USER1,
                 'password' => LoadUserData::PARENT_ACCOUNT_USER1,
                 'status' => 200
             ],
-            'VIEW (user from parent account : LOCAL)' => [
+            'VIEW (user from parent customer : LOCAL)' => [
                 'route' => 'oro_rfp_frontend_request_view',
                 'request' => LoadRequestData::REQUEST2,
                 'login' => LoadUserData::PARENT_ACCOUNT_USER2,
                 'password' => LoadUserData::PARENT_ACCOUNT_USER2,
                 'status' => 403
             ],
-            'UPDATE (user from parent account : LOCAL)' => [
+            'UPDATE (user from parent customer : LOCAL)' => [
                 'route' => 'oro_rfp_frontend_request_update',
                 'request' => LoadRequestData::REQUEST2,
                 'login' => LoadUserData::PARENT_ACCOUNT_USER2,
@@ -687,7 +687,7 @@ class RequestControllerTest extends WebTestCase
         $form['oro_rfp_frontend_request[lastName]'] = LoadRequestData::LAST_NAME . '_UPDATE';
         $form['oro_rfp_frontend_request[email]'] = LoadRequestData::EMAIL . '_UPDATE';
         $form['oro_rfp_frontend_request[poNumber]'] = LoadRequestData::PO_NUMBER . '_UPDATE';
-        $form['oro_rfp_frontend_request[assignedAccountUsers]'] = implode(',', [
+        $form['oro_rfp_frontend_request[assignedCustomerUsers]'] = implode(',', [
             $this->getReference(LoadUserData::ACCOUNT1_USER1)->getId(),
             $this->getReference(LoadUserData::ACCOUNT1_USER2)->getId()
         ]);

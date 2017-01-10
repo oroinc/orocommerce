@@ -2,14 +2,14 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Controller;
 
-use Oro\Bundle\CustomerBundle\Migrations\Data\ORM\LoadAnonymousAccountGroup;
+use Oro\Bundle\CustomerBundle\Migrations\Data\ORM\LoadAnonymousCustomerGroup;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ScopeBundle\Tests\DataFixtures\LoadScopeData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountProductVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
@@ -48,22 +48,22 @@ class ProductVisibilityControllerTest extends WebTestCase
 
         /** @var ChoiceFormField $allForm */
         $allForm = $form['oro_scoped_data_type'][$scope->getId()]['all'];
-        /** @var ChoiceFormField $accountForm */
-        $accountForm = $form['oro_scoped_data_type'][$scope->getId()]['account'];
-        /** @var ChoiceFormField $accountGroupForm */
-        $accountGroupForm = $form['oro_scoped_data_type'][$scope->getId()]['accountGroup'];
+        /** @var ChoiceFormField $customerForm */
+        $customerForm = $form['oro_scoped_data_type'][$scope->getId()]['customer'];
+        /** @var ChoiceFormField $customerGroupForm */
+        $customerGroupForm = $form['oro_scoped_data_type'][$scope->getId()]['customerGroup'];
 
         // assert form data is set correct with loaded fixtures
         $this->assertSame('config', $allForm->getValue(), 'visibility to all');
         $this->assertSame(
-            json_encode([$this->getReference('account.level_1')->getId() => ['visibility' => 'visible']]),
-            $accountForm->getValue(),
-            'account visibility'
+            json_encode([$this->getReference('customer.level_1')->getId() => ['visibility' => 'visible']]),
+            $customerForm->getValue(),
+            'customer visibility'
         );
         $this->assertSame(
             json_encode([$this->getReference(LoadGroups::GROUP1)->getId() => ['visibility' => 'hidden']]),
-            $accountGroupForm->getValue(),
-            'account group visibility'
+            $customerGroupForm->getValue(),
+            'customer group visibility'
         );
 
         // submit form with new values
@@ -73,16 +73,16 @@ class ProductVisibilityControllerTest extends WebTestCase
                 'oro_scoped_data_type' => [
                     $scope->getId() => [
                         'all' => 'hidden',
-                        'account' => json_encode(
+                        'customer' => json_encode(
                             [
-                                $this->getReference('account.level_1')->getId() => ['visibility' => 'hidden'],
-                                $this->getReference('account.level_1.2')->getId() => ['visibility' => 'visible'],
+                                $this->getReference('customer.level_1')->getId() => ['visibility' => 'hidden'],
+                                $this->getReference('customer.level_1.2')->getId() => ['visibility' => 'visible'],
                             ]
                         ),
-                        'accountGroup' => json_encode(
+                        'customerGroup' => json_encode(
                             [
                                 $this->getReference(LoadGroups::GROUP1)->getId() =>
-                                    ['visibility' => AccountGroupProductVisibility::getDefault($product)],
+                                    ['visibility' => CustomerGroupProductVisibility::getDefault($product)],
                                 $this->getReference(LoadGroups::GROUP2)->getId() => ['visibility' => 'visible'],
                             ]
                         ),
@@ -98,30 +98,30 @@ class ProductVisibilityControllerTest extends WebTestCase
         $this->assertCount(1, $pv);
         $this->assertSame('hidden', reset($pv)->getVisibility());
 
-        // assert account group product visibility saved properly
-        $agpv = $em->getRepository(AccountGroupProductVisibility::class)
+        // assert customer group product visibility saved properly
+        $agpv = $em->getRepository(CustomerGroupProductVisibility::class)
             ->findBy(['product' => $product], ['id' => 'ASC']);
         $this->assertCount(1, $agpv);
         $this->assertVisibilityEntity(
-            AccountGroupProductVisibility::class,
+            CustomerGroupProductVisibility::class,
             'visible',
-            ['accountGroup' => $this->getReference(LoadGroups::GROUP2)],
+            ['customerGroup' => $this->getReference(LoadGroups::GROUP2)],
             $product
         );
 
-        // assert account product visibility saved properly
-        $apv = $em->getRepository(AccountProductVisibility::class)->findBy(['product' => $product], ['id' => 'ASC']);
+        // assert customer product visibility saved properly
+        $apv = $em->getRepository(CustomerProductVisibility::class)->findBy(['product' => $product], ['id' => 'ASC']);
         $this->assertCount(2, $apv);
         $this->assertVisibilityEntity(
-            AccountProductVisibility::class,
+            CustomerProductVisibility::class,
             'hidden',
-            ['account' => $this->getReference('account.level_1')],
+            ['customer' => $this->getReference('customer.level_1')],
             $product
         );
         $this->assertVisibilityEntity(
-            AccountProductVisibility::class,
+            CustomerProductVisibility::class,
             'visible',
-            ['account' => $this->getReference('account.level_1.2')],
+            ['customer' => $this->getReference('customer.level_1.2')],
             $product
         );
     }
@@ -165,18 +165,18 @@ class ProductVisibilityControllerTest extends WebTestCase
         );
         $this->assertSame(
             null,
-            $crawler->filter(sprintf('[name = "oro_scoped_data_type[%s][account]"]', $scope->getId()))
+            $crawler->filter(sprintf('[name = "oro_scoped_data_type[%s][customer]"]', $scope->getId()))
                 ->attr('value'),
-            'account visibility form data'
+            'customer visibility form data'
         );
         $this->assertSame(
             json_encode([
                 $this->getReference(LoadGroups::GROUP1)->getId() => ['visibility' => 'hidden'],
                 $this->getAnonymousGroupId() => ['visibility' => 'visible']
             ]),
-            $crawler->filter(sprintf('[name = "oro_scoped_data_type[%s][accountGroup]"]', $scope->getId()))
+            $crawler->filter(sprintf('[name = "oro_scoped_data_type[%s][customerGroup]"]', $scope->getId()))
                 ->attr('value'),
-            'account group visibility form data'
+            'customer group visibility form data'
         );
     }
 
@@ -187,9 +187,9 @@ class ProductVisibilityControllerTest extends WebTestCase
     {
         return $this->getContainer()
             ->get('doctrine')
-            ->getManagerForClass('OroCustomerBundle:AccountGroup')
-            ->getRepository('OroCustomerBundle:AccountGroup')
-            ->findOneBy(['name' => LoadAnonymousAccountGroup::GROUP_NAME_NON_AUTHENTICATED])
+            ->getManagerForClass('OroCustomerBundle:CustomerGroup')
+            ->getRepository('OroCustomerBundle:CustomerGroup')
+            ->findOneBy(['name' => LoadAnonymousCustomerGroup::GROUP_NAME_NON_AUTHENTICATED])
             ->getId();
     }
 }

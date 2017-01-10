@@ -116,8 +116,8 @@ class LoadQuoteDataForPerformance extends AbstractFixture
     {
         return [
             'Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData',
-            'Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadAccountUserAddresses',
-            'Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadAccountAddresses',
+            'Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadCustomerUserAddresses',
+            'Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadCustomerAddresses',
             'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
         ];
     }

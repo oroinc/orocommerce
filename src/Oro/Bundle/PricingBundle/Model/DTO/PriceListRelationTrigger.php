@@ -2,21 +2,21 @@
 
 namespace Oro\Bundle\PricingBundle\Model\DTO;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class PriceListRelationTrigger
 {
     const WEBSITE = 'website';
-    const ACCOUNT = 'account';
-    const ACCOUNT_GROUP = 'accountGroup';
+    const ACCOUNT = 'customer';
+    const ACCOUNT_GROUP = 'customerGroup';
     const FORCE = 'force';
 
     /**
-     * @var Account
+     * @var Customer
      */
-    protected $account;
+    protected $customer;
 
     /**
      * @var Website
@@ -24,9 +24,9 @@ class PriceListRelationTrigger
     protected $website;
 
     /**
-     * @var AccountGroup
+     * @var CustomerGroup
      */
-    protected $accountGroup;
+    protected $customerGroup;
 
     /**
      * @var bool
@@ -34,20 +34,20 @@ class PriceListRelationTrigger
     protected $force = false;
 
     /**
-     * @return Account|null
+     * @return Customer|null
      */
-    public function getAccount()
+    public function getCustomer()
     {
-        return $this->account;
+        return $this->customer;
     }
 
     /**
-     * @param Account|null $account
+     * @param Customer|null $customer
      * @return $this
      */
-    public function setAccount(Account $account = null)
+    public function setCustomer(Customer $customer = null)
     {
-        $this->account = $account;
+        $this->customer = $customer;
 
         return $this;
     }
@@ -72,20 +72,20 @@ class PriceListRelationTrigger
     }
 
     /**
-     * @return AccountGroup|null
+     * @return CustomerGroup|null
      */
-    public function getAccountGroup()
+    public function getCustomerGroup()
     {
-        return $this->accountGroup;
+        return $this->customerGroup;
     }
 
     /**
-     * @param AccountGroup|null $accountGroup
+     * @param CustomerGroup|null $customerGroup
      * @return $this
      */
-    public function setAccountGroup(AccountGroup $accountGroup = null)
+    public function setCustomerGroup(CustomerGroup $customerGroup = null)
     {
-        $this->accountGroup = $accountGroup;
+        $this->customerGroup = $customerGroup;
 
         return $this;
     }
@@ -116,8 +116,8 @@ class PriceListRelationTrigger
     {
         return [
             self::WEBSITE => null !== $this->website ? $this->website->getId() : null,
-            self::ACCOUNT => null !== $this->account ? $this->account->getId() : null,
-            self::ACCOUNT_GROUP => null !== $this->accountGroup ? $this->accountGroup->getId() : null,
+            self::ACCOUNT => null !== $this->customer ? $this->customer->getId() : null,
+            self::ACCOUNT_GROUP => null !== $this->customerGroup ? $this->customerGroup->getId() : null,
             self::FORCE => $this->force,
         ];
     }

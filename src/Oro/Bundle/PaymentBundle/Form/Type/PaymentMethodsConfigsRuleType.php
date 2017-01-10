@@ -7,6 +7,7 @@ use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
 use Oro\Bundle\RuleBundle\Form\Type\RuleType;
+use Oro\Bundle\PaymentBundle\Form\EventSubscriber\DestinationCollectionTypeSubscriber;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -49,8 +50,9 @@ class PaymentMethodsConfigsRuleType extends AbstractType
                 'required' => false
             ])
             ->add('destinations', PaymentMethodsConfigsRuleDestinationCollectionType::class, [
-                'required' => false,
-                'label'    => 'oro.payment.paymentmethodsconfigsrule.destinations.label',
+                'required'             => false,
+                'label'                => 'oro.payment.paymentmethodsconfigsrule.destinations.label',
+                'show_form_when_empty' => false,
             ])
             ->add('currency', CurrencySelectionType::class, [
                 'label'       => 'oro.payment.paymentmethodsconfigsrule.currency.label',
@@ -63,6 +65,8 @@ class PaymentMethodsConfigsRuleType extends AbstractType
                 'mapped'  => false,
                 'choices' => $this->getMethods(),
             ]);
+
+        $builder->addEventSubscriber(new DestinationCollectionTypeSubscriber());
     }
 
     /**

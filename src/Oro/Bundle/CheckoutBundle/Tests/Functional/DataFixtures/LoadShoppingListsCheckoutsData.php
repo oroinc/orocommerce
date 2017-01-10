@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\PaymentTermBundle\Method\PaymentTerm;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 
@@ -35,7 +35,7 @@ class LoadShoppingListsCheckoutsData extends AbstractLoadCheckouts
             self::CHECKOUT_7 => [
                 'source' => LoadShoppingLists::SHOPPING_LIST_7,
                 'checkout' => ['payment_method' => PaymentTerm::TYPE],
-                'accountUser' => LoadAccountUserData::LEVEL_1_EMAIL,
+                'customerUser' => LoadCustomerUserData::LEVEL_1_EMAIL,
             ],
         ];
     }

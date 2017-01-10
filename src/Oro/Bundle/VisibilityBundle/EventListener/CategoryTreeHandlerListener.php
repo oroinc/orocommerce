@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\VisibilityBundle\EventListener;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
-use Oro\Bundle\CustomerBundle\Provider\AccountUserRelationsProvider;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
+use Oro\Bundle\CustomerBundle\Provider\CustomerUserRelationsProvider;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Event\CategoryTreeCreateAfterEvent;
 use Oro\Bundle\UserBundle\Entity\User;
@@ -18,20 +18,20 @@ class CategoryTreeHandlerListener
     protected $categoryVisibilityResolver;
 
     /**
-     * @var AccountUserRelationsProvider
+     * @var CustomerUserRelationsProvider
      */
-    protected $accountUserRelationsProvider;
+    protected $customerUserRelationsProvider;
 
     /**
      * @param CategoryVisibilityResolverInterface $categoryVisibilityResolver
-     * @param AccountUserRelationsProvider $accountUserRelationsProvider
+     * @param CustomerUserRelationsProvider $customerUserRelationsProvider
      */
     public function __construct(
         CategoryVisibilityResolverInterface $categoryVisibilityResolver,
-        AccountUserRelationsProvider $accountUserRelationsProvider
+        CustomerUserRelationsProvider $customerUserRelationsProvider
     ) {
         $this->categoryVisibilityResolver = $categoryVisibilityResolver;
-        $this->accountUserRelationsProvider = $accountUserRelationsProvider;
+        $this->customerUserRelationsProvider = $customerUserRelationsProvider;
     }
 
     /**
@@ -44,24 +44,29 @@ class CategoryTreeHandlerListener
             return;
         }
 
-        $account = $this->accountUserRelationsProvider->getAccount($user);
-        $accountGroup = $this->accountUserRelationsProvider->getAccountGroup($user);
-        $categories = $this->filterCategories($event->getCategories(), $account, $accountGroup);
+        $customer = $this->customerUserRelationsProvider->getCustomer($user);
+        $customerGroup = $this->customerUserRelationsProvider->getCustomerGroup($user);
+        $categories = $this->filterCategories($event->getCategories(), $customer, $customerGroup);
         $event->setCategories($categories);
     }
 
     /**
      * @param Category[] $categories
-     * @param Account|null $account
-     * @param AccountGroup|null $accountGroup
+     * @param Customer|null $customer
+     * @param CustomerGroup|null $customerGroup
      * @return array
      */
-    protected function filterCategories(array $categories, Account $account = null, AccountGroup $accountGroup = null)
-    {
-        if ($account) {
-            $hiddenCategoryIds = $this->categoryVisibilityResolver->getHiddenCategoryIdsForAccount($account);
-        } elseif ($accountGroup) {
-            $hiddenCategoryIds = $this->categoryVisibilityResolver->getHiddenCategoryIdsForAccountGroup($accountGroup);
+    protected function filterCategories(
+        array $categories,
+        Customer $customer = null,
+        CustomerGroup $customerGroup = null
+    ) {
+        if ($customer) {
+            $hiddenCategoryIds = $this->categoryVisibilityResolver->getHiddenCategoryIdsForCustomer($customer);
+        } elseif ($customerGroup) {
+            $hiddenCategoryIds = $this->categoryVisibilityResolver->getHiddenCategoryIdsForCustomerGroup(
+                $customerGroup
+            );
         } else {
             $hiddenCategoryIds = $this->categoryVisibilityResolver->getHiddenCategoryIds();
         }

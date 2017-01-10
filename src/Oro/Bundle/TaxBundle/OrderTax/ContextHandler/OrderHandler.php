@@ -4,8 +4,8 @@ namespace Oro\Bundle\TaxBundle\OrderTax\ContextHandler;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\TaxBundle\Entity\AccountTaxCode;
-use Oro\Bundle\TaxBundle\Entity\Repository\AccountTaxCodeRepository;
+use Oro\Bundle\TaxBundle\Entity\CustomerTaxCode;
+use Oro\Bundle\TaxBundle\Entity\Repository\CustomerTaxCodeRepository;
 use Oro\Bundle\TaxBundle\Event\ContextEvent;
 use Oro\Bundle\TaxBundle\Model\Taxable;
 use Oro\Bundle\TaxBundle\Model\TaxCodeInterface;
@@ -42,14 +42,14 @@ class OrderHandler
             return;
         }
 
-        $context->offsetSet(Taxable::ACCOUNT_TAX_CODE, $this->getAccountTaxCode($order));
+        $context->offsetSet(Taxable::ACCOUNT_TAX_CODE, $this->getCustomerTaxCode($order));
     }
 
     /**
      * @param Order $order
      * @return null|string
      */
-    protected function getAccountTaxCode(Order $order)
+    protected function getCustomerTaxCode(Order $order)
     {
         $cacheKey  = $this->getCacheTaxCodeKey(TaxCodeInterface::TYPE_ACCOUNT, $order);
         $cachedTaxCode = $this->getCachedTaxCode($cacheKey);
@@ -59,14 +59,14 @@ class OrderHandler
         }
 
         $taxCode = null;
-        $account = null;
+        $customer = null;
 
-        if ($order->getAccount()) {
-            $taxCode = $this->getTaxCode(TaxCodeInterface::TYPE_ACCOUNT, $order->getAccount());
+        if ($order->getCustomer()) {
+            $taxCode = $this->getTaxCode(TaxCodeInterface::TYPE_ACCOUNT, $order->getCustomer());
         }
 
-        if (!$taxCode && $order->getAccount() && $order->getAccount()->getGroup()) {
-            $taxCode = $this->getTaxCode(TaxCodeInterface::TYPE_ACCOUNT_GROUP, $order->getAccount()->getGroup());
+        if (!$taxCode && $order->getCustomer() && $order->getCustomer()->getGroup()) {
+            $taxCode = $this->getTaxCode(TaxCodeInterface::TYPE_ACCOUNT_GROUP, $order->getCustomer()->getGroup());
         }
 
         $this->taxCodes[$cacheKey] = $taxCode;
@@ -87,11 +87,11 @@ class OrderHandler
     }
 
     /**
-     * @return AccountTaxCodeRepository
+     * @return CustomerTaxCodeRepository
      */
     protected function getRepository()
     {
-        return $this->doctrineHelper->getEntityRepositoryForClass(AccountTaxCode::class);
+        return $this->doctrineHelper->getEntityRepositoryForClass(CustomerTaxCode::class);
     }
 
     /**

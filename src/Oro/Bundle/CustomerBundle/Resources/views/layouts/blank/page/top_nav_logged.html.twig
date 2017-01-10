@@ -20,7 +20,7 @@
     </li>
 {% endblock %}
 
-{% block _top_nav_my_account_item_widget %}
+{% block _top_nav_my_customer_item_widget %}
     {% set attr = layout_attr_defaults(attr, {
     '~class': ' primary-menu__item primary-menu__item--offset-m'
     }) %}
@@ -38,7 +38,7 @@
     {{ block_widget(block, {attr: attr}) }}
 {% endblock %}
 
-{% block _top_nav_my_account_link_widget %}
+{% block _top_nav_my_customer_link_widget %}
     {% set attr = layout_attr_defaults(attr, {
     '~class': ' link'
     }) %}

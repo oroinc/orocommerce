@@ -1,6 +1,6 @@
 Oro\Bundle\RuleBundle\Entity\Rule:
     rule1:
-        name: 'Shipping Rule 1'
+        name: 'Shipping Rule First'
         enabled: true
         sortOrder: 5
         expression: 'true'
@@ -10,7 +10,6 @@ Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule:
     shipping_methods_configs_rule1:
         rule: '@rule1'
         currency: 'EUR'
-        methodConfigs: ['@method_configuration']
 
 Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination:
     germany_destination:
@@ -24,31 +23,18 @@ Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestinationPostalCode
     postalCode1:
         name: '10115'
 
-Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig:
-    method_configuration:
-        method: 'flat_rate'
-        methodConfigsRule: '@shipping_methods_configs_rule1'
-        typeConfigs: ['@method_type_configuration']
-
-Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig:
-    method_type_configuration:
-        enabled: true
-        type: 'primary'
-        options: { price: '1.5', handling_fee: '1.5', type: 'per_order' }
-        methodConfig: '@method_configuration'
-
 Oro\Bundle\CurrencyBundle\Entity\Price(local):
     price1:
         value: '1'
         currency: 'EUR'
 
-Oro\Bundle\CustomerBundle\Entity\Account:
-    account1:
+Oro\Bundle\CustomerBundle\Entity\Customer:
+    customer1:
         name: 'Company A'
         organization: '@organization'
         owner: '@admin'
 
-Oro\Bundle\CustomerBundle\Entity\AccountUser:
+Oro\Bundle\CustomerBundle\Entity\CustomerUser:
     amanda:
         email: 'AmandaRCole@example.org'
         username: 'AmandaRCole@example.org'
@@ -58,7 +44,7 @@ Oro\Bundle\CustomerBundle\Entity\AccountUser:
         lastName: 'Cole'
         enabled: '1'
         confirmed: '1'
-        account: '@account1'
+        customer: '@customer1'
         organization: ['@organization']
         role: ['@buyer']
         owner: '@admin'
@@ -83,14 +69,14 @@ Oro\Bundle\ProductBundle\Entity\Product:
 Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
     shoppinglist1:
         label: 'Shopping List 1'
-        accountUser: '@amanda'
+        customerUser: '@amanda'
 
 Oro\Bundle\ShoppingListBundle\Entity\LineItem:
     lineitem1:
         product: '@product1'
         quantity: '5'
         unit: '@item'
-        accountUser: '@amanda'
+        customerUser: '@amanda'
         shoppingList: '@shoppinglist1'
         organization: '@organization'
 
@@ -102,7 +88,7 @@ Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal:
         subtotalValue: '10.1'
         valid: true
 
-Oro\Bundle\CustomerBundle\Entity\AccountUserAddress:
+Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
     address1:
         country: '@germany'
         region: '@berlin'
@@ -127,9 +113,9 @@ Oro\Bundle\PricingBundle\Entity\PriceList:
         currencies: ['USD', 'EUR']
         active: true
 
-Oro\Bundle\PricingBundle\Entity\PriceListToAccount:
-    priceListToAccount1:
-        account: '@account1'
+Oro\Bundle\PricingBundle\Entity\PriceListToCustomer:
+    priceListToCustomer1:
+        customer: '@customer1'
         pricelist: '@pricelist_shipping'
         website: '@website1'
         priority: 200
@@ -170,10 +156,10 @@ Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
         value: 2
         currency: 'USD'
 
-Oro\Bundle\PricingBundle\Entity\CombinedPriceListToAccount:
-    combinedPriceListToAccount1:
+Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomer:
+    combinedPriceListToCustomer1:
         pricelist: '@combinedPriceList'
-        account: '@account1'
+        customer: '@customer1'
         website: '@website1'
 
 Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite:
@@ -182,7 +168,7 @@ Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite:
         website: '@website1'
 
 Oro\Bundle\CustomerBundle\Entity\CustomerUserSettings:
-    accountUserSetting1:
+    customerUserSetting1:
         customerUser: '@amanda'
         __construct: ['@website1']
         currency: 'EUR'

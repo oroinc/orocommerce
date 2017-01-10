@@ -29,7 +29,7 @@
 {% endmacro %}
 
 {% block oro_rfp_request_widget %}
-    <div class="rfp-request-widget" data-page-component-module="orocustomer/js/app/components/account-selection-component">
+    <div class="rfp-request-widget" data-page-component-module="orocustomer/js/app/components/customer-selection-component">
         {{ form(form) }}
     </div>
 {% endblock %}
@@ -379,7 +379,7 @@
 
 {% block _oro_rfp_frontend_request_requestProducts_entry_requestProductItems_entry_widget %}
     {% use "OroPricingBundle:layouts/default:layout.html.twig" %}
-    <div class="request-form-lineitem-unit request-form-lineitem-unit--size-s">
+    <div class="request-form-lineitem-unit request-form-lineitem-unit--size-m">
         {{ form_widget(form.quantity) }}
         {{ form_errors(form.quantity) }}
     </div>

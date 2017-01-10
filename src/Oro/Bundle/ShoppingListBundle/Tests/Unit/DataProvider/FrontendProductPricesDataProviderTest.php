@@ -5,7 +5,7 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\DataProvider;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
@@ -77,21 +77,21 @@ class FrontendProductPricesDataProviderTest extends \PHPUnit_Framework_TestCase
      * @dataProvider getDataDataProvider
      * @param ProductPriceCriteria $criteria
      * @param Price $price
-     * @param AccountUser|null $accountUser
+     * @param CustomerUser|null $customerUser
      * @param array $lineItems
      */
     public function testGetProductsPrices(
         ProductPriceCriteria $criteria,
         Price $price,
-        AccountUser $accountUser = null,
+        CustomerUser $customerUser = null,
         array $lineItems = null
     ) {
         $expected = null;
         $this->securityFacade->expects($this->once())
             ->method('getLoggedUser')
-            ->willReturn($accountUser);
+            ->willReturn($customerUser);
 
-        if ($accountUser) {
+        if ($customerUser) {
             $this->userCurrencyManager->expects($this->once())
                 ->method('getUserCurrency')
                 ->willReturn(self::TEST_CURRENCY);
@@ -99,7 +99,7 @@ class FrontendProductPricesDataProviderTest extends \PHPUnit_Framework_TestCase
             /** @var BasePriceList $priceList */
             $priceList = $this->getEntity('Oro\Bundle\PricingBundle\Entity\BasePriceList', ['id' => 1]);
             $this->priceListRequestHandler->expects($this->once())
-                ->method('getPriceListByAccount')
+                ->method('getPriceListByCustomer')
                 ->willReturn($priceList);
 
             $this->productPriceProvider->expects($this->once())
@@ -139,16 +139,16 @@ class FrontendProductPricesDataProviderTest extends \PHPUnit_Framework_TestCase
         $price->setCurrency(self::TEST_CURRENCY);
 
         return [
-            'with account user' => [
+            'with customer user' => [
                 'criteria' => $criteria,
                 'price' => $price,
-                'accountUser' => new AccountUser(),
+                'customerUser' => new CustomerUser(),
                 'lineItems' => [$lineItem]
             ],
-            'without account user' => [
+            'without customer user' => [
                 'criteria' => $criteria,
                 'price' => $price,
-                'accountUser' => null,
+                'customerUser' => null,
                 'lineItems' => [$lineItem]
             ],
         ];

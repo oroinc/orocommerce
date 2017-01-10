@@ -37,7 +37,7 @@ class RolesTest extends Selenium2TestCase
         $login = $this->login();
         $login
             ->openRoles('Oro\Bundle\CustomerBundle')
-            ->assertTitle('All - Account Users - Customers');
+            ->assertTitle('All - Customer Users - Customers');
     }
 
     public function testRolesGridDefaultContent()

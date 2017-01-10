@@ -6,8 +6,8 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\PricingBundle\DependencyInjection\Configuration;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\PricingBundle\DependencyInjection\OroPricingExtension;
 use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
@@ -55,39 +55,39 @@ class PriceListTreeHandlerTest extends WebTestCase
     }
 
     /**
-     * @param string $accountReference
+     * @param string $customerReference
      * @param string $expectedPriceListReference
      *
-     * @dataProvider accountUserDataProvider
+     * @dataProvider customerUserDataProvider
      */
-    public function testGetPriceList($accountReference, $expectedPriceListReference)
+    public function testGetPriceList($customerReference, $expectedPriceListReference)
     {
-        $accountUser = new AccountUser();
-        $accountUser->setAccount($this->getAccount($accountReference));
+        $customerUser = new CustomerUser();
+        $customerUser->setCustomer($this->getCustomer($customerReference));
 
         $this->websiteManager->expects($this->any())->method('getCurrentWebsite')
             ->willReturn($this->getReference(LoadWebsiteData::WEBSITE1));
 
         $this->assertEquals(
             $this->getReference($expectedPriceListReference)->getName(),
-            $this->handler->getPriceList($accountUser->getAccount())->getName()
+            $this->handler->getPriceList($customerUser->getCustomer())->getName()
         );
     }
 
     /**
-     * @param string $accountReference
+     * @param string $customerReference
      * @param string $configPriceListReference
      * @param string $expectedPriceListReference
      *
      * @dataProvider priceListFromConfigDataProvider
      */
     public function testGetPriceListFromConfig(
-        $accountReference,
+        $customerReference,
         $configPriceListReference,
         $expectedPriceListReference
     ) {
-        $accountUser = new AccountUser();
-        $accountUser->setAccount($this->getAccount($accountReference));
+        $customerUser = new CustomerUser();
+        $customerUser->setCustomer($this->getCustomer($customerReference));
         $key = implode(
             ConfigManager::SECTION_MODEL_SEPARATOR,
             [OroPricingExtension::ALIAS, Configuration::COMBINED_PRICE_LIST]
@@ -99,20 +99,20 @@ class PriceListTreeHandlerTest extends WebTestCase
 
         $this->assertEquals(
             $this->getReference($expectedPriceListReference)->getName(),
-            $this->handler->getPriceList($accountUser->getAccount())->getName()
+            $this->handler->getPriceList($customerUser->getCustomer())->getName()
         );
     }
 
     /**
      * @return array
      */
-    public function accountUserDataProvider()
+    public function customerUserDataProvider()
     {
         return [
-            'get PriceList from account' => ['account.level_1.2', '2t_3f_1t'],
-            'get PriceList from group' => ['account.level_1.3', '1t_2t_3t'],
-            'get PriceList from website' => ['account.level_1.2.1', '1t_2t_3t'],
-            'get PriceList from config' => ['account.level_1.2.1', '1t_2t_3t'],
+            'get PriceList from customer' => ['customer.level_1.2', '2t_3f_1t'],
+            'get PriceList from group' => ['customer.level_1.3', '1t_2t_3t'],
+            'get PriceList from website' => ['customer.level_1.2.1', '1t_2t_3t'],
+            'get PriceList from config' => ['customer.level_1.2.1', '1t_2t_3t'],
         ];
     }
 
@@ -122,16 +122,16 @@ class PriceListTreeHandlerTest extends WebTestCase
     public function priceListFromConfigDataProvider()
     {
         return [
-            'get PriceList from account' => ['account.level_1.2', '1t_2t_3t', '2t_3f_1t'],
-            'get PriceList from config' => ['account.level_1.2.1', '1t_2t_3t', '1t_2t_3t'],
+            'get PriceList from customer' => ['customer.level_1.2', '1t_2t_3t', '2t_3f_1t'],
+            'get PriceList from config' => ['customer.level_1.2.1', '1t_2t_3t', '1t_2t_3t'],
         ];
     }
 
     /**
      * @param string $reference
-     * @return Account
+     * @return Customer
      */
-    protected function getAccount($reference)
+    protected function getCustomer($reference)
     {
         return $this->getReference($reference);
     }

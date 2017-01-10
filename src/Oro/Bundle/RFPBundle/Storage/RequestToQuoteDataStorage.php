@@ -25,8 +25,8 @@ class RequestToQuoteDataStorage
     {
         $data = [
             ProductDataStorage::ENTITY_DATA_KEY => [
-                'accountUser' => $rfpRequest->getAccountUser() ? $rfpRequest->getAccountUser()->getId() : null,
-                'account' => $rfpRequest->getAccount() ? $rfpRequest->getAccount()->getId() : null,
+                'customerUser' => $rfpRequest->getCustomerUser() ? $rfpRequest->getCustomerUser()->getId() : null,
+                'customer' => $rfpRequest->getCustomer() ? $rfpRequest->getCustomer()->getId() : null,
                 'request' => $rfpRequest->getId(),
                 'poNumber' => $rfpRequest->getPoNumber(),
                 'shipUntil' => $rfpRequest->getShipUntil(),
@@ -52,7 +52,7 @@ class RequestToQuoteDataStorage
             $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY][] = [
                 ProductDataStorage::PRODUCT_SKU_KEY => $requestProduct->getProduct()->getSku(),
                 ProductDataStorage::PRODUCT_QUANTITY_KEY => null,
-                'commentAccount' => $requestProduct->getComment(),
+                'commentCustomer' => $requestProduct->getComment(),
                 'requestProductItems' => $items,
             ];
         }

@@ -9,6 +9,8 @@ use Symfony\Component\DependencyInjection\Loader;
 
 class OroProductExtension extends Extension
 {
+    const ALIAS = 'oro_product';
+
     /**
      * {@inheritDoc}
      */
@@ -32,6 +34,6 @@ class OroProductExtension extends Extension
      */
     public function getAlias()
     {
-        return 'oro_product';
+        return self::ALIAS;
     }
 }

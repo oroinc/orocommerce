@@ -123,8 +123,7 @@ class PriceAttributeProductPriceDatagridListener
         $columnName = $this->buildColumnName($currency, $priceAttributeId);
         $joinAlias = $this->buildJoinAlias($columnName);
 
-        $selectPattern = 'min(%s.value) as %s';
-        $config->offsetAddToArrayByPath('[source][query][select]', [sprintf($selectPattern, $joinAlias, $columnName)]);
+        $config->getOrmQuery()->addSelect(sprintf('min(%s.value) as %s', $joinAlias, $columnName));
 
         $this->addConfigProductPriceJoin($config, $currency, $priceAttributeId);
 
@@ -219,16 +218,11 @@ class PriceAttributeProductPriceDatagridListener
             ->add($expr->eq(sprintf('%s.priceList', $joinAlias), $expr->literal($priceAttributeId)))
             ->add($expr->eq(sprintf('%s.quantity', $joinAlias), 1));
 
-        $config->offsetAddToArrayByPath(
-            '[source][query][join][left]',
-            [
-                [
-                    'join' => 'OroPricingBundle:PriceAttributeProductPrice',
-                    'alias' => $joinAlias,
-                    'conditionType' => Expr\Join::WITH,
-                    'condition' => (string)$joinExpr,
-                ],
-            ]
+        $config->getOrmQuery()->addLeftJoin(
+            'OroPricingBundle:PriceAttributeProductPrice',
+            $joinAlias,
+            Expr\Join::WITH,
+            (string)$joinExpr
         );
     }
 

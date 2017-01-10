@@ -13,7 +13,7 @@ use Oro\Bundle\LocaleBundle\Formatter\AddressFormatter;
 use Oro\Bundle\OrderBundle\Tests\Unit\Form\Type\AbstractAddressTypeTest;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteAddress;
-use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteAddressType;
 use Oro\Bundle\SaleBundle\Model\QuoteAddressManager;
 use Oro\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider;
@@ -120,7 +120,7 @@ class QuoteAddressTypeTest extends AbstractAddressTypeTest
         $this->quoteAddressManager->expects($this->any())->method('updateFromAbstract')
             ->will(
                 $this->returnCallback(
-                    function (AccountAddress $address = null, QuoteAddress $orderAddress = null) {
+                    function (CustomerAddress $address = null, QuoteAddress $orderAddress = null) {
                         if (!$orderAddress) {
                             $orderAddress = new QuoteAddress();
                         }
@@ -168,11 +168,11 @@ class QuoteAddressTypeTest extends AbstractAddressTypeTest
                 'expectedData' => (new QuoteAddress())->setCountry(new Country('US')),
                 'defaultData' => new QuoteAddress(),
             ],
-            'account address preselector' => [
+            'customer address preselector' => [
                 'isValid' => true,
                 'submittedData' => [
                     'country' => 'US',
-                    'accountAddress' => null,
+                    'customerAddress' => null,
                 ],
                 'expectedData' => (new QuoteAddress())->setCountry(new Country('US')),
                 'defaultData' => new QuoteAddress(),
@@ -253,7 +253,7 @@ class QuoteAddressTypeTest extends AbstractAddressTypeTest
         $this->quoteAddressManager->expects($this->any())->method('updateFromAbstract')
             ->will(
                 $this->returnCallback(
-                    function (AccountAddress $address) {
+                    function (CustomerAddress $address) {
                         $quoteAddress = new QuoteAddress();
                         $quoteAddress->setCountry($address->getCountry());
                         $quoteAddress->setStreet($address->getStreet());
@@ -268,7 +268,7 @@ class QuoteAddressTypeTest extends AbstractAddressTypeTest
         $this->quoteAddressManager->expects($this->any())->method('updateFromAbstract')
             ->will(
                 $this->returnCallback(
-                    function (AccountAddress $address = null, QuoteAddress $orderAddress = null) {
+                    function (CustomerAddress $address = null, QuoteAddress $orderAddress = null) {
                         if (!$orderAddress) {
                             $orderAddress = new QuoteAddress();
                         }
@@ -301,25 +301,25 @@ class QuoteAddressTypeTest extends AbstractAddressTypeTest
             'not valid identifier' => [
                 'isValid' => false,
                 'submittedData' => [
-                    'accountAddress' => 'a_1',
+                    'customerAddress' => 'a_1',
                 ],
                 'expectedData' => null,
                 'defaultData' => new QuoteAddress(),
-                'formErrors' => ['accountAddress' => 'This value is not valid.'],
+                'formErrors' => ['customerAddress' => 'This value is not valid.'],
             ],
             'has identifier' => [
                 'isValid' => true,
                 'submittedData' => [
-                    'accountAddress' => 'a_1',
+                    'customerAddress' => 'a_1',
                 ],
                 'expectedData' => (new QuoteAddress())
                     ->setCountry($country)
                     ->setStreet('Street'),
                 'defaultData' => new QuoteAddress(),
-                'formErrors' => ['accountAddress' => 1],
+                'formErrors' => ['customerAddress' => 1],
                 'groupedAddresses' => [
                     'group_name' => [
-                        'a_1' => (new AccountAddress())
+                        'a_1' => (new CustomerAddress())
                             ->setCountry($country)
                             ->setStreet('Street'),
                     ],
@@ -331,7 +331,7 @@ class QuoteAddressTypeTest extends AbstractAddressTypeTest
     public function testFinishView()
     {
         $view = new FormView();
-        $view->children = ['country' => new FormView(), 'city' => new FormView(), 'accountAddress' => new FormView()];
+        $view->children = ['country' => new FormView(), 'city' => new FormView(), 'customerAddress' => new FormView()];
 
         $this->quoteAddressManager->expects($this->once())->method('getGroupedAddresses')->willReturn([]);
         $this->quoteAddressSecurityProvider->expects($this->atLeastOnce())->method('isManualEditGranted')
@@ -354,7 +354,7 @@ class QuoteAddressTypeTest extends AbstractAddressTypeTest
             $this->assertArrayNotHasKey('label_attr', $view->offsetGet($childName)->vars);
         }
 
-        $this->assertFalse($view->offsetGet('accountAddress')->vars['disabled']);
-        $this->assertFalse($view->offsetGet('accountAddress')->vars['required']);
+        $this->assertFalse($view->offsetGet('customerAddress')->vars['disabled']);
+        $this->assertFalse($view->offsetGet('customerAddress')->vars['required']);
     }
 }

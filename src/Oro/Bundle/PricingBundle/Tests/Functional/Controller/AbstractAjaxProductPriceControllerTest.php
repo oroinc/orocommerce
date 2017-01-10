@@ -14,7 +14,7 @@ abstract class AbstractAjaxProductPriceControllerTest extends WebTestCase
     /**
      * @var  string
      */
-    protected $pricesByAccountActionUrl;
+    protected $pricesByCustomerActionUrl;
 
     /**
      * @var string
@@ -22,19 +22,19 @@ abstract class AbstractAjaxProductPriceControllerTest extends WebTestCase
     protected $matchingPriceActionUrl;
 
     /**
-     * @dataProvider getProductPricesByAccountActionDataProvider
+     * @dataProvider getProductPricesByCustomerActionDataProvider
      *
      * @param string $product
      * @param array $expected
      * @param string|null $currency
-     * @param string|null $account
+     * @param string|null $customer
      * @param string|null $website
      */
-    public function testGetProductPricesByAccountAction(
+    public function testGetProductPricesByCustomerAction(
         $product,
         array $expected,
         $currency = null,
-        $account = null,
+        $customer = null,
         $website = null
     ) {
         /** @var Product $product */
@@ -46,14 +46,14 @@ abstract class AbstractAjaxProductPriceControllerTest extends WebTestCase
         if ($currency) {
             $params['currency'] = $currency;
         }
-        if ($account) {
-            $params[PriceListRequestHandlerInterface::ACCOUNT_ID_KEY] = $this->getReference($account)->getId();
+        if ($customer) {
+            $params[PriceListRequestHandlerInterface::ACCOUNT_ID_KEY] = $this->getReference($customer)->getId();
         }
         if ($website) {
             $params[PriceListRequestHandlerInterface::WEBSITE_KEY] = $this->getReference($website)->getId();
         }
 
-        $url = $this->getUrl($this->pricesByAccountActionUrl, $params);
+        $url = $this->getUrl($this->pricesByCustomerActionUrl, $params);
         $this->client->request('GET', $url);
 
         $result = $this->client->getResponse();
@@ -122,7 +122,7 @@ abstract class AbstractAjaxProductPriceControllerTest extends WebTestCase
     /**
      * @return array
      */
-    abstract public function getProductPricesByAccountActionDataProvider();
+    abstract public function getProductPricesByCustomerActionDataProvider();
 
     /**
      * @return array

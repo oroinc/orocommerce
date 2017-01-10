@@ -1,5 +1,5 @@
 .user-page {
-  .oro-account__block {
+  .oro-customer__block {
     margin-top: 15px;
 
     .map-address-list {
@@ -11,17 +11,17 @@
         }
       }
     }
-    .account-oq__item {
+    .customer-oq__item {
       padding-bottom: 5px;
     }
-    .account-oq__item__body {
+    .customer-oq__item__body {
       border-top: 1px solid #ebebeb;
       padding-top: 10px;
       margin-left: 15px;
     }
   }
 
-  .oro-account__controls-list {
+  .oro-customer__controls-list {
     position: relative;
     z-index: 1;
     float: right;
@@ -141,7 +141,7 @@
   border: none;
 }
 
-.account-profile-edit-page {
+.customer-profile-edit-page {
   .password {
     overflow: hidden;
   }
@@ -165,7 +165,7 @@
   }
 }
 
-.oro-account-user-address__add-link {
+.oro-customer-user-address__add-link {
   a {
     i {
       margin-right: 0.3rem;
@@ -173,7 +173,7 @@
   }
 }
 
-.oro-account-user-role__back-link {
+.oro-customer-user-role__back-link {
   padding-left: 0;
 }
 

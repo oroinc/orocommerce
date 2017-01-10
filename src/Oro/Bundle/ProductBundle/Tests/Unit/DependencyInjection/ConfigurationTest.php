@@ -17,4 +17,11 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
             $configuration->getConfigTreeBuilder()
         );
     }
+
+    public function testGetConfigKeyByName()
+    {
+        $key = 'options';
+        $configKey = Configuration::getConfigKeyByName($key);
+        static::assertEquals('oro_product.'.$key, $configKey);
+    }
 }
